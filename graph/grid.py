@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 
-def grid_adj(size, connectivity=4, tensor=torch.ByteTensor):
+def grid_adj_indices(size, connectivity=4):
     """Return the unweighted adjacency matrix of a regular grid."""
 
     h, w = size
@@ -23,13 +23,14 @@ def grid_adj(size, connectivity=4, tensor=torch.ByteTensor):
         kernel = kernel.cuda()
         rows = rows.cuda()
 
+    # Broadcast kernel and compute indices.
     rows = rows.view(-1, 1).repeat(1, connectivity)
     cols = rows + kernel
     rows = rows.view(-1)
     cols = cols.view(-1)
+    indices = torch.cat((rows, cols)).view(2, -1)
 
-    i = torch.cat((rows, cols)).view(2, -1)
-    print(i)
+    print(indices)
 
     # .repeat(connectivity)
     # print(cols)
@@ -38,14 +39,14 @@ def grid_adj(size, connectivity=4, tensor=torch.ByteTensor):
     # print(kernel)
 
 
-def grid_points(size, tensor=torch.LongTensor):
+def grid_points(size):
     """Return the regular grid points of a given shape with distance `1`."""
 
     h, w = size
     x, y = np.meshgrid(np.arange(w), np.arange(h))
-    x = tensor(x)
-    y = tensor(y)
-    points = tensor(h * w, 2)
+    x = torch.FloatTensor(x)
+    y = torch.FloatTensor(y)
+    points = torch.FloatTensor(h * w, 2)
 
     if torch.cuda.is_available():
         x = x.cuda()
@@ -57,6 +58,6 @@ def grid_points(size, tensor=torch.LongTensor):
     return points
 
 
-size = torch.Size([1, 1])
+size = torch.Size([2, 2])
 a = grid_adj(size, 4)
 print(a)
