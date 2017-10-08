@@ -1,27 +1,34 @@
 import torch
+from math import pi as PI
 
 
 def polar_coordinates(adj_indices, points):
-    starts = points[adj_indices[0]]
-    ends = points[adj_indices[1]]
+    rows, cols = adj_indices
+    starts = points[rows]
+    ends = points[cols]
     directions = ends - starts
 
     dists = directions * directions
     dists = dists.sum(1)
 
-    angle1 = torch.atan2(directions[:, 0], directions[:, 1])
-    # TODO: 0 => 2pi
-    # TODO: No negative indices
+    vec_y = directions[:, 0]  # Save for later usage.
+    ang1 = vec2ang(vec_y, directions[:, 1])
 
-    # TODO: second angle
-    return dists, angle1
+    dim = points.size()[1]
+    if dim == 2:
+        return dists, ang1
+    elif dim == 3:
+        ang2 = vec2ang(vec_y, directions[:, 2])
+        return dists, ang1, ang2
+    else:
+        return ValueError()
 
 
-i = torch.LongTensor([
-    [0, 0, 1, 1],
-    [1, 2, 0, 2],
-])
-points = torch.FloatTensor([[0, 0], [3, 4], [0, 2]])
+def vec2ang(y, x):
+    ang = torch.atan2(y, x)
+    neg = (ang <= 0).type(torch.FloatTensor)
 
-a = polar_coordinates(i, points)
-print(a)
+    if torch.cuda.is_available():
+        neg = neg.cuda()
+
+    return ang + (neg * 2 * PI)

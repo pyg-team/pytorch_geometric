@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 
 
 def grid_adj_indices(size, connectivity=4):
