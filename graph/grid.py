@@ -43,21 +43,19 @@ def grid_points(size):
     """Return the regular grid points of a given shape with distance `1`."""
 
     h, w = size
-    x, y = np.meshgrid(np.arange(w), np.arange(h))
-    x = torch.FloatTensor(x)
-    y = torch.FloatTensor(y)
-    points = torch.FloatTensor(h * w, 2)
+    x = torch.arange(0, w)
+    y = torch.arange(0, h)
 
     if torch.cuda.is_available():
         x = x.cuda()
         y = y.cuda()
-        points = points.cuda()
 
-    points[:, 0] = y.view(-1)
-    points[:, 1] = x.view(-1)
-    return points
+    x = x.repeat(h)
+    y = y.view(-1, 1).repeat(1, w).view(-1)
+
+    return torch.cat((y, x)).view(2, -1).t()
 
 
-size = torch.Size([2, 2])
-a = grid_adj(size, 4)
+size = torch.Size([3, 2])
+a = grid_points(size)
 print(a)
