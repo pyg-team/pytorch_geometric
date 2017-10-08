@@ -1,5 +1,6 @@
-import torch
 from math import pi as PI
+
+import torch
 
 
 def polar_coordinates(adj_indices, points):
