@@ -1,5 +1,6 @@
 import os
 
+import torch
 from torch.utils.data import Dataset
 
 
@@ -31,7 +32,9 @@ class FAUST(Dataset):
 
         self.process()
 
-        pass
+        data_file = self.training_file if train else self.test_file
+        path = os.path.join(self.root, self.processed_folder, data_file)
+        self.data, self.labels = torch.load(path)
 
     def __getitem__(self, index):
         """
@@ -39,14 +42,22 @@ class FAUST(Dataset):
             index (int): Index
 
         Returns:
-            quadruple: (adj, points, features, target) where target is index
-            of the target class.
+            tuple: ((adj_indices, points, features), target) where target is
+            index of the target class.
         """
-        pass
+
+        data, target = self.data[index], self.labels[index]
+
+        if self.transform is not None:
+            data = self.transform(data)
+
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return data, target
 
     def __len__(self):
-        return 200
-        pass
+        return len(self.labels)
 
     def _check_exists(self):
         return os.path.exists(self.root)
@@ -66,7 +77,7 @@ class FAUST(Dataset):
                                '{}'.format(self.url))
 
         # Process and save as torch files.
-        print('Processing dataset...')
+        print('Processing...')
 
         print('Done!')
 
