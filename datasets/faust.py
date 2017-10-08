@@ -18,6 +18,7 @@ class FAUST(Dataset):
     """
 
     url = 'http://faust.is.tue.mpg.de/'
+    processed_folder = 'processed'
     training_file = 'training.pt'
     test_file = 'test.pt'
 
@@ -30,9 +31,6 @@ class FAUST(Dataset):
 
         self.process()
 
-        if not self._check_exists():
-            raise RuntimeError('Dataset not found. Please download it from ' +
-                               '{}'.format(self.url))
         pass
 
     def __getitem__(self, index):
@@ -54,10 +52,23 @@ class FAUST(Dataset):
         return os.path.exists(self.root)
 
     def _check_processed(self):
-        return False
+        return os.path.exists(
+            os.path.join(self.root, self.processed_folder, self.training_file)
+        ) and os.path.exists(
+            os.path.join(self.root, self.processed_folder, self.test_file))
 
     def process(self):
-        pass
+        if self._check_processed():
+            return
+
+        if not self._check_exists():
+            raise RuntimeError('Dataset not found. Please download it from ' +
+                               '{}'.format(self.url))
+
+        # Process and save as torch files.
+        print('Processing dataset...')
+
+        print('Done!')
 
 
 FAUST('~/Downloads/MPI-FAUST')
