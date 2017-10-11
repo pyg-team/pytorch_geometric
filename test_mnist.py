@@ -24,12 +24,13 @@ def load_matlab_file(path_file, name_field, dtype=np.float32):
 
 train_vals = load_matlab_file(path_train_vals, 'vals')
 test_vals = load_matlab_file(path_test_vals, 'vals')
-# train_coords = load_matlab_file(path_train_coords, 'patch_coords')
+train_coords = load_matlab_file(path_train_coords, 'patch_coords')
 test_coords = load_matlab_file(path_test_coords, 'patch_coords')
 train_centroids = load_matlab_file(path_train_centroids, 'idx_centroids',
                                    np.int64)
 test_centroids = load_matlab_file(path_test_centroids, 'idx_centroids',
                                   np.int64)
+print(test_centroids)
 train_labels = load_matlab_file(path_train_labels, 'labels', np.uint8)
 test_labels = load_matlab_file(path_test_labels, 'labels', np.uint8)
 
@@ -38,6 +39,10 @@ test_labels = load_matlab_file(path_test_labels, 'labels', np.uint8)
 # dist is 0 at root, rad is NaN
 
 
+# I don't really need this if I have the centroids. I just need the row and col
+# array
+# sigma needs to be calculated, not passed
+# TODO: find a way to extract these arrays
 def stack_matrices(x):  # Stack 2D matrices into a 3D tensor
     n = int(np.sqrt(x.shape[1] // 2))
     num_examples = x.shape[0]
@@ -50,7 +55,11 @@ def stack_matrices(x):  # Stack 2D matrices into a 3D tensor
 
 
 # Load the coords
-print(test_coords.shape)
 test_coords = stack_matrices(test_coords)
-print(test_coords.shape)
-print(test_coords[0, 0, 0])
+train_coords = stack_matrices(train_coords)
+
+
+# Compute centroids
+def compute_centroids(centroids, list_mapping_graph_0_to_graph_1,
+                      list_mapping_graph_1_to_graph_2):
+    pass
