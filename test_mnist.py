@@ -35,6 +35,7 @@ test_labels = load_matlab_file(path_test_labels, 'labels', np.uint8)
 
 # 75 * 75 * 2 values (warum 2?)
 # 1-dim centroids? wtf?
+# dist is 0 at root, rad is NaN
 
 
 def stack_matrices(x):  # Stack 2D matrices into a 3D tensor
