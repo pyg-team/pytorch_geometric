@@ -2,7 +2,7 @@ import torch
 from torch.autograd import Function
 
 
-class Mm(Function):
+class _Mm(Function):
     def forward(self, a, b):
         self.save_for_backward(a, b)
         return torch.mm(a, b)
@@ -15,11 +15,11 @@ class Mm(Function):
         return grad_input_dL_da, grad_input_dL_db
 
 
-autograd_mm = Mm()
+_mm_autograd = _Mm()
 
 
 def mm(a, b):
     if torch.is_tensor(a) and torch.is_tensor(b):
         return torch.mm(a, b)
     else:
-        return autograd_mm(a, b)
+        return _mm_autograd(a, b)
