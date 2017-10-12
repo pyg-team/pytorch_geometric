@@ -1,5 +1,9 @@
+import math
+
 import torch
 from torch.nn import Module, Parameter
+
+import torch_geometric.nn.functional as F
 
 
 class GCN(Module):
@@ -25,10 +29,13 @@ class GCN(Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        pass
+        stdv = 1. / math.sqrt(self.weight.size(1))
+        self.weight.data.uniform_(-stdv, stdv)
+        if self.bias is not None:
+            self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, adj, features):
-        pass
+        return F.gcn(adj, features, self.weight, self.bias)
 
     def __repr__(self):
         s = ('{name}({in_channels}, {out_channels}')
