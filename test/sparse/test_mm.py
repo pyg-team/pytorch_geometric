@@ -17,7 +17,7 @@ class MmTest(TestCase):
         a_2 = torch.FloatTensor([[0, 0, 4], [3, 0, 0], [0, 0, 0]])
         f = torch.FloatTensor([[1, 2], [3, 4], [5, 6]])
 
-        c_1 = torch.mm(a_1, f)
+        c_1 = mm(a_1, f)
         c_2 = torch.mm(a_2, f)
 
         assert_equal(c_1.numpy(), c_2.numpy())
