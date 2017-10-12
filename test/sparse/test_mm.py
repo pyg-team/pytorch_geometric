@@ -9,8 +9,6 @@ from torch_geometric.sparse import mm
 
 class MmTest(TestCase):
     def test_tensor(self):
-        self.assertEqual(2, 2)
-
         i = torch.LongTensor([[0, 2], [1, 0]])
         v = torch.FloatTensor([4, 3])
         a_1 = torch.sparse.FloatTensor(i.t(), v, torch.Size([3, 3]))
@@ -20,6 +18,7 @@ class MmTest(TestCase):
         c_1 = mm(a_1, f)
         c_2 = torch.mm(a_2, f)
 
+        assert_equal(a_1.to_dense().numpy(), a_2.numpy())
         assert_equal(c_1.numpy(), c_2.numpy())
 
     def test_autograd(self):
@@ -41,6 +40,7 @@ class MmTest(TestCase):
         out_1.backward()
         out_2.backward()
 
+        assert_equal(a_1.to_dense().numpy(), a_2.numpy())
         assert_equal(C_1.data.numpy(), C_2.data.numpy())
         assert_equal(A_1.grad.data.numpy(), A_2.grad.data.numpy())
         assert_equal(F_1.grad.data.numpy(), F_2.grad.data.numpy())

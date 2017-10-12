@@ -1,4 +1,5 @@
 import torch
+from torch_geometric.sparse import mm
 
 
 def sum(a, dim=None, keepdim=False):
@@ -9,10 +10,10 @@ def sum(a, dim=None, keepdim=False):
         a = a.t()
 
     ones = torch.ones(a.size()[1], 1)
-    if torch.cuda.is_available():
+    if a.is_cuda is True:
         ones = ones.cuda()
 
-    c = torch.mm(a, ones)
+    c = mm(a, ones)
 
     if dim is 0:
         c = c.view(1, -1)
