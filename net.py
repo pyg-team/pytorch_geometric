@@ -33,7 +33,7 @@ model = Net()
 loss_fn = torch.nn.MSELoss(size_average=False)
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
-for epoch in range(1, 200):
+for epoch in range(1, 20):
     y_pred = model(A, FF)
     loss = loss_fn(y_pred, Y)
     optimizer.zero_grad()
