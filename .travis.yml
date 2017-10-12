@@ -1,0 +1,26 @@
+language: python
+sudo: required
+dist: trusty
+matrix:
+  include:
+    - python: 2.7
+      install:
+        - pip install http://download.pytorch.org/whl/cu75/torch-0.2.0.post3-cp27-cp27m-manylinux1_x86_64.whl
+    - python: 3.5
+      install:
+        - pip install http://download.pytorch.org/whl/cu75/torch-0.2.0.post3-cp35-cp35m-manylinux1_x86_64.whl
+    - python: 3.6
+      install:
+        - pip install http://download.pytorch.org/whl/cu75/torch-0.2.0.post3-cp36-cp36m-manylinux1_x86_64.whl
+install:
+  - pip install torchvision
+  - pip install -r requirements_test.txt
+  - pip install codecov
+script:
+  - pep8 .
+  - flake8 .
+  - nosetests --with-coverage
+after_success:
+  - codecov
+notifications:
+  email: false
