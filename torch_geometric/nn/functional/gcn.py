@@ -8,8 +8,8 @@ def gcn(adj, features, weight, bias):
     # TODO: Check if on cuda?
 
     # Calculate D^{-1/2} in vector form.
-    # degree = sum(adj, dim=1) + 1
-    # degree = degree.pow(-0.5)  # TODO: test if it works with zeros.
+    degree = sum(adj, dim=1) + 1
+    degree = degree.pow(-0.5)  # TODO: test if it works with zeros.
 
     # adj = sparse_tensor_diag_matmul(adj, degree, transpose=True)
     # adj = sparse_tensor_diag_matmul(adj, degree, transpose=False)
