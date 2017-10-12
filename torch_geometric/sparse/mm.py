@@ -15,11 +15,8 @@ class _Mm(Function):
         return grad_input_dL_da, grad_input_dL_db
 
 
-_mm_autograd = _Mm()
-
-
 def mm(a, b):
     if torch.is_tensor(a) and torch.is_tensor(b):
         return torch.mm(a, b)
     else:
-        return _mm_autograd(a, b)
+        return _Mm()(a, b)

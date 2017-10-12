@@ -33,4 +33,21 @@ class SumTest(TestCase):
             torch.sum(a_2, dim=1, keepdim=False).numpy())
 
     def test_autograd(self):
-        pass
+        i = torch.LongTensor([[0, 2], [1, 0]])
+        v = torch.FloatTensor([4, 3])
+        a_1 = torch.sparse.FloatTensor(i.t(), v, torch.Size([3, 3]))
+        A_1 = Variable(a_1, requires_grad=True)
+        a_2 = torch.FloatTensor([[0, 0, 4], [3, 0, 0], [0, 0, 0]])
+        A_2 = Variable(a_2, requires_grad=True)
+
+        C_1 = sum(A_1, dim=1)
+        C_2 = torch.sum(A_2, dim=1)
+
+        out_1 = C_1.mean()
+        out_2 = C_2.mean()
+        out_1.backward()
+        out_2.backward()
+
+        assert_equal(a_1.to_dense().numpy(), a_2.numpy())
+        assert_equal(C_1.data.numpy(), C_2.data.numpy())
+        assert_equal(A_1.grad.data.numpy(), A_2.grad.data.numpy())

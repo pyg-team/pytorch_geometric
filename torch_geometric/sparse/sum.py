@@ -1,4 +1,6 @@
 import torch
+from torch.autograd import Variable
+
 from torch_geometric.sparse import mm
 
 
@@ -12,6 +14,9 @@ def sum(a, dim=None, keepdim=False):
     ones = torch.ones(a.size()[1], 1)
     if a.is_cuda is True:
         ones = ones.cuda()
+
+    if not torch.is_tensor(a):
+        ones = Variable(ones)
 
     c = mm(a, ones)
 
