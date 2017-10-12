@@ -44,6 +44,3 @@ class MmTest(TestCase):
         assert_equal(C_1.data.numpy(), C_2.data.numpy())
         assert_equal(A_1.grad.data.numpy(), A_2.grad.data.numpy())
         assert_equal(F_1.grad.data.numpy(), F_2.grad.data.numpy())
-
-    def test_autograd_approx(self):
-        pass
