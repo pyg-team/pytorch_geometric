@@ -43,8 +43,8 @@ class SplineGCN(Module):
         self.kernel_size = kernel_size
         self.spline_degree = spline_degree
 
-        self.weight = Parameter(
-            torch.Tensor(*kernel_size, in_features, out_features))
+        weight_size = kernel_size + (in_features, out_features)
+        self.weight = Parameter(torch.Tensor(*weight_size))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_features))
