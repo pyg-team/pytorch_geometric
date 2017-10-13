@@ -75,6 +75,6 @@ class SplineGCN(Module):
         s = ('{name}({in_channels}, {out_channels}, kernel_size={kernel_size}'
              ', spline_degree={spline_degree}')
         if self.bias is None:
-            s += 'bias=False'
+            s += ', bias=False'
         s += ')'
         return s.format(name=self.__class__.__name__, **self.__dict__)

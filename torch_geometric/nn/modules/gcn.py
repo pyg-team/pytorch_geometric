@@ -40,8 +40,8 @@ class GCN(Module):
         return gcn(adj, features, self.weight, self.bias)
 
     def __repr__(self):
-        s = ('{name}({in_channels}, {out_channels}')
+        s = ('{name}({in_features}, {out_features}')
         if self.bias is None:
-            s += 'bias=False'
+            s += ', bias=False'
         s += ')'
         return s.format(name=self.__class__.__name__, **self.__dict__)
