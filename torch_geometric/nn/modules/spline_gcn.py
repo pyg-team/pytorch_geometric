@@ -29,19 +29,21 @@ class SplineGCN(Module):
         super(SplineGCN, self).__init__()
 
         if not 2 <= dim <= 3:
-            raise ValueError()
+            raise ValueError('Node dimension is restricted to 2d or 3d.')
 
+        # Fix kernel size representation to same length as dimensions.
         if isinstance(kernel_size, int):
             kernel_size = (kernel_size, )
         if len(kernel_size) < dim:
-            # TODO: Fill with last value.
-            pass
+            kernel_size += tuple(kernel_size[len(kernel_size) - 1]
+                                 for _ in range(0, dim - len(kernel_size)))
 
+        # Fix spline degree representation to same length as dimensions.
         if isinstance(spline_degree, int):
             spline_degree = (spline_degree, )
         if len(spline_degree) < dim:
-            # TODO: Fill with last value.
-            pass
+            spline_degree += tuple(spline_degree[len(spline_degree) - 1]
+                                   for _ in range(0, dim - len(spline_degree)))
 
         self.in_features = in_features
         self.out_features = out_features
@@ -72,7 +74,7 @@ class SplineGCN(Module):
         return features
 
     def __repr__(self):
-        s = ('{name}({in_channels}, {out_channels}, kernel_size={kernel_size}'
+        s = ('{name}({in_features}, {out_features}, kernel_size={kernel_size}'
              ', spline_degree={spline_degree}')
         if self.bias is None:
             s += ', bias=False'
