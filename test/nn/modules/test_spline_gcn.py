@@ -6,7 +6,6 @@ from torch_geometric.nn.modules import SplineGCN
 class SplineGCNTest(TestCase):
     def test_init(self):
         conv = SplineGCN(1, 10, dim=3, kernel_size=(4, 8), spline_degree=1)
-        print(conv)
         self.assertEqual(conv.in_features, 1)
         self.assertEqual(conv.out_features, 10)
         self.assertEqual(conv.kernel_size, (4, 8, 8))
