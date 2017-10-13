@@ -3,7 +3,7 @@ import math
 import torch
 from torch.nn import Module, Parameter
 
-# import torch_geometric.nn.functional as F
+# from .._functions import spline_gcn
 
 
 class SplineGCN(Module):
@@ -59,7 +59,7 @@ class SplineGCN(Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        n = self.in_channels
+        n = self.in_features
         for k in self.kernel_size:
             n *= k
         stdv = 1. / math.sqrt(n)

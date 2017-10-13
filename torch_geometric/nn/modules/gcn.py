@@ -3,7 +3,7 @@ import math
 import torch
 from torch.nn import Module, Parameter
 
-from torch_geometric.nn.functional import gcn
+from .._functions import gcn
 
 
 class GCN(Module):
@@ -30,7 +30,7 @@ class GCN(Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        stdv = 1. / math.sqrt(self.in_channels)
+        stdv = 1. / math.sqrt(self.in_features)
 
         self.weight.data.uniform_(-stdv, stdv)
         if self.bias is not None:

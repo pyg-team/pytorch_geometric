@@ -1,3 +1,4 @@
-from torch_geometric.nn.modules.gcn import GCN
+from .gcn import GCN
+from .spline_gcn import SplineGCN
 
-__all__ = ['GCN']
+__all__ = ['GCN', 'SplineGCN']
