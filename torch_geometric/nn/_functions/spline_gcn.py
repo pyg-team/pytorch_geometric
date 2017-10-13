@@ -1,9 +1,12 @@
-# import torch
+import torch
 
 # from ...sparse import mm, sum
 
 
 def spline_gcn(adj, features, weight, bias, kernel_size, spline_degree):
+    B = torch.FloatTensor()
+    C = torch.LongTensor()
+    dim = len(kernel_size)
     # Adj has size: torch.Size([n, n, dim])
     # -------------------------------------------------------------------------
     # COMPUTE B AND C with size [|E|, dim, spline_degree + 1]
@@ -18,6 +21,8 @@ def spline_gcn(adj, features, weight, bias, kernel_size, spline_degree):
     # THIS SHOULD BE REALLY REALLY FAST!!
     # -------------------------------------------------------------------------
     # DO THE CONVOLUTION:
+    C = B.view(-1, dim * (spline_degree + 1))
+    C = C.view(-1, dim * (spline_degree + 1))
 
     # 1. We need to compute [|E|, M_out]:
     #   1. Slice the features F => [|E|, M_in]
