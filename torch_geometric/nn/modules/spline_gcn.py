@@ -3,7 +3,7 @@ import math
 import torch
 from torch.nn import Module, Parameter
 
-# from .._functions import spline_gcn
+from .._functions import spline_gcn
 
 
 class SplineGCN(Module):
@@ -71,7 +71,8 @@ class SplineGCN(Module):
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, adj, features):
-        return features
+        return spline_gcn(adj, features, self.weight, self.bias,
+                          self.kernel_size, self.spline_degree)
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}, kernel_size={kernel_size}'
