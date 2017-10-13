@@ -13,7 +13,7 @@ class SplineGCN(Module):
         out_features (int): Size of each output sample.
         dim (int): Mesh dimensions.
         kernel_size (int, tuple or triple): Size of the convolving kernel.
-        spline_degree (int, tuple or triple): B-Spline degree.
+        spline_degree (int): B-Spline degree.
         bias (bool, optional): If set to False, the layer will not learn an
             additive bias. Default: `True`.
     """
@@ -37,13 +37,6 @@ class SplineGCN(Module):
         if len(kernel_size) < dim:
             kernel_size += tuple(kernel_size[len(kernel_size) - 1]
                                  for _ in range(0, dim - len(kernel_size)))
-
-        # Fix spline degree representation to same length as dimensions.
-        if isinstance(spline_degree, int):
-            spline_degree = (spline_degree, )
-        if len(spline_degree) < dim:
-            spline_degree += tuple(spline_degree[len(spline_degree) - 1]
-                                   for _ in range(0, dim - len(spline_degree)))
 
         self.in_features = in_features
         self.out_features = out_features
