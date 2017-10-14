@@ -10,7 +10,7 @@ def polar_coordinates(adj_indices, points):
     directions = ends - starts
 
     dists = directions * directions
-    dists = dists.sum(1)
+    dists = dists.sum(1).sqrt()
 
     vec_y = directions[:, 0]  # Save for later usage.
     ang1 = vec2ang(vec_y, directions[:, 1])

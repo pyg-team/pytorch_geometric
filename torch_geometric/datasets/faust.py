@@ -1,5 +1,7 @@
 import os
 
+from plyfile import PlyData, make2d
+import numpy as np
 import torch
 from torch.utils.data import Dataset
 
@@ -82,4 +84,22 @@ class FAUST(Dataset):
         print('Done!')
 
 
-FAUST('~/Downloads/MPI-FAUST')
+# FAUST('~/Downloads/MPI-FAUST')
+
+p = os.path.expanduser('~/Downloads/MPI-FAUST/training/scans/tr_scan_000.ply')
+
+
+def read_ply(path):
+    with open(p, 'rb') as f:
+        plydata = PlyData.read(f)
+        x = plydata['vertex']['x']
+        y = plydata['vertex']['y']
+        z = plydata['vertex']['z']
+        vertices = np.concatenate((x, y, z))
+        faces = make2d(plydata['face']['vertex_indices'])
+        return vertices, faces
+
+
+v, f = read_ply(p)
+print(v)
+print(f)
