@@ -5,7 +5,8 @@ import torch
 # from torch.autograd import Variable
 from numpy.testing import assert_equal, assert_almost_equal
 
-from torch_geometric.nn.functional.spline_gcn import angle_spline
+from torch_geometric.nn.functional.spline_gcn import (angle_spline,
+                                                      radius_spline)
 
 
 class SplineGcnTest(TestCase):
@@ -22,8 +23,8 @@ class SplineGcnTest(TestCase):
             0.0625, 0.125, 0.1875, 0.25, 0.3125, 0.375, 0.4375, 0.5, 0.5625,
             0.625, 0.6875, 0.75, 0.8125, 0.875, 0.9375, 1
         ]) * 2 * PI
-
         B, C = angle_spline(values, partitions=4)
+
         assert_almost_equal(B.numpy(), [
             [0.25, 0.75],
             [0.5, 0.5],
@@ -62,4 +63,30 @@ class SplineGcnTest(TestCase):
         ])
 
     def test_radius_spline(self):
-        pass
+        values = torch.FloatTensor([0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4])
+        B, C = radius_spline(values, partitions=2)
+
+        assert_equal(B.numpy(), [
+            [1, 0],
+            [0.75, 0.25],
+            [0.5, 0.5],
+            [0.25, 0.75],
+            [1, 0],
+            [0.75, 0.25],
+            [0.5, 0.5],
+            [0.25, 0.75],
+            [1, 0],
+        ])
+        assert_equal(
+            C.numpy(),
+            [
+                [0, 1],
+                [0, 1],
+                [0, 1],
+                [0, 1],
+                [1, 2],
+                [1, 2],
+                [1, 2],
+                [1, 2],
+                [2, 1],  # A bit strange, but there's no corresponding value.
+            ])

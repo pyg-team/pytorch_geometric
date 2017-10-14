@@ -58,11 +58,11 @@ def angle_spline(values, partitions, degree=1):
     values *= partitions
 
     b_1 = values.frac().unsqueeze(dim)
-    b_2 = (1 - b_1)
+    b_2 = 1 - b_1
     B = torch.cat((b_1, b_2), dim)
 
     c_1 = values.floor().unsqueeze(dim)
-    c_2 = (c_1 - 1)
+    c_2 = c_1 - 1
     c_1 = c_1 - (c_1 >= partitions).type(torch.FloatTensor) * partitions
     c_2 = (c_2 < 0).type(torch.FloatTensor) * partitions + c_2
     C = torch.cat((c_1, c_2), dim)
@@ -71,7 +71,17 @@ def angle_spline(values, partitions, degree=1):
 
 
 def radius_spline(values, partitions, degree=1):
+    dim = values.dim()
     values /= values.max()
     values *= partitions
 
-    pass
+    b_2 = values.frac().unsqueeze(dim)
+    b_1 = (1 - b_2)
+    B = torch.cat((b_1, b_2), dim)
+
+    c_1 = values.floor().unsqueeze(dim)
+    c_2 = (c_1 + 1)
+    c_2 -= 2 * (c_2 > partitions).type(torch.FloatTensor)
+    C = torch.cat((c_1, c_2), dim)
+
+    return B, C
