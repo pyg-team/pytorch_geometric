@@ -1,3 +1,5 @@
+from math import pi as PI
+
 import torch
 
 # from ...sparse import mm, sum
@@ -50,9 +52,10 @@ def spline_gcn(adj, features, weight, bias, kernel_size, spline_degree):
     pass
 
 
-def closed_spline(values, partitions, degree=1):
+def angle_spline(values, partitions, degree=1):
     dim = values.dim()
-    values = values * partitions
+    values /= 2 * PI
+    values *= partitions
 
     b_1 = values.frac().unsqueeze(dim)
     b_2 = (1 - b_1)
@@ -67,6 +70,8 @@ def closed_spline(values, partitions, degree=1):
     return B, C
 
 
-def open_spline(values, partitions, degree=1):
+def radius_spline(values, partitions, degree=1):
+    values /= values.max()
+    values *= partitions
 
     pass
