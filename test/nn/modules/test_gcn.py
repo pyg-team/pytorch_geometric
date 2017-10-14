@@ -5,7 +5,7 @@ from torch.autograd import Variable
 from numpy.testing import assert_equal
 
 from torch_geometric.nn.modules import GCN
-from torch_geometric.nn._functions import gcn as gcn
+from torch_geometric.nn.functional import gcn as gcn
 
 
 class GCNTest(TestCase):

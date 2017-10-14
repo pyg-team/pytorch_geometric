@@ -3,7 +3,7 @@ import math
 import torch
 from torch.nn import Module, Parameter
 
-from .._functions import spline_gcn
+from ..functional import spline_gcn
 
 
 class SplineGCN(Module):

@@ -3,7 +3,7 @@ import math
 import torch
 from torch.nn import Module, Parameter
 
-from .._functions import gcn
+from ..functional import gcn
 
 
 class GCN(Module):
