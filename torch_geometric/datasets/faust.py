@@ -103,3 +103,4 @@ def read_ply(path):
 v, f = read_ply(p)
 print(v)
 print(f)
+# TODO: really slow
