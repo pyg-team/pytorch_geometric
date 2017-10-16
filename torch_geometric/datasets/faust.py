@@ -86,21 +86,21 @@ class FAUST(Dataset):
 
 # FAUST('~/Downloads/MPI-FAUST')
 
-p = os.path.expanduser('~/Downloads/MPI-FAUST/training/scans/tr_scan_000.ply')
+p1 = os.path.expanduser('~/Downloads/MPI-FAUST/training/scans/tr_scan_000.ply')
 
 
 def read_ply(path):
-    with open(p, 'rb') as f:
+    with open(path, 'rb') as f:
         plydata = PlyData.read(f)
         x = plydata['vertex']['x']
         y = plydata['vertex']['y']
         z = plydata['vertex']['z']
-        vertices = np.concatenate((x, y, z))
+        vertices = np.stack((x, y, z), axis=1)
         faces = make2d(plydata['face']['vertex_indices'])
         return vertices, faces
 
 
-v, f = read_ply(p)
-print(v)
-print(f)
+v, f = read_ply(p1)
+print(v.shape)
+print(f.shape)
 # TODO: really slow
