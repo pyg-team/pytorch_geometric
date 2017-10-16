@@ -87,20 +87,69 @@ class FAUST(Dataset):
 # FAUST('~/Downloads/MPI-FAUST')
 
 p1 = os.path.expanduser('~/Downloads/MPI-FAUST/training/scans/tr_scan_000.ply')
+p2 = os.path.expanduser(
+    '~/Downloads/MPI-FAUST/training/registrations/tr_reg_000.ply')
+p3 = os.path.expanduser(
+    '~/Downloads/MPI-FAUST/training/ground_truth_vertices/tr_gt_000.txt')
 
 
 def read_ply(path):
     with open(path, 'rb') as f:
         plydata = PlyData.read(f)
-        x = plydata['vertex']['x']
-        y = plydata['vertex']['y']
-        z = plydata['vertex']['z']
-        vertices = np.stack((x, y, z), axis=1)
-        faces = make2d(plydata['face']['vertex_indices'])
-        return vertices, faces
+        print(plydata)
+        # x = plydata['vertex']['x']
+        # y = plydata['vertex']['y']
+        # z = plydata['vertex']['z']
+        # vertices = np.stack((x, y, z), axis=1)
+        # faces = make2d(plydata['face']['vertex_indices'])
+        # return vertices, faces
 
 
-v, f = read_ply(p1)
-print(v.shape)
-print(f.shape)
-# TODO: really slow
+def read_with_numpy(path):
+    with open(path, 'rb') as f:
+
+        print(f)
+
+
+# TODO:  COmpute 544-dimensional SHOT descriptors (local histogram of normal
+# vectors)
+# Architecture:
+# * Lin16
+# * ReLU
+# * CNN32
+# * AMP
+# * ReLU
+# * CNN64
+# * AMP
+# * ReLU
+# * CNN128
+# * AMP
+# * ReLU
+# * Lin256
+# * Lin6890
+#
+# output representing the soft correspondence as an 6890-dimensional vector.
+#
+# shape correspondence (labelling problem) where one tries to label each vertex
+# to the index of a corresponding point.
+# X = Indices
+# y_j denote the vertex corresponding to x_i
+# output representing the probability distribution on Y
+# loss: multinominal regression loss
+# ACN: adam optimizer 10^-3, beta_1 = 0.9, beta_2 = 0.999
+
+# SHOT descriptor: Salti, Tombari, Stefano. SHOT, 2014
+# Signature of Histograms of OrienTations (SHOT)
+
+# v, f = read_ply(p1)
+# print(v.shape)
+# print(f.shape)
+# # TODO: really slow
+# read_with_numpy(p1)
+read_ply(p2)
+
+with open(p3, 'rb') as f:
+    content = f.readlines()
+    print(len(content))
+
+read_with_numpy(p2)
