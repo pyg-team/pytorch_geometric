@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-from ..graph.geometry import adj_indices_from_faces
+from ..graph.geometry import edges_from_faces
 
 
 class FAUST(Dataset):
@@ -84,18 +84,13 @@ class FAUST(Dataset):
         y = plydata['vertex']['y']
         z = plydata['vertex']['z']
         vertices = np.stack((x, y, z), axis=1)
-        faces = make2d(plydata['face']['vertex_indices'])
+        faces = make2d(plydata['face']['vertex_indices']).astype(np.int64)
 
         vertices = torch.FloatTensor(vertices)
-        faces = torch.IntTensor(faces)
+        faces = torch.LongTensor(faces.astype(np.int64))
+        edges = edges_from_faces(faces)
 
-        adj_indices = adj_indices_from_faces(faces)
-
-        return vertices, adj_indices
-
-        print(vertices.shape)
-        print(faces.shape)
-        # return vertices, faces
+        return vertices, edges
 
     def process(self):
         if self._check_processed():
@@ -109,10 +104,10 @@ class FAUST(Dataset):
         print('Processing...')
 
         train_indices = range(0, 2)
-        test_indices = range(80, 20)
+        # test_indices = range(80, 20)
 
         for i in train_indices:
-            self._read_ply(i)
+            vertices, edges = self._read_ply(i)
 
         print('Done!')
 

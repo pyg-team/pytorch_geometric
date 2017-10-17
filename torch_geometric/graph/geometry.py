@@ -1,39 +1,28 @@
-import time
 from math import pi as PI
 
 import torch
 
 
-def polar_coordinates(adj_indices, points):
-    rows, cols = adj_indices
-    starts = points[rows]
-    ends = points[cols]
-    directions = ends - starts
+def polar_coordinates(vertices, edges):
+    rows, cols = edges
+    starts = vertices[rows]
+    ends = vertices[cols]
+    v = ends - starts
 
-    dists = directions * directions
-    dists = dists.sum(1).sqrt()
+    dists = (v * v).sum(1).sqrt()
 
-    vec_y = directions[:, 0]  # Save for later usage.
-    ang1 = vec2ang(vec_y, directions[:, 1])
-
-    dim = points.size()[1]
+    dim = vertices.size(1)
     if dim == 2:
-        return dists, ang1
+        return dists, vec2ang(v[:, 0], v[:, 1])
     elif dim == 3:
-        ang2 = vec2ang(vec_y, directions[:, 2])
-        return dists, ang1, ang2
+        return dists, vec2ang(v[:, 0], v[:, 1]), vec2ang(v[:, 0], v[:, 2])
     else:
-        return ValueError()
+        raise ValueError()
 
 
 def vec2ang(y, x):
     ang = torch.atan2(y, x)
-    neg = (ang <= 0).type(torch.FloatTensor)
-
-    if torch.cuda.is_available():
-        neg = neg.cuda()
-
-    return ang + (neg * 2 * PI)
+    return ang + (ang <= 0).type(torch.FloatTensor) * 2 * PI
 
 
 def edges_from_faces(faces):
