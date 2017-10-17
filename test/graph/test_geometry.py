@@ -10,4 +10,4 @@ class GeometryTest(TestCase):
     def test_adj_indices_from_faces(self):
         faces = torch.LongTensor([[2, 3, 0], [1, 0, 2]])
         edges = edges_from_faces(faces)
-        # print(edges)
+        print(edges)

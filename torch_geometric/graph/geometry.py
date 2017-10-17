@@ -36,25 +36,16 @@ def vec2ang(y, x):
 
 
 def edges_from_faces(faces):
-    n = faces.max() + 1
     dim = faces.size(1)
-
     if dim == 2:
         edges = faces
-    if dim == 3:
+    elif dim == 3:
         edges = torch.cat((faces[:, 0:2], faces[:, 0:3:2]))
     else:
         return ValueError()
 
-    # # edges = edges:index(2, torch.linspace(2,1)):long()
-    # # edges = torch.cat((edges, edges[:, ::-1]))
-    # inv_idx = torch.arange(dim - 1, -1, -1).long()
-    # # edges = edges[:, inv_idx]
-    # print(inv_idx)
-    # # edges.index_select(0, torch.arange(edges.size(0) - 1, -1).long())
-    # print(edges.size())
-
-    # print(n)
+    # Append undirected edges.
+    edges = torch.cat((edges, edges.index_select(1, torch.LongTensor([1, 0]))))
 
     # Sort the adjacencies row-wise.
     edges = edges.t()
