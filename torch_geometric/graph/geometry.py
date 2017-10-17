@@ -9,15 +9,17 @@ def polar_coordinates(vertices, edges):
     ends = vertices[cols]
     v = ends - starts
 
+    # Calculate Euclidean distances.
     dists = (v * v).sum(1).sqrt()
 
+    # Dimensionality case differentation.
     dim = vertices.size(1)
     if dim == 2:
         return dists, vec2ang(v[:, 0], v[:, 1])
     elif dim == 3:
         return dists, vec2ang(v[:, 0], v[:, 1]), vec2ang(v[:, 0], v[:, 2])
-    else:
-        raise ValueError()
+
+    raise ValueError()
 
 
 def vec2ang(y, x):
