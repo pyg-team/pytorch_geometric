@@ -3,6 +3,11 @@ from math import pi as PI
 import torch
 
 
+def vec2ang(y, x):
+    ang = torch.atan2(y, x)
+    return ang + (ang <= 0).type(torch.FloatTensor) * 2 * PI
+
+
 def polar_coordinates(vertices, edges):
     rows, cols = edges
     starts = vertices[rows]
@@ -20,11 +25,6 @@ def polar_coordinates(vertices, edges):
         return dists, vec2ang(v[:, 0], v[:, 1]), vec2ang(v[:, 0], v[:, 2])
 
     raise ValueError()
-
-
-def vec2ang(y, x):
-    ang = torch.atan2(y, x)
-    return ang + (ang <= 0).type(torch.FloatTensor) * 2 * PI
 
 
 def edges_from_faces(faces):
