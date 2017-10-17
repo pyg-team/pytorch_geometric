@@ -1,3 +1,4 @@
+import time
 from math import pi as PI
 
 import torch
@@ -36,19 +37,19 @@ def vec2ang(y, x):
 
 
 def edges_from_faces(faces):
-    dim = faces.size(1)
-    if dim == 2:
-        edges = faces
-    elif dim == 3:
-        edges = torch.cat((faces[:, 0:2], faces[:, 0:3:2]))
-    else:
-        return ValueError()
+    # Get directed edges.
+    edges = torch.cat((faces[:, 0:2], faces[:, 1:3], faces[:, 0:3:2]))
+    n = faces.max() + 1
 
-    # Append undirected edges.
-    edges = torch.cat((edges, edges.index_select(1, torch.LongTensor([1, 0]))))
+    # Build directed adjacency matrix.
+    adj = torch.sparse.FloatTensor(edges.t(),
+                                   torch.ones(edges.size(0)),
+                                   torch.Size([n, n]))
 
-    # Sort the adjacencies row-wise.
-    edges = edges.t()
-    sorted, indices = torch.sort(edges[0], 0)
-    edges = torch.cat((sorted, edges[1][indices])).view(2, -1)
-    return edges
+    # Convert to undirected adjacency matrix.
+    adj = adj + adj.t()
+
+    # Remove duplicate indices.
+    # NOTE: This doesn't work if transpose(...) is removed.
+    adj = adj.transpose(0, 1).coalesce()
+    return adj._indices()
