@@ -89,8 +89,6 @@ def default_collate(batch):
     # print(batch[0].size())
     if torch.is_tensor(batch[0]) and batch[0].is_sparse:
         return stack(batch)
-    # if batch[0].is_sparse:
-    #     return batch[0]
     elif torch.is_tensor(batch[0]):
         out = None
         print('hah1', batch[0].size())

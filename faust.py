@@ -8,11 +8,12 @@ path = '~/Downloads/MPI-FAUST'
 train_dataset = FAUST(path, train=True)
 test_dataset = FAUST(path, train=False)
 
-train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=15, shuffle=True)
 
-for batch_idx, (data, target) in enumerate(train_loader):
+for batch_idx, ((adj, slices), target) in enumerate(train_loader):
     # edges = edges.squeeze()
-    print(data.size())
+    print(adj.size())
+    print(slices)
     # adjs = [mesh_adj(vertices[i], edges[i]) for i in range(0, edges.size(0))]
     # print(adjs[0].size())
     # print(vertices.size())
