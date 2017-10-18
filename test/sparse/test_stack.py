@@ -25,6 +25,7 @@ class StackTest(TestCase):
 
     def test_stack_vertical(self):
         out = stack([mat1, mat2], horizontal=False, vertical=True).to_dense()
+        print(out)
         expected = [
             [0, 1, 0, 0],
             [2, 0, 0, 0],
@@ -44,3 +45,6 @@ class StackTest(TestCase):
             [0, 0, 0, 0, 4, 0, 0],
         ]
         assert_equal(out.numpy(), expected)
+
+    def test_dynamic_type(self):
+        print('TODO: test dynamic type')
