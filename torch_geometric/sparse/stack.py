@@ -22,7 +22,13 @@ def stack(sequence, horizontal=True, vertical=True):
         y, x = (mat.size(0), mat.size(1))
         y_sum = y_sum + y if vertical else max(y_sum, y)
         x_sum = x_sum + x if horizontal else max(x_sum, x)
-        slices.append([y, x])
+
+        if vertical and horizontal:
+            slices.append([y_sum, x_sum])
+        elif vertical:
+            slices.append(y_sum)
+        elif horizontal:
+            slices.append(x_sum)
 
     # Concat all indices and values to one new large sparse matrix.
     indices = torch.cat(indices, dim=1)
