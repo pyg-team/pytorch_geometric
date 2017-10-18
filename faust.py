@@ -3,6 +3,7 @@ import torch
 from torch_geometric.datasets.faust import FAUST
 # from torch_geometric.graph.geometry import mesh_adj
 from torch_geometric.utils.dataloader import DataLoader
+from torch_geometric.sparse.identity import identity
 
 path = '~/Downloads/MPI-FAUST'
 train_dataset = FAUST(path, train=True)
@@ -10,14 +11,18 @@ test_dataset = FAUST(path, train=False)
 
 train_loader = DataLoader(train_dataset, batch_size=15, shuffle=True)
 
-for batch_idx, ((adj, _), target) in enumerate(train_loader):
-    # edges = edges.squeeze()
+for batch_idx, ((adj, _), _) in enumerate(train_loader):
     print(adj.size())
+
+    # Generate correspondence targets.
+    # identity(torch.Size([6890, 6890]))
+
+    # edges = edges.squeeze()
     # adjs = [mesh_adj(vertices[i], edges[i]) for i in range(0, edges.size(0))]
     # print(adjs[0].size())
     # print(vertices.size())
     # print(edges.size())
-    print(target.size())
+    # print(target.size())
 
 # # TODO:  COmpute 544-dimensional SHOT descriptors (local histogram of normal
 # # vectors)

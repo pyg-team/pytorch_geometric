@@ -57,6 +57,7 @@ class FAUST(Dataset):
         data = (vertices, edges)
         target = index % 10  # Every subject is representated by 10 poses.
 
+        # TODO: outsource to save_example
         data = mesh_adj(vertices, edges)
 
         if self.transform is not None:
