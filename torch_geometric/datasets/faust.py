@@ -55,7 +55,7 @@ class FAUST(Dataset):
         vertices = self.vertices[index]
         edges = self.edges[index]
         data = (vertices, edges)
-        target = 1
+        target = index % 10  # Every subject is representated by 10 poses.
 
         if self.transform is not None:
             data = self.transform(data)
