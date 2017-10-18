@@ -5,7 +5,7 @@ import torch
 from numpy.testing import assert_equal, assert_almost_equal
 
 from torch_geometric.graph.geometry import (vec2ang, polar_coordinates,
-                                            edges_from_faces)
+                                            mesh_adj, edges_from_faces)
 
 
 class GeometryTest(TestCase):
@@ -46,6 +46,18 @@ class GeometryTest(TestCase):
 
         expected_phi = [0.25, 1.25]
         assert_almost_equal((phi / PI).numpy(), expected_phi, 2)
+
+    def test_mesh_adj(self):
+        vertices = torch.FloatTensor([[1, 0], [0, 0], [-1, 0]])
+        edges = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+        adj = mesh_adj(vertices, edges).to_dense()
+
+        expected_rho = [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
+        assert_equal(adj[:, :, 0].numpy(), expected_rho)
+
+        expected_theta = [[0, 1, 0], [2, 0, 1], [0, 2, 0]]
+        assert_almost_equal((adj[:, :, 1] / PI).numpy(), expected_theta, 1)
 
     def test_edges_from_faces(self):
         faces = torch.LongTensor([[2, 3, 0], [1, 0, 2]])

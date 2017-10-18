@@ -27,6 +27,14 @@ def polar_coordinates(vertices, edges):
     return torch.stack(values, dim=1)
 
 
+def mesh_adj(vertices, edges):
+    n = vertices.size(0)
+    # print(polar_coordinates(vertices, edges))
+    return torch.sparse.FloatTensor(edges,
+                                    polar_coordinates(vertices, edges),
+                                    torch.Size([n, n, vertices.size(1)]))
+
+
 def edges_from_faces(faces):
     """Get undirected edges from triangular faces."""
 
