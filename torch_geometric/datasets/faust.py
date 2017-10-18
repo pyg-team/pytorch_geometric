@@ -1,13 +1,11 @@
 import os
 
-import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-from ..graph.geometry import edges_from_faces, mesh_adj
+from ..graph.geometry import edges_from_faces
 from .utils.dir import make_dirs
 from .utils.ply import read_ply
-from .utils.save import save
 
 
 class FAUST(Dataset):
@@ -42,9 +40,30 @@ class FAUST(Dataset):
 
         self.process()
 
-        # data_file = self.training_file if train else self.test_file
-        # path = os.path.join(self.root, self.processed_folder, data_file)
-        # self.data, self.labels = torch.load(path)
+        data_file = self.training_file if train else self.test_file
+        self.vertices, self.edges = torch.load(data_file)
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): Index
+        Returns:
+            tuple: ((vertices, edges), target) where target is index of the
+            target class.
+        """
+
+        vertices = self.vertices[index]
+        edges = self.edges[index]
+        data = (vertices, edges)
+        target = 1
+
+        if self.transform is not None:
+            data = self.transform(data)
+
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return data, target
 
     def __len__(self):
         return self.n_training if self.train else self.n_test
@@ -71,7 +90,7 @@ class FAUST(Dataset):
         vertices = torch.stack([example[0] for example in data], dim=0)
         edges = torch.stack([example[1] for example in data], dim=0)
 
-        save({'vertices': vertices, 'edges': edges}, path)
+        torch.save((vertices, edges), path)
 
     def process(self):
         if not self._check_exists():
@@ -92,61 +111,3 @@ class FAUST(Dataset):
         self._save_examples(test_indices, self.test_file)
 
         print('Done!')
-
-
-# p1 = os.path.expanduser('~/Downloads/MPI-FAUST/training/scans/tr_scan_000.ply')
-# p2 = os.path.expanduser(
-#     '~/Downloads/MPI-FAUST/training/registrations/tr_reg_001.ply')
-# p3 = os.path.expanduser(
-#     '~/Downloads/MPI-FAUST/training/ground_truth_vertices/tr_gt_000.txt')
-
-# read_ply(p1)
-# read_ply(p2)
-
-# def read_with_numpy(path):
-#     with open(path, 'rb') as f:
-
-#         print(f)
-
-# # TODO:  COmpute 544-dimensional SHOT descriptors (local histogram of normal
-# # vectors)
-# # Architecture:
-# # * Lin16
-# # * ReLU
-# # * CNN32
-# # * AMP
-# # * ReLU
-# # * CNN64
-# # * AMP
-# # * ReLU
-# # * CNN128
-# # * AMP
-# # * ReLU
-# # * Lin256
-# # * Lin6890
-# #
-# # output representing the soft correspondence as an 6890-dimensional vector.
-# #
-# # shape correspondence (labelling problem) where one tries to label each vertex
-# # to the index of a corresponding point.
-# # X = Indices
-# # y_j denote the vertex corresponding to x_i
-# # output representing the probability distribution on Y
-# # loss: multinominal regression loss
-# # ACN: adam optimizer 10^-3, beta_1 = 0.9, beta_2 = 0.999
-
-# # SHOT descriptor: Salti, Tombari, Stefano. SHOT, 2014
-# # Signature of Histograms of OrienTations (SHOT)
-
-# # v, f = read_ply(p1)
-# # print(v.shape)
-# # print(f.shape)
-# # # TODO: really slow
-# # read_with_numpy(p1)
-# read_ply(p2)
-
-# with open(p3, 'rb') as f:
-#     content = f.readlines()
-#     print(len(content))
-
-# read_with_numpy(p2)
