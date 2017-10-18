@@ -29,7 +29,7 @@ class SplineGCN(Module):
         super(SplineGCN, self).__init__()
 
         if not 2 <= dim <= 3:
-            raise ValueError('Node dimension is restricted to 2d or 3d.')
+            raise ValueError('Node dimension is restricted to 2d or 3d')
 
         # Fix kernel size representation to same length as dimensions.
         if isinstance(kernel_size, int):

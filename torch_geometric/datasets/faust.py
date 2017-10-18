@@ -1,12 +1,13 @@
 import os
-import errno
 
-from plyfile import PlyData, make2d
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 
 from ..graph.geometry import edges_from_faces, mesh_adj
+from .utils.dir import make_dirs
+from .utils.ply import read_ply
+from .utils.save import save
 
 
 class FAUST(Dataset):
@@ -24,13 +25,17 @@ class FAUST(Dataset):
     """
 
     url = 'http://faust.is.tue.mpg.de/'
-    train_file = 'training.pt'
-    test_file = 'test.pt'
+    n_training = 80
+    n_test = 20
 
     def __init__(self, root, train=True, transform=None,
                  target_transform=None):
+
         self.root = os.path.expanduser(root)
         self.processed_folder = os.path.join(self.root, 'processed')
+        self.training_file = os.path.join(self.processed_folder, 'training.pt')
+        self.test_file = os.path.join(self.processed_folder, 'test.pt')
+
         self.train = train
         self.transform = transform
         self.target_transform = target_transform
@@ -41,104 +46,50 @@ class FAUST(Dataset):
         # path = os.path.join(self.root, self.processed_folder, data_file)
         # self.data, self.labels = torch.load(path)
 
-    def __getitem__(self, index):
-        """
-        Args:
-            index (int): Index
-
-        Returns:
-            tuple: ((adj_indices, points, features), target) where target is
-            index of the target class.
-        """
-
-        return 1, 2
-        # data, target = self.data[index], self.labels[index]
-
-        # if self.transform is not None:
-        #     data = self.transform(data)
-
-        # if self.target_transform is not None:
-        #     target = self.target_transform(target)
-
-        # return data, target
-
     def __len__(self):
-        pass
+        return self.n_training if self.train else self.n_test
 
     def _check_exists(self):
         return os.path.exists(self.root)
 
     def _check_processed(self):
+        return os.path.exists(self.training_file) and \
+               os.path.exists(self.test_file)
 
-        return os.path.exists(
-            os.path.join(
-                self.processed_folder, self.train_file)) and os.path.exists(
-                    os.path.join(self.processed_folder, self.test_file))
-
-    def _read_ply(self, index):
+    def _read_example(self, index):
         path = os.path.join(self.root, 'training', 'registrations',
                             'tr_reg_{0:03d}.ply'.format(index))
 
-        with open(path, 'rb') as f:
-            plydata = PlyData.read(f)
-
-        x = plydata['vertex']['x']
-        y = plydata['vertex']['y']
-        z = plydata['vertex']['z']
-        vertices = np.stack((x, y, z), axis=1)
-        faces = make2d(plydata['face']['vertex_indices']).astype(np.int64)
-
-        vertices = torch.FloatTensor(vertices)
-        faces = torch.LongTensor(faces.astype(np.int64))
+        vertices, faces = read_ply(path)
         edges = edges_from_faces(faces)
 
         return vertices, edges
 
-    def process(self):
-        if self._check_processed():
-            return
+    def _save_examples(self, indices, path):
+        data = [self._read_example(i) for i in indices]
 
+        vertices = torch.stack([example[0] for example in data], dim=0)
+        edges = torch.stack([example[1] for example in data], dim=0)
+
+        save({'vertices': vertices, 'edges': edges}, path)
+
+    def process(self):
         if not self._check_exists():
             raise RuntimeError('Dataset not found. Please download it from ' +
                                '{}'.format(self.url))
 
-        try:
-            os.makedirs(os.path.join(self.processed_folder))
-        except OSError as e:
-            if e.errno == errno.EEXIST:
-                pass
-            else:
-                raise
+        if self._check_processed():
+            return
 
-        # Process and save as torch files.
         print('Processing...')
 
-        train_indices = range(0, 2)
-        test_indices = range(80, 82)
+        make_dirs(os.path.join(self.processed_folder))
 
-        train_vertices = []
-        train_adjs = []
-        for i in train_indices:
-            vertices, edges = self._read_ply(i)
-            train_vertices.append(vertices)
-            train_adjs.append(mesh_adj(vertices, edges))
-        train_vertices = torch.stack(train_vertices, dim=0)
+        train_indices = range(0, self.n_training)
+        self._save_examples(train_indices, self.training_file)
 
-        # obj = {'vertices': train_vertices, 'adjs': train_adjs}
-        # torch.save(os.path.join(self.processed_folder, self.train_file), obj)
-
-        test_vertices = []
-        test_adjs = []
-        for i in test_indices:
-            vertices, edges = self._read_ply(i)
-            test_vertices.append(vertices)
-            test_adjs.append(mesh_adj(vertices, edges))
-        test_vertices = torch.stack(test_vertices, dim=0)
-
-        obj = {'vertices': test_vertices}
-        test_file = os.path.join(self.processed_folder, self.test_file)
-        with open(test_file, 'wb') as f:
-            torch.save(obj, f)
+        test_indices = range(self.n_training, self.n_training + self.n_test)
+        self._save_examples(test_indices, self.test_file)
 
         print('Done!')
 
