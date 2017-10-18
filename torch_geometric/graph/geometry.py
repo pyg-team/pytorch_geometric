@@ -29,7 +29,6 @@ def polar_coordinates(vertices, edges):
 
 def mesh_adj(vertices, edges):
     n = vertices.size(0)
-    # print(polar_coordinates(vertices, edges))
     return torch.sparse.FloatTensor(edges,
                                     polar_coordinates(vertices, edges),
                                     torch.Size([n, n, vertices.size(1)]))
