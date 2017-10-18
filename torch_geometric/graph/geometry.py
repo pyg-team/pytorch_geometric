@@ -3,12 +3,15 @@ from math import pi as PI
 import torch
 
 
-def vec2ang(y, x):
+def vec2ang(x, y):
     ang = torch.atan2(y, x)
     return ang + (ang <= 0).type(torch.FloatTensor) * 2 * PI
 
 
 def polar_coordinates(vertices, edges):
+    dim = vertices.size(1)
+    assert dim > 1, 'Invalid vertices dimensionality.'
+
     rows, cols = edges
     starts = vertices[rows]
     ends = vertices[cols]
@@ -17,14 +20,11 @@ def polar_coordinates(vertices, edges):
     # Calculate Euclidean distances.
     rho = (v * v).sum(1).sqrt()
 
-    # Dimensionality case differentation.
-    dim = vertices.size(1)
-    if dim == 2:
-        return rho, vec2ang(v[:, 1], v[:, 0])
-    elif dim == 3:
-        return rho, vec2ang(v[:, 1], v[:, 0]), vec2ang(v[:, 2], v[:, 0])
+    # Append angles.
+    values = [rho]
+    values.extend([vec2ang(v[:, 0], v[:, i]) for i in range(1, dim)])
 
-    raise ValueError()
+    return torch.stack(values, dim=1)
 
 
 def edges_from_faces(faces):

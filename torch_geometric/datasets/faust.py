@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-from ..graph.geometry import edges_from_faces
+from ..graph.geometry import edges_from_faces, polar_coordinates
 
 
 class FAUST(Dataset):
@@ -108,6 +108,8 @@ class FAUST(Dataset):
 
         for i in train_indices:
             vertices, edges = self._read_ply(i)
+            print(vertices.size())
+            print(edges.size())
 
         print('Done!')
 
