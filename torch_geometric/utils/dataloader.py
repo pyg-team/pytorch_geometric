@@ -6,6 +6,7 @@ import collections
 import sys
 import traceback
 import threading
+from ..sparse.stack import stack
 
 string_classes = (str, bytes)
 
@@ -87,7 +88,7 @@ def default_collate(batch):
     # print(len(batch))
     # print(batch[0].size())
     if torch.is_tensor(batch[0]) and batch[0].is_sparse:
-        return batch[0]
+        return stack(batch)
     # if batch[0].is_sparse:
     #     return batch[0]
     elif torch.is_tensor(batch[0]):
