@@ -3,8 +3,8 @@ from math import pi as PI
 import torch
 
 
-def vec2ang(x, y):
-    ang = torch.atan2(x, y)
+def vec2ang(y, x):
+    ang = torch.atan2(y, x)
     return ang + (ang <= 0).type(torch.FloatTensor) * 2 * PI
 
 

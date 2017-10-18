@@ -37,7 +37,6 @@ class GeometryTest(TestCase):
         edges = torch.LongTensor([[0, 1], [1, 0]])
 
         dists, angs1, angs2 = polar_coordinates(vertices, edges)
-        print(angs2 / PI)
 
         expected_dists = [1.73, 1.73]
         assert_almost_equal(dists.numpy(), expected_dists, 2)
