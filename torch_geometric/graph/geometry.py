@@ -28,10 +28,10 @@ def polar_coordinates(vertices, edges):
 
 
 def mesh_adj(vertices, edges):
-    n = vertices.size(0)
+    n, dim = vertices.size()
     return torch.sparse.FloatTensor(edges,
                                     polar_coordinates(vertices, edges),
-                                    torch.Size([n, n, vertices.size(1)]))
+                                    torch.Size([n, n, dim]))
 
 
 def edges_from_faces(faces):
