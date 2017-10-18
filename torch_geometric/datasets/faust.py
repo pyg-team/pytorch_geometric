@@ -3,7 +3,7 @@ import os
 import torch
 from torch.utils.data import Dataset
 
-from ..graph.geometry import edges_from_faces
+from ..graph.geometry import edges_from_faces, mesh_adj
 from .utils.dir import make_dirs
 from .utils.ply import read_ply
 
@@ -56,6 +56,8 @@ class FAUST(Dataset):
         edges = self.edges[index]
         data = (vertices, edges)
         target = index % 10  # Every subject is representated by 10 poses.
+
+        data = mesh_adj(vertices, edges)
 
         if self.transform is not None:
             data = self.transform(data)

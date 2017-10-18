@@ -1,6 +1,23 @@
-from torch_geometric.datasets.faust import FAUST
+import torch
 
-dataset = FAUST('~/Downloads/MPI-FAUST')
+from torch_geometric.datasets.faust import FAUST
+# from torch_geometric.graph.geometry import mesh_adj
+from torch_geometric.utils.dataloader import DataLoader
+
+path = '~/Downloads/MPI-FAUST'
+train_dataset = FAUST(path, train=True)
+test_dataset = FAUST(path, train=False)
+
+train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
+
+for batch_idx, (data, target) in enumerate(train_loader):
+    # edges = edges.squeeze()
+    print(data.size())
+    # adjs = [mesh_adj(vertices[i], edges[i]) for i in range(0, edges.size(0))]
+    # print(adjs[0].size())
+    # print(vertices.size())
+    # print(edges.size())
+    print(target.size())
 
 # # TODO:  COmpute 544-dimensional SHOT descriptors (local histogram of normal
 # # vectors)

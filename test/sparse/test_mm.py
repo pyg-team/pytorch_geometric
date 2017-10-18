@@ -1,10 +1,9 @@
 from unittest import TestCase
-
 import torch
 from torch.autograd import Variable
 from numpy.testing import assert_equal
 
-from torch_geometric.sparse import mm
+from torch_geometric.sparse.mm import mm
 
 
 class MmTest(TestCase):

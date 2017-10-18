@@ -11,7 +11,7 @@ def vec2ang(x, y):
 def polar_coordinates(vertices, edges):
     dim = vertices.size(1)
 
-    if dim > 1:
+    if dim <= 1:
         raise ValueError('Invalid vertices dimensionality')
 
     rows, cols = edges
