@@ -39,7 +39,7 @@ class Net(nn.Module):
         x = F.relu(self.conv2(adj, x))
         x = F.relu(self.conv3(adj, x))
         x = F.relu(self.lin1(x))
-        x = F.relu(self.lin2(x))
+        x = self.lin2(x)
         return F.log_softmax(x)
 
 
@@ -68,6 +68,8 @@ def train(epoch):
         optimizer.zero_grad()
 
         output = model(adj, x)
+        print('max', output.max())
+        print('min', output.max())
 
         loss = F.nll_loss(output, target.view(-1))
         loss.backward()
@@ -102,6 +104,6 @@ def test():
     print('Test set: Accuracy: {}/{}'.format(correct, 20 * 6890))
 
 
-for epoch in range(1, 100):
-    train(epoch)
-    test()
+# for epoch in range(1, 100):
+#     train(epoch)
+#     test()

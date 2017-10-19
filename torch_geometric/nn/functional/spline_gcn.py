@@ -1,30 +1,74 @@
 from math import pi as PI
 
 import torch
+from torch import nn
 
 # from ...sparse import mm, sum
 
 
-def spline_gcn(adj, features, weight, kernel_size, spline_degree, bias=None):
-    B = torch.FloatTensor()
-    C = torch.LongTensor()
-    dim = len(kernel_size)
-    # Adj has size: torch.Size([n, n, dim])
-    # -------------------------------------------------------------------------
-    # COMPUTE B AND C with size [|E|, dim, spline_degree + 1]
-    # 1. Scale ang1 and ang2 to be in interval [0, 1]
+def spline_gcn(adj, features, weight, kernel_size, spline_degree=1, bias=None):
+    values = adj._values()
+    rows, cols = adj._indices()
 
-    # 2. Calculate close b-spline for ang1 and ang2
+    # ---- PREPROCESSING ------------------------------------------------------
 
-    # 3. Calculate open b-spline for dist
+    # Compute B and C, resulting in two [|E| x dim x (degree + 1)] tensors.
+    # B saves the values of the spline functions with non-zero values.
+    # The values in C point to the corresponding spline function indices.
+    B1, C1 = open_spline(values[:, 0], partitions=kernel_size[0])
+    B, C = [B1], [C1]
+    for dim in range(1, len(kernel_size)):
+        Bi, Ci = closed_spline(values[:, dim], partitions=kernel_size[dim])
+        B.append(Bi)
+        C.append(Ci)
 
-    # 4. Concatenate to one big tensor (maybe unneccassary, will see)
+    B = torch.stack(B, dim=0).transpose(1, 2).transpose(0, 1)
+    C = torch.stack(C, dim=0).transpose(1, 2).transpose(0, 1)
+    B = B.contiguous().view(-1, 4)
+    C = C.contiguous().view(-1, 4)
+    print(B.size(), C.size())
 
-    # THIS SHOULD BE REALLY REALLY FAST!!
+    # ---- CONVOLUTION - ------------------------------------------------------
+
+    print('conv')
+    # 1. We need to compute [|E|, M_out]:
+    row_features = features[rows]
+    col_features = features[cols]
+    print(col_features.size())
+    print(B.size())
+    # print(row_features.size())
+    # print(col_features.size())
+
+    # col_features = col_features * B  # results to
+    c = torch.bmm(col_features.view(8, 2, 1), B.view(8, 1, 4))
+    # c => |E| x M_in x (d+k+1)
+    print(c.size())
+    print(c.view(8, -1))
+
+    # print(B[0])
+    # print(col_features[0])
+    # print((col_features * B)[0])
+
+    # We are only interested in the col_features!!!
+    # This needs to be converted from [|E|, M_in] to [|E|, M_out].
+
+    # bla = nn.parallel.scatter(col_features, [0])
+
+    # print(bla)
+
+    # col_features *
+
+    # Get b => [|E|, (d * k + 1)]
+    # Get c => [|E|, (d * k + 1)]
+    # for each edge:
+    # Compute \sum_{b_ij} b_{ij} * f (element-wise) * W_{C_{ij}
+
+    # D
+
     # -------------------------------------------------------------------------
     # DO THE CONVOLUTION:
-    C = B.view(-1, dim * (spline_degree + 1))
-    C = C.view(-1, dim * (spline_degree + 1))
+    # C = B.view(-1, dim * (spline_degree + 1))
+    # C = C.view(-1, dim * (spline_degree + 1))
 
     # 1. We need to compute [|E|, M_out]:
     #   1. Slice the features F => [|E|, M_in]
@@ -69,7 +113,7 @@ def closed_spline(values, partitions, degree=1):
 
 
 def open_spline(values, partitions, degree=1):
-    values = partitions * values / (2 * PI)
+    values = partitions * values / values.max()
 
     b_1 = values.frac()
     b_2 = 1 - b_1
