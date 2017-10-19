@@ -52,36 +52,32 @@ def spline_gcn(adj, features, weight, kernel_size, spline_degree, bias=None):
     pass
 
 
-def angle_spline(values, partitions, degree=1):
-    dim = values.dim()
-    values /= 2 * PI
-    values *= partitions
+def closed_spline(values, partitions, degree=1):
+    values = partitions * values / (2 * PI)
 
-    b_1 = values.frac().unsqueeze(dim)
+    b_1 = values.frac()
     b_2 = 1 - b_1
-    B = torch.cat((b_1, b_2), dim)
+    B = torch.stack([b_1, b_2], dim=0)
 
-    c_1 = values.floor().unsqueeze(dim)
+    c_1 = values.floor().long()
     c_2 = c_1 - 1
-    c_1 = c_1 - (c_1 >= partitions).type(torch.FloatTensor) * partitions
-    c_2 = (c_2 < 0).type(torch.FloatTensor) * partitions + c_2
-    C = torch.cat((c_1, c_2), dim)
+    c_1 = c_1 - (c_1 >= partitions).type(torch.LongTensor) * partitions
+    c_2 = c_2 + (c_2 < 0).type(torch.LongTensor) * partitions
+    C = torch.stack([c_1, c_2], dim=0)
 
     return B, C
 
 
-def radius_spline(values, partitions, degree=1):
-    dim = values.dim()
-    values /= values.max()
-    values *= partitions
+def open_spline(values, partitions, degree=1):
+    values = partitions * values / (2 * PI)
 
-    b_2 = values.frac().unsqueeze(dim)
-    b_1 = (1 - b_2)
-    B = torch.cat((b_1, b_2), dim)
+    b_1 = values.frac()
+    b_2 = 1 - b_1
+    B = torch.stack([b_1, b_2], dim=0)
 
-    c_1 = values.floor().unsqueeze(dim)
-    c_2 = (c_1 + 1)
-    c_2 -= 2 * (c_2 > partitions).type(torch.FloatTensor)
-    C = torch.cat((c_1, c_2), dim)
+    c_2 = values.floor().long()
+    c_2 = c_2 - (c_2 >= partitions).type(torch.LongTensor)
+    c_1 = 1 + c_2
+    C = torch.stack([c_1, c_2], dim=0)
 
     return B, C
