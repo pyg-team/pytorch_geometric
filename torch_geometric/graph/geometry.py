@@ -36,6 +36,13 @@ def mesh_adj(vertices, edges):
                                     torch.Size([n, n, dim]))
 
 
+class MeshAdj(object):
+    def __call__(self, data):
+        vertices, edges = data
+        adjs = mesh_adj(vertices, edges)
+        return vertices, adjs
+
+
 def edges_from_faces(faces):
     """Get undirected edges from triangular faces."""
 

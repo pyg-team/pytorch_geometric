@@ -91,8 +91,8 @@ def default_collate(batch):
         return stack(batch)
     elif torch.is_tensor(batch[0]):
         out = None
-        print('hah1', batch[0].size())
-        print('hah2', batch[1].size())
+        # print('hah1', batch[0].size())
+        # print('hah2', batch[1].size())
         # print(batch.size())
         if _use_shared_memory:
             # If we're in a background process, concatenate directly into a

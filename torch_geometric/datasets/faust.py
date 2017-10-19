@@ -3,7 +3,7 @@ import os
 import torch
 from torch.utils.data import Dataset
 
-from ..graph.geometry import edges_from_faces, mesh_adj
+from ..graph.geometry import edges_from_faces
 from .utils.dir import make_dirs
 from .utils.ply import read_ply
 
@@ -14,19 +14,25 @@ class FAUST(Dataset):
         root (string): Root directory of dataset where
             ``processed/training.pt`` and  ``processed/test.pt`` exist.
         train (bool, optional): If True, creates dataset from ``training.pt``,
-            otherwise from ``test.pt``.
+            otherwise from ``test.pt``. Default: `True`.
+        correspondence (bool, optional): Whether to return shape correspondence
+            label are pose classification label. Default: `False`
         transform (callable, optional): A function/transform that  takes in an
             PIL image and returns a transformed version. E.g,
-            ``transforms.RandomCrop``
+            ``transforms.RandomCrop``. Default: `None`.
         target_transform (callable, optional): A function/transform that takes
-            in the target and transforms it.
+            in the target and transforms it. Default: `None`.
     """
 
     url = 'http://faust.is.tue.mpg.de/'
     n_training = 80
     n_test = 20
 
-    def __init__(self, root, train=True, transform=None,
+    def __init__(self,
+                 root,
+                 train=True,
+                 correspondence=False,
+                 transform=None,
                  target_transform=None):
 
         self.root = os.path.expanduser(root)
@@ -35,6 +41,7 @@ class FAUST(Dataset):
         self.test_file = os.path.join(self.processed_folder, 'test.pt')
 
         self.train = train
+        self.correspondence = correspondence
         self.transform = transform
         self.target_transform = target_transform
 
@@ -55,10 +62,11 @@ class FAUST(Dataset):
         vertices = self.vertices[index]
         edges = self.edges[index]
         data = (vertices, edges)
-        target = index % 10  # Every subject is representated by 10 poses.
 
-        # TODO: outsource to save_example
-        data = mesh_adj(vertices, edges)
+        if self.correspondence:
+            target = torch.arange(0, vertices.size(0)).long()
+        else:
+            target = index % 10  # Every subject is representated by 10 poses.
 
         if self.transform is not None:
             data = self.transform(data)
