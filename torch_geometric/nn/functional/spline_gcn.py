@@ -1,7 +1,8 @@
 from math import pi as PI
 
 import torch
-from torch import nn
+
+# from torch import nn
 
 # from ...sparse import mm, sum
 
@@ -32,7 +33,7 @@ def spline_gcn(adj, features, weight, kernel_size, spline_degree=1, bias=None):
 
     print('conv')
     # 1. We need to compute [|E|, M_out]:
-    row_features = features[rows]
+    # row_features = features[rows]
     col_features = features[cols]
     print(col_features.size())
     print(B.size())

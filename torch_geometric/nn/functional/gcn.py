@@ -1,6 +1,6 @@
 import torch
 
-from ...sparse import mm, sum
+from ...sparse import mm
 
 
 def gcn(adj, features, weight, bias=None):
