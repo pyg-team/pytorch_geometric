@@ -65,17 +65,16 @@ def train(epoch):
 
         x, adj, target = Variable(x), Variable(adj), Variable(target)
 
-        optimizer.zero_grad()
+        # optimizer.zero_grad()
 
         output = model(adj, x)
-        print('max', output.max())
-        print('min', output.max())
+        print(output.size())
 
-        loss = F.nll_loss(output, target.view(-1))
-        loss.backward()
-        optimizer.step()
+        # loss = F.nll_loss(output, target.view(-1))
+        # loss.backward()
+        # optimizer.step()
 
-    print('Train Epoch: {}\tLoss: {:6f}'.format(epoch, loss.data[0]))
+    # print('Train Epoch: {}\tLoss: {:6f}'.format(epoch, loss.data[0]))
 
 
 def test():
@@ -104,6 +103,6 @@ def test():
     print('Test set: Accuracy: {}/{}'.format(correct, 20 * 6890))
 
 
-# for epoch in range(1, 100):
-#     train(epoch)
-#     test()
+for epoch in range(1, 2):
+    train(epoch)
+    # test()

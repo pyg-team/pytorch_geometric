@@ -11,10 +11,7 @@ def collate(batch):
         return stack(batch)
 
     elif isinstance(batch[0], collections.Mapping):
-        return {
-            key: collate([d[key] for d in batch])
-            for key in batch[0]
-        }
+        return {key: collate([d[key] for d in batch]) for key in batch[0]}
 
     elif isinstance(batch[0], collections.Sequence):
         transposed = zip(*batch)
@@ -25,4 +22,4 @@ def collate(batch):
 
 class DataLoader(DefaultDataLoader):
     def __init__(self, dataset, **kwargs):
-        super(DataLoader, self).__init__(dataset, **kwargs, collate_fn=collate)
+        super(DataLoader, self).__init__(dataset, collate_fn=collate, **kwargs)
