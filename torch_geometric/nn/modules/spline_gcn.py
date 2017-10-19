@@ -3,7 +3,7 @@ import math
 import torch
 from torch.nn import Module, Parameter
 
-from ..functional import spline_gcn
+from ..functional.spline_gcn import spline_gcn
 
 
 class SplineGCN(Module):
@@ -15,7 +15,7 @@ class SplineGCN(Module):
         kernel_size (int, tuple or triple): Size of the convolving kernel.
         spline_degree (int): B-Spline degree.
         bias (bool, optional): If set to False, the layer will not learn an
-            additive bias. Default: `True`.
+            additive bias. (default: `True`)
     """
 
     def __init__(self,
