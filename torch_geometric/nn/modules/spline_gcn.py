@@ -65,8 +65,8 @@ class SplineGCN(Module):
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, adj, features):
-        return spline_gcn(adj, features, self.weight, self.bias,
-                          self.kernel_size, self.spline_degree)
+        return spline_gcn(adj, features, self.weight, self.kernel_size,
+                          self.spline_degree, self.bias)
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}, kernel_size={kernel_size}'

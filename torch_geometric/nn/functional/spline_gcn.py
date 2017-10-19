@@ -5,7 +5,7 @@ import torch
 # from ...sparse import mm, sum
 
 
-def spline_gcn(adj, features, weight, bias, kernel_size, spline_degree):
+def spline_gcn(adj, features, weight, kernel_size, spline_degree, bias=None):
     B = torch.FloatTensor()
     C = torch.LongTensor()
     dim = len(kernel_size)

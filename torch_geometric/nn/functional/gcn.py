@@ -3,7 +3,7 @@ import torch
 from ...sparse import mm, sum
 
 
-def gcn(adj, features, weight, bias):
+def gcn(adj, features, weight, bias=None):
     # TODO: add identy
     # TODO: Compute degree and normalized adj
     # TODO: Check if on cuda?
