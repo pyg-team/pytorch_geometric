@@ -14,14 +14,14 @@ class FAUST(Dataset):
         root (string): Root directory of dataset where
             ``processed/training.pt`` and  ``processed/test.pt`` exist.
         train (bool, optional): If True, creates dataset from ``training.pt``,
-            otherwise from ``test.pt``. Default: `True`.
+            otherwise from ``test.pt``. (default: `True`)
         correspondence (bool, optional): Whether to return shape correspondence
-            label are pose classification label. Default: `False`
+            label are pose classification label. (default: `False`)
         transform (callable, optional): A function/transform that  takes in an
             PIL image and returns a transformed version. E.g,
-            ``transforms.RandomCrop``. Default: `None`.
+            ``transforms.RandomCrop``. (default: `None`)
         target_transform (callable, optional): A function/transform that takes
-            in the target and transforms it. Default: `None`.
+            in the target and transforms it. (default: `None`)
     """
 
     url = 'http://faust.is.tue.mpg.de/'
