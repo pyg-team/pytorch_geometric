@@ -5,8 +5,8 @@ import torch
 # from torch.autograd import Variable
 from numpy.testing import assert_equal
 
-from torch_geometric.nn.functional.spline_gcn import (closed_spline,
-                                                      open_spline, points)
+from torch_geometric.nn.functional.spline_gcn import (
+    closed_spline, open_spline, transform, points, weight_indices)
 from torch_geometric.graph.geometry import mesh_adj
 
 
@@ -36,39 +36,7 @@ class SplineGcnTest(TestCase):
         assert_equal(p, [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0],
                          [1, 0, 1], [1, 1, 0], [1, 1, 1]])
 
-    # def test_weight_indices(self):
-    #     # spline_indices should have shape [|E|, dim, degree + 1].
-    #     # Test dim = 2, spline_degree = 1
-    #     # We test two points with coordinates (1, 1) and (3, -3) with radius 4.
-    #     # spline_indices = [[[1, 0], [0, 3]], [[2, 1], [3, 2]]]
-    #     # spline_indices = torch.LongTensor(spline_indices)
-
-    #     spline_indices = [[3, 4], [0, 1], [2, 3]]
-    #     kernel_size = [5, 3, 4]
-    #     spline_indices = torch.LongTensor(spline_indices)
-    #     weight_indices(spline_indices, kernel_size)
-
-    #     # multer = [3 * 4, 4, 1] = [12, 4, 1]
-
-    #     # => [[36, 48], [0, 4], [2, 3]]
-
-    #     # 36 + 0 + 2
-    #     # 36 + 0 + 3
-    #     # 36 + 4 + 2
-    #     # 36 + 4 + 3
-    #     # 48 + 0 + 2
-    #     # 48 + 0 + 3
-    #     # 48 + 4 + 2
-    #     # 48 + 4 + 3
-    #     # => m^d viele
-
-    #     pass
-
-    # def test_weight_amounts(self):
-    #     pass
-
-    def test_forward(self):
-        return
+    def test_transform(self):
         vertices = [[0, 0], [1, 0], [0, 1], [-1, 0], [0, -1]]
         edges = [[0, 0, 0, 0, 1, 2, 3, 4], [1, 2, 3, 4, 0, 0, 0, 0]]
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
@@ -79,13 +47,64 @@ class SplineGcnTest(TestCase):
             [0.1, 0.2, 0.3, 0.4],
             [0.5, 0.6, 0.7, 0.8],
             [0.9, 1.0, 1.1, 1.2],
+            [1.3, 1.4, 1.5, 1.6],
+            [1.7, 1.8, 1.9, 2.0],
+            [2.1, 2.2, 2.3, 2.4],
         ])
-        weight = weight.view(1, 1, 3 * 4)
+        weight = weight.view(2, 1, 3, 4)
 
-        kernel_size = [2, 4]
-        spline_degree = 1
+        transform(adj, features, weight, spline_degree=1)
 
-        print(adj.to_dense()[:, :, 0])
-        print(adj.to_dense()[:, :, 1] / PI)
+    def test_weight_indices(self):
+        # spline_indices should have shape [|E|, dim, degree + 1].
+        # Test dim = 2, spline_degree = 1
+        # We test two points with coordinates (1, 1) and (3, -3) with radius 4.
+        # spline_indices = [[[1, 0], [0, 3]], [[2, 1], [3, 2]]]
+        # spline_indices = torch.LongTensor(spline_indices)
 
-        spline_gcn(adj, features, weight, kernel_size, spline_degree)
+        spline_indices = [[3, 4], [0, 1], [2, 3]]
+        kernel_size = [5, 3, 4]
+        spline_indices = torch.LongTensor(spline_indices)
+        weight_indices(spline_indices, kernel_size)
+
+        # multer = [3 * 4, 4, 1] = [12, 4, 1]
+
+        # => [[36, 48], [0, 4], [2, 3]]
+
+        # 36 + 0 + 2
+        # 36 + 0 + 3
+        # 36 + 4 + 2
+        # 36 + 4 + 3
+        # 48 + 0 + 2
+        # 48 + 0 + 3
+        # 48 + 4 + 2
+        # 48 + 4 + 3
+        # => m^d viele
+
+    #     pass
+
+    # def test_weight_amounts(self):
+    #     pass
+
+    # def test_forward(self):
+    #     return
+    #     vertices = [[0, 0], [1, 0], [0, 1], [-1, 0], [0, -1]]
+    #     edges = [[0, 0, 0, 0, 1, 2, 3, 4], [1, 2, 3, 4, 0, 0, 0, 0]]
+    #     adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
+
+    #     features = torch.FloatTensor([[1, 2], [2, 3], [3, 4], [4, 5], [5, 6]])
+
+    #     weight = torch.FloatTensor([
+    #         [0.1, 0.2, 0.3, 0.4],
+    #         [0.5, 0.6, 0.7, 0.8],
+    #         [0.9, 1.0, 1.1, 1.2],
+    #     ])
+    #     weight = weight.view(1, 1, 3 * 4)
+
+    #     kernel_size = [2, 4]
+    #     spline_degree = 1
+
+    #     print(adj.to_dense()[:, :, 0])
+    #     print(adj.to_dense()[:, :, 1] / PI)
+
+    #     spline_gcn(adj, features, weight, kernel_size, spline_degree)
