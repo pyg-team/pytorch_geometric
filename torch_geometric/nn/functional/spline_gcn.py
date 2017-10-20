@@ -107,7 +107,6 @@ def points(dim, degree):
 
 
 def weight_indices(spline_indices, kernel_size):
-    # P = reduce(lambda x, y: x * y, kernel_size)
     d, m = spline_indices.size()
 
     # Get all possible combinations resulting in a [m^d x d] matrix.
@@ -133,55 +132,19 @@ def weight_indices(spline_indices, kernel_size):
 
     print(a)
     return a
-    print(multer.size(), ' * ', spline_indices.size())
-    c = spline_indices.t() * multer
-    c = c.t()
 
-    # # print(c.chunk(d, 0))
-    # # c = c.chunk(d, 0)
-    print(c)
 
-    return
-    a = a.t()
-    b = 1 - a
-    # a = a.t()
-    # b = 1 - a
+def weight_amounts(spline_amounts, kernel_size):
+    d, m = spline_amounts.size()
 
-    # # print(a)
-    # c = torch.cat([a, b], dim=0)
-    # d = 1 - c
-    # e = torch.cat([c, d], dim=1)
+    # Get all possible combinations resulting in a [m^d x d] matrix.
+    a = list(itertools.product(*[range(m) for _ in range(d)]))
+    a = torch.LongTensor(a)
+
+    a = a + torch.arange(0, d * m, m).long()
+    a = spline_amounts.view(-1)[a.view(-1)].view(m**d, d)
+
+    # TODO: Reduce multiply
+    a = a.mul(1)
 
     print(a)
-    # print(b)
-
-    return
-
-    for i in itertools.combinations_with_():
-        print(i)
-        # print(c[i, 0])
-        # print(i)
-
-    return
-    # print(i)
-    # return
-    # print(i)
-
-    # print(c)
-
-    # return
-    # print(p1, p2)
-    # print('d x m', spline_indices[0])
-    # print(spline_indices[1])
-
-    multer = torch.LongTensor([[p2, 1]])
-
-    # multer = torch.LongTensor([3, 1])
-    # adder = torch.LongTensor([4, 0])
-
-    print(spline_indices[0].size())
-    print(multer.size())
-    c = torch.mm(multer, spline_indices[0])
-    print('c', c)
-
-    pass

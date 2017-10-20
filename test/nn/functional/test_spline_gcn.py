@@ -6,7 +6,8 @@ import torch
 from numpy.testing import assert_equal
 
 from torch_geometric.nn.functional.spline_gcn import (
-    closed_spline, open_spline, transform, points, weight_indices)
+    closed_spline, open_spline, transform, points, weight_indices,
+    weight_amounts)
 from torch_geometric.graph.geometry import mesh_adj
 
 
@@ -76,6 +77,16 @@ class SplineGcnTest(TestCase):
         kernel_size = [5, 3, 4]
         weight_indices(spline_indices, kernel_size)
         # 38, 39, 42, 43, 50, 51, 54, 55
+
+    def test_weight_amounts(self):
+        # spline_indices should have shape [|E|, dim, degree + 1].
+        # Test dim = 2, spline_degree = 1
+        # We test two points with coordinates (1, 1) and (3, -3) with radius 4.
+        spline_amounts = [[0.25, 0.75], [0.4, 0.6]]
+        spline_amounts = torch.FloatTensor(spline_amounts)
+        kernel_size = [3, 4]
+        weight_amounts(spline_amounts, kernel_size)
+        # 0, 3, 4, 7
 
     #     pass
 
