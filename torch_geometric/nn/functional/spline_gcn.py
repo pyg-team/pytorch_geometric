@@ -107,39 +107,32 @@ def points(dim, degree):
 
 
 def weight_indices(spline_indices, kernel_size):
-    P = reduce(lambda x, y: x * y, kernel_size)
+    # P = reduce(lambda x, y: x * y, kernel_size)
     d, m = spline_indices.size()
-    print('kernel_size', kernel_size)
-    print('P', P, 'd', d, 'm', m)
 
-    # print(spline_indices)
-    c = spline_indices
-
-    print(c)
-    c = c.view(-1)
-    # print(c)
-
+    # Get all possible combinations resulting in a [m^d x d] matrix.
     a = list(itertools.product(*[range(m) for _ in range(d)]))
     a = torch.LongTensor(a)
 
-    adder = torch.LongTensor([0, 2, 4])
+    # Add up indices column-wise, so each column contains independent indices
+    # ranging globally from 0 to m*d.
+    a = a + torch.arange(0, d * m, m).long()
 
-    a = a + adder
-    a = a.view(-1)
-    a = c[a]
-    a = a.view(8, 3)
-    print(a)
-    # a = a.view(-1)
-    # print(a)
-    # print(a[c])
+    # Fill in the spline indices.
+    a = spline_indices.view(-1)[a.view(-1)].view(m**d, d)
 
-    p1, p2, p3 = kernel_size
-    multer = [p2 * p3, p3, 1]
+    if d == 3:
+        p1, p2, p3 = kernel_size
+        multer = [p2 * p3, p3, 1]
+    elif d == 2:
+        p1, p2 = kernel_size
+        multer = [p2, 1]
     multer = torch.LongTensor(multer)
     a = a * multer
     a = a.sum(1)
+
     print(a)
-    return
+    return a
     print(multer.size(), ' * ', spline_indices.size())
     c = spline_indices.t() * multer
     c = c.t()

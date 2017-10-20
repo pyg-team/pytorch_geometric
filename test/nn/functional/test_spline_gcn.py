@@ -59,27 +59,23 @@ class SplineGcnTest(TestCase):
         # spline_indices should have shape [|E|, dim, degree + 1].
         # Test dim = 2, spline_degree = 1
         # We test two points with coordinates (1, 1) and (3, -3) with radius 4.
-        # spline_indices = [[[1, 0], [0, 3]], [[2, 1], [3, 2]]]
-        # spline_indices = torch.LongTensor(spline_indices)
+        spline_indices = [[1, 0], [0, 3]]
+        spline_indices = torch.LongTensor(spline_indices)
+        kernel_size = [3, 4]
+        weight_indices(spline_indices, kernel_size)
+        # 0, 3, 4, 7
+
+        spline_indices = [[2, 1], [3, 2]]
+        spline_indices = torch.LongTensor(spline_indices)
+        kernel_size = [3, 4]
+        weight_indices(spline_indices, kernel_size)
+        # 6, 7, 10, 11
 
         spline_indices = [[3, 4], [0, 1], [2, 3]]
-        kernel_size = [5, 3, 4]
         spline_indices = torch.LongTensor(spline_indices)
+        kernel_size = [5, 3, 4]
         weight_indices(spline_indices, kernel_size)
-
-        # multer = [3 * 4, 4, 1] = [12, 4, 1]
-
-        # => [[36, 48], [0, 4], [2, 3]]
-
-        # 36 + 0 + 2
-        # 36 + 0 + 3
-        # 36 + 4 + 2
-        # 36 + 4 + 3
-        # 48 + 0 + 2
-        # 48 + 0 + 3
-        # 48 + 4 + 2
-        # 48 + 4 + 3
-        # => m^d viele
+        # 38, 39, 42, 43, 50, 51, 54, 55
 
     #     pass
 
