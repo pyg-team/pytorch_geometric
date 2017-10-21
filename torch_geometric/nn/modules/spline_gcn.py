@@ -14,6 +14,8 @@ class SplineGCN(Module):
         out_features (int): Size of each output sample.
         dim (int): Mesh dimensions.
         kernel_size (int, tuple or triple): Size of the convolving kernel.
+        max_radius (float): Maximum radius of edges which gets specifically
+            weightened.
         spline_degree (int): B-Spline degree. (default: 1)
         bias (bool, optional): If set to False, the layer will not learn an
             additive bias. (default: `True`)
@@ -24,6 +26,7 @@ class SplineGCN(Module):
                  out_features,
                  dim,
                  kernel_size,
+                 max_radius,
                  degree=1,
                  bias=True):
 
@@ -42,6 +45,7 @@ class SplineGCN(Module):
         self.in_features = in_features
         self.out_features = out_features
         self.kernel_size = kernel_size
+        self.max_radius = max_radius
         self.degree = degree
         self.K = reduce(lambda x, y: x * y, kernel_size)
 
@@ -64,11 +68,11 @@ class SplineGCN(Module):
 
     def forward(self, adj, features):
         return spline_gcn(adj, features, self.weight, self.kernel_size,
-                          self.degree, self.bias)
+                          self.max_radius, self.degree, self.bias)
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}, kernel_size={kernel_size}'
-             ', degree={degree}')
+             ', degree={degree}, max_radius={max_radius}')
         if self.bias is None:
             s += ', bias=False'
         s += ')'
