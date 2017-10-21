@@ -5,34 +5,36 @@ import torch
 
 
 def open_spline(values, num_knots, degree=1):
+    dim = len(values.size())
     values = num_knots * values / values.max()
 
-    b_1 = values.frac()
-    b_2 = 1 - b_1
-    B = torch.stack([b_1, b_2], dim=len(b_1.size()))
+    amount_grow = values.frac()
+    amount_fall = 1 - amount_grow
+    amount = torch.stack([amount_grow, amount_fall], dim)
 
-    c_2 = values.floor().long()
-    c_2 = c_2 - (c_2 >= num_knots).long()
-    c_1 = 1 + c_2
-    C = torch.stack([c_1, c_2], dim=len(c_1.size()))
+    idx_fall = values.floor().long()
+    idx_fall = idx_fall - (idx_fall >= num_knots).long()
+    idx_grow = 1 + idx_fall
+    idx = torch.stack([idx_grow, idx_fall], dim)
 
-    return B, C
+    return amount, idx
 
 
 def closed_spline(values, num_knots, degree=1):
+    dim = len(values.size())
     values = num_knots * values / (2 * PI)
 
-    b_1 = values.frac()
-    b_2 = 1 - b_1
-    B = torch.stack([b_1, b_2], dim=len(b_1.size()))
+    amount_grow = values.frac()
+    amount_fall = 1 - amount_grow
+    amount = torch.stack([amount_grow, amount_fall], dim)
 
-    c_1 = values.floor().long()
-    c_2 = c_1 - 1
-    c_1 = c_1 - (c_1 >= num_knots).long() * num_knots
-    c_2 = c_2 + (c_2 < 0).long() * num_knots
-    C = torch.stack([c_1, c_2], dim=len(c_1.size()))
+    idx_grow = values.floor().long()
+    idx_fall = idx_grow - 1
+    idx_grow = idx_grow - (idx_grow >= num_knots).long() * num_knots
+    idx_fall = idx_fall + (idx_fall < 0).long() * num_knots
+    idx = torch.stack([idx_grow, idx_fall], dim)
 
-    return B, C
+    return amount, idx
 
 
 def points(dim, degree):
