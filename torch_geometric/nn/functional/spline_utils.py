@@ -75,8 +75,36 @@ def spline_weights(values, kernel_size, degree=1):
 
 
 def weight_amount(values, kernel_size, degree=1):
-    # values = num_knots * values / (2 * PI)
-    pass
+    dim = len(kernel_size)
+    m = degree + 1
+
+    # Collect all spline amounts for all dimensions with final shape
+    # [|E| x dim x m]. Dimension 0 needs to be computed by using open splines,
+    # whereas all other dimensions should be handled by closed splines.
+
+    amount_0 = open_spline_amount(values[:, :1], degree)
+    amount_1 = closed_spline_amount(values[:, 1:], degree)
+    amount = torch.cat([amount_0, amount_1], dim=1)
+
+    # Finally, we can compute a flattened out version of the tensor
+    # [|E| x dim x m] with the shape [|E| x m^dim], which contains the amounts
+    # of all dimensions for all possible combinations of m^dim. We do this by
+    # defining a mask of all possible combinations with shape [m^dim x dim].
+    # The product along the dimensions then describes the amounts influencing
+    # the end vertex of each passed edge.
+
+    # 1. Create mask.
+    mask = create_mask(dim, degree)
+
+    # 2. Apply mask.
+    amount = amount.view(-1, m * dim)
+    amount = amount[:, mask.view(-1)]
+    amount = amount.view(-1, m**dim, dim)
+
+    # 3. Multiply up dimensions.
+    amount = amount.prod(2)
+
+    return amount
 
 
 def weight_index(values, kernel_size, degree=1):
@@ -88,8 +116,8 @@ def weight_index(values, kernel_size, degree=1):
     # whereas all other dimensions should be handled by closed splines.
 
     index_0 = open_spline_index(values[:, :1], kernel_size[:1], degree)
-    index_remain = closed_spline_index(values[:, 1:], kernel_size[1:], degree)
-    index = torch.cat([index_0, index_remain], dim=1)
+    index_1 = closed_spline_index(values[:, 1:], kernel_size[1:], degree)
+    index = torch.cat([index_0, index_1], dim=1)
 
     # Broadcast element-wise multiply an offset to indices in each dimension,
     # which allows flattening the indices in a later stage.
