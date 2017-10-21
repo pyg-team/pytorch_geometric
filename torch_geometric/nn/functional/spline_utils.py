@@ -1,5 +1,4 @@
 from math import pi as PI
-from functools import reduce
 import itertools
 
 import torch
@@ -12,10 +11,13 @@ def open_spline_amount(values, degree=1):
     return torch.stack([amount_grow, amount_fall], dim=len(values.size()))
 
 
-def open_spline_index(values, num_knots, degree=1):
+def open_spline_index(values, kernel_size, degree=1):
     # Passed values must be in the range [0, num_knots - 1].
+    if isinstance(kernel_size, (list, tuple)):
+        kernel_size = torch.LongTensor(kernel_size)
+
     idx_fall = values.floor().long()
-    idx_fall = idx_fall - (idx_fall >= num_knots).long()
+    idx_fall = idx_fall - (idx_fall >= kernel_size).long()
     idx_grow = 1 + idx_fall
     return torch.stack([idx_grow, idx_fall], dim=len(values.size()))
 
@@ -27,24 +29,40 @@ def closed_spline_amount(values, degree=1):
     return torch.stack([amount_grow, amount_fall], dim=len(values.size()))
 
 
-def closed_spline_index(values, num_knots, degree=1):
+def closed_spline_index(values, kernel_size, degree=1):
     # Passed values must be in the range [0, num_knots].
+    if isinstance(kernel_size, (list, tuple)):
+        kernel_size = torch.LongTensor(kernel_size)
+
     idx_grow = values.floor().long()
     idx_fall = idx_grow - 1
-    idx_grow = idx_grow - (idx_grow >= num_knots).long() * num_knots
-    idx_fall = idx_fall + (idx_fall < 0).long() * num_knots
+    idx_grow = idx_grow - (idx_grow >= kernel_size).long() * kernel_size
+    idx_fall = idx_fall + (idx_fall < 0).long() * kernel_size
     return torch.stack([idx_grow, idx_fall], dim=len(values.size()))
 
 
 def rescale(values, kernel_size):
-    kernel = torch.FloatTensor(kernel_size)
-    kernel[0] -= 1  # Open spline has one less partition.
+    # Scale values by defining a facot for each dimension.
 
+    kernel = torch.FloatTensor(kernel_size)
+    # Dimension 0 with open splines has one less partition.
+    kernel[0] -= 1
+
+    # TODO: this doesn't work batch-wise.
     boundary = torch.FloatTensor([2 * PI for _ in range(len(kernel_size))])
-    # Radius is rescaled dependent on its max value.
+    # Dimension 0 is bounded dependent on its max value.
     boundary[0] = values[:, 0].max()
 
-    return (kernel / boundary) * values
+    factor = kernel / boundary
+    return factor * values
+
+
+def create_mask(dim, degree):
+    m = degree + 1
+    mask = list(itertools.product(* [range(m) for _ in range(dim)]))
+    mask = torch.LongTensor(mask)
+    mask += torch.arange(0, dim * m, m).long()
+    return mask
 
 
 def spline_weights(values, kernel_size, degree=1):
@@ -62,122 +80,50 @@ def weight_amount(values, kernel_size, degree=1):
 
 
 def weight_index(values, kernel_size, degree=1):
-    # Collect all indices for all dimensions.
-    index = []
-    for i, col in enumerate(values.t()):
-        if i == 0:
-            index.append(open_spline_index(col, kernel_size[i], degree))
-        else:
-            index.append(closed_spline_index(col, kernel_size[i], degree))
+    dim = len(kernel_size)
+    m = degree + 1
 
-    # Stack indices to a [|E| x (degree + 1) x dim] tensor.
-    index = torch.stack(index, dim=2)
+    # Collect all spline indices for all dimensions with final shape
+    # [|E| x dim x m]. Dimension 0 needs to be computed by using open splines,
+    # whereas all other dimensions should be handled by closed splines.
 
-    # Multiply an offset to indices in each dimension, which allows flattening
-    # the indices in a later stage.
-    # The offset is defined by the `kernel_size`. In the 3D case with kernel
-    # [k_1, k_2, k_3]` the offset is then given by [1, k_1, k_1 * k_2].
+    index_0 = open_spline_index(values[:, :1], kernel_size[:1], degree)
+    index_remain = closed_spline_index(values[:, 1:], kernel_size[1:], degree)
+    index = torch.cat([index_0, index_remain], dim=1)
+
+    # Broadcast element-wise multiply an offset to indices in each dimension,
+    # which allows flattening the indices in a later stage.
+    # The offset is defined by the `kernel_size`, e.g. in the 3D case with
+    # kernel [k_1, k_2, k_3]` the offset is given by [1, k_1, k_1 * k_2].
+
+    # 1. Calculate offset.
+    # TODO: more elegant, please!
     offset = [1]
     curr_kernel = 1
     for i in range(len(kernel_size) - 1):
         curr_kernel *= kernel_size[i]
         offset.append(curr_kernel)
-    offset = torch.LongTensor(offset)
+    offset = torch.LongTensor([offset]).t()
 
+    # 2. Apply offset.
     index = offset * index
 
     # Finally, we can compute a flattened out version of the tensor
-    # [|E| x (degree + 1) x dim] with the shape [|E| x (degree + 1)^dim], which
-    # contains the summed up indices of all dimensions for all possible
-    # combinations of (degree + 1)^dim.
-    # The flattened out tensor then describes the weight indices influencing
-    # the end vertex of each passed edge.
+    # [|E| x dim x m] with the shape [|E| x m^dim], which contains the summed
+    # up indices of all dimensions for all possible combinations of m^dim. We
+    # do this by defining a mask of all possible combinations with shape
+    # [m^dim x dim]. The summed up tensor then describes the weight indices
+    # influencing the end vertex of each passed edge.
 
-    print(index)
+    # 1. Create mask.
+    mask = create_mask(dim, degree)
 
-    # print(indices.size())
-    # print(indices)
+    # 2. Apply mask.
+    index = index.view(-1, m * dim)
+    index = index[:, mask.view(-1)]
+    index = index.view(-1, m**dim, dim)
+
+    # 3. Sum up dimensions.
+    index = index.sum(2)
+
     return index
-    # K = reduce(lambda x, y: x * y, kernel_size)
-    # print('dim', dim, 'K', K)
-    # print('values', values.size())
-    # print(values)
-
-    #     # Values contains polar coordinates with shape [|E| x dim].
-    #     # Iterate over each coordinate and calculate spline amounts and indices.
-    #     coff = 1
-    #     for i, col in enumerate(values.t()):
-    #         if i == 0:
-    #             # Rescale values to range [0, kernel_size[i] - 1].
-    #             col = (kernel_size[i] - 1) * col / col.max()
-
-    #             amount = closed_spline_amount(col, degree)
-    #             index = closed_spline_index(col, kernel_size[i], degree)
-    #             print(amount)
-    #         else:
-    #             coff *= kernel_size[i - 1]
-
-    #             # Rescale values to range [0, kernel_size[i]].
-    #             col = kernel_size[i] * col / (2 * PI)
-
-    #             amount = open_spline_amount(col, degree)
-    #             index = open_spline_index(col, kernel_size[i], degree)
-    #             print(amount)
-
-    #         index = coff * index
-
-    #         pass
-
-    # print(d)
-
-    # Calcu
-
-    pass
-
-
-def points(dim, degree):
-    return itertools.product(* [range(degree) for _ in range(dim)])
-
-
-def _weight_indices(spline_indices, kernel_size):
-    d, m = spline_indices.size()
-
-    # Get all possible combinations resulting in a [m^d x d] matrix.
-    a = list(itertools.product(* [range(m) for _ in range(d)]))
-    a = torch.LongTensor(a)
-
-    # Add up indices column-wise, so each column contains independent indices
-    # ranging globally from 0 to m*d.
-    a = a + torch.arange(0, d * m, m).long()
-
-    # Fill in the spline indices.
-    a = spline_indices.view(-1)[a.view(-1)].view(m**d, d)
-
-    if d == 3:
-        p1, p2, p3 = kernel_size
-        multer = [p2 * p3, p3, 1]
-    elif d == 2:
-        p1, p2 = kernel_size
-        multer = [p2, 1]
-    multer = torch.LongTensor(multer)
-    a = a * multer
-    a = a.sum(1)
-
-    print(a)
-    return a
-
-
-def weight_amounts(spline_amounts, kernel_size):
-    d, m = spline_amounts.size()
-
-    # Get all possible combinations resulting in a [m^d x d] matrix.
-    a = list(itertools.product(* [range(m) for _ in range(d)]))
-    a = torch.LongTensor(a)
-
-    a = a + torch.arange(0, d * m, m).long()
-    a = spline_amounts.view(-1)[a.view(-1)].view(m**d, d)
-
-    # TODO: Reduce multiply
-    a = a.mul(1)
-
-    print(a)

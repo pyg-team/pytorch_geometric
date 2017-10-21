@@ -18,7 +18,7 @@ class SplineUtilsTest(TestCase):
         i = [[1, 0], [1, 0], [2, 1], [3, 2], [4, 3], [4, 3], [4, 3]]
 
         amount = open_spline_amount(values, degree=1)
-        index = open_spline_index(values, num_knots=4, degree=1)
+        index = open_spline_index(values, kernel_size=4, degree=1)
 
         assert_almost_equal(amount.numpy(), a, 1)
         assert_equal(index.numpy(), i)
@@ -30,7 +30,7 @@ class SplineUtilsTest(TestCase):
         i = [[0, 3], [0, 3], [1, 0], [2, 1], [3, 2], [3, 2], [0, 3]]
 
         amount = closed_spline_amount(values, degree=1)
-        index = closed_spline_index(values, num_knots=4, degree=1)
+        index = closed_spline_index(values, kernel_size=4, degree=1)
 
         assert_almost_equal(amount.numpy(), a, 1)
         assert_equal(index.numpy(), i)
