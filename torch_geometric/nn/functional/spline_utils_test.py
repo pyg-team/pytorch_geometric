@@ -6,7 +6,8 @@ from numpy.testing import assert_equal, assert_almost_equal
 
 from .spline_utils import (open_spline_amount, open_spline_index,
                            closed_spline_amount, closed_spline_index, rescale,
-                           spline_weights, weight_amount, weight_index)
+                           create_mask, weight_amount, weight_index,
+                           spline_weights)
 from ...graph.geometry import mesh_adj
 
 
@@ -45,25 +46,47 @@ class SplineUtilsTest(TestCase):
 
         assert_equal(values.numpy(), expected_values)
 
+    def test_create_mask(self):
+        mask = create_mask(dim=3, degree=1)
+        expected_mask = [
+            [0, 2, 4],
+            [0, 2, 5],
+            [0, 3, 4],
+            [0, 3, 5],
+            [1, 2, 4],
+            [1, 2, 5],
+            [1, 3, 4],
+            [1, 3, 5],
+        ]
+        assert_equal(mask.numpy(), expected_mask)
+
+    def test_weight_amount(self):
+        pass
+
+    def test_weight_index(self):
+
+        pass
+
     def test_spline_weights(self):
-        vertices = [[0, 0], [1, 1], [2, -2], [-3, -3], [-4, 4]]
+        vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
 
-        spline_weights(
+        amount, index = spline_weights(
             adj._values(), kernel_size=[3, 4], max_radius=sqrt(32), degree=1)
 
+        expected_amount = [
+            [0.25, 0.25, 0.25, 0.25],
+            [0.5, 0.5, 0, 0],
+            [0.25, 0.25, 0.25, 0.25],
+            [0.5, 0.5, 0, 0],
+        ]
+        expected_index = [
+            [4, 7, 0, 3],
+            [5, 4, 1, 0],
+            [10, 9, 6, 5],
+            [11, 10, 7, 6],
+        ]
 
-#     def test_weight_amount(self):
-#         vertices = [[0, 0], [1, 1], [2, -2], [-3, -3], [-4, 4]]
-#         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
-#         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
-
-#         # weight_amount(adj._values(), [3, 4], degree=1)
-
-#     def test_weight_index(self):
-#         vertices = [[0, 0], [4, 4], [1, -1], [-2, -2], [-3, -3]]
-#         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
-#         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
-
-#         # weight_index(adj._values(), [3, 4], degree=1)
+        assert_almost_equal(amount.numpy(), expected_amount, 2)
+        assert_equal(index.numpy(), expected_index)
