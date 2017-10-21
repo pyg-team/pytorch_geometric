@@ -15,11 +15,11 @@ class SplineUtilsTest(TestCase):
     def test_open_spline(self):
         values = torch.FloatTensor([0, 0.2, 1, 2, 3, 3.8, 4])
 
-        a = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
-        i = [[1, 0], [1, 0], [2, 1], [3, 2], [4, 3], [4, 3], [4, 3]]
-
         amount = open_spline_amount(values, degree=1)
         index = open_spline_index(values, kernel_size=4, degree=1)
+
+        a = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
+        i = [[1, 0], [1, 0], [2, 1], [3, 2], [4, 3], [4, 3], [4, 3]]
 
         assert_almost_equal(amount.numpy(), a, 1)
         assert_equal(index.numpy(), i)
@@ -27,11 +27,11 @@ class SplineUtilsTest(TestCase):
     def test_closed_spline(self):
         values = torch.FloatTensor([0, 0.2, 1, 2, 3, 3.8, 4])
 
-        a = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
-        i = [[0, 3], [0, 3], [1, 0], [2, 1], [3, 2], [3, 2], [0, 3]]
-
         amount = closed_spline_amount(values, degree=1)
         index = closed_spline_index(values, kernel_size=4, degree=1)
+
+        a = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
+        i = [[0, 3], [0, 3], [1, 0], [2, 1], [3, 2], [3, 2], [0, 3]]
 
         assert_almost_equal(amount.numpy(), a, 1)
         assert_equal(index.numpy(), i)
@@ -48,6 +48,7 @@ class SplineUtilsTest(TestCase):
 
     def test_create_mask(self):
         mask = create_mask(dim=3, degree=1)
+
         expected_mask = [
             [0, 2, 4],
             [0, 2, 5],
@@ -58,14 +59,30 @@ class SplineUtilsTest(TestCase):
             [1, 3, 4],
             [1, 3, 5],
         ]
+
         assert_equal(mask.numpy(), expected_mask)
 
     def test_weight_amount(self):
         pass
 
     def test_weight_index(self):
+        values = torch.FloatTensor([[0, 0], [0.2, 0.2], [1, 1], [2, 2], [3, 3],
+                                    [3.8, 3.8], [4, 4]])
+        kernel_size = [4, 4]
 
-        pass
+        index = weight_index(values, kernel_size, degree=1)
+
+        expected_index = [
+            [4, 7, 0, 3],
+            [4, 7, 0, 3],
+            [9, 8, 5, 4],
+            [14, 13, 10, 9],
+            [19, 18, 15, 14],
+            [19, 18, 15, 14],
+            [16, 19, 12, 15],
+        ]
+
+        assert_equal(index.numpy(), expected_index)
 
     def test_spline_weights(self):
         vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
