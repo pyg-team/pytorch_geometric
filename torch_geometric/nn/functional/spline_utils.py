@@ -1,4 +1,5 @@
 from math import pi as PI
+from functools import reduce
 import itertools
 
 import torch
@@ -122,22 +123,18 @@ def weight_index(values, kernel_size, degree=1):
     index_1 = closed_spline_index(values[:, 1:], kernel_size[1:], degree)
     index = torch.cat([index_0, index_1], dim=1)
 
-    # Broadcast element-wise multiply an offset to indices in each dimension,
+    # Element-wise broadcast-multiply an offset to indices in each dimension,
     # which allows flattening the indices in a later stage.
     # The offset is defined by the `kernel_size`, e.g. in the 3D case with
-    # kernel [k_1, k_2, k_3]` the offset is given by [1, k_1, k_1 * k_2].
+    # kernel [k_1, k_2, k_3]` the offset is given by [k_2 * k_3, k_3, 1].
 
     # 1. Calculate offset.
-    # TODO: more elegant, please!
-    offset = [1]
-    curr_kernel = 1
-    for i in range(len(kernel_size) - 1):
-        curr_kernel *= kernel_size[i]
-        offset.append(curr_kernel)
-    offset = torch.LongTensor([offset]).t()
+    off = [reduce(lambda x, y: x * y, kernel_size[i:]) for i in range(1, dim)]
+    off.append(1)
+    off = torch.LongTensor([off]).t()
 
     # 2. Apply offset.
-    index = offset * index
+    index = off * index
 
     # Finally, we can compute a flattened out version of the tensor
     # [|E| x dim x m] with the shape [|E| x m^dim], which contains the summed
