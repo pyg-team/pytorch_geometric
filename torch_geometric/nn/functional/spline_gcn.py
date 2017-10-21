@@ -20,6 +20,9 @@ def spline_gcn(adj, features, weight, kernel_size, degree=1, bias=None):
     adj = torch.sparse.FloatTensor(indices, output, adj.size())
     output = sum(adj, dim=1)
 
+    # TODO: root node and weight mean
+    # TODO: set distance max value in conv parameter
+
     if bias is not None:
         output += bias
 
