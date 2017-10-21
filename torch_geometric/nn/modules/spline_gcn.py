@@ -24,7 +24,7 @@ class SplineGCN(Module):
                  out_features,
                  dim,
                  kernel_size,
-                 spline_degree=1,
+                 degree=1,
                  bias=True):
 
         super(SplineGCN, self).__init__()
@@ -42,7 +42,7 @@ class SplineGCN(Module):
         self.in_features = in_features
         self.out_features = out_features
         self.kernel_size = kernel_size
-        self.spline_degree = spline_degree
+        self.degree = degree
         self.K = reduce(lambda x, y: x * y, kernel_size)
 
         weight = torch.Tensor(self.K, in_features, out_features)
@@ -64,11 +64,11 @@ class SplineGCN(Module):
 
     def forward(self, adj, features):
         return spline_gcn(adj, features, self.weight, self.kernel_size,
-                          self.spline_degree, self.bias)
+                          self.degree, self.bias)
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}, kernel_size={kernel_size}'
-             ', spline_degree={spline_degree}')
+             ', degree={degree}')
         if self.bias is None:
             s += ', bias=False'
         s += ')'
