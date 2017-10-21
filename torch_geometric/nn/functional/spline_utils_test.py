@@ -63,17 +63,16 @@ class SplineUtilsTest(TestCase):
         assert_equal(mask.numpy(), expected_mask)
 
     def test_weight_amount(self):
-        pass
+        print("TODO")
 
     def test_weight_index(self):
-        values = torch.FloatTensor([[0, 0], [0.2, 0.2], [1, 1], [2, 2], [3, 3],
-                                    [3.8, 3.8], [4, 4]])
+        values = [[0.2, 0.2], [1, 1], [2, 2], [3, 3], [3.8, 3.8], [4, 4]]
+        values = torch.FloatTensor(values)
         kernel_size = [4, 4]
 
         index = weight_index(values, kernel_size, degree=1)
 
         expected_index = [
-            [4, 7, 0, 3],
             [4, 7, 0, 3],
             [9, 8, 5, 4],
             [14, 13, 10, 9],
@@ -84,7 +83,7 @@ class SplineUtilsTest(TestCase):
 
         assert_equal(index.numpy(), expected_index)
 
-    def test_spline_weights(self):
+    def test_spline_weights_2d(self):
         vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
@@ -107,3 +106,6 @@ class SplineUtilsTest(TestCase):
 
         assert_almost_equal(amount.numpy(), expected_amount, 2)
         assert_equal(index.numpy(), expected_index)
+
+    def test_spline_weights_3d(self):
+        print("TODO")
