@@ -4,6 +4,15 @@ import itertools
 import torch
 
 
+def spline_weights(values, kernel_size, max_radius, degree=1):
+    # Rescale values to be in range for fast calculation splines.
+    values = rescale(values, kernel_size, max_radius)
+
+    amount = weight_amount(values, kernel_size, degree)
+    index = weight_index(values, kernel_size, degree)
+    return amount, index
+
+
 def open_spline_amount(values, degree=1):
     # Passed values must be in the range [0, num_knots -1].
     amount_grow = values.frac()
@@ -41,8 +50,12 @@ def closed_spline_index(values, kernel_size, degree=1):
     return torch.stack([idx_grow, idx_fall], dim=len(values.size()))
 
 
-def rescale(values, kernel_size):
-    # Scale values by defining a facot for each dimension.
+def rescale(values, kernel_size, max_radius):
+    # Scale values by defining a factor for each dimension.
+
+    # Clamp radius to its maximum allowed radius.
+    clamped_radius = torch.clamp(values[:, :1], max=max_radius)
+    values = torch.cat([clamped_radius, values[:, 1:]], dim=1)
 
     kernel = torch.FloatTensor(kernel_size)
     # Dimension 0 with open splines has one less partition.
@@ -50,8 +63,8 @@ def rescale(values, kernel_size):
 
     # TODO: this doesn't work batch-wise.
     boundary = torch.FloatTensor([2 * PI for _ in range(len(kernel_size))])
-    # Dimension 0 is bounded dependent on its max value.
-    boundary[0] = values[:, 0].max()
+    # Dimension 0 must be clamped to the maxium allowed radius
+    boundary[0] = max_radius
 
     factor = kernel / boundary
     return factor * values
@@ -63,15 +76,6 @@ def create_mask(dim, degree):
     mask = torch.LongTensor(mask)
     mask += torch.arange(0, dim * m, m).long()
     return mask
-
-
-def spline_weights(values, kernel_size, degree=1):
-    # Rescale values to be in range for fast calculation splines.
-    values = rescale(values, kernel_size)
-
-    amount = weight_amount(values, kernel_size, degree)
-    index = weight_index(values, kernel_size, degree)
-    return amount, index
 
 
 def weight_amount(values, kernel_size, degree=1):

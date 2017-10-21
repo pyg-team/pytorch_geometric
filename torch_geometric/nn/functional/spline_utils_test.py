@@ -1,4 +1,4 @@
-from math import pi as PI
+from math import pi as PI, sqrt
 
 from unittest import TestCase
 import torch
@@ -36,9 +36,10 @@ class SplineUtilsTest(TestCase):
         assert_equal(index.numpy(), i)
 
     def test_rescale(self):
-        values = [[1, 0.5 * PI], [2, PI], [3, 1.5 * PI], [4, 2 * PI]]
+        values = [[1, 0.5 * PI], [2, PI], [3, 1.5 * PI], [5, 2 * PI]]
 
-        values = rescale(torch.FloatTensor(values), kernel_size=[3, 4])
+        values = rescale(
+            torch.FloatTensor(values), kernel_size=[3, 4], max_radius=4)
 
         expected_values = [[0.5, 1], [1, 2], [1.5, 3], [2, 4]]
 
@@ -49,7 +50,8 @@ class SplineUtilsTest(TestCase):
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
 
-        spline_weights(adj._values(), kernel_size=[3, 4], degree=1)
+        spline_weights(
+            adj._values(), kernel_size=[3, 4], max_radius=sqrt(32), degree=1)
 
 
 #     def test_weight_amount(self):

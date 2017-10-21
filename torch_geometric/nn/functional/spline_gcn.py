@@ -6,14 +6,22 @@ from ...sparse import sum
 from .spline_utils import spline_weights
 
 
-def spline_gcn(adj, features, weight, kernel_size, degree=1, bias=None):
+def spline_gcn(adj,
+               features,
+               weight,
+               kernel_size,
+               max_radius,
+               degree=1,
+               bias=None):
+
     values = adj._values()
     indices = adj._indices()
     _, cols = indices
 
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
     output = features[cols]
-    output = edgewise_spline_gcn(values, output, weight, kernel_size, degree)
+    output = edgewise_spline_gcn(values, output, weight, kernel_size,
+                                 max_radius, degree)
 
     # Convolution via sparse row sum. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
@@ -21,7 +29,6 @@ def spline_gcn(adj, features, weight, kernel_size, degree=1, bias=None):
     output = sum(adj, dim=1)
 
     # TODO: root node and weight mean
-    # TODO: set distance max value in conv parameter
 
     if bias is not None:
         output += bias
@@ -29,11 +36,17 @@ def spline_gcn(adj, features, weight, kernel_size, degree=1, bias=None):
     return output
 
 
-def edgewise_spline_gcn(values, features, weight, kernel_size, degree=1):
+def edgewise_spline_gcn(values,
+                        features,
+                        weight,
+                        kernel_size,
+                        max_radius,
+                        degree=1):
+
     K, M_in, M_out = weight.size()
 
     # Preprocessing.
-    amount, index = spline_weights(values, kernel_size, degree)  # [|E| x K]
+    amount, index = spline_weights(values, kernel_size, max_radius, degree)
 
     features_out = torch.zeros(features.size(0), M_out)
     for k in range(K):
