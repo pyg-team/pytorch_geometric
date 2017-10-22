@@ -61,10 +61,11 @@ def edgewise_spline_gcn(values,
         c = index[:, k]  # [|E|]
 
         for i in range(M_in):
-            pass
             w = weight[:, i]  # [K x M_out]
             w = w[c]  # [|E| x M_out]
             f = features[:, i]  # [|E|]
+
+            # Need to transpose twice, so we can make use of broadcasting.
             features_out += (f * b * w.t()).t()  # [|E| x M_out]
 
     return features_out
