@@ -33,7 +33,7 @@
 
 #     def test_points(self):
 #         p = list(points(3, 2))
-#         assert_equal(p, [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0],
+#       assert_equal(p, [[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0],
 #                          [1, 0, 1], [1, 1, 0], [1, 1, 1]])
 
 #     def test_transform(self):
@@ -41,7 +41,7 @@
 #         edges = [[0, 0, 0, 0, 1, 2, 3, 4], [1, 2, 3, 4, 0, 0, 0, 0]]
 #         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
 
-#         features = torch.FloatTensor([[1, 2], [2, 3], [3, 4], [4, 5], [5, 6]])
+#        features = torch.FloatTensor([[1, 2], [2, 3], [3, 4], [4, 5], [5, 6]])
 
 #         weight = torch.FloatTensor([
 #             [0.1, 0.2, 0.3, 0.4],
@@ -58,7 +58,7 @@
 #     def test_weight_indices(self):
 #         # spline_indices should have shape [|E|, dim, degree + 1].
 #         # Test dim = 2, spline_degree = 1
-#         # We test two points with coordinates (1, 1) and (3, -3) with radius 4.
+#       # We test two points with coordinates (1, 1) and (3, -3) with radius 4.
 #         spline_indices = [[1, 0], [0, 3]]
 #         spline_indices = torch.LongTensor(spline_indices)
 #         kernel_size = [3, 4]
@@ -80,7 +80,7 @@
 #     def test_weight_amounts(self):
 #         # spline_indices should have shape [|E|, dim, degree + 1].
 #         # Test dim = 2, spline_degree = 1
-#         # We test two points with coordinates (1, 1) and (3, -3) with radius 4.
+#       # We test two points with coordinates (1, 1) and (3, -3) with radius 4.
 #         spline_amounts = [[0.25, 0.75], [0.4, 0.6]]
 #         spline_amounts = torch.FloatTensor(spline_amounts)
 #         kernel_size = [3, 4]
@@ -96,9 +96,9 @@
 #     #     return
 #     #     vertices = [[0, 0], [1, 0], [0, 1], [-1, 0], [0, -1]]
 #     #     edges = [[0, 0, 0, 0, 1, 2, 3, 4], [1, 2, 3, 4, 0, 0, 0, 0]]
-#     #     adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
+#    #     adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
 
-#     #     features = torch.FloatTensor([[1, 2], [2, 3], [3, 4], [4, 5], [5, 6]])
+#        features = torch.FloatTensor([[1, 2], [2, 3], [3, 4], [4, 5], [5, 6]])
 
 #     #     weight = torch.FloatTensor([
 #     #         [0.1, 0.2, 0.3, 0.4],
