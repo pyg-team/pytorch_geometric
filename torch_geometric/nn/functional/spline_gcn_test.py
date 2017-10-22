@@ -1,16 +1,50 @@
-# from math import pi as PI
+from math import sqrt
 
-# from unittest import TestCase
-# import torch
+from unittest import TestCase
+import torch
 # # from torch.autograd import Variable
-# from numpy.testing import assert_equal
+from numpy.testing import assert_equal
 
-# from torch_geometric.nn.functional.spline_gcn import (
-#     closed_spline, open_spline, transform, points, weight_indices,
-#     weight_amounts)
-# from torch_geometric.graph.geometry import mesh_adj
+from .spline_gcn import edgewise_spline_gcn, spline_gcn
+from ...graph.geometry import mesh_adj
 
-# class SplineGcnTest(TestCase):
+
+class SplineGcnTest(TestCase):
+    def test_edgewise_spline_gcn(self):
+        vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
+        edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
+        adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
+        values = adj._values()
+        features = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8]])
+        weight = torch.arange(0.1, 0.1 * 24, step=0.1).view(12, 2, 1)
+
+        features = edgewise_spline_gcn(
+            values,
+            features,
+            weight,
+            kernel_size=[3, 4],
+            max_radius=sqrt(16 + 16),
+            degree=1)
+
+
+#         weight = torch.FloatTensor([
+#             [0.1, 0.2, 0.3, 0.4],
+#             [0.5, 0.6, 0.7, 0.8],
+#             [0.9, 1.0, 1.1, 1.2],
+#             [1.3, 1.4, 1.5, 1.6],
+#             [1.7, 1.8, 1.9, 2.0],
+#             [2.1, 2.2, 2.3, 2.4],
+#         ])
+
+#         edgewise_spline_gcn(val)
+
+# def edgewise_spline_gcn(values,
+#                         features,
+#                         weight,
+#                         kernel_size,
+#                         max_radius,
+#                         degree=1):
+
 #     def test_closed_spline(self):
 #         values = torch.FloatTensor([0, 0.125, 0.5, 1, 1.5, 1.875, 2]) * PI
 

@@ -30,6 +30,10 @@ def spline_gcn(adj,
 
     # TODO: root node and weight mean
 
+    # Only  2d case at the moment
+    # root_weight = weight[torch.arange(kernel_size[-1])]
+    # root_weight.mean(0)
+
     if bias is not None:
         output += bias
 
@@ -44,18 +48,23 @@ def edgewise_spline_gcn(values,
                         degree=1):
 
     K, M_in, M_out = weight.size()
+    dim = len(kernel_size)
+    m = degree + 1
 
     # Preprocessing.
     amount, index = spline_weights(values, kernel_size, max_radius, degree)
 
     features_out = torch.zeros(features.size(0), M_out)
-    for k in range(K):
-        c = index[:, k]  # [|E|]
+
+    for k in range(m**dim):
         b = amount[:, k]  # [|E|]
+        c = index[:, k]  # [|E|]
+
         for i in range(M_in):
+            pass
             w = weight[:, i]  # [K x M_out]
             w = w[c]  # [|E| x M_out]
             f = features[:, i]  # [|E|]
-            features_out += f * b * w  # [|E| x M_out]
+            features_out += (f * b * w.t()).t()  # [|E| x M_out]
 
     return features_out
