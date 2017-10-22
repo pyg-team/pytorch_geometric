@@ -72,7 +72,7 @@ class SplineGCN(Module):
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}, kernel_size={kernel_size}'
-             ', degree={degree}, max_radius={max_radius}')
+             ', max_radius={max_radius}, degree={degree}')
         if self.bias is None:
             s += ', bias=False'
         s += ')'
