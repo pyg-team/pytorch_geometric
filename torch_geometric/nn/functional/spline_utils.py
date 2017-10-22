@@ -9,7 +9,7 @@ def spline_weights(values, kernel_size, max_radius, degree=1):
     # Rescale values to be in range for fast calculation splines.
     values = rescale(values, kernel_size, max_radius)
 
-    amount = weight_amount(values, kernel_size, degree)
+    amount = weight_amount(values, degree)
     index = weight_index(values, kernel_size, degree)
     return amount, index
 
@@ -27,7 +27,7 @@ def open_spline_index(values, kernel_size, degree=1):
         kernel_size = torch.LongTensor(kernel_size)
 
     idx_fall = values.floor().long()
-    idx_fall = idx_fall - (idx_fall >= kernel_size).long()
+    idx_fall = idx_fall - (idx_fall >= kernel_size - 1).long()
     idx_grow = 1 + idx_fall
     return torch.stack([idx_grow, idx_fall], dim=len(values.size()))
 
@@ -78,8 +78,8 @@ def create_mask(dim, degree):
     return mask
 
 
-def weight_amount(values, kernel_size, degree=1):
-    dim = len(kernel_size)
+def weight_amount(values, degree=1):
+    dim = values.size(1)
     m = degree + 1
 
     # Collect all spline amounts for all dimensions with final shape

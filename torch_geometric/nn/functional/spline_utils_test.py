@@ -16,7 +16,7 @@ class SplineUtilsTest(TestCase):
         values = torch.FloatTensor([0, 0.2, 1, 2, 3, 3.8, 4])
 
         amount = open_spline_amount(values, degree=1)
-        index = open_spline_index(values, kernel_size=4, degree=1)
+        index = open_spline_index(values, kernel_size=5, degree=1)
 
         a = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
         i = [[1, 0], [1, 0], [2, 1], [3, 2], [4, 3], [4, 3], [4, 3]]
@@ -63,12 +63,26 @@ class SplineUtilsTest(TestCase):
         assert_equal(mask.numpy(), expected_mask)
 
     def test_weight_amount(self):
-        print("TODO")
+        values = [[0.2, 0.2], [1, 1], [2, 2], [3, 3], [3.8, 3.8], [4, 4]]
+        values = torch.FloatTensor(values)
+
+        amount = weight_amount(values, degree=1)
+
+        expected_amount = [
+            [0.04, 0.16, 0.16, 0.64],
+            [0, 0, 0, 1],
+            [0, 0, 0, 1],
+            [0, 0, 0, 1],
+            [0.64, 0.16, 0.16, 0.04],
+            [0, 0, 0, 1],
+        ]
+
+        assert_almost_equal(amount.numpy(), expected_amount, 2)
 
     def test_weight_index(self):
         values = [[0.2, 0.2], [1, 1], [2, 2], [3, 3], [3.8, 3.8], [4, 4]]
         values = torch.FloatTensor(values)
-        kernel_size = [4, 4]
+        kernel_size = [5, 4]
 
         index = weight_index(values, kernel_size, degree=1)
 
@@ -89,7 +103,10 @@ class SplineUtilsTest(TestCase):
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
 
         amount, index = spline_weights(
-            adj._values(), kernel_size=[3, 4], max_radius=sqrt(32), degree=1)
+            adj._values(),
+            kernel_size=[3, 4],
+            max_radius=sqrt(16 + 16),
+            degree=1)
 
         expected_amount = [
             [0.25, 0.25, 0.25, 0.25],
@@ -108,4 +125,22 @@ class SplineUtilsTest(TestCase):
         assert_equal(index.numpy(), expected_index)
 
     def test_spline_weights_3d(self):
-        print("TODO")
+        vertices = [[0, 0, 0], [1, 1, 1]]
+        edges = [[0], [1]]
+        adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
+
+        amount, index = spline_weights(
+            adj._values(),
+            kernel_size=[3, 4, 4],
+            max_radius=sqrt(16 + 16 + 16),
+            degree=1)
+
+        expected_amount = [
+            [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125],
+        ]
+        expected_index = [
+            [16, 19, 28, 31, 0, 3, 12, 15],
+        ]
+
+        assert_almost_equal(amount.numpy(), expected_amount, 3)
+        assert_equal(index.numpy(), expected_index)
