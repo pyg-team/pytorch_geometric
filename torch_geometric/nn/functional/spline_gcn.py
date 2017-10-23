@@ -31,7 +31,7 @@ def spline_gcn(
     zero = zero.cuda() if output.is_cuda else zero
     zero = Variable(zero) if not torch.is_tensor(output) else zero
     row = row.view(-1, 1).expand(row.size(0), output.size(1))
-    output = zero.scatter_add_(0, row, output)
+    output = zero.scatter_add_(0, Variable(row), output)
 
     # Weighten root node features by multiplying with the meaned weights from
     # the origin.
@@ -54,6 +54,7 @@ class _EdgewiseSplineGcn(Function):
         self.index = index
 
     def forward(self, features, weight):
+        self.save_for_backward(features, weight)
         K, M_in, M_out = weight.size()
 
         features_out = torch.zeros(features.size(0), M_out)
@@ -72,8 +73,33 @@ class _EdgewiseSplineGcn(Function):
 
         return features_out
 
-    def backward(self, grad_output):
-        pass
+    def backward(self, features_grad_out):
+        # features_grad_out: [|E| x M_out]
+        # features_in: [|E|] x M_in]
+        # weight: [K x M_in x M_out]
+        features_in, weight = self.saved_tensors
+        K, M_in, M_out = weight.size()
+
+        features_grad_in = torch.zeros(features_grad_out.size(0), M_in)
+        weight_grad_in = torch.zeros(weight.size())
+
+        for k in range(self.m**self.dim):
+            b = self.amount[:, k]  # [|E|]
+            c = self.index[:, k]  # [|E|]
+            c_expand = c.contiguous().view(-1, 1).expand(c.size(0), M_out)
+
+            for i in range(M_in):
+                w = weight[:, i]  # [K x M_out]
+                w = w[c]  # [|E| x M_out]
+
+                f = b * torch.sum(features_grad_out * w, dim=1)  # [|E|]
+                features_grad_in[:, i] += f
+
+                f = features_in[:, i]  # [|E|]
+                w_grad = (f * b * features_grad_out.t()).t()  # [|E|, M_out]
+                weight_grad_in[:, i, :].scatter_add_(0, c_expand, w_grad)
+
+        return features_grad_in, weight_grad_in
 
 
 def edgewise_spline_gcn(values,

@@ -73,13 +73,18 @@ class SplineGcnTest(TestCase):
         features = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])
         weight = torch.arange(0.5, 0.5 * 25, step=0.5).view(12, 2, 1)
 
-        features = Variable(features)
+        features_in = Variable(features, requires_grad=True)
         weight = Variable(weight, requires_grad=True)
 
-        # features = spline_gcn(
-        #     adj,
-        #     features,
-        #     weight,
-        #     kernel_size=[3, 4],
-        #     max_radius=sqrt(16 + 16),
-        #     degree=1)
+        features_out = spline_gcn(
+            adj,
+            features_in,
+            weight,
+            kernel_size=[3, 4],
+            max_radius=sqrt(16 + 16),
+            degree=1)
+
+        features_out.mean().backward()
+
+        print(features_in.grad.size())
+        print(weight.grad.size())
