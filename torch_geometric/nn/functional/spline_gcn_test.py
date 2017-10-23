@@ -2,7 +2,7 @@ from math import sqrt
 
 from unittest import TestCase
 import torch
-# # from torch.autograd import Variable
+from torch.autograd import Variable
 from numpy.testing import assert_almost_equal
 
 from .spline_gcn import edgewise_spline_gcn, spline_gcn
@@ -50,15 +50,32 @@ class SplineGcnTest(TestCase):
             max_radius=sqrt(16 + 16),
             degree=1)
 
+        edgewise_spline_feature = 426
+
         expected_features = [
-            [426 + 0],
-            [0],
-            [0],
-            [0],
-            [0],
+            [2 * 1 + 2.5 * 2 + edgewise_spline_feature],
+            [2 * 3 + 2.5 * 4],
+            [2 * 5 + 2.5 * 6],
+            [2 * 7 + 2.5 * 8],
+            [2 * 9 + 2.5 * 10],
         ]
 
         assert_almost_equal(features.numpy(), expected_features, 1)
 
     def test_backward(self):
-        pass
+        vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
+        edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
+        adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
+        features = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])
+        weight = torch.arange(0.5, 0.5 * 25, step=0.5).view(12, 2, 1)
+
+        features = Variable(features)
+        weight = Variable(weight, requires_grad=True)
+
+        # features = spline_gcn(
+        #     adj,
+        #     features,
+        #     weight,
+        #     kernel_size=[3, 4],
+        #     max_radius=sqrt(16 + 16),
+        #     degree=1)

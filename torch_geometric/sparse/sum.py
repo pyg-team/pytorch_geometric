@@ -1,8 +1,22 @@
 import torch
-from torch.autograd import Variable
+from torch.autograd import Function
 
 
-def sum(a, dim=None):
+class _Sum(Function):
+    def __init__(self, dim):
+        super(_Sum, self).__init__()
+        self.dim = dim
+
+    def forward(self, a):
+        self.save_for_backward(a)
+        return _sum(a, self.dim)
+
+    def backward(self, grad_output):
+        print(grad_output)
+        pass
+
+
+def _sum(a, dim):
     if dim is None:
         return torch.sum(a._values())
 
@@ -23,7 +37,11 @@ def sum(a, dim=None):
     if a.is_cuda is True:
         zero = zero.cuda()
 
-    if not torch.is_tensor(a):
-        zero = Variable(zero)
-
     return zero.scatter_add_(0, index, values)
+
+
+def sum(a, dim=None):
+    if torch.is_tensor(a):
+        return _sum(a, dim)
+    else:
+        return _Sum(dim)(a)

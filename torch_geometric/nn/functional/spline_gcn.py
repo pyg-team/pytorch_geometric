@@ -1,37 +1,41 @@
 import torch
+from torch.autograd import Variable
 
-# from torch import nn
-
-from ...sparse import sum
 from .spline_utils import spline_weights
 
 
-def spline_gcn(adj,
-               features,
-               weight,
-               kernel_size,
-               max_radius,
-               degree=1,
-               bias=None):
+def spline_gcn(
+        adj,  # Tensor
+        features,  # Variable
+        weight,  # Parameter
+        kernel_size,
+        max_radius,
+        degree=1,
+        bias=None):
 
     values = adj._values()
-    indices = adj._indices()
-    _, cols = indices
+    row, col = adj._indices()
+
+    # Get features for every end vertex with shape [|E| x M_in].
+    output = features[col]
 
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
-    output = features[cols]
     output = edgewise_spline_gcn(values, output, weight, kernel_size,
                                  max_radius, degree)
 
-    # Convolution via sparse row sum. Converts [|E| x M_out] feature matrix to
+    # Convolution via `scatter_add`. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
-    size = torch.Size([adj.size(0), adj.size(1), output.size(1)])
-    adj = torch.sparse.FloatTensor(indices, output, size)
-    output = sum(adj, dim=1)
+    zero = torch.zeros(adj.size(1), output.size(1))
+    zero = zero.cuda() if output.is_cuda else zero
+    zero = Variable(zero) if not torch.is_tensor(output) else zero
+    row = row.view(-1, 1).expand(row.size(0), output.size(1))
+    output = zero.scatter_add_(0, row, output)
 
-    # TODO: root node and weight mean
-    # root_weight = weight[torch.arange(kernel_size[-1])]
-    # root_weight.mean(0)
+    # Weighten root node features by multiplying with the meaned weights at the
+    # origin.
+    index = torch.arange(0, kernel_size[-1]).long()
+    root_weight = weight[index].mean(0)
+    output += torch.mm(features, root_weight)
 
     if bias is not None:
         output += bias
