@@ -6,7 +6,7 @@ from torch.autograd import Variable
 from torch_geometric.datasets.faust import FAUST
 from torch_geometric.graph.geometry import MeshAdj
 from torch_geometric.utils.dataloader import DataLoader
-from torch_geometric.nn.modules import GCN, Lin
+from torch_geometric.nn.modules import SplineGCN, Lin
 
 path = '~/MPI-FAUST'
 train_dataset = FAUST(
@@ -28,9 +28,12 @@ test_loader = DataLoader(test_dataset, batch_size=5, shuffle=True, **kwargs)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GCN(1, 32)
-        self.conv2 = GCN(32, 64)
-        self.conv3 = GCN(64, 128)
+        self.conv1 = SplineGCN(
+            1, 32, dim=3, kernel_size=(3, 4, 4), max_radius=20)
+        self.conv2 = SplineGCN(
+            32, 64, dim=3, kernel_size=[3, 4, 4], max_radius=20)
+        self.conv3 = SplineGCN(
+            64, 128, dim=3, kernel_size=[3, 4, 4], max_radius=20)
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
@@ -54,16 +57,11 @@ def train(epoch):
     model.train()
 
     for batch_idx, ((_, (adj, _)), target) in enumerate(train_loader):
-        n = adj.size(0)
-        adj = torch.sparse.FloatTensor(adj._indices(),
-                                       torch.ones(adj._indices().size(1)),
-                                       torch.Size([n, n]))
-
-        x = torch.ones(n).view(-1, 1)
+        x = torch.ones(adj.size(0)).view(-1, 1)
         if torch.cuda.is_available():
             x, adj, target = x.cuda(), adj.cuda(), target.cuda()
 
-        x, adj, target = Variable(x), Variable(adj), Variable(target)
+        x, target = Variable(x), Variable(target)
 
         # optimizer.zero_grad()
 
