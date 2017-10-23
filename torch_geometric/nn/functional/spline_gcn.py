@@ -1,3 +1,5 @@
+from functools import reduce
+
 import torch
 from torch.autograd import Variable
 
@@ -31,9 +33,9 @@ def spline_gcn(
     row = row.view(-1, 1).expand(row.size(0), output.size(1))
     output = zero.scatter_add_(0, row, output)
 
-    # Weighten root node features by multiplying with the meaned weights at the
-    # origin.
-    index = torch.arange(0, kernel_size[-1]).long()
+    # Weighten root node features by multiplying with the meaned weights from
+    # the origin.
+    index = torch.arange(0, reduce(lambda x, y: x * y, kernel_size[1:])).long()
     root_weight = weight[index].mean(0)
     output += torch.mm(features, root_weight)
 
