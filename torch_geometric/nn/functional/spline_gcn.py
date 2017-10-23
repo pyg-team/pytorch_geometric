@@ -25,12 +25,11 @@ def spline_gcn(adj,
 
     # Convolution via sparse row sum. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
-    adj = torch.sparse.FloatTensor(indices, output, adj.size())
+    size = torch.Size([adj.size(0), adj.size(1), output.size(1)])
+    adj = torch.sparse.FloatTensor(indices, output, size)
     output = sum(adj, dim=1)
 
     # TODO: root node and weight mean
-
-    # Only  2d case at the moment
     # root_weight = weight[torch.arange(kernel_size[-1])]
     # root_weight.mean(0)
 
