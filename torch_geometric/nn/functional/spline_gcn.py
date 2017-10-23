@@ -1,7 +1,7 @@
 from functools import reduce
 
 import torch
-from torch.autograd import Variable
+from torch.autograd import Variable, Function
 
 from .spline_utils import spline_weights
 
@@ -45,32 +45,42 @@ def spline_gcn(
     return output
 
 
+class _EdgewiseSplineGcn(Function):
+    def __init__(self, values, kernel_size, max_radius, degree=1):
+        self.dim = len(kernel_size)
+        self.m = degree + 1
+        amount, index = spline_weights(values, kernel_size, max_radius, degree)
+        self.amount = amount
+        self.index = index
+
+    def forward(self, features, weight):
+        K, M_in, M_out = weight.size()
+
+        features_out = torch.zeros(features.size(0), M_out)
+
+        for k in range(self.m**self.dim):
+            b = self.amount[:, k]  # [|E|]
+            c = self.index[:, k]  # [|E|]
+
+            for i in range(M_in):
+                w = weight[:, i]  # [K x M_out]
+                w = w[c]  # [|E| x M_out]
+                f = features[:, i]  # [|E|]
+
+                # Need to transpose twice, so we can make use of broadcasting.
+                features_out += (f * b * w.t()).t()  # [|E| x M_out]
+
+        return features_out
+
+    def backward(self, grad_output):
+        pass
+
+
 def edgewise_spline_gcn(values,
                         features,
                         weight,
                         kernel_size,
                         max_radius,
                         degree=1):
-
-    K, M_in, M_out = weight.size()
-    dim = len(kernel_size)
-    m = degree + 1
-
-    # Preprocessing.
-    amount, index = spline_weights(values, kernel_size, max_radius, degree)
-
-    features_out = torch.zeros(features.size(0), M_out)
-
-    for k in range(m**dim):
-        b = amount[:, k]  # [|E|]
-        c = index[:, k]  # [|E|]
-
-        for i in range(M_in):
-            w = weight[:, i]  # [K x M_out]
-            w = w[c]  # [|E| x M_out]
-            f = features[:, i]  # [|E|]
-
-            # Need to transpose twice, so we can make use of broadcasting.
-            features_out += (f * b * w.t()).t()  # [|E| x M_out]
-
-    return features_out
+    op = _EdgewiseSplineGcn(values, kernel_size, max_radius, degree)
+    return op(features, weight)

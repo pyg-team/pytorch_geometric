@@ -16,7 +16,9 @@ class SplineGcnTest(TestCase):
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
         values = adj._values()
         features = torch.FloatTensor([[3, 4], [5, 6], [7, 8], [9, 10]])
+        features = Variable(features)
         weight = torch.arange(0.5, 0.5 * 25, step=0.5).view(12, 2, 1)
+        weight = Variable(weight)
 
         features = edgewise_spline_gcn(
             values,
@@ -33,14 +35,16 @@ class SplineGcnTest(TestCase):
             [(9 * (10.5 + 11.5) + 10 * (11 + 12)) * 0.5],
         ]
 
-        assert_almost_equal(features.numpy(), expected_features, 1)
+        assert_almost_equal(features.data.numpy(), expected_features, 1)
 
     def test_forward(self):
         vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
         features = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])
+        features = Variable(features)
         weight = torch.arange(0.5, 0.5 * 25, step=0.5).view(12, 2, 1)
+        weight = Variable(weight)
 
         features = spline_gcn(
             adj,
@@ -60,7 +64,7 @@ class SplineGcnTest(TestCase):
             [2 * 9 + 2.5 * 10],
         ]
 
-        assert_almost_equal(features.numpy(), expected_features, 1)
+        assert_almost_equal(features.data.numpy(), expected_features, 1)
 
     def test_backward(self):
         vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
