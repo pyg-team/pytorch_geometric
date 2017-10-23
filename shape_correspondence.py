@@ -29,19 +29,19 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=(3, 4, 4), max_radius=20)
+            1, 32, dim=3, kernel_size=(2, 4, 4), max_radius=4.5)
         self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[3, 4, 4], max_radius=20)
+            32, 64, dim=3, kernel_size=[2, 4, 4], max_radius=4.5)
         self.conv3 = SplineGCN(
-            64, 128, dim=3, kernel_size=[3, 4, 4], max_radius=20)
+            64, 128, dim=3, kernel_size=[2, 4, 4], max_radius=4.5)
         self.lin1 = Lin(128, 256)
-        self.lin2 = Lin(256, 6890)
+        self.lin2 = Lin(64, 6890)
 
     def forward(self, adj, x):
         x = F.relu(self.conv1(adj, x))
         x = F.relu(self.conv2(adj, x))
-        x = F.relu(self.conv3(adj, x))
-        x = F.relu(self.lin1(x))
+        # x = F.relu(self.conv3(adj, x))
+        # x = F.relu(self.lin1(x))
         x = self.lin2(x)
         return F.log_softmax(x)
 
@@ -50,7 +50,7 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.SGD(model.parameters(), lr=0.0001)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
 
 
 def train(epoch):
@@ -62,13 +62,16 @@ def train(epoch):
             x, adj, target = x.cuda(), adj.cuda(), target.cuda()
 
         x, target = Variable(x), Variable(target)
+        values = adj._values()[1]
+        print(values.max())
 
         # optimizer.zero_grad()
 
-        output = model(adj, x)
-        print(output.size())
+        # output = model(adj, x)
+        # print(output.size())
 
         # loss = F.nll_loss(output, target.view(-1))
+        # print(loss)
         # loss.backward()
         # optimizer.step()
 
