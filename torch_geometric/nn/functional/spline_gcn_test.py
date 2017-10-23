@@ -43,15 +43,20 @@ class SplineGcnTest(TestCase):
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
         values = adj._values()
-        features = torch.FloatTensor([[3, 4], [5, 6], [7, 8], [9, 10]])
+        features = torch.randn(4, 2)
         features = Variable(features, requires_grad=True)
-        weight = torch.arange(0.5, 0.5 * 25, step=0.5).view(12, 2, 1)
+        weight = torch.randn(12, 2, 4)
         weight = Variable(weight, requires_grad=True)
 
         op = _EdgewiseSplineGcn(
             values, kernel_size=[3, 4], max_radius=sqrt(16 + 16), degree=1)
 
         test = gradcheck(op, (features, weight), eps=1e-6, atol=1e-4)
+        print(test)
+
+        bla = Variable(torch.randn(10), requires_grad=True)
+        test = gradcheck(
+            torch.nn.functional.relu, (bla, False), eps=1e-5, atol=1e-4)
         print(test)
 
     def test_forward(self):
