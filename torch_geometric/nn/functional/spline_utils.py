@@ -14,39 +14,37 @@ def spline_weights(values, kernel_size, max_radius, degree=1):
     return amount, index
 
 
-def open_spline_amount(values, degree=1):
-    # Passed values must be in the range [0, num_knots -1].
+def open_spline_amount(values, kernel_size, degree=1):
+    # Passed values must be in the range [0, 1].
+    kernel_size -= 1
+    values = values * kernel_size
     amount_grow = values.frac()
     amount_fall = 1 - amount_grow
     return torch.stack([amount_grow, amount_fall], dim=len(values.size()))
 
 
 def open_spline_index(values, kernel_size, degree=1):
-    # Passed values must be in the range [0, num_knots - 1].
+    # Passed values must be in the range [0, 1].
+    kernel_size -= 1
+    values = values * kernel_size
     idx_fall = values.floor().long()
-
-    if isinstance(kernel_size, (list, tuple)):
-        kernel_size = torch.LongTensor(kernel_size).type_as(idx_fall)
-
-    idx_fall = idx_fall - (idx_fall >= kernel_size - 1).long()
+    idx_fall = idx_fall - (idx_fall >= kernel_size).long()
     idx_grow = 1 + idx_fall
     return torch.stack([idx_grow, idx_fall], dim=len(values.size()))
 
 
-def closed_spline_amount(values, degree=1):
-    # Passed values must be in the range [0, num_knots].
+def closed_spline_amount(values, kernel_size, degree=1):
+    # Passed values must be in the range [0, 1].
+    values = values * kernel_size
     amount_grow = values.frac()
     amount_fall = 1 - amount_grow
     return torch.stack([amount_grow, amount_fall], dim=len(values.size()))
 
 
 def closed_spline_index(values, kernel_size, degree=1):
-    # Passed values must be in the range [0, num_knots].
+    # Passed values must be in the range [0, 1].
+    values = values * kernel_size
     idx_grow = values.floor().long()
-
-    if isinstance(kernel_size, (list, tuple)):
-        kernel_size = torch.LongTensor(kernel_size).type_as(idx_grow)
-
     idx_fall = idx_grow - 1
     idx_grow = idx_grow - (idx_grow >= kernel_size).long() * kernel_size
     idx_fall = idx_fall + (idx_fall < 0).long() * kernel_size
