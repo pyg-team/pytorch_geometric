@@ -11,7 +11,6 @@ from ...graph.geometry import mesh_adj
 
 class SplineGcnTest(TestCase):
     def test_edgewise_spline_gcn_forward(self):
-        return
         vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
@@ -40,27 +39,23 @@ class SplineGcnTest(TestCase):
 
     def test_edgewise_spline_gcn_backward(self):
         vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
+        vertices = torch.LongTensor(vertices)
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
-        adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
+        edges = torch.LongTensor(edges)
+        adj = mesh_adj(vertices, edges, type=torch.DoubleTensor)
         values = adj._values()
-        features = torch.randn(4, 2)
+        features = torch.randn(4, 2).double()
         features = Variable(features, requires_grad=True)
-        weight = torch.randn(12, 2, 4)
+        weight = torch.randn(12, 2, 4).double()
         weight = Variable(weight, requires_grad=True)
 
         op = _EdgewiseSplineGcn(
             values, kernel_size=[3, 4], max_radius=sqrt(16 + 16), degree=1)
 
         test = gradcheck(op, (features, weight), eps=1e-6, atol=1e-4)
-        print(test)
-
-        bla = Variable(torch.randn(10), requires_grad=True)
-        test = gradcheck(
-            torch.nn.functional.relu, (bla, False), eps=1e-5, atol=1e-4)
-        print(test)
+        self.assertTrue(test)
 
     def test_forward(self):
-        return
         vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
         adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
@@ -87,28 +82,28 @@ class SplineGcnTest(TestCase):
             [2 * 9 + 2.5 * 10],
         ]
 
+        return
         assert_almost_equal(features.data.numpy(), expected_features, 1)
 
     def test_backward(self):
-        return
         vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
+        vertices = torch.LongTensor(vertices)
         edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
-        adj = mesh_adj(torch.FloatTensor(vertices), torch.LongTensor(edges))
-        features = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]])
-        weight = torch.arange(0.5, 0.5 * 25, step=0.5).view(12, 2, 1)
-
-        features_in = Variable(features, requires_grad=True)
+        edges = torch.LongTensor(edges)
+        adj = mesh_adj(vertices, edges, type=torch.DoubleTensor)
+        features = torch.randn(5, 2).double()
+        features = Variable(features, requires_grad=True)
+        weight = torch.randn(12, 2, 4).double()
         weight = Variable(weight, requires_grad=True)
 
-        features_out = spline_gcn(
-            adj,
-            features_in,
-            weight,
-            kernel_size=[3, 4],
-            max_radius=sqrt(16 + 16),
-            degree=1)
+        def op(features, weight):
+            return spline_gcn(
+                adj,
+                features,
+                weight,
+                kernel_size=[3, 4],
+                max_radius=sqrt(16 + 16),
+                degree=1)
 
-        features_out.mean().backward()
-
-        print(features_in.grad.size())
-        print(weight.grad.size())
+        test = gradcheck(op, (features, weight), eps=1e-6, atol=1e-4)
+        self.assertTrue(test)

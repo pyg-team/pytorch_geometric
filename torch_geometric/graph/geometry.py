@@ -2,13 +2,15 @@ from math import pi as PI
 
 import torch
 
+from ..sparse import SparseTensor
+
 
 def vec2ang(x, y):
     ang = torch.atan2(y, x)
-    return ang + (ang <= 0).type(torch.FloatTensor) * 2 * PI
+    return ang + (ang <= 0).type_as(x) * 2 * PI
 
 
-def polar_coordinates(vertices, edges):
+def polar_coordinates(vertices, edges, type=torch.FloatTensor):
     dim = vertices.size(1)
 
     if dim <= 1:
@@ -17,7 +19,7 @@ def polar_coordinates(vertices, edges):
     rows, cols = edges
     starts = vertices[rows]
     ends = vertices[cols]
-    v = ends - starts
+    v = (ends - starts).type(type)
 
     # Calculate Euclidean distances.
     rho = (v * v).sum(1).sqrt()
@@ -29,11 +31,10 @@ def polar_coordinates(vertices, edges):
     return torch.stack(values, dim=1)
 
 
-def mesh_adj(vertices, edges):
+def mesh_adj(vertices, edges, type=torch.FloatTensor):
     n, dim = vertices.size()
-    return torch.sparse.FloatTensor(edges,
-                                    polar_coordinates(vertices, edges),
-                                    torch.Size([n, n, dim]))
+    values = polar_coordinates(vertices, edges, type)
+    return SparseTensor(edges, values, torch.Size([n, n, dim]))
 
 
 class MeshAdj(object):
@@ -59,6 +60,6 @@ def edges_from_faces(faces):
     adj = adj + adj.t()
 
     # Remove duplicate indices.
-    # NOTE: This doesn't work if transpose(...) is removed.
+    # NOTE: `coalesce()` doesn't work if `transpose(...)` is removed.
     adj = adj.transpose(0, 1).coalesce()
     return adj._indices()

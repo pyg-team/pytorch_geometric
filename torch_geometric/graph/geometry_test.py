@@ -1,4 +1,4 @@
-from math import pi as PI
+from math import sqrt, pi as PI
 
 from unittest import TestCase
 import torch
@@ -18,7 +18,7 @@ class GeometryTest(TestCase):
         assert_almost_equal((vec2ang(x, y) / PI).numpy(), expected, 2)
 
     def test_2d_polar_coordinates(self):
-        vertices = torch.FloatTensor([[-1, -0], [0, -1], [1, 0], [0, 1]])
+        vertices = torch.LongTensor([[-1, -0], [0, -1], [1, 0], [0, 1]])
         edges = torch.LongTensor([
             [0, 0, 0, 1, 1, 2, 2, 2, 3, 3],
             [1, 2, 3, 0, 2, 0, 1, 3, 0, 2],
@@ -33,7 +33,7 @@ class GeometryTest(TestCase):
         assert_almost_equal((theta / PI).numpy(), expected_theta, 2)
 
     def test_3d_polar_coordinates(self):
-        vertices = torch.FloatTensor([[0, 0, 0], [1, 1, 1]])
+        vertices = torch.LongTensor([[0, 0, 0], [1, 1, 1]])
         edges = torch.LongTensor([[0, 1], [1, 0]])
 
         rho, theta, phi = polar_coordinates(vertices, edges).t()
@@ -48,16 +48,16 @@ class GeometryTest(TestCase):
         assert_almost_equal((phi / PI).numpy(), expected_phi, 2)
 
     def test_mesh_adj(self):
-        vertices = torch.FloatTensor([[1, 0], [0, 0], [-1, 0]])
+        vertices = torch.LongTensor([[1, 0], [0, 0], [-1, 1]])
         edges = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
         adj = mesh_adj(vertices, edges).to_dense()
 
-        expected_rho = [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
-        assert_equal(adj[:, :, 0].numpy(), expected_rho)
+        expected_rho = [[0, 1, 0], [1, 0, sqrt(2)], [0, sqrt(2), 0]]
+        assert_almost_equal(adj[:, :, 0].numpy(), expected_rho, 4)
 
-        expected_theta = [[0, 1, 0], [2, 0, 1], [0, 2, 0]]
-        assert_almost_equal((adj[:, :, 1] / PI).numpy(), expected_theta, 1)
+        expected_theta = [[0, 1, 0], [2, 0, 0.75], [0, 1.75, 0]]
+        assert_almost_equal((adj[:, :, 1] / PI).numpy(), expected_theta, 2)
 
     def test_edges_from_faces(self):
         faces = torch.LongTensor([[2, 3, 0], [1, 0, 2]])

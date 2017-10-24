@@ -1,4 +1,11 @@
-from torch_geometric.sparse.mm import mm
-from torch_geometric.sparse.sum import sum
+import torch.sparse as sparse
 
-__all__ = ['mm', 'sum']
+from .mm import mm
+from .sum import sum
+
+
+def SparseTensor(indices, values, size):
+    return getattr(sparse, values.__class__.__name__)(indices, values, size)
+
+
+__all__ = ['SparseTensor', 'mm', 'sum']

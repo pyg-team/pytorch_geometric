@@ -9,7 +9,7 @@ from .spline_utils import spline_weights
 def spline_gcn(
         adj,  # Tensor
         features,  # Variable
-        weight,  # Parameter
+        weight,  # Variable
         kernel_size,
         max_radius,
         degree=1,
@@ -27,7 +27,7 @@ def spline_gcn(
 
     # Convolution via `scatter_add`. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
-    zero = torch.zeros(adj.size(1), output.size(1))
+    zero = torch.zeros(adj.size(1), output.size(1)).type_as(output.data)
     zero = zero.cuda() if output.is_cuda else zero
     zero = Variable(zero) if not torch.is_tensor(output) else zero
     row = row.view(-1, 1).expand(row.size(0), output.size(1))
@@ -57,7 +57,7 @@ class _EdgewiseSplineGcn(Function):
         self.save_for_backward(features, weight)
         K, M_in, M_out = weight.size()
 
-        features_out = torch.zeros(features.size(0), M_out)
+        features_out = torch.zeros(features.size(0), M_out).type_as(features)
 
         for k in range(self.m**self.dim):
             b = self.amount[:, k]  # [|E|]
@@ -79,9 +79,10 @@ class _EdgewiseSplineGcn(Function):
         # weight: [K x M_in x M_out]
         features_in, weight = self.saved_tensors
         K, M_in, M_out = weight.size()
+        n = features_in.size(0)
 
-        features_grad_in = torch.zeros(features_grad_out.size(0), M_in)
-        weight_grad_in = torch.zeros(weight.size())
+        features_grad_in = torch.zeros(n, M_in).type_as(features_in)
+        weight_grad_in = torch.zeros(weight.size()).type_as(weight)
 
         for k in range(self.m**self.dim):
             b = self.amount[:, k]  # [|E|]
