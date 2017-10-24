@@ -49,8 +49,10 @@ class SplineGCN(Module):
 
         self.in_features = in_features
         self.out_features = out_features
-        self.kernel_size = _repeat_last_to_count(kernel_size, dim)
-        self.is_open_spline = _repeat_last_to_count(is_open_spline, dim)
+        kernel_size = _repeat_last_to_count(kernel_size, dim)
+        self.kernel_size = torch.LongTensor(kernel_size)
+        is_open_spline = _repeat_last_to_count(is_open_spline, dim)
+        self.is_open_spline = torch.LongTensor(is_open_spline)
         self.degree = degree
         self.K = 1 + reduce(lambda x, y: x * y, kernel_size)
 
@@ -76,9 +78,12 @@ class SplineGCN(Module):
                           self.max_radius, self.degree, self.bias)
 
     def __repr__(self):
-        s = ('{name}({in_features}, {out_features}, kernel_size={kernel_size}'
-             ', is_open_spline={is_open_spline}, degree={degree}')
+        s = ('{name}({in_features}, {out_features}, kernel_size='
+             '{kernel_size_list}, is_open_spline={is_open_spline_list}, '
+             'degree={degree}')
         if self.bias is None:
             s += ', bias=False'
         s += ')'
+        self.kernel_size_list = list(self.kernel_size.numpy())
+        self.is_open_spline_list = list(self.is_open_spline.numpy())
         return s.format(name=self.__class__.__name__, **self.__dict__)
