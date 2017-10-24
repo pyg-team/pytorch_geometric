@@ -259,9 +259,7 @@ class _EdgewiseSplineGcn_gpu(Function):
         # weight: [K x M_in x M_out]
         features_in, weight = self.saved_tensors
         K, M_in, M_out = weight.size()
-
         e = features_grad_out.size(0)
-        _, M_in, M_out = weight.size()
 
         features_grad_in = features_grad_out.new(e,M_in)
         weight_grad_in = features_grad_out.new(K, M_in, M_out)
@@ -275,23 +273,6 @@ class _EdgewiseSplineGcn_gpu(Function):
                     weight.data_ptr(), features_in.data_ptr(), self.amount.data_ptr(),self.index.data_ptr()],
               stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
-        '''
-        for k in range(self.m**self.dim):
-            b = self.amount[:, k]  # [|E|]
-            c = self.index[:, k]  # [|E|]
-            c_expand = c.contiguous().view(-1, 1).expand(c.size(0), M_out)
-
-            for i in range(M_in):
-                w = weight[:, i]  # [K x M_out]
-                w = w[c]  # [|E| x M_out]
-
-                f = b * torch.sum(features_grad_out * w, dim=1)  # [|E|]
-                features_grad_in[:, i] += f
-
-                f = features_in[:, i]  # [|E|]
-                w_grad = (f * b * features_grad_out.t()).t()  # [|E|, M_out]
-                weight_grad_in[:, i, :].scatter_add_(0, c_expand, w_grad)
-        '''
         return features_grad_in, weight_grad_in
 
 
