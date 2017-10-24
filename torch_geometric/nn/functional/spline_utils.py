@@ -23,10 +23,11 @@ def open_spline_amount(values, degree=1):
 
 def open_spline_index(values, kernel_size, degree=1):
     # Passed values must be in the range [0, num_knots - 1].
-    if isinstance(kernel_size, (list, tuple)):
-        kernel_size = torch.LongTensor(kernel_size)
-
     idx_fall = values.floor().long()
+
+    if isinstance(kernel_size, (list, tuple)):
+        kernel_size = torch.LongTensor(kernel_size).type_as(idx_fall)
+
     idx_fall = idx_fall - (idx_fall >= kernel_size - 1).long()
     idx_grow = 1 + idx_fall
     return torch.stack([idx_grow, idx_fall], dim=len(values.size()))
@@ -41,10 +42,11 @@ def closed_spline_amount(values, degree=1):
 
 def closed_spline_index(values, kernel_size, degree=1):
     # Passed values must be in the range [0, num_knots].
-    if isinstance(kernel_size, (list, tuple)):
-        kernel_size = torch.LongTensor(kernel_size)
-
     idx_grow = values.floor().long()
+
+    if isinstance(kernel_size, (list, tuple)):
+        kernel_size = torch.LongTensor(kernel_size).type_as(idx_grow)
+
     idx_fall = idx_grow - 1
     idx_grow = idx_grow - (idx_grow >= kernel_size).long() * kernel_size
     idx_fall = idx_fall + (idx_fall < 0).long() * kernel_size
@@ -73,9 +75,10 @@ def rescale(values, kernel_size, max_radius):
 
 def create_mask(dim, degree):
     m = degree + 1
-    mask = list(itertools.product(* [range(m) for _ in range(dim)]))
+    mask = list(itertools.product(*[range(m) for _ in range(dim)]))
     mask = torch.LongTensor(mask)
     mask += torch.arange(0, dim * m, m).long()
+    mask = mask.cuda() if torch.cuda.is_available() else mask
     return mask
 
 
@@ -132,7 +135,7 @@ def weight_index(values, kernel_size, degree=1):
     # 1. Calculate offset.
     off = [reduce(lambda x, y: x * y, kernel_size[i:]) for i in range(1, dim)]
     off.append(1)
-    off = torch.LongTensor([off]).t()
+    off = torch.LongTensor([off]).type_as(index).t()
 
     # 2. Apply offset.
     index = off * index

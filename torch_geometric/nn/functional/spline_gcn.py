@@ -1,3 +1,4 @@
+import time
 from functools import reduce
 
 import torch
@@ -36,6 +37,7 @@ def spline_gcn(
     # Weighten root node features by multiplying with the meaned weights from
     # the origin.
     index = torch.arange(0, reduce(lambda x, y: x * y, kernel_size[1:])).long()
+    index = index.cuda() if torch.cuda.is_available() else index
     root_weight = weight[index].mean(0)
     output += torch.mm(features, root_weight)
 

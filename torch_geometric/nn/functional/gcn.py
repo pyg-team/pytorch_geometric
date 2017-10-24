@@ -1,4 +1,5 @@
 import torch
+from torch.autograd import Variable
 
 from ...sparse import mm
 
@@ -15,14 +16,13 @@ def gcn(adj, features, weight, bias=None):
     # adj = sparse_tensor_diag_matmul(adj, degree, transpose=True)
     # adj = sparse_tensor_diag_matmul(adj, degree, transpose=False)
 
-    output = mm(adj, features)
+    output = mm(Variable(adj), features)
 
     # features = tf.transpose(features)
     # features = tf.multiply(tf.multiply(degree, features), degree)
     # features = tf.transpose(features)
-    output += features
-
-    output = torch.mm(output, weight)
+    output = mm(output, weight)
+    output += torch.mm(features, weight)
 
     if bias is not None:
         output += bias

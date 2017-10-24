@@ -20,7 +20,7 @@ class Lin(Module):
 
         self.in_features = in_features
         self.out_features = out_features
-        self.weight = Parameter(torch.Tensor(in_features, out_features))
+        self.weight = Parameter(torch.Tensor(out_features, in_features, 1))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_features))

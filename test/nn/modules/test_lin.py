@@ -8,7 +8,7 @@ class LinTest(TestCase):
         lin = Lin(1, 10)
         self.assertEqual(lin.in_features, 1)
         self.assertEqual(lin.out_features, 10)
-        self.assertEqual(lin.weight.data.size(), (1, 10))
+        self.assertEqual(lin.weight.data.size(), (10, 1, 1))
         self.assertEqual(lin.bias.data.size(), (10, ))
         self.assertEqual(lin.__repr__(), 'Lin(1, 10)')
 
