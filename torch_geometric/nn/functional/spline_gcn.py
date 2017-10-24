@@ -241,7 +241,7 @@ class _EdgewiseSplineGcn_gpu(Function):
 
         features_out = features.new(e,M_out)
         n = features_out.numel()
-        with torch.cuda.device_of(input):
+        with torch.cuda.device_of(features):
             f = load_kernel('bspline_basis_forward_kernel', _bspline_basis_forward_kernel, Dtype=Dtype(input),
                             num_edges=e,num_threads=n, M_in=M_in, M_out=M_out, k_max=self.k)
             f(block=(CUDA_NUM_THREADS, 1, 1),
@@ -264,7 +264,7 @@ class _EdgewiseSplineGcn_gpu(Function):
         features_grad_in = features_grad_out.new(e,M_in)
         weight_grad_in = features_grad_out.new(K, M_in, M_out)
         n = features_grad_in.numel()*self.k
-        with torch.cuda.device_of(input):
+        with torch.cuda.device_of(features_grad_out):
             f = load_kernel('bspline_basis_backward_kernel', _bspline_basis_backward_kernel, Dtype=Dtype(input),
                             num_edges=e,num_threads=n, M_in=M_in, M_out=M_out, k_max=self.k, K=K)
             f(block=(CUDA_NUM_THREADS, 1, 1),
