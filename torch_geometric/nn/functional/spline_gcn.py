@@ -148,7 +148,7 @@ const ${Dtype}* input_features, const ${Dtype}* weights, ${Dtype}* output_featur
     ${Dtype} result = 0.0;
 
     // compute output features
-    // expecting index layout [num_edges, M_out, k_max]
+    // expecting index layout [num_edges, M_out]
     const int e_idx = index / ${M_out};
     const int m_out_idx = index % ${M_out};
 
@@ -164,7 +164,7 @@ const ${Dtype}* input_features, const ${Dtype}* weights, ${Dtype}* output_featur
             // Nice coalescing memory access!
             w = weights[c*${M_out}*${M_in}+ m_in_idx*${M_out} + m_out_idx];
 
-            // Same here, [M_in x E] would be better for memory access
+            // [M_in x E] could be better for memory access
             f = input_features[e*${M_in} + m_in_idx];
 
             result+=f*b*w;
@@ -214,10 +214,10 @@ const ${Dtype}* input_grads, ${Dtype}* output_feature_grads, ${Dtype}* output_we
             // Looping over M_out would be better to avoid the atomicAdd at least here...
 
             // Calculate weight gradient
-            f = features[e_idx*{M_in} + m_in_idx];
+            f = features[e_idx*${M_in} + m_in_idx];
             w_grad = f*b*input_grads[e*${M_out} + m_out_idx];
             atomicAdd(&(output_weights_grads[c*${M_out}*${M_in}+ m_in_idx*${M_out} + m_out_idx]), w_grad);
-
+            // Not so efficient either... but not avoidable
         }
     }
 }
