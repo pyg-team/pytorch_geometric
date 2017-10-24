@@ -1,21 +1,38 @@
-from math import pi as PI
 from functools import reduce
 import itertools
 
 import torch
 
 
-def spline_weights(values, kernel_size, max_radius, degree=1):
-    # Rescale values to be in range for fast calculation splines.
-    values = rescale(values, kernel_size, max_radius)
+def splines(values, kernel_size, is_open_spline, degree):
+    """
+    Args:
+        values (Tensor): 1d or 2d tensor.
+        kernel_size (list)
+        is_open_spline (list)
+        spline_degree (int, optional): B-Spline degree. (default: 1)
+    """
 
-    amount = weight_amount(values, degree)
-    index = weight_index(values, kernel_size, degree)
+    if degree != 1:
+        raise NotImplementedError()
+
+    values = values.unsqueeze(1) if len(values.size()) < 2 else values
+    values *= (kernel_size - is_open_spline).type_as(values)
+
+    amount = values.frac()
+    amount = torch.stack([amount, 1 - amount], dim=len(values.size()))
+
+    index = values.floor().long()
+    index = index - is_open_spline * (index >= kernel_size).type_as(index)
+    # index_1 = index_2 + 1
+
+    index = torch.stack([index, index], dim=len(values.size()))
+
     return amount, index
 
 
 def open_spline_amount(values, kernel_size, degree=1):
-    # Passed values must be in the range [0, 1].
+    # Passed `values` must be in the range [0, 1].
     kernel_size -= 1
     values = values * kernel_size
     amount_grow = values.frac()
@@ -24,7 +41,7 @@ def open_spline_amount(values, kernel_size, degree=1):
 
 
 def open_spline_index(values, kernel_size, degree=1):
-    # Passed values must be in the range [0, 1].
+    # Passed `values` must be in the range [0, 1].
     kernel_size -= 1
     values = values * kernel_size
     idx_fall = values.floor().long()
@@ -34,7 +51,7 @@ def open_spline_index(values, kernel_size, degree=1):
 
 
 def closed_spline_amount(values, kernel_size, degree=1):
-    # Passed values must be in the range [0, 1].
+    # Passed `values` must be in the range [0, 1].
     values = values * kernel_size
     amount_grow = values.frac()
     amount_fall = 1 - amount_grow
@@ -42,7 +59,7 @@ def closed_spline_amount(values, kernel_size, degree=1):
 
 
 def closed_spline_index(values, kernel_size, degree=1):
-    # Passed values must be in the range [0, 1].
+    # Passed `values` must be in the range [0, 1].
     values = values * kernel_size
     idx_grow = values.floor().long()
     idx_fall = idx_grow - 1
@@ -51,27 +68,7 @@ def closed_spline_index(values, kernel_size, degree=1):
     return torch.stack([idx_grow, idx_fall], dim=len(values.size()))
 
 
-def rescale(values, kernel_size, max_radius):
-    """Scale values by defining a factor for each dimension."""
-
-    # Clamp radius (dimension 0) to its maximum allowed value.
-    clamped_radius = torch.clamp(values[:, :1], max=max_radius)
-    values = torch.cat([clamped_radius, values[:, 1:]], dim=1)
-
-    kernel = torch.FloatTensor(kernel_size).type_as(values)
-    # Dimension 0 with open splines has one less partition.
-    kernel[0] -= 1
-
-    boundary = [2 * PI for _ in range(len(kernel_size))]
-    # Dimension 0 must be clamped to the maxium allowed radius
-    boundary[0] = max_radius
-    boundary = torch.FloatTensor(boundary).type_as(values)
-
-    factor = kernel / boundary
-    return factor * values
-
-
-def create_mask(dim, degree):
+def _create_mask(dim, degree):
     m = degree + 1
     mask = list(itertools.product(*[range(m) for _ in range(dim)]))
     mask = torch.LongTensor(mask)
@@ -80,7 +77,12 @@ def create_mask(dim, degree):
     return mask
 
 
-def weight_amount(values, degree=1):
+def weight_amount(values, kernel_size, is_open_spline, degree=1):
+
+    return
+
+    # torch.split(values, )
+
     dim = values.size(1)
     m = degree + 1
 
@@ -157,3 +159,12 @@ def weight_index(values, kernel_size, degree=1):
     index = index.sum(2)
 
     return index
+
+
+def spline_weights(values, kernel_size, max_radius, degree=1):
+    # Rescale values to be in range for fast calculation splines.
+    values = rescale(values, kernel_size, max_radius)
+
+    amount = weight_amount(values, degree)
+    index = weight_index(values, kernel_size, degree)
+    return amount, index
