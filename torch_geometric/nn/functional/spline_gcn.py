@@ -187,7 +187,7 @@ const ${Dtype}* input_grads, ${Dtype}* output_feature_grads, ${Dtype}* output_we
     //Initialize output with zero
     if(index<{num_edges$}*${M_in})
         output_feature_grads[index] = 0.0;
-    for(int i=index; i<${K}*${M_in}*${M_out};i++)
+    for(int i=index; i<${K}*${M_in}*${M_out};i+=blockDim.x * gridDim.x)
         output_weights_grads[index] = 0.0;
     __syncthreads();
 
