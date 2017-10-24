@@ -31,8 +31,7 @@ class SplineTest(TestCase):
         values = torch.stack([values, values], dim=1)
         kernel_size = torch.LongTensor([5, 4])
         is_open_spline = torch.LongTensor([1, 0])
-        amount, index = spline(values, kernel_size, is_open_spline, degree=1)
-        amount, index = spline_weights(amount, index)
+        amount, index = spline_weights(values, kernel_size, is_open_spline, 1)
 
         expected_amount = [
             [0.04, 0.16, 0.16, 0.64],
@@ -42,5 +41,12 @@ class SplineTest(TestCase):
             [0.64, 0.16, 0.16, 0.04],
             [0, 0, 0, 1],
         ]
+        expected_index = [
+            [4, 7, 0, 3],
+            [5, 4, 1, 0],
+            [10, 9, 6, 5],
+            [11, 10, 7, 6],
+        ]
 
         assert_almost_equal(amount.numpy(), expected_amount, 2)
+        assert_equal(index.numpy(), expected_index)
