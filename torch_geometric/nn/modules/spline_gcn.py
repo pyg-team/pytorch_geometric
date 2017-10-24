@@ -7,16 +7,31 @@ from torch.nn import Module, Parameter
 from ..functional.spline_gcn import spline_gcn
 
 
+def _repeat_last_to_count(input, dim):
+    if not isinstance(input, list):
+        input = [input]
+
+    if len(input) > dim:
+        raise ValueError()
+
+    if len(input) < dim:
+        rest = dim - len(input)
+        fill_value = input[len(input) - 1]
+        input += [fill_value for _ in range(rest)]
+
+    return input
+
+
 class SplineGCN(Module):
     """
     Args:
         in_features (int): Size of each input sample.
         out_features (int): Size of each output sample.
-        dim (int): Mesh dimensions.
-        kernel_size (int, tuple or triple): Size of the convolving kernel.
-        max_radius (float): Maximum radius of edges which gets specifically
-            weightened.
-        spline_degree (int): B-Spline degree. (default: 1)
+        dim (int): Edge dimension.
+        kernel_size (int or list): Size of the convolving kernel.
+        is_open_spline (bool or list, optional): Whether to use open or closed
+            spline curves. (default `True`)
+        spline_degree (int, optional): Spline degree. (default: 1)
         bias (bool, optional): If set to False, the layer will not learn an
             additive bias. (default: `True`)
     """
@@ -26,28 +41,18 @@ class SplineGCN(Module):
                  out_features,
                  dim,
                  kernel_size,
-                 max_radius,
+                 is_open_spline=True,
                  degree=1,
                  bias=True):
 
         super(SplineGCN, self).__init__()
 
-        if not 2 <= dim <= 3:
-            raise ValueError('Node dimension is restricted to 2d or 3d')
-
-        # Fix kernel size representation to same length as dimensions.
-        if isinstance(kernel_size, int):
-            kernel_size = (kernel_size, )
-        if len(kernel_size) < dim:
-            kernel_size += tuple(kernel_size[len(kernel_size) - 1]
-                                 for _ in range(0, dim - len(kernel_size)))
-
         self.in_features = in_features
         self.out_features = out_features
-        self.kernel_size = kernel_size
-        self.max_radius = max_radius
+        self.kernel_size = _repeat_last_to_count(kernel_size, dim)
+        self.is_open_spline = _repeat_last_to_count(is_open_spline, dim)
         self.degree = degree
-        self.K = reduce(lambda x, y: x * y, kernel_size)
+        self.K = 1 + reduce(lambda x, y: x * y, kernel_size)
 
         weight = torch.Tensor(self.K, in_features, out_features)
         self.weight = Parameter(weight)
@@ -72,7 +77,7 @@ class SplineGCN(Module):
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}, kernel_size={kernel_size}'
-             ', max_radius={max_radius}, degree={degree}')
+             ', is_open_spline={is_open_spline}, degree={degree}')
         if self.bias is None:
             s += ', bias=False'
         s += ')'
