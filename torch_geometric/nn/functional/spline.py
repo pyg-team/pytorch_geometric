@@ -1,4 +1,13 @@
+from itertools import product
+
 import torch
+
+
+def _create_mask(dim, m, type=torch.LongTensor):
+    mask = list(product(* [range(m) for _ in range(dim)]))
+    mask = torch.LongTensor(mask).type(type)
+    mask += torch.arange(0, dim * m, m).type_as(mask)
+    return mask
 
 
 def spline(values, kernel_size, is_open_spline, degree):
@@ -23,11 +32,12 @@ def spline(values, kernel_size, is_open_spline, degree):
     amount = torch.stack([amount, 1 - amount], dim=len(values.size()))
 
     index_g = values.floor().long()
+
+    # Open splines adjustments.
     index_g -= is_open_spline * (index_g >= kernel_size).type_as(index_g)
     index_f = index_g + is_open_spline
 
-    # index -= is_closed_spline * (
-    #     index >= kernel_size).type_as(index) * kernel_size
+    # Closed splines adjustments.
     index_g -= is_closed_spline
     index_g += is_closed_spline * (index_g < 0).type_as(index_g) * kernel_size
     index_f -= is_closed_spline * (
@@ -36,3 +46,19 @@ def spline(values, kernel_size, is_open_spline, degree):
     index = torch.stack([index_f, index_g], dim=len(values.size()))
 
     return amount, index
+
+
+def spline_weights(amount, index):
+    dim = amount.size(1)
+    m = amount.size(2)
+
+    mask = _create_mask(dim, m, index.type())
+    print(mask)
+
+    amount = amount.view(-1, m * dim)
+    amount = amount[:, mask.view(-1)]
+    amount = amount.view(-1, m**dim, dim)
+
+    amount = amount.prod(2)
+    print(amount)
+    return amount, None
