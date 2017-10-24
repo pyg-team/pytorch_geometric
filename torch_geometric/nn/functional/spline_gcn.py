@@ -170,7 +170,7 @@ const ${Dtype}* input_features, const ${Dtype}* weights, ${Dtype}* output_featur
             result+=f*b*w;
         }
     }
-    output_features[index] = result
+    output_features[index] = result;
 
   }
 }
