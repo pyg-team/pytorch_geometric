@@ -16,7 +16,7 @@ def gcn(adj, features, weight, bias=None):
     # adj = sparse_tensor_diag_matmul(adj, degree, transpose=True)
     # adj = sparse_tensor_diag_matmul(adj, degree, transpose=False)
 
-    output = mm(Variable(adj), features)
+    output = mm(adj, features)
 
     # features = tf.transpose(features)
     # features = tf.multiply(tf.multiply(degree, features), degree)
