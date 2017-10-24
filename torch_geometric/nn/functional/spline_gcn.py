@@ -140,7 +140,7 @@ kernel_loop = '''
 
 _bspline_basis_forward_kernel = kernel_loop + '''
 extern "C"
-__global__ void conv2d_dw_forward_kernel(
+__global__ void bspline_basis_forward_kernel(
 const ${Dtype}* input_features, const ${Dtype}* weights, ${Dtype}* output_features, float* amounts, int* indices) {
   CUDA_KERNEL_LOOP(index, ${num_threads}) {
 
@@ -179,7 +179,7 @@ const ${Dtype}* input_features, const ${Dtype}* weights, ${Dtype}* output_featur
 
 _bspline_basis_backward_kernel = kernel_loop + '''
 extern "C"
-__global__ void conv2d_dw_forward_kernel(
+__global__ void bspline_basis_backward_kernel(
 const ${Dtype}* input_grads, ${Dtype}* output_feature_grads, ${Dtype}* output_weights_grads,
                     const ${Dtype}* weights, const ${Dtype}* features, const float* amounts, const int* indices) {
   CUDA_KERNEL_LOOP(index, ${num_threads}) {
@@ -267,7 +267,7 @@ class _EdgewiseSplineGcn_gpu(Function):
         weight_grad_in = features_grad_out.new(K, M_in, M_out)
         n = features_grad_in.numel()*self.k
         with torch.cuda.device_of(input):
-            f = load_kernel('bspline_basis_forward_kernel', _bspline_basis_forward_kernel, Dtype=Dtype(input),
+            f = load_kernel('bspline_basis_backward_kernel', _bspline_basis_backward_kernel, Dtype=Dtype(input),
                             num_edges=e,num_threads=n, M_in=M_in, M_out=M_out, k_max=self.k, K=K)
             f(block=(CUDA_NUM_THREADS, 1, 1),
               grid=(GET_BLOCKS(n), 1, 1),
