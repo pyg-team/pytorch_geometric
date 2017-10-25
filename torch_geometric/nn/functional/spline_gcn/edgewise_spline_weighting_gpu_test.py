@@ -51,5 +51,4 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
 
         op = EdgewiseSplineWeighting(amount, index)
         test = gradcheck(op, (input, weight), eps=1e-6, atol=1e-4)
-        print(test)
-        # self.assertTrue(test)
+        self.assertTrue(test)

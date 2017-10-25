@@ -14,19 +14,19 @@ train_dataset = FAUST(
 test_dataset = FAUST(
     path, train=False, correspondence=True, transform=EuclideanAdj())
 
-train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=10, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=[3, 8, 2], is_open_spline=True)
+            1, 32, dim=3, kernel_size=[3, 3, 3], is_open_spline=True)
         self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[3, 8, 2], is_open_spline=True)
+            32, 64, dim=3, kernel_size=[3, 3, 3], is_open_spline=True)
         self.conv3 = SplineGCN(
-            64, 128, dim=3, kernel_size=[3, 8, 2], is_open_spline=True)
+            64, 128, dim=3, kernel_size=[3, 3, 3], is_open_spline=True)
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
@@ -54,37 +54,20 @@ def train(epoch):
         print('epoch: ', epoch, 'batch: ', batch_idx)
         features = torch.ones(adj.size(0)).view(-1, 1)
 
-        # BEGIN GCN
-        # n = adj.size(0)
-        # adj = torch.sparse.FloatTensor(adj._indices(),
-        #                                torch.ones(adj._indices().size(1)),
-        #                                torch.Size([n, n]))
-        # END GCN
-
         if torch.cuda.is_available():
             features, adj, target = features.cuda(), adj.cuda(), target.cuda()
 
         features, target = Variable(features), Variable(target)
-        print(features.size())
-        model(adj, features)
-        # return
-        # target = target.view(-1)
-
-        # optimizer.zero_grad()
-
-        # # print('min',
-        # #       output.data.min(), 'mean',
-        # #       output.data.mean(), 'max',
-        # #       output.data.max(), 'sum', output.data.sum())
-
-        # loss = F.nll_loss(output, target.view(-1), size_average=True)
-        # l = loss.data[0]
+        output = model(adj, features)
+        optimizer.zero_grad()
+        loss = F.nll_loss(output, target.view(-1), size_average=True)
+        loss.backward()
+        optimizer.step()
 
         # pred = output.data.max(1, keepdim=True)[1]
         # correct = pred.eq(target.data.view_as(pred)).cpu().sum()
         # print('epoch', epoch, 'batch', batch_idx, 'loss', l, 'correct',
         #       correct)
-        # loss.backward()
         # optimizer.step()
 
     # print('Train Epoch: {}\tLoss: {:6f}'.format(epoch, loss.data[0]))
