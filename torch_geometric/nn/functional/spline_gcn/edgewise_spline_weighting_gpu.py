@@ -1,4 +1,5 @@
 import torch
+from torch.autograd import Function
 
 from ....utils.cuda import Dtype, Stream, load_kernel
 
@@ -24,7 +25,6 @@ ${Dtype}* amount, long* index) {
 
   CUDA_KERNEL_LOOP(idx, ${num_threads}) {
 
-    // Initialize with zero.
     ${Dtype} result = 0.0;
     ${Dtype} w;
     ${Dtype} f;
@@ -59,36 +59,48 @@ ${Dtype}* amount, long* index) {
 '''
 
 
-def edgewise_spline_weighting_forward(input, weight, amount, index):
-    assert input.is_cuda and weight.is_cuda
-    assert amount.is_cuda and index.is_cuda
+class EdgewiseSplineWeighting(Function):
+    def __init__(self, amount, index):
+        super(EdgewiseSplineWeighting, self).__init__()
+        assert amount.is_cuda and index.is_cuda
+        self.amount = amount
+        self.index = index
 
-    _, M_in, M_out = weight.size()
-    k_max = amount.size(1)
+    def forward(self, input, weight):
+        assert input.is_cuda and weight.is_cuda
 
-    output = input.new(input.size(0), weight.size(2))
-    n = output.numel()
+        self.save_for_backward(input, weight)
 
-    kwargs = {'num_threads': n, 'k_max': k_max, 'M_in': M_in, 'M_out': M_out}
+        _, M_in, M_out = weight.size()
+        k_max = self.amount.size(1)
 
-    with torch.cuda.device_of(input):
-        f = load_kernel(
-            'edgewise_spline_weighting_forward_kernel',
-            _edgewise_spline_weighting_forward_kernel,
-            Dtype=Dtype(input),
-            **kwargs)
-        f(block=(CUDA_NUM_THREADS, 1, 1),
-          grid=(GET_BLOCKS(n), 1, 1),
-          args=[
-              input.data_ptr(),
-              weight.data_ptr(),
-              output.data_ptr(),
-              amount.data_ptr(),
-              index.data_ptr()
-          ],
-          stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
+        output = input.new(input.size(0), weight.size(2))
+        num_threads = output.numel()
 
-    return output
+        with torch.cuda.device_of(input):
+            f = load_kernel(
+                'edgewise_spline_weighting_forward_kernel',
+                _edgewise_spline_weighting_forward_kernel,
+                Dtype=Dtype(input),
+                num_threads=num_threads,
+                M_in=M_in,
+                M_out=M_out,
+                k_max=k_max)
+            f(block=(CUDA_NUM_THREADS, 1, 1),
+              grid=(GET_BLOCKS(num_threads), 1, 1),
+              args=[
+                  input.data_ptr(),
+                  weight.data_ptr(),
+                  output.data_ptr(),
+                  self.amount.data_ptr(),
+                  self.index.data_ptr()
+              ],
+              stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
+
+        return output
+
+    def backawrd(self, grad_output):
+        raise NotImplementedError()
 
 
 _bspline_basis_backward_kernel = kernel_loop + '''
