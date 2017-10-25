@@ -33,8 +33,8 @@ const ${Dtype}* amount, const long* index) {
     ${Dtype} f;
     int k;
     ${Dtype} b;
-    int c;
-    int w_idx;
+    long c;
+    long w_idx;
 
     for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
       k = e_idx * ${k_max} + k_idx;
@@ -42,8 +42,9 @@ const ${Dtype}* amount, const long* index) {
       c = index[k];
 
       for (int m_in_idx = 0; m_in_idx < ${M_in}; m_in_idx++) {
-        w_idx = c * ${M_out} * ${M_in};
-        w_idx += m_in_idx * ${M_out} + m_out_idx;
+        w_idx = c * ${M_out} * ${M_in} +
+                m_in_idx * ${M_out} +
+                m_out_idx;
 
         w = weight[w_idx];
         f = input[e_idx * ${M_in} + m_in_idx];
@@ -61,7 +62,7 @@ _edgewise_spline_weighting_backward_kernel = kernel_loop + '''
 extern "C"
 __global__ void edgewise_spline_weighting_backward_kernel(
 const ${Dtype}* grad_output, ${Dtype}* grad_input, ${Dtype}* grad_weight,
-const ${Dtype}* weight, const ${Dtype}* input, const ${Dtype}* amount,
+const ${Dtype}* input, const ${Dtype}* weight, const ${Dtype}* amount,
 const long* index) {
 
   CUDA_KERNEL_LOOP(idx, ${num_threads}) {
@@ -86,8 +87,8 @@ const long* index) {
     ${Dtype} w_grad;
     int k;
     ${Dtype} b;
-    int c;
-    int w_idx;
+    long c;
+    long w_idx;
 
     for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
       k = e_idx * ${k_max} + k_idx;
@@ -95,21 +96,22 @@ const long* index) {
       c = index[k];
 
       for (int m_in_idx = 0; m_in_idx < ${M_in}; m_in_idx++) {
-        w_idx = c * ${M_out} * ${M_in};
-        w_idx += m_in_idx * ${M_out} + m_out_idx;
+        w_idx = c * ${M_out} * ${M_in} +
+                m_in_idx * ${M_out} +
+                m_out_idx;
 
         w = weight[w_idx];
 
         // Calculate input gradient.
         g = grad_output[e_idx * ${M_out} + m_out_idx];
-        // atomicAdd(&(grad_input[e_idx * ${M_in} + m_in_idx]), b * g * w);
+        atomicAdd(&(grad_input[e_idx * ${M_in} + m_in_idx]), b * g * w);
         // This is inefficient: `reduce_sum` shouldn't be done like this.
         // Looping over `M_out` would be better to avoid the `atomicAdd`.
 
         // Calculate weight gradient.
         f = input[e_idx * ${M_in} + m_in_idx];
         w_grad = f * b * grad_output[e_idx * ${M_out} + m_out_idx];
-        // atomicAdd(&(grad_weight[w_idx]), w_grad);
+        atomicAdd(&(grad_weight[w_idx]), w_grad);
         // Not so efficient either, but not avoidable.
       }
     }
@@ -167,7 +169,7 @@ class EdgewiseSplineWeighting(Function):
 
         grad_input = grad_output.new(num_edges, M_in)
         grad_weight = grad_output.new(K, M_in, M_out)
-        num_threads = grad_input.numel() * k_max
+        num_threads = grad_input.numel()
 
         with torch.cuda.device_of(grad_output):
             f = load_kernel(
@@ -186,8 +188,8 @@ class EdgewiseSplineWeighting(Function):
                   grad_output.data_ptr(),
                   grad_input.data_ptr(),
                   grad_weight.data_ptr(),
-                  weight.data_ptr(),
                   input.data_ptr(),
+                  weight.data_ptr(),
                   self.amount.data_ptr(),
                   self.index.data_ptr()
               ],
