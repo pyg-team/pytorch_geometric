@@ -20,4 +20,13 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
         input, weight = input.cuda(), weight.cuda()
 
         out = edgewise_spline_weighting_forward(input, weight, amount, index)
+
+        expected_out = [
+            [0.25 * (1 * (0.5 + 3.5 + 4.5 + 7.5) + 2 * (1 + 4 + 5 + 8))],
+            [0.25 * (3 * (0.5 + 1.5 + 4.5 + 5.5) + 4 * (1 + 2 + 5 + 6))],
+            [0.25 * (5 * (5.5 + 6.5 + 9.5 + 10.5) + 6 * (6 + 7 + 10 + 11))],
+            [0.25 * (7 * (6.5 + 7.5 + 10.5 + 11.5) + 8 * (7 + 8 + 11 + 12))],
+        ]
+
         print(out)
+        print(expected_out)
