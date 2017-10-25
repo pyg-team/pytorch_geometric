@@ -68,3 +68,13 @@ class SplineTest(TestCase):
 
         assert_almost_equal(amount.numpy(), expected_amount, 2)
         assert_equal(index.numpy(), expected_index)
+
+        values = torch.FloatTensor([0.05, 0.25, 0.5, 0.75, 0.95, 1])
+        values = torch.stack([values, values, values], dim=1)
+        kernel_size = torch.LongTensor([5, 4, 4])
+        is_open_spline = torch.LongTensor([1, 0, 0])
+        amount, index = spline_weights(values, kernel_size, is_open_spline, 1)
+
+        self.assertEqual(list(amount.size()), [6, 8])
+        self.assertEqual(list(index.size()), [6, 8])
+        self.assertLess(index.max(), 5 * 4 * 4)
