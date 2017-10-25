@@ -63,14 +63,9 @@ def edgewise_spline_weighting_forward(input, weight, amount, index):
     k_max, M_in, M_out = weight.size()
 
     output = input.new(input.size(0), weight.size(2))
-    num_threads = output.numel()
+    n = output.numel()
 
-    kwargs = {
-        'num_threads': num_threads,
-        'k_max': k_max,
-        'M_in': M_in,
-        'M_out': M_out,
-    }
+    kwargs = {'num_threads': n, 'k_max': k_max, 'M_in': M_in, 'M_out': M_out}
 
     with torch.cuda.device_of(input):
         f = load_kernel(
@@ -79,7 +74,7 @@ def edgewise_spline_weighting_forward(input, weight, amount, index):
             Dtype=Dtype(input),
             **kwargs)
         f(block=(CUDA_NUM_THREADS, 1, 1),
-          grid=(GET_BLOCKS(num_threads), 1, 1),
+          grid=(GET_BLOCKS(n), 1, 1),
           args=[
               input.data_ptr(),
               weight.data_ptr(),
