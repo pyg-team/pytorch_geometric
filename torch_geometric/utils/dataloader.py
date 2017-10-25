@@ -1,6 +1,5 @@
 import torch
 import collections
-from torch.utils.data import dataloader
 from torch.utils.data.dataloader import (DataLoader as DefaultDataLoader,
                                          default_collate)
 
@@ -9,14 +8,6 @@ from ..sparse.stack import stack
 
 def collate(batch):
     if torch.is_tensor(batch[0]) and batch[0].is_sparse:
-        # TODO: Shared memory
-        # out = None
-        # if dataloader._use_shared_memory:
-        # If we're in a background process, concatenate directly into a
-        # shared memory tensor to avoid an extra copy
-        # numel = sum([x.numel() for x in batch])
-        # storage = batch[0].storage()._new_shared(numel)
-        # out = batch[0].new(storage)
         return stack(batch)
 
     elif isinstance(batch[0], collections.Mapping):

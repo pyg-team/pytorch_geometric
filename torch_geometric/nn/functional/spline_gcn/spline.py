@@ -23,7 +23,6 @@ def spline(values, kernel_size, is_open_spline, degree):
     if degree != 1:
         raise NotImplementedError()
 
-    is_closed_spline = 1 - is_open_spline
     kernel_size = kernel_size - is_open_spline
 
     values = values.unsqueeze(1) if len(values.size()) < 2 else values
@@ -35,10 +34,13 @@ def spline(values, kernel_size, is_open_spline, degree):
     index_g = values.floor().long()
 
     # Open splines adjustments.
+    kernel_size = kernel_size.type_as(index_g)
+    is_open_spline = is_open_spline.type_as(index_g)
     index_g -= is_open_spline * (index_g >= kernel_size).type_as(index_g)
     index_f = index_g + is_open_spline
 
     # Closed splines adjustments.
+    is_closed_spline = 1 - is_open_spline
     index_g -= is_closed_spline
     index_g += is_closed_spline * (index_g < 0).type_as(index_g) * kernel_size
     index_f -= is_closed_spline * (

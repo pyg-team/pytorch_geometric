@@ -1,4 +1,3 @@
-import time
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -7,7 +6,7 @@ from torch.autograd import Variable
 from torch_geometric.datasets.faust import FAUST
 from torch_geometric.graph.geometry import MeshAdj
 from torch_geometric.utils.dataloader import DataLoader
-from torch_geometric.nn.modules import SplineGCN, Lin, GCN
+from torch_geometric.nn.modules import SplineGCN, Lin
 
 path = '~/MPI-FAUST'
 train_dataset = FAUST(
@@ -15,41 +14,29 @@ train_dataset = FAUST(
 test_dataset = FAUST(
     path, train=False, correspondence=True, transform=MeshAdj())
 
-if torch.cuda.is_available():
-    # kwargs = {'num_workers': 1, 'pin_memory': True}
-    kwargs = {}
-else:
-    kwargs = {}
-
-train_loader = DataLoader(train_dataset, batch_size=5, shuffle=True, **kwargs)
-test_loader = DataLoader(test_dataset, batch_size=5, shuffle=True, **kwargs)
+train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=10, shuffle=True)
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=(3, 8, 2), max_radius=4.5)
+            1, 32, dim=3, kernel_size=[3, 8, 2], is_open_spline=[1, 0])
         self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[3, 8, 2], max_radius=4.5)
+            32, 64, dim=3, kernel_size=[3, 8, 2], is_open_spline=[1, 0])
         self.conv3 = SplineGCN(
-            64, 128, dim=3, kernel_size=[3, 8, 2], max_radius=4.5)
-        # self.conv1 = GCN(1, 32)
-        # self.conv2 = GCN(32, 64)
-        # self.conv3 = GCN(64, 128)
+            64, 128, dim=3, kernel_size=[3, 8, 2], is_open_spline=[1, 0])
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
     def forward(self, adj, x):
         x = F.relu(self.conv1(adj, x))
         x = F.relu(self.conv2(adj, x))
-        t = time.process_time()
         x = F.relu(self.conv3(adj, x))
-        t = time.process_time() - t
-        print(t)
-        # x = F.relu(self.lin1(x))
+        x = F.relu(self.lin1(x))
         # x = F.dropout(x, training=self.training)
-        # x = self.lin2(x)
+        x = self.lin2(x)
         return F.log_softmax(x)
 
 
@@ -57,7 +44,6 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-# optimizer = torch.optim.SGD(model.parameters(), lr=0.00001)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
@@ -65,6 +51,7 @@ def train(epoch):
     model.train()
 
     for batch_idx, ((_, (adj, _)), target) in enumerate(train_loader):
+        print('epoch: ', epoch, 'batch: ', batch_idx)
         features = torch.ones(adj.size(0)).view(-1, 1)
 
         # BEGIN GCN
@@ -78,8 +65,9 @@ def train(epoch):
             features, adj, target = features.cuda(), adj.cuda(), target.cuda()
 
         features, target = Variable(features), Variable(target)
-        output = model(adj, features)
-        return
+        print(features.size())
+        model(adj, features)
+        # return
         # target = target.view(-1)
 
         # optimizer.zero_grad()
@@ -128,6 +116,6 @@ def test():
     print('Test set: Accuracy: {}/{}'.format(correct, 20 * 6890))
 
 
-for epoch in range(1, 100):
+for epoch in range(1, 2):
     train(epoch)
     # test()

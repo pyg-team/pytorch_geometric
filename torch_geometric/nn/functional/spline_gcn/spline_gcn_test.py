@@ -9,7 +9,7 @@ from .spline_gcn import spline_gcn
 class SplineGcnTest(TestCase):
     def test_forward(self):
         edges = torch.LongTensor([[0, 0, 0, 0], [1, 2, 3, 4]])
-        values = [[0.25, 0.125], [0.25, 0.375], [0.75, 0.6125], [0.75, 0.875]]
+        values = [[0.25, 0.125], [0.25, 0.375], [0.75, 0.625], [0.75, 0.875]]
         values = torch.FloatTensor(values)
         adj = torch.sparse.FloatTensor(edges, values, torch.Size([5, 5, 2]))
 
@@ -23,20 +23,16 @@ class SplineGcnTest(TestCase):
         input, weight = Variable(input), Variable(weight)
 
         output = spline_gcn(adj, input, weight, kernel_size, is_open_spline, 1)
-        print(output)
-        return
 
-        edgewise_spline_feature = 426
-
-        expected_features = [
-            [2 * 1 + 2.5 * 2 + edgewise_spline_feature],
+        expected_output = [
+            [2 * 9 + 2.5 * 10 + 266],
+            [2 * 1 + 2.5 * 2],
             [2 * 3 + 2.5 * 4],
             [2 * 5 + 2.5 * 6],
             [2 * 7 + 2.5 * 8],
-            [2 * 9 + 2.5 * 10],
         ]
 
-        assert_almost_equal(features.data.numpy(), expected_features, 1)
+        assert_almost_equal(output.cpu().data.numpy(), expected_output, 1)
 
     def test_backward(self):
         pass

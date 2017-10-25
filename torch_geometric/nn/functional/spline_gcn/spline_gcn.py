@@ -26,6 +26,7 @@ def spline_gcn(
     amount, index = spline_weights(values, kernel_size, is_open_spline, degree)
     op = EdgewiseSplineWeighting(amount, index)
     output = op(output, weight)
+
     # Convolution via `scatter_add`. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
     zero = torch.zeros(adj.size(1), output.size(1)).type_as(output.data)
