@@ -22,12 +22,11 @@ def polar_coordinates(vertices, edges, type=torch.FloatTensor):
     v = (ends - starts).type(type)
 
     # Calculate Euclidean distances.
-    rho = (v * v).sum(1).sqrt() / 4.5  # TODO: only FAUST
+    rho = (v * v).sum(1).sqrt()
 
     # Append angles.
     values = [rho]
-    values.extend(
-        [vec2ang(v[:, 0], v[:, i]) / (2 * PI) for i in range(1, dim)])
+    values.extend([vec2ang(v[:, 0], v[:, i]) for i in range(1, dim)])
 
     return torch.stack(values, dim=1)
 
