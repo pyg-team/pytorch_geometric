@@ -20,7 +20,7 @@ def GET_BLOCKS(N):
 _edgewise_spline_weighting_forward_kernel = kernel_loop + '''
 extern "C"
 __global__ void edgewise_spline_weighting_forward_kernel(
-const ${Dtype}* input, const ${Dtype}* weight, const ${Dtype}* output,
+const ${Dtype}* input, const ${Dtype}* weight, ${Dtype}* output,
 const ${Dtype}* amount, const long* index) {
 
   CUDA_KERNEL_LOOP(idx, ${num_threads}) {
@@ -60,9 +60,9 @@ const ${Dtype}* amount, const long* index) {
 _edgewise_spline_weighting_backward_kernel = kernel_loop + '''
 extern "C"
 __global__ void edgewise_spline_weighting_backward_kernel(
-const ${Dtype}* grad_output, const${Dtype}* grad_input,
-const ${Dtype}* grad_weight, const ${Dtype}* weight, const ${Dtype}* input,
-const ${Dtype}* amount, const long* index) {
+const ${Dtype}* grad_output, ${Dtype}* grad_input, ${Dtype}* grad_weight,
+const ${Dtype}* weight, const ${Dtype}* input, const ${Dtype}* amount,
+const long* index) {
 
   CUDA_KERNEL_LOOP(idx, ${num_threads}) {
 
@@ -72,7 +72,7 @@ const ${Dtype}* amount, const long* index) {
 
     const int step = blockDim.x * gridDim.x;
     for (int i = idx; i < ${K} * ${M_in} * ${M_out}; i += step) {
-      output_weights_grads[i] = 0.0;
+      grad_weight[i] = 0.0;
     }
 
     __syncthreads();
@@ -81,8 +81,9 @@ const ${Dtype}* amount, const long* index) {
     const int m_out_idx = idx % ${M_out};
 
     ${Dtype} w;
-    ${Dtype} f;
     ${Dtype} g;
+    ${Dtype} f;
+    ${Dtype} w_grad;
     int k;
     ${Dtype} b;
     int c;
@@ -93,7 +94,7 @@ const ${Dtype}* amount, const long* index) {
       b = amount[k];
       c = index[k];
 
-      for (int m_in_idx = 0; i < ${M_in}; i++) {
+      for (int m_in_idx = 0; m_in_idx < ${M_in}; m_in_idx++) {
         w_idx = c * ${M_out} * ${M_in};
         w_idx += m_in_idx * ${M_out} + m_out_idx;
 
@@ -101,14 +102,14 @@ const ${Dtype}* amount, const long* index) {
 
         // Calculate input gradient.
         g = grad_output[e_idx * ${M_out} + m_out_idx];
-        atomicAdd(&(grad_input[e_idx * ${M_in} + m_in_idx]), b * g * w);
+        // atomicAdd(&(grad_input[e_idx * ${M_in} + m_in_idx]), b * g * w);
         // This is inefficient: `reduce_sum` shouldn't be done like this.
         // Looping over `M_out` would be better to avoid the `atomicAdd`.
 
         // Calculate weight gradient.
         f = input[e_idx * ${M_in} + m_in_idx];
         w_grad = f * b * grad_output[e_idx * ${M_out} + m_out_idx];
-        atomicAdd(&(grad_weight[w_idx]), w_grad);
+        // atomicAdd(&(grad_weight[w_idx]), w_grad);
         // Not so efficient either, but not avoidable.
       }
     }
@@ -177,7 +178,7 @@ class EdgewiseSplineWeighting(Function):
                 num_edges=num_edges,
                 M_in=M_in,
                 M_out=M_out,
-                k_max=self.k,
+                k_max=k_max,
                 K=K)
             f(block=(CUDA_NUM_THREADS, 1, 1),
               grid=(GET_BLOCKS(num_threads), 1, 1),
