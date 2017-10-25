@@ -2,7 +2,7 @@ from unittest import TestCase
 import torch
 from numpy.testing import assert_equal
 
-from torch_geometric.sparse.identity import identity
+from .identity import identity
 
 
 class IdentityTest(TestCase):

@@ -3,7 +3,7 @@ import torch
 from torch.autograd import Variable
 from numpy.testing import assert_equal
 
-from torch_geometric.sparse.mm import mm
+from .mm import mm
 
 
 class MmTest(TestCase):

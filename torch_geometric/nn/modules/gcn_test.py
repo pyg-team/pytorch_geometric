@@ -4,8 +4,8 @@ import torch
 from torch.autograd import Variable
 from numpy.testing import assert_equal
 
-from torch_geometric.nn.modules import GCN
-from torch_geometric.nn.functional import gcn as gcn
+from .gcn import GCN
+from ..functional.gcn import gcn
 
 
 class GCNTest(TestCase):

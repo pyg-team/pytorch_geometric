@@ -4,8 +4,7 @@ from unittest import TestCase
 import torch
 from numpy.testing import assert_equal, assert_almost_equal
 
-from torch_geometric.graph.geometry import (vec2ang, polar_coordinates,
-                                            mesh_adj, edges_from_faces)
+from .geometry import (vec2ang, polar_coordinates, mesh_adj, edges_from_faces)
 
 
 class GeometryTest(TestCase):

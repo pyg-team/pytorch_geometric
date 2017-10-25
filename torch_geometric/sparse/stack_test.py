@@ -2,7 +2,7 @@ from unittest import TestCase
 import torch
 from numpy.testing import assert_equal
 
-from torch_geometric.sparse.stack import stack
+from .stack import stack
 
 mat1 = torch.sparse.FloatTensor(
     torch.LongTensor([[0, 1], [1, 0]]),

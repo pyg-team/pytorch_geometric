@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from torch_geometric.nn.modules import Lin
+from .lin import Lin
 
 
 class LinTest(TestCase):
