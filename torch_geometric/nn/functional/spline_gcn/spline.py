@@ -4,8 +4,8 @@ from itertools import product
 import torch
 
 
-def _create_mask(dim, m, type=torch.LongTensor):
-    mask = list(product(* [range(m) for _ in range(dim)]))
+def create_mask(dim, m, type=torch.LongTensor):
+    mask = list(product(*[range(m) for _ in range(dim)]))
     mask = torch.LongTensor(mask).type(type)
     mask += torch.arange(0, dim * m, m).type_as(mask)
     return mask
@@ -55,7 +55,7 @@ def spline_weights(values, kernel_size, is_open_spline, degree):
     dim = amount.size(1)
     m = amount.size(2)
 
-    mask = _create_mask(dim, m, index.type())
+    mask = create_mask(dim, m, index.type())
 
     amount = amount.view(-1, m * dim)
     amount = amount[:, mask.view(-1)]
