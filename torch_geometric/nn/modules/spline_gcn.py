@@ -54,9 +54,9 @@ class SplineGCN(Module):
         is_open_spline = _repeat_last_to_count(is_open_spline, dim)
         self.is_open_spline = torch.LongTensor(is_open_spline)
         self.degree = degree
-        self.K = 1 + reduce(lambda x, y: x * y, kernel_size)
+        self.k_max = reduce(lambda x, y: x * y, kernel_size)
 
-        weight = torch.Tensor(self.K, in_features, out_features)
+        weight = torch.Tensor(self.k_max, in_features, out_features)
         self.weight = Parameter(weight)
 
         if bias:
@@ -67,7 +67,7 @@ class SplineGCN(Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        stdv = 1. / math.sqrt(self.in_features * self.K)
+        stdv = 1. / math.sqrt(self.in_features * self.k_max)
 
         self.weight.data.uniform_(-stdv, stdv)
         if self.bias is not None:
