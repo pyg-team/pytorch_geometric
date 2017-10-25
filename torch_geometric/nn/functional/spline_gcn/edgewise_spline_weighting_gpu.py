@@ -160,7 +160,7 @@ class EdgewiseSplineWeighting(Function):
         grad_weight = grad_output.new(K, M_in, M_out)
         grad_input.fill_(0)
         grad_weight.fill_(0)
-        num_threads = grad_input.numel()
+        num_threads = grad_output.numel()
 
         with torch.cuda.device_of(grad_output):
             f = load_kernel(
