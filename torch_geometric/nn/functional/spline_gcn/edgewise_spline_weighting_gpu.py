@@ -104,7 +104,7 @@ const long* index) {
 
         // Calculate input gradient.
         g = grad_output[e_idx * ${M_out} + m_out_idx];
-        atomicAdd(&(grad_input[e_idx * ${M_in} + m_in_idx]), b * g * w);
+        atomicAdd(&(grad_input[e_idx * ${M_in} + m_in_idx]), b * w * g);
         // This is inefficient: `reduce_sum` shouldn't be done like this.
         // Looping over `M_out` would be better to avoid the `atomicAdd`.
 
