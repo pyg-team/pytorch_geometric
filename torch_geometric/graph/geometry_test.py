@@ -4,7 +4,8 @@ from unittest import TestCase
 import torch
 from numpy.testing import assert_equal, assert_almost_equal
 
-from .geometry import (vec2ang, polar_coordinates, mesh_adj, edges_from_faces)
+from .geometry import (vec2ang, polar_coordinates, mesh_adj, euclidean_adj,
+                       edges_from_faces)
 
 
 class GeometryTest(TestCase):
@@ -57,6 +58,12 @@ class GeometryTest(TestCase):
 
         expected_theta = [[0, 1, 0], [2, 0, 0.75], [0, 1.75, 0]]
         assert_almost_equal((adj[:, :, 1] / PI).numpy(), expected_theta, 2)
+
+    def test_euclidean_adj(self):
+        vertices = torch.LongTensor([[1, 0], [0, 0], [-2, 4]])
+        edges = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+        adj = euclidean_adj(vertices, edges)
 
     def test_edges_from_faces(self):
         faces = torch.LongTensor([[2, 3, 0], [1, 0, 2]])

@@ -31,6 +31,22 @@ def polar_coordinates(vertices, edges, type=torch.FloatTensor):
     return torch.stack(values, dim=1)
 
 
+def euclidean_adj(vertices, edges):
+    rows, cols = edges
+    values = (vertices[cols] - vertices[rows])
+    c = 1 / (2 * values.abs().max())
+    values = c * values.float() + 0.5
+    n, dim = vertices.size()
+    return SparseTensor(edges, values, torch.Size([n, n, dim]))
+
+
+class EuclideanAdj(object):
+    def __call__(self, data):
+        vertices, edges = data
+        adjs = euclidean_adj(vertices, edges)
+        return vertices, adjs
+
+
 def mesh_adj(vertices, edges, type=torch.FloatTensor):
     n, dim = vertices.size()
     values = polar_coordinates(vertices, edges, type)

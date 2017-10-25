@@ -4,15 +4,15 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 from torch_geometric.datasets.faust import FAUST
-from torch_geometric.graph.geometry import MeshAdj
+from torch_geometric.graph.geometry import EuclideanAdj
 from torch_geometric.utils.dataloader import DataLoader
 from torch_geometric.nn.modules import SplineGCN, Lin
 
 path = '~/MPI-FAUST'
 train_dataset = FAUST(
-    path, train=True, correspondence=True, transform=MeshAdj())
+    path, train=True, correspondence=True, transform=EuclideanAdj())
 test_dataset = FAUST(
-    path, train=False, correspondence=True, transform=MeshAdj())
+    path, train=False, correspondence=True, transform=EuclideanAdj())
 
 train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=10, shuffle=True)
@@ -22,11 +22,11 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=[3, 8, 2], is_open_spline=[1, 0])
+            1, 32, dim=3, kernel_size=[3, 8, 2], is_open_spline=True)
         self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[3, 8, 2], is_open_spline=[1, 0])
+            32, 64, dim=3, kernel_size=[3, 8, 2], is_open_spline=True)
         self.conv3 = SplineGCN(
-            64, 128, dim=3, kernel_size=[3, 8, 2], is_open_spline=[1, 0])
+            64, 128, dim=3, kernel_size=[3, 8, 2], is_open_spline=True)
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
