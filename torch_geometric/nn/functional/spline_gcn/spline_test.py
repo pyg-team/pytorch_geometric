@@ -59,11 +59,12 @@ class SplineTest(TestCase):
         ]
         expected_index = [
             [4, 7, 0, 3],
-            [5, 4, 1, 0],
-            [10, 9, 6, 5],
-            [11, 10, 7, 6],
+            [9, 8, 5, 4],
+            [14, 13, 10, 9],
+            [19, 18, 15, 14],
+            [19, 18, 15, 14],
+            [16, 19, 12, 15],
         ]
-        print(index)
 
         assert_almost_equal(amount.numpy(), expected_amount, 2)
-        # assert_equal(index.numpy(), expected_index)
+        assert_equal(index.numpy(), expected_index)
