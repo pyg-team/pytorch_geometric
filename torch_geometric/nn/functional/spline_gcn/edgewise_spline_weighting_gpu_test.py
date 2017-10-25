@@ -1,5 +1,6 @@
 from unittest import TestCase
 import torch
+from numpy.testing import assert_equal
 
 from .edgewise_spline_weighting_gpu import edgewise_spline_weighting_forward
 from .spline import spline_weights
@@ -28,5 +29,4 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
             [0.25 * (7 * (6.5 + 7.5 + 10.5 + 11.5) + 8 * (7 + 8 + 11 + 12))],
         ]
 
-        print(out)
-        print(expected_out)
+        assert_equal(out.cpu().numpy(), expected_out)

@@ -20,14 +20,17 @@ _edgewise_spline_weighting_forward_kernel = kernel_loop + '''
 extern "C"
 __global__ void edgewise_spline_weighting_forward_kernel(
 const ${Dtype}* input, const ${Dtype}* weight, ${Dtype}* output,
-${Dtype}* amount, int* index) {
+${Dtype}* amount, long* index) {
 
   CUDA_KERNEL_LOOP(idx, ${num_threads}) {
 
     // Initialize with zero.
-    ${Dtype} result = 2.0;
+    ${Dtype} result = 0.0;
     ${Dtype} w;
     ${Dtype} f;
+    int k;
+    ${Dtype} b;
+    int c;
     int w_idx;
 
     // Compute output indices with index layout [|E|, M_out].
@@ -35,9 +38,9 @@ ${Dtype}* amount, int* index) {
     const int m_out_idx = idx % ${M_out};
 
     for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
-
-      const float b = amount[e_idx * ${k_max} + k_idx];
-      const int c = index[e_idx * ${k_max} + k_idx];
+      k = e_idx * ${k_max} + k_idx;
+      b = amount[k];
+      c = index[k];
 
       for (int m_in_idx = 0; m_in_idx < ${M_in}; m_in_idx++) {
         w_idx = c * ${M_out} * ${M_in};
@@ -60,7 +63,8 @@ def edgewise_spline_weighting_forward(input, weight, amount, index):
     assert input.is_cuda and weight.is_cuda
     assert amount.is_cuda and index.is_cuda
 
-    k_max, M_in, M_out = weight.size()
+    _, M_in, M_out = weight.size()
+    k_max = amount.size(1)
 
     output = input.new(input.size(0), weight.size(2))
     n = output.numel()
@@ -87,52 +91,52 @@ def edgewise_spline_weighting_forward(input, weight, amount, index):
     return output
 
 
-# _bspline_basis_backward_kernel = kernel_loop + '''
-# extern "C"
-# __global__ void bspline_basis_backward_kernel(
-# const ${Dtype}* input_grads, ${Dtype}* output_feature_grads, ${Dtype}* output_weights_grads,
-#                     const ${Dtype}* weights, const ${Dtype}* features, const float* amounts, const int* indices) {
-#   CUDA_KERNEL_LOOP(index, ${num_threads}) {
+_bspline_basis_backward_kernel = kernel_loop + '''
+extern "C"
+__global__ void bspline_basis_backward_kernel(
+const ${Dtype}* input_grads, ${Dtype}* output_feature_grads, ${Dtype}* output_weights_grads,
+                    const ${Dtype}* weights, const ${Dtype}* features, const float* amounts, const int* indices) {
+  CUDA_KERNEL_LOOP(index, ${num_threads}) {
 
-#     //Initialize output with zero
-#     if(index<{num_edges$}*${M_in})
-#         output_feature_grads[index] = 0.0;
-#     for(int i=index; i<${K}*${M_in}*${M_out};i+=blockDim.x * gridDim.x)
-#         output_weights_grads[index] = 0.0;
-#     __syncthreads();
+    //Initialize output with zero
+    if(index<{num_edges$}*${M_in})
+        output_feature_grads[index] = 0.0;
+    for(int i=index; i<${K}*${M_in}*${M_out};i+=blockDim.x * gridDim.x)
+        output_weights_grads[i] = 0.0;
+    __syncthreads();
 
-#     // compute gradients
-#     const int e_idx = index / ${M_out};
-#     const int m_out_idx = index % ${M_out};
-#     ${Dtype} w;
-#     ${Dtype} f;
-#     ${Dtype} g;
+    // compute gradients
+    const int e_idx = index / ${M_out};
+    const int m_out_idx = index % ${M_out};
+    ${Dtype} w;
+    ${Dtype} f;
+    ${Dtype} g;
 
-#     for(int k_idx=0;k_idx<${k_max};k_idx++)
-#     {
-#         const float b = amounts[e_idx*${k_max} + k_idx];
-#         const int c = indices[e_idx*${k_max} + k_idx];
-#         for(int m_in_idx = 0; i<${M_in}; i++)
-#         {
-#             // Nice coalescing memory access!
-#             w = weights[c*${M_out}*${M_in}+ m_in_idx*${M_out} + m_out_idx];
+    for(int k_idx=0;k_idx<${k_max};k_idx++)
+    {
+        const float b = amounts[e_idx*${k_max} + k_idx];
+        const int c = indices[e_idx*${k_max} + k_idx];
+        for(int m_in_idx = 0; i<${M_in}; i++)
+        {
+            // Nice coalescing memory access!
+            w = weights[c*${M_out}*${M_in}+ m_in_idx*${M_out} + m_out_idx];
 
-#             // Calculate input feature gradients
-#             g = input_grads[e*${M_out} + m_out_idx];
-#             atomicAdd(&(output_feature_grads[e*${M_in} + m_in_idx]), b*g*w );
-#             // This is inefficient.... reduce_sum shouldnt be done like this...
-#             // Looping over M_out would be better to avoid the atomicAdd at least here...
+            // Calculate input feature gradients
+            g = input_grads[e*${M_out} + m_out_idx];
+            atomicAdd(&(output_feature_grads[e*${M_in} + m_in_idx]), b*g*w );
+            // This is inefficient.... reduce_sum shouldnt be done like this...
+            // Looping over M_out would be better to avoid the atomicAdd at least here...
 
-#             // Calculate weight gradient
-#             f = features[e_idx*${M_in} + m_in_idx];
-#             w_grad = f*b*input_grads[e*${M_out} + m_out_idx];
-#             atomicAdd(&(output_weights_grads[c*${M_out}*${M_in}+ m_in_idx*${M_out} + m_out_idx]), w_grad);
-#             // Not so efficient either... but not avoidable
-#         }
-#     }
-# }
-#             // This is only really fast... not super fast. But fast forward/inference is more important anyway!
-# '''
+            // Calculate weight gradient
+            f = features[e_idx*${M_in} + m_in_idx];
+            w_grad = f*b*input_grads[e*${M_out} + m_out_idx];
+            atomicAdd(&(output_weights_grads[c*${M_out}*${M_in}+ m_in_idx*${M_out} + m_out_idx]), w_grad);
+            // Not so efficient either... but not avoidable
+        }
+    }
+}
+            // This is only really fast... not super fast. But fast forward/inference is more important anyway!
+'''
 
 # class _EdgewiseSplineGcn_gpu(Function):
 #     def __init__(self, values, kernel_size, max_radius, degree=1):
