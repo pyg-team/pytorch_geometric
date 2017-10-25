@@ -67,17 +67,6 @@ const long* index) {
 
   CUDA_KERNEL_LOOP(idx, ${num_threads}) {
 
-    if (idx < ${num_edges} * ${M_in}) {
-      grad_input[idx] = 0.0;
-    }
-
-    const int step = blockDim.x * gridDim.x;
-    for (int i = idx; i < ${K} * ${M_in} * ${M_out}; i += step) {
-      grad_weight[i] = 0.0;
-    }
-
-    __syncthreads();
-
     const int e_idx = idx / ${M_out};
     const int m_out_idx = idx % ${M_out};
 
@@ -135,7 +124,7 @@ class EdgewiseSplineWeighting(Function):
         _, M_in, M_out = weight.size()
         k_max = self.amount.size(1)
 
-        output = input.new(input.size(0), weight.size(2))
+        output = input.new(input.size(0), M_out)
         num_threads = output.numel()
 
         with torch.cuda.device_of(input):
@@ -169,6 +158,8 @@ class EdgewiseSplineWeighting(Function):
 
         grad_input = grad_output.new(num_edges, M_in)
         grad_weight = grad_output.new(K, M_in, M_out)
+        grad_input.fill_(0)
+        grad_weight.fill_(0)
         num_threads = grad_input.numel()
 
         with torch.cuda.device_of(grad_output):
