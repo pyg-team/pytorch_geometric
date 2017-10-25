@@ -3,13 +3,16 @@ from functools import reduce
 import torch
 from torch.autograd import Variable
 
+from .spline import spline_weights
+from .edgewise_spline_weighting_gpu import EdgewiseSplineWeighting
+
 
 def spline_gcn(
         adj,  # Tensor
-        features,  # Variable
+        input,  # Variable
         weight,  # Variable
         kernel_size,
-        max_radius,
+        is_open_spline,
         degree=1,
         bias=None):
 
@@ -17,12 +20,12 @@ def spline_gcn(
     row, col = adj._indices()
 
     # Get features for every end vertex with shape [|E| x M_in].
-    output = features[col]
+    output = input[col]
 
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
-    output = edgewise_spline_gcn(values, output, weight, kernel_size,
-                                 max_radius, degree)
-
+    amount, index = spline_weights(values, kernel_size, is_open_spline, degree)
+    op = EdgewiseSplineWeighting(amount, index)
+    output = op(output, weight)
     # Convolution via `scatter_add`. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
     zero = torch.zeros(adj.size(1), output.size(1)).type_as(output.data)
@@ -33,10 +36,10 @@ def spline_gcn(
 
     # Weighten root node features by multiplying with the meaned weights from
     # the origin.
-    index = torch.arange(0, reduce(lambda x, y: x * y, kernel_size[1:])).long()
-    index = index.cuda() if torch.cuda.is_available() else index
-    root_weight = weight[index].mean(0)
-    output += torch.mm(features, root_weight)
+    root_index = torch.arange(0, reduce(lambda x, y: x * y, kernel_size[1:]))
+    root_index = root_index.type_as(index)
+    root_weight = weight[root_index].mean(0)
+    output += torch.mm(input, root_weight)
 
     if bias is not None:
         output += bias

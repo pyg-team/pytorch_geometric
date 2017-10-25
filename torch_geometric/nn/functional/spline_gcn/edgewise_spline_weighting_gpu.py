@@ -99,7 +99,7 @@ class EdgewiseSplineWeighting(Function):
 
         return output
 
-    def backawrd(self, grad_output):
+    def backward(self, grad_output):
         raise NotImplementedError()
 
 
