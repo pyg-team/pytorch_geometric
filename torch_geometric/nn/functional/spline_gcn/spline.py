@@ -26,7 +26,7 @@ def spline(values, kernel_size, is_open_spline, degree):
     kernel_size = kernel_size - is_open_spline
 
     values = values.unsqueeze(1) if len(values.size()) < 2 else values
-    values *= kernel_size.type_as(values)
+    values = values * kernel_size.type_as(values)
 
     amount = values.frac()
     amount = torch.stack([amount, 1 - amount], dim=len(values.size()))
