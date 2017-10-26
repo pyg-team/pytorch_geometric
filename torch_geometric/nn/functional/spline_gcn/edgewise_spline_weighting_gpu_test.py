@@ -3,12 +3,17 @@ import torch
 from torch.autograd import Variable, gradcheck
 from numpy.testing import assert_equal
 
-from .edgewise_spline_weighting_gpu import EdgewiseSplineWeighting
 from .spline import spline_weights
+
+if torch.cuda.is_available():
+    from .edgewise_spline_weighting_gpu import EdgewiseSplineWeightingGPU
 
 
 class EdgewiseSplineWeightingGPUTest(TestCase):
     def test_forward(self):
+        if not torch.cuda.is_available():
+            return
+
         col = [[0.25, 0.125], [0.25, 0.375], [0.75, 0.625], [0.75, 0.875]]
         col = torch.FloatTensor(col)
         kernel_size = torch.LongTensor([3, 4])
@@ -22,7 +27,7 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
         input, weight = input.cuda(), weight.cuda()
         input, weight = Variable(input), Variable(weight)
 
-        op = EdgewiseSplineWeighting(amount, index)
+        op = EdgewiseSplineWeightingGPU(amount, index)
         out = op(input, weight)
 
         expected_out = [
@@ -35,6 +40,9 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
         assert_equal(out.cpu().data.numpy(), expected_out)
 
     def test_backward(self):
+        if not torch.cuda.is_available():
+            return
+
         col = [[0.25, 0.125], [0.25, 0.375], [0.75, 0.625], [0.75, 0.875]]
         col = torch.DoubleTensor(col)
         kernel_size = torch.LongTensor([3, 4])
@@ -49,6 +57,6 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
         input = Variable(input, requires_grad=True)
         weight = Variable(weight, requires_grad=True)
 
-        op = EdgewiseSplineWeighting(amount, index)
+        op = EdgewiseSplineWeightingGPU(amount, index)
         test = gradcheck(op, (input, weight), eps=1e-6, atol=1e-4)
         self.assertTrue(test)

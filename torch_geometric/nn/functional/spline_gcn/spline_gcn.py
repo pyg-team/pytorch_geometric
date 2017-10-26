@@ -4,7 +4,8 @@ import torch
 from torch.autograd import Variable
 
 from .spline import spline_weights
-from .edgewise_spline_weighting_gpu import EdgewiseSplineWeighting
+
+from .edgewise_spline_weighting import edgewise_spline_weighting
 
 
 def spline_gcn(
@@ -24,8 +25,7 @@ def spline_gcn(
 
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
     amount, index = spline_weights(values, kernel_size, is_open_spline, degree)
-    op = EdgewiseSplineWeighting(amount, index)
-    output = op(output, weight)
+    output = edgewise_spline_weighting(output, weight, amount, index)
 
     # Convolution via `scatter_add`. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.

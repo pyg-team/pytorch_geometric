@@ -109,9 +109,9 @@ const long* index) {
 '''
 
 
-class EdgewiseSplineWeighting(Function):
+class EdgewiseSplineWeightingGPU(Function):
     def __init__(self, amount, index):
-        super(EdgewiseSplineWeighting, self).__init__()
+        super(EdgewiseSplineWeightingGPU, self).__init__()
         assert amount.is_cuda and index.is_cuda
         self.amount = amount
         self.index = index
@@ -156,10 +156,9 @@ class EdgewiseSplineWeighting(Function):
         k_max = self.amount.size(1)
         num_edges = input.size(0)
 
-        grad_input = grad_output.new(num_edges, M_in)
-        grad_weight = grad_output.new(K, M_in, M_out)
-        grad_input.fill_(0)
-        grad_weight.fill_(0)
+        grad_input = grad_output.new(num_edges, M_in).fill_(0)
+        grad_weight = grad_output.new(K, M_in, M_out).fill_(0)
+
         num_threads = grad_output.numel()
 
         with torch.cuda.device_of(grad_output):
