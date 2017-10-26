@@ -13,7 +13,7 @@ def stack(sequence, horizontal=True, vertical=True):
     indices = []
     slices = []
     for mat in sequence:
-        # Offset sparse matrix indices by an offset.
+        # Offset sparse matrix indices.
         offset = [[y_sum if vertical else 0], [x_sum if horizontal else 0]]
         offset = torch.LongTensor(offset)
         indices.append(mat._indices() + offset)
@@ -33,7 +33,7 @@ def stack(sequence, horizontal=True, vertical=True):
     # Concat all indices and values to one new large sparse matrix.
     indices = torch.cat(indices, dim=1)
     values = torch.cat([mat._values() for mat in sequence])
-    size = torch.Size([y_sum, x_sum, *(sequence[0].size()[2:])])
+    size = torch.Size([y_sum, x_sum, *list(sequence[0].size()[2:])])
     slices = torch.LongTensor(slices)
 
     return torch.sparse.FloatTensor(indices, values, size), slices
