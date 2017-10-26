@@ -13,8 +13,8 @@
 
 ## Requirements
 
-Install `pytorch` and `torchvision` manually.
-If cuda is available, it is recommended to install `cupy`.
+Install `pytorch` and `torchvision` manually ([Installation](http://pytorch.org/)).
+If cuda is available it is recommended to install `cupy` ([Installation](https://github.com/cupy/cupy#installation)).
 
 To install the additional python packages needed, run:
 
