@@ -15,7 +15,7 @@ from torch_geometric.graph.geometry import EuclideanAdj  # noqa: E402
 from torch_geometric.utils.dataloader import DataLoader  # noqa: E402
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa: E402
 
-path = '~/MPI-FAUST'
+path = '/media/jan/DataExt4/BenchmarkDataSets/Mesh/MPI-FAUST'
 train_dataset = FAUST(
     path, train=True, correspondence=True, transform=EuclideanAdj())
 test_dataset = FAUST(
