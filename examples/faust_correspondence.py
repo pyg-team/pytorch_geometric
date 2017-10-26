@@ -9,7 +9,7 @@ from torch.autograd import Variable
 
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets.faust import FAUST  # noqa: E402
+from torch_geometric.datasets import FAUST  # noqa: E402
 from torch_geometric.graph.geometry import EuclideanAdj  # noqa: E402
 from torch_geometric.utils.dataloader import DataLoader  # noqa: E402
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa: E402

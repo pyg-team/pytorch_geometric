@@ -35,6 +35,8 @@ class FAUST(Dataset):
                  transform=None,
                  target_transform=None):
 
+        super(FAUST, self).__init__()
+
         self.root = os.path.expanduser(root)
         self.processed_folder = os.path.join(self.root, 'processed')
         self.training_file = os.path.join(self.processed_folder, 'training.pt')
