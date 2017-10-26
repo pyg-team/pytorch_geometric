@@ -13,6 +13,20 @@ class Cora(object):
                  target_transform=None):
         self.root = os.path.expanduser(root)
         self.processed_folder = os.path.join(self.root, 'processed')
+        print(self.root)
+
+        file = os.path.join(self.root, 'cora.content')
+        with open(file, 'r') as f:
+            for line in f:
+                s = line.split('\t')
+                idx = s[0]
+                features = s[1:-1]
+                label = s[-1]
+                print(idx)
+                print(label)
+                print(len(features))
+            print(f)
+
         pass
 
 
