@@ -1,5 +1,7 @@
 import sys
 
+print(sys.path)
+sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cora  # noqa: E402
