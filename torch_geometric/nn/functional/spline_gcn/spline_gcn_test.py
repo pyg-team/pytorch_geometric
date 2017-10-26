@@ -68,24 +68,3 @@ class SplineGcnTest(TestCase):
 
     def test_backward_gpu(self):
         pass
-        # vertices = [[0, 0], [1, 1], [-2, 2], [-3, -3], [4, -4]]
-        # vertices = torch.LongTensor(vertices)
-        # edges = [[0, 0, 0, 0], [1, 2, 3, 4]]
-        # edges = torch.LongTensor(edges)
-        # adj = mesh_adj(vertices, edges, type=torch.DoubleTensor)
-        # features = torch.randn(5, 2).double()
-        # features = Variable(features, requires_grad=True)
-        # weight = torch.randn(12, 2, 4).double()
-        # weight = Variable(weight, requires_grad=True)
-
-        # def op(features, weight):
-        #     return spline_gcn(
-        #         adj,
-        #         features,
-        #         weight,
-        #         kernel_size=[3, 4],
-        #         max_radius=sqrt(16 + 16),
-        #         degree=1)
-
-        # test = gradcheck(op, (features, weight), eps=1e-6, atol=1e-4)
-        # self.assertTrue(test)
