@@ -22,7 +22,7 @@ def spline(values, kernel_size, is_open_spline, degree):
 
     if degree != 1:
         raise NotImplementedError()
-
+    print(values)
     kernel_size = kernel_size - is_open_spline
 
     values = values.unsqueeze(1) if len(values.size()) < 2 else values
@@ -52,32 +52,6 @@ def spline(values, kernel_size, is_open_spline, degree):
 
 
 def spline_weights(values, kernel_size, is_open_spline, degree):
-    amount, index = spline(values, kernel_size, is_open_spline, degree)
-
-    dim = amount.size(1)
-    m = amount.size(2)
-
-    mask = create_mask(dim, m, index.type())
-
-    amount = amount.view(-1, m * dim)
-    amount = amount[:, mask.view(-1)]
-    amount = amount.view(-1, m**dim, dim)
-    amount = amount.prod(2)
-
-    off = [reduce(lambda x, y: x * y, kernel_size[i:]) for i in range(1, dim)]
-    off.append(1)
-    off = torch.LongTensor([off]).type_as(index).t()
-    index = off * index
-
-    index = index.view(-1, m * dim)
-    index = index[:, mask.view(-1)]
-    index = index.view(-1, m**dim, dim)
-    index = index.sum(2)
-
-    return amount, index
-
-
-def spline_weights_(values, kernel_size, is_open_spline, degree):
     amount, index = spline(values, kernel_size, is_open_spline, degree)
 
     dim = amount.size(1)
