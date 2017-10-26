@@ -10,3 +10,23 @@
 [coverage-url]: https://codecov.io/github/rusty1s/pytorch_geometric?branch=master
 [requirements-image]: https://requires.io/github/rusty1s/pytorch_geometric/requirements.svg?branch=master
 [requirements-url]: https://requires.io/github/rusty1s/pytorch_geometric/requirements/?branch=master
+
+## Requirements
+
+Install `pytorch` and `torchvision` manually.
+If cuda is available, it is recommended to install `cupy`.
+
+To install the additional python packages needed, run:
+
+```shell
+pip install -r requirements.txt
+```
+
+## Running tests
+
+Install the test requirements and run the test suite:
+
+```shell
+pip install -r requirements_test.txt
+nosetests
+```
