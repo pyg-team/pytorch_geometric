@@ -1,3 +1,5 @@
+from __future__ import division
+
 from math import pi as PI
 
 import torch
