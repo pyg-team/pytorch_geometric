@@ -21,8 +21,8 @@ train_dataset = FAUST(
 test_dataset = FAUST(
     path, train=False, correspondence=True, transform=EuclideanAdj())
 
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=5, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=5, shuffle=True)
 
 
 # Reaches 85.39% accuracy after 99 epochs.
@@ -62,12 +62,15 @@ def train(epoch):
     model.train()
 
     for batch_idx, ((_, (adj, _)), target) in enumerate(train_loader):
-        input = torch.ones(adj.size(0)).view(-1, 1)
+        if batch_idx == 0:
+            input = torch.ones(adj.size(0)).view(-1, 1)
+            input = input.cuda()
+            input = Variable(input)
 
         if torch.cuda.is_available():
-            input, adj, target = input.cuda(), adj.cuda(), target.cuda()
+             adj, target =  adj.cuda(), target.cuda()
 
-        input, target = Variable(input), Variable(target)
+        target = Variable(target)
         output = model(adj, input)
 
         optimizer.zero_grad()

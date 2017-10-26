@@ -45,10 +45,11 @@ def spline_gcn(
     t = time.process_time()
     # Weighten root node features by multiplying with the meaned weights from
     # the origin.
-    root_index = torch.arange(0, reduce(lambda x, y: x * y, kernel_size[1:]))
-    root_index = root_index.type_as(index)
-    root_weight = weight[root_index].mean(0)
+
+    root_weight = weight[:kernel_size[1:].prod()].mean(0)
     output += torch.mm(input, root_weight)
+    print('5',time.process_time()-t)
+    t = time.process_time()
 
     if bias is not None:
         output += bias

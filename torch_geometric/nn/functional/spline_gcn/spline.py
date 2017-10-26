@@ -22,7 +22,7 @@ def spline(values, kernel_size, is_open_spline, degree):
 
     if degree != 1:
         raise NotImplementedError()
-    print(values)
+
     kernel_size = kernel_size - is_open_spline
 
     values = values.unsqueeze(1) if len(values.size()) < 2 else values
