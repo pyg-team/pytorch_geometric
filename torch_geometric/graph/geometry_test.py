@@ -63,7 +63,21 @@ class GeometryTest(TestCase):
         vertices = torch.LongTensor([[1, 0], [0, 0], [-2, 4]])
         edges = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
-        adj = euclidean_adj(vertices, edges)
+        adj = euclidean_adj(vertices, edges).to_dense()
+
+        expected_adj_x = [
+            [0., 0.375, 0],
+            [0.625, 0, 0.25],
+            [0, 0.75, 0],
+        ]
+        expected_adj_y = [
+            [0., 0.5, 0],
+            [0.5, 0, 1],
+            [0, 0, 0],
+        ]
+
+        assert_equal(adj[:, :, 0].numpy(), expected_adj_x)
+        assert_equal(adj[:, :, 1].numpy(), expected_adj_y)
 
     def test_edges_from_faces(self):
         faces = torch.LongTensor([[2, 3, 0], [1, 0, 2]])
