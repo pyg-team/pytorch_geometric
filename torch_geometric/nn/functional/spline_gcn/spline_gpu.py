@@ -27,7 +27,7 @@ class SplineWeightsGPU(Function):
         self._spline_weights_kernel = kernel_loop + '''
         extern "C"
         __global__ void spline_weights_kernel(
-        const ${Dtype}* values, ${Dtype}* amounts, int* indices) {
+        const ${Dtype}* values, ${Dtype}* amounts, int* indices, int* kernel_size, int* is_open_spline) {
           CUDA_KERNEL_LOOP(idx, ${num_threads}) {
             int k = idx % k_max;
             int e_idx = idx / k_max;
@@ -37,11 +37,11 @@ class SplineWeightsGPU(Function):
             for(int d_idx=0; d_idx <${d}; d_idx++)
             {
               k_prod = k_prod/kernel_size[d_idx];
-              int value = values[e_idx * ${d} + d_idx] * (kernel_size[d_idx]-1);
+              int value = values[e_idx * ${d} + d_idx] * (kernel_size[d_idx]-is_open_spline[d_idx]);
               int fraction = frac(value);
               prod *= (1-k%2)*fraction + k%2*(1-fraction);
-              int bot = floor(value);
-              int top = (bot+1) % kernel_size[d_idx];
+              int bot = floor(value) % (kernel_size[d_idx]-(1-is_open_spline[d_idx]));
+              int top = (bot+1) % (kernel_size[d_idx]-(1-is_open_spline[d_idx]));
               index += ((k%2)*bot + (1-k%2)*top)*k_prod;
               k = k >> 1;
             }
@@ -79,7 +79,9 @@ class SplineWeightsGPU(Function):
               args=[
                   values.data_ptr(),
                   amounts.data_ptr(),
-                  indices.data_ptr()
+                  indices.data_ptr(),
+                  self.kernel_size.data_ptr(),
+                  self.is_open_spline.data_ptr()
               ],
               stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
