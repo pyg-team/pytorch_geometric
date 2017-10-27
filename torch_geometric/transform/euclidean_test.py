@@ -27,6 +27,7 @@ class EuclideanTest(TestCase):
             [0, 0, 0],
         ]
 
+        assert_equal(adj.size(), [3, 3, 2])
         assert_equal(position.numpy(), expected_position)
         assert_equal(adj[:, :, 0].numpy(), expected_adj_x)
         assert_equal(adj[:, :, 1].numpy(), expected_adj_y)

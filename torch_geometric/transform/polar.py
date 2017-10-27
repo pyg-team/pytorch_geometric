@@ -2,28 +2,29 @@ from math import pi as PI
 
 import torch
 
-
-def vec2ang(x, y):
-    ang = torch.atan2(y, x)
-    return ang + (ang <= 0).type_as(x) * 2 * PI
+from ..sparse import SparseTensor
 
 
-def polar_coordinates(vertices, edges, type=torch.FloatTensor):
-    dim = vertices.size(1)
+class PolarAdj(object):
+    def __call__(self, data):
+        position, edge = data
+        n, dim = position.size()
+        row, col = edge
 
-    if dim <= 1:
-        raise ValueError('Invalid vertices dimensionality')
+        direction = (position[col] - position[row]).float()
 
-    rows, cols = edges
-    starts = vertices[rows]
-    ends = vertices[cols]
-    v = (ends - starts).type(type)
+        rho = (direction * direction).sum(1).sqrt()
+        rho /= rho.max()
 
-    # Calculate Euclidean distances.
-    rho = (v * v).sum(1).sqrt()
+        theta = torch.atan2(direction[:, 1], direction[:, 0]) / (2 * PI)
+        theta += (theta < 0).type_as(theta)
 
-    # Append angles.
-    values = [rho]
-    values.extend([vec2ang(v[:, 0], v[:, i]) for i in range(1, dim)])
+        if dim == 3:
+            phi = torch.acos(direction[:, 2]) / PI
+            polar = torch.stack([rho, theta, phi], dim=1)
+        else:
+            polar = torch.stack([rho, theta], dim=1)
 
-    return torch.stack(values, dim=1)
+        adj = SparseTensor(edge, polar, torch.Size([n, n, dim]))
+
+        return position, adj

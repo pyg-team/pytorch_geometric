@@ -15,8 +15,7 @@ class DegreeAdj(object):
         degree = weight.new(adj.size(0)).fill_(0)
 
         degree.scatter_add_(0, row, weight)
-        degree = torch.sqrt(degree)
-        degree = 1 / degree
+        degree = 1 / degree.sqrt()
 
         degree_row = degree[row]
         degree_col = degree[col]

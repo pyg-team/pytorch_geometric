@@ -10,9 +10,9 @@ class EuclideanAdj(object):
         position, edge = data
         row, col = edge
 
-        direction = (position[col] - position[row])
+        direction = (position[col] - position[row]).float()
         c = 1 / (2 * direction.abs().max())
-        direction = c * direction.float() + 0.5
+        direction = c * direction + 0.5
         n, dim = position.size()
         adj = SparseTensor(edge, direction, torch.Size([n, n, dim]))
 

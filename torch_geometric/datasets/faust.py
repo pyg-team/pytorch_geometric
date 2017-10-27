@@ -65,6 +65,8 @@ class FAUST(Dataset):
         edges = self.edges[index]
         data = (vertices, edges)
 
+        # TODO: return adj with ones as edge weights?
+
         if self.correspondence:
             target = torch.arange(0, vertices.size(0)).long()
         else:
