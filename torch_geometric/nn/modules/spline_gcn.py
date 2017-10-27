@@ -56,7 +56,7 @@ class SplineGCN(Module):
         self.degree = degree
         self.K = reduce(lambda x, y: x * y, kernel_size)
 
-        weight = torch.Tensor(self.K, in_features, out_features)
+        weight = torch.Tensor(self.K + 1, in_features, out_features)
         self.weight = Parameter(weight)
 
         if bias:
@@ -67,7 +67,7 @@ class SplineGCN(Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        stdv = 1. / math.sqrt(self.in_features * self.K)
+        stdv = 1. / math.sqrt(self.in_features * (self.K + 1))
 
         self.weight.data.uniform_(-stdv, stdv)
         if self.bias is not None:
