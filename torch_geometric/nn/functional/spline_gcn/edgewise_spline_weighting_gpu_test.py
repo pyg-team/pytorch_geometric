@@ -20,7 +20,7 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
         kernel_size = torch.LongTensor([3, 4])
         is_open_spline = torch.LongTensor([1, 0])
 
-        amount, index = spline(input, kernel_size, is_open_spline, 1)
+        amount, index = spline(input, kernel_size, is_open_spline, 12, 1)
         amount, index = amount.cuda(), index.cuda()
 
         input = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8]])
@@ -49,7 +49,7 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
         kernel_size = torch.LongTensor([3, 4])
         is_open_spline = torch.LongTensor([1, 0])
 
-        amount, index = spline(input, kernel_size, is_open_spline, 1)
+        amount, index = spline(input, kernel_size, is_open_spline, 12, 1)
         amount, index = amount.cuda(), index.cuda()
 
         input = torch.randn(4, 2).double()

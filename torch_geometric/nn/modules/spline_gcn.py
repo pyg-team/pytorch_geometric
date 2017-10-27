@@ -49,12 +49,14 @@ class SplineGCN(Module):
 
         self.in_features = in_features
         self.out_features = out_features
-        kernel_size = _repeat_last_to_count(kernel_size, dim)
-        self.kernel_size = torch.LongTensor(kernel_size)
-        is_open_spline = _repeat_last_to_count(is_open_spline, dim)
-        self.is_open_spline = torch.LongTensor(is_open_spline)
+        self.kernel_size_repr = _repeat_last_to_count(kernel_size, dim)
+        kernel_size = torch.LongTensor(self.kernel_size_repr)
+        self.register_buffer('kernel_size', kernel_size)
+        self.is_open_spline_repr = _repeat_last_to_count(is_open_spline, dim)
+        is_open_spline = torch.LongTensor(self.is_open_spline_repr)
+        self.register_buffer('is_open_spline', is_open_spline)
         self.degree = degree
-        self.K = reduce(lambda x, y: x * y, kernel_size)
+        self.K = self.kernel_size.prod()
 
         weight = torch.Tensor(self.K + 1, in_features, out_features)
         self.weight = Parameter(weight)
@@ -74,16 +76,15 @@ class SplineGCN(Module):
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, adj, input):
-        return spline_gcn(adj, input, self.weight, self.kernel_size,
-                          self.is_open_spline, self.degree, self.bias)
+        return spline_gcn(
+            adj, input, self.weight, self._buffers['kernel_size'],
+            self._buffers['is_open_spline'], self.K, self.degree, self.bias)
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}, kernel_size='
-             '{kernel_size_list}, is_open_spline={is_open_spline_list}, '
+             '{kernel_size_repr}, is_open_spline={is_open_spline_repr}, '
              'degree={degree}')
         if self.bias is None:
             s += ', bias=False'
         s += ')'
-        self.kernel_size_list = list(self.kernel_size.numpy())
-        self.is_open_spline_list = list(self.is_open_spline.numpy())
         return s.format(name=self.__class__.__name__, **self.__dict__)

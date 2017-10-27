@@ -14,7 +14,7 @@ const long* kernel_size, const long* is_open_spline) {
     const int e_idx = idx / ${k_max};
     int k_idx = idx % ${k_max};
 
-    int kernel_size_prod = ${kernel_size_prod};
+    int K = ${K};
     int k_idx_mod;
     int bot;
     int top;
@@ -25,7 +25,7 @@ const long* kernel_size, const long* is_open_spline) {
 
     for (int d_idx = 0; d_idx < ${dim}; d_idx++) {
 
-      kernel_size_prod /= kernel_size[d_idx];
+      K /= kernel_size[d_idx];
 
       k_idx_mod = k_idx % 2;
       k_idx >>= 1;
@@ -39,7 +39,7 @@ const long* kernel_size, const long* is_open_spline) {
       bot = int(floor(value));
       top = (bot + 1) % kernel_size[d_idx];
       bot %= kernel_size[d_idx];
-      i += (k_idx_mod * bot + (1 - k_idx_mod) * top) * kernel_size_prod;
+      i += (k_idx_mod * bot + (1 - k_idx_mod) * top) * K;
     }
 
     amount[idx] = a;
@@ -49,17 +49,16 @@ const long* kernel_size, const long* is_open_spline) {
 '''
 
 
-def spline_gpu(input, kernel_size, is_open_spline, degree):
+def spline_gpu(input, kernel_size, is_open_spline, K, degree):
     assert input.is_cuda and kernel_size.is_cuda and is_open_spline.is_cuda
     assert degree == 1
 
     input = input.unsqueeze(1) if len(input.size()) < 2 else input
     num_edges, dim = input.size()
-    kernel_size_prod = kernel_size.prod()
     k_max = (degree + 1)**dim
 
     amount = input.new(num_edges, k_max)
-    index = torch.cuda.LongTensor(num_edges, k_max)
+    index = input.new(num_edges, k_max).long()
     num_threads = amount.numel()
 
     with torch.cuda.device_of(input):
@@ -70,7 +69,7 @@ def spline_gpu(input, kernel_size, is_open_spline, degree):
             num_threads=num_threads,
             k_max=k_max,
             dim=dim,
-            kernel_size_prod=kernel_size_prod)
+            K=K)
         f(block=(cuda_num_threads, 1, 1),
           grid=(get_blocks(num_threads), 1, 1),
           args=[

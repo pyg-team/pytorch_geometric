@@ -21,7 +21,8 @@ class SplineGcnTest(TestCase):
 
         input, weight = Variable(input), Variable(weight)
 
-        output = spline_gcn(adj, input, weight, kernel_size, is_open_spline, 1)
+        output = spline_gcn(
+            adj, input, weight, kernel_size, is_open_spline, K=12, degree=1)
 
         expected_output = [
             [12.5 * 9 + 13 * 10 + 266],
@@ -51,7 +52,8 @@ class SplineGcnTest(TestCase):
         adj, input, weight = adj.cuda(), input.cuda(), weight.cuda()
         input, weight = Variable(input), Variable(weight)
 
-        output = spline_gcn(adj, input, weight, kernel_size, is_open_spline, 1)
+        output = spline_gcn(
+            adj, input, weight, kernel_size, is_open_spline, K=12, degree=1)
 
         expected_output = [
             [12.5 * 9 + 13 * 10 + 266],

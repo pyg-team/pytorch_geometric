@@ -15,14 +15,14 @@ from torch_geometric.graph.geometry import EuclideanAdj  # noqa: E402
 from torch_geometric.utils.dataloader import DataLoader  # noqa: E402
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa: E402
 
-path = '/media/jan/DataExt4/BenchmarkDataSets/Mesh/MPI-FAUST'
+path = '~/MPI-FAUST'
 train_dataset = FAUST(
     path, train=True, correspondence=True, transform=EuclideanAdj())
 test_dataset = FAUST(
     path, train=False, correspondence=True, transform=EuclideanAdj())
 
-train_loader = DataLoader(train_dataset, batch_size=5, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=5, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 
 # Reaches 85.39% accuracy after 99 epochs.
@@ -68,7 +68,7 @@ def train(epoch):
             input = Variable(input)
 
         if torch.cuda.is_available():
-             adj, target =  adj.cuda(), target.cuda()
+            adj, target = adj.cuda(), target.cuda()
 
         target = Variable(target)
         output = model(adj, input)

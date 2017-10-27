@@ -21,7 +21,7 @@ class SplineGPUTest(TestCase):
         a1, i1 = spline_cpu(input, kernel_size, is_open_spline, 1)
 
         a2, i2 = spline_gpu(input.cuda(),
-                            kernel_size.cuda(), is_open_spline.cuda(), 1)
+                            kernel_size.cuda(), is_open_spline.cuda(), 5, 1)
 
         assert_equal(a1.numpy(), a2.cpu().numpy())
         assert_equal(i1.numpy(), i2.cpu().numpy())
@@ -37,7 +37,7 @@ class SplineGPUTest(TestCase):
         a1, i1 = spline_cpu(input, kernel_size, is_open_spline, 1)
 
         a2, i2 = spline_gpu(input.cuda(),
-                            kernel_size.cuda(), is_open_spline.cuda(), 1)
+                            kernel_size.cuda(), is_open_spline.cuda(), 4, 1)
 
         assert_equal(a1.numpy(), a2.cpu().numpy())
         assert_equal(i1.numpy(), i2.cpu().numpy())
@@ -53,7 +53,7 @@ class SplineGPUTest(TestCase):
 
         a1, i1 = spline_cpu(input, kernel_size, is_open_spline, 1)
         a2, i2 = spline_gpu(input.cuda(),
-                            kernel_size.cuda(), is_open_spline.cuda(), 1)
+                            kernel_size.cuda(), is_open_spline.cuda(), 20, 1)
 
         assert_equal(a1.numpy(), a2.cpu().numpy())
         # assert_equal(i1.numpy(), i2.cpu().numpy())
@@ -69,7 +69,7 @@ class SplineGPUTest(TestCase):
         a1, i1 = spline_cpu(input, kernel_size, is_open_spline, 1)
 
         a2, i2 = spline_gpu(input.cuda(),
-                            kernel_size.cuda(), is_open_spline.cuda(), 1)
+                            kernel_size.cuda(), is_open_spline.cuda(), 80, 1)
 
         # assert_equal(a1.numpy(), a2.cpu().numpy())
         # assert_equal(i1.numpy(), i2.cpu().numpy())

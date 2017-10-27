@@ -12,6 +12,7 @@ def spline_gcn(
         weight,  # Variable
         kernel_size,
         is_open_spline,
+        K,
         degree=1,
         bias=None):
 
@@ -21,9 +22,8 @@ def spline_gcn(
     # Get features for every end vertex with shape [|E| x M_in].
     output = input[col]
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
-    amount, index = spline(values, kernel_size, is_open_spline, degree)
+    amount, index = spline(values, kernel_size, is_open_spline, K, degree)
     output = edgewise_spline_weighting(output, weight[:-1], amount, index)
-    print(output)
 
     # Convolution via `scatter_add`. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
