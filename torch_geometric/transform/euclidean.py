@@ -7,13 +7,13 @@ from ..sparse import SparseTensor
 
 class EuclideanAdj(object):
     def __call__(self, data):
-        vertices, edges = data
-        rows, cols = edges
+        position, edge = data
+        row, col = edge
 
-        values = (vertices[cols] - vertices[rows])
-        c = 1 / (2 * values.abs().max())
-        values = c * values.float() + 0.5
-        n, dim = vertices.size()
-        adj = SparseTensor(edges, values, torch.Size([n, n, dim]))
+        direction = (position[col] - position[row])
+        c = 1 / (2 * direction.abs().max())
+        direction = c * direction.float() + 0.5
+        n, dim = position.size()
+        adj = SparseTensor(edge, direction, torch.Size([n, n, dim]))
 
-        return vertices, adj
+        return position, adj

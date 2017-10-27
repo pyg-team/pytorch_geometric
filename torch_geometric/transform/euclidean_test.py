@@ -7,15 +7,15 @@ from .euclidean import EuclideanAdj
 
 class EuclideanTest(TestCase):
     def test_euclidean_adj(self):
-        vertices = torch.LongTensor([[1, 0], [0, 0], [-2, 4]])
-        edges = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        position = torch.LongTensor([[1, 0], [0, 0], [-2, 4]])
+        edge = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
         transform = EuclideanAdj()
 
-        vertices, adj = transform((vertices, edges))
+        position, adj = transform((position, edge))
         adj = adj.to_dense()
 
-        expected_vertices = [[1, 0], [0, 0], [-2, 4]]
+        expected_position = [[1, 0], [0, 0], [-2, 4]]
         expected_adj_x = [
             [0., 0.375, 0],
             [0.625, 0, 0.25],
@@ -27,6 +27,6 @@ class EuclideanTest(TestCase):
             [0, 0, 0],
         ]
 
-        assert_equal(vertices.numpy(), expected_vertices)
+        assert_equal(position.numpy(), expected_position)
         assert_equal(adj[:, :, 0].numpy(), expected_adj_x)
         assert_equal(adj[:, :, 1].numpy(), expected_adj_y)
