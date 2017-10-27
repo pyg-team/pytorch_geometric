@@ -11,32 +11,33 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import FAUST  # noqa: E402
-from torch_geometric.transform import EuclideanAdj  # noqa: E402
+from torch_geometric.transform import PolarAdj  # noqa: E402
 from torch_geometric.utils import DataLoader  # noqa: E402
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa: E402
 
 path = '~/MPI-FAUST'
 train_dataset = FAUST(
-    path, train=True, correspondence=True, transform=EuclideanAdj())
+    path, train=True, correspondence=True, transform=PolarAdj())
 test_dataset = FAUST(
-    path, train=False, correspondence=True, transform=EuclideanAdj())
+    path, train=False, correspondence=True, transform=PolarAdj())
 
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 
-# Reaches 85.39% accuracy after 99 epochs.
+# Reaches 85.39% accuracy (99 epochs, euclidean adj, [5, 5, 2], [1, 1, 1]).
+# Reaches 87.53% accuracy (99 epochs, polar adj, [3, 4, 3], [1, 0, 1]).
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=[5, 5, 2], is_open_spline=True)
+            1, 32, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
         self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[5, 5, 2], is_open_spline=True)
+            32, 64, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
         self.conv3 = SplineGCN(
-            64, 64, dim=3, kernel_size=[5, 5, 2], is_open_spline=True)
+            64, 64, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
         self.conv4 = SplineGCN(
-            64, 128, dim=3, kernel_size=[5, 5, 2], is_open_spline=True)
+            64, 128, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
