@@ -1,86 +1,85 @@
 import torch
-from torch.autograd import Function
 
-from ....utils.cuda import Dtype, Stream, load_kernel
+from ....utils.cuda import (cuda_num_threads, Stream, Dtype, load_kernel,
+                            kernel_loop, get_blocks)
 
-CUDA_NUM_THREADS = 1024
+_spline_kernel = kernel_loop + '''
+extern "C"
+__global__ void spline_kernel(
+const ${Dtype}* input, ${Dtype}* amount, long* index,
+const long* kernel_size, const long* is_open_spline) {
 
-kernel_loop = '''
-#define CUDA_KERNEL_LOOP(i, n)                        \
-  for (int i = blockIdx.x * blockDim.x + threadIdx.x; \
-      i < (n);                                        \
-      i += blockDim.x * gridDim.x)
+  CUDA_KERNEL_LOOP(idx, ${num_threads}) {
+
+    const int e_idx = idx / ${k_max};
+    int k_idx = idx % ${k_max};
+
+    int kernel_size_prod = ${kernel_size_prod};
+    int k_idx_mod;
+    int bot;
+    int top;
+    ${Dtype} value;
+    ${Dtype} frac;
+    ${Dtype} a = 1.0;
+    long i = 0;
+
+    for (int d_idx = 0; d_idx < ${dim}; d_idx++) {
+
+      kernel_size_prod /= kernel_size[d_idx];
+
+      k_idx_mod = k_idx % 2;
+      k_idx >>= 1;
+
+      value = input[e_idx * ${dim} + d_idx] *
+              (kernel_size[d_idx] - is_open_spline[d_idx]);
+
+      frac = value - floor(value);
+      a *= (1 - k_idx_mod) * frac + k_idx_mod * (1 - frac);
+
+      bot = int(floor(value));
+      // bot %= kernel_size
+      top = (bot + 1) % kernel_size[d_idx]; // - (1 - is_open_spline[d_idx]));
+      bot = bot; // % kernel_size[d_idx]; // -(1-is_open_spline[d_idx]));
+      i += (k_idx_mod * bot + (1 - k_idx_mod) * top) * kernel_size_prod;
+    }
+
+    amount[idx] = a;
+    index[idx] = i;
+  }
+}
 '''
 
 
-def GET_BLOCKS(N):
-    return (N + CUDA_NUM_THREADS - 1) // CUDA_NUM_THREADS
+def spline_gpu(input, kernel_size, is_open_spline, degree):
+    assert input.is_cuda and kernel_size.is_cuda and is_open_spline.is_cuda
+    assert degree == 1
 
+    num_edges, dim = input.size()
+    kernel_size_prod = kernel_size.prod()
+    k_max = (degree + 1)**dim
 
-class SplineWeightsGPU(Function):
-    def __init__(self, kernel_size, is_open_spline, degree):
-        super(SplineWeightsGPU, self).__init__()
-        self.kernel_size = kernel_size
-        self.is_open_spline = is_open_spline
-        self.degree = degree
-        self.k_prod = kernel_size.prod()
-        self._spline_weights_kernel = kernel_loop + '''
-        extern "C"
-        __global__ void spline_weights_kernel(
-        const ${Dtype}* values, ${Dtype}* amounts, int* indices, int* kernel_size, int* is_open_spline) {
-          CUDA_KERNEL_LOOP(idx, ${num_threads}) {
-            int k = idx % k_max;
-            int e_idx = idx / k_max;
-            float prod = 1.0;
-            int index;
-            int k_prod = ${k_prod};
-            for(int d_idx=0; d_idx <${d}; d_idx++)
-            {
-              k_prod = k_prod/kernel_size[d_idx];
-              int value = values[e_idx * ${d} + d_idx] * (kernel_size[d_idx]-is_open_spline[d_idx]);
-              int fraction = frac(value);
-              prod *= (1-k%2)*fraction + k%2*(1-fraction);
-              int bot = floor(value) % (kernel_size[d_idx]-(1-is_open_spline[d_idx]));
-              int top = (bot+1) % (kernel_size[d_idx]-(1-is_open_spline[d_idx]));
-              index += ((k%2)*bot + (1-k%2)*top)*k_prod;
-              k = k >> 1;
-            }
-            amount[idx] = prod;
-            indices[idx] = index;
-          }
-        }
-        '''
+    amount = input.new(num_edges, k_max)
+    index = torch.cuda.LongTensor(num_edges, k_max)
+    num_threads = amount.numel()
 
-    def forward(self, values):
-        assert values.is_cuda
+    with torch.cuda.device_of(input):
+        f = load_kernel(
+            'spline_kernel',
+            _spline_kernel,
+            Dtype=Dtype(input),
+            num_threads=num_threads,
+            k_max=k_max,
+            dim=dim,
+            kernel_size_prod=kernel_size_prod)
+        f(block=(cuda_num_threads, 1, 1),
+          grid=(get_blocks(num_threads), 1, 1),
+          args=[
+              input.data_ptr(),
+              amount.data_ptr(),
+              index.data_ptr(),
+              kernel_size.data_ptr(),
+              is_open_spline.data_ptr()
+          ],
+          stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
-        k_max = self.amount.size(1)
-        num_edges, d = values.size()
-
-        amounts = values.new(num_edges, (self.degree + 1)**d)
-        indices = torch.cuda.IntTensor([num_edges, (self.degree + 1)**d])
-        num_threads = amounts.numel()
-
-        with torch.cuda.device_of(input):
-            f = load_kernel(
-                'spline_weights_kernel',
-                self._spline_weights_kernel,
-                Dtype=Dtype(input),
-                num_threads=num_threads,
-                num_edges=num_edges,
-                k_max=k_max,
-                degree=self.degree + 1,
-                d=len(self.kernel_size.size()),
-                k_prod=self.k_prod)
-            f(block=(CUDA_NUM_THREADS, 1, 1),
-              grid=(GET_BLOCKS(num_threads), 1, 1),
-              args=[
-                  values.data_ptr(),
-                  amounts.data_ptr(),
-                  indices.data_ptr(),
-                  self.kernel_size.data_ptr(),
-                  self.is_open_spline.data_ptr()
-              ],
-              stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
-
-        return amounts, indices
+    return amount, index
