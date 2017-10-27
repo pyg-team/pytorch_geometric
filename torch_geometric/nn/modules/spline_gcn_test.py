@@ -24,8 +24,8 @@ class SplineGCNTest(TestCase):
         self.assertEqual(conv.weight.data.size(), (1 + 4 * 8 * 8, 1, 10))
         self.assertEqual(conv.bias.data.size(), (10, ))
         self.assertEqual(conv.__repr__(), 'SplineGCN(1, 10, '
-                         'kernel_size=[4, 8, 8], is_open_spline=[1, 1, 1], '
-                         'degree=2)')
+                         'kernel_size=[4, 8, 8], is_open_spline=[True, True, '
+                         'True], degree=2)')
 
         conv = SplineGCN(
             1, 10, dim=1, kernel_size=[4], is_open_spline=False, bias=False)
@@ -37,4 +37,4 @@ class SplineGCNTest(TestCase):
         self.assertEqual(conv.weight.data.size(), (1 + 4, 1, 10))
         self.assertIsNone(conv.bias)
         self.assertEqual(conv.__repr__(), 'SplineGCN(1, 10, kernel_size=[4], '
-                         'is_open_spline=[0], degree=1, bias=False)')
+                         'is_open_spline=[False], degree=1, bias=False)')

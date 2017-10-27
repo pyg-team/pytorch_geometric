@@ -1,4 +1,3 @@
-from functools import reduce
 import math
 
 import torch
