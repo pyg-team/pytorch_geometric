@@ -37,9 +37,8 @@ const long* kernel_size, const long* is_open_spline) {
       a *= (1 - k_idx_mod) * frac + k_idx_mod * (1 - frac);
 
       bot = int(floor(value));
-      // bot %= kernel_size
-      top = (bot + 1) % kernel_size[d_idx]; // - (1 - is_open_spline[d_idx]));
-      bot = bot; // % kernel_size[d_idx]; // -(1-is_open_spline[d_idx]));
+      top = (bot + 1) % kernel_size[d_idx];
+      bot %= kernel_size[d_idx];
       i += (k_idx_mod * bot + (1 - k_idx_mod) * top) * kernel_size_prod;
     }
 
@@ -54,6 +53,7 @@ def spline_gpu(input, kernel_size, is_open_spline, degree):
     assert input.is_cuda and kernel_size.is_cuda and is_open_spline.is_cuda
     assert degree == 1
 
+    input = input.unsqueeze(1) if len(input.size()) < 2 else input
     num_edges, dim = input.size()
     kernel_size_prod = kernel_size.prod()
     k_max = (degree + 1)**dim
