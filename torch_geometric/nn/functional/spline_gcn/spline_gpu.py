@@ -51,15 +51,14 @@ class SplineWeightsGPU(Function):
         }
         '''
 
-
     def forward(self, values):
         assert values.is_cuda
 
         k_max = self.amount.size(1)
         num_edges, d = values.size()
 
-        amounts = values.new(num_edges, (self.degree+1)**d)
-        indices = torch.cuda.IntTensor([num_edges, (self.degree+1)**d])
+        amounts = values.new(num_edges, (self.degree + 1)**d)
+        indices = torch.cuda.IntTensor([num_edges, (self.degree + 1)**d])
         num_threads = amounts.numel()
 
         with torch.cuda.device_of(input):
@@ -70,10 +69,9 @@ class SplineWeightsGPU(Function):
                 num_threads=num_threads,
                 num_edges=num_edges,
                 k_max=k_max,
-                degree=self.degree+1,
+                degree=self.degree + 1,
                 d=len(self.kernel_size.size()),
-                k_prod = self.k_prod
-            )
+                k_prod=self.k_prod)
             f(block=(CUDA_NUM_THREADS, 1, 1),
               grid=(GET_BLOCKS(num_threads), 1, 1),
               args=[

@@ -1,21 +1,8 @@
 import torch
 from torch.autograd import Function
 
-from ....utils.cuda import Dtype, Stream, load_kernel
-
-CUDA_NUM_THREADS = 1024
-
-kernel_loop = '''
-#define CUDA_KERNEL_LOOP(i, n)                        \
-  for (int i = blockIdx.x * blockDim.x + threadIdx.x; \
-      i < (n);                                        \
-      i += blockDim.x * gridDim.x)
-'''
-
-
-def GET_BLOCKS(N):
-    return (N + CUDA_NUM_THREADS - 1) // CUDA_NUM_THREADS
-
+from ....utils.cuda import (cuda_num_threads, Stream, Dtype, load_kernel,
+                            kernel_loop, get_blocks)
 
 _edgewise_spline_weighting_forward_kernel = kernel_loop + '''
 extern "C"
@@ -136,8 +123,8 @@ class EdgewiseSplineWeightingGPU(Function):
                 M_in=M_in,
                 M_out=M_out,
                 k_max=k_max)
-            f(block=(CUDA_NUM_THREADS, 1, 1),
-              grid=(GET_BLOCKS(num_threads), 1, 1),
+            f(block=(cuda_num_threads, 1, 1),
+              grid=(get_blocks(num_threads), 1, 1),
               args=[
                   input.data_ptr(),
                   weight.data_ptr(),
@@ -172,8 +159,8 @@ class EdgewiseSplineWeightingGPU(Function):
                 M_out=M_out,
                 k_max=k_max,
                 K=K)
-            f(block=(CUDA_NUM_THREADS, 1, 1),
-              grid=(GET_BLOCKS(num_threads), 1, 1),
+            f(block=(cuda_num_threads, 1, 1),
+              grid=(get_blocks(num_threads), 1, 1),
               args=[
                   grad_output.data_ptr(),
                   grad_input.data_ptr(),

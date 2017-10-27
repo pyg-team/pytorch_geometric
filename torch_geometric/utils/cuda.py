@@ -1,8 +1,11 @@
+from __future__ import division
+
 from collections import namedtuple
 from string import Template
 
 import torch
 
+cuda_num_threads = 1024
 Stream = namedtuple('Stream', ['ptr'])
 
 
@@ -11,6 +14,18 @@ def Dtype(t):
         return 'float'
     elif isinstance(t, torch.cuda.DoubleTensor):
         return 'double'
+
+
+kernel_loop = '''
+#define CUDA_KERNEL_LOOP(i, n)                        \
+  for (int i = blockIdx.x * blockDim.x + threadIdx.x; \
+      i < (n);                                        \
+      i += blockDim.x * gridDim.x)
+'''
+
+
+def get_blocks(n, k=cuda_num_threads):
+    return (n + k - 1) // k
 
 
 if torch.cuda.is_available():
