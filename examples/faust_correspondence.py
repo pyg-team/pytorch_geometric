@@ -11,8 +11,8 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import FAUST  # noqa: E402
-from torch_geometric.graph.geometry import EuclideanAdj  # noqa: E402
-from torch_geometric.utils.dataloader import DataLoader  # noqa: E402
+from torch_geometric.transform import EuclideanAdj  # noqa: E402
+from torch_geometric.utils import DataLoader  # noqa: E402
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa: E402
 
 path = '~/MPI-FAUST'
