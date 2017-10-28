@@ -9,6 +9,8 @@ from .utils.dir import make_dirs
 from .utils.download import download_url
 from .utils.extract import extract_tar
 
+from ..sparse.sum import sum
+
 
 class PubMed(object):
     url = "https://linqs-data.soe.ucsc.edu/public/Pubmed-Diabetes.tgz"
@@ -29,7 +31,8 @@ class PubMed(object):
 
         # Load processed data.
         data = torch.load(self.data_file)
-        self.input, index, self.target = data
+        self.input, (r, c), self.target = data
+        index = torch.stack([torch.cat([r, c]), torch.cat([c, r])], dim=0)
 
         # Create unweighted sparse adjacency matrix.
         weight = torch.FloatTensor(index.size(1)).fill_(1)
