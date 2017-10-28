@@ -13,7 +13,6 @@ class Cora(object):
     url = "https://linqs-data.soe.ucsc.edu/public/lbc/cora.tgz"
 
     def __init__(self, root, transform=None, target_transform=None):
-
         super(Cora, self).__init__()
 
         self.root = os.path.expanduser(root)
@@ -58,10 +57,12 @@ class Cora(object):
         return os.path.exists(self.data_file)
 
     def _read(self):
+        raw_folder = os.path.join(self.raw_folder, 'cora')
+
         key = []
 
-        file_path = os.path.join(self.raw_folder, 'cora', 'cora.content')
-        with open(file_path, 'r') as f:
+        path = os.path.join(raw_folder, 'cora.content')
+        with open(path, 'r') as f:
             clx = []
             target = []
             input = []
@@ -77,8 +78,8 @@ class Cora(object):
             input = torch.ByteTensor(input)
             target = torch.LongTensor(target)
 
-        file_path = os.path.join(self.raw_folder, 'cora', 'cora.cites')
-        with open(file_path, 'r') as f:
+        path = os.path.join(raw_folder, 'cora.cites')
+        with open(path, 'r') as f:
             index = []
             for line in f:
                 s = line[:-1].split('\t')
