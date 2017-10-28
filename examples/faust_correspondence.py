@@ -65,7 +65,8 @@ def train(epoch):
     for batch_idx, ((_, (adj, _)), target) in enumerate(train_loader):
         if batch_idx == 0:
             input = torch.ones(adj.size(0)).view(-1, 1)
-            input = input.cuda()
+            if torch.cuda.is_available():
+                input = input.cuda()
             input = Variable(input)
 
         if torch.cuda.is_available():
