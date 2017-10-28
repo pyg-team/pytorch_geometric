@@ -1,8 +1,12 @@
+from __future__ import print_function
+
 import os
 
 import torch
 
 from .utils.dir import make_dirs
+from .utils.download import download_url
+from .utils.extract import extract_tar
 
 
 class Cora(object):
@@ -13,15 +17,21 @@ class Cora(object):
         super(Cora, self).__init__()
 
         self.root = os.path.expanduser(root)
+        self.raw_folder = os.path.join(self.root, 'raw')
         self.processed_folder = os.path.join(self.root, 'processed')
         self.data_file = os.path.join(self.processed_folder, 'data.pt')
 
         self.transform = transform
         self.target_transform = target_transform
 
+        self.download()
         self.process()
 
-        self.input, index, self.target = torch.load(self.data_file)
+        # Load processed data.
+        data = torch.load(self.data_file)
+        self.input, index, self.target = data
+
+        # Create unweighted sparse adjacency matrix.
         weight = torch.FloatTensor(index.size(1)).fill_(1)
         n = self.input.size(0)
         self.adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
@@ -50,7 +60,8 @@ class Cora(object):
     def _read(self):
         key = []
 
-        with open(os.path.join(self.root, 'cora.content'), 'r') as f:
+        file_path = os.path.join(self.raw_folder, 'cora', 'cora.content')
+        with open(file_path, 'r') as f:
             clx = []
             target = []
             input = []
@@ -66,7 +77,8 @@ class Cora(object):
             input = torch.ByteTensor(input)
             target = torch.LongTensor(target)
 
-        with open(os.path.join(self.root, 'cora.cites'), 'r') as f:
+        file_path = os.path.join(self.raw_folder, 'cora', 'cora.cites')
+        with open(file_path, 'r') as f:
             index = []
             for line in f:
                 s = line[:-1].split('\t')
@@ -78,18 +90,23 @@ class Cora(object):
 
         return input, index, target
 
-    def process(self):
-        if not self._check_exists():
-            # TODO: Download dataset.
-            raise RuntimeError()
+    def download(self):
+        if self._check_exists():
+            return
 
+        print('Downloading {}'.format(self.url))
+
+        file_path = download_url(self.url, self.raw_folder)
+        extract_tar(file_path, self.raw_folder)
+        os.unlink(file_path)
+
+    def process(self):
         if self._check_processed():
             return
 
         print('Processing...')
 
         make_dirs(os.path.join(self.processed_folder))
-
         data = self._read()
         torch.save(data, self.data_file)
 
