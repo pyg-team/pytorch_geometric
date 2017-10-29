@@ -76,7 +76,7 @@ class Cora(object):
                     clx.append(label)
                 target.append(clx.index(label))
 
-            input = torch.ByteTensor(input)
+            input = torch.FloatTensor(input)
             target = torch.LongTensor(target)
 
         path = os.path.join(raw_folder, 'cora.cites')
