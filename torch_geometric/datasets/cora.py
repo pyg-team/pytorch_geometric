@@ -8,8 +8,6 @@ from .utils.dir import make_dirs
 from .utils.download import download_url
 from .utils.extract import extract_tar
 
-from ..sparse.sum import sum
-
 
 class Cora(object):
     url = "https://linqs-data.soe.ucsc.edu/public/lbc/cora.tgz"
