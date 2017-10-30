@@ -10,10 +10,11 @@ from torch.autograd import Variable
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import FAUST  # noqa: E402
-from torch_geometric.transform import PolarAdj  # noqa: E402
-from torch_geometric.utils import DataLoader  # noqa: E402
-from torch_geometric.nn.modules import SplineGCN, Lin  # noqa: E402
+from torch_geometric.datasets import FAUST  # noqa
+from torch_geometric.transform import PolarAdj  # noqa
+from torch_geometric.utils import DataLoader  # noqa
+from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
+from torch_geometric.validation import max_geodesic_error_accuracy  # noqa
 
 path = '~/MPI-FAUST'
 train_dataset = FAUST(
@@ -25,8 +26,8 @@ train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 
-# Reaches 85.39% accuracy (99 epochs, euclidean adj, [5, 5, 2], [1, 1, 1]).
-# Reaches 87.53% accuracy (99 epochs, polar adj, [3, 4, 3], [1, 0, 1]).
+# 85.39% after 99 epochs, euclidean adj, [5, 5, 2], [1, 1, 1], 4x conv
+# 87.53% after 99 epochs, polar adj, [3, 4, 3], [1, 0, 1], 4x conv
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -35,8 +36,6 @@ class Net(nn.Module):
         self.conv2 = SplineGCN(
             32, 64, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
         self.conv3 = SplineGCN(
-            64, 64, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
-        self.conv4 = SplineGCN(
             64, 128, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
@@ -45,7 +44,6 @@ class Net(nn.Module):
         x = F.relu(self.conv1(adj, x))
         x = F.relu(self.conv2(adj, x))
         x = F.relu(self.conv3(adj, x))
-        x = F.relu(self.conv4(adj, x))
         x = F.relu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
@@ -62,47 +60,56 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
+    # Learning rate decay after 80 epochs.
+    if epoch == 80:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
+
     for batch_idx, ((_, (adj, _)), target) in enumerate(train_loader):
-        if batch_idx == 0:
-            input = torch.ones(adj.size(0)).view(-1, 1)
-            if torch.cuda.is_available():
-                input = input.cuda()
-            input = Variable(input)
+        input = torch.ones(adj.size(0), 1)
 
         if torch.cuda.is_available():
-            adj, target = adj.cuda(), target.cuda()
+            adj, input, target = adj.cuda(), input.cuda(), target.cuda()
 
-        target = Variable(target)
-        output = model(adj, input)
+        input, target = Variable(input), Variable(target)
 
         optimizer.zero_grad()
+        output = model(adj, input)
         loss = F.nll_loss(output, target.view(-1), size_average=True)
         loss.backward()
         optimizer.step()
-        loss = loss.data.cpu()[0]
 
-        pred = output.data.max(1, keepdim=True)[1]
-        correct = pred.eq(target.data.view_as(pred)).cpu().sum()
-        print('Epoch: ', epoch, 'Batch: ', batch_idx, 'Loss: ', loss,
-              'Correct:', correct)
+        print('Epoch: ', epoch, 'Batch: ', batch_idx, 'Loss: ', loss.data[0])
 
 
 def test():
     model.eval()
-    correct = 0
 
-    for (_, (adj, _)), target in test_loader:
-        input = torch.ones(adj.size(0)).view(-1, 1)
+    acc_0 = acc_1 = acc_2 = acc_4 = acc_8 = 0
+
+    for (p, (adj, _)), target in test_loader:
+        input = torch.ones(adj.size(0), 1)
+        p, target = p.squeeze(), target.squeeze()
 
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()
+            p = p.cuda()
 
         output = model(adj, Variable(input))
 
-        pred = output.data.max(1, keepdim=True)[1]
-        correct += pred.eq(target.view_as(pred)).cpu().sum()
+        pred = output.data.max(1)[1]
 
-    print('Accuracy:', correct / (20 * 6890))
+        acc_0 = max_geodesic_error_accuracy(p, pred, target, error=0.0)
+        acc_1 += max_geodesic_error_accuracy(p, pred, target, error=0.01)
+        acc_2 += max_geodesic_error_accuracy(p, pred, target, error=0.02)
+        acc_4 += max_geodesic_error_accuracy(p, pred, target, error=0.04)
+        acc_8 += max_geodesic_error_accuracy(p, pred, target, error=0.08)
+
+    print('Accuracy 0:', acc_0 / (20 * 6890))
+    print('Accuracy 1:', acc_1 / (20 * 6890))
+    print('Accuracy 2:', acc_2 / (20 * 6890))
+    print('Accuracy 4:', acc_4 / (20 * 6890))
+    print('Accuracy 8:', acc_8 / (20 * 6890))
 
 
 for epoch in range(1, 100):
