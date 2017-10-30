@@ -37,6 +37,14 @@ class PubMed(object):
         n = self.input.size(0)
         self.adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
 
+        # Mask unused values.
+        if train:
+            self.mask = torch.arange(0, 20 * (self.target.max() + 1)).long()
+        else:
+            self.mask = torch.arange(n - 1000, n).long()
+
+        self.target = self.target[self.mask]
+
     def __getitem__(self, index):
         data = (self.input, self.adj)
         target = self.target

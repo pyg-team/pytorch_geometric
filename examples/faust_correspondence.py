@@ -71,13 +71,13 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-    # Learning rate decay after 100 epochs.
+    # Learning rate decay after 200 epochs.
     if epoch == 200:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.00001
 
-    for batch_idx, ((_, (adj, _)), target) in enumerate(train_loader):
-        input = torch.ones(adj.size(0), 1)
+    for batch, ((_, (adj, _)), target) in enumerate(train_loader):
+        input, target = torch.ones(adj.size(0), 1), target.view(-1)
 
         if torch.cuda.is_available():
             adj, input, target = adj.cuda(), input.cuda(), target.cuda()
@@ -86,11 +86,11 @@ def train(epoch):
 
         optimizer.zero_grad()
         output = model(adj, input)
-        loss = F.nll_loss(output, target.view(-1), size_average=True)
+        loss = F.nll_loss(output, target, size_average=True)
         loss.backward()
         optimizer.step()
 
-        print('Epoch: ', epoch, 'Batch: ', batch_idx, 'Loss: ', loss.data[0])
+        print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
 
 
 def test():

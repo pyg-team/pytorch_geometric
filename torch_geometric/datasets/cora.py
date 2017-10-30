@@ -37,15 +37,13 @@ class Cora(object):
         n = self.input.size(0)
         self.adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
 
+        # Mask unused values.
         if train:
-            index_range = torch.arange(0, 20 * (self.target.max() + 1)).long()
+            self.mask = torch.arange(0, 20 * (self.target.max() + 1)).long()
         else:
-            index_range = torch.arange(n - 1000, n).long()
+            self.mask = torch.arange(n - 1000, n).long()
 
-        self.mask = self.target.new(n).fill_(0)
-        self.mask[index_range] = 1
-        self.input *= self.mask.unsqueeze(1).float()
-        self.target *= self.mask
+        self.target = self.target[self.mask]
 
     def __getitem__(self, index):
         data = (self.input, self.adj)
@@ -57,7 +55,7 @@ class Cora(object):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        return (data, target)
+        return (data, target, self.mask)
 
     def __len__(self):
         return 1
