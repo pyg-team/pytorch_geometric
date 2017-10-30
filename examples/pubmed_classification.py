@@ -26,8 +26,8 @@ test_loader = DataLoader(test_dataset, batch_size=1)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(500, 32, dim=2, kernel_size=[2, 2])
-        self.conv2 = SplineGCN(32, 7, dim=2, kernel_size=[2, 2])
+        self.conv1 = SplineGCN(500, 16, dim=2, kernel_size=[2, 2])
+        self.conv2 = SplineGCN(16, 7, dim=2, kernel_size=[2, 2])
 
     def forward(self, adj, x):
         x = F.relu(self.conv1(adj, x))
@@ -40,7 +40,7 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=0.0005)
 
 
 def train(epoch):
@@ -86,6 +86,6 @@ def test():
         print('Accuracy:', acc / output.size(0))
 
 
-for epoch in range(1, 100):
+for epoch in range(1, 200):
     train(epoch)
     test()
