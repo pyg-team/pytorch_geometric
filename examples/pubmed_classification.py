@@ -10,14 +10,14 @@ from torch.autograd import Variable
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import Cora  # noqa
+from torch_geometric.datasets import PubMed  # noqa
 from torch_geometric.transform import DegreeAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
-path = '~/Cora'
-train_dataset = Cora(path, train=True, transform=DegreeAdj())
-test_dataset = Cora(path, train=False, transform=DegreeAdj())
+path = '~/PubMed'
+train_dataset = PubMed(path, train=True, transform=DegreeAdj())
+test_dataset = PubMed(path, train=False, transform=DegreeAdj())
 
 train_loader = DataLoader(train_dataset, batch_size=1)
 test_loader = DataLoader(test_dataset, batch_size=1)
@@ -26,7 +26,7 @@ test_loader = DataLoader(test_dataset, batch_size=1)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1433, 32, dim=2, kernel_size=[2, 2])
+        self.conv1 = SplineGCN(500, 32, dim=2, kernel_size=[2, 2])
         self.conv2 = SplineGCN(32, 7, dim=2, kernel_size=[2, 2])
 
     def forward(self, adj, x):

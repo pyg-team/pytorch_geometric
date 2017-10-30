@@ -55,7 +55,7 @@ class PubMed(object):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        return (data, target)
+        return (data, target, self.mask)
 
     def __len__(self):
         return 1
