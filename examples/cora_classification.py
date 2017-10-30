@@ -40,7 +40,7 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
 
 
 def train(epoch):
@@ -48,6 +48,13 @@ def train(epoch):
 
     for batch, ((input, (adj, _)), target, mask) in enumerate(train_loader):
         input, target, mask = input.squeeze(), target.squeeze(), mask.squeeze()
+
+        # Row-normalize input matrix
+        row, col = adj._indices()
+        value = input.new(row.size(0)).fill_(1)
+        degree = input.new(adj.size(0)).fill_(0)
+        degree = degree.scatter_add_(0, row, value)
+        input /= degree.unsqueeze(1)
 
         if torch.cuda.is_available():
             input, adj = input.cuda(), adj.cuda()
@@ -86,6 +93,6 @@ def test():
         print('Accuracy:', acc / output.size(0))
 
 
-for epoch in range(1, 200):
+for epoch in range(1, 400):
     train(epoch)
     test()
