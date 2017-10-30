@@ -6,13 +6,16 @@ import torch
 
 from .utils.dir import make_dirs
 from .utils.download import download_url
-from .utils.extract import extract_tar
+from .utils.extract import extract_zip
+from .utils.planetoid import read_planetoid
 
 
 class Cora(object):
-    url = "https://linqs-data.soe.ucsc.edu/public/lbc/cora.tgz"
+    url = "https://github.com/kimiyoung/planetoid/archive/master.zip"
 
-    def __init__(self, root, transform=None, target_transform=None):
+    def __init__(self, root, train=True, transform=None,
+                 target_transform=None):
+
         super(Cora, self).__init__()
 
         self.root = os.path.expanduser(root)
@@ -27,14 +30,22 @@ class Cora(object):
         self.process()
 
         # Load processed data.
-        data = torch.load(self.data_file)
-        self.input, (r, c), self.target = data
-        index = torch.stack([torch.cat([r, c]), torch.cat([c, r])], dim=0)
+        self.input, index, self.target = torch.load(self.data_file)
 
         # Create unweighted sparse adjacency matrix.
-        weight = torch.FloatTensor(index.size(1)).fill_(1)
+        weight = torch.ones(index.size(1))
         n = self.input.size(0)
         self.adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+
+        if train:
+            index_range = torch.arange(0, 20 * (self.target.max() + 1)).long()
+        else:
+            index_range = torch.arange(n - 1000, n).long()
+
+        self.mask = self.target.new(n).fill_(0)
+        self.mask[index_range] = 1
+        self.input *= self.mask.unsqueeze(1).float()
+        self.target *= self.mask
 
     def __getitem__(self, index):
         data = (self.input, self.adj)
@@ -57,41 +68,6 @@ class Cora(object):
     def _check_processed(self):
         return os.path.exists(self.data_file)
 
-    def _read(self):
-        raw_folder = os.path.join(self.raw_folder, 'cora')
-
-        key = []
-
-        path = os.path.join(raw_folder, 'cora.content')
-        with open(path, 'r') as f:
-            clx = []
-            target = []
-            input = []
-            for line in f:
-                s = line[:-1].split('\t')
-                key.append(s[0])
-                input.append([int(i) for i in s[1:-1]])
-                label = s[-1]
-                if label not in clx:
-                    clx.append(label)
-                target.append(clx.index(label))
-
-            input = torch.FloatTensor(input)
-            target = torch.LongTensor(target)
-
-        path = os.path.join(raw_folder, 'cora.cites')
-        with open(path, 'r') as f:
-            index = []
-            for line in f:
-                s = line[:-1].split('\t')
-                x = key.index(s[0])
-                y = key.index(s[1])
-                index.append([x, y])
-
-            index = torch.LongTensor(index).t()
-
-        return input, index, target
-
     def download(self):
         if self._check_exists():
             return
@@ -99,7 +75,7 @@ class Cora(object):
         print('Downloading {}'.format(self.url))
 
         file_path = download_url(self.url, self.raw_folder)
-        extract_tar(file_path, self.raw_folder)
+        extract_zip(file_path, self.raw_folder)
         os.unlink(file_path)
 
     def process(self):
@@ -109,7 +85,8 @@ class Cora(object):
         print('Processing...')
 
         make_dirs(os.path.join(self.processed_folder))
-        data = self._read()
+        dir = os.path.join(self.raw_folder, 'planetoid-master', 'data')
+        data = read_planetoid(dir, 'cora')
         torch.save(data, self.data_file)
 
         print('Done!')
