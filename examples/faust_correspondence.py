@@ -99,7 +99,7 @@ def test():
 
         pred = output.data.max(1)[1]
 
-        acc_0 = max_geodesic_error_accuracy(p, pred, target, error=0.0)
+        acc_0 += max_geodesic_error_accuracy(p, pred, target, error=0.0)
         acc_1 += max_geodesic_error_accuracy(p, pred, target, error=0.01)
         acc_2 += max_geodesic_error_accuracy(p, pred, target, error=0.02)
         acc_4 += max_geodesic_error_accuracy(p, pred, target, error=0.04)

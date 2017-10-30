@@ -3,6 +3,6 @@ def geodesic_error(position, pred, target):
     return (direction * direction).sum(1).float().sqrt()
 
 
-def max_geodesic_error_accuracy(position, pred, target, error=0.0):
+def max_geodesic_error_accuracy(position, pred, target, error=None):
     err = geodesic_error(position, pred, target)
-    return (err <= error).cpu().sum()
+    return (err <= error).sum()
