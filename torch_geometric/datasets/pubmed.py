@@ -68,17 +68,16 @@ class PubMed(object):
         path = os.path.join(raw_folder, 'Pubmed-Diabetes.NODE.paper.tab')
         with open(path, 'r') as f:
             feature_name = next(islice(f, 1, 2))[:-1].split('\t')[1:-1]
-            feature_name = list(map(lambda x: x[8:-4], feature_name))
+            feature_name = [f[8:-4] for f in feature_name]
 
             for line in f:
                 s = line[:-1].split('\t')
                 key.append(s[0])
                 target.append(int(s[1][-1:]))
                 feature = s[2:-1]
-                index = list(map(lambda x: x.split('=')[0], feature))
-                index = list(map(lambda x: feature_name.index(x), index))
+                index = [feature_name.index(f.split('=')[0]) for f in feature]
                 index = torch.LongTensor(index)
-                value = list(map(lambda x: float(x.split('=')[1]), feature))
+                value = [float(f.split('=')[1]) for f in feature]
                 value = torch.FloatTensor(value)
                 feature = torch.zeros(500)
                 feature[index] = value
