@@ -28,6 +28,7 @@ test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 # 85.39% after 99 epochs, euclidean adj, [5, 5, 2], [1, 1, 1], 4x conv
 # 87.53% after 99 epochs, polar adj, [3, 4, 3], [1, 0, 1], 4x conv
+# 89.26% after 99 epochs, polar adj, [3, 4, 3], [1, 0, 1], 3x conv + lr decay
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -60,10 +61,20 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    # Learning rate decay after 80 epochs.
-    if epoch == 80:
+    # Learning rate decay after 60 epochs.
+    if epoch == 60:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
+
+    # Learning rate decay after 100 epochs.
+    if epoch == 100:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0001
+
+    # Learning rate decay after 100 epochs.
+    if epoch == 200:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.00001
 
     for batch_idx, ((_, (adj, _)), target) in enumerate(train_loader):
         input = torch.ones(adj.size(0), 1)
@@ -89,7 +100,7 @@ def test():
 
     for (p, (adj, _)), target in test_loader:
         input = torch.ones(adj.size(0), 1)
-        p, target = p.squeeze(), target.squeeze()
+        p, target = p.view(-1, 3), target.view(-1)
 
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()
@@ -112,6 +123,6 @@ def test():
     print('Accuracy 8:', acc_8 / (20 * 6890))
 
 
-for epoch in range(1, 100):
+for epoch in range(1, 300):
     train(epoch)
     test()
