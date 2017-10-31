@@ -6,12 +6,11 @@ import torch
 
 from .utils.dir import make_dirs
 from .utils.download import download_url
-from .utils.extract import extract_zip
 from .utils.planetoid import read_planetoid
 
 
 class Cora(object):
-    url = "https://github.com/kimiyoung/planetoid/archive/master.zip"
+    url = "https://github.com/kimiyoung/planetoid/raw/master/data"
 
     def __init__(self, root, transform=None, target_transform=None):
 
@@ -63,9 +62,10 @@ class Cora(object):
 
         print('Downloading {}'.format(self.url))
 
-        file_path = download_url(self.url, self.raw_folder)
-        extract_zip(file_path, self.raw_folder)
-        os.unlink(file_path)
+        ext = ['x', 'y', 'tx', 'ty', 'allx', 'ally', 'graph', 'test.index']
+        for e in ext:
+            url = '{}/ind.{}.{}'.format(self.url, 'cora', e)
+            download_url(url, self.raw_folder)
 
     def process(self):
         if self._check_processed():
@@ -74,7 +74,7 @@ class Cora(object):
         print('Processing...')
 
         make_dirs(os.path.join(self.processed_folder))
-        dir = os.path.join(self.raw_folder, 'planetoid-master', 'data')
+        dir = os.path.join(self.raw_folder)
         data = read_planetoid(dir, 'cora')
         torch.save(data, self.data_file)
 
