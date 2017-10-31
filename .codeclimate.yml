@@ -1,0 +1,20 @@
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - python:
+  radon:
+    enabled: true
+  fixme:
+    enabled: true
+  pep8:
+    enabled: true
+  markdownlint:
+    enabled: true
+  shellcheck:
+    enabled: true
+ratings:
+  paths:
+    - "**.py"
+    - "**.md"
