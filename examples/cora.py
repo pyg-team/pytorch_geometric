@@ -12,15 +12,20 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cora  # noqa
 from torch_geometric.transform import DegreeAdj  # noqa
-from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
 path = '~/Cora'
-train_dataset = Cora(path, train=True, transform=DegreeAdj())
-test_dataset = Cora(path, train=False, transform=DegreeAdj())
+dataset = Cora(path, transform=DegreeAdj())
+n = dataset.adj.size(0)
+train_mask = torch.arange(0, 20 * (dataset.target.max() + 1)).long()
+test_mask = torch.arange(n - 1000, n).long()
 
-train_loader = DataLoader(train_dataset, batch_size=1)
-test_loader = DataLoader(test_dataset, batch_size=1)
+if torch.cuda.is_available():
+    input, adj = dataset.input.cuda(), dataset.adj.cuda()
+    target = dataset.target.cuda()
+    train_mask, test_mask = train_mask.cuda(), test_mask.cuad()
+
+input, target = Variable(input), Variable(target)
 
 
 class Net(nn.Module):
@@ -46,51 +51,25 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
 def train(epoch):
     model.train()
 
-    for batch, ((input, (adj, _)), target, mask) in enumerate(train_loader):
-        input, target, mask = input.squeeze(), target.squeeze(), mask.squeeze()
+    optimizer.zero_grad()
+    output = model(adj, input)
+    output = output[train_mask]
+    loss = F.nll_loss(output, target, size_average=True)
+    loss.backward()
+    optimizer.step()
 
-        # Row-normalize input matrix
-        row, col = adj._indices()
-        value = input.new(row.size(0)).fill_(1)
-        degree = input.new(adj.size(0)).fill_(0)
-        degree = degree.scatter_add_(0, row, value)
-        input /= degree.unsqueeze(1)
-
-        if torch.cuda.is_available():
-            input, adj = input.cuda(), adj.cuda()
-            target, mask = target.cuda(), mask.cuda()
-
-        input, target = Variable(input), Variable(target)
-
-        optimizer.zero_grad()
-        output = model(adj, input)
-        output = output[mask]
-        loss = F.nll_loss(output, target, size_average=True)
-        loss.backward()
-        optimizer.step()
-
-        print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
+    print('Epoch:', epoch, 'Loss:', loss.data[0])
 
 
 def test():
     model.eval()
 
-    for (input, (adj, _)), target, mask in test_loader:
-        input, target, mask = input.squeeze(), target.squeeze(), mask.squeeze()
+    output = model(adj, input)
+    output = output[test_mask]
+    pred = output.data.max(1)[1]
+    acc = pred.eq(target.data).sum()
 
-        if torch.cuda.is_available():
-            input, adj = input.cuda(), adj.cuda()
-            target, mask = target.cuda(), mask.cuda()
-
-        input, target = Variable(input), Variable(target)
-
-        output = model(adj, input)
-        output = output[mask]
-
-        pred = output.data.max(1)[1]
-        acc = pred.eq(target.data).sum()
-
-        print('Accuracy:', acc / output.size(0))
+    print('Accuracy:', acc / output.size(0))
 
 
 for epoch in range(1, 400):
