@@ -16,8 +16,7 @@ from torch_geometric.nn.modules import SplineGCN  # noqa
 
 dataset = Cora('~/Cora', transform=DegreeAdj())
 input, adj, target = dataset.input, dataset.adj, dataset.target
-train_mask = torch.arange(0, 20 * (target.max() + 1)).long()
-test_mask = torch.arange(adj.size(0) - 1000, adj.size(0)).long()
+train_mask, test_mask = dataset.train_mask, dataset.test_mask
 
 if torch.cuda.is_available():
     input, adj = dataset.input.cuda(), dataset.adj.cuda()

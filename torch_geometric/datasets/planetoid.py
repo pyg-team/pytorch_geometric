@@ -29,12 +29,17 @@ class Planetoid(Dataset):
         self.process()
 
         # Load processed data.
-        self.input, index, self.target = torch.load(self.data_file)
+        data = torch.load(self.data_file)
+        self.input, index, self.target, self.test_mask = data
 
         # Create unweighted sparse adjacency matrix.
         weight = torch.ones(index.size(1))
         n = self.input.size(0)
         self.adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+
+        self.train_mask = torch.arange(0, 20 * (self.target.max() + 1)).long()
+        len_y = self.train_mask.size(0)
+        self.val_mask = torch.arange(len_y, len_y + 500).long()
 
     def __getitem__(self, index):
         data = (self.input, self.adj)
@@ -63,7 +68,7 @@ class Planetoid(Dataset):
 
         print('Downloading {}'.format(self.url))
 
-        ext = ['x', 'y', 'tx', 'ty', 'allx', 'ally', 'graph', 'test.index']
+        ext = ['tx', 'ty', 'allx', 'ally', 'graph', 'test.index']
         for e in ext:
             url = '{}/ind.{}.{}'.format(self.url, self.name, e)
             download_url(url, self.raw_folder)
