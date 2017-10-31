@@ -37,6 +37,7 @@ class Planetoid(Dataset):
         n = self.input.size(0)
         self.adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
 
+        # Generate train and validation mask.
         self.train_mask = torch.arange(0, 20 * (self.target.max() + 1)).long()
         len_y = self.train_mask.size(0)
         self.val_mask = torch.arange(len_y, len_y + 500).long()
@@ -51,7 +52,7 @@ class Planetoid(Dataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        return (data, target, self.mask)
+        return (data, target)
 
     def __len__(self):
         return 1
