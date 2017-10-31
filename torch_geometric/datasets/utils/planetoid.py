@@ -5,10 +5,9 @@ import torch
 
 
 def read_planetoid(dir, name):
-    ind = ['x', 'y', 'tx', 'ty', 'allx', 'ally', 'graph']
     objects = []
-    for i in ind:
-        file_name = os.path.join(dir, 'ind.{}.{}'.format(name, i))
+    for e in ['x', 'y', 'tx', 'ty', 'allx', 'ally', 'graph']:
+        file_name = os.path.join(dir, 'ind.{}.{}'.format(name, e))
         with open(file_name, 'rb') as f:
             objects.append(pickle.load(f, encoding='latin1'))
 
