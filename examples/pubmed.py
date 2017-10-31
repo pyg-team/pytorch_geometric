@@ -14,8 +14,7 @@ from torch_geometric.datasets import PubMed  # noqa
 from torch_geometric.transform import DegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
-path = '~/PubMed'
-dataset = PubMed(path, transform=DegreeAdj())
+dataset = PubMed('~/PubMed', transform=DegreeAdj())
 n = dataset.adj.size(0)
 train_mask = torch.arange(0, 20 * (dataset.target.max() + 1)).long()
 test_mask = torch.arange(n - 1000, n).long()
