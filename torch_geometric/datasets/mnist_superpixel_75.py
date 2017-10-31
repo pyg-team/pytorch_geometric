@@ -1,6 +1,5 @@
 import os
 
-import torch
 from torch.utils.data import Dataset
 
 from .utils.dir import make_dirs
@@ -51,8 +50,5 @@ class MNISTSuperpixel75(Dataset):
         print('Processing...')
 
         make_dirs(os.path.join(self.processed_folder))
-        dir = os.path.join(self.raw_folder, 'MoNet_code', 'MNIST', 'datasets')
-        read_mnist_monet(dir)
-        # torch.save(data, self.data_file)
 
         print('Done!')

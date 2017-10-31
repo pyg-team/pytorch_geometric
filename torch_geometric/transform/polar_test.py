@@ -32,7 +32,7 @@ class PolarTest(TestCase):
         assert_equal(adj.size(), [3, 3, 2])
         assert_equal(position.numpy(), expected_position)
         assert_almost_equal(adj[:, :, 0].numpy(), expected_adj_rho)
-        assert_equal(adj[:, :, 1].numpy(), expected_adj_theta)
+        assert_almost_equal(adj[:, :, 1].numpy(), expected_adj_theta)
 
     def test_polar_adj_3d(self):
         position = torch.LongTensor([[1, 0, 0], [1, 0, 1], [-1, 2, 1]])
@@ -63,5 +63,5 @@ class PolarTest(TestCase):
         assert_equal(adj.size(), [3, 3, 3])
         assert_equal(position.numpy(), expected_position)
         assert_almost_equal(adj[:, :, 0].numpy(), expected_adj_rho)
-        assert_equal(adj[:, :, 1].numpy(), expected_adj_theta)
-        assert_equal(adj[:, :, 2].numpy(), expected_adj_phi)
+        assert_almost_equal(adj[:, :, 1].numpy(), expected_adj_theta)
+        assert_almost_equal(adj[:, :, 2].numpy(), expected_adj_phi)
