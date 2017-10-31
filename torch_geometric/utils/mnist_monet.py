@@ -107,15 +107,24 @@ data = torch.load(os.path.join(path, 'data.pt'))
 input, target, rho, theta = data
 target = target.byte()
 
-positions = []
+position = torch.load(os.path.join(path, 'positions.pt'))
+
+indices = []
 for i in range(70000):
-    adj = polar2euclidean(rho[i], theta[i])
-    adj = sparse_to_dict(adj)
-    pos = dict_to_pos(adj)
-    minimum, _ = pos.min(dim=0)
-    pos = pos - minimum
-    positions.append(pos)
+    nz = rho[i].nonzero().t().byte()
+    indices.append(nz)
 
-positions = torch.stack(positions, dim=0)
+torch.save((input, position, indices, target), os.path.join(path, 'mnist.pt'))
 
-torch.save(positions, os.path.join(path, 'positions.pt'))
+# positions = []
+# for i in range(70000):
+#     adj = polar2euclidean(rho[i], theta[i])
+#     adj = sparse_to_dict(adj)
+#     pos = dict_to_pos(adj)
+#     minimum, _ = pos.min(dim=0)
+#     pos = pos - minimum
+#     positions.append(pos)
+
+# positions = torch.stack(positions, dim=0)
+
+# torch.save(positions, os.path.join(path, 'positions.pt'))
