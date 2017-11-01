@@ -76,7 +76,7 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.00001
 
-    for batch, ((_, (adj, _)), target) in enumerate(train_loader):
+    for batch, ((_, (adj, _), _), target) in enumerate(train_loader):
         input, target = torch.ones(adj.size(0), 1), target.view(-1)
 
         if torch.cuda.is_available():
@@ -98,9 +98,9 @@ def test():
 
     acc_0 = acc_1 = acc_2 = acc_4 = acc_8 = 0
 
-    for (p, (adj, _)), target in test_loader:
+    for (_, (adj, _), position), target in test_loader:
         input = torch.ones(adj.size(0), 1)
-        p, target = p.view(-1, 3), target.view(-1)
+        p, target = position.view(-1, 3), target.view(-1)
 
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()

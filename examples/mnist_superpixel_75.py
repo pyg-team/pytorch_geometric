@@ -14,8 +14,8 @@ test_dataset = MNISTSuperpixel75(path, train=False)
 
 print(len(train_dataset))
 
-for i in range(70000):
-    (input, position, adj), target = train_dataset[i]
+for i in range(60000):
+    (input, adj, position), target = train_dataset[i]
     print(input.size())
     print(position.size())
     print(adj.size())
