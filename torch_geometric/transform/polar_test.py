@@ -10,11 +10,13 @@ from .polar import PolarAdj
 class PolarTest(TestCase):
     def test_polar_adj_2d(self):
         position = torch.LongTensor([[1, 0], [0, 0], [-2, 2]])
-        edge = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        index = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        weight = torch.FloatTensor([1, 1, 1, 1])
+        adj = torch.sparse.FloatTensor(index, weight, torch.Size([3, 3]))
 
         transform = PolarAdj()
 
-        position, adj = transform((position, edge))
+        _, adj, position = transform((None, adj, position))
         adj = adj.to_dense()
 
         expected_position = [[1, 0], [0, 0], [-2, 2]]
@@ -36,11 +38,13 @@ class PolarTest(TestCase):
 
     def test_polar_adj_3d(self):
         position = torch.LongTensor([[1, 0, 0], [1, 0, 1], [-1, 2, 1]])
-        edge = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        index = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        weight = torch.FloatTensor([1, 1, 1, 1])
+        adj = torch.sparse.FloatTensor(index, weight, torch.Size([3, 3]))
 
         transform = PolarAdj()
 
-        position, adj = transform((position, edge))
+        _, adj, position = transform((None, adj, position))
         adj = adj.to_dense()
 
         expected_position = [[1, 0, 0], [1, 0, 1], [-1, 2, 1]]

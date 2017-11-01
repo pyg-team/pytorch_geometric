@@ -11,13 +11,13 @@ from .degree import DegreeAdj
 
 class DegreeTest(TestCase):
     def test_degree_adj(self):
+        index = torch.LongTensor([[0, 0, 1, 2], [1, 2, 0, 1]])
         weight = torch.FloatTensor([2, 3, 4, 6])
-        edge = torch.LongTensor([[0, 0, 1, 2], [1, 2, 0, 1]])
-        adj = torch.sparse.FloatTensor(edge, weight, torch.Size([3, 3]))
+        adj = torch.sparse.FloatTensor(index, weight, torch.Size([3, 3]))
 
         transform = DegreeAdj()
 
-        _, adj = transform((None, adj))
+        _, adj, _ = transform((None, adj, None))
         adj = adj.to_dense()
 
         expected_adj_out = [

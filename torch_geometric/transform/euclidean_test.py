@@ -8,11 +8,13 @@ from .euclidean import EuclideanAdj
 class EuclideanTest(TestCase):
     def test_euclidean_adj(self):
         position = torch.LongTensor([[1, 0], [0, 0], [-2, 4]])
-        edge = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        index = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        weight = torch.FloatTensor([1, 1, 1, 1])
+        adj = torch.sparse.FloatTensor(index, weight, torch.Size([3, 3]))
 
         transform = EuclideanAdj()
 
-        position, adj = transform((position, edge))
+        _, adj, position = transform((None, adj, position))
         adj = adj.to_dense()
 
         expected_position = [[1, 0], [0, 0], [-2, 4]]
