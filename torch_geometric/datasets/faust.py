@@ -6,6 +6,8 @@ from torch.utils.data import Dataset
 from ..graph.geometry import edges_from_faces
 from .utils.dir import make_dirs
 from .utils.ply import read_ply
+from .utils.download import download_url
+from .utils.extract import extract_tar
 
 
 class FAUST(Dataset):
@@ -15,6 +17,8 @@ class FAUST(Dataset):
             ``processed/training.pt`` and  ``processed/test.pt`` exist.
         train (bool, optional): If True, creates dataset from ``training.pt``,
             otherwise from ``test.pt``. (default: `True`)
+        shot (bool, optionall): If True, loads 544-dimensional SHOT-descriptors
+            to each node. (default: `False`)
         correspondence (bool, optional): Whether to return shape correspondence
             label are pose classification label. (default: `False`)
         transform (callable, optional): A function/transform that  takes in an
@@ -25,12 +29,14 @@ class FAUST(Dataset):
     """
 
     url = 'http://faust.is.tue.mpg.de/'
+    url_shot = 'http://www.roemisch-drei.de/faust_shot.tar.gz'
     n_training = 80
     n_test = 20
 
     def __init__(self,
                  root,
                  train=True,
+                 shot=False,
                  correspondence=False,
                  transform=None,
                  target_transform=None):
@@ -38,6 +44,7 @@ class FAUST(Dataset):
         super(FAUST, self).__init__()
 
         self.root = os.path.expanduser(root)
+        self.shot_folder = os.path.join(self.root, 'shot')
         self.processed_folder = os.path.join(self.root, 'processed')
         self.training_file = os.path.join(self.processed_folder, 'training.pt')
         self.test_file = os.path.join(self.processed_folder, 'test.pt')
@@ -47,16 +54,27 @@ class FAUST(Dataset):
         self.transform = transform
         self.target_transform = target_transform
 
+        self.download()
         self.process()
 
         data_file = self.training_file if train else self.test_file
         self.position, self.index = torch.load(data_file)
 
+        if shot is True:
+            data_file = os.path.join(
+                self.shot_folder,
+                'training_shot.pt') if train else os.path.join(
+                    self.shot_folder, 'test_shot.pt')
+            self.shot = torch.load(data_file)
+
     def __getitem__(self, i):
         position = self.position[i]
         index = self.index[:, i]
         weight = torch.FloatTensor(index.size(1)).fill_(1)
-        input = torch.FloatTensor(position.size(0)).fill_(1)
+        if self.shot is None:
+            input = torch.FloatTensor(position.size(0)).fill_(1)
+        else:
+            input = self.shot[i]
         adj = torch.sparse.FloatTensor(index, weight, torch.Size([6890, 6890]))
         data = (input, adj, position)
 
@@ -100,11 +118,17 @@ class FAUST(Dataset):
 
         torch.save((vertices, edges), path)
 
-    def process(self):
+    def download(self):
         if not self._check_exists():
             raise RuntimeError('Dataset not found. Please download it from ' +
                                '{}'.format(self.url))
 
+        if not os.path.exists(self.shot_folder):
+            file_path = download_url(self.url, self.shot_folder)
+            extract_tar(file_path, self.shot_folder)
+            os.unlink(file_path)
+
+    def process(self):
         if self._check_processed():
             return
 
