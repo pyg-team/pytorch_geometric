@@ -15,7 +15,8 @@ from torch_geometric.transform import DegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
 dataset = PubMed('~/PubMed', transform=DegreeAdj())
-input, adj, target = dataset.input, dataset.adj, dataset.target
+data, target = dataset[0]
+input, adj, _ = data
 train_mask, test_mask = dataset.train_mask, dataset.test_mask
 
 if torch.cuda.is_available():

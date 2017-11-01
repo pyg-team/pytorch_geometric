@@ -7,9 +7,10 @@ from ..sparse import SparseTensor
 
 class PolarAdj(object):
     def __call__(self, data):
-        position, edge = data
+        input, adj, position = data
+        index = adj._indices()
         n, dim = position.size()
-        row, col = edge
+        row, col = index
 
         direction = (position[col] - position[row]).float()
 
@@ -25,6 +26,6 @@ class PolarAdj(object):
         else:
             polar = torch.stack([rho, theta], dim=1)
 
-        adj = SparseTensor(edge, polar, torch.Size([n, n, dim]))
+        adj = SparseTensor(index, polar, torch.Size([n, n, dim]))
 
-        return position, adj
+        return input, adj, position

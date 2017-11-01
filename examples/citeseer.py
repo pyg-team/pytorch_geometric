@@ -15,7 +15,8 @@ from torch_geometric.transform import DegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
 dataset = CiteSeer('~/CiteSeer', transform=DegreeAdj())
-input, adj, target = dataset.input, dataset.adj, dataset.target
+data, target = dataset[0]
+input, adj, _ = data
 train_mask, test_mask = dataset.train_mask, dataset.test_mask
 
 if torch.cuda.is_available():
@@ -29,7 +30,7 @@ input, target = Variable(input), Variable(target)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1433, 16, dim=2, kernel_size=[2, 2])
+        self.conv1 = SplineGCN(3703, 16, dim=2, kernel_size=[2, 2])
         self.conv2 = SplineGCN(16, 7, dim=2, kernel_size=[2, 2])
 
     def forward(self, adj, x):

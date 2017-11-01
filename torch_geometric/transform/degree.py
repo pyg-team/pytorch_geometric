@@ -7,7 +7,7 @@ from ..sparse import SparseTensor
 
 class DegreeAdj(object):
     def __call__(self, data):
-        input, adj = data
+        input, adj, position = data
         index = adj._indices()
         row, col = index
         weight = adj._values().float()
@@ -25,4 +25,4 @@ class DegreeAdj(object):
         n = adj.size(0)
         adj = SparseTensor(index, value, torch.Size([n, n, 2]))
 
-        return input, adj
+        return input, adj, position
