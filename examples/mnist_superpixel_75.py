@@ -9,14 +9,17 @@ from torch_geometric.datasets import MNISTSuperpixel75  # noqa
 from torch_geometric.transform import PolarAdj  # noqa
 
 path = '~/MNISTSuperpixel75'
-train_dataset = MNISTSuperpixel75(path, train=True)
-test_dataset = MNISTSuperpixel75(path, train=False)
+train_dataset = MNISTSuperpixel75(path, train=True, transform=PolarAdj())
+test_dataset = MNISTSuperpixel75(path, train=False, transform=PolarAdj())
 
 print(len(train_dataset))
+print(len(test_dataset))
 
-for i in range(60000):
-    (input, adj, position), target = train_dataset[i]
-    print(input.size())
-    print(position.size())
-    print(adj.size())
-    print(target)
+(input, adj, position), target = train_dataset[0]
+print(input.size())
+print(adj.size())
+print(position.size())
+(input, adj, position), target = test_dataset[0]
+print(input.size())
+print(adj.size())
+print(position.size())

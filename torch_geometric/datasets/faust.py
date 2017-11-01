@@ -57,7 +57,7 @@ class FAUST(Dataset):
         index = self.index[:, i]
         weight = torch.FloatTensor(index.size(1)).fill_(1)
         input = torch.FloatTensor(position.size(0)).fill_(1)
-        adj = torch.sparse.FloatTensor(index, weight, torch.Size([75, 75]))
+        adj = torch.sparse.FloatTensor(index, weight, torch.Size([6890, 6890]))
         data = (input, adj, position)
 
         if self.correspondence:
