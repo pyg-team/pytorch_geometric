@@ -48,13 +48,14 @@ def read_planetoid(dir, name):
 
     ally = torch.IntTensor(ally).long()
     target = torch.cat([ally, ty], dim=0)
-    _, target = target.max(dim=1)
+    target = target.max(dim=1)[1]
     target[test_index] = target[test_index_sorted]
 
     row = []
     col = []
     for key, value in graph.items():
         row.extend([key for _ in range(len(value))])
+
         col.extend(value)
 
     row, col = torch.LongTensor(row), torch.LongTensor(col)

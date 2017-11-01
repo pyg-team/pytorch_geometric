@@ -2,14 +2,13 @@ import os
 
 from torch.utils.data import Dataset
 
-from .utils.dir import make_dirs
 from .utils.download import download_url
 from .utils.extract import extract_tar
 
 
 class MNISTSuperpixel75(Dataset):
 
-    url = "http://geometricdeeplearning.com/code/MoNet/MoNet_code.tar.gz"
+    url = "http://www.roemisch-drei.de/mnist.tar.gz"
 
     def __init__(self, root, train=True, transform=None,
                  target_transform=None):
@@ -17,21 +16,15 @@ class MNISTSuperpixel75(Dataset):
         super(MNISTSuperpixel75, self).__init__()
 
         self.root = os.path.expanduser(root)
-        self.raw_folder = os.path.join(self.root, 'raw')
-        self.processed_folder = os.path.join(self.root, 'processed')
-        self.data_file = os.path.join(self.processed_folder, 'data.pt')
+        self.data_file = os.path.join(self.root, 'mnist.pt')
 
         self.transform = transform
         self.target_transform = target_transform
 
         self.download()
-        self.process()
 
     def _check_exists(self):
         return os.path.exists(self.root)
-
-    def _check_processed(self):
-        return os.path.exists(self.data_file)
 
     def download(self):
         if self._check_exists():
@@ -39,16 +32,6 @@ class MNISTSuperpixel75(Dataset):
 
         print('Downloading {}'.format(self.url))
 
-        file_path = download_url(self.url, self.raw_folder)
-        extract_tar(file_path, self.raw_folder)
+        file_path = download_url(self.url, self.root)
+        extract_tar(file_path, self.root)
         os.unlink(file_path)
-
-    def process(self):
-        if self._check_processed():
-            return
-
-        print('Processing...')
-
-        make_dirs(os.path.join(self.processed_folder))
-
-        print('Done!')
