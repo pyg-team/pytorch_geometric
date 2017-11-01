@@ -23,7 +23,7 @@ def read_planetoid(dir, name):
 
     with open(os.path.join(dir, 'ind.{}.test.index'.format(name)), 'r') as f:
         test_index = torch.LongTensor([int(line.strip()) for line in f])
-    test_index_sorted, _ = test_index.sort()
+    test_index_sorted = test_index.sort()[0]
 
     tx = torch.FloatTensor(tx.todense())
     ty = torch.IntTensor(ty).long()
