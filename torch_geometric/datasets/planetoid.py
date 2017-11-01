@@ -43,7 +43,7 @@ class Planetoid(Dataset):
         self.val_mask = torch.arange(len_y, len_y + 500).long()
 
     def __getitem__(self, index):
-        data = (self.input, self.adj)
+        data = (self.input, self.adj, None)
         target = self.target
 
         if self.transform is not None:

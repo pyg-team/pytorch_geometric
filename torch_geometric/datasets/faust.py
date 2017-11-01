@@ -50,25 +50,18 @@ class FAUST(Dataset):
         self.process()
 
         data_file = self.training_file if train else self.test_file
-        self.vertices, self.edges = torch.load(data_file)
+        self.position, self.index = torch.load(data_file)
 
-    def __getitem__(self, index):
-        """
-        Args:
-            index (int): Index
-        Returns:
-            tuple: ((vertices, edges), target) where target is index of the
-            target class.
-        """
-
-        vertices = self.vertices[index]
-        edges = self.edges[index]
-        data = (vertices, edges)
-
-        # TODO: return adj with ones as edge weights?
+    def __getitem__(self, i):
+        position = self.position[i]
+        index = self.index[:, i]
+        weight = torch.FloatTensor(index.size(1)).fill_(1)
+        input = torch.FloatTensor(position.size(0)).fill_(1)
+        adj = torch.sparse.FloatTensor(index, weight, torch.Size([75, 75]))
+        data = (input, adj, position)
 
         if self.correspondence:
-            target = torch.arange(0, vertices.size(0)).long()
+            target = torch.arange(0, input.size(0)).long()
         else:
             target = index % 10  # Every subject is representated by 10 poses.
 

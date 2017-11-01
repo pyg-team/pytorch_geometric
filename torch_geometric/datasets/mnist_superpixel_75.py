@@ -37,7 +37,7 @@ class MNISTSuperpixel75(Dataset):
         index = self.index[:, self.slice[i]:self.slice[i + 1]].long()
         weight = input.new(index.size(1)).fill_(1)
         adj = torch.sparse.FloatTensor(index, weight, torch.Size([75, 75]))
-        data = (input, position, adj)
+        data = (input, adj, position)
         target = self.target[i]
 
         if self.transform is not None:
