@@ -103,18 +103,16 @@ def dict_to_pos(a):
 path = os.path.expanduser('~/Downloads/MoNet_code/MNIST')
 # data = read_mnist_monet(os.path.join(path, 'datasets'))
 # torch.save(data, os.path.join(path, 'data.pt'))
-data = torch.load(os.path.join(path, 'data.pt'))
-input, target, rho, theta = data
-target = target.byte()
+# data = torch.load(os.path.join(path, 'data.pt'))
+# input, target, rho, theta = data
+# target = target.byte()
 
-position = torch.load(os.path.join(path, 'positions.pt'))
+# position = torch.load(os.path.join(path, 'positions.pt'))
 
-indices = []
-for i in range(70000):
-    nz = rho[i].nonzero().t().byte()
-    indices.append(nz)
-
-torch.save((input, position, indices, target), os.path.join(path, 'mnist.pt'))
+# indices = []
+# for i in range(70000):
+#     nz = rho[i].nonzero().t().byte()
+#     indices.append(nz)
 
 # positions = []
 # for i in range(70000):
@@ -128,3 +126,18 @@ torch.save((input, position, indices, target), os.path.join(path, 'mnist.pt'))
 # positions = torch.stack(positions, dim=0)
 
 # torch.save(positions, os.path.join(path, 'positions.pt'))
+
+# data = torch.load(os.path.join(path, 'mnist.pt'))
+# input, position, index, target = data
+
+# cur_slice = 0
+# slice = [0]
+# for i in index:
+#     cur_slice += i.size(1)
+#     slice.append(cur_slice)
+# slice = torch.LongTensor(slice)
+
+# index = torch.cat(index, dim=1)
+
+# torch.save((input, position, index, slice, target),
+#            os.path.join(path, 'mnist_superpixel_75.pt'))
