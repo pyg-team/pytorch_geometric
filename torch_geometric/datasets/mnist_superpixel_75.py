@@ -28,6 +28,25 @@ class MNISTSuperpixel75(Dataset):
         self.download()
 
         input, position, index, slice, target = torch.load(self.data_file)
+        self.input, self.position = input, position
+        self.index, self.slice, self.target = index, slice, target
+
+    def __getitem__(self, i):
+        input = self.input[i]
+        position = self.position[i]
+        index = self.index[:, self.slice[i]:self.slice[i + 1]].long()
+        weight = input.new(index.size(1)).fill_(1)
+        adj = torch.sparse.FloatTensor(index, weight, torch.Size([75, 75]))
+        data = (input, position, adj)
+        target = self.target[i]
+
+        if self.transform is not None:
+            data = self.transform(data)
+
+        if self.target_transform is not None:
+            target = self.target_transform(target)
+
+        return data, target
 
     def __len__(self):
         return self.n_training if self.train else self.n_test
