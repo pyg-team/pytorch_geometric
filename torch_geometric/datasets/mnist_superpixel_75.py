@@ -10,8 +10,6 @@ from .utils.extract import extract_tar
 class MNISTSuperpixel75(Dataset):
 
     url = "http://www.roemisch-drei.de/mnist_superpixel_75.tar.gz"
-    n_training = 60000
-    n_test = 10000
 
     def __init__(self, root, train=True, transform=None,
                  target_transform=None):
@@ -19,7 +17,8 @@ class MNISTSuperpixel75(Dataset):
         super(MNISTSuperpixel75, self).__init__()
 
         self.root = os.path.expanduser(root)
-        self.data_file = os.path.join(self.root, 'data.pt')
+        self.training_file = os.path.join(self.root, 'training.pt')
+        self.test_file = os.path.join(self.root, 'test.pt')
 
         self.train = train
         self.transform = transform
@@ -27,9 +26,10 @@ class MNISTSuperpixel75(Dataset):
 
         self.download()
 
-        input, position, index, slice, target = torch.load(self.data_file)
-        self.input, self.position = input, position
-        self.index, self.slice, self.target = index, slice, target
+        data_file = self.training_file if train else self.test_file
+        input, index, slice, position, target = torch.load(data_file)
+        self.input, self.index, self.slice = input, index, slice
+        self.position, self.target = position, target
 
     def __getitem__(self, i):
         input = self.input[i]
@@ -49,7 +49,7 @@ class MNISTSuperpixel75(Dataset):
         return data, target
 
     def __len__(self):
-        return self.n_training if self.train else self.n_test
+        return self.input.size(0)
 
     def _check_exists(self):
         return os.path.exists(self.root)

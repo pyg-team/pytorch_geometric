@@ -127,17 +127,22 @@ path = os.path.expanduser('~/Downloads/MoNet_code/MNIST')
 
 # torch.save(positions, os.path.join(path, 'positions.pt'))
 
-# data = torch.load(os.path.join(path, 'mnist.pt'))
-# input, position, index, target = data
+# data = torch.load(os.path.join(path, 'data.pt'))
+# input, position, index, slice, target = data
 
-# cur_slice = 0
-# slice = [0]
-# for i in index:
-#     cur_slice += i.size(1)
-#     slice.append(cur_slice)
-# slice = torch.LongTensor(slice)
+# train_input = input[:60000].contiguous()
+# train_position = position[:60000].contiguous()
+# train_target = target[:60000].contiguous()
+# test_input = input[60000:].contiguous()
+# test_position = position[60000:].contiguous()
+# test_target = target[60000:].contiguous()
+# train_slice = slice[:60001].contiguous()
+# test_slice = slice[60000:].contiguous()
+# test_slice = test_slice - test_slice[0]
+# train_index = index[:, :(train_slice[-1])].contiguous()
+# test_index = index[:, train_slice[-1]:].contiguous()
 
-# index = torch.cat(index, dim=1)
-
-# torch.save((input, position, index, slice, target),
-#            os.path.join(path, 'mnist_superpixel_75.pt'))
+# torch.save((train_input, train_index, train_slice, train_position,
+#             train_target), os.path.join(path, 'training.pt'))
+# torch.save((test_input, test_index, test_slice, test_position, test_target),
+#            os.path.join(path, 'test.pt'))
