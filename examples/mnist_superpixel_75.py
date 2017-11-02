@@ -8,6 +8,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import MNISTSuperpixel75  # noqa
 from torch_geometric.transform import Graclus, PolarAdj  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 
 path = '~/MNISTSuperpixel75'
 train_dataset = MNISTSuperpixel75(
@@ -15,10 +16,12 @@ train_dataset = MNISTSuperpixel75(
 test_dataset = MNISTSuperpixel75(
     path, train=False, transform=Compose([Graclus(2), PolarAdj()]))
 
-data, target = train_dataset[0]
-print(len(data))
-input, adj, position = data
-print(input.size())
-print(len(adj))
-print(len(position))
-print(adj[0].size())
+train_loader = DataLoader(train_dataset, batch_size=100, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=128, shuffle=True)
+
+for batch, ((input, adj, position), target) in enumerate(test_loader):
+    print(batch)
+    # print(len(target))
+    # print(input.size())
+    # print('aa', adj[0][1].size())
+    # print(adj[0][1])
