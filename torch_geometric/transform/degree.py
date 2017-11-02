@@ -2,12 +2,12 @@ from __future__ import division
 
 import torch
 
+from .base import BaseAdj
 from ..sparse import SparseTensor
 
 
-class DegreeAdj(object):
-    def __call__(self, data):
-        input, adj, position = data
+class DegreeAdj(BaseAdj):
+    def _call(self, adj, position):
         index = adj._indices()
         row, col = index
         weight = adj._values().float()
@@ -25,4 +25,4 @@ class DegreeAdj(object):
         n = adj.size(0)
         adj = SparseTensor(index, value, torch.Size([n, n, 2]))
 
-        return input, adj, position
+        return adj, position

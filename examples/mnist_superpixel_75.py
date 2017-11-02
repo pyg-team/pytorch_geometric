@@ -1,33 +1,24 @@
 from __future__ import division, print_function
 
-from torchvision.datasets import MNIST
-
 import sys
+from torchvision.transforms import Compose
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import MNISTSuperpixel75  # noqa
-from torch_geometric.transform import PolarAdj  # noqa
+from torch_geometric.transform import Graclus, PolarAdj  # noqa
 
 path = '~/MNISTSuperpixel75'
-train_dataset = MNISTSuperpixel75(path, train=True, transform=PolarAdj())
-test_dataset = MNISTSuperpixel75(path, train=False, transform=PolarAdj())
+train_dataset = MNISTSuperpixel75(
+    path, train=True, transform=Compose([Graclus(2), PolarAdj()]))
+test_dataset = MNISTSuperpixel75(
+    path, train=False, transform=Compose([Graclus(2), PolarAdj()]))
 
-print(len(train_dataset))
-print(len(test_dataset))
-
-(input, adj, position), target = train_dataset[0]
+data, target = train_dataset[0]
+print(len(data))
+input, adj, position = data
 print(input.size())
-print(adj.size())
-print(position.size())
-(input, adj, position), target = test_dataset[0]
-print(input.size())
-print(adj.size())
-print(position.size())
-
-dataset = MNIST('/Users/rusty1s/Downloads/MNIST', train=True, download=True)
-
-data, target = dataset[0]
-print(target)
-print(data.type())
+print(len(adj))
+print(len(position))
+print(adj[0].size())

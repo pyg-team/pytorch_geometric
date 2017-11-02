@@ -2,12 +2,12 @@ from math import pi as PI
 
 import torch
 
+from .base import BaseAdj
 from ..sparse import SparseTensor
 
 
-class PolarAdj(object):
-    def __call__(self, data):
-        input, adj, position = data
+class PolarAdj(BaseAdj):
+    def _call(self, adj, position):
         index = adj._indices()
         n, dim = position.size()
         row, col = index
@@ -28,4 +28,4 @@ class PolarAdj(object):
 
         adj = SparseTensor(index, polar, torch.Size([n, n, dim]))
 
-        return input, adj, position
+        return adj, position

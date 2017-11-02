@@ -2,12 +2,12 @@ from __future__ import division
 
 import torch
 
+from .base import BaseAdj
 from ..sparse import SparseTensor
 
 
-class EuclideanAdj(object):
-    def __call__(self, data):
-        input, adj, position = data
+class EuclideanAdj(BaseAdj):
+    def _call(self, adj, position):
         index = adj._indices()
         row, col = index
 
@@ -17,4 +17,4 @@ class EuclideanAdj(object):
         n, dim = position.size()
         adj = SparseTensor(index, direction, torch.Size([n, n, dim]))
 
-        return input, adj, position
+        return adj, position
