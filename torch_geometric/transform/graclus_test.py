@@ -18,10 +18,11 @@ class GraclusTest(TestCase):
 
         transform = Graclus()
         rid = torch.LongTensor([0, 1, 2, 3, 4])
+        rid = torch.LongTensor([4, 3, 2, 1, 0])
 
         input, adj, position = transform((input, adj, position), rid)
 
-        #         print(input)
-        #         print(position)
-        #         print(adj[0].to_dense())
-        print(adj[1].to_dense())
+        # print(input)
+        # print(position)
+        # print(adj[0].to_dense())
+        # print(adj[1].to_dense())

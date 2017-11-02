@@ -15,7 +15,7 @@ class Graclus(object):
         clusters = []
         for _ in range(self.level):
             # TODO: if position is not None, compute adj_dist
-            cluster, cluster_full = normalized_cut(adj, rid)
+            cluster, cluster_full, singleton = normalized_cut(adj, rid)
             rid = None
             print(cluster)
             clusters.append(cluster_full)
@@ -25,7 +25,7 @@ class Graclus(object):
             adjs.append(adj)
 
             # Compute new positions.
-            position = cluster_position(position, cluster)
+            position = cluster_position(position, cluster_full, singleton)
             positions.append(position)
 
         # Permute inputs, adjacencies and positions.
@@ -72,11 +72,11 @@ def normalized_cut(adj, rid=None):
         col = col[mask]
         count += 1
 
-    # Set singleton values and append.
+    # Append singleton values to the end.
     singleton = cluster == -1
     index = torch.arange(count, singleton.sum() + count).long()
     cluster[singleton] = index
-    return cluster, torch.cat([cluster, index], dim=0)
+    return cluster, torch.cat([cluster, index], dim=0), singleton
 
 
 def cluster_adj(adj, cluster):
@@ -89,13 +89,19 @@ def cluster_adj(adj, cluster):
     return adj.coalesce()
 
 
-def cluster_position(position, cluster):
+def cluster_position(pos, cluster, singleton):
+    dim = pos.size(1)
+    singleton = singleton.repeat(dim).view(dim, -1).t()
+    pos = torch.cat([pos, pos[singleton].view(-1, dim)], dim=0)
     n = cluster.max() + 1
-    x = position.new(n).fill_(0)
-    y = position.new(n).fill_(0)
-    x = x.scatter_add_(0, cluster, position[:, 0]) / 2
-    y = y.scatter_add_(0, cluster, position[:, 1]) / 2
-    return torch.stack([x, y], dim=0)
+    pos = torch.stack(
+        [
+            pos.new(n).fill_(0).scatter_add_(0, cluster, pos[:, i]) / 2
+            for i in range(dim)
+        ],
+        dim=1)
+
+    return pos
 
 
 def compute_perms(clusters):
