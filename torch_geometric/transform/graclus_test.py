@@ -21,7 +21,7 @@ class GraclusTest(TestCase):
 
         input, adj, position = transform((input, adj, position), rid)
 
-        print(input)
-        print(position)
-        print(adj[0].to_dense())
+        #         print(input)
+        #         print(position)
+        #         print(adj[0].to_dense())
         print(adj[1].to_dense())

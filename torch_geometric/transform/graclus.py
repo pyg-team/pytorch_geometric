@@ -127,8 +127,12 @@ def perm_adj(adj, perm):
     perm, _ = perm.sort()
     row = perm[row]
     col = perm[col]
+    weight = adj._values()
+    weight[row == col] = 0
     index = torch.stack([row, col], dim=0)
-    return torch.sparse.FloatTensor(index, adj._values(), torch.Size([n, n]))
+
+    adj = torch.sparse.FloatTensor(index, adj._values(), torch.Size([n, n]))
+    return adj.coalesce()
 
 
 def perm_input(input, perm):
