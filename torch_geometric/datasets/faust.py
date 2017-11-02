@@ -29,7 +29,7 @@ class FAUST(Dataset):
     """
 
     url = 'http://faust.is.tue.mpg.de/'
-    url_shot = 'http://www.roemisch-drei.de/faust_shot.tar.gz'
+    shot_url = 'http://www.roemisch-drei.de/faust_shot.tar.gz'
     n_training = 80
     n_test = 20
 
@@ -69,7 +69,7 @@ class FAUST(Dataset):
 
     def __getitem__(self, i):
         position = self.position[i]
-        index = self.index[:, i]
+        index = self.index[i]
         weight = torch.FloatTensor(index.size(1)).fill_(1)
         if self.shot is None:
             input = torch.FloatTensor(position.size(0)).fill_(1)
@@ -124,7 +124,9 @@ class FAUST(Dataset):
                                '{}'.format(self.url))
 
         if not os.path.exists(self.shot_folder):
-            file_path = download_url(self.url, self.shot_folder)
+            print('Downloading {}'.format(self.shot_url))
+
+            file_path = download_url(self.shot_url, self.shot_folder)
             extract_tar(file_path, self.shot_folder)
             os.unlink(file_path)
 
