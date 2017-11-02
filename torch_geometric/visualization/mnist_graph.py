@@ -33,9 +33,7 @@ y_max = position[:, 0].max()
 shape = image.shape
 
 for i in range(75):
-    y, x = position[i]
-    y = y_max - y
-    x = x_max - x
+    x, y = position[i]
     y, x = scale * y, scale * x
     y, x = scale * offset_y + y, scale * offset_x + x
     rr, cc = draw.circle(y, x, 8, shape=shape)
@@ -44,13 +42,8 @@ for i in range(75):
 index = adj._indices().t()
 for i in range(index.size(0)):
     start, end = index[i]
-    start_y, start_x = position[start]
-    end_y, end_x = position[end]
-
-    start_y = y_max - start_y
-    end_y = y_max - end_y
-    start_x = x_max - start_x
-    end_x = x_max - end_x
+    start_x, start_y = position[start]
+    end_x, end_y = position[end]
 
     start_y, start_x = scale * start_y, scale * start_x
     end_y, end_x = scale * end_y, scale * end_x

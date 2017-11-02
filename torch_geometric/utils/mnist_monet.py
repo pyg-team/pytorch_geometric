@@ -146,3 +146,19 @@ path = os.path.expanduser('~/Downloads/MoNet_code/MNIST')
 #             train_target), os.path.join(path, 'training.pt'))
 # torch.save((test_input, test_index, test_slice, test_position, test_target),
 #            os.path.join(path, 'test.pt'))
+# path = os.path.expanduser('~/MNISTSuperpixel75')
+# train_data = torch.load(os.path.join(path, 'test.pt'))
+
+# input, index, slice, position, target = train_data
+
+# pos_y = position[:, :, 0]
+# pos_x = position[:, :, 1]
+# pos_y_max, _ = pos_y.max(dim=1)
+# pos_x_max, _ = pos_x.max(dim=1)
+# pos_y = pos_y_max.view(-1, 1) - pos_y
+# pos_x = pos_x_max.view(-1, 1) - pos_x
+# print(pos_x.size())
+
+# position = torch.stack([pos_x, pos_y], dim=2)
+# torch.save((input, index, slice, position, target),
+#            os.path.join(path, 'test.pt'))
