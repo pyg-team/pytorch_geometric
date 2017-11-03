@@ -66,6 +66,8 @@ class FAUST(Dataset):
                 'training_shot.pt') if train else os.path.join(
                     self.shot_folder, 'test_shot.pt')
             self.shot = torch.load(data_file)
+        else:
+            self.shot = None
 
     def __getitem__(self, i):
         position = self.position[i]

@@ -14,10 +14,18 @@ class Graclus(object):
         positions = [position]
         clusters = []
         for _ in range(self.level):
-            print('drin')
-            # TODO: if position is not None, compute adj_dist
-            cluster, cluster_full, singleton = normalized_cut(adj, rid)
-            print(cluster_full.size(), cluster.size())
+            n = adj.size(0)
+            index = adj._indices()
+            row, col = index
+            start, end = position[row], position[col]
+            dist = end - start
+            dist = (dist * dist).sum(1)
+            std = dist.sqrt().std()
+            std = std * std
+            weight = torch.exp(dist / (-2 * std))
+            adj_d = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+
+            cluster, cluster_full, singleton = normalized_cut(adj_d, rid)
             rid = None
             clusters.append(cluster_full)
 
@@ -47,6 +55,12 @@ def normalized_cut(adj, rid=None):
 
     row, col = adj._indices()
     weight = adj._values()
+
+    # TODO: Fix MNIST dataset, there are nodes with self-loops, meanwhile do
+    # the following:
+    mask = row != col
+    row, col, weight = row[mask], col[mask], weight[mask]
+
     degree = 1 / weight.new(n).fill_(0).scatter_add_(0, row, weight)
     weight = weight * (degree[row] + degree[col])
 
@@ -63,9 +77,6 @@ def normalized_cut(adj, rid=None):
     # Find cluster values.
     count = 0
     while row.dim() > 0:
-        print(row[0], col[0])
-        if row[0] == col[0]:
-            print('das darf nicht sein')
         cluster[row[0]] = count
         cluster[col[0]] = count
 
@@ -94,11 +105,11 @@ def cluster_adj(adj, cluster):
     row, col = adj._indices()
     row, col = cluster[row], cluster[col]
     weight = adj._values()
+    mask = row != col
+    row, col, weight = row[mask], col[mask], weight[mask]
     index = torch.stack([row, col], dim=0)
-    weight = adj._values()
-    weight[row == col] = 0
     adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
-    return adj.coalesce()
+    return adj
 
 
 def cluster_position(pos, cluster, singleton):
@@ -106,14 +117,12 @@ def cluster_position(pos, cluster, singleton):
     singleton = singleton.repeat(dim).view(dim, -1).t()
     pos = torch.cat([pos, pos[singleton].view(-1, dim)], dim=0)
     n = cluster.max() + 1
-    pos = torch.stack(
+    return torch.stack(
         [
             pos.new(n).fill_(0).scatter_add_(0, cluster, pos[:, i]) / 2
             for i in range(dim)
         ],
         dim=1)
-
-    return pos
 
 
 def compute_perms(clusters):
@@ -125,17 +134,16 @@ def compute_perms(clusters):
     for i in range(len(clusters) - 1, -1, -1):
         cluster = clusters[i]
         max_cluster = cluster.max() + 1
-        # print('max_cluster', max_cluster, 'n', n, cluster.size())
+
+        # Append double fake nodes.
         if max_cluster < n:
             index = torch.arange(max_cluster, n).long().repeat(2)
             cluster = torch.cat([cluster, index], dim=0)
 
-        # print(perm.max(), perm.size())
-        # print(cluster.max(), cluster.size())
-        # cluster = perm.sort()[1][cluster]
-        # rid = cluster.sort()[1]
+        cluster = perm.sort()[1][cluster]
+        _, rid = cluster.sort()
         n *= 2
-        perm = torch.arange(0, n).long()
+        perm = torch.arange(0, n).long()[rid]
         perms.append(perm)
 
     return perms[::-1]

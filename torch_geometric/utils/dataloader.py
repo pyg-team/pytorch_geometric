@@ -10,6 +10,10 @@ def collate(batch):
     if torch.is_tensor(batch[0]) and batch[0].is_sparse:
         return stack(batch)
 
+    if torch.is_tensor(batch[0]):
+        # Do a cat instead of a stack!
+        return torch.cat(batch, dim=0)
+
     elif isinstance(batch[0], collections.Mapping):
         return {key: collate([d[key] for d in batch]) for key in batch[0]}
 
