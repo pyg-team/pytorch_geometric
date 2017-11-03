@@ -36,11 +36,11 @@ class Lin(Module):
         if self.bias is not None:
             self.bias.data.uniform_(-stdv, stdv)
 
-    def forward(self, features):
-        return lin(features, self.weight, self.bias)
+    def forward(self, input):
+        return lin(input, self.weight, self.bias)
 
     def __repr__(self):
-        s = ('{name}({in_features}, {out_features}')
+        s = '{name}({in_features}, {out_features}'
         if self.bias is None:
             s += ', bias=False'
         s += ')'
