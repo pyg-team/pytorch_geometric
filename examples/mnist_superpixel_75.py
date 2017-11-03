@@ -64,6 +64,15 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
+    if epoch == 10:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0001
+
+    # Unnecessary...
+    if epoch == 20:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.00001
+
     for batch, ((input, adjs, _), target) in enumerate(train_loader):
         adj_0, adj_1, adj_2 = adjs[0][0], adjs[2][0], adjs[4][0]
         ones = input.new(input.size(0)).fill_(1)
@@ -82,21 +91,21 @@ def train(epoch):
         loss.backward()
         optimizer.step()
 
-        pred = output.data.max(1)[1]
-        correct = pred.eq(target.data).cpu().sum()
-        acc = correct / 64
 
-        print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0],
-              'Accuracy:', acc)
+#         pred = output.data.max(1)[1]
+#         correct = pred.eq(target.data).cpu().sum()
+#         acc = correct / 64
+
+#         print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0],
+#               'Accuracy:', acc)
 
 
-def test():
+def test(epoch):
     model.eval()
 
     correct = 0
 
     for batch, ((input, adjs, _), target) in enumerate(test_loader):
-        print('test batch', batch)
         adj_0, adj_1, adj_2 = adjs[0][0], adjs[2][0], adjs[4][0]
         ones = input.new(input.size(0)).fill_(1)
         input = torch.stack([input, ones], dim=1)
@@ -113,9 +122,9 @@ def test():
         pred = output.data.max(1)[1]
         correct += pred.eq(target.data).cpu().sum()
 
-    print('Accuracy:', correct / 10000)
+    print('Epoch:', epoch, 'Accuracy:', correct / 10000)
 
 
-for epoch in range(1, 200):
+for epoch in range(1, 100):
     train(epoch)
-    test()
+    test(epoch)
