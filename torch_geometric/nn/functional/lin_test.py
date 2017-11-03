@@ -4,7 +4,7 @@ from torch.autograd import Variable
 
 from numpy.testing import assert_almost_equal
 
-from torch_geometric.nn.functional import lin
+from .lin import lin
 
 
 class LinTest(TestCase):

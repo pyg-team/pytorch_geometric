@@ -1,3 +1,5 @@
+from __future__ import division
+
 from unittest import TestCase
 import torch
 from torch.autograd import Variable
@@ -25,7 +27,7 @@ class SplineGcnTest(TestCase):
             adj, input, weight, kernel_size, is_open_spline, K=12, degree=1)
 
         expected_output = [
-            [12.5 * 9 + 13 * 10 + 266],
+            [(12.5 * 9 + 13 * 10 + 266) / 4],
             [12.5 * 1 + 13 * 2],
             [12.5 * 3 + 13 * 4],
             [12.5 * 5 + 13 * 6],
@@ -56,7 +58,7 @@ class SplineGcnTest(TestCase):
             adj, input, weight, kernel_size, is_open_spline, K=12, degree=1)
 
         expected_output = [
-            [12.5 * 9 + 13 * 10 + 266],
+            [(12.5 * 9 + 13 * 10 + 266) / 4],
             [12.5 * 1 + 13 * 2],
             [12.5 * 3 + 13 * 4],
             [12.5 * 5 + 13 * 6],
