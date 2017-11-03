@@ -26,6 +26,7 @@ class Graclus(object):
             adj_d = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
 
             cluster, cluster_full, singleton = normalized_cut(adj_d, rid)
+            print(cluster)
             rid = None
             clusters.append(cluster_full)
 
@@ -39,7 +40,10 @@ class Graclus(object):
 
         # Permute inputs, adjacencies and positions.
         perms = compute_perms(clusters)
+
+        print(adjs[0].to_dense())
         adjs = [perm_adj(adjs[i], perms[i]) for i in range(len(perms))]
+        print(adjs[0].to_dense())
         positions = [
             perm_input(positions[i], perms[i]) for i in range(len(perms))
         ]
@@ -61,7 +65,8 @@ def normalized_cut(adj, rid=None):
     mask = row != col
     row, col, weight = row[mask], col[mask], weight[mask]
 
-    degree = 1 / weight.new(n).fill_(0).scatter_add_(0, row, weight)
+    one = weight.new(weight.size(0)).fill_(1)
+    degree = 1 / weight.new(n).fill_(0).scatter_add_(0, row, one)
     weight = weight * (degree[row] + degree[col])
 
     # Sort after weight.
@@ -153,7 +158,7 @@ def perm_adj(adj, perm):
     n = perm.size(0)
     row, col = adj._indices()
 
-    perm, _ = perm.sort()
+    _, perm = perm.sort()
     row = perm[row]
     col = perm[col]
     index = torch.stack([row, col], dim=0)
