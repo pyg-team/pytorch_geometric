@@ -29,12 +29,19 @@ def spline_gcn(
     # [n x M_out] feature matrix.
     zero = output.data.new(adj.size(1), output.size(1)).fill_(0.0)
     zero = Variable(zero) if not torch.is_tensor(output) else zero
-    row = row.view(-1, 1).expand(row.size(0), output.size(1))
-    output = zero.scatter_add_(0, Variable(row), output)
+    r = row.view(-1, 1).expand(row.size(0), output.size(1))
+    output = zero.scatter_add_(0, Variable(r), output)
 
     # Weighten root node features by multiplying with the meaned weights from
     # the origin.
     output += torch.mm(input, weight[-1])
+
+    # Normalize output by degree.
+    ones = values.new(values.size(0)).fill_(1)
+    zero = values.new(output.size(0)).fill_(0)
+    degree = zero.scatter_add_(0, row, ones)
+    degree = torch.clamp(degree, min=1)
+    output = output / Variable(degree.view(-1, 1))
 
     if bias is not None:
         output += bias
