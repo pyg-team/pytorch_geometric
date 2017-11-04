@@ -1,11 +1,16 @@
 engines:
   duplication:
     enabled: true
+    exclude_paths:
+      - "**_test.py"
     config:
       languages:
-      - python:
+        python:
+          mass_threshold: 32
   radon:
     enabled: true
+    config:
+      threshold: "B"
   fixme:
     enabled: true
   pep8:
