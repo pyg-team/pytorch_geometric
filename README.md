@@ -4,7 +4,6 @@
 [![Code Coverage][coverage-image]][coverage-url]
 [![Requirements Status][requirements-image]][requirements-url]
 [![Code Climate][code-climate-image]][code-climate-url]
-[![Code Climate Issues][code-climate-issues-image]][code-climate-issues-url]
 
 [build-image]: https://travis-ci.org/rusty1s/pytorch_geometric.svg?branch=master
 [build-url]: https://travis-ci.org/rusty1s/pytorch_geometric
@@ -14,8 +13,6 @@
 [requirements-url]: https://requires.io/github/rusty1s/pytorch_geometric/requirements/?branch=master
 [code-climate-image]: https://api.codeclimate.com/v1/badges/ea4a011808e1bbcd5ea7/maintainability
 [code-climate-url]: https://codeclimate.com/github/rusty1s/pytorch_geometric
-[code-climate-issues-image]: https://codeclimate.com/github/rusty1s/pytorch_geometric/badges/issue_count.svg
-[code-climate-issues-url]: https://codeclimate.com/github/rusty1s/pytorch_geometric/issues
 
 ## Requirements
 
