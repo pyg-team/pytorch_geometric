@@ -1,60 +1,66 @@
 import torch
 
 
-def grid_adj_indices(size, connectivity=4):
+def grid(size, connectivity=4, out=None):
     """Return the unweighted adjacency matrix of a regular grid."""
-
     h, w = size
+    n = h * w
 
-    if connectivity == 4:
-        kernel = [-w - 2, -1, 1, w + 2]
-    elif connectivity == 8:
-        kernel = [-w - 3, -w - 2, -w - 1, -1, 1, w + 1, w + 2, w + 3]
-    else:
-        raise ValueError()
+    # BOTTOM
+    row = torch.arange(0, n - w).long()
+    col = torch.arange(w, n).long()
 
-    kernel = torch.LongTensor(kernel)
+    index = torch.stack([row, col], dim=0)
+    weight = torch.ones(n - w)
+    bottom = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
 
-    n = (h + 1) * (w + 2) - 1
-    rows = torch.arange(w + 3, n, out=torch.LongTensor())
+    # RIGHT
+    row = torch.arange(0, w - 1).long().repeat(h).view(h, -1)
+    row += torch.arange(0, n, w).long().view(-1, 1)
+    row = row.view(-1)
+    col = row + 1
 
-    if torch.cuda.is_available():
-        kernel = kernel.cuda()
-        rows = rows.cuda()
+    index = torch.stack([row, col], dim=0)
+    weight = torch.ones(n - h)
+    right = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
 
-    # Broadcast kernel and compute indices.
-    rows = rows.view(-1, 1).repeat(1, connectivity)
-    cols = rows + kernel
-    rows = rows.view(-1)
-    cols = cols.view(-1)
-    indices = torch.cat((rows, cols)).view(2, -1)
+    a = bottom + right
 
-    print(indices)
+    if connectivity == 8:
+        # BOTTOM RIGHT
+        row = torch.arange(0, w - 1).long().repeat(h - 1).view(h - 1, -1)
+        row += torch.arange(0, n - w, w).long().view(-1, 1)
+        row = row.view(-1)
+        col = row + w + 1
 
-    # .repeat(connectivity)
-    # print(cols)
-    # print(rows)
+        index = torch.stack([row, col], dim=0)
+        weight = torch.ones(row.size(0)) + 1
+        br = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+        a += br
 
-    # print(kernel)
+        # # TOP RIGHT
+        row = torch.arange(0, w - 1).long().repeat(h - 1).view(h - 1, -1)
+        row += w
+        row += torch.arange(0, n - w, w).long().view(-1, 1)
+        row = row.view(-1)
+        col = row - w + 1
+        index = torch.stack([row, col], dim=0)
+        weight = torch.ones(row.size(0)) + 1
+        tr = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+        a += tr
+
+    a = a + a.t()
+    return a.transpose(0, 1).coalesce()
 
 
-def grid_points(size):
+def grid_position(size):
     """Return the regular grid points of a given shape with distance `1`."""
 
     h, w = size
     x = torch.arange(0, w)
     y = torch.arange(0, h)
 
-    if torch.cuda.is_available():
-        x = x.cuda()
-        y = y.cuda()
-
     x = x.repeat(h)
     y = y.view(-1, 1).repeat(1, w).view(-1)
 
-    return torch.cat((y, x)).view(2, -1).t()
-
-
-size = torch.Size([3, 2])
-a = grid_points(size)
-print(a)
+    return torch.cat((x, y)).view(2, -1).t()
