@@ -27,7 +27,7 @@ def image_graph(image, input, graph, position, scale, offset):
     position += scale * offset
 
     # Draw edges
-    index = adj._indices().t()
+    index = graph._indices().t()
     for i in range(index.size(0)):
         start, end = index[i]
         start_x, start_y = position[start]
@@ -41,9 +41,9 @@ def image_graph(image, input, graph, position, scale, offset):
     # Draw nodes
     for i in range(position.size(0)):
         x, y = position[i]
-        rr, cc = draw.circle(y, x, 12, shape=shape)
+        rr, cc = draw.circle(y, x, 10, shape=shape)
         image[rr, cc] = [1, 0, 0]
-        rr, cc = draw.circle(y, x, 8, shape=shape)
+        rr, cc = draw.circle(y, x, 9, shape=shape)
         image[rr, cc] = [input[i], input[i], input[i]]
 
     return image
@@ -60,14 +60,14 @@ image, _ = image_dataset[example]
 image = np.array(image)
 (input, adj, position), _ = graph_dataset[example]
 
-grid_adj = grid(torch.Size([28, 28]))
+grid_adj = grid(torch.Size([28, 28]), connectivity=8)
 grid_position = grid_position(torch.Size([28, 28]))
 grid_input = image.flatten() / 255.0
 grid_offset = torch.FloatTensor([0.5, 0.5])
 
-image = image_graph(image, input, adj, position, scale, offset)
-# image = image_graph(image, grid_input, grid_adj, grid_position, scale,
-#                     grid_offset)
+# image = image_graph(image, input, adj, position, scale, offset)
+image = image_graph(image, grid_input, grid_adj, grid_position, scale,
+                    grid_offset)
 
 io.imshow(image)
 io.show()
