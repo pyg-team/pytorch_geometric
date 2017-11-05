@@ -34,7 +34,7 @@ const long* kernel_size, const long* is_open_spline) {
               (kernel_size[d_idx] - is_open_spline[d_idx]);
 
       frac = value - floor(value);
-      // Ich glaube immernoch, dass hier muss andersrum sein. (Wahrscheinlich egal in der Praxis wegen Symmetrie)
+
       a *= (1 - k_idx_mod) * frac + k_idx_mod * (1 - frac);
 
       bot = int(floor(value));
@@ -192,6 +192,7 @@ const long* kernel_size, const long* is_open_spline) {
   }
 }
 '''
+
 
 def spline_gpu(input, kernel_size, is_open_spline, K, degree):
     assert input.is_cuda and kernel_size.is_cuda and is_open_spline.is_cuda
