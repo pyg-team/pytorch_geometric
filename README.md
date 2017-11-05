@@ -4,13 +4,15 @@
 
 --------------------------------------------------------------------------------
 
-PyTorch Geometric is a PyTorch extension package for Geometric Deep Learning
+PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch
 
+![Development Status][development-status-image]
 [![Build Status][build-image]][build-url]
 [![Code Coverage][coverage-image]][coverage-url]
 [![Requirements Status][requirements-image]][requirements-url]
 [![Code Climate][code-climate-image]][code-climate-url]
 
+[development-status-image]: https://img.shields.io/badge/status-in%20development-blue.svg
 [build-image]: https://travis-ci.org/rusty1s/pytorch_geometric.svg?branch=master
 [build-url]: https://travis-ci.org/rusty1s/pytorch_geometric
 [coverage-image]: https://codecov.io/gh/rusty1s/pytorch_geometric/branch/master/graph/badge.svg
