@@ -1,7 +1,5 @@
-https://user-images.githubusercontent.com/6945922/32413706-b83b5530-c217-11e7-83ef-43da79b8b5aa.png
-
 <p align="center">
-  <img width="40%" src="https://user-images.githubusercontent.com/6945922/32413706-b83b5530-c217-11e7-83ef-43da79b8b5aa.png" />
+  <img width="80%" src="https://user-images.githubusercontent.com/6945922/32413706-b83b5530-c217-11e7-83ef-43da79b8b5aa.png" />
 </p>
 
 --------------------------------------------------------------------------------
