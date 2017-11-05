@@ -1,4 +1,12 @@
-# PyTorch Geometric Deep Learning Library
+https://user-images.githubusercontent.com/6945922/32413706-b83b5530-c217-11e7-83ef-43da79b8b5aa.png
+
+<p align="center">
+  <img width="40%" src="https://user-images.githubusercontent.com/6945922/32413706-b83b5530-c217-11e7-83ef-43da79b8b5aa.png" />
+</p>
+
+--------------------------------------------------------------------------------
+
+PyTorch Geometric is a PyTorch extension package for Geometric Deep Learning
 
 [![Build Status][build-image]][build-url]
 [![Code Coverage][coverage-image]][coverage-url]
