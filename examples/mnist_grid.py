@@ -47,9 +47,9 @@ _, adjs, positions = transform((None, adjs, positions))
 new_adjs = []
 for adj in adjs:
     index = adj._indices()
-    weight = adj._values()[:, 1:]
+    weight = adj._values()[:, 1]
     n = adj.size(0)
-    adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n, 1]))
+    adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
     new_adjs.append(adj)
 adjs = new_adjs
 
