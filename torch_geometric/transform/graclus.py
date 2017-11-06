@@ -3,6 +3,43 @@ from __future__ import division
 import torch
 
 
+def graclus(adj, position, level, rid=None):
+    adjs = [adj]
+    positions = [position]
+    clusters = []
+    for _ in range(level):
+        n = adj.size(0)
+        index = adj._indices()
+        row, col = index
+        start, end = position[row], position[col]
+        dist = end - start
+        dist = (dist * dist).sum(1)
+        std = dist.sqrt().std()
+        std = std * std
+        weight = torch.exp(dist / (-2 * std))
+        adj_d = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+
+        cluster, cluster_full, singleton = normalized_cut(adj_d, rid)
+        rid = None
+        clusters.append(cluster_full)
+
+        # Compute new adjaceny.
+        adj = cluster_adj(adj, cluster)
+        adjs.append(adj)
+
+        # Compute new positions.
+        position = cluster_position(position, cluster_full, singleton)
+        positions.append(position)
+
+    # Permute inputs, adjacencies and positions.
+    perms = compute_perms(clusters)
+
+    adjs = [perm_adj(adjs[i], perms[i]) for i in range(len(perms))]
+    positions = [perm_input(positions[i], perms[i]) for i in range(len(perms))]
+
+    return adjs, positions, perms[0]
+
+
 class Graclus(object):
     def __init__(self, level=1):
         self.level = level
@@ -10,41 +47,8 @@ class Graclus(object):
     def __call__(self, data, rid=None):
         input, adj, position = data
 
-        adjs = [adj]
-        positions = [position]
-        clusters = []
-        for _ in range(self.level):
-            n = adj.size(0)
-            index = adj._indices()
-            row, col = index
-            start, end = position[row], position[col]
-            dist = end - start
-            dist = (dist * dist).sum(1)
-            std = dist.sqrt().std()
-            std = std * std
-            weight = torch.exp(dist / (-2 * std))
-            adj_d = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
-
-            cluster, cluster_full, singleton = normalized_cut(adj_d, rid)
-            rid = None
-            clusters.append(cluster_full)
-
-            # Compute new adjaceny.
-            adj = cluster_adj(adj, cluster)
-            adjs.append(adj)
-
-            # Compute new positions.
-            position = cluster_position(position, cluster_full, singleton)
-            positions.append(position)
-
-        # Permute inputs, adjacencies and positions.
-        perms = compute_perms(clusters)
-
-        adjs = [perm_adj(adjs[i], perms[i]) for i in range(len(perms))]
-        positions = [
-            perm_input(positions[i], perms[i]) for i in range(len(perms))
-        ]
-        input = perm_input(input, perms[0])
+        adjs, positions, perm = graclus(adj, position, self.level, rid)
+        input = perm_input(input, perm)
 
         return input, adjs, positions
 
