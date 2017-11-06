@@ -66,15 +66,12 @@ def train(epoch):
     loss.backward()
     optimizer.step()
 
-    output = model(adj, input)[train_mask]
-    loss = F.nll_loss(output, target[train_mask], size_average=True)
-
     output = model(adj, input)[val_mask]
     val_loss = F.nll_loss(output, target[val_mask], size_average=True)
     return val_loss.data[0]
 
 
-def test(epoch):
+def test():
     model.eval()
 
     output = model(adj, input)
@@ -87,24 +84,17 @@ def test(epoch):
 
 accs = []
 for run in range(0, 101):
-    val_loss_count = 0
-    last_val_loss = 0
+    val_losses = []
     model.conv1.reset_parameters()
     model.conv2.reset_parameters()
     for epoch in range(1, 200):
         val_loss = train(epoch)
-        if val_loss > last_val_loss:
-            val_loss_count += 1
-            last_val_loss = val_loss
-        else:
-            val_loss_count = 0
-            last_val_loss = 0
+        val_losses.append(val_loss)
+        acc = test()
 
-        acc = test(epoch)
-
-        if val_loss_count > 5:
-            print('early stopping')
-            break
+        # if epoch > 10 and val_loss > np.mean(val_losses[-11:-1]):
+        #     print('Early stopping...')
+        #     break
 
     print('Run:', run, 'Accuracy:', acc)
     accs.append(acc)

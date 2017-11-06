@@ -22,7 +22,7 @@ train_mask, test_mask = dataset.train_mask, dataset.test_mask
 if torch.cuda.is_available():
     input, adj = dataset.input.cuda(), dataset.adj.cuda()
     target = dataset.target.cuda()
-    train_mask, test_mask = train_mask.cuda(), test_mask.cuad()
+    train_mask, test_mask = train_mask.cuda(), test_mask.cuda()
 
 input, target = Variable(input), Variable(target)
 
@@ -44,20 +44,18 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=0.0005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.005)
 
 
-def train(epoch):
+def train():
     model.train()
 
     optimizer.zero_grad()
     output = model(adj, input)
     output = output[train_mask]
-    loss = F.nll_loss(output, target, size_average=True)
+    loss = F.nll_loss(output, target[train_mask], size_average=True)
     loss.backward()
     optimizer.step()
-
-    print('Epoch:', epoch, 'Loss:', loss.data[0])
 
 
 def test():
@@ -66,11 +64,20 @@ def test():
     output = model(adj, input)
     output = output[test_mask]
     pred = output.data.max(1)[1]
-    acc = pred.eq(target.data).sum()
+    acc = pred.eq(target.data[test_mask]).sum() / output.size(0)
+    return acc
 
-    print('Accuracy:', acc / output.size(0))
 
+accs = []
+for run in range(0, 101):
+    model.conv1.reset_parameters()
+    model.conv2.reset_parameters()
+    for epoch in range(1, 200):
+        train()
 
-for epoch in range(1, 200):
-    train(epoch)
-    test()
+    acc = test()
+    print('Run:', run, 'Accuracy:', acc)
+    accs.append(acc)
+
+accs = torch.FloatTensor(accs)
+print('Mean:', accs.mean(), 'Stddev:', accs.std())
