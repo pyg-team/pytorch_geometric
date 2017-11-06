@@ -35,18 +35,19 @@ class Net(nn.Module):
             2, 32, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
         self.conv2 = SplineGCN(
             32, 64, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
-        self.fc1 = nn.Linear(64, 128)
-        self.fc2 = nn.Linear(128, 10)
+        self.conv3 = SplineGCN(
+            64, 512, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
+        self.fc1 = nn.Linear(512, 10)
 
     def forward(self, adjs, x, slice):
-        x = F.elu(self.conv1(adjs[0], x))
+        x = F.relu(self.conv1(adjs[0], x))
         x = self.pool(x)
-        x = F.elu(self.conv2(adjs[1], x))
+        x = F.relu(self.conv2(adjs[1], x))
         x = self.pool(x)
+        x = F.relu(self.conv3(adjs[2], x))
         x = batch_average(x, slice)
-        x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
-        x = self.fc2(x)
+        x = self.fc1(x)
         return F.log_softmax(x)
 
 
@@ -60,16 +61,16 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 6:
+    if epoch == 10:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
-    if epoch == 10:
+    if epoch == 20:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
     # Unnecessary...
-    if epoch == 20:
+    if epoch == 40:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.00001
 

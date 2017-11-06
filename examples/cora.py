@@ -15,14 +15,13 @@ from torch_geometric.transform import DegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
 dataset = Cora('~/Cora', transform=DegreeAdj())
-data, target = dataset[0]
-input, adj, _ = data
+(input, adj, _), target = dataset[0]
 train_mask, test_mask = dataset.train_mask, dataset.test_mask
 
 if torch.cuda.is_available():
     input, adj = dataset.input.cuda(), dataset.adj.cuda()
     target = dataset.target.cuda()
-    train_mask, test_mask = train_mask.cuda(), test_mask.cuad()
+    train_mask, test_mask = train_mask.cuda(), test_mask.cuda()
 
 input, target = Variable(input), Variable(target)
 
@@ -44,33 +43,32 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.005)
 
 
 def train(epoch):
     model.train()
 
     optimizer.zero_grad()
-    output = model(adj, input)
-    output = output[train_mask]
-    loss = F.nll_loss(output, target, size_average=True)
+    output = model(adj, input)[train_mask]
+    loss = F.nll_loss(output, target[train_mask], size_average=True)
     loss.backward()
     optimizer.step()
 
     print('Epoch:', epoch, 'Loss:', loss.data[0])
 
 
-def test():
+def test(epoch):
     model.eval()
 
     output = model(adj, input)
     output = output[test_mask]
     pred = output.data.max(1)[1]
-    acc = pred.eq(target.data).sum()
+    acc = pred.eq(target.data[test_mask]).sum()
 
-    print('Accuracy:', acc / output.size(0))
+    print('Epoch:', epoch, 'Accuracy:', acc / output.size(0))
 
 
-for epoch in range(1, 400):
+for epoch in range(1, 200):
     train(epoch)
-    test()
+    test(epoch)
