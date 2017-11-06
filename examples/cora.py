@@ -18,9 +18,11 @@ dataset = Cora('~/Cora', transform=DegreeAdj())
 (input, adj, _), target = dataset[0]
 train_mask, test_mask = dataset.train_mask, dataset.test_mask
 
+# one = input.new(input.size(0)).fill_(1)
+# input = torch.cat([input, one], dim=1)
+
 if torch.cuda.is_available():
-    input, adj = dataset.input.cuda(), dataset.adj.cuda()
-    target = dataset.target.cuda()
+    input, adj, target = input.cuda(), adj.cuda(), target.cuda()
     train_mask, test_mask = train_mask.cuda(), test_mask.cuda()
 
 input, target = Variable(input), Variable(target)
@@ -29,12 +31,12 @@ input, target = Variable(input), Variable(target)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1433, 16, dim=2, kernel_size=[2, 2])
-        self.conv2 = SplineGCN(16, 7, dim=2, kernel_size=[2, 2])
+        self.conv1 = SplineGCN(1433, 16, dim=2, kernel_size=[2, 2], bias=False)
+        self.conv2 = SplineGCN(16, 7, dim=2, kernel_size=[2, 2], bias=False)
 
     def forward(self, adj, x):
-        x = F.relu(self.conv1(adj, x))
-        x = F.dropout(x, training=self.training)
+        x = F.elu(self.conv1(adj, x))
+        x = F.dropout(x, training=self.training, p=0.5)
         x = self.conv2(adj, x)
         return F.log_softmax(x)
 
@@ -55,8 +57,6 @@ def train(epoch):
     loss.backward()
     optimizer.step()
 
-    print('Epoch:', epoch, 'Loss:', loss.data[0])
-
 
 def test(epoch):
     model.eval()
@@ -64,11 +64,20 @@ def test(epoch):
     output = model(adj, input)
     output = output[test_mask]
     pred = output.data.max(1)[1]
-    acc = pred.eq(target.data[test_mask]).sum()
+    acc = pred.eq(target.data[test_mask]).sum() / output.size(0)
 
-    print('Epoch:', epoch, 'Accuracy:', acc / output.size(0))
+    return acc
 
 
-for epoch in range(1, 200):
-    train(epoch)
-    test(epoch)
+accs = []
+for run in range(0, 201):
+    model.conv1.reset_parameters()
+    model.conv2.reset_parameters()
+    for epoch in range(1, 200):
+        train(epoch)
+        acc = test(epoch)
+    print('Run:', run, 'Accuracy:', acc)
+    accs.append(acc)
+
+accs = torch.FloatTensor(accs)
+print('Mean:', accs.mean(), 'Stddev:', accs.std())
