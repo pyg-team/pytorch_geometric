@@ -16,8 +16,7 @@ const long* kernel_size, const long* is_open_spline) {
 
     int K = ${K};
     int k_idx_mod;
-    int bot;
-    int top;
+    int pos;
     ${Dtype} value;
     ${Dtype} frac;
     ${Dtype} a = 1.0;
@@ -31,47 +30,21 @@ const long* kernel_size, const long* is_open_spline) {
       k_idx /= 4;
 
       value = input[e_idx * ${dim} + d_idx] *
-              (kernel_size[d_idx] - (is_open_spline[d_idx]*3));
+              (kernel_size[d_idx] - (3 * is_open_spline[d_idx]));
 
       frac = value - floor(value);
-      if(k_idx_mod==0)
-      {
-        a *= (1-frac)*(1- frac)*(1-frac)/6.0;
-      }
-      else if(k_idx_mod==1)
-      {
-        a *= (3*frac*frac*frac - 6*frac*frac + 4)/6.0;
-      }
-      else if(k_idx_mod==2)
-      {
-        a *= (-3*frac*frac*frac + 3*frac*frac + 3*frac + 1)/6.0;
-      }
-      else if(k_idx_mod==3)
-      {
-        a *= frac*frac*frac/6.0;
-      }
 
-      pos1 = int(floor(value));
-      pos2 = (pos1 + 1) % kernel_size[d_idx];
-      pos3 = (pos1 + 2) % kernel_size[d_idx];
-      pos4 = (pos1 + 3) % kernel_size[d_idx];
-      bot %= kernel_size[d_idx];
-      if(k_idx_mod==0)
-      {
-        i += pos1 * K;
-      }
-      else if(k_idx_mod==1)
-      {
-        i += pos2 * K;
-      }
-      else if(k_idx_mod==2)
-      {
-        i += pos3 * K;
-      }
-      else if(k_idx_mod==3)
-      {
-        i += pos4 * K;
-      }
+      if (k_idx_mod == 0) a *= (1 - frac) * (1 - frac) * (1 - frac) / 6.0;
+      else if (k_idx_mod == 1)
+        a *= (3 * frac * frac * frac - 6 * frac * frac + 4) / 6.0;
+      else if (k_idx_mod == 2)
+        a *= (-3 * frac * frac * frac + 3 * frac * frac + 3 * frac + 1) / 6.0;
+      else a *= frac * frac * frac / 6.0;
+
+      pos = int(floor(value)) + k_idx_mod;
+      pos %= kernel_size[d_idx];
+
+      i += pos * K;
     }
     amount[idx] = a;
     index[idx] = i;
