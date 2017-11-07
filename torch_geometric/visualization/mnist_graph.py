@@ -14,6 +14,7 @@ sys.path.insert(0, '../..')
 
 from torch_geometric.datasets import MNISTSuperpixel75  # noqa
 from torch_geometric.graph.grid import grid, grid_position  # noqa
+from torch_geometric.transform.graclus import graclus, perm_input
 
 # def image_graph(image, input, graph, position, scale, offset):
 #     image = image.copy()
@@ -48,7 +49,7 @@ from torch_geometric.graph.grid import grid, grid_position  # noqa
 
 #     return image
 
-image_dataset = MNIST('/Users/rusty1s/MNIST', train=True, download=True)
+image_dataset = MNIST('/home/matthias/MNIST', train=True, download=True)
 graph_dataset = MNISTSuperpixel75('~/MNISTSuperpixel75', train=True)
 
 scale = 32
@@ -60,9 +61,9 @@ image, _ = image_dataset[example]
 image = np.array(image)
 (input, adj, position), _ = graph_dataset[example]
 
-adj = grid(torch.Size([28, 28]), connectivity=8)
-position = grid_position(torch.Size([28, 28]))
-input = image.flatten() / 255.0
+# adj = grid(torch.Size([28, 28]), connectivity=8)
+# position = grid_position(torch.Size([28, 28]))
+# input = image.flatten() / 255.0
 
 # image = image_graph(image, input, adj, position, scale, offset)
 # image = image_graph(image, grid_input, grid_adj, grid_position, scale,
@@ -72,18 +73,36 @@ input = image.flatten() / 255.0
 # io.show()
 
 # image = skimage.img_as_float(image)
-image = np.zeros((28, 28), np.uint8)
+image = np.ones((28, 28), np.uint8)
 image = np.repeat(image, scale * rescale, axis=0)
 image = np.repeat(image, scale * rescale, axis=1)
 image = gray2rgb(image)
+# image *= np.array([228, 246, 232], np.uint8)
+image *= np.array([255, 255, 255], np.uint8)
 image = Image.fromarray(image)
 draw = ImageDraw.Draw(image)
 
 offset = torch.FloatTensor([(28 - position[:, 0].max()) / 2,
                             (28 - position[:, 1].max()) / 2])
 
+row, col = adj._indices()
+direction = position[row] - position[col]
+direction = (direction * direction).sum(dim=1)
+mask = direction < 30
+row = row[mask]
+col = col[mask]
+index = torch.stack([row, col], dim=0)
+weight = torch.FloatTensor(row.size(0)).fill_(1)
+n = adj.size(0)
+adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+
 position *= scale * rescale
 position += scale * offset * rescale
+
+# adjs, positions, perm = graclus(adj, position, level=2)
+# adj, position = adjs[2], positions[2]
+# input = perm_input(input, perm)
+# input = input.view(-1, 4).sum(dim=1)
 
 index = adj._indices().t()
 for i in range(index.size(0)):
@@ -94,15 +113,17 @@ for i in range(index.size(0)):
     end_x, end_y = int(end_x), int(end_y)
 
     draw.line(
-        (start_x, start_y, end_x, end_y), fill=(255, 0, 0), width=rescale * 2)
+        (start_x, start_y, end_x, end_y), fill=(0, 0, 0), width=rescale * 2)
 
 for i in range(position.size(0)):
     x, y = position[i]
-    r = 10 * rescale
-    draw.ellipse((x - r, y - r, x + r, y + r), fill=(255, 0, 0))
-    r = 8 * rescale
-    v = int(input[i] * 255)
-    draw.ellipse((x - r, y - r, x + r, y + r), fill=(v, v, v))
+    r = 16 * rescale
+    draw.ellipse((x - r, y - r, x + r, y + r), fill=(0, 0, 0))
+    r = 14 * rescale
+    if input[i] > 0.3:
+        draw.ellipse((x - r, y - r, x + r, y + r), fill=(49, 130, 219))
+    else:
+        draw.ellipse((x - r, y - r, x + r, y + r), fill=(228, 246, 232))
 
 image = image.resize((28 * scale, 28 * scale), Image.ANTIALIAS)
 
