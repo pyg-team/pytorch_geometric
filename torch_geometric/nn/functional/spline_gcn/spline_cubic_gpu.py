@@ -27,22 +27,52 @@ const long* kernel_size, const long* is_open_spline) {
 
       K /= kernel_size[d_idx];
 
-      k_idx_mod = k_idx % 2;
-      k_idx >>= 1;
+      k_idx_mod = k_idx % 4;
+      k_idx /= 4;
 
       value = input[e_idx * ${dim} + d_idx] *
-              (kernel_size[d_idx] - is_open_spline[d_idx]);
+              (kernel_size[d_idx] - (is_open_spline[d_idx]*3));
 
       frac = value - floor(value);
+      if(k_idx_mod==0)
+      {
+        a *= (1-frac)*(1- frac)*(1-frac)/6.0;
+      }
+      else if(k_idx_mod==1)
+      {
+        a *= (3*frac*frac*frac - 6*frac*frac + 4)/6.0;
+      }
+      else if(k_idx_mod==2)
+      {
+        a *= (-3*frac*frac*frac + 3*frac*frac + 3*frac + 1)/6.0;
+      }
+      else if(k_idx_mod==3)
+      {
+        a *= frac*frac*frac/6.0;
+      }
 
-      a *= (1 - k_idx_mod) * frac + k_idx_mod * (1 - frac);
-
-      bot = int(floor(value));
-      top = (bot + 1) % kernel_size[d_idx];
+      pos1 = int(floor(value));
+      pos2 = (pos1 + 1) % kernel_size[d_idx];
+      pos3 = (pos1 + 2) % kernel_size[d_idx];
+      pos4 = (pos1 + 3) % kernel_size[d_idx];
       bot %= kernel_size[d_idx];
-      i += (k_idx_mod * bot + (1 - k_idx_mod) * top) * K;
+      if(k_idx_mod==0)
+      {
+        i += pos1 * K;
+      }
+      else if(k_idx_mod==1)
+      {
+        i += pos2 * K;
+      }
+      else if(k_idx_mod==2)
+      {
+        i += pos3 * K;
+      }
+      else if(k_idx_mod==3)
+      {
+        i += pos4 * K;
+      }
     }
-
     amount[idx] = a;
     index[idx] = i;
   }
@@ -50,12 +80,12 @@ const long* kernel_size, const long* is_open_spline) {
 '''
 
 
-def spline_gpu(input, kernel_size, is_open_spline, K):
+def spline_quadratic_gpu(input, kernel_size, is_open_spline, K):
     assert input.is_cuda and kernel_size.is_cuda and is_open_spline.is_cuda
 
     input = input.unsqueeze(1) if len(input.size()) < 2 else input
     num_edges, dim = input.size()
-    k_max = 2**dim
+    k_max = 4**dim
 
     amount = input.new(num_edges, k_max)
     index = input.new(num_edges, k_max).long()
