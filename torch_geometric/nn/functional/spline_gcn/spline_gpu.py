@@ -49,75 +49,8 @@ const long* kernel_size, const long* is_open_spline) {
 }
 '''
 
-''' //Trying m=2 Kernel
-extern "C"
-__global__ void spline_kernel(
-const ${Dtype}* input, ${Dtype}* amount, long* index,
-const long* kernel_size, const long* is_open_spline) {
-
-  CUDA_KERNEL_LOOP(idx, ${num_threads}) {
-
-    const int e_idx = idx / ${k_max};
-    int k_idx = idx % ${k_max};
-
-    int K = ${K};
-    int k_idx_mod;
-    int bot;
-    int top;
-    ${Dtype} value;
-    ${Dtype} frac;
-    ${Dtype} a = 1.0;
-    long i = 0;
-
-    for (int d_idx = 0; d_idx < ${dim}; d_idx++) {
-
-      K /= kernel_size[d_idx];
-
-      k_idx_mod = k_idx % 3;
-      k_idx /= 3;
-
-      value = input[e_idx * ${dim} + d_idx] *
-              (kernel_size[d_idx] - (is_open_spline[d_idx]*2));
-
-      frac = value - floor(value);
-      if(k_idx_mod==0)
-      {
-        a *= 0.5(1- frac)*(1-frac);
-      }
-      else if(k_idx_mod==1)
-      {
-        a *= -frac*frac + frac + 0.5
-      }
-      else if(k_idx_mod==2)
-      {
-        a *= 0.5*frac*frac
-      }
-
-      pos1 = int(floor(value));
-      pos2 = (pos1 + 1) % kernel_size[d_idx];
-      pos3 = (pos1 + 2) % kernel_size[d_idx];
-      bot %= kernel_size[d_idx];
-      if(k_idx_mod==0)
-      {
-        i += pos1 * K;
-      }
-      else if(k_idx_mod==1)
-      {
-        i += pos2 * K;
-      }
-      else if(k_idx_mod==2)
-      {
-        i += pos3 * K;
-      }
-    }
-    amount[idx] = a;
-    index[idx] = i;
-  }
-}
+# m=3 kernel
 '''
-
-
-''' //Trying m=3 Kernel
 extern "C"
 __global__ void spline_kernel(
 const ${Dtype}* input, ${Dtype}* amount, long* index,
