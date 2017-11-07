@@ -80,7 +80,7 @@ const long* kernel_size, const long* is_open_spline) {
 '''
 
 
-def spline_quadratic_gpu(input, kernel_size, is_open_spline, K):
+def spline_cubic_gpu(input, kernel_size, is_open_spline, K):
     assert input.is_cuda and kernel_size.is_cuda and is_open_spline.is_cuda
 
     input = input.unsqueeze(1) if len(input.size()) < 2 else input
