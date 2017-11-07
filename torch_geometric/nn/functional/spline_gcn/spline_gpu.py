@@ -127,13 +127,12 @@ const long* kernel_size, const long* is_open_spline) {
 '''
 
 
-def spline_gpu(input, kernel_size, is_open_spline, K, degree):
+def spline_gpu(input, kernel_size, is_open_spline, K):
     assert input.is_cuda and kernel_size.is_cuda and is_open_spline.is_cuda
-    assert degree == 1
 
     input = input.unsqueeze(1) if len(input.size()) < 2 else input
     num_edges, dim = input.size()
-    k_max = (degree + 1)**dim
+    k_max = 2**dim
 
     amount = input.new(num_edges, k_max)
     index = input.new(num_edges, k_max).long()
