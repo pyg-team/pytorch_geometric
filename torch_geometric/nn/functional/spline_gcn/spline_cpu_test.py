@@ -16,8 +16,8 @@ class SplineCPUTest(TestCase):
         a = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
         i = [[1, 0], [1, 0], [2, 1], [3, 2], [4, 3], [4, 3], [0, 4]]
 
-        assert_almost_equal(amount.cpu().numpy(), a, 1)
-        assert_equal(index.cpu().numpy(), i)
+        assert_almost_equal(amount.numpy(), a, 1)
+        assert_equal(index.numpy(), i)
 
     def test_closed_spline(self):
         input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
@@ -29,8 +29,8 @@ class SplineCPUTest(TestCase):
         a = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
         i = [[1, 0], [1, 0], [2, 1], [3, 2], [0, 3], [0, 3], [1, 0]]
 
-        assert_almost_equal(amount.cpu().numpy(), a, 1)
-        assert_equal(index.cpu().numpy(), i)
+        assert_almost_equal(amount.numpy(), a, 1)
+        assert_equal(index.numpy(), i)
 
     def test_spline_2d(self):
         input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
