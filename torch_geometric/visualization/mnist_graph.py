@@ -14,7 +14,7 @@ sys.path.insert(0, '../..')
 
 from torch_geometric.datasets import MNISTSuperpixel75  # noqa
 from torch_geometric.graph.grid import grid, grid_position  # noqa
-from torch_geometric.transform.graclus import graclus, perm_input
+from torch_geometric.transform.graclus import graclus, perm_input  # noqa
 
 # def image_graph(image, input, graph, position, scale, offset):
 #     image = image.copy()

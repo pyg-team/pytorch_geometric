@@ -11,21 +11,19 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cora  # noqa
-from torch_geometric.transform import DegreeAdj  # noqa
+from torch_geometric.transform import TargetDegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
-dataset = Cora('~/Cora', transform=DegreeAdj())
+dataset = Cora('~/Cora', transform=TargetDegreeAdj())
 (input, adj, _), target = dataset[0]
 train_mask, test_mask = dataset.train_mask, dataset.test_mask
-val_mask = dataset.val_mask
 
-# one = input.new(input.size(0)).fill_(1)
-# input = torch.cat([input, one], dim=1)
+train_mask = torch.arange(0, 1708).long()
+test_mask = torch.arange(2208, 2708).long()
 
 if torch.cuda.is_available():
     input, adj, target = input.cuda(), adj.cuda(), target.cuda()
     train_mask, test_mask = train_mask.cuda(), test_mask.cuda()
-    val_mask = val_mask.cuda()
 
 # (Row)-normalize input features.
 # row, col = adj._indices()
@@ -40,12 +38,12 @@ input, target = Variable(input), Variable(target)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1433, 16, dim=2, kernel_size=[2, 2], bias=True)
-        self.conv2 = SplineGCN(16, 7, dim=2, kernel_size=[2, 2], bias=True)
+        self.conv1 = SplineGCN(1433, 16, dim=1, kernel_size=[2])
+        self.conv2 = SplineGCN(16, 7, dim=1, kernel_size=[2])
 
     def forward(self, adj, x):
         x = F.elu(self.conv1(adj, x))
-        x = F.dropout(x, training=self.training, p=0.5)
+        x = F.dropout(x, training=self.training)
         x = self.conv2(adj, x)
         return F.log_softmax(x)
 
@@ -54,7 +52,7 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.005)
 
 
 def train(epoch):
@@ -65,10 +63,6 @@ def train(epoch):
     loss = F.nll_loss(output, target[train_mask], size_average=True)
     loss.backward()
     optimizer.step()
-
-    output = model(adj, input)[val_mask]
-    val_loss = F.nll_loss(output, target[val_mask], size_average=True)
-    return val_loss.data[0]
 
 
 def test():
@@ -83,18 +77,13 @@ def test():
 
 
 accs = []
-for run in range(0, 101):
-    val_losses = []
+for run in range(1, 101):
     model.conv1.reset_parameters()
     model.conv2.reset_parameters()
-    for epoch in range(1, 200):
-        val_loss = train(epoch)
-        val_losses.append(val_loss)
-        acc = test()
 
-        # if epoch > 10 and val_loss > np.mean(val_losses[-11:-1]):
-        #     print('Early stopping...')
-        #     break
+    for epoch in range(0, 200):
+        train(epoch)
+        acc = test()
 
     print('Run:', run, 'Accuracy:', acc)
     accs.append(acc)

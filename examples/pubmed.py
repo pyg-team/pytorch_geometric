@@ -11,10 +11,10 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import PubMed  # noqa
-from torch_geometric.transform import DegreeAdj  # noqa
+from torch_geometric.transform import TargetDegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
-dataset = PubMed('~/PubMed', transform=DegreeAdj())
+dataset = PubMed('~/PubMed', transform=TargetDegreeAdj())
 data, target = dataset[0]
 input, adj, _ = data
 train_mask, test_mask = dataset.train_mask, dataset.test_mask
@@ -30,11 +30,11 @@ input, target = Variable(input), Variable(target)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(500, 16, dim=2, kernel_size=[2, 2])
-        self.conv2 = SplineGCN(16, 7, dim=2, kernel_size=[2, 2])
+        self.conv1 = SplineGCN(500, 16, dim=1, kernel_size=[2])
+        self.conv2 = SplineGCN(16, 7, dim=1, kernel_size=[2])
 
     def forward(self, adj, x):
-        x = F.relu(self.conv1(adj, x))
+        x = F.elu(self.conv1(adj, x))
         x = F.dropout(x, training=self.training)
         x = self.conv2(adj, x)
         return F.log_softmax(x)
@@ -69,10 +69,10 @@ def test():
 
 
 accs = []
-for run in range(0, 101):
+for run in range(1, 101):
     model.conv1.reset_parameters()
     model.conv2.reset_parameters()
-    for epoch in range(1, 200):
+    for epoch in range(0, 200):
         train()
 
     acc = test()
