@@ -36,12 +36,10 @@ const long* kernel_size, const long* is_open_spline) {
 
       if (k_idx_mod == 0) a *= 0.5 * (1- frac) * (1-frac);
       else if (k_idx_mod == 1) a *= -frac * frac + frac + 0.5;
-      else if (k_idx_mod == 2) a *= 0.5 * frac * frac;
+      else a *= 0.5 * frac * frac;
 
-      pos = int(floor(value));
-      if (k_idx_mod == 0) pos = pos % kernel_size[d_idx];
-      else if (k_idx_mod == 1) pos = (pos + 1) % (kernel_size[d_idx]);
-      else if (k_idx_mod == 2) pos = (pos + 2) % (kernel_size[d_idx]);
+      pos = int(floor(value)) + k_idx_mod;
+      pos %= kernel_size[d_idx];
 
       i += pos * K;
     }
