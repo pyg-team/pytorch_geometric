@@ -7,7 +7,6 @@ from torch import nn
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 from torch.autograd import Variable
-# from torchvision.transforms import Compose
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
@@ -16,9 +15,7 @@ from torch_geometric.graph.grid import grid, grid_position  # noqa
 from torch_geometric.transform.graclus import graclus, perm_input  # noqa
 from torch_geometric.transform import PolarAdj  # noqa
 from torch_geometric.sparse.stack import stack  # noqa
-# from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, GraclusMaxPool  # noqa
-# from torch_geometric.nn.functional import batch_average  # noqa
 
 batch_size = 64
 transform = transforms.Compose([transforms.ToTensor()])
@@ -44,19 +41,21 @@ num_first_fc = adjs[2].size(0)
 transform = PolarAdj()
 _, adjs, positions = transform((None, adjs, positions))
 
-new_adjs = []
-for adj in adjs:
-    index = adj._indices()
-    weight = adj._values()[:, 1]
-    n = adj.size(0)
-    adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
-    new_adjs.append(adj)
-adjs = new_adjs
+# new_adjs = []
+# for adj in adjs:
+#     index = adj._indices()
+#     weight = adj._values()[:, 1]
+#     n = adj.size(0)
+#     adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+#     new_adjs.append(adj)
+# adjs = new_adjs
 
 adjs = [stack([adj for _ in range(batch_size)])[0] for adj in adjs]
 
 if torch.cuda.is_available():
     adjs = [adj.cuda() for adj in adjs]
+
+adj_0, adj_1, adj_2 = adjs[0], adjs[1], adjs[2]
 
 
 class Net(nn.Module):
@@ -64,25 +63,25 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.pool = GraclusMaxPool(2)
         self.conv1 = SplineGCN(
-            1, 32, dim=1, kernel_size=[8], is_open_spline=[0])
+            1, 32, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
         self.conv2 = SplineGCN(
-            32, 32, dim=1, kernel_size=[8], is_open_spline=[0])
+            32, 32, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
         self.conv3 = SplineGCN(
-            32, 64, dim=1, kernel_size=[8], is_open_spline=[0])
+            32, 64, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
         self.conv4 = SplineGCN(
-            64, 64, dim=1, kernel_size=[8], is_open_spline=[0])
+            64, 64, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
         self.fc1 = nn.Linear(num_first_fc * 64, 1024)
         self.fc2 = nn.Linear(1024, 10)
 
     def forward(self, adjs, x):
-        x = F.relu(self.conv1(adjs[0], x))
-        x = F.relu(self.conv2(adjs[0], x))
+        x = F.elu(self.conv1(adjs[0], x))
+        x = F.elu(self.conv2(adjs[0], x))
         x = self.pool(x)
-        x = F.relu(self.conv3(adjs[1], x))
-        x = F.relu(self.conv4(adjs[1], x))
+        x = F.elu(self.conv3(adjs[1], x))
+        x = F.elu(self.conv4(adjs[1], x))
         x = self.pool(x)
         x = x.contiguous().view(-1, num_first_fc * 64)
-        x = self.fc1(x)
+        x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
         return F.log_softmax(x)
