@@ -69,8 +69,6 @@ def train(epoch):
     for batch, ((input, adjs, _), target) in enumerate(train_loader):
         adj_0, adj_1, adj_2 = adjs[0][0], adjs[2][0], adjs[4][0]
         input = input.view(-1, 1)
-        # ones = input.new(input.size(0)).fill_(1)
-        # input = torch.stack([input, ones], dim=1)
         slice = adjs[4][1][:, 0]
 
         if torch.cuda.is_available():
@@ -94,8 +92,6 @@ def test(epoch):
     for batch, ((input, adjs, _), target) in enumerate(test_loader):
         adj_0, adj_1, adj_2 = adjs[0][0], adjs[2][0], adjs[4][0]
         input = input.view(-1, 1)
-        # ones = input.new(input.size(0)).fill_(1)
-        # input = torch.stack([input, ones], dim=1)
         slice = adjs[4][1][:, 0]
 
         if torch.cuda.is_available():
@@ -115,8 +111,3 @@ def test(epoch):
 for epoch in range(1, 21):
     train(epoch)
     test(epoch)
-
-conv_1_weight = model.conv1.weight.data.cpu()
-conv_2_weight = model.conv2.weight.data.cpu()
-torch.save(conv_1_weight, '/tmp/conv_1_weight.pt')
-torch.save(conv_2_weight, '/tmp/conv_2_weight.pt')
