@@ -54,16 +54,15 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.pool = GraclusMaxPool(2)
         self.conv1 = SplineGCN(
-            1, 6, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
+            1, 32, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
         self.conv2 = SplineGCN(
-            6, 6, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
+            32, 32, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
         self.conv3 = SplineGCN(
-            6, 16, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
+            64, 64, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
         self.conv4 = SplineGCN(
-            16, 16, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
-        self.fc1 = nn.Linear(num_first_fc * 16, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 10)
+            64, 64, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
+        self.fc1 = nn.Linear(num_first_fc * 64, 512)
+        self.fc2 = nn.Linear(512, 10)
 
     def forward(self, adjs, x):
         x = F.elu(self.conv1(adjs[0], x))
@@ -74,7 +73,6 @@ class Net(nn.Module):
         x = self.pool(x)
         x = x.contiguous().view(-1, num_first_fc * 16)
         x = F.elu(self.fc1(x))
-        x = F.elu(self.fc2(x))
         x = F.dropout(x, training=self.training)
         x = self.fc3(x)
         return F.log_softmax(x)
