@@ -54,6 +54,11 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
+conv_1_weight = model.conv1.weight.data.cpu()
+conv_2_weight = model.conv2.weight.data.cpu()
+torch.save(conv_1_weight, '/tmp/conv_1_weight.pt')
+torch.save(conv_2_weight, '/tmp/conv_2_weight.pt')
+
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
