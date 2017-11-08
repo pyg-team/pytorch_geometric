@@ -71,7 +71,7 @@ class Net(nn.Module):
         x = F.elu(self.conv3(adjs[1], x))
         x = F.elu(self.conv4(adjs[1], x))
         x = self.pool(x)
-        x = x.contiguous().view(-1, num_first_fc * 16)
+        x = x.contiguous().view(-1, num_first_fc * 64)
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc3(x)
