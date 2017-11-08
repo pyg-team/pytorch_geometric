@@ -19,11 +19,9 @@ from torch_geometric.nn.functional import batch_average  # noqa
 
 path = '~/MNISTSuperpixel75'
 train_dataset = MNISTSuperpixel75(
-    path, train=True, transform=Compose([Graclus(4),
-                                         EuclideanAdj()]))
+    path, train=True, transform=Compose([Graclus(4), PolarAdj()]))
 test_dataset = MNISTSuperpixel75(
-    path, train=False, transform=Compose([Graclus(4),
-                                          EuclideanAdj()]))
+    path, train=False, transform=Compose([Graclus(4), PolarAdj()]))
 
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
@@ -34,9 +32,9 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.pool = GraclusMaxPool(2)
         self.conv1 = SplineGCN(
-            2, 32, dim=2, kernel_size=[5, 5], is_open_spline=[1, 1])
+            2, 32, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
         self.conv2 = SplineGCN(
-            32, 64, dim=2, kernel_size=[5, 5], is_open_spline=[1, 1])
+            32, 64, dim=2, kernel_size=[2, 8], is_open_spline=[1, 0])
         self.fc1 = nn.Linear(64, 128)
         self.fc2 = nn.Linear(128, 10)
 
