@@ -49,7 +49,7 @@ from torch_geometric.transform.graclus import graclus, perm_input  # noqa
 
 #     return image
 
-image_dataset = MNIST('/home/matthias/MNIST', train=True, download=True)
+image_dataset = MNIST('/tmp/MNIST', train=True, download=True)
 graph_dataset = MNISTSuperpixel75('~/MNISTSuperpixel75', train=True)
 
 scale = 32
