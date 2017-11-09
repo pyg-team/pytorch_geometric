@@ -50,7 +50,7 @@ class Net(nn.Module):
         x = F.elu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
-        return F.log_softmax(x)
+        return F.sigmoid(x)
 
 
 model = Net()
@@ -76,15 +76,18 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-    for batch, ((_, (adj, _), _), target, _) in enumerate(train_loader):
+    for batch, ((_, (adj, _), _), target, distance) in enumerate(train_loader):
         if torch.cuda.is_available():
-            adj, target, = adj.cuda(), target.cuda()
-
-        target = Variable(target)
+            adj, distance, = adj.cuda(), distance.cuda()
 
         optimizer.zero_grad()
         output = model(adj, input)
-        loss = F.nll_loss(output, target, size_average=True)
+
+        r = distance * distance
+        std = 0.0005
+        target = torch.exp(-r / std)
+
+        loss = F.mse_loss(output, Variable(target), size_average=True)
         loss.backward()
         optimizer.step()
 
@@ -94,7 +97,7 @@ def train(epoch):
 def test():
     model.eval()
 
-    acc_0 = acc_1 = acc_2 = acc_4 = acc_8 = 0
+    acc_0 = acc_1 = acc_2 = acc_4 = acc_6 = acc_8 = acc_10 = 0
 
     for (_, (adj, _), _), target, distance in test_loader:
         if torch.cuda.is_available():
@@ -105,19 +108,23 @@ def test():
         output = model(adj, input)
         pred = output.data.max(1)[1]
         geodesic_error = distance[pred, target.data]
-        acc_0 += (geodesic_error <= 0.00002).sum()
+        acc_0 += (geodesic_error <= 0.0000002).sum()
         acc_1 += (geodesic_error <= 0.01).sum()
         acc_2 += (geodesic_error <= 0.02).sum()
-        acc_4 += (geodesic_error <= 0.02).sum()
-        acc_8 += (geodesic_error <= 0.04).sum()
+        acc_4 += (geodesic_error <= 0.04).sum()
+        acc_6 += (geodesic_error <= 0.06).sum()
+        acc_8 += (geodesic_error <= 0.08).sum()
+        acc_10 += (geodesic_error <= 0.1).sum()
 
     print('Accuracy 0:', acc_0 / (20 * 6890))
     print('Accuracy 1:', acc_1 / (20 * 6890))
     print('Accuracy 2:', acc_2 / (20 * 6890))
     print('Accuracy 4:', acc_4 / (20 * 6890))
+    print('Accuracy 6:', acc_6 / (20 * 6890))
     print('Accuracy 8:', acc_8 / (20 * 6890))
+    print('Accuracy 10:', acc_10 / (20 * 6890))
 
 
-for epoch in range(1, 200):
+for epoch in range(1, 151):
     train(epoch)
     test()
