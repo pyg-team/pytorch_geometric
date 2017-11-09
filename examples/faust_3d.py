@@ -1,7 +1,6 @@
 from __future__ import division, print_function
 
 import sys
-import time
 
 import torch
 from torch import nn
