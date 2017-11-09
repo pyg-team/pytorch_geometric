@@ -1,6 +1,7 @@
 from __future__ import division, print_function
 
 import sys
+import time
 
 import torch
 from torch import nn
@@ -11,16 +12,16 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import FAUST  # noqa
-from torch_geometric.transform import PolarAdj  # noqa
+from torch_geometric.transform import PolarAdj, EuclideanAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 from torch_geometric.validation import max_geodesic_error_accuracy  # noqa
 
 path = '~/MPI-FAUST'
 train_dataset = FAUST(
-    path, train=True, correspondence=True, transform=PolarAdj())
+    path, train=True, correspondence=True, transform=EuclideanAdj())
 test_dataset = FAUST(
-    path, train=False, correspondence=True, transform=PolarAdj())
+    path, train=False, correspondence=True, transform=EuclideanAdj())
 
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
@@ -34,19 +35,19 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
+            1, 32, dim=3, kernel_size=[5, 5, 3], is_open_spline=[1, 1, 1])
         self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
+            32, 64, dim=3, kernel_size=[5, 5, 3], is_open_spline=[1, 1, 1])
         self.conv3 = SplineGCN(
-            64, 128, dim=3, kernel_size=[3, 4, 3], is_open_spline=[1, 0, 1])
+            64, 128, dim=3, kernel_size=[5, 5, 3], is_open_spline=[1, 1, 1])
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
     def forward(self, adj, x):
-        x = F.relu(self.conv1(adj, x))
-        x = F.relu(self.conv2(adj, x))
-        x = F.relu(self.conv3(adj, x))
-        x = F.relu(self.lin1(x))
+        x = F.elu(self.conv1(adj, x))
+        x = F.elu(self.conv2(adj, x))
+        x = F.elu(self.conv3(adj, x))
+        x = F.elu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
         return F.log_softmax(x)
@@ -58,26 +59,28 @@ if torch.cuda.is_available():
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
+input = torch.FloatTensor(6890, 1).fill_(1)
+if torch.cuda.is_available():
+    input = input.cuda()
+input = Variable(input)
+
 
 def train(epoch):
     model.train()
 
-    if epoch == 60:
+    if epoch == 61:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
-    if epoch == 120:
+    if epoch == 121:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-    for batch, ((_, (adj, _), _), target) in enumerate(train_loader):
-        input = torch.FloatTensor(6890, 1).fill_(1)
-        target = target.view(-1)
-
+    for batch, ((_, (adj, _), _), target, _) in enumerate(train_loader):
         if torch.cuda.is_available():
-            adj, input, target = adj.cuda(), input.cuda(), target.cuda()
+            adj, target, = adj.cuda(), target.cuda()
 
-        input, target = Variable(input), Variable(target)
+        target = Variable(target)
 
         optimizer.zero_grad()
         output = model(adj, input)
@@ -93,24 +96,20 @@ def test():
 
     acc_0 = acc_1 = acc_2 = acc_4 = acc_8 = 0
 
-    for (input, (adj, _), position), target in test_loader:
-        input = torch.FloatTensor(6890, 1).fill_(1)
-        target = target.view(-1)
-        p = position.view(-1, 3)
-
+    for (_, (adj, _), _), target, distance in test_loader:
         if torch.cuda.is_available():
-            input, adj, target = input.cuda(), adj.cuda(), target.cuda()
-            p = p.cuda()
+            adj, target, distance = adj.cuda(), target.cuda(), distance.cuda()
 
-        output = model(adj, Variable(input))
+        target = Variable(target)
 
+        output = model(adj, input)
         pred = output.data.max(1)[1]
-
-        acc_0 += max_geodesic_error_accuracy(p, pred, target, error=0.0)
-        acc_1 += max_geodesic_error_accuracy(p, pred, target, error=0.01)
-        acc_2 += max_geodesic_error_accuracy(p, pred, target, error=0.02)
-        acc_4 += max_geodesic_error_accuracy(p, pred, target, error=0.04)
-        acc_8 += max_geodesic_error_accuracy(p, pred, target, error=0.08)
+        geodesic_error = distance[pred, target.data]
+        acc_0 += (geodesic_error <= 0.00002).sum()
+        acc_1 += (geodesic_error <= 0.01).sum()
+        acc_2 += (geodesic_error <= 0.02).sum()
+        acc_4 += (geodesic_error <= 0.02).sum()
+        acc_8 += (geodesic_error <= 0.04).sum()
 
     print('Accuracy 0:', acc_0 / (20 * 6890))
     print('Accuracy 1:', acc_1 / (20 * 6890))
