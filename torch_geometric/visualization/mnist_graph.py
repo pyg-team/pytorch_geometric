@@ -61,9 +61,9 @@ image, _ = image_dataset[example]
 image = np.array(image)
 (input, adj, position), _ = graph_dataset[example]
 
-# adj = grid(torch.Size([28, 28]), connectivity=8)
-# position = grid_position(torch.Size([28, 28]))
-# input = image.flatten() / 255.0
+adj = grid(torch.Size([28, 28]), connectivity=8)
+position = grid_position(torch.Size([28, 28]))
+input = image.flatten() / 255.0
 
 # image = image_graph(image, input, adj, position, scale, offset)
 # image = image_graph(image, grid_input, grid_adj, grid_position, scale,
@@ -120,9 +120,9 @@ for i in range(index.size(0)):
 
 for i in range(position.size(0)):
     x, y = position[i]
-    r = 16 * rescale
+    r = 10 * rescale
     draw.ellipse((x - r, y - r, x + r, y + r), fill=(0, 0, 0, 255))
-    r = 14 * rescale
+    r = 8 * rescale
     draw.ellipse(
         (x - r, y - r, x + r, y + r), fill=(49, 130, 219, int(255 * input[i])))
     # if v > 0:
