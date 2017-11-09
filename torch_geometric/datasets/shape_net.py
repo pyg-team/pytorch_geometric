@@ -3,11 +3,9 @@ import os
 # import torch
 from torch.utils.data import Dataset
 
-# from ..graph.geometry import edges_from_faces
-# from .utils.dir import make_dirs
-# from .utils.ply import read_ply
-# from .utils.download import download_url
-# from .utils.extract import extract_tar
+from .utils.dir import make_dirs
+from .utils.download import download_url
+from .utils.extract import extract_zip
 
 
 class ShapeNet(Dataset):
@@ -32,18 +30,51 @@ class ShapeNet(Dataset):
         '04379243': 'table',
     }
 
-    def __init__(self, root, train=True, transform=None,
+    def __init__(self,
+                 root,
+                 train=True,
+                 category='airplaine',
+                 transform=None,
                  target_transform=None):
 
         super(ShapeNet, self).__init__()
 
-        print(self.url)
+        if category not in self.categories.values():
+            raise ValueError
+
         self.root = os.path.expanduser(root)
         self.processed_folder = os.path.join(self.root, 'processed')
 
+        self.category = category
         self.train = train
         self.transform = transform
         self.target_transform = target_transform
 
         self.download()
         self.process()
+
+    def _check_exists(self):
+        return os.path.exists(self.root)
+
+    def _check_processed(self):
+        return os.path.exists(self.processed_folder)
+
+    def download(self):
+        if not self._check_exists():
+            return
+
+        print('Downloading {}'.format(self.url))
+
+        file_path = download_url(self.url, self.root)
+        extract_zip(file_path, self.root)
+        os.unlink(file_path)
+
+    def process(self):
+        if self._check_processed():
+            return
+
+        print('Processing...')
+
+        make_dirs(os.path.join(self.processed_folder))
+
+        print('Done!')

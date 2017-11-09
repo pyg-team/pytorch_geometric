@@ -9,5 +9,5 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet  # noqa
 
-path = '~/MPI-FAUST'
+path = '~/ShapeNet'
 train_dataset = ShapeNet(path, train=True)
