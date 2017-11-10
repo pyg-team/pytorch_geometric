@@ -4,9 +4,6 @@ from math import pi as PI
 import torch
 from torch.utils.data import Dataset
 
-from ..graph.geometry import edges_from_faces
-from .utils.dir import make_dirs
-from .utils.ply import read_ply
 from .utils.download import download_url
 from .utils.extract import extract_tar
 
