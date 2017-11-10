@@ -39,9 +39,9 @@ positions = positions[0:5:2]
 num_first_fc = adjs[2].size(0)
 
 transform = EuclideanAdj()
-_, adjs, positions = transform((None, adjs, positions))
+adjs, positions = transform((None, adjs, positions))[1:]
 
-adjs = [stack([adj for _ in range(batch_size)])[0] for adj in adjs]
+adjs = [stack([a for _ in range(batch_size)])[0] for a in adjs]
 
 if torch.cuda.is_available():
     adjs = [adj.cuda() for adj in adjs]
