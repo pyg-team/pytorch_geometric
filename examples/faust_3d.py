@@ -34,11 +34,11 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=[5, 5, 3], is_open_spline=[1, 1, 1])
+            1, 32, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
         self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[5, 5, 3], is_open_spline=[1, 1, 1])
+            32, 64, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
         self.conv3 = SplineGCN(
-            64, 128, dim=3, kernel_size=[5, 5, 3], is_open_spline=[1, 1, 1])
+            64, 128, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
@@ -63,6 +63,7 @@ if torch.cuda.is_available():
     input = input.cuda()
 input = Variable(input)
 
+idx = torch.arange(0, 6890, out=torch.cuda.LongTensor())
 
 def train(epoch):
     model.train()
@@ -83,10 +84,12 @@ def train(epoch):
         output = model(adj, input)
 
         r = distance * distance
+
         std = 0.0005
         target = torch.exp(-r / std)
+        target[idx, idx] +=10.0
         target /= target.sum(dim=1)
-
+        target = Variable(target)
         loss = torch.mean(-torch.sum(target * torch.log(output + 1e-6), dim=1))
         loss.backward()
         optimizer.step()
