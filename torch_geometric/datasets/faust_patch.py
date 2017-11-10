@@ -1,4 +1,5 @@
 import os
+from math import pi as PI
 
 import torch
 from torch.utils.data import Dataset
@@ -10,9 +11,8 @@ from .utils.download import download_url
 from .utils.extract import extract_tar
 
 
-class FAUST(Dataset):
+class FAUSTPatch(Dataset):
 
-    url = 'http://faust.is.tue.mpg.de/'
     shot_url = 'http://www.roemisch-drei.de/faust_shot.tar.gz'
     n_training = 80
     n_test = 20
@@ -25,11 +25,11 @@ class FAUST(Dataset):
                  transform=None,
                  target_transform=None):
 
-        super(FAUST, self).__init__()
+        super(FAUSTPatch, self).__init__()
 
         self.root = os.path.expanduser(root)
         self.shot_folder = os.path.join(self.root, 'shot')
-        self.processed_folder = os.path.join(self.root, 'processed')
+        self.processed_folder = os.path.join(self.root, 'processed', 'patch')
         self.training_file = os.path.join(self.processed_folder, 'training.pt')
         self.test_file = os.path.join(self.processed_folder, 'test.pt')
 
@@ -39,10 +39,9 @@ class FAUST(Dataset):
         self.target_transform = target_transform
 
         self.download()
-        self.process()
 
         data_file = self.training_file if train else self.test_file
-        self.position, self.index = torch.load(data_file)
+        self.index, self.weight, self.slice = torch.load(data_file)
 
         if shot is True:
             data_file = os.path.join(
@@ -54,15 +53,17 @@ class FAUST(Dataset):
             self.shot = None
 
     def __getitem__(self, i):
-        position = self.position[i]
-        index = self.index[i]
-        weight = torch.FloatTensor(index.size(1)).fill_(1)
+        start, end = self.slice[i:i + 2]
+        index = self.index[:, start:end]
+        weight = self.weight[start:end]
+        weight = to_cartesian(weight)
+        n = 6890
         if self.shot is None:
-            input = torch.FloatTensor(position.size(0)).fill_(1)
+            input = torch.FloatTensor(n, 1).fill_(1)
         else:
             input = self.shot[i]
-        adj = torch.sparse.FloatTensor(index, weight, torch.Size([6890, 6890]))
-        data = (input, adj, position)
+        adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n, 2]))
+        data = (input, adj, torch.FloatTensor())
 
         if self.correspondence:
             target = torch.arange(0, input.size(0)).long()
@@ -75,9 +76,9 @@ class FAUST(Dataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        if self.correspondence:
+        if self.correspondence and not self.train:
             geodesic_distances = torch.load(
-                os.path.join(self.processed_folder, 'geodesic_distances',
+                os.path.join(self.processed_folder, '../geodesic_distances',
                              '{:02d}.pt'.format(i)))
             return data, target, geodesic_distances
         else:
@@ -88,19 +89,6 @@ class FAUST(Dataset):
 
     def _check_exists(self):
         return os.path.exists(self.root)
-
-    def _check_processed(self):
-        return os.path.exists(self.training_file) and \
-               os.path.exists(self.test_file)
-
-    def _read_example(self, index):
-        path = os.path.join(self.root, 'training', 'registrations',
-                            'tr_reg_{0:03d}.ply'.format(index))
-
-        vertices, faces = read_ply(path)
-        edges = edges_from_faces(faces)
-
-        return vertices, edges
 
     def _save_examples(self, indices, path):
         data = [self._read_example(i) for i in indices]
@@ -122,18 +110,18 @@ class FAUST(Dataset):
             extract_tar(file_path, self.shot_folder)
             os.unlink(file_path)
 
-    def process(self):
-        if self._check_processed():
-            return
 
-        print('Processing...')
+def to_polar(weight):
+    scale = torch.FloatTensor([weight[:, 0].max(), 2 * PI])
+    weight /= scale
+    weight += torch.FloatTensor([0, 0.5])
+    return weight
 
-        make_dirs(os.path.join(self.processed_folder))
 
-        train_indices = range(0, self.n_training)
-        self._save_examples(train_indices, self.training_file)
-
-        test_indices = range(self.n_training, self.n_training + self.n_test)
-        self._save_examples(test_indices, self.test_file)
-
-        print('Done!')
+def to_cartesian(weight):
+    x = weight[:, 0] * torch.cos(weight[:, 1])
+    y = weight[:, 0] * torch.sin(weight[:, 1])
+    weight = torch.stack([x, y], dim=1)
+    c = 1 / (2 * weight.abs().max())
+    weight = c * weight + 0.5
+    return weight

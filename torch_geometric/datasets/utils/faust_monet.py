@@ -26,25 +26,35 @@ def read_matlab(path, name):
 
 
 root = os.path.expanduser('~/cvpr')
-geo_path = os.path.join(root, 'geodistances', 'p=005_cs=010_ada=0')
+# geo_path = os.path.join(root, 'geodistances', 'p=005_cs=010_ada=0')
 patch_path = os.path.join(root, 'patches_coord', 'p=005_cs=010_ada=0')
 
-file_path = os.path.join(patch_path, 'tr_reg_000.mat')
-out = read_matlab_sparse(file_path, 'patch_coord')
-rho = out[:, :out.shape[0]].tocoo()
-theta = out[:, out.shape[0]:].tocoo()
+indices = []
+values = []
+slices = [0]
+for i in range(80, 100):
+    print(i)
+    file_path = os.path.join(patch_path, 'tr_reg_{:03d}.mat'.format(i))
+    out = read_matlab_sparse(file_path, 'patch_coord')
+    rho = out[:, :out.shape[0]].tocoo()
+    theta = out[:, out.shape[0]:].tocoo()
+    row = torch.from_numpy(rho.row).long()
+    col = torch.from_numpy(rho.col).long()
+    rho = torch.from_numpy(rho.data)
+    theta = torch.from_numpy(theta.data)
+    index = torch.stack([row, col], dim=0)
+    value = torch.stack([rho, theta], dim=1)
+    indices.append(index)
+    values.append(value)
+    slices.append(slices[-1] + index.size(1))
 
-row = torch.from_numpy(rho.row).long()
-col = torch.from_numpy(rho.col).long()
-rho = torch.from_numpy(rho.data)
-theta = torch.from_numpy(theta.data)
+index = torch.cat(indices, dim=1)
+value = torch.cat(values, dim=0)
+slice = torch.LongTensor(slices)
+torch.save((index, value, slice), os.path.join(root, 'patch/test.pt'))
 
-index = torch.stack([row, col], dim=0)
-value = torch.stack([rho, theta], dim=1)
-adj = torch.sparse.FloatTensor(index, value, torch.Size([6890, 6890, 2]))
-
-outputs = []
-for i in range(0, 100):
-    file_path = os.path.join(geo_path, 'tr_reg_{:03d}.mat'.format(i))
-    out = read_matlab(file_path, 'distance_matrix')
-    torch.save(out, os.path.join(root, 'geodesic/{:02d}.pt'.format(i)))
+# outputs = []
+# for i in range(0, 100):
+#     file_path = os.path.join(geo_path, 'tr_reg_{:03d}.mat'.format(i))
+#     out = read_matlab(file_path, 'distance_matrix')
+#     torch.save(out, os.path.join(root, 'geodesic/{:02d}.pt'.format(i)))

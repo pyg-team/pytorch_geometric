@@ -1,4 +1,5 @@
 from .faust import FAUST
+from .faust_patch import FAUSTPatch
 from .cora import Cora
 from .pubmed import PubMed
 from .citeseer import CiteSeer
