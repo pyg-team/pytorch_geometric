@@ -51,6 +51,14 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
+    if epoch == 61:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
+
+    if epoch == 121:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0001
+
     for batch, ((input, (adj, _), _), target) in enumerate(train_loader):
         if torch.cuda.is_available():
             input, adj, target, = input.cuda(), adj.cuda(), target.cuda()
