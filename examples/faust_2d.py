@@ -67,20 +67,20 @@ def train(epoch):
 
 
 def test():
-    return
     model.eval()
 
     acc_0 = acc_1 = acc_2 = acc_4 = acc_6 = acc_8 = acc_10 = 0
 
-    for (_, (adj, _), _), target, distance in test_loader:
+    for (input, (adj, _), _), target, distance in test_loader:
         if torch.cuda.is_available():
-            adj, target, distance = adj.cuda(), target.cuda(), distance.cuda()
+            input, adj = input.cuda(), adj.cuda()
+            target, distance = target.cuda(), distance.cuda()
 
-        target = Variable(target)
+        input = Variable(input)
 
         output = model(adj, input)
         pred = output.data.max(1)[1]
-        geodesic_error = distance[pred, target.data]
+        geodesic_error = distance[pred, target]
         acc_0 += (geodesic_error <= 0.0000002).sum()
         acc_1 += (geodesic_error <= 0.01).sum()
         acc_2 += (geodesic_error <= 0.02).sum()
@@ -100,4 +100,4 @@ def test():
 
 for epoch in range(1, 151):
     train(epoch)
-    # test()
+    test()
