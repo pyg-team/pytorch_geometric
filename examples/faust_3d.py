@@ -92,9 +92,9 @@ def test():
 
     acc_0 = acc_1 = acc_2 = acc_4 = acc_6 = acc_8 = acc_10 = 0
 
-    for (_, (adj, _), _), target, _ in test_loader:
+    for (_, (adj, _), _), target, distance in test_loader:
         if torch.cuda.is_available():
-            adj, target, distance = adj.cuda(), target.cuda()
+            adj, target, distance = adj.cuda(), target.cuda(), distance.cuda()
 
         target = Variable(target)
 
