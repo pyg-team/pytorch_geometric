@@ -15,8 +15,8 @@ from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 
 path = '~/MPI-FAUST'
-train_dataset = FAUSTPatch(path, train=True, correspondence=True)
-test_dataset = FAUSTPatch(path, train=False, correspondence=True)
+train_dataset = FAUSTPatch(path, train=True, shot=True, correspondence=True)
+test_dataset = FAUSTPatch(path, train=False, shot=True, correspondence=True)
 
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
@@ -25,13 +25,15 @@ test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1, 32, dim=2, kernel_size=5)
+        self.lin = Lin(544, 16)
+        self.conv1 = SplineGCN(16, 32, dim=2, kernel_size=5)
         self.conv2 = SplineGCN(32, 64, dim=2, kernel_size=5)
         self.conv3 = SplineGCN(64, 128, dim=2, kernel_size=5)
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
     def forward(self, adj, x):
+        x = F.elu(self.lin(x))
         x = F.elu(self.conv1(adj, x))
         x = F.elu(self.conv2(adj, x))
         x = F.elu(self.conv3(adj, x))
