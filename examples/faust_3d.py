@@ -14,7 +14,6 @@ from torch_geometric.datasets import FAUST  # noqa
 from torch_geometric.transform import PolarAdj, EuclideanAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
-from torch_geometric.validation import max_geodesic_error_accuracy  # noqa
 
 path = '~/MPI-FAUST'
 train_dataset = FAUST(
@@ -49,7 +48,7 @@ class Net(nn.Module):
         x = F.elu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
-        return F.softmax(x)
+        return F.log_softmax(x)
 
 
 model = Net()
@@ -63,7 +62,6 @@ if torch.cuda.is_available():
     input = input.cuda()
 input = Variable(input)
 
-idx = torch.arange(0, 6890, out=torch.cuda.LongTensor())
 
 def train(epoch):
     model.train()
@@ -76,21 +74,13 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-    for batch, ((_, (adj, _), _), target, distance) in enumerate(train_loader):
+    for batch, ((_, (adj, _), _), target, _) in enumerate(train_loader):
         if torch.cuda.is_available():
-            adj, distance, = adj.cuda(), distance.cuda()
+            adj, target, = adj.cuda(), target.cuda()
 
         optimizer.zero_grad()
         output = model(adj, input)
-
-        r = distance * distance
-
-        std = 0.0005
-        target = torch.exp(-r / std)
-        target[idx, idx] +=10.0
-        target /= target.sum(dim=1)
-        target = Variable(target)
-        loss = torch.mean(-torch.sum(target * torch.log(output + 1e-6), dim=1))
+        loss = F.nll_loss(output, Variable(target))
         loss.backward()
         optimizer.step()
 
@@ -102,9 +92,9 @@ def test():
 
     acc_0 = acc_1 = acc_2 = acc_4 = acc_6 = acc_8 = acc_10 = 0
 
-    for (_, (adj, _), _), target, distance in test_loader:
+    for (_, (adj, _), _), target, _ in test_loader:
         if torch.cuda.is_available():
-            adj, target, distance = adj.cuda(), target.cuda(), distance.cuda()
+            adj, target, distance = adj.cuda(), target.cuda()
 
         target = Variable(target)
 
