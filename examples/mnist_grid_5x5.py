@@ -48,7 +48,7 @@ adjs, positions = transform((None, adjs, positions))[1:]
 adjs = [stack([a for _ in range(batch_size)])[0] for a in adjs]
 
 if torch.cuda.is_available():
-    adjs = [adj.cuda() for adj in adjs]
+    adjs = [a.cuda() for a in adjs]
 
 adj_0, adj_1, adj_2 = adjs[0], adjs[1], adjs[2]
 
