@@ -1,6 +1,7 @@
 from __future__ import division, print_function
 
 import sys
+import time
 
 import torch
 from torch import nn
@@ -9,35 +10,24 @@ from torch.autograd import Variable
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
-
-from torch_geometric.datasets import FAUST  # noqa
-from torch_geometric.transform import PolarAdj, EuclideanAdj  # noqa
+from torch_geometric.datasets import FAUSTPatch  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 
 path = '~/MPI-FAUST'
-train_dataset = FAUST(
-    path, train=True, correspondence=True, transform=EuclideanAdj())
-test_dataset = FAUST(
-    path, train=False, correspondence=True, transform=EuclideanAdj())
+train_dataset = FAUSTPatch(path, train=True, correspondence=True)
+test_dataset = FAUSTPatch(path, train=False, correspondence=True)
 
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 
-# WITHOUT SHOT:
-# 85.39% after 99 epochs, euclidean adj, [5, 5, 2], [1, 1, 1], 4x conv
-# 87.53% after 99 epochs, polar adj, [3, 4, 3], [1, 0, 1], 4x conv
-# 89.26% after 99 epochs, polar adj, [3, 4, 3], [1, 0, 1], 3x conv + lr decay
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
-        self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
-        self.conv3 = SplineGCN(
-            64, 128, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
+        self.conv1 = SplineGCN(1, 32, dim=2, kernel_size=5)
+        self.conv2 = SplineGCN(32, 64, dim=2, kernel_size=5)
+        self.conv3 = SplineGCN(64, 128, dim=2, kernel_size=5)
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
@@ -57,30 +47,19 @@ if torch.cuda.is_available():
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-input = torch.FloatTensor(6890, 1).fill_(1)
-if torch.cuda.is_available():
-    input = input.cuda()
-input = Variable(input)
-
 
 def train(epoch):
     model.train()
 
-    if epoch == 61:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
-
-    if epoch == 121:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.0001
-
-    for batch, ((_, (adj, _), _), target) in enumerate(train_loader):
+    for batch, ((input, (adj, _), _), target) in enumerate(train_loader):
         if torch.cuda.is_available():
-            adj, target, = adj.cuda(), target.cuda()
+            input, adj, target, = input.cuda(), adj.cuda(), target.cuda()
+
+        input, target = Variable(input), Variable(target)
 
         optimizer.zero_grad()
         output = model(adj, input)
-        loss = F.nll_loss(output, Variable(target))
+        loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
 
@@ -88,6 +67,7 @@ def train(epoch):
 
 
 def test():
+    return
     model.eval()
 
     acc_0 = acc_1 = acc_2 = acc_4 = acc_6 = acc_8 = acc_10 = 0
@@ -120,4 +100,4 @@ def test():
 
 for epoch in range(1, 151):
     train(epoch)
-    test()
+    # test()
