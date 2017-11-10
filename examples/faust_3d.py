@@ -49,7 +49,7 @@ class Net(nn.Module):
         x = F.elu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
-        return F.sigmoid(x)
+        return F.softmax(x)
 
 
 model = Net()
@@ -85,8 +85,9 @@ def train(epoch):
         r = distance * distance
         std = 0.0005
         target = torch.exp(-r / std)
+        target /= target.sum(dim=1)
 
-        loss = F.mse_loss(output, Variable(target), size_average=True)
+        loss = torch.mean(-torch.sum(target * torch.log(output + 1e-6), dim=1))
         loss.backward()
         optimizer.step()
 
