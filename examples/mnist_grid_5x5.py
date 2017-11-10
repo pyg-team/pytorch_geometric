@@ -37,9 +37,8 @@ position2 = grid_position(torch.Size([14, 14]))
 adj3 = grid_5x5(torch.Size([7, 7]))
 position3 = grid_position(torch.Size([7, 7]))
 
-adjs = [adj,adj2, adj3]
-positions = [position,position2, position3]
-
+adjs = [adj, adj2, adj3]
+positions = [position, position2, position3]
 
 num_first_fc = adjs[2].size(0)
 
@@ -64,19 +63,18 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(num_first_fc * 64, 512)
         self.fc2 = nn.Linear(512, 10)
 
-
     def forward(self, adjs, x):
         x = F.elu(self.conv1(adjs[0], x))
         x = x.view((-1, 28, 28, 32))
-        x = x.permute(0,3,1,2)
-        x = F.max_pool2d(x,2)
-        x = x.permute(0,2,3,1)
-        x = x.contiguous().view(-1,32)
+        x = x.permute(0, 3, 1, 2)
+        x = F.max_pool2d(x, 2)
+        x = x.permute(0, 2, 3, 1)
+        x = x.contiguous().view(-1, 32)
         x = F.elu(self.conv2(adjs[1], x))
         x = x.view((-1, 28, 28, 64))
-        x = x.permute(0,3,1,2)
-        x = F.max_pool2d(x,2)
-        x = x.permute(0,2,3,1)
+        x = x.permute(0, 3, 1, 2)
+        x = F.max_pool2d(x, 2)
+        x = x.permute(0, 2, 3, 1)
         x = x.contiguous().view(-1, num_first_fc * 64)
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
