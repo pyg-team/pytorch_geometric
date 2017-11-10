@@ -91,7 +91,13 @@ class FAUST(Dataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        return data, target
+        if self.correspondence:
+            geodesic_distances = torch.load(
+                os.path.join(self.processed_folder, 'geodesic_distances',
+                             '{:02d}.pt'.format(i)))
+            return data, target, geodesic_distances
+        else:
+            return data, target
 
     def __len__(self):
         return self.n_training if self.train else self.n_test
