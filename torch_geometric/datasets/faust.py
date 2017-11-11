@@ -11,6 +11,23 @@ from .utils.extract import extract_tar
 
 
 class FAUST(Dataset):
+    """`MPI FAUST <http://faust.is.tue.mpg.de/>`_ Dataset.
+
+    Args:
+        root (string): Root directory of dataset where
+            ``processed/training.pt`` and  ``processed/test.pt`` exist.
+        train (bool, optional): If True, creates dataset from ``training.pt``,
+            otherwise from ``test.pt``. (default: ``True``)
+        shot (bool, optional): If True, loads 544-dimensional SHOT-descriptors
+            to each node. (default: ``False``)
+        correspondence (bool, optional): Whether to return shape correspondence
+            label are pose classification label. (default: ``False``)
+        transform (callable, optional): A function/transform that  takes in an
+            PIL image and returns a transformed version. E.g,
+            ``transforms.RandomCrop``. (default: ``None``)
+        target_transform (callable, optional): A function/transform that takes
+            in the target and transforms it. (default: ``None``)
+    """
 
     url = 'http://faust.is.tue.mpg.de/'
     shot_url = 'http://www.roemisch-drei.de/faust_shot.tar.gz'
