@@ -18,18 +18,3 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-
-gh-pages:
-	git checkout gh-pages
-	cd ..
-	git checkout master docs torch_geometric
-	cd docs
-	make html
-	cd ..
-	mv -fv build/html/* ./
-	rm -rf docs torch_geometric
-	git add -A
-	git commit -m 'Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`'
-	git push origin gh-pages
-	git checkout master
-	cd docs
