@@ -1,20 +1,25 @@
-.. pytorch_geometric documentation master file, created by
-   sphinx-quickstart on Fri Nov 10 23:05:41 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+:github_url: https://github.com/rusty1s/pytorch_geometric
 
-Welcome to pytorch_geometric's documentation!
-=============================================
+PyTorch Geometric documentation
+===============================
+
+PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :glob:
+   :maxdepth: 1
+   :caption: Notes
 
+   notes/*
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Package Reference
+
+   datasets
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
