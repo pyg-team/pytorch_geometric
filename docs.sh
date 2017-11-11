@@ -1,5 +1,7 @@
 #!/bin/sh
 
+git diff-index --quiet HEAD -- || exit 1
+
 git checkout gh-pages
 git checkout master docs torch_geometric
 cd docs && make html
