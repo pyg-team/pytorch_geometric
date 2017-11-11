@@ -12,3 +12,21 @@ FAUST
 
 .. autoclass:: FAUST
    :members:
+
+Cora
+----
+
+.. autoclass:: Cora
+   :members:
+
+PubMed
+------
+
+.. autoclass:: PubMed
+   :members:
+
+CiteSeer
+--------
+
+.. autoclass:: CiteSeer
+   :members:
