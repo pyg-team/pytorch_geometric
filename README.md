@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="80%" src="https://user-images.githubusercontent.com/6945922/32413706-b83b5530-c217-11e7-83ef-43da79b8b5aa.png" />
+  <img width="80%" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/logo.svg?sanitize=true" />
 </p>
 
 --------------------------------------------------------------------------------
