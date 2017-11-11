@@ -3,6 +3,7 @@
 git checkout gh-pages
 git checkout master docs torch_geometric
 cd docs && make html
+cd ..
 mv -fv docs/build/html/* ./
 rm -rf docs torch_geometric
 git add -A
