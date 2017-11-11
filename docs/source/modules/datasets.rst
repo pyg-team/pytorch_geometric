@@ -1,9 +1,7 @@
 Datasets
 ========
 
-The following datasets are available:
-
-.. contents:: Datasets
+.. contents:: Contents
    :local:
 
 .. automodule:: torch_geometric.datasets

@@ -13,10 +13,11 @@ PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch
    notes/*
 
 .. toctree::
+   :glob:
    :maxdepth: 1
    :caption: Package Reference
 
-   datasets
+   modules/*
 
 Indices and tables
 ==================

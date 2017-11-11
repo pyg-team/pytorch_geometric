@@ -3,6 +3,7 @@
 
 import os
 import sys
+import datetime
 
 sys.path.insert(0, os.path.abspath('../..'))
 
@@ -26,7 +27,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pytorch_geometric'
-copyright = '2017, Matthias Fey'
+copyright = '{}, Matthias Fey'.format(datetime.datetime.now().year)
 author = 'Matthias Fey'
 
 # The version info for the project you're documenting, acts as replacement for
