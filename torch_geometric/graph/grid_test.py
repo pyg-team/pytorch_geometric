@@ -20,7 +20,6 @@ class GridTest(TestCase):
 
         assert_equal(adj.to_dense().numpy(), expected_adj)
 
-
     def test_grid_with_connectivity_8(self):
         adj = grid(torch.Size([3, 2]), connectivity=8)
 
