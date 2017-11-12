@@ -3,17 +3,16 @@ import json
 
 import torch
 from torch.utils.data import Dataset
-import torch.nn.functional as F
 
 from .utils.dir import make_dirs
 from .utils.download import download_url
 from .utils.extract import extract_zip
 from ..graph.point_cloud import nn_graph
-from ..transform.graclus import graclus, perm_input
 
 
 class ShapeNet(Dataset):
-    url = 'https://shapenet.cs.stanford.edu/ericyi/shapenetcore_partanno_segmentation_benchmark_v0.zip'
+    url = ('https://shapenet.cs.stanford.edu/ericyi/'
+           'shapenetcore_partanno_segmentation_benchmark_v0.zip')
     raw_folder = 'shapenetcore_partanno_segmentation_benchmark_v0'
     training_filename = 'training.pt'
     test_filename = 'test.pt'

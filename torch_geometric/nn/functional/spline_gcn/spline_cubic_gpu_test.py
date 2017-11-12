@@ -45,10 +45,10 @@ class SplineQuadraticGPUTest(TestCase):
         a1, i1 = spline_cubic_gpu(input.cuda(),
                                   kernel_size.cuda(), is_open_spline.cuda(), 4)
 
-        # a2 = [[0.5, 0.5, 0], [0.32, 0.66, 0.02], [0.5, 0.5, 0], [0.5, 0.5, 0],
-        #       [0.5, 0.5, 0], [0.02, 0.66, 0.32], [0.5, 0.5, 0]]
-        # i2 = [[0, 1, 2], [0, 1, 2], [1, 2, 3], [2, 3, 0], [3, 0, 1], [3, 0, 1],
-        #       [0, 1, 2]]
+        a2 = [[0.5, 0.5, 0], [0.32, 0.66, 0.02], [0.5, 0.5, 0], [0.5, 0.5, 0],
+              [0.5, 0.5, 0], [0.02, 0.66, 0.32], [0.5, 0.5, 0]]
+        i2 = [[0, 1, 2], [0, 1, 2], [1, 2, 3], [2, 3, 0], [3, 0, 1], [3, 0, 1],
+              [0, 1, 2]]
 
-        # assert_almost_equal(a1.cpu().numpy(), a2, 2)
-        # assert_equal(i1.cpu().numpy(), i2)
+        assert_almost_equal(a1.cpu().numpy(), a2, 2)
+        assert_equal(i1.cpu().numpy(), i2)
