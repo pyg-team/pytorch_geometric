@@ -26,9 +26,12 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.lin = Lin(544, 16)
-        self.conv1 = SplineGCN(16, 32, dim=2, kernel_size=5)
-        self.conv2 = SplineGCN(32, 64, dim=2, kernel_size=5)
-        self.conv3 = SplineGCN(64, 128, dim=2, kernel_size=5)
+        self.conv1 = SplineGCN(
+            16, 32, dim=2, kernel_size=[3, 8], is_open_spline=[1, 0])
+        self.conv2 = SplineGCN(
+            32, 64, dim=2, kernel_size=[3, 8], is_open_spline=[1, 0])
+        self.conv3 = SplineGCN(
+            64, 128, dim=2, kernel_size=[3, 8], is_open_spline=[1, 0])
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
@@ -53,11 +56,11 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 61:
+    if epoch == 71:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
-    if epoch == 121:
+    if epoch == 131:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
