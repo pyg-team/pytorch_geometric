@@ -90,7 +90,8 @@ class ShapeNet(Dataset):
         return os.path.exists(self.root)
 
     def _check_processed(self):
-        return os.path.exists(self.processed_folder)
+        processed_folder = os.path.join(self.processed_folder, self.category)
+        return os.path.exists(processed_folder)
 
     def download(self):
         if self._check_exists():
@@ -109,9 +110,7 @@ class ShapeNet(Dataset):
         print('Processing...')
 
         make_dirs(self.processed_folder)
-
-        for category in self.categories:
-            self._process(category)
+        self._process(self.category)
 
         print('Done!')
 
