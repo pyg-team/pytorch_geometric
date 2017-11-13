@@ -25,10 +25,6 @@ train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 
 
-# WITHOUT SHOT:
-# 85.39% after 99 epochs, euclidean adj, [5, 5, 2], [1, 1, 1], 4x conv
-# 87.53% after 99 epochs, polar adj, [3, 4, 3], [1, 0, 1], 4x conv
-# 89.26% after 99 epochs, polar adj, [3, 4, 3], [1, 0, 1], 3x conv + lr decay
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
