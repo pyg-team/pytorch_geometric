@@ -29,35 +29,26 @@ num_classes = 2
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(33, 128, dim=3, kernel_size=6)
-        self.conv2 = SplineGCN(128, 64, dim=3, kernel_size=6)
-        self.conv3 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv4 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv5 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv6 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv7 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv8 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv9 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv10 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv11 = SplineGCN(64, 64, dim=3, kernel_size=6)
-        self.conv12 = SplineGCN(64, 64, dim=3, kernel_size=6)
+        self.conv1 = SplineGCN(34, 64, dim=3, kernel_size=5)
+        self.conv2 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv3 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv4 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv5 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv6 = SplineGCN(64, 64, dim=3, kernel_size=5)
 
-        self.lin1 = Lin(64, 128)
+        self.lin1 = Lin(128, 128)
         self.lin2 = Lin(128, num_classes)
 
     def forward(self, adj, x):
-        x = F.elu(self.conv1(adj, x))
-        x = F.elu(self.conv2(adj, x))
+        y = F.elu(self.conv1(adj, x))
+        x = F.elu(self.conv2(adj, y))
         x = F.elu(self.conv3(adj, x))
         x = F.elu(self.conv4(adj, x))
         x = F.elu(self.conv5(adj, x))
         x = F.elu(self.conv6(adj, x))
-        x = F.elu(self.conv7(adj, x))
-        x = F.elu(self.conv8(adj, x))
-        x = F.elu(self.conv9(adj, x))
-        x = F.elu(self.conv10(adj, x))
-        x = F.elu(self.conv11(adj, x))
-        x = F.elu(self.conv12(adj, x))
+        x = torch.cat((x,y),dim=1)
+        #x = F.elu(self.conv7(adj, x))
+        #x = F.elu(self.conv8(adj, x))
         x = F.elu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
@@ -68,21 +59,23 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train(epoch):
     model.train()
 
-    if epoch == 51:
+    if epoch == 41:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
+
+    if epoch == 61:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-        if epoch == 101:
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = 0.00001
-
     for batch, ((input, (adj, _), _), target) in enumerate(train_loader):
+        one = input.new(input.size(0)).fill_(1)
+        input = torch.cat((input,one),dim=1)
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()
 
@@ -94,7 +87,7 @@ def train(epoch):
         loss.backward()
         optimizer.step()
 
-        print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
+        #print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
 
 
 def test(epoch):
@@ -104,6 +97,8 @@ def test(epoch):
     correct = 0
 
     for (input, (adj, _), _), target in test_loader:
+        one = input.new(input.size(0)).fill_(1)
+        input = torch.cat((input,one),dim=1)
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()
 
