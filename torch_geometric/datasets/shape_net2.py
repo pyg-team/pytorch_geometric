@@ -64,7 +64,8 @@ class ShapeNet(Dataset):
         return os.path.exists(self.raw_folder)
 
     def _check_processed(self):
-        return os.path.exists(self.processed_folder)
+        path = os.path.join(self.processed_folder, self.category)
+        return os.path.exists(path)
 
     @property
     def categories(self):
@@ -89,8 +90,7 @@ class ShapeNet(Dataset):
 
         make_dirs(self.processed_folder)
 
-        for category in self.categories:
-            self._process_category(category)
+        self._process_category(self.category)
 
         print('Done!')
 
@@ -99,18 +99,23 @@ class ShapeNet(Dataset):
         processed_folder = os.path.join(self.processed_folder, category)
         make_dirs(processed_folder)
 
-        data = self._read_file(os.path.join(raw_folder, 'train_1.mat'))
-        t_input, t_index, t_point, t_target, t_slice = data
+        d1 = self._read_file(os.path.join(raw_folder, 'train_1.mat'))
+        d2 = self._read_file(os.path.join(raw_folder, 'train_2.mat'))
+        d3 = self._read_file(os.path.join(raw_folder, 'train_3.mat'))
+        d4 = self._read_file(os.path.join(raw_folder, 'train_4.mat'))
+        input = torch.cat([d1[0], d2[0], d3[0], d4[0]], dim=0)
+        index = torch.cat([d1[1], d2[1], d3[1], d4[1]], dim=1)
+        point = torch.cat([d1[2], d2[2], d3[2], d4[2]], dim=0)
+        target = torch.cat([d1[3], d2[3], d3[3], d4[3]], dim=0)
+        off = d1[4][-1]
+        slices = [d1[4]]
+        slices.append(d2[4][1:] + off)
+        off += d2[4][-1]
+        slices.append(d3[4][1:] + off)
+        off += d3[4][-1]
+        slices.append(d4[4][1:] + off)
+        slice = torch.cat(slices, dim=0)
 
-        data = self._read_file(os.path.join(raw_folder, 'val_1.mat'))
-        v_input, v_index, v_point, v_target, v_slice = data
-        v_slice += t_slice[-1]
-
-        input = torch.cat([t_input, v_input], dim=0)
-        index = torch.cat([t_index, v_index], dim=1)
-        point = torch.cat([t_point, v_point], dim=0)
-        target = torch.cat([t_target, v_target], dim=0)
-        slice = torch.cat([t_slice, v_slice[1:]], dim=0)
         data = (input, index, point, target, slice)
         torch.save(data, os.path.join(processed_folder, 'training.pt'))
 
