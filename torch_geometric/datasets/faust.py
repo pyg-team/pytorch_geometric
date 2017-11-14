@@ -92,7 +92,7 @@ class FAUST(Dataset):
         if self.target_transform is not None:
             target = self.target_transform(target)
 
-        if self.correspondence:
+        if self.correspondence and not self.train:
             geodesic_distances = torch.load(
                 os.path.join(self.processed_folder, 'geodesic_distances',
                              '{:02d}.pt'.format(i)))

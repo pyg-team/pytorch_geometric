@@ -25,12 +25,9 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.lin = Lin(544, 16)
-        self.conv1 = SplineGCN(
-            16, 32, dim=2, kernel_size=[3, 8], is_open_spline=[1, 0])
-        self.conv2 = SplineGCN(
-            32, 64, dim=2, kernel_size=[3, 8], is_open_spline=[1, 0])
-        self.conv3 = SplineGCN(
-            64, 128, dim=2, kernel_size=[3, 8], is_open_spline=[1, 0])
+        self.conv1 = SplineGCN(16, 32, dim=2, kernel_size=10)
+        self.conv2 = SplineGCN(32, 64, dim=2, kernel_size=10)
+        self.conv3 = SplineGCN(64, 128, dim=2, kernel_size=10)
         self.lin1 = Lin(128, 256)
         self.lin2 = Lin(256, 6890)
 
@@ -110,6 +107,6 @@ def test():
     print('Accuracy 10:', acc_10 / (20 * 6890))
 
 
-for epoch in range(1, 151):
+for epoch in range(1, 301):
     train(epoch)
     test()
