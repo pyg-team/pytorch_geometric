@@ -53,7 +53,7 @@ class FAUSTPatch(Dataset):
         start, end = self.slice[i:i + 2]
         index = self.index[:, start:end]
         weight = self.weight[start:end]
-        weight = to_polar(weight)
+        weight = to_cartesian(weight)
         n = 6890
         if self.shot is None:
             input = torch.FloatTensor(n, 1).fill_(1)

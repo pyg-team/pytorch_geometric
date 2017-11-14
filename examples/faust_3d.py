@@ -28,19 +28,22 @@ test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(
-            1, 32, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
-        self.conv2 = SplineGCN(
-            32, 64, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
-        self.conv3 = SplineGCN(
-            64, 128, dim=3, kernel_size=[5, 5, 5], is_open_spline=[1, 1, 1])
-        self.lin1 = Lin(128, 256)
+        self.conv1 = SplineGCN(1, 32, dim=3, kernel_size=5)
+        self.conv2 = SplineGCN(32, 64, dim=3, kernel_size=5)
+        self.conv3 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv4 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv5 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv6 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.lin1 = Lin(64, 256)
         self.lin2 = Lin(256, 6890)
 
     def forward(self, adj, x):
         x = F.elu(self.conv1(adj, x))
         x = F.elu(self.conv2(adj, x))
         x = F.elu(self.conv3(adj, x))
+        x = F.elu(self.conv4(adj, x))
+        x = F.elu(self.conv5(adj, x))
+        x = F.elu(self.conv6(adj, x))
         x = F.elu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
