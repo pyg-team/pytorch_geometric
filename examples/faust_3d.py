@@ -118,6 +118,6 @@ def test():
     print('Accuracy 10:', acc_10 / (20 * 6890))
 
 
-for epoch in range(1, 151):
+for epoch in range(1, 101):
     train(epoch)
     test()
