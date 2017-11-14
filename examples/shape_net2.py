@@ -6,59 +6,39 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-import numpy as np
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import ShapeNet  # noqa
+from torch_geometric.datasets.shape_net2 import ShapeNet  # noqa
 from torch_geometric.transform import EuclideanAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 
-path = '~/ShapeNet'
+path = '~/ShapeNet2'
 train_dataset = ShapeNet(
-    path, train=True, category='cap', transform=EuclideanAdj())
+    path, train=True, category='Airplane', transform=EuclideanAdj())
 test_dataset = ShapeNet(
-    path, train=False, category='cap', transform=EuclideanAdj())
+    path, train=False, category='Airplane', transform=EuclideanAdj())
 
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
-num_classes = 2
+num_classes = 4
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1, 128, dim=3, kernel_size=5)
-        self.conv2 = SplineGCN(128, 128, dim=3, kernel_size=5)
-        self.conv3 = SplineGCN(128, 128, dim=3, kernel_size=5)
-        self.conv4 = SplineGCN(128, 64, dim=3, kernel_size=5)
-        self.conv5 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv6 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv7 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv8 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv9 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv10 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv11 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv12 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv1 = SplineGCN(34, 32, dim=3, kernel_size=3)
+        self.conv2 = SplineGCN(32, 16, dim=3, kernel_size=3)
 
-        self.lin1 = Lin(64, 128)
-        self.lin2 = Lin(128, num_classes)
+        self.lin1 = Lin(16, 32)
+        self.lin2 = Lin(32, num_classes)
 
     def forward(self, adj, x):
         x = F.elu(self.conv1(adj, x))
         x = F.elu(self.conv2(adj, x))
-        x = F.elu(self.conv3(adj, x))
-        x = F.elu(self.conv4(adj, x))
-        x = F.elu(self.conv5(adj, x))
-        x = F.elu(self.conv6(adj, x))
-        x = F.elu(self.conv7(adj, x))
-        x = F.elu(self.conv8(adj, x))
-        x = F.elu(self.conv9(adj, x))
-        x = F.elu(self.conv10(adj, x))
-        x = F.elu(self.conv11(adj, x))
-        x = F.elu(self.conv12(adj, x))
+        # x = F.elu(self.conv3(adj, x))
         x = F.elu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
@@ -69,38 +49,32 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train(epoch):
     model.train()
 
-    if epoch == 51:
+    if epoch == 21:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-        if epoch == 101:
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = 0.0001
-
     for batch, ((input, (adj, _), _), target) in enumerate(train_loader):
-        # weight = target.numpy()
-        # weight = np.bincount(weight)
-        # weight = torch.LongTensor(weight).float()
-        # weight = 1 / weight
+        one = input.new(input.size(0)).fill_(1)
+        input = torch.cat((input, one), dim=1)
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()
-            # weight = weight.cuda()
 
         input, target = Variable(input), Variable(target)
 
         optimizer.zero_grad()
         output = model(adj, input)
-
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
-        print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
+
+        if batch % 50 == 0:
+            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
 
 
 def test(epoch):
@@ -110,6 +84,8 @@ def test(epoch):
     correct = 0
 
     for (input, (adj, _), _), target in test_loader:
+        one = input.new(input.size(0)).fill_(1)
+        input = torch.cat((input, one), dim=1)
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()
 
@@ -128,7 +104,6 @@ def test(epoch):
                 iou_single = 1
             else:
                 iou_single += intersection / union
-            # w = t.sum() / t.size(0)
             w = 1 / num_classes
             iou_single *= w
 
@@ -139,6 +114,6 @@ def test(epoch):
     print('Epoch:', epoch, 'Accuracy:', acc, 'IoU:', iou)
 
 
-for epoch in range(1, 401):
+for epoch in range(1, 251):
     train(epoch)
     test(epoch)

@@ -72,16 +72,8 @@ class ShapeNet(Dataset):
         target = self.target[start:end]
         n = point.size(0)
         adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+        input = weight.new(n, 1).fill_(1)
         data = (input, adj, point)
-
-        # adjs, points, perm = graclus(adj, point, level=2)
-        # adj = adjs[2]
-        # point = points[2]
-        # n = point.size(0)
-        # input = point.new(n, 1).fill_(1)
-
-        # target = perm_input(target, perm).view(1, 1, -1)
-        # target = F.max_pool1d(target.float(), 4).view(-1).data.long()
 
         if self.transform is not None:
             data = self.transform(data)
@@ -98,7 +90,8 @@ class ShapeNet(Dataset):
         return os.path.exists(self.root)
 
     def _check_processed(self):
-        return os.path.exists(self.processed_folder)
+        processed_folder = os.path.join(self.processed_folder, self.category)
+        return os.path.exists(processed_folder)
 
     def download(self):
         if self._check_exists():
@@ -117,9 +110,7 @@ class ShapeNet(Dataset):
         print('Processing...')
 
         make_dirs(self.processed_folder)
-
-        for category in self.categories:
-            self._process(category)
+        self._process(self.category)
 
         print('Done!')
 
