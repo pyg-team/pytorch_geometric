@@ -17,38 +17,28 @@ from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 
 path = '~/ShapeNet2'
 train_dataset = ShapeNet(
-    path, train=True, category='Cap', transform=EuclideanAdj())
+    path, train=True, category='Airplane', transform=EuclideanAdj())
 test_dataset = ShapeNet(
-    path, train=False, category='Cap', transform=EuclideanAdj())
+    path, train=False, category='Airplane', transform=EuclideanAdj())
 
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
-num_classes = 2
+num_classes = 4
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(34, 64, dim=3, kernel_size=5)
-        self.conv2 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv3 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv4 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv5 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv6 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv1 = SplineGCN(34, 32, dim=3, kernel_size=3)
+        self.conv2 = SplineGCN(32, 16, dim=3, kernel_size=3)
 
-        self.lin1 = Lin(128, 128)
-        self.lin2 = Lin(128, num_classes)
+        self.lin1 = Lin(16, 32)
+        self.lin2 = Lin(32, num_classes)
 
     def forward(self, adj, x):
-        y = F.elu(self.conv1(adj, x))
-        x = F.elu(self.conv2(adj, y))
-        x = F.elu(self.conv3(adj, x))
-        x = F.elu(self.conv4(adj, x))
-        x = F.elu(self.conv5(adj, x))
-        x = F.elu(self.conv6(adj, x))
-        x = torch.cat((x,y),dim=1)
-        #x = F.elu(self.conv7(adj, x))
-        #x = F.elu(self.conv8(adj, x))
+        x = F.elu(self.conv1(adj, x))
+        x = F.elu(self.conv2(adj, x))
+        # x = F.elu(self.conv3(adj, x))
         x = F.elu(self.lin1(x))
         x = F.dropout(x, training=self.training)
         x = self.lin2(x)
@@ -65,17 +55,13 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 41:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
-
-    if epoch == 61:
+    if epoch == 21:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
     for batch, ((input, (adj, _), _), target) in enumerate(train_loader):
         one = input.new(input.size(0)).fill_(1)
-        input = torch.cat((input,one),dim=1)
+        input = torch.cat((input, one), dim=1)
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()
 
@@ -87,7 +73,8 @@ def train(epoch):
         loss.backward()
         optimizer.step()
 
-        #print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
+        if batch % 50 == 0:
+            print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
 
 
 def test(epoch):
@@ -98,7 +85,7 @@ def test(epoch):
 
     for (input, (adj, _), _), target in test_loader:
         one = input.new(input.size(0)).fill_(1)
-        input = torch.cat((input,one),dim=1)
+        input = torch.cat((input, one), dim=1)
         if torch.cuda.is_available():
             input, adj, target = input.cuda(), adj.cuda(), target.cuda()
 
@@ -117,7 +104,6 @@ def test(epoch):
                 iou_single = 1
             else:
                 iou_single += intersection / union
-            # w = t.sum() / t.size(0)
             w = 1 / num_classes
             iou_single *= w
 
@@ -128,6 +114,6 @@ def test(epoch):
     print('Epoch:', epoch, 'Accuracy:', acc, 'IoU:', iou)
 
 
-for epoch in range(1, 151):
+for epoch in range(1, 251):
     train(epoch)
     test(epoch)
