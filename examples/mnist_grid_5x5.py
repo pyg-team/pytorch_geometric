@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 
+import os
 import sys
 
 import torch
@@ -95,10 +96,6 @@ def train(epoch):
     if epoch == 11:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
-
-    if epoch == 25:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.00001
 
     for batch, (data, target) in enumerate(train_loader):
         data = data.view(data.size(0), -1, 1)
