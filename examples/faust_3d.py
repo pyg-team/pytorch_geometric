@@ -1,6 +1,7 @@
 from __future__ import division, print_function
 
 import sys
+import os
 
 import torch
 from torch import nn
@@ -69,10 +70,6 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
-    if epoch == 121:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.0001
-
     for batch, ((_, (adj, _), _), target) in enumerate(train_loader):
         if torch.cuda.is_available():
             adj, target, = adj.cuda(), target.cuda()
@@ -95,11 +92,9 @@ def test():
         if torch.cuda.is_available():
             adj, target, distance = adj.cuda(), target.cuda(), distance.cuda()
 
-        target = Variable(target)
-
         output = model(adj, input)
         pred = output.data.max(1)[1]
-        geodesic_error = distance[pred, target.data]
+        geodesic_error = distance[pred, target]
         acc_0 += (geodesic_error <= 0.0000002).sum()
         acc_1 += (geodesic_error <= 0.01).sum()
         acc_2 += (geodesic_error <= 0.02).sum()
