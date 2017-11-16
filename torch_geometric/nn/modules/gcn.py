@@ -36,8 +36,8 @@ class GCN(Module):
         if self.bias is not None:
             self.bias.data.uniform_(-stdv, stdv)
 
-    def forward(self, adj, features):
-        return gcn(adj, features, self.weight, self.bias)
+    def forward(self, adj, input):
+        return gcn(adj, input, self.weight, self.bias)
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}')
