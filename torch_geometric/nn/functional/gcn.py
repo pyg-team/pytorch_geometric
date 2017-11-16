@@ -6,8 +6,8 @@ from ...sparse import mm, mm_diagonal, sum, eye
 def gcn(adj, input, weight, bias=None):
     n, m = adj.size()
 
-    I = eye(n, m)
-    adj = adj + I
+    i = eye(n, m)
+    adj = adj + i
     deg = sum(adj, dim=1)
     deg = deg.pow(-0.5)
 
