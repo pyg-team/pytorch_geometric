@@ -1,6 +1,6 @@
 from torch.autograd import Variable
 
-from ...sparse import mm, mm_diagonal, eye
+from ...sparse import mm, mm_diagonal, sum, eye
 
 
 def gcn(adj, input, weight, bias=None):
