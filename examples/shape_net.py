@@ -6,7 +6,6 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-import numpy as np
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
