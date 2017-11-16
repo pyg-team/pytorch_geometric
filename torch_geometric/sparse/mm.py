@@ -9,10 +9,15 @@ class _Mm(Function):
 
     def backward(self, grad_output):
         a, b = self.saved_tensors
-        grad_input = grad_output.clone()
-        grad_input_dL_da = torch.mm(grad_input, b.t())
-        grad_input_dL_db = torch.mm(a.t(), grad_input)
-        return grad_input_dL_da, grad_input_dL_db
+        grad_a = grad_b = None
+
+        if self.needs_input_grad[0]:
+            grad_a = torch.mm(grad_output, b.t())
+
+        if self.needs_input_grad[1]:
+            grad_b = torch.mm(a.t(), grad_output)
+
+        return grad_a, grad_b
 
 
 def mm(a, b):
