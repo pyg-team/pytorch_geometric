@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 import torch
 from numpy.testing import assert_equal
 
@@ -36,9 +37,3 @@ class IdentityTest(TestCase):
         ]
 
         assert_equal(out.to_dense().numpy(), expected)
-
-    def test_dynamic_type(self):
-        print('TODO: test dynamic type')
-
-    def test_stack_dense_sparse_matrices(self):
-        print('TODO: test dense sparse type')
