@@ -2,13 +2,10 @@ import torch
 
 
 def identity(size):
-    if len(size) != 2:
-        raise ValueError('Invalid sparse dimensionality')
-
     y, x = size
 
-    values = torch.ones(min(y, x))
-    indices = torch.arange(0, min(y, x)).long()
-    indices = indices.repeat(2, 1)
+    value = torch.ones(min(y, x))
+    index = torch.arange(0, min(y, x), out=torch.LongTensor())
+    index = index.repeat(2, 1)
 
-    return torch.sparse.FloatTensor(indices, values, size)
+    return torch.sparse.FloatTensor(index, value, size)
