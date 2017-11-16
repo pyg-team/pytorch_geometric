@@ -25,7 +25,7 @@ class GCNTest(TestCase):
         conv = GCN(1, 10)
         i = torch.LongTensor([[0, 0, 1, 1, 2, 2], [1, 2, 0, 2, 0, 1]])
         w = torch.FloatTensor([1, 1, 1, 1, 1, 1])
-        adj = Variable(torch.sparse.FloatTensor(i, w, torch.Size([3, 3])))
+        adj = torch.sparse.FloatTensor(i, w, torch.Size([3, 3]))
         features = Variable(torch.FloatTensor([[1], [2], [3]]))
 
         out = conv(adj, features)
