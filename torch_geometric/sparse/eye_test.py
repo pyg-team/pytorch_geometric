@@ -1,24 +1,22 @@
 from unittest import TestCase
 
-import torch
 from numpy.testing import assert_equal
 
-from .identity import identity
+from .eye import eye
 
 
-class IdentityTest(TestCase):
-    def test_identity_n_n(self):
-        out = identity(torch.Size([3, 3]))
-        expected = [
+class EyeTest(TestCase):
+    def test_eye_n(self):
+        out = eye(3)
+        expected_out = [
             [1, 0, 0],
             [0, 1, 0],
             [0, 0, 1],
         ]
+        assert_equal(out.to_dense().numpy(), expected_out)
 
-        assert_equal(out.to_dense().numpy(), expected)
-
-    def test_identity_n_m(self):
-        out = identity(torch.Size([3, 4]))
+    def test_eye_n_m(self):
+        out = eye(3, 4)
         expected = [
             [1, 0, 0, 0],
             [0, 1, 0, 0],
@@ -27,8 +25,8 @@ class IdentityTest(TestCase):
 
         assert_equal(out.to_dense().numpy(), expected)
 
-    def test_identity_m_n(self):
-        out = identity(torch.Size([4, 3]))
+    def test_eye_m_n(self):
+        out = eye(4, 3)
         expected = [
             [1, 0, 0],
             [0, 1, 0],
