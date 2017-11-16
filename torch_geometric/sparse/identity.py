@@ -2,10 +2,11 @@ import torch
 
 
 def identity(size):
-    y, x = size
+    h, w = size
+    n = min(h, w)
 
-    value = torch.ones(min(y, x))
-    index = torch.arange(0, min(y, x), out=torch.LongTensor())
+    value = torch.ones(n)
+    index = torch.arange(0, n, out=torch.LongTensor())
     index = index.repeat(2, 1)
 
     return torch.sparse.FloatTensor(index, value, size)
