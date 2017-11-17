@@ -6,7 +6,7 @@ from .base import BaseAdj
 from ..sparse import SparseTensor
 
 
-class EuclideanAdj(BaseAdj):
+class CartesianAdj(BaseAdj):
     def _call(self, adj, position):
         index = adj._indices()
         row, col = index

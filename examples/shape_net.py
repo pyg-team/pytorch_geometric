@@ -11,15 +11,15 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet  # noqa
-from torch_geometric.transform import EuclideanAdj  # noqa
+from torch_geometric.transform import CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 
 path = '~/ShapeNet'
 train_dataset = ShapeNet(
-    path, train=True, category='cap', transform=EuclideanAdj())
+    path, train=True, category='cap', transform=CartesianAdj())
 test_dataset = ShapeNet(
-    path, train=False, category='cap', transform=EuclideanAdj())
+    path, train=False, category='cap', transform=CartesianAdj())
 
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)

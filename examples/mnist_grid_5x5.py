@@ -13,7 +13,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.graph.grid import grid, grid_5x5, grid_position  # noqa
 from torch_geometric.transform.graclus import graclus, perm_input  # noqa
-from torch_geometric.transform import PolarAdj, EuclideanAdj  # noqa
+from torch_geometric.transform import CartesianAdj  # noqa
 from torch_geometric.sparse.stack import stack  # noqa
 from torch_geometric.nn.modules import SplineGCN, GraclusMaxPool  # noqa
 
@@ -42,7 +42,7 @@ positions = [position, position2, position3]
 
 num_first_fc = adjs[2].size(0)
 
-transform = EuclideanAdj()
+transform = CartesianAdj()
 adjs, positions = transform((None, adjs, positions))[1:]
 
 adjs = [stack([a for _ in range(batch_size)])[0] for a in adjs]

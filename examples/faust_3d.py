@@ -11,15 +11,15 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import FAUST  # noqa
-from torch_geometric.transform import PolarAdj, EuclideanAdj  # noqa
+from torch_geometric.transform import PolarAdj, CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 
 path = '~/MPI-FAUST'
 train_dataset = FAUST(
-    path, train=True, correspondence=True, transform=EuclideanAdj())
+    path, train=True, correspondence=True, transform=CartesianAdj())
 test_dataset = FAUST(
-    path, train=False, correspondence=True, transform=EuclideanAdj())
+    path, train=False, correspondence=True, transform=CartesianAdj())
 
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
