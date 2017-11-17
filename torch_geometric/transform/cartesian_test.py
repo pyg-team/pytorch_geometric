@@ -2,17 +2,17 @@ from unittest import TestCase
 import torch
 from numpy.testing import assert_equal
 
-from .euclidean import EuclideanAdj
+from .cartesian import CartesianAdj
 
 
-class EuclideanTest(TestCase):
-    def test_euclidean_adj(self):
+class CartesianTest(TestCase):
+    def test_cartesian_adj(self):
         position = torch.LongTensor([[1, 0], [0, 0], [-2, 4]])
         index = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
         weight = torch.FloatTensor([1, 1, 1, 1])
         adj = torch.sparse.FloatTensor(index, weight, torch.Size([3, 3]))
 
-        transform = EuclideanAdj()
+        transform = CartesianAdj()
 
         _, adj, position = transform((None, adj, position))
         adj = adj.to_dense()

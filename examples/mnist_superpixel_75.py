@@ -12,7 +12,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import MNISTSuperpixel75  # noqa
-from torch_geometric.transform import Graclus, PolarAdj, EuclideanAdj  # noqa
+from torch_geometric.transform import Graclus, CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, GraclusMaxPool  # noqa
 from torch_geometric.nn.functional import batch_average  # noqa
@@ -20,10 +20,10 @@ from torch_geometric.nn.functional import batch_average  # noqa
 path = '~/MNISTSuperpixel75'
 train_dataset = MNISTSuperpixel75(
     path, train=True, transform=Compose([Graclus(4),
-                                         EuclideanAdj()]))
+                                         CartesianAdj()]))
 test_dataset = MNISTSuperpixel75(
     path, train=False, transform=Compose([Graclus(4),
-                                          EuclideanAdj()]))
+                                          CartesianAdj()]))
 
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)

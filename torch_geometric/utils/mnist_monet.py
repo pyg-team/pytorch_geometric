@@ -49,7 +49,7 @@ def read_mnist_monet(dir):
     return input, target, rho, theta
 
 
-def polar2euclidean(rho, theta):
+def polar2cartesian(rho, theta):
     nz = rho.nonzero().t()
     rho = rho[nz[0], nz[1]]
     theta = theta[nz[0], nz[1]]
@@ -57,9 +57,9 @@ def polar2euclidean(rho, theta):
     x = rho * torch.cos(theta)
     y = rho * torch.sin(theta)
 
-    euclidean = torch.stack([x, y], dim=1)
+    cartesian = torch.stack([x, y], dim=1)
 
-    return torch.sparse.FloatTensor(nz, euclidean, torch.Size([75, 75, 2]))
+    return torch.sparse.FloatTensor(nz, cartesian, torch.Size([75, 75, 2]))
 
 
 def sparse_to_dict(a):
@@ -116,7 +116,7 @@ path = os.path.expanduser('~/Downloads/MoNet_code/MNIST')
 
 # positions = []
 # for i in range(70000):
-#     adj = polar2euclidean(rho[i], theta[i])
+#     adj = polar2cartesian(rho[i], theta[i])
 #     adj = sparse_to_dict(adj)
 #     pos = dict_to_pos(adj)
 #     minimum, _ = pos.min(dim=0)
