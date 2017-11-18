@@ -68,7 +68,8 @@ def test():
     return acc
 
 
-accs = []
+acc = input.new(100).fill_(0)
+
 for run in range(1, 101):
     model.conv1.reset_parameters()
     model.conv2.reset_parameters()
@@ -76,9 +77,7 @@ for run in range(1, 101):
     for _ in range(0, 200):
         train()
 
-    acc = test()
-    accs.append(acc)
-    print('Run:', run, 'Accuracy:', acc)
+    acc[run - 1] = test()
+    print('Run:', run, 'Accuracy:', acc[run - 1])
 
-accs = torch.FloatTensor(accs)
-print('Mean:', accs.mean(), 'Stddev:', accs.std())
+print('Mean:', acc.mean(), 'Stddev:', acc.std())
