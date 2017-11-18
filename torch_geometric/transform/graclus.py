@@ -69,12 +69,12 @@ def normalized_cut(adj, rid=None):
     degree = 1 / weight.new(n).fill_(0).scatter_add_(0, row, one)
     weight = weight * (degree[row] + degree[col])
 
-    # Sort after weight.
+    # Sort by weight.
     weight, perm = weight.sort(dim=0, descending=True)
     row = row[perm]
     col = col[perm]
 
-    # Sort after rid.
+    # Sort by rid.
     _, perm = rid[row].sort()
     row = row[perm]
     col = col[perm]
