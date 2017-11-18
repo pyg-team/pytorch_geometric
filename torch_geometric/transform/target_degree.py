@@ -13,9 +13,9 @@ class TargetDegreeAdj(object):
         n = adj.size(0)
 
         # Compute target input degree.
-        degree = sum(adj, dim=0)
-        degree /= degree.max()
-        degree = degree[col]
+        degree = sum(adj, dim=0)  # Input degree.
+        degree /= degree.max()  # Normalize.
+        degree = degree[col]  # Target nodes.
 
         # Modify data and return.
         data.adj = SparseTensor(index, degree, torch.Size([n, n]))
