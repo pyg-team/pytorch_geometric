@@ -12,6 +12,3 @@ class Data(object):
 
     def __getitem__(self, key):
         return self.params[key] if key in self.params else None
-
-    def all(self):
-        return self.input, self.adj, self.position, self.target, self.params
