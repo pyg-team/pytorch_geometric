@@ -2,22 +2,21 @@ from __future__ import division
 
 import torch
 
-from .base import BaseAdj
-from ..sparse import SparseTensor
+from ..sparse import SparseTensor, sum
 
 
-class TargetDegreeAdj(BaseAdj):
-    def _call(self, adj, position):
-        n = adj.size(0)
+class TargetDegreeAdj(object):
+    def __call__(self, data):
+        adj = data.adj
         index = adj._indices()
-        row, col = index
-        weight = adj._values().float()
+        col = index[1]
+        n = adj.size(0)
 
-        degree = weight.new(n).fill_(0)
-        degree.scatter_add_(0, col, weight)  # Collect input degree.
-        degree /= degree.max()  # Normalize globally.
-        target_degree = degree[col]
+        # Compute target input degree.
+        degree = sum(adj, dim=0)  # Input degree.
+        degree /= degree.max()
+        degree = degree[col]
 
-        adj = SparseTensor(index, target_degree, torch.Size([n, n]))
-
-        return adj, position
+        # Modify data and return.
+        data.adj = SparseTensor(index, degree, torch.Size([n, n]))
+        return data
