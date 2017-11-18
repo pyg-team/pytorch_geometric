@@ -66,8 +66,8 @@ def grid_5x5(size):
     for i in range(h):
         for j in range(w):
             a_np = np.zeros([h, w])
-            a_np[max(0, i - 2):min(h - 1, i + 2),
-                 max(0, j - 2):min(w - 1, j + 2)] = 1.0
+            a_np[max(0, i - 2):min(h, i + 2),
+                 max(0, j - 2):min(w, j + 2)] = 1.0
             a_np = a_np.reshape([1, n])
             matrix_list.append(a_np)
 
