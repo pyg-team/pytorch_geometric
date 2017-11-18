@@ -52,8 +52,8 @@ def train():
     model.train()
 
     optimizer.zero_grad()
-    output = model(adj, input)[train_mask]
-    loss = F.nll_loss(output, target[train_mask])
+    output = model(adj, input)
+    loss = F.nll_loss(output[train_mask], target[train_mask])
     loss.backward()
     optimizer.step()
 
@@ -62,8 +62,8 @@ def test():
     model.eval()
 
     output = model(adj, input)
-    output = output[test_mask]
-    pred = output.data.max(1)[1]
+    output = output.data[test_mask]
+    pred = output.max(1)[1]
     acc = pred.eq(target.data[test_mask]).sum() / n
     return acc
 
