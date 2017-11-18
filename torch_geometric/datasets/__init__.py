@@ -1,12 +1,9 @@
-from .faust import FAUST
-from .faust_patch import FAUSTPatch
+from .data import Data
+
 from .cora import Cora
 from .pubmed import PubMed
 from .citeseer import CiteSeer
+from .faust import FAUST
 from .mnist_superpixel_75 import MNISTSuperpixel75
-from .shape_net import ShapeNet
 
-__all__ = [
-    'FAUST', 'Cora', 'PubMed', 'CiteSeer', 'MNISTSuperpixel75', 'ShapeNet',
-    'FAUSTPatch'
-]
+__all__ = ['Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixel75']
