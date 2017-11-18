@@ -61,8 +61,7 @@ def normalized_cut(adj, rid=None):
     row, col = adj._indices()
     weight = adj._values()
 
-    # TODO: Fix MNIST dataset, there are nodes with self-loops, meanwhile do
-    # the following:
+    # Fix graphs with self-loops.
     mask = row != col
     row, col, weight = row[mask], col[mask], weight[mask]
 
