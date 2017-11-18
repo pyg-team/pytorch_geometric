@@ -11,10 +11,10 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cora  # noqa
-from torch_geometric.transform import TargetDegreeAdj  # noqa
+from torch_geometric.transform import TargetIndegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
-dataset = Cora('~/Cora', transform=TargetDegreeAdj())
+dataset = Cora('~/Cora', transform=TargetIndegreeAdj())
 data = dataset[0]
 input, adj, target = data.input, data.adj, data.target
 n = adj.size(0)
@@ -68,7 +68,7 @@ def test():
     return acc
 
 
-acc = input.new(100).fill_(0)
+acc = input.data.new(100).fill_(0)
 
 for run in range(1, 101):
     model.conv1.reset_parameters()

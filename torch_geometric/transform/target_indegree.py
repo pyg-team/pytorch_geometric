@@ -5,7 +5,7 @@ import torch
 from ..sparse import SparseTensor, sum
 
 
-class TargetDegreeAdj(object):
+class TargetIndegreeAdj(object):
     def __call__(self, data):
         adj = data.adj
         index = adj._indices()
