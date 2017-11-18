@@ -9,7 +9,7 @@ class TargetIndegreeAdj(object):
     def __call__(self, data):
         adj = data.adj
         index = adj._indices()
-        col = index[1]
+        _, col = index
         n = adj.size(0)
 
         # Compute target input degree.
