@@ -23,7 +23,7 @@ def graclus(adj, position, level, rid=None):
         rid = None
         clusters.append(cluster_full)
 
-        # Compute new adjaceny.
+        # Compute new adjacency.
         adj = cluster_adj(adj, cluster)
         adjs.append(adj)
 
