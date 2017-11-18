@@ -1,11 +1,9 @@
 from .cartesian import CartesianAdj
 from .polar import PolarAdj
 from .spherical import SphericalAdj
-from .degree import DegreeAdj
-from .target_degree import TargetDegreeAdj
+from .target_indegree import TargetIndegreeAdj
 from .graclus import Graclus
 
 __all__ = [
-    'CartesianAdj', 'PolarAdj', 'SphericalAdj', 'DegreeAdj', 'TargetDegreeAdj',
-    'Graclus'
+    'CartesianAdj', 'PolarAdj', 'SphericalAdj', 'TargetIndegreeAdj', 'Graclus'
 ]
