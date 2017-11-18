@@ -24,6 +24,5 @@ class CartesianTest(TestCase):
         ]
         expected_position = [[1, 0], [0, 0], [-2, 4]]
 
-        assert_equal(adj.size(), [3, 3, 2])
         assert_equal(adj.to_dense().numpy(), expected_adj)
         assert_equal(position.numpy(), expected_position)
