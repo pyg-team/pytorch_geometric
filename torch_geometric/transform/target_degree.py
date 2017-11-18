@@ -15,7 +15,7 @@ class TargetDegreeAdj(BaseAdj):
 
         degree = weight.new(n).fill_(0)
         degree.scatter_add_(0, col, weight)  # Collect input degree.
-        degree /= degree.max()  # Normalize globally (TODO).
+        degree /= degree.max()  # Normalize globally.
         target_degree = degree[col]
 
         adj = SparseTensor(index, target_degree, torch.Size([n, n]))
