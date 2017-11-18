@@ -13,7 +13,7 @@ class TargetDegreeAdj(object):
         n = adj.size(0)
 
         # Compute target input degree.
-        degree = sum(adj, dim=0)  # Input degree.
+        degree = sum(adj, dim=0)
         degree /= degree.max()
         degree = degree[col]
 
