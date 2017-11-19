@@ -11,7 +11,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cora  # noqa
-from torch_geometric.transform import TargetIndegreeAdj  # noqa
+from torch_geometric.transforms import TargetIndegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
 dataset = Cora('~/Cora', transform=TargetIndegreeAdj())

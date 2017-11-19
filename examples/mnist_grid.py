@@ -11,9 +11,9 @@ from torch.autograd import Variable
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.graph.grid import grid, grid_position  # noqa
-from torch_geometric.transform.graclus import graclus, perm_input  # noqa
-from torch_geometric.transform import CartesianAdj  # noqa
+from torch_geometric.graph.grid import grid, grid_5x5, grid_position  # noqa
+from torch_geometric.transforms.graclus import graclus, perm_input  # noqa
+from torch_geometric.transforms import CartesianAdj  # noqa
 from torch_geometric.sparse.stack import stack  # noqa
 from torch_geometric.nn.modules import SplineGCN, GraclusMaxPool  # noqa
 
@@ -30,12 +30,16 @@ test_loader = torch.utils.data.DataLoader(
     batch_size=batch_size,
     shuffle=True)
 
-adj = grid(torch.Size([28, 28]))
+adj = grid_5x5(torch.Size([28, 28]))
 position = grid_position(torch.Size([28, 28]))
-adjs, positions, perm = graclus(adj, position, level=4)
+adj2 = grid_5x5(torch.Size([14, 14]))
+position2 = grid_position(torch.Size([14, 14]))
+adj3 = grid_5x5(torch.Size([7, 7]))
+position3 = grid_position(torch.Size([7, 7]))
 
-adjs = adjs[0:5:2]
-positions = positions[0:5:2]
+adjs = [adj, adj2, adj3]
+positions = [position, position2, position3]
+
 num_first_fc = adjs[2].size(0)
 
 transform = CartesianAdj()
@@ -52,29 +56,29 @@ adj_0, adj_1, adj_2 = adjs[0], adjs[1], adjs[2]
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.pool = GraclusMaxPool(2)
         self.conv1 = SplineGCN(
-            1, 32, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
+            1, 32, dim=2, kernel_size=[5, 5], is_open_spline=[1, 1])
         self.conv2 = SplineGCN(
-            32, 32, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
-        self.conv3 = SplineGCN(
-            32, 64, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
-        self.conv4 = SplineGCN(
-            64, 64, dim=2, kernel_size=[4, 4], is_open_spline=[1, 1])
+            32, 64, dim=2, kernel_size=[5, 5], is_open_spline=[1, 1])
         self.fc1 = nn.Linear(num_first_fc * 64, 512)
         self.fc2 = nn.Linear(512, 10)
 
     def forward(self, adjs, x):
         x = F.elu(self.conv1(adjs[0], x))
-        x = F.elu(self.conv2(adjs[0], x))
-        x = self.pool(x)
-        x = F.elu(self.conv3(adjs[1], x))
-        x = F.elu(self.conv4(adjs[1], x))
-        x = self.pool(x)
+        x = x.view((-1, 28, 28, 32))
+        x = x.permute(0, 3, 1, 2)
+        x = F.max_pool2d(x, 2)
+        x = x.permute(0, 2, 3, 1)
+        x = x.contiguous().view(-1, 32)
+        x = F.elu(self.conv2(adjs[1], x))
+        x = x.view((-1, 28, 28, 64))
+        x = x.permute(0, 3, 1, 2)
+        x = F.max_pool2d(x, 2)
+        x = x.permute(0, 2, 3, 1)
         x = x.contiguous().view(-1, num_first_fc * 64)
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
-        x = self.fc2(x)
+        x = F.elu(self.fc2(x))
         return F.log_softmax(x)
 
 
@@ -94,7 +98,7 @@ def train(epoch):
 
     for batch, (data, target) in enumerate(train_loader):
         data = data.view(data.size(0), -1, 1)
-        input = torch.cat([perm_input(img, perm) for img in data], dim=0)
+        input = torch.cat([img for img in data], dim=0)
 
         if torch.cuda.is_available():
             input, target = input.cuda(), target.cuda()
@@ -115,7 +119,7 @@ def test(epoch):
 
     for batch, (data, target) in enumerate(test_loader):
         data = data.view(data.size(0), -1, 1)
-        input = torch.cat([perm_input(img, perm) for img in data], dim=0)
+        input = torch.cat([img for img in data], dim=0)
 
         if torch.cuda.is_available():
             input, target = input.cuda(), target.cuda()
