@@ -22,7 +22,7 @@ class Graclus(object):
         for i in range(1, self.level + 1):
             data.append(Data(None, adjs[i], positions[i], None))
 
-        return data
+        return tuple(data)
 
 
 def adj_distance(adj, position):
