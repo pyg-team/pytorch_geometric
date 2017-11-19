@@ -11,7 +11,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet  # noqa
-from torch_geometric.transform import CartesianAdj  # noqa
+from torch_geometric.transforms import CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 

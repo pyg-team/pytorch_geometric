@@ -12,7 +12,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import MNISTSuperpixel75  # noqa
-from torch_geometric.transform import Graclus, CartesianAdj  # noqa
+from torch_geometric.transforms import Graclus, CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, GraclusMaxPool  # noqa
 from torch_geometric.nn.functional import batch_average  # noqa
