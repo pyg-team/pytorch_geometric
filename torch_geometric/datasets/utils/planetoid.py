@@ -41,6 +41,6 @@ def read_planetoid(dir, name):
     ty = torch.IntTensor(ty)
     ally = torch.IntTensor(ally)
     target = torch.cat([ally, ty], dim=0)
-    target = target.max(dim=1)[1].long()
+    target = target.max(dim=1)[1].byte()
 
     return input, index, target

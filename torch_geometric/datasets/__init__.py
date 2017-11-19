@@ -4,6 +4,6 @@ from .cora import Cora
 from .pubmed import PubMed
 from .citeseer import CiteSeer
 from .faust import FAUST
-from .mnist_superpixel_75 import MNISTSuperpixel75
+from .mnist_superpixels import MNISTSuperpixels
 
-__all__ = ['Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixel75']
+__all__ = ['Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels']

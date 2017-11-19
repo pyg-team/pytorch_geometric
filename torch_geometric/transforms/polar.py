@@ -2,12 +2,11 @@ from math import pi as PI
 
 import torch
 
-from .base import BaseTransform
 from ..sparse import SparseTensor
 
 
-class PolarAdj(BaseTransform):
-    def _call(self, data):
+class PolarAdj(object):
+    def __call__(self, data):
         adj, position = data.adj, data.position
         index = adj._indices()
         row, col = index

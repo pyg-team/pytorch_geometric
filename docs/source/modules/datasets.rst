@@ -30,3 +30,9 @@ CiteSeer
 
 .. autoclass:: CiteSeer
    :members:
+
+MNISTSuperpixels
+----------------
+
+.. autoclass:: MNISTSuperpixels
+   :members:

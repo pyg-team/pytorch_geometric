@@ -2,12 +2,11 @@ from __future__ import division
 
 import torch
 
-from .base import BaseTransform
 from ..sparse import SparseTensor, sum
 
 
-class TargetIndegreeAdj(BaseTransform):
-    def _call(self, data):
+class TargetIndegreeAdj(object):
+    def __call__(self, data):
         adj = data.adj
         index = adj._indices()
         _, col = index
