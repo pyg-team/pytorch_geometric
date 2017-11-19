@@ -1,4 +1,4 @@
-from unittest import TestCase
+import unittest
 
 import torch
 from torch.autograd import Variable, gradcheck
@@ -10,11 +10,9 @@ if torch.cuda.is_available():
     from .edgewise_spline_weighting_gpu import EdgewiseSplineWeightingGPU
 
 
-class EdgewiseSplineWeightingGPUTest(TestCase):
+class EdgewiseSplineWeightingGPUTest(unittest.TestCase):
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_forward(self):
-        if not torch.cuda.is_available():
-            return
-
         input = [[0.25, 0.125], [0.25, 0.375], [0.75, 0.625], [0.75, 0.875]]
         input = torch.FloatTensor(input)
         kernel_size = torch.LongTensor([3, 4])
@@ -40,10 +38,8 @@ class EdgewiseSplineWeightingGPUTest(TestCase):
 
         assert_equal(out.cpu().data.numpy(), expected_out)
 
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_backward(self):
-        if not torch.cuda.is_available():
-            return
-
         input = [[0.25, 0.125], [0.25, 0.375], [0.75, 0.625], [0.75, 0.875]]
         input = torch.DoubleTensor(input)
         kernel_size = torch.LongTensor([3, 4])

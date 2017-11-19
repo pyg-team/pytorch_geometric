@@ -1,4 +1,4 @@
-from unittest import TestCase
+import unittest
 
 import torch
 from numpy.testing import assert_equal
@@ -9,11 +9,9 @@ if torch.cuda.is_available():
     from .spline_linear_gpu import spline_linear_gpu
 
 
-class SplineLinearGPUTest(TestCase):
+class SplineLinearGPUTest(unittest.TestCase):
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_open_spline(self):
-        if not torch.cuda.is_available():
-            return
-
         input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         kernel_size = torch.LongTensor([5])
         is_open_spline = torch.LongTensor([1])
@@ -27,10 +25,8 @@ class SplineLinearGPUTest(TestCase):
         assert_equal(a1.numpy(), a2.cpu().numpy())
         assert_equal(i1.numpy(), i2.cpu().numpy())
 
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_closed_spline(self):
-        if not torch.cuda.is_available():
-            return
-
         input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         kernel_size = torch.LongTensor([4])
         is_open_spline = torch.LongTensor([0])
@@ -44,10 +40,8 @@ class SplineLinearGPUTest(TestCase):
         assert_equal(a1.numpy(), a2.cpu().numpy())
         assert_equal(i1.numpy(), i2.cpu().numpy())
 
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_spline_2d(self):
-        if not torch.cuda.is_available():
-            return
-
         input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         input = torch.stack([input, input], dim=1)
         kernel_size = torch.LongTensor([5, 4])
@@ -61,10 +55,8 @@ class SplineLinearGPUTest(TestCase):
         assert_equal(a1.numpy(), a2.cpu().numpy())
         # assert_equal(i1.numpy(), i2.cpu().numpy())
 
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_spline_3d(self):
-        if not torch.cuda.is_available():
-            return
-
         input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         input = torch.stack([input, input, input], dim=1)
         kernel_size = torch.LongTensor([5, 4, 4])
