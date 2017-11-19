@@ -2,12 +2,12 @@ from unittest import TestCase
 import torch
 from numpy.testing import assert_equal
 
-from .grid import grid, grid_position
+from .grid import grid_3x3, grid_position
 
 
 class GridTest(TestCase):
     def test_grid_with_connectivity_4(self):
-        adj = grid(torch.Size([3, 2]))
+        adj = grid_3x3(torch.Size([3, 2]))
 
         expected_adj = [
             [0, 1, 1, 0, 0, 0],
@@ -21,7 +21,7 @@ class GridTest(TestCase):
         assert_equal(adj.to_dense().numpy(), expected_adj)
 
     def test_grid_with_connectivity_8(self):
-        adj = grid(torch.Size([3, 2]), connectivity=8)
+        adj = grid_3x3(torch.Size([3, 2]), connectivity=8)
 
         expected_adj = [
             [0, 1, 1, 2, 0, 0],
