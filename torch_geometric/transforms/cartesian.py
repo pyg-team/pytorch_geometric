@@ -2,11 +2,12 @@ from __future__ import division
 
 import torch
 
+from .base import BaseTransform
 from ..sparse import SparseTensor
 
 
-class CartesianAdj(object):
-    def __call__(self, data):
+class CartesianAdj(BaseTransform):
+    def _call(self, data):
         adj, position = data.adj, data.position
         index = adj._indices()
         row, col = index
