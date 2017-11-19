@@ -20,11 +20,9 @@ class GraclusTest(TestCase):
 
         data = Graclus()(data, rid=torch.LongTensor([4, 3, 2, 0, 1]))
 
-        self.assertEqual(len(data), 2)
-
         # Cluster = [1, 0, 1, 0, 2, 2].
         expected_input = [[3, 4], [7, 8], [1, 2], [5, 6], [9, 10], [0, 0]]
-        assert_equal(data[0].input.numpy(), expected_input)
+        assert_equal(data.input.numpy(), expected_input)
 
         expected_adj_0 = [
             [0, 1, 1, 0, 0, 0],
@@ -34,15 +32,15 @@ class GraclusTest(TestCase):
             [0, 1, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ]
-        assert_equal(data[0].adj.to_dense().numpy(), expected_adj_0)
+        assert_equal(data.adj.to_dense().numpy(), expected_adj_0)
         expected_adj_1 = [
             [0, 2, 1],
             [2, 0, 0],
             [1, 0, 0],
         ]
-        assert_equal(data[1].adj.to_dense().numpy(), expected_adj_1)
+        assert_equal(data['adj_2'].to_dense().numpy(), expected_adj_1)
 
         expected_position_0 = [[3, 2], [4, 1], [1, 1], [3, 0], [8, 3], [0, 0]]
-        assert_equal(data[0].position.numpy(), expected_position_0)
+        assert_equal(data.position.numpy(), expected_position_0)
         expected_position_1 = [[3.5, 1.5], [2, 0.5], [8, 3]]
-        assert_equal(data[1].position.numpy(), expected_position_1)
+        assert_equal(data['position_2'].numpy(), expected_position_1)

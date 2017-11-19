@@ -18,7 +18,7 @@ class Graclus(object):
 
         for i in range(2, self.level + 2):
             data.add('adj_{}'.format(i), adjs[i - 1])
-            data.add('position_{}'.format(i), position[i - 1])
+            data.add('position_{}'.format(i), positions[i - 1])
 
         return data
 
