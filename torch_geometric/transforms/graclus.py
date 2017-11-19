@@ -2,8 +2,6 @@ from __future__ import division
 
 import torch
 
-from ..datasets.data import Data
-
 
 class Graclus(object):
     def __init__(self, level=1):
@@ -17,12 +15,12 @@ class Graclus(object):
         data.adj = adjs[0]
         data.position = positions[0]
         data.input = perm_input(data.input, perm)
-        data = [data]
 
-        for i in range(1, self.level + 1):
-            data.append(Data(None, adjs[i], positions[i], None))
+        for i in range(2, self.level + 2):
+            data.add('adj_{}'.format(i), adjs[i - 1])
+            data.add('position_{}'.format(i), position[i - 1])
 
-        return tuple(data)
+        return data
 
 
 def adj_distance(adj, position):

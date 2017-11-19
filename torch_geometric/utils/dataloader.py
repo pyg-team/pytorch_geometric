@@ -8,10 +8,10 @@ from ..sparse.stack import stack
 
 def collate(batch):
     if torch.is_tensor(batch[0]) and batch[0].is_sparse:
-        return stack(batch)
+        data, slice = stack(batch)
+        return {'content': data, 'slice': slice}
 
     if torch.is_tensor(batch[0]):
-        # Do a cat instead of a stack!
         return torch.cat(batch, dim=0)
 
     elif isinstance(batch[0], collections.Mapping):

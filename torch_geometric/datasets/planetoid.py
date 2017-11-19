@@ -47,7 +47,7 @@ class Planetoid(Dataset):
         if self.transform is not None:
             data = self.transform(data)
 
-        return data
+        return data.all()
 
     def __len__(self):
         return 1
