@@ -1,4 +1,4 @@
-from unittest import TestCase
+import unittest
 
 import torch
 from numpy.testing import assert_equal, assert_almost_equal
@@ -7,11 +7,9 @@ if torch.cuda.is_available():
     from .spline_quadratic_gpu import spline_quadratic_gpu
 
 
-class SplineQuadraticGPUTest(TestCase):
+class SplineQuadraticGPUTest(unittest.TestCase):
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_open_spline(self):
-        if not torch.cuda.is_available():
-            return
-
         input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         kernel_size = torch.LongTensor([6])
         is_open_spline = torch.LongTensor([1])
@@ -28,10 +26,8 @@ class SplineQuadraticGPUTest(TestCase):
         assert_almost_equal(a1.cpu().numpy(), a2, 2)
         assert_equal(i1.cpu().numpy(), i2)
 
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_closed_spline(self):
-        if not torch.cuda.is_available():
-            return
-
         input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         kernel_size = torch.LongTensor([4])
         is_open_spline = torch.LongTensor([0])
