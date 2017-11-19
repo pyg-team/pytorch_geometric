@@ -14,9 +14,10 @@ from torch_geometric.datasets import Cora  # noqa
 from torch_geometric.transforms import TargetIndegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineGCN  # noqa
 
-dataset = Cora('~/Cora', transform=TargetIndegreeAdj())
+transform = TargetIndegreeAdj()
+dataset = Cora('~/Cora', transform=transform)
 data = dataset[0]
-input, adj, target = data.input, data.adj, data.target
+input, adj, target = data['input'], data['adj'], data['target']
 n = adj.size(0)
 train_mask = torch.arange(0, n - 1000, out=torch.LongTensor())
 test_mask = torch.arange(n - 500, n, out=torch.LongTensor())

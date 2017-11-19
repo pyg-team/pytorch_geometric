@@ -11,18 +11,20 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import FAUST  # noqa
-from torch_geometric.transforms import PolarAdj, CartesianAdj  # noqa
+from torch_geometric.transforms import CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
 
-path = '~/MPI-FAUST'
-train_dataset = FAUST(
-    path, train=True, correspondence=True, transform=CartesianAdj())
-test_dataset = FAUST(
-    path, train=False, correspondence=True, transform=CartesianAdj())
+path = '~/FAUST'
+transform = CartesianAdj()
+train_dataset = FAUST(path, train=True, transform=transform)
+test_dataset = FAUST(path, train=False, distance=True, transform=transform)
 
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=1, shuffle=True)
+n = 6890
+batch_size = 1
+
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
 
 class Net(nn.Module):
@@ -51,15 +53,14 @@ class Net(nn.Module):
 
 
 model = Net()
-if torch.cuda.is_available():
-    model.cuda()
+input = torch.FloatTensor(n * batch_size, 1).fill_(1)
+target = torch.arange(0, n, out=torch.LongTensor()).repeat(batch_size)
 
+if torch.cuda.is_available():
+    model, input, target = model.cuda(), input.cuda(), target.cuda()
+
+input, target = Variable(input), Variable(target)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-
-input = torch.FloatTensor(6890, 1).fill_(1)
-if torch.cuda.is_available():
-    input = input.cuda()
-input = Variable(input)
 
 
 def train(epoch):
@@ -69,9 +70,11 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
-    for batch, ((_, (adj, _), _), target) in enumerate(train_loader):
+    for batch, data in enumerate(train_loader):
+        adj = data['adj']['content']
+
         if torch.cuda.is_available():
-            adj, target, = adj.cuda(), target.cuda()
+            adj = adj.cuda()
 
         optimizer.zero_grad()
         output = model(adj, input)
@@ -82,14 +85,16 @@ def train(epoch):
         print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
 
 
-def test():
+def test(epoch):
     model.eval()
 
     acc_0 = acc_1 = acc_2 = acc_4 = acc_6 = acc_8 = acc_10 = 0
 
-    for (_, (adj, _), _), target, distance in test_loader:
+    for data in test_loader:
+        adj, distance = data['adj']['content'], data['distance']
+
         if torch.cuda.is_available():
-            adj, target, distance = adj.cuda(), target.cuda(), distance.cuda()
+            adj, distance = adj.cuda(), distance.cuda()
 
         output = model(adj, input)
         pred = output.data.max(1)[1]
@@ -102,6 +107,7 @@ def test():
         acc_8 += (geodesic_error <= 0.08).sum()
         acc_10 += (geodesic_error <= 0.1).sum()
 
+    print('Epoch', epoch)
     print('Accuracy 0:', acc_0 / (20 * 6890))
     print('Accuracy 1:', acc_1 / (20 * 6890))
     print('Accuracy 2:', acc_2 / (20 * 6890))
@@ -113,4 +119,4 @@ def test():
 
 for epoch in range(1, 101):
     train(epoch)
-    test()
+    test(epoch)
