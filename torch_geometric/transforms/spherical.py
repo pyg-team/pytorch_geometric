@@ -2,12 +2,11 @@ from math import pi as PI
 
 import torch
 
-from .base import BaseTransform
 from ..sparse import SparseTensor
 
 
-class SphericalAdj(BaseTransform):
-    def _call(self, data):
+class SphericalAdj(object):
+    def __call__(self, data):
         adj, position = data.adj, data.position
         index = adj._indices()
         row, col = index

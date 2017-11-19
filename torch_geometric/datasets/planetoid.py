@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import Dataset
 
 from .data import Data
+from ..sparse import SparseTensor
 from .utils.dir import make_dirs
 from .utils.download import download_url
 from .utils.planetoid import read_planetoid
@@ -25,7 +26,7 @@ class Planetoid(Dataset):
         self.data_file = os.path.join(self.processed_folder, 'data.pt')
         self.transform = transform
 
-        # Download and process.
+        # Download and process data.
         self.download()
         self.process()
 
@@ -36,10 +37,10 @@ class Planetoid(Dataset):
         # Create unweighted sparse adjacency matrix.
         weight = torch.ones(index.size(1))
         n = input.size(0)
-        adj = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+        adj = SparseTensor(index, weight, torch.Size([n, n]))
 
         # Bundle graph to data object.
-        self.data = Data(input, adj, position=None, target=target)
+        self.data = Data(input, adj, position=None, target=target.long())
 
     def __getitem__(self, index):
         data = self.data
