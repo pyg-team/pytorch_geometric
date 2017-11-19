@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 
-def grid(size, connectivity=4, out=None):
+def grid_3x3(size, connectivity=4, out=None):
     """Return the unweighted adjacency matrix of a regular grid."""
     h, w = size
     n = h * w
