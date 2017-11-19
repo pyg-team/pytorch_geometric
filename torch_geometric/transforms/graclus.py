@@ -2,22 +2,48 @@ from __future__ import division
 
 import torch
 
+from ..datasets.data import Data
+
+
+class Graclus(object):
+    def __init__(self, level=1):
+        self.level = level
+
+    def __call__(self, data, rid=None):
+        adj, position = data.adj, data.position
+
+        adjs, positions, perm = graclus(adj, position, self.level, rid)
+
+        data.adj = adjs[0]
+        data.position = positions[0]
+        data.input = perm_input(data.input, perm)
+        data = [data]
+
+        for i in range(1, self.level + 1):
+            data.append(Data(None, adjs[i], positions[i], None))
+
+        return data
+
+
+def adj_distance(adj, position):
+    n = adj.size(0)
+    index = adj._indices()
+    row, col = index
+    start, end = position[row], position[col]
+    dist = end - start
+    dist = (dist * dist).sum(1)
+    std = dist.sqrt().std()
+    std = std * std
+    weight = torch.exp(dist / (-2 * std))
+    return torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+
 
 def graclus(adj, position, level, rid=None):
     adjs = [adj]
     positions = [position]
     clusters = []
     for _ in range(level):
-        n = adj.size(0)
-        index = adj._indices()
-        row, col = index
-        start, end = position[row], position[col]
-        dist = end - start
-        dist = (dist * dist).sum(1)
-        std = dist.sqrt().std()
-        std = std * std
-        weight = torch.exp(dist / (-2 * std))
-        adj_d = torch.sparse.FloatTensor(index, weight, torch.Size([n, n]))
+        adj_d = adj_distance(adj, position)
 
         cluster, cluster_full, singleton = normalized_cut(adj_d, rid)
         rid = None
@@ -38,19 +64,6 @@ def graclus(adj, position, level, rid=None):
     positions = [perm_input(positions[i], perms[i]) for i in range(len(perms))]
 
     return adjs, positions, perms[0]
-
-
-class Graclus(object):
-    def __init__(self, level=1):
-        self.level = level
-
-    def __call__(self, data, rid=None):
-        input, adj, position = data
-
-        adjs, positions, perm = graclus(adj, position, self.level, rid)
-        input = perm_input(input, perm)
-
-        return input, adjs, positions
 
 
 def normalized_cut(adj, rid=None):
