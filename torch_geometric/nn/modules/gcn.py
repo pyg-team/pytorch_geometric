@@ -6,17 +6,22 @@ from torch.nn import Module, Parameter
 from ..functional.gcn import gcn
 
 
-class GCN(Module):
-    """
+class GraphConv(Module):
+    """Graph Convolutional Operator from the `"Semi-Supervised Classfication
+    with Graph Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_
+    paper. Computes :math:`F_{out} = \hat{D}^{-1/2} \hat{A} \hat{D}^{-1/2}
+    F_{in} W` with :math:`\hat{A} = A + I` and
+    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}`.
+
     Args:
         in_features (int): Size of each input sample.
         out_features (int): Size of each output sample.
-        bias (bool, optional): If set to False, the layer will not learn an
-            additive bias. (default: `True`)
+        bias (bool, optional): If set to ``False``, the layer will not learn an
+            additive bias. (default: ``True``)
     """
 
     def __init__(self, in_features, out_features, bias=True):
-        super(GCN, self).__init__()
+        super(GraphConv, self).__init__()
 
         self.in_features = in_features
         self.out_features = out_features
@@ -30,7 +35,7 @@ class GCN(Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        stdv = 1. / math.sqrt(self.in_features)
+        stdv = 1. / math.sqrt(self.out_features)
 
         self.weight.data.uniform_(-stdv, stdv)
         if self.bias is not None:

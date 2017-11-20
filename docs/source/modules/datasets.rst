@@ -1,8 +1,8 @@
-Datasets
-========
+torch_geometric.datasets
+========================
 
 .. contents:: Contents
-   :local:
+    :local:
 
 .. automodule:: torch_geometric.datasets
 .. currentmodule:: torch_geometric.datasets
@@ -11,28 +11,28 @@ FAUST
 -----
 
 .. autoclass:: FAUST
-   :members:
+    :members:
 
 Cora
 ----
 
 .. autoclass:: Cora
-   :members:
+    :members:
 
 PubMed
 ------
 
 .. autoclass:: PubMed
-   :members:
+    :members:
 
 CiteSeer
 --------
 
 .. autoclass:: CiteSeer
-   :members:
+    :members:
 
 MNISTSuperpixels
 ----------------
 
 .. autoclass:: MNISTSuperpixels
-   :members:
+    :members:
