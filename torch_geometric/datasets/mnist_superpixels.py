@@ -16,7 +16,7 @@ class MNISTSuperpixels(Dataset):
     75 graph-nodes.
 
     Args:
-        root (string): Root directory of dataset. Download data automatically
+        root (string): Root directory of dataset. Downloads data automatically
             if dataset doesn't exist.
         train (bool, optional): If ``True``, creates dataset from
             ``training.pt``, otherwise from ``test.pt``. (default: ``True``)
