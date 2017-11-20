@@ -20,7 +20,7 @@ class MNISTSuperpixels(Dataset):
             if dataset doesn't exist.
         train (bool, optional): If ``True``, creates dataset from
             ``training.pt``, otherwise from ``test.pt``. (default: ``True``)
-        transform (callable, optional): A function/transform that takes in an
+        transform (callable, optional): A function/transform that takes in a
             ``Data`` object and returns a transformed version.
             (default: ``None``)
     """

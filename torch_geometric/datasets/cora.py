@@ -7,7 +7,7 @@ class Cora(Planetoid):
     Args:
         root (string): Root directory of dataset. Download and process data
             automatically if dataset doesn't exist.
-        transform (callable, optional): A function/transform that takes in an
+        transform (callable, optional): A function/transform that takes in a
             ``Data`` object and returns a transformed version.
             (default: ``None``)
     """
