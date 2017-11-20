@@ -48,6 +48,10 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(512, 10)
 
     def forward(self, adjs, x):
+        # Inference and training takes a long time ...
+        # This is due to the `contiguous()` call and the PyTorch `max_pool2d`
+        # operation expecting a [N, C, H, W] input format :(
+        # However, the convolution calls ON GPU are really, really fast.
         x = F.elu(self.conv1(adjs[0], x))
         x = x.view(-1, 28, 28, 32)
         x = x.permute(0, 3, 1, 2)
