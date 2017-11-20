@@ -77,6 +77,7 @@ def train(epoch):
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
+        print(epoch, batch, loss.data[0])
 
 
 def test(epoch):
@@ -99,7 +100,7 @@ def test(epoch):
         pred = output.data.max(1)[1]
         correct += pred.eq(target).cpu().sum()
 
-    print('Epoch:', epoch, 'Accuracy:', correct / 10000)
+    print('Epoch:', epoch, 'Accuracy:', correct / len(test_dataset))
 
 
 for epoch in range(1, 21):
