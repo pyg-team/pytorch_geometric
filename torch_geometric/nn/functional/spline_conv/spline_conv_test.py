@@ -5,7 +5,7 @@ import torch
 from torch.autograd import Variable
 from numpy.testing import assert_almost_equal
 
-from .spline_gcn import spline_gcn
+from .spline_conv import spline_conv
 
 
 class SplineGcnTest(TestCase):
@@ -23,7 +23,7 @@ class SplineGcnTest(TestCase):
 
         input, weight = Variable(input), Variable(weight)
 
-        output = spline_gcn(
+        output = spline_conv(
             adj, input, weight, kernel_size, is_open_spline, K=12, degree=1)
 
         expected_output = [
@@ -54,7 +54,7 @@ class SplineGcnTest(TestCase):
         adj, input, weight = adj.cuda(), input.cuda(), weight.cuda()
         input, weight = Variable(input), Variable(weight)
 
-        output = spline_gcn(
+        output = spline_conv(
             adj, input, weight, kernel_size, is_open_spline, K=12, degree=1)
 
         expected_output = [
