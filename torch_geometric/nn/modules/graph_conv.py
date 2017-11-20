@@ -3,7 +3,7 @@ import math
 import torch
 from torch.nn import Module, Parameter
 
-from ..functional.gcn import gcn
+from ..functional.graph_conv import graph_conv
 
 
 class GraphConv(Module):
@@ -35,14 +35,14 @@ class GraphConv(Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        stdv = 1. / math.sqrt(self.out_features)
+        stdv = 1. / math.sqrt(self.in_features)
 
         self.weight.data.uniform_(-stdv, stdv)
         if self.bias is not None:
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, adj, input):
-        return gcn(adj, input, self.weight, self.bias)
+        return graph_conv(adj, input, self.weight, self.bias)
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}')
