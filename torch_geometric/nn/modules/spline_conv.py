@@ -21,7 +21,7 @@ def _repeat_last_to_count(input, dim):
     return input
 
 
-class SplineGCN(Module):
+class SplineConv(Module):
     """Spline-based Convolutional Operator.
 
     Args:
@@ -45,7 +45,7 @@ class SplineGCN(Module):
                  degree=1,
                  bias=True):
 
-        super(SplineGCN, self).__init__()
+        super(SplineConv, self).__init__()
 
         self.in_features = in_features
         self.out_features = out_features

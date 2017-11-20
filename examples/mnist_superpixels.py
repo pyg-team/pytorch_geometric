@@ -14,7 +14,7 @@ sys.path.insert(0, '..')
 from torch_geometric.datasets import MNISTSuperpixels  # noqa
 from torch_geometric.transforms import Graclus, CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.nn.modules import SplineGCN, GraclusMaxPool  # noqa
+from torch_geometric.nn.modules import SplineConv, GraclusMaxPool  # noqa
 from torch_geometric.nn.functional import batch_average  # noqa
 
 path = '~/MNISTSuperpixels'
@@ -30,8 +30,8 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.pool = GraclusMaxPool(2)
-        self.conv1 = SplineGCN(1, 32, dim=2, kernel_size=5)
-        self.conv2 = SplineGCN(32, 64, dim=2, kernel_size=5)
+        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.fc1 = nn.Linear(64, 128)
         self.fc2 = nn.Linear(128, 10)
 
