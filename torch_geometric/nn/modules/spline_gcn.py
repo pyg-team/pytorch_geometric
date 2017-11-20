@@ -22,7 +22,7 @@ def _repeat_last_to_count(input, dim):
 
 
 class SplineGCN(Module):
-    """Spline-based Convolutional operator.
+    """Spline-based Convolutional Operator.
 
     Args:
         in_features (int): Size of each input sample.
