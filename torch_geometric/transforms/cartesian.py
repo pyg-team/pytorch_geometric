@@ -2,12 +2,12 @@ from __future__ import division
 
 import torch
 
+from .base import BaseAdj
 from ..sparse import SparseTensor
 
 
-class CartesianAdj(object):
-    def __call__(self, data):
-        adj, position = data.adj, data.position
+class CartesianAdj(BaseAdj):
+    def _call(self, adj, position):
         index = adj._indices()
         row, col = index
         n, dim = position.size()
@@ -17,6 +17,4 @@ class CartesianAdj(object):
         cartesian *= 1 / (2 * cartesian.abs().max())
         cartesian += 0.5
 
-        # Modify data and return.
-        data.adj = SparseTensor(index, cartesian, torch.Size([n, n, dim]))
-        return data
+        return SparseTensor(index, cartesian, torch.Size([n, n, dim]))

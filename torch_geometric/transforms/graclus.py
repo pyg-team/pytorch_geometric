@@ -12,13 +12,11 @@ class Graclus(object):
 
         adjs, positions, perm = graclus(adj, position, self.level, rid)
 
-        data.adj = adjs[0]
-        data.position = positions[0]
         data.input = perm_input(data.input, perm)
-
-        for i in range(2, self.level + 2):
-            data.add('adj_{}'.format(i), adjs[i - 1])
-            data.add('position_{}'.format(i), positions[i - 1])
+        data.adj = None
+        data.add('adjs', adjs)
+        data.position = None
+        data.add('positions', positions)
 
         return data
 

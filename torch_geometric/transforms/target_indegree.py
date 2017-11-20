@@ -2,12 +2,12 @@ from __future__ import division
 
 import torch
 
+from .base import BaseAdj
 from ..sparse import SparseTensor, sum
 
 
-class TargetIndegreeAdj(object):
-    def __call__(self, data):
-        adj = data.adj
+class TargetIndegreeAdj(BaseAdj):
+    def _call(self, adj, position):
         index = adj._indices()
         _, col = index
         n = adj.size(0)
@@ -17,6 +17,4 @@ class TargetIndegreeAdj(object):
         degree /= degree.max()  # Normalize.
         degree = degree[col]  # Target nodes.
 
-        # Modify data and return.
-        data.adj = SparseTensor(index, degree, torch.Size([n, n]))
-        return data
+        return SparseTensor(index, degree, torch.Size([n, n]))
