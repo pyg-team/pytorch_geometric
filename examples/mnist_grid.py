@@ -1,81 +1,65 @@
 from __future__ import division, print_function
 
+import os
 import sys
 
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torchvision import datasets, transforms
+from torchvision import transforms
 from torch.autograd import Variable
+from torch.utils.data import DataLoader
+from torchvision.datasets import MNIST
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.graph.grid import grid, grid_5x5, grid_position  # noqa
-from torch_geometric.transforms.graclus import graclus, perm_input  # noqa
+from torch_geometric.graph.grid import grid_5x5, grid_position  # noqa
 from torch_geometric.transforms import CartesianAdj  # noqa
-from torch_geometric.sparse.stack import stack  # noqa
-from torch_geometric.nn.modules import SplineGCN, GraclusMaxPool  # noqa
+from torch_geometric.sparse import stack  # noqa
+from torch_geometric.nn.modules import SplineGCN  # noqa
 
 batch_size = 100
 transform = transforms.Compose([transforms.ToTensor()])
-train_loader = torch.utils.data.DataLoader(
-    datasets.MNIST(
-        '/tmp/MNIST', train=True, download=True, transform=transform),
-    batch_size=batch_size,
-    shuffle=True)
-test_loader = torch.utils.data.DataLoader(
-    datasets.MNIST(
-        '/tmp/MNIST', train=False, download=True, transform=transform),
-    batch_size=batch_size,
-    shuffle=True)
+root = os.path.expanduser('~/MNIST')
+train_dataset = MNIST(root, train=True, download=True, transform=transform)
+test_dataset = MNIST(root, train=False, download=True, transform=transform)
 
-adj = grid_5x5(torch.Size([28, 28]))
-position = grid_position(torch.Size([28, 28]))
-adj2 = grid_5x5(torch.Size([14, 14]))
-position2 = grid_position(torch.Size([14, 14]))
-adj3 = grid_5x5(torch.Size([7, 7]))
-position3 = grid_position(torch.Size([7, 7]))
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
-adjs = [adj, adj2, adj3]
-positions = [position, position2, position3]
-
-num_first_fc = adjs[2].size(0)
-
-transform = CartesianAdj()
-adjs, positions = transform((None, adjs, positions))[1:]
-
-adjs = [stack([a for _ in range(batch_size)])[0] for a in adjs]
+size = torch.Size([28, 28])
+adj_0 = CartesianAdj()._call(grid_5x5(size), grid_position(size))
+size = torch.Size([14, 14])
+adj_1 = CartesianAdj()._call(grid_5x5(size), grid_position(size))
+adj_0 = stack([adj_0 for _ in range(batch_size)])[0]
+adj_1 = stack([adj_1 for _ in range(batch_size)])[0]
 
 if torch.cuda.is_available():
-    adjs = [a.cuda() for a in adjs]
-
-adj_0, adj_1, adj_2 = adjs[0], adjs[1], adjs[2]
+    adj_0, adj_1 = adj_0.cuda(), adj_1.cuda()
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(
-            1, 32, dim=2, kernel_size=[5, 5], is_open_spline=[1, 1])
-        self.conv2 = SplineGCN(
-            32, 64, dim=2, kernel_size=[5, 5], is_open_spline=[1, 1])
-        self.fc1 = nn.Linear(num_first_fc * 64, 512)
+        self.conv1 = SplineGCN(1, 32, dim=2, kernel_size=5)
+        self.conv2 = SplineGCN(32, 64, dim=2, kernel_size=5)
+        self.fc1 = nn.Linear(7 * 7 * 64, 512)
         self.fc2 = nn.Linear(512, 10)
 
     def forward(self, adjs, x):
         x = F.elu(self.conv1(adjs[0], x))
-        x = x.view((-1, 28, 28, 32))
+        x = x.view(-1, 28, 28, 32)
         x = x.permute(0, 3, 1, 2)
         x = F.max_pool2d(x, 2)
         x = x.permute(0, 2, 3, 1)
         x = x.contiguous().view(-1, 32)
         x = F.elu(self.conv2(adjs[1], x))
-        x = x.view((-1, 28, 28, 64))
+        x = x.view((-1, 14, 14, 64))
         x = x.permute(0, 3, 1, 2)
         x = F.max_pool2d(x, 2)
         x = x.permute(0, 2, 3, 1)
-        x = x.contiguous().view(-1, num_first_fc * 64)
+        x = x.contiguous().view(-1, 7 * 7 * 64)
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = F.elu(self.fc2(x))
@@ -96,9 +80,8 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-    for batch, (data, target) in enumerate(train_loader):
-        data = data.view(data.size(0), -1, 1)
-        input = torch.cat([img for img in data], dim=0)
+    for batch, (input, target) in enumerate(train_loader):
+        input = input.view(-1, 1)
 
         if torch.cuda.is_available():
             input, target = input.cuda(), target.cuda()
@@ -106,7 +89,7 @@ def train(epoch):
         input, target = Variable(input), Variable(target)
 
         optimizer.zero_grad()
-        output = model(adjs, input)
+        output = model((adj_0, adj_1), input)
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
@@ -117,21 +100,22 @@ def test(epoch):
 
     correct = 0
 
-    for batch, (data, target) in enumerate(test_loader):
-        data = data.view(data.size(0), -1, 1)
-        input = torch.cat([img for img in data], dim=0)
+    for batch, (input, target) in enumerate(test_loader):
+        input = input.view(-1, 1)
 
         if torch.cuda.is_available():
             input, target = input.cuda(), target.cuda()
 
-        input, target = Variable(input), Variable(target)
+        if torch.cuda.is_available():
+            input, target = input.cuda(), target.cuda()
 
-        output = model(adjs, input)
+        input = Variable(input)
+
+        output = model((adj_0, adj_1), input)
         pred = output.data.max(1)[1]
+        correct += pred.eq(target).cpu().sum()
 
-        correct += pred.eq(target.data).cpu().sum()
-
-    print('Epoch:', epoch, 'Accuracy:', correct / 10000)
+    print('Epoch:', epoch, 'Accuracy:', correct / len(test_loader))
 
 
 for epoch in range(1, 21):
