@@ -13,7 +13,7 @@ sys.path.insert(0, '..')
 from torch_geometric.datasets import FAUST  # noqa
 from torch_geometric.transforms import CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.nn.modules import SplineGCN, Lin  # noqa
+from torch_geometric.nn.modules import SplineConv, Lin  # noqa
 
 path = '~/FAUST'
 transform = CartesianAdj()
@@ -30,12 +30,12 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1, 32, dim=3, kernel_size=5)
-        self.conv2 = SplineGCN(32, 64, dim=3, kernel_size=5)
-        self.conv3 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv4 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv5 = SplineGCN(64, 64, dim=3, kernel_size=5)
-        self.conv6 = SplineGCN(64, 64, dim=3, kernel_size=5)
+        self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5)
+        self.conv2 = SplineConv(32, 64, dim=3, kernel_size=5)
+        self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv4 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv5 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv6 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.lin1 = Lin(64, 256)
         self.lin2 = Lin(256, 6890)
 

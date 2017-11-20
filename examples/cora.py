@@ -12,7 +12,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cora  # noqa
 from torch_geometric.transforms import TargetIndegreeAdj  # noqa
-from torch_geometric.nn.modules import SplineGCN  # noqa
+from torch_geometric.nn.modules import SplineConv  # noqa
 
 transform = TargetIndegreeAdj()
 dataset = Cora('~/Cora', transform=transform)
@@ -32,8 +32,8 @@ input, target = Variable(input), Variable(target)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1433, 16, dim=1, kernel_size=2)
-        self.conv2 = SplineGCN(16, 7, dim=1, kernel_size=2)
+        self.conv1 = SplineConv(1433, 16, dim=1, kernel_size=2)
+        self.conv2 = SplineConv(16, 7, dim=1, kernel_size=2)
 
     def forward(self, adj, x):
         x = F.elu(self.conv1(adj, x))

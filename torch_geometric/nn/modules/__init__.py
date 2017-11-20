@@ -1,6 +1,6 @@
 from .lin import Lin
+from .spline_conv import SplineConv
 from .graph_conv import GraphConv
-from .spline_gcn import SplineGCN
 from .pooling import GraclusMaxPool
 
-__all__ = ['Lin', 'GraphConv', 'SplineGCN', 'GraclusMaxPool']
+__all__ = ['Lin', 'SplineConv', 'GraphConv', 'GraclusMaxPool']

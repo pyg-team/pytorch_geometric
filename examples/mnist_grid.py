@@ -17,7 +17,7 @@ sys.path.insert(0, '..')
 from torch_geometric.graph.grid import grid_5x5, grid_position  # noqa
 from torch_geometric.transforms import CartesianAdj  # noqa
 from torch_geometric.sparse import stack  # noqa
-from torch_geometric.nn.modules import SplineGCN  # noqa
+from torch_geometric.nn.modules import SplineConv  # noqa
 
 batch_size = 100
 transform = transforms.Compose([transforms.ToTensor()])
@@ -42,8 +42,8 @@ if torch.cuda.is_available():
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(1, 32, dim=2, kernel_size=5)
-        self.conv2 = SplineGCN(32, 64, dim=2, kernel_size=5)
+        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.fc1 = nn.Linear(7 * 7 * 64, 512)
         self.fc2 = nn.Linear(512, 10)
 
