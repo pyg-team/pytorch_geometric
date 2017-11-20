@@ -3,7 +3,7 @@ from unittest import TestCase
 from .spline_conv import _repeat_last_to_count, SplineConv
 
 
-class SplineGCNTest(TestCase):
+class SplineConvTest(TestCase):
     def test_repeat_last_to_count(self):
         output = _repeat_last_to_count(2, 5)
         self.assertEqual(output, [2, 2, 2, 2, 2])

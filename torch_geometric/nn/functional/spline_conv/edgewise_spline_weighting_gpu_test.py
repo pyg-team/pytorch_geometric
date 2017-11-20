@@ -14,16 +14,14 @@ class EdgewiseSplineWeightingGPUTest(unittest.TestCase):
     @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_forward(self):
         input = [[0.25, 0.125], [0.25, 0.375], [0.75, 0.625], [0.75, 0.875]]
-        input = torch.FloatTensor(input)
-        kernel_size = torch.LongTensor([3, 4])
-        is_open_spline = torch.LongTensor([1, 0])
+        input = torch.cuda.FloatTensor(input)
+        kernel_size = torch.cuda.LongTensor([3, 4])
+        is_open_spline = torch.cuda.LongTensor([1, 0])
 
         amount, index = spline(input, kernel_size, is_open_spline, 12, 1)
-        amount, index = amount.cuda(), index.cuda()
 
-        input = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8]])
-        weight = torch.arange(0.5, 0.5 * 25, step=0.5).view(12, 2, 1)
-        input, weight = input.cuda(), weight.cuda()
+        input = torch.cuda.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8]])
+        weight = torch.arange(0.5, 0.5 * 25, step=0.5).view(12, 2, 1).cuda()
         input, weight = Variable(input), Variable(weight)
 
         op = EdgewiseSplineWeightingGPU(amount, index)
@@ -41,16 +39,14 @@ class EdgewiseSplineWeightingGPUTest(unittest.TestCase):
     @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_backward(self):
         input = [[0.25, 0.125], [0.25, 0.375], [0.75, 0.625], [0.75, 0.875]]
-        input = torch.DoubleTensor(input)
-        kernel_size = torch.LongTensor([3, 4])
-        is_open_spline = torch.LongTensor([1, 0])
+        input = torch.cuda.DoubleTensor(input)
+        kernel_size = torch.cuda.LongTensor([3, 4])
+        is_open_spline = torch.cuda.LongTensor([1, 0])
 
         amount, index = spline(input, kernel_size, is_open_spline, 12, 1)
-        amount, index = amount.cuda(), index.cuda()
 
-        input = torch.randn(4, 2).double()
-        weight = torch.randn(12, 2, 1).double()
-        input, weight = input.cuda(), weight.cuda()
+        input = torch.randn(4, 2).double().cuda()
+        weight = torch.randn(12, 2, 1).double().cuda()
         input = Variable(input, requires_grad=True)
         weight = Variable(weight, requires_grad=True)
 

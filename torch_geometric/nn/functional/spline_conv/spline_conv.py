@@ -32,8 +32,7 @@ def spline_conv(
     r = row.view(-1, 1).expand(row.size(0), output.size(1))
     output = zero.scatter_add_(0, Variable(r), output)
 
-    # Weighten root node features by multiplying with the meaned weights from
-    # the origin.
+    # Weighten root node features by multiplying with root weight.
     output += torch.mm(input, weight[-1])
 
     # Normalize output by degree.

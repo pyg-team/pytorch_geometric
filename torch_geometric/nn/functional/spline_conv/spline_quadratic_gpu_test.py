@@ -10,13 +10,11 @@ if torch.cuda.is_available():
 class SplineQuadraticGPUTest(unittest.TestCase):
     @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_open_spline(self):
-        input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
-        kernel_size = torch.LongTensor([6])
-        is_open_spline = torch.LongTensor([1])
+        input = torch.cuda.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
+        kernel_size = torch.cuda.LongTensor([6])
+        is_open_spline = torch.cuda.LongTensor([1])
 
-        a1, i1 = spline_quadratic_gpu(input.cuda(),
-                                      kernel_size.cuda(),
-                                      is_open_spline.cuda(), 6)
+        a1, i1 = spline_quadratic_gpu(input, kernel_size, is_open_spline, 6)
 
         a2 = [[0.5, 0.5, 0], [0.32, 0.66, 0.02], [0.5, 0.5, 0], [0.5, 0.5, 0],
               [0.5, 0.5, 0], [0.02, 0.66, 0.32], [0.5, 0.5, 0]]
@@ -28,13 +26,11 @@ class SplineQuadraticGPUTest(unittest.TestCase):
 
     @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_closed_spline(self):
-        input = torch.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
-        kernel_size = torch.LongTensor([4])
-        is_open_spline = torch.LongTensor([0])
+        input = torch.cuda.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
+        kernel_size = torch.cuda.LongTensor([4])
+        is_open_spline = torch.cuda.LongTensor([0])
 
-        a1, i1 = spline_quadratic_gpu(input.cuda(),
-                                      kernel_size.cuda(),
-                                      is_open_spline.cuda(), 4)
+        a1, i1 = spline_quadratic_gpu(input, kernel_size, is_open_spline, 4)
 
         a2 = [[0.5, 0.5, 0], [0.32, 0.66, 0.02], [0.5, 0.5, 0], [0.5, 0.5, 0],
               [0.5, 0.5, 0], [0.02, 0.66, 0.32], [0.5, 0.5, 0]]
