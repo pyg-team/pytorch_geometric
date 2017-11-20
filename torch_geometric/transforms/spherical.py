@@ -2,12 +2,12 @@ from math import pi as PI
 
 import torch
 
+from .base import BaseAdj
 from ..sparse import SparseTensor
 
 
-class SphericalAdj(object):
-    def __call__(self, data):
-        adj, position = data.adj, data.position
+class SphericalAdj(BaseAdj):
+    def _call(self, adj, position):
         index = adj._indices()
         row, col = index
         n = adj.size(0)
@@ -21,6 +21,4 @@ class SphericalAdj(object):
         phi = torch.acos(direction[:, 2]) / PI
         spherical = torch.stack([rho, theta, phi], dim=1)
 
-        # Modify data and return.
-        data.adj = SparseTensor(index, spherical, torch.Size([n, n, 3]))
-        return data
+        return SparseTensor(index, spherical, torch.Size([n, n, 3]))

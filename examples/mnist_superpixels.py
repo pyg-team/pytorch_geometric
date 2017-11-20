@@ -63,21 +63,21 @@ def train(epoch):
 
     for batch, data in enumerate(train_loader):
         input, target = data['input'].view(-1, 1), data['target']
-        adj_0, adj_1 = data['adj']['content'], data['adj_3']['content']
-        adj_2, slice = data['adj_5']['content'], data['adj_5']['slice'][:, 0]
+        adj_0, adj_1 = data['adjs'][0]['content'], data['adjs'][2]['content']
+        slice = data['adjs'][4]['slice'][:, 0]
 
         if torch.cuda.is_available():
             input, target, slice = input.cuda(), target.cuda(), slice.cuda()
-            adj_0, adj_1, adj_2 = adj_0.cuda(), adj_1.cuda(), adj_2.cuda()
+            adj_0, adj_1 = adj_0.cuda(), adj_1.cuda()
 
         input, target = Variable(input), Variable(target)
 
         optimizer.zero_grad()
-        output = model((adj_0, adj_1, adj_2), input, slice)
+        output = model((adj_0, adj_1), input, slice)
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
-        print(epoch, batch, loss.data[0])
+        print(loss.data[0])
 
 
 def test(epoch):
@@ -87,16 +87,16 @@ def test(epoch):
 
     for batch, data in enumerate(test_loader):
         input, target = data['input'].view(-1, 1), data['target']
-        adj_0, adj_1 = data['adj']['content'], data['adj_3']['content']
-        adj_2, slice = data['adj_5']['content'], data['adj_5']['slice'][:, 0]
+        adj_0, adj_1 = data['adjs'][0]['content'], data['adjs'][2]['content']
+        slice = data['adjs'][4]['slice'][:, 0]
 
         if torch.cuda.is_available():
             input, target, slice = input.cuda(), target.cuda(), slice.cuda()
-            adj_0, adj_1, adj_2 = adj_0.cuda(), adj_1.cuda(), adj_2.cuda()
+            adj_0, adj_1 = adj_0.cuda(), adj_1.cuda()
 
         input = Variable(input)
 
-        output = model((adj_0, adj_1, adj_2), input, slice)
+        output = model((adj_0, adj_1), input, slice)
         pred = output.data.max(1)[1]
         correct += pred.eq(target).cpu().sum()
 
