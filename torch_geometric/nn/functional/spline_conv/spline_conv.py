@@ -6,7 +6,7 @@ from .spline import spline
 from .edgewise_spline_weighting import edgewise_spline_weighting
 
 
-def spline_gcn(
+def spline_conv(
         adj,  # Tensor
         input,  # Variable
         weight,  # Variable
