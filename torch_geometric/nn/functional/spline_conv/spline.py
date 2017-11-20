@@ -1,7 +1,5 @@
 import torch
 
-from .spline_cpu import spline_cpu
-
 if torch.cuda.is_available():
     from .spline_linear_gpu import spline_linear_gpu
     from .spline_quadratic_gpu import spline_quadratic_gpu
@@ -19,4 +17,4 @@ def spline(input, kernel_size, is_open_spline, K, degree):
         else:
             raise NotImplementedError()
     else:
-        return spline_cpu(input, kernel_size, is_open_spline, degree)
+        raise NotImplementedError()
