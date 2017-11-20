@@ -20,7 +20,7 @@ class FAUST(Dataset):
             ``training.pt``, otherwise from ``test.pt``. (default: ``True``)
         distance (bool, optional): Whether to load additional geodesic distance
             information for each example. (default: ``False``)
-        transform (callable, optional): A function/transform that takes in an
+        transform (callable, optional): A function/transform that takes in a
             ``Data`` object and returns a transformed version.
             (default: ``None``)
     """
