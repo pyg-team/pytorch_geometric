@@ -22,17 +22,18 @@ def _repeat_last_to_count(input, dim):
 
 
 class SplineGCN(Module):
-    """
+    """Spline-based Convolutional operator.
+
     Args:
         in_features (int): Size of each input sample.
         out_features (int): Size of each output sample.
-        dim (int): Edge dimension.
-        kernel_size (int or list): Size of the convolving kernel.
-        is_open_spline (bool or list, optional): Whether to use open or closed
-            spline curves. (default `True`)
-        spline_degree (int, optional): Spline degree. (default: 1)
-        bias (bool, optional): If set to False, the layer will not learn an
-            additive bias. (default: `True`)
+        dim (int): Pseudo-coordinate dimensionality.
+        kernel_size (int or [int]): Size of the convolving kernel.
+        is_open_spline (bool or [bool], optional): Whether to use open or
+            closed B-spline bases. (default ``True``)
+        degree (int, optional): B-spline degree. (default: ``1``)
+        bias (bool, optional): If set to ``False``, the layer will not learn an
+            additive bias. (default: ``True``)
     """
 
     def __init__(self,
