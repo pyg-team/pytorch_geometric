@@ -77,7 +77,6 @@ def train(epoch):
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
-        print(loss.data[0])
 
 
 def test(epoch):
