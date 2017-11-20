@@ -3,7 +3,7 @@ from torch.autograd import Variable
 from ...sparse import mm, mm_diagonal, sum, eye
 
 
-def gcn(adj, input, weight, bias=None):
+def graph_conv(adj, input, weight, bias=None):
     n, m = adj.size()
 
     i = eye(n, m)

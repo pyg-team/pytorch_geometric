@@ -1,5 +1,5 @@
 from .lin import Lin
-from .gcn import GraphConv
+from .graph_conv import GraphConv
 from .spline_gcn import SplineGCN
 from .pooling import GraclusMaxPool
 

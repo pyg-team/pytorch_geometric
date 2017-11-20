@@ -6,7 +6,7 @@ import torch
 # from torch_geometric.nn.functional import gcn
 
 
-class GcnTest(TestCase):
+class GraphConvTest(TestCase):
     def test_forward(self):
         a_2 = torch.FloatTensor([[1, 1, 0], [1, 1, 2], [0, 2, 1]])
         degree = torch.sum(a_2, dim=1)
