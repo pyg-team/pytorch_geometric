@@ -31,7 +31,7 @@ class SplineGCN(Module):
         kernel_size (int or [int]): Size of the convolving kernel.
         is_open_spline (bool or [bool], optional): Whether to use open or
             closed B-spline bases. (default ``True``)
-        degree (int, optional): B-spline degree. (default: ``1``)
+        degree (int, optional): B-spline basis degrees. (default: ``1``)
         bias (bool, optional): If set to ``False``, the layer will not learn an
             additive bias. (default: ``True``)
     """
