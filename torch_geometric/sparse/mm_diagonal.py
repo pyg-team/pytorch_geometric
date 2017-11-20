@@ -1,4 +1,4 @@
-import torch
+from .sparse import SparseTensor
 
 
 def mm_diagonal(a, b, transpose=False):
@@ -8,4 +8,4 @@ def mm_diagonal(a, b, transpose=False):
 
     value = a[target] * value
 
-    return torch.sparse.FloatTensor(index, value, b.size())
+    return SparseTensor(index, value, b.size())
