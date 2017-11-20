@@ -32,8 +32,8 @@ input, target = Variable(input), Variable(target)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineGCN(input.size(1), 16, dim=1, kernel_size=2)
-        self.conv2 = SplineGCN(16, target.data.max(), dim=1, kernel_size=2)
+        self.conv1 = SplineGCN(1433, 16, dim=1, kernel_size=2)
+        self.conv2 = SplineGCN(16, 7, dim=1, kernel_size=2)
 
     def forward(self, adj, x):
         x = F.elu(self.conv1(adj, x))
@@ -69,9 +69,10 @@ def test():
     return acc
 
 
-acc = input.data.new(100).fill_(0)
+num_runs = 2
+acc = input.data.new(num_runs).fill_(0)
 
-for run in range(1, 101):
+for run in range(1, num_runs + 1):
     model.conv1.reset_parameters()
     model.conv2.reset_parameters()
 

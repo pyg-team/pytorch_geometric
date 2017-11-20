@@ -23,10 +23,15 @@ def read_planetoid(dir, name):
 
     tx, ty, allx, ally, graph = tuple(objects)
 
+    with open(os.path.join(dir, 'ind.{}.test.index'.format(name)), 'r') as f:
+        test_index = torch.LongTensor([int(line.strip()) for line in f])
+    test_index_sorted = test_index.sort()[0]
+
     # Input.
     tx = torch.FloatTensor(tx.todense())
     allx = torch.FloatTensor(allx.todense())
     input = torch.cat([allx, tx], dim=0)
+    input[test_index, :] = input[test_index_sorted, :]
 
     # Graph.
     row = []
@@ -34,13 +39,14 @@ def read_planetoid(dir, name):
     for key, value in graph.items():
         row += repeat(key, len(value))
         col += value
+
     row, col = torch.LongTensor(row), torch.LongTensor(col)
     index = torch.stack([row, col], dim=0)
 
     # Target.
-    ty = torch.IntTensor(ty)
-    ally = torch.IntTensor(ally)
+    ty, ally = torch.IntTensor(ty), torch.IntTensor(ally)
     target = torch.cat([ally, ty], dim=0)
     target = target.max(dim=1)[1].byte()
+    target[test_index] = target[test_index_sorted]
 
     return input, index, target

@@ -67,7 +67,7 @@ class Planetoid(Dataset):
 
         print('Downloading {}'.format(self.url))
 
-        ext = ['tx', 'ty', 'allx', 'ally', 'graph']
+        ext = ['tx', 'ty', 'allx', 'ally', 'graph', 'test.index']
         for e in ext:
             url = '{}/ind.{}.{}'.format(self.url, self._name, e)
             download_url(url, self.raw_folder)

@@ -78,3 +78,5 @@ class MNISTSuperpixels(Dataset):
         file_path = download_url(self.url, self.raw_folder)
         extract_tar(file_path, self.raw_folder)
         os.unlink(file_path)
+
+        print('Done!')
