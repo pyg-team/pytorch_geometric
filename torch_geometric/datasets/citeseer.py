@@ -5,7 +5,7 @@ class CiteSeer(Planetoid):
     """`CiteSeer <https://linqs.soe.ucsc.edu/node/236>`_ Dataset.
 
     Args:
-        root (string): Root directory of dataset. Download and process data
+        root (string): Root directory of dataset. Downloads and processes data
             automatically if dataset doesn't exist.
         transform (callable, optional): A function/transform that takes in a
             ``Data`` object and returns a transformed version.
