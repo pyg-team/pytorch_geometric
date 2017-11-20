@@ -65,12 +65,12 @@ def test():
     output = model(adj, input)
     output = output.data[test_mask]
     pred = output.max(1)[1]
-    acc = pred.eq(target.data[test_mask]).sum() / n
+    acc = pred.eq(target.data[test_mask]).sum() / test_mask.size(0)
     return acc
 
 
-num_runs = 2
-acc = input.data.new(num_runs).fill_(0)
+num_runs = 100
+acc = torch.zeros(num_runs)
 
 for run in range(1, num_runs + 1):
     model.conv1.reset_parameters()
