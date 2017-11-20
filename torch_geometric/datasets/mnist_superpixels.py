@@ -10,10 +10,10 @@ from .utils.extract import extract_tar
 
 
 class MNISTSuperpixels(Dataset):
-    """`MNIST <http://yann.lecun.com/exdb/mnist>`_ Superpixels Dataset from
-        `"Geometric Deep Learning on Graphs and Manifolds Using Mixture Model
-        CNNs" <https://arxiv.org/abs/1611.08402>`_. Each example contains
-        exactly 75 graph-nodes.
+    """`MNIST <http://yann.lecun.com/exdb/mnist>`_ Superpixels Dataset from the
+    `"Geometric Deep Learning on Graphs and Manifolds Using Mixture Model CNNs"
+    <https://arxiv.org/abs/1611.08402>`_ paper. Each example contains exactly
+    75 graph-nodes.
 
     Args:
         root (string): Root directory of dataset. Download data automatically
