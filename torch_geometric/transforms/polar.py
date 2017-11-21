@@ -7,6 +7,12 @@ from ..sparse import SparseTensor
 
 
 class PolarAdj(BaseAdj):
+    """Converts a set of adjacency matrices :math:`A \in \mathbb{R}^{N x N}`
+    saved in a dataset :obj:`Data` object to globally normalized polar
+    pseudo-coordinates :math:`A \in [0, 1]^{N x N x 2}` based on the position
+    :math:`P \in \mathbb{R}^{N x 2}` of graph-nodes.
+    """
+
     def _call(self, adj, position):
         index = adj._indices()
         row, col = index

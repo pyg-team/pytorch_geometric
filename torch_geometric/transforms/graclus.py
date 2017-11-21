@@ -4,6 +4,22 @@ import torch
 
 
 class Graclus(object):
+    """Converts an adjacency matrix to :obj:`level` coarsened graphs saved in
+    :obj:`data['adjs']` based on the `"Convolutional Neural Networks on Graphs
+    with Fast Localized Spectral Filtering"
+    <https://arxiv.org/abs/1606.09375>`_ paper.
+
+    Args:
+        level (int): Number of coarsened graphs to compute.
+            (default: :obj:`1`)
+
+    :class:`Graclus` and pseudo-coordinate transforms can be composed:
+
+    Example:
+
+        >>> Compose([Graclus(4), CartesianAdj()])
+    """
+
     def __init__(self, level=1):
         self.level = level
 
