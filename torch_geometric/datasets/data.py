@@ -1,4 +1,9 @@
 class Data(object):
+    """Single Example Dataholder Object that can hold ``input`` feature
+    matrices, ``adj`` sparse matrices, graph-node ``position`` and ``target``
+    information. Additional properties can be added manually.
+    """
+
     def __init__(self, input, adj, position, target):
         self.props = {}
 
@@ -8,6 +13,7 @@ class Data(object):
         self.target = target
 
     def add(self, key, value):
+        """Adds a property as key-value pair."""
         if value is not None:
             self.props[key] = value
         else:
@@ -18,6 +24,7 @@ class Data(object):
         return self.props[key] if key in self.props else None
 
     def all(self):
+        """Returns all data properties as :obj:`dict`."""
         return self.props
 
     @property

@@ -1,5 +1,5 @@
-torch_geometric.nn
-==================
+torch_geometric.nn.modules
+==========================
 
 Convolution Layers
 -------------------
@@ -11,4 +11,13 @@ Convolution Layers
     :members:
 
 .. autoclass:: GraphConv
+    :members:
+
+.. autoclass:: Lin
+    :members:
+
+Pooling Layers
+--------------
+
+.. autoclass:: GraclusMaxPool
     :members:
