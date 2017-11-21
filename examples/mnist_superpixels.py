@@ -57,11 +57,11 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 11:
+    if epoch == 16:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
-    for batch, data in enumerate(train_loader):
+    for data in train_loader:
         input, target = data['input'].view(-1, 1), data['target']
         adj_0, adj_1 = data['adjs'][0]['content'], data['adjs'][2]['content']
         slice = data['adjs'][4]['slice'][:, 0]
@@ -84,7 +84,7 @@ def test(epoch):
 
     correct = 0
 
-    for batch, data in enumerate(test_loader):
+    for data in test_loader:
         input, target = data['input'].view(-1, 1), data['target']
         adj_0, adj_1 = data['adjs'][0]['content'], data['adjs'][2]['content']
         slice = data['adjs'][4]['slice'][:, 0]
