@@ -7,12 +7,14 @@ from ..functional.lin import lin
 
 
 class Lin(Module):
-    """
+    """Applies a 1x1 convolution over an input signal with input
+    size :math:`(N, M_{in})` to output size :math:`(N, M_{out})`.
+
     Args:
         in_features (int): Size of each input sample.
         out_features (int): Size of each output sample.
-        bias (bool, optional): If set to False, the layer will not learn an
-            additive bias. (default: `True`)
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+            an additive bias. (default: :obj:`True`)
     """
 
     def __init__(self, in_features, out_features, bias=True):

@@ -18,8 +18,8 @@ class MNISTSuperpixels(Dataset):
     Args:
         root (string): Root directory of dataset. Downloads data automatically
             if dataset doesn't exist.
-        train (bool, optional): If ``True``, creates dataset from
-            ``training.pt``, otherwise from ``test.pt``. (default: ``True``)
+        train (bool, optional): If :obj:`True`, creates dataset from
+            ``training.pt``, otherwise from ``test.pt``. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in a
             ``Data`` object and returns a transformed version.
             (default: ``None``)

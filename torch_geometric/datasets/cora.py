@@ -8,8 +8,8 @@ class Cora(Planetoid):
         root (string): Root directory of dataset. Downloads and processes data
             automatically if dataset doesn't exist.
         transform (callable, optional): A function/transform that takes in a
-            ``Data`` object and returns a transformed version.
-            (default: ``None``)
+            :class:`Data` object and returns a transformed version.
+            (default: :obj:`None`)
     """
 
     def __init__(self, root, transform=None):

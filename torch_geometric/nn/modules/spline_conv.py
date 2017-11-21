@@ -22,7 +22,11 @@ def _repeat_last_to_count(input, dim):
 
 
 class SplineConv(Module):
-    """Spline-based Convolutional Operator.
+    """Spline-based Convolutional Operator :math:`(f \star g)(i) =
+    1/\mathcal{N}(i) \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
+    f_l(j) \cdot g_l(u(i, j))`, where :math:`g_l` is a kernel function defined
+    over the weighted B-Spline tensor product basis for a single input feature
+    map.
 
     Args:
         in_features (int): Size of each input sample.
@@ -30,10 +34,10 @@ class SplineConv(Module):
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int or [int]): Size of the convolving kernel.
         is_open_spline (bool or [bool], optional): Whether to use open or
-            closed B-spline bases. (default ``True``)
-        degree (int, optional): B-spline basis degrees. (default: ``1``)
-        bias (bool, optional): If set to ``False``, the layer will not learn an
-            additive bias. (default: ``True``)
+            closed B-spline bases. (default :obj:`True`)
+        degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+            an additive bias. (default: :obj:`True`)
     """
 
     def __init__(self,

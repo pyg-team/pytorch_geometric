@@ -1,11 +1,17 @@
 torch_geometric.datasets
 ========================
 
+.. automodule:: torch_geometric.datasets
+.. currentmodule:: torch_geometric.datasets
+
 .. contents:: Contents
     :local:
 
-.. automodule:: torch_geometric.datasets
-.. currentmodule:: torch_geometric.datasets
+Single Example Data
+-------------------
+
+.. autoclass:: Data
+    :members:
 
 FAUST
 -----

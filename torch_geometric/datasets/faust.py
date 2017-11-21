@@ -16,11 +16,11 @@ class FAUST(Dataset):
     Args:
         root (string): Root directory of dataset where ``raw/MPI-FAUST`` exist.
             Dataset needs to be downloaded manually.
-        train (bool, optional): If ``True``, creates dataset from
-            ``training.pt``, otherwise from ``test.pt``. (default: ``True``)
+        train (bool, optional): If :obj:`True`, creates dataset from
+            ``training.pt``, otherwise from ``test.pt``. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in a
-            ``Data`` object and returns a transformed version.
-            (default: ``None``)
+            :class:`Data` object and returns a transformed version.
+            (default: :obj:`None`)
     """
 
     url = 'http://faust.is.tue.mpg.de/'
