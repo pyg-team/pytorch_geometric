@@ -10,13 +10,10 @@ class GraclusMaxPool(Module):
     several input planes with kernel_size :math:`2^{level}`.
 
     Args:
-        in_features (int): Size of each input sample.
-        out_features (int): Size of each output sample.
-        bias (bool, optional): If set to :obj:`False`, the layer will not learn
-            an additive bias. (default: :obj:`True`)
+        level (int): Levels of cluster to pool. (default: :obj:`1`)
     """
 
-    def __init__(self, level):
+    def __init__(self, level=1):
         super(GraclusMaxPool, self).__init__()
         self.level = level
         self.kernel_size = 2**level
