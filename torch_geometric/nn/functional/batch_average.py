@@ -2,6 +2,17 @@ import torch
 
 
 def batch_average(input, slice):
+    """Averages ``input`` features in the node dimension. Batch information is
+    given by ``slice``.
+
+    Examples::
+
+        >>>> input = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8]])
+        >>>> slice = torch.LongTensor([2, 4])
+        >>>> output = batch_average(input, slice)
+        >>>> # [[2, 3], [6, 7]]
+    """
+
     last_index = 0
     outputs = []
     for i in range(slice.size(0)):
