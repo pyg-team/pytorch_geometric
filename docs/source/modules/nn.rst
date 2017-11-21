@@ -7,7 +7,7 @@ Convolution Layers
 .. automodule:: torch_geometric.nn.modules
 .. currentmodule:: torch_geometric.nn.modules
 
-.. autoclass:: SplineGCN
+.. autoclass:: SplineConv
     :members:
 
 .. autoclass:: GraphConv
