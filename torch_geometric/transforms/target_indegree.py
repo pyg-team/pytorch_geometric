@@ -7,6 +7,12 @@ from ..sparse import SparseTensor, sum
 
 
 class TargetIndegreeAdj(BaseAdj):
+    """Converts a set of adjacency matrices :math:`A \in \mathbb{R}^{N x N}`
+    saved in a dataset :obj:`Data` object to the globally normalized indegree
+    of the target nodes
+    :math:`u(i, j) = \deg(j)/\max_{i \in \mathcal{V}}(\deg(i))`.
+    """
+
     def _call(self, adj, position):
         index = adj._indices()
         _, col = index
