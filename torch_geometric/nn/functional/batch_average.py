@@ -5,7 +5,8 @@ def batch_average(input, slice):
     """Averages :obj:`input` features
     :math:`F_{in} \in \mathbb{R}^{N x M_{in}}` in the node dimension to a fixed
     batch shape :math:`[B, M_{in}]`. Batch information is given in :obj:`slice`
-    containing the indices in the node dimension.
+    containing the example slices in the node dimension.
+
     Example:
 
         >>> input = torch.FloatTensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
