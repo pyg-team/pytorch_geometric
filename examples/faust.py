@@ -18,7 +18,7 @@ from torch_geometric.nn.modules import SplineConv, Lin  # noqa
 path = '~/FAUST'
 transform = CartesianAdj()
 train_dataset = FAUST(path, train=True, transform=transform)
-test_dataset = FAUST(path, train=False, distance=True, transform=transform)
+test_dataset = FAUST(path, train=False, transform=transform)
 
 n = 6890
 batch_size = 1
@@ -70,7 +70,7 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
-    for batch, data in enumerate(train_loader):
+    for data in train_loader:
         adj = data['adj']['content']
 
         if torch.cuda.is_available():
@@ -78,43 +78,27 @@ def train(epoch):
 
         optimizer.zero_grad()
         output = model(adj, input)
-        loss = F.nll_loss(output, Variable(target))
+        loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
-
-        print('Epoch:', epoch, 'Batch:', batch, 'Loss:', loss.data[0])
 
 
 def test(epoch):
     model.eval()
 
-    acc_0 = acc_1 = acc_2 = acc_4 = acc_6 = acc_8 = acc_10 = 0
+    correct = 0
 
     for data in test_loader:
-        adj, distance = data['adj']['content'], data['distance']
+        adj = data['adj']['content']
 
         if torch.cuda.is_available():
-            adj, distance = adj.cuda(), distance.cuda()
+            adj = adj.cuda()
 
         output = model(adj, input)
         pred = output.data.max(1)[1]
-        geodesic_error = distance[pred, target]
-        acc_0 += (geodesic_error <= 0.0000002).sum()
-        acc_1 += (geodesic_error <= 0.01).sum()
-        acc_2 += (geodesic_error <= 0.02).sum()
-        acc_4 += (geodesic_error <= 0.04).sum()
-        acc_6 += (geodesic_error <= 0.06).sum()
-        acc_8 += (geodesic_error <= 0.08).sum()
-        acc_10 += (geodesic_error <= 0.1).sum()
+        correct += pred.eq(target.data).cpu().sum()
 
-    print('Epoch', epoch)
-    print('Accuracy 0:', acc_0 / (20 * 6890))
-    print('Accuracy 1:', acc_1 / (20 * 6890))
-    print('Accuracy 2:', acc_2 / (20 * 6890))
-    print('Accuracy 4:', acc_4 / (20 * 6890))
-    print('Accuracy 6:', acc_6 / (20 * 6890))
-    print('Accuracy 8:', acc_8 / (20 * 6890))
-    print('Accuracy 10:', acc_10 / (20 * 6890))
+    print('Epoch:', epoch, 'Accuracy:', correct / (len(test_dataset) * n))
 
 
 for epoch in range(1, 101):

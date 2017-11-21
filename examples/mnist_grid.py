@@ -80,11 +80,11 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 def train(epoch):
     model.train()
 
-    if epoch == 11:
+    if epoch == 16:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-    for batch, (input, target) in enumerate(train_loader):
+    for input, target in enumerate(train_loader):
         input = input.view(-1, 1)
 
         if torch.cuda.is_available():
@@ -104,7 +104,7 @@ def test(epoch):
 
     correct = 0
 
-    for batch, (input, target) in enumerate(test_loader):
+    for input, target in enumerate(test_loader):
         input = input.view(-1, 1)
 
         if torch.cuda.is_available():
