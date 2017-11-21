@@ -14,13 +14,14 @@ from .utils.planetoid import read_planetoid
 
 class Planetoid(Dataset):
     url = "https://github.com/kimiyoung/planetoid/raw/master/data"
+    ext = ['tx', 'ty', 'allx', 'ally', 'graph', 'test.index']
 
     def __init__(self, root, name, transform=None):
         super(Planetoid, self).__init__()
 
         # Set dataset properites.
         self.root = os.path.expanduser(root)
-        self._name = name
+        self.name = name
         self.raw_folder = os.path.join(self.root, 'raw')
         self.processed_folder = os.path.join(self.root, 'processed')
         self.data_file = os.path.join(self.processed_folder, 'data.pt')
@@ -55,11 +56,14 @@ class Planetoid(Dataset):
 
     @property
     def _raw_exists(self):
-        return os.path.exists(self.raw_folder)
+        files = ['ind.{}.{}'.format(self.name, ext) for ext in self.ext]
+        files = [os.path.join(self.raw_folder, f) for f in files]
+        files = [os.path.exists(f) for f in files]
+        return all(files)
 
     @property
     def _processed_exists(self):
-        return os.path.exists(self.processed_folder)
+        return os.path.exists(os.path.join(self.processed_folder, 'data.pt'))
 
     def download(self):
         if self._raw_exists:
@@ -67,9 +71,8 @@ class Planetoid(Dataset):
 
         print('Downloading {}'.format(self.url))
 
-        ext = ['tx', 'ty', 'allx', 'ally', 'graph', 'test.index']
-        for e in ext:
-            url = '{}/ind.{}.{}'.format(self.url, self._name, e)
+        for ext in self.ext:
+            url = '{}/ind.{}.{}'.format(self.url, self.name, ext)
             download_url(url, self.raw_folder)
 
     def process(self):
@@ -79,7 +82,7 @@ class Planetoid(Dataset):
         print('Processing...')
 
         make_dirs(os.path.join(self.processed_folder))
-        data = read_planetoid(self.raw_folder, self._name)
+        data = read_planetoid(self.raw_folder, self.name)
         torch.save(data, self.data_file)
 
         print('Done!')

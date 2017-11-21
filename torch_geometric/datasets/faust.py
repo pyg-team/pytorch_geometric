@@ -18,8 +18,6 @@ class FAUST(Dataset):
             Dataset needs to be downloaded manually.
         train (bool, optional): If ``True``, creates dataset from
             ``training.pt``, otherwise from ``test.pt``. (default: ``True``)
-        distance (bool, optional): Whether to load additional geodesic distance
-            information for each example. (default: ``False``)
         transform (callable, optional): A function/transform that takes in a
             ``Data`` object and returns a transformed version.
             (default: ``None``)
@@ -28,7 +26,7 @@ class FAUST(Dataset):
     url = 'http://faust.is.tue.mpg.de/'
     distance_url = 'http://www.roemisch-drei.de/faust_shot.tar.gz'
 
-    def __init__(self, root, train=True, distance=False, transform=None):
+    def __init__(self, root, train=True, transform=None):
         super(FAUST, self).__init__()
 
         # Set dataset properites.
@@ -40,7 +38,6 @@ class FAUST(Dataset):
         self.test_file = os.path.join(self.processed_folder, 'test.pt')
 
         self.train = train
-        self.distance = distance
         self.transform = transform
 
         # Download and process data.
@@ -67,11 +64,15 @@ class FAUST(Dataset):
     def __len__(self):
         return self.index.size(0)
 
+    @property
     def _raw_exists(self):
         return os.path.exists(self.raw_folder)
 
+    @property
     def _processed_exists(self):
-        return os.path.exists(self.processed_folder)
+        train_exists = os.path.exists(self.training_file)
+        test_exists = os.path.exists(self.training_file)
+        return train_exists and test_exists
 
     def _read_example(self, index):
         path = os.path.join(self.raw_folder, 'training', 'registrations',
@@ -91,12 +92,12 @@ class FAUST(Dataset):
         torch.save((index, position), path)
 
     def download(self):
-        if not self._raw_exists():
+        if not self._raw_exists:
             raise RuntimeError('Dataset not found. Please download it from ' +
                                '{}'.format(self.url))
 
     def process(self):
-        if self._processed_exists():
+        if self._processed_exists:
             return
 
         print('Processing...')

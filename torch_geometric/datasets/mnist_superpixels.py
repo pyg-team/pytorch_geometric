@@ -66,11 +66,14 @@ class MNISTSuperpixels(Dataset):
     def __len__(self):
         return self.input.size(0)
 
+    @property
     def _raw_exists(self):
-        return os.path.exists(self.raw_folder)
+        train_exists = os.path.exists(self.training_file)
+        test_exists = os.path.exists(self.training_file)
+        return train_exists and test_exists
 
     def download(self):
-        if self._raw_exists():
+        if self._raw_exists:
             return
 
         print('Downloading {}'.format(self.url))
