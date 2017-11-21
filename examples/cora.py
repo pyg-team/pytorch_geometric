@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 
+import os
 import sys
 
 import torch
@@ -15,7 +16,9 @@ from torch_geometric.transforms import TargetIndegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 
 transform = TargetIndegreeAdj()
-dataset = Cora('~/Cora', transform=transform)
+path = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(path, '..', 'data', 'Cora')
+dataset = Cora(path, transform=transform)
 data = dataset[0]
 input, adj, target = data['input'], data['adj'], data['target']
 n = adj.size(0)
