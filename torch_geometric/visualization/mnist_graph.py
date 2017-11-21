@@ -12,9 +12,9 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
 
-from torch_geometric.datasets import MNISTSuperpixel75  # noqa
-from torch_geometric.graph.grid import grid, grid_position  # noqa
-from torch_geometric.transform.graclus import graclus, perm_input  # noqa
+from torch_geometric.datasets import MNISTSuperpixels  # noqa
+from torch_geometric.graph.grid import grid_5x5, grid_position  # noqa
+from torch_geometric.transforms.graclus import graclus, perm_input  # noqa
 
 # def image_graph(image, input, graph, position, scale, offset):
 #     image = image.copy()
@@ -50,20 +50,22 @@ from torch_geometric.transform.graclus import graclus, perm_input  # noqa
 #     return image
 
 image_dataset = MNIST('/tmp/MNIST', train=True, download=True)
-graph_dataset = MNISTSuperpixel75('~/MNISTSuperpixel75', train=True)
+graph_dataset = MNISTSuperpixels('~/MNISTSuperpixels', train=True)
 
 scale = 32
 rescale = 4
 offset = torch.FloatTensor([1, 1])
-example = 2
+example = 35
 
 image, _ = image_dataset[example]
 image = np.array(image)
-(input, adj, position), _ = graph_dataset[example]
+data = graph_dataset[example]
+input, adj, position = data['input'], data['adj'], data['position']
+print(data['target'])
 
-adj = grid(torch.Size([28, 28]), connectivity=8)
-position = grid_position(torch.Size([28, 28]))
-input = image.flatten() / 255.0
+# adj = grid(torch.Size([28, 28]), connectivity=8)
+# position = grid_position(torch.Size([28, 28]))
+# input = image.flatten() / 255.0
 
 # image = image_graph(image, input, adj, position, scale, offset)
 # image = image_graph(image, grid_input, grid_adj, grid_position, scale,
@@ -78,8 +80,8 @@ image = np.repeat(image, scale * rescale, axis=0)
 image = np.repeat(image, scale * rescale, axis=1)
 image = gray2rgb(image, alpha=True)
 # image *= np.array([228, 246, 232], np.uint8)
-# image *= np.array([255, 255, 255, 1], np.uint8)
-image *= np.array([0, 0, 0, 0], np.uint8)
+image *= np.array([255, 255, 255, 1], np.uint8)
+# image *= np.array([0, 0, 0, 0], np.uint8)
 image = Image.fromarray(image)
 draw = ImageDraw.Draw(image)
 
@@ -100,10 +102,10 @@ offset = torch.FloatTensor([(28 - position[:, 0].max()) / 2,
 position *= scale * rescale
 position += scale * offset * rescale
 
-# adjs, positions, perm = graclus(adj, position, level=2)
-# adj, position = adjs[2], positions[2]
-# input = perm_input(input, perm)
-# input = input.view(-1, 4).sum(dim=1)
+adjs, positions, perm = graclus(adj, position, level=2)
+adj, position = adjs[2], positions[2]
+input = perm_input(input, perm)
+input = input.view(-1, 4).sum(dim=1)
 
 index = adj._indices().t()
 for i in range(index.size(0)):
@@ -120,9 +122,9 @@ for i in range(index.size(0)):
 
 for i in range(position.size(0)):
     x, y = position[i]
-    r = 10 * rescale
+    r = 16 * rescale
     draw.ellipse((x - r, y - r, x + r, y + r), fill=(0, 0, 0, 255))
-    r = 8 * rescale
+    r = 14 * rescale
     draw.ellipse(
         (x - r, y - r, x + r, y + r), fill=(49, 130, 219, int(255 * input[i])))
     # if v > 0:
