@@ -2,15 +2,16 @@ import torch
 
 
 def batch_average(input, slice):
-    """Averages ``input`` features in the node dimension. Batch information is
-    given by ``slice``.
-
+    """Averages :obj:`input` features
+    :math:`F_{in} \in \mathbb{R}^{N x M_{in}}` in the node dimension to a fixed
+    batch shape :math:`[B, M_{in}]`. Batch information is given in :obj:`slice`
+    containing the indices in the node dimension.
     Example:
 
-        >>> input = torch.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8]])
-        >>> slice = torch.LongTensor([2, 4])
+        >>> input = torch.FloatTensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+        >>> slice = torch.LongTensor([2, 5])
         >>> output = batch_average(input, slice)
-        >>> # [[2, 3], [6, 7]]
+        >>> # [[1, 2], [6, 7]]
     """
 
     last_index = 0
