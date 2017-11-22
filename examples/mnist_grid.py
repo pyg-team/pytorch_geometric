@@ -21,9 +21,10 @@ from torch_geometric.nn.modules import SplineConv  # noqa
 
 batch_size = 100
 transform = transforms.Compose([transforms.ToTensor()])
-root = os.path.expanduser('~/MNIST')
-train_dataset = MNIST(root, train=True, download=True, transform=transform)
-test_dataset = MNIST(root, train=False, download=True, transform=transform)
+path = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(path, '..', 'data', 'MNIST')
+train_dataset = MNIST(path, train=True, download=True, transform=transform)
+test_dataset = MNIST(path, train=False, download=True, transform=transform)
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
@@ -84,7 +85,7 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-    for input, target in enumerate(train_loader):
+    for input, target in train_loader:
         input = input.view(-1, 1)
 
         if torch.cuda.is_available():
@@ -104,7 +105,7 @@ def test(epoch):
 
     correct = 0
 
-    for input, target in enumerate(test_loader):
+    for input, target in test_loader:
         input = input.view(-1, 1)
 
         if torch.cuda.is_available():
