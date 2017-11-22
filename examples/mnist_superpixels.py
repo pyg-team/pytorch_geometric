@@ -61,6 +61,10 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
+    if epoch == 26:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0001
+
     for data in train_loader:
         input, target = data['input'].view(-1, 1), data['target']
         adj_0, adj_1 = data['adjs'][0]['content'], data['adjs'][2]['content']
