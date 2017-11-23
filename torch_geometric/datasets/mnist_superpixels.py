@@ -25,7 +25,7 @@ class MNISTSuperpixels(Dataset):
             (default: ``None``)
     """
 
-    url = 'http://ls7-www.cs.uni-dortmund.de/CVPS_Materials/' \
+    url = 'http://ls7-www.cs.uni-dortmund.de/cvpr_geometric_dl/' \
           'mnist_superpixels.tar.gz'
 
     def __init__(self, root, train=True, transform=None):
