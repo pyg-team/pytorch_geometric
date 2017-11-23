@@ -24,7 +24,8 @@ class FAUST(Dataset):
     """
 
     url = 'http://faust.is.tue.mpg.de/'
-    distance_url = 'http://www.roemisch-drei.de/faust_shot.tar.gz'
+    distance_url = 'http://ls7-www.cs.uni-dortmund.de/CVPS_Materials/' \
+                   'faust_geodesic_distance.tar.gz'
 
     def __init__(self, root, train=True, transform=None):
         super(FAUST, self).__init__()
