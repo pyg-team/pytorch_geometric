@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 
+import os
 import sys
 
 import torch
@@ -17,7 +18,8 @@ from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineConv, GraclusMaxPool  # noqa
 from torch_geometric.nn.functional import batch_average  # noqa
 
-path = '~/MNISTSuperpixels'
+path = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(path, '..', 'data', 'MNISTSuperpixels')
 transform = Compose([Graclus(4), CartesianAdj()])
 train_dataset = MNISTSuperpixels(path, train=True, transform=transform)
 test_dataset = MNISTSuperpixels(path, train=False, transform=transform)
@@ -57,9 +59,13 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 21:
+    if epoch == 16:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
+
+    if epoch == 26:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0001
 
     for data in train_loader:
         input, target = data['input'].view(-1, 1), data['target']
