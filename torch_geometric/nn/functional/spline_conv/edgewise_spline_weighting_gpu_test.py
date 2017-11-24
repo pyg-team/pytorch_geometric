@@ -1,5 +1,4 @@
 import unittest
-
 import torch
 from torch.autograd import Variable, gradcheck
 from numpy.testing import assert_equal

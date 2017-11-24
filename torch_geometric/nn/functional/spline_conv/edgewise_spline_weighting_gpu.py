@@ -141,9 +141,8 @@ class EdgewiseSplineWeightingGPU(Function):
 
         K, M_in, M_out = weight.size()
         k_max = self.amount.size(1)
-        num_edges = input.size(0)
 
-        grad_input = grad_output.new(num_edges, M_in).fill_(0)
+        grad_input = grad_output.new(input.size(0), M_in).fill_(0)
         grad_weight = grad_output.new(K, M_in, M_out).fill_(0)
 
         num_threads = grad_output.numel()
@@ -154,7 +153,6 @@ class EdgewiseSplineWeightingGPU(Function):
                 _edgewise_spline_weighting_backward_kernel,
                 Dtype=Dtype(input),
                 num_threads=num_threads,
-                num_edges=num_edges,
                 M_in=M_in,
                 M_out=M_out,
                 k_max=k_max,
