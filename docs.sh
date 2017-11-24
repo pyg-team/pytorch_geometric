@@ -6,7 +6,7 @@ git checkout gh-pages
 git checkout master docs torch_geometric
 cd docs && make html
 cd ..
-rm -rf _modules _sources _static modules notes
+rm -rf _modules _sources _static modules notes data
 mv -fv docs/build/html/* ./
 rm -rf docs torch_geometric
 git add -A
