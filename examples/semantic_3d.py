@@ -11,4 +11,4 @@ from torch_geometric.datasets import Semantic3D  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Semantic3D')
 train_dataset = Semantic3D(path, train=True)
-test_dataset = Semantic3D(path, train=False)
+# test_dataset = Semantic3D(path, train=False)

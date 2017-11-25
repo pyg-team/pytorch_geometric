@@ -1,9 +1,12 @@
 import os
 
+import torch
 from torch.utils.data import Dataset
 
 from .utils.download import download_url
 from .utils.extract import extract_7z
+from .utils.dir import make_dirs
+from .utils.progress import Progress
 
 
 class Semantic3D(Dataset):
@@ -76,6 +79,7 @@ class Semantic3D(Dataset):
         self.transform = transform
 
         self.download()
+        self.process()
 
     @property
     def _processed_exists(self):
@@ -106,3 +110,33 @@ class Semantic3D(Dataset):
                 download_url(url, self.raw_folder)
             extract_7z(c, self.raw_folder)
             os.unlink(c)
+
+    def process(self):
+        if self._processed_exists:
+            return
+
+        make_dirs(os.path.join(self.processed_folder))
+
+        count = len(self.c_files)
+        progress = Progress('Processing', '', end=count, type='')
+
+        for i in range(count):
+            file_path = os.path.join(self.raw_folder, self.e_target_files[i])
+            with open(file_path, 'r') as f:
+                target = f.read().split(' \n')[:-1]
+                target = torch.ByteTensor([int(i) for i in target])
+                filename = 't_{0:02d}.pt'.format(i)
+                file_path = os.path.join(self.processed_folder, filename)
+                torch.save(target, file_path)
+
+            file_path = os.path.join(self.raw_folder, self.e_files[i])
+            with open(file_path, 'r') as f:
+                data = f.read().split()
+                data = torch.FloatTensor([float(i) for i in data])
+                data = data.view(-1, 7)
+                filename = 'd_{0:02d}.pt'.format(i)
+                file_path = os.path.join(self.processed_folder, filename)
+                torch.save(data, file_path)
+
+            progress.update(i + 1)
+        progress.success()
