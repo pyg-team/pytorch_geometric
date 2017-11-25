@@ -16,4 +16,4 @@ class ScatterArgMaxGPUTest(unittest.TestCase):
 
         expected_max = [[2, 3], [4, 5], [-1, -2]]
         assert_equal(max.cpu().numpy(), expected_max)
-        print(argmax)
+        # print(argmax)
