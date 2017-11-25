@@ -21,17 +21,7 @@ const float* input, const int* cluster, int* max, long* max_index) {
 
     // Compute `scatter_max`.
     atomicMax((int*) &max[c], f);
-
-    if (max[c] == f) {
-        // hier sind wir drin, wenn f das aktuelle maximum ist,
-        // d.h. es kann keine werte geben die höher ooder niedriger sind
-
-    }
-
-    int* p_max_index = (int*) &max_index[c];
-    atomicCAS(p_max_index, n_idx, n_idx);
   }
-
 }
 """
 
