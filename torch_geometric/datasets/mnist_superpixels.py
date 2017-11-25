@@ -77,10 +77,6 @@ class MNISTSuperpixels(Dataset):
         if self._raw_exists:
             return
 
-        print('Downloading {}'.format(self.url))
-
         file_path = download_url(self.url, self.raw_folder)
         extract_tar(file_path, self.raw_folder, mode='r')
         os.unlink(file_path)
-
-        print('Done!')

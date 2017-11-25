@@ -69,8 +69,6 @@ class Planetoid(Dataset):
         if self._raw_exists:
             return
 
-        print('Downloading {}'.format(self.url))
-
         for ext in self.ext:
             url = '{}/ind.{}.{}'.format(self.url, self.name, ext)
             download_url(url, self.raw_folder)
