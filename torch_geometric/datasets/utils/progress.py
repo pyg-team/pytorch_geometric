@@ -28,7 +28,7 @@ class Progress(object):
 
         self.count = '{}/{}{}'.format(type, end, type)
         self.curr_size = len(str(end))
-        self.bar_size = col - self.curr_size - len(self.count) - 2
+        self.bar_size = col - self.curr_size - len(self.count) - 3
         self.incomplete = '░' * self.bar_size
         self.complete = '▓' * self.bar_size
         self.end = end
@@ -55,7 +55,7 @@ class Progress(object):
         per = round((curr / self.end) * self.bar_size)
         bar = '{}{}'.format(self.complete[:per], self.incomplete[per:])
         count = '{}{}'.format(str(curr).rjust(self.curr_size), self.count)
-        sys.stdout.write('{}{} {}'.format(CLEAR, bar, count))
+        sys.stdout.write('{}{} {}{}'.format(CLEAR, bar, count, SAVE))
         sys.stdout.flush()
 
     def clear(self):

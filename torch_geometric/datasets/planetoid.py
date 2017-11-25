@@ -77,10 +77,6 @@ class Planetoid(Dataset):
         if self._processed_exists:
             return
 
-        print('Processing...')
-
         make_dirs(os.path.join(self.processed_folder))
         data = read_planetoid(self.raw_folder, self.name)
         torch.save(data, self.data_file)
-
-        print('Done!')
