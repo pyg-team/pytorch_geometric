@@ -28,8 +28,8 @@ def download_url(url, dir):
                 f.write(data)
                 progress.update(round(downloaded / div, 1))
             progress.success()
+
     except:
-        # TODO: Ctrl-C prints character which messes with the displayed output.
         progress.fail()
         os.unlink(file_path)
         sys.exit(1)
