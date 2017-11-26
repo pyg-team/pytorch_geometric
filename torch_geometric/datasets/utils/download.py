@@ -19,14 +19,14 @@ def download_url(url, dir):
         response = requests.get(url, stream=True)
         size = int(response.headers.get('content-length'))
         type, div = file_type(size)
-        progress = Progress('Downloading', url, round(size / div, 2), type)
+        progress = Progress('Downloading', url, round(size / div, 1), type)
 
         with open(file_path, 'wb') as f:
             downloaded = 0
             for data in response.iter_content(chunk_size=2**18):
                 downloaded += len(data)
                 f.write(data)
-                progress.update(round(downloaded / div, 2))
+                progress.update(round(downloaded / div, 1))
             progress.success()
 
     except:
