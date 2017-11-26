@@ -2,7 +2,6 @@ from __future__ import division
 
 import os
 import sys
-from six.moves import urllib
 import requests
 
 from .dir import make_dirs

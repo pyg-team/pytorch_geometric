@@ -25,6 +25,7 @@ class Progress(object):
         self.complete = '▓' * self.bar_size
         self.end = end
 
+        sys.stdout.write('\n')
         self.update(0)
 
         self.spinner.reset_cursor = '{}{}{}'.format(STORE, UP, CLEAR)

@@ -34,6 +34,7 @@ class Spinner(object):
 
     def start(self):
         self.thread.start()
+        return self
 
     def stop(self):
         self.stop_running.set()
