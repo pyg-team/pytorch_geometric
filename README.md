@@ -43,3 +43,17 @@ Install the test requirements and run the test suite:
 pip install -r requirements_test.txt
 nosetests
 ```
+
+## Cite
+
+Please cite our paper if you use this code in your own work:
+
+```
+@article{Fey2017,
+  title={{SplineCNN}: Fast Geometric Deep Learning with Continuous B-Spline Kernels},
+  author={Matthias Fey and {Jan Eric} Lenssen and Frank Weichert and Heinrich M{\"u}ller},
+  journal={CoRR},
+  volume={abs/1711.08920},
+  year={2017},
+}
+```
