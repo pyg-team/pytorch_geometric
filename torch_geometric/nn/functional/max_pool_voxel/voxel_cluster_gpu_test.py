@@ -15,6 +15,6 @@ class VoxelClusterGPUTest(unittest.TestCase):
         K = cluster_size.prod()
         cluster = voxel_cluster_gpu(position, cluster_size, K)
 
-        expected_cluster = [0, 3, 0, 3, 1, 2]
+        expected_cluster = [0, 3, 0, 3, 2, 1]
 
         assert_equal(cluster.cpu().numpy(), expected_cluster)
