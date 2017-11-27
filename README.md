@@ -4,7 +4,8 @@
 
 --------------------------------------------------------------------------------
 
-PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch
+PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch.
+In addition, PyTorch Geometric contains our spline-based convolutional layer from [SplineCNN](https://arxiv.org/pdf/1711.08920.pdf).
 
 **[Documentation](http://rusty1s.github.io/pytorch_geometric)**
 
