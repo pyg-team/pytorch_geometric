@@ -23,7 +23,7 @@ class MaxPoolVoxelGPUTest(unittest.TestCase):
 
         max_pool = MaxPoolVoxel(adj, position, cluster_size, 4)
 
-        output = max_pool(input)
+        output, adj, position = max_pool(input)
 
         expected_output = [[3, 3], [-2, -1], [-1, -2], [2, 5]]
         assert_equal(output.data.cpu().numpy(), expected_output)
