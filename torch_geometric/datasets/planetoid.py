@@ -8,6 +8,7 @@ from ..sparse import SparseTensor
 from .utils.dir import make_dirs
 from .utils.download import download_url
 from .utils.planetoid import read_planetoid
+from .utils.spinner import Spinner
 
 
 class Planetoid(Dataset):
@@ -75,6 +76,8 @@ class Planetoid(Dataset):
         if self._processed_exists:
             return
 
+        spinner = Spinner('Processing').start()
         make_dirs(os.path.join(self.processed_folder))
         data = read_planetoid(self.raw_folder, self.name)
         torch.save(data, self.data_file)
+        spinner.success()
