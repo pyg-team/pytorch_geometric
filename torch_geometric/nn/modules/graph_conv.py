@@ -1,7 +1,8 @@
 import torch
 from torch.nn import Module, Parameter
 
-from .inits import uniform
+from .utils.inits import uniform
+from .utils.repr import repr
 from ..functional.graph_conv import graph_conv
 
 
@@ -35,14 +36,10 @@ class GraphConv(Module):
 
     def reset_parameters(self):
         size = self.in_features
-        uniform(self.weight, self.bias, size)
+        uniform(size, self.weight, self.bias)
 
     def forward(self, adj, input):
         return graph_conv(adj, input, self.weight, self.bias)
 
     def __repr__(self):
-        s = ('{name}({in_features}, {out_features}')
-        if self.bias is None:
-            s += ', bias=False'
-        s += ')'
-        return s.format(name=self.__class__.__name__, **self.__dict__)
+        return repr(self)
