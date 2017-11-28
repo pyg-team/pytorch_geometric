@@ -15,7 +15,7 @@ const ${Dtype}* position, const long* cluster_size, long* cluster) {
     int s;
     int K = ${K};
 
-    for (int d_idx = 0; d_idx < ${dim}; d_idx++) {
+    for (int d_idx = ${dim} - 1; d_idx >= 0; d_idx--) {
 
         s = cluster_size[d_idx];
         K /= s;

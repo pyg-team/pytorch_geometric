@@ -1,29 +1,57 @@
+import torch
 from torch.autograd import Function
 
 from .voxel_cluster_gpu import voxel_cluster_gpu
 from .scatter_max_gpu import scatter_max_gpu
 from .scatter_arg_max_gpu import scatter_arg_max_gpu
 
+from ....sparse import SparseTensor
+
 
 class MaxPoolVoxel(Function):
-    def __init__(self, cluster_size, K):
+    def __init__(self, adj, position, cluster_size, K):
         super(MaxPoolVoxel, self).__init__()
+        self.adj = adj
+        self.position = position
         self.cluster_size = cluster_size
+        self.n, self.dim = position.size()
         self.K = K
 
-    def forward(self, input, adj, position):
-        cluster = voxel_cluster_gpu(position, self.cluster_size, self.K)
+    def forward(self, input):
+        cluster = voxel_cluster_gpu(self.position, self.cluster_size, self.K)
         max = scatter_max_gpu(input, cluster.int(), self.K)
         argmax = scatter_arg_max_gpu(input, cluster, max)
-        self.save_for_backward(cluster, argmax)
+        self.argmax = argmax
 
-        return input
+        node_count = self.position.new(self.K).fill_(0)
+        node_count.scatter_add_(0, cluster, self.position.new(self.n).fill_(1))
 
-    def backward(self, grad_output):
-        cluster, argmax = self.saved_tensors
-        n, m = cluster.size(0), grad_output.size(1)
+        position = self.position.new(self.K * self.dim).fill_(0)
+        # cluster = cluster.view(-1, 1).repeat(1, 2).view(-1)
+        # print(cluster)
+        # position.scatter_add_(0, cluster, self.position.view(-1))
+        # print(node_count)
+        # print(position.view(-1, self.dim))
+        # position, adj
 
-        grad_input = grad_output.new(n, m).fill_(0)
-        grad_input[argmax] = grad_output
+        row, col = self.adj._indices()
+        row, col = cluster[row], cluster[col]
+        weight = self.adj._values()
+        mask = row != col
+        row, col, weight = row[mask], col[mask], weight[mask]
+        index = torch.stack([row, col], dim=0)
+        size = torch.Size([self.K, self.K])
+        adj = SparseTensor(index, weight, size)
 
-        return grad_input
+        return max, adj, position
+
+    def backward(self, grad_output, adj=None, position=None):
+        k, m = grad_output.size()
+        grad_input = grad_output.new(self.n * grad_output.size(1)).fill_(0)
+
+        index = self.argmax * m
+        index += torch.arange(0, m).type_as(index)
+
+        grad_input[index.view(-1)] = grad_output.view(-1)
+
+        return grad_input.view(-1, m)
