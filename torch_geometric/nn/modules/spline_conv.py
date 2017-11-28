@@ -4,6 +4,7 @@ import torch
 from torch.nn import Module, Parameter
 
 from ..functional.spline_conv import spline_conv
+from ..functional.spline_conv import spline_conv_bp2adj
 
 
 def _repeat_last_to_count(input, dim):
@@ -47,7 +48,8 @@ class SplineConv(Module):
                  kernel_size,
                  is_open_spline=True,
                  degree=1,
-                 bias=True):
+                 bias=True,
+                 backprop_to_u=False):
 
         super(SplineConv, self).__init__()
 
@@ -80,9 +82,14 @@ class SplineConv(Module):
             self.bias.data.uniform_(-stdv, stdv)
 
     def forward(self, adj, input):
-        return spline_conv(
-            adj, input, self.weight, self._buffers['kernel_size'],
-            self._buffers['is_open_spline'], self.K, self.degree, self.bias)
+        if self.backprob_to_u:
+            return spline_conv_bp2adj(
+                adj, input, self.weight, self._buffers['kernel_size'],
+                self._buffers['is_open_spline'], self.K, self.degree, self.bias)
+        else:
+            return spline_conv(
+                adj, input, self.weight, self._buffers['kernel_size'],
+                self._buffers['is_open_spline'], self.K, self.degree, self.bias)
 
     def __repr__(self):
         s = ('{name}({in_features}, {out_features}, kernel_size='
