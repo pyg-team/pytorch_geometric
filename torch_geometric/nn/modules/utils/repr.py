@@ -1,20 +1,18 @@
 def repr(obj, keys=None):
-    str = '{name}({in_features}, {out_features}'
+    params = []
+
+    if getattr(obj, 'in_features', None) is not None:
+        params.append(str(obj.in_features))
+
+    if getattr(obj, 'out_features', None) is not None:
+        params.append(str(obj.out_features))
 
     if keys is not None:
-        str += ', ' + ', '.join([key + '={' + key + '}' for key in keys])
+        params.extend([key + '={' + key + '}' for key in keys])
 
-    if obj.bias is None:
-        str += ', bias=False'
+    if getattr(obj, 'weight', None) is not None and \
+       getattr(obj, 'bias', None) is None:
+        params.append('bias=False')
 
-    str += ')'
-
-    return str.format(name=obj.__class__.__name__, **obj.__dict__)
-
-    # s = ('{name}({in_features}, {out_features}, kernel_size='
-    #      '{kernel_size_repr}, is_open_spline={is_open_spline_repr}, '
-    #      'degree={degree}')
-    # if self.bias is None:
-    #     s += ', bias=False'
-    # s += ')'
-    # return s.format(name=self.__class__.__name__, **self.__dict__)
+    out = '{name}(' + ', '.join(params) + ')'
+    return out.format(name=obj.__class__.__name__, **obj.__dict__)
