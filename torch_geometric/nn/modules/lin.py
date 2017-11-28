@@ -7,8 +7,8 @@ from ..functional.lin import lin
 
 
 class Lin(Module):
-    """Applies a 1x1 convolution over an input signal with input
-    size :math:`(N, M_{in})` to output size :math:`(N, M_{out})`.
+    """Applies a 1x1 convolution over an input signal with input size
+    :math:`(N, M_{in})` to output size :math:`(N, M_{out})`.
 
     Args:
         in_features (int): Size of each input sample.
