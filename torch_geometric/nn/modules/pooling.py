@@ -1,6 +1,8 @@
 import torch.nn.functional as F
 from torch.nn import Module
 
+from .utils.repr import repr
+
 
 class GraclusMaxPool(Module):
     """Graclus Max Pooling from the `"Convolutional Neural Networks on Graphs
@@ -23,5 +25,4 @@ class GraclusMaxPool(Module):
         return output.squeeze(0).t()
 
     def __repr__(self):
-        s = '{name}(level={level})'
-        return s.format(name=self.__class__.__name__, **self.__dict__)
+        return repr(self, ['level'])
