@@ -1,11 +1,12 @@
 import torch
 from torch.nn import Module, Parameter
 
-from .inits import uniform
+from .utils.inits import uniform
+from .utils.repr import repr
 from ..functional.spline_conv import spline_conv
 
 
-def _repeat_last_to_count(input, dim):
+def repeat_to(input, dim):
     if not isinstance(input, list):
         input = [input]
 
@@ -52,14 +53,13 @@ class SplineConv(Module):
 
         self.in_features = in_features
         self.out_features = out_features
-        self.kernel_size_repr = _repeat_last_to_count(kernel_size, dim)
-        kernel_size = torch.LongTensor(self.kernel_size_repr)
-        self.register_buffer('kernel_size', kernel_size)
-        self.is_open_spline_repr = _repeat_last_to_count(is_open_spline, dim)
-        is_open_spline = torch.LongTensor(self.is_open_spline_repr)
+        self.kernel_size = repeat_to(kernel_size, dim)
+        self.register_buffer('kernel_size', torch.LongTensor(self.kernel_size))
+        self.is_open_spline = repeat_to(is_open_spline, dim)
+        is_open_spline = torch.LongTensor(self.is_open_spline)
         self.register_buffer('is_open_spline', is_open_spline)
         self.degree = degree
-        self.K = self.kernel_size.prod()
+        self.K = self._buffers['kernel_size'].prod()
 
         weight = torch.Tensor(self.K + 1, in_features, out_features)
         self.weight = Parameter(weight)
@@ -73,7 +73,7 @@ class SplineConv(Module):
 
     def reset_parameters(self):
         size = self.in_features * (self.K + 1)
-        uniform(self.weight, self.bias, size)
+        uniform(size, self.weight, self.bias)
 
     def forward(self, adj, input):
         return spline_conv(
@@ -81,10 +81,4 @@ class SplineConv(Module):
             self._buffers['is_open_spline'], self.K, self.degree, self.bias)
 
     def __repr__(self):
-        s = ('{name}({in_features}, {out_features}, kernel_size='
-             '{kernel_size_repr}, is_open_spline={is_open_spline_repr}, '
-             'degree={degree}')
-        if self.bias is None:
-            s += ', bias=False'
-        s += ')'
-        return s.format(name=self.__class__.__name__, **self.__dict__)
+        return repr(self, ['kernel_size', 'is_open_spline', 'degree'])
