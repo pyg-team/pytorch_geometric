@@ -83,6 +83,6 @@ for run in range(1, num_runs + 1):
         train()
 
     acc[run - 1] = test()
-    print('Run:', run, 'Accuracy:', acc[run - 1])
+    print('Run:', run, 'Test Accuracy:', acc[run - 1])
 
 print('Mean:', acc.mean(), 'Stddev:', acc.std())
