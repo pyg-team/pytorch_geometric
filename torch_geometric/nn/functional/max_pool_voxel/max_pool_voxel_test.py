@@ -28,6 +28,12 @@ class MaxPoolVoxelGPUTest(unittest.TestCase):
         expected_output = [[3, 3], [-2, -1], [-1, -2], [2, 5]]
         assert_equal(output.data.cpu().numpy(), expected_output)
 
+        expected_adj = [[0, 1, 1, 1], [1, 0, 0, 1], [1, 0, 0, 0], [1, 1, 0, 0]]
+        assert_equal(adj.data.to_dense().cpu().numpy(), expected_adj)
+
+        expected_position = [[-1.5, -1.5], [2, -2], [-2, 2], [1.5, 1.5]]
+        assert_equal(position.data.cpu().numpy(), expected_position)
+
         grad_output = torch.cuda.FloatTensor([[1, 2], [3, 4], [5, 6], [7, 8]])
         output.backward(grad_output)
 

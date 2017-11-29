@@ -26,14 +26,6 @@ class MaxPoolVoxel(Function):
         node_count = self.position.new(self.K).fill_(0)
         node_count.scatter_add_(0, cluster, self.position.new(self.n).fill_(1))
 
-        position = self.position.new(self.K * self.dim).fill_(0)
-        # cluster = cluster.view(-1, 1).repeat(1, 2).view(-1)
-        # print(cluster)
-        # position.scatter_add_(0, cluster, self.position.view(-1))
-        # print(node_count)
-        # print(position.view(-1, self.dim))
-        # position, adj
-
         row, col = self.adj._indices()
         row, col = cluster[row], cluster[col]
         weight = self.adj._values()
@@ -42,6 +34,16 @@ class MaxPoolVoxel(Function):
         index = torch.stack([row, col], dim=0)
         size = torch.Size([self.K, self.K])
         adj = SparseTensor(index, weight, size)
+
+        node_count = self.position.new(self.K).fill_(0)
+        node_count.scatter_add_(0, cluster, self.position.new(self.n).fill_(1))
+
+        position = self.position.new(self.K * self.dim).fill_(0)
+        cluster = cluster.view(-1, 1).repeat(1, self.dim) * 2
+        cluster += torch.arange(0, self.dim, out=torch.cuda.LongTensor())
+        position.scatter_add_(0, cluster.view(-1), self.position.view(-1))
+        position = position.view(-1, self.dim)
+        position /= node_count.view(-1, 1)
 
         return max, adj, position
 
