@@ -120,7 +120,7 @@ def test(epoch):
         pred = output.data.max(1)[1]
         correct += pred.eq(target).cpu().sum()
 
-    print('Epoch:', epoch, 'Accuracy:', correct / len(test_loader))
+    print('Epoch:', epoch, 'Test Accuracy:', correct / len(test_loader))
 
 
 for epoch in range(1, 21):
