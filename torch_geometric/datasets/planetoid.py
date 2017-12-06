@@ -57,8 +57,7 @@ class Planetoid(Dataset):
     def _raw_exists(self):
         files = ['ind.{}.{}'.format(self.name, ext) for ext in self.ext]
         files = [os.path.join(self.raw_folder, f) for f in files]
-        files = [os.path.exists(f) for f in files]
-        return all(files)
+        return all([os.path.exists(f) for f in files])
 
     @property
     def _processed_exists(self):
