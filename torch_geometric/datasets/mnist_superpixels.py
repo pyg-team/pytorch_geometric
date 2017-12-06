@@ -70,7 +70,7 @@ class MNISTSuperpixels(Dataset):
     @property
     def _raw_exists(self):
         train_exists = os.path.exists(self.training_file)
-        test_exists = os.path.exists(self.training_file)
+        test_exists = os.path.exists(self.test_file)
         return train_exists and test_exists
 
     def download(self):
