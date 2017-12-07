@@ -1,15 +1,18 @@
 import os
 
+import torch
 from torch.utils.data import Dataset
 
 from .utils.download import download_url
 from .utils.extract import extract_tar
 from .utils.dir import make_dirs
+from .utils.spinner import Spinner
 
 
 class Cuneiform(Dataset):
     url = 'http://www.roemisch-drei.de/cuneiform.tar.gz'
-    names = ['BU1', 'BU2', 'BU3', 'HA1', 'HA2', 'HU1', 'HU2', 'MAKI1', 'MAKI2']
+    training_raw = ['BU1', 'BU2', 'HA1', 'HA2', 'HU1', 'HU2', 'MAKI1', 'MAKI2']
+    test_raw = ['BU3']
 
     def __init__(self, root, train=True, transform=None):
         super(Cuneiform, self).__init__()
@@ -29,7 +32,7 @@ class Cuneiform(Dataset):
 
     @property
     def _raw_exists(self):
-        files = ['{}.txt'.format(f) for f in self.names]
+        files = ['{}.txt'.format(f) for f in self.training_raw + self.test_raw]
         files = [os.path.join(self.raw_folder, f) for f in files]
         return all([os.path.exists(f) for f in files])
 
@@ -48,7 +51,27 @@ class Cuneiform(Dataset):
         os.unlink(file_path)
 
     def process(self):
-        if self._processed_exists:
-            return
+        # if self._processed_exists:
+        #     return
 
-        make_dirs(os.path.join(self.processed_folder))
+        # spinner = Spinner('Processing').start()
+        make_dirs(self.processed_folder)
+
+        data = self._process_file_names(self.training_raw)
+        torch.save(data, self.training_file)
+
+        data = self._process_file_names(self.test_raw)
+        torch.save(data, self.test_file)
+
+        # spinner.success()
+
+    def _process_file_names(self, file_names):
+        # Read cuneiform wedges into memory and concat.
+        wedges = []
+        for name in file_names:
+            path = os.path.join(self.raw_folder, '{}.txt'.format(name))
+            with open(path, 'r') as f:
+                content = f.read().split('\n')[1:]
+                for wedge in content:
+                    wedges.append([float(x) for x in wedge.split(',')[:-1]])
+        print(len(wedges))

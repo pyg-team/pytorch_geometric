@@ -103,7 +103,7 @@ class FAUST(Dataset):
 
         print('Processing...')
 
-        make_dirs(os.path.join(self.processed_folder))
+        make_dirs(self.processed_folder)
 
         train_indices = range(0, 80)
         self._save_examples(train_indices, self.training_file)
