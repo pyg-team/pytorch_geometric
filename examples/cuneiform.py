@@ -13,16 +13,18 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cuneiform  # noqa
-from torch_geometric.transforms import FlatPosition, CartesianAdj  # noqa
+from torch_geometric.transforms import (RandomTranslate, FlatPosition,
+                                        CartesianAdj)  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import batch_average  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cuneiform')
-transform = Compose([FlatPosition(), CartesianAdj()])
-train_dataset = Cuneiform(path, train=True, transform=transform)
-test_dataset = Cuneiform(path, train=False, transform=transform)
+train_transform = Compose([FlatPosition(), CartesianAdj()])
+test_transform = Compose([FlatPosition(), CartesianAdj()])
+train_dataset = Cuneiform(path, train=True, transform=train_transform)
+test_dataset = Cuneiform(path, train=False, transform=test_transform)
 
 batch_size = 32
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
