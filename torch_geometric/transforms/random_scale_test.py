@@ -7,7 +7,7 @@ from .random_scale import RandomScale
 
 class RandomScaleTest(TestCase):
     def test_random_scale(self):
-        position = [[1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 6], [5, 6, 7]]
-        position = torch.FloatTensor(position)
+        position = [[0, 0, 0], [1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4]]
+        position = torch.FloatTensor(position) - 2
         data = Data(None, None, position, None)
-        data = RandomScale(1)(data)
+        data = RandomScale(2)(data)
