@@ -13,8 +13,8 @@ from .utils.spinner import Spinner
 
 class Cuneiform(Dataset):
     url = 'http://www.roemisch-drei.de/cuneiform.tar.gz'
-    training_raw = ['BU1', 'BU2', 'HA1', 'HA2', 'HU1', 'HU2', 'MAKI1', 'MAKI2']
-    test_raw = ['BU3']
+    training_raw = ['BU1', 'BU2', 'HA1', 'HA2', 'HU1', 'MAKI1', 'MAKI2']
+    test_raw = ['BU3', 'HU2']
 
     def __init__(self, root, train=True, transform=None):
         super(Cuneiform, self).__init__()
@@ -35,8 +35,9 @@ class Cuneiform(Dataset):
         # Load processed data.
         data_file = self.training_file if train else self.test_file
         data = torch.load(data_file)
-        self.index, self.position, self.target = data[:3]
+        self.index, self.position, target = data[:3]
         self.index_slice, self.slice = data[3:]
+        self.target = target.long()
 
     def __getitem__(self, i):
         index = self.index[:, self.index_slice[i]:self.index_slice[i + 1]]
