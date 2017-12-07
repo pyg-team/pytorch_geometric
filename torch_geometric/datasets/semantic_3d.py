@@ -115,7 +115,7 @@ class Semantic3D(Dataset):
         if self._processed_exists:
             return
 
-        make_dirs(os.path.join(self.processed_folder))
+        make_dirs(self.processed_folder)
 
         count = len(self.c_files)
         progress = Progress('Processing', '', end=count, type='')

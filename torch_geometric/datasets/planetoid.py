@@ -76,7 +76,7 @@ class Planetoid(Dataset):
             return
 
         spinner = Spinner('Processing').start()
-        make_dirs(os.path.join(self.processed_folder))
+        make_dirs(self.processed_folder)
         data = read_planetoid(self.raw_folder, self.name)
         torch.save(data, self.data_file)
         spinner.success()
