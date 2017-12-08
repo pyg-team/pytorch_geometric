@@ -1,10 +1,8 @@
 from PIL import Image, ImageDraw
 import numpy as np
-# from torchvision.datasets import MNIST
 from skimage.color import gray2rgb
-# import skimage.io as io
-# from skimage.draw import draw
 import torch
+from torchvision.transforms import Compose
 
 import sys
 
@@ -14,8 +12,16 @@ sys.path.insert(0, '../..')
 
 from torch_geometric.datasets import Cuneiform  # noqa
 from torch_geometric.sparse import stack  # noqa
+from torch_geometric.transforms import (RandomTranslate, FlatPosition,
+                                        RandomRotate, RandomScale)  # noqa
 
-dataset = Cuneiform('/tmp/cuneiform', train=True)
+transform = Compose([
+    FlatPosition(),
+    RandomRotate(0.2),
+    RandomScale(1.3),
+    RandomTranslate(0.2),
+])
+dataset = Cuneiform('/tmp/cuneiform', train=True, transform=transform)
 
 scale = 32
 rescale = 2
@@ -30,12 +36,12 @@ image = Image.fromarray(image)
 draw = ImageDraw.Draw(image)
 
 positions, adjs = [], []
-for i in range(0, 50):
+for i in range(0, 30):
     data = dataset[i]
     adjs.append(data['adj'])
     positions.append(data['position'])
 adj, _ = stack(adjs)
-position = torch.cat(positions, dim=0)[:, :2]
+position = torch.cat(positions, dim=0)
 position -= position.mean(dim=0)
 position += torch.FloatTensor([60, 60])
 
