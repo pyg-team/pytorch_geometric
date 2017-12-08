@@ -27,5 +27,4 @@ class RandomScale(object):
         position *= scale.type_as(position)
 
         position += mean
-
         return data
