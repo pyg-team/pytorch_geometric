@@ -12,40 +12,42 @@ sys.path.insert(0, '../..')
 
 from torch_geometric.datasets import Cuneiform  # noqa
 from torch_geometric.sparse import stack  # noqa
-from torch_geometric.transforms import (RandomTranslate, FlatPosition,
-                                        RandomRotate, RandomScale)  # noqa
+from torch_geometric.transforms import (RandomRotate, RandomScale,
+                                        RandomTranslate)  # noqa
 
+dataset = Cuneiform('/tmp/cuneiform', train=True)
 transform = Compose([
-    FlatPosition(),
     RandomRotate(0.2),
     RandomScale(1.3),
     RandomTranslate(0.2),
 ])
 dataset = Cuneiform('/tmp/cuneiform', train=True, transform=transform)
 
-scale = 32
+num_signs = 30
+positions, adjs = [], []
+for i in range(0, num_signs):
+    data = dataset[i]
+    adjs.append(data['adj'])
+    positions.append(data['position'][:, :2])
+adj, _ = stack(adjs)
+position = torch.cat(positions, dim=0)
+position -= position.min(dim=0)[0]
+position += 2
+h, w = position.max(dim=0)[0]
+s = int(max(h, w) + 2)
+
+scale = 10
 rescale = 2
-h, w = 100, 100
-image = np.ones((h, w), np.uint8)
+position *= scale * rescale
+
+image = np.ones((s, s), np.uint8)
 image = np.repeat(image, scale * rescale, axis=0)
 image = np.repeat(image, scale * rescale, axis=1)
 image = gray2rgb(image, alpha=True)
-image *= np.array([255, 225, 255, 0], np.uint8)
+image *= np.array([255, 225, 255, 1], np.uint8)
 
 image = Image.fromarray(image)
 draw = ImageDraw.Draw(image)
-
-positions, adjs = [], []
-for i in range(0, 30):
-    data = dataset[i]
-    adjs.append(data['adj'])
-    positions.append(data['position'])
-adj, _ = stack(adjs)
-position = torch.cat(positions, dim=0)
-position -= position.mean(dim=0)
-position += torch.FloatTensor([60, 60])
-
-position *= scale * rescale
 
 index = adj._indices().t()
 for i in range(index.size(0)):
@@ -58,12 +60,12 @@ for i in range(index.size(0)):
     draw.line(
         (start_y, start_x, end_y, end_x),
         fill=(0, 0, 0, 255),
-        width=rescale * 2)
+        width=rescale * 1)
 
 for i in range(position.size(0)):
     x, y = position[i]
-    r = 6 * rescale
+    r = 2 * rescale
     draw.ellipse((y - r, x - r, y + r, x + r), fill=(0, 0, 0, 255))
 
-image = image.resize((h * scale, w * scale), Image.ANTIALIAS)
+image = image.resize((s * scale, s * scale), Image.ANTIALIAS)
 image.show()
