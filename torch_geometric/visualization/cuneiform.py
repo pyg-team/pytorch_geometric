@@ -23,9 +23,8 @@ transform = Compose([
 ])
 dataset = Cuneiform('/tmp/cuneiform', train=True, transform=transform)
 
-num_signs = 30
 positions, adjs = [], []
-for i in range(0, num_signs):
+for i in range(0, 200):
     data = dataset[i]
     adjs.append(data['adj'])
     positions.append(data['position'][:, :2])
