@@ -126,7 +126,7 @@ class Cuneiform(Dataset):
         index_slice = torch.LongTensor(index_slice)
 
         tr_input = input[:slice[-60]]
-        tr_index = index[:index_slice[-60]]
+        tr_index = index[:index_slice[-60]].t()
         tr_position = position[:slice[-60]]
         tr_target = target[:-60]
         tr_slice = slice[:-60]
@@ -135,7 +135,7 @@ class Cuneiform(Dataset):
         torch.save(d, self.training_file)
 
         te_input = input[slice[-60]:]
-        te_index = index[index_slice[-60]:]
+        te_index = index[index_slice[-60]:].t()
         te_position = position[slice[-60]:]
         te_target = target[-60:]
         te_slice = slice[-60:]
