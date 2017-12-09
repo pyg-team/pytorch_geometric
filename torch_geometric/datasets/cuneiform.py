@@ -38,12 +38,29 @@ class Cuneiform(Dataset):
         self.process()
 
         # Load processed data.
+        path = self.training_file if train else self.test_file
+        input, index, position, target, slice, index_slice = torch.load(path)
+        self.input, self.index = input.float(), index.long()
+        self.position, self.target = position, target.long()
+        self.slice, self.index_slice = slice, index_slice
 
     def __getitem__(self, i):
-        pass
+        input = self.input[self.slice[i]:self.slice[i + 1]]
+        index = self.index[:, self.index_slice[i]:self.index_slice[i + 1]]
+        weight = torch.ones(index.size(1))
+        position = self.position[self.slice[i]:self.slice[i + 1]]
+        n = position.size(0)
+        adj = SparseTensor(index, weight, torch.Size([n, n]))
+        target = self.target[i]
+        data = Data(input, adj, position, target)
+
+        if self.transform is not None:
+            data = self.transform(data)
+
+        return data.all()
 
     def __len__(self):
-        pass
+        return self.target.size(0)
 
     @property
     def _raw_exists(self):
@@ -104,6 +121,7 @@ class Cuneiform(Dataset):
 
             index[i, :] -= slice[curr_idx - 1]
 
+        index = index.byte()
         index_slice.append(index.size(0))
         index_slice = torch.LongTensor(index_slice)
 
