@@ -15,28 +15,25 @@ from torch_geometric.sparse import stack  # noqa
 from torch_geometric.transforms import (RandomRotate, RandomScale,
                                         RandomTranslate)  # noqa
 
-dataset = Cuneiform('/tmp/cuneiform', train=True)
-transform = Compose([
-    RandomRotate(0.2),
-    RandomScale(1.3),
-    RandomTranslate(0.2),
-])
-dataset = Cuneiform('/tmp/cuneiform', train=True, transform=transform)
+dataset = Cuneiform('/tmp/cuneifo', train=True)
+# transform = Compose([
+#     RandomRotate(0.2),
+#     RandomScale(1.3),
+#     RandomTranslate(0.2),
+# ])
+# dataset = Cuneiform('/tmp/cuneiform', train=True, transform=transform)
 
-positions, adjs = [], []
-for i in range(0, 200):
-    data = dataset[i]
-    adjs.append(data['adj'])
-    positions.append(data['position'][:, :2])
-adj, _ = stack(adjs)
-position = torch.cat(positions, dim=0)
-position -= position.min(dim=0)[0]
-position += 2
-h, w = position.max(dim=0)[0]
-s = int(max(h, w) + 2)
+data = dataset[2]
+index, position = data['adj']._indices().t(), data['position']
+print(position.size())
+print(index.size())
 
-scale = 10
-rescale = 2
+position -= position.min(dim=0)[0] - 2
+
+s = int(position.max()) + 2
+
+scale = 32
+rescale = 4
 position *= scale * rescale
 
 image = np.ones((s, s), np.uint8)
@@ -48,7 +45,6 @@ image *= np.array([255, 225, 255, 1], np.uint8)
 image = Image.fromarray(image)
 draw = ImageDraw.Draw(image)
 
-index = adj._indices().t()
 for i in range(index.size(0)):
     start, end = index[i]
     start_x, start_y = position[start]
@@ -59,11 +55,11 @@ for i in range(index.size(0)):
     draw.line(
         (start_y, start_x, end_y, end_x),
         fill=(0, 0, 0, 255),
-        width=rescale * 1)
+        width=rescale * 2)
 
 for i in range(position.size(0)):
     x, y = position[i]
-    r = 2 * rescale
+    r = 4 * rescale
     draw.ellipse((y - r, x - r, y + r, x + r), fill=(0, 0, 0, 255))
 
 image = image.resize((s * scale, s * scale), Image.ANTIALIAS)
