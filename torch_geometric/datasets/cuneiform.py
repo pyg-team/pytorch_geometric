@@ -2,6 +2,7 @@ import os
 
 import torch
 from torch.utils.data import Dataset
+import numpy as np
 
 from .data import Data
 from ..sparse import SparseTensor
@@ -68,19 +69,60 @@ class Cuneiform(Dataset):
         if self._processed_exists:
             return
 
-        # spinner = Spinner('Processing').start()
+        spinner = Spinner('Processing').start()
         make_dirs(self.processed_folder)
 
         dir = self.raw_folder
         index = read_file(dir, self.prefix, 'A').long()
-        slice = read_file(dir, self.prefix, 'graph_indicator').long()
-        target = read_file(dir, self.prefix, 'graph_labels').byte()
+        slice = read_file(dir, self.prefix, 'graph_indicator').view(-1).long()
+        target = read_file(dir, self.prefix, 'graph_labels').view(-1).byte()
         position = read_file(dir, self.prefix, 'node_attributes')
         input = read_file(dir, self.prefix, 'node_labels').byte()
-        print(index.size())
-        print(slice.size())
-        print(target.size())
-        print(position.size())
-        print(input.size())
 
-        # spinner.success()
+        # Convert to slice representation.
+        slice = np.bincount(slice.numpy())
+        for i in range(1, len(slice)):
+            slice[i] = slice[i - 1] + slice[i]
+        slice = torch.LongTensor(slice)
+
+        # Convert to none-one-hot vector.
+        x = input.new(input.size(0) * 7).fill_(0)
+        input += torch.ByteTensor([0, 4])
+        y = torch.arange(0, input.size(0)).view(-1, 1).long() * 7
+        input = input.long() + y
+        x[input.view(-1)] = 1
+        input = x.view(-1, 7)
+
+        index_slice = [0]
+        index -= 1
+        for i in range(index.size(0)):
+            curr_idx = len(index_slice)
+            row, col = index[i]
+            if row >= slice[curr_idx]:
+                index_slice.append(i)
+                curr_idx += 1
+
+            index[i, :] -= slice[curr_idx - 1]
+
+        index_slice.append(index.size(0))
+        index_slice = torch.LongTensor(index_slice)
+
+        tr_input = input[:slice[-60]]
+        tr_index = index[:index_slice[-60]]
+        tr_position = position[:slice[-60]]
+        tr_target = target[:-60]
+        tr_slice = slice[:-60]
+        tr_slice_2 = index_slice[:-60]
+        d = (tr_input, tr_index, tr_position, tr_target, tr_slice, tr_slice_2)
+        torch.save(d, self.training_file)
+
+        te_input = input[slice[-60]:]
+        te_index = index[index_slice[-60]:]
+        te_position = position[slice[-60]:]
+        te_target = target[-60:]
+        te_slice = slice[-60:]
+        te_slice_2 = index_slice[-60:]
+        d = (te_input, te_index, te_position, te_target, te_slice, te_slice_2)
+        torch.save(d, self.test_file)
+
+        spinner.success()
