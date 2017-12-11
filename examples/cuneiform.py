@@ -62,10 +62,6 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 201:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
-
     for data in train_loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
@@ -105,7 +101,7 @@ def test(epoch, loader, string):
     print('Epoch', epoch, string, correct / num_examples)
 
 
-for epoch in range(1, 301):
+for epoch in range(1, 201):
     train(epoch)
     test(epoch, train_loader, 'Train Accuracy')
     test(epoch, test_loader, ' Test Accuracy')
