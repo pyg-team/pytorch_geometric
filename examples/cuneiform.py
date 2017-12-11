@@ -39,17 +39,13 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(7, 16, dim=2, kernel_size=3)
-        self.conv2 = SplineConv(16, 16, dim=2, kernel_size=3)
-        self.conv3 = SplineConv(16, 16, dim=2, kernel_size=3)
-        self.conv4 = SplineConv(16, 32, dim=2, kernel_size=3)
-        self.fc1 = nn.Linear(32, 30)
+        self.conv1 = SplineConv(7, 32, dim=2, kernel_size=5)
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
+        self.fc1 = nn.Linear(64, 30)
 
     def forward(self, x, adj, slice):
         x = F.elu(self.conv1(adj, x))
         x = F.elu(self.conv2(adj, x))
-        x = F.elu(self.conv3(adj, x))
-        x = F.elu(self.conv4(adj, x))
         x = batch_average(x, slice)
         x = F.dropout(x, training=self.training)
         x = self.fc1(x)
@@ -60,7 +56,7 @@ model = Net()
 if torch.cuda.is_available():
     model = model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train(epoch):
