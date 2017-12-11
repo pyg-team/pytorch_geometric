@@ -1,3 +1,5 @@
+from __future__ import division
+
 import os
 
 import torch
@@ -21,7 +23,7 @@ class Cuneiform(Dataset):
         'node_attributes'
     ]
 
-    def __init__(self, root, train=True, transform=None):
+    def __init__(self, root, split, transform=None):
         super(Cuneiform, self).__init__()
 
         # Set dataset properites.
@@ -30,7 +32,7 @@ class Cuneiform(Dataset):
         self.processed_folder = os.path.join(self.root, 'processed')
         self.data_file = os.path.join(self.processed_folder, 'data.pt')
 
-        self.train = train
+        self.split = split
         self.transform = transform
 
         self.download()
@@ -42,10 +44,9 @@ class Cuneiform(Dataset):
         self.input, self.index = input.float(), index.long()
         self.position, self.target = position, target.long()
         self.slice, self.index_slice = slice, index_slice
-        self.n = self.target.size(0)
 
     def __getitem__(self, i):
-        i = i if self.train else i + self.n - 60
+        i = self.split[i]
         input = self.input[self.slice[i]:self.slice[i + 1]]
         index = self.index[:, self.index_slice[i]:self.index_slice[i + 1]]
         weight = torch.ones(index.size(1))
@@ -61,7 +62,7 @@ class Cuneiform(Dataset):
         return data.all()
 
     def __len__(self):
-        return self.n - 60 if self.train else 60
+        return self.split.size(0)
 
     @property
     def _raw_exists(self):

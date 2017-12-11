@@ -21,6 +21,7 @@ from torch_geometric.nn.functional import batch_average  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cuneiform')
+split = torch.randperm(267)
 train_transform = Compose([
     RandomRotate(0.2),
     RandomScale(1.2),
@@ -28,8 +29,8 @@ train_transform = Compose([
     CartesianAdj(),
 ])
 test_transform = CartesianAdj()
-train_dataset = Cuneiform(path, train=True, transform=train_transform)
-test_dataset = Cuneiform(path, train=False, transform=test_transform)
+train_dataset = Cuneiform(path, split=split[:-26], transform=train_transform)
+test_dataset = Cuneiform(path, split=split[-26:], transform=test_transform)
 
 batch_size = 32
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
@@ -61,6 +62,10 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 def train(epoch):
     model.train()
+
+    if epoch == 101:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
 
     for data in train_loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
