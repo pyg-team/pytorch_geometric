@@ -105,10 +105,13 @@ def test(epoch, loader, string):
         pred = output.data.max(1)[1]
         correct += pred.eq(target).cpu().sum()
 
-    print('Epoch', epoch, string, correct / num_examples)
+    acc = correct / num_examples
+    print('Epoch', epoch, string, acc)
+    return acc
 
 
 # 10-fold cross-validation.
+accs = []
 for i in range(split.size(0) - 1):
     test_split = perm[split[i]:split[i + 1]]
 
@@ -132,4 +135,8 @@ for i in range(split.size(0) - 1):
     for epoch in range(1, 301):
         train(epoch)
 
-    test(epoch, test_loader, ' Test Accuracy')
+    acc = test(epoch, test_loader, ' Test Accuracy')
+    accs.append(acc)
+
+acc = torch.FloatTensor(accs)
+print('Mean:', acc.mean(), 'Stddev:', acc.std())
