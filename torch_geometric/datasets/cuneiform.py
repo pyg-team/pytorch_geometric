@@ -28,8 +28,7 @@ class Cuneiform(Dataset):
         self.root = os.path.expanduser(root)
         self.raw_folder = os.path.join(self.root, 'raw')
         self.processed_folder = os.path.join(self.root, 'processed')
-        self.training_file = os.path.join(self.processed_folder, 'training.pt')
-        self.test_file = os.path.join(self.processed_folder, 'test.pt')
+        self.data_file = os.path.join(self.processed_folder, 'data.pt')
 
         self.train = train
         self.transform = transform
@@ -38,13 +37,15 @@ class Cuneiform(Dataset):
         self.process()
 
         # Load processed data.
-        path = self.training_file if train else self.test_file
-        input, index, position, target, slice, index_slice = torch.load(path)
+        data = torch.load(self.data_file)
+        input, index, position, target, slice, index_slice = data
         self.input, self.index = input.float(), index.long()
         self.position, self.target = position, target.long()
         self.slice, self.index_slice = slice, index_slice
+        self.n = self.target.size(0)
 
     def __getitem__(self, i):
+        i = i if self.train else i + self.n - 60
         input = self.input[self.slice[i]:self.slice[i + 1]]
         index = self.index[:, self.index_slice[i]:self.index_slice[i + 1]]
         weight = torch.ones(index.size(1))
@@ -60,7 +61,7 @@ class Cuneiform(Dataset):
         return data.all()
 
     def __len__(self):
-        return self.target.size(0)
+        return self.n - 60 if self.train else 60
 
     @property
     def _raw_exists(self):
@@ -70,9 +71,7 @@ class Cuneiform(Dataset):
 
     @property
     def _processed_exists(self):
-        train_exists = os.path.exists(self.training_file)
-        test_exists = os.path.exists(self.test_file)
-        return train_exists and test_exists
+        return os.path.exists(self.data_file)
 
     def download(self):
         if self._raw_exists:
@@ -121,26 +120,11 @@ class Cuneiform(Dataset):
 
             index[i, :] -= slice[curr_idx - 1]
 
-        index = index.byte()
         index_slice.append(index.size(0))
         index_slice = torch.LongTensor(index_slice)
+        index = index.byte().t()
 
-        tr_input = input[:slice[-60]]
-        tr_index = index[:index_slice[-60]].t()
-        tr_position = position[:slice[-60]]
-        tr_target = target[:-60]
-        tr_slice = slice[:-60]
-        tr_slice_2 = index_slice[:-60]
-        d = (tr_input, tr_index, tr_position, tr_target, tr_slice, tr_slice_2)
-        torch.save(d, self.training_file)
-
-        te_input = input[slice[-60]:]
-        te_index = index[index_slice[-60]:].t()
-        te_position = position[slice[-60]:]
-        te_target = target[-60:]
-        te_slice = slice[-60:]
-        te_slice_2 = index_slice[-60:]
-        d = (te_input, te_index, te_position, te_target, te_slice, te_slice_2)
-        torch.save(d, self.test_file)
+        data = (input, index, position, target, slice, index_slice)
+        torch.save(data, self.data_file)
 
         spinner.success()
