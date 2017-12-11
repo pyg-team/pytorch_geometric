@@ -21,7 +21,9 @@ from torch_geometric.nn.functional import batch_average  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cuneiform')
-split = torch.randperm(267)
+n = 267
+perm = torch.randperm(n)
+split = torch.arange(0, n + 27, 27, out=torch.LongTensor())
 train_transform = Compose([
     RandomRotate(0.2),
     RandomScale(1.2),
@@ -29,12 +31,8 @@ train_transform = Compose([
     CartesianAdj(),
 ])
 test_transform = CartesianAdj()
-train_dataset = Cuneiform(path, split=split[:-26], transform=train_transform)
-test_dataset = Cuneiform(path, split=split[-26:], transform=test_transform)
-
-batch_size = 32
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+train_dataset = Cuneiform(path, split=None, transform=train_transform)
+test_dataset = Cuneiform(path, split=None, transform=test_transform)
 
 
 class Net(nn.Module):
@@ -63,7 +61,11 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 101:
+    if epoch == 1:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.01
+
+    if epoch == 201:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
@@ -106,7 +108,28 @@ def test(epoch, loader, string):
     print('Epoch', epoch, string, correct / num_examples)
 
 
-for epoch in range(1, 201):
-    train(epoch)
-    test(epoch, train_loader, 'Train Accuracy')
+# 10-fold cross-validation.
+for i in range(split.size(0) - 1):
+    test_split = perm[split[i]:split[i + 1]]
+
+    if i == 0:
+        train_split = perm[split[i + 1]:]
+    elif i == split.size(0) - 2:
+        train_split = perm[:split[i]]
+    else:
+        train_split = torch.cat([perm[:split[i]], perm[split[i + 1]:]])
+
+    train_dataset.split = train_split
+    test_dataset.split = test_split
+
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+
+    model.conv1.reset_parameters()
+    model.conv2.reset_parameters()
+    model.fc1.reset_parameters()
+
+    for epoch in range(1, 301):
+        train(epoch)
+
     test(epoch, test_loader, ' Test Accuracy')
