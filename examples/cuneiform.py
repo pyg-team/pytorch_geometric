@@ -113,6 +113,8 @@ def test(epoch, loader, string):
 # 10-fold cross-validation.
 accs = []
 for i in range(split.size(0) - 1):
+    print('Split', i)
+
     test_split = perm[split[i]:split[i + 1]]
 
     if i == 0:
@@ -128,15 +130,18 @@ for i in range(split.size(0) - 1):
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
 
-    model.conv1.reset_parameters()
-    model.conv2.reset_parameters()
-    model.fc1.reset_parameters()
-
-    for epoch in range(1, 301):
-        train(epoch)
-
-    acc = test(epoch, test_loader, ' Test Accuracy')
-    accs.append(acc)
+    accs_single = []
+    for _ in range(10):
+        model.conv1.reset_parameters()
+        model.conv2.reset_parameters()
+        model.fc1.reset_parameters()
+        for epoch in range(1, 301):
+            train(epoch)
+        acc = test(epoch, test_loader, ' Test Accuracy')
+        accs_single.append(acc)
+    mean = torch.FloatTensor(accs_single).mean()
+    print('Mean', mean)
+    accs.append(mean)
 
 acc = torch.FloatTensor(accs)
 print('Mean:', acc.mean(), 'Stddev:', acc.std())
