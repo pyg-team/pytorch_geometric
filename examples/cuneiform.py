@@ -23,10 +23,11 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cuneiform')
 n = 267
 perm = torch.randperm(n)
+perm = torch.load('/tmp/perm.pt')
 split = torch.arange(0, n + 27, 27, out=torch.LongTensor())
 train_transform = Compose([
-    RandomRotate(0.2),
-    RandomScale(1.2),
+    RandomRotate(0.6),
+    RandomScale(1.4),
     RandomTranslate(0.1),
     CartesianAdj(),
 ])
@@ -38,15 +39,17 @@ test_dataset = Cuneiform(path, split=None, transform=test_transform)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(7, 32, dim=2, kernel_size=5)
+        self.conv1 = SplineConv(8, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
-        self.fc1 = nn.Linear(64, 30)
+        self.conv3 = SplineConv(64, 124, dim=2, kernel_size=5)
+        self.fc1 = nn.Linear(124, 30)
 
     def forward(self, x, adj, slice):
         x = F.elu(self.conv1(adj, x))
         x = F.elu(self.conv2(adj, x))
+        x = F.elu(self.conv3(adj, x))
         x = batch_average(x, slice)
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, p=0.5, training=self.training)
         x = self.fc1(x)
         return F.log_softmax(x)
 
@@ -72,6 +75,9 @@ def train(epoch):
     for data in train_loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
+        input *= 2
+        input -= 1
+        input = torch.cat([input, input.new(input.size(0)).fill_(1)], dim=1)
 
         if torch.cuda.is_available():
             adj, slice = adj.cuda(), slice.cuda()
@@ -95,6 +101,9 @@ def test(epoch, loader, string):
     for data in loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
+        input *= 2
+        input -= 1
+        input = torch.cat([input, input.new(input.size(0)).fill_(1)], dim=1)
         num_examples += target.size(0)
 
         if torch.cuda.is_available():
@@ -130,7 +139,6 @@ for i in range(split.size(0) - 1):
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
 
-    accs_single = []
     for _ in range(10):
         model.conv1.reset_parameters()
         model.conv2.reset_parameters()
@@ -138,10 +146,10 @@ for i in range(split.size(0) - 1):
         for epoch in range(1, 301):
             train(epoch)
         acc = test(epoch, test_loader, ' Test Accuracy')
-        accs_single.append(acc)
-    mean = torch.FloatTensor(accs_single).mean()
-    print('Mean', mean)
-    accs.append(mean)
+        accs.append(acc)
 
 acc = torch.FloatTensor(accs)
 print('Mean:', acc.mean(), 'Stddev:', acc.std())
+
+# Results:
+# with 8 features: 92.0185, 0.05372
