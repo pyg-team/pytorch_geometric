@@ -2,6 +2,7 @@ from __future__ import division, print_function
 
 import os
 import sys
+import time
 
 import torch
 from torch import nn
@@ -150,6 +151,3 @@ for i in range(split.size(0) - 1):
 
 acc = torch.FloatTensor(accs)
 print('Mean:', acc.mean(), 'Stddev:', acc.std())
-
-# Results:
-# with 8 features: 92.0185, 0.05372
