@@ -140,6 +140,7 @@ for i in range(split.size(0) - 1):
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
 
+    accs_single = []
     for _ in range(10):
         model.conv1.reset_parameters()
         model.conv2.reset_parameters()
@@ -147,7 +148,9 @@ for i in range(split.size(0) - 1):
         for epoch in range(1, 301):
             train(epoch)
         acc = test(epoch, test_loader, ' Test Accuracy')
-        accs.append(acc)
+        accs_single.append(acc)
+    accs.append(accs_single)
 
 acc = torch.FloatTensor(accs)
+torch.save(acc, '/tmp/acc.pt')
 print('Mean:', acc.mean(), 'Stddev:', acc.std())
