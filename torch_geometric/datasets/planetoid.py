@@ -57,8 +57,7 @@ class Planetoid(Dataset):
     def _raw_exists(self):
         files = ['ind.{}.{}'.format(self.name, ext) for ext in self.ext]
         files = [os.path.join(self.raw_folder, f) for f in files]
-        files = [os.path.exists(f) for f in files]
-        return all(files)
+        return all([os.path.exists(f) for f in files])
 
     @property
     def _processed_exists(self):
@@ -77,7 +76,7 @@ class Planetoid(Dataset):
             return
 
         spinner = Spinner('Processing').start()
-        make_dirs(os.path.join(self.processed_folder))
+        make_dirs(self.processed_folder)
         data = read_planetoid(self.raw_folder, self.name)
         torch.save(data, self.data_file)
         spinner.success()

@@ -6,8 +6,9 @@ from .citeseer import CiteSeer
 from .faust import FAUST
 from .mnist_superpixels import MNISTSuperpixels
 from .semantic_3d import Semantic3D
+from .cuneiform import Cuneiform
 
 __all__ = [
     'Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels',
-    'Semantic3D'
+    'Semantic3D', 'Cuneiform'
 ]
