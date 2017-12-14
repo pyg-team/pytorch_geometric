@@ -24,7 +24,6 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cuneiform')
 n = 267
 perm = torch.randperm(n)
-perm = torch.load('/tmp/perm.pt')
 split = torch.arange(0, n + 27, 27, out=torch.LongTensor())
 train_transform = Compose([
     RandomRotate(0.6),
@@ -33,7 +32,7 @@ train_transform = Compose([
     CartesianAdj(),
 ])
 test_transform = CartesianAdj()
-train_dataset = Cuneiform(path, split=None, transform=train_transform)
+train_dataset = Cuneiform(path, split=None, transform=test_transform)
 test_dataset = Cuneiform(path, split=None, transform=test_transform)
 
 
@@ -50,7 +49,7 @@ class Net(nn.Module):
         x = F.elu(self.conv2(adj, x))
         x = F.elu(self.conv3(adj, x))
         x = batch_average(x, slice)
-        x = F.dropout(x, p=0.5, training=self.training)
+        x = F.dropout(x, training=self.training)
         x = self.fc1(x)
         return F.log_softmax(x)
 
@@ -76,8 +75,6 @@ def train(epoch):
     for data in train_loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
-        input *= 2
-        input -= 1
         input = torch.cat([input, input.new(input.size(0)).fill_(1)], dim=1)
 
         if torch.cuda.is_available():
@@ -102,8 +99,6 @@ def test(epoch, loader, string):
     for data in loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
-        input *= 2
-        input -= 1
         input = torch.cat([input, input.new(input.size(0)).fill_(1)], dim=1)
         num_examples += target.size(0)
 
@@ -152,5 +147,7 @@ for i in range(split.size(0) - 1):
     accs.append(accs_single)
 
 acc = torch.FloatTensor(accs)
-torch.save(acc, '/tmp/acc.pt')
-print('Mean:', acc.mean(), 'Stddev:', acc.std())
+print('Mean over splits:', acc.mean(1).tolist())
+print('Std over splits:', acc.std(1).tolist())
+print('Mean:', acc.mean().tolist())
+print('Std:', acc.std().tolist())

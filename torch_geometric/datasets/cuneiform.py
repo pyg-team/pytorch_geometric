@@ -94,7 +94,7 @@ class Cuneiform(Dataset):
         slice = read_file(dir, self.prefix, 'graph_indicator').view(-1).long()
         target = read_file(dir, self.prefix, 'graph_labels').view(-1).byte()
         position = read_file(dir, self.prefix, 'node_attributes')
-        input = read_file(dir, self.prefix, 'node_labels').byte()
+        input = read_file(dir, self.prefix, 'node_labels').long()
 
         # Convert to slice representation.
         slice = np.bincount(slice.numpy())
@@ -102,13 +102,13 @@ class Cuneiform(Dataset):
             slice[i] = slice[i - 1] + slice[i]
         slice = torch.LongTensor(slice)
 
-        # Convert to none-one-hot vector.
-        x = input.new(input.size(0) * 7).fill_(0)
-        input += torch.ByteTensor([0, 4])
+        # Convert to feature vector.
+        x = input.new(input.size(0) * 7).fill_(-1)
+        input += torch.LongTensor([0, 4])
         y = torch.arange(0, input.size(0)).view(-1, 1).long() * 7
         input = input.long() + y
         x[input.view(-1)] = 1
-        input = x.view(-1, 7)
+        input = x.view(-1, 7).char()
 
         index_slice = [0]
         index -= 1
