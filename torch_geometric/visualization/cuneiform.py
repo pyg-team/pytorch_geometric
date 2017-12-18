@@ -1,8 +1,8 @@
 from PIL import Image, ImageDraw
 import numpy as np
 from skimage.color import gray2rgb
-import torch
-from torchvision.transforms import Compose
+# import torch
+# from torchvision.transforms import Compose
 
 import sys
 
@@ -12,8 +12,8 @@ sys.path.insert(0, '../..')
 
 from torch_geometric.datasets import Cuneiform  # noqa
 from torch_geometric.sparse import stack  # noqa
-from torch_geometric.transforms import (RandomRotate, RandomScale,
-                                        RandomTranslate)  # noqa
+# from torch_geometric.transforms import (RandomRotate, RandomScale,
+#                                         RandomTranslate)  # noqa
 
 dataset = Cuneiform('/tmp/cuneifo', train=True)
 # transform = Compose([
