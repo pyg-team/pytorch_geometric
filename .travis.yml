@@ -7,9 +7,9 @@ matrix:
     - python: 3.5
     - python: 3.6
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.2.0.post3-cp27-cp27mu-manylinux1_x86_64.whl; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.2.0.post3-cp35-cp35m-manylinux1_x86_64.whl; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.2.0.post3-cp36-cp36m-manylinux1_x86_64.whl; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.3.0.post4-cp27-cp27mu-manylinux1_x86_64.whl; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.3.0.post4-cp35-cp35m-manylinux1_x86_64.whl; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.3.0.post4-cp36-cp36m-manylinux1_x86_64.whl; fi
   - pip install torchvision
   - pip install -r requirements_test.txt
   - pip install codecov
