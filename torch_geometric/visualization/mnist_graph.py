@@ -102,10 +102,10 @@ offset = torch.FloatTensor([(28 - position[:, 0].max()) / 2,
 position *= scale * rescale
 position += scale * offset * rescale
 
-adjs, positions, perm = graclus(adj, position, level=2)
-adj, position = adjs[2], positions[2]
-input = perm_input(input, perm)
-input = input.view(-1, 4).sum(dim=1)
+# adjs, positions, perm = graclus(adj, position, level=2)
+# adj, position = adjs[2], positions[2]
+# input = perm_input(input, perm)
+# input = input.view(-1, 4).sum(dim=1)
 
 index = adj._indices().t()
 for i in range(index.size(0)):
