@@ -54,12 +54,13 @@ class SplineConv(Module):
         self.in_features = in_features
         self.out_features = out_features
         self.kernel_size = repeat_to(kernel_size, dim)
-        self.register_buffer('kernel_size', torch.LongTensor(self.kernel_size))
+        kernel_size = torch.LongTensor(self.kernel_size)
+        self.register_buffer('_kernel_size', kernel_size)
         self.is_open_spline = repeat_to(is_open_spline, dim)
         is_open_spline = torch.LongTensor(self.is_open_spline)
-        self.register_buffer('is_open_spline', is_open_spline)
+        self.register_buffer('_is_open_spline', is_open_spline)
         self.degree = degree
-        self.K = self._buffers['kernel_size'].prod()
+        self.K = self._buffers['_kernel_size'].prod()
 
         weight = torch.Tensor(self.K + 1, in_features, out_features)
         self.weight = Parameter(weight)
@@ -77,8 +78,8 @@ class SplineConv(Module):
 
     def forward(self, adj, input):
         return spline_conv(
-            adj, input, self.weight, self._buffers['kernel_size'],
-            self._buffers['is_open_spline'], self.K, self.degree, self.bias)
+            adj, input, self.weight, self._buffers['_kernel_size'],
+            self._buffers['_is_open_spline'], self.K, self.degree, self.bias)
 
     def __repr__(self):
         return repr(self, ['kernel_size', 'is_open_spline', 'degree'])
