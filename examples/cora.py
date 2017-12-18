@@ -42,7 +42,7 @@ class Net(nn.Module):
         x = F.elu(self.conv1(adj, x))
         x = F.dropout(x, training=self.training)
         x = self.conv2(adj, x)
-        return F.log_softmax(x)
+        return F.log_softmax(x, dim=0)
 
 
 model = Net()
