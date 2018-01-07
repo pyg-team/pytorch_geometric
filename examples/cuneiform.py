@@ -23,6 +23,7 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cuneiform')
 n = 267
 perm = torch.randperm(n)
+torch.save(perm, '/Users/rusty1s/Desktop/perm.pt')
 split = torch.arange(0, n + 27, 27, out=torch.LongTensor())
 train_transform = Compose([
     RandomRotate(0.6),
@@ -145,8 +146,9 @@ for i in range(split.size(0) - 1):
         accs_single.append(acc)
     accs.append(accs_single)
 
+torch.save(model.state_dict(), '/Users/rusty1s/Desktop/model.pt')
 acc = torch.FloatTensor(accs)
-print('Mean over splits:', acc.mean(1).tolist())
-print('Std over splits:', acc.std(1).tolist())
-print('Mean:', acc.mean().tolist())
-print('Std:', acc.std().tolist())
+print('Mean over splits:', acc.mean(dim=1).tolist())
+print('Std over splits:', acc.std(dim=1).tolist())
+print('Mean:', acc.mean())
+print('Std:', acc.std())
