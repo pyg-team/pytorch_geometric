@@ -50,7 +50,7 @@ class Net(nn.Module):
         x = batch_average(x, slice)
         x = F.dropout(x, training=self.training)
         x = self.fc1(x)
-        return F.log_softmax(x)
+        return F.log_softmax(x, dim=1)
 
 
 model = Net()
