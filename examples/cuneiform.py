@@ -74,7 +74,7 @@ def train(epoch):
     for data in train_loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
-        input = torch.cat([input, input.new(input.size(0)).fill_(1)], dim=1)
+        input = torch.cat([input, input.new(input.size(0), 1).fill_(1)], dim=1)
 
         if torch.cuda.is_available():
             adj, slice = adj.cuda(), slice.cuda()
@@ -98,7 +98,7 @@ def test(epoch, loader, string):
     for data in loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
-        input = torch.cat([input, input.new(input.size(0)).fill_(1)], dim=1)
+        input = torch.cat([input, input.new(input.size(0), 1).fill_(1)], dim=1)
         num_examples += target.size(0)
 
         if torch.cuda.is_available():
