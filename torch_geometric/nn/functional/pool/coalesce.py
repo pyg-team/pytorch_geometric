@@ -6,5 +6,7 @@ def coalesce(index):
     perm = torch.arange(0, e.size(0), out=e.new())
 
     _, perm = unique_by_key(e, perm)
+    index = index[:, perm]
+    index = index.contiguous()
 
-    return index[:, perm]
+    return index
