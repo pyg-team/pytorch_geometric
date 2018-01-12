@@ -111,13 +111,13 @@
   <filter id="filter5926" style="color-interpolation-filters:sRGB" height="1.6319" width="1.3728" y="-.31597" x="-.18641">
    <feGaussianBlur id="feGaussianBlur5928" stdDeviation="3.071984"/>
   </filter>
-  <filter id="filter5974" style="color-interpolation-filters:sRGB" height="2.1663" width="1.8768" y="-.58314" x="-.43839">
-   <feGaussianBlur id="feGaussianBlur5976" stdDeviation="6.43019"/>
-  </filter>
   <radialGradient id="radialGradient5654-4-5" gradientUnits="userSpaceOnUse" cy="66.747" cx="508.56" gradientTransform="matrix(.28685 .19266 -.011879 .017686 368.78 -66.129)" r="34.682">
    <stop id="stop4349" stop-color="#fff" stop-opacity=".263" offset="0"/>
    <stop id="stop4351" stop-color="#fff" stop-opacity="0" offset="1"/>
   </radialGradient>
+  <filter id="filter4357" style="color-interpolation-filters:sRGB" height="1.7664" width="1.5174" y="-.38319" x="-.25871">
+   <feGaussianBlur id="feGaussianBlur4359" stdDeviation="4.013875"/>
+  </filter>
  </defs>
  <g fill-rule="evenodd" fill="#333">
   <path id="path12" d="m0.9 169.17q0-7.3 3.5-13.1 3.4-5.7 9.2-8.7t12.9-3q3.6 0 6.8 0.9 3.1 0.8 5.5 2.4 2.4 1.5 4.3 3.4 1.8 1.8 3.2 4l-8.4 4.7q-1.8-2.8-4.8-4.5-3-1.8-6.6-1.8-6.6 0-10.8 4.5-4.3 4.4-4.3 11.2 0 6.9 4.3 11.3 4.2 4.5 10.8 4.5 4.9 0 8-2.6 3.2-2.7 4.5-6.8h-15v-9h26.2q0 12.8-6.6 20.2-6.5 7.3-18 7.3-5 0-9.4-1.8-4.5-1.8-7.9-4.9-3.4-3.2-5.4-7.9t-2-10.3zm157.9 24h-34v-48h34v9h-23.8v10.1h23.3v9h-23.3v10.9h23.8v9zm77.3-14q-1.9-4.6-1.9-10 0-5.3 1.9-9.9 1.9-4.7 5.2-7.9 3.3-3.3 8-5.1 4.7-1.9 10-1.9 7.2 0 12.9 3.2 5.7 3.1 9 8.8 3.2 5.7 3.2 12.8 0 7.2-3.2 12.9-3.3 5.7-9 8.8-5.7 3.2-12.9 3.2-5.3 0-10-1.9-4.7-1.8-8-5.1-3.3-3.2-5.2-7.9zm8.7-10q0 6.9 4 11.3 4 4.5 10.5 4.5 6.6 0 10.6-4.5 4-4.4 4-11.3 0-6.8-4-11.3-4-4.4-10.6-4.4t-10.6 4.4q-3.9 4.5-3.9 11.3zm126.8 24h-10.2v-48h14.3l11.7 30 11.6-30h14.4v48h-10.3v-34.6l-13.5 34.6h-4.5l-13.5-34.6v34.6zm155.1 0h-34v-48h34v9h-23.7v10.1h23.2v9h-23.2v10.9h23.7v9zm88.9-39h-14.1v-9h38.3v9h-13.9v39h-10.3v-39zm110.8 39h-10.3v-48h22.5q7.4 0 11.8 4.3t4.4 11.2q0 3-0.9 5.6-0.9 2.5-2.5 4.2-1.5 1.7-3.3 2.8t-3.9 1.6l10.9 18.3h-11.8l-9.4-17h-7.5v17zm0-39v13h10.8q3.1 0 5.1-1.8t2-4.8q0-2.9-2-4.7-2-1.7-5.1-1.7h-10.8zm116 39h-10.2v-48h10.2v48zm77.1-24q0-7.2 3.3-12.9 3.4-5.7 9.2-8.8 5.9-3.1 13.1-3.1 3.8 0 7 1 3.3 0.9 5.7 2.6t4.2 3.7 3.1 4.4l-8.8 4.4q-1.5-3.1-4.6-5-3.1-2-6.6-2-6.6 0-10.9 4.5-4.2 4.4-4.2 11.2 0 6.9 4.2 11.3 4.3 4.5 10.9 4.5 3.5 0 6.6-2 3.1-1.9 4.6-5l8.8 4.3q-1.4 2.4-3.1 4.4-1.8 2-4.2 3.7t-5.7 2.7q-3.2 1-7 1-5.4 0-10.1-1.8-4.8-1.9-8.2-5.1t-5.4-7.8q-1.9-4.7-1.9-10.2z"/>
@@ -177,7 +177,7 @@
   <rect id="rect4190-9-2-2-7-7-6" style="isolation:isolate" rx="0" ry="6.7344" height="22.981" width="37.948" y="98.457" x="479.34" fill="url(#radialGradient5654-4-1-8-7-1-4)"/>
   <rect id="rect4190-7-4-7-7-1" style="isolation:isolate" ry="6.7344" height="16.426" width="11.204" y="62.16" x="397.89" fill="url(#radialGradient5654-1-6-9-1-5)"/>
   <rect id="rect4190-9-2-9-6-5-9" style="isolation:isolate" rx="0" ry="6.7344" height="41.314" width="9.7626" y="33.286" x="407.63" fill="url(#radialGradient5654-4-1-2-7-7-3)"/>
-  <rect id="rect4190-9-2-23" opacity="0.38" style="isolation:isolate" transform="matrix(.69966 .54435 -0.872 .91392 158.58 -236.07)" rx="13.88" ry="15.164" height="30.327" filter="url(#filter5974)" width="27.76" y="21.634" x="417.9" fill="#fff"/>
+  <rect id="rect4190-9-2-23" opacity="0.38" style="isolation:isolate" transform="matrix(.69966 .54435 -0.872 .91392 156.46 -245.26)" rx="13.88" ry="15.164" height="30.327" filter="url(#filter4357)" width="27.76" y="21.634" x="417.9" fill="#fff"/>
   <rect id="rect4190-9-2-2-2" opacity=".178" style="isolation:isolate" rx="0" ry="6.7344" height="42.98" width="12.012" y="24.567" x="490.23" fill="url(#radialGradient5654-4-1-8-6)"/>
  </g>
  <rect id="rect4190-9-2-2-2-9" opacity="0.168" style="isolation:isolate" fill-opacity="0" rx="0" ry="6.7344" height="19.23" width="10.012" y="5.2105" x="494.07"/>
