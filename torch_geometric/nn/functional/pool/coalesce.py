@@ -1,6 +1,7 @@
 import torch
 from torch_unique import unique_by_key
 
+
 def remove_self_loops(index):
     row, col = index
     mask = row != col
