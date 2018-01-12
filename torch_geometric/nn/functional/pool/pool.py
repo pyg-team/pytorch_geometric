@@ -1,4 +1,5 @@
 import torch
+from torch.autograd import Variable
 from torch_scatter import scatter_add
 
 from .coalesce import remove_self_loops, coalesce
@@ -9,18 +10,31 @@ def _pool(index, position, cluster):
     index = remove_self_loops(index)  # Remove self loops.
     index = coalesce(index)  # Remove duplicates.
 
-    _cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
-    position = scatter_add(_cluster, position, dim=0)
+    cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
+    position = scatter_add(cluster, position, dim=0)
 
     return index, position
 
+
+def _max_pool(input, cluster):
+    cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
+    if torch.is_tensor(input):
+        return scatter_add(cluster, input, dim=0)
+    else:
+        return scatter_add(Variable(cluster), input, dim=0)
+
+
 def max_pool(input, index, position, cluster):
-    _cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
-    input = scatter_add(_cluster, input, dim=0)
-    return (input,) + _pool(index, position, cluster)
+    return (_max_pool(input, cluster),) + _pool(index, position, cluster)
 
 
-def average_pool(input, index, position, cluster):
-    _cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
-    input = scatter_add(_cluster, input, dim=0)
-    return (input,) + _pool(index, position, cluster)
+def _avg_pool(input, cluster):
+    cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
+    if torch.is_tensor(input):
+        return scatter_add(cluster, input, dim=0)
+    else:
+        return scatter_add(Variable(cluster), input, dim=0)
+
+
+def avg_pool(input, index, position, cluster):
+    return (_avg_pool(input, cluster),) + _pool(index, position, cluster)
