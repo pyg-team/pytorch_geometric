@@ -39,22 +39,21 @@ class Cuneiform(Dataset):
         self.process()
 
         # Load processed data.
-        # data = torch.load(self.data_file)
-        # input, index, position, target, slice, index_slice = data
-        # self.input, self.index = input.float(), index.long()
-        # self.position, self.target = position, target.long()
-        # self.slice, self.index_slice = slice, index_slice
+        data = torch.load(self.data_file)
+        input, index, position, target, slice, index_slice = data
+        self.input, self.index, self.position = input, index, position
+        self.target, self.slice, self.index_slice = target, slice, index_slice
 
-        # if split is not None:
-        #     self.split = split
-        # else:
-        #     self.split = torch.arange(0, len(slice) - 1, out=torch.LongTensor())
+        if split is not None:
+            self.split = split
+        else:
+            self.split = torch.arange(0, len(slice) - 1, out=torch.LongTensor())
 
     def __getitem__(self, i):
         i = self.split[i]
         input = self.input[self.slice[i]:self.slice[i + 1]]
         index = self.index[:, self.index_slice[i]:self.index_slice[i + 1]]
-        weight = torch.ones(index.size(1))
+        weight = input.new(index.size(1)).fill_(1)
         position = self.position[self.slice[i]:self.slice[i + 1]]
         n = position.size(0)
         adj = SparseTensor(index, weight, torch.Size([n, n]))
