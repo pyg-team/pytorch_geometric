@@ -15,7 +15,8 @@ from torch_geometric.sparse import stack  # noqa
 # from torch_geometric.transforms import (RandomRotate, RandomScale,
 #                                         RandomTranslate)  # noqa
 
-dataset = Cuneiform('/tmp/cuneifo', train=True)
+dataset = Cuneiform('/tmp/cuneiform_1', mode=1)
+# dataset = Cuneiform('/tmp/cuneiform_2', mode=2)
 # transform = Compose([
 #     RandomRotate(0.2),
 #     RandomScale(1.3),
@@ -23,10 +24,8 @@ dataset = Cuneiform('/tmp/cuneifo', train=True)
 # ])
 # dataset = Cuneiform('/tmp/cuneiform', train=True, transform=transform)
 
-data = dataset[2]
+data = dataset[0]
 index, position = data['adj']._indices().t(), data['position']
-print(position.size())
-print(index.size())
 
 position -= position.min(dim=0)[0] - 2
 
