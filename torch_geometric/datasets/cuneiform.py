@@ -12,7 +12,7 @@ from .utils.download import download_url
 from .utils.extract import extract_tar
 from .utils.dir import make_dirs
 from .utils.spinner import Spinner
-from .utils.tu_format import read_file
+from .utils.tu_format import read_file, read_adj, read_slice
 
 
 class Cuneiform(Dataset):
@@ -39,16 +39,16 @@ class Cuneiform(Dataset):
         self.process()
 
         # Load processed data.
-        data = torch.load(self.data_file)
-        input, index, position, target, slice, index_slice = data
-        self.input, self.index = input.float(), index.long()
-        self.position, self.target = position, target.long()
-        self.slice, self.index_slice = slice, index_slice
+        # data = torch.load(self.data_file)
+        # input, index, position, target, slice, index_slice = data
+        # self.input, self.index = input.float(), index.long()
+        # self.position, self.target = position, target.long()
+        # self.slice, self.index_slice = slice, index_slice
 
-        if split is not None:
-            self.split = split
-        else:
-            self.split = torch.arange(0, len(slice) - 1, out=torch.LongTensor())
+        # if split is not None:
+        #     self.split = split
+        # else:
+        #     self.split = torch.arange(0, len(slice) - 1, out=torch.LongTensor())
 
     def __getitem__(self, i):
         i = self.split[i]
@@ -94,41 +94,18 @@ class Cuneiform(Dataset):
         spinner = Spinner('Processing').start()
         make_dirs(self.processed_folder)
 
-        dir = self.raw_folder
-        index = read_file(dir, self.prefix, 'A').long()
-        slice = read_file(dir, self.prefix, 'graph_indicator').view(-1).long()
-        target = read_file(dir, self.prefix, 'graph_labels').view(-1).byte()
-        position = read_file(dir, self.prefix, 'node_attributes')
-        input = read_file(dir, self.prefix, 'node_labels').long()
+        index, index_slice = read_adj(self.raw_folder, self.prefix)
+        slice = read_slice(self.raw_folder, self.prefix)
+        position = read_file(self.raw_folder, self.prefix, 'node_attributes')
+        target = read_file(self.raw_folder, self.prefix, 'graph_labels')
 
-        # Convert to slice representation.
-        slice = np.bincount(slice.numpy())
-        for i in range(1, len(slice)):
-            slice[i] = slice[i - 1] + slice[i]
-        slice = torch.LongTensor(slice)
-
-        # Convert to feature vector.
-        x = input.new(input.size(0) * 7).fill_(-1)
-        input += torch.LongTensor([0, 4])
-        y = torch.arange(0, input.size(0)).view(-1, 1).long() * 7
-        input = input.long() + y
-        x[input.view(-1)] = 1
-        input = x.view(-1, 7).char()
-
-        index_slice = [0]
-        index -= 1
-        for i in range(index.size(0)):
-            curr_idx = len(index_slice)
-            row, col = index[i]
-            if row >= slice[curr_idx]:
-                index_slice.append(i)
-                curr_idx += 1
-
-            index[i, :] -= slice[curr_idx - 1]
-
-        index_slice.append(index.size(0))
-        index_slice = torch.LongTensor(index_slice)
-        index = index.byte().t()
+        # Encode inputs.
+        x = read_file(self.raw_folder, self.prefix, 'node_labels')
+        x += torch.FloatTensor([0, 4])
+        x += torch.arange(0, 7 * x.size(0), 7).view(-1, 1)
+        input = torch.zeros(7 * x.size(0))
+        input[x.view(-1).long()] = 1
+        input = input.view(-1, 7)
 
         data = (input, index, position, target, slice, index_slice)
         torch.save(data, self.data_file)

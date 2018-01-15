@@ -9,7 +9,7 @@ def read_file(dir, prefix, name):
     with open(path, 'r') as f:
         lines = f.read().split('\n')[:-1]
         content = [[float(x) for x in line.split(', ')] for line in lines]
-    return torch.FloatTensor(content)
+    return torch.FloatTensor(content).squeeze()
 
 
 def read_adj(dir, prefix):
@@ -17,7 +17,7 @@ def read_adj(dir, prefix):
     index = index.t().long() - 1
     new_index = index.new(index.size()).copy_(index)
 
-    indicator = read_file(dir, prefix, 'graph_indicator').squeeze().long() - 1
+    indicator = read_file(dir, prefix, 'graph_indicator').long() - 1
     bincount = torch.from_numpy(np.bincount(indicator.numpy()))
 
     index_slice = index.new(bincount.size(0) + 1)
@@ -33,3 +33,10 @@ def read_adj(dir, prefix):
     index = new_index
 
     return index, index_slice
+
+def read_slice(dir, prefix):
+    indicator = read_file(dir, prefix, 'graph_indicator').squeeze().long() - 1
+    slice = np.cumsum(np.bincount(indicator.numpy()))
+    slice = torch.from_numpy(slice)
+    return torch.cat([torch.LongTensor([0]), slice], dim=0)
+
