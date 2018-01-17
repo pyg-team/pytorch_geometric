@@ -15,22 +15,24 @@ def read_file(dir, prefix, name):
 def read_adj(dir, prefix):
     index = read_file(dir, prefix, 'A')
     index = index.t().long() - 1
-    new_index = index.new(index.size()).copy_(index)
-
+    row, col = index
+    row, perm = row.sort()
+    col = col[perm]
+    index = torch.stack([row, col], dim=0)
     indicator = read_file(dir, prefix, 'graph_indicator').long() - 1
-    bincount = torch.from_numpy(np.bincount(indicator.numpy()))
 
-    index_slice = index.new(bincount.size(0) + 1)
+    index_slice = index.new(indicator.max() + 2)
     index_slice[0] = 0
+    index_slice[-1] = index.size(1)
     curr_graph = indicator[0]
+
     for i in range(index.size(1)):
         row = index[0, i]
         if indicator[row] > curr_graph:
-            new_index[:, i:] -= bincount[curr_graph]
+            index[:, index_slice[curr_graph]:i] -= index[:, index_slice[curr_graph]:i].min()
             curr_graph += 1
             index_slice[curr_graph] = i
-    index_slice[-1] = index.size(1)
-    index = new_index
+    index[:, index_slice[curr_graph]:] -= index[:, index_slice[curr_graph]:].min()
 
     return index, index_slice
 
