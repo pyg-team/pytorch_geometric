@@ -19,13 +19,10 @@ from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import batch_average  # noqa
 
-mode=2
+mode=1
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cuneiform_{}'.format(mode))
-n = 267
-perm = torch.randperm(n)
-torch.save(perm, '/Users/rusty1s/Desktop/perm.pt')
-split = torch.arange(0, n + 27, 27, out=torch.LongTensor())
+
 train_transform = Compose([
     RandomRotate(0.6),
     RandomScale(1.4),
@@ -43,14 +40,21 @@ input = torch.cat([input, input.new(input.size(0), 1).fill_(1)], dim=1)
 train_dataset.input = input
 test_dataset.input = input
 
+# Modify splits.
+n = 267
+step = (n + 10) // 10
+perm = torch.randperm(n)
+perm = torch.load('/Users/rusty1s/Desktop/perm2.pt')
+split = torch.arange(0, n + step, step, out=torch.LongTensor())
+
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineConv(8, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
-        self.conv3 = SplineConv(64, 128, dim=2, kernel_size=5)
-        self.fc1 = nn.Linear(128, 30)
+        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
+        self.fc1 = nn.Linear(64, 30)
 
     def forward(self, x, adj, slice):
         x = F.elu(self.conv1(adj, x))
@@ -122,39 +126,38 @@ def test(epoch, loader, string):
 
 
 # 10-fold cross-validation.
-# accs = []
-# for i in range(split.size(0) - 1):
-#     print('Split', i)
+accs = []
+for i in range(split.size(0) - 1):
+    print('Split', i)
 
-#     test_split = perm[split[i]:split[i + 1]]
+    test_split = perm[split[i]:split[i + 1]]
 
-#     if i == 0:
-#         train_split = perm[split[i + 1]:]
-#     elif i == split.size(0) - 2:
-#         train_split = perm[:split[i]]
-#     else:
-#         train_split = torch.cat([perm[:split[i]], perm[split[i + 1]:]])
+    if i == 0:
+        train_split = perm[split[i + 1]:]
+    elif i == split.size(0) - 2:
+        train_split = perm[:split[i]]
+    else:
+        train_split = torch.cat([perm[:split[i]], perm[split[i + 1]:]])
 
-#     train_dataset.split = train_split
-#     test_dataset.split = test_split
+    train_dataset.split = train_split
+    test_dataset.split = test_split
 
-#     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-#     test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=True)
 
-#     accs_single = []
-#     for _ in range(10):
-#         model.conv1.reset_parameters()
-#         model.conv2.reset_parameters()
-#         model.fc1.reset_parameters()
-#         for epoch in range(1, 301):
-#             train(epoch)
-#         acc = test(epoch, test_loader, ' Test Accuracy')
-#         accs_single.append(acc)
-#     accs.append(accs_single)
+    accs_single = []
+    for _ in range(10):
+        model.conv1.reset_parameters()
+        model.conv2.reset_parameters()
+        model.fc1.reset_parameters()
+        for epoch in range(1, 301):
+            train(epoch)
+        acc = test(epoch, test_loader, ' Test Accuracy')
+        accs_single.append(acc)
+    accs.append(accs_single)
 
-# torch.save(model.state_dict(), '/Users/rusty1s/Desktop/model.pt')
-# acc = torch.FloatTensor(accs)
-# print('Mean over splits:', acc.mean(dim=1).tolist())
-# print('Std over splits:', acc.std(dim=1).tolist())
-# print('Mean:', acc.mean())
-# print('Std:', acc.std())
+acc = torch.FloatTensor(accs)
+print('Mean over splits:', acc.mean(dim=1).tolist())
+print('Std over splits:', acc.std(dim=1).tolist())
+print('Mean:', acc.mean())
+print('Std:', acc.std())
