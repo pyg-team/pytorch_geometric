@@ -97,6 +97,10 @@ class Cuneiform(Dataset):
         index, index_slice = read_adj(self.raw_folder, self.prefix)
         slice = read_slice(self.raw_folder, self.prefix)
         position = read_file(self.raw_folder, self.prefix, 'node_attributes')
+        depth = position[:, 2]
+        depth = (depth - depth.mean()) / max(depth.std(), 1.0 / depth.size(0))
+        depth = depth.view(-1, 1)
+        position = position[:, :2]
         target = read_file(self.raw_folder, self.prefix, 'graph_labels').long()
 
         # Encode inputs.
@@ -106,6 +110,7 @@ class Cuneiform(Dataset):
         input = torch.zeros(7 * x.size(0))
         input[x.view(-1).long()] = 1
         input = input.view(-1, 7)
+        input = torch.cat([input, depth], dim=1)
 
         data = (input, index, position, target, slice, index_slice)
         torch.save(data, self.data_file)

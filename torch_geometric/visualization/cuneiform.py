@@ -16,27 +16,11 @@ from torch_geometric.sparse import stack  # noqa
 #                                         RandomTranslate)  # noqa
 
 dataset1 = Cuneiform('/tmp/cuneiform_1', mode=1)
-print(dataset1.index.size())
 dataset2 = Cuneiform('/tmp/cuneiform_2', mode=2)
-print(dataset2.index.size())
-dataset = dataset1
-# transform = Compose([
-#     RandomRotate(0.2),
-#     RandomScale(1.3),
-#     RandomTranslate(0.2),
-# ])
-# dataset = Cuneiform('/tmp/cuneiform', train=True, transform=transform)
 
-data = dataset1[60]
-data = dataset2[60]
+data = dataset1[65]
+# data = dataset2[65]
 index, position = data['adj']._indices().t(), data['position']
-
-print(dataset1.position[1300])
-print(dataset2.position[1300])
-
-raise NotImplementedError
-
-
 
 position -= position.min(dim=0)[0] - 2
 
