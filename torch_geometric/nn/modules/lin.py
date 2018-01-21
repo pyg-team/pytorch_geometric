@@ -33,7 +33,8 @@ class Lin(Module):
 
     def reset_parameters(self):
         size = self.in_features
-        uniform(size, self.weight, self.bias)
+        uniform(size, self.weight)
+        uniform(size, self.bias)
 
     def forward(self, input):
         return lin(input, self.weight, self.bias)

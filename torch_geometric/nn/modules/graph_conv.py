@@ -36,7 +36,8 @@ class GraphConv(Module):
 
     def reset_parameters(self):
         size = self.in_features
-        uniform(size, self.weight, self.bias)
+        uniform(size, self.weight)
+        uniform(size, self.bias)
 
     def forward(self, adj, input):
         return graph_conv(adj, input, self.weight, self.bias)

@@ -74,7 +74,8 @@ class SplineConv(Module):
 
     def reset_parameters(self):
         size = self.in_features * (self.K + 1)
-        uniform(size, self.weight, self.bias)
+        uniform(size, self.weight)
+        uniform(size, self.bias)
 
     def forward(self, adj, input):
         return spline_conv(
