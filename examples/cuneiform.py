@@ -45,7 +45,6 @@ test_dataset.input = input
 n = 267
 step = (n + 10) // 10
 perm = torch.randperm(n)
-perm = torch.load('/Users/rusty1s/Desktop/perm.pt')
 split = torch.arange(0, n + step, step, out=torch.LongTensor())
 
 

@@ -140,5 +140,6 @@ for clx in range(0, 30):
         if c1 / true_count == 1:
             break
 
+print(str)
 with open('/Users/rusty1s/Desktop/roc.txt', 'w') as f:
     f.write(str)
