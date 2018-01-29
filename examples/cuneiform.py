@@ -2,6 +2,7 @@ from __future__ import division, print_function
 
 import os
 import sys
+import time
 
 import torch
 from torch import nn
@@ -21,10 +22,7 @@ from torch_geometric.nn.functional import batch_average  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cuneiform')
-n = 267
-perm = torch.randperm(n)
-torch.save(perm, '/Users/rusty1s/Desktop/perm.pt')
-split = torch.arange(0, n + 27, 27, out=torch.LongTensor())
+
 train_transform = Compose([
     RandomRotate(0.6),
     RandomScale(1.4),
@@ -32,17 +30,30 @@ train_transform = Compose([
     CartesianAdj(),
 ])
 test_transform = CartesianAdj()
-train_dataset = Cuneiform(path, split=None, transform=test_transform)
-test_dataset = Cuneiform(path, split=None, transform=test_transform)
+train_dataset = Cuneiform(path, transform=train_transform)
+test_dataset = Cuneiform(path, transform=test_transform)
+
+# Modify inputs.
+input = train_dataset.input
+input[:, :7] = 2 * input[:, :7] - 1
+input = torch.cat([input, input.new(input.size(0), 1).fill_(1)], dim=1)
+train_dataset.input = input
+test_dataset.input = input
+
+# Modify splits.
+n = 267
+step = (n + 10) // 10
+perm = torch.randperm(n)
+split = torch.arange(0, n + step, step, out=torch.LongTensor())
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(8, 32, dim=2, kernel_size=5)
+        self.conv1 = SplineConv(9, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
-        self.conv3 = SplineConv(64, 124, dim=2, kernel_size=5)
-        self.fc1 = nn.Linear(124, 30)
+        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
+        self.fc1 = nn.Linear(64, 30)
 
     def forward(self, x, adj, slice):
         x = F.elu(self.conv1(adj, x))
@@ -60,6 +71,8 @@ if torch.cuda.is_available():
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
+times = []
+
 
 def train(epoch):
     model.train()
@@ -75,7 +88,6 @@ def train(epoch):
     for data in train_loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
-        input = torch.cat([input, input.new(input.size(0), 1).fill_(1)], dim=1)
 
         if torch.cuda.is_available():
             adj, slice = adj.cuda(), slice.cuda()
@@ -83,11 +95,13 @@ def train(epoch):
 
         input, target = Variable(input), Variable(target)
 
+        t = time.process_time()
         optimizer.zero_grad()
         output = model(input, adj, slice)
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
+        times.append(time.process_time() - t)
 
 
 def test(epoch, loader, string):
@@ -99,7 +113,6 @@ def test(epoch, loader, string):
     for data in loader:
         adj, slice = data['adj']['content'], data['adj']['slice'][:, 0]
         input, target = data['input'], data['target']
-        input = torch.cat([input, input.new(input.size(0), 1).fill_(1)], dim=1)
         num_examples += target.size(0)
 
         if torch.cuda.is_available():
@@ -140,13 +153,14 @@ for i in range(split.size(0) - 1):
         model.conv1.reset_parameters()
         model.conv2.reset_parameters()
         model.fc1.reset_parameters()
+        times = []
         for epoch in range(1, 301):
             train(epoch)
+        times = torch.FloatTensor(times)
         acc = test(epoch, test_loader, ' Test Accuracy')
         accs_single.append(acc)
     accs.append(accs_single)
 
-torch.save(model.state_dict(), '/Users/rusty1s/Desktop/model.pt')
 acc = torch.FloatTensor(accs)
 print('Mean over splits:', acc.mean(dim=1).tolist())
 print('Std over splits:', acc.std(dim=1).tolist())
