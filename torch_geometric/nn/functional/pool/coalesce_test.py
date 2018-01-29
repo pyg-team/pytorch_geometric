@@ -17,7 +17,6 @@ class CoalesceTest(TestCase):
         index = remove_self_loops(index)
         assert_equal(index.tolist(), expected_index)
 
-
     def test_coalesce(self):
         index = torch.LongTensor([[2, 2, 1, 0, 2, 1], [0, 1, 0, 2, 0, 0]])
         expected_index = [[0, 1, 2, 2], [2, 0, 0, 1]]

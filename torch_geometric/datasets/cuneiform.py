@@ -4,7 +4,6 @@ import os
 
 import torch
 from torch.utils.data import Dataset
-import numpy as np
 
 from .data import Data
 from ..sparse import SparseTensor

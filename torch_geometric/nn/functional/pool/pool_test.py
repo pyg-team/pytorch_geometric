@@ -23,10 +23,10 @@ class PoolTest(TestCase):
         position = torch.FloatTensor([[-2, 2], [2, 2], [2, -2], [-2, -2]])
         cluster = torch.LongTensor([0, 1, 1, 0])
 
-        expected_max_input = [[5, 3], [8, 7]]
-        expected_average_input = [[3, 2.5], [6, 5]]
-        expected_index = [[0, 1], [1, 0]]
-        expected_position = [[-2, 0], [2, 0]]
+        # expected_max_input = [[5, 3], [8, 7]]
+        # expected_average_input = [[3, 2.5], [6, 5]]
+        # expected_index = [[0, 1], [1, 0]]
+        # expected_position = [[-2, 0], [2, 0]]
 
         input, index, position = max_pool(input, index, position, cluster)
 
@@ -37,9 +37,9 @@ class PoolTest(TestCase):
         input = Variable(input, requires_grad=True)
 
         op = max_pool_backward
-        test = gradcheck(op, (input,), eps=1e-6, atol=1e-4)
+        test = gradcheck(op, (input, ), eps=1e-6, atol=1e-4)
         self.assertTrue(test)
 
         op = avg_pool_backward
-        test = gradcheck(op, (input,), eps=1e-6, atol=1e-4)
+        test = gradcheck(op, (input, ), eps=1e-6, atol=1e-4)
         self.assertTrue(test)

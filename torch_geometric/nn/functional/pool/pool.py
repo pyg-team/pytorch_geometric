@@ -6,7 +6,8 @@ from .coalesce import remove_self_loops, coalesce
 
 
 def _pool(index, position, cluster):
-    index = cluster[index.view(-1)].view(2, -1)  # Replace edge indices with cluster indices.
+    # Replace edge indices with cluster indices.
+    index = cluster[index.view(-1)].view(2, -1)
     index = remove_self_loops(index)  # Remove self loops.
     index = coalesce(index)  # Remove duplicates.
 
@@ -25,7 +26,7 @@ def _max_pool(input, cluster):
 
 
 def max_pool(input, index, position, cluster):
-    return (_max_pool(input, cluster),) + _pool(index, position, cluster)
+    return (_max_pool(input, cluster), ) + _pool(index, position, cluster)
 
 
 def _avg_pool(input, cluster):
@@ -37,4 +38,4 @@ def _avg_pool(input, cluster):
 
 
 def avg_pool(input, index, position, cluster):
-    return (_avg_pool(input, cluster),) + _pool(index, position, cluster)
+    return (_avg_pool(input, cluster), ) + _pool(index, position, cluster)
