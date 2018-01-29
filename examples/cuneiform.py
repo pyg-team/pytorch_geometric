@@ -20,9 +20,8 @@ from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import batch_average  # noqa
 
-mode=1
 path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(path, '..', 'data', 'Cuneiform_{}'.format(mode))
+path = os.path.join(path, '..', 'data', 'Cuneiform')
 
 train_transform = Compose([
     RandomRotate(0.6),
@@ -31,8 +30,8 @@ train_transform = Compose([
     CartesianAdj(),
 ])
 test_transform = CartesianAdj()
-train_dataset = Cuneiform(path, mode=mode, transform=train_transform)
-test_dataset = Cuneiform(path, mode=mode, transform=test_transform)
+train_dataset = Cuneiform(path, transform=train_transform)
+test_dataset = Cuneiform(path, transform=test_transform)
 
 # Modify inputs.
 input = train_dataset.input

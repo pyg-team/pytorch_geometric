@@ -16,20 +16,18 @@ from .utils.tu_format import read_file, read_adj, read_slice
 
 
 class Cuneiform(Dataset):
-    url = 'http://www.roemisch-drei.de/cuneiform_{}.tar.gz'
+    url = 'http://www.roemisch-drei.de/cuneiform.tar.gz'
+    prefix = 'CuneiformArrangement'
     filenames = [
         'A', 'graph_indicator', 'graph_labels', 'node_labels',
         'node_attributes'
     ]
 
-    def __init__(self, root,mode=1, split=None, transform=None):
+    def __init__(self, root, split=None, transform=None):
         super(Cuneiform, self).__init__()
 
         # Set dataset properites.
         self.root = os.path.expanduser(root)
-        self.url = self.url.format(mode)
-        self.prefix = 'Arrangement' if mode is 1 else 'NearestNeighbor'
-        self.prefix = 'Cuneiform{}'.format(self.prefix)
         self.raw_folder = os.path.join(self.root, 'raw')
         self.processed_folder = os.path.join(self.root, 'processed')
         self.data_file = os.path.join(self.processed_folder, 'data.pt')
@@ -48,7 +46,8 @@ class Cuneiform(Dataset):
         if split is not None:
             self.split = split
         else:
-            self.split = torch.arange(0, target.size(0), out=torch.LongTensor())
+            self.split = torch.arange(
+                0, target.size(0), out=torch.LongTensor())
 
     def __getitem__(self, i):
         i = self.split[i]
