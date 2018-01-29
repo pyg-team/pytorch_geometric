@@ -2,7 +2,6 @@ from __future__ import division, print_function
 
 import os
 import sys
-import time
 
 import torch
 from torch import nn
@@ -71,8 +70,6 @@ if torch.cuda.is_available():
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-times = []
-
 
 def train(epoch):
     model.train()
@@ -95,13 +92,11 @@ def train(epoch):
 
         input, target = Variable(input), Variable(target)
 
-        t = time.process_time()
         optimizer.zero_grad()
         output = model(input, adj, slice)
         loss = F.nll_loss(output, target)
         loss.backward()
         optimizer.step()
-        times.append(time.process_time() - t)
 
 
 def test(epoch, loader, string):
@@ -153,10 +148,8 @@ for i in range(split.size(0) - 1):
         model.conv1.reset_parameters()
         model.conv2.reset_parameters()
         model.fc1.reset_parameters()
-        times = []
         for epoch in range(1, 301):
             train(epoch)
-        times = torch.FloatTensor(times)
         acc = test(epoch, test_loader, ' Test Accuracy')
         accs_single.append(acc)
     accs.append(accs_single)

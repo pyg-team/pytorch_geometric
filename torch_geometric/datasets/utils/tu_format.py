@@ -29,16 +29,18 @@ def read_adj(dir, prefix):
     for i in range(index.size(1)):
         row = index[0, i]
         if indicator[row] > curr_graph:
-            index[:, index_slice[curr_graph]:i] -= index[:, index_slice[curr_graph]:i].min()
+            j = index_slice[curr_graph]
+            index[:, j:i] -= index[:, j:i].min()
             curr_graph += 1
             index_slice[curr_graph] = i
-    index[:, index_slice[curr_graph]:] -= index[:, index_slice[curr_graph]:].min()
+    index[:, index_slice[curr_graph]:] -= index[:, index_slice[
+        curr_graph]:].min()
 
     return index, index_slice
+
 
 def read_slice(dir, prefix):
     indicator = read_file(dir, prefix, 'graph_indicator').squeeze().long() - 1
     slice = np.cumsum(np.bincount(indicator.numpy()))
     slice = torch.from_numpy(slice)
     return torch.cat([torch.LongTensor([0]), slice], dim=0)
-
