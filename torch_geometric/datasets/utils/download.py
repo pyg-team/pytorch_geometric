@@ -13,6 +13,7 @@ def download_url(url, dir):
 
     filename = url.rpartition('/')[2]
     file_path = os.path.join(dir, filename)
+    file_path = os.path.normpath(file_path)
 
     try:
         response = requests.get(url, stream=True)
