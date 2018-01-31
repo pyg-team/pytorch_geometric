@@ -11,7 +11,7 @@ class QM9(Dataset):
         root (string): Root directory of dataset. Downloads data automatically
             if dataset doesn't exist.
         train (bool, optional): If :obj:`True`, returns training molecules,
-        otherwise test molecules. (default: :obj:`True`)
+            otherwise test molecules. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in a
             ``Data`` object and returns a transformed version.
             (default: ``None``)
