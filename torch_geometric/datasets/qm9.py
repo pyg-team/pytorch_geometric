@@ -1,6 +1,7 @@
 import os
 import os.path as osp
 
+import torch
 from torch.utils.data import Dataset
 
 from .utils.download import download_url
@@ -40,10 +41,17 @@ class QM9(Dataset):
         self.process()
 
     @property
+    def _raw_files(self):
+        data_dir = osp.join(self.raw_folder, 'data')
+        if not osp.exists(data_dir):
+            return []
+        return sorted([f for f in os.listdir(data_dir) if f.endswith('.xyz')])
+
+    @property
     def _raw_exists(self):
-        data_file = osp.join(self.raw_folder, 'data')
+        files = self._raw_files
         filter_file = osp.join(self.raw_folder, self.filter_id)
-        return osp.exists(data_file) and osp.exists(filter_file)
+        return len(files) == 133885 and osp.exists(filter_file)
 
     def download(self):
         if self._raw_exists:
@@ -58,4 +66,20 @@ class QM9(Dataset):
         download_url(filter_url, self.raw_folder)
 
     def process(self):
-        pass
+        n = 0
+        idx = 0
+        for i, file in enumerate(self._raw_files):
+            atoms, target = self.process_molecule(file)
+            n = max(n, len(atoms))
+            if n == len(atoms):
+                idx = i
+        print(n, idx)
+
+    def process_molecule(self, file_name):
+        file_path = osp.join(self.raw_folder, 'data', file_name)
+        with open(file_path, 'r') as f:
+            lines = f.read().split('\n')
+            targets = [float(x) for x in lines[1].split()[5:]]
+            atoms = lines[2:-4]
+        target = torch.FloatTensor(targets)
+        return atoms, target
