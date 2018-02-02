@@ -77,30 +77,32 @@ class QM9(Dataset):
             mask = torch.ByteTensor(133885).fill_(1)
             mask[tmp] = 0
 
-        input = torch.FloatTensor(0, 5)
-        index = torch.LongTensor(0, 2)
-        weight = torch.FloatTensor(0)
-        position = torch.FloatTensor(0, 3)
-        target = torch.FloatTensor(0, 12)
-        slice = index_slice = [0]
-
-        progress = Progress('Processing', end=mask.size(0), type='')
+        input, index, weight, position, target = [], [], [], [], []
+        slice, index_slice = [0], [0]
 
         with open(osp.join(self.raw_folder, 'input.sdf'), 'r') as f:
-            for idx, sdf in enumerate(f.read().split('$$$$\n')[:-1]):
+            sdfs = f.read().split('$$$$\n')[:-1]
+            progress = Progress('Processing', end=len(sdfs), type='')
+            for idx, sdf in enumerate(sdfs):
                 if mask[idx] == 0:
                     continue
                 f, i, w, p, t = read_sdf(sdf)
-                input = torch.cat([input, f], dim=0)
-                index = torch.cat([index, i], dim=0)
-                weight = torch.cat([weight, w], dim=0)
-                position = torch.cat([position, p], dim=0)
-                target = torch.cat([target, t], dim=0)
-                slice.append(slice[-1] + input.size(0))
-                index_slice.append(index_slice[-1] + weight.size(0))
+                input.append(f)
+                index.append(i)
+                weight.append(w)
+                position.append(p)
+                target.append(t)
+
+                slice.append(slice[-1] + f.size(0))
+                index_slice.append(index_slice[-1] + w.size(0))
+
                 progress.update(idx + 1)
-        index = index.t()
+            progress.success()
+
+        input = torch.cat(input, dim=0)
+        index = torch.cat(index, dim=0).t()
+        weight = torch.cat(weight, dim=0)
+        position = torch.cat(position, dim=0)
+        target = torch.cat(target, dim=0)
         slice = torch.LongTensor(slice)
         index_slice = torch.LongTensor(index_slice)
-
-        progress.success()
