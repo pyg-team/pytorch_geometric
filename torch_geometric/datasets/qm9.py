@@ -6,6 +6,7 @@ from torch.utils.data import Dataset
 
 from .utils.download import download_url
 from .utils.extract import extract_tar
+from .utils.dir import make_dirs
 from .utils.progress import Progress
 from .utils.sdf import read_sdf
 
@@ -37,6 +38,7 @@ class QM9(Dataset):
         self.root = osp.expanduser(root)
         self.raw_folder = osp.join(self.root, 'raw')
         self.processed_folder = osp.join(self.root, 'processed')
+        self.data_file = os.path.join(self.processed_folder, 'data.pt')
 
         # Download and process data.
         self.download()
@@ -50,7 +52,7 @@ class QM9(Dataset):
 
     @property
     def _processed_exists(self):
-        return False
+        return os.path.exists(self.data_file)
 
     def download(self):
         if self._raw_exists:
@@ -69,6 +71,8 @@ class QM9(Dataset):
     def process(self):
         if self._processed_exists:
             return
+
+        make_dirs(self.processed_folder)
 
         with open(osp.join(self.raw_folder, 'mask.txt'), 'r') as f:
             tmp = f.read().split('\n')[9:-2]
@@ -106,3 +110,6 @@ class QM9(Dataset):
         target = torch.cat(target, dim=0)
         slice = torch.LongTensor(slice)
         index_slice = torch.LongTensor(index_slice)
+
+        data = (input, index, weight, position, target, slice, index_slice)
+        torch.save(data, self.data_file)
