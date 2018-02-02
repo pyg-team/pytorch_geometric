@@ -43,11 +43,9 @@ class QM9(Dataset):
 
     @property
     def _raw_exists(self):
-        r = self.raw_folder
-        input_exists = osp.exists(osp.join(r, 'input.sdf'))
-        target_exists = osp.exists(osp.join(r, 'target.txt'))
-        mask_exists = osp.exists(osp.join(r, 'mask.txt'))
-        return input_exists and target_exists and mask_exists
+        input_exists = osp.exists(osp.join(self.raw_folder, 'input.sdf'))
+        mask_exists = osp.exists(osp.join(self.raw_folder, 'mask.txt'))
+        return input_exists and mask_exists
 
     @property
     def _processed_exists(self):
@@ -60,30 +58,25 @@ class QM9(Dataset):
         file_path = download_url(self.data_url, self.raw_folder)
         extract_tar(file_path, osp.join(self.raw_folder), mode='r')
         os.unlink(file_path)
+        os.unlink(osp.join(self.raw_folder, 'gdb9.sdf.csv'))
         download_url(self.mask_url, self.raw_folder)
 
         r = self.raw_folder
         os.rename(osp.join(r, 'gdb9.sdf'), osp.join(r, 'input.sdf'))
-        os.rename(osp.join(r, 'gdb9.sdf.csv'), osp.join(r, 'target.txt'))
         os.rename(osp.join(r, '3195404'), osp.join(r, 'mask.txt'))
 
     def process(self):
         if self._processed_exists:
             return
 
-        with open(osp.join(self.raw_folder, 'target.txt'), 'r') as f:
-            target = [float(x) for x in re.split(',|\n', f.read())[21:-1]]
-            target = torch.FloatTensor(target).view(-1, 21)[:, 5:17]
-
         with open(osp.join(self.raw_folder, 'mask.txt'), 'r') as f:
             tmp = f.read().split('\n')[9:-2]
             tmp = [int(x.split()[0]) for x in tmp]
             tmp = torch.LongTensor(tmp)
-            mask = torch.ByteTensor(target.size(0)).fill_(1)
+            mask = torch.ByteTensor(133885).fill_(1)
             mask[tmp] = 0
-            target = target.masked_select(mask.view(-1, 1)).view(-1, 12)
 
-        with open(osp.join(self.raw_folder, 'input.sdf'), 'r') as f:
-            for idx, sdf in enumerate(f.read().split('$$$$\n')[:-1]):
-                if mask[idx] == 0:
-                    continue
+        # with open(osp.join(self.raw_folder, 'input.sdf'), 'r') as f:
+        #     for idx, sdf in enumerate(f.read().split('$$$$\n')[:-1]):
+        #         if mask[idx] == 0:
+        #             continue
