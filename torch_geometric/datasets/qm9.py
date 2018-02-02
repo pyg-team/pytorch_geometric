@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import re
 
 import torch
 from torch.utils.data import Dataset
@@ -24,9 +25,9 @@ class QM9(Dataset):
             (default: ``None``)
     """
 
-    url = 'https://ndownloader.figshare.com/files/{}'
-    data_id = '3195389'
-    filter_id = '3195404'
+    data_url = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/' \
+               'datasets/gdb9.tar.gz'
+    mask_url = 'https://ndownloader.figshare.com/files/3195404'
 
     def __init__(self, root, train=True, transform=None):
         super(QM9, self).__init__()
@@ -41,45 +42,48 @@ class QM9(Dataset):
         self.process()
 
     @property
-    def _raw_files(self):
-        data_dir = osp.join(self.raw_folder, 'data')
-        if not osp.exists(data_dir):
-            return []
-        return sorted([f for f in os.listdir(data_dir) if f.endswith('.xyz')])
+    def _raw_exists(self):
+        r = self.raw_folder
+        input_exists = osp.exists(osp.join(r, 'input.sdf'))
+        target_exists = osp.exists(osp.join(r, 'target.txt'))
+        mask_exists = osp.exists(osp.join(r, 'mask.txt'))
+        return input_exists and target_exists and mask_exists
 
     @property
-    def _raw_exists(self):
-        files = self._raw_files
-        filter_file = osp.join(self.raw_folder, self.filter_id)
-        return len(files) == 133885 and osp.exists(filter_file)
+    def _processed_exists(self):
+        return False
 
     def download(self):
         if self._raw_exists:
             return
 
-        data_url = self.url.format(self.data_id)
-        file_path = download_url(data_url, self.raw_folder)
-        extract_tar(file_path, osp.join(self.raw_folder, 'data'), mode='r')
+        file_path = download_url(self.data_url, self.raw_folder)
+        extract_tar(file_path, osp.join(self.raw_folder), mode='r')
         os.unlink(file_path)
+        download_url(self.mask_url, self.raw_folder)
 
-        filter_url = self.url.format(self.filter_id)
-        download_url(filter_url, self.raw_folder)
+        r = self.raw_folder
+        os.rename(osp.join(r, 'gdb9.sdf'), osp.join(r, 'input.sdf'))
+        os.rename(osp.join(r, 'gdb9.sdf.csv'), osp.join(r, 'target.txt'))
+        os.rename(osp.join(r, '3195404'), osp.join(r, 'mask.txt'))
 
     def process(self):
-        n = 0
-        idx = 0
-        for i, file in enumerate(self._raw_files):
-            atoms, target = self.process_molecule(file)
-            n = max(n, len(atoms))
-            if n == len(atoms):
-                idx = i
-        print(n, idx)
+        if self._processed_exists:
+            return
 
-    def process_molecule(self, file_name):
-        file_path = osp.join(self.raw_folder, 'data', file_name)
-        with open(file_path, 'r') as f:
-            lines = f.read().split('\n')
-            targets = [float(x) for x in lines[1].split()[5:]]
-            atoms = lines[2:-4]
-        target = torch.FloatTensor(targets)
-        return atoms, target
+        with open(osp.join(self.raw_folder, 'target.txt'), 'r') as f:
+            target = [float(x) for x in re.split(',|\n', f.read())[21:-1]]
+            target = torch.FloatTensor(target).view(-1, 21)[:, 5:17]
+
+        with open(osp.join(self.raw_folder, 'mask.txt'), 'r') as f:
+            tmp = f.read().split('\n')[9:-2]
+            tmp = [int(x.split()[0]) for x in tmp]
+            tmp = torch.LongTensor(tmp)
+            mask = torch.ByteTensor(target.size(0)).fill_(1)
+            mask[tmp] = 0
+            target = target.masked_select(mask.view(-1, 1)).view(-1, 12)
+
+        with open(osp.join(self.raw_folder, 'input.sdf'), 'r') as f:
+            for idx, sdf in enumerate(f.read().split('$$$$\n')[:-1]):
+                if mask[idx] == 0:
+                    continue
