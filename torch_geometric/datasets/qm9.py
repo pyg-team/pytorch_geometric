@@ -4,6 +4,8 @@ import os.path as osp
 import torch
 from torch.utils.data import Dataset
 
+from .data import Data
+from ..sparse import SparseTensor
 from .utils.download import download_url
 from .utils.extract import extract_tar
 from .utils.dir import make_dirs
@@ -40,9 +42,42 @@ class QM9(Dataset):
         self.processed_folder = osp.join(self.root, 'processed')
         self.data_file = os.path.join(self.processed_folder, 'data.pt')
 
+        self.transform = transform
+
         # Download and process data.
         self.download()
         self.process()
+
+        data = torch.load(self.data_file)
+        input, index, weight, position, target, slice, index_slice = data
+
+        self.input, self.index, self.weight = input, index, weight
+        self.position, self.target = position, target
+        self.slice, self.index_slice = slice, index_slice
+
+        G = self.target.size(0)
+        if train:
+            self.split = torch.arange(0, G - 10000).long()
+        else:
+            self.split = torch.arange(G - 10000, G).long()
+
+    def __getitem__(self, i):
+        i = self.split[i]
+        index = self.index[:, self.index_slice[i]:self.index_slice[i + 1]]
+        weight = self.weight[self.index_slice[i]:self.index_slice[i + 1]]
+        position = self.position[self.slice[i]:self.slice[i + 1]]
+        n = position.size(0)
+        adj = SparseTensor(index, weight, torch.Size([n, n]))
+        target = self.target[i]
+        data = Data(input, adj, position, target)
+
+        if self.transform is not None:
+            data = self.transform(data)
+
+        return data.all()
+
+    def __len__(self):
+        return self.split.size(0)
 
     @property
     def _raw_exists(self):
@@ -107,7 +142,7 @@ class QM9(Dataset):
         index = torch.cat(index, dim=0).t()
         weight = torch.cat(weight, dim=0)
         position = torch.cat(position, dim=0)
-        target = torch.cat(target, dim=0)
+        target = torch.cat(target, dim=0).view(-1, 12)
         slice = torch.LongTensor(slice)
         index_slice = torch.LongTensor(index_slice)
 
