@@ -8,7 +8,7 @@ from ..sparse import SparseTensor
 
 
 def to_list(x):
-    return [x] if not isinstance(x, collections.Sequence) else x
+    return x if isinstance(x, collections.Sequence) else [x]
 
 
 def exists(files):
@@ -47,8 +47,8 @@ class Dataset(BaseDataset):
         raise NotImplementedError
 
     @property
-    def processed_file(self):
-        raise NotImplementedError
+    def processed_files(self):
+        return ['training.pt', 'test.pt']
 
     def download(self):
         raise NotImplementedError
@@ -58,11 +58,13 @@ class Dataset(BaseDataset):
 
     @property
     def _raw_files(self):
-        return [osp.join(self.raw_folder, f) for f in self.raw_files]
+        files = to_list(self.raw_files)
+        return [osp.join(self.raw_folder, f) for f in files]
 
     @property
-    def _processed_file(self):
-        return osp.join(self.processed_folder, self.processed_file)
+    def _processed_files(self):
+        files = to_list(self.processed_files)
+        return [osp.join(self.processed_folder, f) for f in files]
 
     def __getitem__(self, i):
         data = self.datas[i]
@@ -80,10 +82,12 @@ class Dataset(BaseDataset):
         self.download()
 
     def _process(self):
-        filename = self._processed_file
-        if exists(filename):
-            self.datas = torch.load(filename)
+        if exists(self._processed_files):
             return
 
-        self.datas = self.process()
-        torch.save(to_list(self.datas), filename)
+        sets = self.process()
+        sets = sets if isinstance(sets, tuple) else (sets, )
+
+        # Save training and test set separately.
+        for i in range(len(self._processed_files)):
+            torch.save(to_list(sets[i]), self._processed_files[i])
