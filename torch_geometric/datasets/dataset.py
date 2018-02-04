@@ -56,6 +56,14 @@ class Dataset(BaseDataset):
     def process(self):
         raise NotImplementedError
 
+    @property
+    def _raw_files(self):
+        return [osp.join(self.raw_folder, f) for f in self.raw_files]
+
+    @property
+    def _processed_file(self):
+        return osp.join(self.processed_folder, self.processed_file)
+
     def __getitem__(self, i):
         data = self.datas[i]
         if self.transform is not None:
@@ -66,15 +74,16 @@ class Dataset(BaseDataset):
         return len(self.datas)
 
     def _download(self):
-        if exists(self.raw_files):
+        if exists(self._raw_files):
             return
 
         self.download()
 
     def _process(self):
-        if exists(self.processed_file):
-            self.datas = torch.load(self.processed_file)
+        filename = self._processed_file
+        if exists(filename):
+            self.datas = torch.load(filename)
             return
 
         self.datas = self.process()
-        torch.save(to_list(self.datas), self.processed_file)
+        torch.save(to_list(self.datas), filename)
