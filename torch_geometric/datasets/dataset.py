@@ -67,13 +67,13 @@ class Dataset(BaseDataset):
         return [osp.join(self.processed_folder, f) for f in files]
 
     def __getitem__(self, i):
-        data = self.datas[i]
+        data = self.set[i]
         if self.transform is not None:
             data = self.transform(data)
         return data
 
     def __len__(self):
-        return len(self.datas)
+        return len(self.set)
 
     def _download(self):
         if exists(self._raw_files):
