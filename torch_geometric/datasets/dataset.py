@@ -4,6 +4,7 @@ import torch
 from torch.utils.data import Dataset as BaseDataset
 
 from ..sparse import SparseTensor
+from .utils.dir import make_dirs
 
 
 def to_list(x):
@@ -84,6 +85,7 @@ class Dataset(BaseDataset):
         if exists(self._processed_files):
             return
 
+        make_dirs(self.processed_folder)
         sets = self.process()
         sets = sets if isinstance(sets, tuple) else (sets, )
 

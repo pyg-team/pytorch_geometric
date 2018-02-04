@@ -1,5 +1,7 @@
 import torch
 
+from ..dataset import Data
+
 
 def read_sdf(content):
     lines = content.split('\n')
@@ -20,4 +22,4 @@ def read_sdf(content):
     index = torch.cat([index, index_rev])
     weight = bonds[:, 2].repeat(2).float()
 
-    return input, index, weight, position, target
+    return Data(input, position, index, weight, target)
