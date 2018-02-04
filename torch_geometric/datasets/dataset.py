@@ -1,5 +1,4 @@
 import os.path as osp
-import collections
 
 import torch
 from torch.utils.data import Dataset as BaseDataset
@@ -8,7 +7,7 @@ from ..sparse import SparseTensor
 
 
 def to_list(x):
-    return x if isinstance(x, collections.Sequence) else [x]
+    return x if isinstance(x, list) else [x]
 
 
 def exists(files):
@@ -88,6 +87,6 @@ class Dataset(BaseDataset):
         sets = self.process()
         sets = sets if isinstance(sets, tuple) else (sets, )
 
-        # Save training and test set separately.
+        # Save (training and test) sets separately.
         for i in range(len(self._processed_files)):
             torch.save(to_list(sets[i]), self._processed_files[i])
