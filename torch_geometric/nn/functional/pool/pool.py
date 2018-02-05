@@ -6,7 +6,8 @@ from .coalesce import remove_self_loops, coalesce
 
 
 def _pool(index, position, cluster):
-    index = cluster[index.view(-1)].view(2, -1)  # Swap to cluster indices.
+    # Map edge indices to new cluster indices.
+    index = cluster[index.view(-1)].view(2, -1)
     index = remove_self_loops(index)  # Remove self loops.
     index = coalesce(index)  # Remove duplicates.
 
