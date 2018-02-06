@@ -2,7 +2,6 @@ from __future__ import division, print_function
 
 import os
 import sys
-import time
 
 import torch
 from torch import nn
@@ -19,7 +18,7 @@ from torch_geometric.transforms import CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import max_pool  # noqa
-from torch_geometric.sparse import SparseTensor
+from torch_geometric.sparse import SparseTensor  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'MNISTSuperpixels')
@@ -66,7 +65,7 @@ class Net(nn.Module):
         batch = Variable(batch.view(-1, 1).expand(batch.size(0), 128))
         x = scatter_mean(batch, x)
 
-        x = F.dropout(x, training=self.training)
+        # x = F.dropout(x, training=self.training)
         x = self.fc1(x)
         return F.log_softmax(x, dim=1)
 
