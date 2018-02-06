@@ -65,7 +65,7 @@ class Net(nn.Module):
         batch = Variable(batch.view(-1, 1).expand(batch.size(0), 128))
         x = scatter_mean(batch, x)
 
-        # x = F.dropout(x, training=self.training)
+        x = F.dropout(x, training=self.training)
         x = self.fc1(x)
         return F.log_softmax(x, dim=1)
 
@@ -74,17 +74,18 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
 def train(epoch):
     model.train()
 
-    for data in train_loader:
+    for i, data in enumerate(train_loader):
         input, position = data['input'].view(-1, 1), data['position']
         adj, target = data['adj']['content'], data['target']
         batch_len = data['adj']['slice'].size(0)
-        batch = torch.arange(0, batch_len).view(-1, 1).repeat(1, 75).view(-1)
+        batch = torch.arange(0, batch_len).view(-1, 1)
+        batch = batch.repeat(1, 75).view(-1).long()
 
         if torch.cuda.is_available():
             input, position = input.cuda(), position.cuda()
@@ -97,9 +98,33 @@ def train(epoch):
         output = model(input, position, adj, batch)
         loss = F.nll_loss(output, target)
         loss.backward()
-        print(loss.data[0])
+        print(i, loss.data[0])
         optimizer.step()
 
 
-for epoch in range(1, 2):
+def test(epoch):
+    model.eval()
+    correct = 0
+
+    for i, data in enumerate(test_loader):
+        input, position = data['input'].view(-1, 1), data['position']
+        adj, target = data['adj']['content'], data['target']
+        batch_len = data['adj']['slice'].size(0)
+        batch = torch.arange(0, batch_len).view(-1, 1)
+        batch = batch.repeat(1, 75).view(-1).long()
+
+        if torch.cuda.is_available():
+            input, position = input.cuda(), position.cuda()
+            adj, target = adj.cuda(), target.cuda()
+            batch = batch.cuda()
+
+        output = model(Variable(input), position, adj, batch)
+        pred = output.data.max(1)[1]
+        correct += pred.eq(target).cpu().sum()
+
+    print('Epoch:', epoch, 'Test Accuracy:', correct / len(test_dataset))
+
+
+for epoch in range(1, 10):
     train(epoch)
+    test(epoch)
