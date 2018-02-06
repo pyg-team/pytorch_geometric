@@ -12,9 +12,9 @@ def compute_neighborhoods(data, radius):
     indices = np.array([x + [None] * (length - len(x)) for x in indices])
 
     # Nodes with no neighbors
-    no_neighbors = indices[indices[:, 1] is None]
+    no_neighbors = indices[indices[:, 1] == None]
     no_neighbor_idx = no_neighbors[:, 0]
-    nns = np.array(tree.query(tree.data[indices[:, 1] is None], k=2))[1, :, 1]
+    nns = np.array(tree.query(tree.data[indices[:, 1] == None], k=2))[1, :, 1]
 
     indices[np.int32(no_neighbor_idx), 1] = np.int32(nns)
 
@@ -25,7 +25,7 @@ def compute_neighborhoods(data, radius):
     indices = np.stack([indices1, indices2], axis=1)
 
     # Eliminate Nones and self-edges
-    indices = indices[indices[:, 1] is not None]
+    indices = indices[indices[:, 1] != None]
     indices = indices[indices[:, 0] != indices[:, 1]]
     return indices
 
