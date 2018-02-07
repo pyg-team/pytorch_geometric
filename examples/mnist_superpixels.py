@@ -2,6 +2,7 @@ from __future__ import division, print_function
 
 import os
 import sys
+import time
 
 import torch
 from torch import nn
@@ -25,7 +26,7 @@ path = os.path.join(path, '..', 'data', 'MNISTSuperpixels')
 train_dataset = MNISTSuperpixels(path, train=True, transform=CartesianAdj())
 test_dataset = MNISTSuperpixels(path, train=False, transform=CartesianAdj())
 
-batch_size = 64
+batch_size = 128
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
@@ -52,18 +53,18 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
-        self.conv3 = SplineConv(64, 128, dim=2, kernel_size=5)
-        self.fc1 = nn.Linear(128, 10)
+        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
+        self.fc1 = nn.Linear(64, 10)
 
     def forward(self, x, position, adj, batch):
         x = F.elu(self.conv1(adj, x))
-        x, position, adj, batch = max_grid_pool(x, position, adj, batch, 3)
+        # x, position, adj, batch = max_grid_pool(x, position, adj, batch, 3)
         x = F.elu(self.conv2(adj, x))
-        x, position, adj, batch = max_grid_pool(x, position, adj, batch, 5)
+        # x, position, adj, batch = max_grid_pool(x, position, adj, batch, 5)
         x = F.elu(self.conv3(adj, x))
 
         # Batch average.
-        batch = Variable(batch.view(-1, 1).expand(batch.size(0), 128))
+        batch = Variable(batch.view(-1, 1).expand(batch.size(0), 64))
         x = scatter_mean(batch, x)
 
         x = F.dropout(x, training=self.training)
@@ -89,7 +90,11 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
+    t_all = 0
     for i, data in enumerate(train_loader):
+        t_all = time.process_time() - t_all
+        print('t_all', t_all)
+        t_all = time.process_time()
         input, position = data['input'].view(-1, 1), data['position']
         adj, target = data['adj']['content'], data['target']
         batch_len = data['adj']['slice'].size(0)
@@ -104,10 +109,15 @@ def train(epoch):
         input, target = Variable(input), Variable(target)
 
         optimizer.zero_grad()
+        t_forward = time.process_time()
         output = model(input, position, adj, batch)
+        t_forward = time.process_time() - t_forward
         loss = F.nll_loss(output, target)
+        t_backward = time.process_time()
         loss.backward()
+        t_backward = time.process_time() - t_backward
         optimizer.step()
+        print('forward', t_forward, 'backward', t_backward)
         print(i, loss.data[0])
 
 
