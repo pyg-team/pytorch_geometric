@@ -25,8 +25,9 @@ path = os.path.join(path, '..', 'data', 'MNISTSuperpixels')
 train_dataset = MNISTSuperpixels(path, train=True, transform=CartesianAdj())
 test_dataset = MNISTSuperpixels(path, train=False, transform=CartesianAdj())
 
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64, shuffle=True)
+batch_size = 64
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
 
 def to_cartesian_adj(index, position):
@@ -56,9 +57,9 @@ class Net(nn.Module):
 
     def forward(self, x, position, adj, batch):
         x = F.elu(self.conv1(adj, x))
-        x, position, adj, batch = max_grid_pool(x, position, adj, batch, 4)
+        x, position, adj, batch = max_grid_pool(x, position, adj, batch, 3)
         x = F.elu(self.conv2(adj, x))
-        x, position, adj, batch = max_grid_pool(x, position, adj, batch, 8)
+        x, position, adj, batch = max_grid_pool(x, position, adj, batch, 5)
         x = F.elu(self.conv3(adj, x))
 
         # Batch average.
@@ -74,11 +75,19 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train(epoch):
     model.train()
+
+    if epoch == 16:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
+
+    if epoch == 26:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0001
 
     for i, data in enumerate(train_loader):
         input, position = data['input'].view(-1, 1), data['position']
@@ -98,8 +107,8 @@ def train(epoch):
         output = model(input, position, adj, batch)
         loss = F.nll_loss(output, target)
         loss.backward()
-        print(i, loss.data[0])
         optimizer.step()
+        print(i, loss.data[0])
 
 
 def test(epoch):
@@ -125,6 +134,6 @@ def test(epoch):
     print('Epoch:', epoch, 'Test Accuracy:', correct / len(test_dataset))
 
 
-for epoch in range(1, 10):
+for epoch in range(1, 31):
     train(epoch)
     test(epoch)
