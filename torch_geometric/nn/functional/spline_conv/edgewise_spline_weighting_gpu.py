@@ -86,7 +86,7 @@ const long* index, int num_threads) {
 
         // Calculate weight gradient.
         f = input[e_idx * ${M_in} + m_in_idx];
-        w_grad = f * b * grad_output[e_idx * ${M_out} + m_out_idx];
+        w_grad = f * b * g;
         atomicAdd(&(grad_weight[w_idx]), w_grad);
         // Not so efficient either, but not avoidable.
       }
