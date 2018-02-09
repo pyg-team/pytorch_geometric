@@ -18,29 +18,29 @@ def _exists(files):
 def _data_list_to_set(data_list):
     size = len(data_list)
 
-    input = [None] * size
-    pos = [None] * size
-    index = [None] * size
-    weight = [None] * size
-    target = [None] * size
+    input = range(size)
+    pos = range(size)
+    index = range(size)
+    weight = range(size)
+    target = range(size)
 
     slice, index_slice = [0], [0]
 
     for i, data in enumerate(data_list):
-        input.append(data.input)
-        pos.append(data.pos)
-        index.append(data.index)
-        weight.append(data.weight)
-        target.append(data.target)
+        input[i] = data.input
+        pos[i] = data.pos
+        index[i] = data.index
+        weight[i] = data.weight
+        target[i] = data.target
 
         slice.append(slice[-1] + data.num_nodes)
         index_slice.append(index_slice[-1] + data.num_edges)
 
-    input = None if input[0] is None else torch.cat(input, dim=0)
-    pos = None if pos[0] is None else torch.cat(pos, dim=0)
-    index = None if index[0] is None else torch.cat(index, dim=1)
-    weight = None if weight[0] is None else torch.cat(weight, dim=0)
-    target = None if target[0] is None else torch.cat(target, dim=0)
+    input = None if input[0] == 0 else torch.cat(input, dim=0)
+    pos = None if pos[0] == 0 else torch.cat(pos, dim=0)
+    index = None if index[0] == 0 else torch.cat(index, dim=1)
+    weight = None if weight[0] == 0 else torch.cat(weight, dim=0)
+    target = None if target[0] == 0 else torch.cat(target, dim=0)
 
     slice = torch.LongTensor(slice)
     index_slice = torch.LongTensor(index_slice)
