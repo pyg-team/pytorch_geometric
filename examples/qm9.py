@@ -16,4 +16,4 @@ train_loader = DataLoader(train_dataset, batch_size=256, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=256)
 
 for data in train_loader:
-    data = data.cpu().to_variable()
+    data = data.cuda().to_variable()
