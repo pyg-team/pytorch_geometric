@@ -16,16 +16,17 @@ def _exists(files):
     return all([osp.exists(f) for f in _to_list(files)])
 
 
+def _cat(tensors, dim):
+    return None if tensors[0] is None else torch.cat(tensors, dim=dim)
+
+
+def _empty_lists(size, number):
+    return tuple([None] * size for _ in range(number))
+
+
 def _data_list_to_set(data_list):
     """Concat all tensors from data list for fast saving and loading."""
-    size = len(data_list)
-
-    input = [None] * size
-    pos = [None] * size
-    index = [None] * size
-    weight = [None] * size
-    target = [None] * size
-
+    input, pos, index, weight, target = _empty_lists(len(data_list), 5)
     slice, index_slice = [0], [0]
 
     for i, data in enumerate(data_list):
@@ -38,11 +39,8 @@ def _data_list_to_set(data_list):
         slice.append(slice[-1] + data.num_nodes)
         index_slice.append(index_slice[-1] + data.num_edges)
 
-    input = None if input[0] is None else torch.cat(input, dim=0)
-    pos = None if pos[0] is None else torch.cat(pos, dim=0)
-    index = None if index[0] is None else torch.cat(index, dim=1)
-    weight = None if weight[0] is None else torch.cat(weight, dim=0)
-    target = None if target[0] is None else torch.cat(target, dim=0)
+    input, pos, index = _cat(input, 0), _cat(pos, 0), _cat(index, 1)
+    weight, target = _cat(weight, 0), _cat(target, 0)
 
     slice = torch.LongTensor(slice)
     index_slice = torch.LongTensor(index_slice)
@@ -51,14 +49,8 @@ def _data_list_to_set(data_list):
 
 
 def data_list_to_batch(data_list):
-    size = len(data_list)
-
-    input = [None] * size
-    pos = [None] * size
-    index = [None] * size
-    weight = [None] * size
-    target = [None] * size
-    batch = [None] * size
+    """Concat all tensors from data list for batch-wise processing."""
+    input, pos, index, weight, target, batch = _empty_lists(len(data_list), 6)
 
     index_offset = 0
     for i, data in enumerate(data_list):
@@ -70,12 +62,8 @@ def data_list_to_batch(data_list):
         batch[i] = data.index.new(data.num_nodes).fill_(i)
         index_offset += data_list[i - 1].num_edges
 
-    input = None if input[0] is None else torch.cat(input, dim=0)
-    pos = None if pos[0] is None else torch.cat(pos, dim=0)
-    index = None if index[0] is None else torch.cat(index, dim=1)
-    weight = None if weight[0] is None else torch.cat(weight, dim=0)
-    target = None if target[0] is None else torch.cat(target, dim=0)
-    batch = None if batch[0] is None else torch.cat(batch, dim=0)
+    input, pos, index = _cat(input, 0), _cat(pos, 0), _cat(index, 1)
+    weight, target, batch = _cat(weight, 0), _cat(target, 0), _cat(batch, 0)
 
     return Data(input, pos, index, weight, target, batch)
 
@@ -124,10 +112,10 @@ class Data(object):
 
     def _transer(self, func, props=None):
         props = self._props if props is None else _to_list(props)
-        data = Data(None, None, None, None, None)
         for prop in props:
-            setattr(data, prop, func(getattr(self, prop)))
-        return data
+            setattr(self, prop, func(getattr(self, prop)))
+
+        return self
 
     def cuda(self, props=None):
         return self._transer(lambda x: x.cuda(), props)
