@@ -17,13 +17,14 @@ def _exists(files):
 
 
 def _data_list_to_set(data_list):
+    """Concat all tensors from data list for fast saving and loading."""
     size = len(data_list)
 
-    input = range(size)
-    pos = range(size)
-    index = range(size)
-    weight = range(size)
-    target = range(size)
+    input = [None] * size
+    pos = [None] * size
+    index = [None] * size
+    weight = [None] * size
+    target = [None] * size
 
     slice, index_slice = [0], [0]
 
@@ -37,11 +38,11 @@ def _data_list_to_set(data_list):
         slice.append(slice[-1] + data.num_nodes)
         index_slice.append(index_slice[-1] + data.num_edges)
 
-    input = None if input[0] == 0 else torch.cat(input, dim=0)
-    pos = None if pos[0] == 0 else torch.cat(pos, dim=0)
-    index = None if index[0] == 0 else torch.cat(index, dim=1)
-    weight = None if weight[0] == 0 else torch.cat(weight, dim=0)
-    target = None if target[0] == 0 else torch.cat(target, dim=0)
+    input = None if input[0] is None else torch.cat(input, dim=0)
+    pos = None if pos[0] is None else torch.cat(pos, dim=0)
+    index = None if index[0] is None else torch.cat(index, dim=1)
+    weight = None if weight[0] is None else torch.cat(weight, dim=0)
+    target = None if target[0] is None else torch.cat(target, dim=0)
 
     slice = torch.LongTensor(slice)
     index_slice = torch.LongTensor(index_slice)
@@ -50,22 +51,43 @@ def _data_list_to_set(data_list):
 
 
 def data_list_to_batch(data_list):
-    raise NotImplementedError
+    size = len(data_list)
 
+    input = [None] * size
+    pos = [None] * size
+    index = [None] * size
+    weight = [None] * size
+    target = [None] * size
+    batch = [None] * size
 
-def _cat(data_list, key):
-    if getattr(data_list[0], key, None) is None:
-        return None
+    index_offset = 0
+    for i, data in enumerate(data_list):
+        input[i] = data.input
+        pos[i] = data.pos
+        index[i] = data.index + index_offset
+        weight[i] = data.weight
+        target[i] = data.target
+        batch[i] = data.index.new(data.num_nodes).fill_(i)
+        index_offset += data_list[i - 1].num_edges
+
+    input = None if input[0] is None else torch.cat(input, dim=0)
+    pos = None if pos[0] is None else torch.cat(pos, dim=0)
+    index = None if index[0] is None else torch.cat(index, dim=1)
+    weight = None if weight[0] is None else torch.cat(weight, dim=0)
+    target = None if target[0] is None else torch.cat(target, dim=0)
+    batch = None if batch[0] is None else torch.cat(batch, dim=0)
+
+    return Data(input, pos, index, weight, target, batch)
 
 
 class Data(object):
-    def __init__(self, input, pos, index, weight, target):
+    def __init__(self, input, pos, index, weight, target, batch=None):
         self.input = input
         self.pos = pos
         self.index = index
         self.weight = weight
         self.target = target
-        self.batch = None
+        self.batch = batch
 
     @property
     def _props(self):
@@ -75,7 +97,7 @@ class Data(object):
     @property
     def adj(self):
         n = self.num_nodes
-        size = torch.Size([n, n] + self.weight.size()[1:])
+        size = torch.Size([n, n] + list(self.weight.size())[1:])
         return SparseTensor(self.index, self.weight, size)
 
     @property
@@ -102,25 +124,27 @@ class Data(object):
 
     def _transer(self, func, props=None):
         props = self._props if props is None else _to_list(props)
+        data = Data(None, None, None, None, None)
         for prop in props:
-            setattr(self, prop, func(getattr(self, prop)))
+            setattr(data, prop, func(getattr(self, prop)))
+        return data
 
     def cuda(self, props=None):
-        self._transer(lambda x: x.cuda(), props)
+        return self._transer(lambda x: x.cuda(), props)
 
     def cpu(self, props=None):
-        self._transer(lambda x: x.cpu(), props)
+        return self._transer(lambda x: x.cpu(), props)
 
     def to_variable(self, props=['input', 'target']):
-        self._transer(lambda x: Variable(x), props)
+        return self._transer(lambda x: Variable(x), props)
 
     def to_tensor(self, props=['input', 'target']):
-        self._transer(lambda x: x.data, props)
+        return self._transer(lambda x: x.data, props)
 
 
 class _Set(Data):
     def __init__(self, input, pos, index, weight, target, slice, index_slice):
-        super(Data, self).__init__(input, pos, index, weight, target)
+        super(_Set, self).__init__(input, pos, index, weight, target)
         self.slice = slice
         self.index_slice = index_slice
 
@@ -161,7 +185,7 @@ class Dataset(BaseDataset):
 
     @property
     def processed_files(self):
-        return ['training.pt', 'test.pt']
+        raise NotImplementedError
 
     def download(self):
         raise NotImplementedError
@@ -204,6 +228,6 @@ class Dataset(BaseDataset):
         sets = self.process()
         sets = sets if isinstance(sets, tuple) else (sets, )
 
-        # Save (training and test) sets separately.
+        # Save (training and test) sets separately according to filenames.
         for i in range(len(self._processed_files)):
             torch.save(_data_list_to_set(sets[i]), self._processed_files[i])

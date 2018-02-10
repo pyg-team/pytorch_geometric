@@ -40,19 +40,27 @@ class QM9(Dataset):
     def raw_files(self):
         return ['input.sdf', 'mask.txt']
 
+    @property
+    def processed_files(self):
+        return ['training.pt', 'test.pt']
+
     def _rename(self, a, b):
         os.rename(osp.join(self.raw_folder, a), osp.join(self.raw_folder, b))
 
     def download(self):
+        # Download and extract data and uncharaterized mask file.
         file_path = download_url(self.data_url, self.raw_folder)
         extract_tar(file_path, osp.join(self.raw_folder), mode='r')
         os.unlink(file_path)
         os.unlink(osp.join(self.raw_folder, 'gdb9.sdf.csv'))
         download_url(self.mask_url, self.raw_folder)
+
+        # Rename to more meaningful filenames.
         self._rename('gdb9.sdf', 'input.sdf')
         self._rename('3195404', 'mask.txt')
 
     def process(self):
+        # Read uncharacterized examples and convert to inverted byte tensor.
         with open(osp.join(self.raw_folder, 'mask.txt'), 'r') as f:
             tmp = f.read().split('\n')[9:-2]
             tmp = [int(x.split()[0]) for x in tmp]
@@ -60,6 +68,7 @@ class QM9(Dataset):
             mask = torch.ByteTensor(133885).fill_(1)
             mask[tmp] = 0
 
+        # Read and convert all valid examples.
         examples = []
         with open(osp.join(self.raw_folder, 'input.sdf'), 'r') as f:
             sdfs = f.read().split('$$$$\n')[:-1]
@@ -70,4 +79,5 @@ class QM9(Dataset):
                 progress.update(idx + 1)
             progress.success()
 
+        # Use the last 10,000 examples for testing.
         return examples[:-10000], examples[-10000:]
