@@ -12,7 +12,7 @@ path = os.path.join(path, '..', 'data', 'QM9')
 
 train_dataset = QM9(path, train=True)
 test_dataset = QM9(path, train=False)
-train_loader = DataLoader(train_dataset, batch_size=256, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=256)
 
 for data in train_loader:
