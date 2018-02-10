@@ -12,8 +12,8 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'QM9')
 
 transform = CartesianAdj()
-train_dataset = QM9(path, train=True, transform=transform)
-test_dataset = QM9(path, train=False, transform=transform)
+train_dataset = QM9(path, True, transform=transform)
+test_dataset = QM9(path, False, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=256)
 

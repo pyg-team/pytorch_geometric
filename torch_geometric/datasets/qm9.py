@@ -4,7 +4,6 @@ import os.path as osp
 import torch
 
 from .dataset import Dataset
-
 from .utils.download import download_url
 from .utils.extract import extract_tar
 from .utils.progress import Progress
@@ -33,8 +32,9 @@ class QM9(Dataset):
 
     def __init__(self, root, train=True, transform=None):
         super(QM9, self).__init__(root, transform)
-        name = self.processed_files[0] if train else self.processed_files[0]
-        self.set = torch.load(osp.join(self.processed_folder, name))
+
+        name = self._processed_files[0] if train else self._processed_files[0]
+        self.set = torch.load(name)
 
     @property
     def raw_files(self):
