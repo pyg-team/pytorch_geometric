@@ -6,11 +6,11 @@ from .citeseer import CiteSeer
 from .faust import FAUST
 from .mnist_superpixels import MNISTSuperpixels
 from .shapenet import ShapeNet
-from .semantic_3d import Semantic3D
 from .cuneiform import Cuneiform
+from .cuneiform2 import Cuneiform2
 from .qm9 import QM9
 
 __all__ = [
     'Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels',
-    'ShapeNet', 'Semantic3D', 'Cuneiform', 'QM9'
+    'ShapeNet', 'Cuneiform', 'Cuneiform2', 'QM9'
 ]

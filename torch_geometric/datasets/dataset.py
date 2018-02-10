@@ -45,7 +45,7 @@ def _data_list_to_set(data_list):
     slice = torch.LongTensor(slice)
     index_slice = torch.LongTensor(index_slice)
 
-    return _Set(input, pos, index, weight, target, slice, index_slice)
+    return Set(input, pos, index, weight, target, slice, index_slice)
 
 
 def data_list_to_batch(data_list):
@@ -131,9 +131,9 @@ class Data(object):
         return self._transer(lambda x: x.data, props)
 
 
-class _Set(Data):
+class Set(Data):
     def __init__(self, input, pos, index, weight, target, slice, index_slice):
-        super(_Set, self).__init__(input, pos, index, weight, target)
+        super(Set, self).__init__(input, pos, index, weight, target)
         self.slice = slice
         self.index_slice = index_slice
 
@@ -165,8 +165,12 @@ class Dataset(BaseDataset):
         self.processed_folder = osp.join(self.root, 'processed')
         self.transform = transform
 
-        self._download()
-        self._process()
+        if not _exists(self._raw_files):
+            self.download()
+
+        if not _exists(self._processed_files):
+            make_dirs(self.processed_folder)
+            self._process()
 
     @property
     def raw_files(self):
@@ -203,17 +207,7 @@ class Dataset(BaseDataset):
     def __len__(self):
         return len(self.set)
 
-    def _download(self):
-        if _exists(self._raw_files):
-            return
-
-        self.download()
-
     def _process(self):
-        if _exists(self._processed_files):
-            return
-
-        make_dirs(self.processed_folder)
         sets = self.process()
         sets = sets if isinstance(sets, tuple) else (sets, )
 

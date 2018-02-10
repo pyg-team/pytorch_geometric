@@ -4,6 +4,32 @@ import torch
 import numpy as np
 
 
+def tu_files(prefix,
+             A=False,
+             graph_indicator=False,
+             graph_labels=False,
+             graph_attributes=False,
+             node_labels=False,
+             node_attributes=False,
+             edge_labels=False,
+             edge_attributes=False,
+             graph_sets=False):
+
+    func = lambda x: ['{}_{}.txt'.format(prefix, x)]  # noqa
+
+    files = []
+    files += func('A') if A else []
+    files += func('graph_indicator') if graph_indicator else []
+    files += func('graph_labels') if graph_labels else []
+    files += func('graph_attributes') if graph_attributes else []
+    files += func('node_labels') if node_labels else []
+    files += func('node_attributes') if node_attributes else []
+    files += func('edge_labels') if edge_labels else []
+    files += func('edge_attributes') if edge_attributes else []
+    files += func('graph_sets') if graph_sets else []
+    return files
+
+
 def read_file(dir, prefix, name):
     path = os.path.join(dir, '{}_{}.txt'.format(prefix, name))
     with open(path, 'r') as f:
