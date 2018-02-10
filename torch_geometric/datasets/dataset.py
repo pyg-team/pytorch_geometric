@@ -118,7 +118,8 @@ class Data(object):
         return self
 
     def cuda(self, props=None):
-        return self._transer(lambda x: x.cuda(), props)
+        func = lambda x: x.cuda() if torch.cuda.is_available() else x  # noqa
+        return self._transer(func, props)
 
     def cpu(self, props=None):
         return self._transer(lambda x: x.cpu(), props)
