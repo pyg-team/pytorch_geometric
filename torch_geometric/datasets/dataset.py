@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+from torch.autograd import Variable
 from torch.utils.data import Dataset as BaseDataset
 
 from ..sparse import SparseTensor
@@ -99,16 +100,22 @@ class Data(object):
         else:
             return self.weight.size(0)
 
-    def _transer(self, device, props=None):
+    def _transer(self, func, props=None):
         props = self._props if props is None else _to_list(props)
         for prop in props:
-            getattr(getattr(self, prop), device)()
+            setattr(self, prop, func(getattr(self, prop)))
 
     def cuda(self, props=None):
-        self._transer('cuda', props)
+        self._transer(lambda x: x.cuda(), props)
 
     def cpu(self, props=None):
-        self._transer('cpu', props)
+        self._transer(lambda x: x.cpu(), props)
+
+    def to_variable(self, props=['input', 'target']):
+        self._transer(lambda x: Variable(x), props)
+
+    def to_tensor(self, props=['input', 'target']):
+        self._transer(lambda x: x.data, props)
 
 
 class _Set(Data):
