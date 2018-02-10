@@ -2,23 +2,25 @@ from __future__ import division
 
 import torch
 
+from .base import BaseAdj
+from ..sparse import SparseTensor
 
-class CartesianAdj(object):
-    """Concatenates directed Cartesian spatial relations based on the position
-    :math:`P \in \mathbb{R}^{N x D}` of graph nodes to the graph's edge
-    attributes."""
 
-    def __call__(self, data):
-        row, col = data.index
+class CartesianAdj(BaseAdj):
+    """Converts a set of adjacency matrices :math:`A \in \mathbb{R}^{N x N}`
+    saved in a dataset :obj:`Data` object to globally normalized Cartesian
+    pseudo-coordinates :math:`A \in [0, 1]^{N x N x d}` based on the position
+    :math:`P \in \mathbb{R}^{N x d}` of graph-nodes.
+    """
+
+    def _call(self, adj, position):
+        index = adj._indices()
+        row, col = index
+        n, dim = position.size()
 
         # Compute Cartesian pseudo-coordinates.
-        weight = data.pos[col] - data.pos[row]
-        weight *= 1 / (2 * weight.abs().max())
-        weight += 0.5
+        cartesian = position[col] - position[row]
+        cartesian *= 1 / (2 * cartesian.abs().max())
+        cartesian += 0.5
 
-        if data.weight is None:
-            data.weight = weight
-        else:
-            data.weight = torch.cat([weight, data.weight.unsqueeze(1)], dim=1)
-
-        return data
+        return SparseTensor(index, cartesian, torch.Size([n, n, dim]))
