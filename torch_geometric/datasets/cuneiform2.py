@@ -32,5 +32,6 @@ class Cuneiform2(Dataset):
         extract_tar(file_path, self.raw_folder, mode='r')
         os.unlink(file_path)
 
-    def _process(self):
+    def process(self):
         print('huhu')
+        return 'awd'

@@ -165,12 +165,8 @@ class Dataset(BaseDataset):
         self.processed_folder = osp.join(self.root, 'processed')
         self.transform = transform
 
-        if not _exists(self._raw_files):
-            self.download()
-
-        if not _exists(self._processed_files):
-            make_dirs(self.processed_folder)
-            self._process()
+        self._download()
+        self._process()
 
     @property
     def raw_files(self):
@@ -207,10 +203,28 @@ class Dataset(BaseDataset):
     def __len__(self):
         return len(self.set)
 
+    def _download(self):
+        if _exists(self._raw_files):
+            return
+
+        self.download()
+
     def _process(self):
+        if _exists(self._processed_files):
+            return
+
+        make_dirs(self.processed_folder)
+
         sets = self.process()
         sets = sets if isinstance(sets, tuple) else (sets, )
 
         # Save (training and test) sets separately according to filenames.
-        for i in range(len(self._processed_files)):
-            torch.save(_data_list_to_set(sets[i]), self._processed_files[i])
+        # We allow different return types of the `process` method: either a Set
+        # or a list of Data objects.
+        for i, set in enumerate(sets):
+            if isinstance(set, list) and isinstance(set[0], Data):
+                set = _data_list_to_set(set)
+            elif not isinstance(set, Set):
+                raise ValueError('No valid processed object type')
+
+            torch.save(set, self._processed_files[i])
