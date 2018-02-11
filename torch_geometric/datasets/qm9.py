@@ -65,13 +65,13 @@ class QM9(Dataset):
             tmp = f.read().split('\n')[9:-2]
             tmp = [int(x.split()[0]) for x in tmp]
             tmp = torch.LongTensor(tmp)
-            mask = torch.ByteTensor(133885).fill_(1)
-            mask[tmp] = 0
 
         # Read and convert all valid examples.
         examples = []
         with open(osp.join(self.raw_folder, 'input.sdf'), 'r') as f:
             sdfs = f.read().split('$$$$\n')[:-1]
+            mask = torch.ByteTensor(len(sdfs)).fill_(1)
+            mask[tmp] = 0
             progress = Progress('Processing', end=len(sdfs), type='')
             for idx, sdf in enumerate(sdfs):
                 if mask[idx] == 1:
