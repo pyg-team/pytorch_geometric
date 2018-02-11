@@ -2,13 +2,10 @@ import os
 import os.path as osp
 
 import torch
-from torch.utils.data import Dataset
 
-from .data import Data
-from ..sparse import SparseTensor
+from .dataset import Dataset
 from .utils.download import download_url
 from .utils.extract import extract_tar
-from .utils.dir import make_dirs
 from .utils.progress import Progress
 from .utils.sdf import read_sdf
 
@@ -17,7 +14,7 @@ class QM9(Dataset):
     """`QM9 <http://quantum-machine.org/datasets>`_ Molecule Dataset from the
     `"Quantum Chemistry Structures and Properties of 134 Kilo Molecules"
     <https://www.nature.com/articles/sdata201422>`_ paper. QM9 consists of
-    130k molecules with 13 properties for each molecule.
+    approximately 130k molecules with 12 properties for each molecule.
 
     Args:
         root (string): Root directory of dataset. Downloads data automatically
@@ -34,81 +31,36 @@ class QM9(Dataset):
     mask_url = 'https://ndownloader.figshare.com/files/3195404'
 
     def __init__(self, root, train=True, transform=None):
-        super(QM9, self).__init__()
+        super(QM9, self).__init__(root, transform)
 
-        # Set dataset properites.
-        self.root = osp.expanduser(root)
-        self.raw_folder = osp.join(self.root, 'raw')
-        self.processed_folder = osp.join(self.root, 'processed')
-        self.data_file = os.path.join(self.processed_folder, 'data.pt')
-
-        self.transform = transform
-
-        # Download and process data.
-        self.download()
-        self.process()
-
-        data = torch.load(self.data_file)
-        input, index, weight, position, target, slice, index_slice = data
-
-        self.input, self.index, self.weight = input, index, weight
-        self.position, self.target = position, target
-        self.slice, self.index_slice = slice, index_slice
-
-        G = self.target.size(0)
-        if train:
-            self.split = torch.arange(0, G - 10000).long()
-        else:
-            self.split = torch.arange(G - 10000, G).long()
-
-    def __getitem__(self, i):
-        i = self.split[i]
-        index = self.index[:, self.index_slice[i]:self.index_slice[i + 1]]
-        weight = self.weight[self.index_slice[i]:self.index_slice[i + 1]]
-        position = self.position[self.slice[i]:self.slice[i + 1]]
-        n = position.size(0)
-        adj = SparseTensor(index, weight, torch.Size([n, n]))
-        target = self.target[i]
-        data = Data(input, adj, position, target)
-
-        if self.transform is not None:
-            data = self.transform(data)
-
-        return data.all()
-
-    def __len__(self):
-        return self.split.size(0)
+        name = self._processed_files[0] if train else self._processed_files[0]
+        self.set = torch.load(name)
 
     @property
-    def _raw_exists(self):
-        input_exists = osp.exists(osp.join(self.raw_folder, 'input.sdf'))
-        mask_exists = osp.exists(osp.join(self.raw_folder, 'mask.txt'))
-        return input_exists and mask_exists
+    def raw_files(self):
+        return ['input.sdf', 'mask.txt']
 
     @property
-    def _processed_exists(self):
-        return os.path.exists(self.data_file)
+    def processed_files(self):
+        return ['training.pt', 'test.pt']
+
+    def _rename(self, a, b):
+        os.rename(osp.join(self.raw_folder, a), osp.join(self.raw_folder, b))
 
     def download(self):
-        if self._raw_exists:
-            return
-
+        # Download and extract data and uncharaterized mask file.
         file_path = download_url(self.data_url, self.raw_folder)
         extract_tar(file_path, osp.join(self.raw_folder), mode='r')
         os.unlink(file_path)
         os.unlink(osp.join(self.raw_folder, 'gdb9.sdf.csv'))
         download_url(self.mask_url, self.raw_folder)
 
-        r = self.raw_folder
-        os.rename(osp.join(r, 'gdb9.sdf'), osp.join(r, 'input.sdf'))
-        os.rename(osp.join(r, '3195404'), osp.join(r, 'mask.txt'))
+        # Rename to more meaningful filenames.
+        self._rename('gdb9.sdf', 'input.sdf')
+        self._rename('3195404', 'mask.txt')
 
     def process(self):
-        if self._processed_exists:
-            return
-
-        make_dirs(self.processed_folder)
-
+        # Read uncharacterized examples and convert to inverted byte tensor.
         with open(osp.join(self.raw_folder, 'mask.txt'), 'r') as f:
             tmp = f.read().split('\n')[9:-2]
             tmp = [int(x.split()[0]) for x in tmp]
@@ -116,35 +68,16 @@ class QM9(Dataset):
             mask = torch.ByteTensor(133885).fill_(1)
             mask[tmp] = 0
 
-        input, index, weight, position, target = [], [], [], [], []
-        slice, index_slice = [0], [0]
-
+        # Read and convert all valid examples.
+        examples = []
         with open(osp.join(self.raw_folder, 'input.sdf'), 'r') as f:
             sdfs = f.read().split('$$$$\n')[:-1]
             progress = Progress('Processing', end=len(sdfs), type='')
             for idx, sdf in enumerate(sdfs):
-                if mask[idx] == 0:
-                    continue
-                f, i, w, p, t = read_sdf(sdf)
-                input.append(f)
-                index.append(i)
-                weight.append(w)
-                position.append(p)
-                target.append(t)
-
-                slice.append(slice[-1] + f.size(0))
-                index_slice.append(index_slice[-1] + w.size(0))
-
+                if mask[idx] == 1:
+                    examples.append(read_sdf(sdf))
                 progress.update(idx + 1)
             progress.success()
 
-        input = torch.cat(input, dim=0)
-        index = torch.cat(index, dim=0).t()
-        weight = torch.cat(weight, dim=0)
-        position = torch.cat(position, dim=0)
-        target = torch.cat(target, dim=0).view(-1, 12)
-        slice = torch.LongTensor(slice)
-        index_slice = torch.LongTensor(index_slice)
-
-        data = (input, index, weight, position, target, slice, index_slice)
-        torch.save(data, self.data_file)
+        # Use the last 10,000 examples for testing.
+        return examples[:-10000], examples[-10000:]
