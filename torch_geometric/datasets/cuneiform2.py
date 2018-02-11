@@ -5,7 +5,8 @@ import torch
 from .dataset import Dataset
 from .utils.download import download_url
 from .utils.extract import extract_tar
-from .utils.tu_format import tu_files, read_tu_sets
+from .utils.spinner import Spinner
+from .utils.tu_format import tu_files, read_tu_set
 
 
 class Cuneiform2(Dataset):
@@ -15,6 +16,18 @@ class Cuneiform2(Dataset):
     def __init__(self, root, split=None, transform=None):
         super(Cuneiform2, self).__init__(root, transform)
         self.set = torch.load(self._processed_files[0])
+
+        if split is None:
+            g = self.set.num_graphs
+            self.split = torch.arange(0, g, out=torch.LongTensor())
+        else:
+            self.split = split
+
+    def __getitem__(self, i):
+        return super(Cuneiform2, self).__getitem__(self.split[i])
+
+    def __len__(self):
+        return self.split.size(0)
 
     @property
     def raw_files(self):
@@ -35,7 +48,9 @@ class Cuneiform2(Dataset):
         os.unlink(file_path)
 
     def process(self):
-        set = read_tu_sets(
+        spinner = Spinner('Processing').start()
+
+        set = read_tu_set(
             self.raw_folder,
             self.prefix,
             graph_indicator=True,
@@ -46,5 +61,6 @@ class Cuneiform2(Dataset):
         set.pos = set.input[:, :2]
         set.input = set.input[:, 2:]
 
-        raise NotImplementedError
+        spinner.success()
+
         return set
