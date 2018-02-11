@@ -32,8 +32,8 @@ def tu_files(prefix,
              edge_attributes=False,
              edge_labels=False,
              graph_sets=False):
-
-    func = lambda x: ['{}_{}.txt'.format(prefix, x)]  # noqa
+    def func(x):
+        return ['{}_{}.txt'.format(prefix, x)]
 
     files = []
     files += func('A')
