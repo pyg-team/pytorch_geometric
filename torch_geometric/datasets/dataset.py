@@ -17,7 +17,16 @@ def _exists(files):
 
 
 def _cat(tensors, dim):
-    return None if tensors[0] is None else torch.cat(tensors, dim=dim)
+    if tensors[0] is None:
+        return None
+    elif torch.is_tensor(tensors[0]):
+        return torch.cat(tensors, dim=dim)
+    elif isinstance(tensors[0], float):
+        return torch.FloatTensor(tensors)
+    elif isinstance(tensors[0], int):
+        return torch.LongTensor(tensors)
+
+    raise TypeError('Could not concatenate batch due to unsupported types')
 
 
 def _empty_lists(size, number):
@@ -154,6 +163,10 @@ class Set(Data):
 
     def __len__(self):
         return self.slice.size(0) - 1
+
+    @property
+    def num_graphs(self):
+        return len(self.slice) - 1
 
 
 class Dataset(BaseDataset):

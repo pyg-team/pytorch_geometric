@@ -48,31 +48,30 @@ def tu_files(prefix,
     return files
 
 
-def read_tu_sets(dir,
-                 prefix,
-                 graph_indicator=False,
-                 graph_attributes=False,
-                 graph_labels=False,
-                 node_attributes=False,
-                 node_labels=False,
-                 edge_attributes=False,
-                 edge_labels=False):
+def read_tu_set(dir,
+                prefix,
+                graph_indicator=False,
+                graph_attributes=False,
+                graph_labels=False,
+                node_attributes=False,
+                node_labels=False,
+                edge_attributes=False,
+                edge_labels=False):
 
     index = read_tu_index(dir, prefix)
     input = read_tu_x(dir, prefix, 'node', node_attributes, node_labels)
     weight = read_tu_x(dir, prefix, 'edge', edge_attributes, edge_labels)
+    data = read_tu_slice(dir, prefix, index, graph_indicator)
+    index, slice, index_slice = data
 
     if graph_labels is True and graph_attributes is False:
-        target = read_tu_file(
-            dir, prefix, 'graph_labels', out=torch.LongTensor())
+        f = 'graph_labels'
+        target = read_tu_file(dir, prefix, f, out=torch.LongTensor())
     else:
-        target = read_tu_x(dir, prefix, 'graph', graph_attributes,
-                           graph_labels)
+        f = 'graph'
+        target = read_tu_x(dir, prefix, f, graph_attributes, graph_labels)
 
-    # print(target)
-
-    index, index_slice = None, None
-    return Set(input, None, index, weight, target, index, index_slice)
+    return Set(input, None, index, weight, target, slice, index_slice)
 
 
 def read_tu_file(dir, prefix, name, out=None):
@@ -106,6 +105,34 @@ def read_tu_x(dir, prefix, name, attributes=False, labels=False):
         x += [to_one_hot(read_tu_file(dir, prefix, f, out=torch.LongTensor()))]
 
     return x[0] if len(x) == 1 else torch.cat(x, dim=1)
+
+
+def read_tu_slice(dir, prefix, index, graph_indicator=False):
+    if graph_indicator is True:
+        f = 'graph_indicator'
+        batch = read_tu_file(dir, prefix, f, out=torch.LongTensor()) - 1
+
+        slice, cur_i = [0], 0
+        for idx, i in enumerate(batch):
+            if cur_i != i:
+                slice.append(idx)
+                cur_i += 1
+        slice.append(batch.size(0))
+
+        index_slice, cur_i, cur_off = [0], 0, 0
+        off = torch.LongTensor(index.size(1))
+        for idx, i in enumerate(index[0]):
+            if cur_i != batch[i]:
+                index_slice.append(idx)
+                cur_i += 1
+                cur_off = index[0, idx]
+            off[idx] = cur_off
+        index_slice.append(index.size(1))
+        index -= off
+    else:
+        slice, index_slice = [0, index.max() + 1], [0, index.size(1)]
+
+    return index, torch.LongTensor(slice), torch.LongTensor(index_slice)
 
 
 # OLD VERSION -----------------------------------------------------------------
