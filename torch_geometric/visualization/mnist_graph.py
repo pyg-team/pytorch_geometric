@@ -5,6 +5,7 @@ from skimage.color import gray2rgb
 # import skimage.io as io
 # from skimage.draw import draw
 import torch
+from torch_cluster import grid_cluster
 
 import sys
 
@@ -15,6 +16,8 @@ sys.path.insert(0, '../..')
 from torch_geometric.datasets import MNISTSuperpixels  # noqa
 from torch_geometric.graph.grid import grid_5x5, grid_position  # noqa
 from torch_geometric.transforms.graclus import graclus, perm_input  # noqa
+from torch_geometric.nn.functional import max_pool  # noqa
+from torch_geometric.sparse import SparseTensor  # noqa
 
 # def image_graph(image, input, graph, position, scale, offset):
 #     image = image.copy()
@@ -62,6 +65,21 @@ image = np.array(image)
 data = graph_dataset[example]
 input, adj, position = data['input'], data['adj'], data['position']
 print(data['target'])
+
+
+def max_grid_pool(x, position, adj, size):
+    x = x.view(-1, 1)
+    grid_size = position.new(2).fill_(size)
+    cluster = grid_cluster(position, grid_size)
+    index = adj._indices().contiguous()
+    x, index, position = max_pool(x, index, position, cluster)
+    n = position.size(0)
+    adj = SparseTensor(index, torch.ones(index.size(1)), torch.Size([n, n]))
+    return x, position, adj
+
+
+input, position, adj = max_grid_pool(input, position, adj, 3)
+input, position, adj = max_grid_pool(input, position, adj, 6)
 
 # adj = grid(torch.Size([28, 28]), connectivity=8)
 # position = grid_position(torch.Size([28, 28]))

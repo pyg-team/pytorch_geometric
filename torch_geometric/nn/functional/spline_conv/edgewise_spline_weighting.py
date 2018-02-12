@@ -6,6 +6,8 @@ if torch.cuda.is_available():
 
 def edgewise_spline_weighting(input, weight, amount, index):
     if input.is_cuda:
-        return EdgewiseSplineWeightingGPU(amount, index)(input, weight)
+        K, M_in, M_out = weight.size()
+        k_max = amount.size(1)
+        return EdgewiseSplineWeightingGPU(amount, index, K, M_in, M_out, k_max)(input, weight)
     else:
         raise NotImplementedError
