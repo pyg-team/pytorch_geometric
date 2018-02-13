@@ -16,6 +16,9 @@ def spline_conv(
         degree=1,
         bias=None):
 
+    if input.dim() == 1:
+        input = input.unsqueeze(1)
+
     values = adj._values()
     row, col = adj._indices()
 

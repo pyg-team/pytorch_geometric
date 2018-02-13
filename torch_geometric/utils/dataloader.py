@@ -1,12 +1,25 @@
+import torch
+import collections
 from torch.utils.data.dataloader import (DataLoader as DefaultDataLoader,
                                          default_collate)
 
-from ..datasets.dataset import Data, data_list_to_batch
+from ..sparse.stack import stack
 
 
 def collate(batch):
-    if type(batch[0]) is Data:
-        return data_list_to_batch(batch)
+    if torch.is_tensor(batch[0]) and batch[0].is_sparse:
+        data, slice = stack(batch)
+        return {'content': data, 'slice': slice}
+
+    if torch.is_tensor(batch[0]):
+        return torch.cat(batch, dim=0)
+
+    elif isinstance(batch[0], collections.Mapping):
+        return {key: collate([d[key] for d in batch]) for key in batch[0]}
+
+    elif isinstance(batch[0], collections.Sequence):
+        transposed = zip(*batch)
+        return [collate(samples) for samples in transposed]
 
     return default_collate(batch)
 

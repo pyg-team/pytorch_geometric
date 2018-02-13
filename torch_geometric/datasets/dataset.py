@@ -69,7 +69,7 @@ def data_list_to_batch(data_list):
         weight[i] = data.weight
         target[i] = data.target
         batch[i] = data.index.new(data.num_nodes).fill_(i)
-        index_offset += data_list[i - 1].num_edges
+        index_offset += data_list[i].num_nodes
 
     input, pos, index = _cat(input, 0), _cat(pos, 0), _cat(index, 1)
     weight, target, batch = _cat(weight, 0), _cat(target, 0), _cat(batch, 0)

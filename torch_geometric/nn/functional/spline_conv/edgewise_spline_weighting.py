@@ -8,6 +8,7 @@ def edgewise_spline_weighting(input, weight, amount, index):
     if input.is_cuda:
         K, M_in, M_out = weight.size()
         k_max = amount.size(1)
-        return EdgewiseSplineWeightingGPU(amount, index, K, M_in, M_out, k_max)(input, weight)
+        return EdgewiseSplineWeightingGPU(amount, index, K, M_in, M_out,
+                                          k_max)(input, weight)
     else:
         raise NotImplementedError
