@@ -41,8 +41,8 @@ def to_cartesian_adj(index, position):
 
 
 def max_grid_pool(x, position, adj, batch, size):
-    grid_size = position.new(2).fill_(size)
-    cluster, batch = grid_cluster(position, grid_size, batch)
+    cell_size = position.new(2).fill_(size)
+    cluster, batch = grid_cluster(position, cell_size, batch)
     x, index, position = max_pool(x, adj._indices(), position, cluster)
     adj = to_cartesian_adj(index, position)
     return x, position, adj, batch
