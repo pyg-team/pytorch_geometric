@@ -19,13 +19,15 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ShapeNet')
 
 category = 'Cap'
-num_classes = 3
 transform = CartesianAdj()
 train_dataset = ShapeNet(path, category, True, transform)
 test_dataset = ShapeNet(path, category, False, transform)
 train_loader = DataLoader2(train_dataset, batch_size=16, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=16)
+test_loader = DataLoader2(test_dataset, batch_size=1)
 
+labelmin, labelmax = train_dataset.set.target.min(), train_dataset.set.target.max()
+
+num_classes = labelmax+1
 
 def upscale(input, cluster):
     cluster = Variable(cluster)
@@ -79,6 +81,10 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
+    if epoch == 61:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
+
     for data in train_loader:
         data = data.cuda().to_variable()
         optimizer.zero_grad()
@@ -91,17 +97,39 @@ def train(epoch):
 def test(epoch):
     model.eval()
     correct = 0
+    iou=0
+    num_examples = 0
 
     for data in test_loader:
         data = data.cuda().to_variable()
         output = model(data)
         pred = output.data.max(1)[1]
         correct += pred.eq(data.target.data).cpu().sum()
+        iou_single = 0
+        num_labels = 0
+        for i in range(labelmin,labelmax+1):
+            p = pred == i
+            t = data.target.data == i
 
+            intersection = ((p + t) > 1).sum()
+            union = p.sum() + t.sum() - intersection
+            if union == 0:
+                iou_single += 1
+            else:
+                iou_single += intersection / union
+            num_labels += 1
+
+        iou += iou_single/num_labels
+        num_examples += 1
     num_nodes = test_dataset.set.input.size(0)
-    print('Epoch:', epoch, 'Test Accuracy:', correct / num_nodes)
+    acc = correct / num_nodes
+    iou = iou / num_examples
 
 
-for epoch in range(1, 31):
+    print('Epoch:', epoch, 'Accuracy:', acc, 'IoU:', iou)
+
+
+
+for epoch in range(1, 201):
     train(epoch)
     test(epoch)
