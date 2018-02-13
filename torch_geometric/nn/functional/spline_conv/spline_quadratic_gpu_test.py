@@ -4,7 +4,8 @@ import torch
 from numpy.testing import assert_equal, assert_almost_equal
 
 if torch.cuda.is_available():
-    from .spline_quadratic_gpu import spline_quadratic_gpu
+    from .compute_spline_basis import compute_spline_basis
+    from .compute_spline_basis import get_basis_kernel
 
 
 class SplineQuadraticGPUTest(unittest.TestCase):
@@ -13,8 +14,12 @@ class SplineQuadraticGPUTest(unittest.TestCase):
         input = torch.cuda.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         kernel_size = torch.cuda.LongTensor([6])
         is_open_spline = torch.cuda.LongTensor([1])
+        k_max = 3
+        K = 6
+        dim=1
+        basis_kernel = get_basis_kernel(k_max,K,dim,2)
 
-        a1, i1 = spline_quadratic_gpu(input, kernel_size, is_open_spline, 6)
+        a1, i1 = compute_spline_basis(input, kernel_size, is_open_spline, 6, basis_kernel)
 
         a2 = [[0.5, 0.5, 0], [0.32, 0.66, 0.02], [0.5, 0.5, 0], [0.5, 0.5, 0],
               [0.5, 0.5, 0], [0.02, 0.66, 0.32], [0.5, 0.5, 0]]
@@ -29,8 +34,11 @@ class SplineQuadraticGPUTest(unittest.TestCase):
         input = torch.cuda.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         kernel_size = torch.cuda.LongTensor([4])
         is_open_spline = torch.cuda.LongTensor([0])
-
-        a1, i1 = spline_quadratic_gpu(input, kernel_size, is_open_spline, 4)
+        k_max = 3
+        K = 4
+        dim = 1
+        basis_kernel = get_basis_kernel(k_max, K, dim, 2)
+        a1, i1 = compute_spline_basis(input, kernel_size, is_open_spline, 4, basis_kernel)
 
         a2 = [[0.5, 0.5, 0], [0.32, 0.66, 0.02], [0.5, 0.5, 0], [0.5, 0.5, 0],
               [0.5, 0.5, 0], [0.02, 0.66, 0.32], [0.5, 0.5, 0]]

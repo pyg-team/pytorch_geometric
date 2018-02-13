@@ -4,7 +4,8 @@ import torch
 from numpy.testing import assert_equal, assert_almost_equal
 
 if torch.cuda.is_available():
-    from .spline_linear_gpu import spline_linear_gpu
+    from .compute_spline_basis import compute_spline_basis
+    from .compute_spline_basis import get_basis_kernel
 
 
 class SplineLinearGPUTest(unittest.TestCase):
@@ -13,8 +14,11 @@ class SplineLinearGPUTest(unittest.TestCase):
         input = torch.cuda.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         kernel_size = torch.cuda.LongTensor([5])
         is_open_spline = torch.cuda.LongTensor([1])
-
-        a1, i1 = spline_linear_gpu(input, kernel_size, is_open_spline, 5)
+        k_max = 2
+        K = 5
+        dim = 1
+        basis_kernel = get_basis_kernel(k_max, K, dim, 1)
+        a1, i1 = compute_spline_basis(input, kernel_size, is_open_spline, 5, basis_kernel)
 
         a2 = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
         i2 = [[1, 0], [1, 0], [2, 1], [3, 2], [4, 3], [4, 3], [0, 4]]
@@ -27,8 +31,11 @@ class SplineLinearGPUTest(unittest.TestCase):
         input = torch.cuda.FloatTensor([0, 0.05, 0.25, 0.5, 0.75, 0.95, 1])
         kernel_size = torch.cuda.LongTensor([4])
         is_open_spline = torch.cuda.LongTensor([0])
-
-        a1, i1 = spline_linear_gpu(input, kernel_size, is_open_spline, 4)
+        k_max = 2
+        K = 4
+        dim = 1
+        basis_kernel = get_basis_kernel(k_max, K, dim, 1)
+        a1, i1 = compute_spline_basis(input, kernel_size, is_open_spline, 4, basis_kernel)
 
         a2 = [[0, 1], [0.2, 0.8], [0, 1], [0, 1], [0, 1], [0.8, 0.2], [0, 1]]
         i2 = [[1, 0], [1, 0], [2, 1], [3, 2], [0, 3], [0, 3], [1, 0]]

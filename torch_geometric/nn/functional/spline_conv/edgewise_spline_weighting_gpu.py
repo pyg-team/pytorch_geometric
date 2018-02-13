@@ -95,9 +95,34 @@ const long* index, int num_threads) {
 }
 '''
 
+def get_forward_kernel(M_in,M_out,k_max):
+    cuda_tensor = torch.FloatTensor([1]).cuda()
+    with torch.cuda.device_of(cuda_tensor):
+        f_fw = load_kernel(
+            'edgewise_spline_weighting_forward_kernel',
+            _edgewise_spline_weighting_forward_kernel,
+            Dtype='float',
+            M_in=M_in,
+            M_out=M_out,
+            k_max=k_max)
+    return f_fw
+
+def get_backward_kernel(M_in,M_out,k_max, K):
+    cuda_tensor = torch.FloatTensor([1]).cuda()
+    with torch.cuda.device_of(cuda_tensor):
+        f_bw = load_kernel(
+            'edgewise_spline_weighting_backward_kernel',
+            _edgewise_spline_weighting_backward_kernel,
+            Dtype='float',
+            M_in=M_in,
+            M_out=M_out,
+            k_max=k_max,
+            K=K)
+    return f_bw
+
 
 class EdgewiseSplineWeightingGPU(Function):
-    def __init__(self, amount, index, K, M_in, M_out, k_max):
+    def __init__(self, amount, index, K, M_in, M_out, k_fw, k_bw):
         super(EdgewiseSplineWeightingGPU, self).__init__()
         assert amount.is_cuda and index.is_cuda
         self.amount = amount
@@ -105,23 +130,9 @@ class EdgewiseSplineWeightingGPU(Function):
         self.M_in = M_in
         self.M_out = M_out
         self.K = K
-        with torch.cuda.device_of(amount):
-            self.f_fw = load_kernel(
-                'edgewise_spline_weighting_forward_kernel',
-                _edgewise_spline_weighting_forward_kernel,
-                Dtype=Dtype(amount),
-                M_in=M_in,
-                M_out=M_out,
-                k_max=k_max)
+        self.f_fw = k_fw
+        self.f_bw = k_bw
 
-            self.f_bw = load_kernel(
-                'edgewise_spline_weighting_backward_kernel',
-                _edgewise_spline_weighting_backward_kernel,
-                Dtype=Dtype(amount),
-                M_in=M_in,
-                M_out=M_out,
-                k_max=k_max,
-                K=K)
 
     def forward(self, input, weight):
         assert input.is_cuda and weight.is_cuda
