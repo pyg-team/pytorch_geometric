@@ -25,9 +25,11 @@ test_dataset = ShapeNet(path, category, False, transform)
 train_loader = DataLoader2(train_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=1)
 
-labelmin, labelmax = train_dataset.set.target.min(), train_dataset.set.target.max()
+labelmin = train_dataset.set.target.min()
+labelmax = train_dataset.set.target.max()
 
-num_classes = labelmax+1
+num_classes = labelmax + 1
+
 
 def upscale(input, cluster):
     cluster = Variable(cluster)
@@ -39,35 +41,52 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5)
-        self.conv2 = SplineConv(32, 64, dim=3, kernel_size=5)
+        self.conv12 = SplineConv(32, 64, dim=3, kernel_size=5)
+        self.conv2 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv22 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv32 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.conv4 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.fc1 = Lin(64, 64)
-        self.conv5 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv6 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv7 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv5 = SplineConv(80, 64, dim=3, kernel_size=5)
+        self.conv6 = SplineConv(80, 64, dim=3, kernel_size=5)
+        self.conv7 = SplineConv(80, 64, dim=3, kernel_size=5)
         self.fc2 = Lin(64, num_classes)
+        self.skip1 = Lin(64, 16)
+        self.skip2 = Lin(64, 16)
+        self.skip3 = Lin(64, 16)
 
     def forward(self, data1):
         # print('Num nodes', data1.num_nodes)
         data1.input = F.elu(self.conv1(data1.adj, data1.input))
+        data1.input = F.elu(self.conv12(data1.adj, data1.input))
         data2, cluster1 = voxel_max_pool(data1, 0.03, transform)
         # print('First pool', data2.num_nodes)
         data2.input = F.elu(self.conv2(data2.adj, data2.input))
+        data2.input = F.elu(self.conv22(data2.adj, data2.input))
         data3, cluster2 = voxel_max_pool(data2, 0.05, transform)
         # print('Second pool', data3.num_nodes)
         data3.input = F.elu(self.conv3(data3.adj, data3.input))
+        data3.input = F.elu(self.conv32(data3.adj, data3.input))
         data4, cluster3 = voxel_max_pool(data3, 0.07, transform)
         # print('Third pool', data4.num_nodes)
         data4.input = F.elu(self.conv4(data4.adj, data4.input))
         data4.input = F.elu(self.fc1(data4.input))
-        data3.input = upscale(data4.input, cluster3)
+
+        data3.input = torch.cat(
+            [upscale(data4.input, cluster3), self.skip3(data3.input)], dim=1)
         data3.input = F.elu(self.conv5(data3.adj, data3.input))
-        data2.input = upscale(data3.input, cluster2)
+
+        data2.input = torch.cat(
+            [upscale(data3.input, cluster2), self.skip2(data2.input)], dim=1)
         data2.input = F.elu(self.conv6(data2.adj, data2.input))
-        data1.input = upscale(data2.input, cluster1)
+
+        data1.input = torch.cat(
+            [upscale(data2.input, cluster1), self.skip1(data1.input)], dim=1)
         data1.input = F.elu(self.conv7(data1.adj, data1.input))
+
         data1.input = F.elu(self.fc2(data1.input))
+
         return F.log_softmax(data1.input, dim=1)
 
 
@@ -97,7 +116,7 @@ def train(epoch):
 def test(epoch):
     model.eval()
     correct = 0
-    iou=0
+    iou = 0
     num_examples = 0
 
     for data in test_loader:
@@ -107,7 +126,7 @@ def test(epoch):
         correct += pred.eq(data.target.data).cpu().sum()
         iou_single = 0
         num_labels = 0
-        for i in range(labelmin,labelmax+1):
+        for i in range(labelmin, labelmax + 1):
             p = pred == i
             t = data.target.data == i
 
@@ -119,15 +138,13 @@ def test(epoch):
                 iou_single += intersection / union
             num_labels += 1
 
-        iou += iou_single/num_labels
+        iou += iou_single / num_labels
         num_examples += 1
     num_nodes = test_dataset.set.input.size(0)
     acc = correct / num_nodes
     iou = iou / num_examples
 
-
     print('Epoch:', epoch, 'Accuracy:', acc, 'IoU:', iou)
-
 
 
 for epoch in range(1, 201):
