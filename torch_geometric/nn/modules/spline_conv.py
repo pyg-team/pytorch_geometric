@@ -1,7 +1,7 @@
 import torch
 from torch.nn import Module, Parameter
 
-from .utils.inits import uniform
+from .utils.inits import xavier, uniform, const
 from .utils.repr import repr
 from ..functional.spline_conv import spline_conv
 from ..functional.spline_conv.edgewise_spline_weighting_gpu \
@@ -83,9 +83,8 @@ class SplineConv(Module):
         self.basis_kernel = get_basis_kernel(self.k_max, self.K, dim, degree)
 
     def reset_parameters(self):
-        size = self.in_features * (self.K + 1)
-        uniform(size, self.weight)
-        uniform(size, self.bias)
+        xavier(self.weight)
+        const(self.bias, 0.0)
 
     def forward(self, adj, input):
         return spline_conv(
