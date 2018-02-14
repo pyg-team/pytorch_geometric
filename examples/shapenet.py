@@ -22,8 +22,8 @@ category = 'Cap'
 transform = CartesianAdj()
 train_dataset = ShapeNet(path, category, True, transform)
 test_dataset = ShapeNet(path, category, False, transform)
-train_loader = DataLoader2(train_dataset, batch_size=16, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=1)
+train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader2(test_dataset, batch_size=32)
 
 labelmin = train_dataset.set.target.min()
 labelmax = train_dataset.set.target.max()
