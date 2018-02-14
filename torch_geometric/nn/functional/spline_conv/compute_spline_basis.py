@@ -144,11 +144,11 @@ const long* kernel_size, const long* is_open_spline, int num_threads) {
 }
 '''
 
-def get_basis_kernel(k_max,K,dim,degree):
 
-    if degree==3:
+def get_basis_kernel(k_max, K, dim, degree):
+    if degree == 3:
         _spline_kernel = _spline_kernel_cubic
-    elif degree==2:
+    elif degree == 2:
         _spline_kernel = _spline_kernel_quadratic
     else:
         _spline_kernel = _spline_kernel_linear
@@ -164,12 +164,13 @@ def get_basis_kernel(k_max,K,dim,degree):
             K=K)
     return f
 
+
 def compute_spline_basis(input, kernel_size, is_open_spline, K, basis_kernel):
     assert input.is_cuda and kernel_size.is_cuda and is_open_spline.is_cuda
 
     input = input.unsqueeze(1) if len(input.size()) < 2 else input
     num_edges, dim = input.size()
-    k_max = 2**dim
+    k_max = 2 ** dim
 
     amount = input.new(num_edges, k_max)
     index = input.new(num_edges, k_max).long()
@@ -177,15 +178,15 @@ def compute_spline_basis(input, kernel_size, is_open_spline, K, basis_kernel):
 
     with torch.cuda.device_of(input):
         basis_kernel(block=(cuda_num_threads, 1, 1),
-          grid=(get_blocks(num_threads), 1, 1),
-          args=[
-              input.data_ptr(),
-              amount.data_ptr(),
-              index.data_ptr(),
-              kernel_size.data_ptr(),
-              is_open_spline.data_ptr(),
-              num_threads
-          ],
-          stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
+                     grid=(get_blocks(num_threads), 1, 1),
+                     args=[
+                         input.data_ptr(),
+                         amount.data_ptr(),
+                         index.data_ptr(),
+                         kernel_size.data_ptr(),
+                         is_open_spline.data_ptr(),
+                         num_threads
+                     ],
+                     stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
     return amount, index
