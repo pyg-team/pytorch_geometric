@@ -95,7 +95,8 @@ const long* index, int num_threads) {
 }
 '''
 
-def get_forward_kernel(M_in,M_out,k_max):
+
+def get_forward_kernel(M_in, M_out, k_max):
     cuda_tensor = torch.FloatTensor([1]).cuda()
     with torch.cuda.device_of(cuda_tensor):
         f_fw = load_kernel(
@@ -107,7 +108,8 @@ def get_forward_kernel(M_in,M_out,k_max):
             k_max=k_max)
     return f_fw
 
-def get_backward_kernel(M_in,M_out,k_max, K):
+
+def get_backward_kernel(M_in, M_out, k_max, K):
     cuda_tensor = torch.FloatTensor([1]).cuda()
     with torch.cuda.device_of(cuda_tensor):
         f_bw = load_kernel(
@@ -133,35 +135,32 @@ class EdgewiseSplineWeightingGPU(Function):
         self.f_fw = k_fw
         self.f_bw = k_bw
 
-
     def forward(self, input, weight):
         assert input.is_cuda and weight.is_cuda
 
         self.save_for_backward(input, weight)
 
-
         output = input.new(input.size(0), self.M_out)
         num_threads = output.numel()
 
         with torch.cuda.device_of(input):
-
             self.f_fw(block=(cuda_num_threads, 1, 1),
-              grid=(get_blocks(num_threads), 1, 1),
-              args=[
-                  input.data_ptr(),
-                  weight.data_ptr(),
-                  output.data_ptr(),
-                  self.amount.data_ptr(),
-                  self.index.data_ptr(),
-                  num_threads
-              ],
-              stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
+                      grid=(get_blocks(num_threads), 1, 1),
+                      args=[
+                          input.data_ptr(),
+                          weight.data_ptr(),
+                          output.data_ptr(),
+                          self.amount.data_ptr(),
+                          self.index.data_ptr(),
+                          num_threads
+                      ],
+                      stream=Stream(
+                          ptr=torch.cuda.current_stream().cuda_stream))
 
         return output
 
     def backward(self, grad_output):
         input, weight = self.saved_tensors
-
 
         grad_input = grad_output.new(input.size(0), self.M_in).fill_(0)
         grad_weight = grad_output.new(self.K, self.M_in, self.M_out).fill_(0)
@@ -170,17 +169,18 @@ class EdgewiseSplineWeightingGPU(Function):
 
         with torch.cuda.device_of(grad_output):
             self.f_bw(block=(cuda_num_threads, 1, 1),
-              grid=(get_blocks(num_threads), 1, 1),
-              args=[
-                  grad_output.data_ptr(),
-                  grad_input.data_ptr(),
-                  grad_weight.data_ptr(),
-                  input.data_ptr(),
-                  weight.data_ptr(),
-                  self.amount.data_ptr(),
-                  self.index.data_ptr(),
-                  num_threads
-              ],
-              stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
+                      grid=(get_blocks(num_threads), 1, 1),
+                      args=[
+                          grad_output.data_ptr(),
+                          grad_input.data_ptr(),
+                          grad_weight.data_ptr(),
+                          input.data_ptr(),
+                          weight.data_ptr(),
+                          self.amount.data_ptr(),
+                          self.index.data_ptr(),
+                          num_threads
+                      ],
+                      stream=Stream(
+                          ptr=torch.cuda.current_stream().cuda_stream))
 
         return grad_input, grad_weight

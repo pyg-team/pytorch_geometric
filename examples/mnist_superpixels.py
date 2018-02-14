@@ -68,7 +68,7 @@ class Net(nn.Module):
         batch = Variable(batch.view(-1, 1).expand(batch.size(0), 64))
         x = scatter_mean(batch, x)
         t_scatter_mean = time.process_time() - t_scatter_mean
-        print('t_scatter_mean',t_scatter_mean)
+        print('t_scatter_mean', t_scatter_mean)
         x = F.dropout(x, training=self.training)
         x = self.fc1(x)
         return F.log_softmax(x, dim=1)

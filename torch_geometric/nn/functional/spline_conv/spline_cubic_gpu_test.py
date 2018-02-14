@@ -18,7 +18,8 @@ class SplineQuadraticGPUTest(unittest.TestCase):
         K = 7
         dim = 1
         basis_kernel = get_basis_kernel(k_max, K, dim, 3)
-        a1, i1 = compute_spline_basis(input, kernel_size, is_open_spline, 7, basis_kernel)
+        a1, i1 = compute_spline_basis(input, kernel_size, is_open_spline, 7,
+                                      basis_kernel)
 
         a2 = [
             [0.1667, 0.6667, 0.1667, 0],
@@ -44,7 +45,8 @@ class SplineQuadraticGPUTest(unittest.TestCase):
         K = 4
         dim = 1
         basis_kernel = get_basis_kernel(k_max, K, dim, 3)
-        a1, i1 = compute_spline_basis(input, kernel_size, is_open_spline, 4, basis_kernel)
+        a1, i1 = compute_spline_basis(input, kernel_size, is_open_spline, 4,
+                                      basis_kernel)
 
         a2 = [
             [0.1667, 0.6667, 0.1667, 0],

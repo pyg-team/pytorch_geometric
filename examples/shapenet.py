@@ -18,7 +18,7 @@ from torch_geometric.nn.functional import voxel_max_pool  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ShapeNet')
 
-category = 'Cap'
+category = 'Mug'
 transform = CartesianAdj()
 train_dataset = ShapeNet(path, category, True, transform)
 test_dataset = ShapeNet(path, category, False, transform)
