@@ -26,7 +26,7 @@ path = os.path.join(path, '..', 'data', 'MNISTSuperpixels')
 train_dataset = MNISTSuperpixels(path, train=True, transform=CartesianAdj())
 test_dataset = MNISTSuperpixels(path, train=False, transform=CartesianAdj())
 
-batch_size = 128
+batch_size = 256
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
@@ -64,9 +64,11 @@ class Net(nn.Module):
         x = F.elu(self.conv3(adj, x))
 
         # Batch average.
+        t_scatter_mean = time.process_time()
         batch = Variable(batch.view(-1, 1).expand(batch.size(0), 64))
         x = scatter_mean(batch, x)
-
+        t_scatter_mean = time.process_time() - t_scatter_mean
+        print('t_scatter_mean',t_scatter_mean)
         x = F.dropout(x, training=self.training)
         x = self.fc1(x)
         return F.log_softmax(x, dim=1)
