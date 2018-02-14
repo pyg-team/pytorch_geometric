@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 import torch
 from torch.autograd import Variable
@@ -32,14 +33,19 @@ class Net(nn.Module):
         self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
+        self.attention = nn.Linear(64, 1)
         self.fc1 = nn.Linear(64, 10)
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 3, transform)
-        data.input = F.elu(self.conv2(data.adj, data.input))
         data, _ = voxel_max_pool(data, 5, transform)
+        data.input = F.elu(self.conv2(data.adj, data.input))
+        data, _ = voxel_max_pool(data, 7, transform)
         data.input = F.elu(self.conv3(data.adj, data.input))
+
+        # Attention
+        # weight = F.relu(self.attention(data.input))
+        # data.input = data.input * weight
 
         data.batch = Variable(data.batch.view(-1, 1).expand(data.input.size()))
         x = scatter_mean(data.batch, data.input)
@@ -67,13 +73,16 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
+    t_train = time.process_time()
     for data in train_loader:
         data = data.cuda().to_variable()
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, data.target)
         loss.backward()
+        # print(loss.data[0])
         optimizer.step()
+    print('Training runtime', time.process_time() - t_train)
 
 
 def test(epoch):
