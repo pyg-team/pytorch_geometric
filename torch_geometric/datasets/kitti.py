@@ -1,8 +1,13 @@
 import os
+import os.path as osp
+
+import torch
+import numpy as np
 
 from .dataset import Dataset
 from .utils.download import download_url
 from .utils.extract import extract_zip
+from .utils.nn_graph import nn_graph
 
 
 class KITTI(Dataset):
@@ -31,7 +36,12 @@ class KITTI(Dataset):
 
     @property
     def raw_files(self):
-        return ['input.sdf', 'mask.txt']
+        return [
+            'training/velodyne',
+            'training/det_2',
+            'testing/velodyne',
+            'testing/det_2',
+        ]
 
     @property
     def processed_files(self):
@@ -47,4 +57,12 @@ class KITTI(Dataset):
         os.unlink(file_path)
 
     def process(self):
-        pass
+        dir = osp.join(self.raw_folder, 'training')
+        self.process_example(dir, '000700')
+
+    def process_example(self, dir, name):
+        filename = osp.join(dir, 'velodyne', '{}.bin'.format(name))
+        scan = torch.from_numpy(np.fromfile(filename, dtype=np.float32))
+        scan = scan.view(-1, 4)  # [x, y, z, reflectance]
+        input, pos = scan[:, 3], scan[:, :3]
+        index = nn_graph(pos)
