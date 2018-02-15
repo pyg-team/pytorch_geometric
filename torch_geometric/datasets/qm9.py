@@ -50,7 +50,7 @@ class QM9(Dataset):
     def download(self):
         # Download and extract data and uncharaterized mask file.
         file_path = download_url(self.data_url, self.raw_folder)
-        extract_tar(file_path, osp.join(self.raw_folder), mode='r')
+        extract_tar(file_path, self.raw_folder, mode='r')
         os.unlink(file_path)
         os.unlink(osp.join(self.raw_folder, 'gdb9.sdf.csv'))
         download_url(self.mask_url, self.raw_folder)
