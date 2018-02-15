@@ -5,7 +5,7 @@ from string import Template
 
 import torch
 
-cuda_num_threads = 1024
+cuda_num_threads = 512
 Stream = namedtuple('Stream', ['ptr'])
 
 

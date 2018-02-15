@@ -5,23 +5,42 @@ import torch
 from torch.autograd import Variable
 from torch import nn
 import torch.nn.functional as F
+from torchvision.transforms import Compose
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.transform import CartesianAdj  # noqa
+from torch_geometric.transform import CartesianAdj, RandomRotate, RandomScale, \
+    RandomTranslate, RandomShear  # noqa
 from torch_geometric.nn.modules import SplineConv, Lin  # noqa
-from torch_geometric.nn.functional import voxel_max_pool  # noqa
+from torch_geometric.nn.functional import voxel_max_pool, voxel_avg_pool  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ShapeNet')
 
-category = 'Mug'
-transform = CartesianAdj()
-train_dataset = ShapeNet(path, category, True, transform)
-test_dataset = ShapeNet(path, category, False, transform)
+category = 'Rocket'
+
+cell_sizes = {'Cap': (0.05, 0.08, 0.12),
+              'Bag': (0.05, 0.08, 0.12),
+              'Rocket': (0.05, 0.08, 0.12),
+              'Pistol': (0.05, 0.08, 0.12),
+              'Airplane': (0.05, 0.08, 0.12),
+              'Earphone': (0.03, 0.05, 0.7),
+              'Chair': (0.03, 0.05, 0.07),
+              'Knife': (0.03, 0.05, 0.07)}
+
+train_transform = Compose([
+#    RandomRotate(0.2),
+#    RandomScale(1.1),
+#    RandomShear(0.5),
+#    RandomTranslate(0.005),
+    CartesianAdj()
+])
+test_transform = CartesianAdj()
+train_dataset = ShapeNet(path, category, True, train_transform)
+test_dataset = ShapeNet(path, category, False, test_transform)
 train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=32)
 
@@ -30,7 +49,8 @@ labelmax = train_dataset.set.target.max()
 
 num_classes = labelmax + 1
 
-
+print(len(train_dataset))
+print(len(test_dataset))
 def upscale(input, cluster):
     cluster = Variable(cluster)
     cluster = cluster.view(-1, 1).expand(cluster.size(0), input.size(1))
@@ -41,51 +61,68 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5)
-        self.conv12 = SplineConv(32, 64, dim=3, kernel_size=5)
-        self.conv2 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv22 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv32 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv4 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.fc1 = Lin(64, 64)
-        self.conv5 = SplineConv(80, 64, dim=3, kernel_size=5)
-        self.conv6 = SplineConv(80, 64, dim=3, kernel_size=5)
-        self.conv7 = SplineConv(80, 64, dim=3, kernel_size=5)
-        self.fc2 = Lin(64, num_classes)
-        self.skip1 = Lin(64, 16)
-        self.skip2 = Lin(64, 16)
-        self.skip3 = Lin(64, 16)
+        self.conv12 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv2 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv22 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv3 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv32 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv4 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv42 = SplineConv(32, 32, dim=3, kernel_size=5)
+        #self.conv42 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.fc1 = Lin(32, 32)
+        self.conv5 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv52 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv6 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv62 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv7 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv72 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.fc2 = Lin(32, num_classes)
+        self.skip1 = Lin(32, 8)
+        self.skip2 = Lin(32, 8)
+        self.skip3 = Lin(32, 8)
 
     def forward(self, data1):
-        # print('Num nodes', data1.num_nodes)
+        #print('Num nodes', data1.num_nodes)
         data1.input = F.elu(self.conv1(data1.adj, data1.input))
         data1.input = F.elu(self.conv12(data1.adj, data1.input))
-        data2, cluster1 = voxel_max_pool(data1, 0.03, transform)
-        # print('First pool', data2.num_nodes)
+        data2, cluster1 = voxel_avg_pool(data1, cell_sizes[category][0], test_transform)
+
+        #print('First pool', data2.num_nodes)
         data2.input = F.elu(self.conv2(data2.adj, data2.input))
         data2.input = F.elu(self.conv22(data2.adj, data2.input))
-        data3, cluster2 = voxel_max_pool(data2, 0.05, transform)
-        # print('Second pool', data3.num_nodes)
+        data3, cluster2 = voxel_avg_pool(data2, cell_sizes[category][1], test_transform)
+
+        #print('Second pool', data3.num_nodes)
         data3.input = F.elu(self.conv3(data3.adj, data3.input))
         data3.input = F.elu(self.conv32(data3.adj, data3.input))
-        data4, cluster3 = voxel_max_pool(data3, 0.07, transform)
-        # print('Third pool', data4.num_nodes)
+        data4, cluster3 = voxel_avg_pool(data3, cell_sizes[category][2], test_transform)
+
+        #print('Third pool', data4.num_nodes)
         data4.input = F.elu(self.conv4(data4.adj, data4.input))
+        data4.input = F.elu(self.conv42(data4.adj, data4.input))
+        #data4.input = F.elu(self.conv42(data4.adj, data4.input))
+        data4.input = F.dropout(data4.input, training=self.training)
         data4.input = F.elu(self.fc1(data4.input))
 
-        data3.input = torch.cat(
-            [upscale(data4.input, cluster3), self.skip3(data3.input)], dim=1)
+        data3.input = upscale(data4.input, cluster3)
+        #data3.input = torch.cat(
+        #    [upscale(data4.input, cluster3), self.skip3(data3.input)], dim=1)
         data3.input = F.elu(self.conv5(data3.adj, data3.input))
+        data3.input = F.elu(self.conv52(data3.adj, data3.input))
 
-        data2.input = torch.cat(
-            [upscale(data3.input, cluster2), self.skip2(data2.input)], dim=1)
+        data2.input = upscale(data3.input, cluster2)
+        #data2.input = torch.cat(
+        #    [upscale(data3.input, cluster2), self.skip2(data2.input)], dim=1)
         data2.input = F.elu(self.conv6(data2.adj, data2.input))
+        data2.input = F.elu(self.conv62(data2.adj, data2.input))
 
-        data1.input = torch.cat(
-            [upscale(data2.input, cluster1), self.skip1(data1.input)], dim=1)
+        data1.input = upscale(data2.input, cluster1)
+        #data1.input = torch.cat(
+        #    [upscale(data2.input, cluster1), self.skip1(data1.input)], dim=1)
         data1.input = F.elu(self.conv7(data1.adj, data1.input))
+        data1.input = F.elu(self.conv72(data1.adj, data1.input))
 
-        data1.input = F.elu(self.fc2(data1.input))
+        data1.input = self.fc2(data1.input)
 
         return F.log_softmax(data1.input, dim=1)
 
@@ -100,9 +137,9 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 61:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
+    #if epoch == 101:
+    #    for param_group in optimizer.param_groups:
+    #        param_group['lr'] = 0.001
 
     for data in train_loader:
         data = data.cuda().to_variable()
@@ -113,13 +150,13 @@ def train(epoch):
         optimizer.step()
 
 
-def test(epoch):
+def test(epoch, loader, print_str):
     model.eval()
     correct = 0
     iou = 0
     num_examples = 0
-
-    for data in test_loader:
+    num_nodes = 0
+    for data in loader:
         data = data.cuda().to_variable()
         output = model(data)
         pred = output.data.max(1)[1]
@@ -140,13 +177,14 @@ def test(epoch):
 
         iou += iou_single / num_labels
         num_examples += 1
-    num_nodes = test_dataset.set.input.size(0)
+        num_nodes += data.num_nodes
     acc = correct / num_nodes
     iou = iou / num_examples
 
-    print('Epoch:', epoch, 'Accuracy:', acc, 'IoU:', iou)
+    print(print_str, 'Epoch:', epoch, 'Accuracy:', acc, 'IoU:', iou)
 
 
 for epoch in range(1, 201):
     train(epoch)
-    test(epoch)
+    test(epoch, train_loader, 'Train:')
+    test(epoch, test_loader, 'Test:')
