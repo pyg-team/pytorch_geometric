@@ -35,7 +35,7 @@ class ShapeNet(Dataset):
     }
 
     def __init__(self, root, category, train=True, transform=None):
-        assert category in self.categories, 'No valid ShapeNet category'
+        assert category in self.categories, 'No valid category'
         self.id = self.categories[category]
 
         super(ShapeNet, self).__init__(root, transform)

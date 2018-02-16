@@ -13,15 +13,14 @@ from mpl_toolkits.mplot3d import Axes3D
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import ShapeNet  # noqa
+from torch_geometric.datasets import ShapeNet2  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.transform import CartesianAdj, RandomRotate, RandomScale, \
-    RandomTranslate, RandomShear  # noqa
+from torch_geometric.transform import CartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv, Lin  # noqa
 from torch_geometric.nn.functional import voxel_max_pool, voxel_avg_pool  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(path, '..', 'data', 'ShapeNet')
+path = os.path.join(path, '..', 'data', 'ShapeNet2')
 
 category = 'Cap'
 
@@ -36,6 +35,7 @@ cell_sizes = {'Cap': (0.05, 0.08, 0.12),
               'Chair': (0.03, 0.05, 0.07),
               'Knife': (0.03, 0.05, 0.07)}
 
+
 train_transform = Compose([
     #    RandomRotate(0.2),
     #    RandomScale(1.1),
@@ -44,9 +44,11 @@ train_transform = Compose([
     CartesianAdj()
 ])
 test_transform = CartesianAdj()
-train_dataset = ShapeNet(path, category, True, train_transform)
-test_dataset = ShapeNet(path, category, False, test_transform)
+train_dataset = ShapeNet2(path, category, 'train', train_transform)
+val_dataset = ShapeNet2(path, category, 'val', test_transform)
+test_dataset = ShapeNet2(path, category, 'test', test_transform)
 train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
+val_loader = DataLoader2(val_dataset, batch_size=32)
 test_loader = DataLoader2(test_dataset, batch_size=32)
 test_loader_visualize = DataLoader2(test_dataset, batch_size=1)
 
@@ -55,8 +57,9 @@ labelmax = train_dataset.set.target.max()
 
 num_classes = labelmax - labelmin + 1
 
-print(len(train_dataset))
-print(len(test_dataset))
+print('Length of train set:', len(train_dataset))
+print('Length of val set:  ', len(val_dataset))
+print('Length of test set: ', len(test_dataset))
 
 
 def upscale(input, cluster):
@@ -68,8 +71,8 @@ def upscale(input, cluster):
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5)
-        self.conv12 = SplineConv(32, 32, dim=3, kernel_size=5)
+        self.conv1 = SplineConv(33, 64, dim=3, kernel_size=5)
+        self.conv12 = SplineConv(64, 32, dim=3, kernel_size=5)
         self.conv2 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.conv22 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.conv3 = SplineConv(32, 32, dim=3, kernel_size=5)
@@ -152,6 +155,7 @@ def train(epoch):
     #    for param_group in optimizer.param_groups:
     #        param_group['lr'] = 0.001
 
+
     for data in train_loader:
         data = data.cuda().to_variable()
         optimizer.zero_grad()
@@ -218,7 +222,9 @@ def show_pointclouds():
 
 for epoch in range(1, 61):
     train(epoch)
-    test(epoch, train_loader, 'Train:')
-    test(epoch, test_loader, 'Test:')
+    print('----------------------------')
+    test(epoch, train_loader, 'Train --')
+    test(epoch, val_loader, 'Val   --')
+    test(epoch, test_loader, 'Test  --')
 
 show_pointclouds()
