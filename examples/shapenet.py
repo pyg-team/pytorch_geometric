@@ -7,6 +7,9 @@ from torch import nn
 import torch.nn.functional as F
 from torchvision.transforms import Compose
 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
@@ -20,11 +23,13 @@ from torch_geometric.nn.functional import voxel_max_pool, voxel_avg_pool  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ShapeNet')
 
-category = 'Rocket'
+category = 'Cap'
 
 cell_sizes = {'Cap': (0.05, 0.08, 0.12),
               'Bag': (0.05, 0.08, 0.12),
-              'Rocket': (0.05, 0.08, 0.12),
+              'Lamp': (0.05, 0.08, 0.12),
+              'Laptop': (0.05, 0.08, 0.12),
+              'Rocket': (0.015, 0.03, 0.06),
               'Pistol': (0.05, 0.08, 0.12),
               'Airplane': (0.05, 0.08, 0.12),
               'Earphone': (0.03, 0.05, 0.7),
@@ -32,10 +37,10 @@ cell_sizes = {'Cap': (0.05, 0.08, 0.12),
               'Knife': (0.03, 0.05, 0.07)}
 
 train_transform = Compose([
-#    RandomRotate(0.2),
-#    RandomScale(1.1),
-#    RandomShear(0.5),
-#    RandomTranslate(0.005),
+    #    RandomRotate(0.2),
+    #    RandomScale(1.1),
+    #    RandomShear(0.5),
+    #    RandomTranslate(0.005),
     CartesianAdj()
 ])
 test_transform = CartesianAdj()
@@ -43,14 +48,17 @@ train_dataset = ShapeNet(path, category, True, train_transform)
 test_dataset = ShapeNet(path, category, False, test_transform)
 train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=32)
+test_loader_visualize = DataLoader2(test_dataset, batch_size=1)
 
 labelmin = train_dataset.set.target.min()
 labelmax = train_dataset.set.target.max()
 
-num_classes = labelmax + 1
+num_classes = labelmax - labelmin + 1
 
 print(len(train_dataset))
 print(len(test_dataset))
+
+
 def upscale(input, cluster):
     cluster = Variable(cluster)
     cluster = cluster.view(-1, 1).expand(cluster.size(0), input.size(1))
@@ -68,7 +76,7 @@ class Net(nn.Module):
         self.conv32 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.conv4 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.conv42 = SplineConv(32, 32, dim=3, kernel_size=5)
-        #self.conv42 = SplineConv(32, 32, dim=3, kernel_size=5)
+        # self.conv42 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.fc1 = Lin(32, 32)
         self.conv5 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.conv52 = SplineConv(32, 32, dim=3, kernel_size=5)
@@ -82,42 +90,45 @@ class Net(nn.Module):
         self.skip3 = Lin(32, 8)
 
     def forward(self, data1):
-        #print('Num nodes', data1.num_nodes)
+        # print('Num nodes', data1.num_nodes)
         data1.input = F.elu(self.conv1(data1.adj, data1.input))
         data1.input = F.elu(self.conv12(data1.adj, data1.input))
-        data2, cluster1 = voxel_avg_pool(data1, cell_sizes[category][0], test_transform)
+        data2, cluster1 = voxel_max_pool(data1, cell_sizes[category][0],
+                                         test_transform)
 
-        #print('First pool', data2.num_nodes)
+        # print('First pool', data2.num_nodes)
         data2.input = F.elu(self.conv2(data2.adj, data2.input))
         data2.input = F.elu(self.conv22(data2.adj, data2.input))
-        data3, cluster2 = voxel_avg_pool(data2, cell_sizes[category][1], test_transform)
+        data3, cluster2 = voxel_max_pool(data2, cell_sizes[category][1],
+                                         test_transform)
 
-        #print('Second pool', data3.num_nodes)
+        # print('Second pool', data3.num_nodes)
         data3.input = F.elu(self.conv3(data3.adj, data3.input))
         data3.input = F.elu(self.conv32(data3.adj, data3.input))
-        data4, cluster3 = voxel_avg_pool(data3, cell_sizes[category][2], test_transform)
+        data4, cluster3 = voxel_max_pool(data3, cell_sizes[category][2],
+                                         test_transform)
 
-        #print('Third pool', data4.num_nodes)
+        # print('Third pool', data4.num_nodes)
         data4.input = F.elu(self.conv4(data4.adj, data4.input))
         data4.input = F.elu(self.conv42(data4.adj, data4.input))
-        #data4.input = F.elu(self.conv42(data4.adj, data4.input))
+        # data4.input = F.elu(self.conv42(data4.adj, data4.input))
         data4.input = F.dropout(data4.input, training=self.training)
         data4.input = F.elu(self.fc1(data4.input))
 
         data3.input = upscale(data4.input, cluster3)
-        #data3.input = torch.cat(
+        # data3.input = torch.cat(
         #    [upscale(data4.input, cluster3), self.skip3(data3.input)], dim=1)
         data3.input = F.elu(self.conv5(data3.adj, data3.input))
         data3.input = F.elu(self.conv52(data3.adj, data3.input))
 
         data2.input = upscale(data3.input, cluster2)
-        #data2.input = torch.cat(
+        # data2.input = torch.cat(
         #    [upscale(data3.input, cluster2), self.skip2(data2.input)], dim=1)
         data2.input = F.elu(self.conv6(data2.adj, data2.input))
         data2.input = F.elu(self.conv62(data2.adj, data2.input))
 
         data1.input = upscale(data2.input, cluster1)
-        #data1.input = torch.cat(
+        # data1.input = torch.cat(
         #    [upscale(data2.input, cluster1), self.skip1(data1.input)], dim=1)
         data1.input = F.elu(self.conv7(data1.adj, data1.input))
         data1.input = F.elu(self.conv72(data1.adj, data1.input))
@@ -137,7 +148,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    #if epoch == 101:
+    # if epoch == 101:
     #    for param_group in optimizer.param_groups:
     #        param_group['lr'] = 0.001
 
@@ -145,6 +156,7 @@ def train(epoch):
         data = data.cuda().to_variable()
         optimizer.zero_grad()
         output = model(data)
+        data.target.data -= labelmin
         loss = F.nll_loss(output, data.target)
         loss.backward()
         optimizer.step()
@@ -159,11 +171,12 @@ def test(epoch, loader, print_str):
     for data in loader:
         data = data.cuda().to_variable()
         output = model(data)
+        data.target.data -= labelmin
         pred = output.data.max(1)[1]
         correct += pred.eq(data.target.data).cpu().sum()
         iou_single = 0
         num_labels = 0
-        for i in range(labelmin, labelmax + 1):
+        for i in range(num_classes):
             p = pred == i
             t = data.target.data == i
 
@@ -184,7 +197,28 @@ def test(epoch, loader, print_str):
     print(print_str, 'Epoch:', epoch, 'Accuracy:', acc, 'IoU:', iou)
 
 
-for epoch in range(1, 201):
+def show_pointclouds():
+    model.eval()
+    for data in test_loader_visualize:
+        data = data.cuda().to_variable()
+        output = model(data)
+        pred = output.data.max(1)[1]
+        print(data.pos)
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 2, 1, projection='3d')
+        ax_gt = fig.add_subplot(1, 2, 2, projection='3d')
+        ax.axis('equal')
+        ax.scatter(data.pos[:, 0], data.pos[:, 1], data.pos[:, 2], c=pred,
+                   alpha=1, )
+        ax_gt.axis('equal')
+        ax_gt.scatter(data.pos[:, 0], data.pos[:, 1], data.pos[:, 2],
+                      c=data.target.data, alpha=1, )
+        plt.show()
+
+
+for epoch in range(1, 61):
     train(epoch)
     test(epoch, train_loader, 'Train:')
     test(epoch, test_loader, 'Test:')
+
+show_pointclouds()
