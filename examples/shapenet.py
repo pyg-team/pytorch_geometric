@@ -25,17 +25,22 @@ path = os.path.join(path, '..', 'data', 'ShapeNet2')
 
 category = 'Pistol'
 
-cell_sizes = {'Cap': (0.05, 0.08, 0.12),
+cell_sizes = {'Airplane': (0.05, 0.08, 0.12),
               'Bag': (0.05, 0.08, 0.12),
+              'Cap': (0.05, 0.08, 0.12),
+              'Car': (0.05, 0.08, 0.12),
+              'Chair': (0.03, 0.05, 0.07),
+              'Earphone': (0.03, 0.05, 0.7),
+              'Guitar': (0.05, 0.08, 0.12),
+              'Knife': (0.03, 0.05, 0.07),
               'Lamp': (0.05, 0.08, 0.12),
               'Laptop': (0.05, 0.08, 0.12),
-              'Rocket': (0.015, 0.03, 0.06),
+              'Motorbike': (0.05, 0.08, 0.12),
+              'Mug': (0.05, 0.08, 0.12),
               'Pistol': (0.05, 0.08, 0.12),
-              'Airplane': (0.05, 0.08, 0.12),
-              'Earphone': (0.03, 0.05, 0.7),
-              'Chair': (0.03, 0.05, 0.07),
-              'Knife': (0.03, 0.05, 0.07)}
-
+              'Rocket': (0.015, 0.03, 0.06),
+              'Skateboard': (0.05, 0.08, 0.12),
+              'Table': (0.05, 0.08, 0.12)}
 
 train_transform = Compose([
     #    RandomRotate(0.2),
