@@ -15,7 +15,7 @@ from torch_geometric.datasets import MNISTSuperpixels2  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import CartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
-from torch_geometric.nn.functional import voxel_max_pool  # noqa
+from torch_geometric.nn.functional import voxel_avg_pool  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'MNISTSuperpixels2')
@@ -23,8 +23,8 @@ path = os.path.join(path, '..', 'data', 'MNISTSuperpixels2')
 transform = CartesianAdj()
 train_dataset = MNISTSuperpixels2(path, True, transform=transform)
 test_dataset = MNISTSuperpixels2(path, False, transform=transform)
-train_loader = DataLoader2(train_dataset, batch_size=512, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=512)
+train_loader = DataLoader2(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader2(test_dataset, batch_size=64)
 
 
 class Net(nn.Module):
@@ -33,19 +33,14 @@ class Net(nn.Module):
         self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
-        self.attention = nn.Linear(64, 1)
         self.fc1 = nn.Linear(64, 10)
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 5, transform)
+        data, _ = voxel_avg_pool(data, 5, transform)
         data.input = F.elu(self.conv2(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 7, transform)
+        data, _ = voxel_avg_pool(data, 7, transform)
         data.input = F.elu(self.conv3(data.adj, data.input))
-
-        # Attention
-        # weight = F.relu(self.attention(data.input))
-        # data.input = data.input * weight
 
         data.batch = Variable(data.batch.view(-1, 1).expand(data.input.size()))
         x = scatter_mean(data.batch, data.input)
@@ -80,9 +75,8 @@ def train(epoch):
         output = model(data)
         loss = F.nll_loss(output, data.target)
         loss.backward()
-        # print(loss.data[0])
         optimizer.step()
-    print('Training runtime', time.process_time() - t_train)
+    # print('Training runtime:', time.process_time() - t_train)
 
 
 def test(epoch):
