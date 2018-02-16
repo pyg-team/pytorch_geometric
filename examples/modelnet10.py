@@ -14,8 +14,8 @@ path = os.path.join(path, '..', 'data', 'ModelNet10')
 transform = CartesianAdj()
 train_dataset = ModelNet10(path, True, transform=transform)
 test_dataset = ModelNet10(path, False, transform=transform)
-train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=32)
+train_loader = DataLoader2(train_dataset, batch_size=16, shuffle=True)
+test_loader = DataLoader2(test_dataset, batch_size=16)
 
 for data in train_loader:
     data = data.cuda().to_variable()
