@@ -242,4 +242,5 @@ class Dataset(BaseDataset):
             elif not isinstance(set, Set):
                 raise ValueError('No valid processed object type')
 
+            print(set)
             torch.save(set, self._processed_files[i])
