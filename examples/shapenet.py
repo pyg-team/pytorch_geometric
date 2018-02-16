@@ -12,8 +12,8 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.transform import CartesianAdj, RandomRotate, RandomScale, \
-    RandomTranslate, RandomShear  # noqa
+from torch_geometric.transform import (CartesianAdj, RandomRotate, RandomScale,
+                                       RandomTranslate, RandomShear)  # noqa
 from torch_geometric.nn.modules import SplineConv, Lin  # noqa
 from torch_geometric.nn.functional import voxel_max_pool, voxel_avg_pool  # noqa
 
@@ -22,20 +22,22 @@ path = os.path.join(path, '..', 'data', 'ShapeNet')
 
 category = 'Rocket'
 
-cell_sizes = {'Cap': (0.05, 0.08, 0.12),
-              'Bag': (0.05, 0.08, 0.12),
-              'Rocket': (0.05, 0.08, 0.12),
-              'Pistol': (0.05, 0.08, 0.12),
-              'Airplane': (0.05, 0.08, 0.12),
-              'Earphone': (0.03, 0.05, 0.7),
-              'Chair': (0.03, 0.05, 0.07),
-              'Knife': (0.03, 0.05, 0.07)}
+cell_sizes = {
+    'Cap': (0.05, 0.08, 0.12),
+    'Bag': (0.05, 0.08, 0.12),
+    'Rocket': (0.05, 0.08, 0.12),
+    'Pistol': (0.05, 0.08, 0.12),
+    'Airplane': (0.05, 0.08, 0.12),
+    'Earphone': (0.03, 0.05, 0.7),
+    'Chair': (0.03, 0.05, 0.07),
+    'Knife': (0.03, 0.05, 0.07)
+}
 
 train_transform = Compose([
-#    RandomRotate(0.2),
-#    RandomScale(1.1),
-#    RandomShear(0.5),
-#    RandomTranslate(0.005),
+    #    RandomRotate(0.2),
+    #    RandomScale(1.1),
+    #    RandomShear(0.5),
+    #    RandomTranslate(0.005),
     CartesianAdj()
 ])
 test_transform = CartesianAdj()
@@ -51,6 +53,8 @@ num_classes = labelmax + 1
 
 print(len(train_dataset))
 print(len(test_dataset))
+
+
 def upscale(input, cluster):
     cluster = Variable(cluster)
     cluster = cluster.view(-1, 1).expand(cluster.size(0), input.size(1))
@@ -68,7 +72,7 @@ class Net(nn.Module):
         self.conv32 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.conv4 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.conv42 = SplineConv(32, 32, dim=3, kernel_size=5)
-        #self.conv42 = SplineConv(32, 32, dim=3, kernel_size=5)
+        # self.conv42 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.fc1 = Lin(32, 32)
         self.conv5 = SplineConv(32, 32, dim=3, kernel_size=5)
         self.conv52 = SplineConv(32, 32, dim=3, kernel_size=5)
@@ -82,42 +86,45 @@ class Net(nn.Module):
         self.skip3 = Lin(32, 8)
 
     def forward(self, data1):
-        #print('Num nodes', data1.num_nodes)
+        # print('Num nodes', data1.num_nodes)
         data1.input = F.elu(self.conv1(data1.adj, data1.input))
         data1.input = F.elu(self.conv12(data1.adj, data1.input))
-        data2, cluster1 = voxel_avg_pool(data1, cell_sizes[category][0], test_transform)
+        data2, cluster1 = voxel_avg_pool(data1, cell_sizes[category][0],
+                                         test_transform)
 
-        #print('First pool', data2.num_nodes)
+        # print('First pool', data2.num_nodes)
         data2.input = F.elu(self.conv2(data2.adj, data2.input))
         data2.input = F.elu(self.conv22(data2.adj, data2.input))
-        data3, cluster2 = voxel_avg_pool(data2, cell_sizes[category][1], test_transform)
+        data3, cluster2 = voxel_avg_pool(data2, cell_sizes[category][1],
+                                         test_transform)
 
-        #print('Second pool', data3.num_nodes)
+        # print('Second pool', data3.num_nodes)
         data3.input = F.elu(self.conv3(data3.adj, data3.input))
         data3.input = F.elu(self.conv32(data3.adj, data3.input))
-        data4, cluster3 = voxel_avg_pool(data3, cell_sizes[category][2], test_transform)
+        data4, cluster3 = voxel_avg_pool(data3, cell_sizes[category][2],
+                                         test_transform)
 
-        #print('Third pool', data4.num_nodes)
+        # print('Third pool', data4.num_nodes)
         data4.input = F.elu(self.conv4(data4.adj, data4.input))
         data4.input = F.elu(self.conv42(data4.adj, data4.input))
-        #data4.input = F.elu(self.conv42(data4.adj, data4.input))
+        # data4.input = F.elu(self.conv42(data4.adj, data4.input))
         data4.input = F.dropout(data4.input, training=self.training)
         data4.input = F.elu(self.fc1(data4.input))
 
         data3.input = upscale(data4.input, cluster3)
-        #data3.input = torch.cat(
+        # data3.input = torch.cat(
         #    [upscale(data4.input, cluster3), self.skip3(data3.input)], dim=1)
         data3.input = F.elu(self.conv5(data3.adj, data3.input))
         data3.input = F.elu(self.conv52(data3.adj, data3.input))
 
         data2.input = upscale(data3.input, cluster2)
-        #data2.input = torch.cat(
+        # data2.input = torch.cat(
         #    [upscale(data3.input, cluster2), self.skip2(data2.input)], dim=1)
         data2.input = F.elu(self.conv6(data2.adj, data2.input))
         data2.input = F.elu(self.conv62(data2.adj, data2.input))
 
         data1.input = upscale(data2.input, cluster1)
-        #data1.input = torch.cat(
+        # data1.input = torch.cat(
         #    [upscale(data2.input, cluster1), self.skip1(data1.input)], dim=1)
         data1.input = F.elu(self.conv7(data1.adj, data1.input))
         data1.input = F.elu(self.conv72(data1.adj, data1.input))
