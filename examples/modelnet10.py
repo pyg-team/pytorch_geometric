@@ -4,18 +4,18 @@ import sys
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import QM9  # noqa
+from torch_geometric.datasets import ModelNet10  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import CartesianAdj  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(path, '..', 'data', 'QM9')
+path = os.path.join(path, '..', 'data', 'ModelNet10')
 
 transform = CartesianAdj()
-train_dataset = QM9(path, True, transform=transform)
-test_dataset = QM9(path, False, transform=transform)
-train_loader = DataLoader2(train_dataset, batch_size=512, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=512)
+train_dataset = ModelNet10(path, True, transform=transform)
+test_dataset = ModelNet10(path, False, transform=transform)
+train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader2(test_dataset, batch_size=32)
 
 for data in train_loader:
     data = data.cuda().to_variable()

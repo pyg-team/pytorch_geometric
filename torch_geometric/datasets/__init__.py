@@ -12,9 +12,11 @@ from .cuneiform import Cuneiform
 from .cuneiform2 import Cuneiform2
 from .qm9 import QM9
 from .kitti import KITTI
+from .modelnet10 import ModelNet10
+from .modelnet40 import ModelNet40
 
 __all__ = [
     'Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels',
     'MNISTSuperpixels2', 'ShapeNet', 'ShapeNet2', 'Cuneiform', 'Cuneiform2',
-    'QM9', 'KITTI'
+    'QM9', 'KITTI', 'ModelNet10', 'ModelNet40'
 ]
