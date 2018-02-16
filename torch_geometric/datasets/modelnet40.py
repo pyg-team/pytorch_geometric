@@ -13,20 +13,13 @@ from .utils.nn_graph import nn_graph
 
 
 class ShapeNet2(Dataset):
-    url = 'https://shapenet.cs.stanford.edu/ericyi/scnn_data.zip'
+    url = 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
 
-    categories = [
-        'Airplane', 'Bag', 'Cap', 'Car', 'Chair', 'Earphone', 'Guitar',
-        'Knife', 'Lamp', 'Laptop', 'Motorbike', 'Mug', 'Pistol', 'Rocket',
-        'Skateboard', 'Table'
-    ]
     sets = ['train', 'val', 'test']
 
-    def __init__(self, root, category, set='train', transform=None):
-        assert category in self.categories, 'No valid category'
+    def __init__(self, root, set='train', transform=None):
         assert set in self.sets, 'No valid set name'
 
-        self.category = category
         super(ShapeNet2, self).__init__(root, transform)
 
         name = self._processed_files[self.sets.index(set)]
@@ -36,14 +29,22 @@ class ShapeNet2(Dataset):
 
     @property
     def raw_files(self):
-        return 'Data/Categories/{}'.format(self.category)
+        return ['Data/airplane/','Data/bathtub/', 'Data/bed/','Data/bench/',
+                'Data/bookshelf/', 'Data/bottle/', 'Data/bowl/','Data/car/',
+                'Data/chair/', 'Data/cone/', 'Data/cup/', 'Data/curtain/',
+                'Data/desk/', 'Data/door/', 'Data/dresser/', 'Data/flower_pot/',
+                'Data/glass_box/', 'Data/guitar/', 'Data/keyboard/',
+                'Data/lamp/', 'Data/laptop/', 'Data/mantel/', 'Data/monitor/',
+                'Data/night_stand/',
+                'Data/person/', 'Data/piano/', 'Data/plant/', 'Data/radio/',
+                'Data/chair/', 'Data/cone/', 'Data/cup/', 'Data/curtain/',
+                'Data/chair/', 'Data/cone/', 'Data/cup/', 'Data/curtain/']
 
     @property
     def processed_files(self):
         return [
-            '{}_training.pt'.format(self.category),
-            '{}_val.pt'.format(self.category),
-            '{}_test.pt'.format(self.category),
+            'training.pt'
+            'test.pt'
         ]
 
     def download(self):
