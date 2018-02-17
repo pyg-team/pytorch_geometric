@@ -14,8 +14,9 @@ def read_off(filename):
     pos = torch.FloatTensor(pos).view(-1, 3)
 
     face = [int(x) for x in data[num_nodes * 3 + 4:]]
-    face = torch.LongTensor(face).view(-1, 4)[:, 1:]
+    face = torch.LongTensor(face).view(-1, 4)[:, 1:].contiguous()
 
     index = edges_from_faces(face)
+    input = pos.new(num_nodes).fill_(1)
 
-    return Data(None, pos, index, None, None)
+    return Data(input, pos, index, None, None)

@@ -7,7 +7,7 @@ import torch
 from .dataset import Dataset
 from .utils.download import download_url
 from .utils.extract import extract_zip
-from .utils.spinner import Spinner
+from .utils.progress import Progress
 from .utils.off import read_off
 
 
@@ -18,6 +18,7 @@ class ModelNet10(Dataset):
         'bathtub', 'bed', 'chair', 'desk', 'dresser', 'monitor', 'night_stand',
         'sofa', 'table', 'toilet'
     ]
+    num_examples = 3991 + 908  # train + test
 
     def __init__(self, root, train=True, transform=None):
         super(ModelNet10, self).__init__(root, transform)
@@ -40,18 +41,18 @@ class ModelNet10(Dataset):
 
     def process(self):
         train, test = [], []
-        spinner = Spinner('Processing').start()
+        p = Progress('Processing', end=self.num_examples, type='')
         for target, category in enumerate(self.categories):
             dir = osp.join(self.raw_folder, 'ModelNet10', category)
             train_files = glob.glob('{}/train/*.off'.format(dir))
             test_files = glob.glob('{}/test/*.off'.format(dir))
-            train += [self.process_example(f, target) for f in train_files]
-            test += [self.process_example(f, target) for f in test_files]
-        spinner.success()
+            train += [self.process_example(f, target, p) for f in train_files]
+            test += [self.process_example(f, target, p) for f in test_files]
+        p.success()
         return train, test
 
-    def process_example(self, filename, target):
+    def process_example(self, filename, target, progress):
         data = read_off(filename)
-        data.input = data.pos.new(data.pos.size(0)).fill_(1)
         data.target = target
+        progress.inc()
         return data
