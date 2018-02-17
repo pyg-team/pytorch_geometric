@@ -5,3 +5,5 @@ plyfile>=0.5
 torch-scatter
 torch-unique
 torch-cluster
+cupy
+requests
