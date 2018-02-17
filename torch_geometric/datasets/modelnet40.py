@@ -21,7 +21,7 @@ class ModelNet40(Dataset):
         'radio', 'range_hood', 'sink', 'sofa', 'stairs', 'stool', 'table',
         'tent', 'toilet', 'tv_stand', 'vase', 'wardrobe', 'xbox'
     ]
-    num_examples = 30991 + 9008  # train + test
+    num_examples = 9843 + 2468  # train + test
 
     def __init__(self, root, train=True, transform=None):
         super(ModelNet40, self).__init__(root, transform)
