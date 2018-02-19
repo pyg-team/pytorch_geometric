@@ -35,6 +35,7 @@ class Progress(object):
         self.spinner.start()
 
     def update(self, curr):
+        self.curr = curr
         per = round((curr / self.end) * self.bar_size)
         bar = '{}{}'.format(self.complete[:per], self.incomplete[per:])
         count = '{}{}'.format(str(curr).rjust(self.curr_size), self.count)
@@ -43,6 +44,12 @@ class Progress(object):
         sys.stdout.write('{}{} {}'.format(CLEAR, bar, count))
         self.lock.release()
         sys.stdout.flush()
+
+    def inc(self, value=1):
+        self.update(self.curr + value)
+
+    def dec(self, value=1):
+        self.update(self.curr - value)
 
     def success(self):
         self.spinner.success()

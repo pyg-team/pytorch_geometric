@@ -22,6 +22,7 @@ from torch_geometric.nn.functional import voxel_avg_pool, voxel_max_pool  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
 
+
 train_transform = Compose([
         #RandomRotate([0, 0, 2]),
         #RandomScale(1.1),
@@ -142,4 +143,3 @@ for epoch in range(1, 31):
     train(epoch)
     test(epoch,train_loader, train_dataset)
     test(epoch,test_loader, test_dataset)
-
