@@ -81,14 +81,14 @@ class ShapeNet(Dataset):
 
         train_set, test_set = [], []
         cur = 0
-        for idx, id in enumerate(ids):
+        for id in ids:
             data = self.process_example(pos_dir, target_dir, id)
             if cur < len(test_split) and id == test_split[cur]:
                 cur += 1
                 test_set.append(data)
             else:
                 train_set.append(data)
-            progress.update(idx + 1)
+            progress.inc()
         progress.success()
 
         return train_set, test_set
