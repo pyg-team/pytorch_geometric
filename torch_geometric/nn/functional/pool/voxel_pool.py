@@ -9,10 +9,15 @@ def voxel_max_pool(data, size, origin=None, fake_nodes=False, transform=None):
     size = repeat_to(size, data.pos.size(1))
     size = data.pos.new(size)
 
-    c, b = grid_cluster(data.pos, size, data.batch, origin, fake_nodes)
-    b = None if fake_nodes else b
-    input, index, pos = max_pool(data.input, data.index, data.pos, c)
-    data = Data(input, pos, index, None, data.target, b)
+    if fake_nodes:
+        c, C = grid_cluster(data.pos, size, data.batch, origin, fake_nodes)
+        input, index, pos = max_pool(data.input, data.index, data.pos, c, C)
+        batch = None
+    else:
+        c, batch = grid_cluster(data.pos, size, data.batch, origin)
+        input, index, pos = max_pool(data.input, data.index, data.pos, c)
+
+    data = Data(input, pos, index, None, data.target, batch)
 
     if transform is not None:
         data = transform(data)
