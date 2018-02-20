@@ -44,3 +44,11 @@ class VoxelPoolTest(unittest.TestCase):
         expected_grad = [[0, 5], [2, 0], [1, 6], [3, 4], [2, 0], [0, 5],
                          [1, 6], [3, 4]]
         assert_equal(input.grad.tolist(), expected_grad)
+
+    def test_voxel_pool_with_offset_and_fake_nodes(self):
+        input = torch.FloatTensor([[1, 5], [2, 4], [3, 3], [4, 2], [5, 1]])
+        pos = torch.FloatTensor([[3, 1], [4, 1], [12, 1], [6, 1], [14, 1]])
+        index = torch.LongTensor([[0, 1, 1, 2, 3, 4], [1, 0, 2, 1, 4, 3]])
+        batch = torch.LongTensor([0, 0, 0, 1, 1])
+        data = Data(input, pos, index, None, None, batch)
+        data, cluster = voxel_max_pool(data, 5, offset=0, fake_nodes=True)
