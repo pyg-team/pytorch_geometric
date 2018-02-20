@@ -19,6 +19,8 @@ def _pool(index, position, cluster):
 
 def _max_pool(input, cluster):
     fill = -999999
+    if input.dim() == 1:
+        input = input.unsqueeze(1)
     cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
     if torch.is_tensor(input):
         x = scatter_max(cluster, input, dim=0, fill_value=fill)[0]
