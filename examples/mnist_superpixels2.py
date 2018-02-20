@@ -37,12 +37,12 @@ class Net(nn.Module):
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 3.5, offset=0, transform=transform)
+        data, _ = voxel_max_pool(data, 5, origin=0, transform=transform)
         data.input = F.elu(self.conv2(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 7, offset=0, transform=transform)
+        data, _ = voxel_max_pool(data, 7, origin=0, transform=transform)
         data.input = F.elu(self.conv3(data.adj, data.input))
         data, _ = voxel_max_pool(
-            data, 14, offset=0, fake_nodes=True, transform=transform)
+            data, 14, origin=0, fake_nodes=True, transform=transform)
 
         x = data.input.view(-1, 4 * 64)
         x = F.elu(self.fc1(x))
@@ -61,11 +61,11 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train(epoch):
     model.train()
 
-    if epoch == 21:
+    if epoch == 6:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
 
-    if epoch == 31:
+    if epoch == 16:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
@@ -91,6 +91,6 @@ def test(epoch):
     print('Epoch:', epoch, 'Test Accuracy:', correct / len(test_dataset))
 
 
-for epoch in range(1, 41):
+for epoch in range(1, 21):
     train(epoch)
     test(epoch)
