@@ -31,8 +31,8 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
-        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
-        self.fc1 = nn.Linear(256, 128)
+        self.conv3 = SplineConv(64, 128, dim=2, kernel_size=5)
+        self.fc1 = nn.Linear(512, 128)
         self.fc2 = nn.Linear(128, 10)
 
     def forward(self, data):
@@ -44,7 +44,7 @@ class Net(nn.Module):
         data, _ = voxel_max_pool(
             data, 14, origin=0, fake_nodes=True, transform=transform)
 
-        x = data.input.view(-1, 4 * 64)
+        x = data.input.view(-1, 4 * 128)
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)

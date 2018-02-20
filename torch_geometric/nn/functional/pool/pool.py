@@ -1,4 +1,3 @@
-import torch
 from torch.autograd import Variable
 from torch_scatter import scatter_max, scatter_mean
 
@@ -17,30 +16,20 @@ def _pool(index, position, cluster):
     return index, position
 
 
-def _max_pool(input, cluster):
-    fill = -999999
+def _max_pool(input, cluster, size):
     if input.dim() == 1:
         input = input.unsqueeze(1)
-    cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
-    if torch.is_tensor(input):
+
+    cluster = Variable(cluster.unsqueeze(1).expand(-1, input.size(1)))
+    fill = -999999
+    if size is None:
         x = scatter_max(cluster, input, dim=0, fill_value=fill)[0]
     else:
-        x = scatter_max(Variable(cluster), input, dim=0, fill_value=fill)[0]
-    x[x == fill] = 0
+        x = scatter_max(cluster, input, dim=0, size=size, fill_value=fill)[0]
+        x[x == fill] = 0
     return x
 
 
-def max_pool(input, index, position, cluster):
-    return (_max_pool(input, cluster), ) + _pool(index, position, cluster)
-
-
-def _avg_pool(input, cluster):
-    cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
-    if torch.is_tensor(input):
-        return scatter_mean(cluster, input, dim=0)
-    else:
-        return scatter_mean(Variable(cluster), input, dim=0)
-
-
-def avg_pool(input, index, position, cluster):
-    return (_avg_pool(input, cluster), ) + _pool(index, position, cluster)
+def max_pool(input, index, position, cluster, size=None):
+    x = _max_pool(input, cluster, size)
+    return (x, ) + _pool(index, position, cluster)

@@ -14,20 +14,20 @@ sys.path.insert(0, '..')
 from torch_geometric.datasets import ModelNet10  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import (RandomRotate, RandomScale,
-                                        RandomTranslate, RandomShear)  # noqa
-from torch_geometric.transform import CartesianAdj  # noqa
+                                       RandomTranslate, RandomShear)  # noqa
+from torch_geometric.transform import ScaleNormalize, CartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import voxel_avg_pool, voxel_max_pool  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
 
-
 train_transform = Compose([
-        #RandomRotate([0, 0, 2]),
-        #RandomScale(1.1),
-        #RandomShear(0.5),
-        #RandomTranslate(0.005),
+    #RandomRotate([0, 0, 2]),
+    #RandomScale(1.1),
+    #RandomShear(0.5),
+    #RandomTranslate(0.005),
+    ScaleNormalize(),
     CartesianAdj()
 ])
 test_transform = CartesianAdj()
@@ -35,7 +35,8 @@ train_dataset = ModelNet10(path, True, transform=train_transform)
 test_dataset = ModelNet10(path, False, transform=test_transform)
 train_loader = DataLoader2(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=1)
-num_classes=10
+num_classes = 10
+
 
 class Net(nn.Module):
     def __init__(self):
@@ -53,11 +54,11 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(64, num_classes)
 
     def forward(self, data):
-        max, min = torch.max(data.pos, 0)[0], torch.min(data.pos,0)[0]
-        pool1_cells = ((max-min)/64).cpu().tolist()
-        pool2_cells = ((max-min)/32).cpu().tolist()
-        pool3_cells = ((max-min)/16).cpu().tolist()
-        pool4_cells = ((max-min)/8).cpu().tolist()
+        max, min = torch.max(data.pos, 0)[0], torch.min(data.pos, 0)[0]
+        pool1_cells = ((max - min) / 64).cpu().tolist()
+        pool2_cells = ((max - min) / 32).cpu().tolist()
+        pool3_cells = ((max - min) / 16).cpu().tolist()
+        pool4_cells = ((max - min) / 8).cpu().tolist()
         #pool1_cells = torch.mean(pool1_cells)
         #pool2_cells = torch.mean(pool2_cells)
         #pool3_cells = torch.mean(pool3_cells)
@@ -65,7 +66,7 @@ class Net(nn.Module):
         #print('Num nodes', data.num_nodes)
         data.input = F.elu(self.conv1(data.adj, data.input))
         data.input = F.elu(self.conv12(data.adj, data.input))
-        data, _ = voxel_max_pool(data,pool1_cells, test_transform)
+        data, _ = voxel_max_pool(data, pool1_cells, test_transform)
         #print('FirstPool:', data.num_nodes)
         data.input = F.elu(self.conv2(data.adj, data.input))
         data.input = F.elu(self.conv3(data.adj, data.input))
@@ -83,7 +84,7 @@ class Net(nn.Module):
 
         #data.batch = Variable(data.batch.view(-1, 1).expand(data.input.size()))
         #x = scatter_mean(data.batch, data.input)
-        x = data.input.mean(0).view(1,-1)
+        x = data.input.mean(0).view(1, -1)
         x = self.fc1(x)
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
@@ -110,7 +111,7 @@ def train(epoch):
     example = 0
     loss_accum = 0
     loss_count = 0
-    for i,data in enumerate(train_loader):
+    for i, data in enumerate(train_loader):
         data = data.cuda().to_variable()
         optimizer.zero_grad()
         output = model(data)
@@ -120,13 +121,14 @@ def train(epoch):
         loss.backward()
         optimizer.step()
         if i % 100 == 0:
-            print('Example',example, 'of',len(train_dataset),'. Loss:', loss_accum/loss_count)
+            print('Example', example, 'of', len(train_dataset), '. Loss:',
+                  loss_accum / loss_count)
             loss_accum = 0
             loss_count = 0
-        example +=1
+        example += 1
 
 
-def test(epoch,loader, ds):
+def test(epoch, loader, ds):
     model.eval()
     correct = 0
 
@@ -141,5 +143,5 @@ def test(epoch,loader, ds):
 
 for epoch in range(1, 31):
     train(epoch)
-    test(epoch,train_loader, train_dataset)
-    test(epoch,test_loader, test_dataset)
+    test(epoch, train_loader, train_dataset)
+    test(epoch, test_loader, test_dataset)
