@@ -32,21 +32,22 @@ class Net(nn.Module):
         self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
-        self.fc1 = nn.Linear(64, 10)
+        self.fc1 = nn.Linear(256, 128)
+        self.fc2 = nn.Linear(128, 10)
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 5, transform)
+        data, _ = voxel_max_pool(data, 3.5, offset=0, transform=transform)
         data.input = F.elu(self.conv2(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 7, transform)
+        data, _ = voxel_max_pool(data, 7, offset=0, transform=transform)
         data.input = F.elu(self.conv3(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 9, transform)
+        data, _ = voxel_max_pool(
+            data, 14, offset=0, fake_nodes=True, transform=transform)
 
-        data.batch = Variable(data.batch.view(-1, 1).expand(data.input.size()))
-        x = scatter_mean(data.batch, data.input)
-
+        x = data.input.view(-1, 4 * 64)
+        x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
-        x = self.fc1(x)
+        x = self.fc2(x)
         return F.log_softmax(x, dim=1)
 
 
