@@ -26,7 +26,8 @@ def _max_pool(input, cluster, size):
         x = scatter_max(cluster, input, dim=0, fill_value=fill)[0]
     else:
         x = scatter_max(cluster, input, dim=0, size=size, fill_value=fill)[0]
-        x[x == fill] = 0
+        mask = x == fill
+        x[mask.data] = 0
     return x
 
 
