@@ -16,11 +16,10 @@ class CartesianLocalAdj(object):
 
         row_idx = row.unsqueeze(1).expand(row.size(0), weight.size(1))
 
-        max_n, _ = scatter_max(row_idx, weight, dim=0, fill_value=-9999999)
-        max_n, _ = max_n.abs().max(dim=1)
+        max_n, _ = scatter_max(row_idx, weight.abs(), dim=0)
+        max_n, _ = max_n.max(dim=1)
 
         max_e = max_n.gather(dim=0, index=row)
-
         weight *= 1 / (2 * max_e.unsqueeze(1))
         weight += 0.5
 
