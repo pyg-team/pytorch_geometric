@@ -50,10 +50,10 @@ trans1 = Compose([
     #NormalizeScale(),
     #RandomTranslate(0.005),
     NormalizeScale(),
-    CartesianLocalAdj()
+    CartesianAdj()
 ])
 
-trans2 = CartesianLocalAdj()
+trans2 = CartesianAdj()
 train_dataset = ShapeNet2(path, category, 'train', trans1)
 val_dataset = ShapeNet2(path, category, 'val', trans1)
 test_dataset = ShapeNet2(path, category, 'test', trans1)
