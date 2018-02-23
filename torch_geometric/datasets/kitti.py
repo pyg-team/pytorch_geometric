@@ -11,6 +11,15 @@ from .utils.extract import extract_zip, extract_tar
 from .utils.progress import Progress
 from .utils.nn_graph import nn_graph
 
+from .utils.dir import make_dirs
+
+
+def _to_list(x):
+    return x if isinstance(x, list) else [x]
+
+def _exists(files):
+    return all([osp.exists(f) for f in _to_list(files)])
+
 
 class KITTI(Dataset):
     """`KITTI Vision Benchmark <http://www.cvlibs.net/datasets/kitti>`_
@@ -38,6 +47,7 @@ class KITTI(Dataset):
 
     def __init__(self, root, train=True, transform=None):
         super(KITTI, self).__init__(root, transform)
+        self.train = train
 
     @property
     def raw_files(self):
@@ -62,7 +72,11 @@ class KITTI(Dataset):
         extract_tar(file_path, self.raw_folder)
         os.unlink(file_path)
 
-    def process(self):
+    def _process(self):
+        if self._exists(self._processed_files):
+            return
+
+        make_dirs(self.processed_folder)
         with open(osp.join(self.raw_folder, 'ImageSets/train.txt'), 'r') as f:
             train_files = f.read().split()
         with open(osp.join(self.raw_folder, 'ImageSets/val.txt'), 'r') as f:
@@ -73,13 +87,17 @@ class KITTI(Dataset):
         num_examples = 200
         progress = Progress('Processing', end=num_examples, type='')
         for i in range(100):
-            train.append(self.process_example(self.raw_folder, train_files[i]))
+            data = self.process_example(self.raw_folder, train_files[i])
             progress.inc()
+            torch.save(data, self.processed_folder+'/train/'+'example'+str(i)+'.pt')
         for i in range(100):
-            test.append(self.process_example(self.raw_folder, test_files[i]))
+            data = self.process_example(self.raw_folder, test_files[i])
             progress.inc()
+            torch.save(data, self.processed_folder+'/test/'+'example'+str(i)+'.pt')
 
         # return train, test
+
+
 
     def process_example(self, dir, name):
         filename = osp.join(dir, 'training', 'velodyne', '{}.bin'.format(name))
@@ -102,3 +120,10 @@ class KITTI(Dataset):
         target = target[:, (0, 3, 8, 9, 10, 11, 12, 13, 14)]
 
         return Data(input, pos, index, None, target)
+
+    def __getitem__(self, i):
+        traintest = 'train' if self.train else 'test'
+        data = torch.load(self.processed_folder+'/train/'+'example'+str(i)+'.pt')
+        if self.transform is not None:
+            data = self.transform(data)
+        return data
