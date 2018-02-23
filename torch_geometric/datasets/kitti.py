@@ -55,14 +55,17 @@ class KITTI(Dataset):
 
     @property
     def processed_files(self):
-        return ['training.pt', 'test.pt']
+        return [self.processed_folder+'/train/'+'example'+str(i)+'.pt'
+                for i in range(100)] + \
+               [self.processed_folder+'/test/'+'example'+str(i)+'.pt'
+                for i in range(100)]
 
     def download(self):
         file_path = download_url(self.data_url, self.raw_folder)
         extract_zip(file_path, self.raw_folder)
         os.unlink(file_path)
         shutil.rmtree(osp.join(self.raw_folder, 'testing'))
-        shutil.rmtree(osp.join(self.raw_folder, 'training', 'det_2'))
+
 
         file_path = download_url(self.target_url, self.raw_folder)
         extract_zip(file_path, self.raw_folder)
@@ -73,7 +76,7 @@ class KITTI(Dataset):
         os.unlink(file_path)
 
     def _process(self):
-        if self._exists(self._processed_files):
+        if _exists(self._processed_files):
             return
 
         make_dirs(self.processed_folder)
@@ -86,9 +89,12 @@ class KITTI(Dataset):
         # num_examples = len(train_files) + len(test_files)
         num_examples = 200
         progress = Progress('Processing', end=num_examples, type='')
+        make_dirs(self.processed_folder+'/train/')
+        make_dirs(self.processed_folder+'/test/')
         for i in range(100):
             data = self.process_example(self.raw_folder, train_files[i])
             progress.inc()
+            make_dirs(self.processed_folder+'/train/')
             torch.save(data, self.processed_folder+'/train/'+'example'+str(i)+'.pt')
         for i in range(100):
             data = self.process_example(self.raw_folder, test_files[i])
@@ -127,3 +133,7 @@ class KITTI(Dataset):
         if self.transform is not None:
             data = self.transform(data)
         return data
+
+# TODO: testset -> correct one
+    def __len__(self):
+        return 100
