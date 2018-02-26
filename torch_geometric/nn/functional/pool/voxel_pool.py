@@ -9,7 +9,10 @@ def sparse_voxel_max_pool(data, size, start=None, transform=None):
     size = repeat_to(size, data.pos.size(1))
     size = data.pos.new(size)
 
-    cluster, batch = sparse_grid_cluster(data.pos, size, data.batch, start)
+    output = sparse_grid_cluster(data.pos, size, data.batch, start)
+    cluster = output[0] if isinstance(output, tuple) else output
+    batch = output[1] if isinstance(output, tuple) else None
+
     input, index, pos = max_pool(data.input, data.index, data.pos, cluster)
 
     data = Data(input, pos, index, None, data.target, batch)

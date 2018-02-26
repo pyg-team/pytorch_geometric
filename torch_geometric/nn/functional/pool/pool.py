@@ -1,3 +1,4 @@
+import torch
 from torch.autograd import Variable
 from torch_scatter import scatter_max, scatter_mean
 
@@ -6,6 +7,7 @@ from .coalesce import remove_self_loops, coalesce
 
 def _pool(index, position, cluster):
     # Map edge indices to new cluster indices.
+    index = index.contiguous()
     index = cluster[index.view(-1)].view(2, -1)
     index = remove_self_loops(index)  # Remove self loops.
     index = coalesce(index)  # Remove duplicates.
@@ -20,7 +22,9 @@ def _max_pool(input, cluster, size):
     if input.dim() == 1:
         input = input.unsqueeze(1)
 
-    cluster = Variable(cluster.unsqueeze(1).expand(-1, input.size(1)))
+    cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
+    cluster = cluster if torch.is_tensor(input) else Variable(cluster)
+
     fill = -999999
     if size is None:
         x = scatter_max(cluster, input, dim=0, fill_value=fill)[0]
