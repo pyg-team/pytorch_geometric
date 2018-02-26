@@ -2,7 +2,7 @@ import torch
 
 from ...graph.geometry import edges_from_faces
 from ..dataset import Data
-
+import torch_unique
 
 def read_off(filename):
     with open(filename, 'r') as f:
@@ -23,6 +23,24 @@ def read_off(filename):
     face = torch.LongTensor(face).view(-1, 4)[:, 1:].contiguous()
 
     index = edges_from_faces(face)
+
+    # Delete isolated vertices
+    unique = torch_unique.unique(index[0])
+    pos = pos[unique]
+    perm = []
+    j = 0
+    for i in range(num_nodes):
+        if j<unique.size()[0] and i == unique[j]:
+            perm.append(j)
+            j += 1
+        else:
+            perm.append(-1)
+    perm = torch.LongTensor(perm)
+    index[0] = perm[index[0]]
+    index[1] = perm[index[1]]
+
+    # Create input features
+    num_nodes = unique.size()
     input = pos.new(num_nodes).fill_(1)
 
     return Data(input, pos, index, None, None)
