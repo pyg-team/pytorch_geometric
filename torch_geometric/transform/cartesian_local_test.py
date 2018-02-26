@@ -12,4 +12,3 @@ class CartesianLocalTest(unittest.TestCase):
         data = Data(None, pos, index, None, None)
 
         data = CartesianLocalAdj()(data)
-        print(data.weight)
