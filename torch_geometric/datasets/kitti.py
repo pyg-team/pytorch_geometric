@@ -5,20 +5,12 @@ import shutil
 import torch
 import numpy as np
 
-from .dataset import Dataset, Data
+from .dataset import Dataset, Data, _exists
 from .utils.download import download_url
 from .utils.extract import extract_zip, extract_tar
+from .utils.dir import make_dirs
 from .utils.progress import Progress
 from .utils.nn_graph import nn_graph
-
-from .utils.dir import make_dirs
-
-
-def _to_list(x):
-    return x if isinstance(x, list) else [x]
-
-def _exists(files):
-    return all([osp.exists(f) for f in _to_list(files)])
 
 
 class KITTI(Dataset):
@@ -66,7 +58,6 @@ class KITTI(Dataset):
         os.unlink(file_path)
         shutil.rmtree(osp.join(self.raw_folder, 'testing'))
 
-
         file_path = download_url(self.target_url, self.raw_folder)
         extract_zip(file_path, self.raw_folder)
         os.unlink(file_path)
@@ -89,21 +80,23 @@ class KITTI(Dataset):
         # num_examples = len(train_files) + len(test_files)
         num_examples = 200
         progress = Progress('Processing', end=num_examples, type='')
-        make_dirs(self.processed_folder+'/train/')
-        make_dirs(self.processed_folder+'/test/')
+        make_dirs(self.processed_folder + '/train/')
+        make_dirs(self.processed_folder + '/test/')
         for i in range(100):
             data = self.process_example(self.raw_folder, train_files[i])
             progress.inc()
-            make_dirs(self.processed_folder+'/train/')
-            torch.save(data, self.processed_folder+'/train/'+'example'+str(i)+'.pt')
+            make_dirs(self.processed_folder + '/train/')
+            torch.save(
+                data,
+                self.processed_folder + '/train/' + 'example' + str(i) + '.pt')
         for i in range(100):
             data = self.process_example(self.raw_folder, test_files[i])
             progress.inc()
-            torch.save(data, self.processed_folder+'/test/'+'example'+str(i)+'.pt')
+            torch.save(
+                data,
+                self.processed_folder + '/test/' + 'example' + str(i) + '.pt')
 
         # return train, test
-
-
 
     def process_example(self, dir, name):
         filename = osp.join(dir, 'training', 'velodyne', '{}.bin'.format(name))
@@ -129,11 +122,14 @@ class KITTI(Dataset):
 
     def __getitem__(self, i):
         traintest = 'train' if self.train else 'test'
-        data = torch.load(self.processed_folder+'/train/'+'example'+str(i)+'.pt')
+        data = torch.load(
+            self.processed_folder + '/train/' + 'example' + str(i) + '.pt')
         if self.transform is not None:
             data = self.transform(data)
         return data
 
+
 # TODO: testset -> correct one
+
     def __len__(self):
         return 100
