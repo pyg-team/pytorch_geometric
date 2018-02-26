@@ -2,10 +2,8 @@ import os
 import sys
 
 import torch
-from torch.autograd import Variable
 from torch import nn
 import torch.nn.functional as F
-from torch_scatter import scatter_mean
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
@@ -14,7 +12,8 @@ from torch_geometric.datasets import MNISTSuperpixels2  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import CartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
-from torch_geometric.nn.functional import voxel_max_pool  # noqa
+from torch_geometric.nn.functional import (sparse_voxel_max_pool,
+                                           dense_voxel_max_pool)  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'MNISTSuperpixels2')
@@ -37,12 +36,12 @@ class Net(nn.Module):
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 5, origin=0, transform=transform)
+        data = sparse_voxel_max_pool(data, 5, 0, transform)
         data.input = F.elu(self.conv2(data.adj, data.input))
-        data, _ = voxel_max_pool(data, 7, origin=0, transform=transform)
+        data = sparse_voxel_max_pool(data, 7, 0, transform)
         data.input = F.elu(self.conv3(data.adj, data.input))
-        data, _ = voxel_max_pool(
-            data, 14, origin=0, fake_nodes=True, transform=transform)
+
+        data = dense_voxel_max_pool(data, 14, 0, 28, transform)
 
         x = data.input.view(-1, 4 * 128)
         x = F.elu(self.fc1(x))
