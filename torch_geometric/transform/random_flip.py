@@ -23,6 +23,6 @@ class RandomFlip(object):
         self.p = p
 
     def __call__(self, data):
-        if random.random < self.p:
+        if random.random() < self.p:
             return flip(data, self.axis)
         return data
