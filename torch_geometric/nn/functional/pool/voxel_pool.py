@@ -1,25 +1,35 @@
-from torch_cluster import grid_cluster
+from torch_cluster import sparse_grid_cluster, dense_grid_cluster
 
 from .pool import max_pool
 from ....datasets.dataset import Data
 from ...modules.spline_conv import repeat_to
 
 
-def voxel_max_pool(data, size, origin=None, fake_nodes=False, transform=None):
+def sparse_voxel_max_pool(data, size, start=None, transform=None):
     size = repeat_to(size, data.pos.size(1))
     size = data.pos.new(size)
 
-    if fake_nodes:
-        c, C = grid_cluster(data.pos, size, data.batch, origin, fake_nodes)
-        input, index, pos = max_pool(data.input, data.index, data.pos, c, C)
-        batch = None
-    else:
-        c, batch = grid_cluster(data.pos, size, data.batch, origin)
-        input, index, pos = max_pool(data.input, data.index, data.pos, c)
+    cluster, batch = sparse_grid_cluster(data.pos, size, data.batch, start)
+    input, index, pos = max_pool(data.input, data.index, data.pos, cluster)
 
     data = Data(input, pos, index, None, data.target, batch)
 
     if transform is not None:
         data = transform(data)
 
-    return data, c
+    return data
+
+
+def dense_voxel_max_pool(data, size, start=None, end=None, transform=None):
+    size = repeat_to(size, data.pos.size(1))
+    size = data.pos.new(size)
+
+    cluster, C = dense_grid_cluster(data.pos, size, data.batch, start, end)
+    input, index, pos = max_pool(data.input, data.index, data.pos, cluster, C)
+
+    data = Data(input, pos, index, None, data.target)
+
+    if transform is not None:
+        data = transform(data)
+
+    return data
