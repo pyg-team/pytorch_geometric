@@ -36,12 +36,12 @@ class Net(nn.Module):
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.adj, data.input))
-        data = sparse_voxel_max_pool(data, 5, 0, transform)
+        data, _ = sparse_voxel_max_pool(data, 5, 0, transform)
         data.input = F.elu(self.conv2(data.adj, data.input))
-        data = sparse_voxel_max_pool(data, 7, 0, transform)
+        data, _ = sparse_voxel_max_pool(data, 7, 0, transform)
         data.input = F.elu(self.conv3(data.adj, data.input))
 
-        data = dense_voxel_max_pool(data, 14, 0, 28, transform)
+        data, _ = dense_voxel_max_pool(data, 14, 0, 28, transform)
 
         x = data.input.view(-1, 4 * 128)
         x = F.elu(self.fc1(x))
