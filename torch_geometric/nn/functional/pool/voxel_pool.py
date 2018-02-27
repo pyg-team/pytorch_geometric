@@ -20,7 +20,7 @@ def sparse_voxel_max_pool(data, size, start=None, transform=None):
     if transform is not None:
         data = transform(data)
 
-    return data
+    return data, cluster
 
 
 def dense_voxel_max_pool(data, size, start=None, end=None, transform=None):
@@ -35,4 +35,4 @@ def dense_voxel_max_pool(data, size, start=None, end=None, transform=None):
     if transform is not None:
         data = transform(data)
 
-    return data
+    return data, cluster
