@@ -31,7 +31,7 @@ const long* kernel_size, const long* is_open_spline, int num_threads) {
       k_idx >>= 1;
 
       value = input[e_idx * ${dim} + d_idx];
-      if (value >= 1) { a = 0; i = 0; break; }
+      if (value > 1) { a = 0; i = 0; break; }
       value *= kernel_size[d_idx] - is_open_spline[d_idx];
 
       frac = value - floor(value);
