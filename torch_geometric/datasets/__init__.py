@@ -14,9 +14,10 @@ from .qm9 import QM9
 from .kitti import KITTI
 from .modelnet10 import ModelNet10
 from .modelnet40 import ModelNet40
+from .modelnet10_pc import ModelNet10PC
 
 __all__ = [
     'Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels',
     'MNISTSuperpixels2', 'ShapeNet', 'ShapeNet2', 'Cuneiform', 'Cuneiform2',
-    'QM9', 'KITTI', 'ModelNet10', 'ModelNet40'
+    'QM9', 'KITTI', 'ModelNet10', 'ModelNet40', 'ModelNet10PC'
 ]
