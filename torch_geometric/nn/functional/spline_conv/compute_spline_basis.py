@@ -30,8 +30,9 @@ const long* kernel_size, const long* is_open_spline, int num_threads) {
       k_idx_mod = k_idx % 2;
       k_idx >>= 1;
 
-      value = input[e_idx * ${dim} + d_idx] *
-              (kernel_size[d_idx] - is_open_spline[d_idx]);
+      value = input[e_idx * ${dim} + d_idx];
+      if (value >= 1) { a = 0; i = 0; break; }
+      value *= kernel_size[d_idx] - is_open_spline[d_idx];
 
       frac = value - floor(value);
 
@@ -170,23 +171,23 @@ def compute_spline_basis(input, kernel_size, is_open_spline, K, basis_kernel):
 
     input = input.unsqueeze(1) if len(input.size()) < 2 else input
     num_edges, dim = input.size()
-    k_max = 2 ** dim
+    k_max = 2**dim
 
     amount = input.new(num_edges, k_max)
     index = input.new(num_edges, k_max).long()
     num_threads = amount.numel()
 
     with torch.cuda.device_of(input):
-        basis_kernel(block=(cuda_num_threads, 1, 1),
-                     grid=(get_blocks(num_threads), 1, 1),
-                     args=[
-                         input.data_ptr(),
-                         amount.data_ptr(),
-                         index.data_ptr(),
-                         kernel_size.data_ptr(),
-                         is_open_spline.data_ptr(),
-                         num_threads
-                     ],
-                     stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
+        basis_kernel(
+            block=(cuda_num_threads, 1, 1),
+            grid=(get_blocks(num_threads), 1, 1),
+            args=[
+                input.data_ptr(),
+                amount.data_ptr(),
+                index.data_ptr(),
+                kernel_size.data_ptr(),
+                is_open_spline.data_ptr(), num_threads
+            ],
+            stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
     return amount, index
