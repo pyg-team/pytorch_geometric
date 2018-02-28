@@ -40,6 +40,6 @@ def read_off(filename):
     index = torch.stack([perm[index[0]], perm[index[1]]], dim=0)
 
     # Create input features.
-    input = pos.new(pos.size(0)).fill_(1)
+    input = torch.ones(pos.size(0))
 
     return Data(input, pos, index, None, None)
