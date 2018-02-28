@@ -119,7 +119,7 @@ class Data(object):
         else:
             return self.weight.size(0)
 
-    def _transer(self, func, props=None):
+    def _transfer(self, func, props=None):
         props = self._props if props is None else _to_list(props)
         for prop in props:
             setattr(self, prop, func(getattr(self, prop)))
@@ -130,16 +130,16 @@ class Data(object):
         def func(x):
             return x.cuda() if torch.cuda.is_available() else x
 
-        return self._transer(func, props)
+        return self._transfer(func, props)
 
     def cpu(self, props=None):
-        return self._transer(lambda x: x.cpu(), props)
+        return self._transfer(lambda x: x.cpu(), props)
 
     def to_variable(self, props=['input', 'target']):
-        return self._transer(lambda x: Variable(x), props)
+        return self._transfer(lambda x: Variable(x), props)
 
     def to_tensor(self, props=['input', 'target']):
-        return self._transer(lambda x: x.data, props)
+        return self._transfer(lambda x: x.data, props)
 
 
 class Set(Data):

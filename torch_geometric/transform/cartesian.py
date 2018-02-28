@@ -8,12 +8,16 @@ class CartesianAdj(object):
     :math:`P \in \mathbb{R}^{N x D}` of graph nodes to the graph's edge
     attributes."""
 
+    def __init__(self, r=None):
+        self.r = r
+
     def __call__(self, data):
         row, col = data.index
 
         # Compute Cartesian pseudo-coordinates.
         weight = data.pos[col] - data.pos[row]
-        weight *= 1 / (2 * weight.abs().max())
+        max = weight.abs().max() if self.r is None else self.r
+        weight *= 1 / (2 * max)
         weight += 0.5
 
         if data.weight is None:
