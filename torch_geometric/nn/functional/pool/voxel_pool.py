@@ -6,8 +6,10 @@ from ...modules.spline_conv import repeat_to
 
 
 def sparse_voxel_max_pool(data, size, start=None, transform=None):
-    size = repeat_to(size, data.pos.size(1))
-    size = data.pos.new(size)
+    size = data.pos.new(repeat_to(size, data.pos.size(1)))
+
+    if start is not None:
+        start = data.pos.new(repeat_to(start, data.pos.size(1)))
 
     output = sparse_grid_cluster(data.pos, size, data.batch, start)
     cluster = output[0] if isinstance(output, tuple) else output
@@ -24,8 +26,13 @@ def sparse_voxel_max_pool(data, size, start=None, transform=None):
 
 
 def dense_voxel_max_pool(data, size, start=None, end=None, transform=None):
-    size = repeat_to(size, data.pos.size(1))
-    size = data.pos.new(size)
+    size = data.pos.new(repeat_to(size, data.pos.size(1)))
+
+    if start is not None:
+        start = data.pos.new(repeat_to(start, data.pos.size(1)))
+
+    if end is not None:
+        end = data.pos.new(repeat_to(end, data.pos.size(1)))
 
     cluster, C = dense_grid_cluster(data.pos, size, data.batch, start, end)
     input, index, pos = max_pool(data.input, data.index, data.pos, cluster, C)
