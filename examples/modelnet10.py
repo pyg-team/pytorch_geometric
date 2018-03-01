@@ -21,7 +21,7 @@ from torch_geometric.nn.functional import (sparse_voxel_max_pool,
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
 
-transform = CartesianAdj(r=0.05)
+transform = CartesianAdj(0.05)
 train_transform = Compose([NormalizeScale(), transform])
 test_transform = Compose([NormalizeScale(), transform])
 train_dataset = ModelNet10(path, True, transform=train_transform)
@@ -106,7 +106,8 @@ def train():
     for data in train_loader:
         data = data.cuda().to_variable()
         optimizer.zero_grad()
-        F.nll_loss(model(data), data.target).backward()
+        loss = F.nll_loss(model(data), data.target)
+        loss.backward()
         optimizer.step()
 
 
