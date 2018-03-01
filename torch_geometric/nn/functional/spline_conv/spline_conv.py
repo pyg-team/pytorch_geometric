@@ -18,7 +18,8 @@ def spline_conv(
         backward_kernel,
         basis_kernel,
         degree=1,
-        bias=None, ):
+        bias=None):
+
     if input.dim() == 1:
         input = input.unsqueeze(1)
 

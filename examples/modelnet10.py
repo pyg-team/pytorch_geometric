@@ -13,7 +13,7 @@ sys.path.insert(0, '..')
 from torch_geometric.datasets import ModelNet10  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import (NormalizeScale, RandomFlip,
-                                       LogCartesianAdj)  # noqa
+                                       CartesianAdj)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
@@ -21,8 +21,8 @@ from torch_geometric.nn.functional import (sparse_voxel_max_pool,
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
 
-transform = LogCartesianAdj(30)
-train_transform = Compose([NormalizeScale(), RandomFlip(0), transform])
+transform = CartesianAdj(0.05)
+train_transform = Compose([NormalizeScale(), transform])
 test_transform = Compose([NormalizeScale(), transform])
 train_dataset = ModelNet10(path, True, transform=train_transform)
 test_dataset = ModelNet10(path, False, transform=test_transform)
@@ -50,27 +50,25 @@ class Net(nn.Module):
         return size, start
 
     def forward(self, data):
-        size, start = self.pool_args(64, 16)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
-
         data.input = F.elu(self.conv1(data.adj, data.input))
         size, start = self.pool_args(32, 8)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
+        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj(
+            1 / 16))
 
         data.input = F.elu(self.conv2(data.adj, data.input))
         size, start = self.pool_args(16, 4)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
+        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj(1 / 8))
 
         data.input = F.elu(self.conv3(data.adj, data.input))
         size, start = self.pool_args(8, 2)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
+        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj(1 / 4))
 
         data.input = F.elu(self.conv4(data.adj, data.input))
         size, start = self.pool_args(4, 1)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
+        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj())
 
         data.input = F.elu(self.conv5(data.adj, data.input))
-        data, _ = dense_voxel_max_pool(data, 0.5, 0, 1, transform)
+        data, _ = dense_voxel_max_pool(data, 0.5, 0, 1, CartesianAdj())
 
         x = data.input.view(-1, 8 * 128)
         x = F.elu(self.fc1(x))
@@ -108,7 +106,8 @@ def train():
     for data in train_loader:
         data = data.cuda().to_variable()
         optimizer.zero_grad()
-        F.nll_loss(model(data), data.target).backward()
+        loss = F.nll_loss(model(data), data.target)
+        loss.backward()
         optimizer.step()
 
 

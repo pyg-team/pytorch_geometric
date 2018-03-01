@@ -1,8 +1,8 @@
 import torch
 from torch.autograd import Function
 
-from ....utils.cuda import (cuda_num_threads, Stream, Dtype, load_kernel,
-                            kernel_loop, get_blocks)
+from ....utils.cuda import (cuda_num_threads, Stream, load_kernel, kernel_loop,
+                            get_blocks)
 
 _edgewise_spline_weighting_forward_kernel = kernel_loop + '''
 extern "C"
@@ -144,18 +144,17 @@ class EdgewiseSplineWeightingGPU(Function):
         num_threads = output.numel()
 
         with torch.cuda.device_of(input):
-            self.f_fw(block=(cuda_num_threads, 1, 1),
-                      grid=(get_blocks(num_threads), 1, 1),
-                      args=[
-                          input.data_ptr(),
-                          weight.data_ptr(),
-                          output.data_ptr(),
-                          self.amount.data_ptr(),
-                          self.index.data_ptr(),
-                          num_threads
-                      ],
-                      stream=Stream(
-                          ptr=torch.cuda.current_stream().cuda_stream))
+            self.f_fw(
+                block=(cuda_num_threads, 1, 1),
+                grid=(get_blocks(num_threads), 1, 1),
+                args=[
+                    input.data_ptr(),
+                    weight.data_ptr(),
+                    output.data_ptr(),
+                    self.amount.data_ptr(),
+                    self.index.data_ptr(), num_threads
+                ],
+                stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
         return output
 
@@ -168,19 +167,18 @@ class EdgewiseSplineWeightingGPU(Function):
         num_threads = grad_output.numel()
 
         with torch.cuda.device_of(grad_output):
-            self.f_bw(block=(cuda_num_threads, 1, 1),
-                      grid=(get_blocks(num_threads), 1, 1),
-                      args=[
-                          grad_output.data_ptr(),
-                          grad_input.data_ptr(),
-                          grad_weight.data_ptr(),
-                          input.data_ptr(),
-                          weight.data_ptr(),
-                          self.amount.data_ptr(),
-                          self.index.data_ptr(),
-                          num_threads
-                      ],
-                      stream=Stream(
-                          ptr=torch.cuda.current_stream().cuda_stream))
+            self.f_bw(
+                block=(cuda_num_threads, 1, 1),
+                grid=(get_blocks(num_threads), 1, 1),
+                args=[
+                    grad_output.data_ptr(),
+                    grad_input.data_ptr(),
+                    grad_weight.data_ptr(),
+                    input.data_ptr(),
+                    weight.data_ptr(),
+                    self.amount.data_ptr(),
+                    self.index.data_ptr(), num_threads
+                ],
+                stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
         return grad_input, grad_weight
