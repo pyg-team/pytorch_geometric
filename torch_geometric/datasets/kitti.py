@@ -78,18 +78,18 @@ class KITTI(Dataset):
 
         train, test = [], []
         # num_examples = len(train_files) + len(test_files)
-        num_examples = 200
+        num_examples = 7481
         progress = Progress('Processing', end=num_examples, type='')
         make_dirs(self.processed_folder + '/train/')
         make_dirs(self.processed_folder + '/test/')
-        for i in range(100):
+        for i in range(3712):
             data = self.process_example(self.raw_folder, train_files[i])
             progress.inc()
             make_dirs(self.processed_folder + '/train/')
             torch.save(
                 data,
                 self.processed_folder + '/train/' + 'example' + str(i) + '.pt')
-        for i in range(100):
+        for i in range(3769):
             data = self.process_example(self.raw_folder, test_files[i])
             progress.inc()
             torch.save(
@@ -102,9 +102,14 @@ class KITTI(Dataset):
         filename = osp.join(dir, 'training', 'velodyne', '{}.bin'.format(name))
         scan = torch.from_numpy(np.fromfile(filename, dtype=np.float32))
         scan = scan.view(-1, 4)  # [x, y, z, reflectance]
+        mask = (scan[:,2]<=1) * (scan[:,2]>=-3) * (scan[:,1]>=-40) * \
+               (scan[:,1]<=40) * (scan[:,0]>=0) * (scan[:,0]<=70.4)
+
+        scan = scan[mask.nonzero(),:].squeeze()
         pos, input = scan[:, :3], scan[:, 3]
         index = None
         target = None
+
         index = nn_graph(pos)
 
         filename = osp.join(dir, 'training', 'label_2', '{}.txt'.format(name))
@@ -122,8 +127,8 @@ class KITTI(Dataset):
 
     def __getitem__(self, i):
         traintest = 'train' if self.train else 'test'
-        data = torch.load(
-            self.processed_folder + '/train/' + 'example' + str(i) + '.pt')
+        data = torch.load(self.processed_folder+'/'+traintest+'/'+'example'+
+                          str(i)+'.pt')
         if self.transform is not None:
             data = self.transform(data)
         return data
@@ -132,4 +137,7 @@ class KITTI(Dataset):
 # TODO: testset -> correct one
 
     def __len__(self):
-        return 100
+        if self.train:
+            return 3712
+        else:
+            return 3769
