@@ -9,8 +9,7 @@ def edges_from_faces(faces):
     n = faces.max() + 1
 
     # Build directed adjacency matrix.
-    adj = torch.sparse.FloatTensor(edges.t(),
-                                   torch.ones(edges.size(0)),
+    adj = torch.sparse.FloatTensor(edges.t(), torch.ones(edges.size(0)),
                                    torch.Size([n, n]))
 
     # Convert to undirected adjacency matrix.
