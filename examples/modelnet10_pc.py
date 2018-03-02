@@ -6,7 +6,6 @@ import time
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torchvision.transforms import Compose
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
@@ -17,29 +16,22 @@ from torch_geometric.transform import NormalizeScale, CartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
-from torch_geometric.visualization.model import show_model  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10PC')
 
-transform = Compose([NormalizeScale(), CartesianAdj()])
-train_dataset = ModelNet10PC(path, True, transform=transform)
-test_dataset = ModelNet10PC(path, False, transform=transform)
+train_dataset = ModelNet10PC(path, True, transform=NormalizeScale())
+test_dataset = ModelNet10PC(path, False, transform=NormalizeScale())
 train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=32)
-
-data = train_dataset[1]
-show_model(data, show_edges=True)
-raise NotImplementedError()
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5)
-        self.conv2 = SplineConv(32, 64, dim=3, kernel_size=5)
-        self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv4 = SplineConv(64, 128, dim=3, kernel_size=5)
+        self.conv1 = SplineConv(1, 64, dim=3, kernel_size=5)
+        self.conv2 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv3 = SplineConv(64, 128, dim=3, kernel_size=5)
         self.fc1 = nn.Linear(8 * 128, 256)
         self.fc2 = nn.Linear(256, 10)
 
@@ -51,22 +43,22 @@ class Net(nn.Module):
         return size, start
 
     def forward(self, data):
+        # data.input = F.elu(self.conv1(data.adj, data.input))
+        size, start = self.pool_args(13, 5)
+        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj())
+
         data.input = F.elu(self.conv1(data.adj, data.input))
-        size, start = self.pool_args(24, 4)
+        size, start = self.pool_args(7, 3)
         data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj())
 
         data.input = F.elu(self.conv2(data.adj, data.input))
-        size, start = self.pool_args(12, 2)
+        size, start = self.pool_args(5, 2)
         data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj())
 
         data.input = F.elu(self.conv3(data.adj, data.input))
-        size, start = self.pool_args(6, 1)
-        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj())
-
-        data.input = F.elu(self.conv4(data.adj, data.input))
         data, _ = dense_voxel_max_pool(data, 1 / 2, 0, 1)
 
-        x = data.input.view(-1, 8 * 128)
+        x = data.input.view(-1, self.fc1.weight.size(1))
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
@@ -80,8 +72,12 @@ if torch.cuda.is_available():
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
-def train():
+def train(epoch):
     model.train()
+
+    if epoch == 8:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0001
 
     for data in train_loader:
         data = data.cuda().to_variable()
@@ -111,6 +107,6 @@ def test(epoch, loader, dataset, str):
 
 
 for epoch in range(1, 21):
-    train()
+    train(epoch)
     test(epoch, train_loader, train_dataset, 'Train')
     test(epoch, test_loader, test_dataset, 'Test')
