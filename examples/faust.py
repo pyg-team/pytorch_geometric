@@ -2,7 +2,6 @@ from __future__ import division, print_function
 
 import os
 import sys
-import time
 
 import torch
 from torch import nn
@@ -68,7 +67,7 @@ def train(epoch):
             param_group['lr'] = 0.001
 
     for data in train_loader:
-        data = data.cuda(['input', 'index', 'weight']).to_variable('input')
+        data = data.cuda().to_variable('input')
         optimizer.zero_grad()
         F.nll_loss(model(data), target).backward()
         optimizer.step()
@@ -79,7 +78,7 @@ def test(epoch):
     correct = 0
 
     for data in test_loader:
-        data = data.cuda(['input', 'index', 'weight']).to_variable('input')
+        data = data.cuda().to_variable('input')
         pred = model(data).data.max(1)[1]
         correct += pred.eq(target.data).sum() / target.size(0)
 

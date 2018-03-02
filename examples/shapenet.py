@@ -13,8 +13,8 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet2  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.transform import (NormalizeScale, RandomFlip,
-                                       CartesianAdj)  # noqa
+from torch_geometric.transform import (NormalizeScale, CartesianAdj,
+                                       LogCartesianAdj)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import sparse_voxel_max_pool  # noqa
 from torch_geometric.visualization.model import show_model  # noqa
@@ -24,10 +24,12 @@ path = os.path.join(path, '..', 'data', 'ShapeNet2')
 
 category = 'Pistol'
 
-transform = Compose([NormalizeScale(), CartesianAdj()])
-train_dataset = ShapeNet2(path, category, 'train', transform)
-val_dataset = ShapeNet2(path, category, 'val', transform)
-test_dataset = ShapeNet2(path, category, 'test', transform)
+transform = CartesianAdj()
+train_transform = Compose([NormalizeScale(), transform])
+test_transform = Compose([NormalizeScale(), transform])
+train_dataset = ShapeNet2(path, category, 'train', train_transform)
+val_dataset = ShapeNet2(path, category, 'val', test_transform)
+test_dataset = ShapeNet2(path, category, 'test', test_transform)
 train_loader = DataLoader2(train_dataset, batch_size=8, shuffle=True)
 val_loader = DataLoader2(val_dataset, batch_size=8)
 test_loader = DataLoader2(test_dataset, batch_size=8)
@@ -35,12 +37,6 @@ test_loader = DataLoader2(test_dataset, batch_size=8)
 min_label = train_dataset.set.target.min()
 max_label = train_dataset.set.target.max()
 num_classes = max_label - min_label + 1
-
-data = train_dataset[1]
-print(data.num_edges / data.num_nodes)
-# data, _ = sparse_voxel_max_pool(data, 1 / 16, 0)
-show_model(data, show_edges=True)
-raise NotImplementedError()
 
 
 def upscale(input, cluster):
@@ -76,7 +72,7 @@ class Net(nn.Module):
 
     def forward(self, data1):
         data1.input = F.elu(self.conv1(data1.adj, data1.input))
-        size, start = self.pool_args(24, 4)
+        size, start = self.pool_args(32, 24)
         data2, c1 = sparse_voxel_max_pool(data1, size, start, transform)
 
         data2.input = F.elu(self.conv2(data2.adj, data2.input))
@@ -109,17 +105,13 @@ model = Net()
 if torch.cuda.is_available():
     model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
 def train():
     model.train()
 
-    if epoch == 21:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
-
-    if epoch == 41:
+    if epoch == 31:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 

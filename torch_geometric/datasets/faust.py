@@ -25,7 +25,7 @@ class FAUST(Dataset):
     def __init__(self, root, train=True, transform=None):
         super(FAUST, self).__init__(root, transform)
 
-        name = self._processed_files[0] if train else self._processed_files[0]
+        name = self._processed_files[0] if train else self._processed_files[1]
         self.set = torch.load(name)
 
     @property
