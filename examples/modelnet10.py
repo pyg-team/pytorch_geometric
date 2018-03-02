@@ -1,5 +1,6 @@
 import os
 import sys
+import random
 
 import torch
 from torch import nn
@@ -23,7 +24,7 @@ transform = LogCartesianAdj(30)
 init_transform = Compose([NormalizeScale(), transform])
 train_dataset = ModelNet10(path, True, transform=init_transform)
 test_dataset = ModelNet10(path, False, transform=init_transform)
-batch_size = 8
+batch_size = 6
 train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=batch_size)
 
@@ -32,21 +33,37 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5)
-        self.conv2 = SplineConv(32, 32, dim=3, kernel_size=5)
-        self.conv3 = SplineConv(32, 32, dim=3, kernel_size=5)
-        self.fc1 = nn.Linear(8 * 32, 10)
+        self.conv2 = SplineConv(32, 64, dim=3, kernel_size=5)
+        self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv4 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv5 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.fc1 = nn.Linear(8 * 64, 10)
+
+    def pool_args(self, mean, x):
+        if not self.training:
+            return 1 / mean, 0
+        size = [1 / random.uniform(mean - x, mean + x) for _ in range(3)]
+        start = [random.uniform(-1 / (mean - x), 0) for _ in range(3)]
+        return size, start
 
     def forward(self, data):
-        data, _ = sparse_voxel_max_pool(data, 1 / 16, 0, transform)
         data.input = F.elu(self.conv1(data.adj, data.input))
+        size, start = self.pool_args(32, 8)
+        data, _ = sparse_voxel_max_pool(data, size, start, transform)
 
-        data, _ = sparse_voxel_max_pool(data, 1 / 8, 0, transform)
         data.input = F.elu(self.conv2(data.adj, data.input))
+        size, start = self.pool_args(16, 4)
+        data, _ = sparse_voxel_max_pool(data, size, start, transform)
 
-        data, _ = sparse_voxel_max_pool(data, 1 / 4, 0, transform)
-        # data.input = F.dropout(data.input, training=self.training)
         data.input = F.elu(self.conv3(data.adj, data.input))
+        size, start = self.pool_args(8, 2)
+        data, _ = sparse_voxel_max_pool(data, size, start, transform)
 
+        data.input = F.elu(self.conv4(data.adj, data.input))
+        size, start = self.pool_args(4, 1)
+        data, _ = sparse_voxel_max_pool(data, size, start, transform)
+
+        data.input = F.elu(self.conv5(data.adj, data.input))
         data, _ = dense_voxel_max_pool(data, 0.5, 0, 1)
 
         x = data.input.view(-1, self.fc1.weight.size(1))
@@ -69,10 +86,6 @@ def train(epoch):
     if epoch == 11:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
-
-    if epoch == 21:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.00001
 
     for data in train_loader:
         data = data.cuda().to_variable()
