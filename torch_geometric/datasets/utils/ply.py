@@ -1,24 +1,21 @@
 import torch
-import numpy as np
 from plyfile import PlyData, make2d
 
+from ...graph.geometry import edges_from_faces
+from ..dataset import Data
 
-def read_ply(path):
-    # Read ply dataformat file.
-    with open(path, 'rb') as f:
+
+def read_ply(filename):
+    with open(filename, 'rb') as f:
         plydata = PlyData.read(f)
 
-    # Extract numpy arrays for vertices and faces.
-    x = plydata['vertex']['x']
-    y = plydata['vertex']['y']
-    z = plydata['vertex']['z']
-    vertices = np.stack((x, y, z), axis=1)
+    x = torch.FloatTensor(plydata['vertex']['x'])
+    y = torch.FloatTensor(plydata['vertex']['y'])
+    z = torch.FloatTensor(plydata['vertex']['z'])
+    pos = torch.stack([x, y, z], dim=1)
+    input = torch.ones(pos.size(0))
 
-    faces = make2d(plydata['face']['vertex_indices'])
-    faces = faces.astype(np.int64)
+    face = torch.LongTensor(make2d(plydata['face']['vertex_indices']))
+    index = edges_from_faces(face)
 
-    # Conver to torch tensors.
-    vertices = torch.FloatTensor(vertices)
-    faces = torch.LongTensor(faces)
-
-    return vertices, faces
+    return Data(input, pos, index, None, None)
