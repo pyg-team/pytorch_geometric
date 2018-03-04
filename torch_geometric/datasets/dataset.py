@@ -76,15 +76,23 @@ def data_list_to_batch(data_list):
 
     input, pos, index = _cat(input, 0), _cat(pos, 0), _cat(index, 1)
     weight, target, batch = _cat(weight, 0), _cat(target, 0), _cat(batch, 0)
-    scale, offset = _cat(scale,0), _cat(offset,0)
+    scale, offset = _cat(scale, 0), _cat(offset, 0)
 
-    return Data(input, pos, index, weight, target, batch, scale=scale,
-                offset=offset)
+    return Data(
+        input, pos, index, weight, target, batch, scale=scale, offset=offset)
 
 
 class Data(object):
-    def __init__(self, input, pos, index, weight, target, batch=None, scale=0,
+    def __init__(self,
+                 input,
+                 pos,
+                 index,
+                 weight,
+                 target,
+                 batch=None,
+                 scale=0,
                  offset=0):
+
         self.input = input
         self.pos = pos
         self.index = index
@@ -163,11 +171,13 @@ class Set(Data):
         index = None if self.index is None else self.index[:, s2[i]:s2[i + 1]]
         weight = None if self.weight is None else self.weight[s2[i]:s2[i + 1]]
 
-        target = self.target
-        if target is not None and self.num_nodes == target.size(0):
-            target = target[s1[i]:s1[i + 1]]
-        else:
-            target = target[i]
+        target = None
+        if self.target is not None:
+            if self.num_nodes == self.target.size(0):
+                target = self.target[s1[i]:s1[i + 1]]
+            else:
+                target = self.target[i]
+            target = target.view(1, -1).squeeze(1)
 
         return Data(input, pos, index, weight, target)
 
