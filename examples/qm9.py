@@ -19,4 +19,4 @@ test_loader = DataLoader2(test_dataset, batch_size=512)
 
 for data in train_loader:
     data = data.cuda().to_variable()
-    print(data.num_nodes, data.num_edges, data.adj.size())
+    print(data.num_nodes, data.num_edges, data.adj.size(), data.target.size())
