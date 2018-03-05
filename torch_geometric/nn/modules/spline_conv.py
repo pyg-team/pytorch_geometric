@@ -5,13 +5,10 @@ from .utils.inits import uniform
 from .utils.repr import repr
 from ..functional.spline_conv import spline_conv
 
-from ..functional.spline_conv import spline_conv_bp2adj
-
-from ..functional.spline_conv.edgewise_spline_weighting_gpu \
-    import get_forward_kernel, get_backward_kernel
-from ..functional.spline_conv.compute_spline_basis \
-    import get_basis_kernel
-
+from ..functional.spline_conv.spline_conv_gpu \
+    import get_weighting_forward_kernel, get_weighting_backward_kernel
+from ..functional.spline_conv.spline_conv_gpu \
+    import get_basis_kernel, get_basis_backward_kernel
 
 
 def repeat_to(input, dim):
@@ -70,7 +67,7 @@ class SplineConv(Module):
         self.register_buffer('_is_open_spline', is_open_spline)
         self.degree = degree
         self.K = self._buffers['_kernel_size'].prod()
-        self.k_max = (degree + 1)**dim
+        self.k_max = (degree + 1) ** dim
         weight = torch.Tensor(self.K + 1, in_features, out_features)
         self.weight = Parameter(weight)
 
@@ -81,11 +78,23 @@ class SplineConv(Module):
 
         self.reset_parameters()
 
-        self.forward_kernel = get_forward_kernel(in_features, out_features,
-                                                 self.k_max)
-        self.backward_kernel = get_backward_kernel(in_features, out_features,
-                                                   self.k_max, self.K)
-        self.basis_kernel = get_basis_kernel(self.k_max, self.K, dim, degree)
+        self.forward_kernel = get_weighting_forward_kernel(in_features,
+                                                           out_features,
+                                                           self.k_max,
+                                                           self.backprob_to_u)
+        self.backward_kernel = get_weighting_backward_kernel(in_features,
+                                                             out_features,
+                                                             self.k_max, self.K,
+                                                             self.backprob_to_u)
+
+        self.basis_kernel = get_basis_kernel(self.k_max, self.K, dim, degree,
+                                             self.backprob_to_u)
+        if self.backprob_to_u:
+            self.basis_backward_kernel = get_basis_backward_kernel(self.k_max,
+                                                                   self.K, dim,
+                                                                   degree)
+        else:
+            self.basis_backward_kernel = None
 
     def reset_parameters(self):
         size = self.in_features * (self.K + 1)
@@ -94,17 +103,12 @@ class SplineConv(Module):
 
     def forward(self, adj, input):
 
-        if self.backprob_to_u:
-            return spline_conv_bp2adj(
-                adj, input, self.weight, self._buffers['kernel_size'],
-                self._buffers['is_open_spline'], self.K, self.forward_kernel,
-                self.backward_kernel, self.basis_kernel, self.degree, self.bias)
-        else:
-            return spline_conv(
-                adj, input, self.weight, self._buffers['_kernel_size'],
-                self._buffers['_is_open_spline'], self.K, self.forward_kernel,
-                self.backward_kernel, self.basis_kernel, self.degree, self.bias)
-
+        return spline_conv(
+            adj, input, self.weight, self._buffers['kernel_size'],
+            self._buffers['is_open_spline'], self.K, self.forward_kernel,
+            self.backward_kernel, self.basis_kernel,
+            self.basis_backward_kernel, self.degree, self.bias,
+            self.backprob_to_u)
 
     def __repr__(self):
         return repr(self, ['kernel_size', 'is_open_spline', 'degree'])
