@@ -24,10 +24,7 @@ def extract_zip(file_path, dir):
 def extract_7z(file_path, dir):
     spinner = Spinner('Extracting', file_path).start()
 
-    try:
-        cmd = ['7z', '-y', 'e', file_path, '-o{}'.format(dir)]
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-        process.wait()
-        spinner.success()
-    except:
-        spinner.fail()
+    cmd = ['7z', '-y', 'e', file_path, '-o{}'.format(dir)]
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    process.wait()
+    spinner.success()

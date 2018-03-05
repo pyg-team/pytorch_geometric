@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import division
 
 import os
@@ -8,8 +10,8 @@ from .spinner import Spinner
 CLEAR = '\r\033[K'
 UP = '\033[1A'
 DOWN = '\033[1B'
-STORE = '\033[s'
-RESTORE = '\033[u'
+RIGHT = '\033[10000C'
+ONE_LEFT = '\033[1D'
 
 
 class Progress(object):
@@ -28,11 +30,12 @@ class Progress(object):
         sys.stdout.write('\n')
         self.update(0)
 
-        self.spinner.reset_cursor = '{}{}{}'.format(STORE, UP, CLEAR)
-        self.spinner.restore_cursor = '{}{}'.format(DOWN, RESTORE)
+        self.spinner.reset_cursor = '{}{}'.format(UP, CLEAR)
+        self.spinner.restore_cursor = '{}{}{}'.format(DOWN, RIGHT, ONE_LEFT)
         self.spinner.start()
 
     def update(self, curr):
+        self.curr = curr
         per = round((curr / self.end) * self.bar_size)
         bar = '{}{}'.format(self.complete[:per], self.incomplete[per:])
         count = '{}{}'.format(str(curr).rjust(self.curr_size), self.count)
@@ -41,6 +44,12 @@ class Progress(object):
         sys.stdout.write('{}{} {}'.format(CLEAR, bar, count))
         self.lock.release()
         sys.stdout.flush()
+
+    def inc(self, value=1):
+        self.update(self.curr + value)
+
+    def dec(self, value=1):
+        self.update(self.curr - value)
 
     def success(self):
         self.spinner.success()

@@ -42,3 +42,9 @@ MNISTSuperpixels
 
 .. autoclass:: MNISTSuperpixels
     :members:
+
+QM9
+----------------
+
+.. autoclass:: QM9
+    :members:

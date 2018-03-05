@@ -1,5 +1,6 @@
 import torch
 from torch.autograd import Variable
+import time
 
 from .spline import spline
 
@@ -13,8 +14,14 @@ def spline_conv(
         kernel_size,
         is_open_spline,
         K,
+        forward_kernel,
+        backward_kernel,
+        basis_kernel,
         degree=1,
         bias=None):
+
+    if input.dim() == 1:
+        input = input.unsqueeze(1)
 
     values = adj._values()
     row, col = adj._indices()
@@ -22,8 +29,12 @@ def spline_conv(
     # Get features for every end vertex with shape [|E| x M_in].
     output = input[col]
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
-    amount, index = spline(values, kernel_size, is_open_spline, K, degree)
-    output = edgewise_spline_weighting(output, weight[:-1], amount, index)
+
+    amount, index = spline(values, kernel_size, is_open_spline, K, degree,
+                           basis_kernel)
+
+    output = edgewise_spline_weighting(output, weight[:-1], amount, index,
+                                       forward_kernel, backward_kernel)
 
     # Convolution via `scatter_add`. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
