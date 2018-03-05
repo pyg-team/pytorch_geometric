@@ -42,7 +42,7 @@ class Net(nn.Module):
         x = F.elu(self.conv1(adj, x))
         x = F.dropout(x, training=self.training)
         x = self.conv2(adj, x)
-        return F.log_softmax(x)
+        return F.log_softmax(x, dim=1)
 
 
 model = Net()
@@ -83,6 +83,6 @@ for run in range(1, num_runs + 1):
         train()
 
     acc[run - 1] = test()
-    print('Run:', run, 'Accuracy:', acc[run - 1])
+    print('Run:', run, 'Test Accuracy:', acc[run - 1])
 
 print('Mean:', acc.mean(), 'Stddev:', acc.std())

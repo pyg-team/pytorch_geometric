@@ -30,7 +30,7 @@ In addition, PyTorch Geometric contains the spline-based convolutional layer fro
 Install `pytorch` and `torchvision` manually ([Installation](http://pytorch.org/)).
 If cuda is available it is recommended to install `cupy` ([Installation](https://github.com/cupy/cupy#installation)).
 
-To install the additional python packages needed, run:
+Run the following command to install the additional dependencies:
 
 ```shell
 pip install -r requirements.txt
@@ -51,7 +51,7 @@ Please cite our paper if you use this code in your own work:
 
 ```
 @article{Fey2017,
-  title={{SplineCNN}: Fast Geometric Deep Learning with Continuous B-Spline Kernels},
+  title={{SplineCNN}: Fast Geometric Deep Learning with Continuous {B}-Spline Kernels},
   author={Matthias Fey and {Jan Eric} Lenssen and Frank Weichert and Heinrich M{\"u}ller},
   journal={CoRR},
   volume={abs/1711.08920},

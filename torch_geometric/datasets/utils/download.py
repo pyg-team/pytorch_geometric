@@ -13,6 +13,7 @@ def download_url(url, dir):
 
     filename = url.rpartition('/')[2]
     file_path = os.path.join(dir, filename)
+    file_path = os.path.normpath(file_path)
 
     try:
         response = requests.get(url, stream=True)
@@ -28,7 +29,7 @@ def download_url(url, dir):
                 progress.update(round(downloaded / div, 1))
             progress.success()
 
-    except:
+    except (IOError, OSError, requests.exceptions.HTTPError):
         progress.fail()
         os.unlink(file_path)
         sys.exit(1)

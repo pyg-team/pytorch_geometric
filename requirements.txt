@@ -2,3 +2,8 @@ numpy>=1.13.3
 scipy>=1.0.0
 h5py>=2.7.1
 plyfile>=0.5
+torch-scatter
+torch-unique
+torch-cluster
+cupy
+requests
