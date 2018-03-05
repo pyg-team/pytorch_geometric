@@ -177,7 +177,9 @@ class Set(Data):
                 target = self.target[s1[i]:s1[i + 1]]
             else:
                 target = self.target[i]
-            target = target.view(1, -1).squeeze(1)
+
+            if torch.is_tensor(target):
+                target = target.view(1, -1).squeeze(1)
 
         return Data(input, pos, index, weight, target)
 
