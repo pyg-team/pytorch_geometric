@@ -35,9 +35,9 @@ def graph_conv(x, index, weight, bias=None):
     adj = SparseTensor(index, value, torch.Size([n, n]))
 
     # Start computation.
-    x = SparseMM(adj)(torch.mm(x, weight))
+    output = SparseMM(adj)(torch.mm(x, weight))
 
     if bias is not None:
-        x += bias
+        output += bias
 
-    return x
+    return output
