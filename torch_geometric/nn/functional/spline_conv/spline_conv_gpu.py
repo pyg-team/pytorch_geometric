@@ -349,7 +349,7 @@ int num_threads) {
     ${Dtype} grad_out = 0.0;
     long i = 0;
     
-    int quotient = (int)pow(2.0,(float)d_idx)
+    int quotient = (int)pow(2.0,(float)d_idx);
     
     for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
       
@@ -359,7 +359,7 @@ int num_threads) {
       value *= kernel_size[d_idx] - is_open_spline[d_idx];
 
       frac = value - floor(value);
-      residual = (1 - k_idx_mod) * frac + k_idx_mod * (1 - frac);
+      residual = (1 - k_idx_mod) * (frac - 1) + k_idx_mod * frac;
       int a_idx = e_idx*${k_max} + k_idx
       grad_out += grad_amount[a_idx]*amount[a_idx]/residual;
 
