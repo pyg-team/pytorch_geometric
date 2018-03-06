@@ -9,9 +9,10 @@ from .normalize_scale import NormalizeScale
 from .spherical import SphericalAdj
 from .spherical_2d import Spherical2dAdj
 from .random_flip import RandomFlip
+from .target_indegree import TargetIndegreeAdj
 
 __all__ = [
     'CartesianAdj', 'RandomTranslate', 'RandomScale', 'RandomRotate',
     'RandomShear', 'NormalizeScale', 'CartesianLocalAdj', 'SphericalAdj',
-    'Spherical2dAdj', 'LogCartesianAdj', 'RandomFlip'
+    'Spherical2dAdj', 'LogCartesianAdj', 'RandomFlip', 'TargetIndegreeAdj'
 ]

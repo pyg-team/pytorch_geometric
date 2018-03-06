@@ -59,8 +59,7 @@ def _data_list_to_set(data_list):
 
 def data_list_to_batch(data_list):
     """Concat all tensors from data list for batch-wise processing."""
-    input, pos, index, weight, target, batch, scale, offset = \
-        _empty_lists(len(data_list), 8)
+    input, pos, index, weight, target, batch = _empty_lists(len(data_list), 6)
 
     index_offset = 0
     for i, data in enumerate(data_list):
@@ -71,36 +70,21 @@ def data_list_to_batch(data_list):
         target[i] = data.target
         batch[i] = data.index.new(data.num_nodes).fill_(i)
         index_offset += data_list[i].num_nodes
-        scale[i] = data.scale
-        offset[i] = data.offset
 
     input, pos, index = _cat(input, 0), _cat(pos, 0), _cat(index, 1)
     weight, target, batch = _cat(weight, 0), _cat(target, 0), _cat(batch, 0)
-    scale, offset = _cat(scale, 0), _cat(offset, 0)
 
-    return Data(
-        input, pos, index, weight, target, batch, scale=scale, offset=offset)
+    return Data(input, pos, index, weight, target, batch)
 
 
 class Data(object):
-    def __init__(self,
-                 input,
-                 pos,
-                 index,
-                 weight,
-                 target,
-                 batch=None,
-                 scale=0,
-                 offset=0):
-
+    def __init__(self, input, pos, index, weight, target, batch=None):
         self.input = input
         self.pos = pos
         self.index = index
         self.weight = weight
         self.target = target
         self.batch = batch
-        self.scale = scale
-        self.offset = offset
 
     @property
     def _props(self):
@@ -177,9 +161,8 @@ class Set(Data):
                 target = self.target[s1[i]:s1[i + 1]]
             else:
                 target = self.target[i]
-
-            if torch.is_tensor(target):
-                target = target.view(1, -1).squeeze(1)
+                if torch.is_tensor(target):
+                    target = target.view(1, -1).squeeze(1)
 
         return Data(input, pos, index, weight, target)
 
