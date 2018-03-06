@@ -53,7 +53,7 @@ class SplineConv(Module):
                  is_open_spline=True,
                  degree=1,
                  bias=True,
-                 backprop_to_u=False):
+                 backprop_to_adj=False):
 
         super(SplineConv, self).__init__()
 
@@ -70,6 +70,8 @@ class SplineConv(Module):
         self.k_max = (degree + 1) ** dim
         weight = torch.Tensor(self.K + 1, in_features, out_features)
         self.weight = Parameter(weight)
+        self.bp_to_adj = backprop_to_adj
+
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_features))
@@ -81,15 +83,15 @@ class SplineConv(Module):
         self.forward_kernel = get_weighting_forward_kernel(in_features,
                                                            out_features,
                                                            self.k_max,
-                                                           self.backprob_to_u)
+                                                           self.bp_to_adj)
         self.backward_kernel = get_weighting_backward_kernel(in_features,
                                                              out_features,
                                                              self.k_max, self.K,
-                                                             self.backprob_to_u)
+                                                             self.bp_to_adj)
 
         self.basis_kernel = get_basis_kernel(self.k_max, self.K, dim, degree,
-                                             self.backprob_to_u)
-        if self.backprob_to_u:
+                                             self.bp_to_adj)
+        if self.bp_to_adj:
             self.basis_backward_kernel = get_basis_backward_kernel(self.k_max,
                                                                    self.K, dim,
                                                                    degree)
@@ -104,11 +106,11 @@ class SplineConv(Module):
     def forward(self, adj, input):
 
         return spline_conv(
-            adj, input, self.weight, self._buffers['kernel_size'],
-            self._buffers['is_open_spline'], self.K, self.forward_kernel,
+            adj, input, self.weight, self._buffers['_kernel_size'],
+            self._buffers['_is_open_spline'], self.K, self.forward_kernel,
             self.backward_kernel, self.basis_kernel,
             self.basis_backward_kernel, self.degree, self.bias,
-            self.backprob_to_u)
+            self.bp_to_adj)
 
     def __repr__(self):
         return repr(self, ['kernel_size', 'is_open_spline', 'degree'])
