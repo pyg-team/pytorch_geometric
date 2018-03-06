@@ -29,8 +29,10 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
-        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
-        self.conv3 = SplineConv(64, 128, dim=2, kernel_size=5)
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5,
+                                backprop_to_adj=True)
+        self.conv3 = SplineConv(64, 128, dim=2, kernel_size=5,
+                                backprop_to_adj=True)
         self.fc1 = nn.Linear(4 * 128, 128)
         self.fc2 = nn.Linear(128, 10)
 
@@ -41,7 +43,7 @@ class Net(nn.Module):
         data, _ = sparse_voxel_max_pool(data, 7, 0, transform)
         data.input = F.elu(self.conv3(data.adj, data.input))
 
-        data, _ = dense_voxel_max_pool(data, 14, 0, 28, transform)
+        data, _ = dense_voxel_max_pool(data, 25, -10, 40)
 
         x = data.input.view(-1, self.fc1.weight.size(1))
         x = F.elu(self.fc1(x))
@@ -69,10 +71,12 @@ def train(epoch):
             param_group['lr'] = 0.0001
 
     for data in train_loader:
-        data = data.cuda().to_variable()
+        data = data.cuda().to_variable(['input', 'target', 'weight', 'pos'])
         optimizer.zero_grad()
-        F.nll_loss(model(data), data.target).backward()
+        loss = F.nll_loss(model(data), data.target)
+        loss.backward()
         optimizer.step()
+        print(loss.data[0])
 
 
 def test(epoch):
@@ -80,7 +84,7 @@ def test(epoch):
     correct = 0
 
     for data in test_loader:
-        data = data.cuda().to_variable('input')
+        data = data.cuda().to_variable(['input', 'weight', 'pos'])
         pred = model(data).data.max(1)[1]
         correct += pred.eq(data.target).sum()
 

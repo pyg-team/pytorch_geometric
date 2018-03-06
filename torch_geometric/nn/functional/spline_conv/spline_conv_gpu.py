@@ -1,5 +1,5 @@
 import torch
-from torch.autograd import Function
+from torch.autograd import Function, Variable
 
 from ....utils.cuda import (cuda_num_threads, Stream, load_kernel, kernel_loop,
                             get_blocks)
@@ -120,6 +120,7 @@ const ${Dtype}* amount, const long* index, int num_threads) {
       k = e_idx * ${k_max} + k_idx;
       b = amount[k];
       c = index[k];
+      ${Dtype} adj_g = 0.0;
 
       for (int m_in_idx = 0; m_in_idx < ${M_in}; m_in_idx++) {
         w_idx = c * ${M_out} * ${M_in} +
@@ -212,8 +213,7 @@ const long* kernel_size, const long* is_open_spline, int num_threads) {
       k_idx >>= 1;
 
       value = input[e_idx * ${dim} + d_idx];
-      if(value==1.0)
-        value -= 0.000001;
+
       value *= kernel_size[d_idx] - is_open_spline[d_idx];
         
       frac = value - floor(value);
@@ -340,16 +340,12 @@ int num_threads) {
     const int e_idx = idx / ${dim};
     int d_idx = idx % ${dim};
 
-    int K = ${K};
     int k_idx_mod;
-    int bot;
-    int top;
     ${Dtype} value;
     ${Dtype} frac;
     ${Dtype} grad_out = 0.0;
-    long i = 0;
     
-    int quotient = (int)pow(2.0,(float)d_idx);
+    int quotient = (int)pow(2.0,(double)d_idx);
     
     for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
       
@@ -359,8 +355,8 @@ int num_threads) {
       value *= kernel_size[d_idx] - is_open_spline[d_idx];
 
       frac = value - floor(value);
-      residual = (1 - k_idx_mod) * (frac - 1) + k_idx_mod * frac;
-      int a_idx = e_idx*${k_max} + k_idx
+      ${Dtype} residual = (1 - k_idx_mod) * (frac - 1) + k_idx_mod * frac;
+      int a_idx = e_idx*${k_max} + k_idx;
       grad_out += grad_amount[a_idx]*amount[a_idx]/residual;
 
     }
@@ -471,9 +467,12 @@ class SplineConvGPU(Function):
                 stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
         if self.bp_to_adj:
-            self.save_for_backward(input, weight, adj_values, amount, index)
+            self.save_for_backward(input, weight, adj_values)
         else:
-            self.save_for_backward(input, weight, amount, index)
+            self.save_for_backward(input, weight)
+
+        self.amount = amount
+        self.index = index
 
         return output
 
@@ -483,7 +482,9 @@ class SplineConvGPU(Function):
         num_threads = grad_output.numel()
 
         if self.bp_to_adj:
-            input, weight, adj_values, amount, index = self.saved_tensors
+            input, weight, adj_values = self.saved_tensors
+            amount = self.amount
+            index = self.index
             grad_amount = grad_output.new(amount.size(0),
                                           amount.size(1)).fill_(0)
             with torch.cuda.device_of(grad_output):
@@ -502,9 +503,9 @@ class SplineConvGPU(Function):
                     ],
                     stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
-            num_threads = grad_amount.numel()
             grad_adj = grad_amount.new(grad_amount.size(0),
                                        self.kernel_size.size(0)).fill_(0)
+            num_threads = grad_adj.numel()
 
             with torch.cuda.device_of(grad_amount):
                 self.f_basis_bw(
@@ -516,14 +517,17 @@ class SplineConvGPU(Function):
                         amount.data_ptr(),
                         grad_adj.data_ptr(),
                         self.kernel_size.data_ptr(),
-                        self.is_open_spline.data_ptr(), num_threads
+                        self.is_open_spline.data_ptr(),
+                        num_threads
                     ],
                     stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
-            return grad_input, grad_weight, grad_adj
+            return grad_input, grad_weight, None
 
         else:
-            input, weight, amount, index = self.saved_tensors
+            input, weight = self.saved_tensors
+            amount = self.amount
+            index = self.index
             with torch.cuda.device_of(grad_output):
                 self.f_weighting_bw(
                     block=(cuda_num_threads, 1, 1),
@@ -539,4 +543,4 @@ class SplineConvGPU(Function):
                     ],
                     stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
-            return grad_input, grad_weight
+            return grad_input, grad_weight, None

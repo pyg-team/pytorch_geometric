@@ -111,7 +111,7 @@ class Data(object):
     def adj(self):
         n = self.num_nodes
         size = torch.Size([n, n] + list(self.weight.size())[1:])
-        return SparseTensor(self.index, self.weight, size)
+        return {'indices': self.index, 'values': self.weight, 'size': size}
 
     @property
     def num_nodes(self):
