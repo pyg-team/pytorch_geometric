@@ -1,5 +1,5 @@
 import torch
-from torch.autograd import Function, Variable
+from torch.autograd import Function
 
 from ...sparse import SparseTensor
 
@@ -41,31 +41,3 @@ def graph_conv(x, index, weight, bias=None):
         x += bias
 
     return x
-
-    # # weight = scatter_mul(col, weight)
-
-    # # print(degree)
-    # print(degree.size())
-    # # print(weight)
-    # print(weight.size())
-
-    # raise NotImplementedError
-    # n, m = adj.size()
-
-    # i = eye(n, m)
-    # i = i.cuda() if adj.is_cuda else i
-    # adj = adj + i
-
-    # deg = sum(adj, dim=1)
-    # deg = deg.pow(-0.5)
-
-    # adj = mm_diagonal(deg, adj)
-    # adj = mm_diagonal(deg, adj, transpose=True)
-
-    # output = mm(Variable(adj), input)
-    # output = mm(output, weight)
-
-    # if bias is not None:
-    #     output += bias
-
-    # return output

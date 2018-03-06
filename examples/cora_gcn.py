@@ -1,6 +1,5 @@
 import os
 import sys
-import time
 
 import torch
 from torch import nn
@@ -17,6 +16,7 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cora')
 data = Cora(path)[0].cuda().to_variable()
 train_mask = torch.arange(0, 140).long()
+val_mask = torch.arange(140, 640).long()
 test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
 
 
@@ -27,7 +27,7 @@ class Net(nn.Module):
         self.conv2 = GraphConv(16, 7)
 
     def forward(self):
-        x = F.relu(self.conv1(data.input, data.index))
+        x = F.elu(self.conv1(data.input, data.index))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, data.index)
         return F.log_softmax(x, dim=1)
@@ -35,10 +35,10 @@ class Net(nn.Module):
 
 model = Net()
 if torch.cuda.is_available():
-    train_mask, test_mask = train_mask.cuda(), test_mask.cuda()
-    model = model.cuda()
+    train_mask, val_mask = train_mask.cuda(), val_mask.cuda()
+    test_mask, model = test_mask.cuda(), model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.005)
 
 
 def train():
@@ -48,10 +48,10 @@ def train():
     optimizer.step()
 
 
-def test():
+def test(mask):
     model.eval()
-    pred = model()[test_mask].data.max(1)[1]
-    return pred.eq(data.target.data[test_mask]).sum() / test_mask.size(0)
+    pred = model()[mask].data.max(1)[1]
+    return pred.eq(data.target.data[mask]).sum() / mask.size(0)
 
 
 acc = []
@@ -59,14 +59,17 @@ for run in range(1, 101):
     model.conv1.reset_parameters()
     model.conv2.reset_parameters()
 
-    torch.cuda.synchronize()
-    t = time.perf_counter()
+    old_val = 0
+    cur_test = 0
     for _ in range(0, 200):
         train()
-    torch.cuda.synchronize()
-    t = time.perf_counter() - t
-    acc.append(test())
-    print('Run:', run, 'Test Accuracy:', acc[-1], 'Time:', t)
+        val = test(val_mask)
+        if val > old_val:
+            old_val = val
+            cur_test = test(test_mask)
+
+    acc.append(cur_test)
+    print('Run:', run, 'Test Accuracy:', acc[-1])
 
 acc = torch.FloatTensor(acc)
 print('Mean:', acc.mean(), 'Stddev:', acc.std())
