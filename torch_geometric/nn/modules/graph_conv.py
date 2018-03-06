@@ -39,8 +39,8 @@ class GraphConv(Module):
         uniform(size, self.weight)
         uniform(size, self.bias)
 
-    def forward(self, adj, input):
-        return graph_conv(adj, input, self.weight, self.bias)
+    def forward(self, x, index):
+        return graph_conv(x, index, self.weight, self.bias)
 
     def __repr__(self):
         return repr(self)
