@@ -14,7 +14,7 @@ class ChebConv(Module):
     Args:
         in_features (int): Size of each input sample.
         out_features (int): Size of each output sample.
-        kernel_size (int): Chebyshev filter size.
+        kernel_size (int): Chebyshev filter size, i.e. number of hops.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
