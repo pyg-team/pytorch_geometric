@@ -1,6 +1,8 @@
+'''
 import unittest
 import torch
 from torch.autograd import Variable, gradcheck
+
 from numpy.testing import assert_equal
 
 from .spline import spline
@@ -52,3 +54,4 @@ class EdgewiseSplineWeightingGPUTest(unittest.TestCase):
         op = EdgewiseSplineWeightingGPU(amount, index)
         test = gradcheck(op, (input, weight), eps=1e-6, atol=1e-4)
         self.assertTrue(test)
+'''

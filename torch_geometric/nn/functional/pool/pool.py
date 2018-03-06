@@ -1,19 +1,33 @@
 import torch
 from torch.autograd import Variable
-from torch_scatter import scatter_max, scatter_mean
+from torch_scatter import scatter_max, scatter_mean, scatter_add
 
 from .coalesce import remove_self_loops, coalesce
 
 
-def _pool(index, position, cluster):
+def _pool(index, position, cluster, weight):
     # Map edge indices to new cluster indices.
     index = index.contiguous()
     index = cluster[index.view(-1)].view(2, -1)
     index = remove_self_loops(index)  # Remove self loops.
+    #if index.dim() == 1:
+    #    index = index.view(2,1)
     index = coalesce(index)  # Remove duplicates.
 
-    cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
-    position = scatter_mean(Variable(cluster), position, dim=0)
+    if weight is not None:
+        print(weight.data.min(), weight.data.max())
+        weight = torch.sigmoid(weight).unsqueeze(1)
+        norm = scatter_add(Variable(cluster), weight.squeeze(), dim=0)
+        norm = torch.gather(norm,0,Variable(cluster))
+
+        weight = weight/norm.unsqueeze(1)
+        cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
+
+        position *= weight
+        position = scatter_add(Variable(cluster), position, dim=0)
+    else:
+        cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
+        position = scatter_mean(Variable(cluster), position, dim=0)
 
     return index, position
 
@@ -34,6 +48,6 @@ def _max_pool(input, cluster, size):
     return x
 
 
-def max_pool(input, index, position, cluster, size=None):
+def max_pool(input, index, position, cluster, size=None, weight=None):
     x = _max_pool(input, cluster, size)
-    return (x, ) + _pool(index, position, cluster)
+    return (x, ) + _pool(index, position, cluster, weight)

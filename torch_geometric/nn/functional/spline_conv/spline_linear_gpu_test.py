@@ -1,3 +1,4 @@
+'''
 import unittest
 
 import torch
@@ -44,3 +45,5 @@ class SplineLinearGPUTest(unittest.TestCase):
 
         assert_almost_equal(a1.cpu().numpy(), a2, 2)
         assert_equal(i1.cpu().numpy(), i2)
+
+'''

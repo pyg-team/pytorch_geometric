@@ -4,23 +4,27 @@ import sys
 import torch
 from torch import nn
 import torch.nn.functional as F
+from torchvision.transforms import Compose
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import MNISTSuperpixels2  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.transform import CartesianAdj  # noqa
+from torch_geometric.transform import CartesianAdj, NormalizeScale  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
 
+from torch.autograd import Variable
+from torch_scatter import scatter_mean
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'MNISTSuperpixels2')
 
 transform = CartesianAdj()
-train_dataset = MNISTSuperpixels2(path, True, transform=transform)
-test_dataset = MNISTSuperpixels2(path, False, transform=transform)
+transform_norm = Compose([NormalizeScale(), transform])
+train_dataset = MNISTSuperpixels2(path, True)
+test_dataset = MNISTSuperpixels2(path, False)
 train_loader = DataLoader2(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=64)
 
@@ -28,24 +32,25 @@ test_loader = DataLoader2(test_dataset, batch_size=64)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
-        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5,
+        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5,bias=False,
                                 backprop_to_adj=True)
-        self.conv3 = SplineConv(64, 128, dim=2, kernel_size=5,
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5,bias=False,
                                 backprop_to_adj=True)
-        self.fc1 = nn.Linear(4 * 128, 128)
+        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5,bias=False,
+                                backprop_to_adj=True)
+        self.fc1 = nn.Linear(4 * 64, 128)
         self.fc2 = nn.Linear(128, 10)
 
     def forward(self, data):
-        data.input = F.elu(self.conv1(data.adj, data.input))
-        data, _ = sparse_voxel_max_pool(data, 5, 0, transform)
-        data.input = F.elu(self.conv2(data.adj, data.input))
+        data.input = F.relu(self.conv1(data.adj, data.input))
+        data, _ = sparse_voxel_max_pool(data, 5, 0, transform, weight=data.input[:,-1])
+        data.input = F.relu(self.conv2(data.adj, data.input))
         data, _ = sparse_voxel_max_pool(data, 7, 0, transform)
-        data.input = F.elu(self.conv3(data.adj, data.input))
+        data.input = F.relu(self.conv3(data.adj, data.input))
 
         data, _ = dense_voxel_max_pool(data, 25, -10, 40)
 
-        x = data.input.view(-1, self.fc1.weight.size(1))
+        x = data.input.contiguous().view(-1, self.fc1.weight.size(1))
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
@@ -71,11 +76,15 @@ def train(epoch):
             param_group['lr'] = 0.0001
 
     for data in train_loader:
-        data = data.cuda().to_variable(['input', 'target', 'weight', 'pos'])
+        data = data.cuda().to_variable(['input', 'target', 'pos'])
+        data = transform(data)
         optimizer.zero_grad()
         loss = F.nll_loss(model(data), data.target)
         loss.backward()
+        print('conv1_w_grad:',model.conv1.weight.grad.data[:,:,-1].min(),model.conv1.weight.grad.data[:,:,-1].max())
+        print('conv1_w:',model.conv1.weight.data[:,:,-1].min(),model.conv1.weight.data[:,:,-1].max())
         optimizer.step()
+        print('conv1_w:',model.conv1.weight.data[:,:,-1].min(),model.conv1.weight.data[:,:,-1].max())
         print(loss.data[0])
 
 
