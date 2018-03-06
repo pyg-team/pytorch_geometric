@@ -6,7 +6,7 @@ import torch
 class TargetIndegreeAdj(object):
     def __call__(self, data):
         _, col = data.index
-        zero, one = torch.zeros(col.size(0)), torch.ones(col.size(0))
+        zero, one = torch.zeros(data.num_nodes), torch.ones(col.size(0))
 
         degree = zero.scatter_add_(0, col, one)
         degree /= degree.max()
