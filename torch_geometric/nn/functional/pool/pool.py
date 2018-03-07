@@ -1,7 +1,7 @@
 import torch
 from torch.autograd import Variable
 from torch_scatter import scatter_max, scatter_mean, scatter_add
-import torch.nn.functional as F
+
 from .coalesce import remove_self_loops, coalesce
 
 
@@ -13,20 +13,12 @@ def _pool(index, position, cluster, weight):
     #if index.dim() == 1:
     #    index = index.view(2,1)
     index = coalesce(index)  # Remove duplicates.
+    cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
 
     if weight is not None:
-        weight = F.relu(weight).unsqueeze(1) + 0.0001  # avoid all zero
-
-        norm = scatter_add(Variable(cluster), weight.squeeze(), dim=0)
-        norm = torch.gather(norm,0,Variable(cluster))
-
-        weight = weight/norm.unsqueeze(1)
-        cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
-
         position *= weight
         position = scatter_add(Variable(cluster), position, dim=0)
     else:
-        cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
         position = scatter_mean(Variable(cluster), position, dim=0)
 
     return index, position
@@ -51,3 +43,42 @@ def _max_pool(input, cluster, size):
 def max_pool(input, index, position, cluster, size=None, weight=None):
     x = _max_pool(input, cluster, size)
     return (x, ) + _pool(index, position, cluster, weight)
+
+
+def _avg_pool(input, cluster, size, weight):
+    if input.dim() == 1:
+        input = input.unsqueeze(1)
+
+    cluster = cluster.unsqueeze(1).expand(-1, input.size(1))
+    cluster = cluster if torch.is_tensor(input) else Variable(cluster)
+
+    fill = 0
+    if size is None:
+        if weight is not None:
+            input = input * weight.expand(-1,input.size(1))
+            x = scatter_add(cluster, input, dim=0, fill_value=fill)[0]
+        else:
+            x = scatter_mean(cluster, input, dim=0, fill_value=fill)[0]
+    else:
+        if weight is not None:
+            input = input * weight.expand(-1,input.size(1))
+            x = scatter_add(cluster, input, dim=0, size=size,
+                            fill_value=fill)[0]
+        else:
+            x = scatter_mean(cluster, input, dim=0, size=size,
+                             fill_value=fill)[0]
+        x[(x == fill).data] = 0
+    return x
+
+
+def avg_pool(input, index, position, cluster, size=None, weight=None,
+             weight_values=False, weight_pos=False):
+    if weight is not None and weight_values:
+        x = _avg_pool(input, cluster, size, weight)
+    else:
+        x = _avg_pool(input, cluster, size, None)
+    if weight is not None and weight_pos:
+        return (x, ) + _pool(index, position, cluster, weight)
+    else:
+        return (x, ) + _pool(index, position, cluster, None)
+
