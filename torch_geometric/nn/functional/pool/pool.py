@@ -1,7 +1,7 @@
 import torch
 from torch.autograd import Variable
 from torch_scatter import scatter_max, scatter_mean, scatter_add
-
+import torch.nn.functional as F
 from .coalesce import remove_self_loops, coalesce
 
 
@@ -15,8 +15,8 @@ def _pool(index, position, cluster, weight):
     index = coalesce(index)  # Remove duplicates.
 
     if weight is not None:
-        print(weight.data.min(), weight.data.max())
-        weight = torch.sigmoid(weight).unsqueeze(1)
+        weight = F.relu(weight).unsqueeze(1) + 0.0001  # avoid all zero
+
         norm = scatter_add(Variable(cluster), weight.squeeze(), dim=0)
         norm = torch.gather(norm,0,Variable(cluster))
 

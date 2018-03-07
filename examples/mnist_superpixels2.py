@@ -33,9 +33,9 @@ test_loader = DataLoader2(test_dataset, batch_size=64)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5, bias=False,
+        self.conv1 = SplineConv(1, 33, dim=2, kernel_size=5, bias=False,
                                 backprop_to_adj=True)
-        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5, bias=False,
+        self.conv2 = SplineConv(32, 65, dim=2, kernel_size=5, bias=False,
                                 backprop_to_adj=True)
         self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5, bias=False,
                                 backprop_to_adj=True)
@@ -52,11 +52,13 @@ class Net(nn.Module):
     def forward(self, data):
         data.input = F.elu(self.conv1(data.adj, data.input))
         size, start = self.pool_args(8)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
-        data.input = F.elu(self.conv2(data.adj, data.input))
+        data, _ = sparse_voxel_max_pool(data, size, start, transform,
+                                        weight=data.input[:,-1])
+        data.input = F.elu(self.conv2(data.adj, data.input[:,:-1]))
         size, start = self.pool_args(4)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
-        data.input = F.elu(self.conv3(data.adj, data.input))
+        data, _ = sparse_voxel_max_pool(data, size, start, transform,
+                                        weight=data.input[:,-1])
+        data.input = F.elu(self.conv3(data.adj, data.input[:,:-1]))
 
         data, _ = dense_voxel_max_pool(data, 1, -0.5, 1.5)
 
