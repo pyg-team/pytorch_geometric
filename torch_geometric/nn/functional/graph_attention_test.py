@@ -85,3 +85,4 @@ class GraphAttentionTest(TestCase):
         x, weight, att_weight = Var(x), Var(weight), Var(att_weight)
 
         output = graph_attention(x, index, True, 0.2, 0, weight, att_weight)
+        print(output)
