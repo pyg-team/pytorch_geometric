@@ -40,7 +40,7 @@ class ChebConv(Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index, edge_attr=None):
-        return cheb_conv(x, edge_index, self.weight, edge_attr, self.bias)
+        return cheb_conv(x, edge_index, edge_attr, self.weight, self.bias)
 
     def __repr__(self):
         return repr(self)
