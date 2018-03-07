@@ -21,9 +21,9 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
 
 transform = LogCartesianAdj(30)
-init_transform = Compose([NormalizeScale(), transform])
-train_dataset = ModelNet10(path, True, transform=init_transform)
-test_dataset = ModelNet10(path, False, transform=init_transform)
+init_transform = NormalizeScale()
+train_dataset = ModelNet10(path, True, init_transform)
+test_dataset = ModelNet10(path, False, init_transform)
 batch_size = 6
 train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=batch_size)
@@ -32,11 +32,11 @@ test_loader = DataLoader2(test_dataset, batch_size=batch_size)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5)
-        self.conv2 = SplineConv(32, 64, dim=3, kernel_size=5)
-        self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv4 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.conv5 = SplineConv(64, 64, dim=3, kernel_size=5)
+        self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5, bias=False, backprop_to_adj=True)
+        self.conv2 = SplineConv(32, 64, dim=3, kernel_size=5, bias=False, backprop_to_adj=True)
+        self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5, bias=False, backprop_to_adj=True)
+        self.conv4 = SplineConv(64, 64, dim=3, kernel_size=5, bias=False, backprop_to_adj=True)
+        self.conv5 = SplineConv(64, 64, dim=3, kernel_size=5, bias=False, backprop_to_adj=True)
         self.fc1 = nn.Linear(8 * 64, 10)
 
     def pool_args(self, mean, x):
@@ -47,24 +47,24 @@ class Net(nn.Module):
         return size, start
 
     def forward(self, data):
-        data.input = F.elu(self.conv1(data.adj, data.input))
+        data.input = F.relu(self.conv1(data.adj, data.input))
         size, start = self.pool_args(32, 8)
         data, _ = sparse_voxel_max_pool(data, size, start, transform)
 
-        data.input = F.elu(self.conv2(data.adj, data.input))
+        data.input = F.relu(self.conv2(data.adj, data.input))
         size, start = self.pool_args(16, 4)
         data, _ = sparse_voxel_max_pool(data, size, start, transform)
 
-        data.input = F.elu(self.conv3(data.adj, data.input))
+        data.input = F.relu(self.conv3(data.adj, data.input))
         size, start = self.pool_args(8, 2)
         data, _ = sparse_voxel_max_pool(data, size, start, transform)
 
-        data.input = F.elu(self.conv4(data.adj, data.input))
+        data.input = F.relu(self.conv4(data.adj, data.input))
         size, start = self.pool_args(4, 1)
         data, _ = sparse_voxel_max_pool(data, size, start, transform)
 
-        data.input = F.elu(self.conv5(data.adj, data.input))
-        data, _ = dense_voxel_max_pool(data, 0.5, 0, 1)
+        data.input = F.relu(self.conv5(data.adj, data.input))
+        data, _ = dense_voxel_max_pool(data, 1, -0.5, 1.5)
 
         x = data.input.view(-1, self.fc1.weight.size(1))
         x = F.dropout(x, training=self.training)
@@ -88,7 +88,8 @@ def train(epoch):
             param_group['lr'] = 0.0001
 
     for data in train_loader:
-        data = data.cuda().to_variable()
+        data = data.cuda().to_variable(['input', 'target', 'pos'])
+        data = transform(data)
         optimizer.zero_grad()
         loss = F.nll_loss(model(data), data.target)
         loss.backward()
@@ -100,7 +101,8 @@ def test(epoch, loader, dataset, str):
     correct = 0
 
     for data in loader:
-        data = data.cuda().to_variable('input')
+        data = data.cuda().to_variable(['input', 'pos'])
+        data = transform(data)
         pred = model(data).data.max(1)[1]
         correct += pred.eq(data.target).cpu().sum()
 
