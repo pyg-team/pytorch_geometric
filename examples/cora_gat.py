@@ -62,15 +62,14 @@ for run in range(1, 101):
 
     old_val = 0
     cur_test = 0
-    for i in range(0, 100000):
+    for i in range(0, 200):
         train()
-        # val = test(val_mask)
-        # if val > old_val:
-        #     old_val = val
-        #     cur_test = test(test_mask)
+        val = test(val_mask)
+        if val > old_val:
+            old_val = val
+            cur_test = test(test_mask)
 
-    # acc.append(cur_test)
-    acc.append(test(test_mask))
+    acc.append(cur_test)
     print('Run:', run, 'Test Accuracy:', acc[-1])
 
 acc = torch.FloatTensor(acc)
