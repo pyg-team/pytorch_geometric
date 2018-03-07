@@ -16,7 +16,11 @@ def graph_attention(x,
                     att_weight,
                     bias=None):
 
-    torch.cuda.synchronize()
+    if weight.dim() == 2:
+        weight = weight.unsqueeze(1)
+    if att_weight.dim() == 1:
+        att_weight = att_weight.unsqueeze(0)
+
     n, e = x.size(0), edge_index.size(1) + x.size(0)
     m_in, k, m_out = weight.size()
 
