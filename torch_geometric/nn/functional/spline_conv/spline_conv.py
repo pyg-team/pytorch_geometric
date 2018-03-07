@@ -29,6 +29,7 @@ def spline_conv(
     output = input[col]
 
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
+
     if output.is_cuda:
         output = SplineConvGPU(kernel_size, is_open_spline, K, degree,
                                basis_kernel, basis_backward_kernel,

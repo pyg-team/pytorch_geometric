@@ -82,15 +82,13 @@ class SplineConv(Module):
 
         self.forward_kernel = get_weighting_forward_kernel(in_features,
                                                            out_features,
-                                                           self.k_max,
-                                                           self.bp_to_adj)
+                                                           self.k_max)
         self.backward_kernel = get_weighting_backward_kernel(in_features,
                                                              out_features,
                                                              self.k_max, self.K,
                                                              self.bp_to_adj)
 
-        self.basis_kernel = get_basis_kernel(self.k_max, self.K, dim, degree,
-                                             self.bp_to_adj)
+        self.basis_kernel = get_basis_kernel(self.k_max, self.K, dim, degree)
         if self.bp_to_adj:
             self.basis_backward_kernel = get_basis_backward_kernel(self.k_max,
                                                                    self.K, dim,

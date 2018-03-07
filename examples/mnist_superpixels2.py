@@ -1,5 +1,6 @@
 import os
 import sys
+import random
 
 import torch
 from torch import nn
@@ -32,23 +33,32 @@ test_loader = DataLoader2(test_dataset, batch_size=64)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5,bias=False,
+        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5,
                                 backprop_to_adj=True)
-        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5,bias=False,
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5,
                                 backprop_to_adj=True)
-        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5,bias=False,
+        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5,
                                 backprop_to_adj=True)
         self.fc1 = nn.Linear(4 * 64, 128)
         self.fc2 = nn.Linear(128, 10)
 
+    def pool_args(self, mean):
+        if not self.training:
+            return 1 / mean, 0
+        size = 1 / mean
+        start = [random.uniform(-1 / mean, 0) for _ in range(2)]
+        return size, start
+
     def forward(self, data):
         data.input = F.relu(self.conv1(data.adj, data.input))
-        data, _ = sparse_voxel_max_pool(data, 5, 0, transform, weight=data.input[:,-1])
+        size, start = self.pool_args(8)
+        data, _ = sparse_voxel_max_pool(data, size, start, transform)
         data.input = F.relu(self.conv2(data.adj, data.input))
-        data, _ = sparse_voxel_max_pool(data, 7, 0, transform)
+        size, start = self.pool_args(4)
+        data, _ = sparse_voxel_max_pool(data, size, start, transform)
         data.input = F.relu(self.conv3(data.adj, data.input))
 
-        data, _ = dense_voxel_max_pool(data, 25, -10, 40)
+        data, _ = dense_voxel_max_pool(data, 1, -0.5, 1.5)
 
         x = data.input.contiguous().view(-1, self.fc1.weight.size(1))
         x = F.elu(self.fc1(x))
@@ -77,15 +87,12 @@ def train(epoch):
 
     for data in train_loader:
         data = data.cuda().to_variable(['input', 'target', 'pos'])
-        data = transform(data)
+        data = transform_norm(data)
         optimizer.zero_grad()
         loss = F.nll_loss(model(data), data.target)
         loss.backward()
-        print('conv1_w_grad:',model.conv1.weight.grad.data[:,:,-1].min(),model.conv1.weight.grad.data[:,:,-1].max())
-        print('conv1_w:',model.conv1.weight.data[:,:,-1].min(),model.conv1.weight.data[:,:,-1].max())
         optimizer.step()
-        print('conv1_w:',model.conv1.weight.data[:,:,-1].min(),model.conv1.weight.data[:,:,-1].max())
-        print(loss.data[0])
+        #print(loss.data[0])
 
 
 def test(epoch):
@@ -93,7 +100,8 @@ def test(epoch):
     correct = 0
 
     for data in test_loader:
-        data = data.cuda().to_variable(['input', 'weight', 'pos'])
+        data = data.cuda().to_variable(['input', 'pos'])
+        data = transform_norm(data)
         pred = model(data).data.max(1)[1]
         correct += pred.eq(data.target).sum()
 
