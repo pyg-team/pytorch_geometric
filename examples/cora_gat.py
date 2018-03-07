@@ -10,7 +10,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cora  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.nn.modules import GraphConv, ChebConv  # noqa
+from torch_geometric.nn.modules import GraphAttention  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cora')
@@ -23,15 +23,14 @@ test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GraphConv(1433, 16)
-        self.conv2 = GraphConv(16, 7)
-        # self.conv1 = ChebConv(1433, 16, 2)
-        # self.conv2 = ChebConv(16, 7, 2)
+        self.att1 = GraphAttention(1433, 8, 8, dropout=0.6)
+        self.att2 = GraphAttention(64, 7, 1, dropout=0.6)
 
     def forward(self):
-        x = F.elu(self.conv1(data.input, data.index))
-        x = F.dropout(x, training=self.training)
-        x = self.conv2(x, data.index)
+        x = F.dropout(data.input, p=0.6, training=self.training)
+        x = F.elu(self.att1(data.input, data.index))
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = self.att2(x, data.index)
         return F.log_softmax(x, dim=1)
 
 
@@ -40,7 +39,7 @@ if torch.cuda.is_available():
     train_mask, val_mask = train_mask.cuda(), val_mask.cuda()
     test_mask, model = test_mask.cuda(), model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=0.0005)
 
 
 def train():
@@ -58,19 +57,20 @@ def test(mask):
 
 acc = []
 for run in range(1, 101):
-    model.conv1.reset_parameters()
-    model.conv2.reset_parameters()
+    model.att1.reset_parameters()
+    model.att2.reset_parameters()
 
     old_val = 0
     cur_test = 0
-    for _ in range(0, 200):
+    for i in range(0, 100000):
         train()
-        val = test(val_mask)
-        if val > old_val:
-            old_val = val
-            cur_test = test(test_mask)
+        # val = test(val_mask)
+        # if val > old_val:
+        #     old_val = val
+        #     cur_test = test(test_mask)
 
-    acc.append(cur_test)
+    # acc.append(cur_test)
+    acc.append(test(test_mask))
     print('Run:', run, 'Test Accuracy:', acc[-1])
 
 acc = torch.FloatTensor(acc)

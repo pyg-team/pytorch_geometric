@@ -4,10 +4,9 @@ from ...sparse import SparseTensor
 from .graph_conv import SparseMM
 
 
-def cheb_conv(x, edge_index, weight, edge_attr=None, bias=None):
+def cheb_conv(x, edge_index, edge_attr, weight, bias=None):
     row, col = edge_index
     n, e, K = x.size(0), row.size(0), weight.size(0)
-    # raise NotImplementedError
 
     if edge_attr is None:
         edge_attr = x.data.new(e).fill_(1)
