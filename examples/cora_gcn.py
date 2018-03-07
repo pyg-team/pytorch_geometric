@@ -12,11 +12,6 @@ from torch_geometric.datasets import Cora  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.nn.modules import GraphConv  # noqa
 
-
-def preprocess_input(x):
-    return x.sum(1, keepdim=True).pow_(-1) * x
-
-
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cora')
 data = Cora(path)[0].cuda().to_variable()
