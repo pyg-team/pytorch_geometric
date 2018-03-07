@@ -324,6 +324,9 @@ const long* kernel_size, const long* is_open_spline, int num_threads) {
 }
 '''
 
+# This is the efficient version which uses amount but may divide by 0 and
+# may be numerically unstable.
+# No solution for this yet, use the less efficient version 2.
 _spline_kernel_linear_backward = kernel_loop + '''
 extern "C"
 __global__ void spline_kernel(
@@ -342,6 +345,7 @@ int num_threads) {
     ${Dtype} grad_out = 0.0;
     
     int quotient = (int)pow(2.0,(double)d_idx);
+    
     value = input[e_idx * ${dim} + d_idx];
     value *= kernel_size[d_idx] - is_open_spline[d_idx];
     frac = value - floor(value);
@@ -349,20 +353,20 @@ int num_threads) {
     for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
       
       k_idx_mod = (k_idx/quotient) % 2;
-
-      ${Dtype} residual = (1 - k_idx_mod) * (frac - 1) + k_idx_mod * frac;
       int a_idx = e_idx*${k_max} + k_idx;
+
+      ${Dtype} residual = - (1 - k_idx_mod) * (1 - frac) + k_idx_mod * frac;
       grad_out += grad_amount[a_idx]*amount[a_idx]/residual;
       
+   
     }
     grad_adj[idx] = grad_out*(kernel_size[d_idx] - is_open_spline[d_idx]);
   }
 }
 
 
-
 /*
-      ${Dtype} a = -(1 - k_idx_mod) + k_idx_mod;
+ ${Dtype} a = -(1 - k_idx_mod) + k_idx_mod;
       for (int d_it = 0; d_it < ${dim}; d_it++) {
         if(d_it!=d_idx)
         {
@@ -372,8 +376,54 @@ int num_threads) {
           a *= (1 - k_idx_mod) * (1 - frac) + k_idx_mod * frac;
         }
       } 
-      grad_out += a*grad_amount[a_idx];
-      */
+      grad_out += a*grad_amount[a_idx];     
+*/
+
+'''
+
+# This is the inefficient version with gradient computation without using amount
+_spline_kernel_linear_backward2 = kernel_loop + '''
+extern "C"
+__global__ void spline_kernel(
+const ${Dtype}* input, const ${Dtype}* grad_amount, ${Dtype}* amount, 
+${Dtype}* grad_adj, const long* kernel_size, const long* is_open_spline, 
+int num_threads) {
+
+  CUDA_KERNEL_LOOP(idx, num_threads) {
+
+    const int e_idx = idx / ${dim};
+    int d_idx = idx % ${dim};
+
+    int k_idx_mod;
+    ${Dtype} value;
+    ${Dtype} frac;
+    ${Dtype} grad_out = 0.0;
+    int quotient = (int)pow(2.0,(double)d_idx);
+          
+    for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
+      k_idx_mod = (k_idx/quotient) % 2;
+      int a_idx = e_idx*${k_max} + k_idx;
+      
+      ${Dtype} a = -(1 - k_idx_mod) + k_idx_mod;
+      for (int d_it = 0; d_it < ${dim}; d_it++) {
+        if(d_it!=d_idx)
+        {
+          int quotient = (int)pow(2.0,(double)d_it);
+          k_idx_mod = (k_idx/quotient) % 2;
+          value = input[e_idx * ${dim} + d_it];
+          value *= kernel_size[d_it] - is_open_spline[d_it];
+          frac = value - floor(value);
+          a *= (1 - k_idx_mod) * (1 - frac) + k_idx_mod * frac;
+        }
+      } 
+      grad_out += a*grad_amount[a_idx];    
+
+    }
+    grad_adj[idx] = grad_out*(kernel_size[d_idx] - is_open_spline[d_idx]);
+  }
+}
+
+
 '''
 
 
@@ -403,7 +453,7 @@ def get_basis_backward_kernel(k_max, K, dim, degree, dtype='float'):
     elif degree == 2:
         raise NotImplementedError
     else:
-        _spline_kernel = _spline_kernel_linear_backward
+        _spline_kernel = _spline_kernel_linear_backward2
 
     cuda_tensor = torch.FloatTensor([1]).cuda()
     with torch.cuda.device_of(cuda_tensor):
