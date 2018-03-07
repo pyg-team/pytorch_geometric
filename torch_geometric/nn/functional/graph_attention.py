@@ -17,7 +17,7 @@ def graph_attention(x,
                     bias=None):
 
     if weight.dim() == 2:
-        weight = weight.unsqueeze(1)
+        weight = weight.unsqueeze(-2)
     if att_weight.dim() == 1:
         att_weight = att_weight.unsqueeze(0)
 
