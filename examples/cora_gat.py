@@ -62,7 +62,7 @@ for run in range(1, 101):
 
     old_val = 0
     cur_test = 0
-    for i in range(0, 200):
+    for i in range(0, 300):
         train()
         val = test(val_mask)
         if val > old_val:
