@@ -19,22 +19,26 @@ class SparseMM(Function):
         return grad_input
 
 
-def graph_conv(x, index, weight, bias=None):
-    row, col = index
+def graph_conv(x, edge_index, weight, edge_attr=None, bias=None):
+    row, col = edge_index
     n, e = x.size(0), row.size(0)
 
-    # Preprocess.
-    zero, one = x.data.new(n).fill_(0), x.data.new(e).fill_(1)
-    degree = zero.scatter_add_(0, row, one) + 1
+    if edge_attr is None:
+        edge_attr = x.data.new(e).fill_(1)
+
+    # Compute degree.
+    degree = x.data.new(n).fill_(0).scatter_add_(0, row, edge_attr) + 1
     degree = degree.pow_(-0.5)
 
-    value = degree[row] * degree[col]
-    value = torch.cat([value, degree * degree], dim=0)
-    loop = torch.arange(0, n, out=index.new()).view(1, -1).repeat(2, 1)
-    index = torch.cat([index, loop], dim=1)
-    adj = SparseTensor(index, value, torch.Size([n, n]))
+    # Normalize adjacency matrix.
+    edge_attr *= degree[row]
+    edge_attr *= degree[col]
+    edge_attr = torch.cat([edge_attr, degree * degree], dim=0)
+    loop = torch.arange(0, n, out=row.new()).view(1, -1).repeat(2, 1)
+    edge_index = torch.cat([edge_index, loop], dim=1)
+    adj = SparseTensor(edge_index, edge_attr, torch.Size([n, n]))
 
-    # Start computation.
+    # Convolution.
     output = SparseMM(adj)(torch.mm(x, weight))
 
     if bias is not None:
