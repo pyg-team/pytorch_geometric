@@ -1,5 +1,5 @@
 import torch
-from torch.nn import Module, Parameter as Param
+from torch.nn import Module, Parameter
 
 from .utils.inits import uniform
 from .utils.repr import repr
@@ -24,18 +24,18 @@ class ChebConv(Module):
 
         self.in_features = in_features
         self.out_features = out_features
-        self.K = K + 1
-        self.weight = Param(torch.Tensor(self.K, in_features, out_features))
+        self.K = K
+        self.weight = Parameter(torch.Tensor(K + 1, in_features, out_features))
 
         if bias:
-            self.bias = Param(torch.Tensor(out_features))
+            self.bias = Parameter(torch.Tensor(out_features))
         else:
             self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.K * self.in_features
+        size = (self.K + 1) * self.in_features
         uniform(size, self.weight)
         uniform(size, self.bias)
 
