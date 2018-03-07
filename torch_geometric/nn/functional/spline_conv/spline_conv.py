@@ -16,8 +16,7 @@ def spline_conv(
         basis_kernel,
         basis_backward_kernel=None,
         degree=1,
-        bias=None,
-        bp_to_adj=False):
+        bias=None):
 
     if input.dim() == 1:
         input = input.unsqueeze(1)
@@ -28,6 +27,7 @@ def spline_conv(
     # Get features for every end vertex with shape [|E| x M_in].
     output = input[col]
 
+    bp_to_adj = False if torch.is_tensor(values) else True
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
 
     if output.is_cuda:
