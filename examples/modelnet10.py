@@ -55,29 +55,29 @@ class Net(nn.Module):
         return size, start
 
     def forward(self, data):
-        data.input = F.relu(self.conv1(data.adj, data.input))
-        #att1 = self.att1(data.input)
+        data.input = F.elu(self.conv1(data.adj, data.input))
+        att1 = self.att1(data.input)
         size, start = self.pool_args(32, 8)
         data, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=data.input[:,0])
+                                        weight=att1[:,0])
 
-        data.input = F.relu(self.conv2(data.adj, data.input))
-        #att2 = self.att2(data.input)
+        data.input = F.elu(self.conv2(data.adj, data.input))
+        att2 = self.att2(data.input)
         size, start = self.pool_args(16, 4)
         data, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=data.input[:,0])
+                                        weight=att2[:,0])
 
-        data.input = F.relu(self.conv3(data.adj, data.input))
-        #att3 = self.att3(data.input)
+        data.input = F.elu(self.conv3(data.adj, data.input))
+        att3 = self.att3(data.input)
         size, start = self.pool_args(8, 2)
         data, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=data.input[:,0])
+                                        weight=att3[:,0])
 
-        data.input = F.relu(self.conv4(data.adj, data.input))
-        #att4 = self.att4(data.input)
+        data.input = F.elu(self.conv4(data.adj, data.input))
+        att4 = self.att4(data.input)
         size, start = self.pool_args(4, 1)
         data, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=data.input[:,0])
+                                        weight=att4[:,0])
 
         data.input = F.relu(self.conv5(data.adj, data.input))
         data, _ = dense_voxel_max_pool(data, 1, -0.5, 1.5)

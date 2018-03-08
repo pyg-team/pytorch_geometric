@@ -17,7 +17,7 @@ from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import (NormalizeScale, RandomFlip,
                                        CartesianAdj, RandomTranslate,
                                        PCToGraphNN, PCToGraphRad,
-                                       SamplePointcloud)  # noqa
+                                       SamplePointcloud, RandomRotate)  # noqa
 from torch_geometric.nn.modules import SplineConv, Lin  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
@@ -26,9 +26,10 @@ from torch_geometric.visualization.model import show_model  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10RandAugPC')
 
-#to_graph = PCToGraphNN()
-to_graph = PCToGraphRad(r=0.03)
-init_transform = Compose([SamplePointcloud(), NormalizeScale(), to_graph])
+to_graph = PCToGraphNN()
+#to_graph = PCToGraphRad(r=0.03)
+init_transform = Compose([SamplePointcloud(num_points=2048), NormalizeScale(),
+                          RandomRotate(np.pi), to_graph])
 train_dataset = ModelNet10RandAugPC(path, True, transform=init_transform)
 test_dataset = ModelNet10RandAugPC(path, False, transform=init_transform)
 batch_size = 6
@@ -55,8 +56,8 @@ class Net(nn.Module):
         self.att3 = Lin(96, 2)
         self.att4 = Lin(128, 2)
 
-        self.transform = CartesianAdj(2/64, trainable=True)
-        self.transform1 = CartesianAdj(2/32, trainable=True)
+        self.transform = CartesianAdj(1/10, trainable=True)
+        self.transform1 = CartesianAdj(1/10, trainable=True)
         self.transform2 = CartesianAdj(2/16, trainable=True)
         self.transform3 = CartesianAdj(2/8, trainable=True)
         self.transform4 = CartesianAdj(2/4, trainable=True)
@@ -144,7 +145,7 @@ def train(epoch):
         loss = F.nll_loss(model(data), data.target)
         loss.backward()
         optimizer.step()
-        to_graph.r = model.transform.r.data.clamp(min=0.0001, max=1)[0]
+        #to_graph.r = model.transform.r.data.clamp(min=0.0001, max=1)[0]
 
 
 def test(epoch, loader, dataset, str):
