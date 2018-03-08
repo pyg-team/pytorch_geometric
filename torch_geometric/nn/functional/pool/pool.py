@@ -55,30 +55,24 @@ def _avg_pool(input, cluster, size, weight):
     fill = 0
     if size is None:
         if weight is not None:
-            input = input * weight.expand(-1,input.size(1))
-            x = scatter_add(cluster, input, dim=0, fill_value=fill)[0]
+            input = input * weight
+            x = scatter_add(cluster, input, dim=0, fill_value=fill)
         else:
-            x = scatter_mean(cluster, input, dim=0, fill_value=fill)[0]
+            x = scatter_mean(cluster, input, dim=0, fill_value=fill)
     else:
         if weight is not None:
-            input = input * weight.expand(-1,input.size(1))
+            input = input * weight
             x = scatter_add(cluster, input, dim=0, size=size,
-                            fill_value=fill)[0]
+                            fill_value=fill)
         else:
             x = scatter_mean(cluster, input, dim=0, size=size,
-                             fill_value=fill)[0]
+                             fill_value=fill)
         x[(x == fill).data] = 0
     return x
 
 
-def avg_pool(input, index, position, cluster, size=None, weight=None,
-             weight_values=False, weight_pos=False):
-    if weight is not None and weight_values:
-        x = _avg_pool(input, cluster, size, weight)
-    else:
-        x = _avg_pool(input, cluster, size, None)
-    if weight is not None and weight_pos:
-        return (x, ) + _pool(index, position, cluster, weight)
-    else:
-        return (x, ) + _pool(index, position, cluster, None)
+def avg_pool(input, index, position, cluster, size=None,
+             weight_values=None, weight_pos=None):
+    x = _avg_pool(input, cluster, size, weight_values)
+    return (x, ) + _pool(index, position, cluster, weight_pos)
 

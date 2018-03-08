@@ -61,8 +61,8 @@ def dense_voxel_max_pool(data, size, start=None, end=None, transform=None,
     return data, cluster
 
 
-def sparse_voxel_avg_pool(data, size, start=None, transform=None, weight=None,
-                          weight_values=False, weight_pos=False):
+def sparse_voxel_avg_pool(data, size, start=None, transform=None,
+                          weight_values=None, weight_pos=None):
     pos_tensor = data.pos if torch.is_tensor(data.pos) else data.pos.data
     size = pos_tensor.new(repeat_to(size, data.pos.size(1)))
 
@@ -73,15 +73,21 @@ def sparse_voxel_avg_pool(data, size, start=None, transform=None, weight=None,
     cluster = output[0] if isinstance(output, tuple) else output
     batch = output[1] if isinstance(output, tuple) else None
 
-    if weight is not None:
-        weight = F.relu(weight).unsqueeze(1) + 0.0001  # avoid all zero
-        norm = scatter_add(Variable(cluster), weight.squeeze(), dim=0)
+    if weight_values is not None:
+        weight_values = F.relu(weight_values).unsqueeze(1) + 0.0001  # avoid all zero
+        norm = scatter_add(Variable(cluster), weight_values.squeeze(), dim=0)
         norm = torch.gather(norm, 0, Variable(cluster))
-        weight = weight / norm.unsqueeze(1)
+        weight_values = weight_values / norm.unsqueeze(1)
+
+    if weight_pos is not None:
+        weight_pos = F.relu(weight_pos).unsqueeze(1) + 0.0001  # avoid all zero
+        norm = scatter_add(Variable(cluster), weight_pos.squeeze(), dim=0)
+        norm = torch.gather(norm, 0, Variable(cluster))
+        weight_pos = weight_pos / norm.unsqueeze(1)
 
     input, index, pos = avg_pool(data.input, data.index, data.pos, cluster,
-                                 weight=weight, weight_values=False,
-                                 weight_pos=False)
+                                 weight_values=weight_values,
+                                 weight_pos=weight_pos)
 
     data = Data(input, pos, index, None, data.target, batch)
 
@@ -92,7 +98,7 @@ def sparse_voxel_avg_pool(data, size, start=None, transform=None, weight=None,
 
 
 def dense_voxel_avg_pool(data, size, start=None, end=None, transform=None,
-                         weight=None, weight_values=False, weight_pos=False):
+                         weight_values=None, weight_pos=None):
     pos_tensor = data.pos if torch.is_tensor(data.pos) else data.pos.data
     size = pos_tensor.new(repeat_to(size, data.pos.size(1)))
 
@@ -104,8 +110,22 @@ def dense_voxel_avg_pool(data, size, start=None, end=None, transform=None,
 
     cluster, C = dense_grid_cluster(pos_tensor, size, data.batch, start, end)
 
+    if weight_values is not None:
+        weight_values = F.relu(weight_values).unsqueeze(
+            1) + 0.0001  # avoid all zero
+        norm = scatter_add(Variable(cluster), weight_values.squeeze(), dim=0)
+        norm = torch.gather(norm, 0, Variable(cluster))
+        weight_values = weight_values / norm.unsqueeze(1)
+
+    if weight_pos is not None:
+        weight_pos = F.relu(weight_pos).unsqueeze(1) + 0.0001  # avoid all zero
+        norm = scatter_add(Variable(cluster), weight_pos.squeeze(), dim=0)
+        norm = torch.gather(norm, 0, Variable(cluster))
+        weight_pos = weight_pos / norm.unsqueeze(1)
+
     input, index, pos = avg_pool(data.input, data.index, data.pos, cluster, C,
-                                 weight=weight)
+                                 weight_values=weight_values,
+                                 weight_pos=weight_pos)
 
     data = Data(input, pos, index, None, data.target)
 
