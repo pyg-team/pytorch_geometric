@@ -14,7 +14,7 @@ from torch_geometric.nn.modules import GraphConv, ChebConv  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cora')
-data = Cora(path)[0].cuda().to_variable()
+data = Cora(path, normalize=True)[0].cuda().to_variable()
 train_mask = torch.arange(0, 140).long()
 val_mask = torch.arange(140, 640).long()
 test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
@@ -29,7 +29,7 @@ class Net(nn.Module):
         # self.conv2 = ChebConv(16, 7, 2)
 
     def forward(self):
-        x = F.elu(self.conv1(data.input, data.index))
+        x = F.relu(self.conv1(data.input, data.index))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, data.index)
         return F.log_softmax(x, dim=1)
@@ -40,7 +40,7 @@ if torch.cuda.is_available():
     train_mask, val_mask = train_mask.cuda(), val_mask.cuda()
     test_mask, model = test_mask.cuda(), model.cuda()
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
 
 
 def train():
@@ -71,6 +71,7 @@ for run in range(1, 101):
             cur_test = test(test_mask)
 
     acc.append(cur_test)
+    # acc.append(test(test_mask))
     print('Run:', run, 'Test Accuracy:', acc[-1])
 
 acc = torch.FloatTensor(acc)

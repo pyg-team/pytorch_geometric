@@ -14,7 +14,7 @@ from torch_geometric.nn.modules import GraphAttention  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'Cora')
-data = Cora(path)[0].cuda().to_variable()
+data = Cora(path, normalize=True)[0].cuda().to_variable()
 train_mask = torch.arange(0, 140).long()
 val_mask = torch.arange(140, 640).long()
 test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
@@ -24,7 +24,7 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.att1 = GraphAttention(1433, 8, 8, dropout=0.6)
-        self.att2 = GraphAttention(64, 7, 1, dropout=0.6)
+        self.att2 = GraphAttention(64, 7, dropout=0.6)
 
     def forward(self):
         x = F.dropout(data.input, p=0.6, training=self.training)
@@ -62,7 +62,7 @@ for run in range(1, 101):
 
     old_val = 0
     cur_test = 0
-    for i in range(0, 300):
+    for i in range(0, 200):
         train()
         val = test(val_mask)
         if val > old_val:
