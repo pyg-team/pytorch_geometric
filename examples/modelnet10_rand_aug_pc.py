@@ -26,7 +26,7 @@ from torch_geometric.visualization.model import show_model  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10RandAugPC')
 
-#sampling = PCToGraphNN()
+#to_graph = PCToGraphNN()
 to_graph = PCToGraphRad(r=0.03)
 init_transform = Compose([SamplePointcloud(), NormalizeScale(), to_graph])
 train_dataset = ModelNet10RandAugPC(path, True, transform=init_transform)
@@ -144,7 +144,7 @@ def train(epoch):
         loss = F.nll_loss(model(data), data.target)
         loss.backward()
         optimizer.step()
-        #to_graph.r = model.transform.r.data.clamp(min=0.0001, max=1)[0]
+        to_graph.r = model.transform.r.data.clamp(min=0.0001, max=1)[0]
 
 
 def test(epoch, loader, dataset, str):

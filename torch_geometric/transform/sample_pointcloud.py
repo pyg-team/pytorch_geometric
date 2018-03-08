@@ -48,6 +48,7 @@ class PCToGraphRad(object):
 
     def __call__(self, data):
         data.index = radius_graph(data.pos, self.r)
+        return data
 
 
 class PCToGraphNN(object):
@@ -56,3 +57,4 @@ class PCToGraphNN(object):
 
     def __call__(self, data):
         data.index = nn_graph(data.pos, k=self.nn)
+        return data
