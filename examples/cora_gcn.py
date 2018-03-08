@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 import sys
 
 import torch
@@ -8,24 +8,26 @@ import torch.nn.functional as F
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import Cora  # noqa
+from torch_geometric.datasets import Cora, CiteSeer  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.nn.modules import GraphConv, ChebConv  # noqa
 
-path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(path, '..', 'data', 'Cora')
-data = Cora(path, normalize=True)[0].cuda().to_variable()
-train_mask = torch.arange(0, 140).long()
-val_mask = torch.arange(140, 640).long()
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
+dataset = Cora(osp.join(path, 'Cora'), normalize=True)
+# dataset = CiteSeer(osp.join(path, 'CiteSeer'), normalize=True)
+data = dataset[0].cuda().to_variable()
+train_mask = torch.arange(0, 140).long()  # Cora = 140, CiteSeer = 120
+val_mask = torch.arange(train_mask.size(0), train_mask.size(0) + 500).long()
 test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
+        # Cora = 1433, CiteSeer = 3703
         self.conv1 = GraphConv(1433, 16)
         self.conv2 = GraphConv(16, 7)
-        # self.conv1 = ChebConv(1433, 16, 2)
+        # self.conv1 = ChebConv(3703, 16, 2)
         # self.conv2 = ChebConv(16, 7, 2)
 
     def forward(self):
@@ -71,7 +73,6 @@ for run in range(1, 101):
             cur_test = test(test_mask)
 
     acc.append(cur_test)
-    # acc.append(test(test_mask))
     print('Run:', run, 'Test Accuracy:', acc[-1])
 
 acc = torch.FloatTensor(acc)
