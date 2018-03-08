@@ -17,6 +17,7 @@ def radius_graph(data, radius):
     indices = tree.query_ball_tree(tree, radius)
 
     length = len(sorted(indices, key=len, reverse=True)[0])
+    length = max(length,1)
     indices = np.array([x + [None] * (length - len(x)) for x in indices])
 
     # Nodes with no neighbors
