@@ -1,4 +1,4 @@
-import os
+import os.path as osp
 import sys
 
 import torch
@@ -8,21 +8,23 @@ import torch.nn.functional as F
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import Cora  # noqa
+from torch_geometric.datasets import Cora, CiteSeer  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.nn.modules import GraphAttention  # noqa
 
-path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(path, '..', 'data', 'Cora')
-data = Cora(path, normalize=True)[0].cuda().to_variable()
-train_mask = torch.arange(0, 140).long()
-val_mask = torch.arange(140, 640).long()
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
+dataset = Cora(osp.join(path, 'Cora'), normalize=True)
+# dataset = CiteSeer(osp.join(path, 'CiteSeer'), normalize=True)
+data = dataset[0].cuda().to_variable()
+train_mask = torch.arange(0, 140).long()  # Cora = 140, CiteSeer = 120
+val_mask = torch.arange(train_mask.size(0), train_mask.size(0) + 500).long()
 test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
 
 
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
+        # Cora = 1433, CiteSeer = 3703
         self.att1 = GraphAttention(1433, 8, 8, dropout=0.6)
         self.att2 = GraphAttention(64, 7, dropout=0.6)
 
