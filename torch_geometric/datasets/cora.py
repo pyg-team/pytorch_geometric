@@ -1,3 +1,5 @@
+from __future__ import division
+
 import torch
 
 from .dataset import Dataset
@@ -12,6 +14,8 @@ class Cora(Dataset):
     Args:
         root (string): Root directory of dataset. Downloads and processes data
             automatically if dataset doesn't exist.
+        normalize (bool, optional): (Row-)normalize input feature vectors.
+            (default: :obj:`False`)
         transform (callable, optional): A function/transform that takes in a
             :class:`Data` object and returns a transformed version.
             (default: :obj:`None`)
@@ -20,9 +24,12 @@ class Cora(Dataset):
     url = "https://github.com/kimiyoung/planetoid/raw/master/data"
     extensions = ['tx', 'ty', 'allx', 'ally', 'graph', 'test.index']
 
-    def __init__(self, root, transform=None):
+    def __init__(self, root, normalize=False, transform=None):
         super(Cora, self).__init__(root, transform)
         self.set = torch.load(self._processed_files[0])
+
+        if normalize is True:
+            self.set.input /= self.set.input.sum(1, keepdim=True)
 
     @property
     def raw_files(self):
