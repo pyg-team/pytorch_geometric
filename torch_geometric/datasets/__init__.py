@@ -17,10 +17,11 @@ from .modelnet40 import ModelNet40
 from .modelnet10_pc import ModelNet10PC
 from .modelnet10_rand_pc import ModelNet10RandPC
 from .modelnet40_rand_pc import ModelNet40RandPC
+from .modelnet10_rand_aug_pc import ModelNet10RandAugPC
 
 __all__ = [
     'Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels',
     'MNISTSuperpixels2', 'ShapeNet', 'ShapeNet2', 'Cuneiform', 'Cuneiform2',
     'QM9', 'KITTI', 'ModelNet10', 'ModelNet40', 'ModelNet10PC',
-    'ModelNet10RandPC', 'ModelNet40RandPC'
+    'ModelNet10RandPC', 'ModelNet40RandPC', 'ModelNet10RandAugPC'
 ]

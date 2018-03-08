@@ -22,7 +22,7 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
 
 transform = LogCartesianAdj(30)
-init_transform = Compose([NormalizeScale(), RandomTranslate(0.001)])
+init_transform = NormalizeScale()
 train_dataset = ModelNet10(path, True, init_transform)
 test_dataset = ModelNet10(path, False, init_transform)
 batch_size = 6

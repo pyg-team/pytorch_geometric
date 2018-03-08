@@ -63,4 +63,28 @@ def generate_cloud(filename):
 
     return Data(input, pos, index, None, None)
 
+def load_triangles(filename):
+
+    with open(filename, 'r') as f:
+        data = f.read().split()
+
+    if data[0] == 'OFF':
+        data.pop(0)
+    else:
+        # Some files contain a bug and don't have a carriage return after OFF.
+        data[0] = data[0][3:]
+
+    num_nodes = int(data[0])
+
+    pos = [float(x) for x in data[3:num_nodes * 3 + 3]]
+    pos = torch.FloatTensor(pos).view(-1, 3)
+
+    face = [int(x) for x in data[num_nodes * 3 + 3:]]
+    face = torch.LongTensor(face).view(-1, 4)[:, 1:].contiguous()
+
+    triangles = pos[face.view(-1)].view(-1,3,3)
+
+    return Data(None, None, None, None, None, faces=triangles)
+
+
 #generate_cloud('/home/jan/PycharmProjects/pytorch_geometric/data/ModelNet10/raw/ModelNet10/bed/train/bed_0001.off')

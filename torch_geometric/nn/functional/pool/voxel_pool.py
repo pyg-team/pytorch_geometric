@@ -21,7 +21,8 @@ def sparse_voxel_max_pool(data, size, start=None, transform=None, weight=None):
     batch = output[1] if isinstance(output, tuple) else None
 
     if weight is not None:
-        weight = F.relu(weight).unsqueeze(1) + 0.0001  # avoid all zero
+        # Scatter softmax.
+        weight = weight.exp().unsqueeze(1)  # avoid all zero
         norm = scatter_add(Variable(cluster), weight.squeeze(), dim=0)
         norm = torch.gather(norm, 0, Variable(cluster))
         weight = weight / norm.unsqueeze(1)

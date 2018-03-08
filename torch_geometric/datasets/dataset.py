@@ -35,7 +35,8 @@ def _empty_lists(size, number):
 
 def _data_list_to_set(data_list):
     """Concat all tensors from data list for fast saving and loading."""
-    input, pos, index, weight, target = _empty_lists(len(data_list), 5)
+    input, pos, index, weight, target, faces = \
+        _empty_lists(len(data_list), 6)
     slice, index_slice = [0], [0]
 
     for i, data in enumerate(data_list):
@@ -44,17 +45,19 @@ def _data_list_to_set(data_list):
         index[i] = data.index
         weight[i] = data.weight
         target[i] = data.target
+        faces[i] = data.faces
 
         slice.append(slice[-1] + data.num_nodes)
         index_slice.append(index_slice[-1] + data.num_edges)
 
     input, pos, index = _cat(input, 0), _cat(pos, 0), _cat(index, 1)
     weight, target = _cat(weight, 0), _cat(target, 0)
+    faces = _cat(faces, 0)
 
     slice = torch.LongTensor(slice)
     index_slice = torch.LongTensor(index_slice)
 
-    return Set(input, pos, index, weight, target, slice, index_slice)
+    return Set(input, pos, index, weight, target, faces, slice, index_slice)
 
 
 def data_list_to_batch(data_list):
@@ -76,7 +79,7 @@ def data_list_to_batch(data_list):
 
     input, pos, index = _cat(input, 0), _cat(pos, 0), _cat(index, 1)
     weight, target, batch = _cat(weight, 0), _cat(target, 0), _cat(batch, 0)
-    scale, offset = _cat(scale, 0), _cat(offset, 0)
+    scale, offset  = _cat(scale, 0), _cat(offset, 0)
 
     return Data(
         input, pos, index, weight, target, batch, scale=scale, offset=offset)
@@ -90,6 +93,7 @@ class Data(object):
                  weight,
                  target,
                  batch=None,
+                 faces=None,
                  scale=0,
                  offset=0):
 
@@ -101,10 +105,11 @@ class Data(object):
         self.batch = batch
         self.scale = scale
         self.offset = offset
+        self.faces = faces
 
     @property
     def _props(self):
-        props = ['input', 'pos', 'index', 'weight', 'target', 'batch']
+        props = ['input', 'pos', 'index', 'weight', 'target', 'batch', 'faces']
         return [p for p in props if getattr(self, p, None) is not None]
 
     @property
@@ -115,25 +120,31 @@ class Data(object):
 
     @property
     def num_nodes(self):
-        assert self.input is not None or self.pos is not None, (
+        assert self.input is not None or self.pos is not None or \
+               self.faces is not None, (
             'At least input or position tensor must be defined in order to '
             'compute number of nodes')
 
-        if self.pos is None:
+        if self.pos is not None:
+            return self.pos.size(0)
+        elif self.input is not None:
             return self.input.size(0)
         else:
-            return self.pos.size(0)
+            return self.faces.size(0)
 
     @property
     def num_edges(self):
-        assert self.index is not None or self.weight is not None, (
+        assert self.index is not None or self.weight is not None or \
+               self.faces is not None, (
             'At least index or weight tensor must be defined in order to '
             'compute number of edges')
 
-        if self.weight is None:
+        if self.weight is not None:
+            return self.weight.size(0)
+        elif self.index is not None:
             return self.index.size(1)
         else:
-            return self.weight.size(0)
+            return 0
 
     def _transfer(self, func, props=None):
         props = self._props if props is None else _to_list(props)
@@ -159,8 +170,10 @@ class Data(object):
 
 
 class Set(Data):
-    def __init__(self, input, pos, index, weight, target, slice, index_slice):
-        super(Set, self).__init__(input, pos, index, weight, target)
+    def __init__(self, input, pos, index, weight, target, faces, slice,
+                 index_slice):
+        super(Set, self).__init__(input, pos, index, weight, target,
+                                  faces=faces)
         self.slice = slice
         self.index_slice = index_slice
 
@@ -170,6 +183,8 @@ class Set(Data):
         pos = None if self.pos is None else self.pos[s1[i]:s1[i + 1]]
         index = None if self.index is None else self.index[:, s2[i]:s2[i + 1]]
         weight = None if self.weight is None else self.weight[s2[i]:s2[i + 1]]
+        faces = None if self.faces is None else \
+            self.faces[s1[i]:s1[i + 1]]
 
         target = None
         if self.target is not None:
@@ -181,7 +196,7 @@ class Set(Data):
             if torch.is_tensor(target):
                 target = target.view(1, -1).squeeze(1)
 
-        return Data(input, pos, index, weight, target)
+        return Data(input, pos, index, weight, target, faces=faces)
 
     def __len__(self):
         return self.slice.size(0) - 1
