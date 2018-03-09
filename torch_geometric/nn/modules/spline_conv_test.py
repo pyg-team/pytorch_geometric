@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from .spline_conv import repeat_to, SplineConv
+from .utils.repeat import repeat_to
+from .spline_conv import SplineConv
 
 
 class SplineConvTest(TestCase):
