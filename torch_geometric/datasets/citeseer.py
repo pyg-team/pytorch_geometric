@@ -47,5 +47,4 @@ class CiteSeer(Dataset):
         spinner = Spinner('Processing').start()
         data = read_planetoid(self._raw_files)
         spinner.success()
-        raise NotImplementedError
         return [data]
