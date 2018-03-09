@@ -102,7 +102,7 @@ def test(epoch, loader, dataset, str):
     for data in loader:
         data = data.cuda().to_variable('input')
         pred = model(data).data.max(1)[1]
-        correct += pred.eq(data.target).cpu().sum()
+        correct += pred.eq(data.target).sum()
 
     print('Epoch:', epoch, str, 'Accuracy:', correct / len(dataset))
 

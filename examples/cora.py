@@ -68,5 +68,4 @@ for run in range(1, 101):
     acc.append(test(test_mask))
     print('Run:', run, 'Test Accuracy:', acc[-1])
 
-acc = torch.FloatTensor(acc)
-print('Mean:', acc.mean(), 'Stddev:', acc.std())
+print('Mean:', torch.Tensor(acc).mean(), 'Stddev:', torch.Tensor(acc).std())

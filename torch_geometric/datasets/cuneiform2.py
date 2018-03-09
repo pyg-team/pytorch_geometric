@@ -1,17 +1,19 @@
 import os
+import os.path as osp
 
 import torch
 
 from .dataset import Dataset
 from .utils.download import download_url
-from .utils.extract import extract_tar
+from .utils.extract import extract_zip
 from .utils.spinner import Spinner
 from .utils.tu_format import tu_files, read_tu_set
 
 
 class Cuneiform2(Dataset):
-    url = 'http://www.roemisch-drei.de/cuneiform.tar.gz'
-    prefix = 'CuneiformArrangement'
+    url = 'https://ls11-www.cs.uni-dortmund.de/people/morris/' \
+          'graphkerneldatasets/Cuneiform.zip'
+    prefix = osp.join('Cuneiform', 'Cuneiform')
 
     def __init__(self, root, split=None, transform=None):
         super(Cuneiform2, self).__init__(root, transform)
@@ -44,7 +46,7 @@ class Cuneiform2(Dataset):
 
     def download(self):
         file_path = download_url(self.url, self.raw_folder)
-        extract_tar(file_path, self.raw_folder, mode='r')
+        extract_zip(file_path, self.raw_folder)
         os.unlink(file_path)
 
     def process(self):
