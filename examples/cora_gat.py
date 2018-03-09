@@ -10,14 +10,16 @@ import torch.nn.functional as F
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import Cora  # noqa
+from torch_geometric.datasets import Cora, PubMed  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.nn.modules import GraphAttention  # noqa
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), normalize=True)
+# dataset = PubMed(osp.join(path, 'PubMed'), normalize=True)
 data = dataset[0].cuda().to_variable()
-train_mask = torch.arange(0, 140).long()
+num_features, num_targets = data.input.size(1), data.target.data.max() + 1
+train_mask = torch.arange(0, 20 * num_targets).long()
 val_mask = torch.arange(train_mask.size(0), train_mask.size(0) + 500).long()
 test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
 
@@ -25,8 +27,8 @@ test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.att1 = GraphAttention(1433, 8, 8, dropout=0.6)
-        self.att2 = GraphAttention(64, 7, dropout=0.6)
+        self.att1 = GraphAttention(num_features, 8, 8, dropout=0.6)
+        self.att2 = GraphAttention(64, num_targets, dropout=0.6)
 
     def forward(self):
         x = F.dropout(data.input, p=0.6, training=self.training)
@@ -64,7 +66,7 @@ for run in range(1, 101):
 
     old_val = 0
     cur_test = 0
-    for i in range(0, 200):
+    for _ in range(200):
         train()
         val = test(val_mask)
         if val > old_val:

@@ -62,7 +62,7 @@ for run in range(1, 101):
     model.conv1.reset_parameters()
     model.conv2.reset_parameters()
 
-    for _ in range(0, 200):
+    for _ in range(200):
         train()
 
     acc.append(test(test_mask))

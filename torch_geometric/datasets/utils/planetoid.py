@@ -28,36 +28,23 @@ def read_planetoid(filenames):
     # Fix datasets with isoloated nodes in the graph.
     # Find isolated nodes and add them as zero-vec into the right position.
     min, max = test_index_sorted[0], test_index_sorted[-1]
-    print(max - min)
     if max - min > 1000:
-        # mask = torch.ByteTensor(max + 1 - min).fill_(0)
-        # mask[test_index_sorted - min] = 1
-        # print(mask[:100])
-        x = 2407
-
-        # print(test_index_sorted[:100])
-        # test_index_full = torch.arange(min, max + 1).long()
-
-        print('drin')
-    # raise NotImplementedError
+        pass
 
     allx, tx = torch.Tensor(allx.todense()), torch.Tensor(tx.todense())
     input = torch.cat([allx, tx], dim=0)
-    print(input.size())
-    # input[test_index, :] = input[test_index_sorted, :]
+    input[test_index, :] = input[test_index_sorted, :]
 
-    # ty, ally = torch.LongTensor(ty), torch.LongTensor(ally)
-    # target = torch.cat([ally, ty], dim=0)
-    # target[test_index, :] = target[test_index_sorted, :]
-    # target = target.max(dim=1)[1]
+    ty, ally = torch.LongTensor(ty), torch.LongTensor(ally)
+    target = torch.cat([ally, ty], dim=0)
+    target[test_index, :] = target[test_index_sorted, :]
+    target = target.max(dim=1)[1]
 
     row, col = [], []
     for key, value in graph.items():
         row += repeat(key, len(value))
         col += value
     row, col = torch.LongTensor(row), torch.LongTensor(col)
-    print((row == 2407).sum(), (col == 2407).sum())
-    raise NotImplementedError
     index = torch.stack([row, col], dim=0)
 
     return Data(input, None, index, None, target)
