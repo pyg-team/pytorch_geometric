@@ -1,3 +1,5 @@
+from __future__ import division, print_function
+
 import os.path as osp
 import sys
 
@@ -8,13 +10,12 @@ import torch.nn.functional as F
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
-from torch_geometric.datasets import Cora, CiteSeer  # noqa
+from torch_geometric.datasets import Cora  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.nn.modules import GraphConv, ChebConv  # noqa
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), normalize=True)
-# dataset = CiteSeer(osp.join(path, 'CiteSeer'), normalize=True)
 data = dataset[0].cuda().to_variable()
 train_mask = torch.arange(0, 140).long()  # Cora = 140, CiteSeer = 120
 val_mask = torch.arange(train_mask.size(0), train_mask.size(0) + 500).long()

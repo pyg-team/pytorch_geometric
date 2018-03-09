@@ -1,6 +1,6 @@
 from __future__ import division, print_function
 
-import os
+import os.path as osp
 import sys
 
 import torch
@@ -14,9 +14,9 @@ from torch_geometric.datasets import Cora  # noqa
 from torch_geometric.transform import TargetIndegreeAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 
-path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(path, '..', 'data', 'Cora')
-data = Cora(path, transform=TargetIndegreeAdj())[0].cuda().to_variable()
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
+dataset = Cora(osp.join(path, 'Cora'), transform=TargetIndegreeAdj())
+data = dataset[0].cuda().to_variable()
 train_mask = torch.arange(0, data.num_nodes - 1000).long()
 test_mask = torch.arange(data.num_nodes - 500, data.num_nodes).long()
 
@@ -29,6 +29,7 @@ class Net(nn.Module):
 
     def forward(self):
         x, adj = data.input, data.adj
+        x = F.dropout(x, training=self.training)
         x = F.elu(self.conv1(adj, x))
         x = F.dropout(x, training=self.training)
         x = self.conv2(adj, x)
@@ -50,10 +51,10 @@ def train():
     optimizer.step()
 
 
-def test():
+def test(mask):
     model.eval()
-    pred = model()[test_mask].data.max(1)[1]
-    return pred.eq(data.target.data[test_mask]).sum() / test_mask.size(0)
+    pred = model()[mask].data.max(1)[1]
+    return pred.eq(data.target.data[mask]).sum() / mask.size(0)
 
 
 acc = []
@@ -63,7 +64,8 @@ for run in range(1, 101):
 
     for _ in range(0, 200):
         train()
-    acc.append(test())
+
+    acc.append(test(test_mask))
     print('Run:', run, 'Test Accuracy:', acc[-1])
 
 acc = torch.FloatTensor(acc)
