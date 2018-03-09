@@ -106,7 +106,7 @@ def test(run, loader):
 # 10-fold cross-validation.
 acc = []
 for i in range(split.size(0) - 1):
-    print('Split {}:'.format(i))
+    print('Split {}:'.format(i + 1))
 
     if i == 0:
         train_dataset.split = perm[split[i + 1]:]
