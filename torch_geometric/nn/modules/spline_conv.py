@@ -3,27 +3,13 @@ from torch.nn import Module, Parameter
 
 from .utils.inits import uniform
 from .utils.repr import repr
+from .utils.repeat import repeat_to
 from ..functional.spline_conv import spline_conv
 
 from ..functional.spline_conv.spline_conv_gpu \
     import get_weighting_forward_kernel, get_weighting_backward_kernel
 from ..functional.spline_conv.spline_conv_gpu \
     import get_basis_kernel, get_basis_backward_kernel
-
-
-def repeat_to(input, dim):
-    if not isinstance(input, list):
-        input = [input]
-
-    if len(input) > dim:
-        raise ValueError()
-
-    if len(input) < dim:
-        rest = dim - len(input)
-        fill_value = input[len(input) - 1]
-        input += [fill_value for _ in range(rest)]
-
-    return input
 
 
 class SplineConv(Module):
@@ -69,7 +55,6 @@ class SplineConv(Module):
         self.k_max = (degree + 1) ** dim
         weight = torch.Tensor(self.K + 1, in_features, out_features)
         self.weight = Parameter(weight)
-        self.bp_to_adj = True
 
 
         if bias:

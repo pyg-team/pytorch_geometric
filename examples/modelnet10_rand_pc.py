@@ -14,7 +14,8 @@ from torch_geometric.datasets import ModelNet10RandPC  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import (NormalizeScale, RandomFlip,
                                        CartesianAdj, RandomTranslate)  # noqa
-from torch_geometric.nn.modules import SplineConv, Lin  # noqa
+from torch_geometric.nn.modules import SplineConv  # noqa
+from torch.nn import Linear as Lin # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
 from torch_geometric.visualization.model import show_model  # noqa
@@ -23,12 +24,15 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10RandPC')
 
 transform = CartesianAdj()
+
 init_transform = NormalizeScale()
 train_dataset = ModelNet10RandPC(path, True, transform=init_transform)
 test_dataset = ModelNet10RandPC(path, False, transform=init_transform)
+
 batch_size = 6
 train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=batch_size)
+
 
 class Net(nn.Module):
     def __init__(self):
@@ -128,7 +132,7 @@ def test(epoch, loader, dataset, str):
         data = data.cuda().to_variable(['input', 'pos'])
         data = transform(data)
         pred = model(data).data.max(1)[1]
-        correct += pred.eq(data.target).cpu().sum()
+        correct += pred.eq(data.target).sum()
 
     print('Epoch:', epoch, str, 'Accuracy:', correct / len(dataset))
 

@@ -1,6 +1,6 @@
 from __future__ import division, print_function
 
-import os
+import os.path as osp
 import sys
 
 import torch
@@ -16,8 +16,7 @@ from torch_geometric.transform import CartesianAdj  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 
-path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(path, '..', 'data', 'FAUST')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FAUST')
 train_dataset = FAUST(path, train=True, transform=CartesianAdj())
 test_dataset = FAUST(path, train=False, transform=CartesianAdj())
 train_loader = DataLoader2(train_dataset, batch_size=1, shuffle=True)

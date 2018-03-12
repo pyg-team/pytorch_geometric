@@ -18,7 +18,8 @@ from torch_geometric.transform import (NormalizeScale, RandomFlip,
                                        CartesianAdj, RandomTranslate,
                                        PCToGraphNN, PCToGraphRad,
                                        SamplePointcloud, RandomRotate)  # noqa
-from torch_geometric.nn.modules import SplineConv, Lin  # noqa
+from torch_geometric.nn.modules import SplineConv  # noqa
+from torch.nn import Linear as Lin # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
 from torch_geometric.visualization.model import show_model  # noqa
