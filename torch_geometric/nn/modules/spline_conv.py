@@ -17,7 +17,8 @@ class SplineConv(Module):
     1/\mathcal{N}(i) \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
     f_l(j) \cdot g_l(u(i, j))`, where :math:`g_l` is a kernel function defined
     over the weighted B-Spline tensor product basis for a single input feature
-    map.
+    map. (Fey et al: SplineCNN: Fast Geometric Deep Learning with Continuous
+    B-Spline Kernels, CVPR 2018, https://arxiv.org/abs/1711.08920)
 
     Args:
         in_features (int): Size of each input sample.
