@@ -110,4 +110,4 @@ class ShapeNet(Dataset):
         # 6-nearest neighbor for edge indices.
         index = nn_graph(pos, k=6)
 
-        return Data(input, pos, index, None, target)
+        return Data(input, pos, index, None, target, None)

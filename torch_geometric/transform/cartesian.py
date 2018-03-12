@@ -10,11 +10,12 @@ class CartesianAdj(Module):
 
     def __init__(self, r=None, trainable=False):
         super(CartesianAdj, self).__init__()
-        r_tensor = torch.FloatTensor([r]).cuda()
-        if trainable:
-            self.r = Parameter(r_tensor)
+        if r is not None:
+            r = torch.FloatTensor([r]).cuda()
+        if trainable and r is not None:
+            self.r = Parameter(r)
         else:
-            self.r = r_tensor
+            self.r = r
 
     def __call__(self, data):
         row, col = data.index

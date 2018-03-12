@@ -14,12 +14,13 @@ def _pool(index, position, cluster, weight):
     #    index = index.view(2,1)
     index = coalesce(index)  # Remove duplicates.
     cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
+    cluster = cluster if torch.is_tensor(position) else Variable(cluster)
 
     if weight is not None:
         position *= weight
-        position = scatter_add(Variable(cluster), position, dim=0)
+        position = scatter_add(cluster, position, dim=0)
     else:
-        position = scatter_mean(Variable(cluster), position, dim=0)
+        position = scatter_mean(cluster, position, dim=0)
 
     return index, position
 

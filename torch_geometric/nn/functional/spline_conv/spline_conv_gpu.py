@@ -471,7 +471,7 @@ class SplineConvGPU(Function):
     def __init__(self, kernel_size, is_open_spline, K, degree,
                                basis_kernel, basis_backward_kernel,
                                weighting_kernel, weighting_backward_kernel,
-                               bp_to_adj=False):
+                               bp_to_adj=False, adj_values=None):
         super(SplineConvGPU, self).__init__()
         self.degree = degree
         self.f_weighting_fw = weighting_kernel
@@ -481,11 +481,15 @@ class SplineConvGPU(Function):
         self.f_basis_fw = basis_kernel
         self.f_basis_bw = basis_backward_kernel
         self.bp_to_adj = bp_to_adj
+        self.adj_values = adj_values
 
-    def forward(self, input, weight, adj_values):
+    def forward(self, input, weight, adj_values=None):
         assert input.is_cuda and weight.is_cuda
         self.K, self.M_in, self.M_out = weight.size()
 
+        # If bp_to_u is false
+        if adj_values is None:
+            adj_values = self.adj_values
         # Compute B-spline basis tensor products
         adj_values = adj_values.unsqueeze(1) if len(adj_values.size()) < 2 \
             else adj_values

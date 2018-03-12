@@ -31,10 +31,16 @@ def spline_conv(
     # Convert to [|E| x M_in] feature matrix and calculate [|E| x M_out].
 
     if output.is_cuda:
-        output = SplineConvGPU(kernel_size, is_open_spline, K, degree,
-                               basis_kernel, basis_backward_kernel,
-                               weighting_kernel, weighting_backward_kernel,
-                               bp_to_adj)(output, weight[:-1], values)
+        if bp_to_adj:
+            output = SplineConvGPU(kernel_size, is_open_spline, K, degree,
+                                   basis_kernel, basis_backward_kernel,
+                                   weighting_kernel, weighting_backward_kernel,
+                                   bp_to_adj)(output, weight[:-1], values)
+        else:
+            output = SplineConvGPU(kernel_size, is_open_spline, K, degree,
+                                   basis_kernel, basis_backward_kernel,
+                                   weighting_kernel, weighting_backward_kernel,
+                                   bp_to_adj, values)(output, weight[:-1])
     else:
         # CPU Implementation not available
         raise NotImplementedError()
@@ -50,8 +56,8 @@ def spline_conv(
     output += torch.mm(input, weight[-1])
 
     # Normalize output by degree.
-    ones = values.data.new(values.size(0)).fill_(1)
-    zero = values.data.new(output.size(0)).fill_(0)
+    ones = output.data.new(values.size(0)).fill_(1)
+    zero = output.data.new(output.size(0)).fill_(0)
     degree = zero.scatter_add_(0, row, ones)
     degree = torch.clamp(degree, min=1)
     output = output / Variable(degree.view(-1, 1))

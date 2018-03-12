@@ -85,4 +85,4 @@ class ShapeNet2(Dataset):
         target = torch.cat([torch.LongTensor(t[0]) for t in target], dim=0)
         target = target.squeeze()
 
-        return Set(input, pos, index, None, target, slice, index_slice)
+        return Set(input, pos, index, None, target, None, slice, index_slice)
