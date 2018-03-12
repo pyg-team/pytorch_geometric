@@ -1,4 +1,6 @@
-import os
+from __future__ import division, print_function
+
+import os.path as osp
 import sys
 import random
 
@@ -17,15 +19,10 @@ from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
 
-from torch.autograd import Variable
-from torch_scatter import scatter_mean
-path = os.path.dirname(os.path.realpath(__file__))
-path = os.path.join(path, '..', 'data', 'MNISTSuperpixels2')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
+train_dataset = MNISTSuperpixels2(path, True, transform=CartesianAdj())
+test_dataset = MNISTSuperpixels2(path, False, transform=CartesianAdj())
 
-transform = CartesianAdj()
-transform_norm = Compose([NormalizeScale(), transform])
-train_dataset = MNISTSuperpixels2(path, True)
-test_dataset = MNISTSuperpixels2(path, False)
 train_loader = DataLoader2(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=64)
 
@@ -47,15 +44,14 @@ class Net(nn.Module):
         return size, start
 
     def forward(self, data):
-        data.input = F.relu(self.conv1(data.adj, data.input))
-        size, start = self.pool_args(8)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
-        data.input = F.relu(self.conv2(data.adj, data.input))
-        size, start = self.pool_args(4)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform)
-        data.input = F.relu(self.conv3(data.adj, data.input))
 
-        data, _ = dense_voxel_max_pool(data, 1, -0.5, 1.5)
+        data.input = F.elu(self.conv1(data.adj, data.input))
+        data, _ = sparse_voxel_max_pool(data, 5, 0, CartesianAdj())
+        data.input = F.elu(self.conv2(data.adj, data.input))
+        data, _ = sparse_voxel_max_pool(data, 7, 0, CartesianAdj())
+        data.input = F.elu(self.conv3(data.adj, data.input))
+
+        data, _ = dense_voxel_max_pool(data, 14, 0, 28)
 
         x = data.input.contiguous().view(-1, self.fc1.weight.size(1))
         x = F.elu(self.fc1(x))
@@ -84,7 +80,6 @@ def train(epoch):
 
     for data in train_loader:
         data = data.cuda().to_variable(['input', 'target', 'pos'])
-        data = transform_norm(data)
         optimizer.zero_grad()
         loss = F.nll_loss(model(data), data.target)
         loss.backward()
@@ -98,7 +93,6 @@ def test(epoch):
 
     for data in test_loader:
         data = data.cuda().to_variable(['input', 'pos'])
-        data = transform_norm(data)
         pred = model(data).data.max(1)[1]
         correct += pred.eq(data.target).sum()
 

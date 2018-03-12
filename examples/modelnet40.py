@@ -19,7 +19,7 @@ from torch_geometric.transform import (RandomRotate, RandomScale,
                                        NormalizeScale)  # noqa
 from torch_geometric.transform import CartesianAdj, CartesianLocalAdj, \
     SphericalAdj, Spherical2dAdj  # noqa
-from torch_geometric.nn.modules import SplineConv, Lin  # noqa
+from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import voxel_max_pool  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
@@ -134,11 +134,11 @@ class Net(nn.Module):
         #self.conv8 = SplineConv(256, 256, dim=3, kernel_size=5)
         self.fc1 = nn.Linear(128, num_classes)
 
-        self.skip1 = Lin(32, 64)
-        self.skip2 = Lin(64, 96)
-        self.skip3 = Lin(96, 128)
-        self.skip4 = Lin(128, 256)
-        self.skip5 = Lin(256, 256)
+        self.skip1 = nn.Linear(32, 64)
+        self.skip2 = nn.Linear(64, 96)
+        self.skip3 = nn.Linear(96, 128)
+        self.skip4 = nn.Linear(128, 256)
+        self.skip5 = nn.Linear(256, 256)
 
     def forward(self, data):
         ones = Variable(data.input.data.new(data.input.size(0), 1).fill_(1))
@@ -237,7 +237,7 @@ def test(epoch, loader, ds, string):
         output = model(data)
         pred = output.data.max(1)[1]
         #print(pred.size(),data.target.size())
-        correct += pred.eq(data.target).cpu().sum()
+        correct += pred.eq(data.target).sum()
     print(correct)
     print('Epoch:', epoch, string, 'Accuracy:', correct / len(ds))
 

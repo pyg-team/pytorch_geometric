@@ -23,15 +23,15 @@ path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet40RandPC')
 
 transform = CartesianAdj()
-train_transform = Compose([NormalizeScale(),
-                           RandomTranslate(0.001),
-                           transform])
+train_transform = Compose(
+    [NormalizeScale(), RandomTranslate(0.001), transform])
 test_transform = Compose([NormalizeScale(), transform])
 train_dataset = ModelNet40RandPC(path, True, transform=train_transform)
 test_dataset = ModelNet40RandPC(path, False, transform=test_transform)
 batch_size = 6
 train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=batch_size)
+
 
 class Net(nn.Module):
     def __init__(self):
@@ -123,7 +123,7 @@ def test(epoch, loader, dataset, str):
     for data in loader:
         data = data.cuda().to_variable(['input'])
         pred = model(data).data.max(1)[1]
-        correct += pred.eq(data.target).cpu().sum()
+        correct += pred.eq(data.target).sum()
 
     print('Epoch:', epoch, str, 'Accuracy:', correct / len(dataset))
 

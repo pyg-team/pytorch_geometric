@@ -16,7 +16,8 @@ from torch_geometric.datasets import ModelNet10  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import (NormalizeScale, LogCartesianAdj,
                                        RandomTranslate)  # noqa
-from torch_geometric.nn.modules import SplineConv, Lin  # noqa
+from torch_geometric.nn.modules import SplineConv  # noqa
+from torch.nn import Linear as Lin # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
 

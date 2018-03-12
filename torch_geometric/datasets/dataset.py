@@ -79,10 +79,9 @@ def data_list_to_batch(data_list):
 
     input, pos, index = _cat(input, 0), _cat(pos, 0), _cat(index, 1)
     weight, target, batch = _cat(weight, 0), _cat(target, 0), _cat(batch, 0)
-    scale, offset  = _cat(scale, 0), _cat(offset, 0)
+    scale, offset = _cat(scale, 0), _cat(offset, 0)
 
-    return Data(
-        input, pos, index, weight, target, batch, scale=scale, offset=offset)
+    return Data(input, pos, index, weight, target, batch)
 
 
 class Data(object):
@@ -96,7 +95,6 @@ class Data(object):
                  faces=None,
                  scale=0,
                  offset=0):
-
         self.input = input
         self.pos = pos
         self.index = index
@@ -192,9 +190,8 @@ class Set(Data):
                 target = self.target[s1[i]:s1[i + 1]]
             else:
                 target = self.target[i]
-
-            if torch.is_tensor(target):
-                target = target.view(1, -1).squeeze(1)
+                if torch.is_tensor(target):
+                    target = target.view(1, -1).squeeze(1)
 
         return Data(input, pos, index, weight, target, faces=faces)
 
