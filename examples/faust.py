@@ -24,10 +24,10 @@ test_dataset = FAUST(path, train=False, transform=CartesianAdj())
 train_loader = DataLoader2(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader2(test_dataset, batch_size=1)
 
-# url = 'http://ls7-www.cs.uni-dortmund.de/cvpr_geometric_dl/' \
-#       'faust_geodesic_distance.tar.gz'
-# download_url(url, path)
-# extract_tar(osp.join(path, 'faust_geodesic_distance.tar.gz'), path)
+#url = 'http://ls7-www.cs.uni-dortmund.de/cvpr_geometric_dl/' \
+#      'faust_geodesic_distance.tar.gz'
+#download_url(url, path)
+#extract_tar(osp.join(path, 'faust_geodesic_distance.tar.gz'), path)
 
 
 class Net(nn.Module):
@@ -58,10 +58,10 @@ class Net(nn.Module):
         x = F.elu(self.conv6(adj, x))
         x = F.elu(self.conv7(adj, x))
         x = F.elu(self.conv8(adj, x))
-        # x = F.elu(self.conv9(adj, x))
-        # x = F.elu(self.conv10(adj, x))
-        # x = F.elu(self.conv11(adj, x))
-        # x = F.elu(self.conv12(adj, x))
+        x = F.elu(self.conv9(adj, x))
+        x = F.elu(self.conv10(adj, x))
+        x = F.elu(self.conv11(adj, x))
+        x = F.elu(self.conv12(adj, x))
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
