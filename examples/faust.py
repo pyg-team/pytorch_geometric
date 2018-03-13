@@ -56,11 +56,12 @@ class Net(nn.Module):
         x = F.elu(self.conv4(adj, x))
         x = F.elu(self.conv5(adj, x))
         x = F.elu(self.conv6(adj, x))
+        x = F.elu(self.conv7(adj, x))
         x = F.elu(self.conv8(adj, x))
-        x = F.elu(self.conv9(adj, x))
-        x = F.elu(self.conv10(adj, x))
-        x = F.elu(self.conv11(adj, x))
-        x = F.elu(self.conv12(adj, x))
+        # x = F.elu(self.conv9(adj, x))
+        # x = F.elu(self.conv10(adj, x))
+        # x = F.elu(self.conv11(adj, x))
+        # x = F.elu(self.conv12(adj, x))
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
@@ -96,10 +97,11 @@ def test(epoch):
 
     for i, data in enumerate(test_loader):
         data = data.cuda().to_variable('input')
-        pred = model(data).data.max(1)[1].cpu()
+        pred = model(data).data.max(1)[1]
         filename = '{}.pt'.format(80 + i)
         distance = torch.load(osp.join(path, 'geodesic_distance', filename))
-        geodesic_error = distance[pred, data.target.cpu()]
+        distance = distance.cuda()
+        geodesic_error = distance[pred, target.data]
         acc_0 += (geodesic_error <= 0.0000002).sum()
         acc_1 += (geodesic_error <= 0.01).sum()
         acc_2 += (geodesic_error <= 0.02).sum()
