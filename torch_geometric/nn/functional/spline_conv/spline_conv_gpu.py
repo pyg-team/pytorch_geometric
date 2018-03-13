@@ -449,9 +449,9 @@ def get_basis_kernel(k_max, K, dim, degree, dtype='float'):
 
 def get_basis_backward_kernel(k_max, K, dim, degree, dtype='float'):
     if degree == 3:
-        raise NotImplementedError
+        _spline_kernel = _spline_kernel_linear_backward2
     elif degree == 2:
-        raise NotImplementedError
+        _spline_kernel = _spline_kernel_linear_backward2
     else:
         _spline_kernel = _spline_kernel_linear_backward2
 
@@ -548,6 +548,9 @@ class SplineConvGPU(Function):
         num_threads = grad_output.numel()
 
         if self.bp_to_adj:
+            if self.degree == 2 or self.degree == 3:
+                print('Backward to u for degree>1 not implemented!')
+                raise NotImplementedError
             input, weight, adj_values = self.saved_tensors
             #adj_values = torch.clamp(adj_values,min=0.0,max=1.0)
             amount = self.amount
