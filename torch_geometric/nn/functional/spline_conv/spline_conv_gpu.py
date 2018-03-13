@@ -281,7 +281,7 @@ __global__ void spline_kernel(
 const ${Dtype}* input, ${Dtype}* amount, long* index,
 const long* kernel_size, const long* is_open_spline, int num_threads) {
 
-  CUDA_KERNEL_LOOP(idx, num_threads}) {
+  CUDA_KERNEL_LOOP(idx, num_threads) {
 
     const int e_idx = idx / ${k_max};
     int k_idx = idx % ${k_max};
