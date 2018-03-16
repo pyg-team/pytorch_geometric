@@ -54,12 +54,13 @@ const long* index, int num_threads) {
 
   CUDA_KERNEL_LOOP(idx, num_threads) {
 
-    const int e_idx = idx / ${M_out};
-    const int m_out_idx = idx % ${M_out};
+    const int e_idx = idx / ${M_in};
+    const int m_in_idx = idx % ${M_in};
 
     ${Dtype} w;
     ${Dtype} g;
     ${Dtype} f;
+    ${Dtype} value = 0.0;
     ${Dtype} w_grad;
     int k;
     ${Dtype} b;
@@ -69,18 +70,15 @@ const long* index, int num_threads) {
     for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
       k = e_idx * ${k_max} + k_idx;
       b = amount[k];
-      c = index[k];
+      c = index[k] * ${M_out} * ${M_in};
 
-      for (int m_in_idx = 0; m_in_idx < ${M_in}; m_in_idx++) {
-        w_idx = c * ${M_out} * ${M_in} +
-                m_in_idx * ${M_out} +
-                m_out_idx;
-
+      for (int m_out_idx = 0; m_out_idx < ${M_out}; m_out_idx++) {
+        w_idx = c + m_out_idx * ${M_in} + m_in_idx;
         w = weight[w_idx];
 
         // Calculate input gradient.
         g = grad_output[e_idx * ${M_out} + m_out_idx];
-        atomicAdd(&(grad_input[e_idx * ${M_in} + m_in_idx]), b * w * g);
+        value += b * w * g;
         // This is inefficient: `reduce_sum` shouldn't be done like this.
         // Looping over `M_out` would be better to avoid the `atomicAdd`.
 
@@ -91,6 +89,7 @@ const long* index, int num_threads) {
         // Not so efficient either, but not avoidable.
       }
     }
+    grad_input[idx] = value;
   }
 }
 '''
@@ -104,12 +103,13 @@ const ${Dtype}* amount, const long* index, int num_threads) {
 
   CUDA_KERNEL_LOOP(idx, num_threads) {
 
-    const int e_idx = idx / ${M_out};
-    const int m_out_idx = idx % ${M_out};
+    const int e_idx = idx / ${M_in};
+    const int m_in_idx = idx % ${M_in};
 
     ${Dtype} w;
     ${Dtype} g;
     ${Dtype} f;
+    ${Dtype} value = 0.0;
     ${Dtype} w_grad;
     int k;
     ${Dtype} b;
@@ -119,19 +119,16 @@ const ${Dtype}* amount, const long* index, int num_threads) {
     for (int k_idx = 0; k_idx < ${k_max}; k_idx++) {
       k = e_idx * ${k_max} + k_idx;
       b = amount[k];
-      c = index[k];
+      c = index[k] * ${M_out} * ${M_in};
       ${Dtype} adj_g = 0.0;
 
-      for (int m_in_idx = 0; m_in_idx < ${M_in}; m_in_idx++) {
-        w_idx = c * ${M_out} * ${M_in} +
-                m_in_idx * ${M_out} +
-                m_out_idx;
-
+      for (int m_out_idx = 0; m_out_idx < ${M_out}; m_out_idx++) {
+        w_idx = c + m_out_idx * ${M_in} + m_in_idx;
         w = weight[w_idx];
 
         // Calculate input gradient.
         g = grad_output[e_idx * ${M_out} + m_out_idx];
-        atomicAdd(&(grad_input[e_idx * ${M_in} + m_in_idx]), b * w * g);
+        value += b * w * g;
         // This is inefficient: `reduce_sum` shouldn't be done like this.
         // Looping over `M_out` would be better to avoid the `atomicAdd`.
 
@@ -146,6 +143,7 @@ const ${Dtype}* amount, const long* index, int num_threads) {
       }
       atomicAdd(&(grad_amount[e_idx*${k_max} + k_idx]), adj_g);
     }
+    grad_input[idx] = value;
   }
 }
 '''
@@ -165,7 +163,11 @@ def get_weighting_forward_kernel(M_in, M_out, k_max, dtype='float'):
     return f_fw
 
 
-def get_weighting_backward_kernel(M_in, M_out, k_max, K, bp_to_adj=False,
+def get_weighting_backward_kernel(M_in,
+                                  M_out,
+                                  k_max,
+                                  K,
+                                  bp_to_adj=False,
                                   dtype='float'):
     cuda_tensor = torch.FloatTensor([1]).cuda()
     if bp_to_adj:
@@ -468,10 +470,17 @@ def get_basis_backward_kernel(k_max, K, dim, degree, dtype='float'):
 
 
 class SplineConvGPU(Function):
-    def __init__(self, kernel_size, is_open_spline, K, degree,
-                               basis_kernel, basis_backward_kernel,
-                               weighting_kernel, weighting_backward_kernel,
-                               bp_to_adj=False, adj_values=None):
+    def __init__(self,
+                 kernel_size,
+                 is_open_spline,
+                 K,
+                 degree,
+                 basis_kernel,
+                 basis_backward_kernel,
+                 weighting_kernel,
+                 weighting_backward_kernel,
+                 bp_to_adj=False,
+                 adj_values=None):
         super(SplineConvGPU, self).__init__()
         self.degree = degree
         self.f_weighting_fw = weighting_kernel
@@ -501,7 +510,7 @@ class SplineConvGPU(Function):
             self.save_for_backward(input, weight)
 
         num_edges, dim = adj_values.size()
-        k_max = (self.degree+1) ** dim
+        k_max = (self.degree + 1)**dim
         amount = adj_values.new(num_edges, k_max)
         index = adj_values.new(num_edges, k_max).long()
         num_threads = amount.numel()
@@ -514,8 +523,7 @@ class SplineConvGPU(Function):
                     amount.data_ptr(),
                     index.data_ptr(),
                     self.kernel_size.data_ptr(),
-                    self.is_open_spline.data_ptr(),
-                    num_threads
+                    self.is_open_spline.data_ptr(), num_threads
                 ],
                 stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
@@ -532,8 +540,7 @@ class SplineConvGPU(Function):
                     weight.data_ptr(),
                     output.data_ptr(),
                     amount.data_ptr(),
-                    index.data_ptr(),
-                    num_threads
+                    index.data_ptr(), num_threads
                 ],
                 stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
@@ -544,8 +551,8 @@ class SplineConvGPU(Function):
 
     def backward(self, grad_output):
         grad_input = grad_output.new(grad_output.size(0), self.M_in).fill_(0)
-        grad_weight = grad_output.new(self.K, self.M_in, self.M_out).fill_(0)
-        num_threads = grad_output.numel()
+        grad_weight = grad_output.new(self.K, self.M_out, self.M_in).fill_(0)
+        num_threads = grad_input.numel()
 
         if self.bp_to_adj:
             if self.degree == 2 or self.degree == 3:
@@ -557,6 +564,7 @@ class SplineConvGPU(Function):
             index = self.index
             grad_amount = grad_output.new(amount.size(0),
                                           amount.size(1)).fill_(0)
+            weight = weight.transpose(2, 1).contiguous()
             with torch.cuda.device_of(grad_output):
                 self.f_weighting_bw(
                     block=(cuda_num_threads, 1, 1),
@@ -572,9 +580,10 @@ class SplineConvGPU(Function):
                         index.data_ptr(), num_threads
                     ],
                     stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
+            grad_weight = grad_weight.transpose(2, 1).contiguous()
 
-            grad_adj = grad_amount.new(grad_amount.size(0),
-                                       self.kernel_size.size(0)).fill_(0)
+            grad_adj = grad_amount.new(
+                grad_amount.size(0), self.kernel_size.size(0)).fill_(0)
 
             num_threads = grad_adj.numel()
 
@@ -588,8 +597,7 @@ class SplineConvGPU(Function):
                         amount.data_ptr(),
                         grad_adj.data_ptr(),
                         self.kernel_size.data_ptr(),
-                        self.is_open_spline.data_ptr(),
-                        num_threads
+                        self.is_open_spline.data_ptr(), num_threads
                     ],
                     stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
 
@@ -607,6 +615,7 @@ class SplineConvGPU(Function):
             grad_amount = grad_output.new(amount.size(0),
                                           amount.size(1)).fill_(0)
 
+            weight = weight.transpose(2, 1).contiguous()
             with torch.cuda.device_of(grad_output):
                 self.f_weighting_bw(
                     block=(cuda_num_threads, 1, 1),
@@ -622,6 +631,6 @@ class SplineConvGPU(Function):
                         index.data_ptr(), num_threads
                     ],
                     stream=Stream(ptr=torch.cuda.current_stream().cuda_stream))
-
+            grad_weight = grad_weight.transpose(2, 1).contiguous()
 
             return grad_input, grad_weight, None
