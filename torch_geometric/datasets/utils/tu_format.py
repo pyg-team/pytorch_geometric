@@ -8,6 +8,7 @@ import numpy as np
 
 
 def to_one_hot(tensor):
+    tensor -= tensor.min()
     max = tensor.max(dim=0)[0] + 1
     D = max.sum()
     out = torch.FloatTensor(tensor.size(0), D).fill_(0)
@@ -67,18 +68,19 @@ def read_tu_set(dir,
     if graph_labels is True and graph_attributes is False:
         f = 'graph_labels'
         target = read_tu_file(dir, prefix, f, out=torch.LongTensor())
+        target = target.squeeze()
     else:
         f = 'graph'
         target = read_tu_x(dir, prefix, f, graph_attributes, graph_labels)
 
-    return Set(input, None, index, weight, target, slice, index_slice)
+    return Set(input, None, index, weight, target, None, slice, index_slice)
 
 
 def read_tu_file(dir, prefix, name, out=None):
     with open(osp.join(dir, '{}_{}.txt'.format(prefix, name)), 'r') as f:
         lines = f.read().split('\n')[:-1]
-        tensor = [[float(x) for x in line.split(', ')] for line in lines]
-    tensor = torch.FloatTensor(tensor).squeeze()
+        tensor = [[float(x.strip()) for x in l.split(',')] for l in lines]
+    tensor = torch.FloatTensor(tensor)
     return tensor if out is None else tensor.type_as(out)
 
 
@@ -111,6 +113,7 @@ def read_tu_slice(dir, prefix, index, graph_indicator=False):
     if graph_indicator is True:
         f = 'graph_indicator'
         batch = read_tu_file(dir, prefix, f, out=torch.LongTensor()) - 1
+        batch = batch.squeeze()
 
         slice, cur_i = [0], 0
         for idx, i in enumerate(batch):
