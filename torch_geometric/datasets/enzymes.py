@@ -37,7 +37,6 @@ class ENZYMES(Dataset):
             self.prefix,
             graph_indicator=True,
             graph_labels=True,
-            node_attributes=True,
             node_labels=True)
 
     @property
@@ -57,7 +56,6 @@ class ENZYMES(Dataset):
             self.prefix,
             graph_indicator=True,
             graph_labels=True,
-            node_attributes=True,
             node_labels=True)
 
         spinner.success()
