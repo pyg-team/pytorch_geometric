@@ -69,6 +69,7 @@ def read_tu_set(dir,
         f = 'graph_labels'
         target = read_tu_file(dir, prefix, f, out=torch.LongTensor())
         target = target.squeeze()
+        target -= target.min()
     else:
         f = 'graph'
         target = read_tu_x(dir, prefix, f, graph_attributes, graph_labels)
