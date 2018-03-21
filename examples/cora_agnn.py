@@ -27,12 +27,13 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.fc1 = nn.Linear(num_features, 16)
-        self.conv1 = AGNN()
-        self.conv2 = AGNN()
+        self.conv1 = AGNN(requires_grad=False)
+        self.conv2 = AGNN(requires_grad=True)
         self.fc2 = nn.Linear(16, num_targets)
 
     def forward(self):
-        x = F.relu(self.fc1(data.input))
+        x = F.dropout(data.input, training=self.training)
+        x = F.relu(self.fc1(x))
         x = self.conv1(x, data.index)
         x = self.conv2(x, data.index)
         x = F.dropout(x, training=self.training)
@@ -70,7 +71,7 @@ for run in range(1, 101):
 
     old_val = 0
     cur_test = 0
-    for _ in range(200):
+    for _ in range(1000):
         train()
         val = test(val_mask)
         if val > old_val:
