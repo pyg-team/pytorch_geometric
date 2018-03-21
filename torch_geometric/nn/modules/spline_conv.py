@@ -53,10 +53,9 @@ class SplineConv(Module):
         self.register_buffer('_is_open_spline', is_open_spline)
         self.degree = degree
         self.K = self._buffers['_kernel_size'].prod()
-        self.k_max = (degree + 1) ** dim
+        self.k_max = (degree + 1)**dim
         weight = torch.Tensor(self.K + 1, in_features, out_features)
         self.weight = Parameter(weight)
-
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_features))
@@ -65,20 +64,15 @@ class SplineConv(Module):
 
         self.reset_parameters()
 
-        self.forward_kernel = get_weighting_forward_kernel(in_features,
-                                                           out_features,
-                                                           self.k_max)
-        self.backward_kernel = get_weighting_backward_kernel(in_features,
-                                                             out_features,
-                                                             self.k_max, self.K,
-                                                             True)
+        self.forward_kernel = get_weighting_forward_kernel(
+            in_features, out_features, self.k_max)
+        self.backward_kernel = get_weighting_backward_kernel(
+            in_features, out_features, self.k_max, self.K, True)
 
         self.basis_kernel = get_basis_kernel(self.k_max, self.K, dim, degree)
 
-        self.basis_backward_kernel = get_basis_backward_kernel(self.k_max,
-                                                               self.K, dim,
-                                                               degree)
-
+        self.basis_backward_kernel = get_basis_backward_kernel(
+            self.k_max, self.K, dim, degree)
 
     def reset_parameters(self):
         size = self.in_features * (self.K + 1)
