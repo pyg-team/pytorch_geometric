@@ -12,7 +12,7 @@ def agnn(x, edge_index, beta):
     norm = torch.norm(x, 2, 1)
     norm = norm[row] * norm[col]
     cos = torch.matmul(x[row].unsqueeze(-2), x[col].unsqueeze(-1)).squeeze()
-    cos /= norm
+    cos /= norm + 1e-7  # Prevent underflow.
     cos *= beta
 
     # Scatter softmax.
