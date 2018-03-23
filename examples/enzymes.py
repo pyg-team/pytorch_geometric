@@ -82,5 +82,5 @@ def test(epoch, dataset, loader, str):
 
 for epoch in range(1, 501):
     train()
-    test(epoch, train_dataset, train_loader, 'Train')
+    # test(epoch, train_dataset, train_loader, 'Train')
     test(epoch, test_dataset, test_loader, 'Test')
