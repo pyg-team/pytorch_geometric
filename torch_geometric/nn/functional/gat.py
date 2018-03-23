@@ -7,14 +7,14 @@ from torch.autograd import Variable
 from .graph_conv import add_self_loops
 
 
-def graph_attention(x,
-                    edge_index,
-                    concat,
-                    negative_slope,
-                    dropout,
-                    weight,
-                    att_weight,
-                    bias=None):
+def gat(x,
+        edge_index,
+        concat,
+        negative_slope,
+        dropout,
+        weight,
+        att_weight,
+        bias=None):
 
     if weight.dim() == 2:
         weight = weight.unsqueeze(-2)

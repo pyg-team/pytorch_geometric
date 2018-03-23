@@ -3,10 +3,10 @@ from torch.nn import Module, Parameter
 
 from .utils.inits import uniform
 from .utils.repr import repr
-from ..functional.graph_attention import graph_attention
+from ..functional.gat import gat
 
 
-class GraphAttention(Module):
+class GAT(Module):
     """Graph Attentional Layer from the `"Graph Attention Networks (GAT)"
     <https://arxiv.org/abs/1710.10903>`_ paper.
 
@@ -34,7 +34,7 @@ class GraphAttention(Module):
                  negative_slope=0.2,
                  dropout=0,
                  bias=True):
-        super(GraphAttention, self).__init__()
+        super(GAT, self).__init__()
 
         self.in_features = in_features
         self.out_features = out_features
@@ -63,9 +63,8 @@ class GraphAttention(Module):
 
     def forward(self, x, edge_index):
         dropout = self.dropout if self.training else 0
-        return graph_attention(x, edge_index, self.concat, self.negative_slope,
-                               dropout, self.weight, self.att_weight,
-                               self.bias)
+        return gat(x, edge_index, self.concat, self.negative_slope, dropout,
+                   self.weight, self.att_weight, self.bias)
 
     def __repr__(self):
         return repr(self)
