@@ -12,7 +12,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import Cora, PubMed  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.nn.modules import GraphAttention  # noqa
+from torch_geometric.nn.modules import GAT  # noqa
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), normalize=True)
@@ -27,8 +27,8 @@ test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.att1 = GraphAttention(num_features, 8, 8, dropout=0.6)
-        self.att2 = GraphAttention(64, num_targets, dropout=0.6)
+        self.att1 = GAT(num_features, 8, 8, dropout=0.6)
+        self.att2 = GAT(64, num_targets, dropout=0.6)
 
     def forward(self):
         x = F.dropout(data.input, p=0.6, training=self.training)
