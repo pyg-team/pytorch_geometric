@@ -6,7 +6,6 @@ from torch import nn
 import torch.nn.functional as F
 from torchvision.transforms import Compose
 
-import time
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
@@ -16,11 +15,8 @@ from kitti_utils import camera_to_lidar_box, show_pointclouds, \
 from torch_geometric.datasets import KITTI  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
 
-from torch_geometric.transform import (RandomRotate, RandomScale,
-                                       RandomTranslate, RandomShear,
-                                       NormalizeScale)  # noqa
-from torch_geometric.transform import CartesianAdj, CartesianLocalAdj, \
-    SphericalAdj, Spherical2dAdj  # noqa
+from torch_geometric.transform import RandomRotate, NormalizeScale  # noqa
+from torch_geometric.transform import CartesianAdj, CartesianLocalAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import sparse_voxel_max_pool  # noqa
 
@@ -31,14 +27,7 @@ batch_size = 1
 num_classes = 2
 num_anchors = 2
 
-transform = Compose([
-    #RandomRotate(3.14),
-    #RandomScale(1.1),
-    #RandomShear(0.5),
-    #RandomTranslate(0.005),
-    NormalizeScale(),
-    CartesianAdj(0.05)
-])
+transform = Compose([NormalizeScale(), CartesianAdj(0.05)])
 train_dataset = KITTI(path, True, transform=transform)
 test_dataset = KITTI(path, False, transform=transform)
 train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
@@ -118,10 +107,10 @@ class Net(nn.Module):
         data2.input = F.elu(self.convRPN2(data2.adj, data2.input))
         data2.input = self.convRPN4(data2.adj, data2.input)
 
-        #data1.input = torch.cat(
+        # data1.input = torch.cat(
         #    [upscale(data2.input, cluster2), self.fc1(data1.input)], dim=1)
-        #data1.input = F.elu(self.convRPN3(data1.adj, data1.input))
-        #data1.input = self.convRPN4(data1.adj, data1.input)
+        # data1.input = F.elu(self.convRPN3(data1.adj, data1.input))
+        # data1.input = self.convRPN4(data1.adj, data1.input)
         class_out = data2.input[:, :
                                 num_classes * num_anchors].contiguous().view(
                                     -1, 2)
@@ -143,7 +132,7 @@ class_id = 0
 def train(epoch):
     model.train()
 
-    #if epoch == 21:
+    # if epoch == 21:
     #    for param_group in optimizer.param_groups:
     #        param_group['lr'] = 0.0005
 
@@ -155,7 +144,7 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.00005
 
-    #if epoch == 61:
+    # if epoch == 61:
     #    for param_group in optimizer.param_groups:
     #        param_group['lr'] = 0.00001
     example = 0
@@ -166,12 +155,10 @@ def train(epoch):
         data = data.cuda().to_variable()
         data.offset = data.offset[0].cuda()
         optimizer.zero_grad()
-        start = time.time()
         class_out, bb_out, positions, data1 = model(data)
-        #torch.cuda.synchronize()
-        #print('Model Forward:',time.time()-start)
+        # torch.cuda.synchronize()
+        # print('Model Forward:',time.time()-start)
         mask = data.target.data[:, 0] == class_id
-        start = time.time()
         if mask.sum() > 0:
             mask = mask.view(-1, 1).expand(mask.size(0), 9)
             boxes = data.target.data[mask].view(-1, 9)[:, 2:9]
@@ -183,18 +170,18 @@ def train(epoch):
             boxes = None
         class_gt, bb_gt, mask_gt = compute_anchor_gt(
             positions, boxes, data.offset, data.scale[0])
-        #torch.cuda.synchronize()
-        #print('Compute Anchor GT:',time.time()-start)
-        #start = time.time()
-        #show_pointclouds(data1, boxes)
-        #print(class_out.max(dim=1)[1].sum().data[0], class_gt.sum())
+        # torch.cuda.synchronize()
+        # print('Compute Anchor GT:',time.time()-start)
+        # start = time.time()
+        # show_pointclouds(data1, boxes)
+        # print(class_out.max(dim=1)[1].sum().data[0], class_gt.sum())
         # Anchor loss
         weight = torch.Tensor([1.0, 3.0]).cuda()
         loss_class = F.nll_loss(class_out, Variable(class_gt), weight=weight)
-        #mAP = mean_average_precision(boxes, class_out.data, bb_out.data)
-        #print(mAP)
+        # mAP = mean_average_precision(boxes, class_out.data, bb_out.data)
+        # print(mAP)
         # BB loss
-        #bb_out.data = bb_out.data * mask.unsqueeze(1)
+        # bb_out.data = bb_out.data * mask.unsqueeze(1)
         loss_bb = F.smooth_l1_loss(bb_out, Variable(bb_gt), reduce=False)
 
         loss_bb = loss_bb * Variable(mask_gt.unsqueeze(1))
@@ -205,13 +192,12 @@ def train(epoch):
             loss_bb = loss_bb.sum()
 
         loss = loss_class + loss_bb
-        #torch.cuda.synchronize()
-        #print('Loss:',time.time()-start)
-        start = time.time()
+        # torch.cuda.synchronize()
+        # print('Loss:',time.time()-start)
         loss.backward()
         optimizer.step()
-        #torch.cuda.synchronize()
-        #print('BW:',time.time()-start)
+        # torch.cuda.synchronize()
+        # print('BW:',time.time()-start)
 
         loss_class_sum += loss_class.data[0]
         loss_bb_sum += loss_bb.data[0]
@@ -233,7 +219,6 @@ def test(epoch, loader, ds, string):
         optimizer.zero_grad()
         class_out, bb_out, positions, data1 = model(data)
         mask = data.target.data[:, 0] == class_id
-        num_targets = mask.sum()
         if mask.sum() > 0:
             mask = mask.view(-1, 1).expand(mask.size(0), 9)
             boxes = data.target.data[mask].view(-1, 9)[:, 2:9]
@@ -243,13 +228,13 @@ def test(epoch, loader, ds, string):
             # Compute Groundtruth
         else:
             boxes = None
-        #print(class_out.max(dim=1)[1].sum().data[0], num_targets)
+        # print(class_out.max(dim=1)[1].sum().data[0], num_targets)
 
         # Translate to global position
         positions = torch.cat([positions, positions], dim=1).view(-1, 3)
         bb_out.data[:, 3:6] += positions
         # Translate middle to bottom of bb to match gt
-        #bb_out.data[:, 5] -= bb_out.data[:, 0]/2
+        # bb_out.data[:, 5] -= bb_out.data[:, 0]/2
         mAP_sum += mean_average_precision(boxes, class_out.data, bb_out.data,
                                           data.offset, data.scale[0])
 
@@ -268,7 +253,7 @@ def test(epoch, loader, ds, string):
 
 
 for epoch in range(1, 71):
-    #test(epoch, train_loader, train_dataset, 'Train')
+    # test(epoch, train_loader, train_dataset, 'Train')
     train(epoch)
     if epoch % 10 == 0:
         test(epoch, train_loader, train_dataset, 'Train')
