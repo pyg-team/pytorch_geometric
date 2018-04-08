@@ -12,8 +12,8 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet40RandPC  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.transform import (NormalizeScale, RandomFlip,
-                                       CartesianAdj, RandomTranslate)  # noqa
+from torch_geometric.transform import (NormalizeScale, CartesianAdj,
+                                       RandomTranslate)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
@@ -45,7 +45,6 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(8 * 128, 10)
 
     def pool_args(self, mean, x):
-        #return 1 / mean, 0
         if not self.training:
             return 1 / mean, 0
         size = 1 / random.uniform(mean - x, mean + x)
@@ -100,11 +99,11 @@ def train():
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.00001
 
-    #if epoch == 61:
+    # if epoch == 61:
     #    for param_group in optimizer.param_groups:
     #        param_group['lr'] = 0.000001
 
-    #if epoch == 81:
+    # if epoch == 81:
     #    for param_group in optimizer.param_groups:
     #        param_group['lr'] = 0.000001
 

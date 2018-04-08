@@ -2,11 +2,9 @@ import torch
 from torch.nn import Module, Parameter
 
 from .utils.inits import normal
-from .utils.repr import repr
 from .utils.repeat import repeat_to
 from ..functional.mlp_conv import mlp_conv
 from torch.nn import Linear
-
 
 
 class MLPConv(Module):
@@ -44,8 +42,10 @@ class MLPConv(Module):
         num_features = [self.dim] + self.num_neurons_in_hidden + \
                        [self.out_features * self.in_features]
 
-        self.linears = [Linear(num_features[i], num_features[i+1]).cuda()
-                        for i, _ in enumerate(num_features[:-1])]
+        self.linears = [
+            Linear(num_features[i], num_features[i + 1]).cuda()
+            for i, _ in enumerate(num_features[:-1])
+        ]
 
         self.root_weight = Parameter(torch.Tensor(in_features, out_features))
 
@@ -56,7 +56,6 @@ class MLPConv(Module):
 
         self.reset_parameters()
 
-
     def reset_parameters(self):
         normal(self.root_weight)
         normal(self.bias)
@@ -64,7 +63,3 @@ class MLPConv(Module):
     def forward(self, adj, input):
         return mlp_conv(adj, input, self.linears, self.root_weight,
                         self.out_features, self.bias)
-
-    # ?
-    #def __repr__(self):
-    #    return repr(self, ['kernel_size', 'is_open_spline', 'degree'])

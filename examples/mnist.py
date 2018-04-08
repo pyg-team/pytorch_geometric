@@ -7,7 +7,6 @@ import random
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torchvision.transforms import Compose
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')

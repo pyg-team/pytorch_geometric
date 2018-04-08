@@ -1,8 +1,8 @@
 import torch
 from torch.autograd import Variable
-import time
 
 from .spline_conv_gpu import SplineConvGPU
+
 
 def spline_conv(
         adj,  # Pytorch Tensor (!bp_to_adj) or Pytorch Variable (bp_to_adj)

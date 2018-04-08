@@ -10,7 +10,7 @@ def _pool(index, position, cluster, weight):
     index = index.contiguous()
     index = cluster[index.view(-1)].view(2, -1)
     index = remove_self_loops(index)  # Remove self loops.
-    #if index.dim() == 1:
+    # if index.dim() == 1:
     #    index = index.view(2,1)
     index = coalesce(index)  # Remove duplicates.
     cluster = cluster.unsqueeze(1).expand(-1, position.size(1))
@@ -63,17 +63,19 @@ def _avg_pool(input, cluster, size, weight):
     else:
         if weight is not None:
             input = input * weight
-            x = scatter_add(cluster, input, dim=0, size=size,
-                            fill_value=fill)
+            x = scatter_add(cluster, input, dim=0, size=size, fill_value=fill)
         else:
-            x = scatter_mean(cluster, input, dim=0, size=size,
-                             fill_value=fill)
+            x = scatter_mean(cluster, input, dim=0, size=size, fill_value=fill)
         x[(x == fill).data] = 0
     return x
 
 
-def avg_pool(input, index, position, cluster, size=None,
-             weight_values=None, weight_pos=None):
+def avg_pool(input,
+             index,
+             position,
+             cluster,
+             size=None,
+             weight_values=None,
+             weight_pos=None):
     x = _avg_pool(input, cluster, size, weight_values)
     return (x, ) + _pool(index, position, cluster, weight_pos)
-
