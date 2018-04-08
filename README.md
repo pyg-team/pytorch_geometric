@@ -50,11 +50,10 @@ nosetests
 Please cite our paper if you use this code in your own work:
 
 ```
-@article{Fey2017,
+@inproceedings{Fey/etal/2018,
   title={{SplineCNN}: Fast Geometric Deep Learning with Continuous {B}-Spline Kernels},
-  author={Matthias Fey and {Jan Eric} Lenssen and Frank Weichert and Heinrich M{\"u}ller},
-  journal={CoRR},
-  volume={abs/1711.08920},
-  year={2017},
+  author={Fey, Matthias and Lenssen, Jan Eric and Weichert, Frank and M{\"u}ller, Heinrich},
+  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}
+  year={2018},
 }
 ```
