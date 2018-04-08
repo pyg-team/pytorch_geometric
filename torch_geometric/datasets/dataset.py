@@ -4,7 +4,6 @@ import torch
 from torch.autograd import Variable
 from torch.utils.data import Dataset as BaseDataset
 
-from ..sparse import SparseTensor
 from .utils.dir import make_dirs
 
 
@@ -120,8 +119,8 @@ class Data(object):
     def num_nodes(self):
         assert self.input is not None or self.pos is not None or \
                self.faces is not None, (
-            'At least input or position tensor must be defined in order to '
-            'compute number of nodes')
+                    'At least input or position tensor must be defined in '
+                    'order to compute number of nodes')
 
         if self.pos is not None:
             return self.pos.size(0)
@@ -134,8 +133,8 @@ class Data(object):
     def num_edges(self):
         assert self.index is not None or self.weight is not None or \
                self.faces is not None, (
-            'At least index or weight tensor must be defined in order to '
-            'compute number of edges')
+                'At least index or weight tensor must be defined in order to '
+                'compute number of edges')
 
         if self.weight is not None:
             return self.weight.size(0)
@@ -170,8 +169,8 @@ class Data(object):
 class Set(Data):
     def __init__(self, input, pos, index, weight, target, faces, slice,
                  index_slice):
-        super(Set, self).__init__(input, pos, index, weight, target,
-                                  faces=faces)
+        super(Set, self).__init__(
+            input, pos, index, weight, target, faces=faces)
         self.slice = slice
         self.index_slice = index_slice
 

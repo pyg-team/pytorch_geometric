@@ -8,7 +8,6 @@ from .dataset import Dataset
 from .utils.download import download_url
 from .utils.extract import extract_zip
 from .utils.progress import Progress
-from .utils.off import read_off
 from .utils.mesh_to_cloud import generate_cloud
 
 

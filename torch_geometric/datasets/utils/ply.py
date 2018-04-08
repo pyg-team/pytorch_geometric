@@ -1,5 +1,5 @@
 import torch
-from plyfile import PlyData, make2d
+from plyfile import PlyData
 import numpy as np
 
 from ...graph.geometry import edges_from_faces

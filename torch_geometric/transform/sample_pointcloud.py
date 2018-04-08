@@ -7,19 +7,16 @@ from ..datasets.utils.nn_graph import nn_graph, radius_graph
 
 class SamplePointcloud(object):
     def __init__(self, num_points=1024):
-        self.num_points=num_points
+        self.num_points = num_points
 
     def __call__(self, data):
-        triangles = data.faces
-        probs = np.sqrt((np.cross(triangles[:, 1, :] - triangles[:, 0, :],
-                                  triangles[:, 2, :] - triangles[:, 0,
-                                                       :]) ** 2).sum(
-            axis=1)) / 2.
+        t = data.faces
+        probs = np.cross(t[:, 1, :] - t[:, 0, :], t[:, 2, :] - t[:, 0, :])**2
+        probs = np.sqrt(probs.sum(axis=1)) / 2.
         probs /= probs.sum()
 
-        sample = torch.LongTensor(np.random.choice(np.arange(len(triangles)),
-                                                   size=self.num_points,
-                                                   p=probs))
+        sample = torch.LongTensor(
+            np.random.choice(np.arange(len(t)), size=self.num_points, p=probs))
 
         samples_0 = np.random.random((self.num_points, 1))
         samples_1 = np.random.random((self.num_points, 1))
@@ -30,16 +27,16 @@ class SamplePointcloud(object):
         samples_0 = torch.FloatTensor(samples_0)
         samples_1 = torch.FloatTensor(samples_1)
 
-        tri_points0 = triangles[sample][:, 0, :]
-        tri_points1 = triangles[sample][:, 1, :]
-        tri_points2 = triangles[sample][:, 2, :]
+        tri_points0 = t[sample][:, 0, :]
+        tri_points1 = t[sample][:, 1, :]
+        tri_points2 = t[sample][:, 2, :]
 
-        data.pos = tri_points0 + samples_0 * (tri_points1 - tri_points0) + \
-              samples_1 * (tri_points2 - tri_points0)
+        data.pos = tri_points0 + samples_0 * (
+            tri_points1 - tri_points0) + samples_1 * (
+                tri_points2 - tri_points0)
 
         data.input = torch.ones(data.pos.size(0))
         return data
-
 
 
 class PCToGraphRad(object):

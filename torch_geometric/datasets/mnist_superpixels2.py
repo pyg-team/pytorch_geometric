@@ -58,7 +58,8 @@ class MNISTSuperpixels2(Dataset):
             input, pos = input.view(-1), pos.view(-1, 2)
             index, target = index.long(), target.long()
 
-            set = Set(input, pos, index, None, target, None, slice, index_slice)
+            set = Set(input, pos, index, None, target, None, slice,
+                      index_slice)
             sets += (set, )
 
         spinner.success()
