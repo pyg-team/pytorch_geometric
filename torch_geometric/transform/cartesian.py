@@ -22,7 +22,8 @@ class CartesianAdj(Module):
         # Compute Cartesian pseudo-coordinates.
         weight = data.pos[col] - data.pos[row]
 
-        max = weight.abs().max() if self.r is None else self.r.clamp(min=0.0001)
+        max = weight.abs().max() if self.r is None else self.r.clamp(
+            min=0.0001)
 
         if self.r is not None:
             weight = weight * (1 / max)

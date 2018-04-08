@@ -14,7 +14,6 @@ class SphericalAdj(object):
 
         index = data.index
         row, col = index
-        n = data.num_nodes
 
         # Compute spherical pseudo-coordinates.
         direction = data.pos[col] - data.pos[row]
@@ -28,7 +27,7 @@ class SphericalAdj(object):
         if data.weight is None:
             data.weight = spherical
         else:
-            data.weight = torch.cat([spherical, data.weight.unsqueeze(1)], dim=1)
+            data.weight = torch.cat(
+                [spherical, data.weight.unsqueeze(1)], dim=1)
 
         return data
-

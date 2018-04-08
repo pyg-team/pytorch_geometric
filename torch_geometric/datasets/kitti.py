@@ -76,7 +76,6 @@ class KITTI(Dataset):
         with open(osp.join(self.raw_folder, 'ImageSets/val.txt'), 'r') as f:
             test_files = f.read().split()
 
-        train, test = [], []
         # num_examples = len(train_files) + len(test_files)
         num_examples = 7481
         progress = Progress('Processing', end=num_examples, type='')
@@ -96,16 +95,14 @@ class KITTI(Dataset):
                 data,
                 self.processed_folder + '/test/' + 'example' + str(i) + '.pt')
 
-        # return train, test
-
     def process_example(self, dir, name):
         filename = osp.join(dir, 'training', 'velodyne', '{}.bin'.format(name))
         scan = torch.from_numpy(np.fromfile(filename, dtype=np.float32))
         scan = scan.view(-1, 4)  # [x, y, z, reflectance]
-        mask = (scan[:,2]<=1) * (scan[:,2]>=-3) * (scan[:,1]>=-40) * \
-               (scan[:,1]<=40) * (scan[:,0]>=0) * (scan[:,0]<=70.4)
+        mask = (scan[:, 2] <= 1) * (scan[:, 2] >= -3) * (scan[:, 1] >= -40) * \
+               (scan[:, 1] <= 40) * (scan[:, 0] >= 0) * (scan[:, 0] <= 70.4)
 
-        scan = scan[mask.nonzero(),:].squeeze()
+        scan = scan[mask.nonzero(), :].squeeze()
         pos, input = scan[:, :3], scan[:, 3]
         index = None
         target = None
@@ -127,14 +124,11 @@ class KITTI(Dataset):
 
     def __getitem__(self, i):
         traintest = 'train' if self.train else 'test'
-        data = torch.load(self.processed_folder+'/'+traintest+'/'+'example'+
-                          str(i)+'.pt')
+        data = torch.load(self.processed_folder + '/' + traintest + '/' +
+                          'example' + str(i) + '.pt')
         if self.transform is not None:
             data = self.transform(data)
         return data
-
-
-# TODO: testset -> correct one
 
     def __len__(self):
         if self.train:

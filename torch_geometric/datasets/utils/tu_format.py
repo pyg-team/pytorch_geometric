@@ -1,10 +1,8 @@
-import os
 import os.path as osp
 
 from ..dataset import Set
 
 import torch
-import numpy as np
 
 
 def to_one_hot(tensor):

@@ -25,7 +25,7 @@ class Spherical2dAdj(object):
         if data.weight is None:
             data.weight = spherical
         else:
-            data.weight = torch.cat([spherical, data.weight.unsqueeze(1)], dim=1)
+            data.weight = torch.cat(
+                [spherical, data.weight.unsqueeze(1)], dim=1)
 
         return data
-
