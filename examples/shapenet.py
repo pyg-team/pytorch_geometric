@@ -13,8 +13,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet2  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.transform import (NormalizeScale, CartesianAdj,
-                                       LogCartesianAdj)  # noqa
+from torch_geometric.transform import NormalizeScale, CartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import sparse_voxel_max_pool  # noqa
 from torch_geometric.visualization.model import show_model  # noqa

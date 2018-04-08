@@ -5,17 +5,15 @@ import random
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torchvision.transforms import Compose
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet10  # noqa
 from torch_geometric.utils import DataLoader2  # noqa
-from torch_geometric.transform import (NormalizeScale, LogCartesianAdj,
-                                       RandomTranslate)  # noqa
+from torch_geometric.transform import NormalizeScale, LogCartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
-from torch.nn import Linear as Lin # noqa
+from torch.nn import Linear as Lin  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
 
@@ -50,35 +48,35 @@ class Net(nn.Module):
         if not self.training:
             return 1 / mean, 0
         size = [1 / random.uniform(mean - x, mean + x) for _ in range(3)]
-        #size = 1 / mean
+        # size = 1 / mean
         start = [random.uniform(-1 / (mean - x), 0) for _ in range(3)]
-        #start = 0
+        # start = 0
         return size, start
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.adj, data.input))
         att1 = self.att1(data.input)
         size, start = self.pool_args(32, 8)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=att1[:,0])
+        data, _ = sparse_voxel_max_pool(
+            data, size, start, transform, weight=att1[:, 0])
 
         data.input = F.elu(self.conv2(data.adj, data.input))
         att2 = self.att2(data.input)
         size, start = self.pool_args(16, 4)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=att2[:,0])
+        data, _ = sparse_voxel_max_pool(
+            data, size, start, transform, weight=att2[:, 0])
 
         data.input = F.elu(self.conv3(data.adj, data.input))
         att3 = self.att3(data.input)
         size, start = self.pool_args(8, 2)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=att3[:,0])
+        data, _ = sparse_voxel_max_pool(
+            data, size, start, transform, weight=att3[:, 0])
 
         data.input = F.elu(self.conv4(data.adj, data.input))
         att4 = self.att4(data.input)
         size, start = self.pool_args(4, 1)
-        data, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=att4[:,0])
+        data, _ = sparse_voxel_max_pool(
+            data, size, start, transform, weight=att4[:, 0])
 
         data.input = F.relu(self.conv5(data.adj, data.input))
         data, _ = dense_voxel_max_pool(data, 1, -0.5, 1.5)

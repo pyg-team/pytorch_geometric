@@ -3,11 +3,10 @@ from __future__ import division
 import unittest
 import torch
 from torch.autograd import Variable, gradcheck
-from numpy.testing import assert_almost_equal
 
-from .spline_conv import spline_conv
-from .spline_conv_gpu import get_basis_kernel,get_basis_backward_kernel, \
-    get_weighting_forward_kernel, get_weighting_backward_kernel, SplineConvGPU
+from .spline_conv_gpu import (get_basis_kernel, get_basis_backward_kernel,
+                              get_weighting_forward_kernel,
+                              get_weighting_backward_kernel, SplineConvGPU)
 
 
 class SplineConvTest(unittest.TestCase):
@@ -24,7 +23,8 @@ class SplineConvTest(unittest.TestCase):
         kernel_size = torch.cuda.LongTensor([3, 4])
         is_open_spline = torch.cuda.LongTensor([1, 0])
 
-        input = torch.FloatTensor([[9, 10], [1, 2], [3, 4], [5, 6], [7, 8]]).double()
+        input = torch.FloatTensor([[9, 10], [1, 2], [3, 4], [5, 6], [7, 8]])
+        input = input.double()
         weight = torch.arange(0.5, 0.5 * 27, step=0.5).view(13, 2, 1).double()
         input, weight = input.cuda(), weight.cuda()
         input, weight = Variable(input), Variable(weight)
@@ -113,10 +113,10 @@ class SplineConvTest(unittest.TestCase):
 
         #self.assertTrue(test)
     '''
+
     @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_backward(self):
-        
-        
+
         input = torch.randn(4, 2).double().cuda()
         weight = torch.randn(9, 2, 1).double().cuda()
         values = torch.FloatTensor(4, 2).uniform_(0, 1).double().cuda()
@@ -130,23 +130,29 @@ class SplineConvTest(unittest.TestCase):
         out_features = 1
         degree = 1
         dim = 2
-        k_max = (degree + 1) ** dim
+        k_max = (degree + 1)**dim
         kernel_size = torch.cuda.LongTensor([3, 3])
         is_open_spline = torch.cuda.LongTensor([1, 0])
-        fw_k = get_weighting_forward_kernel(in_features, out_features, k_max,
-                                            dtype='double')
-        bw_k = get_weighting_backward_kernel(in_features, out_features, k_max,
-                                             K, True,dtype='double')
+        fw_k = get_weighting_forward_kernel(
+            in_features, out_features, k_max, dtype='double')
+        bw_k = get_weighting_backward_kernel(
+            in_features, out_features, k_max, K, True, dtype='double')
 
         basis_fw_k = get_basis_kernel(k_max, K, dim, degree, dtype='double')
 
-        basis_bw_k = get_basis_backward_kernel(k_max, K, dim, degree,
-                                            dtype='double')
+        basis_bw_k = get_basis_backward_kernel(
+            k_max, K, dim, degree, dtype='double')
 
-        op = SplineConvGPU(kernel_size, is_open_spline, K, degree,
-                               basis_fw_k, basis_bw_k, fw_k, bw_k,
-                               bp_to_adj=True)
-        #print(op(input, weight, values))
+        op = SplineConvGPU(
+            kernel_size,
+            is_open_spline,
+            K,
+            degree,
+            basis_fw_k,
+            basis_bw_k,
+            fw_k,
+            bw_k,
+            bp_to_adj=True)
         test = gradcheck(op, (input, weight, values), eps=1e-6, atol=1e-4)
 
         self.assertTrue(test)

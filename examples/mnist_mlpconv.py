@@ -7,7 +7,6 @@ import random
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torchvision.transforms import Compose
 
 sys.path.insert(0, '.')
 sys.path.insert(0, '..')
@@ -87,7 +86,6 @@ def train(epoch):
         loss = F.nll_loss(model(data), data.target)
         loss.backward()
         optimizer.step()
-        #print(loss.data[0])
 
 
 def test(epoch):

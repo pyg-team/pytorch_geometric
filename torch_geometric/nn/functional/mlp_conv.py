@@ -27,10 +27,8 @@ def mlp_conv(
     x = linears[-1](x)
     x = x.view(-1, out_features, input.size(1))
 
-
     # Compute new Edge-wise Features
     output = torch.matmul(x, output.unsqueeze(2)).squeeze(2)
-
 
     # Convolution via `scatter_add`. Converts [|E| x M_out] feature matrix to
     # [n x M_out] feature matrix.
