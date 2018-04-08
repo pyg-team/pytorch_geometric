@@ -17,9 +17,8 @@ from torch_geometric.utils import DataLoader2  # noqa
 from torch_geometric.transform import (NormalizeScale, LogCartesianAdj,
                                        RandomTranslate)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
-from torch.nn import Linear as Lin # noqa
-from torch_geometric.nn.functional import (sparse_voxel_max_pool,
-                                           dense_voxel_max_pool)  # noqa
+from torch.nn import Linear as Lin  # noqa
+from torch_geometric.nn.functional import sparse_voxel_max_pool  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
@@ -57,9 +56,9 @@ class Net(nn.Module):
         if not self.training:
             return 1 / mean, 0
         size = [1 / random.uniform(mean - x, mean + x) for _ in range(3)]
-        #size = 1 / mean
+        # size = 1 / mean
         start = [random.uniform(-1 / (mean - x), 0) for _ in range(3)]
-        #start = 0
+        # start = 0
         return size, start
 
     def forward(self, data):
@@ -69,17 +68,18 @@ class Net(nn.Module):
         f1_res = scatter_mean(batch, f1)
 
         size, start = self.pool_args(32, 8)
-        data2, _ = sparse_voxel_max_pool(data, size, start, transform,
-                                        weight=f1[:,0])
+        data2, _ = sparse_voxel_max_pool(
+            data, size, start, transform, weight=f1[:, 0])
 
         f2 = F.relu(self.conv2(data2.adj, data2.input))
         f2 = F.relu(self.conv22(data2.adj, f2))
-        batch = Variable(data2.batch.view(-1, 1).expand(data2.batch.size(0), 64))
+        batch = Variable(
+            data2.batch.view(-1, 1).expand(data2.batch.size(0), 64))
         f2_res = scatter_mean(batch, f2)
 
         size, start = self.pool_args(16, 4)
-        data3, _ = sparse_voxel_max_pool(data2, size, start, transform,
-                                        weight=f2[:,0])
+        data3, _ = sparse_voxel_max_pool(
+            data2, size, start, transform, weight=f2[:, 0])
 
         f3 = F.relu(self.conv3(data3.adj, data3.input))
         f3 = F.relu(self.conv32(data3.adj, f3))
@@ -88,8 +88,8 @@ class Net(nn.Module):
         f3_res = scatter_mean(batch, f3)
 
         size, start = self.pool_args(8, 2)
-        data4, _ = sparse_voxel_max_pool(data3, size, start, transform,
-                                        weight=f3[:,0])
+        data4, _ = sparse_voxel_max_pool(
+            data3, size, start, transform, weight=f3[:, 0])
 
         f4 = F.relu(self.conv4(data4.adj, data4.input))
         f4 = F.relu(self.conv42(data4.adj, f4))
@@ -97,10 +97,9 @@ class Net(nn.Module):
             data4.batch.view(-1, 1).expand(data4.batch.size(0), 64))
         f4_res = scatter_mean(batch, f4)
 
-
         size, start = self.pool_args(4, 1)
-        data5, _ = sparse_voxel_max_pool(data4, size, start, transform,
-                                        weight=f4[:,0])
+        data5, _ = sparse_voxel_max_pool(
+            data4, size, start, transform, weight=f4[:, 0])
 
         f5 = F.relu(self.conv5(data5.adj, data5.input))
         f5 = F.relu(self.conv52(data5.adj, f5))
@@ -108,10 +107,10 @@ class Net(nn.Module):
             data5.batch.view(-1, 1).expand(data5.batch.size(0), 64))
         f5_res = scatter_mean(batch, f5)
 
-        x = torch.cat([f1_res,f2_res,f3_res,f4_res,f5_res],dim=1)
+        x = torch.cat([f1_res, f2_res, f3_res, f4_res, f5_res], dim=1)
 
-        #data.input = F.relu(self.conv5(data.adj, data.input))
-        #data, _ = dense_voxel_max_pool(data, 1, -0.5, 1.5)
+        # data.input = F.relu(self.conv5(data.adj, data.input))
+        # data, _ = dense_voxel_max_pool(data, 1, -0.5, 1.5)
 
         x = x.view(-1, self.fc1.weight.size(1))
         x = F.dropout(x, training=self.training)
