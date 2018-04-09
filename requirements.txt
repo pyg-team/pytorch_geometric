@@ -4,6 +4,6 @@ h5py>=2.7.1
 plyfile>=0.5
 torch-scatter
 torch-unique
-torch-cluster>=1.0.0
+torch-cluster==0.2.4
 cupy
 requests

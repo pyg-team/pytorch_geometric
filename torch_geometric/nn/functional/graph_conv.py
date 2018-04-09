@@ -36,7 +36,7 @@ def graph_conv(x, edge_index, edge_attr, weight, bias=None):
     degree = degree.pow_(-0.5)
 
     # Normalize and append adjacency matrix by self loops.
-    edge_attr *= degree[row]
+    edge_attr = edge_attr * degree[row]
     edge_attr *= degree[col]
     edge_attr = torch.cat([edge_attr, degree * degree], dim=0)
     edge_index = add_self_loops(edge_index, n)
