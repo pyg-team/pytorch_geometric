@@ -6,10 +6,11 @@ from .utils.repr import repr
 from .utils.repeat import repeat_to
 from ..functional.spline_conv import spline_conv
 
-from ..functional.spline_conv.spline_conv_gpu \
-    import get_weighting_forward_kernel, get_weighting_backward_kernel
-from ..functional.spline_conv.spline_conv_gpu \
-    import get_basis_kernel, get_basis_backward_kernel
+if torch.cuda.is_available():
+    from ..functional.spline_conv.spline_conv_gpu import (
+        get_weighting_forward_kernel, get_weighting_backward_kernel)
+    from ..functional.spline_conv.spline_conv_gpu import (
+        get_basis_kernel, get_basis_backward_kernel)
 
 
 class SplineConv(Module):
