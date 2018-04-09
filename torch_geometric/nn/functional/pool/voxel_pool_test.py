@@ -31,7 +31,7 @@ class VoxelPoolTest(unittest.TestCase):
         assert_equal(cluster.tolist(), expected_cluster)
         assert_equal(data.pos.tolist(), expected_pos)
         assert_equal(data.index.tolist(), expected_index)
-        assert_equal(data.input.tolist(), expected_input)
+        assert_equal(data.input.data.tolist(), expected_input)
         assert_equal(data.batch.tolist(), expected_batch)
 
         grad = torch.FloatTensor([[1, 6], [2, 5], [3, 4], [1, 6], [2, 5],
@@ -40,7 +40,7 @@ class VoxelPoolTest(unittest.TestCase):
 
         expected_grad = [[0, 5], [2, 0], [1, 6], [3, 4], [2, 0], [0, 5],
                          [1, 6], [3, 4]]
-        assert_equal(input.grad.tolist(), expected_grad)
+        assert_equal(input.grad.data.tolist(), expected_grad)
 
     def test_dense_voxel_pool(self):
         input = torch.FloatTensor([[1, 5], [2, 4], [3, 3], [4, 2], [5, 1]])
