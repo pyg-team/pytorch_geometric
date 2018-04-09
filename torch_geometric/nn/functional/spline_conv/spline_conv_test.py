@@ -4,9 +4,10 @@ import unittest
 import torch
 from torch.autograd import Variable, gradcheck
 
-from .spline_conv_gpu import (get_basis_kernel, get_basis_backward_kernel,
-                              get_weighting_forward_kernel,
-                              get_weighting_backward_kernel, SplineConvGPU)
+if torch.cuda.is_available():
+    from .spline_conv_gpu import (get_basis_kernel, get_basis_backward_kernel,
+                                  get_weighting_forward_kernel,
+                                  get_weighting_backward_kernel, SplineConvGPU)
 
 
 class SplineConvTest(unittest.TestCase):

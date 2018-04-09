@@ -1,5 +1,4 @@
 import unittest
-
 import torch
 from torch.autograd import Variable
 from numpy.testing import assert_equal
@@ -17,8 +16,6 @@ class VoxelPoolTest(unittest.TestCase):
         input = torch.FloatTensor([[1, 4], [2, 3], [3, 2], [4, 1], [4, 1],
                                    [3, 2], [2, 3], [1, 4]])
         batch = torch.LongTensor([0, 0, 0, 0, 1, 1, 1, 1])
-        pos, index = pos.cuda(), index.cuda()
-        input, batch = input.cuda(), batch.cuda()
         input = Variable(input, requires_grad=True)
 
         data = Data(input, pos, index, None, None, batch)
@@ -38,7 +35,7 @@ class VoxelPoolTest(unittest.TestCase):
         assert_equal(data.batch.tolist(), expected_batch)
 
         grad = torch.FloatTensor([[1, 6], [2, 5], [3, 4], [1, 6], [2, 5],
-                                  [3, 4]]).cuda()
+                                  [3, 4]])
         data.input.backward(grad)
 
         expected_grad = [[0, 5], [2, 0], [1, 6], [3, 4], [2, 0], [0, 5],
