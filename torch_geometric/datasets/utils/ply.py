@@ -14,7 +14,7 @@ def read_ply(filename):
     z = torch.FloatTensor(plydata['vertex']['z'])
     pos = torch.stack([x, y, z], dim=1)
     input = torch.ones(pos.size(0))
-    arrays = [np.expand_dims(x, 0) for x in plydata['face']['vertex_indices']]
+    arrays = [np.expand_dims(v, 0) for v in plydata['face']['vertex_indices']]
     face = torch.LongTensor(np.concatenate(arrays, axis=0))
     index = edges_from_faces(face)
 
