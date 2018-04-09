@@ -23,13 +23,11 @@ class GraphConvTest(TestCase):
 
     def test_forward(self):
         conv = GraphConv(1, 10)
+        x = Variable(torch.Tensor([[1], [2], [3]]))
         i = torch.LongTensor([[0, 0, 1, 1, 2, 2], [1, 2, 0, 2, 0, 1]])
-        w = torch.FloatTensor([1, 1, 1, 1, 1, 1])
-        adj = torch.sparse.FloatTensor(i, w, torch.Size([3, 3]))
-        features = Variable(torch.FloatTensor([[1], [2], [3]]))
+        w = torch.Tensor([1, 1, 1, 1, 1, 1])
 
-        out = conv(adj, features)
-        expected_out = graph_conv(adj, features, conv.weight, conv.bias)
+        out = conv(x, i, w)
+        expected_out = graph_conv(x, i, w, conv.weight, conv.bias)
 
-        assert_equal(out.data.numpy(), expected_out.data.numpy())
         assert_equal(out.data.numpy(), expected_out.data.numpy())

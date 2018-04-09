@@ -37,7 +37,10 @@ def _max_pool(input, cluster, size):
         x = scatter_max(cluster, input, dim=0, fill_value=fill)[0]
     else:
         x = scatter_max(cluster, input, dim=0, size=size, fill_value=fill)[0]
-        x[(x == fill).data] = 0
+        if torch.is_tensor(x):
+            x[(x == fill)] = 0
+        else:
+            x[(x == fill).data] = 0
     return x
 
 

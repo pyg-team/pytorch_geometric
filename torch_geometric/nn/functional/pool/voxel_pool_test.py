@@ -4,12 +4,12 @@ import torch
 from torch.autograd import Variable
 from numpy.testing import assert_equal
 
-from .voxel_pool import voxel_max_pool
+from .voxel_pool import sparse_voxel_max_pool, dense_voxel_max_pool
 from ....datasets.dataset import Data
 
 
 class VoxelPoolTest(unittest.TestCase):
-    def test_voxel_pool(self):
+    def test_sparse_voxel_pool(self):
         pos = torch.FloatTensor([[0, 1], [0.5, 1.5], [0, 0], [1, 0], [0, 1],
                                  [0.5, 1.5], [0, 0], [1, 0]])
         index = torch.LongTensor([[0, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7],
@@ -22,7 +22,7 @@ class VoxelPoolTest(unittest.TestCase):
         input = Variable(input, requires_grad=True)
 
         data = Data(input, pos, index, None, None, batch)
-        data, cluster = voxel_max_pool(data, 1)
+        data, cluster = sparse_voxel_max_pool(data, 1)
 
         expected_cluster = [1, 1, 0, 2, 4, 4, 3, 5]
         expected_pos = [[0, 0], [0.25, 1.25], [1, 0], [0, 0], [0.25, 1.25],
@@ -45,10 +45,10 @@ class VoxelPoolTest(unittest.TestCase):
                          [1, 6], [3, 4]]
         assert_equal(input.grad.tolist(), expected_grad)
 
-    def test_voxel_pool_with_origin_and_fake_nodes(self):
+    def test_dense_voxel_pool(self):
         input = torch.FloatTensor([[1, 5], [2, 4], [3, 3], [4, 2], [5, 1]])
         pos = torch.FloatTensor([[3, 1], [4, 1], [12, 1], [6, 1], [14, 1]])
         index = torch.LongTensor([[0, 1, 1, 2, 3, 4], [1, 0, 2, 1, 4, 3]])
         batch = torch.LongTensor([0, 0, 0, 1, 1])
         data = Data(input, pos, index, None, None, batch)
-        data, cluster = voxel_max_pool(data, 5, origin=0, fake_nodes=True)
+        data, cluster = dense_voxel_max_pool(data, 5, start=0)

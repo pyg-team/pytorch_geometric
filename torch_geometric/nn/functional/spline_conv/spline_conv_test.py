@@ -120,7 +120,6 @@ class SplineConvTest(unittest.TestCase):
         input = torch.randn(4, 2).double().cuda()
         weight = torch.randn(9, 2, 1).double().cuda()
         values = torch.FloatTensor(4, 2).uniform_(0, 1).double().cuda()
-        print(values)
         input = Variable(input, requires_grad=True)
         weight = Variable(weight, requires_grad=True)
         values = Variable(values, requires_grad=True)

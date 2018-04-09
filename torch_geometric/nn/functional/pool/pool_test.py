@@ -10,13 +10,13 @@ from .pool import max_pool, avg_pool, _max_pool, _avg_pool
 def max_pool_backward(input):
     cluster = torch.LongTensor([0, 1, 1, 0])
     cluster = cluster.cuda() if input.is_cuda else cluster
-    return _max_pool(input, cluster)
+    return _max_pool(input, cluster, None)
 
 
 def avg_pool_backward(input):
     cluster = torch.LongTensor([0, 1, 1, 0])
     cluster = cluster.cuda() if input.is_cuda else cluster
-    return _avg_pool(input, cluster)
+    return _avg_pool(input, cluster, None, None)
 
 
 class PoolTest(unittest.TestCase):
