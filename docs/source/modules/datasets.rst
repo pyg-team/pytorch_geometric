@@ -7,12 +7,6 @@ torch_geometric.datasets
 .. contents:: Contents
     :local:
 
-Single Example Data
--------------------
-
-.. autoclass:: Data
-    :members:
-
 FAUST
 -----
 

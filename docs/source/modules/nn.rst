@@ -13,19 +13,11 @@ Convolution Layers
 .. autoclass:: GraphConv
     :members:
 
-.. autoclass:: Lin
-    :members:
-
 Pooling Layers
 --------------
-
-.. autoclass:: GraclusMaxPool
-    :members:
 
 torch_geometric.nn.functional
 =============================
 
 .. automodule:: torch_geometric.nn.functional
 .. currentmodule:: torch_geometric.nn.functional
-
-.. autofunction:: batch_average
