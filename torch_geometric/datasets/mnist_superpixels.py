@@ -8,7 +8,7 @@ from .utils.extract import extract_tar
 from .utils.spinner import Spinner
 
 
-class MNISTSuperpixels2(Dataset):
+class MNISTSuperpixels(Dataset):
     """`MNIST <http://yann.lecun.com/exdb/mnist>`_ Superpixels Dataset from the
     `"Geometric Deep Learning on Graphs and Manifolds Using Mixture Model CNNs"
     <https://arxiv.org/abs/1611.08402>`_ paper. Each example contains exactly
@@ -28,7 +28,7 @@ class MNISTSuperpixels2(Dataset):
           'mnist_superpixels.tar.gz'
 
     def __init__(self, root, train=True, transform=None):
-        super(MNISTSuperpixels2, self).__init__(root, transform)
+        super(MNISTSuperpixels, self).__init__(root, transform)
 
         name = self._processed_files[0] if train else self._processed_files[1]
         self.set = torch.load(name)

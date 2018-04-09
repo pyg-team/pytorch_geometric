@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>torch_geometric.nn.modules &mdash; pytorch_geometric 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pytorch_geometric 0.0.1 documentation" href="../index.html"/>
+        <link rel="prev" title="torch_geometric.datasets" href="datasets.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.svg" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">torch_geometric.datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#faust">FAUST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#cora">Cora</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#pubmed">PubMed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#citeseer">CiteSeer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#mnistsuperpixels">MNISTSuperpixels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#qm9">QM9</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.nn.modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#convolution-layers">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pooling-layers">Pooling Layers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-torch_geometric.nn.functional">torch_geometric.nn.functional</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pytorch_geometric</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>torch_geometric.nn.modules</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/nn.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-torch_geometric.nn.modules">
+<span id="torch-geometric-nn-modules"></span><h1>torch_geometric.nn.modules<a class="headerlink" href="#module-torch_geometric.nn.modules" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="convolution-layers">
+<h2>Convolution Layers<a class="headerlink" href="#convolution-layers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="torch_geometric.nn.modules.SplineConv">
+<em class="property">class </em><code class="descclassname">torch_geometric.nn.modules.</code><code class="descname">SplineConv</code><span class="sig-paren">(</span><em>in_features</em>, <em>out_features</em>, <em>dim</em>, <em>kernel_size</em>, <em>is_open_spline=True</em>, <em>degree=1</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/modules/spline_conv.html#SplineConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.modules.SplineConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spline-based Convolutional Operator <span class="math">\((f \star g)(i) =
+1/\mathcal{N}(i) \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
+f_l(j) \cdot g_l(u(i, j))\)</span>, where <span class="math">\(g_l\)</span> is a kernel function defined
+over the weighted B-Spline tensor product basis for a single input feature
+map. (Fey et al: SplineCNN: Fast Geometric Deep Learning with Continuous
+B-Spline Kernels, CVPR 2018, <a class="reference external" href="https://arxiv.org/abs/1711.08920">https://arxiv.org/abs/1711.08920</a>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Pseudo-coordinate dimensionality.</li>
+<li><strong>kernel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>]</em>) – Size of the convolving kernel.</li>
+<li><strong>is_open_spline</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em> or </em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>]</em><em>, </em><em>optional</em>) – Whether to use open or
+closed B-spline bases. (default <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+<li><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – B-spline basis degrees. (default: <code class="xref py py-obj docutils literal"><span class="pre">1</span></code>)</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.modules.GraphConv">
+<em class="property">class </em><code class="descclassname">torch_geometric.nn.modules.</code><code class="descname">GraphConv</code><span class="sig-paren">(</span><em>in_features</em>, <em>out_features</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/modules/graph_conv.html#GraphConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.modules.GraphConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graph Convolutional Operator <span class="math">\(F_{out} = \hat{D}^{-1/2} \hat{A}
+\hat{D}^{-1/2} F_{in} W\)</span> with <span class="math">\(\hat{A} = A + I\)</span> and
+<span class="math">\(\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}\)</span> from the <a class="reference external" href="https://arxiv.org/abs/1609.02907">“Semi-Supervised
+Classfication with Graph Convolutional Networks”</a> paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="pooling-layers">
+<h2>Pooling Layers<a class="headerlink" href="#pooling-layers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="module-torch_geometric.nn.functional">
+<span id="torch-geometric-nn-functional"></span><h1>torch_geometric.nn.functional<a class="headerlink" href="#module-torch_geometric.nn.functional" title="Permalink to this headline">¶</a></h1>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="datasets.html" class="btn btn-neutral" title="torch_geometric.datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Matthias Fey.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
