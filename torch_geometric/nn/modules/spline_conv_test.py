@@ -1,10 +1,11 @@
-from unittest import TestCase
+import unittest
+import torch
 
 from .utils.repeat import repeat_to
 from .spline_conv import SplineConv
 
 
-class SplineConvTest(TestCase):
+class SplineConvTest(unittest.TestCase):
     def test_repeat_to(self):
         output = repeat_to(2, 5)
         self.assertEqual(output, [2, 2, 2, 2, 2])
@@ -15,6 +16,7 @@ class SplineConvTest(TestCase):
         output = repeat_to([2, 4, 3, 7, 2], 5)
         self.assertEqual(output, [2, 4, 3, 7, 2])
 
+    @unittest.skipIf(not torch.cuda.is_available(), 'no GPU')
     def test_init(self):
         conv = SplineConv(1, 10, dim=3, kernel_size=[4, 8], degree=2)
         self.assertEqual(conv.in_features, 1)
