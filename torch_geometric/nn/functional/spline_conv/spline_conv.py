@@ -1,7 +1,8 @@
 import torch
 from torch.autograd import Variable
 
-from .spline_conv_gpu import SplineConvGPU
+if torch.cuda.is_available():
+    from .spline_conv_gpu import SplineConvGPU
 
 
 def spline_conv(
