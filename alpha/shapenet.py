@@ -12,7 +12,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet2  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.transform import NormalizeScale, CartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import sparse_voxel_max_pool  # noqa
@@ -29,9 +29,9 @@ test_transform = Compose([NormalizeScale(), transform])
 train_dataset = ShapeNet2(path, category, 'train', train_transform)
 val_dataset = ShapeNet2(path, category, 'val', test_transform)
 test_dataset = ShapeNet2(path, category, 'test', test_transform)
-train_loader = DataLoader2(train_dataset, batch_size=8, shuffle=True)
-val_loader = DataLoader2(val_dataset, batch_size=8)
-test_loader = DataLoader2(test_dataset, batch_size=8)
+train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=8)
+test_loader = DataLoader(test_dataset, batch_size=8)
 
 min_label = train_dataset.set.target.min()
 max_label = train_dataset.set.target.max()

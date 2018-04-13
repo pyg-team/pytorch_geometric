@@ -13,7 +13,7 @@ sys.path.insert(0, '..')
 from kitti_utils import camera_to_lidar_box, show_pointclouds, \
     compute_anchor_gt, mean_average_precision  # noqa
 from torch_geometric.datasets import KITTI  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 
 from torch_geometric.transform import RandomRotate, NormalizeScale  # noqa
 from torch_geometric.transform import CartesianAdj, CartesianLocalAdj  # noqa
@@ -30,8 +30,8 @@ num_anchors = 2
 transform = Compose([NormalizeScale(), CartesianAdj(0.05)])
 train_dataset = KITTI(path, True, transform=transform)
 test_dataset = KITTI(path, False, transform=transform)
-train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=batch_size)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
 trans = CartesianAdj()
 

@@ -11,7 +11,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet10PC  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.transform import NormalizeScale, CartesianAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
@@ -22,8 +22,8 @@ path = os.path.join(path, '..', 'data', 'ModelNet10PC')
 
 train_dataset = ModelNet10PC(path, True, transform=NormalizeScale())
 test_dataset = ModelNet10PC(path, False, transform=NormalizeScale())
-train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=32)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=32)
 
 
 class Net(nn.Module):

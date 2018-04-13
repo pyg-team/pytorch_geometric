@@ -14,7 +14,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import FAUST  # noqa
 from torch_geometric.transform import CartesianAdj  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.datasets.utils.download import download_url  # noqa
 from torch_geometric.datasets.utils.extract import extract_tar  # noqa
@@ -22,8 +22,8 @@ from torch_geometric.datasets.utils.extract import extract_tar  # noqa
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FAUST')
 train_dataset = FAUST(path, train=True, transform=CartesianAdj())
 test_dataset = FAUST(path, train=False, transform=CartesianAdj())
-train_loader = DataLoader2(train_dataset, batch_size=1, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=1)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=1)
 
 
 class Net(nn.Module):

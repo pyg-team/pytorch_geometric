@@ -11,7 +11,6 @@ def collate(batch):
     return default_collate(batch)
 
 
-class DataLoader2(DefaultDataLoader):
+class DataLoader(DefaultDataLoader):
     def __init__(self, dataset, **kwargs):
-        super(DataLoader2, self).__init__(
-            dataset, collate_fn=collate, **kwargs)
+        super(DataLoader, self).__init__(dataset, collate_fn=collate, **kwargs)
