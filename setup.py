@@ -9,6 +9,8 @@ install_requires = [
     'torch-unique',
     'torch-cluster',
     'torch-spline-conv',
+    'h5py',
+    'plyfile',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov']
