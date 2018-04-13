@@ -14,7 +14,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ENZYMES  # noqa
 from torch_geometric.transform import TargetIndegreeAdj  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES')
@@ -23,8 +23,8 @@ test_dataset = ENZYMES(path, transform=TargetIndegreeAdj())
 perm = torch.randperm(len(train_dataset))
 train_dataset.split = perm[len(train_dataset) // 10:]
 test_dataset.split = perm[:len(test_dataset) // 10]
-train_loader = DataLoader2(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=64)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=64)
 
 
 class Net(nn.Module):

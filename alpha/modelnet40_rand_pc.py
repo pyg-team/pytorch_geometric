@@ -11,7 +11,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet40RandPC  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.transform import (NormalizeScale, CartesianAdj,
                                        RandomTranslate)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
@@ -29,8 +29,8 @@ test_transform = Compose([NormalizeScale(), transform])
 train_dataset = ModelNet40RandPC(path, True, transform=train_transform)
 test_dataset = ModelNet40RandPC(path, False, transform=test_transform)
 batch_size = 6
-train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=batch_size)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
 
 class Net(nn.Module):

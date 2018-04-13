@@ -12,7 +12,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet40  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.transform import RandomRotate, NormalizeScale  # noqa
 from torch_geometric.transform import CartesianAdj, CartesianLocalAdj  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
@@ -29,8 +29,8 @@ trans = CartesianAdj()
 batch_size = 1
 train_dataset = ModelNet40(path, True, transform=transform)
 test_dataset = ModelNet40(path, False, transform=transform_test)
-train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 num_classes = 40
 
 

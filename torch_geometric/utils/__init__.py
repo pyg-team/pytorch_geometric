@@ -1,3 +1,3 @@
-from .dataloader2 import DataLoader2
+from .dataloader import DataLoader
 
-__all__ = ['DataLoader2']
+__all__ = ['DataLoader']

@@ -16,7 +16,7 @@ sys.path.insert(0, '..')
 from torch_geometric.datasets import Cuneiform2  # noqa
 from torch_geometric.transform import (RandomRotate, RandomScale,
                                        RandomTranslate, CartesianAdj)  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 
 transform = Compose([
@@ -115,8 +115,8 @@ for i in range(split.size(0) - 1):
     else:
         train_dataset.split = torch.cat([perm[:split[i]], perm[split[i + 1]:]])
     test_dataset.split = perm[split[i]:split[i + 1]]
-    train_loader = DataLoader2(train_dataset, batch_size=32, shuffle=True)
-    test_loader = DataLoader2(test_dataset, batch_size=32)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=32)
 
     acc_split = []
     for run in range(1, 11):

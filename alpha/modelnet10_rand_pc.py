@@ -10,7 +10,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet10RandPC  # noqa
-from torch_geometric.utils import DataLoader2  # noqa
+from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.transform import (NormalizeScale, CartesianAdj)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch.nn import Linear as Lin  # noqa
@@ -28,8 +28,8 @@ train_dataset = ModelNet10RandPC(path, True, transform=init_transform)
 test_dataset = ModelNet10RandPC(path, False, transform=init_transform)
 
 batch_size = 6
-train_loader = DataLoader2(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader2(test_dataset, batch_size=batch_size)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
 
 class Net(nn.Module):
