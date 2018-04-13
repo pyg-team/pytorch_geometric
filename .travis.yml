@@ -16,7 +16,7 @@ install:
 script:
   - pycodestyle .
   - flake8 .
-  - python -c "import torch"
+  - python -c "import torch; import torch.autograd"
   - python setup.py install
   # - python setup.py test
   - cd docs && pip install -r requirements.txt && make clean && make html
