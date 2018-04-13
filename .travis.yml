@@ -7,15 +7,17 @@ matrix:
     - python: 3.5
     - python: 3.6
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.3.0.post4-cp27-cp27mu-linux_x86_64.whl; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.3.0.post4-cp35-cp35m-linux_x86_64.whl; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip install --quiet http://download.pytorch.org/whl/cu80/torch-0.3.0.post4-cp36-cp36m-linux_x86_64.whl; fi
-  - pip install torchvision
-  - pip install -r requirements_test.txt
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install --quiet http://download.pytorch.org/whl/cpu/torch-0.3.1-cp27-cp27mu-linux_x86_64.whl; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pip install --quiet http://download.pytorch.org/whl/cpu/torch-0.3.1-cp35-cp35m-linux_x86_64.whl; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip install --quiet http://download.pytorch.org/whl/cpu/torch-0.3.1-cp36-cp36m-linux_x86_64.whl; fi
+  - pip install pycodestyle
+  - pip install flake8
   - pip install codecov
 script:
+  - pycodestyle .
   - flake8 .
-  - nosetests --with-coverage
+  - python setup.py install
+  - python setup.py test
 after_success:
   - codecov
 notifications:
