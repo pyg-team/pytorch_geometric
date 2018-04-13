@@ -4,7 +4,11 @@ __version__ = '0.1.0'
 url = 'https://github.com/rusty1s/pytorch_geometric'
 
 install_requires = [
-    'torch-scatter', 'torch-unique', 'torch-cluster', 'torch-spline-conv'
+    'cffi',
+    'torch-scatter',
+    'torch-unique',
+    'torch-cluster',
+    'torch-spline-conv',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov']
