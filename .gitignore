@@ -3,5 +3,6 @@ data/
 build/
 dist/
 *.egg-info/
+.coverage
 
 !docs/build
