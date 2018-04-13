@@ -1,7 +1,0 @@
-# Pull in the packages required to run the project.
--r requirements.txt
-
-# Testing-specific package requirements
-flake8>=3.4.1
-nose>=1.3.7
-coverage>=4.4.1
