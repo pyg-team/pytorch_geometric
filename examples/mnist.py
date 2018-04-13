@@ -1,22 +1,17 @@
 from __future__ import division, print_function
 
 import os.path as osp
-import sys
-import random
 
 import torch
+from torch.autograd import Variable
 from torch import nn
 import torch.nn.functional as F
-
-sys.path.insert(0, '.')
-sys.path.insert(0, '..')
-
-from torch_geometric.datasets import MNISTSuperpixels  # noqa
-from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.transform import CartesianAdj, NormalizeScale  # noqa
-from torch_geometric.nn.modules import SplineConv  # noqa
-from torch_geometric.nn.functional import (sparse_voxel_max_pool,
-                                           dense_voxel_max_pool)  # noqa
+from torch_geometric.datasets import MNISTSuperpixels
+from torch_geometric.utils import DataLoader
+from torch_geometric.transform import CartesianAdj
+from torch_geometric.nn.modules import SplineConv
+from torch_geometric.nn.functional.pool import sparse_voxel_grid_pool
+from torch_geometric.nn.functional.pool import dense_voxel_grid_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 train_dataset = MNISTSuperpixels(path, True, transform=CartesianAdj())
@@ -35,24 +30,19 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(4 * 64, 128)
         self.fc2 = nn.Linear(128, 10)
 
-    def pool_args(self, mean):
-        if not self.training:
-            return 1 / mean, 0
-        size = 1 / mean
-        start = [random.uniform(-1 / mean, 0) for _ in range(2)]
-        return size, start
-
     def forward(self, data):
+        data.input = F.elu(self.conv1(data.input, data.index, data.weight))
+        data = sparse_voxel_grid_pool(data, 5, 0, 28, CartesianAdj())
+        data.weight = Variable(data.weight)
 
-        data.input = F.elu(self.conv1(data.adj, data.input))
-        data, _ = sparse_voxel_max_pool(data, 5, 0, CartesianAdj())
-        data.input = F.elu(self.conv2(data.adj, data.input))
-        data, _ = sparse_voxel_max_pool(data, 7, 0, CartesianAdj())
-        data.input = F.elu(self.conv3(data.adj, data.input))
+        data.input = F.elu(self.conv2(data.input, data.index, data.weight))
+        data = sparse_voxel_grid_pool(data, 7, 0, 28, CartesianAdj())
+        data.weight = Variable(data.weight)
 
-        data, _ = dense_voxel_max_pool(data, 14, 0, 28)
+        data.input = F.elu(self.conv3(data.input, data.index, data.weight))
+        x = dense_voxel_grid_pool(data, 14, 0, 27.99)
 
-        x = data.input.contiguous().view(-1, self.fc1.weight.size(1))
+        x = x.view(-1, self.fc1.weight.size(1))
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
@@ -80,8 +70,7 @@ def train(epoch):
     for data in train_loader:
         data = data.cuda().to_variable()
         optimizer.zero_grad()
-        loss = F.nll_loss(model(data), data.target)
-        loss.backward()
+        F.nll_loss(model(data), data.target).backward()
         optimizer.step()
 
 
@@ -90,7 +79,7 @@ def test(epoch):
     correct = 0
 
     for data in test_loader:
-        data = data.cuda().to_variable('input')
+        data = data.cuda().to_variable(['input', 'weight'])
         pred = model(data).data.max(1)[1]
         correct += pred.eq(data.target).sum()
 

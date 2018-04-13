@@ -1,17 +1,12 @@
 from __future__ import division, print_function
 
 import os.path as osp
-import sys
 
 import torch
 from torch import nn
 import torch.nn.functional as F
-
-sys.path.insert(0, '.')
-sys.path.insert(0, '..')
-
-from torch_geometric.datasets import Cora  # noqa
-from torch_geometric.nn.modules import AGNN  # noqa
+from torch_geometric.datasets import Cora
+from torch_geometric.nn.modules import AGNN
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), normalize=True)

@@ -14,7 +14,6 @@ install:
   - pip install -r requirements_test.txt
   - pip install codecov
 script:
-  - pycodestyle .
   - flake8 .
   - nosetests --with-coverage
 after_success:

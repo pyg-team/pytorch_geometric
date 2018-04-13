@@ -1,7 +1,6 @@
 from __future__ import division, print_function
 
 import os.path as osp
-import sys
 
 import torch
 from torch import nn
@@ -9,15 +8,11 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 from torchvision.transforms import Compose
 from torch_scatter import scatter_mean
-
-sys.path.insert(0, '.')
-sys.path.insert(0, '..')
-
-from torch_geometric.datasets import Cuneiform2  # noqa
+from torch_geometric.datasets import Cuneiform
+from torch_geometric.utils import DataLoader
+from torch_geometric.nn.modules import SplineConv
 from torch_geometric.transform import (RandomRotate, RandomScale,
-                                       RandomTranslate, CartesianAdj)  # noqa
-from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.nn.modules import SplineConv  # noqa
+                                       RandomTranslate, CartesianAdj)
 
 transform = Compose([
     RandomRotate(0.6),
@@ -26,8 +21,8 @@ transform = Compose([
     CartesianAdj(),
 ])
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Cuneiform')
-train_dataset = Cuneiform2(path, transform=transform)
-test_dataset = Cuneiform2(path, transform=CartesianAdj())
+train_dataset = Cuneiform(path, transform=transform)
+test_dataset = Cuneiform(path, transform=CartesianAdj())
 
 # Modify inputs.
 # input = train_dataset.input
@@ -52,11 +47,13 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(64, 30)
 
     def forward(self, data):
-        x, adj = data.input, data.adj
-        x = F.elu(self.conv1(adj, x))
-        x = F.elu(self.conv2(adj, x))
-        x = F.elu(self.conv3(adj, x))
+        x, edge_index, pseudo = data.input, data.index, data.weight
+        x = F.elu(self.conv1(x, edge_index, pseudo))
+        x = F.elu(self.conv2(x, edge_index, pseudo))
+        x = F.elu(self.conv3(x, edge_index, pseudo))
+
         x = scatter_mean(Variable(data.batch.unsqueeze(1).expand_as(x)), x)
+
         x = F.dropout(x, training=self.training)
         x = self.fc1(x)
         return F.log_softmax(x, dim=1)
@@ -82,7 +79,6 @@ def train(epoch):
 
     for data in train_loader:
         data = data.cuda().to_variable()
-
         optimizer.zero_grad()
         F.nll_loss(model(data), data.target).backward()
         optimizer.step()
@@ -94,7 +90,7 @@ def test(run, loader):
     num_examples = 0
 
     for data in loader:
-        data = data.cuda().to_variable('input')
+        data = data.cuda().to_variable(['input', 'weight'])
         pred = model(data).data.max(1)[1]
         correct += pred.eq(data.target).sum()
         num_examples += data.target.size(0)
