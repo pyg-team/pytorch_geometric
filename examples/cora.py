@@ -1,18 +1,13 @@
 from __future__ import division, print_function
 
 import os.path as osp
-import sys
 
 import torch
 from torch import nn
 import torch.nn.functional as F
-
-sys.path.insert(0, '.')
-sys.path.insert(0, '..')
-
-from torch_geometric.datasets import Cora  # noqa
-from torch_geometric.transform import TargetIndegreeAdj  # noqa
-from torch_geometric.nn.modules import SplineConv  # noqa
+from torch_geometric.datasets import Cora
+from torch_geometric.transform import TargetIndegreeAdj
+from torch_geometric.nn.modules import SplineConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), transform=TargetIndegreeAdj())
@@ -28,11 +23,11 @@ class Net(nn.Module):
         self.conv2 = SplineConv(16, 7, dim=1, kernel_size=2)
 
     def forward(self):
-        x, adj = data.input, data.adj
+        x, edge_index, pseudo = data.input, data.index, data.weight
         x = F.dropout(x, training=self.training)
-        x = F.elu(self.conv1(adj, x))
+        x = F.elu(self.conv1(x, edge_index, pseudo))
         x = F.dropout(x, training=self.training)
-        x = self.conv2(adj, x)
+        x = self.conv2(x, edge_index, pseudo)
         return F.log_softmax(x, dim=1)
 
 

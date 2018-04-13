@@ -159,10 +159,10 @@ class Data(object):
     def cpu(self, props=None):
         return self._transfer(lambda x: x.cpu(), props)
 
-    def to_variable(self, props=['input', 'target']):
+    def to_variable(self, props=['input', 'target', 'weight']):
         return self._transfer(lambda x: Variable(x), props)
 
-    def to_tensor(self, props=['input', 'target']):
+    def to_tensor(self, props=['input', 'target', 'weight']):
         return self._transfer(lambda x: x.data, props)
 
 

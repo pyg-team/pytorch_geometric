@@ -3,7 +3,7 @@ from .citeseer import CiteSeer
 from .pubmed import PubMed
 from .faust import FAUST
 from .mnist_superpixels import MNISTSuperpixels
-from .cuneiform2 import Cuneiform2
+from .cuneiform import Cuneiform
 from .qm9 import QM9
 from .enzymes import ENZYMES
 from .shapenet import ShapeNet
@@ -18,7 +18,7 @@ from .modelnet10_rand_aug_pc import ModelNet10RandAugPC
 
 __all__ = [
     'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels', 'ShapeNet',
-    'ShapeNet2', 'Cuneiform2', 'QM9', 'ENZYMES', 'KITTI', 'ModelNet10',
+    'ShapeNet2', 'Cuneiform', 'QM9', 'ENZYMES', 'KITTI', 'ModelNet10',
     'ModelNet40', 'ModelNet10PC', 'ModelNet10RandPC', 'ModelNet40RandPC',
     'ModelNet10RandAugPC'
 ]

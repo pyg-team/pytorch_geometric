@@ -1,21 +1,15 @@
 from __future__ import division, print_function
 
 import os.path as osp
-import sys
 
 import torch
 from torch import nn
 import torch.nn.functional as F
-
-sys.path.insert(0, '.')
-sys.path.insert(0, '..')
-
-from torch_geometric.datasets import Cora, PubMed  # noqa
-from torch_geometric.nn.modules import GAT  # noqa
+from torch_geometric.datasets import Cora
+from torch_geometric.nn.modules import GAT
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), normalize=True)
-# dataset = PubMed(osp.join(path, 'PubMed'), normalize=True)
 data = dataset[0].cuda().to_variable()
 num_features, num_targets = data.input.size(1), data.target.data.max() + 1
 train_mask = torch.arange(0, 20 * num_targets).long()

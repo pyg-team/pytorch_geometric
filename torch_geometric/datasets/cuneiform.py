@@ -10,13 +10,13 @@ from .utils.spinner import Spinner
 from .utils.tu_format import tu_files, read_tu_set
 
 
-class Cuneiform2(Dataset):
+class Cuneiform(Dataset):
     url = 'https://ls11-www.cs.uni-dortmund.de/people/morris/' \
           'graphkerneldatasets/Cuneiform.zip'
     prefix = osp.join('Cuneiform', 'Cuneiform')
 
     def __init__(self, root, split=None, transform=None):
-        super(Cuneiform2, self).__init__(root, transform)
+        super(Cuneiform, self).__init__(root, transform)
         self.set = torch.load(self._processed_files[0])
 
         if split is None:
@@ -26,7 +26,7 @@ class Cuneiform2(Dataset):
             self.split = split
 
     def __getitem__(self, i):
-        return super(Cuneiform2, self).__getitem__(self.split[i])
+        return super(Cuneiform, self).__getitem__(self.split[i])
 
     def __len__(self):
         return self.split.size(0)
