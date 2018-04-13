@@ -12,7 +12,7 @@ tests_require = ['pytest', 'pytest-cov']
 setup(
     name='torch_geometric',
     version=__version__,
-    description='Geometric Deep Learning extension library for PyTorch',
+    description='Geometric Deep Learning Extension Library for PyTorch',
     author='Matthias Fey',
     author_email='matthias.fey@tu-dortmund.de',
     url=url,
