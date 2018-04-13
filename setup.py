@@ -9,6 +9,8 @@ install_requires = [
     'torch-unique',
     'torch-cluster',
     'torch-spline-conv',
+    'numpy',
+    'scipy',
     'h5py',
     'plyfile',
 ]
