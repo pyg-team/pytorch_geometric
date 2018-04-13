@@ -13,12 +13,10 @@ install:
   - pip install pycodestyle
   - pip install flake8
   - pip install codecov
-  - pip install torch-unique
 script:
   - pycodestyle .
   - flake8 .
-  - python -c "import torch; import torch.autograd"
-  - python setup.py install
+  - python setup.py --verbose install
   # - python setup.py test
   - cd docs && pip install -r requirements.txt && make clean && make html
 after_success:
