@@ -17,13 +17,15 @@ def agnn(x, edge_index, beta):
 
     # Scatter softmax.
     cos = cos.exp_()
-    cos /= cos.new(n).fill_(0).scatter_add_(0, Variable(row), cos)[row]
+    cos_sum = Variable(cos.data.new(n)).fill_(0)
+    cos /= cos_sum.scatter_add_(0, Variable(row), cos)[row]
 
     # Apply attention.
     x_col = cos.unsqueeze(-1) * x[col]
 
     # Sum up neighborhoods.
     var_row = Variable(row.view(e, 1).expand(e, m))
-    output = x.new(n, m).fill_(0).scatter_add_(0, var_row, x_col)
+    output = Variable(x.data.new(n, m)).fill_(0)
+    output.scatter_add_(0, var_row, x_col)
 
     return output

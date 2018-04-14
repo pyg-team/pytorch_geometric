@@ -38,7 +38,8 @@ def gat(x,
     # Scatter softmax.
     alpha = alpha.exp_()
     var_row = Variable(row.unsqueeze(-1).expand(e, k))
-    alpha_sum = alpha.new(n, k).fill_(0).scatter_add_(0, var_row, alpha)
+    alpha_sum = Variable(alpha.data.new(n, k)).fill_(0)
+    alpha_sum.scatter_add_(0, var_row, alpha)
     alpha /= alpha_sum.gather(0, var_row)
 
     # Sample attention coefficients stochastically.
@@ -49,7 +50,8 @@ def gat(x,
 
     # Sum up neighborhoods.
     var_row = Variable(row.view(e, 1, 1).expand(e, k, m_out))
-    output = x.new(n, k, m_out).fill_(0).scatter_add_(0, var_row, x_col)
+    output = Variable(x.data.new(n, k, m_out)).fill_(0)
+    output.scatter_add_(0, var_row, x_col)
 
     if concat is True:
         output = output.view(n, k * m_out)
