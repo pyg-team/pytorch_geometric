@@ -21,22 +21,20 @@ In addition, PyTorch Geometric contains the spline-based convolutional layer fro
 
 ## Requirements
 
-Install `pytorch` and `torchvision` manually ([Installation](http://pytorch.org/)).
-If cuda is available it is recommended to install `cupy` ([Installation](https://github.com/cupy/cupy#installation)).
-
-Run the following command to install the additional dependencies:
+Install PyTorch manually ([Installation](http://pytorch.org/)).
+If cuda is available, check that `nvcc` is accessible from your terminal, e.g. by typing `nvcc --version`.
+If not, add cuda (`/usr/local/cuda/bin`) to your `$PATH`.
+Then run:
 
 ```shell
 pip install -r requirements.txt
+python setup.py install
 ```
 
 ## Running tests
 
-Install the test requirements and run the test suite:
-
 ```shell
-pip install -r requirements_test.txt
-nosetests
+python setup.py test
 ```
 
 ## Cite
