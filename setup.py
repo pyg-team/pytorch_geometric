@@ -14,6 +14,8 @@ install_requires = [
     'h5py',
     'plyfile',
     'requests',
+    'unittest',
+    'nose',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov']
