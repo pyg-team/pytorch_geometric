@@ -4,11 +4,6 @@ __version__ = '1.0.0'
 url = 'https://github.com/rusty1s/pytorch_geometric'
 
 install_requires = [
-    'cffi',
-    'torch-scatter',
-    'torch-unique',
-    'torch-cluster',
-    'torch-spline-conv',
     'numpy',
     'scipy',
     'h5py',
