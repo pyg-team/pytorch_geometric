@@ -14,6 +14,16 @@ install:
   - pip install flake8
   - pip install codecov
   - pip install cffi
+  - pip install torch-scatter
+  - pip install torch-unique
+  - pip install torch-cluster
+  - pip install torch-spline-conv
+  - pip install numpy
+  - pip install scipy
+  - pip install h5py
+  - pip install plyfile
+  - pip install requests
+  - pip install nose
 script:
   - pycodestyle .
   - flake8 .
