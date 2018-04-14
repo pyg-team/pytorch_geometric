@@ -27,8 +27,8 @@ install:
 script:
   - pycodestyle .
   - flake8 .
-  - python setup.py --verbose install
-  # - python setup.py test
+  - python setup.py install
+  - python setup.py test
   - cd docs && pip install -r requirements.txt && make clean && make html
 after_success:
   - codecov
