@@ -1,3 +1,4 @@
+from .data import Data
 from .cora import Cora
 from .citeseer import CiteSeer
 from .pubmed import PubMed
@@ -17,8 +18,8 @@ from .modelnet40_rand_pc import ModelNet40RandPC
 from .modelnet10_rand_aug_pc import ModelNet10RandAugPC
 
 __all__ = [
-    'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels', 'ShapeNet',
-    'ShapeNet2', 'Cuneiform', 'QM9', 'ENZYMES', 'KITTI', 'ModelNet10',
-    'ModelNet40', 'ModelNet10PC', 'ModelNet10RandPC', 'ModelNet40RandPC',
-    'ModelNet10RandAugPC'
+    'Data', 'Cora', 'PubMed', 'CiteSeer', 'FAUST', 'MNISTSuperpixels',
+    'ShapeNet', 'ShapeNet2', 'Cuneiform', 'QM9', 'ENZYMES', 'KITTI',
+    'ModelNet10', 'ModelNet40', 'ModelNet10PC', 'ModelNet10RandPC',
+    'ModelNet40RandPC', 'ModelNet10RandAugPC'
 ]
