@@ -17,6 +17,7 @@ install:
   - pip install torch-scatter
   - pip install torch-unique
   - pip install torch-cluster
+  - pip install torch-spline-conv
 script:
   - pycodestyle .
   - flake8 .
