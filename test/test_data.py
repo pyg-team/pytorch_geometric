@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.datasets import Data
+from torch_geometric.utils import Data
 
 
 def test_data():
