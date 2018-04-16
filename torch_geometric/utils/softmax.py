@@ -1,7 +1,7 @@
 from itertools import repeat
 
-from torch.autograd import Variable
 import torch
+from torch.autograd import Variable
 
 from .new import new
 
