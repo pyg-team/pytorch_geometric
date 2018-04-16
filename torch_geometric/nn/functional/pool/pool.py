@@ -11,7 +11,7 @@ def pool(edge_index, cluster, edge_attr=None, pos=None):
     edge_index = coalesce(edge_index)
 
     if edge_attr is not None:
-        pass  # TODO
+        edge_attr = None  # TODO
 
     if pos is not None:
         pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
