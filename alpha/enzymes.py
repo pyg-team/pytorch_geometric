@@ -1,21 +1,18 @@
 from __future__ import division, print_function
 
 import os.path as osp
-import sys
 
 import torch
 from torch import nn
 from torch.autograd import Variable
 import torch.nn.functional as F
-from torch_scatter import scatter_mean
+from torch_scatter import scatter_max
 
-sys.path.insert(0, '.')
-sys.path.insert(0, '..')
-
-from torch_geometric.datasets import ENZYMES  # noqa
-from torch_geometric.transform import TargetIndegreeAdj  # noqa
-from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.nn.modules import SplineConv  # noqa
+from torch_geometric.datasets import ENZYMES
+from torch_geometric.transform import TargetIndegreeAdj
+from torch_geometric.utils import DataLoader
+from torch_geometric.nn.modules import SplineConv
+from torch_geometric.nn.functional.pool import graclus_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES')
 train_dataset = ENZYMES(path, transform=TargetIndegreeAdj())
@@ -32,21 +29,38 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.conv1 = SplineConv(3, 64, dim=1, kernel_size=2)
         self.conv2 = SplineConv(64, 64, dim=1, kernel_size=2)
-        self.conv3 = SplineConv(64, 64, dim=1, kernel_size=2)
-        self.conv4 = SplineConv(64, 64, dim=1, kernel_size=2)
-        self.fc1 = nn.Linear(64, 6)
+        self.conv3 = SplineConv(64, 128, dim=1, kernel_size=2)
+        self.conv4 = SplineConv(128, 256, dim=1, kernel_size=2)
+        self.conv5 = SplineConv(256, 512, dim=1, kernel_size=2)
+        self.fc1 = nn.Linear(512, 64)
+        self.fc2 = nn.Linear(64, 6)
 
     def forward(self, data):
-        x = F.elu(self.conv1(data.adj, data.input))
-        x = F.elu(self.conv2(data.adj, x))
-        x = F.elu(self.conv3(data.adj, x))
-        x = F.elu(self.conv4(data.adj, x))
+        data.input = F.elu(self.conv1(data.input, data.index, data.weight))
+        data = graclus_pool(data, transform=TargetIndegreeAdj())
+        data.weight = Variable(data.weight)
 
+        data.input = F.elu(self.conv2(data.input, data.index, data.weight))
+        data = graclus_pool(data, transform=TargetIndegreeAdj())
+        data.weight = Variable(data.weight)
+
+        data.input = F.elu(self.conv3(data.input, data.index, data.weight))
+        data = graclus_pool(data, transform=TargetIndegreeAdj())
+        data.weight = Variable(data.weight)
+
+        data.input = F.elu(self.conv4(data.input, data.index, data.weight))
+        data = graclus_pool(data, transform=TargetIndegreeAdj())
+        data.weight = Variable(data.weight)
+
+        data.input = F.elu(self.conv5(data.input, data.index, data.weight))
+
+        x = data.input
         index = Variable(data.batch.unsqueeze(1).expand(x.size()))
-        x = scatter_mean(index, x, dim=0)
+        x, _ = scatter_max(index, x, dim=0)
 
         x = self.fc1(x)
-        return F.log_softmax(x, dim=1)
+        x = F.dropout(x, training=self.training)
+        return F.log_softmax(self.fc2(x), dim=1)
 
 
 model = Net()
@@ -73,14 +87,14 @@ def test(epoch, dataset, loader, str):
     correct = 0
 
     for data in loader:
-        data = data.cuda().to_variable('input')
+        data = data.cuda().to_variable()
         pred = model(data).data.max(1)[1]
-        correct += pred.eq(data.target).sum()
+        correct += pred.eq(data.target.data).sum()
 
     print('Epoch:', epoch, str, 'Accuracy:', correct / len(dataset))
 
 
 for epoch in range(1, 501):
     train()
-    # test(epoch, train_dataset, train_loader, 'Train')
+    test(epoch, train_dataset, train_loader, 'Train')
     test(epoch, test_dataset, test_loader, 'Test')
