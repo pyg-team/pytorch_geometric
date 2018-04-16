@@ -6,12 +6,12 @@ import torch
 from torch import nn
 from torch.autograd import Variable
 import torch.nn.functional as F
-from torch_scatter import scatter_max, scatter_mean
+from torch_scatter import scatter_max
 
 from torch_geometric.datasets import ENZYMES
 from torch_geometric.transform import TargetIndegreeAdj
 from torch_geometric.utils import DataLoader
-from torch_geometric.nn.modules import AttSplineConv, SplineConv
+from torch_geometric.nn.modules import SplineConv
 from torch_geometric.nn.functional.pool import graclus_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES')
