@@ -5,7 +5,7 @@ from torch_geometric.utils import matmul
 def random_walk(edge_index, edge_attr, one_hot, weight):
     num_classes, num_steps = weight.size()
 
-    # Recale to initial probabilities.
+    # Rescale to initial probabilities.
     initial_prob = one_hot / one_hot.t().sum(dim=1, keepdim=True).t()
 
     # Perform random walks.
