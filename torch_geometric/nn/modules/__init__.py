@@ -4,7 +4,7 @@ from .graph_conv import GraphConv
 from .cheb_conv import ChebConv
 from .gat import GAT
 from .agnn import AGNN
-from .random_wald import RandomWalk
+from .random_walk import RandomWalk
 from .mlp_conv import MLPConv
 
 __all__ = [
