@@ -6,7 +6,8 @@ def random_walk(edge_index, edge_attr, one_hot, weight):
     num_classes, num_steps = weight.size()
 
     # Rescale to initial probabilities.
-    initial_prob = one_hot / one_hot.t().sum(dim=1, keepdim=True).t()
+    # initial_prob = one_hot / one_hot.t().sum(dim=1, keepdim=True).t()
+    initial_prob = one_hot
 
     # Perform random walks.
     probs = [initial_prob]
