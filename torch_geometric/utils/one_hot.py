@@ -1,6 +1,5 @@
 import torch
-
-from .new import new
+from torch_geometric.utils import new
 
 
 def one_hot(src, max_value=None, out=None):
