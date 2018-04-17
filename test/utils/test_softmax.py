@@ -6,10 +6,7 @@ from torch_geometric.utils import softmax
 
 
 def test_softmax():
-    edge_index = torch.LongTensor([
-        [0, 0, 0, 1, 1, 1],
-        [1, 2, 3, 0, 2, 3],
-    ])
+    edge_index = torch.LongTensor([[0, 0, 0, 1, 1, 1], [1, 2, 3, 0, 2, 3]])
     edge_attr = torch.Tensor([0, 1, 2, 0, 1, 2])
     e = [exp(1), exp(2), exp(3)]
     e_sum = e[0] + e[1] + e[2]
