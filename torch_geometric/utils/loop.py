@@ -13,6 +13,8 @@ def add_self_loops(edge_index, num_nodes=None):
 
 def remove_self_loops(edge_index):
     row, col = edge_index
-    edge_index = edge_index[:, row != col]
+    mask = row != col
+    mask = mask.unsqueeze(0).expand_as(edge_index)
+    edge_index = edge_index[mask].view(2, -1)
 
     return edge_index
