@@ -16,11 +16,15 @@ from torch_geometric.nn.functional.pool import graclus_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES')
 train_dataset = ENZYMES(path, transform=TargetIndegreeAdj())
+val_dataset = ENZYMES(path, transform=TargetIndegreeAdj())
 test_dataset = ENZYMES(path, transform=TargetIndegreeAdj())
 perm = torch.randperm(len(train_dataset))
-train_dataset.split = perm[len(train_dataset) // 10:]
-test_dataset.split = perm[:len(test_dataset) // 10]
+split = len(train_dataset) // 10
+train_dataset.split = perm[2 * split:]
+val_dataset.split = perm[:split]
+test_dataset.split = perm[split:2 * split]
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=64)
 test_loader = DataLoader(test_dataset, batch_size=64)
 
 
@@ -62,7 +66,7 @@ class Net(nn.Module):
         index = Variable(data.batch.unsqueeze(1).expand(x.size()))
         x, _ = scatter_max(index, x, dim=0)
 
-        x = self.fc1(x)
+        x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         return F.log_softmax(self.fc2(x), dim=1)
 
@@ -90,7 +94,7 @@ def train(epoch):
         optimizer.step()
 
 
-def test(epoch, dataset, loader, str):
+def test(dataset, loader):
     model.eval()
     correct = 0
 
@@ -98,11 +102,14 @@ def test(epoch, dataset, loader, str):
         data = data.cuda().to_variable()
         pred = model(data).data.max(1)[1]
         correct += pred.eq(data.target.data).sum()
-
-    print('Epoch:', epoch, str, 'Accuracy:', correct / len(dataset))
+    return correct / len(dataset)
 
 
 for epoch in range(1, 501):
     train(epoch)
-    test(epoch, train_dataset, train_loader, 'Train')
-    test(epoch, test_dataset, test_loader, 'Test')
+    train_acc = test(train_dataset, train_loader)
+    val_acc = test(val_dataset, val_loader)
+    test_acc = test(test_dataset, test_loader)
+
+    print('Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'.format(
+        epoch, train_acc, val_acc, test_acc))

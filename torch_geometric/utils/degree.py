@@ -1,7 +1,6 @@
 import torch
 from torch.autograd import Variable
-
-from .new import new
+from torch_geometric.utils import new
 
 
 def degree(index, num_nodes=None, out=None):
