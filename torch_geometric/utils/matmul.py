@@ -1,7 +1,6 @@
 import torch
 from torch.autograd import Variable
-
-from .new import new
+from torch_geometric.utils import new
 
 
 def matmul(edge_index, edge_attr, tensor):

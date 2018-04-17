@@ -2,8 +2,7 @@ from itertools import repeat
 
 import torch
 from torch.autograd import Variable
-
-from .new import new
+from torch_geometric.utils import new
 
 
 def softmax(index, src, num_nodes=None):
