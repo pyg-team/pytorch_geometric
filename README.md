@@ -33,7 +33,7 @@ python setup.py install
 
 ## Running tests
 
-```shell
+```
 python setup.py test
 ```
 
