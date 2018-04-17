@@ -4,9 +4,10 @@ from .graph_conv import GraphConv
 from .cheb_conv import ChebConv
 from .gat import GAT
 from .agnn import AGNN
+from .random_wald import RandomWalk
 from .mlp_conv import MLPConv
 
 __all__ = [
     'SplineConv', 'AttSplineConv', 'GraphConv', 'ChebConv', 'GAT', 'AGNN',
-    'MLPConv'
+    'RandomWalk', 'MLPConv'
 ]
