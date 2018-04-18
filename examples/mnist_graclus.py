@@ -8,7 +8,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch_scatter import scatter_mean
 from torch_geometric.datasets import MNISTSuperpixels
-from torch_geometric.utils import DataLoader
+from torch_geometric.utils import DataLoader, normalized_cut
 from torch_geometric.transform import CartesianAdj
 from torch_geometric.nn.modules import SplineConv
 from torch_geometric.nn.functional.pool import graclus_pool
@@ -21,6 +21,12 @@ train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64)
 
 
+def normalized_cut_2d(edge_index, pos):
+    row, col = edge_index
+    edge_attr = torch.norm(pos[row] - pos[col], p=2, dim=1)
+    return normalized_cut(edge_index, edge_attr, pos.size(0))
+
+
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -31,11 +37,13 @@ class Net(nn.Module):
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.input, data.index, data.weight))
-        data = graclus_pool(data, transform=CartesianAdj())
+        weight = normalized_cut_2d(data.index, data.pos)
+        data = graclus_pool(data, weight, transform=CartesianAdj())
         data.weight = Variable(data.weight)
 
         data.input = F.elu(self.conv2(data.input, data.index, data.weight))
-        data = graclus_pool(data, transform=CartesianAdj())
+        weight = normalized_cut_2d(data.index, data.pos)
+        data = graclus_pool(data, weight, transform=CartesianAdj())
 
         x = data.input
         index = Variable(data.batch.unsqueeze(1).expand(x.size()))
@@ -61,7 +69,7 @@ def train(epoch):
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0001
 
-    for i, data in enumerate(train_loader):
+    for data in train_loader:
         data = data.cuda().to_variable()
         optimizer.zero_grad()
         F.nll_loss(model(data), data.target).backward()
@@ -73,9 +81,9 @@ def test():
     correct = 0
 
     for data in test_loader:
-        data = data.cuda().to_variable(['input', 'weight'])
+        data = data.cuda().to_variable()
         pred = model(data).data.max(1)[1]
-        correct += pred.eq(data.target).sum()
+        correct += pred.eq(data.target.data).sum()
     return correct / len(test_dataset)
 
 

@@ -76,9 +76,9 @@ def test():
     correct = 0
 
     for data in test_loader:
-        data = data.cuda().to_variable(['input', 'weight'])
+        data = data.cuda().to_variable()
         pred = model(data).data.max(1)[1]
-        correct += pred.eq(data.target).sum()
+        correct += pred.eq(data.target.data).sum()
     return correct / len(test_dataset)
 
 
