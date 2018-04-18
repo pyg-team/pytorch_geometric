@@ -19,7 +19,7 @@ script:
   - flake8 .
   - python setup.py install
   - python setup.py test
-  - cd docs && pip install -r requirements.txt && make clean && make html && cd ..
+  - cd docs && pip install -r requirements.txt && make clean && make html && make doctest && cd ..
 after_success:
   - codecov
 notifications:

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.modules &mdash; pytorch_geometric 0.0.1 documentation</title>
+  <title>torch_geometric.nn.modules &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -37,7 +37,8 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pytorch_geometric 0.0.1 documentation" href="../index.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
+        <link rel="next" title="torch_geometric.utils" href="utils.html"/>
         <link rel="prev" title="torch_geometric.datasets" href="datasets.html"/> 
 
   
@@ -70,7 +71,7 @@
             
             
               <div class="version">
-                0.0.1
+                master (1.0.0)
               </div>
             
           
@@ -115,6 +116,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#module-torch_geometric.nn.functional">torch_geometric.nn.functional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">torch_geometric.utils</a></li>
 </ul>
 
             
@@ -184,7 +186,7 @@
 <h2>Convolution Layers<a class="headerlink" href="#convolution-layers" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.modules.SplineConv">
-<em class="property">class </em><code class="descclassname">torch_geometric.nn.modules.</code><code class="descname">SplineConv</code><span class="sig-paren">(</span><em>in_features</em>, <em>out_features</em>, <em>dim</em>, <em>kernel_size</em>, <em>is_open_spline=True</em>, <em>degree=1</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/modules/spline_conv.html#SplineConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.modules.SplineConv" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">torch_geometric.nn.modules.</code><code class="descname">SplineConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>is_open_spline=True</em>, <em>degree=1</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/modules/spline_conv.html#SplineConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.modules.SplineConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spline-based Convolutional Operator <span class="math">\((f \star g)(i) =
 1/\mathcal{N}(i) \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
 f_l(j) \cdot g_l(u(i, j))\)</span>, where <span class="math">\(g_l\)</span> is a kernel function defined
@@ -196,13 +198,16 @@ B-Spline Kernels, CVPR 2018, <a class="reference external" href="https://arxiv.o
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>in_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
-<li><strong>out_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
 <li><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Pseudo-coordinate dimensionality.</li>
 <li><strong>kernel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>]</em>) – Size of the convolving kernel.</li>
 <li><strong>is_open_spline</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em> or </em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>]</em><em>, </em><em>optional</em>) – Whether to use open or
 closed B-spline bases. (default <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
 <li><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – B-spline basis degrees. (default: <code class="xref py py-obj docutils literal"><span class="pre">1</span></code>)</li>
+<li><strong>root_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>, the layer will
+add the weighted root node features to the output.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
 <li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>, the layer will not learn
 an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
 </ul>
@@ -254,6 +259,8 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="utils.html" class="btn btn-neutral float-right" title="torch_geometric.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
       
         <a href="datasets.html" class="btn btn-neutral" title="torch_geometric.datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
@@ -286,7 +293,7 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.0.1',
+            VERSION:'master',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
