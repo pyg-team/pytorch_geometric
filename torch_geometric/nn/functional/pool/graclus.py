@@ -1,11 +1,14 @@
+import torch
 from torch_cluster import graclus_cluster
 
 from .consecutive import consecutive_cluster
 from .pool import pool, max_pool
 from ....datasets.dataset import Data
+from .coalesce import coalesce, remove_self_loops
 
 
 def graclus_pool(data, weight=None, transform=None):
+    data.index = remove_self_loops(data.index)
     row, col = data.index
 
     cluster = graclus_cluster(row, col, weight, data.num_nodes)
