@@ -7,8 +7,9 @@ from .softmax import softmax
 from .coalesce import coalesce
 from .loop import add_self_loops, remove_self_loops
 from .one_hot import one_hot
+from .normalized_cut import normalized_cut
 
 __all__ = [
     'new', 'Data', 'DataLoader', 'matmul', 'degree', 'softmax', 'coalesce',
-    'remove_self_loops', 'add_self_loops', 'one_hot'
+    'remove_self_loops', 'add_self_loops', 'one_hot', 'normalized_cut'
 ]
