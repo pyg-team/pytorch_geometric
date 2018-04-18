@@ -19,10 +19,10 @@ def consecutive_cluster(src, batch=None):
     size = src.size(0)
     key, value = unique_by_key(src, torch.arange(0, size, out=src.new()))
     len = key[-1] + 1
-    max = key.size(0)
-    type = _get_type(max, src.is_cuda)
+    max_value = key.size(0)
+    type = _get_type(max_value, src.is_cuda)
     arg = type(len)
-    arg[key] = torch.arange(0, max, out=type(max))
+    arg[key] = torch.arange(0, max_value, out=type(max_value))
     output = arg[src.view(-1)]
     output = output.view(size).long()
 
