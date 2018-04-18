@@ -33,7 +33,7 @@ class Data(object):
     def num_nodes(self):
         for _, value in self('x', 'pos'):
             return value.size(0)
-        raise ValueError('Can not compute number of nodes')
+        raise ValueError('Can\'t determine the number of nodes')
 
     @property
     def num_edges(self):
@@ -41,7 +41,7 @@ class Data(object):
             return value.size(0)
         if self.edge_index is not None:
             return self.edge_index.size(1)
-        raise ValueError('Can not compute number of edges')
+        raise ValueError('Can\'t determine the number of edges')
 
     def _apply(self, func, *keys):
         for key, value in self(*keys):
