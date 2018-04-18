@@ -3,8 +3,9 @@ from torch_geometric.utils import coalesce
 
 
 def test_coalesce():
-    edge_index = torch.LongTensor([[1, 0, 1, 0, 2, 1], [0, 1, 1, 1, 0, 0]])
+    row = torch.LongTensor([1, 0, 1, 0, 2, 1])
+    col = torch.LongTensor([0, 1, 1, 1, 0, 0])
     expected_output = [[0, 1, 1, 2], [1, 0, 1, 0]]
 
-    output = coalesce(edge_index)
+    output = coalesce(torch.stack([row, col], dim=0))
     assert output.tolist() == expected_output
