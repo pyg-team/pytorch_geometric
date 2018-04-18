@@ -26,14 +26,14 @@ If cuda is available, check that `nvcc` is accessible from your terminal, e.g. b
 If not, add cuda (`/usr/local/cuda/bin`) to your `$PATH`.
 Then run:
 
-```shell
+```
 pip install -r requirements.txt
 python setup.py install
 ```
 
 ## Running examples
 
-```shell
+```
 cd examples
 python cora.py
 ```
