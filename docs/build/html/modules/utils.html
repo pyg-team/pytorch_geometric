@@ -181,6 +181,40 @@
             
   <div class="section" id="module-torch_geometric.utils">
 <span id="torch-geometric-utils"></span><h1>torch_geometric.utils<a class="headerlink" href="#module-torch_geometric.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="torch_geometric.utils.degree">
+<code class="descclassname">torch_geometric.utils.</code><code class="descname">degree</code><span class="sig-paren">(</span><em>index</em>, <em>num_nodes=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/degree.html#degree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.degree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the degree of a given index tensor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>LongTensor</em>) – Source or target indices of edges</li>
+<li><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nodes in <code class="xref py py-obj docutils literal"><span class="pre">index</span></code></li>
+<li><strong>out</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – The result tensor</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">Tensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">degree</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span> 3
+ 1
+ 1
+[torch.FloatTensor of size 3]
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 
 
