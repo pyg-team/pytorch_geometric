@@ -16,6 +16,13 @@ class Data(object):
         self.y = y
         self.pos = pos
 
+    @staticmethod
+    def from_dict(dictionary):
+        data = Data()
+        for key, item in dictionary.items():
+            data[key] = item
+        return data
+
     def __getitem__(self, key):
         return getattr(self, key)
 
@@ -39,12 +46,6 @@ class Data(object):
         for _, item in self('x', 'pos'):
             return item.size(0)
         raise ValueError('Can\'t determine the number of nodes')
-
-    @property
-    def num_edges(self):
-        for _, item in self('edge_index', 'edge_attr'):
-            return item.size(0)
-        raise ValueError('Can\'t determine the number of edges')
 
     def _apply(self, func, *keys):
         for key, item in self(*keys):
