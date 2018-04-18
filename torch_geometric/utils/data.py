@@ -15,53 +15,53 @@ class Data(object):
         self.y = y
         self.pos = pos
 
+    def __iter__(self):
+        for key in self.__dict__.keys():
+            if getattr(self, key) is not None:
+                yield key, getattr(self, key)
+
+    def __call__(self, *props):
+        props = self.__dict__.keys() if not props else props
+        for key in props:
+            if getattr(self, key) is not None:
+                yield key, getattr(self, key)
+
+    def _apply(self, func, *props):
+        for key, value in self(*props):
+            setattr(self, key, func(value))
+        return self
+
     @property
     def num_nodes(self):
-        if self.x is not None:
-            return self.x.size(0)
-        elif self.pos is not None:
-            return self.pos.size(0)
-        else:
-            return None
+        for _, value in self('x', 'pos'):
+            return value.size(0)
+        return None
 
     @property
     def num_edges(self):
-        if self.edge_index is not None:
-            return self.edge_index.size(1)
-        elif self.edge_attr is not None:
-            return self.edge_attr.size(0)
-        else:
-            return None
+        for _, value in self('edge_attr'):
+            return value.size(0)
+        return None if self.edge_index is None else self.edge_index.size(1)
 
     def cuda(self, *props):
         def func(x):
             return x.cuda() if torch.cuda.is_available() else x
 
-        return self._transfer(func, props)
+        return self._apply(func, *props)
 
     def cpu(self, *props):
-        return self._transfer(lambda x: x.cpu(), props)
+        return self._apply(lambda x: x.cpu(), *props)
 
     def to_variable(self, *props):
         props = ('x', 'edge_attr', 'y') if not props else props
-        return self._transfer(lambda x: Variable(x), props)
+        return self._apply(lambda x: Variable(x), *props)
 
     def to_tensor(self, *props):
         def func(x):
             return x if torch.is_tensor(x) else x.data
 
-        return self._transfer(func, props)
-
-    def _transfer(self, func, props):
-        props = self.__dict__.keys() if not props else props
-        for prop in props:
-            if getattr(self, prop) is not None:
-                setattr(self, prop, func(getattr(self, prop)))
-        return self
+        return self._apply(func, *props)
 
     def __repr__(self):
-        info = self.__dict__
-        info = {k: v for k, v in info.items() if v is not None}
-        info = {k: list(v.size()) for k, v in info.items()}
-        info = ['{}={}'.format(k, v) for k, v in info.items()]
+        info = ['{}={}'.format(k, list(v.size())) for k, v in self]
         return 'Data({})'.format(', '.join(info))
