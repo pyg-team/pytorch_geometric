@@ -19,7 +19,7 @@ In addition, PyTorch Geometric contains the spline-based convolutional layer fro
 
 Matthias Fey, Jan Eric Lenssen, Frank Weichert, Heinrich Müller: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018)
 
-## Requirements
+## Installation
 
 Install PyTorch manually ([Installation](http://pytorch.org/)).
 If cuda is available, check that `nvcc` is accessible from your terminal, e.g. by typing `nvcc --version`.
