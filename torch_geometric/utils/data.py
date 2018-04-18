@@ -16,36 +16,39 @@ class Data(object):
         self.y = y
         self.pos = pos
 
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+    def __setitem__(self, key, item):
+        setattr(self, key, item)
+
     @property
     def keys(self):
-        keys = self.__dict__.keys()
-        return [key for key in keys if getattr(self, key) is not None]
+        return [key for key in self.__dict__.keys() if self[key] is not None]
 
     def __call__(self, *keys):
         keys = self.keys if not keys else keys
         for key in self.keys:
-            yield key, getattr(self, key)
+            yield key, self[key]
 
     def __iter__(self):
         yield self()
 
     @property
     def num_nodes(self):
-        for _, value in self('x', 'pos'):
-            return value.size(0)
+        for _, item in self('x', 'pos'):
+            return item.size(0)
         raise ValueError('Can\'t determine the number of nodes')
 
     @property
     def num_edges(self):
-        for _, value in self('edge_attr'):
-            return value.size(0)
-        if self.edge_index is not None:
-            return self.edge_index.size(1)
+        for _, item in self('edge_index', 'edge_attr'):
+            return item.size(0)
         raise ValueError('Can\'t determine the number of edges')
 
     def _apply(self, func, *keys):
-        for key, value in self(*keys):
-            setattr(self, key, func(value))
+        for key, item in self(*keys):
+            setattr(self, key, func(item))
         return self
 
     def cuda(self, *keys):
@@ -62,5 +65,5 @@ class Data(object):
         return self._apply(lambda x: x if is_tensor(x) else x.data, *keys)
 
     def __repr__(self):
-        info = ['{}={}'.format(key, list(value.size())) for key, value in self]
+        info = ['{}={}'.format(key, list(item.size())) for key, item in self]
         return 'Data({})'.format(', '.join(info))
