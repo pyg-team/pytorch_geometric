@@ -1,23 +1,23 @@
+[build-image]: https://travis-ci.org/rusty1s/pytorch_geometric.svg?branch=master
+[build-url]: https://travis-ci.org/rusty1s/pytorch_geometric
+[coverage-image]: https://codecov.io/gh/rusty1s/pytorch_geometric/branch/master/graph/badge.svg
+[coverage-url]: https://codecov.io/github/rusty1s/pytorch_geometric?branch=master
+
 <p align="center">
   <img width="80%" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/logo.svg?sanitize=true" />
 </p>
 
 --------------------------------------------------------------------------------
 
-PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch.
-In addition, PyTorch Geometric contains the spline-based convolutional layer from our paper [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920).
-
-**[Documentation](http://rusty1s.github.io/pytorch_geometric)**
-
-![Development Status][development-status-image]
 [![Build Status][build-image]][build-url]
 [![Code Coverage][coverage-image]][coverage-url]
 
-[development-status-image]: https://img.shields.io/badge/status-in%20development-blue.svg
-[build-image]: https://travis-ci.org/rusty1s/pytorch_geometric.svg?branch=master
-[build-url]: https://travis-ci.org/rusty1s/pytorch_geometric
-[coverage-image]: https://codecov.io/gh/rusty1s/pytorch_geometric/branch/master/graph/badge.svg
-[coverage-url]: https://codecov.io/github/rusty1s/pytorch_geometric?branch=master
+**[Documentation](http://rusty1s.github.io/pytorch_geometric)**
+
+PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch.
+In addition, PyTorch Geometric contains the spline-based convolutional layer from our paper:
+
+Matthias Fey, Jan Eric Lenssen, Frank Weichert, Heinrich Müller: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018)
 
 ## Requirements
 
@@ -29,6 +29,13 @@ Then run:
 ```shell
 pip install -r requirements.txt
 python setup.py install
+```
+
+## Running examples
+
+```shell
+cd examples
+python cora.py
 ```
 
 ## Running tests
