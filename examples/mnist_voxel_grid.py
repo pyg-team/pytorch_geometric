@@ -24,9 +24,9 @@ test_loader = DataLoader(test_dataset, batch_size=64)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5, bias=False)
-        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5, bias=False)
-        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5, bias=False)
+        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
+        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
         self.fc1 = nn.Linear(4 * 64, 128)
         self.fc2 = nn.Linear(128, 10)
 
@@ -49,10 +49,7 @@ class Net(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-model = Net()
-if torch.cuda.is_available():
-    model.cuda()
-
+model = Net().cuda() if torch.cuda.is_available() else Net()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
@@ -74,7 +71,7 @@ def train(epoch):
         optimizer.step()
 
 
-def test(epoch):
+def test():
     model.eval()
     correct = 0
 
@@ -82,10 +79,10 @@ def test(epoch):
         data = data.cuda().to_variable(['input', 'weight'])
         pred = model(data).data.max(1)[1]
         correct += pred.eq(data.target).sum()
-
-    print('Epoch:', epoch, 'Test Accuracy:', correct / len(test_dataset))
+    return correct / len(test_dataset)
 
 
 for epoch in range(1, 21):
     train(epoch)
-    test(epoch)
+    test_acc = test()
+    print('Epoch: {:02d}, Test: {:.4f}'.format(epoch, test_acc))

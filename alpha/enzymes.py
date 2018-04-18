@@ -7,7 +7,6 @@ from torch import nn
 from torch.autograd import Variable
 import torch.nn.functional as F
 from torch_scatter import scatter_max
-
 from torch_geometric.datasets import ENZYMES
 from torch_geometric.transform import TargetIndegreeAdj
 from torch_geometric.utils import DataLoader
@@ -40,28 +39,23 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(256, 6)
 
     def forward(self, data):
-        x = self.conv1(data.input, data.index, data.weight)
-        data.input = F.elu(x)
-        data = graclus_pool(data, None, transform=TargetIndegreeAdj())
+        data.input = F.elu(self.conv1(data.input, data.index, data.weight))
+        data = graclus_pool(data, transform=TargetIndegreeAdj())
         data.weight = Variable(data.weight)
 
-        x = self.conv2(data.input, data.index, data.weight)
-        data.input = F.elu(x)
-        data = graclus_pool(data, None, transform=TargetIndegreeAdj())
+        data.input = F.elu(self.conv2(data.input, data.index, data.weight))
+        data = graclus_pool(data, transform=TargetIndegreeAdj())
         data.weight = Variable(data.weight)
 
-        x = self.conv3(data.input, data.index, data.weight)
-        data.input = F.elu(x)
-        data = graclus_pool(data, None, transform=TargetIndegreeAdj())
+        data.input = F.elu(self.conv3(data.input, data.index, data.weight))
+        data = graclus_pool(data, transform=TargetIndegreeAdj())
         data.weight = Variable(data.weight)
 
-        x = self.conv4(data.input, data.index, data.weight)
-        data.input = F.elu(x)
-        data = graclus_pool(data, None, transform=TargetIndegreeAdj())
+        data.input = F.elu(self.conv4(data.input, data.index, data.weight))
+        data = graclus_pool(data, transform=TargetIndegreeAdj())
         data.weight = Variable(data.weight)
 
-        x = self.conv5(data.input, data.index, data.weight)
-        x = F.elu(x)
+        x = F.elu(self.conv5(data.input, data.index, data.weight))
 
         index = Variable(data.batch.unsqueeze(1).expand(x.size()))
         x, _ = scatter_max(index, x, dim=0)
