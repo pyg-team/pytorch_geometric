@@ -1,4 +1,3 @@
-import torch
 from torch_cluster import graclus_cluster
 
 from .consecutive import consecutive_cluster
