@@ -1,4 +1,5 @@
-import torch
+from torch import is_tensor
+from torch.cuda import is_available as has_cuda
 from torch.autograd import Variable
 
 
@@ -15,53 +16,51 @@ class Data(object):
         self.y = y
         self.pos = pos
 
+    @property
+    def keys(self):
+        keys = self.__dict__.keys()
+        return [key for key in keys if getattr(self, key) is not None]
+
+    def __call__(self, *keys):
+        keys = self.keys if not keys else keys
+        for key in self.keys:
+            yield key, getattr(self, key)
+
     def __iter__(self):
-        for key in self.__dict__.keys():
-            if getattr(self, key) is not None:
-                yield key, getattr(self, key)
-
-    def __call__(self, *props):
-        props = self.__dict__.keys() if not props else props
-        for key in props:
-            if getattr(self, key) is not None:
-                yield key, getattr(self, key)
-
-    def _apply(self, func, *props):
-        for key, value in self(*props):
-            setattr(self, key, func(value))
-        return self
+        yield self()
 
     @property
     def num_nodes(self):
         for _, value in self('x', 'pos'):
             return value.size(0)
-        return None
+        raise ValueError('Can not compute number of nodes')
 
     @property
     def num_edges(self):
         for _, value in self('edge_attr'):
             return value.size(0)
-        return None if self.edge_index is None else self.edge_index.size(1)
+        if self.edge_index is not None:
+            return self.edge_index.size(1)
+        raise ValueError('Can not compute number of edges')
 
-    def cuda(self, *props):
-        def func(x):
-            return x.cuda() if torch.cuda.is_available() else x
+    def _apply(self, func, *keys):
+        for key, value in self(*keys):
+            setattr(self, key, func(value))
+        return self
 
-        return self._apply(func, *props)
+    def cuda(self, *keys):
+        return self._apply(lambda x: x.cuda() if has_cuda() else x, *keys)
 
-    def cpu(self, *props):
-        return self._apply(lambda x: x.cpu(), *props)
+    def cpu(self, *keys):
+        return self._apply(lambda x: x.cpu(), *keys)
 
-    def to_variable(self, *props):
-        props = ('x', 'edge_attr', 'y') if not props else props
-        return self._apply(lambda x: Variable(x), *props)
+    def to_variable(self, *keys):
+        keys = ['x', 'edge_attr', 'y'] if not keys else keys
+        return self._apply(lambda x: Variable(x), *keys)
 
-    def to_tensor(self, *props):
-        def func(x):
-            return x if torch.is_tensor(x) else x.data
-
-        return self._apply(func, *props)
+    def to_tensor(self, *keys):
+        return self._apply(lambda x: x if is_tensor(x) else x.data, *keys)
 
     def __repr__(self):
-        info = ['{}={}'.format(k, list(v.size())) for k, v in self]
+        info = ['{}={}'.format(key, list(value.size())) for key, value in self]
         return 'Data({})'.format(', '.join(info))
