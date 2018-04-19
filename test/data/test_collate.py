@@ -1,5 +1,5 @@
 from torch import Tensor
-from torch_geometric.utils import Data, collate_to_set, collate_to_batch
+from torch_geometric.data import Data, collate_to_set, collate_to_batch
 
 
 def test_collate_to_set():

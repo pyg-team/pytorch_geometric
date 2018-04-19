@@ -2,7 +2,7 @@ import collections
 import os.path as osp
 
 import torch.utils.data
-from torch_geometric.utils import makedirs
+from torch_geometric.data import makedirs
 
 
 def to_list(x):

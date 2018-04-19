@@ -1,4 +1,4 @@
-from torch_geometric.utils import Dataset, Data
+from torch_geometric.data import Dataset, Data
 
 
 class InMemoryDataset(Dataset):
