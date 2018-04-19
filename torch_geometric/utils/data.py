@@ -33,19 +33,29 @@ class Data(object):
     def keys(self):
         return [key for key in self.__dict__.keys() if self[key] is not None]
 
-    def __call__(self, *keys):
-        keys = self.keys if not keys else keys
+    @property
+    def num_keys(self):
+        return len(self.keys)
+
+    def __iter__(self):
         for key in self.keys:
             yield key, self[key]
 
-    def __iter__(self):
-        yield self()
+    def __call__(self, *keys):
+        for key in self.keys if not keys else keys:
+            yield key, self[key]
 
     @property
     def num_nodes(self):
         for _, item in self('x', 'pos'):
             return item.size(0)
         raise ValueError('Can\'t determine the number of nodes')
+
+    @property
+    def num_edges(self):
+        for _, item in self('edge_index', 'edge_attr'):
+            return item.size(0)
+        raise ValueError('Can\'t determine the number of edges')
 
     def _apply(self, func, *keys):
         for key, item in self(*keys):
