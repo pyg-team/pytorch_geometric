@@ -37,6 +37,9 @@ class Data(object):
     def num_keys(self):
         return len(self.keys)
 
+    def has_key(self, key):
+        return key in self.keys
+
     def __iter__(self):
         for key in self.keys:
             yield key, self[key]
