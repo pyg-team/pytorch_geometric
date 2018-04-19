@@ -1,4 +1,4 @@
-from torch_geometric.data import Dataset, Data
+from torch_geometric.data import Dataset, data_from_set
 
 
 class InMemoryDataset(Dataset):
@@ -26,8 +26,4 @@ class InMemoryDataset(Dataset):
         return self.slices[self.dataset.keys[0]].size(0) - 1
 
     def get_data(self, i):
-        data = Data()
-        for key in self.dataset.keys:
-            s = self.slices[key]
-            data[key] = self.dataset[key][s[i]:s[i + 1]]
-        return data
+        return data_from_set(self.dataset, self.slices, i)
