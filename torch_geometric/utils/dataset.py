@@ -2,6 +2,7 @@ import collections
 import os.path as osp
 
 import torch.utils.data
+from torch_geometric.utils import makedirs
 
 
 def to_list(x):
@@ -58,12 +59,14 @@ class Dataset(torch.utils.data.Dataset):
         if files_exist(self._raw_files):
             return
 
+        makedirs(self.raw_dir)
         self.download()
 
     def _process(self):
         if files_exist(self._processed_files):
             return
 
+        makedirs(self.processed_dir)
         self.process()
 
     def __getitem__(self, i):
