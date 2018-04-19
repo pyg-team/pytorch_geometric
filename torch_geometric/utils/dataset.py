@@ -32,6 +32,18 @@ class Dataset(torch.utils.data.Dataset):
     def processed_files(self):
         raise NotImplementedError
 
+    def download(self):
+        raise NotImplementedError
+
+    def process(self):
+        raise NotImplementedError
+
+    def __len__(self):
+        raise NotImplementedError
+
+    def get_data(self, i):
+        raise NotImplementedError
+
     @property
     def _raw_files(self):
         files = to_list(self.raw_files)
@@ -41,12 +53,6 @@ class Dataset(torch.utils.data.Dataset):
     def _processed_files(self):
         files = to_list(self.processed_files)
         return [osp.join(self.processed_dir, f) for f in files]
-
-    def download(self):
-        raise NotImplementedError
-
-    def process(self):
-        raise NotImplementedError
 
     def _download(self):
         if files_exist(self._raw_files):
@@ -59,12 +65,6 @@ class Dataset(torch.utils.data.Dataset):
             return
 
         self.process()
-
-    def __len__(self):
-        raise NotImplementedError
-
-    def get_data(self, i):
-        raise NotImplementedError
 
     def __getitem__(self, i):
         data = self.get_data(i)
