@@ -7,4 +7,6 @@ dist/
 *.egg-info/
 .coverage
 
-!docs/build
+!docs/build/
+!torch_geometric/data/
+!test/data/

@@ -1,7 +1,7 @@
 import itertools
 
 import torch
-from torch_geometric.utils import Data
+from torch_geometric.data import Data
 
 
 def collate_to_set(data_list):
