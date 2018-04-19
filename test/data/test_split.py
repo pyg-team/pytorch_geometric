@@ -1,5 +1,14 @@
 from torch import Tensor, LongTensor
-from torch_geometric.data import Data, split_set
+from torch_geometric.data import Data, data_from_set, split_set
+
+
+def test_data_from_set():
+    dataset = Data(x=Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))
+    slices = {'x': LongTensor([0, 3, 5, 8, 10])}
+    output = data_from_set(dataset, slices, 1)
+
+    assert len(output) == 1
+    assert output.x.tolist() == [3, 4]
 
 
 def test_split_set():
