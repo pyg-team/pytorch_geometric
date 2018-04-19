@@ -33,8 +33,7 @@ class Data(object):
     def keys(self):
         return [key for key in self.__dict__.keys() if self[key] is not None]
 
-    @property
-    def num_keys(self):
+    def __len__(self):
         return len(self.keys)
 
     def has_key(self, key):

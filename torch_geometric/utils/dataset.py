@@ -1,7 +1,7 @@
 import collections
 import os.path as osp
 
-import torch
+import torch.utils.data
 
 
 def to_list(x):

@@ -1,4 +1,4 @@
-import torch
+import torch.utils.data
 
 from ..datasets.dataset import Data, data_list_to_batch
 
