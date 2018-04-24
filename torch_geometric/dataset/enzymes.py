@@ -3,7 +3,7 @@ import os.path as osp
 
 import torch
 from torch_geometric.data import InMemoryDataset, split_set
-from torch_geometric.read import tu_raw_files, tu_files_to_set
+from torch_geometric.read import get_tu_filenames, read_tu_files
 from torch_geometric.datasets.utils.download import download_url
 from torch_geometric.datasets.utils.extract import extract_zip
 from torch_geometric.datasets.utils.spinner import Spinner
@@ -23,7 +23,7 @@ class ENZYMES(InMemoryDataset):
 
     @property
     def raw_files(self):
-        return tu_raw_files(
+        return get_tu_filenames(
             ENZYMES.__name__,
             graph_indicator=True,
             graph_labels=True,
@@ -42,7 +42,7 @@ class ENZYMES(InMemoryDataset):
     def process(self):
         spinner = Spinner('Processing').start()
 
-        dataset, slices = tu_files_to_set(
+        dataset, slices = read_tu_files(
             self.raw_dir,
             ENZYMES.__name__,
             graph_indicator=True,
