@@ -70,23 +70,27 @@ def read_tu_files(path,
     dataset = Data(x, edge_index, edge_attr, y, None)
 
     if graph_indicator:
-        tmp = read_txt(filename(prefix, 'graph_indicator', path), Long()) - 1
+        file_path = filename(prefix, 'graph_indicator', path)
+        graph_indicator = read_txt(file_path, Long()) - 1
     else:
-        tmp = Long(x.size(0)).fill_(0)
+        graph_indicator = Long(x.size(0)).fill_(0)
 
-    return dataset, compute_slices(dataset, tmp)
+    return compute_slices(dataset, graph_indicator)
 
 
-def compute_slices(dataset, batch):
-    num_nodes = batch.size(0)
-    graph_slice = torch.arange(0, batch[-1] + 2, out=Long())
+def compute_slices(dataset, graph_indicator):
+    num_nodes = graph_indicator.size(0)
+    graph_slice = torch.arange(0, graph_indicator[-1] + 2, out=Long())
 
-    node_slice = torch.cumsum(Long(bincount(batch)), dim=0)
+    node_slice = torch.cumsum(Long(bincount(graph_indicator)), dim=0)
     node_slice = torch.cat([Long([0]), node_slice], dim=0)
 
-    batch = batch[dataset.edge_index[:, 0]]
-    edge_slice = torch.cumsum(Long(bincount(batch)), dim=0)
+    graph_indicator = graph_indicator[dataset.edge_index[:, 0]]
+    edge_slice = torch.cumsum(Long(bincount(graph_indicator)), dim=0)
     edge_slice = torch.cat([Long([0]), edge_slice], dim=0)
+
+    # Edge indices should start at zero for every graph.
+    dataset.edge_index -= node_slice[graph_indicator].unsqueeze(1)
 
     slices = {'edge_index': edge_slice}
     if 'x' in dataset:
@@ -97,4 +101,4 @@ def compute_slices(dataset, batch):
         y_slice = node_slice if dataset.y.size(0) == num_nodes else graph_slice
         slices['y'] = y_slice
 
-    return slices
+    return dataset, slices
