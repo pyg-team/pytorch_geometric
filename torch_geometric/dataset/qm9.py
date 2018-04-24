@@ -17,9 +17,14 @@ class QM9(InMemoryDataset):
     def __init__(self, root, split, transform=None):
         super(QM9, self).__init__(root, transform)
 
-        filename = self._processed_files[0]
-        dataset, slices = torch.load(filename)
-        self.dataset, self.slices = split_set(dataset, slices, split)
+        self.split = split
+        self.dataset, self.slices = torch.load(self._processed_files[0])
+
+    def __len__(self):
+        return self.split.size(0)
+
+    def get_data(self, i):
+        return super(QM9, self).get_data(self.split[i])
 
     @property
     def raw_files(self):
