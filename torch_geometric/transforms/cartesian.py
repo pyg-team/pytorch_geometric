@@ -2,6 +2,45 @@ import torch
 
 
 class Cartesian(object):
+    """Transforms the position of graph nodes of two linked graph nodes into
+    directed Cartesian spatial coordinates and saves them as edge attributes.
+    The Cartesian coordinates are globally transformed into the fixed interval
+    range :math:`[0,1]` and are therefore given by the formula
+
+    .. math::
+        \mathbf{e}_{i,j} = 0.5 + (\mathbf{pos}_j - \mathbf{pos}_i) / (2 *
+        \max_{(v, w) \in \mathcal{E}} | \mathbf{pos}_w - \mathbf{pos}_v|).
+
+    Args:
+        cat (bool, optional): Concat Cartesian coordinates to edge attributes
+            instead of replacing them. (default: :obj:`True`)
+
+    .. testsetup::
+
+        import torch
+        from torch_geometric.data import Data
+
+    .. testcode::
+
+        from torch_geometric.transforms import Cartesian
+
+        pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])
+        edge_index = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        data = Data(edge_index=edge_index, pos=pos)
+
+        data = Cartesian()(data)
+
+        print(data.edge_attr)
+
+    .. testoutput::
+
+         0.7500  0.5000
+         0.2500  0.5000
+         1.0000  0.5000
+         0.0000  0.5000
+        [torch.FloatTensor of size 4x2]
+    """
+
     def __init__(self, cat=True):
         self.cat = cat
 
