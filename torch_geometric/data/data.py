@@ -36,7 +36,7 @@ class Data(object):
     def __len__(self):
         return len(self.keys)
 
-    def has_key(self, key):
+    def __contains__(self, key):
         return key in self.keys
 
     def __iter__(self):
@@ -52,12 +52,6 @@ class Data(object):
         for _, item in self('x', 'pos'):
             return item.size(0)
         raise ValueError('Can\'t determine the number of nodes')
-
-    @property
-    def num_edges(self):
-        for _, item in self('edge_index', 'edge_attr'):
-            return item.size(0)
-        raise ValueError('Can\'t determine the number of edges')
 
     def _apply(self, func, *keys):
         for key, item in self(*keys):

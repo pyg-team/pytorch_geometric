@@ -6,7 +6,9 @@ from torch_geometric.data import makedirs
 
 
 def to_list(x):
-    return x if isinstance(x, collections.Iterable) else [x]
+    if not isinstance(x, collections.Iterable) or isinstance(x, str):
+        x = [x]
+    return x
 
 
 def files_exist(files):

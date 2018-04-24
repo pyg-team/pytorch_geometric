@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+from numpy import bincount
 from torch import LongTensor
 from torch_geometric.utils import coalesce, one_hot
 from torch_geometric.data import Data
@@ -56,7 +57,7 @@ def tu_files_to_set(path,
     if node_attributes:
         tmp1 = to_tensor(path, prefix, 'node_attributes')
     if node_labels:
-        tmp2 = to_tensor(path, prefix, 'node_labels', LongTensor()) - 1
+        tmp2 = to_tensor(path, prefix, 'node_labels', out=LongTensor()) - 1
         tmp2 = one_hot(tmp2)
     x = cat(tmp1, tmp2)
 
@@ -64,8 +65,8 @@ def tu_files_to_set(path,
     if edge_attributes:
         tmp1 = to_tensor(path, prefix, 'edge_attributes')[perm]
     if edge_labels:
-        tmp2 = to_tensor(path, prefix, 'edge_labels', LongTensor())[perm] - 1
-        tmp2 = one_hot(tmp2)
+        tmp2 = to_tensor(path, prefix, 'edge_labels', out=LongTensor()) - 1
+        tmp2 = one_hot(tmp2)[perm]
     edge_attr = cat(tmp1, tmp2)
 
     y = None
@@ -79,12 +80,29 @@ def tu_files_to_set(path,
     if graph_indicator:
         tmp = to_tensor(path, prefix, 'graph_indicator', out=LongTensor()) - 1
     else:
-        tmp = torch.LongTensor(x.size(0)).fill_(0)
+        tmp = LongTensor(x.size(0)).fill_(0)
 
     return dataset, compute_slices(dataset, tmp)
 
 
 def compute_slices(dataset, batch):
-    print(batch)
-    print(dataset.edge_index)
-    pass
+    num_nodes = batch.size(0)
+    graph_slice = torch.arange(0, batch[-1] + 2, out=LongTensor())
+
+    node_slice = torch.cumsum(LongTensor(bincount(batch)), dim=0)
+    node_slice = torch.cat([LongTensor([0]), node_slice], dim=0)
+
+    batch = batch[dataset.edge_index[:, 0]]
+    edge_slice = torch.cumsum(LongTensor(bincount(batch)), dim=0)
+    edge_slice = torch.cat([LongTensor([0]), edge_slice], dim=0)
+
+    slices = {'edge_index': edge_slice}
+    if 'x' in dataset:
+        slices['x'] = node_slice
+    if 'edge_attr' in dataset:
+        slices['edge_attr'] = edge_slice
+    if 'y' in dataset:
+        y_slice = node_slice if dataset.y.size(0) == num_nodes else graph_slice
+        slices['y'] = y_slice
+
+    return slices
