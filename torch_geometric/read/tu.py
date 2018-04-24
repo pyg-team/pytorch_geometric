@@ -58,8 +58,7 @@ def read_tu_files(path,
     if edge_attributes:
         tmp1 = read_txt(filename(prefix, 'edge_attributes', path))[perm]
     if edge_labels:
-        tmp2 = read_txt(filename(prefix, 'edge_attributes', path), out=Long())
-        tmp2 = one_hot(tmp2 - 1)[perm]
+        tmp2 = read_txt(filename(prefix, 'edge_attributes', path))[perm]
     edge_attr = cat(tmp1, tmp2)
 
     y = None
