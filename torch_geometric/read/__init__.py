@@ -1,3 +1,4 @@
-from .tu import tu_raw_files, tu_files_to_set
+from .txt import read_txt
+from .tu import get_tu_filenames, read_tu_files
 
-__all__ = ['tu_raw_files', 'tu_files_to_set']
+__all__ = ['read_txt', 'get_tu_filenames', 'read_tu_files']
