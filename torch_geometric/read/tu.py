@@ -93,11 +93,11 @@ def compute_slices(dataset, graph_indicator):
     dataset.edge_index -= node_slice[graph_indicator].unsqueeze(1)
 
     slices = {'edge_index': edge_slice}
-    if 'x' in dataset:
+    if dataset.x is not None:
         slices['x'] = node_slice
-    if 'edge_attr' in dataset:
+    if dataset.edge_attr is not None:
         slices['edge_attr'] = edge_slice
-    if 'y' in dataset:
+    if dataset.y is not None:
         y_slice = node_slice if dataset.y.size(0) == num_nodes else graph_slice
         slices['y'] = y_slice
 
