@@ -4,6 +4,9 @@ torch_geometric.nn.modules
 .. automodule:: torch_geometric.nn.modules
 .. currentmodule:: torch_geometric.nn.modules
 
+.. contents:: Contents
+    :local:
+
 Convolution Layers
 -------------------
 
