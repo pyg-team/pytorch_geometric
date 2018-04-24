@@ -11,4 +11,4 @@ def coalesce(edge_index, num_nodes=None):
     _, perm = unique_by_key(idx, perm)
     edge_index = edge_index[:, perm]
 
-    return edge_index
+    return edge_index, perm
