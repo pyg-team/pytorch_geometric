@@ -13,17 +13,20 @@ class Compose(object):
     .. testcode::
 
         import torch_geometric.transforms as T
-        transform = T.Compose([T.Cartesian(), T.Cartesian()])
-        pos = torch.Tensor([[0, 0], [1, 1]])
-        edge_index = torch.LongTensor([[0, 1], [1, 0]])
+
+        pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])
+        edge_index = torch.LongTensor([[0, 1], [1, 2]])
         data = Data(edge_index=edge_index, pos=pos)
+
+        transform = T.Compose([T.Cartesian(cat=False), T.Cartesian(cat=True)])
         data = transform(data)
+
         print(data.edge_attr)
 
     .. testoutput::
 
-        -0.5  0.5 -0.5  0.5
-        -0.5  0.5 -0.5  0.5
+         0.7500  0.5000  0.7500  0.5000
+         1.0000  0.5000  1.0000  0.5000
         [torch.FloatTensor of size 2x4]
     """
 
