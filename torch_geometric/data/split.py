@@ -3,7 +3,7 @@ from torch_geometric.data import Data, collate_to_set
 
 def data_from_set(dataset, slices, i):
     data = Data()
-    for key in dataset.keys:
+    for key in dataset.keys():
         data[key] = dataset[key][slices[key][i]:slices[key][i + 1]]
     return data
 

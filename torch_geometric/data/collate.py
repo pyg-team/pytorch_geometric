@@ -5,7 +5,7 @@ from torch_geometric.data import Data
 
 
 def collate_to_set(data_list):
-    keys = data_list[0].keys
+    keys = data_list[0].keys()
     dataset = {key: [] for key in keys}
     slices = {key: [0] for key in keys}
 
@@ -21,7 +21,7 @@ def collate_to_set(data_list):
 
 
 def collate_to_batch(data_list):
-    keys = data_list[0].keys
+    keys = data_list[0].keys()
     batch = {key: [] for key in keys}
 
     for data, key in itertools.product(data_list, keys):

@@ -23,7 +23,7 @@ class InMemoryDataset(Dataset):
         raise NotImplementedError
 
     def __len__(self):
-        return self.slices[self.dataset.keys[0]].size(0) - 1
+        return self.slices[self.dataset.keys()[0]].size(0) - 1
 
     def get_data(self, i):
         return data_from_set(self.dataset, self.slices, i)

@@ -13,7 +13,7 @@ def parse_off(src):
     face = src[2 + num_nodes:2 + num_nodes + num_faces]
     face = parse_txt(face, start=1, out=torch.LongTensor())
 
-    edge_index = face_to_edge_index(face, pos.size(0)).t()
+    edge_index = face_to_edge_index(face, pos.size(0))
 
     data = Data(edge_index=edge_index, pos=pos)
     data.face = face
