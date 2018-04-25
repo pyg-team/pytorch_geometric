@@ -58,6 +58,9 @@ class Data(object):
             setattr(self, key, func(item))
         return self
 
+    def contiguous(self, *keys):
+        return self._apply(lambda x: x.contiguous(), *keys)
+
     def cuda(self, *keys):
         return self._apply(lambda x: x.cuda() if has_cuda() else x, *keys)
 
