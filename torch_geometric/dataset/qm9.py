@@ -20,6 +20,8 @@ class QM9(InMemoryDataset):
 
         self.split = split
         self.dataset, self.slices = torch.load(self._processed_files[0])
+        print(self.dataset.edge_index.size())
+        print(self.dataset.edge_index.is_contiguous())
 
     def __len__(self):
         return self.split.size(0)

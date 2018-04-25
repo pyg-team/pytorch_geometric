@@ -45,7 +45,6 @@ def read_tu_files(path,
     file_path = filename(prefix, 'A', path)
     edge_index = read_txt(file_path, sep=',', out=Long()) - 1
     edge_index, perm = coalesce(edge_index.t())
-    edge_index = edge_index.t().contiguous()
 
     x = tmp1 = tmp2 = None
     if node_attributes:
@@ -91,12 +90,13 @@ def compute_slices(dataset, graph_indicator):
     node_slice = torch.cumsum(Long(bincount(graph_indicator)), dim=0)
     node_slice = torch.cat([Long([0]), node_slice], dim=0)
 
-    graph_indicator = graph_indicator[dataset.edge_index[:, 0]]
+    row, _ = dataset.edge_index
+    graph_indicator = graph_indicator[row]
     edge_slice = torch.cumsum(Long(bincount(graph_indicator)), dim=0)
     edge_slice = torch.cat([Long([0]), edge_slice], dim=0)
 
     # Edge indices should start at zero for every graph.
-    dataset.edge_index -= node_slice[graph_indicator].unsqueeze(1)
+    dataset.edge_index -= node_slice[graph_indicator].unsqueeze(0)
 
     slices = {'edge_index': edge_slice}
     if dataset.x is not None:
