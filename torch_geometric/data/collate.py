@@ -47,4 +47,7 @@ def collate_to_batch(data_list):
     if 'face' in keys:
         pass
 
-    return Data.from_dict(batch)
+    data = Data.from_dict(batch)
+    data = data.contiguous()
+
+    return data
