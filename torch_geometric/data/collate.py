@@ -40,12 +40,12 @@ def collate_to_batch(data_list):
 
     if 'edge_index' in keys:
         data = batch['edge_index']
-        for i in range(len(cum_num_nodes) - 1):
+        for i, _ in enumerate(data):
             data[i] = data[i] + cum_num_nodes[i]
 
     if 'face' in keys:
         data = batch['face']
-        for i in range(len(cum_num_nodes) - 1):
+        for i, _ in enumerate(data):
             data[i] = data[i] + cum_num_nodes[i]
 
     for key in batch.keys():
