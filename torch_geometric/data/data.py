@@ -45,13 +45,14 @@ class Data(object):
 
     def __call__(self, *keys):
         for key in self.keys if not keys else keys:
-            yield key, self[key]
+            if self[key] is not None:
+                yield key, self[key]
 
     @property
     def num_nodes(self):
         for _, item in self('x', 'pos'):
             return item.size(0)
-        raise ValueError('Can\'t determine the number of nodes')
+        return None
 
     def _apply(self, func, *keys):
         for key, item in self(*keys):
