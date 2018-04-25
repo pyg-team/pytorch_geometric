@@ -9,7 +9,7 @@ def test_collate_to_set():
 
     assert len(output) == 2
     assert output.x.tolist() == [1, 2, 3, 4, 5]
-    assert output.edge_index.tolist() == [[0, 1], [1, 2], [0, 1], [1, 0]]
+    assert output.edge_index.tolist() == [[0, 1, 0, 1], [1, 2, 1, 0]]
     assert len(output_slices.keys()) == 2
     assert output_slices['x'].tolist() == [0, 3, 5]
     assert output_slices['edge_index'].tolist() == [0, 2, 4]
@@ -22,5 +22,5 @@ def test_collate_to_batch():
 
     assert len(output) == 3
     assert output.x.tolist() == [1, 2, 3, 4, 5]
-    assert output.edge_index.tolist() == [[0, 1, 0, 1], [1, 2, 1, 0]]
+    assert output.edge_index.tolist() == [[0, 1, 3, 4], [1, 2, 4, 3]]
     assert output.batch.tolist() == [0, 0, 0, 1, 1]
