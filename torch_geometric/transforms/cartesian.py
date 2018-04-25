@@ -2,17 +2,17 @@ import torch
 
 
 class Cartesian(object):
-    """Transforms the position of graph nodes of two linked graph nodes into
-    directed Cartesian spatial coordinates and saves them as edge attributes.
-    The Cartesian coordinates are globally transformed into the fixed interval
-    range :math:`[0,1]` and are therefore given by the formula
+    r"""Saves the globally normalized spatial relation of linked nodes in
+    Cartesian coordinates
 
     .. math::
-        \mathbf{e}_{i,j} = 0.5 + (\mathbf{pos}_j - \mathbf{pos}_i) / (2 *
-        \max_{(v, w) \in \mathcal{E}} | \mathbf{pos}_w - \mathbf{pos}_v|).
+        \mathbf{u}(i,j) = 0.5 + \frac{\mathbf{pos}_j - \mathbf{pos}_i}{2 \cdot
+        \max_{(v, w) \in \mathcal{E}} | \mathbf{pos}_w - \mathbf{pos}_v|}
+
+    as edge attributes.
 
     Args:
-        cat (bool, optional): Concat Cartesian coordinates to edge attributes
+        cat (bool, optional): Concat pseudo-coordinates to edge attributes
             instead of replacing them. (default: :obj:`True`)
 
     .. testsetup::
@@ -53,6 +53,7 @@ class Cartesian(object):
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
+            cartesian = cartesian.type_as(pseudo)
             data.edge_attr = torch.cat([pseudo, cartesian], dim=-1)
         else:
             data.edge_attr = cartesian

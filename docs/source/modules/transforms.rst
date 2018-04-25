@@ -18,3 +18,9 @@ Cartesian
 
 .. autoclass:: Cartesian
     :members:
+
+TargetIndegree
+--------------
+
+.. autoclass:: TargetIndegree
+    :members:
