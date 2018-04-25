@@ -18,7 +18,6 @@ def parse_sdf(src):
     bond_block = src[1 + num_atoms:1 + num_atoms + num_bonds]
     edge_index = parse_txt(bond_block, end=2, out=Long()) - 1
     edge_index, perm = coalesce(edge_index.t())
-    edge_index = edge_index.t().contiguous()
     edge_attr = parse_txt(bond_block, start=2, end=3, out=Long())[perm] - 1
 
     return Data(x, edge_index, edge_attr, None, pos)
