@@ -25,27 +25,29 @@ def collate_to_set(data_list):
 def collate_to_batch(data_list):
     keys = data_list[0].keys()
     batch = {key: [] for key in keys}
+    batch['batch'] = []
     dims = {key: 0 for key in keys}
     dims['edge_index'] = 1
+    dims['batch'] = 0
 
     for data, key in itertools.product(data_list, keys):
         batch[key].append(data[key])
 
-    batch['batch'] = []
-    dims['batch'] = 0
+    cum_num_nodes = [0]
     for idx, data in enumerate(data_list):
+        cum_num_nodes.append(cum_num_nodes[-1] + data.num_nodes)
         batch['batch'].append(torch.LongTensor(data.num_nodes).fill_(idx))
+
+    if 'edge_index' in keys:
+        for i in range(len(cum_num_nodes) - 1):
+            batch['edge_index'][i] = batch['edge_index'][i] + cum_num_nodes[i]
+
+    if 'face' in keys:
+        for i in range(len(cum_num_nodes) - 1):
+            batch['face'][i] = batch['face'][i] + cum_num_nodes[i]
 
     for key in batch.keys():
         batch[key] = torch.cat(batch[key], dim=dims[key])
-
-    # TODO: Add index to edge indices
-    if 'edge_index' in keys:
-        pass
-
-    # TODO: Add index to edge indices
-    if 'face' in keys:
-        pass
 
     data = Data.from_dict(batch)
     data = data.contiguous()
