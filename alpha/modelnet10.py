@@ -9,4 +9,4 @@ dataset = ModelNet10(path, train=True, transform=T.Cartesian())
 dataloader = DataLoader(dataset, batch_size=16, shuffle=True)
 
 for data in dataloader:
-    print(data.edge_index.size(), data.y.size())
+    print(data.edge_index.size(), data.edge_attr.size(), data.y.size())

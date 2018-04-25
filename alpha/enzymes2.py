@@ -11,5 +11,4 @@ dataset = ENZYMES(path, split, transform=T.TargetIndegree())
 dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
 
 for data in dataloader:
-    print(data.x.size(), data.edge_index.size(), data.y.size())
-    print(data.edge_attr.size())
+    print(data.x.size(), data.edge_attr.size(), data.y.size())
