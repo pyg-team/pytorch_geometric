@@ -37,4 +37,12 @@ def collate_to_batch(data_list):
     if 'edge_index' in keys:
         batch['edge_index'] = batch['edge_index'].t().contiguous()
 
+    # TODO: Add index to edge indices
+    if 'edge_index' in keys:
+        pass
+
+    # TODO: Add index to edge indices
+    if 'face' in keys:
+        pass
+
     return Data.from_dict(batch)
