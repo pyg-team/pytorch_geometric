@@ -1,9 +1,9 @@
 import os
 
 import torch
-from torch import LongTensor
+from torch import LongTensor as Long
 from torch_geometric.data import InMemoryDataset, collate_to_set, split_set
-from torch_geometric.read import split2d, parse_sdf
+from torch_geometric.read import parse_txt, parse_sdf
 from torch_geometric.datasets.utils.download import download_url
 from torch_geometric.datasets.utils.extract import extract_tar
 from torch_geometric.datasets.utils.spinner import Spinner
@@ -54,13 +54,13 @@ class QM9(InMemoryDataset):
         # Add targets to dataset.
         with open(self._raw_files[1], 'r') as f:
             src = f.read().split('\n')[1:-1]
-            dataset.y = split2d(src, sep=',', start=4, end=16)
-            slices['y'] = torch.arange(dataset.y.size(0) + 1, out=LongTensor())
+            dataset.y = parse_txt(src, sep=',', start=4, end=16)
+            slices['y'] = torch.arange(dataset.y.size(0) + 1, out=Long())
 
         # Remove invalid data.
         with open(self._raw_files[2], 'r') as f:
-            src = split2d(f.read().split('\n')[9:-2], end=1, out=LongTensor())
-            split = torch.arange(dataset.y.size(0), out=LongTensor())
+            src = parse_txt(f.read().split('\n')[9:-2], end=1, out=Long())
+            split = torch.arange(dataset.y.size(0), out=Long())
             split = split[split == split.clone().index_fill_(0, src, -1)]
 
         dataset, slices = split_set(dataset, slices, split)

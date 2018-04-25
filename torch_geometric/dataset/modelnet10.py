@@ -3,7 +3,7 @@ import os.path as osp
 import glob
 
 import torch
-from torch_geometric.data import InMemoryDataset
+from torch_geometric.data import InMemoryDataset, collate_to_set
 from torch_geometric.read import read_off
 from torch_geometric.datasets.utils.download import download_url
 from torch_geometric.datasets.utils.extract import extract_zip
@@ -21,6 +21,9 @@ class ModelNet10(InMemoryDataset):
 
     def __init__(self, root, train, transform=None):
         super(ModelNet10, self).__init__(root, transform)
+
+        path = self._processed_files[0] if train else self._processed_files[1]
+        self.dataset, self.slices = torch.load(path)
 
     @property
     def raw_files(self):
@@ -55,5 +58,11 @@ class ModelNet10(InMemoryDataset):
                 data.y = torch.LongTensor([y])
                 test_data_list.append(data)
                 progress.inc()
+
+        train_dataset, train_slices = collate_to_set(train_data_list)
+        torch.save((train_dataset, train_slices), self._processed_files[0])
+
+        test_dataset, test_slices = collate_to_set(test_data_list)
+        torch.save((test_dataset, test_slices), self._processed_files[1])
 
         progress.success()
