@@ -72,7 +72,7 @@ def read_tu_files(path,
         file_path = filename(prefix, 'graph_labels', path)
         y = read_txt(file_path, sep=',', out=Long()) - 1
 
-    dataset = Data(x, edge_index, edge_attr, y, None)
+    dataset = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
 
     if graph_indicator:
         file_path = filename(prefix, 'graph_indicator', path)
