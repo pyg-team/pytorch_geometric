@@ -20,4 +20,4 @@ def parse_sdf(src):
     edge_index, perm = coalesce(edge_index.t())
     edge_attr = parse_txt(bond_block, start=2, end=3, out=Long())[perm] - 1
 
-    return Data(x, edge_index, edge_attr, None, pos)
+    return Data(x=x, edge=edge_index, edge_attr=edge_attr, pos=pos)
