@@ -21,7 +21,6 @@ Matthias Fey, Jan Eric Lenssen, Frank Weichert, Heinrich Müller: [SplineCNN: Fa
 
 ## Installation
 
-Install PyTorch manually ([Installation](http://pytorch.org/)).
 If cuda is available, check that `nvcc` is accessible from your terminal, e.g. by typing `nvcc --version`.
 If not, add cuda (`/usr/local/cuda/bin`) to your `$PATH`.
 Then run:
