@@ -38,12 +38,6 @@ cd examples
 python cora.py
 ```
 
-## Running tests
-
-```
-python setup.py test
-```
-
 ## Cite
 
 Please cite our paper if you use this code in your own work:
@@ -55,4 +49,10 @@ Please cite our paper if you use this code in your own work:
   booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}
   year={2018},
 }
+```
+
+## Running tests
+
+```
+python setup.py test
 ```
