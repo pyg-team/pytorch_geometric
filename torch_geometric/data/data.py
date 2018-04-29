@@ -51,7 +51,9 @@ class Data(object):
     def num_nodes(self):
         for _, item in self('x', 'pos'):
             return item.size(0)
-        return None if self.edge_index is None else self.edge_index.max() + 1
+        if self.edge_index is not None:
+            return self.edge_index.max().item() + 1
+        return None
 
     def _apply(self, func, *keys):
         for key, item in self(*keys):

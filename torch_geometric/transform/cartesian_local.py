@@ -10,13 +10,15 @@ class CartesianLocalAdj(object):
     attributes."""
 
     def __call__(self, data):
-        row, col = data.index
+        (row, col), pos = data.index, data.pos
+        num_nodes = pos.size(0)
+
         # Compute Cartesian pseudo-coordinates.
-        weight = data.pos[col] - data.pos[row]
+        weight = pos[col] - pos[row]
 
-        row_idx = row.unsqueeze(1).expand(row.size(0), weight.size(1))
+        # row_idx = row.unsqueeze(1).expand(row.size(0), weight.size(1))
 
-        max_n, _ = scatter_max(row_idx, weight.abs(), dim=0)
+        max_n, _ = scatter_max(weight.abs(), row, dim=0, dim_size=num_nodes)
         max_n, _ = max_n.max(dim=1)
 
         max_e = max_n.gather(dim=0, index=row)

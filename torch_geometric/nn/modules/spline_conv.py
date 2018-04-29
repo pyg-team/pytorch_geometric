@@ -45,14 +45,15 @@ class SplineConv(Module):
         self.out_channels = out_channels
         self.degree = degree
 
-        kernel_size = torch.LongTensor(repeat_to(kernel_size, dim))
+        kernel_size = torch.tensor(repeat_to(kernel_size, dim))
         self.register_buffer('kernel_size', kernel_size)
 
-        is_open_spline = torch.ByteTensor(repeat_to(is_open_spline, dim))
+        is_open_spline = repeat_to(is_open_spline, dim)
+        is_open_spline = torch.tensor(is_open_spline, dtype=torch.uint8)
         self.register_buffer('is_open_spline', is_open_spline)
 
-        weight = torch.Tensor(kernel_size.prod(), in_channels, out_channels)
-        self.weight = Parameter(weight)
+        K = kernel_size.prod().item()
+        self.weight = Parameter(torch.Tensor(K, in_channels, out_channels))
 
         if root_weight:
             root_weight = torch.Tensor(in_channels, out_channels)

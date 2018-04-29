@@ -6,7 +6,7 @@ def edges_from_faces(faces):
 
     # Get directed edges.
     edges = torch.cat((faces[:, 0:2], faces[:, 1:3], faces[:, 0:3:2]))
-    n = faces.max() + 1
+    n = faces.max().item() + 1
 
     # Build directed adjacency matrix.
     adj = torch.sparse.FloatTensor(edges.t(), torch.ones(edges.size(0)),
