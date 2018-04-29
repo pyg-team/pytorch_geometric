@@ -1,6 +1,6 @@
 import torch
 from torch.nn import Module, Parameter
-from torch_spline_conv import spline_conv
+from torch_spline_conv import SplineConv
 
 from .utils.inits import uniform
 from .utils.repeat import repeat_to
@@ -74,7 +74,7 @@ class SplineConv(Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index, pseudo):
-        return spline_conv(x, edge_index, pseudo, self.weight,
-                           self._buffers['kernel_size'],
-                           self._buffers['is_open_spline'], self.degree,
-                           self.root_weight, self.bias)
+        return SplineConv.apply(x, edge_index, pseudo, self.weight,
+                                self._buffers['kernel_size'],
+                                self._buffers['is_open_spline'], self.degree,
+                                self.root_weight, self.bias)

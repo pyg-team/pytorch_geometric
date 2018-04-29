@@ -1,8 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
-from torch_spline_conv.basis import spline_basis
-from torch_spline_conv.weighting import spline_weighting
+from torch_spline_conv import SplineBasis, SplineWeighting
 
 
 def att_spline_conv(x,
@@ -26,9 +25,9 @@ def att_spline_conv(x,
     output = torch.mm(x, root_weight)
 
     # Weight each node.
-    basis, weight_index = spline_basis(degree, pseudo, kernel_size,
-                                       is_open_spline)
-    x_col = spline_weighting(x[col], weight, basis, weight_index)
+    basis, weight_index = SplineBasis.apply(degree, pseudo, kernel_size,
+                                            is_open_spline)
+    x_col = SplineWeighting.apply(x[col], weight, basis, weight_index)
 
     # Compute attention across edges.
     x_row = output[row]
