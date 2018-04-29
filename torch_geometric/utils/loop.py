@@ -4,11 +4,11 @@ import torch
 def has_self_loops(edge_index):
     row, col = edge_index
     mask = row == col
-    return mask.sum() > 0
+    return mask.sum().item() > 0
 
 
 def add_self_loops(edge_index, num_nodes=None):
-    num_nodes = edge_index.max() + 1 if num_nodes is None else num_nodes
+    num_nodes = edge_index.max().item() + 1 if num_nodes is None else num_nodes
 
     loop = torch.arange(num_nodes, out=edge_index.new())
     loop = loop.unsqueeze(0).repeat(2, 1)

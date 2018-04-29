@@ -23,12 +23,8 @@ def pool(edge_index, cluster, edge_attr=None, pos=None):
 
 
 def max_pool(x, cluster, size=None):
-    x = x.unsqueeze(-1) if x.dim() == 1 else x
-    cluster = cluster.unsqueeze(-1).expand_as(x)
-    cluster = cluster if torch.is_tensor(x) else Variable(cluster)
-
     fill = -9999999
-    x, _ = scatter_max(cluster, x, dim=0, size=size, fill_value=fill)
+    x, _ = scatter_max(x, cluster, dim=0, dim_size=size, fill_value=fill)
 
     if size is not None:
         x[(x == fill)] = 0

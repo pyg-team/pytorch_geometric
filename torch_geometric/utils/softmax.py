@@ -6,7 +6,7 @@ from torch_geometric.utils import new
 
 
 def softmax(index, src, num_nodes=None):
-    num_nodes = index.max() + 1 if num_nodes is None else num_nodes
+    num_nodes = index.max().item() + 1 if num_nodes is None else num_nodes
 
     index = index if torch.is_tensor(src) else Variable(index)
     sizes = list(src.size())[1:]

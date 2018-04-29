@@ -20,6 +20,6 @@ class SumTest(TestCase):
         ]
 
         assert_equal(a.to_dense().numpy(), expected_a)
-        assert_equal(sum(a), 12)
+        assert_equal(sum(a).item(), 12)
         assert_equal(sum(a, dim=0).numpy(), [2, 4, 6])
         assert_equal(sum(a, dim=1).numpy(), [7, 2, 0, 3])

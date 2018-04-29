@@ -32,8 +32,8 @@ class AttSplineConv(Module):
         is_open_spline = torch.ByteTensor(repeat_to(is_open_spline, dim))
         self.register_buffer('is_open_spline', is_open_spline)
 
-        weight = torch.Tensor(kernel_size.prod(), in_channels, out_channels)
-        self.weight = Parameter(weight)
+        K = kernel_size.prod().item()
+        self.weight = Parameter(torch.Tensor(K, in_channels, out_channels))
 
         self.root_weight = Parameter(torch.Tensor(in_channels, out_channels))
 
