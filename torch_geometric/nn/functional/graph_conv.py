@@ -1,7 +1,7 @@
 import torch
-from torch.autograd import Function
+from torch_geometric.utils import degree, add_self_loops, matmul
 
-from ...sparse import SparseTensor
+from torch.autograd import Function
 
 
 class SparseMM(Function):
@@ -19,33 +19,24 @@ class SparseMM(Function):
         return grad_input
 
 
-def add_self_loops(edge_index, n):
-    loop = torch.arange(0, n, out=edge_index.new()).unsqueeze(0).repeat(2, 1)
-    return torch.cat([edge_index, loop], dim=1)
-
-
 def graph_conv(x, edge_index, edge_attr, weight, bias=None):
     row, col = edge_index
-    n, e = x.size(0), row.size(0)
+    num_nodes, e = x.size(0), row.size(0)
 
-    if edge_attr is None:
-        edge_attr = x.data.new(e).fill_(1)
-
-    # Compute degree.
-    degree = x.data.new(n).fill_(0).scatter_add_(0, row, edge_attr) + 1
-    degree = degree.pow_(-0.5)
+    edge_attr = x.new_full((e, ), 1) if edge_attr is None else edge_attr
+    deg = degree(row, num_nodes, dtype=x.dtype, device=x.device).pow_(-0.5)
 
     # Normalize and append adjacency matrix by self loops.
-    edge_attr = edge_attr * degree[row]
-    edge_attr *= degree[col]
-    edge_attr = torch.cat([edge_attr, degree * degree], dim=0)
-    edge_index = add_self_loops(edge_index, n)
-    adj = SparseTensor(edge_index, edge_attr, torch.Size([n, n]))
+    edge_attr = deg[row] * edge_attr * deg[col]
 
-    # Convolution.
-    output = SparseMM(adj)(torch.mm(x, weight))
+    # Append self-loops.
+    edge_attr = torch.cat([edge_attr, deg * deg], dim=0)
+    edge_index = add_self_loops(edge_index, num_nodes)
+
+    # Perform the convolution.
+    out = matmul(edge_index, edge_attr, torch.mm(x, weight))
 
     if bias is not None:
-        output += bias
+        out += bias
 
-    return output
+    return out
