@@ -25,9 +25,8 @@ class Compose(object):
 
     .. testoutput::
 
-         0.7500  0.5000  0.7500  0.5000
-         1.0000  0.5000  1.0000  0.5000
-        [torch.FloatTensor of size 2x4]
+        tensor([[ 0.7500,  0.5000,  0.7500,  0.5000],
+                [ 1.0000,  0.5000,  1.0000,  0.5000]])
     """
 
     def __init__(self, transforms):

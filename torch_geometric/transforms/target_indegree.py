@@ -33,11 +33,7 @@ class TargetIndegree(object):
 
     .. testoutput::
 
-         1.0000
-         0.5000
-         0.5000
-         1.0000
-        [torch.FloatTensor of size 4]
+        tensor([ 1.0000,  0.5000,  0.5000,  1.0000])
     """
 
     def __init__(self, cat=True):

@@ -28,7 +28,7 @@ def degree(index, num_nodes=None, dtype=None, device=None):
 
     .. testoutput::
 
-       tensor([ 3,  1,  1])
+       tensor([ 3.,  1.,  1.])
     """
 
     num_nodes = index.max().item() + 1 if num_nodes is None else num_nodes
