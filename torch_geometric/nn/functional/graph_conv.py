@@ -1,8 +1,6 @@
 import torch
 from torch_geometric.utils import degree, add_self_loops, matmul
 
-from torch.autograd import Function
-
 
 def graph_conv(x, edge_index, edge_attr, weight, bias=None):
     row, col = edge_index
