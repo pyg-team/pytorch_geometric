@@ -34,11 +34,10 @@ class Cartesian(object):
 
     .. testoutput::
 
-         0.7500  0.5000
-         0.2500  0.5000
-         1.0000  0.5000
-         0.0000  0.5000
-        [torch.FloatTensor of size 4x2]
+        tensor([[ 0.7500,  0.5000]
+                [ 0.2500,  0.5000]
+                [ 1.0000,  0.5000]
+                [ 0.0000,  0.5000]])
     """
 
     def __init__(self, cat=True):
