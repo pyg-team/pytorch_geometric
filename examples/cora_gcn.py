@@ -6,7 +6,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch_geometric.datasets import Cora
-from torch_geometric.nn.modules import GraphConv  # ChebConv
+from torch_geometric.nn.modules import GraphConv, ChebConv  # noqa
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), normalize=True)
@@ -56,7 +56,7 @@ def test(mask):
 
 
 acc = []
-for run in range(1, 3):
+for run in range(1, 101):
     model.conv1.reset_parameters()
     model.conv2.reset_parameters()
 
@@ -72,5 +72,6 @@ for run in range(1, 3):
     acc.append(cur_test)
     print('Run: {:03d}, Test: {:.4f}'.format(run, acc[-1]))
 
-acc = torch.tensor(acc)
-print('Mean: {:.4f}, Stddev: {:.4f}'.format(acc.mean().item(), acc.std.item()))
+mean = torch.tensor(acc).mean().item()
+std = torch.tensor(acc).std().item()
+print('Mean: {:.4f}, Stddev: {:.4f}'.format(mean, std))
