@@ -61,6 +61,8 @@ for run in range(1, 101):
         train()
 
     acc.append(test(test_mask))
-    print('Run:', run, 'Test Accuracy:', acc[-1])
+    print('Run: {:03d}, Test: {:.4f}'.format(run, acc[-1]))
 
-print('Mean:', torch.Tensor(acc).mean(), 'Stddev:', torch.Tensor(acc).std())
+mean = torch.tensor(acc).mean().item()
+std = torch.tensor(acc).std().item()
+print('Mean: {:.4f}, Stddev: {:.4f}'.format(mean, std))
