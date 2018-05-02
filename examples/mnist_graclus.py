@@ -67,7 +67,7 @@ def train(epoch):
             param_group['lr'] = 0.0001
 
     for data in train_loader:
-        data = data.cuda().to_variable()
+        data = data.cuda()
         optimizer.zero_grad()
         F.nll_loss(model(data), data.target).backward()
         optimizer.step()
@@ -78,7 +78,7 @@ def test():
     correct = 0
 
     for data in test_loader:
-        data = data.cuda().to_variable()
+        data = data.cuda()
         pred = model(data).max(1)[1]
         correct += pred.eq(data.target).sum().item()
     return correct / len(test_dataset)
