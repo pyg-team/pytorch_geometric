@@ -1,6 +1,5 @@
 import torch
 from torch.nn import Module, Parameter
-from torch.autograd import Variable as Var
 
 from .utils.repr import repr
 from ..functional.agnn import agnn
@@ -22,7 +21,7 @@ class AGNN(Module):
         if requires_grad:
             self.beta = Parameter(torch.Tensor(1))
         else:
-            self.register_buffer('beta', torch.zeros(1))
+            self.register_buffer('beta', torch.ones(1))
 
         self.requires_grad = requires_grad
         self.reset_parameters()
@@ -32,7 +31,7 @@ class AGNN(Module):
             self.beta.data.uniform_(0, 1)
 
     def forward(self, x, edge_index):
-        beta = self.beta if self.requires_grad else Var(self._buffers['beta'])
+        beta = self.beta if self.requires_grad else self._buffers['beta']
         return agnn(x, edge_index, beta)
 
     def __repr__(self):

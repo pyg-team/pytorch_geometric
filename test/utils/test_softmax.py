@@ -13,14 +13,14 @@ def test_softmax():
     e_sum = e[0] + e[1] + e[2]
     e = [e[0] / e_sum, e[1] / e_sum, e[2] / e_sum]
 
-    output = softmax(row, edge_attr)
+    output = softmax(edge_attr, row)
 
-    output = softmax(row, Variable(edge_attr))
+    output = softmax(Variable(edge_attr), row)
 
-    output = softmax(col, edge_attr)
+    output = softmax(edge_attr, col)
 
     edge_attr = torch.Tensor([[1, 1], [2, 2], [3, 3], [1, 1], [2, 2], [3, 3]])
-    output = softmax(row, edge_attr)
+    output = softmax(edge_attr, row)
 
-    output = softmax(row, Variable(edge_attr))
+    output = softmax(Variable(edge_attr), row)
     output

@@ -11,7 +11,8 @@ from torch_geometric.nn.modules import GAT
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), normalize=True)
 data = dataset[0].cuda().to_variable()
-num_features, num_targets = data.input.size(1), data.target.data.max() + 1
+num_features = data.input.size(1)
+num_targets = data.target.data.max().item() + 1
 train_mask = torch.arange(0, 20 * num_targets).long()
 val_mask = torch.arange(train_mask.size(0), train_mask.size(0) + 500).long()
 test_mask = torch.arange(data.num_nodes - 1000, data.num_nodes).long()
@@ -48,8 +49,8 @@ def train():
 
 def test(mask):
     model.eval()
-    pred = model()[mask].data.max(1)[1]
-    return pred.eq(data.target.data[mask]).sum() / mask.size(0)
+    pred = model()[mask].max(1)[1]
+    return pred.eq(data.target[mask]).sum().item() / mask.size(0)
 
 
 acc = []
@@ -67,6 +68,8 @@ for run in range(1, 101):
             cur_test = test(test_mask)
 
     acc.append(cur_test)
-    print('Run:', run, 'Test Accuracy:', acc[-1])
+    print('Run: {:03d}, Test: {:.4f}'.format(run, acc[-1]))
 
-print('Mean:', torch.Tensor(acc).mean(), 'Stddev:', torch.Tensor(acc).std())
+mean = torch.tensor(acc).mean().item()
+std = torch.tensor(acc).std().item()
+print('Mean: {:.4f}, Stddev: {:.4f}'.format(mean, std))
