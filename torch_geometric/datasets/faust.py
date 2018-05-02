@@ -1,4 +1,4 @@
-import os.path as osp
+from os.path import join
 
 import torch
 
@@ -31,9 +31,8 @@ class FAUST(Dataset):
 
     @property
     def raw_files(self):
-        path = osp.join('MPI-FAUST', 'training', 'registrations')
-        func = lambda i: 'tr_reg_{0:03d}.ply'.format(i)  # noqa
-        return [osp.join(path, func(i)) for i in range(100)]
+        path = join('MPI-FAUST', 'training', 'registrations')
+        return [join(path, 'tr_reg_{0:03d}.ply'.format(i)) for i in range(100)]
 
     @property
     def processed_files(self):
