@@ -9,7 +9,6 @@ from ....datasets.dataset import Data
 
 def voxel_grid(pos, size, start=None, end=None, batch=None, consecutive=True):
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
-
     n, d = pos.size()
 
     size = pos.new(repeat_to(size, d))

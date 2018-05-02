@@ -13,6 +13,8 @@ from torch_geometric.transform import CartesianAdj
 from torch_geometric.nn.modules import SplineConv
 from torch_geometric.nn.functional.pool import graclus_pool
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 train_dataset = MNISTSuperpixels(path, True, transform=CartesianAdj())
 test_dataset = MNISTSuperpixels(path, False, transform=CartesianAdj())
@@ -54,7 +56,7 @@ class Net(nn.Module):
         return F.log_softmax(self.fc2(x), dim=1)
 
 
-model = Net().cuda() if torch.cuda.is_available() else Net()
+model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
@@ -82,8 +84,8 @@ def test():
 
     for data in test_loader:
         data = data.cuda().to_variable()
-        pred = model(data).data.max(1)[1]
-        correct += pred.eq(data.target.data).sum()
+        pred = model(data).max(1)[1]
+        correct += pred.eq(data.target).sum().item()
     return correct / len(test_dataset)
 
 
