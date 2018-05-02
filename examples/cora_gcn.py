@@ -44,8 +44,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
 def train():
     model.train()
     optimizer.zero_grad()
-    loss = F.nll_loss(model()[train_mask], data.target[train_mask])
-    loss.backward()
+    F.nll_loss(model()[train_mask], data.target[train_mask]).backward()
     optimizer.step()
 
 

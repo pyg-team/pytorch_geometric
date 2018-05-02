@@ -48,8 +48,8 @@ def train():
 
 def test(mask):
     model.eval()
-    pred = model()[mask].data.max(1)[1]
-    return pred.eq(data.target.data[mask]).sum() / mask.size(0)
+    pred = model()[mask].max(1)[1]
+    return pred.eq(data.target[mask]).sum().item() / mask.size(0)
 
 
 acc = []
