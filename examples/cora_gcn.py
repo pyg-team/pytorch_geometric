@@ -10,7 +10,7 @@ from torch_geometric.nn.modules import GraphConv, ChebConv  # noqa
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 dataset = Cora(osp.join(path, 'Cora'), normalize=True)
-data = dataset[0].cuda().to_variable()
+data = dataset[0].cuda()
 num_features = data.input.size(1)
 num_targets = data.target.data.max().item() + 1
 train_mask = torch.arange(0, 20 * num_targets).long()
