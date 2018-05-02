@@ -1,11 +1,11 @@
 def repr(obj, keys=None):
     params = []
 
-    if getattr(obj, 'in_features', None) is not None:
-        params.append(str(obj.in_features))
+    if getattr(obj, 'in_channels', None) is not None:
+        params.append(str(obj.in_channels))
 
-    if getattr(obj, 'out_features', None) is not None:
-        params.append(str(obj.out_features))
+    if getattr(obj, 'out_channels', None) is not None:
+        params.append(str(obj.out_channels))
 
     if keys is not None:
         params.extend([key + '={' + key + '}' for key in keys])

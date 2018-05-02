@@ -11,8 +11,8 @@ from ..functional.graph_conv import graph_conv
 class GraphConvTest(TestCase):
     def test_init(self):
         conv = GraphConv(1, 10)
-        self.assertEqual(conv.in_features, 1)
-        self.assertEqual(conv.out_features, 10)
+        self.assertEqual(conv.in_channels, 1)
+        self.assertEqual(conv.out_channels, 10)
         self.assertEqual(conv.weight.data.size(), (1, 10))
         self.assertEqual(conv.bias.data.size(), (10, ))
         self.assertEqual(conv.__repr__(), 'GraphConv(1, 10)')
