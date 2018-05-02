@@ -11,8 +11,8 @@ class GAT(Module):
     <https://arxiv.org/abs/1710.10903>`_ paper.
 
     Args:
-        in_features (int): Size of each input sample.
-        out_features (int): Size of each output sample.
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions. (default:
             :obj:`1`)
         concat (bool, optional): Whether to concat or average multi-head
@@ -27,8 +27,8 @@ class GAT(Module):
     """
 
     def __init__(self,
-                 in_features,
-                 out_features,
+                 in_channels,
+                 out_channels,
                  heads=1,
                  concat=True,
                  negative_slope=0.2,
@@ -36,27 +36,27 @@ class GAT(Module):
                  bias=True):
         super(GAT, self).__init__()
 
-        self.in_features = in_features
-        self.out_features = out_features
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.heads = heads
         self.concat = concat
         self.negative_slope = negative_slope
         self.dropout = dropout
-        self.weight = Parameter(torch.Tensor(in_features, heads, out_features))
-        self.att_weight = Parameter(torch.Tensor(heads, 2 * out_features))
+        self.weight = Parameter(torch.Tensor(in_channels, heads, out_channels))
+        self.att_weight = Parameter(torch.Tensor(heads, 2 * out_channels))
 
         if bias:
             if concat:
-                self.bias = Parameter(torch.Tensor(out_features * heads))
+                self.bias = Parameter(torch.Tensor(out_channels * heads))
             else:
-                self.bias = Parameter(torch.Tensor(out_features))
+                self.bias = Parameter(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.heads * self.in_features
+        size = self.heads * self.in_channels
         uniform(size, self.weight)
         uniform(size, self.att_weight)
         uniform(size, self.bias)
