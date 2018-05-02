@@ -21,6 +21,7 @@ class FAUST(Dataset):
     """
 
     url = 'http://faust.is.tue.mpg.de/'
+    num_nodes = 6890
 
     def __init__(self, root, train=True, transform=None):
         super(FAUST, self).__init__(root, transform)
@@ -30,9 +31,9 @@ class FAUST(Dataset):
 
     @property
     def raw_files(self):
-        dir = osp.join('MPI-FAUST', 'training', 'registrations')
-        f = [osp.join(dir, 'tr_reg_{0:03d}.ply'.format(i)) for i in range(100)]
-        return f
+        path = osp.join('MPI-FAUST', 'training', 'registrations')
+        func = lambda i: 'tr_reg_{0:03d}.ply'.format(i)  # noqa
+        return [osp.join(path, func(i)) for i in range(100)]
 
     @property
     def processed_files(self):

@@ -5,11 +5,12 @@ import os.path as osp
 import torch
 from torch import nn
 import torch.nn.functional as F
-from torch.autograd import Variable
 from torch_geometric.datasets import FAUST
 from torch_geometric.transform import CartesianAdj
 from torch_geometric.utils import DataLoader
 from torch_geometric.nn.modules import SplineConv
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FAUST')
 train_dataset = FAUST(path, train=True, transform=CartesianAdj())
@@ -28,7 +29,7 @@ class Net(nn.Module):
         self.conv5 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.conv6 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.fc1 = nn.Linear(64, 256)
-        self.fc2 = nn.Linear(256, 6890)
+        self.fc2 = nn.Linear(256, FAUST.num_nodes)
 
     def forward(self, data):
         x, edge_index, pseudo = data.input, data.index, data.weight
@@ -44,12 +45,8 @@ class Net(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-model = Net()
-target = torch.arange(0, model.fc2.weight.size(0)).long()
-if torch.cuda.is_available():
-    model, target = model.cuda(), target.cuda()
-
-target = Variable(target)
+model = Net().to(device)
+target = torch.arange(FAUST.num_nodes, dtype=torch.long, device=device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
@@ -61,25 +58,24 @@ def train(epoch):
             param_group['lr'] = 0.001
 
     for data in train_loader:
-        data = data.cuda().to_variable(['input', 'weight'])
+        data = data.cuda()
         optimizer.zero_grad()
-        output = model(data)
-        F.nll_loss(output, target).backward()
+        F.nll_loss(model(data), target).backward()
         optimizer.step()
 
 
-def test(epoch):
+def test():
     model.eval()
     correct = 0
 
     for i, data in enumerate(test_loader):
-        data = data.cuda().to_variable(['input', 'weight'])
-        pred = model(data).data.max(1)[1]
-        correct += pred.eq(data.target).sum()
-
-    print('Epoch', epoch, 'Test Accuracy:', correct / (20 * 6890))
+        data = data.cuda()
+        pred = model(data).max(1)[1]
+        correct += pred.eq(target).sum().item()
+    return correct / (len(test_dataset) * FAUST.num_nodes)
 
 
 for epoch in range(1, 101):
     train(epoch)
-    test(epoch)
+    test_acc = test()
+    print('Epoch: {:02d}, Test: {:.4f}'.format(epoch, test_acc))
