@@ -3,7 +3,6 @@ from __future__ import division, print_function
 import os.path as osp
 
 import torch
-from torch.autograd import Variable
 from torch import nn
 import torch.nn.functional as F
 from torch_geometric.datasets import MNISTSuperpixels
@@ -35,11 +34,9 @@ class Net(nn.Module):
     def forward(self, data):
         data.input = F.elu(self.conv1(data.input, data.index, data.weight))
         data = sparse_voxel_grid_pool(data, 5, 0, 28, CartesianAdj())
-        data.weight = Variable(data.weight)
 
         data.input = F.elu(self.conv2(data.input, data.index, data.weight))
         data = sparse_voxel_grid_pool(data, 7, 0, 28, CartesianAdj())
-        data.weight = Variable(data.weight)
 
         data.input = F.elu(self.conv3(data.input, data.index, data.weight))
         x = dense_voxel_grid_pool(data, 14, 0, 27.99)

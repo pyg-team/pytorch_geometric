@@ -3,7 +3,6 @@ from __future__ import division, print_function
 import os.path as osp
 
 import torch
-from torch.autograd import Variable
 from torch import nn
 import torch.nn.functional as F
 from torch_scatter import scatter_mean
@@ -41,16 +40,12 @@ class Net(nn.Module):
         data.input = F.elu(self.conv1(data.input, data.index, data.weight))
         weight = normalized_cut_2d(data.index, data.pos)
         data = graclus_pool(data, weight, transform=CartesianAdj())
-        data.weight = Variable(data.weight)
 
         data.input = F.elu(self.conv2(data.input, data.index, data.weight))
         weight = normalized_cut_2d(data.index, data.pos)
         data = graclus_pool(data, weight, transform=CartesianAdj())
 
-        x = data.input
-        index = Variable(data.batch.unsqueeze(1).expand(x.size()))
-        x = scatter_mean(index, x, dim=0)
-
+        x = scatter_mean(data.input, data.batch, dim=0)
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
         return F.log_softmax(self.fc2(x), dim=1)
