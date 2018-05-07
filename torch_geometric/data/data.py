@@ -1,8 +1,3 @@
-from torch import is_tensor
-from torch.cuda import is_available as has_cuda
-from torch.autograd import Variable
-
-
 class Data(object):
     def __init__(self,
                  x=None,
@@ -55,26 +50,16 @@ class Data(object):
             return self.edge_index.max().item() + 1
         return None
 
-    def _apply(self, func, *keys):
+    def apply(self, func, *keys):
         for key, item in self(*keys):
             setattr(self, key, func(item))
         return self
 
     def contiguous(self, *keys):
-        return self._apply(lambda x: x.contiguous(), *keys)
+        return self.apply(lambda x: x.contiguous(), *keys)
 
-    def cuda(self, *keys):
-        return self._apply(lambda x: x.cuda() if has_cuda() else x, *keys)
-
-    def cpu(self, *keys):
-        return self._apply(lambda x: x.cpu(), *keys)
-
-    def to_variable(self, *keys):
-        keys = ['x', 'edge_attr', 'y'] if not keys else keys
-        return self._apply(lambda x: Variable(x), *keys)
-
-    def to_tensor(self, *keys):
-        return self._apply(lambda x: x if is_tensor(x) else x.data, *keys)
+    def to(self, device, *keys):
+        return self.apply(lambda x: x.to(device), *keys)
 
     def __repr__(self):
         info = ['{}={}'.format(key, list(item.size())) for key, item in self]
