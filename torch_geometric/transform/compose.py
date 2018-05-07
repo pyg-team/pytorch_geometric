@@ -8,20 +8,20 @@ class Compose(object):
     .. testsetup::
 
         import torch
-        from torch_geometric.data import Data
+        from torch_geometric.datasets.dataset import Data
 
     .. testcode::
 
-        import torch_geometric.transforms as T
+        import torch_geometric.transform as T
 
         pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])
         edge_index = torch.LongTensor([[0, 1], [1, 2]])
-        data = Data(edge_index=edge_index, pos=pos)
+        data = Data(None, pos, edge_index, None, None)
 
         transform = T.Compose([T.Cartesian(cat=False), T.Cartesian(cat=True)])
         data = transform(data)
 
-        print(data.edge_attr)
+        print(data.weight)
 
     .. testoutput::
 

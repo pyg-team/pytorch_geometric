@@ -1,3 +1,4 @@
+from .compose import Compose
 from .cartesian import Cartesian
 from .local_cartesian import LocalCartesian
 from .log_cartesian import LogCartesian
@@ -13,7 +14,7 @@ from .sample_pointcloud import SamplePointcloud, PCToGraphNN, PCToGraphRad
 from .target_indegree import TargetIndegree
 
 __all__ = [
-    'Cartesian', 'RandomTranslate', 'RandomScale', 'RandomRotate',
+    'Compose', 'Cartesian', 'RandomTranslate', 'RandomScale', 'RandomRotate',
     'RandomShear', 'NormalizeScale', 'LocalCartesian', 'Spherical', 'Polar',
     'LogCartesian', 'RandomFlip', 'PCToGraphRad', 'PCToGraphNN',
     'SamplePointcloud', 'TargetIndegree'
