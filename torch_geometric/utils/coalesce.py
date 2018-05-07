@@ -7,7 +7,7 @@ def coalesce(edge_index, num_nodes=None):
     row, col = edge_index
 
     index = num_nodes * row + col
-    perm = torch.arange(index.size(0), out=row.new())
+    perm = torch.arange(index.size(0), dtype=torch.long, device=row.device)
     _, perm = unique_by_key(index, perm)
     edge_index = edge_index[:, perm]
 

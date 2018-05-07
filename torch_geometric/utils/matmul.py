@@ -1,19 +1,12 @@
-import torch
-from torch.autograd import Variable
-from torch_geometric.utils import new
+from torch_scatter import scatter_add
 
 
-def matmul(edge_index, edge_attr, tensor):
+def matmul(index, value, tensor):
     tensor = tensor if tensor.dim() > 1 else tensor.unsqueeze(-1)
-    assert edge_attr.dim() == 1 and tensor.dim() == 2
+    assert value.dim() == 1 and tensor.dim() == 2
 
-    num_nodes, dim = tensor.size()
-    row, col = edge_index
-    row = row if torch.is_tensor(tensor) else Variable(row)
+    row, col = index
+    out_col = value.unsqueeze(-1) * tensor[col]
+    out = scatter_add(out_col, row, dim=0, dim_size=tensor.size(0))
 
-    output_col = edge_attr.unsqueeze(-1) * tensor[col]
-    output = new(output_col, num_nodes, dim).fill_(0)
-    row_expand = row.unsqueeze(-1).expand_as(output_col)
-    output.scatter_add_(0, row_expand, output_col)
-
-    return output
+    return out
