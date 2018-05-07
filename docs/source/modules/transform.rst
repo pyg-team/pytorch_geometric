@@ -1,8 +1,8 @@
-torch_geometric.transforms
-==========================
+torch_geometric.transform
+=========================
 
-.. automodule:: torch_geometric.transforms
-.. currentmodule:: torch_geometric.transforms
+.. automodule:: torch_geometric.transform
+.. currentmodule:: torch_geometric.transform
 
 .. contents:: Contents
     :local:

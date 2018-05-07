@@ -118,16 +118,18 @@ class Data(object):
     @property
     def num_nodes(self):
         assert self.input is not None or self.pos is not None or \
-               self.faces is not None, (
-                    'At least input or position tensor must be defined in '
-                    'order to compute number of nodes')
+               self.faces is not None or self.index is not None, (
+                    'At least input, position or index tensor must be defined '
+                    'in order to compute number of nodes')
 
         if self.pos is not None:
             return self.pos.size(0)
         elif self.input is not None:
             return self.input.size(0)
-        else:
+        elif self.faces is not None:
             return self.faces.size(0)
+        else:
+            return self.index.max().item() + 1
 
     @property
     def num_edges(self):

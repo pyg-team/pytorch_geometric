@@ -1,43 +1,63 @@
-from __future__ import division
-from torch.nn import Module, Parameter
 import torch
 
 
-class Cartesian(Module):
-    """Concatenates Cartesian spatial relations based on the position
-    :math:`P \in \mathbb{R}^{N x D}` of graph nodes to the graph's edge
-    attributes."""
+class Cartesian(object):
+    r"""Saves the globally normalized spatial relation of linked nodes in
+    Cartesian coordinates
 
-    def __init__(self, r=None, trainable=False):
-        super(Cartesian, self).__init__()
-        if r is not None:
-            r = torch.FloatTensor([r]).cuda()
-        if trainable and r is not None:
-            self.r = Parameter(r)
-        else:
-            self.r = r
+    .. math::
+        \mathbf{u}(i,j) = 0.5 + \frac{\mathbf{pos}_j - \mathbf{pos}_i}{2 \cdot
+        \max_{(v, w) \in \mathcal{E}} | \mathbf{pos}_w - \mathbf{pos}_v|}
+
+    as edge attributes.
+
+    Args:
+        cat (bool, optional): Concat pseudo-coordinates to edge attributes
+            instead of replacing them. (default: :obj:`True`)
+
+    .. testsetup::
+
+        import torch
+        from torch_geometric.datasets.dataset import Data
+
+    .. testcode::
+
+        from torch_geometric.transform import Cartesian
+
+        pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])
+        edge_index = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        data = Data(None, pos, edge_index, None, None)
+
+        data = Cartesian()(data)
+
+        print(data.weight)
+
+    .. testoutput::
+
+        tensor([[ 0.7500,  0.5000],
+                [ 0.2500,  0.5000],
+                [ 1.0000,  0.5000],
+                [ 0.0000,  0.5000]])
+    """
+
+    def __init__(self, cat=True):
+        self.cat = cat
 
     def __call__(self, data):
-        row, col = data.index
-        # Compute Cartesian pseudo-coordinates.
-        weight = data.pos[col] - data.pos[row]
+        (row, col), pos, pseudo = data.index, data.pos, data.weight
 
-        max = weight.abs().max() if self.r is None else self.r.clamp(
-            min=0.0001)
+        cartesian = pos[col] - pos[row]
+        cartesian /= 2 * cartesian.abs().max()
+        cartesian += 0.5
 
-        if self.r is not None:
-            weight = weight * (1 / max)
-            factor = weight.abs().max(1)[0].clamp(min=1)
-            weight = weight / factor.unsqueeze(1)
-            weight = weight / 2
+        if pseudo is not None and self.cat:
+            pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
+            cartesian = cartesian.type_as(pseudo)
+            data.weight = torch.cat([pseudo, cartesian], dim=-1)
         else:
-            weight = weight * (1 / (2 * max))
-
-        weight = weight + 0.5
-
-        if data.weight is None:
-            data.weight = weight
-        else:
-            data.weight = torch.cat([weight, data.weight.unsqueeze(1)], dim=1)
+            data.weight = cartesian
 
         return data
+
+    def __repr__(self):
+        return '{}(cat={})'.format(self.__class__.__name__, self.cat)
