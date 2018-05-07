@@ -16,7 +16,7 @@ from torch_geometric.datasets import KITTI  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 
 from torch_geometric.transform import RandomRotate, NormalizeScale  # noqa
-from torch_geometric.transform import CartesianAdj, CartesianLocalAdj  # noqa
+from torch_geometric.transform import Cartesian, LocalCartesian  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import sparse_voxel_max_pool  # noqa
 
@@ -27,13 +27,13 @@ batch_size = 1
 num_classes = 2
 num_anchors = 2
 
-transform = Compose([NormalizeScale(), CartesianAdj(0.05)])
+transform = Compose([NormalizeScale(), Cartesian(0.05)])
 train_dataset = KITTI(path, True, transform=transform)
 test_dataset = KITTI(path, False, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=batch_size)
 
-trans = CartesianAdj()
+trans = Cartesian()
 
 
 def upscale(input, cluster):

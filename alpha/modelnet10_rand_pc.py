@@ -11,7 +11,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet10RandPC  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.transform import (NormalizeScale, CartesianAdj)  # noqa
+from torch_geometric.transform import (NormalizeScale, Cartesian)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch.nn import Linear as Lin  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
@@ -21,7 +21,7 @@ from torch_geometric.visualization.model import show_model  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10RandPC')
 
-transform = CartesianAdj()
+transform = Cartesian()
 
 init_transform = NormalizeScale()
 train_dataset = ModelNet10RandPC(path, True, transform=init_transform)

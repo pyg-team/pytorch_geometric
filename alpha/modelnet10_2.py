@@ -14,7 +14,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet10  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.transform import (NormalizeScale, LogCartesianAdj,
+from torch_geometric.transform import (NormalizeScale, LogCartesian,
                                        RandomTranslate)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch.nn import Linear as Lin  # noqa
@@ -23,7 +23,7 @@ from torch_geometric.nn.functional import sparse_voxel_max_pool  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
 
-transform = LogCartesianAdj(30)
+transform = LogCartesian(30)
 init_transform = Compose([NormalizeScale(), RandomTranslate(0.001)])
 train_dataset = ModelNet10(path, True, init_transform)
 test_dataset = ModelNet10(path, False, init_transform)

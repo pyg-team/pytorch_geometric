@@ -4,11 +4,7 @@ import torch
 from torch_scatter import scatter_max
 
 
-class CartesianLocalAdj(object):
-    """Concatenates Cartesian spatial relations based on the position
-    :math:`P \in \mathbb{R}^{N x D}` of graph nodes to the graph's edge
-    attributes."""
-
+class LocalCartesian(object):
     def __call__(self, data):
         (row, col), pos = data.index, data.pos
         num_nodes = pos.size(0)

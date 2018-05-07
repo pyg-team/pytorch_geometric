@@ -13,13 +13,12 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import MNISTSuperpixels  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.transform import CartesianAdj, NormalizeScale  # noqa
+from torch_geometric.transform import Cartesian, NormalizeScale  # noqa
 from torch_geometric.nn.modules import MLPConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
 
-transform = CartesianAdj()
-
+transform = Cartesian()
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 train_dataset = MNISTSuperpixels(path, True, transform=None)
 test_dataset = MNISTSuperpixels(path, False, transform=None)
@@ -47,9 +46,9 @@ class Net(nn.Module):
     def forward(self, data):
 
         data.input = F.elu(self.conv1(data.adj, data.input))
-        data, _ = sparse_voxel_max_pool(data, 5, 0, CartesianAdj())
+        data, _ = sparse_voxel_max_pool(data, 5, 0, Cartesian())
         data.input = F.elu(self.conv2(data.adj, data.input))
-        data, _ = sparse_voxel_max_pool(data, 7, 0, CartesianAdj())
+        data, _ = sparse_voxel_max_pool(data, 7, 0, Cartesian())
         data.input = F.elu(self.conv3(data.adj, data.input))
 
         data, _ = dense_voxel_max_pool(data, 14, 0, 28)

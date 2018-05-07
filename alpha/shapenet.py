@@ -13,7 +13,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ShapeNet2  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.transform import NormalizeScale, CartesianAdj  # noqa
+from torch_geometric.transform import NormalizeScale, Cartesian  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import sparse_voxel_max_pool  # noqa
 from torch_geometric.visualization.model import show_model  # noqa
@@ -23,7 +23,7 @@ path = os.path.join(path, '..', 'data', 'ShapeNet2')
 
 category = 'Pistol'
 
-transform = CartesianAdj()
+transform = Cartesian()
 train_transform = Compose([NormalizeScale(), transform])
 test_transform = Compose([NormalizeScale(), transform])
 train_dataset = ShapeNet2(path, category, 'train', train_transform)

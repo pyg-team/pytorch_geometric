@@ -3,7 +3,7 @@ from __future__ import division
 import torch
 
 
-class TargetIndegreeAdj(object):
+class TargetIndegree(object):
     def __call__(self, data):
         _, col = data.index
 

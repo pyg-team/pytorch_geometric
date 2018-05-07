@@ -12,17 +12,17 @@ from torch_geometric.datasets import Cuneiform
 from torch_geometric.utils import DataLoader
 from torch_geometric.nn.modules import SplineConv
 from torch_geometric.transform import (RandomRotate, RandomScale,
-                                       RandomTranslate, CartesianAdj)
+                                       RandomTranslate, Cartesian)
 
 transform = Compose([
     RandomRotate(0.6),
     RandomScale(1.4),
     RandomTranslate(0.1),
-    CartesianAdj(),
+    Cartesian(),
 ])
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Cuneiform')
 train_dataset = Cuneiform(path, transform=transform)
-test_dataset = Cuneiform(path, transform=CartesianAdj())
+test_dataset = Cuneiform(path, transform=Cartesian())
 
 # Modify inputs.
 # input = train_dataset.input

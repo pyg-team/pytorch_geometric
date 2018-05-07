@@ -5,11 +5,7 @@ from math import pi as PI
 import torch
 
 
-class Spherical2dAdj(object):
-    """Concatenates Cartesian spatial relations based on the position
-    :math:`P \in \mathbb{R}^{N x D}` of graph nodes to the graph's edge
-    attributes."""
-
+class Polar(object):
     def __call__(self, data):
 
         index = data.index

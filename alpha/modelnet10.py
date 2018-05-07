@@ -1,6 +1,6 @@
 import os.path as osp
 
-import torch_geometric.transforms as T
+import torch_geometric.transform as T
 from torch_geometric.dataset import ModelNet10
 from torch_geometric.data import DataLoader
 

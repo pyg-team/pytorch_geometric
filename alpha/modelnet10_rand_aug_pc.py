@@ -12,9 +12,8 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet10RandAugPC  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.transform import (NormalizeScale, CartesianAdj,
-                                       PCToGraphNN, SamplePointcloud,
-                                       RandomRotate)  # noqa
+from torch_geometric.transform import (NormalizeScale, Cartesian, PCToGraphNN,
+                                       SamplePointcloud, RandomRotate)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch.nn import Linear as Lin  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
@@ -57,11 +56,11 @@ class Net(nn.Module):
         self.att3 = Lin(96, 2)
         self.att4 = Lin(128, 2)
 
-        self.transform = CartesianAdj(1 / 10, trainable=True)
-        self.transform1 = CartesianAdj(1 / 10, trainable=True)
-        self.transform2 = CartesianAdj(2 / 16, trainable=True)
-        self.transform3 = CartesianAdj(2 / 8, trainable=True)
-        self.transform4 = CartesianAdj(2 / 4, trainable=True)
+        self.transform = Cartesian(1 / 10, trainable=True)
+        self.transform1 = Cartesian(1 / 10, trainable=True)
+        self.transform2 = Cartesian(2 / 16, trainable=True)
+        self.transform3 = Cartesian(2 / 8, trainable=True)
+        self.transform4 = Cartesian(2 / 4, trainable=True)
 
     def pool_args(self, mean, x):
         if not self.training:

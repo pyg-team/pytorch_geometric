@@ -1,7 +1,7 @@
 import os.path as osp
 
 import torch
-import torch_geometric.transforms as T
+import torch_geometric.transform as T
 from torch_geometric.dataset import QM9
 from torch_geometric.data import DataLoader
 

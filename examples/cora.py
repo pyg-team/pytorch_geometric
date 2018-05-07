@@ -6,11 +6,11 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch_geometric.datasets import Cora
-from torch_geometric.transform import TargetIndegreeAdj
+from torch_geometric.transform import TargetIndegree
 from torch_geometric.nn.modules import SplineConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
-dataset = Cora(osp.join(path, 'Cora'), transform=TargetIndegreeAdj())
+dataset = Cora(osp.join(path, 'Cora'), transform=TargetIndegree())
 data = dataset[0].cuda()
 train_mask = torch.arange(0, data.num_nodes - 1000).long()
 test_mask = torch.arange(data.num_nodes - 500, data.num_nodes).long()

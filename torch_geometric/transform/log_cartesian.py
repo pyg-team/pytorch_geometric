@@ -5,7 +5,7 @@ from math import log
 import torch
 
 
-class LogCartesianAdj(object):
+class LogCartesian(object):
     def __init__(self, scale=1):
         self.scale = scale
         self.norm = 1 / log(1 + scale)
