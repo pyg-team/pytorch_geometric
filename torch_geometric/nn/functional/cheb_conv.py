@@ -6,7 +6,7 @@ def cheb_conv(x, edge_index, edge_attr, weight, bias=None):
     row, col = edge_index
     n, e, K = x.size(0), row.size(0), weight.size(0)
 
-    edge_attr = x.new_full((e, ), 1) if edge_attr is None else edge_attr
+    edge_attr = x.new_ones((e, )) if edge_attr is None else edge_attr
     deg = degree(row, n, dtype=edge_attr.dtype, device=edge_attr.device)
 
     # Compute normalized and rescaled Laplacian.
