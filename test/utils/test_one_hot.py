@@ -1,5 +1,4 @@
 import torch
-from torch.autograd import Variable
 from torch_geometric.utils import one_hot
 
 
@@ -9,6 +8,3 @@ def test_one_hot():
 
     output = one_hot(src)
     assert output.tolist() == expected_output
-
-    output = one_hot(Variable(src))
-    assert output.data.tolist() == expected_output
