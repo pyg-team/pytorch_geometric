@@ -1,8 +1,8 @@
 import torch
-
-from ...graph.geometry import edges_from_faces
-from ..dataset import Data
+from torch_geometric.utils import face_to_edge_index
 import torch_unique
+
+from ..dataset import Data
 
 
 def read_off(filename):
@@ -23,7 +23,7 @@ def read_off(filename):
     face = [int(x) for x in data[num_nodes * 3 + 3:]]
     face = torch.LongTensor(face).view(-1, 4)[:, 1:].contiguous()
 
-    index = edges_from_faces(face)
+    index = face_to_edge_index(face, num_nodes)
 
     # Delete isolated vertices.
     unique = torch_unique.unique(index[0])
