@@ -1,5 +1,4 @@
 import torch
-from torch.autograd import Variable
 from torch_geometric.utils import matmul
 
 
@@ -14,6 +13,3 @@ def test_matmul():
 
     output = matmul(edge_index, edge_attr, b)
     assert output.tolist() == expected_output
-
-    output = matmul(edge_index, Variable(edge_attr), Variable(b))
-    assert output.data.tolist() == expected_output
