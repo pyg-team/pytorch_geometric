@@ -6,7 +6,7 @@ def graph_conv(x, edge_index, edge_attr, weight, bias=None):
     row, col = edge_index
     n, e = x.size(0), row.size(0)
 
-    edge_attr = x.new_full((e, ), 1) if edge_attr is None else edge_attr
+    edge_attr = x.new_ones((e, )) if edge_attr is None else edge_attr
     deg = degree(row, n, dtype=edge_attr.dtype, device=edge_attr.device)
 
     # Normalize and append adjacency matrix by self loops.
@@ -18,7 +18,8 @@ def graph_conv(x, edge_index, edge_attr, weight, bias=None):
     edge_index = add_self_loops(edge_index, n)
 
     # Perform the convolution.
-    out = matmul(edge_index, edge_attr, torch.mm(x, weight))
+    out = torch.mm(x, weight)
+    out = matmul(edge_index, edge_attr, out)
 
     if bias is not None:
         out += bias
