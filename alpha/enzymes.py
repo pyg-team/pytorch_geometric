@@ -8,15 +8,15 @@ from torch.autograd import Variable
 import torch.nn.functional as F
 from torch_scatter import scatter_max
 from torch_geometric.datasets import ENZYMES
-from torch_geometric.transform import TargetIndegreeAdj
+from torch_geometric.transform import TargetIndegree
 from torch_geometric.utils import DataLoader
 from torch_geometric.nn.modules import SplineConv
 from torch_geometric.nn.functional.pool import graclus_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES')
-train_dataset = ENZYMES(path, transform=TargetIndegreeAdj())
-val_dataset = ENZYMES(path, transform=TargetIndegreeAdj())
-test_dataset = ENZYMES(path, transform=TargetIndegreeAdj())
+train_dataset = ENZYMES(path, transform=TargetIndegree())
+val_dataset = ENZYMES(path, transform=TargetIndegree())
+test_dataset = ENZYMES(path, transform=TargetIndegree())
 perm = torch.randperm(len(train_dataset))
 split = len(train_dataset) // 10
 train_dataset.split = perm[2 * split:]
@@ -40,19 +40,19 @@ class Net(nn.Module):
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.input, data.index, data.weight))
-        data = graclus_pool(data, transform=TargetIndegreeAdj())
+        data = graclus_pool(data, transform=TargetIndegree())
         data.weight = Variable(data.weight)
 
         data.input = F.elu(self.conv2(data.input, data.index, data.weight))
-        data = graclus_pool(data, transform=TargetIndegreeAdj())
+        data = graclus_pool(data, transform=TargetIndegree())
         data.weight = Variable(data.weight)
 
         data.input = F.elu(self.conv3(data.input, data.index, data.weight))
-        data = graclus_pool(data, transform=TargetIndegreeAdj())
+        data = graclus_pool(data, transform=TargetIndegree())
         data.weight = Variable(data.weight)
 
         data.input = F.elu(self.conv4(data.input, data.index, data.weight))
-        data = graclus_pool(data, transform=TargetIndegreeAdj())
+        data = graclus_pool(data, transform=TargetIndegree())
         data.weight = Variable(data.weight)
 
         x = F.elu(self.conv5(data.input, data.index, data.weight))

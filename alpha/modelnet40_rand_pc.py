@@ -12,7 +12,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet40RandPC  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.transform import (NormalizeScale, CartesianAdj,
+from torch_geometric.transform import (NormalizeScale, Cartesian,
                                        RandomTranslate)  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
@@ -22,7 +22,7 @@ from torch_geometric.visualization.model import show_model  # noqa
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet40RandPC')
 
-transform = CartesianAdj()
+transform = Cartesian()
 train_transform = Compose(
     [NormalizeScale(), RandomTranslate(0.001), transform])
 test_transform = Compose([NormalizeScale(), transform])

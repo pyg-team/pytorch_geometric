@@ -12,7 +12,7 @@ sys.path.insert(0, '..')
 
 from torch_geometric.datasets import ModelNet10PC  # noqa
 from torch_geometric.utils import DataLoader  # noqa
-from torch_geometric.transform import NormalizeScale, CartesianAdj  # noqa
+from torch_geometric.transform import NormalizeScale, Cartesian  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import (sparse_voxel_max_pool,
                                            dense_voxel_max_pool)  # noqa
@@ -45,15 +45,15 @@ class Net(nn.Module):
     def forward(self, data):
         # data.input = F.elu(self.conv1(data.adj, data.input))
         size, start = self.pool_args(13, 5)
-        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj())
+        data, _ = sparse_voxel_max_pool(data, size, start, Cartesian())
 
         data.input = F.elu(self.conv1(data.adj, data.input))
         size, start = self.pool_args(7, 3)
-        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj())
+        data, _ = sparse_voxel_max_pool(data, size, start, Cartesian())
 
         data.input = F.elu(self.conv2(data.adj, data.input))
         size, start = self.pool_args(5, 2)
-        data, _ = sparse_voxel_max_pool(data, size, start, CartesianAdj())
+        data, _ = sparse_voxel_max_pool(data, size, start, Cartesian())
 
         data.input = F.elu(self.conv3(data.adj, data.input))
         data, _ = dense_voxel_max_pool(data, 1 / 2, 0, 1)

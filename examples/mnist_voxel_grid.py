@@ -7,7 +7,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.utils import DataLoader
-from torch_geometric.transform import CartesianAdj
+from torch_geometric.transform import Cartesian
 from torch_geometric.nn.modules import SplineConv
 from torch_geometric.nn.functional.pool import sparse_voxel_grid_pool
 from torch_geometric.nn.functional.pool import dense_voxel_grid_pool
@@ -15,8 +15,8 @@ from torch_geometric.nn.functional.pool import dense_voxel_grid_pool
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
-train_dataset = MNISTSuperpixels(path, True, transform=CartesianAdj())
-test_dataset = MNISTSuperpixels(path, False, transform=CartesianAdj())
+train_dataset = MNISTSuperpixels(path, True, transform=Cartesian())
+test_dataset = MNISTSuperpixels(path, False, transform=Cartesian())
 
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64)
@@ -33,10 +33,10 @@ class Net(nn.Module):
 
     def forward(self, data):
         data.input = F.elu(self.conv1(data.input, data.index, data.weight))
-        data = sparse_voxel_grid_pool(data, 5, 0, 28, CartesianAdj())
+        data = sparse_voxel_grid_pool(data, 5, 0, 28, Cartesian())
 
         data.input = F.elu(self.conv2(data.input, data.index, data.weight))
-        data = sparse_voxel_grid_pool(data, 7, 0, 28, CartesianAdj())
+        data = sparse_voxel_grid_pool(data, 7, 0, 28, Cartesian())
 
         data.input = F.elu(self.conv3(data.input, data.index, data.weight))
         x = dense_voxel_grid_pool(data, 14, 0, 27.99)

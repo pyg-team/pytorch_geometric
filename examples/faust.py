@@ -6,15 +6,15 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from torch_geometric.datasets import FAUST
-from torch_geometric.transform import CartesianAdj
+from torch_geometric.transform import Cartesian
 from torch_geometric.utils import DataLoader
 from torch_geometric.nn.modules import SplineConv
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FAUST')
-train_dataset = FAUST(path, train=True, transform=CartesianAdj())
-test_dataset = FAUST(path, train=False, transform=CartesianAdj())
+train_dataset = FAUST(path, train=True, transform=Cartesian())
+test_dataset = FAUST(path, train=False, transform=Cartesian())
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1)
 

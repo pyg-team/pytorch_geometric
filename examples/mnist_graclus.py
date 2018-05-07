@@ -8,15 +8,15 @@ import torch.nn.functional as F
 from torch_scatter import scatter_mean
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.utils import DataLoader, normalized_cut
-from torch_geometric.transform import CartesianAdj
+from torch_geometric.transform import Cartesian
 from torch_geometric.nn.modules import SplineConv
 from torch_geometric.nn.functional.pool import graclus_pool
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
-train_dataset = MNISTSuperpixels(path, True, transform=CartesianAdj())
-test_dataset = MNISTSuperpixels(path, False, transform=CartesianAdj())
+train_dataset = MNISTSuperpixels(path, True, transform=Cartesian())
+test_dataset = MNISTSuperpixels(path, False, transform=Cartesian())
 
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64)
@@ -39,11 +39,11 @@ class Net(nn.Module):
     def forward(self, data):
         data.input = F.elu(self.conv1(data.input, data.index, data.weight))
         weight = normalized_cut_2d(data.index, data.pos)
-        data = graclus_pool(data, weight, transform=CartesianAdj())
+        data = graclus_pool(data, weight, transform=Cartesian())
 
         data.input = F.elu(self.conv2(data.input, data.index, data.weight))
         weight = normalized_cut_2d(data.index, data.pos)
-        data = graclus_pool(data, weight, transform=CartesianAdj())
+        data = graclus_pool(data, weight, transform=Cartesian())
 
         x = scatter_mean(data.input, data.batch, dim=0)
         x = F.elu(self.fc1(x))

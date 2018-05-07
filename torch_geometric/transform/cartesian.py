@@ -3,13 +3,13 @@ from torch.nn import Module, Parameter
 import torch
 
 
-class CartesianAdj(Module):
+class Cartesian(Module):
     """Concatenates Cartesian spatial relations based on the position
     :math:`P \in \mathbb{R}^{N x D}` of graph nodes to the graph's edge
     attributes."""
 
     def __init__(self, r=None, trainable=False):
-        super(CartesianAdj, self).__init__()
+        super(Cartesian, self).__init__()
         if r is not None:
             r = torch.FloatTensor([r]).cuda()
         if trainable and r is not None:

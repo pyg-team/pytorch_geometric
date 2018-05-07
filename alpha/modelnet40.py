@@ -14,17 +14,17 @@ sys.path.insert(0, '..')
 from torch_geometric.datasets import ModelNet40  # noqa
 from torch_geometric.utils import DataLoader  # noqa
 from torch_geometric.transform import RandomRotate, NormalizeScale  # noqa
-from torch_geometric.transform import CartesianAdj, CartesianLocalAdj  # noqa
+from torch_geometric.transform import Cartesian, LocalCartesian  # noqa
 from torch_geometric.nn.modules import SplineConv  # noqa
 from torch_geometric.nn.functional import voxel_max_pool  # noqa
 
 path = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(path, '..', 'data', 'ModelNet10')
 
-transform = Compose([RandomRotate(3.14), NormalizeScale(), CartesianAdj()])
-transform_test = Compose([NormalizeScale(), CartesianAdj()])
+transform = Compose([RandomRotate(3.14), NormalizeScale(), Cartesian()])
+transform_test = Compose([NormalizeScale(), Cartesian()])
 
-trans = CartesianAdj()
+trans = Cartesian()
 
 batch_size = 1
 train_dataset = ModelNet40(path, True, transform=transform)
