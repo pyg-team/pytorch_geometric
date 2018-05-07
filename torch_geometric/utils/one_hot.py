@@ -1,15 +1,9 @@
 import torch
-from torch_geometric.utils import new
 
 
-def one_hot(src, size=None, out=None):
-    src_data = src if torch.is_tensor(src) else src.data
-    size = src_data.max() + 1 if size is None else size
-    sizes = src.size(0), size
+def one_hot(src, size=None, dtype=None, device=None):
+    size = src.max().item() + 1 if size is None else size
 
-    out = new(src.float()) if out is None else out
-    out.resize_(*sizes) if torch.is_tensor(out) else out.data.resize_(*sizes)
-    out.fill_(0)
-    out[torch.arange(sizes[0], out=src_data.new()), src_data] = 1
-
+    out = torch.zeros(src.size(0), size, dtype=dtype, device=device)
+    out.scatter_(1, src.unsqueeze(-1).expand_as(out), 1)
     return out
