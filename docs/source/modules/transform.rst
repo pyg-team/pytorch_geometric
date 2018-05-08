@@ -19,6 +19,12 @@ Cartesian
 .. autoclass:: Cartesian
     :members:
 
+LocalCartesian
+--------------
+
+.. autoclass:: LocalCartesian
+    :members:
+
 TargetIndegree
 --------------
 

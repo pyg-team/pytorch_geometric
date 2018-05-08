@@ -10,5 +10,5 @@ def test_target_indegree():
     data = Data(None, None, edge_index, None, None)
     expected_output = [1, 0.5, 0.5, 1]
 
-    output = TargetIndegree()(data)
-    assert output.weight.tolist() == expected_output
+    data = TargetIndegree()(data)
+    assert data.weight.tolist() == expected_output
