@@ -11,8 +11,8 @@ def test_compose():
                        '])')
     assert transform.__repr__() == expected_output
 
-    pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])
-    edge_index = torch.LongTensor([[0, 1], [1, 2]])
+    pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)
+    edge_index = torch.tensor([[0, 1], [1, 2]])
     data = Data(None, pos, edge_index, None, None)
     expected_output = [[0.75, 0.5, 1], [1, 0.5, 1]]
 
