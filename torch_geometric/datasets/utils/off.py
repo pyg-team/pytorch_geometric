@@ -1,8 +1,8 @@
 import torch
-from torch_geometric.utils import face_to_edge_index
 import torch_unique
 
 from ..dataset import Data
+from ...utils.face import face_to_edge_index
 
 
 def read_off(filename):
