@@ -47,17 +47,17 @@ class LocalCartesian(object):
     def __call__(self, data):
         (row, col), pos, pseudo = data.index, data.pos, data.weight
 
-        cartesian = pos[col] - pos[row]
-        tmp, _ = scatter_max(cartesian.abs(), row, 0, dim_size=pos.size(0))
-        cartesian /= 2 * tmp.max(dim=1, keepdim=True)[0][row]
-        cartesian += 0.5
+        cart = pos[col] - pos[row]
+        max_cart, _ = scatter_max(cart.abs(), row, 0, dim_size=pos.size(0))
+        cart /= 2 * max_cart.max(dim=1, keepdim=True)[0][row]
+        cart += 0.5
+        cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
-            cartesian = cartesian.type_as(pseudo)
-            data.weight = torch.cat([pseudo, cartesian], dim=-1)
+            data.weight = torch.cat([pseudo, cart.type_as(pseudo)], dim=-1)
         else:
-            data.weight = cartesian
+            data.weight = cart
 
         return data
 
