@@ -1,9 +1,9 @@
 import torch
 from plyfile import PlyData
 import numpy as np
-from torch_geometric.utils import face_to_edge_index
 
 from ..dataset import Data
+from ...utils.face import face_to_edge_index
 
 
 def read_ply(filename):
