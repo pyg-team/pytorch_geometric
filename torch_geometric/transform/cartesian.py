@@ -51,7 +51,7 @@ class Cartesian(object):
         cartesian += 0.5
 
         if pseudo is not None and self.cat:
-            pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
+            pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
             cartesian = cartesian.type_as(pseudo)
             data.weight = torch.cat([pseudo, cartesian], dim=-1)
         else:

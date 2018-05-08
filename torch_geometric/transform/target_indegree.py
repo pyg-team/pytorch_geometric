@@ -47,7 +47,7 @@ class TargetIndegree(object):
         deg = deg[col]
 
         if pseudo is not None and self.cat:
-            pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
+            pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
             deg = deg.type_as(pseudo)
             data.weight = torch.cat([pseudo, deg], dim=-1)
         else:
