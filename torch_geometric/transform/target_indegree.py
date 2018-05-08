@@ -24,7 +24,7 @@ class TargetIndegree(object):
 
         from torch_geometric.transform import TargetIndegree
 
-        edge_index = torch.LongTensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+        edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
         data = Data(None, None, edge_index, None, None)
 
         data = TargetIndegree()(data)
