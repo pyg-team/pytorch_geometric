@@ -18,15 +18,15 @@ class Compose(object):
         edge_index = torch.LongTensor([[0, 1], [1, 2]])
         data = Data(None, pos, edge_index, None, None)
 
-        transform = T.Compose([T.Cartesian(cat=False), T.Cartesian(cat=True)])
+        transform = T.Compose([T.Cartesian(), T.TargetIndegree()])
         data = transform(data)
 
         print(data.weight)
 
     .. testoutput::
 
-        tensor([[ 0.7500,  0.5000,  0.7500,  0.5000],
-                [ 1.0000,  0.5000,  1.0000,  0.5000]])
+        tensor([[ 0.7500,  0.5000,  1.0000],
+                [ 1.0000,  0.5000,  1.0000]])
     """
 
     def __init__(self, transforms):

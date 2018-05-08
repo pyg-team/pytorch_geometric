@@ -33,7 +33,10 @@ class TargetIndegree(object):
 
     .. testoutput::
 
-        tensor([ 1.0000,  0.5000,  0.5000,  1.0000])
+        tensor([[ 1.0000],
+                [ 0.5000],
+                [ 0.5000],
+                [ 1.0000]])
     """
 
     def __init__(self, cat=True):
@@ -45,11 +48,11 @@ class TargetIndegree(object):
         deg = degree(col, data.num_nodes)
         deg /= deg.max()
         deg = deg[col]
+        deg = deg.view(-1, 1)
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
-            deg = deg.type_as(pseudo)
-            data.weight = torch.cat([pseudo, deg], dim=-1)
+            data.weight = torch.cat([pseudo, deg.type_as(pseudo)], dim=-1)
         else:
             data.weight = deg
 
