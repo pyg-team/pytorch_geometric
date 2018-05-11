@@ -20,8 +20,6 @@ def test_data():
     assert not data.batch_cumsum('x')
     assert data.batch_cumsum('edge_index')
 
-    assert data.num_nodes == 3
-
     data.to(torch.device('cpu'))
     assert not data.x.is_contiguous()
     data.contiguous()
@@ -35,3 +33,9 @@ def test_data():
     dictionary = {'x': x, 'edge_index': edge_index}
     data = Data.from_dict(dictionary)
     assert data.keys() == ['x', 'edge_index']
+
+    assert data.num_nodes == 3
+    data.x = None
+    assert data.num_nodes == 3
+    data.edge_index = None
+    assert data.num_nodes is None
