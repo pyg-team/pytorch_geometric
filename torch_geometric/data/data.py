@@ -52,7 +52,7 @@ class Data(object):
 
     def apply(self, func, *keys):
         for key, item in self(*keys):
-            setattr(self, key, func(item))
+            self[key] = func(item)
         return self
 
     def contiguous(self, *keys):
