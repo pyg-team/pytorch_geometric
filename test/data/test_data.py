@@ -10,7 +10,7 @@ def test_data():
     assert data.x.tolist() == x.tolist()
     assert data['x'].tolist() == x.tolist()
 
-    assert data.keys() == ['x', 'edge_index']
+    assert sorted(data.keys()) == ['edge_index', 'x']
     assert len(data) == 2
     assert 'x' in data and 'edge_index' in data and 'pos' not in data
 
@@ -32,7 +32,7 @@ def test_data():
 
     dictionary = {'x': x, 'edge_index': edge_index}
     data = Data.from_dict(dictionary)
-    assert data.keys() == ['x', 'edge_index']
+    assert sorted(data.keys()) == ['edge_index', 'x']
 
     assert data.num_nodes == 3
     data.x = None
