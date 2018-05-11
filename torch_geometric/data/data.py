@@ -1,3 +1,6 @@
+import torch
+
+
 class Data(object):
     def __init__(self,
                  x=None,
@@ -41,6 +44,12 @@ class Data(object):
         for key in self.keys() if not keys else keys:
             if self[key] is not None:
                 yield key, self[key]
+
+    def batch_cat_dim(self, key):
+        return -1 if self[key].dtype == torch.long else 0
+
+    def batch_cumsum(self, key):
+        return self[key].dim() > 1 and self[key].dtype == torch.long
 
     @property
     def num_nodes(self):

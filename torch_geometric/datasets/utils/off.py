@@ -23,7 +23,7 @@ def read_off(filename):
     face = [int(x) for x in data[num_nodes * 3 + 3:]]
     face = torch.LongTensor(face).view(-1, 4)[:, 1:].contiguous()
 
-    index = face_to_edge_index(face, num_nodes)
+    index = face_to_edge_index(face.t(), num_nodes)
 
     # Delete isolated vertices.
     unique = torch_unique.unique(index[0])
