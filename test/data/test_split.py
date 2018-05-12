@@ -1,21 +1,33 @@
-# from torch import Tensor, LongTensor
-# from torch_geometric.data import Data, data_from_set, split_set
+import torch
+from torch_geometric.data import Data, collate_to_set, data_from_set, split_set
 
-# def test_data_from_set():
-#     dataset = Data(x=Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))
-#     slices = {'x': LongTensor([0, 3, 5, 8, 10])}
-#     output = data_from_set(dataset, slices, 1)
+x1 = torch.tensor([1, 2, 3], dtype=torch.float)
+edge_index1 = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+x2 = torch.tensor([1, 2], dtype=torch.float)
+edge_index2 = torch.tensor([[0, 1], [1, 0]])
+data1, data2 = Data(x1, edge_index1), Data(x2, edge_index2)
+dataset, slices = collate_to_set([data1, data2])
 
-#     assert len(output) == 1
-#     assert output.x.tolist() == [3, 4]
 
-# def test_split_set():
-#     dataset = Data(x=Tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]))
-#     slices = {'x': LongTensor([0, 3, 5, 8, 10])}
-#     split = LongTensor([3, 0, 2])
-#     output, output_slices = split_set(dataset, slices, split)
+def test_data_from_set():
+    data = data_from_set(dataset, slices, 0)
+    assert len(data) == 2
+    assert data.x.tolist() == x1.tolist()
+    assert data.edge_index.tolist() == edge_index1.tolist()
 
-#     assert len(output) == 1
-#     assert output.x.tolist() == [8, 9, 0, 1, 2, 5, 6, 7]
-#     assert len(slices.keys()) == 1
-#     assert output_slices['x'].tolist() == [0, 2, 5, 8]
+    data = data_from_set(dataset, slices, 1)
+    assert len(data) == 2
+    assert data.x.tolist() == x2.tolist()
+    assert data.edge_index.tolist() == edge_index2.tolist()
+
+
+def test_split_set():
+    output, output_slices = split_set(dataset, slices, torch.tensor([0]))
+
+    assert len(output) == 2
+    assert output.x.tolist() == x1.tolist()
+    assert output.edge_index.tolist() == edge_index1.tolist()
+
+    assert len(output_slices.keys()) == 2
+    assert output_slices['x'].tolist() == [0, 3]
+    assert output_slices['edge_index'].tolist() == [0, 4]
