@@ -14,4 +14,3 @@ def test_polar():
 
     data = Polar()(data)
     assert pytest.approx(data.weight.view(-1).tolist()) == expected_output
-    print(data.weight)
