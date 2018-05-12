@@ -42,3 +42,9 @@ TargetIndegree
 
 .. autoclass:: TargetIndegree
     :members:
+
+RandomFlip
+----------
+
+.. autoclass:: RandomFlip
+    :members:
