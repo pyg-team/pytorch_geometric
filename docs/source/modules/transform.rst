@@ -25,6 +25,18 @@ LocalCartesian
 .. autoclass:: LocalCartesian
     :members:
 
+Polar
+-----
+
+.. autoclass:: Polar
+    :members:
+
+Spherical
+---------
+
+.. autoclass:: Spherical
+    :members:
+
 TargetIndegree
 --------------
 
