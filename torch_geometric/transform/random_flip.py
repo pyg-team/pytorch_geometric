@@ -1,28 +1,47 @@
 import random
 
 
-def flip(data, axis):
-    pos = data.pos
-
-    min, max = pos.min(0)[0], pos.max(0)[0]
-    offset = min + 0.5 * (max - min)
-    scale = pos.new(pos.size(1)).fill_(1)
-    scale[axis] = -1
-
-    pos = pos - offset  # Translate to origin.
-    pos *= scale  # Flip.
-    pos += offset  # Translate back.
-
-    data.pos = pos
-    return data
-
-
 class RandomFlip(object):
+    """Flips the position of nodes along a given axis randomly with a given
+    probability.
+
+    Args:
+        axis (int): The axis along the position of nodes being flipped.
+        p (float, optional): Probability of the position of nodes being
+            flipped. (default: :obj:`0.5`)
+
+    .. testsetup::
+
+        import torch
+        from torch_geometric.datasets.dataset import Data
+
+    .. testcode::
+
+        from torch_geometric.transform import RandomFlip
+
+        pos = torch.tensor([[-1, 1], [-3, 0], [2, -1]], dtype=torch.float)
+        data = Data(None, pos, None, None, None)
+
+        data = RandomFlip(axis=0, p=1)(data)
+
+        print(data.pos)
+
+    .. testoutput::
+
+        tensor([[ 1.,  1.],
+                [ 3.,  0.],
+                [-2., -1.]])
+    """
+
     def __init__(self, axis, p=0.5):
         self.axis = axis
         self.p = p
 
     def __call__(self, data):
         if random.random() < self.p:
-            return flip(data, self.axis)
+            data.pos[:, self.axis] = -data.pos[:, self.axis]
         return data
+
+    def __repr__(self):
+        return '{}(axis={}, p={})'.format(self.__class__.__name__, self.axis,
+                                          self.p)
