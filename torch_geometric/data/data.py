@@ -45,10 +45,10 @@ class Data(object):
             if self[key] is not None:
                 yield key, self[key]
 
-    def batch_cat_dim(self, key):
+    def cat_dim(self, key):
         return -1 if self[key].dtype == torch.long else 0
 
-    def batch_cumsum(self, key):
+    def should_cumsum(self, key):
         return self[key].dim() > 1 and self[key].dtype == torch.long
 
     @property
