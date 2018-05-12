@@ -3,7 +3,8 @@ from torch_geometric.utils import degree
 
 
 class TargetIndegree(object):
-    r"""Saves the globally normalized degree of target nodes
+    r"""Saves the globally normalized degree of target nodes (mapped to the
+    fixed interval :math:`[0, 1]`)
 
     .. math::
 
