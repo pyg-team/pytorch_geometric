@@ -2,14 +2,14 @@ import torch
 
 
 class Cartesian(object):
-    r"""Saves the globally normalized spatial relation of linked nodes in
-    Cartesian coordinates
+    r"""Saves the globally normalized spatial relation of linked nodes as
+    Cartesian coordinates (mapped to the fixed interval :math:`[0, 1]`)
 
     .. math::
         \mathbf{u}(i,j) = 0.5 + \frac{\mathbf{pos}_j - \mathbf{pos}_i}{2 \cdot
         \max_{(v, w) \in \mathcal{E}} | \mathbf{pos}_w - \mathbf{pos}_v|}
 
-    as edge attributes.
+    in its edge attributes.
 
     Args:
         cat (bool, optional): Concat pseudo-coordinates to edge attributes

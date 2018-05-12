@@ -1,29 +1,31 @@
-from __future__ import division
-
 from math import pi as PI
 
 import torch
 
 
 class Spherical(object):
+    def __init__(self, cat=True):
+        self.cat = cat
+
     def __call__(self, data):
+        (row, col), pos, pseudo = data.index, data.pos, data.weight
+        assert pos.dim() == 3
 
-        index = data.index
-        row, col = index
-
-        # Compute spherical pseudo-coordinates.
-        direction = data.pos[col] - data.pos[row]
-        rho = (direction * direction).sum(1).sqrt()
+        cart = pos[col] - pos[row]
+        rho = torch.norm(cart, p=2, dim=-1)
         rho /= rho.max()
-        theta = torch.atan2(direction[:, 1], direction[:, 0]) / (2 * PI)
+        theta = torch.atan2(cart[..., 1], cart[..., 0]) / (2 * PI)
         theta += (theta < 0).type_as(theta)
-        phi = torch.acos(direction[:, 2]) / PI
-        spherical = torch.stack([rho, theta, phi], dim=1)
+        phi = torch.acos(cart[..., 2]) / PI
+        polar = torch.stack([rho, theta, phi], dim=1)
 
-        if data.weight is None:
-            data.weight = spherical
+        if pseudo is not None and self.cat:
+            pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
+            data.weight = torch.cat([pseudo, cart.type_as(polar)], dim=-1)
         else:
-            data.weight = torch.cat(
-                [spherical, data.weight.unsqueeze(1)], dim=1)
+            data.weight = polar
 
         return data
+
+    def __repr__(self):
+        return '{}(cat={})'.format(self.__class__.__name__, self.cat)
