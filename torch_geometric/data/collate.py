@@ -6,52 +6,36 @@ from torch_geometric.data import Data
 
 def collate_to_set(data_list):
     keys = data_list[0].keys()
-    dataset = {key: [] for key in keys}
+    data_dict = {key: [] for key in keys}
     slices = {key: [0] for key in keys}
-    dims = {key: 0 for key in keys}
-    dims['edge_index'] = 1
 
     for data, key in itertools.product(data_list, keys):
-        dataset[key].append(data[key])
-        slices[key].append(slices[key][-1] + data[key].size(dims[key]))
+        data_dict[key].append(data[key])
+        slices[key].append(slices[key][-1] + data[key].size(data.cat_dim(key)))
 
     for key in keys:
-        dataset[key] = torch.cat(dataset[key], dim=dims[key])
+        data_dict[key] = torch.cat(data_dict[key], dim=data.cat_dim(key))
         slices[key] = torch.LongTensor(slices[key])
 
-    return Data.from_dict(dataset), slices
+    return Data.from_dict(data_dict), slices
 
 
 def collate_to_batch(data_list):
     keys = data_list[0].keys()
     batch = {key: [] for key in keys}
     batch['batch'] = []
-    dims = {key: 0 for key in keys}
-    dims['edge_index'] = 1
-    dims['batch'] = 0
 
-    for data, key in itertools.product(data_list, keys):
-        batch[key].append(data[key])
+    cumsum = 0
+    for i, data in enumerate(data_list):
+        num_nodes = data.num_nodes
+        batch['batch'].append(torch.full((num_nodes, ), i, dtype=torch.long))
+        for key in keys:
+            t = data[key] + cumsum if data.should_cumsum(key) else data[key]
+            batch[key].append(t)
+        cumsum += num_nodes
 
-    cum_num_nodes = [0]
-    for idx, data in enumerate(data_list):
-        cum_num_nodes.append(cum_num_nodes[-1] + data.num_nodes)
-        batch['batch'].append(torch.LongTensor(data.num_nodes).fill_(idx))
+    for key in keys:
+        batch[key] = torch.cat(batch[key], dim=data_list[0].cat_dim(key))
+    batch['batch'] = torch.cat(batch['batch'], dim=0)
 
-    if 'edge_index' in keys:
-        data = batch['edge_index']
-        for i, _ in enumerate(data):
-            data[i] = data[i] + cum_num_nodes[i]
-
-    if 'face' in keys:
-        data = batch['face']
-        for i, _ in enumerate(data):
-            data[i] = data[i] + cum_num_nodes[i]
-
-    for key in batch.keys():
-        batch[key] = torch.cat(batch[key], dim=dims[key])
-
-    data = Data.from_dict(batch)
-    data = data.contiguous()
-
-    return data
+    return Data.from_dict(batch).contiguous()

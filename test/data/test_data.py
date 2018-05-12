@@ -14,11 +14,11 @@ def test_data():
     assert len(data) == 2
     assert 'x' in data and 'edge_index' in data and 'pos' not in data
 
-    assert data.batch_cat_dim('x') == 0
-    assert data.batch_cat_dim('edge_index') == -1
+    assert data.cat_dim('x') == 0
+    assert data.cat_dim('edge_index') == -1
 
-    assert not data.batch_cumsum('x')
-    assert data.batch_cumsum('edge_index')
+    assert not data.should_cumsum('x')
+    assert data.should_cumsum('edge_index')
 
     data.to(torch.device('cpu'))
     assert not data.x.is_contiguous()
