@@ -9,7 +9,7 @@ class TargetIndegree(object):
 
         \mathbf{u}(i,j) = \frac{\deg(j)}{\max_{v \in \mathcal{V}} \deg(v)}
 
-    as edge attributes.
+    in its edge attributes.
 
     Args:
         cat (bool, optional): Concat pseudo-coordinates to edge attributes
