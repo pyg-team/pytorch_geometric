@@ -71,5 +71,6 @@ class Data(object):
         return self.apply(lambda x: x.to(device), *keys)
 
     def __repr__(self):
-        info = ['{}={}'.format(key, list(item.size())) for key, item in self]
+        keys = sorted(self.keys())
+        info = ['{}={}'.format(key, list(self[key].size())) for key in keys]
         return 'Data({})'.format(', '.join(info))
