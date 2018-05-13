@@ -28,7 +28,7 @@ def test_data():
     data['x'] = x + 1
     assert data.x.tolist() == (x + 1).tolist()
 
-    assert data.__repr__() == 'Data(x=[3, 2], edge_index=[2, 4])'
+    assert data.__repr__() == 'Data(edge_index=[2, 4], x=[3, 2])'
 
     dictionary = {'x': x, 'edge_index': edge_index}
     data = Data.from_dict(dictionary)
