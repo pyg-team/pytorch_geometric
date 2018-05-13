@@ -4,9 +4,9 @@ import torch
 
 
 class Polar(object):
-    r"""Saves the globally normalized spatial relation of linked nodes as
-    polar coordinates (mapped to the fixed interval :math:`[0, 1]`) in its edge
-    attributes.
+    r"""Saves the globally normalized two-dimensional spatial relation of
+    linked nodes as polar coordinates (mapped to the fixed interval
+    :math:`[0, 1]`) in its edge attributes.
 
     Args:
         cat (bool, optional): Concat pseudo-coordinates to edge attributes
@@ -42,7 +42,7 @@ class Polar(object):
 
     def __call__(self, data):
         (row, col), pos, pseudo = data.index, data.pos, data.weight
-        assert pos.dim() == 2
+        assert pos.dim() == 2 and pos.size(1) == 2
 
         cart = pos[col] - pos[row]
         rho = torch.norm(cart, p=2, dim=-1)
@@ -53,7 +53,7 @@ class Polar(object):
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
-            data.weight = torch.cat([pseudo, polar.type_as(polar)], dim=-1)
+            data.weight = torch.cat([pseudo, polar.type_as(pos)], dim=-1)
         else:
             data.weight = polar
 
