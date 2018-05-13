@@ -53,7 +53,7 @@ class Polar(object):
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
-            data.weight = torch.cat([pseudo, cart.type_as(polar)], dim=-1)
+            data.weight = torch.cat([pseudo, polar.type_as(polar)], dim=-1)
         else:
             data.weight = polar
 
