@@ -43,6 +43,12 @@ TargetIndegree
 .. autoclass:: TargetIndegree
     :members:
 
+LinearTransformation
+--------------------
+
+.. autoclass:: LinearTransformation
+    :members:
+
 RandomFlip
 ----------
 
