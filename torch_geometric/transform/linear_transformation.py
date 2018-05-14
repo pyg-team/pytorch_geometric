@@ -6,7 +6,7 @@ class LinearTransformation(object):
     computed offline.
 
     Args:
-        matrix (Tensor): tensor with shape :math:`[D x D]` where :math:`D`
+        matrix (Tensor): tensor with shape :math:`[D, D]` where :math:`D`
             corresponds to the dimensionality of node positions.
 
     .. testsetup::
@@ -48,7 +48,7 @@ class LinearTransformation(object):
         assert pos.size(1) == self.matrix.size(0), (
             'Node position and transformation matrix have incompatible shape.')
 
-        data.pos = torch.mm(pos, self.matrix)
+        data.pos = torch.mm(pos, self.matrix.type_as(pos))
 
         return data
 
