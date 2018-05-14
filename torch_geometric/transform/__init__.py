@@ -1,21 +1,23 @@
 from .compose import Compose
 from .cartesian import Cartesian
 from .local_cartesian import LocalCartesian
+from .polar import Polar
+from .spherical import Spherical
+from .target_indegree import TargetIndegree
+from .linear_transformation import LinearTransformation
+
 from .log_cartesian import LogCartesian
 from .random_translate import RandomTranslate
 from .random_scale import RandomScale
 from .random_rotate import RandomRotate
 from .random_shear import RandomShear
 from .normalize_scale import NormalizeScale
-from .spherical import Spherical
-from .polar import Polar
 from .random_flip import RandomFlip
 from .sample_pointcloud import SamplePointcloud, PCToGraphNN, PCToGraphRad
-from .target_indegree import TargetIndegree
 
 __all__ = [
-    'Compose', 'Cartesian', 'RandomTranslate', 'RandomScale', 'RandomRotate',
-    'RandomShear', 'NormalizeScale', 'LocalCartesian', 'Spherical', 'Polar',
-    'LogCartesian', 'RandomFlip', 'PCToGraphRad', 'PCToGraphNN',
-    'SamplePointcloud', 'TargetIndegree'
+    'Compose', 'Cartesian', 'LocalCartesian', 'Polar', 'Spherical',
+    'TargetIndegree', 'LinearTransformation', 'LogCartesian', 'RandomFlip',
+    'PCToGraphRad', 'PCToGraphNN', 'SamplePointcloud', 'RandomTranslate',
+    'RandomScale', 'RandomRotate', 'RandomShear', 'NormalizeScale'
 ]
