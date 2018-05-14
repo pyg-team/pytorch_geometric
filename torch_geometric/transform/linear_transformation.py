@@ -2,7 +2,7 @@ import torch
 
 
 class LinearTransformation(object):
-    r"""Transform all node positions with a square transformation matrix
+    r"""Transforms all node positions with a square transformation matrix
     computed offline.
 
     Args:
