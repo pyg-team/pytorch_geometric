@@ -46,7 +46,8 @@ class LinearTransformation(object):
         pos = data.pos.view(-1, 1) if data.pos.dim() == 1 else data.pos
 
         assert pos.size(1) == self.matrix.size(0), (
-            'Node position and transformation matrix have incompatible shape.')
+            'Node position matrix and transformation matrix have incompatible '
+            'shape.')
 
         data.pos = torch.mm(pos, self.matrix.type_as(pos))
 
