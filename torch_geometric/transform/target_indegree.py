@@ -47,7 +47,7 @@ class TargetIndegree(object):
         col, pseudo = data.index[1], data.weight
 
         deg = degree(col, data.num_nodes)
-        deg /= deg.max()
+        deg = deg / deg.max()
         deg = deg[col]
         deg = deg.view(-1, 1)
 

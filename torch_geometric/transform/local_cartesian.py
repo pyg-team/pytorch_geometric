@@ -49,7 +49,7 @@ class LocalCartesian(object):
 
         cart = pos[col] - pos[row]
         max_cart, _ = scatter_max(cart.abs(), row, 0, dim_size=pos.size(0))
-        cart /= 2 * max_cart.max(dim=1, keepdim=True)[0][row]
+        cart = cart / (2 * max_cart.max(dim=1, keepdim=True)[0][row])
         cart += 0.5
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
