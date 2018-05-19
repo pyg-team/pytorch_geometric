@@ -47,7 +47,7 @@ class Cartesian(object):
         (row, col), pos, pseudo = data.index, data.pos, data.weight
 
         cart = pos[col] - pos[row]
-        cart /= 2 * cart.abs().max()
+        cart = cart / (2 * cart.abs().max())
         cart += 0.5
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
