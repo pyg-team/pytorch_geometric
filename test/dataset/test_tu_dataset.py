@@ -30,7 +30,7 @@ def test_enzymes():
         assert len(data) == 4
         assert list(data.x.size()) == [data.num_nodes, 21]
         assert list(data.y.size()) == [data.num_graphs]
-        assert data.y.max().item() + 1 == 6
+        assert data.y.max() + 1 == 6
         assert list(data.batch.size()) == [data.num_nodes]
 
         assert data.contains_isolated_nodes()
