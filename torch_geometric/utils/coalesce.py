@@ -1,9 +1,11 @@
 import torch
 from torch_unique import unique_by_key
 
+from .num_nodes import get_num_nodes
+
 
 def coalesce(edge_index, num_nodes=None):
-    num_nodes = edge_index.max().item() + 1 if num_nodes is None else num_nodes
+    num_nodes = get_num_nodes(edge_index, num_nodes)
     row, col = edge_index
 
     index = num_nodes * row + col

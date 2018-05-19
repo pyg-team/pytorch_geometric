@@ -1,4 +1,5 @@
 import torch
+from torch_geometric.utils import get_num_nodes
 
 
 class Data(object):
@@ -56,7 +57,7 @@ class Data(object):
         for key, item in self('x', 'pos'):
             return item.size(self.cat_dim(key))
         if self.edge_index is not None:
-            return self.edge_index.max().item() + 1
+            return get_num_nodes(self.edge_index)
         return None
 
     @property

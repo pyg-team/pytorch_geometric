@@ -1,5 +1,7 @@
 import torch
 
+from .num_nodes import get_num_nodes
+
 
 def has_self_loops(edge_index):
     row, col = edge_index
@@ -8,7 +10,7 @@ def has_self_loops(edge_index):
 
 
 def add_self_loops(edge_index, num_nodes=None):
-    num_nodes = edge_index.max().item() + 1 if num_nodes is None else num_nodes
+    num_nodes = get_num_nodes(edge_index, num_nodes)
 
     dtype, device = edge_index.dtype, edge_index.device
     loop = torch.arange(0, num_nodes, dtype=dtype, device=device)
