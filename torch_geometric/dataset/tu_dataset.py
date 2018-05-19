@@ -14,10 +14,12 @@ class TUDataset(InMemoryDataset):
         self.name = name
         super(TUDataset, self).__init__(root, transform)
         self.dataset, self.slices = torch.load(self.processed_paths[0])
+        print(self.dataset)
+        print(self.slices)
 
     @property
     def raw_file_names(self):
-        names = ['A', 'graph_indicator', 'graph_labels', 'node_labels']
+        names = ['A', 'graph_indicator']
         return ['{}_{}.txt'.format(self.name, name) for name in names]
 
     @property
@@ -32,6 +34,5 @@ class TUDataset(InMemoryDataset):
         os.rename(osp.join(self.root, self.name), self.raw_dir)
 
     def process(self):
-        data_list = read_tu_dataset(self.raw_dir)
-        dataset, slices = self.collate(data_list)
+        dataset, slices = read_tu_dataset(self.raw_dir, self.name)
         torch.save((dataset, slices), self.processed_paths[0])

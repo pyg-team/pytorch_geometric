@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.read import parse_txt
+from torch_geometric.read import parse_txt_array
 from torch_geometric.data import Data
 from torch_geometric.utils import face_to_edge_index
 
@@ -8,10 +8,10 @@ def parse_off(src):
     counts_line = src[1].split()
     num_nodes, num_faces = int(counts_line[0]), int(counts_line[1])
 
-    pos = parse_txt(src[2:2 + num_nodes])
+    pos = parse_txt_array(src[2:2 + num_nodes])
 
     face = src[2 + num_nodes:2 + num_nodes + num_faces]
-    face = parse_txt(face, start=1, out=torch.LongTensor()).t()
+    face = parse_txt_array(face, start=1, dtype=torch.long).t()
 
     edge_index = face_to_edge_index(face, pos.size(0))
 
