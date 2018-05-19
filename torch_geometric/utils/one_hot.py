@@ -6,7 +6,7 @@ def one_hot(src, num_classes=None, dtype=None):
     assert src.dim() == 2
 
     if num_classes is None:
-        num_classes = src.t().max(dim=1)[0] + 1
+        num_classes = src.max(dim=0)[0] + 1
     elif isinstance(num_classes, int):
         num_classes = torch.tensor(num_classes)
 

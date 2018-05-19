@@ -42,8 +42,7 @@ def read_tu_data(folder, prefix):
         y = read_file(folder, prefix, 'graph_attributes')
     if 'graph_labels' in names:  # Classification problem.
         y = read_file(folder, prefix, 'graph_labels', torch.long)
-        assert y.dim() == 1
-        y -= y.min()
+        y -= y.min(dim=0)[0]
 
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
     data, slices = split(data, batch)
