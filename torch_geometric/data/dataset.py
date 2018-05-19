@@ -33,7 +33,7 @@ class Dataset(torch.utils.data.Dataset):
     def __len__(self):
         raise NotImplementedError
 
-    def get_data(self, i):
+    def get(self, idx):
         raise NotImplementedError
 
     def __init__(self, root, transform=None):
@@ -71,10 +71,9 @@ class Dataset(torch.utils.data.Dataset):
         makedirs(self.processed_dir)
         self.process()
 
-    def __getitem__(self, i):
-        data = self.get_data(i)
+    def __getitem__(self, idx):
+        data = self.get(idx)
+        return data if self.transform is None else self.transform(data)
 
-        if self.transform is not None:
-            data = self.transform(data)
-
-        return data
+    def __repr__(self):
+        return '{}({})'.format(self.__class__.__name__, len(self))
