@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.utils import get_num_nodes
+from torch_geometric.utils import (get_num_nodes, contains_isolated_nodes,
+                                   contains_self_loops, is_undirected)
 
 
 class Data(object):
@@ -28,6 +29,7 @@ class Data(object):
     def __setitem__(self, key, item):
         setattr(self, key, item)
 
+    @property
     def keys(self):
         return [key for key in self.__dict__.keys() if self[key] is not None]
 
@@ -49,9 +51,6 @@ class Data(object):
     def cat_dim(self, key):
         return -1 if self[key].dtype == torch.long else 0
 
-    def should_cumsum(self, key):
-        return self[key].dim() > 1 and self[key].dtype == torch.long
-
     @property
     def num_nodes(self):
         for key, item in self('x', 'pos'):
@@ -67,25 +66,20 @@ class Data(object):
         return None
 
     @property
-    def num_graphs(self):
-        if self.batch is not None:
-            return self.batch.max().item() + 1
-        # NOTE: return `1` might not be true for datasets. However, this should
-        # not be problematic, because the user only operates on singular or
-        # batch-sized data.
-        return 1
-
-    @property
     def contains_isolated_nodes(self):
-        raise NotImplementedError
+        return contains_isolated_nodes(self.edge_index)
 
     @property
     def contains_self_loops(self):
-        raise NotImplementedError
+        return contains_self_loops(self.edge_index)
+
+    @property
+    def is_undirected(self):
+        return is_undirected(self.edge_index, self.num_nodes)
 
     @property
     def is_directed(self):
-        raise NotImplementedError
+        return not self.is_undirected
 
     def apply(self, func, *keys):
         for key, item in self(*keys):

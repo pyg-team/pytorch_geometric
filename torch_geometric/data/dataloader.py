@@ -1,11 +1,10 @@
 import torch.utils.data
-from torch_geometric.data import Data, collate_to_batch
+from torch_geometric.data import Data, Batch
 
 
 def collate(batch):
     if type(batch[0]) is Data:
-        return collate_to_batch(batch)
-
+        return Batch(batch)
     return torch.utils.data.dataloader.default_collate(batch)
 
 
