@@ -8,7 +8,7 @@ from torch_geometric.read import read_tu_data
 
 class TUDataset(InMemoryDataset):
     url = 'https://ls11-www.cs.uni-dortmund.de/people/morris/' \
-          'graphkerneldatasets/'
+          'graphkerneldatasets'
 
     def __init__(self, root, name, transform=None):
         self.name = name
@@ -25,8 +25,7 @@ class TUDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        url = '{}/{}.zip'.format(self.url, self.name)
-        path = download_url(url, self.root)
+        path = download_url('{}/{}.zip'.format(self.url, self.name), self.root)
         extract_zip(path, self.root)
         os.unlink(path)
         os.rename(osp.join(self.root, self.name), self.raw_dir)
