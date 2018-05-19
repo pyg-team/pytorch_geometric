@@ -34,3 +34,6 @@ class TUDataset(InMemoryDataset):
     def process(self):
         data, slices = read_tu_data(self.raw_dir, self.name)
         torch.save((data, slices), self.processed_paths[0])
+
+    def __repr__(self):
+        return '{}({})'.format(self.name, len(self))
