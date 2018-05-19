@@ -1,25 +1,24 @@
-from torch_geometric.data import InMemoryDataset
+from torch_geometric.data import InMemoryDataset, download_url
 
 
 class TUDataset(InMemoryDataset):
     url = 'https://ls11-www.cs.uni-dortmund.de/people/morris/' \
-          'graphkerneldatasets/{}.zip'
+          'graphkerneldatasets/'
 
     def __init__(self, root, name, transform=None):
-        super(InMemoryDataset).__init__(root, transform)
-
         self.name = name
+        super(TUDataset, self).__init__(root, transform)
 
     @property
     def raw_file_names(self):
-        pass
+        return 'awdawd'
 
     @property
     def processed_file_names(self):
-        pass
+        return 'awdawd'
 
     def download(self):
-        # url = self.url.format(self.url)
+        download_url('{}/{}.zip'.format(self.url, self.name), self.raw_dir)
         pass
 
     def process(self):
