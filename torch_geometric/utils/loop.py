@@ -3,7 +3,7 @@ import torch
 from .num_nodes import get_num_nodes
 
 
-def has_self_loops(edge_index):
+def contains_self_loops(edge_index):
     row, col = edge_index
     mask = row == col
     return mask.sum().item() > 0
