@@ -26,7 +26,7 @@ def read_tu_data(folder, prefix):
         node_attributes = read_file(folder, prefix, 'node_attributes')
     if 'node_labels' in names:
         node_labels = read_file(folder, prefix, 'node_labels', torch.long)
-        node_labels = one_hot(node_labels - node_labels.min(dim=-1))
+        node_labels = one_hot(node_labels - node_labels.min(dim=0)[0])
     x = cat([node_attributes, node_labels])
 
     edge_attributes, edge_labels = None, None
@@ -34,7 +34,7 @@ def read_tu_data(folder, prefix):
         edge_attributes = read_file(folder, prefix, 'edge_attributes')
     if 'edge_labels' in names:
         edge_labels = read_file(folder, prefix, 'edge_labels', torch.long) - 1
-        edge_labels = one_hot(edge_labels - edge_labels.min(dim=-1))
+        edge_labels = one_hot(edge_labels - edge_labels.min(dim=0)[0])
     edge_attr = cat([edge_attributes, edge_labels])
 
     y = None

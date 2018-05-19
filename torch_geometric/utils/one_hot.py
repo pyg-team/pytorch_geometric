@@ -1,8 +1,20 @@
 import torch
 
 
-def one_hot(src, num_classes=None, dtype=None, device=None):
-    num_classes = src.max().item() + 1 if num_classes is None else num_classes
-    out = torch.zeros(src.size(0), num_classes, dtype=dtype, device=src.device)
-    out.scatter_(1, src.unsqueeze(-1).expand_as(out), 1)
+def one_hot(src, num_classes=None, dtype=None):
+    src = src.unsqueeze(-1) if src.dim() == 1 else src
+    assert src.dim() == 2
+
+    if num_classes is None:
+        num_classes = src.t().max(dim=1)[0] + 1
+    elif isinstance(num_classes, int):
+        num_classes = torch.tensor(num_classes)
+
+    if src.size(1) > 1:
+        zero = torch.tensor([0], device=src.device)
+        src = src + torch.cat([zero, torch.cumsum(num_classes, 0)[:-1]])
+
+    size = src.size(0), num_classes.sum()
+    out = torch.zeros(size, dtype=dtype, device=src.device)
+    out.scatter_(1, src, 1)
     return out
