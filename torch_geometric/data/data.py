@@ -53,11 +53,38 @@ class Data(object):
 
     @property
     def num_nodes(self):
-        for _, item in self('x', 'pos'):
-            return item.size(0)
+        for key, item in self('x', 'pos'):
+            return item.size(self.cat_dim(key))
         if self.edge_index is not None:
             return self.edge_index.max().item() + 1
         return None
+
+    @property
+    def num_edges(self):
+        for key, item in self('edge_index', 'edge_attr'):
+            return item.size(self.cat_dim(key))
+        return None
+
+    @property
+    def num_graphs(self):
+        if self.batch is not None:
+            return self.batch.max().item() + 1
+        # NOTE: return `1` might not be true for datasets. However, this should
+        # not be problematic, because the user only operates on singular or
+        # batched data.
+        return 1
+
+    @property
+    def contains_isolated_nodes(self):
+        raise NotImplementedError
+
+    @property
+    def contains_self_loops(self):
+        raise NotImplementedError
+
+    @property
+    def is_directed(self):
+        raise NotImplementedError
 
     def apply(self, func, *keys):
         for key, item in self(*keys):
