@@ -31,8 +31,17 @@ def test_data():
     data = Data.from_dict(dictionary)
     assert sorted(data.keys) == ['edge_index', 'x']
 
+    assert not data.contains_isolated_nodes()
+    assert not data.contains_self_loops()
+    assert data.is_undirected()
+    assert not data.is_directed()
+
     assert data.num_nodes == 3
+    assert data.num_edges == 4
+
     data.x = None
     assert data.num_nodes == 3
+
     data.edge_index = None
     assert data.num_nodes is None
+    assert data.num_edges is None
