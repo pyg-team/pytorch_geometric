@@ -31,4 +31,4 @@ class Batch(Data):
 
     @property
     def num_graphs(self):
-        return self.batch[-1] + 1
+        return self.batch[-1].item() + 1
