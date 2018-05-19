@@ -68,8 +68,12 @@ class Dataset(torch.utils.data.Dataset):
         if files_exist(self.processed_paths):
             return
 
+        print('Processing...')
+
         makedirs(self.processed_dir)
         self.process()
+
+        print('Done!')
 
     def __getitem__(self, idx):
         data = self.get(idx)
