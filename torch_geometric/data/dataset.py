@@ -16,23 +16,12 @@ def files_exist(files):
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, root, transform=None):
-        super(Dataset, self).__init__()
-
-        self.root = osp.expanduser(osp.normpath(root))
-        self.raw_dir = osp.join(self.root, 'raw')
-        self.processed_dir = osp.join(self.root, 'processed')
-        self.transform = transform
-
-        self._download()
-        self._process()
-
     @property
-    def raw_files(self):
+    def raw_file_names(self):
         raise NotImplementedError
 
     @property
-    def processed_files(self):
+    def processed_file_names(self):
         raise NotImplementedError
 
     def download(self):
@@ -47,25 +36,36 @@ class Dataset(torch.utils.data.Dataset):
     def get_data(self, i):
         raise NotImplementedError
 
+    def __init__(self, root, transform=None):
+        super(Dataset, self).__init__()
+
+        self.root = osp.expanduser(osp.normpath(root))
+        self.raw_dir = osp.join(self.root, 'raw')
+        self.processed_dir = osp.join(self.root, 'processed')
+        self.transform = transform
+
+        self._download()
+        self._process()
+
     @property
-    def _raw_files(self):
-        files = to_list(self.raw_files)
+    def raw_paths(self):
+        files = to_list(self.raw_file_names)
         return [osp.join(self.raw_dir, f) for f in files]
 
     @property
-    def _processed_files(self):
-        files = to_list(self.processed_files)
+    def processed_paths(self):
+        files = to_list(self.processed_file_names)
         return [osp.join(self.processed_dir, f) for f in files]
 
     def _download(self):
-        if files_exist(self._raw_files):
+        if files_exist(self.raw_paths):
             return
 
         makedirs(self.raw_dir)
         self.download()
 
     def _process(self):
-        if files_exist(self._processed_files):
+        if files_exist(self.processed_paths):
             return
 
         makedirs(self.processed_dir)

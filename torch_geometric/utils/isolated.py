@@ -1,6 +1,5 @@
 from torch_unique import unique
-
-from .num_nodes import get_num_nodes
+from torch_geometric.utils import get_num_nodes
 from .loop import remove_self_loops
 
 
