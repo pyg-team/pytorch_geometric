@@ -71,7 +71,7 @@ class Data(object):
             return self.batch.max().item() + 1
         # NOTE: return `1` might not be true for datasets. However, this should
         # not be problematic, because the user only operates on singular or
-        # batched data.
+        # batch-sized data.
         return 1
 
     @property
