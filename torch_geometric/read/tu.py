@@ -13,7 +13,7 @@ names = [
 ]
 
 
-def read_tu_dataset(folder, prefix):
+def read_tu_data(folder, prefix):
     files = glob.glob(osp.join(folder, '{}_*.txt'.format(prefix)))
     names = ['_'.join(f.split('/')[-1].split('_')[1:])[:-4] for f in files]
 
@@ -43,10 +43,10 @@ def read_tu_dataset(folder, prefix):
     if 'graph_labels' in names:  # Classification problem.
         y = read_file(folder, prefix, 'graph_labels', torch.long) - 1
 
-    dataset = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
-    dataset, slices = split(dataset, batch)
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
+    data, slices = split(data, batch)
 
-    return dataset, slices
+    return data, slices
 
 
 def read_file(folder, prefix, name, dtype=None):
@@ -60,26 +60,26 @@ def cat(seq):
     return torch.cat(seq, dim=-1).squeeze() if len(seq) > 0 else None
 
 
-def split(dataset, batch):
+def split(data, batch):
     node_slice = torch.cumsum(torch.from_numpy(np.bincount(batch)), 0)
     node_slice = torch.cat([torch.tensor([0]), node_slice])
 
-    row, _ = dataset.edge_index
+    row, _ = data.edge_index
     edge_slice = torch.cumsum(torch.from_numpy(np.bincount(batch[row])), 0)
     edge_slice = torch.cat([torch.tensor([0]), edge_slice])
 
     # Edge indices should start at zero for every graph.
-    dataset.edge_index -= node_slice[batch[row]].unsqueeze(0)
+    data.edge_index -= node_slice[batch[row]].unsqueeze(0)
 
     slices = {'edge_index': edge_slice}
-    if dataset.x is not None:
+    if data.x is not None:
         slices['x'] = node_slice
-    if dataset.edge_attr is not None:
+    if data.edge_attr is not None:
         slices['edge_attr'] = edge_slice
-    if dataset.y is not None:
-        if dataset.y.size(0) == batch.size(0):
+    if data.y is not None:
+        if data.y.size(0) == batch.size(0):
             slices['y'] = node_slice
         else:
             slices['y'] = torch.arange(0, batch[-1] + 2, dtype=torch.long)
 
-    return dataset, slices
+    return data, slices

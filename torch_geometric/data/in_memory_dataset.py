@@ -21,7 +21,7 @@ class InMemoryDataset(Dataset):
 
     def __init__(self, root, transform=None):
         super(InMemoryDataset, self).__init__(root, transform)
-        self.dataset, self.slices = None, None
+        self.data, self.slices = None, None
 
     def __len__(self):
         return self.slices[list(self.slices.keys())[0]].size(0) - 1
@@ -46,34 +46,34 @@ class InMemoryDataset(Dataset):
 
     def get(self, idx):
         data = Data()
-        for key in self.dataset.keys:
-            item, slices = self.dataset[key], self.slices[key]
+        for key in self.data.keys:
+            item, slices = self.data[key], self.slices[key]
             s = list(repeat(slice(None), item.dim()))
-            s[self.dataset.cat_dim(key)] = slice(slices[idx], slices[idx + 1])
+            s[self.data.cat_dim(key)] = slice(slices[idx], slices[idx + 1])
             data[key] = item[s]
         return data
 
     def split(self, index):
         copy = self.__class__.__new__(self.__class__)
         copy.__dict__ = self.__dict__
-        copy.dataset, copy.slices = self.collate([self.get(i) for i in index])
+        copy.data, copy.slices = self.collate([self.get(i) for i in index])
         return copy
 
     def collate(self, data_list):
         keys = data_list[0].keys
-        dataset = Data()
+        data = Data()
 
         for key in keys:
-            dataset[key] = []
+            data[key] = []
         slices = {key: [0] for key in keys}
 
-        for data, key in product(data_list, keys):
-            dataset[key].append(data[key])
-            s = slices[key][-1] + data[key].size(data.cat_dim(key))
+        for item, key in product(data_list, keys):
+            data[key].append(item[key])
+            s = slices[key][-1] + item[key].size(item.cat_dim(key))
             slices[key].append(s)
 
         for key in keys:
-            dataset[key] = torch.cat(dataset[key], dim=data.cat_dim(key))
+            data[key] = torch.cat(data[key], dim=data_list[0].cat_dim(key))
             slices[key] = torch.LongTensor(slices[key])
 
-        return dataset, slices
+        return data, slices
