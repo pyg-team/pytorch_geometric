@@ -34,17 +34,17 @@ class Data(object):
         return [key for key in self.__dict__.keys() if self[key] is not None]
 
     def __len__(self):
-        return len(self.keys())
+        return len(self.keys)
 
     def __contains__(self, key):
-        return key in self.keys()
+        return key in self.keys
 
     def __iter__(self):
-        for key in self.keys():
+        for key in self.keys:
             yield key, self[key]
 
     def __call__(self, *keys):
-        for key in self.keys() if not keys else keys:
+        for key in self.keys if not keys else keys:
             if self[key] is not None:
                 yield key, self[key]
 
@@ -93,6 +93,6 @@ class Data(object):
         return self.apply(lambda x: x.to(device), *keys)
 
     def __repr__(self):
-        keys = sorted(self.keys())
+        keys = sorted(self.keys)
         info = ['{}={}'.format(key, list(self[key].size())) for key in keys]
         return 'Data({})'.format(', '.join(info))

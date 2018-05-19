@@ -4,7 +4,7 @@ from torch_geometric.data import Data, collate_to_set
 
 def data_from_set(dataset, slices, i):
     data = Data()
-    for key in dataset.keys():
+    for key in dataset.keys:
         s = list(repeat(slice(None), dataset[key].dim()))
         s[dataset.cat_dim(key)] = slice(slices[key][i], slices[key][i + 1])
         data[key] = dataset[key][s]
