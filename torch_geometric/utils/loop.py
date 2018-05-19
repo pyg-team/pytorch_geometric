@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import get_num_nodes
+from torch_geometric.utils import maybe_num_nodes
 
 
 def contains_self_loops(edge_index):
@@ -9,7 +9,7 @@ def contains_self_loops(edge_index):
 
 
 def add_self_loops(edge_index, num_nodes=None):
-    num_nodes = get_num_nodes(edge_index, num_nodes)
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     dtype, device = edge_index.dtype, edge_index.device
     loop = torch.arange(0, num_nodes, dtype=dtype, device=device)

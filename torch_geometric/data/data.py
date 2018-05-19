@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import (get_num_nodes, contains_isolated_nodes,
+from torch_geometric.utils import (maybe_num_nodes, contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
 
@@ -56,7 +56,7 @@ class Data(object):
         for key, item in self('x', 'pos'):
             return item.size(self.cat_dim(key))
         if self.edge_index is not None:
-            return get_num_nodes(self.edge_index)
+            return maybe_num_nodes(self.edge_index)
         return None
 
     @property

@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import get_num_nodes
+from torch_geometric.utils import maybe_num_nodes
 
 
 def degree(index, num_nodes=None, dtype=None, device=None):
@@ -31,6 +31,6 @@ def degree(index, num_nodes=None, dtype=None, device=None):
 
        tensor([ 3.,  1.,  1.])
     """
-    num_nodes = get_num_nodes(index, num_nodes)
+    num_nodes = maybe_num_nodes(index, num_nodes)
     out = torch.zeros((num_nodes), dtype=dtype, device=device)
     return out.scatter_add_(0, index, out.new_ones((index.size(0))))
