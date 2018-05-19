@@ -65,19 +65,15 @@ class Data(object):
             return item.size(self.cat_dim(key))
         return None
 
-    @property
     def contains_isolated_nodes(self):
         return contains_isolated_nodes(self.edge_index)
 
-    @property
     def contains_self_loops(self):
         return contains_self_loops(self.edge_index)
 
-    @property
     def is_undirected(self):
         return is_undirected(self.edge_index, self.num_nodes)
 
-    @property
     def is_directed(self):
         return not self.is_undirected
 
