@@ -95,4 +95,4 @@ class Data(object):
     def __repr__(self):
         keys = sorted(self.keys)
         info = ['{}={}'.format(key, list(self[key].size())) for key in keys]
-        return 'Data({})'.format(', '.join(info))
+        return '{}({})'.format(self.__class__.__name__, ', '.join(info))
