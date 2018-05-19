@@ -1,5 +1,7 @@
 import torch
 
+from .num_nodes import get_num_nodes
+
 
 def degree(index, num_nodes=None, dtype=None, device=None):
     """Computes the degree of a given index tensor.
@@ -30,7 +32,6 @@ def degree(index, num_nodes=None, dtype=None, device=None):
 
        tensor([ 3.,  1.,  1.])
     """
-
-    num_nodes = index.max().item() + 1 if num_nodes is None else num_nodes
+    num_nodes = get_num_nodes(index, num_nodes)
     out = torch.zeros((num_nodes), dtype=dtype, device=device)
     return out.scatter_add_(0, index, out.new_ones((index.size(0))))

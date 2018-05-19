@@ -1,8 +1,10 @@
 from torch_scatter import scatter_add
 
+from .num_nodes import get_num_nodes
+
 
 def softmax(src, index, num_nodes=None):
-    num_nodes = index.max().item() + 1 if num_nodes is None else num_nodes
+    num_nodes = get_num_nodes(index, num_nodes)
 
     out = src.exp()
     out = out / scatter_add(out, index, dim=0, dim_size=num_nodes)[index]
