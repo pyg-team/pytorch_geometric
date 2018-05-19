@@ -1,3 +1,5 @@
+from __future__ import division
+
 import sys
 import random
 import os.path as osp
