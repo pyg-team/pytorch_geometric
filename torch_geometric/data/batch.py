@@ -1,6 +1,5 @@
 import torch
-
-from .data import Data
+from torch_geometric.data import Data
 
 
 class Batch(Data):

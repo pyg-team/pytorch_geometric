@@ -1,6 +1,5 @@
 from torch_scatter import scatter_add
-
-from .num_nodes import get_num_nodes
+from torch_geometric.utils import get_num_nodes
 
 
 def softmax(src, index, num_nodes=None):

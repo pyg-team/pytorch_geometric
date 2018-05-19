@@ -1,6 +1,5 @@
 import torch
-
-from .num_nodes import get_num_nodes
+from torch_geometric.utils import get_num_nodes
 
 
 def degree(index, num_nodes=None, dtype=None, device=None):
