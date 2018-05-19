@@ -1,0 +1,4 @@
+[report]
+exlcude_lines =
+    pragma: no cover
+    raise
