@@ -54,6 +54,5 @@ class LinearTransformation(object):
         return data
 
     def __repr__(self):
-        matrix = str(self.matrix.cpu().numpy())[1:-1].split('\n')
-        matrix = '\n'.join(['    {}'.format(row.strip()) for row in matrix])
-        return '{}([\n{}\n])'.format(self.__class__.__name__, matrix)
+        matrix = self.matrix.cpu().tolist()
+        return '{}({})'.format(self.__class__.__name__, matrix)

@@ -44,7 +44,7 @@ class Spherical(object):
 
         cart = pos[col] - pos[row]
         rho = torch.norm(cart, p=2, dim=-1)
-        rho /= rho.max()
+        rho = rho / rho.max()
         theta = torch.atan2(cart[..., 1], cart[..., 0]) / (2 * PI)
         theta += (theta < 0).type_as(theta)
         phi = torch.acos(cart[..., 2] / rho) / PI
