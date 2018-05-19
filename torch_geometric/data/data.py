@@ -40,11 +40,11 @@ class Data(object):
         return key in self.keys
 
     def __iter__(self):
-        for key in self.keys:
+        for key in sorted(self.keys):
             yield key, self[key]
 
     def __call__(self, *keys):
-        for key in self.keys if not keys else keys:
+        for key in sorted(self.keys) if not keys else keys:
             if self[key] is not None:
                 yield key, self[key]
 
@@ -93,6 +93,5 @@ class Data(object):
         return self.apply(lambda x: x.to(device), *keys)
 
     def __repr__(self):
-        keys = sorted(self.keys)
-        info = ['{}={}'.format(key, list(self[key].size())) for key in keys]
+        info = ['{}={}'.format(key, list(item.size())) for key, item in self]
         return '{}({})'.format(self.__class__.__name__, ', '.join(info))
