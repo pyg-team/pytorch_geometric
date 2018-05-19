@@ -8,6 +8,6 @@ from .in_memory_dataset import InMemoryDataset
 from .dataloader import DataLoader
 
 __all__ = [
-    'makedirs', 'Data', 'collate_to_set', 'data_from_set', 'split_set',
-    'Dataset', 'DataLoader', 'InMemoryDataset', 'DataLoader'
+    'makedirs', 'Data', 'Batch', 'collate_to_set', 'data_from_set',
+    'split_set', 'Dataset', 'DataLoader', 'InMemoryDataset', 'DataLoader'
 ]
