@@ -1,4 +1,3 @@
-from .makedirs import makedirs
 from .download import download_url
 from .extract import extract_tar, extract_zip
 from .data import Data
@@ -8,6 +7,6 @@ from .in_memory_dataset import InMemoryDataset
 from .dataloader import DataLoader
 
 __all__ = [
-    'makedirs', 'download_url', 'extract_tar', 'extract_zip', 'Data', 'Batch',
-    'Dataset', 'DataLoader', 'InMemoryDataset', 'DataLoader'
+    'download_url', 'extract_tar', 'extract_zip', 'Data', 'Batch', 'Dataset',
+    'DataLoader', 'InMemoryDataset', 'DataLoader'
 ]

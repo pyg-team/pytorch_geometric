@@ -38,3 +38,5 @@ html_theme_options = {
 html_logo = '_static/img/logo.svg'
 html_static_path = ['_static']
 html_context = {'css_files': ['_static/css/custom.css']}
+
+add_module_names = False

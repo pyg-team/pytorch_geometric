@@ -1,6 +1,7 @@
 import os.path as osp
 from six.moves import urllib
-from torch_geometric.data import makedirs
+
+from .makedirs import makedirs
 
 
 def download_url(url, folder):

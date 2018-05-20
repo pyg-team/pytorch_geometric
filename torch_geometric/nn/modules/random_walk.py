@@ -7,7 +7,7 @@ from .utils.inits import uniform
 
 class RandomWalk(Module):
     """Random Walk Operator from the `"Adaptive Diffusions for Scalable
-    Learning over Graphs"<https://arxiv.org/abs/1804.02081>`_ paper.
+    Learning over Graphs" <https://arxiv.org/abs/1804.02081>`_ paper.
 
     Args:
         num_classes (int): Number of output classes.
