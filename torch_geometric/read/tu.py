@@ -4,7 +4,7 @@ import glob
 import torch
 import numpy as np
 from torch_geometric.read import read_txt_array
-from torch_geometric.utils import coalesce, one_hot
+from torch_geometric.utils import coalesce, remove_self_loops, one_hot
 from torch_geometric.data import Data
 
 names = [
@@ -19,6 +19,7 @@ def read_tu_data(folder, prefix):
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
     edge_index, _ = coalesce(edge_index)
+    edge_index = remove_self_loops(edge_index)
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1
 
     node_attributes, node_labels = None, None
