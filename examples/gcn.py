@@ -25,6 +25,10 @@ class Net(torch.nn.Module):
         x = self.conv2(x, data.edge_index)
         return F.log_softmax(x, dim=1)
 
+    def reset_parameters(self):
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
+
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model, data = Net().to(device), data.to(device)
