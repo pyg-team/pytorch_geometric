@@ -6,6 +6,7 @@ from .spherical import Spherical
 from .target_indegree import TargetIndegree
 from .linear_transformation import LinearTransformation
 from .normalize import Normalize
+from .nn_graph import NNGraph
 
 from .log_cartesian import LogCartesian
 from .random_translate import RandomTranslate
@@ -18,8 +19,8 @@ from .sample_pointcloud import SamplePointcloud, PCToGraphNN, PCToGraphRad
 
 __all__ = [
     'Compose', 'Cartesian', 'LocalCartesian', 'Polar', 'Spherical',
-    'TargetIndegree', 'LinearTransformation', 'Normalize', 'LogCartesian',
-    'RandomFlip', 'PCToGraphRad', 'PCToGraphNN', 'SamplePointcloud',
-    'RandomTranslate', 'RandomScale', 'RandomRotate', 'RandomShear',
-    'NormalizeScale'
+    'TargetIndegree', 'LinearTransformation', 'Normalize', 'NNGraph',
+    'LogCartesian', 'RandomFlip', 'PCToGraphRad', 'PCToGraphNN',
+    'SamplePointcloud', 'RandomTranslate', 'RandomScale', 'RandomRotate',
+    'RandomShear', 'NormalizeScale'
 ]
