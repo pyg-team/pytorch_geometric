@@ -11,9 +11,9 @@ def read_ply_data(path):
     pos = ([torch.tensor(data['vertex'][axis]) for axis in ['x', 'y', 'z']])
     pos = torch.stack(pos, dim=-1)
 
-    face = data['face']['vertex_indices']
-    face = [torch.tensor(f, dtype=torch.long) for f in face]
-    face = torch.stack(face, dim=-1)
+    faces = data['face']['vertex_indices']
+    faces = [torch.tensor(face, dtype=torch.long) for face in faces]
+    face = torch.stack(faces, dim=-1)
 
     edge_index = face_to_edge_index(face, num_nodes=pos.size(0))
 
