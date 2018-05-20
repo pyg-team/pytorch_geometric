@@ -1,2 +1,2 @@
-Introduction
-============
+Introduction by example
+=======================
