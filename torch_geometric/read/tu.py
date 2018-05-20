@@ -18,8 +18,6 @@ def read_tu_data(folder, prefix):
     names = ['_'.join(f.split('/')[-1].split('_')[1:])[:-4] for f in files]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
-    edge_index, _ = coalesce(edge_index)
-    edge_index = remove_self_loops(edge_index)
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1
 
     node_attributes, node_labels = None, None
@@ -44,6 +42,9 @@ def read_tu_data(folder, prefix):
     if 'graph_labels' in names:  # Classification problem.
         y = read_file(folder, prefix, 'graph_labels', torch.long)
         y -= y.min(dim=0)[0]
+
+    edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
+    edge_index, edge_attr = coalesce(edge_index, edge_attr)
 
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
     data, slices = split(data, batch)

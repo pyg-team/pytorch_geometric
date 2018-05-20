@@ -18,8 +18,7 @@ def parse_sdf(src):
 
     bond_block = src[1 + num_atoms:1 + num_atoms + num_bonds]
     edge_index = parse_txt_array(bond_block, end=2, dtype=torch.long) - 1
-    edge_index, perm = coalesce(edge_index.t())
     edge_attr = parse_txt_array(bond_block, start=2, end=3, dtype=torch.long)
-    edge_attr = edge_attr[perm] - 1
+    edge_index, edge_attr = coalesce(edge_index.t(), edge_attr - 1)
 
     return Data(x=x, edge=edge_index, edge_attr=edge_attr, pos=pos)

@@ -85,8 +85,8 @@ def edge_index_from_dict(graph_dict, num_nodes=None):
     edge_index = torch.stack([torch.tensor(row), torch.tensor(col)], dim=0)
     # NOTE: There are duplicated edges and self loops in the datasets. Other
     # implementations do not remove them!
+    edge_index, _ = remove_self_loops(edge_index)
     edge_index, _ = coalesce(edge_index, num_nodes=num_nodes)
-    edge_index = remove_self_loops(edge_index)
     return edge_index
 
 

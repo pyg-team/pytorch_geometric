@@ -1,16 +1,31 @@
 import torch
-from torch_unique import unique_by_key
+from torch_unique import unique, unique_by_key
 
 from .num_nodes import maybe_num_nodes
 
 
-def coalesce(edge_index, num_nodes=None):
+def is_coalesced(edge_index, num_nodes=None):
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     row, col = edge_index
 
     index = num_nodes * row + col
-    perm = torch.arange(index.size(0), dtype=torch.long, device=row.device)
-    _, perm = unique_by_key(index, perm)
-    edge_index = edge_index[:, perm]
+    return index.size(0) == unique(index).size(0)
 
-    return edge_index, perm
+
+def coalesce(edge_index, edge_attr=None, num_nodes=None):
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    row, col = edge_index
+
+    if edge_attr is None:
+        index = num_nodes * row + col
+        perm = torch.arange(index.size(0), dtype=torch.long, device=row.device)
+        _, perm = unique_by_key(index, perm)
+        edge_index = edge_index[:, perm]
+    else:
+        sparse = getattr(torch.sparse, edge_attr.type().split('.')[-1])
+        n = num_nodes
+        size = torch.Size([n, n, *list(edge_attr.size())[1:]])
+        adj = sparse(edge_index, edge_attr, size).coalesce()
+        edge_index, edge_attr = adj._indices(), adj._values()
+
+    return edge_index, edge_attr

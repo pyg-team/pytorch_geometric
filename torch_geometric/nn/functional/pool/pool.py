@@ -4,11 +4,8 @@ from torch_geometric.utils import remove_self_loops, coalesce
 
 def pool(edge_index, cluster, edge_attr=None, pos=None):
     edge_index = cluster[edge_index.view(-1)].view(2, -1)
-    edge_index = remove_self_loops(edge_index)
-    edge_index, _ = coalesce(edge_index, num_nodes=cluster.size(0))
-
-    if edge_attr is not None:
-        edge_attr = None  # TODO
+    edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
+    edge_index, edge_attr = coalesce(edge_index, edge_attr, cluster.size(0))
 
     if pos is not None:
         pos = scatter_mean(pos, cluster, dim=0)
