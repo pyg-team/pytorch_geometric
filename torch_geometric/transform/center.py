@@ -1,5 +1,5 @@
 class Center(object):
-    def __call__(data):
+    def __call__(self, data):
         pos = data.pos
 
         mean = data.pos.mean(dim=0).view(1, -1)
