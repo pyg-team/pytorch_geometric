@@ -1,5 +1,6 @@
 from torch_unique import unique
-from torch_geometric.utils import maybe_num_nodes
+
+from .num_nodes import maybe_num_nodes
 from .loop import remove_self_loops
 
 

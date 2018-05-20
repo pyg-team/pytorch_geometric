@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.utils import maybe_num_nodes
+
+from .num_nodes import maybe_num_nodes
 
 
 def contains_self_loops(edge_index):
