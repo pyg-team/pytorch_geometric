@@ -7,8 +7,8 @@ from .target_indegree import TargetIndegree
 from .center import Center
 from .normalize_scale import NormalizeScale
 from .random_translate import RandomTranslate
-from .linear_transformation import LinearTransformation
 from .random_flip import RandomFlip
+from .linear_transformation import LinearTransformation
 from .random_scale import RandomScale
 from .random_rotate import RandomRotate
 from .random_shear import RandomShear
@@ -17,8 +17,21 @@ from .nn_graph import NNGraph
 from .radius_graph import RadiusGraph
 
 __all__ = [
-    'Compose', 'Cartesian', 'LocalCartesian', 'Polar', 'Spherical',
-    'TargetIndegree', 'LinearTransformation', 'NormalizeFeatures', 'NNGraph',
-    'RadiusGraph', 'Center', 'RandomFlip', 'RandomTranslate', 'RandomScale',
-    'RandomRotate', 'RandomShear', 'NormalizeScale'
+    'Compose',
+    'Cartesian',
+    'LocalCartesian',
+    'Polar',
+    'Spherical',
+    'TargetIndegree',
+    'Center',
+    'NormalizeScale',
+    'RandomTranslate',
+    'RandomFlip',
+    'LinearTransformation',
+    'RandomScale',
+    'RandomRotate',
+    'RandomShear',
+    'NormalizeFeatures',
+    'NNGraph',
+    'RadiusGraph',
 ]
