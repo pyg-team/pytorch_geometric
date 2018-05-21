@@ -7,6 +7,13 @@ from .in_memory_dataset import InMemoryDataset
 from .dataloader import DataLoader
 
 __all__ = [
-    'download_url', 'extract_tar', 'extract_zip', 'Data', 'Batch', 'Dataset',
-    'DataLoader', 'InMemoryDataset', 'DataLoader'
+    'download_url',
+    'extract_tar',
+    'extract_zip',
+    'Data',
+    'Batch',
+    'Dataset',
+    'DataLoader',
+    'InMemoryDataset',
+    'DataLoader',
 ]
