@@ -2,8 +2,8 @@ import torch
 
 
 class LinearTransformation(object):
-    r"""Transforms all node positions with a square transformation matrix
-    computed offline.
+    r"""Transforms node positions with a square transformation matrix computed
+    offline.
 
     Args:
         matrix (Tensor): tensor with shape :math:`[D, D]` where :math:`D`
@@ -54,5 +54,5 @@ class LinearTransformation(object):
         return data
 
     def __repr__(self):
-        matrix = self.matrix.cpu().tolist()
-        return '{}({})'.format(self.__class__.__name__, matrix)
+        return '{}({})'.format(self.__class__.__name__,
+                               self.matrix.cpu().tolist())
