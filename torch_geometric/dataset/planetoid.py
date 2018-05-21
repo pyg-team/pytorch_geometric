@@ -6,9 +6,9 @@ from torch_geometric.read import read_planetoid_data
 class Planetoid(InMemoryDataset):
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
 
-    def __init__(self, root, name, transform=None):
+    def __init__(self, root, name, transform=None, pre_transform=None):
         self.name = name
-        super(Planetoid, self).__init__(root, transform)
+        super(Planetoid, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -27,6 +27,7 @@ class Planetoid(InMemoryDataset):
     def process(self):
         data = read_planetoid_data(self.raw_dir, self.name)
         data, slices = self.collate([data])
+        data = data if self.pre_transform is None else self.pre_transform(data)
         torch.save((data, slices), self.processed_paths[0])
 
     def __repr__(self):
