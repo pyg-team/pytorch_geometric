@@ -3,6 +3,7 @@ from .planetoid import Planetoid
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
 from .qm9 import QM9
+from .shapenet import ShapeNet
 
 __all__ = [
     'TUDataset',
@@ -10,4 +11,5 @@ __all__ = [
     'MNISTSuperpixels',
     'FAUST',
     'QM9',
+    'ShapeNet',
 ]
