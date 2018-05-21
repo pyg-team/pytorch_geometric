@@ -7,18 +7,26 @@ elems = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
 
 
 def parse_sdf(src):
-    counts_line = src[0].split()
-    num_atoms, num_bonds = int(counts_line[0]), int(counts_line[1])
+    src = src.split('\n')[3:]
+    num_atoms, num_bonds = [int(item) for item in src[0].split()[:2]]
 
     atom_block = src[1:num_atoms + 1]
     pos = parse_txt_array(atom_block, end=3)
-    x = parse_txt_array(
-        atom_block, lambda x: elems[x], start=3, end=4, dtype=torch.long)
+    x = torch.tensor([elems[item.split()[3]] for item in atom_block])
     x = one_hot(x, len(elems))
 
     bond_block = src[1 + num_atoms:1 + num_atoms + num_bonds]
-    edge_index = parse_txt_array(bond_block, end=2, dtype=torch.long) - 1
-    edge_attr = parse_txt_array(bond_block, start=2, end=3, dtype=torch.long)
-    edge_index, edge_attr = coalesce(edge_index.t(), edge_attr - 1)
+    row, col = parse_txt_array(bond_block, end=2, dtype=torch.long).t() - 1
+    row, col = torch.cat([row, col], dim=0), torch.cat([col, row], dim=0)
+    edge_index = torch.stack([row, col], dim=0)
+    edge_attr = parse_txt_array(bond_block, start=2, end=3) - 1
+    edge_attr = torch.cat([edge_attr, edge_attr], dim=0)
+    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_atoms)
 
-    return Data(x=x, edge=edge_index, edge_attr=edge_attr, pos=pos)
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, pos=pos)
+    return data
+
+
+def read_sdf(path):
+    with open(path, 'r') as f:
+        return parse_sdf(f.read())
