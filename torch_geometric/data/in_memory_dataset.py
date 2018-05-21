@@ -19,8 +19,8 @@ class InMemoryDataset(Dataset):
     def process(self):
         raise NotImplementedError
 
-    def __init__(self, root, transform=None):
-        super(InMemoryDataset, self).__init__(root, transform)
+    def __init__(self, root, transform=None, pre_transform=None):
+        super(InMemoryDataset, self).__init__(root, transform, pre_transform)
         self.data, self.slices = None, None
 
     def __len__(self):
@@ -29,7 +29,8 @@ class InMemoryDataset(Dataset):
     def __getitem__(self, idx):
         if isinstance(idx, int):
             data = self.get(idx)
-            return data if self.transform is None else self.transform(data)
+            data = data if self.transform is None else self.transform(data)
+            return data
         elif isinstance(idx, slice):
             return self.split(range(*idx.indices(len(self))))
         elif isinstance(idx, torch.LongTensor):

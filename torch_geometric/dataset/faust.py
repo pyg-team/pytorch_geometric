@@ -9,8 +9,8 @@ from torch_geometric.read import read_ply_data
 class FAUST(InMemoryDataset):
     url = 'http://faust.is.tue.mpg.de/'
 
-    def __init__(self, root, train=True, transform=None):
-        super(FAUST, self).__init__(root, transform)
+    def __init__(self, root, train=True, transform=None, pre_transform=None):
+        super(FAUST, self).__init__(root, transform, pre_transform)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
 
@@ -34,8 +34,11 @@ class FAUST(InMemoryDataset):
         path = osp.join(path, 'tr_reg_{0:03d}.ply')
         data_list = []
         for i in range(100):
-            data_list.append(read_ply_data(path.format(i)))
-            data_list[-1].y = torch.tensor([i % 10], dtype=torch.long)
+            data = read_ply_data(path.format(i))
+            data.y = torch.tensor([i % 10], dtype=torch.long)
+            if self.pre_transform is not None:
+                data = self.pre_transform(data)
+            data_list.append(data)
 
         torch.save(self.collate(data_list[:80]), self.processed_paths[0])
         torch.save(self.collate(data_list[80:]), self.processed_paths[1])
