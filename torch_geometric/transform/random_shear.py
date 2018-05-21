@@ -1,23 +1,36 @@
 import torch
+from torch_geometric.transform import LinearTransformation
 
 
 class RandomShear(object):
-    def __init__(self, max):
-        self.max = abs(max)
+    r"""Shears node positions by randomly sampled factors :math:`s` within a
+    given interval, e.g., resulting in the transformation matrix
+
+    .. math::
+        \begin{bmatrix}
+            1      & s_{xy} & s_{xz} \\
+            s_{yx} & 1      & s_{yz} \\
+            s_{zx} & z_{zy} & 1      \\
+        \end{bmatrix}
+
+    for three-dimensional positions.
+
+    Args:
+        shear (float or int): maximum shearing factor defining the range
+            :math:`(-\mathrm{shear}, +\mathrm{shear})` to sample from.
+    """
+
+    def __init__(self, shear):
+        self.shear = abs(shear)
 
     def __call__(self, data):
-        mean = data.pos.mean(dim=0)
-        pos = data.pos - mean
+        dim = data.pos.size(1)
 
-        dim = pos.size(1)
-        shear = torch.rand(dim, dim) * 2 * self.max - self.max
-        range = torch.arange(0, dim, out=torch.LongTensor())
-        shear[range, range] = 1
+        matrix = data.pos.new_empty(dim, dim).uniform(-self.scale, self.scale)
+        eye = torch.arange(dim, dtype=torch.long)
+        matrix[eye, eye] = 1
 
-        shear = shear.type_as(pos)
-        pos = torch.matmul(shear, pos.view(-1, dim, 1))
-        pos = pos.view(-1, dim)
+        return LinearTransformation(matrix)(data)
 
-        pos += mean
-        data.pos = pos
-        return data
+    def __repr__(self):
+        return '{}({})'.format(self.__class__.__name__, *self.scale)

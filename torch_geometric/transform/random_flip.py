@@ -2,7 +2,7 @@ import random
 
 
 class RandomFlip(object):
-    """Flips the position of nodes along a given axis randomly with a given
+    """Flips node positions along a given axis randomly with a given
     probability.
 
     Args:

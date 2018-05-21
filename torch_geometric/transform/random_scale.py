@@ -1,30 +1,34 @@
-from __future__ import division
-
 import torch
+from torch_geometric.transform import LinearTransformation
 
 
 class RandomScale(object):
+    r"""Scales node positions by a randomly sampled factor :math:`s` within a
+    given interval, e.g., resulting in the transformation matrix
+
+    .. math::
+        \begin{bmatrix}
+            s & 0 & 0 \\
+            0 & s & 0 \\
+            0 & 0 & s \\
+        \end{bmatrix}
+
+    for three-dimensional positions.
+
+    Args:
+        scale (tuple): scaling factor interval, e.g. :obj:`(a, b)`, then scale
+            is randomly sampled from the range
+            :math:`a \leq \mathrm{scale} \leq b`.
+    """
+
     def __init__(self, scale):
-        self.max = max(abs(scale), 1)
+        self.scale = scale
 
     def __call__(self, data):
-        mean = data.pos.mean(dim=0)
-        pos = data.pos - mean
+        rand = data.pos.new_empty(1).uniform(*self.scale)
+        matrix = torch.diag(rand.expand(data.pos.size(1)))
 
-        scale = 2 * torch.rand(pos.size(1))
-        upscale_mask = scale > 1
-        downscale_mask = scale < 1
+        return LinearTransformation(matrix)(data)
 
-        scale[upscale_mask] -= 1
-        scale[upscale_mask] *= (self.max - 1)
-        scale[upscale_mask] += 1
-
-        inv = 1 / self.max
-        scale[downscale_mask] *= (1 - inv)
-        scale[downscale_mask] += inv
-
-        pos *= scale.type_as(pos)
-
-        pos += mean
-        data.pos = pos
-        return data
+    def __repr__(self):
+        return '{}({})'.format(self.__class__.__name__, *self.scale)
