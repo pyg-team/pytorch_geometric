@@ -15,6 +15,7 @@ from .random_shear import RandomShear
 from .normalize_features import NormalizeFeatures
 from .nn_graph import NNGraph
 from .radius_graph import RadiusGraph
+from .face_to_edge import FaceToEdge
 
 __all__ = [
     'Compose',
@@ -34,4 +35,5 @@ __all__ = [
     'NormalizeFeatures',
     'NNGraph',
     'RadiusGraph',
+    'FaceToEdge',
 ]
