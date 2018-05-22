@@ -1,15 +1,17 @@
-from __future__ import division
+from torch_geometric.transform import Center
 
 
 class NormalizeScale(object):
+    def __init__(self):
+        self.center = Center()
+
     def __call__(self, data):
-        pos = data.pos
-        data.offset = -pos.min(dim=0, keepdim=True)[0]
-        pos += data.offset
-        data.scale = 1 / pos.max()
-        pos *= data.scale
-        to_mid = 0.5 * (1 - pos.max(0, keepdim=True)[0])
-        pos += to_mid
-        data.offset += to_mid / data.scale
-        data.pos = pos
+        data = self.center(data)
+
+        scale = (1 / data.pos.abs().max()) * 0.999999
+        data.pos = data.pos * scale
+
         return data
+
+    def __repr__(self):
+        return '{}()'.format(self.__class__.__name__)

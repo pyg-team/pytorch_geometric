@@ -1,8 +1,4 @@
 import random
-from itertools import repeat
-
-import torch
-from torch_geometric.transform import LinearTransformation
 
 
 class RandomScale(object):
@@ -29,8 +25,8 @@ class RandomScale(object):
 
     def __call__(self, data):
         scale = random.uniform(*self.scales)
-        matrix = torch.diag(torch.tensor(repeat(scale, data.pos.size(1))))
-        return LinearTransformation(matrix)(data)
+        data.pos = data.pos * scale
+        return data
 
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__, self.scales)
