@@ -1,68 +1,60 @@
-from __future__ import division, print_function
-
 import os.path as osp
 
 import torch
-from torch import nn
 import torch.nn.functional as F
-from torch_geometric.datasets import Cora
-from torch_geometric.transform import TargetIndegree
+from torch_geometric.dataset import Planetoid
+import torch_geometric.transform as T
 from torch_geometric.nn.modules import SplineConv
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
-dataset = Cora(osp.join(path, 'Cora'), transform=TargetIndegree())
-data = dataset[0].cuda()
-train_mask = torch.arange(0, data.num_nodes - 1000).long()
-test_mask = torch.arange(data.num_nodes - 500, data.num_nodes).long()
+dataset = 'Cora'
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+data = Planetoid(path, dataset, T.TargetIndegree())[0]
+
+data.train_mask = torch.zeros(data.num_nodes, dtype=torch.uint8)
+data.train_mask[:data.num_nodes - 1000] = 1
+data.val_mask = None
+data.test_mask = torch.zeros(data.num_nodes, dtype=torch.uint8)
+data.test_mask[data.num_nodes - 500:] = 1
 
 
-class Net(nn.Module):
+class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1433, 16, dim=1, kernel_size=2)
-        self.conv2 = SplineConv(16, 7, dim=1, kernel_size=2)
+        self.conv1 = SplineConv(data.num_features, 16, dim=1, kernel_size=2)
+        self.conv2 = SplineConv(16, data.num_classes, dim=1, kernel_size=2)
 
     def forward(self):
-        x, edge_index, pseudo = data.input, data.index, data.weight
+        x, edge_index, edge_attr = data.x, data.edge_index, data.edge_attr
         x = F.dropout(x, training=self.training)
-        x = F.elu(self.conv1(x, edge_index, pseudo))
+        x = F.elu(self.conv1(x, edge_index, edge_attr))
         x = F.dropout(x, training=self.training)
-        x = self.conv2(x, edge_index, pseudo)
+        x = self.conv2(x, edge_index, edge_attr)
         return F.log_softmax(x, dim=1)
 
 
-model = Net()
-if torch.cuda.is_available():
-    train_mask, test_mask = train_mask.cuda(), test_mask.cuda()
-    model = model.cuda()
-
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.005)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model, data = Net().to(device), data.to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-3)
 
 
 def train():
     model.train()
     optimizer.zero_grad()
-    F.nll_loss(model()[train_mask], data.target[train_mask]).backward()
+    F.nll_loss(model()[data.train_mask], data.y[data.train_mask]).backward()
     optimizer.step()
 
 
-def test(mask):
+def test():
     model.eval()
-    pred = model()[mask].max(1)[1]
-    return pred.eq(data.target[mask]).sum().item() / mask.size(0)
+    logits, accs = model(), []
+    for _, mask in data('train_mask', 'test_mask'):
+        pred = logits[mask].max(1)[1]
+        acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
+        accs.append(acc)
+    return accs
 
 
-acc = []
-for run in range(1, 101):
-    model.conv1.reset_parameters()
-    model.conv2.reset_parameters()
-
-    for _ in range(200):
-        train()
-
-    acc.append(test(test_mask))
-    print('Run: {:03d}, Test: {:.4f}'.format(run, acc[-1]))
-
-mean = torch.tensor(acc).mean().item()
-std = torch.tensor(acc).std().item()
-print('Mean: {:.4f}, Stddev: {:.4f}'.format(mean, std))
+for epoch in range(1, 101):
+    train()
+    log = 'Epoch: {:03d}, Train: {:.4f}, Test: {:.4f}'
+    print(log.format(epoch, *test()))

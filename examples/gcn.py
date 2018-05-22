@@ -14,8 +14,8 @@ data = Planetoid(path, dataset, T.NormalizeFeatures())[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GraphConv(data.x.size(1), 16)
-        self.conv2 = GraphConv(16, data.y.max().item() + 1)
+        self.conv1 = GraphConv(data.num_features, 16)
+        self.conv2 = GraphConv(16, data.num_classes)
         # self.conv1 = ChebConv(data.x.size(1), 16, 2)
         # self.conv2 = ChebConv(16, data.y.max().item() + 1, 2)
 
@@ -44,8 +44,7 @@ def train():
 
 def test():
     model.eval()
-    logits = model()
-    accs = []
+    logits, accs = model(), []
     for _, mask in data('train_mask', 'val_mask', 'test_mask'):
         pred = logits[mask].max(1)[1]
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()

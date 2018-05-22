@@ -19,18 +19,18 @@ class TargetIndegree(object):
     .. testsetup::
 
         import torch
-        from torch_geometric.datasets.dataset import Data
+        from torch_geometric.data import Data
 
     .. testcode::
 
         from torch_geometric.transform import TargetIndegree
 
         edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-        data = Data(None, None, edge_index, None, None)
+        data = Data(edge_index=edge_index)
 
         data = TargetIndegree()(data)
 
-        print(data.weight)
+        print(data.edge_attr)
 
     .. testoutput::
 
@@ -44,7 +44,7 @@ class TargetIndegree(object):
         self.cat = cat
 
     def __call__(self, data):
-        col, pseudo = data.index[1], data.weight
+        col, pseudo = data.edge_index[1], data.edge_attr
 
         deg = degree(col, data.num_nodes)
         deg = deg / deg.max()
@@ -53,9 +53,9 @@ class TargetIndegree(object):
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
-            data.weight = torch.cat([pseudo, deg.type_as(pseudo)], dim=-1)
+            data.edge_attr = torch.cat([pseudo, deg.type_as(pseudo)], dim=-1)
         else:
-            data.weight = deg
+            data.edge_attr = deg
 
         return data
 
