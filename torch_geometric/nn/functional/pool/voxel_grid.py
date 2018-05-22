@@ -37,8 +37,7 @@ def sparse_voxel_grid_pool(data, size, start=None, end=None, transform=None):
     x = max_pool(data.x, cluster)
     edge_index, _, pos = pool(data.edge_index, cluster, None, data.pos)
 
-    data = Batch(x=x, edge_index=edge_index, pos=pos)
-    data.batch = batch
+    data = Batch(x=x, edge_index=edge_index, pos=pos, batch=batch)
 
     if transform is not None:
         data = transform(data)
