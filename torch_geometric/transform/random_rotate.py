@@ -1,30 +1,33 @@
-from math import sin, cos
+import numbers
+import random
+import math
 
 import torch
+from torch_geometric.transform import LinearTransformation
 
 
 class RandomRotate(object):
-    def __init__(self, max):
-        self.max = abs(max)
+    def __init__(self, degrees, axis=0):
+        if isinstance(degrees, numbers.Number):
+            degrees = (-abs(degrees), abs(degrees))
+        assert isinstance(degrees, (tuple, list)) and len(degrees) == 2
+        self.degrees = degrees
+        self.axis = 0
 
     def __call__(self, data):
-        mean = data.pos.mean(dim=0)
-        pos = data.pos - mean
+        degree = math.pi * random.uniform(*self.degrees) / 180.0
+        sin, cos = math.sin(degree), math.cos(degree)
 
-        a = 2 * self.max * torch.rand(1)[0] - self.max
-        s, c = sin(a), cos(a)
-        dim = pos.size(1)
-        if dim == 2:
-            rotate = torch.FloatTensor([[c, -s], [s, c]])
-        elif dim == 3:
-            rotate = torch.FloatTensor([[c, -s, 0], [s, c, 0], [0, 0, 1]])
+        if data.pos.size(1) == 2:
+            matrix = [[cos, sin], [-sin, cos]]
         else:
-            raise ValueError
+            if self.axis == 0:
+                matrix = [[1, 0, 0], [0, cos, sin], [0, -sin, cos]]
+            elif self.axis == 1:
+                matrix = [[cos, 0, -sin], [0, 1, 0], [sin, 0, cos]]
+            else:
+                matrix = [[cos, sin, 0], [-sin, cos, 0], [0, 0, 1]]
+        return LinearTransformation(torch.tensor(matrix))(data)
 
-        rotate = rotate.type_as(pos)
-        pos = torch.matmul(rotate, pos.view(-1, dim, 1))
-        pos = pos.view(-1, dim)
-
-        pos += mean
-        data.pos = pos
-        return data
+    def __repr__(self):
+        return '{}({})'.format(self.__class__.__name__, self.degrees)

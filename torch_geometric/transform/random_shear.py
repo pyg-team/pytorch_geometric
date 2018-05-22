@@ -26,11 +26,11 @@ class RandomShear(object):
     def __call__(self, data):
         dim = data.pos.size(1)
 
-        matrix = data.pos.new_empty(dim, dim).uniform(-self.scale, self.scale)
+        matrix = data.pos.new_empty(dim, dim).uniform_(-self.shear, self.shear)
         eye = torch.arange(dim, dtype=torch.long)
         matrix[eye, eye] = 1
 
         return LinearTransformation(matrix)(data)
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, *self.scale)
+        return '{}({})'.format(self.__class__.__name__, self.shear)
