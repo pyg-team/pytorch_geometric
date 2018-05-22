@@ -15,7 +15,7 @@ class Spherical(object):
     .. testsetup::
 
         import torch
-        from torch_geometric.datasets.dataset import Data
+        from torch_geometric.data import Data
 
     .. testcode::
 
@@ -23,11 +23,11 @@ class Spherical(object):
 
         pos = torch.tensor([[0, 0, 0], [0, 1, 1]], dtype=torch.float)
         edge_index = torch.tensor([[0, 1], [1, 0]])
-        data = Data(None, pos, edge_index, None, None)
+        data = Data(edge_index=edge_index, pos=pos)
 
         data = Spherical()(data)
 
-        print(data.weight)
+        print(data.edge_attr)
 
     .. testoutput::
 
@@ -39,7 +39,7 @@ class Spherical(object):
         self.cat = cat
 
     def __call__(self, data):
-        (row, col), pos, pseudo = data.index, data.pos, data.weight
+        (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
         assert pos.dim() == 2 and pos.size(1) == 3
 
         cart = pos[col] - pos[row]
@@ -48,13 +48,13 @@ class Spherical(object):
         theta = torch.atan2(cart[..., 1], cart[..., 0]) / (2 * PI)
         theta += (theta < 0).type_as(theta)
         phi = torch.acos(cart[..., 2] / rho) / PI
-        spherical = torch.stack([rho, theta, phi], dim=1)
+        spher = torch.stack([rho, theta, phi], dim=1)
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
-            data.weight = torch.cat([pseudo, spherical.type_as(pos)], dim=-1)
+            data.edge_attr = torch.cat([pseudo, spher.type_as(pos)], dim=-1)
         else:
-            data.weight = spherical
+            data.edge_attr = spher
 
         return data
 

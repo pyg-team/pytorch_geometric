@@ -1,38 +1,42 @@
-from __future__ import division, print_function
-
 import os.path as osp
 
 import torch
-from torch import nn
 import torch.nn.functional as F
-from torch_geometric.datasets import FAUST
-from torch_geometric.transform import Cartesian
-from torch_geometric.utils import DataLoader
+from torch_geometric.dataset import FAUST
+import torch_geometric.transform as T
+from torch_geometric.data import DataLoader
 from torch_geometric.nn.modules import SplineConv
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+class MyTransform(object):
+    def __call__(self, data):
+        data.face, data.x = None, torch.ones(data.num_nodes)
+        return data
+
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FAUST')
-train_dataset = FAUST(path, train=True, transform=Cartesian())
-test_dataset = FAUST(path, train=False, transform=Cartesian())
+pre_transform = T.Compose([T.FaceToEdge(), MyTransform()])
+train_dataset = FAUST(path, True, T.Cartesian(), pre_transform)
+test_dataset = FAUST(path, False, T.Cartesian(), pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1)
+d = train_dataset[0]
 
 
-class Net(nn.Module):
+class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=3, kernel_size=5)
+        self.conv1 = SplineConv(d.num_features, 32, dim=3, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=3, kernel_size=5)
         self.conv3 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.conv4 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.conv5 = SplineConv(64, 64, dim=3, kernel_size=5)
         self.conv6 = SplineConv(64, 64, dim=3, kernel_size=5)
-        self.fc1 = nn.Linear(64, 256)
-        self.fc2 = nn.Linear(256, FAUST.num_nodes)
+        self.fc1 = torch.nn.Linear(64, 256)
+        self.fc2 = torch.nn.Linear(256, d.num_nodes)
 
     def forward(self, data):
-        x, edge_index, pseudo = data.input, data.index, data.weight
+        x, edge_index, pseudo = data.x, data.edge_index, data.edge_attr
         x = F.elu(self.conv1(x, edge_index, pseudo))
         x = F.elu(self.conv2(x, edge_index, pseudo))
         x = F.elu(self.conv3(x, edge_index, pseudo))
@@ -45,8 +49,9 @@ class Net(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
-target = torch.arange(FAUST.num_nodes, dtype=torch.long, device=device)
+target = torch.arange(d.num_nodes, dtype=torch.long, device=device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
@@ -58,9 +63,8 @@ def train(epoch):
             param_group['lr'] = 0.001
 
     for data in train_loader:
-        data = data.cuda()
         optimizer.zero_grad()
-        F.nll_loss(model(data), target).backward()
+        F.nll_loss(model(data.to(device)), target).backward()
         optimizer.step()
 
 
@@ -68,11 +72,10 @@ def test():
     model.eval()
     correct = 0
 
-    for i, data in enumerate(test_loader):
-        data = data.cuda()
-        pred = model(data).max(1)[1]
+    for data in test_loader:
+        pred = model(data.to(device)).max(1)[1]
         correct += pred.eq(target).sum().item()
-    return correct / (len(test_dataset) * FAUST.num_nodes)
+    return correct / (len(test_dataset) * d.num_nodes)
 
 
 for epoch in range(1, 101):

@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.transform import RadiusGraph
-from torch_geometric.datasets.dataset import Data
+from torch_geometric.data import Data
 
 
 def test_radius_graph():
@@ -8,7 +8,7 @@ def test_radius_graph():
 
     pos = [[0, 0], [1, 0], [2, 0], [0, 1], [-2, 0], [0, -2]]
     pos = torch.tensor(pos, dtype=torch.float)
-    data = Data(None, pos, None, None, None)
+    data = Data(pos=pos)
 
-    edge_index = RadiusGraph(1)(data).index
+    edge_index = RadiusGraph(1)(data).edge_index
     assert edge_index.tolist() == [[0, 0, 1, 1, 2, 3], [1, 3, 0, 2, 1, 0]]

@@ -19,7 +19,7 @@ class NNGraph(object):
         edge_index = torch.stack([row, col], dim=0)
         edge_index = to_undirected(edge_index, num_nodes=pos.size(0))
 
-        data.index = edge_index
+        data.edge_index = edge_index
         return data
 
     def __repr__(self):

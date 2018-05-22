@@ -1,6 +1,6 @@
 import torch
 import torch_geometric.transform as T
-from torch_geometric.datasets.dataset import Data
+from torch_geometric.data import Data
 
 
 def test_compose():
@@ -12,7 +12,7 @@ def test_compose():
 
     pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)
     edge_index = torch.tensor([[0, 1], [1, 2]])
-    data = Data(None, pos, edge_index, None, None)
+    data = Data(edge_index=edge_index, pos=pos)
 
-    out = transform(data).weight.tolist()
+    out = transform(data).edge_attr.tolist()
     assert out == [[0.75, 0.5, 1], [1, 0.5, 1]]
