@@ -1,10 +1,10 @@
 import torch
 from torch_cluster import grid_cluster
+from torch_geometric.data import Batch
 
 from .consecutive import consecutive_cluster
 from ...modules.spline_conv import repeat_to
 from .pool import pool, max_pool
-from ....datasets.dataset import Data
 
 
 def voxel_grid(pos, size, start=None, end=None, batch=None, consecutive=True):
@@ -34,10 +34,11 @@ def voxel_grid(pos, size, start=None, end=None, batch=None, consecutive=True):
 
 def sparse_voxel_grid_pool(data, size, start=None, end=None, transform=None):
     cluster, batch = voxel_grid(data.pos, size, start, end, data.batch, True)
-    x = max_pool(data.input, cluster)
-    index, _, pos = pool(data.index, cluster, None, data.pos)
+    x = max_pool(data.x, cluster)
+    edge_index, _, pos = pool(data.edge_index, cluster, None, data.pos)
 
-    data = Data(x, pos, index, None, data.target, batch)
+    data = Batch(x=x, edge_index=edge_index, pos=pos)
+    data.batch = batch
 
     if transform is not None:
         data = transform(data)
@@ -47,5 +48,5 @@ def sparse_voxel_grid_pool(data, size, start=None, end=None, transform=None):
 
 def dense_voxel_grid_pool(data, size, start=None, end=None):
     cluster, _ = voxel_grid(data.pos, size, start, end, data.batch, False)
-    x = max_pool(data.input, cluster)  # TODO: size
+    x = max_pool(data.x, cluster)  # TODO: size
     return x
