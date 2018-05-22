@@ -4,8 +4,9 @@ from six.moves import urllib
 from .makedirs import makedirs
 
 
-def download_url(url, folder):
-    print('Downloading', url)
+def download_url(url, folder, log=True):
+    if log:
+        print('Downloading', url)
 
     makedirs(folder)
 
