@@ -10,7 +10,7 @@ from torch_geometric.nn.modules import SplineConv
 
 class MyTransform(object):
     def __call__(self, data):
-        data.face, data.x = None, torch.ones(data.num_nodes)
+        data.face, data.x = None, torch.ones(data.num_nodes, 1)
         return data
 
 
