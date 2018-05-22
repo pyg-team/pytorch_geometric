@@ -2,7 +2,7 @@ import torch
 import torch_unique
 
 from ..dataset import Data
-from ...utils.face import face_to_edge_index
+from ...utils.undirected import to_undirected
 
 
 def read_off(filename):
@@ -21,9 +21,10 @@ def read_off(filename):
     pos = torch.FloatTensor(pos).view(-1, 3)
 
     face = [int(x) for x in data[num_nodes * 3 + 3:]]
-    face = torch.LongTensor(face).view(-1, 4)[:, 1:].contiguous()
+    face = torch.LongTensor(face).view(-1, 4)[:, 1:].contiguous().t()
 
-    index = face_to_edge_index(face.t(), num_nodes)
+    index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
+    index = to_undirected(index, num_nodes=pos.size(0))
 
     # Delete isolated vertices.
     unique = torch_unique.unique(index[0])

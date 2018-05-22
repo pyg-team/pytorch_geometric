@@ -3,7 +3,7 @@ from plyfile import PlyData
 import numpy as np
 
 from ..dataset import Data
-from ...utils.face import face_to_edge_index
+from ...utils.undirected import to_undirected
 
 
 def read_ply(filename):
@@ -15,7 +15,8 @@ def read_ply(filename):
     pos = torch.stack([x, y, z], dim=1)
     input = torch.ones(pos.size(0))
     arrays = [np.expand_dims(v, 0) for v in plydata['face']['vertex_indices']]
-    face = torch.LongTensor(np.concatenate(arrays, axis=0))
-    index = face_to_edge_index(face.t(), pos.size(0))
+    face = torch.LongTensor(np.concatenate(arrays, axis=0)).t()
+    index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
+    index = to_undirected(index, num_nodes=pos.size(0))
 
     return Data(input, pos, index, None, None)
