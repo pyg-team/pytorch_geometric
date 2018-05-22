@@ -1,44 +1,39 @@
-from __future__ import division, print_function
-
 import os.path as osp
 
 import torch
-from torch import nn
 import torch.nn.functional as F
-from torch_geometric.datasets import MNISTSuperpixels
-from torch_geometric.utils import DataLoader
-from torch_geometric.transform import Cartesian
+from torch_geometric.dataset import MNISTSuperpixels
+import torch_geometric.transform as T
+from torch_geometric.data import DataLoader
 from torch_geometric.nn.modules import SplineConv
 from torch_geometric.nn.functional.pool import sparse_voxel_grid_pool
 from torch_geometric.nn.functional.pool import dense_voxel_grid_pool
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
-train_dataset = MNISTSuperpixels(path, True, transform=Cartesian())
-test_dataset = MNISTSuperpixels(path, False, transform=Cartesian())
-
+train_dataset = MNISTSuperpixels(path, True, transform=T.Cartesian())
+test_dataset = MNISTSuperpixels(path, False, transform=T.Cartesian())
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64)
+d = train_dataset.data
 
 
-class Net(nn.Module):
+class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
+        self.conv1 = SplineConv(d.num_features, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
-        self.fc1 = nn.Linear(4 * 64, 128)
-        self.fc2 = nn.Linear(128, 10)
+        self.fc1 = torch.nn.Linear(4 * 64, 128)
+        self.fc2 = torch.nn.Linear(128, d.num_classes)
 
     def forward(self, data):
-        data.input = F.elu(self.conv1(data.input, data.index, data.weight))
-        data = sparse_voxel_grid_pool(data, 5, 0, 28, Cartesian())
+        data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
+        data = sparse_voxel_grid_pool(data, 5, 0, 28, T.Cartesian())
 
-        data.input = F.elu(self.conv2(data.input, data.index, data.weight))
-        data = sparse_voxel_grid_pool(data, 7, 0, 28, Cartesian())
+        data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
+        data = sparse_voxel_grid_pool(data, 7, 0, 28, T.Cartesian())
 
-        data.input = F.elu(self.conv3(data.input, data.index, data.weight))
+        data.x = F.elu(self.conv3(data.x, data.edge_index, data.edge_attr))
         x = dense_voxel_grid_pool(data, 14, 0, 27.99)
 
         x = x.view(-1, self.fc1.weight.size(1))
@@ -48,6 +43,7 @@ class Net(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
@@ -64,9 +60,9 @@ def train(epoch):
             param_group['lr'] = 0.0001
 
     for data in train_loader:
-        data = data.cuda()
+        data = data.to(device)
         optimizer.zero_grad()
-        F.nll_loss(model(data), data.target).backward()
+        F.nll_loss(model(data), data.y).backward()
         optimizer.step()
 
 
@@ -75,9 +71,9 @@ def test():
     correct = 0
 
     for data in test_loader:
-        data = data.cuda()
+        data = data.to(device)
         pred = model(data).max(1)[1]
-        correct += pred.eq(data.target).sum().item()
+        correct += pred.eq(data.y).sum().item()
     return correct / len(test_dataset)
 
 
