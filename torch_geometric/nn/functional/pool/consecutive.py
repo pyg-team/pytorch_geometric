@@ -1,5 +1,5 @@
 import torch
-from torch_unique import unique_by_key
+from torch_unique import unique
 
 
 def _get_dtype(max_value):
@@ -15,7 +15,7 @@ def _get_dtype(max_value):
 
 def consecutive_cluster(src, batch=None):
     size = src.size(0)
-    key, value = unique_by_key(src, torch.arange(0, size, out=src.new()))
+    key, perm = unique(src)
     max_value = key.size(0)
     dtype = _get_dtype(max_value)
     arg = torch.empty((key[-1] + 1, ), dtype=dtype, device=src.device)
@@ -23,4 +23,4 @@ def consecutive_cluster(src, batch=None):
     output = arg[src.view(-1)]
     output = output.view(size).long()
 
-    return (output, None) if batch is None else (output, batch[value])
+    return (output, None) if batch is None else (output, batch[perm])

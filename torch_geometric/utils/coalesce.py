@@ -1,5 +1,5 @@
 import torch
-from torch_unique import unique, unique_by_key
+from torch_unique import unique
 
 from .num_nodes import maybe_num_nodes
 
@@ -9,7 +9,7 @@ def is_coalesced(edge_index, num_nodes=None):
     row, col = edge_index
 
     index = num_nodes * row + col
-    return index.size(0) == unique(index).size(0)
+    return index.size(0) == unique(index)[0].size(0)
 
 
 def coalesce(edge_index, edge_attr=None, num_nodes=None):
@@ -18,8 +18,7 @@ def coalesce(edge_index, edge_attr=None, num_nodes=None):
 
     if edge_attr is None:
         index = num_nodes * row + col
-        perm = torch.arange(index.size(0), dtype=torch.long, device=row.device)
-        _, perm = unique_by_key(index, perm)
+        _, perm = unique(index)
         edge_index = edge_index[:, perm]
     else:
         sparse = getattr(torch.sparse, edge_attr.type().split('.')[-1])
