@@ -27,7 +27,7 @@ def read_off(filename):
     index = to_undirected(index, num_nodes=pos.size(0))
 
     # Delete isolated vertices.
-    unique = torch_unique.unique(index[0])
+    unique = torch_unique.unique(index[0])[0]
     pos = pos[unique]
     perm = []
     j = 0
