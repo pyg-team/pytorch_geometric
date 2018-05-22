@@ -10,6 +10,6 @@ def test_face_to_edge():
     data = Data()
     data.face = face
 
-    row, col = FaceToEdge()(data).index
+    row, col = FaceToEdge()(data).edge_index
     assert row.tolist() == [0, 0, 0, 1, 1, 1, 2, 2, 3, 3]
     assert col.tolist() == [1, 2, 3, 0, 2, 3, 0, 1, 0, 1]

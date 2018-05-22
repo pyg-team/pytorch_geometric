@@ -15,7 +15,7 @@ class Polar(object):
     .. testsetup::
 
         import torch
-        from torch_geometric.datasets.dataset import Data
+        from torch_geometric.data import Data
 
     .. testcode::
 
@@ -23,11 +23,11 @@ class Polar(object):
 
         pos = torch.tensor([[-1, 0], [0, 0], [0, 2]], dtype=torch.float)
         edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-        data = Data(None, pos, edge_index, None, None)
+        data = Data(edge_index=edge_index, pos=pos)
 
         data = Polar()(data)
 
-        print(data.weight)
+        print(data.edge_attr)
 
     .. testoutput::
 
@@ -41,7 +41,7 @@ class Polar(object):
         self.cat = cat
 
     def __call__(self, data):
-        (row, col), pos, pseudo = data.index, data.pos, data.weight
+        (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
         assert pos.dim() == 2 and pos.size(1) == 2
 
         cart = pos[col] - pos[row]
@@ -53,9 +53,9 @@ class Polar(object):
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
-            data.weight = torch.cat([pseudo, polar.type_as(pos)], dim=-1)
+            data.edge_attr = torch.cat([pseudo, polar.type_as(pos)], dim=-1)
         else:
-            data.weight = polar
+            data.edge_attr = polar
 
         return data
 

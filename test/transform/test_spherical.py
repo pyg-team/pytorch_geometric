@@ -1,7 +1,7 @@
 from pytest import approx
 import torch
 from torch_geometric.transform import Spherical
-from torch_geometric.datasets.dataset import Data
+from torch_geometric.data import Data
 
 
 def test_spherical():
@@ -9,11 +9,11 @@ def test_spherical():
 
     pos = torch.tensor([[0, 0, 0], [0, 1, 1]], dtype=torch.float)
     edge_index = torch.tensor([[0, 1], [1, 0]])
-    data = Data(None, pos, edge_index, None, None)
+    data = Data(edge_index=edge_index, pos=pos)
 
-    out = Spherical()(data).weight.view(-1).tolist()
+    out = Spherical()(data).edge_attr.view(-1).tolist()
     assert approx(out) == [1, 0.25, 0, 1, 0.75, 1]
 
-    data.weight = torch.tensor([1, 1], dtype=torch.float)
-    out = Spherical()(data).weight.view(-1).tolist()
+    data.edge_attr = torch.tensor([1, 1], dtype=torch.float)
+    out = Spherical()(data).edge_attr.view(-1).tolist()
     assert approx(out) == [1, 1, 0.25, 0, 1, 1, 0.75, 1]

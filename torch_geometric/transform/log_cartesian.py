@@ -9,7 +9,7 @@ class LogCartesian(object):
         self.norm = 1 / log(1 + scale)
 
     def __call__(self, data):
-        row, col = data.index
+        row, col = data.edge_index
 
         # Compute Log-Cartesian pseudo-coordinates.
         weight = data.pos[col] - data.pos[row]
@@ -21,9 +21,10 @@ class LogCartesian(object):
         weight *= 0.5
         weight += 0.5
 
-        if data.weight is None:
-            data.weight = weight
+        if data.edge_attr is None:
+            data.edge_attr = weight
         else:
-            data.weight = torch.cat([weight, data.weight.unsqueeze(1)], dim=1)
+            data.edge_attr = torch.cat(
+                [weight, data.weight.unsqueeze(1)], dim=1)
 
         return data

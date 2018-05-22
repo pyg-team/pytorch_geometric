@@ -9,7 +9,7 @@ class FaceToEdge(object):
         edge_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
         edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
 
-        data.index = edge_index
+        data.edge_index = edge_index
         return data
 
     def __repr__(self):

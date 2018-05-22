@@ -23,7 +23,7 @@ class RadiusGraph(object):
         edge_index = torch.tensor([row, col])
         edge_index, _ = remove_self_loops(edge_index)
 
-        data.index = edge_index
+        data.edge_index = edge_index
         return data
 
     def __repr__(self):

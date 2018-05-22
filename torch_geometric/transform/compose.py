@@ -8,7 +8,7 @@ class Compose(object):
     .. testsetup::
 
         import torch
-        from torch_geometric.datasets.dataset import Data
+        from torch_geometric.data import Data
 
     .. testcode::
 
@@ -16,12 +16,12 @@ class Compose(object):
 
         pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)
         edge_index = torch.tensor([[0, 1], [1, 2]])
-        data = Data(None, pos, edge_index, None, None)
+        data = Data(edge_index=edge_index, pos=pos)
 
         transform = T.Compose([T.Cartesian(), T.TargetIndegree()])
         data = transform(data)
 
-        print(data.weight)
+        print(data.edge_attr)
 
     .. testoutput::
 
