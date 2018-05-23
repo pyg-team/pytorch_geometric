@@ -6,7 +6,7 @@ import os.path as osp
 import shutil
 
 import pytest
-from torch_geometric.dataset import TUDataset
+from torch_geometric.datasets import TUDataset
 from torch_geometric.data import DataLoader
 
 

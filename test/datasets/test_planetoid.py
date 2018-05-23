@@ -3,7 +3,7 @@ import random
 import os.path as osp
 import shutil
 
-from torch_geometric.dataset import Planetoid
+from torch_geometric.datasets import Planetoid
 from torch_geometric.data import DataLoader
 
 

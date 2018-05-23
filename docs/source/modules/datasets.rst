@@ -1,7 +1,7 @@
-torch_geometric.dataset
-=======================
+torch_geometric.datasets
+========================
 
-.. automodule:: torch_geometric.dataset
+.. automodule:: torch_geometric.datasets
     :members:
     :undoc-members:
 
