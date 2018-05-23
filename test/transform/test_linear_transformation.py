@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.transform import LinearTransformation
-from torch_geometric.datasets.dataset import Data
+from torch_geometric.data import Data
 
 
 def test_cartesian():
@@ -10,7 +10,7 @@ def test_cartesian():
     assert transform.__repr__() == out
 
     pos = torch.tensor([[-1, 1], [-3, 0], [2, -1]], dtype=torch.float)
-    data = Data(None, pos, None, None, None)
+    data = Data(pos=pos)
 
     out = transform(data).pos.tolist()
     assert out == [[-2, 2], [-6, 0], [4, -2]]
