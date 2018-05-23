@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn.functional.pool import graclus_pool
+from torch_geometric.nn.pool import graclus_pool
 from torch_geometric.data import Batch
 
 
