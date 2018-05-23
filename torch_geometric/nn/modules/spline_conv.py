@@ -1,9 +1,11 @@
+import numbers
+from itertools import repeat
+
 import torch
 from torch.nn import Module, Parameter
 from torch_spline_conv import SplineConv as Conv
 
-from .utils.inits import uniform
-from .utils.repeat import repeat_to
+from ..inits import uniform
 
 
 class SplineConv(Module):
@@ -38,17 +40,19 @@ class SplineConv(Module):
                  degree=1,
                  root_weight=True,
                  bias=True):
-
         super(SplineConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.degree = degree
 
-        kernel_size = torch.tensor(repeat_to(kernel_size, dim))
+        if isinstance(kernel_size, numbers.Number):
+            kernel_size = list(repeat(kernel_size, dim))
+        kernel_size = torch.tensor(kernel_size, dtype=torch.long)
         self.register_buffer('kernel_size', kernel_size)
 
-        is_open_spline = repeat_to(is_open_spline, dim)
+        if isinstance(is_open_spline, numbers.Number):
+            is_open_spline = list(repeat(is_open_spline, dim))
         is_open_spline = torch.tensor(is_open_spline, dtype=torch.uint8)
         self.register_buffer('is_open_spline', is_open_spline)
 
@@ -56,8 +60,7 @@ class SplineConv(Module):
         self.weight = Parameter(torch.Tensor(K, in_channels, out_channels))
 
         if root_weight:
-            root_weight = torch.Tensor(in_channels, out_channels)
-            self.root_weight = Parameter(root_weight)
+            self.root = Parameter(torch.Tensor(in_channels, out_channels))
         else:
             self.register_parameter('root_weight', None)
 
@@ -71,11 +74,13 @@ class SplineConv(Module):
     def reset_parameters(self):
         size = self.in_channels * self.weight.size(0)
         uniform(size, self.weight)
-        uniform(size, self.root_weight)
+        uniform(size, self.root)
         uniform(size, self.bias)
 
     def forward(self, x, edge_index, pseudo):
-        return Conv.apply(x, edge_index, pseudo, self.weight,
-                          self._buffers['kernel_size'],
-                          self._buffers['is_open_spline'], self.degree,
-                          self.root_weight, self.bias)
+        return Conv.apply(
+            x, edge_index, pseudo, self.weight, self._buffers['kernel_size'],
+            self._buffers['is_open_spline'], self.degree, self.root, self.bias)
+
+    def __repr__(self):
+        pass
