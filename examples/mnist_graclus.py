@@ -34,12 +34,12 @@ class Net(torch.nn.Module):
 
     def forward(self, data):
         data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
-        edge_attr = normalized_cut_2d(data.edge_index, data.pos)
-        data = graclus_pool(data, edge_attr, transform=T.Cartesian())
+        weight = normalized_cut_2d(data.edge_index, data.pos)
+        data = graclus_pool(data, weight, transform=T.Cartesian())
 
         data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
-        edge_attr = normalized_cut_2d(data.edge_index, data.pos)
-        data = graclus_pool(data, edge_attr, transform=T.Cartesian())
+        weight = normalized_cut_2d(data.edge_index, data.pos)
+        data = graclus_pool(data, weight, transform=T.Cartesian())
 
         x = scatter_mean(data.x, data.batch, dim=0)
         x = F.elu(self.fc1(x))
