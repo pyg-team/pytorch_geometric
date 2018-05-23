@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric.nn.modules import GraphConv, ChebConv  # noqa
+from torch_geometric.nn.modules import GCNConv, ChebConv  # noqa
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -14,8 +14,8 @@ data = Planetoid(path, dataset, T.NormalizeFeatures())[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GraphConv(data.num_features, 16)
-        self.conv2 = GraphConv(16, data.num_classes)
+        self.conv1 = GCNConv(data.num_features, 16)
+        self.conv2 = GCNConv(16, data.num_classes)
         # self.conv1 = ChebConv(data.x.size(1), 16, 2)
         # self.conv2 = ChebConv(16, data.y.max().item() + 1, 2)
 

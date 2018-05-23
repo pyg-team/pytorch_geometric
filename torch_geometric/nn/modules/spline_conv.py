@@ -83,4 +83,6 @@ class SplineConv(Module):
             self._buffers['is_open_spline'], self.degree, self.root, self.bias)
 
     def __repr__(self):
+        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
+                                   self.out_channels)
         pass
