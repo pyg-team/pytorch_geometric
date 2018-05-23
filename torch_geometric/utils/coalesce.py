@@ -21,7 +21,8 @@ def coalesce(edge_index, edge_attr=None, num_nodes=None):
         _, perm = unique(index)
         edge_index = edge_index[:, perm]
     else:
-        sparse = getattr(torch.sparse, edge_attr.type().split('.')[-1])
+        t = torch.cuda if edge_attr.is_cuda else torch
+        sparse = getattr(t.sparse, edge_attr.type().split('.')[-1])
         n = num_nodes
         size = torch.Size([n, n] + list(edge_attr.size())[1:])
         adj = sparse(edge_index, edge_attr, size).coalesce()
