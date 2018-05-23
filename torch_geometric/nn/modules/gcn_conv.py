@@ -2,11 +2,10 @@ import torch
 from torch.nn import Module, Parameter
 
 from .utils.inits import uniform
-from .utils.repr import repr
 from ..functional.graph_conv import graph_conv
 
 
-class GraphConv(Module):
+class GCNConv(Module):
     """Graph Convolutional Operator :math:`F_{out} = \hat{D}^{-1/2} \hat{A}
     \hat{D}^{-1/2} F_{in} W` with :math:`\hat{A} = A + I` and
     :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` from the `"Semi-Supervised
@@ -21,7 +20,7 @@ class GraphConv(Module):
     """
 
     def __init__(self, in_channels, out_channels, bias=True):
-        super(GraphConv, self).__init__()
+        super(GCNConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -43,4 +42,5 @@ class GraphConv(Module):
         return graph_conv(x, edge_index, edge_attr, self.weight, self.bias)
 
     def __repr__(self):
-        return repr(self)
+        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
+                                   self.out_channels)
