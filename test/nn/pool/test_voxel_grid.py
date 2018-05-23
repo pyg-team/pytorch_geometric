@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn.functional.pool.voxel_grid import voxel_grid
+from torch_geometric.nn.pool.voxel_grid import voxel_grid
 
 
 def test_voxel_grid():
