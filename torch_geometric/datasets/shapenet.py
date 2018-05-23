@@ -84,3 +84,7 @@ class ShapeNet(InMemoryDataset):
         data_list = datasets[0] + datasets[1]
         torch.save(self.collate(data_list), self.processed_paths[0])
         torch.save(self.collate(datasets[2]), self.processed_paths[1])
+
+    def __repr__(self):
+        return '{}({}, category={})'.format(self.__class__.__name__, len(self),
+                                            self.category)

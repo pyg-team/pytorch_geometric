@@ -4,13 +4,18 @@ from torch_geometric.data import Data
 
 
 def parse_off(src):
-    counts_line = src[1].split()
-    num_nodes, num_faces = int(counts_line[0]), int(counts_line[1])
+    # Some files may contain a bug and do not have a carriage return after OFF.
+    if src[0] == 'OFF':
+        src = src[1:]
+    else:
+        src[0] = src[0][3:]
 
-    pos = parse_txt_array(src[2:2 + num_nodes])
+    num_nodes, num_faces = [int(item) for item in src[0].split()[:2]]
 
-    face = src[2 + num_nodes:2 + num_nodes + num_faces]
-    face = parse_txt_array(face, start=1, dtype=torch.long).t()
+    pos = parse_txt_array(src[1:1 + num_nodes])
+
+    face = src[1 + num_nodes:1 + num_nodes + num_faces]
+    face = parse_txt_array(face, start=1, dtype=torch.long).t().contiguous()
 
     data = Data(pos=pos)
     data.face = face
