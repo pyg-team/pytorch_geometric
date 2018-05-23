@@ -3,7 +3,7 @@ from torch_cluster import grid_cluster
 from torch_geometric.data import Batch
 
 from .consecutive import consecutive_cluster
-from ...modules.spline_conv import repeat_to
+from ...modules.utils.repeat import repeat_to
 from .pool import pool, max_pool
 
 
