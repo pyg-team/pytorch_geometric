@@ -1,6 +1,3 @@
-import numbers
-from itertools import repeat
-
 import torch
 from torch_cluster import grid_cluster
 from torch_geometric.data import Batch
@@ -8,22 +5,16 @@ from torch_geometric.data import Batch
 from .consecutive import consecutive_cluster
 from .pool import pool, max_pool
 
+from ..repeat import repeat
+
 
 def voxel_grid(pos, size, start=None, end=None, batch=None, consecutive=True):
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
     n, d = pos.size()
 
-    if size is not None and isinstance(size, numbers.Number):
-        size = list(repeat(size, d))
-    size = pos.new(size) if size is not None else size
-
-    if start is not None and isinstance(start, numbers.Number):
-        start = list(repeat(start, d))
-    start = pos.new(start) if start is not None else start
-
-    if end is not None and isinstance(end, numbers.Number):
-        end = list(repeat(end, d))
-    end = pos.new(end) if end is not None else end
+    size = pos.new(repeat(size, d)) if size is not None else size
+    start = pos.new(repeat(start, d)) if start is not None else start
+    end = pos.new(repeat(end, d)) if end is not None else end
 
     if batch is not None:
         pos = torch.cat([pos, batch.unsqueeze(-1).type_as(pos)], dim=-1)
