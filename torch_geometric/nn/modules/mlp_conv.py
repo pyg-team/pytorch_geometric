@@ -1,8 +1,7 @@
 import torch
 from torch.nn import Module, Parameter
 
-from .utils.inits import normal
-from .utils.repeat import repeat_to
+from ..inits import uniform
 from ..functional.mlp_conv import mlp_conv
 from torch.nn import Linear
 
@@ -35,8 +34,7 @@ class MLPConv(Module):
         self.in_features = in_features
         self.out_features = out_features
         self.num_hidden_layers = num_hidden_layers
-        self.num_neurons_in_hidden = repeat_to(num_neurons_in_hidden,
-                                               num_hidden_layers)
+        self.num_neurons_in_hidden = num_neurons_in_hidden
         self.dim = dim
 
         num_features = [self.dim] + self.num_neurons_in_hidden + \
@@ -57,8 +55,9 @@ class MLPConv(Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        normal(self.root_weight)
-        normal(self.bias)
+        size = self.in_features
+        uniform(size, self.weight)
+        uniform(size, self.bias)
 
     def forward(self, adj, input):
         return mlp_conv(adj, input, self.linears, self.root_weight,
