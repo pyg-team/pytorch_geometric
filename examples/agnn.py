@@ -2,7 +2,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch_geometric.dataset import Planetoid
+from torch_geometric.datasets import Planetoid
 import torch_geometric.transform as T
 from torch_geometric.nn.modules import AGNN
 

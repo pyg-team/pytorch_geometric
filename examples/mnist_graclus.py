@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch_scatter import scatter_mean
-from torch_geometric.dataset import MNISTSuperpixels
+from torch_geometric.datasets import MNISTSuperpixels
 import torch_geometric.transform as T
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import normalized_cut
