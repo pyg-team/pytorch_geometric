@@ -63,7 +63,7 @@ class ModelNet(InMemoryDataset):
                 data_list.append(data)
 
         if self.pre_transform is not None:
-            data_list = [self.pre_transform(data) for data in data_list]
+            data_list = [self.pre_transform(d) for d in data_list]
 
         return self.collate(data_list)
 
