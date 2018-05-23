@@ -1,6 +1,6 @@
 from pytest import approx
 import torch
-from torch_geometric.transform import Spherical
+from torch_geometric.transforms import Spherical
 from torch_geometric.data import Data
 
 

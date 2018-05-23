@@ -1,13 +1,14 @@
 import torch
+from torch_scatter import scatter_max
 
 
-class Cartesian(object):
-    r"""Saves the globally normalized spatial relation of linked nodes as
+class LocalCartesian(object):
+    r"""Saves the locally normalized spatial relation of linked nodes as
     Cartesian coordinates (mapped to the fixed interval :math:`[0, 1]`)
 
     .. math::
         \mathbf{u}(i,j) = 0.5 + \frac{\mathbf{pos}_j - \mathbf{pos}_i}{2 \cdot
-        \max_{(v, w) \in \mathcal{E}} | \mathbf{pos}_w - \mathbf{pos}_v|}
+        \max_{v \in \mathcal{N}(i)} | \mathbf{pos}_v - \mathbf{pos}_i|}
 
     in its edge attributes.
 
@@ -22,19 +23,19 @@ class Cartesian(object):
 
     .. testcode::
 
-        from torch_geometric.transform import Cartesian
+        from torch_geometric.transforms import LocalCartesian
 
         pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)
         edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
         data = Data(edge_index=edge_index, pos=pos)
 
-        data = Cartesian()(data)
+        data = LocalCartesian()(data)
 
         print(data.edge_attr)
 
     .. testoutput::
 
-        tensor([[ 0.7500,  0.5000],
+        tensor([[ 1.0000,  0.5000],
                 [ 0.2500,  0.5000],
                 [ 1.0000,  0.5000],
                 [ 0.0000,  0.5000]])
@@ -47,7 +48,8 @@ class Cartesian(object):
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
 
         cart = pos[col] - pos[row]
-        cart = cart / (2 * cart.abs().max())
+        max_cart, _ = scatter_max(cart.abs(), row, 0, dim_size=pos.size(0))
+        cart = cart / (2 * max_cart.max(dim=1, keepdim=True)[0][row])
         cart += 0.5
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 

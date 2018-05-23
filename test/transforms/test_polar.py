@@ -1,6 +1,6 @@
 from pytest import approx
 import torch
-from torch_geometric.transform import Polar
+from torch_geometric.transforms import Polar
 from torch_geometric.data import Data
 
 

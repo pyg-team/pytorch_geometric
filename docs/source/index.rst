@@ -23,7 +23,7 @@ PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch.
    modules/nn
    modules/data
    modules/datasets
-   modules/transform
+   modules/transforms
    modules/utils
 
 Indices and Tables

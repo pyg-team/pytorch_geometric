@@ -19,7 +19,7 @@ class Polar(object):
 
     .. testcode::
 
-        from torch_geometric.transform import Polar
+        from torch_geometric.transforms import Polar
 
         pos = torch.tensor([[-1, 0], [0, 0], [0, 2]], dtype=torch.float)
         edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])

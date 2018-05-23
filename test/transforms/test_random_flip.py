@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.transform import RandomFlip
+from torch_geometric.transforms import RandomFlip
 from torch_geometric.data import Data
 
 

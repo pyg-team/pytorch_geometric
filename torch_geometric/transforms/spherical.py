@@ -19,7 +19,7 @@ class Spherical(object):
 
     .. testcode::
 
-        from torch_geometric.transform import Spherical
+        from torch_geometric.transforms import Spherical
 
         pos = torch.tensor([[0, 0, 0], [0, 1, 1]], dtype=torch.float)
         edge_index = torch.tensor([[0, 1], [1, 0]])
