@@ -1,8 +1,9 @@
 import torch
 from torch.nn import Module, Parameter
+from torch_geometric.utils import (degree, remove_self_loops, add_self_loops,
+                                   matmul)
 
 from .utils.inits import uniform
-from ..functional.graph_conv import graph_conv
 
 
 class GCNConv(Module):
@@ -39,7 +40,31 @@ class GCNConv(Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index, edge_attr=None):
-        return graph_conv(x, edge_index, edge_attr, self.weight, self.bias)
+        row, col = edge_index
+        num_nodes, num_edges = x.size(0), row.size(0)
+
+        if edge_attr is None:
+            edge_attr = x.new_ones((num_edges, ))
+
+        deg = degree(row, num_nodes, dtype=x.dtype, device=x.device)
+
+        # Normalize adjacency matrix.
+        deg = deg.pow(-0.5)
+        edge_attr = deg[row] * edge_attr * deg[col]
+
+        # Add self-loops to adjacency matrix.
+        edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
+        edge_attr = torch.cat([edge_attr, deg * deg], dim=0)
+        edge_index = add_self_loops(edge_index, num_nodes)
+
+        # Perform the convolution.
+        out = torch.mm(x, self.weight)
+        out = matmul(edge_index, edge_attr, out)
+
+        if self.bias is not None:
+            out += self.bias
+
+        return out
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
