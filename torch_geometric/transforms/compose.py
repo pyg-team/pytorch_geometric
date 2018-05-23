@@ -12,7 +12,7 @@ class Compose(object):
 
     .. testcode::
 
-        import torch_geometric.transform as T
+        import torch_geometric.transforms as T
 
         pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)
         edge_index = torch.tensor([[0, 1], [1, 2]])

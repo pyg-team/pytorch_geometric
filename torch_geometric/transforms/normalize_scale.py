@@ -1,4 +1,4 @@
-from torch_geometric.transform import Center
+from torch_geometric.transforms import Center
 
 
 class NormalizeScale(object):

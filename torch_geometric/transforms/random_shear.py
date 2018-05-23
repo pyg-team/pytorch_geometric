@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.transform import LinearTransformation
+from torch_geometric.transforms import LinearTransformation
 
 
 class RandomShear(object):

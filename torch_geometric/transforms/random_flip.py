@@ -17,7 +17,7 @@ class RandomFlip(object):
 
     .. testcode::
 
-        from torch_geometric.transform import RandomFlip
+        from torch_geometric.transforms import RandomFlip
 
         pos = torch.tensor([[-1, 1], [-3, 0], [2, -1]], dtype=torch.float)
         data = Data(pos=pos)

@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import MNISTSuperpixels
-import torch_geometric.transform as T
+import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
 from torch_geometric.nn.modules import SplineConv
 from torch_geometric.nn.functional.pool import sparse_voxel_grid_pool

@@ -23,7 +23,7 @@ class TargetIndegree(object):
 
     .. testcode::
 
-        from torch_geometric.transform import TargetIndegree
+        from torch_geometric.transforms import TargetIndegree
 
         edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
         data = Data(edge_index=edge_index)
