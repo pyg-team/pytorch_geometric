@@ -3,7 +3,7 @@ from torch.nn import Module, Parameter
 from torch_geometric.utils import (degree, remove_self_loops, add_self_loops,
                                    matmul)
 
-from .utils.inits import uniform
+from ..inits import uniform
 
 
 class GCNConv(Module):
