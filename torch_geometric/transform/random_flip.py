@@ -13,14 +13,14 @@ class RandomFlip(object):
     .. testsetup::
 
         import torch
-        from torch_geometric.datasets.dataset import Data
+        from torch_geometric.data import Data
 
     .. testcode::
 
         from torch_geometric.transform import RandomFlip
 
         pos = torch.tensor([[-1, 1], [-3, 0], [2, -1]], dtype=torch.float)
-        data = Data(None, pos, None, None, None)
+        data = Data(pos=pos)
 
         data = RandomFlip(axis=0, p=1)(data)
 
