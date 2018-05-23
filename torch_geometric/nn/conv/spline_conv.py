@@ -1,11 +1,9 @@
-import numbers
-from itertools import repeat
-
 import torch
 from torch.nn import Module, Parameter
 from torch_spline_conv import SplineConv as Conv
 
 from ..inits import uniform
+from ..repeat import repeat
 
 
 class SplineConv(Module):
@@ -46,13 +44,10 @@ class SplineConv(Module):
         self.out_channels = out_channels
         self.degree = degree
 
-        if isinstance(kernel_size, numbers.Number):
-            kernel_size = list(repeat(kernel_size, dim))
-        kernel_size = torch.tensor(kernel_size, dtype=torch.long)
+        kernel_size = torch.tensor(repeat(kernel_size, dim), dtype=torch.long)
         self.register_buffer('kernel_size', kernel_size)
 
-        if isinstance(is_open_spline, numbers.Number):
-            is_open_spline = list(repeat(is_open_spline, dim))
+        is_open_spline = repeat(is_open_spline, dim)
         is_open_spline = torch.tensor(is_open_spline, dtype=torch.uint8)
         self.register_buffer('is_open_spline', is_open_spline)
 
