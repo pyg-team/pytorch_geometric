@@ -3,7 +3,7 @@ from plyfile import PlyData
 from torch_geometric.data import Data
 
 
-def read_ply_data(path):
+def read_ply(path):
     with open(path, 'rb') as f:
         data = PlyData.read(f)
 
