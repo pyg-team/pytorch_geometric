@@ -1,7 +1,6 @@
 import torch
 from torch.nn import Module, Parameter
 
-from .utils.repr import repr
 from ..functional.agnn import agnn
 
 
@@ -35,4 +34,4 @@ class AGNN(Module):
         return agnn(x, edge_index, beta)
 
     def __repr__(self):
-        return repr(self)
+        return '{}()'.format(self.__class__.__name__)

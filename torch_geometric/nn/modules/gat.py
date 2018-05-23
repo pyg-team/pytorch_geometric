@@ -1,8 +1,7 @@
 import torch
 from torch.nn import Module, Parameter
 
-from .utils.inits import uniform
-from .utils.repr import repr
+from ..inits import uniform
 from ..functional.gat import gat
 
 
@@ -67,4 +66,6 @@ class GAT(Module):
                    self.weight, self.att_weight, self.bias)
 
     def __repr__(self):
-        return repr(self)
+        return '{}({}, {}, heads={})'.format(self.__class__.__name__,
+                                             self.in_channels,
+                                             self.out_channels, self.heads)
