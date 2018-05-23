@@ -1,5 +1,3 @@
-from .dataloader import DataLoader
-
 from .matmul import matmul
 from .degree import degree
 from .softmax import softmax
@@ -12,7 +10,6 @@ from .one_hot import one_hot
 from .grid import grid
 
 __all__ = [
-    'DataLoader',
     'matmul',
     'degree',
     'softmax',
