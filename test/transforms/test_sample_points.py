@@ -10,7 +10,9 @@ def test_sample_points():
     data = Data(pos=torch.tensor(pos, dtype=torch.float))
     data.face = torch.tensor([[0, 1], [1, 2], [2, 3]], dtype=torch.long)
 
-    pos = SamplePoints(8)(data).pos
+    data = SamplePoints(8)(data)
+    pos = data.pos
     assert pos[:, 0].min().item() >= 0 and pos[:, 0].max().item() <= 1
     assert pos[:, 1].min().item() >= 0 and pos[:, 1].max().item() <= 1
     assert pos[:, 2].abs().sum().item() == 0
+    assert 'face' not in data
