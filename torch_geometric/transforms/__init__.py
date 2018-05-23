@@ -16,6 +16,7 @@ from .normalize_features import NormalizeFeatures
 from .nn_graph import NNGraph
 from .radius_graph import RadiusGraph
 from .face_to_edge import FaceToEdge
+from .sample_points import SamplePoints
 
 __all__ = [
     'Compose',
@@ -36,4 +37,5 @@ __all__ = [
     'NNGraph',
     'RadiusGraph',
     'FaceToEdge',
+    'SamplePoints',
 ]
