@@ -3,7 +3,7 @@ import shutil
 
 import torch
 from torch_geometric.data import InMemoryDataset, extract_zip
-from torch_geometric.read import read_ply_data
+from torch_geometric.read import read_ply
 
 
 class FAUST(InMemoryDataset):
@@ -34,7 +34,7 @@ class FAUST(InMemoryDataset):
         path = osp.join(path, 'tr_reg_{0:03d}.ply')
         data_list = []
         for i in range(100):
-            data = read_ply_data(path.format(i))
+            data = read_ply(path.format(i))
             data.y = torch.tensor([i % 10], dtype=torch.long)
             if self.pre_transform is not None:
                 data = self.pre_transform(data)
