@@ -4,16 +4,16 @@ torch_geometric.nn
 .. contents:: Contents
     :local:
 
-Modules
--------
+Convolution Layers
+------------------
 
 .. automodule:: torch_geometric.nn.modules
     :members:
     :undoc-members:
 
-Functions
----------
+Pooling Layers
+--------------
 
-.. automodule:: torch_geometric.nn.functional
+.. automodule:: torch_geometric.nn.pool
     :members:
     :undoc-members:

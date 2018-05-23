@@ -7,8 +7,7 @@ from torch_geometric.datasets import MNISTSuperpixels
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import normalized_cut
-from torch_geometric.nn.modules import SplineConv
-from torch_geometric.nn.functional.pool import graclus_pool
+from torch_geometric.nn import SplineConv, graclus_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 train_dataset = MNISTSuperpixels(path, True, transform=T.Cartesian())

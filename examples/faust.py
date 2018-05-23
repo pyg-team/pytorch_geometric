@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch_geometric.datasets import FAUST
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
-from torch_geometric.nn.modules import SplineConv
+from torch_geometric.nn import SplineConv
 
 
 class MyTransform(object):
