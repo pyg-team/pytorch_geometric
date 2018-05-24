@@ -21,7 +21,6 @@ d = train_dataset.data
 def normalized_cut_2d(edge_index, pos):
     row, col = edge_index
     edge_attr = torch.norm(pos[row] - pos[col], p=2, dim=1)
-    # TODO: take gaussian
     return normalized_cut(edge_index, edge_attr, num_nodes=pos.size(0))
 
 
