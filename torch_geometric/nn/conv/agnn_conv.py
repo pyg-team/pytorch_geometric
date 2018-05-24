@@ -4,7 +4,7 @@ from torch.nn import Module, Parameter
 from ..functional.agnn import agnn
 
 
-class AGNN(Module):
+class AGNNConv(Module):
     """Graph Attentional Layer from the `"Attention-based Graph Neural Network
     for Semi-Supervised Learning (AGNN)" <https://arxiv.org/abs/1803.03735>`_
     paper.
@@ -15,7 +15,7 @@ class AGNN(Module):
     """
 
     def __init__(self, requires_grad=True):
-        super(AGNN, self).__init__()
+        super(AGNNConv, self).__init__()
 
         if requires_grad:
             self.beta = Parameter(torch.Tensor(1))

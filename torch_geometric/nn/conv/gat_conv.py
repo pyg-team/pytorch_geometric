@@ -5,7 +5,7 @@ from ..inits import uniform
 from ..functional.gat import gat
 
 
-class GAT(Module):
+class GATConv(Module):
     """Graph Attentional Layer from the `"Graph Attention Networks (GAT)"
     <https://arxiv.org/abs/1710.10903>`_ paper.
 
@@ -33,7 +33,7 @@ class GAT(Module):
                  negative_slope=0.2,
                  dropout=0,
                  bias=True):
-        super(GAT, self).__init__()
+        super(GATConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels

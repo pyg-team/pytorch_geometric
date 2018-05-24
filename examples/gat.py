@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric.nn import GAT
+from torch_geometric.nn import GATConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -14,8 +14,8 @@ data = Planetoid(path, dataset, T.NormalizeFeatures())[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.att1 = GAT(data.num_features, 8, heads=8, dropout=0.6)
-        self.att2 = GAT(8 * 8, data.num_classes, dropout=0.6)
+        self.att1 = GATConv(data.num_features, 8, heads=8, dropout=0.6)
+        self.att2 = GATConv(8 * 8, data.num_classes, dropout=0.6)
 
     def forward(self):
         x = F.dropout(data.x, p=0.6, training=self.training)

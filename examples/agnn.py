@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric.nn import AGNN
+from torch_geometric.nn import AGNNConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -15,8 +15,8 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.fc1 = torch.nn.Linear(data.num_features, 16)
-        self.conv1 = AGNN(requires_grad=False)
-        self.conv2 = AGNN(requires_grad=True)
+        self.conv1 = AGNNConv(requires_grad=False)
+        self.conv2 = AGNNConv(requires_grad=True)
         self.fc2 = torch.nn.Linear(16, data.num_classes)
 
     def forward(self):
@@ -51,7 +51,7 @@ def test():
     return accs
 
 
-for epoch in range(1, 151):
+for epoch in range(1, 101):
     train()
     log = 'Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
     print(log.format(epoch, *test()))
