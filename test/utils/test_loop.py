@@ -32,5 +32,5 @@ def test_add_self_loops():
     col = torch.tensor([1, 0, 0])
     edge_index = torch.stack([row, col], dim=0)
 
-    expected = [[0, 1, 0, 0, 1], [1, 0, 0, 0, 1]]
+    expected = [[0, 1, 0, 1], [1, 0, 0, 1]]
     assert add_self_loops(edge_index).tolist() == expected
