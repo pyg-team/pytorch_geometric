@@ -15,15 +15,15 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.fc1 = torch.nn.Linear(data.num_features, 16)
-        self.conv1 = AGNNProp(requires_grad=False)
-        self.conv2 = AGNNProp(requires_grad=True)
+        self.prop1 = AGNNProp(requires_grad=False)
+        self.prop2 = AGNNProp(requires_grad=True)
         self.fc2 = torch.nn.Linear(16, data.num_classes)
 
     def forward(self):
         x = F.dropout(data.x, training=self.training)
         x = F.relu(self.fc1(x))
-        x = self.conv1(x, data.edge_index)
-        x = self.conv2(x, data.edge_index)
+        x = self.prop1(x, data.edge_index)
+        x = self.prop2(x, data.edge_index)
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
         return F.log_softmax(x, dim=1)
