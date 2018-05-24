@@ -13,6 +13,7 @@ from .random_scale import RandomScale
 from .random_rotate import RandomRotate
 from .random_shear import RandomShear
 from .normalize_features import NormalizeFeatures
+from .add_self_loops import AddSelfLoops
 from .nn_graph import NNGraph
 from .radius_graph import RadiusGraph
 from .face_to_edge import FaceToEdge
@@ -34,6 +35,7 @@ __all__ = [
     'RandomRotate',
     'RandomShear',
     'NormalizeFeatures',
+    'AddSelfLoops',
     'NNGraph',
     'RadiusGraph',
     'FaceToEdge',
