@@ -1,13 +1,13 @@
 import torch
-from torch.nn import Module, Parameter
+from torch.nn import Parameter
 
 from ..functional.agnn import agnn
 
 
-class AGNNConv(Module):
-    """Graph Attentional Layer from the `"Attention-based Graph Neural Network
-    for Semi-Supervised Learning (AGNN)" <https://arxiv.org/abs/1803.03735>`_
-    paper.
+class AGNNProp(torch.nn.Module):
+    """Graph Attentional Propagation Layer from the
+    `"Attention-based Graph Neural Network for Semi-Supervised Learning (AGNN)"
+    <https://arxiv.org/abs/1803.03735>`_ paper.
 
     Args:
         requires_grad (bool, optional): If set to :obj:`False`, the propagation
@@ -15,7 +15,7 @@ class AGNNConv(Module):
     """
 
     def __init__(self, requires_grad=True):
-        super(AGNNConv, self).__init__()
+        super(AGNNProp, self).__init__()
 
         if requires_grad:
             self.beta = Parameter(torch.Tensor(1))
