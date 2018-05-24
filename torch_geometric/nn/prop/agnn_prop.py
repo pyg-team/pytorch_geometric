@@ -1,7 +1,7 @@
 import torch
 from torch.nn import Parameter
-
-from ..functional.agnn import agnn
+from torch_geometric.utils import (remove_self_loops, add_self_loops, softmax,
+                                   matmul)
 
 
 class AGNNProp(torch.nn.Module):
@@ -30,8 +30,23 @@ class AGNNProp(torch.nn.Module):
             self.beta.data.uniform_(0, 1)
 
     def forward(self, x, edge_index):
+        x = x.unsqueeze(-1) if x.dim() == 1 else x
         beta = self.beta if self.requires_grad else self._buffers['beta']
-        return agnn(x, edge_index, beta)
+
+        # Add self-loops to adjacency matrix.
+        edge_index, edge_attr = remove_self_loops(edge_index)
+        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
+        row, col = edge_index
+
+        # Create sparse propagation matrix.
+        norm = torch.norm(x, p=2, dim=1)
+        alpha = (x[row] * x[col]).sum(dim=1) / (norm[row] * norm[col])
+        alpha = softmax(alpha * beta, row, num_nodes=x.size(0))
+
+        # Perform the propagation.
+        out = matmul(edge_index, alpha, x)
+
+        return out
 
     def __repr__(self):
         return '{}()'.format(self.__class__.__name__)
