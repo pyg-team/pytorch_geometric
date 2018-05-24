@@ -1,11 +1,11 @@
 import torch
-from torch.nn import Module, Parameter
+from torch.nn import Parameter
 from torch_geometric.utils import degree, matmul
 
 from ..inits import uniform
 
 
-class ChebConv(Module):
+class ChebConv(torch.nn.Module):
     """Chebyshev Spectral Graph Convolutional Operator from the `"Convolutional
     Neural Networks on Graphs with Fast Localized Spectral Filtering"
     <https://arxiv.org/abs/1606.09375>`_ paper.
