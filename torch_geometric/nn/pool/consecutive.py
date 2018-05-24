@@ -13,14 +13,13 @@ def _get_dtype(max_value):
         return torch.long
 
 
-def consecutive_cluster(src, batch=None):
+def consecutive_cluster(src):
     size = src.size(0)
     key, perm = unique(src)
     max_value = key.size(0)
     dtype = _get_dtype(max_value)
     arg = torch.empty((key[-1] + 1, ), dtype=dtype, device=src.device)
     arg[key] = torch.arange(0, max_value, dtype=dtype, device=src.device)
-    output = arg[src.view(-1)]
-    output = output.view(size).long()
-
-    return (output, None) if batch is None else (output, batch[perm])
+    out = arg[src.view(-1)]
+    out = out.view(size).long()
+    return out, perm

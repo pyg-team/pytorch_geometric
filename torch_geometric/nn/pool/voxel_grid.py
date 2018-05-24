@@ -1,52 +1,20 @@
 import torch
 from torch_cluster import grid_cluster
-from torch_geometric.data import Batch
-
-from .consecutive import consecutive_cluster
-from .pool import pool, max_pool
 
 from ..repeat import repeat
 
 
-def voxel_grid(pos, size, start=None, end=None, batch=None, consecutive=True):
+def voxel_grid(pos, batch, size, start=None, end=None):
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
-    n, d = pos.size()
+    num_nodes, dim = pos.size()
 
-    size = pos.new(repeat(size, d)) if size is not None else size
-    start = pos.new(repeat(start, d)) if start is not None else start
-    end = pos.new(repeat(end, d)) if end is not None else end
+    size, start, end = repeat(size, dim), repeat(start, dim), repeat(end, dim)
 
-    if batch is not None:
-        pos = torch.cat([pos, batch.unsqueeze(-1).type_as(pos)], dim=-1)
-        size = torch.cat([size, size.new(1).fill_(1)], dim=-1)
+    pos = torch.cat([pos, batch.unsqueeze(-1).type_as(pos)], dim=-1)
+    size = size + [1]
+    start = None if start is None else start + [0]
+    end = None if end is None else end + [batch.max().item() + 1]
 
-        if start is not None:
-            start = torch.cat([start, start.new(1).fill_(0)], dim=-1)
-        if end is not None:
-            end = torch.cat([end, end.new(1).fill_(batch.max() + 1)], dim=-1)
+    size, start, end = pos.new(size), pos.new(start), pos.new(end)
 
-    cluster = grid_cluster(pos, size, start, end)
-
-    if consecutive:
-        cluster, batch = consecutive_cluster(cluster, batch)
-
-    return cluster, batch
-
-
-def sparse_voxel_grid_pool(data, size, start=None, end=None, transform=None):
-    cluster, batch = voxel_grid(data.pos, size, start, end, data.batch, True)
-    x = max_pool(data.x, cluster)
-    edge_index, _, pos = pool(data.edge_index, cluster, None, data.pos)
-
-    data = Batch(x=x, edge_index=edge_index, pos=pos, batch=batch)
-
-    if transform is not None:
-        data = transform(data)
-
-    return data
-
-
-def dense_voxel_grid_pool(data, size, start=None, end=None):
-    cluster, _ = voxel_grid(data.pos, size, start, end, data.batch, False)
-    x = max_pool(data.x, cluster)  # TODO: size
-    return x
+    return grid_cluster(pos, size, start, end)
