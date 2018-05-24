@@ -20,8 +20,6 @@ def remove_self_loops(edge_index, edge_attr=None):
 
 
 def add_self_loops(edge_index, num_nodes=None):
-    edge_index, _ = remove_self_loops(edge_index)
-
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     dtype, device = edge_index.dtype, edge_index.device
