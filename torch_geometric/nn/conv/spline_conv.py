@@ -57,7 +57,7 @@ class SplineConv(Module):
         if root_weight:
             self.root = Parameter(torch.Tensor(in_channels, out_channels))
         else:
-            self.register_parameter('root_weight', None)
+            self.register_parameter('root', None)
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -80,4 +80,3 @@ class SplineConv(Module):
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
                                    self.out_channels)
-        pass
