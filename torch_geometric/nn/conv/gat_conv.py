@@ -1,11 +1,11 @@
 import torch
-from torch.nn import Module, Parameter
+from torch.nn import Parameter
 
 from ..inits import uniform
 from ..functional.gat import gat
 
 
-class GATConv(Module):
+class GATConv(torch.nn.Module):
     """Graph Attentional Layer from the `"Graph Attention Networks (GAT)"
     <https://arxiv.org/abs/1710.10903>`_ paper.
 

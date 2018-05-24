@@ -1,12 +1,12 @@
 import torch
-from torch.nn import Module, Parameter
+from torch.nn import Parameter
 from torch_spline_conv import SplineConv as Conv
 
 from ..inits import uniform
 from ..repeat import repeat
 
 
-class SplineConv(Module):
+class SplineConv(torch.nn.Module):
     """Spline-based Convolutional Operator :math:`(f \star g)(i) =
     1/|\mathcal{N}(i)| \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
     f_l(j) \cdot g_l(u(i, j))`, where :math:`g_l` is a kernel function defined

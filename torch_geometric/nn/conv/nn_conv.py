@@ -1,12 +1,12 @@
 import torch
-from torch.nn import Module, Parameter
+from torch.nn import Parameter
 from torch_scatter import scatter_add
 from torch_geometric.utils import degree
 
 from ..inits import uniform
 
 
-class NNConv(Module):
+class NNConv(torch.nn.Module):
     """Convolution operator using a continuous kernel function computed by a
        neural network. Kernel function maps pseudo-coordinates (adj) to
        in_features x out_features weights for the feature aggregation.
