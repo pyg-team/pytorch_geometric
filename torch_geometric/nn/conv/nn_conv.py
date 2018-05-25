@@ -17,6 +17,8 @@ class NNConv(torch.nn.Module):
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         nn (nn.Sequential): Neural network.
+        norm (bool, optional): Whether to normalize output by node degree.
+            (default: :obj:`True`)
         root_weight (bool, optional): If set to :obj:`True`, the layer will
             add the weighted root node features to the output.
             (default: :obj:`True`)
@@ -28,6 +30,7 @@ class NNConv(torch.nn.Module):
                  in_channels,
                  out_channels,
                  nn,
+                 norm=True,
                  root_weight=True,
                  bias=True):
         super(NNConv, self).__init__()
@@ -35,6 +38,7 @@ class NNConv(torch.nn.Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.nn = nn
+        self.norm = norm
 
         if root_weight:
             self.root = Parameter(torch.Tensor(in_channels, out_channels))
@@ -68,9 +72,10 @@ class NNConv(torch.nn.Module):
         out = torch.matmul(x[col].unsqueeze(1), out).squeeze(1)
         out = scatter_add(out, row, dim=0)
 
-        # Normalize by node degree.
-        deg = degree(row, x.size(0), x.dtype, x.device)
-        out = out / deg.unsqueeze(-1).clamp(min=1)
+        # Normalize by node degree (if wished).
+        if self.norm:
+            deg = degree(row, x.size(0), x.dtype, x.device)
+            out = out / deg.unsqueeze(-1).clamp(min=1)
 
         # Weight root node separately (if wished).
         if self.root is not None:
