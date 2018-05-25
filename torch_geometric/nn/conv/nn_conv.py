@@ -68,9 +68,11 @@ class NNConv(torch.nn.Module):
         out = torch.matmul(x[col].unsqueeze(1), out).squeeze(1)
         out = scatter_add(out, row, dim=0)
 
+        # Normalize by node degree.
         deg = degree(row, x.size(0), x.dtype, x.device)
         out = out / deg.unsqueeze(-1).clamp(min=1)
 
+        # Weight root node separately (if wished).
         if self.root is not None:
             out += torch.mm(x, self.root)
 
