@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.1.0)
+                master (0.1.1)
               </div>
             
           
@@ -191,7 +191,7 @@
 <span id="convolution-layers"></span><h2><a class="toc-backref" href="#id1">Convolution Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.conv.SplineConv">
-<em class="property">class </em><code class="descname">SplineConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>is_open_spline=True</em>, <em>degree=1</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/spline_conv.html#SplineConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.SplineConv" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">SplineConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>is_open_spline=True</em>, <em>degree=1</em>, <em>norm=True</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/spline_conv.html#SplineConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.SplineConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spline-based Convolutional Operator <span class="math">\((f \star g)(i) =
 1/|\mathcal{N}(i)| \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
 f_l(j) \cdot g_l(u(i, j))\)</span>, where <span class="math">\(g_l\)</span> is a kernel function defined
@@ -210,6 +210,8 @@ B-Spline Kernels, CVPR 2018, <a class="reference external" href="https://arxiv.o
 <li><strong>is_open_spline</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em> or </em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>]</em><em>, </em><em>optional</em>) – Whether to use open or
 closed B-spline bases. (default <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
 <li><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – B-spline basis degrees. (default: <code class="xref py py-obj docutils literal"><span class="pre">1</span></code>)</li>
+<li><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to normalize output by node degree.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
 <li><strong>root_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>, the layer will
 add the weighted root node features to the output.
 (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
@@ -299,7 +301,7 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 
 <dl class="class">
 <dt id="torch_geometric.nn.conv.NNConv">
-<em class="property">class </em><code class="descname">NNConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>nn</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/nn_conv.html#NNConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.NNConv" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">NNConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>nn</em>, <em>norm=True</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/nn_conv.html#NNConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.NNConv" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt>Convolution operator using a continuous kernel function computed by a</dt>
 <dd>neural network. The neural network kernel function maps
@@ -315,6 +317,8 @@ for Quantum Chemistry, <a class="reference external" href="https://arxiv.org/abs
 <li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
 <li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
 <li><strong>nn</strong> (<em>nn.Sequential</em>) – Neural network.</li>
+<li><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to normalize output by node degree.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
 <li><strong>root_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>, the layer will
 add the weighted root node features to the output.
 (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
