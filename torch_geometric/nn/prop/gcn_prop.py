@@ -18,6 +18,7 @@ class GCNProp(torch.nn.Module):
         # Normalize adjacency matrix.
         deg = degree(row, num_nodes, dtype=x.dtype, device=x.device)
         deg = deg.pow(-0.5)
+        deg[deg == float('inf')] = 0
         edge_attr = deg[row] * edge_attr * deg[col]
 
         # Add self-loops to adjacency matrix.
