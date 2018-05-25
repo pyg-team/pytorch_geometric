@@ -1,7 +1,7 @@
 Installation
 ============
 
-We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be installed first.
+We have outsourced a lot of functionality of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ to other packages, which needs to be installed first.
 These packages come with their own CPU and GPU kernel implementations based on `C FFI <https://github.com/pytorch/extension-ffi/>`_ and the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_.
 
 If CUDA is available, ensure that ``nvcc`` is accessible from your terminal, e.g. by typing ``nvcc --version``. If not, add CUDA (e.g. ``/usr/local/cuda/bin``) to your ``$PATH``. Then run:
@@ -42,9 +42,29 @@ Please setup an `Anaconda/Miniconda <https://conda.io/docs/user-guide/install/in
                       ^
     compilation terminated.
 
-PyTorch can not find your CUDA.
+PyTorch can not find CUDA.
 Easily fixable by running:
 
 .. code-block:: none
 
     $ CPATH=/usr/local/cuda/include python setup.py install
+
+C++/CUDA extensions on macOS
+----------------------------
+
+In order to compile C++/CUDA extensions on macOS, you need to replace the call
+
+.. code-block:: python
+
+    def spawn(self, cmd):
+        spawn(cmd, dry_run=self.dry_run)
+
+with
+
+.. code-block:: python
+
+    def spawn(self, cmd):
+        subprocess.call(cmd)
+
+in ``python/distutils/ccompiler.py``.
+Do not forget to ``import subprocess`` at the top of the file.
