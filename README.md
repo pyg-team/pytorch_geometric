@@ -30,8 +30,9 @@ In detail, the following methods are currently implemented and verified for thei
 * **[Graclus Pooling](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.graclus)** from Dhillon *et al.*: [Weighted Graph Cuts without Eigenvectors: A Multilevel Approach](http://www.cs.utexas.edu/users/inderjit/public_papers/multilevel_pami.pdf) (PAMI 2007)
 * **[Voxel Grid Pooling](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.voxel_grid)**
 
-[comment]: # Head over to our documentation to find more about installation, data handling, creation of datasets and a full list of implemented methods, transformations, and datasets.
-
+<!---
+Head over to our documentation to find more about installation, data handling, creation of datasets and a full list of implemented methods, transformations, and datasets.
+--->
 For a quick start, check out our provided [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in the `examples/` directory.
 
 We are currently in our first alpha release and work on completing [documentation](http://rusty1s.github.io/pytorch_geometric).
