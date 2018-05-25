@@ -36,7 +36,7 @@ Head over to our documentation to find more about installation, data handling, c
 For a quick start, check out our provided [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in the `examples/` directory.
 
 We are currently in our first alpha release and work on completing [documentation](http://rusty1s.github.io/pytorch_geometric).
-If you notice anything unexpected, please open a [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
+If you notice anything unexpected, please open an [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
 If you are missing a specific method, feel free to open a [feature request](https://github.com/rusty1s/pytorch_geometric/issues).
 We are constantly encouraged to make PyTorch Geometric even better.
 
