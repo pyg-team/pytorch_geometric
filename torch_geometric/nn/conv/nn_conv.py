@@ -35,7 +35,6 @@ class NNConv(torch.nn.Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.nn = nn
-        self.bla = nn
 
         if root_weight:
             self.root = Parameter(torch.Tensor(in_channels, out_channels))
