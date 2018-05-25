@@ -11,6 +11,13 @@ Convolution Layers
     :members:
     :undoc-members:
 
+Propagation Layers
+------------------
+
+.. automodule:: torch_geometric.nn.prop
+    :members:
+    :undoc-members:
+
 Pooling Layers
 --------------
 
