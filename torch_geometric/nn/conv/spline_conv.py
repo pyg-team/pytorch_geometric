@@ -22,6 +22,8 @@ class SplineConv(torch.nn.Module):
         is_open_spline (bool or [bool], optional): Whether to use open or
             closed B-spline bases. (default :obj:`True`)
         degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
+        norm (bool, optional): Whether to normalize output by node degree.
+            (default: :obj:`True`)
         root_weight (bool, optional): If set to :obj:`True`, the layer will
             add the weighted root node features to the output.
             (default: :obj:`True`)
@@ -36,6 +38,7 @@ class SplineConv(torch.nn.Module):
                  kernel_size,
                  is_open_spline=True,
                  degree=1,
+                 norm=True,
                  root_weight=True,
                  bias=True):
         super(SplineConv, self).__init__()
@@ -43,6 +46,7 @@ class SplineConv(torch.nn.Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.degree = degree
+        self.norm = norm
 
         kernel_size = torch.tensor(repeat(kernel_size, dim), dtype=torch.long)
         self.register_buffer('kernel_size', kernel_size)
@@ -73,9 +77,10 @@ class SplineConv(torch.nn.Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index, pseudo):
-        return Conv.apply(
-            x, edge_index, pseudo, self.weight, self._buffers['kernel_size'],
-            self._buffers['is_open_spline'], self.degree, self.root, self.bias)
+        return Conv.apply(x, edge_index, pseudo, self.weight,
+                          self._buffers['kernel_size'],
+                          self._buffers['is_open_spline'], self.degree,
+                          self.norm, self.root, self.bias)
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
