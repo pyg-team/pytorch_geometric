@@ -1,8 +1,10 @@
 import torch
 from torch.nn import Parameter
+import torch.nn.functional as F
+from torch_scatter import scatter_add
+from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 from ..inits import uniform
-from ..functional.gat import gat
 
 
 class GATConv(torch.nn.Module):
@@ -41,14 +43,15 @@ class GATConv(torch.nn.Module):
         self.concat = concat
         self.negative_slope = negative_slope
         self.dropout = dropout
-        self.weight = Parameter(torch.Tensor(in_channels, heads, out_channels))
-        self.att_weight = Parameter(torch.Tensor(heads, 2 * out_channels))
 
-        if bias:
-            if concat:
-                self.bias = Parameter(torch.Tensor(out_channels * heads))
-            else:
-                self.bias = Parameter(torch.Tensor(out_channels))
+        self.weight = Parameter(
+            torch.Tensor(in_channels, heads * out_channels))
+        self.att_weight = Parameter(torch.Tensor(1, heads, 2 * out_channels))
+
+        if bias and concat:
+            self.bias = Parameter(torch.Tensor(out_channels * heads))
+        elif bias and not concat:
+            self.bias = Parameter(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -61,9 +64,38 @@ class GATConv(torch.nn.Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index):
+        x = x.unsqueeze(-1) if x.dim() == 1 else x
+        x = torch.mm(x, self.weight)
+        x = x.view(-1, self.heads, self.out_channels)
+
+        # Add self-loops to adjacency matrix.
+        edge_index, edge_attr = remove_self_loops(edge_index)
+        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
+        row, col = edge_index
+
+        # Compute attention coefficients.
+        alpha = torch.cat([x[row], x[col]], dim=-1)
+        alpha = (alpha * self.att_weight).sum(dim=-1)
+        alpha = F.leaky_relu(alpha, self.negative_slope)
+        alpha = softmax(alpha, row, num_nodes=x.size(0))
+
+        # Sample attention coefficients stochastically.
         dropout = self.dropout if self.training else 0
-        return gat(x, edge_index, self.concat, self.negative_slope, dropout,
-                   self.weight, self.att_weight, self.bias)
+        alpha = F.dropout(alpha, p=dropout, training=True)
+
+        # Sum up neighborhoods.
+        out = alpha.view(-1, self.heads, 1) * x[col]
+        out = scatter_add(out, row, dim=0, dim_size=x.size(0))
+
+        if self.concat is True:
+            out = out.view(-1, self.heads * self.out_channels)
+        else:
+            out = out.sum(dim=1) / self.heads
+
+        if self.bias is not None:
+            out += self.bias
+
+        return out
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

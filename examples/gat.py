@@ -40,7 +40,7 @@ def train():
 def test():
     model.eval()
     logits, accs = model(), []
-    for _, mask in data('train_mask', 'test_mask'):
+    for _, mask in data('train_mask', 'val_mask', 'test_mask'):
         pred = logits[mask].max(1)[1]
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
         accs.append(acc)
@@ -49,5 +49,5 @@ def test():
 
 for epoch in range(1, 101):
     train()
-    log = 'Epoch: {:03d}, Train: {:.4f}, Test: {:.4f}'
+    log = 'Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
     print(log.format(epoch, *test()))
