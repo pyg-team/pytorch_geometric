@@ -38,7 +38,7 @@ class AGNNProp(torch.nn.Module):
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
         row, col = edge_index
 
-        # Create sparse propagation matrix.
+        # Compute attention coefficients.
         norm = torch.norm(x, p=2, dim=1)
         alpha = (x[row] * x[col]).sum(dim=1) / (norm[row] * norm[col])
         alpha = softmax(alpha * beta, row, num_nodes=x.size(0))
