@@ -1,23 +1,19 @@
-torch_geometric.nn.modules
-==========================
+torch_geometric.nn
+==================
 
-.. automodule:: torch_geometric.nn.modules
-.. currentmodule:: torch_geometric.nn.modules
+.. contents:: Contents
+    :local:
 
 Convolution Layers
--------------------
+------------------
 
-.. autoclass:: SplineConv
+.. automodule:: torch_geometric.nn.conv
     :members:
-
-.. autoclass:: GraphConv
-    :members:
+    :undoc-members:
 
 Pooling Layers
 --------------
 
-torch_geometric.nn.functional
-=============================
-
-.. automodule:: torch_geometric.nn.functional
-.. currentmodule:: torch_geometric.nn.functional
+.. automodule:: torch_geometric.nn.pool
+    :members:
+    :undoc-members:

@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (1.0.0)
+                master (0.1.0)
               </div>
             
           
@@ -97,24 +97,20 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="notes/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes/introduction.html">Introduction by example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes/data_handling.html">Data handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes/create_dataset.html">Create your own dataset</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules/datasets.html">torch_geometric.datasets</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/datasets.html#faust">FAUST</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/datasets.html#cora">Cora</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/datasets.html#pubmed">PubMed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/datasets.html#citeseer">CiteSeer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/datasets.html#mnistsuperpixels">MNISTSuperpixels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/datasets.html#qm9">QM9</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/nn.html">torch_geometric.nn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules/nn.html">torch_geometric.nn.modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/nn.html#convolution-layers">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/nn.html#pooling-layers">Pooling Layers</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.functional">torch_geometric.nn.functional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/data.html">torch_geometric.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/datasets.html">torch_geometric.datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/transforms.html">torch_geometric.transforms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/utils.html">torch_geometric.utils</a></li>
 </ul>
 
@@ -181,25 +177,90 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#C"><strong>C</strong></a>
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
-<h2 id="C">C</h2>
+<h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.CiteSeer">CiteSeer (class in torch_geometric.datasets)</a>
+      <li><a href="modules/utils.html#torch_geometric.utils.add_self_loops">add_self_loops() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.AddSelfLoops">AddSelfLoops (class in torch_geometric.transforms)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.Cora">Cora (class in torch_geometric.datasets)</a>
+      <li><a href="modules/data.html#torch_geometric.data.Data.apply">apply() (Data method)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.pool.avg_pool">avg_pool() (in module torch_geometric.nn.pool)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.pool.avg_pool_x">avg_pool_x() (in module torch_geometric.nn.pool)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.Batch">Batch (class in torch_geometric.data)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.Cartesian">Cartesian (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.cat_dim">cat_dim() (Data method)</a>
+</li>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.categories">categories (ShapeNet attribute)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.Center">Center (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv">ChebConv (class in torch_geometric.nn.conv)</a>
+</li>
+      <li><a href="modules/utils.html#torch_geometric.utils.coalesce">coalesce() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.collate">collate() (InMemoryDataset method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.Compose">Compose (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.contains_isolated_nodes">contains_isolated_nodes() (Data method)</a>
+
+      <ul>
+        <li><a href="modules/utils.html#torch_geometric.utils.contains_isolated_nodes">(in module torch_geometric.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.contains_self_loops">contains_self_loops() (Data method)</a>
+
+      <ul>
+        <li><a href="modules/utils.html#torch_geometric.utils.contains_self_loops">(in module torch_geometric.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.contiguous">contiguous() (Data method)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Batch.cumsum">cumsum() (Batch method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -207,7 +268,51 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.Data">Data (class in torch_geometric.data)</a>
+</li>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.data_url">data_url (QM9 attribute)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.DataLoader">DataLoader (class in torch_geometric.data)</a>, <a href="modules/data.html#torch_geometric.data.DataLoader">[1]</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset">Dataset (class in torch_geometric.data)</a>
+</li>
       <li><a href="modules/utils.html#torch_geometric.utils.degree">degree() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.download">download() (Dataset method)</a>
+
+      <ul>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.download">(FAUST method)</a>
+</li>
+        <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.download">(InMemoryDataset method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.download">(MNISTSuperpixels method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.download">(ModelNet method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.download">(Planetoid method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.download">(QM9 method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.download">(ShapeNet method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.download">(TUDataset method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.download_url">download_url() (in module torch_geometric.data)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.extract_tar">extract_tar() (in module torch_geometric.data)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.extract_zip">extract_zip() (in module torch_geometric.data)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -215,7 +320,27 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.FaceToEdge">FaceToEdge (class in torch_geometric.transforms)</a>
+</li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST">FAUST (class in torch_geometric.datasets)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.forward">forward() (ChebConv method)</a>
+
+      <ul>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv.forward">(GATConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv.forward">(GCNConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.NNConv.forward">(NNConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.SplineConv.forward">(SplineConv method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.Batch.from_data_list">from_data_list() (Batch static method)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.from_dict">from_dict() (Data static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -223,7 +348,65 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/nn.html#torch_geometric.nn.modules.GraphConv">GraphConv (class in torch_geometric.nn.modules)</a>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv">GATConv (class in torch_geometric.nn.conv)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv">GCNConv (class in torch_geometric.nn.conv)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.get">get() (Dataset method)</a>
+
+      <ul>
+        <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.get">(InMemoryDataset method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/nn.html#torch_geometric.nn.pool.graclus">graclus() (in module torch_geometric.nn.pool)</a>
+</li>
+      <li><a href="modules/utils.html#torch_geometric.utils.grid">grid() (in module torch_geometric.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset">InMemoryDataset (class in torch_geometric.data)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.is_coalesced">is_coalesced() (Data method)</a>
+
+      <ul>
+        <li><a href="modules/utils.html#torch_geometric.utils.is_coalesced">(in module torch_geometric.utils)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.Data.is_directed">is_directed() (Data method)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.is_undirected">is_undirected() (Data method)</a>
+
+      <ul>
+        <li><a href="modules/utils.html#torch_geometric.utils.is_undirected">(in module torch_geometric.utils)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.Data.keys">keys (Data attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.LinearTransformation">LinearTransformation (class in torch_geometric.transforms)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.LocalCartesian">LocalCartesian (class in torch_geometric.transforms)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -231,7 +414,55 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.mask_url">mask_url (QM9 attribute)</a>
+</li>
+      <li><a href="modules/utils.html#torch_geometric.utils.matmul">matmul() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.pool.max_pool">max_pool() (in module torch_geometric.nn.pool)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/nn.html#torch_geometric.nn.pool.max_pool_x">max_pool_x() (in module torch_geometric.nn.pool)</a>
+</li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels">MNISTSuperpixels (class in torch_geometric.datasets)</a>
+</li>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet">ModelNet (class in torch_geometric.datasets)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.NNConv">NNConv (class in torch_geometric.nn.conv)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.NNGraph">NNGraph (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/utils.html#torch_geometric.utils.normalized_cut">normalized_cut() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.NormalizeFeatures">NormalizeFeatures (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.NormalizeScale">NormalizeScale (class in torch_geometric.transforms)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.Data.num_classes">num_classes (Data attribute)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.num_edges">num_edges (Data attribute)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.num_features">num_features (Data attribute)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Batch.num_graphs">num_graphs (Batch attribute)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Data.num_nodes">num_nodes (Data attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#torch_geometric.utils.one_hot">one_hot() (in module torch_geometric.utils)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -239,7 +470,55 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.PubMed">PubMed (class in torch_geometric.datasets)</a>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid">Planetoid (class in torch_geometric.datasets)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.Polar">Polar (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.process">process() (Dataset method)</a>
+
+      <ul>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.process">(FAUST method)</a>
+</li>
+        <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.process">(InMemoryDataset method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.process">(MNISTSuperpixels method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.process">(ModelNet method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.process">(Planetoid method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.process">(QM9 method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.process">(ShapeNet method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.process">(TUDataset method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.process_set">process_set() (ModelNet method)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.processed_file_names">processed_file_names (Dataset attribute)</a>
+
+      <ul>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.processed_file_names">(FAUST attribute)</a>
+</li>
+        <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.processed_file_names">(InMemoryDataset attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.processed_file_names">(MNISTSuperpixels attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.processed_file_names">(ModelNet attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.processed_file_names">(Planetoid attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.processed_file_names">(QM9 attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.processed_file_names">(ShapeNet attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.processed_file_names">(TUDataset attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.processed_paths">processed_paths (Dataset attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -252,10 +531,80 @@
   </ul></td>
 </tr></table>
 
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.RadiusGraph">RadiusGraph (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.RandomFlip">RandomFlip (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.RandomRotate">RandomRotate (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.RandomScale">RandomScale (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.RandomShear">RandomShear (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.RandomTranslate">RandomTranslate (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.raw_file_names">raw_file_names (Dataset attribute)</a>
+
+      <ul>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.raw_file_names">(FAUST attribute)</a>
+</li>
+        <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.raw_file_names">(InMemoryDataset attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.raw_file_names">(MNISTSuperpixels attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.raw_file_names">(ModelNet attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.raw_file_names">(Planetoid attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.raw_file_names">(QM9 attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.raw_file_names">(ShapeNet attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.raw_file_names">(TUDataset attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.raw_paths">raw_paths (Dataset attribute)</a>
+</li>
+      <li><a href="modules/utils.html#torch_geometric.utils.remove_self_loops">remove_self_loops() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.reset_parameters">reset_parameters() (ChebConv method)</a>
+
+      <ul>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv.reset_parameters">(GATConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv.reset_parameters">(GCNConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.NNConv.reset_parameters">(NNConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.SplineConv.reset_parameters">(SplineConv method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/nn.html#torch_geometric.nn.modules.SplineConv">SplineConv (class in torch_geometric.nn.modules)</a>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.SamplePoints">SamplePoints (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet">ShapeNet (class in torch_geometric.datasets)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.shuffle">shuffle() (InMemoryDataset method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#torch_geometric.utils.softmax">softmax() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.Spherical">Spherical (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.SplineConv">SplineConv (class in torch_geometric.nn.conv)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.split">split() (InMemoryDataset method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -263,15 +612,57 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/datasets.html#module-torch_geometric.datasets">torch_geometric.datasets (module)</a>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.TargetIndegree">TargetIndegree (class in torch_geometric.transforms)</a>
 </li>
-      <li><a href="modules/nn.html#module-torch_geometric.nn.functional">torch_geometric.nn.functional (module)</a>
+      <li><a href="modules/data.html#torch_geometric.data.Data.to">to() (Data method)</a>
+</li>
+      <li><a href="modules/utils.html#torch_geometric.utils.to_undirected">to_undirected() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/data.html#module-torch_geometric.data">torch_geometric.data (module)</a>
+</li>
+      <li><a href="modules/datasets.html#module-torch_geometric.datasets">torch_geometric.datasets (module)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/nn.html#module-torch_geometric.nn.modules">torch_geometric.nn.modules (module)</a>
+      <li><a href="modules/nn.html#module-torch_geometric.nn.conv">torch_geometric.nn.conv (module)</a>
+</li>
+      <li><a href="modules/nn.html#module-torch_geometric.nn.pool">torch_geometric.nn.pool (module)</a>
+</li>
+      <li><a href="modules/transforms.html#module-torch_geometric.transforms">torch_geometric.transforms (module)</a>
 </li>
       <li><a href="modules/utils.html#module-torch_geometric.utils">torch_geometric.utils (module)</a>
+</li>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset">TUDataset (class in torch_geometric.datasets)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.url">url (FAUST attribute)</a>
+
+      <ul>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.url">(MNISTSuperpixels attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.url">(Planetoid attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.url">(ShapeNet attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.url">(TUDataset attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.urls">urls (ModelNet attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/nn.html#torch_geometric.nn.pool.voxel_grid">voxel_grid() (in module torch_geometric.nn.pool)</a>
 </li>
   </ul></td>
 </tr></table>

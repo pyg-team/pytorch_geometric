@@ -3,23 +3,30 @@
 PyTorch Geometric documentation
 ===============================
 
-PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch
+PyTorch Geometric is a Geometric Deep Learning extension library for PyTorch.
 
 .. toctree::
    :glob:
    :maxdepth: 1
    :caption: Notes
 
-   notes/*
+   notes/installation
+   notes/introduction
+   notes/data_handling
+   notes/create_dataset
 
 .. toctree::
    :glob:
    :maxdepth: 1
    :caption: Package Reference
 
-   modules/*
+   modules/nn
+   modules/data
+   modules/datasets
+   modules/transforms
+   modules/utils
 
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`

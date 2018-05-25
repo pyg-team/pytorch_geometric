@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>torch_geometric.transforms &mdash; pytorch_geometric master documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
+        <link rel="next" title="torch_geometric.utils" href="utils.html"/>
+        <link rel="prev" title="torch_geometric.datasets" href="datasets.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.svg" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master (0.1.0)
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/data_handling.html">Data handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/create_dataset.html">Create your own dataset</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">torch_geometric.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">torch_geometric.datasets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">torch_geometric.utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pytorch_geometric</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>torch_geometric.transforms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/transforms.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-torch_geometric.transforms">
+<span id="torch-geometric-transforms"></span><h1>torch_geometric.transforms<a class="headerlink" href="#module-torch_geometric.transforms" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="torch_geometric.transforms.Compose">
+<em class="property">class </em><code class="descname">Compose</code><span class="sig-paren">(</span><em>transforms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/compose.html#Compose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Compose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Composes several transforms together.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>transforms</strong> (list of <code class="xref py py-obj docutils literal"><span class="pre">transform</span></code> objects) – List of transforms to
+compose.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch_geometric.transforms</span> <span class="k">as</span> <span class="nn">T</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+<span class="n">transform</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">T</span><span class="o">.</span><span class="n">Cartesian</span><span class="p">(),</span> <span class="n">T</span><span class="o">.</span><span class="n">TargetIndegree</span><span class="p">()])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[ 0.7500,  0.5000,  1.0000],
+        [ 1.0000,  0.5000,  1.0000]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.Cartesian">
+<em class="property">class </em><code class="descname">Cartesian</code><span class="sig-paren">(</span><em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/cartesian.html#Cartesian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Cartesian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the globally normalized spatial relation of linked nodes as
+Cartesian coordinates (mapped to the fixed interval <span class="math">\([0, 1]\)</span>)</p>
+<div class="math">
+\[\mathbf{u}(i,j) = 0.5 + \frac{\mathbf{pos}_j - \mathbf{pos}_i}{2 \cdot
+\max_{(v, w) \in \mathcal{E}} | \mathbf{pos}_w - \mathbf{pos}_v|}\]</div>
+<p>in its edge attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat pseudo-coordinates to edge attributes
+instead of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">Cartesian</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">Cartesian</span><span class="p">()(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[ 0.7500,  0.5000],
+        [ 0.2500,  0.5000],
+        [ 1.0000,  0.5000],
+        [ 0.0000,  0.5000]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.LocalCartesian">
+<em class="property">class </em><code class="descname">LocalCartesian</code><span class="sig-paren">(</span><em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/local_cartesian.html#LocalCartesian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.LocalCartesian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the locally normalized spatial relation of linked nodes as
+Cartesian coordinates (mapped to the fixed interval <span class="math">\([0, 1]\)</span>)</p>
+<div class="math">
+\[\mathbf{u}(i,j) = 0.5 + \frac{\mathbf{pos}_j - \mathbf{pos}_i}{2 \cdot
+\max_{v \in \mathcal{N}(i)} | \mathbf{pos}_v - \mathbf{pos}_i|}\]</div>
+<p>in its edge attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat pseudo-coordinates to edge attributes
+instead of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">LocalCartesian</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">LocalCartesian</span><span class="p">()(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[ 1.0000,  0.5000],
+        [ 0.2500,  0.5000],
+        [ 1.0000,  0.5000],
+        [ 0.0000,  0.5000]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.Polar">
+<em class="property">class </em><code class="descname">Polar</code><span class="sig-paren">(</span><em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/polar.html#Polar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Polar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the globally normalized two-dimensional spatial relation of
+linked nodes as polar coordinates (mapped to the fixed interval
+<span class="math">\([0, 1]\)</span>) in its edge attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat pseudo-coordinates to edge attributes
+instead of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">Polar</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">Polar</span><span class="p">()(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[ 0.5000,  0.0000],
+        [ 0.5000,  0.5000],
+        [ 1.0000,  0.2500],
+        [ 1.0000,  0.7500]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.Spherical">
+<em class="property">class </em><code class="descname">Spherical</code><span class="sig-paren">(</span><em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/spherical.html#Spherical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Spherical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the globally normalized three-dimensional spatial relation of
+linked nodes as spherical coordinates (mapped to the fixed interval
+<span class="math">\([0, 1]\)</span>) in its edge attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat pseudo-coordinates to edge attributes
+instead of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">Spherical</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">Spherical</span><span class="p">()(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[ 1.0000,  0.2500,  0.0000],
+        [ 1.0000,  0.7500,  1.0000]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.TargetIndegree">
+<em class="property">class </em><code class="descname">TargetIndegree</code><span class="sig-paren">(</span><em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/target_indegree.html#TargetIndegree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.TargetIndegree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the globally normalized degree of target nodes (mapped to the
+fixed interval <span class="math">\([0, 1]\)</span>)</p>
+<div class="math">
+\[\mathbf{u}(i,j) = \frac{\deg(j)}{\max_{v \in \mathcal{V}} \deg(v)}\]</div>
+<p>in its edge attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat pseudo-coordinates to edge attributes
+instead of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">TargetIndegree</span>
+
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">TargetIndegree</span><span class="p">()(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[ 1.0000],
+        [ 0.5000],
+        [ 0.5000],
+        [ 1.0000]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.Center">
+<em class="property">class </em><code class="descname">Center</code><a class="reference internal" href="../_modules/torch_geometric/transforms/center.html#Center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Center" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.NormalizeScale">
+<em class="property">class </em><code class="descname">NormalizeScale</code><a class="reference internal" href="../_modules/torch_geometric/transforms/normalize_scale.html#NormalizeScale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.NormalizeScale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.RandomTranslate">
+<em class="property">class </em><code class="descname">RandomTranslate</code><span class="sig-paren">(</span><em>translate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/random_translate.html#RandomTranslate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RandomTranslate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates node positions by randomly sampled translation values
+within a given interval. In contrast to other random transformations,
+translation is applied randomly at each position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>translate</strong> (<em>sequence</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – maximum translation in each
+dimension, defining the range
+<span class="math">\((-\mathrm{translate}, +\mathrm{translate})\)</span> to sample from.
+If <code class="xref py py-obj docutils literal"><span class="pre">translate</span></code> is a number instead of a sequence, the same
+range is used for each dimension.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.RandomFlip">
+<em class="property">class </em><code class="descname">RandomFlip</code><span class="sig-paren">(</span><em>axis</em>, <em>p=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/random_flip.html#RandomFlip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RandomFlip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flips node positions along a given axis randomly with a given
+probability.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>axis</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The axis along the position of nodes being flipped.</li>
+<li><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Probability of the position of nodes being
+flipped. (default: <code class="xref py py-obj docutils literal"><span class="pre">0.5</span></code>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">RandomFlip</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">RandomFlip</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[ 1.,  1.],
+        [ 3.,  0.],
+        [-2., -1.]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.LinearTransformation">
+<em class="property">class </em><code class="descname">LinearTransformation</code><span class="sig-paren">(</span><em>matrix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/linear_transformation.html#LinearTransformation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.LinearTransformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms node positions with a square transformation matrix computed
+offline.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>matrix</strong> (<em>Tensor</em>) – tensor with shape <span class="math">\([D, D]\)</span> where <span class="math">\(D\)</span>
+corresponds to the dimensionality of node positions.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">LinearTransformation</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+<span class="n">matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">LinearTransformation</span><span class="p">(</span><span class="n">matrix</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[-2.,  2.],
+        [-6.,  0.],
+        [ 4., -2.]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.RandomScale">
+<em class="property">class </em><code class="descname">RandomScale</code><span class="sig-paren">(</span><em>scales</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/random_scale.html#RandomScale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RandomScale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales node positions by a randomly sampled factor <span class="math">\(s\)</span> within a
+given interval, e.g., resulting in the transformation matrix</p>
+<div class="math">
+\[\begin{split}\begin{bmatrix}
+    s &amp; 0 &amp; 0 \\
+    0 &amp; s &amp; 0 \\
+    0 &amp; 0 &amp; s \\
+\end{bmatrix}\end{split}\]</div>
+<p>for three-dimensional positions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.6)"><em>tuple</em></a>) – scaling factor interval, e.g. <code class="xref py py-obj docutils literal"><span class="pre">(a,</span> <span class="pre">b)</span></code>, then scale
+is randomly sampled from the range
+<span class="math">\(a \leq \mathrm{scale} \leq b\)</span>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.RandomRotate">
+<em class="property">class </em><code class="descname">RandomRotate</code><span class="sig-paren">(</span><em>degrees</em>, <em>axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/random_rotate.html#RandomRotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RandomRotate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.RandomShear">
+<em class="property">class </em><code class="descname">RandomShear</code><span class="sig-paren">(</span><em>shear</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/random_shear.html#RandomShear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RandomShear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shears node positions by randomly sampled factors <span class="math">\(s\)</span> within a
+given interval, e.g., resulting in the transformation matrix</p>
+<div class="math">
+\[\begin{split}\begin{bmatrix}
+    1      &amp; s_{xy} &amp; s_{xz} \\
+    s_{yx} &amp; 1      &amp; s_{yz} \\
+    s_{zx} &amp; z_{zy} &amp; 1      \\
+\end{bmatrix}\end{split}\]</div>
+<p>for three-dimensional positions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shear</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – maximum shearing factor defining the range
+<span class="math">\((-\mathrm{shear}, +\mathrm{shear})\)</span> to sample from.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.NormalizeFeatures">
+<em class="property">class </em><code class="descname">NormalizeFeatures</code><a class="reference internal" href="../_modules/torch_geometric/transforms/normalize_features.html#NormalizeFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.NormalizeFeatures" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.AddSelfLoops">
+<em class="property">class </em><code class="descname">AddSelfLoops</code><a class="reference internal" href="../_modules/torch_geometric/transforms/add_self_loops.html#AddSelfLoops"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.AddSelfLoops" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.NNGraph">
+<em class="property">class </em><code class="descname">NNGraph</code><span class="sig-paren">(</span><em>k=6</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/nn_graph.html#NNGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.NNGraph" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.RadiusGraph">
+<em class="property">class </em><code class="descname">RadiusGraph</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/radius_graph.html#RadiusGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RadiusGraph" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.FaceToEdge">
+<em class="property">class </em><code class="descname">FaceToEdge</code><a class="reference internal" href="../_modules/torch_geometric/transforms/face_to_edge.html#FaceToEdge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.FaceToEdge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.SamplePoints">
+<em class="property">class </em><code class="descname">SamplePoints</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/sample_points.html#SamplePoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.SamplePoints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.html" class="btn btn-neutral float-right" title="torch_geometric.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="datasets.html" class="btn btn-neutral" title="torch_geometric.datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Matthias Fey.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

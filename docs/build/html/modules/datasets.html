@@ -38,8 +38,8 @@
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
-        <link rel="next" title="torch_geometric.nn.modules" href="nn.html"/>
-        <link rel="prev" title="Installation" href="../notes/installation.html"/> 
+        <link rel="next" title="torch_geometric.transforms" href="transforms.html"/>
+        <link rel="prev" title="torch_geometric.data" href="data.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (1.0.0)
+                master (0.1.0)
               </div>
             
           
@@ -98,24 +98,20 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/data_handling.html">Data handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/create_dataset.html">Create your own dataset</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.datasets</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#faust">FAUST</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cora">Cora</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pubmed">PubMed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#citeseer">CiteSeer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mnistsuperpixels">MNISTSuperpixels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#qm9">QM9</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn.modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#convolution-layers">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#pooling-layers">Pooling Layers</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="nn.html#module-torch_geometric.nn.functional">torch_geometric.nn.functional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">torch_geometric.data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transforms.html">torch_geometric.transforms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">torch_geometric.utils</a></li>
 </ul>
 
@@ -182,177 +178,231 @@
             
   <div class="section" id="module-torch_geometric.datasets">
 <span id="torch-geometric-datasets"></span><h1>torch_geometric.datasets<a class="headerlink" href="#module-torch_geometric.datasets" title="Permalink to this headline">¶</a></h1>
-<div class="contents local topic" id="contents">
-<p class="topic-title first">Contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#faust" id="id5">FAUST</a></li>
-<li><a class="reference internal" href="#cora" id="id6">Cora</a></li>
-<li><a class="reference internal" href="#pubmed" id="id7">PubMed</a></li>
-<li><a class="reference internal" href="#citeseer" id="id8">CiteSeer</a></li>
-<li><a class="reference internal" href="#mnistsuperpixels" id="id9">MNISTSuperpixels</a></li>
-<li><a class="reference internal" href="#qm9" id="id10">QM9</a></li>
-</ul>
-</div>
-<div class="section" id="faust">
-<h2><a class="toc-backref" href="#id5">FAUST</a><a class="headerlink" href="#faust" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="torch_geometric.datasets.FAUST">
-<em class="property">class </em><code class="descclassname">torch_geometric.datasets.</code><code class="descname">FAUST</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="http://faust.is.tue.mpg.de">MPI FAUST</a> Dataset.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Root directory of dataset where <code class="docutils literal"><span class="pre">raw/MPI-FAUST</span></code> exist.
-Dataset needs to be downloaded manually.</li>
-<li><strong>train</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>, returns training shapes,
-otherwise test shapes. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
-<li><strong>transform</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – A function/transform that takes in a
-<code class="xref py py-class docutils literal"><span class="pre">Data</span></code> object and returns a transformed version.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="torch_geometric.datasets.TUDataset">
+<em class="property">class </em><code class="descname">TUDataset</code><span class="sig-paren">(</span><em>root</em>, <em>name</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.datasets.TUDataset.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset.download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.TUDataset.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.TUDataset.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.TUDataset.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.TUDataset.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.TUDataset.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.TUDataset.url">
+<code class="descname">url</code><em class="property"> = 'https://ls11-www.cs.uni-dortmund.de/people/morris/graphkerneldatasets'</em><a class="headerlink" href="#torch_geometric.datasets.TUDataset.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-</div>
-<div class="section" id="cora">
-<h2><a class="toc-backref" href="#id6">Cora</a><a class="headerlink" href="#cora" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="torch_geometric.datasets.Cora">
-<em class="property">class </em><code class="descclassname">torch_geometric.datasets.</code><code class="descname">Cora</code><span class="sig-paren">(</span><em>root</em>, <em>normalize=False</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/cora.html#Cora"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Cora" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://linqs.soe.ucsc.edu/node/236">Cora</a> Dataset.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Root directory of dataset. Downloads and processes data
-automatically if dataset doesn’t exist.</li>
-<li><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – (Row-)normalize input feature vectors.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>)</li>
-<li><strong>transform</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – A function/transform that takes in a
-<code class="xref py py-class docutils literal"><span class="pre">Data</span></code> object and returns a transformed version.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="torch_geometric.datasets.Planetoid">
+<em class="property">class </em><code class="descname">Planetoid</code><span class="sig-paren">(</span><em>root</em>, <em>name</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/planetoid.html#Planetoid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Planetoid" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.datasets.Planetoid.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/planetoid.html#Planetoid.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Planetoid.download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.Planetoid.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/planetoid.html#Planetoid.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Planetoid.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.Planetoid.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.Planetoid.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.Planetoid.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.Planetoid.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.Planetoid.url">
+<code class="descname">url</code><em class="property"> = 'https://github.com/kimiyoung/planetoid/raw/master/data'</em><a class="headerlink" href="#torch_geometric.datasets.Planetoid.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-</div>
-<div class="section" id="pubmed">
-<h2><a class="toc-backref" href="#id7">PubMed</a><a class="headerlink" href="#pubmed" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="torch_geometric.datasets.PubMed">
-<em class="property">class </em><code class="descclassname">torch_geometric.datasets.</code><code class="descname">PubMed</code><span class="sig-paren">(</span><em>root</em>, <em>normalize=False</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/pubmed.html#PubMed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.PubMed" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://linqs.soe.ucsc.edu/node/236">PubMed</a> Dataset.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Root directory of dataset. Downloads and processes data
-automatically if dataset doesn’t exist.</li>
-<li><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – (Row-)normalize input feature vectors.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>)</li>
-<li><strong>transform</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – A function/transform that takes in a
-<code class="xref py py-class docutils literal"><span class="pre">Data</span></code> object and returns a transformed version.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="citeseer">
-<h2><a class="toc-backref" href="#id8">CiteSeer</a><a class="headerlink" href="#citeseer" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="torch_geometric.datasets.CiteSeer">
-<em class="property">class </em><code class="descclassname">torch_geometric.datasets.</code><code class="descname">CiteSeer</code><span class="sig-paren">(</span><em>root</em>, <em>normalize=False</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/citeseer.html#CiteSeer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CiteSeer" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://linqs.soe.ucsc.edu/node/236">CiteSeer</a> Dataset.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Root directory of dataset. Downloads and processes data
-automatically if dataset doesn’t exist.</li>
-<li><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – (Row-)normalize input feature vectors.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>)</li>
-<li><strong>transform</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – A function/transform that takes in a
-<code class="xref py py-class docutils literal"><span class="pre">Data</span></code> object and returns a transformed version.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="mnistsuperpixels">
-<h2><a class="toc-backref" href="#id9">MNISTSuperpixels</a><a class="headerlink" href="#mnistsuperpixels" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.datasets.MNISTSuperpixels">
-<em class="property">class </em><code class="descclassname">torch_geometric.datasets.</code><code class="descname">MNISTSuperpixels</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="http://yann.lecun.com/exdb/mnist">MNIST</a> Superpixels Dataset from the
-<a class="reference external" href="https://arxiv.org/abs/1611.08402">“Geometric Deep Learning on Graphs and Manifolds Using Mixture Model CNNs”</a> paper. Each example contains exactly
-75 graph-nodes.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Root directory of dataset. Downloads data automatically
-if dataset doesn’t exist.</li>
-<li><strong>train</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>, creates dataset from
-<code class="docutils literal"><span class="pre">training.pt</span></code>, otherwise from <code class="docutils literal"><span class="pre">test.pt</span></code>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
-<li><strong>transform</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – A function/transform that takes in a
-<code class="docutils literal"><span class="pre">Data</span></code> object and returns a transformed version.
-(default: <code class="docutils literal"><span class="pre">None</span></code>)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<em class="property">class </em><code class="descname">MNISTSuperpixels</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.datasets.MNISTSuperpixels.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.MNISTSuperpixels.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.MNISTSuperpixels.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.MNISTSuperpixels.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.MNISTSuperpixels.url">
+<code class="descname">url</code><em class="property"> = 'http://ls7-www.cs.uni-dortmund.de/cvpr_geometric_dl/mnist_superpixels.tar.gz'</em><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-</div>
-<div class="section" id="qm9">
-<h2><a class="toc-backref" href="#id10">QM9</a><a class="headerlink" href="#qm9" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="torch_geometric.datasets.FAUST">
+<em class="property">class </em><code class="descname">FAUST</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.datasets.FAUST.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST.download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.FAUST.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.FAUST.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.FAUST.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.FAUST.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.FAUST.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.FAUST.url">
+<code class="descname">url</code><em class="property"> = 'http://faust.is.tue.mpg.de/'</em><a class="headerlink" href="#torch_geometric.datasets.FAUST.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="torch_geometric.datasets.QM9">
-<em class="property">class </em><code class="descclassname">torch_geometric.datasets.</code><code class="descname">QM9</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="http://quantum-machine.org/datasets">QM9</a> Molecule Dataset from the
-<a class="reference external" href="https://www.nature.com/articles/sdata201422">“Quantum Chemistry Structures and Properties of 134 Kilo Molecules”</a> paper. QM9 consists of
-approximately 130k molecules with 12 properties for each molecule.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.6)"><em>string</em></a>) – Root directory of dataset. Downloads data automatically
-if dataset doesn’t exist.</li>
-<li><strong>train</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>, returns training molecules,
-otherwise test molecules. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
-<li><strong>transform</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#callable" title="(in Python v3.6)"><em>callable</em></a><em>, </em><em>optional</em>) – A function/transform that takes in a
-<code class="docutils literal"><span class="pre">Data</span></code> object and returns a transformed version.
-(default: <code class="docutils literal"><span class="pre">None</span></code>)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<em class="property">class </em><code class="descname">QM9</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="torch_geometric.datasets.QM9.data_url">
+<code class="descname">data_url</code><em class="property"> = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/gdb9.tar.gz'</em><a class="headerlink" href="#torch_geometric.datasets.QM9.data_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.QM9.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9.download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.QM9.mask_url">
+<code class="descname">mask_url</code><em class="property"> = 'https://ndownloader.figshare.com/files/3195404'</em><a class="headerlink" href="#torch_geometric.datasets.QM9.mask_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.QM9.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.QM9.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM9.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.QM9.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM9.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-</div>
+<dl class="class">
+<dt id="torch_geometric.datasets.ShapeNet">
+<em class="property">class </em><code class="descname">ShapeNet</code><span class="sig-paren">(</span><em>root</em>, <em>category</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/shapenet.html#ShapeNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ShapeNet" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="torch_geometric.datasets.ShapeNet.categories">
+<code class="descname">categories</code><em class="property"> = {'Airplane': '02691156', 'Bag': '02773838', 'Cap': '02954340', 'Car': '02958343', 'Chair': '03001627', 'Earphone': '03261776', 'Guitar': '03467517', 'Knife': '03624134', 'Lamp': '03636649', 'Laptop': '03642806', 'Motorbike': '03790512', 'Mug': '03797390', 'Pistol': '03948459', 'Rocket': '04099429', 'Skateboard': '04225987', 'Table': '04379243'}</em><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.categories" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.ShapeNet.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/shapenet.html#ShapeNet.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.ShapeNet.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/shapenet.html#ShapeNet.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.ShapeNet.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.ShapeNet.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.ShapeNet.url">
+<code class="descname">url</code><em class="property"> = 'https://shapenet.cs.stanford.edu/iccv17/partseg'</em><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.datasets.ModelNet">
+<em class="property">class </em><code class="descname">ModelNet</code><span class="sig-paren">(</span><em>root</em>, <em>name='10'</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.datasets.ModelNet.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet.download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.ModelNet.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.ModelNet.process_set">
+<code class="descname">process_set</code><span class="sig-paren">(</span><em>dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet.process_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet.process_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.ModelNet.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ModelNet.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.ModelNet.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ModelNet.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.ModelNet.urls">
+<code class="descname">urls</code><em class="property"> = {'10': 'http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip', '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'}</em><a class="headerlink" href="#torch_geometric.datasets.ModelNet.urls" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -365,10 +415,10 @@ otherwise test molecules. (default: <a class="reference external" href="https://
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="nn.html" class="btn btn-neutral float-right" title="torch_geometric.nn.modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="transforms.html" class="btn btn-neutral float-right" title="torch_geometric.transforms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../notes/installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="data.html" class="btn btn-neutral" title="torch_geometric.data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

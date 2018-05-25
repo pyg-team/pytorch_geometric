@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.modules &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.nn &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -38,8 +38,8 @@
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
-        <link rel="next" title="torch_geometric.utils" href="utils.html"/>
-        <link rel="prev" title="torch_geometric.datasets" href="datasets.html"/> 
+        <link rel="next" title="torch_geometric.data" href="data.html"/>
+        <link rel="prev" title="Create your own dataset" href="../notes/create_dataset.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (1.0.0)
+                master (0.1.0)
               </div>
             
           
@@ -98,24 +98,20 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/data_handling.html">Data handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/create_dataset.html">Create your own dataset</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="datasets.html">torch_geometric.datasets</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html#faust">FAUST</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html#cora">Cora</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html#pubmed">PubMed</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html#citeseer">CiteSeer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html#mnistsuperpixels">MNISTSuperpixels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html#qm9">QM9</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.nn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.nn.modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#convolution-layers">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pooling-layers">Pooling Layers</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#module-torch_geometric.nn.functional">torch_geometric.nn.functional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">torch_geometric.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">torch_geometric.datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transforms.html">torch_geometric.transforms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">torch_geometric.utils</a></li>
 </ul>
 
@@ -161,7 +157,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>torch_geometric.nn.modules</li>
+      <li>torch_geometric.nn</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -180,15 +176,22 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-torch_geometric.nn.modules">
-<span id="torch-geometric-nn-modules"></span><h1>torch_geometric.nn.modules<a class="headerlink" href="#module-torch_geometric.nn.modules" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="convolution-layers">
-<h2>Convolution Layers<a class="headerlink" href="#convolution-layers" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="torch-geometric-nn">
+<h1>torch_geometric.nn<a class="headerlink" href="#torch-geometric-nn" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#module-torch_geometric.nn.conv" id="id1">Convolution Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id2">Pooling Layers</a></li>
+</ul>
+</div>
+<div class="section" id="module-torch_geometric.nn.conv">
+<span id="convolution-layers"></span><h2><a class="toc-backref" href="#id1">Convolution Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="torch_geometric.nn.modules.SplineConv">
-<em class="property">class </em><code class="descclassname">torch_geometric.nn.modules.</code><code class="descname">SplineConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>is_open_spline=True</em>, <em>degree=1</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/modules/spline_conv.html#SplineConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.modules.SplineConv" title="Permalink to this definition">¶</a></dt>
+<dt id="torch_geometric.nn.conv.SplineConv">
+<em class="property">class </em><code class="descname">SplineConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>is_open_spline=True</em>, <em>degree=1</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/spline_conv.html#SplineConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.SplineConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Spline-based Convolutional Operator <span class="math">\((f \star g)(i) =
-1/\mathcal{N}(i) \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
+1/|\mathcal{N}(i)| \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
 f_l(j) \cdot g_l(u(i, j))\)</span>, where <span class="math">\(g_l\)</span> is a kernel function defined
 over the weighted B-Spline tensor product basis for a single input feature
 map. (Fey et al: SplineCNN: Fast Geometric Deep Learning with Continuous
@@ -215,11 +218,21 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.SplineConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>pseudo</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/spline_conv.html#SplineConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.SplineConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.SplineConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/spline_conv.html#SplineConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.SplineConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
-<dt id="torch_geometric.nn.modules.GraphConv">
-<em class="property">class </em><code class="descclassname">torch_geometric.nn.modules.</code><code class="descname">GraphConv</code><span class="sig-paren">(</span><em>in_features</em>, <em>out_features</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/modules/graph_conv.html#GraphConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.modules.GraphConv" title="Permalink to this definition">¶</a></dt>
+<dt id="torch_geometric.nn.conv.GCNConv">
+<em class="property">class </em><code class="descname">GCNConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Graph Convolutional Operator <span class="math">\(F_{out} = \hat{D}^{-1/2} \hat{A}
 \hat{D}^{-1/2} F_{in} W\)</span> with <span class="math">\(\hat{A} = A + I\)</span> and
 <span class="math">\(\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}\)</span> from the <a class="reference external" href="https://arxiv.org/abs/1609.02907">“Semi-Supervised
@@ -229,8 +242,8 @@ Classfication with Graph Convolutional Networks”</a> paper.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>in_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
-<li><strong>out_features</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
 <li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>, the layer will not learn
 an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
 </ul>
@@ -238,15 +251,163 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.GCNConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>edge_attr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.GCNConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.ChebConv">
+<em class="property">class </em><code class="descname">ChebConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>K</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/cheb_conv.html#ChebConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ChebConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Chebyshev Spectral Graph Convolutional Operator from the <a class="reference external" href="https://arxiv.org/abs/1606.09375">“Convolutional
+Neural Networks on Graphs with Fast Localized Spectral Filtering”</a> paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>K</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Chebyshev filter size, i.e. number of hops.</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.ChebConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>edge_attr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/cheb_conv.html#ChebConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ChebConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.ChebConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/cheb_conv.html#ChebConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ChebConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.NNConv">
+<em class="property">class </em><code class="descname">NNConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>nn</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/nn_conv.html#NNConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.NNConv" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Convolution operator using a continuous kernel function computed by a</dt>
+<dd>neural network. The neural network kernel function maps
+pseudo-coordinates (adj) to in_channels x out_channels weights for the
+feature aggregation. (adapted from Gilmer et al.: Neural Message Passing
+for Quantum Chemistry, <a class="reference external" href="https://arxiv.org/abs/1704.01212">https://arxiv.org/abs/1704.01212</a>)</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>nn</strong> (<em>nn.Sequential</em>) – Neural network.</li>
+<li><strong>root_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>, the layer will
+add the weighted root node features to the output.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.NNConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>pseudo</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/nn_conv.html#NNConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.NNConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.NNConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/nn_conv.html#NNConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.NNConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.GATConv">
+<em class="property">class </em><code class="descname">GATConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>heads=1</em>, <em>concat=True</em>, <em>negative_slope=0.2</em>, <em>dropout=0</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gat_conv.html#GATConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GATConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graph Attentional Layer from the <a class="reference external" href="https://arxiv.org/abs/1710.10903">“Graph Attention Networks (GAT)”</a> paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>heads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Number of multi-head-attentions. (default:
+<code class="xref py py-obj docutils literal"><span class="pre">1</span></code>)</li>
+<li><strong>concat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to concat or average multi-head
+attentions (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+<li><strong>negative_slope</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – LeakyRELU angle of the negative
+slope. (default: <code class="xref py py-obj docutils literal"><span class="pre">0.2</span></code>)</li>
+<li><strong>dropout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – Dropout propbability of the normalized
+attention coefficients, i.e. exposes each node to a stochastically
+sampled neighborhood during training. (default: <code class="xref py py-obj docutils literal"><span class="pre">0</span></code>)</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.GATConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gat_conv.html#GATConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GATConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.GATConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gat_conv.html#GATConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GATConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
-<div class="section" id="pooling-layers">
-<h2>Pooling Layers<a class="headerlink" href="#pooling-layers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-torch_geometric.nn.pool">
+<span id="pooling-layers"></span><h2><a class="toc-backref" href="#id2">Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="torch_geometric.nn.pool.max_pool">
+<code class="descname">max_pool</code><span class="sig-paren">(</span><em>cluster</em>, <em>data</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/max_pool.html#max_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.max_pool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.max_pool_x">
+<code class="descname">max_pool_x</code><span class="sig-paren">(</span><em>cluster</em>, <em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/max_pool.html#max_pool_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.max_pool_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.avg_pool">
+<code class="descname">avg_pool</code><span class="sig-paren">(</span><em>cluster</em>, <em>data</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/avg_pool.html#avg_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.avg_pool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.avg_pool_x">
+<code class="descname">avg_pool_x</code><span class="sig-paren">(</span><em>cluster</em>, <em>x</em>, <em>batch=None</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/avg_pool.html#avg_pool_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.avg_pool_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.graclus">
+<code class="descname">graclus</code><span class="sig-paren">(</span><em>edge_index</em>, <em>weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/graclus.html#graclus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.graclus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.voxel_grid">
+<code class="descname">voxel_grid</code><span class="sig-paren">(</span><em>pos</em>, <em>batch</em>, <em>size</em>, <em>start=None</em>, <em>end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/voxel_grid.html#voxel_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.voxel_grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-</div>
-<div class="section" id="module-torch_geometric.nn.functional">
-<span id="torch-geometric-nn-functional"></span><h1>torch_geometric.nn.functional<a class="headerlink" href="#module-torch_geometric.nn.functional" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -259,10 +420,10 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="utils.html" class="btn btn-neutral float-right" title="torch_geometric.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="data.html" class="btn btn-neutral float-right" title="torch_geometric.data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="datasets.html" class="btn btn-neutral" title="torch_geometric.datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../notes/create_dataset.html" class="btn btn-neutral" title="Create your own dataset" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
