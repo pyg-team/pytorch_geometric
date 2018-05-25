@@ -121,8 +121,8 @@ We now have access to all 600 graphs in the dataset:
 We can see that the first graph in the dataset contains 37 nodes, each one having 21 features.
 There are 84 undirected edges and the graph belongs to exactly one out of six classes.
 
-We can even use slices, long or byte tensors to generate a training and test dataset.
-To create a 90/10 train/test split, type:
+We can even use slices, long or byte tensors to split the dataset.
+E.g., to create a 90/10 train/test split, type:
 
 .. code-block:: python
 
