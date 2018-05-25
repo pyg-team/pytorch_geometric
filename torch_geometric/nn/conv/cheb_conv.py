@@ -48,6 +48,7 @@ class ChebConv(torch.nn.Module):
 
         # Compute normalized and rescaled Laplacian.
         deg = deg.pow(-0.5)
+        deg[deg == float('inf')] = 0
         lap = -deg[row] * edge_attr * deg[col]
 
         # Perform filter operation recurrently .
