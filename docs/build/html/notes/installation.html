@@ -97,7 +97,10 @@
             
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#common-installation-issues">Common installation issues</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction by example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_handling.html">Data handling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="create_dataset.html">Create your own dataset</a></li>
@@ -179,6 +182,43 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be installed first.
+These packages come with their own CPU and GPU kernel implementations based on <a class="reference external" href="https://github.com/pytorch/extension-ffi/">C FFI</a> and the newly introduced <a class="reference external" href="https://github.com/pytorch/extension-cpp/">C++/CUDA extensions</a>.</p>
+<p>If CUDA is available, ensure that <code class="docutils literal"><span class="pre">nvcc</span></code> is accessible from your terminal, e.g. by typing <code class="docutils literal"><span class="pre">nvcc</span> <span class="pre">--version</span></code>. If not, add cuda (e.g. <code class="docutils literal"><span class="pre">/usr/local/cuda/bin</span></code>) to your <code class="docutils literal"><span class="pre">$PATH</span></code>. Then run:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>$ pip install cffi
+$ pip install --upgrade torch-scatter torch-unique torch-cluster torch-spline-conv
+$ pip install torch-geometric
+</pre></div>
+</div>
+<p>Installation should be straightforward.
+However, in rare cases CUDA or python path issues can prevent a succesful installation.</p>
+<p>The error messages of <code class="docutils literal"><span class="pre">pip</span></code> in case of installation failure are unfortunately not very meaningful.
+Therefore, you should clone the respective package and check where the error occurs:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>$ git clone https://github.com/rusty1s/pytorch_scatter
+$ cd pytorch_scatter
+$ ./build.sh  # Check for CUDA compilation error.
+$ python setup.py install  # Check for link error.
+$ python setup.py test  # Verify.
+</pre></div>
+</div>
+<div class="section" id="common-installation-issues">
+<h2>Common installation issues<a class="headerlink" href="#common-installation-issues" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-none"><div class="highlight"><pre><span></span>[Errno 13] Permission denied:
+</pre></div>
+</div>
+<p>We do not recommend installation as root user on your system python.
+Please setup an <a class="reference external" href="https://conda.io/docs/user-guide/install/index.html/">Anaconda/Miniconda</a> environment or <a class="reference external" href="https://www.docker.com/">Docker image</a>.</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span> #include &quot;cuda.h&quot;
+                  ^
+compilation terminated.
+</pre></div>
+</div>
+<p>PyTorch can not find your CUDA.
+Easily fixable by running:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>$ CPATH=/usr/local/cuda/include python setup.py install
+</pre></div>
+</div>
+</div>
 </div>
 
 
