@@ -1,5 +1,0 @@
-cffi
-torch-scatter
-torch-unique
-torch-cluster
-torch-spline-conv
