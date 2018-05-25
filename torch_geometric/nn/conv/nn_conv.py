@@ -52,7 +52,10 @@ class NNConv(torch.nn.Module):
         size = self.in_channels
         uniform(size, self.root)
         uniform(size, self.bias)
-        # TODO: Reset NN
+
+        for item in self.nn:
+            if hasattr(item, 'reset_parameters'):
+                item.reset_parameters()
 
     def forward(self, x, edge_index, pseudo):
         row, col = edge_index
