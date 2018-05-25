@@ -8,10 +8,10 @@ from ..inits import uniform
 
 class NNConv(torch.nn.Module):
     """Convolution operator using a continuous kernel function computed by a
-       neural network. Kernel function maps pseudo-coordinates (adj) to
-       in_features x out_features weights for the feature aggregation.
-       (adapted from Gilmer et al.: Neural Message Passing for Quantum
-       Chemistry, https://arxiv.org/abs/1704.01212)
+       neural network. The neural network kernel function maps
+       pseudo-coordinates (adj) to in_channels x out_channels weights for the
+       feature aggregation. (adapted from Gilmer et al.: Neural Message Passing
+       for Quantum Chemistry, https://arxiv.org/abs/1704.01212)
 
     Args:
         in_channels (int): Size of each input sample.
