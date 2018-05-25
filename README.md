@@ -47,8 +47,9 @@ If not, add cuda (`/usr/local/cuda/bin`) to your `$PATH`.
 Then run:
 
 ```
-pip install -r requirements.txt
-python setup.py install
+pip install cffi
+pip install --upgrade torch-scatter torch-unique torch-cluster torch-spline-conv
+pip install torch-geometric
 ```
 
 ## Running examples
