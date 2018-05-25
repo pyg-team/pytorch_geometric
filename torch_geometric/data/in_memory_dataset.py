@@ -23,6 +23,14 @@ class InMemoryDataset(Dataset):
         super(InMemoryDataset, self).__init__(root, transform, pre_transform)
         self.data, self.slices = None, None
 
+    @property
+    def num_features(self):
+        return 1 if self.data.x.dim() == 1 else self.data.x.size(1)
+
+    @property
+    def num_classes(self):
+        return self.data.y.max().item() + 1
+
     def __len__(self):
         return self.slices[list(self.slices.keys())[0]].size(0) - 1
 

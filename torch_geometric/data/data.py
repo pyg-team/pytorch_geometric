@@ -71,10 +71,6 @@ class Data(object):
     def num_features(self):
         return 1 if self.x.dim() == 1 else self.x.size(1)
 
-    @property
-    def num_classes(self):
-        return self.y.max().item() + 1
-
     def is_coalesced(self):
         return is_coalesced(self.edge_index, self.num_nodes)
 
