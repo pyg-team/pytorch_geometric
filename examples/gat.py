@@ -47,7 +47,7 @@ def test():
     return accs
 
 
-for epoch in range(1, 101):
+for epoch in range(1, 201):
     train()
     log = 'Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
     print(log.format(epoch, *test()))
