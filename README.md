@@ -42,7 +42,7 @@ We are constantly encouraged to make PyTorch Geometric even better.
 
 ## Installation
 
-If cuda is available, check that `nvcc` is accessible from your terminal, e.g. by typing `nvcc --version`.
+If cuda is available, check that `nvcc` is accessible from your terminal, *e.g.* by typing `nvcc --version`.
 If not, add cuda (`/usr/local/cuda/bin`) to your `$PATH`.
 Then run:
 
