@@ -105,6 +105,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/nn.html">torch_geometric.nn</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
 </li>
@@ -205,6 +206,8 @@
       <li><a href="modules/utils.html#torch_geometric.utils.add_self_loops">add_self_loops() (in module torch_geometric.utils)</a>
 </li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.AddSelfLoops">AddSelfLoops (class in torch_geometric.transforms)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.prop.AGNNProp">AGNNProp (class in torch_geometric.nn.prop)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -324,12 +327,16 @@
 </li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST">FAUST (class in torch_geometric.datasets)</a>
 </li>
-      <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.forward">forward() (ChebConv method)</a>
+      <li><a href="modules/nn.html#torch_geometric.nn.prop.AGNNProp.forward">forward() (AGNNProp method)</a>
 
       <ul>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.forward">(ChebConv method)</a>
+</li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv.forward">(GATConv method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv.forward">(GCNConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.prop.GCNProp.forward">(GCNProp method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.NNConv.forward">(NNConv method)</a>
 </li>
@@ -352,14 +359,16 @@
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv">GCNConv (class in torch_geometric.nn.conv)</a>
 </li>
+      <li><a href="modules/nn.html#torch_geometric.nn.prop.GCNProp">GCNProp (class in torch_geometric.nn.prop)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data.html#torch_geometric.data.Dataset.get">get() (Dataset method)</a>
 
       <ul>
         <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.get">(InMemoryDataset method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/nn.html#torch_geometric.nn.pool.graclus">graclus() (in module torch_geometric.nn.pool)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.grid">grid() (in module torch_geometric.utils)</a>
@@ -572,9 +581,11 @@
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.remove_self_loops">remove_self_loops() (in module torch_geometric.utils)</a>
 </li>
-      <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.reset_parameters">reset_parameters() (ChebConv method)</a>
+      <li><a href="modules/nn.html#torch_geometric.nn.prop.AGNNProp.reset_parameters">reset_parameters() (AGNNProp method)</a>
 
       <ul>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.reset_parameters">(ChebConv method)</a>
+</li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv.reset_parameters">(GATConv method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv.reset_parameters">(GCNConv method)</a>
@@ -627,6 +638,8 @@
       <li><a href="modules/nn.html#module-torch_geometric.nn.conv">torch_geometric.nn.conv (module)</a>
 </li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.pool">torch_geometric.nn.pool (module)</a>
+</li>
+      <li><a href="modules/nn.html#module-torch_geometric.nn.prop">torch_geometric.nn.prop (module)</a>
 </li>
       <li><a href="modules/transforms.html#module-torch_geometric.transforms">torch_geometric.transforms (module)</a>
 </li>

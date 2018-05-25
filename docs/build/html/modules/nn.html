@@ -106,6 +106,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.nn</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
 </li>
@@ -182,7 +183,8 @@
 <p class="topic-title first">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#module-torch_geometric.nn.conv" id="id1">Convolution Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id2">Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.prop" id="id2">Propagation Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id3">Pooling Layers</a></li>
 </ul>
 </div>
 <div class="section" id="module-torch_geometric.nn.conv">
@@ -375,8 +377,47 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 </dd></dl>
 
 </div>
+<div class="section" id="module-torch_geometric.nn.prop">
+<span id="propagation-layers"></span><h2><a class="toc-backref" href="#id2">Propagation Layers</a><a class="headerlink" href="#module-torch_geometric.nn.prop" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="torch_geometric.nn.prop.GCNProp">
+<em class="property">class </em><code class="descname">GCNProp</code><a class="reference internal" href="../_modules/torch_geometric/nn/prop/gcn_prop.html#GCNProp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.prop.GCNProp" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.nn.prop.GCNProp.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>edge_attr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/prop/gcn_prop.html#GCNProp.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.prop.GCNProp.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.prop.AGNNProp">
+<em class="property">class </em><code class="descname">AGNNProp</code><span class="sig-paren">(</span><em>requires_grad=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/prop/agnn_prop.html#AGNNProp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.prop.AGNNProp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graph Attentional Propagation Layer from the
+<a class="reference external" href="https://arxiv.org/abs/1803.03735">“Attention-based Graph Neural Network for Semi-Supervised Learning (AGNN)”</a> paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>requires_grad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">False</span></code></a>, the propagation
+layer will not be trainable. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.prop.AGNNProp.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/prop/agnn_prop.html#AGNNProp.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.prop.AGNNProp.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.prop.AGNNProp.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/prop/agnn_prop.html#AGNNProp.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.prop.AGNNProp.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-torch_geometric.nn.pool">
-<span id="pooling-layers"></span><h2><a class="toc-backref" href="#id2">Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
+<span id="pooling-layers"></span><h2><a class="toc-backref" href="#id3">Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="torch_geometric.nn.pool.max_pool">
 <code class="descname">max_pool</code><span class="sig-paren">(</span><em>cluster</em>, <em>data</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/max_pool.html#max_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.max_pool" title="Permalink to this definition">¶</a></dt>
