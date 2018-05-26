@@ -15,7 +15,7 @@ A single graph in PyTorch Geometric is decribed by a ``Data`` object, which hold
 - ``data.x``: Node feature matrix with shape ``[num_nodes, num_node_features]``
 - ``data.edge_index``: Graph connectivity in COO format with shape ``[2, num_edges]`` and type ``torch.long``
 - ``data.edge_attr``: Edge feature matrix with shape ``[num_edges, num_edge_features]``
-- ``data.y``: Target features to train against with arbitrary shape
+- ``data.y``: Target to train against (may have arbitrary shape)
 - ``data.pos``: Node position matrix with shape ``[num_nodes, num_dimensions]``
 
 None of these attributes is required.
@@ -92,13 +92,14 @@ Common benchmark datasets
 
 PyTorch Geometric contains a large number of common benchmark datasets, e.g. all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM9 dataset, and a handful of 3D mesh/point cloud datasets (FAUST, ModelNet10/40, ShapeNet).
 
-Initializing datasets is straightforward, e.g. the ENZYMES dataset (consisting of 600 graphs and 6 classes):
+Initializing datasets is straightforward, e.g. the ENZYMES dataset (consisting of 600 graphs and 6 classes).
+The dataset will automatically download and process the graphs to the ``Data`` format:
 
 .. code-block:: python
 
     from torch_geometric.datasets import TUDataset
 
-    dataset = TUDataset('/tmp/ENZYMES', name='ENZYMES')
+    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES')
     >>> ENZYMES(600)
 
     len(dataset)
@@ -148,6 +149,49 @@ This is equivalent of doing:
     perm = torch.randperm(len(dataset))
     dataset = dataset[perm]
     >> ENZYMES(600)
+
+Let's try another one! Let's download Cora, the standard benchmark dataset for semi-supervised graph node classification:
+
+.. code-block:: python
+
+    from torch_geometric.datasets import Planetoid
+
+    dataset = Planetoid(root='/tmp/Cora', name='Cora')
+    >>> Cora()
+
+    len(dataset)
+    >>> 1
+
+    dataset.num_classes
+    >>> 7
+
+    dataset.num_features
+    >>> 1433
+
+The dataset consists of a single, undirected citation graph, so get it:
+
+.. code-block:: python
+
+    data = dataset[0]
+    >>> Data(x=[2708, 1433], edge_index=[2, 10556], y=[2708], train_mask=[2708], val_mask=[2708], test_mask=[2708])
+
+    data.is_undirected()
+    >>> True
+
+    data.train_mask.sum()
+    >>> 140
+
+    data.val_mask.sum()
+    >>> 500
+
+    data.test_mask.sum()
+    >>> 1000
+
+This time there are additional byte tensors: ``train_mask``, ``val_mask`` and ``test_mask``.
+
+- ``train_mask`` denotes against which nodes to train (140 nodes)
+- ``val_mask`` denotes which nodes to use for validation, e.g., to perform early stopping (500 nodes)
+- ``test_mask`` denotes against which nodes to test (1000 nodes)
 
 Mini-Batches
 ------------
