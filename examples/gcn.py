@@ -16,8 +16,8 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         self.conv1 = GCNConv(data.num_features, 16)
         self.conv2 = GCNConv(16, data.num_classes)
-        # self.conv1 = ChebConv(data.x.size(1), 16, K=2)
-        # self.conv2 = ChebConv(16, data.y.max().item() + 1, K=2)
+        # self.conv1 = ChebConv(data.num_features, 16, K=2)
+        # self.conv2 = ChebConv(16, data.num_features, K=2)
 
     def forward(self):
         x = F.relu(self.conv1(data.x, data.edge_index))
