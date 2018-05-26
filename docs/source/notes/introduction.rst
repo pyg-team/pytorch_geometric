@@ -19,13 +19,14 @@ A single graph in PyTorch Geometric is decribed by a ``Data`` object, which hold
 - ``data.pos``: Node position matrix with shape ``[num_nodes, num_dimensions]``
 
 None of these attributes is required.
-In fact, we can just extend the ``Data`` object by an arbitrary number of attributes, e.g. ``data.face`` to save the connectivity of triangles from a 3D mesh as a tensor with shape ``[3, num_faces]`` and type ``torch.long``.
+In addition, the ``Data`` object is not restricted to these attributes.
+We can, e.g., extend the ``Data`` object by ``data.face`` to save the connectivity of triangles from a 3D mesh as a tensor with shape ``[3, num_faces]`` and type ``torch.long``.
 
 .. Note::
     PyTorch defines an example as a tuple of an image and a target.
     We omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.
 
-We show a simple example to save a unweighted, directed graph with three nodes and four edges. Each node is defined by one feature:
+We show a simple example to save an unweighted, directed graph with three nodes and four edges. Each node is defined by one feature:
 
 .. code-block:: python
 
@@ -39,7 +40,8 @@ We show a simple example to save a unweighted, directed graph with three nodes a
     data = Data(x=x, edge_index=edge_index)
     >>> Data(x=[3, 1], edge_index=[2, 4])
 
-Note that you can print out your data object anytime and receive a short information of which attributes with which shapes its holding.
+.. Note::
+    You can print out your data object anytime and receive a short information of which attributes with which shapes its holding.
 
 Besides of being a plain old python object, the ``Data`` object holds some utility functions, e.g.:
 
@@ -79,7 +81,7 @@ Besides of being a plain old python object, the ``Data`` object holds some utili
     data.is_directed()
     >>> True
 
-    # Bring data object onto the GPU.
+    # Transfer data object to GPU.
     device = torch.device('cuda')
     data = data.to(device)
 
@@ -88,9 +90,9 @@ You can find a complete list of all ``Data`` methods at :class:`torch_geometric.
 Common benchmark datasets
 -------------------------
 
-PyTorch Geometric contains a large number of common benchmark datasets, e.g. all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_ and a handful of 3D mesh/point cloud datasets (FAUST, ModelNet, ShapeNet).
+PyTorch Geometric contains a large number of common benchmark datasets, e.g. all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM9 dataset, and a handful of 3D mesh/point cloud datasets (FAUST, ModelNet10/40, ShapeNet).
 
-Initializing datasets is straightforward, e.g. the ENZYMES dataset (consisting of 600 enzymes):
+Initializing datasets is straightforward, e.g. the ENZYMES dataset (consisting of 600 graphs and 6 classes):
 
 .. code-block:: python
 
@@ -119,7 +121,7 @@ We now have access to all 600 graphs in the dataset:
     >>> True
 
 We can see that the first graph in the dataset contains 37 nodes, each one having 21 features.
-There are 84 undirected edges and the graph belongs to exactly one out of six classes.
+There are 168/2 = 84 undirected edges and the graph belongs to exactly one class.
 
 We can even use slices, long or byte tensors to split the dataset.
 E.g., to create a 90/10 train/test split, type:
@@ -132,12 +134,20 @@ E.g., to create a 90/10 train/test split, type:
     test_dataset = dataset[540:]
     >>> ENZYMES(60)
 
-If you are unsure whether the dataset is already shuffled, you can random permutate it by running:
+If you are unsure whether the dataset is already shuffled before you split, you can random permutate it by running:
 
 .. code-block:: python
 
     dataset = dataset.shuffle()
     >>> ENZYMES(600)
+
+This is equivalent of doing:
+
+.. code-block:: python
+
+    perm = torch.randperm(len(dataset))
+    dataset = dataset[perm]
+    >> ENZYMES(600)
 
 Mini-Batches
 ------------
