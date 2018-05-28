@@ -11,7 +11,6 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinxcontrib.tikz',
 ]
 
 source_suffix = '.rst'
