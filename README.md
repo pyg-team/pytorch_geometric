@@ -33,9 +33,7 @@ In detail, the following methods are currently implemented:
 * **[Graclus Pooling](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.graclus)** from Dhillon *et al.*: [Weighted Graph Cuts without Eigenvectors: A Multilevel Approach](http://www.cs.utexas.edu/users/inderjit/public_papers/multilevel_pami.pdf) (PAMI 2007)
 * **[Voxel Grid Pooling](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.pool.voxel_grid)**
 
-<!---
-Head over to our documentation to find more about installation, data handling, creation of datasets and a full list of implemented methods, transformations, and datasets.
---->
+Head over to our [documentation](http://rusty1s.github.io/pytorch_geometric) to find more about installation, data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
 For a quick start, check out our provided [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in the `examples/` directory.
 
 We are currently in our first alpha release and work on completing [documentation](http://rusty1s.github.io/pytorch_geometric).
@@ -45,14 +43,31 @@ We are constantly encouraged to make PyTorch Geometric even better.
 
 ## Installation
 
-If cuda is available, check that `nvcc` is accessible from your terminal, *e.g.* by typing `nvcc --version`.
-If not, add cuda (`/usr/local/cuda/bin`) to your `$PATH`.
-Then run:
+If cuda is available, add CUDA to `$PATH` and `$CPATH` (note that your actual CUDA path may vary from `/usr/local/cuda`):
 
 ```
-pip install cffi
-pip install --upgrade torch-scatter torch-unique torch-cluster torch-spline-conv
-pip install torch-geometric
+$ PATH=/usr/local/cuda/bin:$PATH
+$ echo $PATH
+
+$ CPATH=/usr/local/cuda/install:$CPATH
+$ echo $CPATH
+```
+
+and verify that `nvcc` is accessible from your terminal:
+
+```
+$ nvcc --version
+```
+
+Then install all needed packages:
+
+```
+$ pip install cffi
+$ pip install --upgrade torch-scatter
+$ pip install --upgrade torch-unique
+$ pip install --upgrade torch-cluster
+$ pip install --upgrade torch-spline-conv
+$ pip install torch-geometric
 ```
 
 ## Running examples
