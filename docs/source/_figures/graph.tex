@@ -4,11 +4,9 @@
 
 \begin{document}
 
-\tikzset{global scale/.style={thick, scale=#1, every node/.style={scale=#1}}}
-
-\begin{tikzpicture}[global scale=1.5]
-  \node[draw,circle,label=left:{$x_1=-1$}] (0) at (0, 0) {0};
-  \node[draw,circle,label=above:{$x_0=0$}] (1) at (1, 1) {1};
+\begin{tikzpicture}
+  \node[draw,circle,label= left:{$x_1=-1$}] (0) at (0, 0) {0};
+  \node[draw,circle,label=above:{$x_1=0$}] (1) at (1, 1) {1};
   \node[draw,circle,label=right:{$x_1=1$}] (2) at (2, 0) {2};
 
   \path[draw] (0) -- (1);
