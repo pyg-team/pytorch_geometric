@@ -353,9 +353,7 @@ Now let's implement a two-layer GCN:
             x = F.dropout(x, training=self.training)
             x = self.conv2(x, edge_index)
 
-        return F.log_softmax(x, dim=1)
-
-
+            return F.log_softmax(x, dim=1)
 
 We use ReLU as our non-linearity acitivation function and output a softmax distribution over the number of classes.
 Let's train this model on the train nodes for 200 epochs:
