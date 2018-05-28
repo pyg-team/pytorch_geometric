@@ -57,11 +57,11 @@ class ChebConv(torch.nn.Module):
 
         if K > 1:
             Tx_1 = matmul(edge_index, lap, x)
-            out += torch.mm(Tx_1, self.weight[1])
+            out = out + torch.mm(Tx_1, self.weight[1])
 
         for k in range(2, K):
             Tx_2 = 2 * matmul(edge_index, lap, Tx_1) - Tx_0
-            out += torch.mm(Tx_2, self.weight[k])
+            out = out + torch.mm(Tx_2, self.weight[k])
             Tx_0, Tx_1 = Tx_1, Tx_2
 
         if self.bias is not None:
