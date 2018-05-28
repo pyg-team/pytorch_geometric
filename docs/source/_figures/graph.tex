@@ -1,3 +1,9 @@
+\documentclass{standalone}
+
+\usepackage{tikz}
+
+\begin{document}
+
 \tikzset{global scale/.style={thick, scale=#1, every node/.style={scale=#1}}}
 
 \begin{tikzpicture}[global scale=1.5]
@@ -8,3 +14,5 @@
   \path[draw] (0) -- (1);
   \path[draw] (1) -- (2);
 \end{tikzpicture}
+
+\end{document}
