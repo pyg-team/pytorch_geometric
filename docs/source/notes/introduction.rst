@@ -180,7 +180,8 @@ Here, the dataset contains only a single, undirected citation graph:
 .. code-block:: python
 
     data = dataset[0]
-    >>> Data(x=[2708, 1433], edge_index=[2, 10556], y=[2708], train_mask=[2708], val_mask=[2708], test_mask=[2708])
+    >>> Data(x=[2708, 1433], edge_index=[2, 10556], y=[2708],
+             train_mask=[2708], val_mask=[2708], test_mask=[2708])
 
     data.is_undirected()
     >>> True
@@ -237,7 +238,7 @@ Let's learn about it in an example:
 
     \mathrm{batch} = {\begin{bmatrix} 0 & \cdots & 0 & 1 & \cdots & n - 2 & n -1 & \cdots & n - 1 \end{bmatrix}}^{\top}
 
-You can use it to, e.g., average node features for each graph individually:
+You can use it to, e.g., average node features in the node dimension for each graph individually:
 
 .. code-block:: python
 
@@ -261,8 +262,130 @@ You can use it to, e.g., average node features for each graph individually:
 
 You can learn more about scatter operations in the `documentation <http://rusty1s.github.io/pytorch_scatter>`_ of ``torch_scatter``.
 
-Data transformations
+Data transforms
 --------------------
+
+Transforms are a common way in ``torchvision`` to transform images and perform augmentation.
+PyTorch Geometric comes with its own transforms, which expect a ``Data`` object as input and return a new transformed ``Data`` object.
+Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset (``pre_transform``) on disk or before accessing a graph in a dataset (``transform``).
+
+Let's look at an example, where we apply transforms on the ShapeNet dataset (containing 17,000 3D shape point clouds and per point labels from 16 shape categories).
+
+.. code-block:: python
+
+    from torch_geometric.datasets import ShapeNet
+
+    dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane')
+
+    data[0]
+    >>> Data(pos=[2518, 3], y=[2518])
+
+We can convert the point cloud dataset into a graph dataset by generating nearest neighbor graphs from the point clouds via transforms:
+
+.. code-block:: python
+
+    import torch_geometric.transforms as T
+    from torch_geometric.datasets import ShapeNet
+
+    dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
+                        pre_transform=T.NNGraph(k=6))
+
+    data[0]
+    >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
+
+.. note::
+    We use the ``pre_transform`` to convert the data before saving it to disk (leading to faster loading times).
+    Note that the next time the dataset is initialized it will already contain graph edges, even if you do not pass any transform.
+
+In addition, we can use the ``transform`` argument to randomly augment a ``Data`` object, e.g. translating each node position by a small number:
+
+.. code-block:: python
+
+    import torch_geometric.transforms as T
+    from torch_geometric.datasets import ShapeNet
+
+    dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
+                        pre_transform=T.NNGraph(k=6),
+                        transform=RandomTranslate(0.01))
+
+    data[0]
+    >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
+
+You can find a complete list of all implemented transforms at :mod:`torch_geometric.transforms`.
 
 Learning methods on graphs
 --------------------------
+
+After learning about data handling, datasets, loader and transforms in PyTorch Geometric, it's time to implement our first graph neural network!
+
+We will use a simple GCN layer and replicate the experiments on the Cora citation dataset.
+For a high-level explanation on GCN, have a look at its `blog post <http://tkipf.github.io/graph-convolutional-networks/>`_.
+
+We first need to load the Cora dataset:
+
+.. code-block:: python
+
+    from torch_geometric.datasets import Planetoid
+
+    dataset = Planetoid(root='/tmp/Cora', name='Cora')
+    >>> Cora()
+
+Note that we do not need to use transforms or a dataloader.
+Now let's implement a two-layer GCN:
+
+.. code-block:: python
+
+    import torch
+    import torch.nn.functional as F
+    from torch_geometric.nn import GCNConv
+
+    class Net(torch.nn.Module):
+        def __init__(self):
+            super(Net, self).__init__()
+            self.conv1 = GCNConv(data.num_features, 16)
+            self.conv2 = GCNConv(16, data.num_classes)
+
+    def forward(self, data):
+        x, edge_index = data.x, data.edge_index
+
+        x = self.conv1(x, edge_index)
+        x = F.relu(x)
+        x = F.dropout(x, training=self.training)
+        x = self.conv2(x, edge_index)
+
+        return F.log_softmax(x, dim=1)
+
+
+
+We use ReLU as our non-linearity acitivation function and output a softmax distribution over the number of classes.
+Let's train this model on the train nodes for 200 epochs:
+
+.. code-block:: python
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = Net().to(device)
+    data = dataset[0].to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+
+    model.train()
+    for epoch in range(200):
+        optimizer.zero_grad()
+        out = model(data)
+        loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
+        loss.backward()
+        optimizer.step()
+
+Finally we can evaluate our model on the test nodes:
+
+.. code-block:: python
+
+    model.eval()
+    _, pred = model(data).max(dim=1)
+    correct = pred[data.test_mask].eq(data.y[data.test_mask]).sum().item()
+    acc = correct / data.test_mask.sum().item()
+    print('Accuracy: {:.4f}'.format(acc))
+    >>> Accuracy: 0.8150
+
+That all it takes to implement a graph neural network.
+The easiest way to learn more about graph convolution and pooling is to study the examples in the ``examples/`` directory and to browse :mod:`torch_geometric.nn`.
+Happy hacking!
