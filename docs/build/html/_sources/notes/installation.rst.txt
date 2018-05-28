@@ -1,22 +1,59 @@
 Installation
 ============
 
-We have outsourced a lot of functionality of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ to other packages, which needs to be installed first.
-These packages come with their own CPU and GPU kernel implementations based on `C FFI <https://github.com/pytorch/extension-ffi/>`_ and the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_.
+We have outsourced a lot of functionality of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ to other packages, which needs to be installed in advance.
+These packages come with their own CPU and GPU kernel implementations based on `C FFI <https://github.com/pytorch/extension-ffi/>`_ and the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ in PyTorch 0.4.0.
 
-If CUDA is available, ensure that ``nvcc`` is accessible from your terminal, e.g. by typing ``nvcc --version``. If not, add CUDA (e.g. ``/usr/local/cuda/bin``) to your ``$PATH``. Then run:
+.. note::
+    We do not recommend installation as root user on your system python.
+    Please setup an `Anaconda/Miniconda <https://conda.io/docs/user-guide/install/index.html/>`_ environment or `Docker image <https://www.docker.com/>`_.
 
-.. code-block:: none
+Please follow the steps below for a successful installation:
 
-    $ pip install cffi
-    $ pip install --upgrade torch-scatter torch-unique torch-cluster torch-spline-conv
-    $ pip install torch-geometric
+#. Ensure that PyTorch 0.4.0 is installed:
 
-Installation should be straightforward.
-However, in rare cases CUDA or python path issues can prevent a succesful installation.
+    .. code-block:: none
 
-The error messages of ``pip`` in case of installation failure are unfortunately not very meaningful.
-Therefore, you should clone the respective package and check where the error occurs:
+        $ python -c "import torch; print(torch.__version__)"
+
+#. Ensure CUDA is setup correctly (optional):
+
+    #. Check if PyTorch is installed with CUDA support:
+
+        .. code-block:: none
+
+            $ python -c "import torch; print(torch.cuda.is_available())"
+
+    #. Add CUDA to ``$PATH`` and ``$CPATH`` (note that your actual CUDA path may vary from ``/usr/local/cuda``):
+
+        .. code-block:: none
+
+            $ PATH=/usr/local/cuda/bin:$PATH
+            $ echo $PATH
+
+            $ CPATH=/usr/local/cuda/install:$CPATH
+            $ echo $CPATH
+
+    #. Verify that ``nvcc`` is accessible from terminal:
+
+        .. code-block:: none
+
+            $ nvcc --version
+
+#. Install all needed packages:
+
+    .. code-block:: none
+
+        $ pip install cffi
+        $ pip install --upgrade torch-scatter
+        $ pip install --upgrade torch-unique
+        $ pip install --upgrade torch-cluster
+        $ pip install --upgrade torch-spline-conv
+        $ pip install torch-geometric
+
+In rare cases, CUDA or python path issues can prevent a succesful installation.
+Unfortunately, the error messages of ``pip`` are not very meaningful.
+You should therefore clone the respective package and check where the error occurs, e.g.:
 
 .. code-block:: none
 
@@ -25,29 +62,6 @@ Therefore, you should clone the respective package and check where the error occ
     $ ./build.sh  # Check for CUDA compilation error.
     $ python setup.py install  # Check for link error.
     $ python setup.py test  # Verify.
-
-Common installation issues
---------------------------
-
-.. code-block:: none
-
-    [Errno 13] Permission denied:
-
-We do not recommend installation as root user on your system python.
-Please setup an `Anaconda/Miniconda <https://conda.io/docs/user-guide/install/index.html/>`_ environment or `Docker image <https://www.docker.com/>`_.
-
-.. code-block:: none
-
-     #include "cuda.h"
-                      ^
-    compilation terminated.
-
-PyTorch can not find CUDA.
-Easily fixable by running:
-
-.. code-block:: none
-
-    $ CPATH=/usr/local/cuda/include python setup.py install
 
 C++/CUDA extensions on macOS
 ----------------------------
@@ -66,5 +80,5 @@ with
     def spawn(self, cmd):
         subprocess.call(cmd)
 
-in ``python/distutils/ccompiler.py``.
+in ``distutils/ccompiler.py``.
 Do not forget to ``import subprocess`` at the top of the file.
