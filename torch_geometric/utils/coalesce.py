@@ -13,17 +13,16 @@ def is_coalesced(edge_index, num_nodes=None):
 
 
 def coalesce(edge_index, edge_attr=None, num_nodes=None):
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    n = maybe_num_nodes(edge_index, num_nodes)
     row, col = edge_index
 
     if edge_attr is None:
-        index = num_nodes * row + col
+        index = n * row + col
         _, perm = unique(index)
         edge_index = edge_index[:, perm]
     else:
         t = torch.cuda if edge_attr.is_cuda else torch
         sparse = getattr(t.sparse, edge_attr.type().split('.')[-1])
-        n = num_nodes
         size = torch.Size([n, n] + list(edge_attr.size())[1:])
         adj = sparse(edge_index, edge_attr, size).coalesce()
         edge_index, edge_attr = adj._indices(), adj._values()
