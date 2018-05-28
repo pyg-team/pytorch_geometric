@@ -43,8 +43,11 @@ Each node is assigned exactly one feature:
     data = Data(x=x, edge_index=edge_index)
     >>> Data(x=[3, 1], edge_index=[2, 4])
 
-.. tikz::
-   :include: graph.tikz
+.. image:: ../_figures/graph.svg
+  :align: center
+  :width: 300px
+
+|
 
 .. Note::
     You can print out your data object anytime and receive a short information about its attributes and their shapes.
