@@ -4,8 +4,47 @@ Installation
 We have outsourced a lot of functionality of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ to other packages, which needs to be installed first.
 These packages come with their own CPU and GPU kernel implementations based on `C FFI <https://github.com/pytorch/extension-ffi/>`_ and the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ in PyTorch 0.4.0.
 
-Ensure that PyTorch 0.4.0 is installed.
-If CUDA is available, ensure that ``nvcc`` is accessible from your terminal, e.g. by typing ``nvcc --version``. If not, add CUDA (e.g. ``/usr/local/cuda/bin``) to your ``$PATH``. Then run:
+Please follow the steps below for a successful installation:
+
+#. List item 1
+  ::
+
+      code sample...
+      code sample...
+
+    #. List item 2
+  ::
+
+      code sample...
+      code sample...
+
+1. Ensure that PyTorch 0.4.0 is installed:
+    ::
+
+        $ python -c "import torch; print(torch.__version__)"
+
+2. Ensure CUDA is setup correctly (optional, only needed for CUDA support):
+
+Check if PyTorch was installed with CUDA support:
+
+.. code-block:: none
+
+    $ python -c "import torch; print(torch.cuda.is_available())"
+
+Check that ``nvcc`` is accessible:
+
+
+
+
+
+If CUDA is available, ensure that ``nvcc`` is accessible from your terminal, e.g. by typing:
+
+.. code-block:: none
+
+    $ nvcc --version
+
+If not, add CUDA (e.g. ``/usr/local/cuda/bin``) to your ``$PATH``.
+In addition, 
 
 .. code-block:: none
 
