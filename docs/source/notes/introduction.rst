@@ -26,7 +26,7 @@ We can, e.g., extend the ``Data`` object by ``data.face`` to save the connectivi
     PyTorch and ``torchvision`` define an example as a tuple of an image and a target.
     We omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.
 
-We show a simple example to save an unweighted, directed graph with three nodes and four edges. Each node is defined by one feature:
+We show a simple example to save an unweighted and undirected graph with three nodes and four edges. Each node is defined by one feature:
 
 .. code-block:: python
 
@@ -35,10 +35,13 @@ We show a simple example to save an unweighted, directed graph with three nodes 
 
     edge_index = torch.tensor([[0, 1, 1, 2],
                                [1, 0, 2, 1]], dtype=torch.long)
-    x = torch.tensor([[0], [1], [2]], dtype=torch.float)
+    x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
 
     data = Data(x=x, edge_index=edge_index)
     >>> Data(x=[3, 1], edge_index=[2, 4])
+
+.. tikz::
+   :include: graph.tikz
 
 .. Note::
     You can print out your data object anytime and receive a short information of which attributes with which shapes its holding.
