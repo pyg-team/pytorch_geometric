@@ -109,7 +109,11 @@
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Create your own dataset</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Create your own dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-larger-datasets">Creating “larger” datasets</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -188,6 +192,76 @@
             
   <div class="section" id="create-your-own-dataset">
 <h1>Create your own dataset<a class="headerlink" href="#create-your-own-dataset" title="Permalink to this headline">¶</a></h1>
+<p>Although <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric">PyTorch Geometric</a> already contains a lot of useful datasets, you may wish to create your own because you recorded data by yourself or want to use a dataset which is not publicly available.</p>
+<p>Implementing datasets by yourself is straightforward and you may have a look at the source code to find out how the various datasets are implemented.
+However, we give a brief introduction on what is needed to setup your own dataset.</p>
+<p>We provide two abstract classes for datasets: <a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset" title="torch_geometric.data.Dataset"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Dataset</span></code></a> and <a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset" title="torch_geometric.data.InMemoryDataset"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset</span></code></a>.
+<a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset" title="torch_geometric.data.InMemoryDataset"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset</span></code></a> inherits from <a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset" title="torch_geometric.data.Dataset"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Dataset</span></code></a> and should be used if the whole dataset fits into memory.</p>
+<p>Each dataset gets passed a root folder, a <code class="docutils literal"><span class="pre">transform</span></code> and a <code class="docutils literal"><span class="pre">pre_transform</span></code> object (<code class="docutils literal"><span class="pre">None</span></code> by default).
+We basically split up the root folder into two folders: the <code class="docutils literal"><span class="pre">raw_dir</span></code>, where the dataset gets downloaded to, and the <code class="docutils literal"><span class="pre">processed_dir</span></code>, where the processed dataset is being saved.</p>
+<div class="section" id="creating-in-memory-datasets">
+<h2>Creating “in memory datasets”<a class="headerlink" href="#creating-in-memory-datasets" title="Permalink to this headline">¶</a></h2>
+<p>In order to create a <a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset" title="torch_geometric.data.InMemoryDataset"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset</span></code></a>, you need to implement four fundamental methods:</p>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">raw_file_names(self)</span></code>:</dt>
+<dd>A list of files in the <code class="docutils literal"><span class="pre">raw_dir</span></code> which needs to be found, so the download is being skipped.</dd>
+<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">processed_file_names(self)</span></code>:</dt>
+<dd>A list of files in the <code class="docutils literal"><span class="pre">processed_dir</span></code> which needs to be found, so the processing is being skipped.</dd>
+<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">download(self)</span></code>:</dt>
+<dd>Should download all needed data into <code class="docutils literal"><span class="pre">raw_dir</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">process(self)</span></code>:</dt>
+<dd>Should process downloaded data and save it into the <code class="docutils literal"><span class="pre">processed_dir</span></code>.</dd>
+</dl>
+<p>You can find helpful methods to download and extract data in <a class="reference internal" href="../modules/data.html#module-torch_geometric.data" title="torch_geometric.data"><code class="xref py py-mod docutils literal"><span class="pre">torch_geometric.data</span></code></a>.</p>
+<p>The real magic happens in the body of <code class="docutils literal"><span class="pre">process(self)</span></code>.
+Here, we need to read and create a list of <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Data</span></code></a> and save it into the <code class="docutils literal"><span class="pre">processed_dir</span></code>.
+Saving a huge python list is really slow, so we must collate the list into one huge <code class="docutils literal"><span class="pre">Data</span></code> object before saving.
+The collated data object simply concatenates all examples (similar to <a class="reference internal" href="../modules/data.html#torch_geometric.data.DataLoader" title="torch_geometric.data.DataLoader"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.DataLoader</span></code></a>).
+In addition, it creates a <code class="docutils literal"><span class="pre">slices</span></code> dictionary to simply reconstruct single examples from the object.</p>
+<p>Let’s see a simple example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">InMemoryDataset</span>
+
+
+<span class="k">class</span> <span class="nc">MyOwnDataset</span><span class="p">(</span><span class="n">InMemoryDataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pre_transform</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyOwnDataset</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">pre_transform</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">raw_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;some_file_1&#39;</span><span class="p">,</span> <span class="s1">&#39;some_file_2&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">processed_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;data.pt&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Download to `self.raw_dir`</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Read data into huge `Data` list.</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
+
+        <span class="n">data</span><span class="p">,</span> <span class="n">slices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">slices</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-larger-datasets">
+<h2>Creating “larger” datasets<a class="headerlink" href="#creating-larger-datasets" title="Permalink to this headline">¶</a></h2>
+<p>Analogous to the datasets in <code class="docutils literal"><span class="pre">torchvision</span></code>, you need to further implement the following methods:</p>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">__len__(self)</span></code>:</dt>
+<dd>How many graphs are in your dataset?</dd>
+<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">get(self,</span> <span class="pre">idx)</span></code>:</dt>
+<dd>Logic to load a single graph.
+The <code class="docutils literal"><span class="pre">Data</span></code> object will automatically be transformed according to <code class="docutils literal"><span class="pre">self.transform</span></code>.</dd>
+</dl>
+</div>
 </div>
 
 
