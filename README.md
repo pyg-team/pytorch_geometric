@@ -43,7 +43,7 @@ We are constantly encouraged to make PyTorch Geometric even better.
 
 ## Installation
 
-If cuda is available, add CUDA to `$PATH` and `$CPATH` (note that your actual CUDA path may vary from `/usr/local/cuda`):
+If cuda is available, add CUDA to `$PATH` and `$CPATH` (note that your actual CUDA path may vary from `/usr/local/cuda`)
 
 ```
 $ PATH=/usr/local/cuda/bin:$PATH
