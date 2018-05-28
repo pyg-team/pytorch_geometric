@@ -10,7 +10,9 @@ At its core, PyTorch Geometric provides the following main features:
 Data handling of graphs
 ------------------------------------
 
-A single graph in PyTorch Geometric is decribed by a ``Data`` object, which holds the graph data in its attributes.
+A single graph in PyTorch Geometric is decribed by :class:`torch_geometric.data.Data`.
+This ``Data`` object holds all information needed to define an arbitrary graph.
+There are already some predefined attributes:
 
 - ``data.x``: Node feature matrix with shape ``[num_nodes, num_node_features]``
 - ``data.edge_index``: Graph connectivity in COO format with shape ``[2, num_edges]`` and type ``torch.long``
@@ -18,15 +20,16 @@ A single graph in PyTorch Geometric is decribed by a ``Data`` object, which hold
 - ``data.y``: Target to train against (may have arbitrary shape)
 - ``data.pos``: Node position matrix with shape ``[num_nodes, num_dimensions]``
 
-None of these attributes are required.
+None of these attributes is required.
 In fact, the ``Data`` object is not even restricted to these attributes.
-We can, e.g., extend the ``Data`` object by ``data.face`` to save the connectivity of triangles from a 3D mesh as a tensor with shape ``[3, num_faces]`` and type ``torch.long``.
+We can, e.g., extend it by ``data.face`` to save the connectivity of triangles from a 3D mesh in a tensor with shape ``[3, num_faces]`` and type ``torch.long``.
 
 .. Note::
     PyTorch and ``torchvision`` define an example as a tuple of an image and a target.
-    We omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.
+    In contrast, we omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.
 
-We show a simple example to save an unweighted and undirected graph with three nodes and four edges. Each node is defined by one feature:
+We show a simple example of an unweighted and undirected graph with three nodes and four edges.
+Each node is assigned exactly one feature:
 
 .. code-block:: python
 
@@ -44,9 +47,9 @@ We show a simple example to save an unweighted and undirected graph with three n
    :include: graph.tikz
 
 .. Note::
-    You can print out your data object anytime and receive a short information of which attributes with which shapes its holding.
+    You can print out your data object anytime and receive a short information about its attributes and their shapes.
 
-Besides of being a plain old python object, the ``Data`` object holds some utility functions, e.g.:
+Besides of being a plain old python object, :class:`torch_geometric.data.Data` provides a number of utility functions, e.g.:
 
 .. code-block:: python
 
@@ -88,15 +91,16 @@ Besides of being a plain old python object, the ``Data`` object holds some utili
     device = torch.device('cuda')
     data = data.to(device)
 
-You can find a complete list of all ``Data`` methods at :class:`torch_geometric.data.Data`.
+You can find a complete list of all methods at :class:`torch_geometric.data.Data`.
 
 Common benchmark datasets
 -------------------------
 
 PyTorch Geometric contains a large number of common benchmark datasets, e.g. all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM9 dataset, and a handful of 3D mesh/point cloud datasets (FAUST, ModelNet10/40, ShapeNet).
 
-Initializing datasets is straightforward, e.g. the ENZYMES dataset (consisting of 600 graphs and 6 classes).
-The dataset will be automatically downloaded and process the graphs to the ``Data`` format:
+Initializing a dataset is straightforward.
+The dataset will be automatically downloaded and process the graphs to the previously decribed ``Data`` format.
+E.g., to load the ENZYMES dataset (consisting of 600 graphs within 6 classes), type:
 
 .. code-block:: python
 
@@ -125,7 +129,7 @@ We now have access to all 600 graphs in the dataset:
     >>> True
 
 We can see that the first graph in the dataset contains 37 nodes, each one having 21 features.
-There are 168/2 = 84 undirected edges and the graph belongs to exactly one class.
+There are 168/2 = 84 undirected edges and the graph is assigned to exactly one class.
 
 We can even use slices, long or byte tensors to split the dataset.
 E.g., to create a 90/10 train/test split, type:
@@ -171,7 +175,7 @@ Let's try another one! Let's download Cora, the standard benchmark dataset for s
     dataset.num_features
     >>> 1433
 
-The dataset contains a single, undirected citation graph:
+Here, the dataset contains only a single, undirected citation graph:
 
 .. code-block:: python
 
@@ -190,7 +194,7 @@ The dataset contains a single, undirected citation graph:
     data.test_mask.sum()
     >>> 1000
 
-This time there are additional byte tensors: ``train_mask``, ``val_mask`` and ``test_mask``:
+This time, the ``Data`` objects holds additional attributes: ``train_mask``, ``val_mask`` and ``test_mask``:
 
 - ``train_mask`` denotes against which nodes to train (140 nodes)
 - ``val_mask`` denotes which nodes to use for validation, e.g., to perform early stopping (500 nodes)
@@ -227,7 +231,7 @@ Let's learn about it in an example:
 
 :class:`torch_geometric.data.Batch` inherits from :class:`torch_geometric.data.Data` and contains an additional attribute: ``batch``.
 
-``batch`` is a column vector of graph identifiers for all nodes of all graphs in the batch.
+``batch`` is a column vector of graph identifiers for all nodes of all graphs in the batch:
 
 .. math::
 
