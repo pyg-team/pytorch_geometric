@@ -203,22 +203,22 @@ We basically split up the root folder into two folders: the <code class="docutil
 <h2>Creating “in memory datasets”<a class="headerlink" href="#creating-in-memory-datasets" title="Permalink to this headline">¶</a></h2>
 <p>In order to create a <a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset" title="torch_geometric.data.InMemoryDataset"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset</span></code></a>, you need to implement four fundamental methods:</p>
 <dl class="docutils">
-<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">raw_file_names(self)</span></code>:</dt>
+<dt><a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset.raw_file_names" title="torch_geometric.data.InMemoryDataset.raw_file_names"><code class="xref py py-meth docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset.raw_file_names()</span></code></a>:</dt>
 <dd>A list of files in the <code class="docutils literal"><span class="pre">raw_dir</span></code> which needs to be found, so the download is being skipped.</dd>
-<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">processed_file_names(self)</span></code>:</dt>
+<dt><a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset.processed_file_names" title="torch_geometric.data.InMemoryDataset.processed_file_names"><code class="xref py py-meth docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset.processed_file_names()</span></code></a>:</dt>
 <dd>A list of files in the <code class="docutils literal"><span class="pre">processed_dir</span></code> which needs to be found, so the processing is being skipped.</dd>
-<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">download(self)</span></code>:</dt>
+<dt><a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset.download" title="torch_geometric.data.InMemoryDataset.download"><code class="xref py py-meth docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset.download()</span></code></a>:</dt>
 <dd>Should download all needed data into <code class="docutils literal"><span class="pre">raw_dir</span></code>.</dd>
-<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">process(self)</span></code>:</dt>
+<dt><a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset.process" title="torch_geometric.data.InMemoryDataset.process"><code class="xref py py-meth docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset.process()</span></code></a>:</dt>
 <dd>Should process downloaded data and save it into the <code class="docutils literal"><span class="pre">processed_dir</span></code>.</dd>
 </dl>
 <p>You can find helpful methods to download and extract data in <a class="reference internal" href="../modules/data.html#module-torch_geometric.data" title="torch_geometric.data"><code class="xref py py-mod docutils literal"><span class="pre">torch_geometric.data</span></code></a>.</p>
-<p>The real magic happens in the body of <code class="docutils literal"><span class="pre">process(self)</span></code>.
-Here, we need to read and create a list of <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Data</span></code></a> and save it into the <code class="docutils literal"><span class="pre">processed_dir</span></code>.
-Saving a huge python list is really slow, so we must collate the list into one huge <code class="docutils literal"><span class="pre">Data</span></code> object before saving.
+<p>The real magic happens in the body of <a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset.process" title="torch_geometric.data.InMemoryDataset.process"><code class="xref py py-meth docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset.process()</span></code></a>.
+Here, we need to read and create a list of <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Data</span></code></a> objects and save it into the <code class="docutils literal"><span class="pre">processed_dir</span></code>.
+Because saving a huge python list is really slow, we must collate the list into one huge <code class="docutils literal"><span class="pre">Data</span></code> object before saving.
 The collated data object simply concatenates all examples (similar to <a class="reference internal" href="../modules/data.html#torch_geometric.data.DataLoader" title="torch_geometric.data.DataLoader"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.DataLoader</span></code></a>).
-In addition, it creates a <code class="docutils literal"><span class="pre">slices</span></code> dictionary to simply reconstruct single examples from the object.</p>
-<p>Let’s see a simple example:</p>
+In addition, the <a class="reference internal" href="../modules/data.html#torch_geometric.data.InMemoryDataset.collate" title="torch_geometric.data.InMemoryDataset.collate"><code class="xref py py-meth docutils literal"><span class="pre">torch_geometric.data.InMemoryDataset.collate()</span></code></a> method returns a <code class="docutils literal"><span class="pre">slices</span></code> dictionary to reconstruct single examples from the object.</p>
+<p>Let’s see this process in a simplified example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">InMemoryDataset</span>
 
@@ -255,9 +255,9 @@ In addition, it creates a <code class="docutils literal"><span class="pre">slice
 <h2>Creating “larger” datasets<a class="headerlink" href="#creating-larger-datasets" title="Permalink to this headline">¶</a></h2>
 <p>Analogous to the datasets in <code class="docutils literal"><span class="pre">torchvision</span></code>, you need to further implement the following methods:</p>
 <dl class="docutils">
-<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">__len__(self)</span></code>:</dt>
+<dt><code class="xref py py-meth docutils literal"><span class="pre">torch_geometric.data.Dataset.__len__()</span></code>:</dt>
 <dd>How many graphs are in your dataset?</dd>
-<dt><code class="docutils literal"><span class="pre">def</span> <span class="pre">get(self,</span> <span class="pre">idx)</span></code>:</dt>
+<dt><a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset.get" title="torch_geometric.data.Dataset.get"><code class="xref py py-meth docutils literal"><span class="pre">torch_geometric.data.Dataset.get()</span></code></a>:</dt>
 <dd>Logic to load a single graph.
 The <code class="docutils literal"><span class="pre">Data</span></code> object will automatically be transformed according to <code class="docutils literal"><span class="pre">self.transform</span></code>.</dd>
 </dl>
