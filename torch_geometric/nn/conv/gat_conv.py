@@ -93,7 +93,7 @@ class GATConv(torch.nn.Module):
             out = out.sum(dim=1) / self.heads
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

@@ -65,7 +65,7 @@ class ChebConv(torch.nn.Module):
             Tx_0, Tx_1 = Tx_1, Tx_2
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

@@ -79,10 +79,10 @@ class NNConv(torch.nn.Module):
 
         # Weight root node separately (if wished).
         if self.root is not None:
-            out += torch.mm(x, self.root)
+            out = out + torch.mm(x, self.root)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

@@ -44,7 +44,7 @@ class GCNConv(torch.nn.Module):
         out = self.prop(out, edge_index, edge_attr)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
