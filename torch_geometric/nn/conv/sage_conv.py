@@ -1,8 +1,11 @@
 import torch
 
 
-class SAGEMeanAggr(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, num_samples):
+class SAGEMaxPool(torch.nn.Module):
+    def __init__(self, in_channels, out_channels):
+        pass
+
+    def forward(x, edge_index):
         pass
 
 
@@ -11,6 +14,7 @@ class SAGEConv(torch.nn.Module):
         super(SAGEConv, self).__init__()
 
         # w needs to be 2 * in_channels x out_channels
+        # bias out_channels
 
     def forward(self, x, edge_index):
         out = torch.cat([x, self.aggregate(x, edge_index)], dim=-1)
