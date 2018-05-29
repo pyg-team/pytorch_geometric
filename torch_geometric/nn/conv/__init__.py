@@ -3,6 +3,7 @@ from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
 from .nn_conv import NNConv
 from .gat_conv import GATConv
+from .sage_conv import SAGEConv
 
 __all__ = [
     'SplineConv',
@@ -10,4 +11,5 @@ __all__ = [
     'ChebConv',
     'NNConv',
     'GATConv',
+    'SAGEConv',
 ]
