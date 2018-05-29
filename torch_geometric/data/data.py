@@ -73,7 +73,7 @@ class Data(object):
 
     @property
     def num_classes(self):
-        return self.y.max().item() + 1
+        return self.y.max().item() + 1 if self.y.dim() == 1 else self.y.size(1)
 
     def is_coalesced(self):
         return is_coalesced(self.edge_index, self.num_nodes)

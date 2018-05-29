@@ -29,7 +29,8 @@ class InMemoryDataset(Dataset):
 
     @property
     def num_classes(self):
-        return self.data.y.max().item() + 1
+        data = self.data
+        return data.y.max().item() + 1 if data.y.dim() == 1 else data.y.size(1)
 
     def __len__(self):
         return self.slices[list(self.slices.keys())[0]].size(0) - 1
