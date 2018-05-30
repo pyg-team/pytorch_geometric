@@ -65,7 +65,7 @@ class InMemoryDataset(Dataset):
 
     def split(self, index):
         copy = self.__class__.__new__(self.__class__)
-        copy.__dict__ = self.__dict__
+        copy.__dict__ = self.__dict__.copy()
         copy.data, copy.slices = self.collate([self.get(i) for i in index])
         return copy
 
