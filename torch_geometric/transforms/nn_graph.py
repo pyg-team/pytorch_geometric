@@ -16,7 +16,8 @@ class NNGraph(object):
 
         _, col = scipy.spatial.cKDTree(pos).query(pos, self.k + 1)
         col = torch.tensor(col)[:, 1:].contiguous().view(-1)
-        edge_index = torch.stack([row, col], dim=0)
+        mask = col < pos.size(0)
+        edge_index = torch.stack([row[mask], col[mask]], dim=0)
         edge_index = to_undirected(edge_index, num_nodes=pos.size(0))
 
         data.edge_index = edge_index
