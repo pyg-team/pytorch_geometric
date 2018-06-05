@@ -54,5 +54,4 @@ class LinearTransformation(object):
         return data
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__,
-                               self.matrix.cpu().tolist())
+        return '{}({})'.format(self.__class__.__name__, self.matrix.tolist())
