@@ -6,7 +6,7 @@
 [coverage-url]: https://codecov.io/github/rusty1s/pytorch_geometric?branch=master
 
 <p align="center">
-  <img width="80%" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/logo.svg?sanitize=true" />
+  <img width="40%" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/logo.svg?sanitize=true" />
 </p>
 
 --------------------------------------------------------------------------------
