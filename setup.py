@@ -6,6 +6,7 @@ url = 'https://github.com/rusty1s/pytorch_geometric'
 install_requires = [
     'numpy',
     'scipy',
+    'networkx',
     'plyfile',
 ]
 setup_requires = ['pytest-runner']
