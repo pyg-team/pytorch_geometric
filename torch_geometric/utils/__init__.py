@@ -9,6 +9,7 @@ from .one_hot import one_hot
 from .grid import grid
 from .normalized_cut import normalized_cut
 from .sparse import dense_to_sparse
+from .convert import to_scipy_sparse_matrix, to_networkx
 
 __all__ = [
     'matmul',
@@ -26,4 +27,6 @@ __all__ = [
     'grid',
     'normalized_cut',
     'dense_to_sparse',
+    'to_scipy_sparse_matrix',
+    'to_networkx',
 ]
