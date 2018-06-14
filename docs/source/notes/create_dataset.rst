@@ -79,3 +79,5 @@ Analogous to the datasets in ``torchvision``, you need to further implement the 
 :meth:`torch_geometric.data.Dataset.get`:
     Logic to load a single graph.
     The ``Data`` object will automatically be transformed according to ``self.transform``.
+
+For :meth:`torch_geometric.data.Dataset.process`, each graph data should be saved individually and should be manually loaded in :meth:`torch_geometric.data.Dataset.get`.
