@@ -86,7 +86,7 @@ Please cite our paper if you use this code in your own work:
 @inproceedings{Fey/etal/2018,
   title={{SplineCNN}: Fast Geometric Deep Learning with Continuous {B}-Spline Kernels},
   author={Fey, Matthias and Lenssen, Jan Eric and Weichert, Frank and M{\"u}ller, Heinrich},
-  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}
+  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
   year={2018},
 }
 ```
