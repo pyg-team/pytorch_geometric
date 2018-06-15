@@ -10,9 +10,9 @@ At its core, PyTorch Geometric provides the following main features:
 Data handling of graphs
 ------------------------------------
 
-A single graph in PyTorch Geometric is decribed by :class:`torch_geometric.data.Data`.
-This ``Data`` object holds all information needed to define an arbitrary graph.
-There are already some predefined attributes:
+A single graph in PyTorch Geometric is decribed by the class :class:`torch_geometric.data.Data`.
+An instance of this class holds all information needed to define an arbitrary graph.
+The following attributes are already predefined:
 
 - ``data.x``: Node feature matrix with shape ``[num_nodes, num_node_features]``
 - ``data.edge_index``: Graph connectivity in COO format with shape ``[2, num_edges]`` and type ``torch.long``
@@ -26,7 +26,7 @@ We can, e.g., extend it by ``data.face`` to save the connectivity of triangles f
 
 .. Note::
     PyTorch and ``torchvision`` define an example as a tuple of an image and a target.
-    In contrast, we omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.
+    We omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.
 
 We show a simple example of an unweighted and undirected graph with three nodes and four edges.
 Each node is assigned exactly one feature:
