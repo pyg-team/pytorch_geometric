@@ -10,9 +10,7 @@ At its core, PyTorch Geometric provides the following main features:
 Data handling of graphs
 ------------------------------------
 
-A single graph in PyTorch Geometric is decribed by the class :class:`torch_geometric.data.Data`.
-An instance of this class holds all information needed to define an arbitrary graph.
-The following attributes are already predefined:
+A single arbitrary graph in PyTorch Geometric is decribed by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
 
 - ``data.x``: Node feature matrix with shape ``[num_nodes, num_node_features]``
 - ``data.edge_index``: Graph connectivity in COO format with shape ``[2, num_edges]`` and type ``torch.long``
