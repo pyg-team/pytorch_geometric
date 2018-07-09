@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.1.1)
+                master (0.2.0)
               </div>
             
           
@@ -108,7 +108,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../notes/create_dataset.html">Create your own dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/create_dataset.html">Create your own dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#creating-larger-datasets">Creating “larger” datasets</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
@@ -202,8 +206,8 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>index</strong> (<em>LongTensor</em>) – Source or target indices of edges.</li>
-<li><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nodes in <code class="xref py py-attr docutils literal"><span class="pre">index</span></code>.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.6)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>)</li>
+<li><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nodes in <code class="xref py py-attr docutils literal"><span class="pre">index</span></code>.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>)</li>
 <li><strong>dtype</strong> (<code class="xref py py-obj docutils literal"><span class="pre">torch.dtype</span></code>, optional) – tensor.</li>
 <li><strong>device</strong> (<code class="xref py py-obj docutils literal"><span class="pre">torch.device</span></code>, optional) – The desired device of returned
 tensor.</li>
@@ -284,6 +288,21 @@ tensor.</li>
 <dl class="function">
 <dt id="torch_geometric.utils.normalized_cut">
 <code class="descname">normalized_cut</code><span class="sig-paren">(</span><em>edge_index</em>, <em>edge_attr</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/normalized_cut.html#normalized_cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.normalized_cut" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.dense_to_sparse">
+<code class="descname">dense_to_sparse</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/sparse.html#dense_to_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.dense_to_sparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.to_scipy_sparse_matrix">
+<code class="descname">to_scipy_sparse_matrix</code><span class="sig-paren">(</span><em>edge_index</em>, <em>edge_attr=None</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/convert.html#to_scipy_sparse_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.to_scipy_sparse_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.to_networkx">
+<code class="descname">to_networkx</code><span class="sig-paren">(</span><em>edge_index</em>, <em>edge_attr=None</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/convert.html#to_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.to_networkx" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>

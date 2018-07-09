@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.1.1)
+                master (0.2.0)
               </div>
             
           
@@ -294,6 +294,8 @@
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.degree">degree() (in module torch_geometric.utils)</a>
 </li>
+      <li><a href="modules/utils.html#torch_geometric.utils.dense_to_sparse">dense_to_sparse() (in module torch_geometric.utils)</a>
+</li>
       <li><a href="modules/data.html#torch_geometric.data.Dataset.download">download() (Dataset method)</a>
 
       <ul>
@@ -304,6 +306,8 @@
         <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.download">(MNISTSuperpixels method)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.download">(ModelNet method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.download">(PPI method)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.download">(Planetoid method)</a>
 </li>
@@ -352,6 +356,8 @@
         <li><a href="modules/nn.html#torch_geometric.nn.prop.GCNProp.forward">(GCNProp method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.NNConv.forward">(NNConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.SAGEConv.forward">(SAGEConv method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.SplineConv.forward">(SplineConv method)</a>
 </li>
@@ -504,6 +510,8 @@
 </li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.Polar">Polar (class in torch_geometric.transforms)</a>
 </li>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.PPI">PPI (class in torch_geometric.datasets)</a>
+</li>
       <li><a href="modules/data.html#torch_geometric.data.Dataset.process">process() (Dataset method)</a>
 
       <ul>
@@ -514,6 +522,8 @@
         <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.process">(MNISTSuperpixels method)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.process">(ModelNet method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.process">(PPI method)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.process">(Planetoid method)</a>
 </li>
@@ -538,6 +548,8 @@
         <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.processed_file_names">(MNISTSuperpixels attribute)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.processed_file_names">(ModelNet attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.processed_file_names">(PPI attribute)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.processed_file_names">(Planetoid attribute)</a>
 </li>
@@ -587,6 +599,8 @@
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.raw_file_names">(ModelNet attribute)</a>
 </li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.raw_file_names">(PPI attribute)</a>
+</li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.raw_file_names">(Planetoid attribute)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.raw_file_names">(QM9 attribute)</a>
@@ -613,6 +627,8 @@
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.NNConv.reset_parameters">(NNConv method)</a>
 </li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.SAGEConv.reset_parameters">(SAGEConv method)</a>
+</li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.SplineConv.reset_parameters">(SplineConv method)</a>
 </li>
       </ul></li>
@@ -622,6 +638,8 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.SAGEConv">SAGEConv (class in torch_geometric.nn.conv)</a>
+</li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.SamplePoints">SamplePoints (class in torch_geometric.transforms)</a>
 </li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet">ShapeNet (class in torch_geometric.datasets)</a>
@@ -648,14 +666,18 @@
 </li>
       <li><a href="modules/data.html#torch_geometric.data.Data.to">to() (Data method)</a>
 </li>
+      <li><a href="modules/utils.html#torch_geometric.utils.to_networkx">to_networkx() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/utils.html#torch_geometric.utils.to_scipy_sparse_matrix">to_scipy_sparse_matrix() (in module torch_geometric.utils)</a>
+</li>
       <li><a href="modules/utils.html#torch_geometric.utils.to_undirected">to_undirected() (in module torch_geometric.utils)</a>
 </li>
       <li><a href="modules/data.html#module-torch_geometric.data">torch_geometric.data (module)</a>
 </li>
-      <li><a href="modules/datasets.html#module-torch_geometric.datasets">torch_geometric.datasets (module)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/datasets.html#module-torch_geometric.datasets">torch_geometric.datasets (module)</a>
+</li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.conv">torch_geometric.nn.conv (module)</a>
 </li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.pool">torch_geometric.nn.pool (module)</a>
@@ -678,6 +700,8 @@
 
       <ul>
         <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.url">(MNISTSuperpixels attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.url">(PPI attribute)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.url">(Planetoid attribute)</a>
 </li>

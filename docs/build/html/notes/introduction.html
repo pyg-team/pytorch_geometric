@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.1.1)
+                master (0.2.0)
               </div>
             
           
@@ -109,7 +109,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="create_dataset.html">Create your own dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_dataset.html">Create your own dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="create_dataset.html#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_dataset.html#creating-larger-datasets">Creating “larger” datasets</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -201,9 +205,7 @@ At its core, PyTorch Geometric provides the following main features:</p>
 </div>
 <div class="section" id="data-handling-of-graphs">
 <h2><a class="toc-backref" href="#id1">Data handling of graphs</a><a class="headerlink" href="#data-handling-of-graphs" title="Permalink to this headline">¶</a></h2>
-<p>A single graph in PyTorch Geometric is decribed by <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Data</span></code></a>.
-This <code class="docutils literal"><span class="pre">Data</span></code> object holds all information needed to define an arbitrary graph.
-There are already some predefined attributes:</p>
+<p>A single arbitrary graph in PyTorch Geometric is decribed by an instance of <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Data</span></code></a>, which holds the following attributes by default:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">data.x</span></code>: Node feature matrix with shape <code class="docutils literal"><span class="pre">[num_nodes,</span> <span class="pre">num_node_features]</span></code></li>
 <li><code class="docutils literal"><span class="pre">data.edge_index</span></code>: Graph connectivity in COO format with shape <code class="docutils literal"><span class="pre">[2,</span> <span class="pre">num_edges]</span></code> and type <code class="docutils literal"><span class="pre">torch.long</span></code></li>
@@ -217,7 +219,7 @@ We can, e.g., extend it by <code class="docutils literal"><span class="pre">data
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">PyTorch and <code class="docutils literal"><span class="pre">torchvision</span></code> define an example as a tuple of an image and a target.
-In contrast, we omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.</p>
+We omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.</p>
 </div>
 <p>We show a simple example of an unweighted and undirected graph with three nodes and four edges.
 Each node is assigned exactly one feature:</p>
