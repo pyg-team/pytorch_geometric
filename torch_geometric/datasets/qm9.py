@@ -31,11 +31,9 @@ class QM9(InMemoryDataset):
     def process(self):
         with open(self.raw_paths[0], 'r') as f:
             data_list = [parse_sdf(x) for x in f.read().split('$$$$\n')[:-1]]
-        print(len(data_list))
 
         with open(self.raw_paths[1], 'r') as f:
             y = parse_txt_array(f.read().split('\n')[1:-1], ',', 4, 16)
-            print(y.size())
 
         for i, data in enumerate(data_list):
             data.y = y[i].view(1, -1)
