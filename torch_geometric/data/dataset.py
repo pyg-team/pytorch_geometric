@@ -37,7 +37,11 @@ class Dataset(torch.utils.data.Dataset):
     def get(self, idx):
         raise NotImplementedError
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(self,
+                 root,
+                 transform=None,
+                 pre_transform=None,
+                 pre_filter=None):
         super(Dataset, self).__init__()
 
         self.root = osp.expanduser(osp.normpath(root))
@@ -45,6 +49,7 @@ class Dataset(torch.utils.data.Dataset):
         self.processed_dir = osp.join(self.root, 'processed')
         self.transform = transform
         self.pre_transform = pre_transform
+        self.pre_filter = pre_filter
 
         self._download()
         self._process()

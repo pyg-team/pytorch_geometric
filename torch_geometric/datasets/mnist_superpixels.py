@@ -9,8 +9,14 @@ class MNISTSuperpixels(InMemoryDataset):
     url = 'http://ls7-www.cs.uni-dortmund.de/cvpr_geometric_dl/' \
           'mnist_superpixels.tar.gz'
 
-    def __init__(self, root, train=True, transform=None):
-        super(MNISTSuperpixels, self).__init__(root, transform)
+    def __init__(self,
+                 root,
+                 train=True,
+                 transform=None,
+                 pre_transform=None,
+                 pre_filter=None):
+        super(MNISTSuperpixels, self).__init__(root, transform, pre_transform,
+                                               pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
 
@@ -42,8 +48,15 @@ class MNISTSuperpixels(InMemoryDataset):
                 'y': graph_slice,
                 'pos': node_slice
             }
+
+            if self.pre_filter is not None:
+                data_list = [self.get(idx) for idx in range(len(self))]
+                data_list = [d for d in data_list if self.pre_filter(d)]
+                self.data, self.slices = self.collate(data_list)
+
             if self.pre_transform is not None:
                 data_list = [self.get(idx) for idx in range(len(self))]
                 data_list = [self.pre_transform(data) for data in data_list]
                 self.data, self.slices = self.collate(data_list)
+
             torch.save((self.data, self.slices), path)
