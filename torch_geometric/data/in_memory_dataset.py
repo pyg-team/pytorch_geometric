@@ -19,8 +19,13 @@ class InMemoryDataset(Dataset):
     def process(self):
         raise NotImplementedError
 
-    def __init__(self, root, transform=None, pre_transform=None):
-        super(InMemoryDataset, self).__init__(root, transform, pre_transform)
+    def __init__(self,
+                 root,
+                 transform=None,
+                 pre_transform=None,
+                 pre_filter=None):
+        super(InMemoryDataset, self).__init__(root, transform, pre_transform,
+                                              pre_filter)
         self.data, self.slices = None, None
 
     @property
