@@ -7,7 +7,7 @@ class Cartesian(object):
 
     .. math::
         \mathbf{u}(i,j) = 0.5 + \frac{\mathbf{pos}_j - \mathbf{pos}_i}{2 \cdot
-        \max_{(v, w) \in \mathcal{E}} | \mathbf{pos}_w - \mathbf{pos}_v|}
+        \max_{(v, w) \in \mathcal{V}} | \mathbf{pos}_w - \mathbf{pos}_v|}
 
     in its edge attributes.
 
