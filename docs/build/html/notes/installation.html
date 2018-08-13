@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.2.0)
+                master (0.3.0)
               </div>
             
           
@@ -197,13 +197,14 @@ These packages come with their own CPU and GPU kernel implementations based on <
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">We do not recommend installation as root user on your system python.
-Please setup an <a class="reference external" href="https://conda.io/docs/user-guide/install/index.html/">Anaconda/Miniconda</a> environment or <a class="reference external" href="https://www.docker.com/">Docker image</a>.</p>
+Please setup an <a class="reference external" href="https://conda.io/docs/user-guide/install/index.html/">Anaconda/Miniconda</a> environment or create a <a class="reference external" href="https://www.docker.com/">Docker image</a>.</p>
 </div>
 <p>Please follow the steps below for a successful installation:</p>
 <ol class="arabic">
-<li><p class="first">Ensure that PyTorch 0.4.0 is installed:</p>
+<li><p class="first">Ensure that at least PyTorch 0.4.1 is installed:</p>
 <blockquote>
 <div><div class="highlight-none"><div class="highlight"><pre><span></span>$ python -c &quot;import torch; print(torch.__version__)&quot;
+&gt;&gt;&gt; 0.4.1
 </pre></div>
 </div>
 </div></blockquote>
@@ -214,6 +215,7 @@ Please setup an <a class="reference external" href="https://conda.io/docs/user-g
 <li><p class="first">Check if PyTorch is installed with CUDA support:</p>
 <blockquote>
 <div><div class="highlight-none"><div class="highlight"><pre><span></span>$ python -c &quot;import torch; print(torch.cuda.is_available())&quot;
+&gt;&gt;&gt; True
 </pre></div>
 </div>
 </div></blockquote>
@@ -222,9 +224,11 @@ Please setup an <a class="reference external" href="https://conda.io/docs/user-g
 <blockquote>
 <div><div class="highlight-none"><div class="highlight"><pre><span></span>$ PATH=/usr/local/cuda/bin:$PATH
 $ echo $PATH
+&gt;&gt;&gt; /usr/local/cuda/bin:...
 
 $ CPATH=/usr/local/cuda/install:$CPATH
 $ echo $CPATH
+&gt;&gt;&gt; /usr/local/cuda/install:...
 </pre></div>
 </div>
 </div></blockquote>
@@ -243,7 +247,7 @@ $ echo $CPATH
 <blockquote>
 <div><div class="highlight-none"><div class="highlight"><pre><span></span>$ pip install cffi
 $ pip install --upgrade torch-scatter
-$ pip install --upgrade torch-unique
+$ pip install --upgrade torch-sparse
 $ pip install --upgrade torch-cluster
 $ pip install --upgrade torch-spline-conv
 $ pip install torch-geometric
@@ -257,9 +261,8 @@ Unfortunately, the error messages of <code class="docutils literal"><span class=
 You should therefore clone the respective package and check where the error occurs, e.g.:</p>
 <div class="highlight-none"><div class="highlight"><pre><span></span>$ git clone https://github.com/rusty1s/pytorch_scatter
 $ cd pytorch_scatter
-$ ./build.sh  # Check for CUDA compilation error.
-$ python setup.py install  # Check for link error.
-$ python setup.py test  # Verify.
+$ python setup.py install  # Check for CUDA compilation or link error.
+$ python setup.py test  # Verify installation by running test suite.
 </pre></div>
 </div>
 <div class="section" id="c-cuda-extensions-on-macos">

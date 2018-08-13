@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import coalesce
+from torch_sparse import coalesce
 
 
 def grid(height, width, dtype=None, device=None):
@@ -24,7 +24,7 @@ def grid_index(height, width, device=None):
     row, col = row[mask], col[mask]
 
     edge_index = torch.stack([row, col], dim=0)
-    edge_index, _ = coalesce(edge_index, num_nodes=height * width)
+    edge_index, _ = coalesce(edge_index, None, height * width, height * width)
 
     return edge_index
 

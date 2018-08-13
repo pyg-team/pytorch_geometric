@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.2.0)
+                master (0.3.0)
               </div>
             
           
@@ -190,7 +190,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for torch_geometric.utils.isolated</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">torch_unique</span> <span class="k">import</span> <span class="n">unique</span>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">.num_nodes</span> <span class="k">import</span> <span class="n">maybe_num_nodes</span>
 <span class="kn">from</span> <span class="nn">.loop</span> <span class="k">import</span> <span class="n">remove_self_loops</span>
@@ -199,7 +199,7 @@
 <div class="viewcode-block" id="contains_isolated_nodes"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.contains_isolated_nodes">[docs]</a><span class="k">def</span> <span class="nf">contains_isolated_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
     <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">unique</span><span class="p">(</span><span class="n">row</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">num_nodes</span></div>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">num_nodes</span></div>
 </pre></div>
 
            </div>

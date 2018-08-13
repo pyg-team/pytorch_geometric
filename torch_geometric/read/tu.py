@@ -3,8 +3,9 @@ import glob
 
 import torch
 import numpy as np
+from torch_sparse import coalesce
 from torch_geometric.read import read_txt_array
-from torch_geometric.utils import coalesce, remove_self_loops, one_hot
+from torch_geometric.utils import remove_self_loops, one_hot
 from torch_geometric.data import Data
 
 names = [
@@ -43,8 +44,10 @@ def read_tu_data(folder, prefix):
         y = read_file(folder, prefix, 'graph_labels', torch.long)
         y -= y.min(dim=0)[0]
 
+    num_nodes = edge_index.max().item() + 1 if x is None else x.size(0)
     edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
-    edge_index, edge_attr = coalesce(edge_index, edge_attr)
+    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes,
+                                     num_nodes)
 
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
     data, slices = split(data, batch)

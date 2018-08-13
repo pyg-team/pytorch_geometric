@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.2.0)
+                master (0.3.0)
               </div>
             
           
@@ -190,14 +190,14 @@
            <div itemprop="articleBody">
             
   <h1>Source code for torch_geometric.utils.sparse</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.coalesce</span> <span class="k">import</span> <span class="n">coalesce</span>
+<span></span><span class="kn">from</span> <span class="nn">torch_sparse</span> <span class="k">import</span> <span class="n">coalesce</span>
 
 
 <div class="viewcode-block" id="dense_to_sparse"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.dense_to_sparse">[docs]</a><span class="k">def</span> <span class="nf">dense_to_sparse</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
     <span class="n">index</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
     <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
-    <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span></div>
 </pre></div>
 

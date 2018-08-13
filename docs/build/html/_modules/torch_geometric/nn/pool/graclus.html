@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.2.0)
+                master (0.3.0)
               </div>
             
           
@@ -193,9 +193,9 @@
 <span></span><span class="kn">from</span> <span class="nn">torch_cluster</span> <span class="k">import</span> <span class="n">graclus_cluster</span>
 
 
-<div class="viewcode-block" id="graclus"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.graclus">[docs]</a><span class="k">def</span> <span class="nf">graclus</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="graclus"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.graclus">[docs]</a><span class="k">def</span> <span class="nf">graclus</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
-    <span class="k">return</span> <span class="n">graclus_cluster</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">graclus_cluster</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import (is_coalesced, contains_isolated_nodes,
+from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
 from ..utils.num_nodes import maybe_num_nodes
@@ -76,7 +76,9 @@ class Data(object):
         return self.y.max().item() + 1 if self.y.dim() == 1 else self.y.size(1)
 
     def is_coalesced(self):
-        return is_coalesced(self.edge_index, self.num_nodes)
+        row, col = self.edge_index
+        index = self.num_nodes * row + col
+        return self.row.size(0) == torch.unique(index).size(0)
 
     def contains_isolated_nodes(self):
         return contains_isolated_nodes(self.edge_index, self.num_nodes)

@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.2.0)
+                master (0.3.0)
               </div>
             
           
@@ -205,7 +205,8 @@ At its core, PyTorch Geometric provides the following main features:</p>
 </div>
 <div class="section" id="data-handling-of-graphs">
 <h2><a class="toc-backref" href="#id1">Data handling of graphs</a><a class="headerlink" href="#data-handling-of-graphs" title="Permalink to this headline">¶</a></h2>
-<p>A single arbitrary graph in PyTorch Geometric is decribed by an instance of <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Data</span></code></a>, which holds the following attributes by default:</p>
+<p>A graph is used to model pairwise relations (edges) between objects (nodes).
+A single graph in PyTorch Geometric is decribed by an instance of <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal"><span class="pre">torch_geometric.data.Data</span></code></a>, which holds the following attributes by default:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">data.x</span></code>: Node feature matrix with shape <code class="docutils literal"><span class="pre">[num_nodes,</span> <span class="pre">num_node_features]</span></code></li>
 <li><code class="docutils literal"><span class="pre">data.edge_index</span></code>: Graph connectivity in COO format with shape <code class="docutils literal"><span class="pre">[2,</span> <span class="pre">num_edges]</span></code> and type <code class="docutils literal"><span class="pre">torch.long</span></code></li>

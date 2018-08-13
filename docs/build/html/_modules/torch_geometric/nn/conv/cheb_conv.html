@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.2.0)
+                master (0.3.0)
               </div>
             
           
@@ -192,7 +192,8 @@
   <h1>Source code for torch_geometric.nn.conv.cheb_conv</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">degree</span><span class="p">,</span> <span class="n">matmul</span>
+<span class="kn">from</span> <span class="nn">torch_sparse</span> <span class="k">import</span> <span class="n">spmm</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">degree</span>
 
 <span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">uniform</span>
 
@@ -248,11 +249,11 @@
         <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">Tx_0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">K</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">Tx_1</span> <span class="o">=</span> <span class="n">matmul</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">lap</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">Tx_1</span> <span class="o">=</span> <span class="n">spmm</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">lap</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">Tx_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">K</span><span class="p">):</span>
-            <span class="n">Tx_2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">matmul</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">lap</span><span class="p">,</span> <span class="n">Tx_1</span><span class="p">)</span> <span class="o">-</span> <span class="n">Tx_0</span>
+            <span class="n">Tx_2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">spmm</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">lap</span><span class="p">,</span> <span class="n">Tx_1</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="n">Tx_0</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">Tx_2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="n">Tx_0</span><span class="p">,</span> <span class="n">Tx_1</span> <span class="o">=</span> <span class="n">Tx_1</span><span class="p">,</span> <span class="n">Tx_2</span>
 
