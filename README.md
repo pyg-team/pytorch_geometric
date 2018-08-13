@@ -61,7 +61,6 @@ $ echo $CPATH
 $ pip install cffi
 $ pip install --upgrade torch-scatter
 $ pip install --upgrade torch-sparse
-$ pip install --upgrade torch-unique
 $ pip install --upgrade torch-cluster
 $ pip install --upgrade torch-spline-conv
 $ pip install torch-geometric
