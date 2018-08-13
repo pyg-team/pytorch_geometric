@@ -1,7 +1,7 @@
 import torch
 from torch.nn import Parameter
-from torch_geometric.utils import (remove_self_loops, add_self_loops, softmax,
-                                   matmul)
+from torch_sparse import spmm
+from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 
 class AGNNProp(torch.nn.Module):
@@ -30,6 +30,8 @@ class AGNNProp(torch.nn.Module):
             self.beta.data.uniform_(0, 1)
 
     def forward(self, x, edge_index):
+        num_nodes = x.size(0)
+
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         beta = self.beta if self.requires_grad else self._buffers['beta']
 
@@ -44,7 +46,7 @@ class AGNNProp(torch.nn.Module):
         alpha = softmax(alpha * beta, row, num_nodes=x.size(0))
 
         # Perform the propagation.
-        out = matmul(edge_index, alpha, x)
+        out = spmm(edge_index, alpha, x, num_nodes)
 
         return out
 

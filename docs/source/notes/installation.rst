@@ -6,7 +6,7 @@ These packages come with their own CPU and GPU kernel implementations based on `
 
 .. note::
     We do not recommend installation as root user on your system python.
-    Please setup an `Anaconda/Miniconda <https://conda.io/docs/user-guide/install/index.html/>`_ environment or `Docker image <https://www.docker.com/>`_.
+    Please setup an `Anaconda/Miniconda <https://conda.io/docs/user-guide/install/index.html/>`_ environment or create a `Docker image <https://www.docker.com/>`_.
 
 Please follow the steps below for a successful installation:
 
@@ -15,6 +15,7 @@ Please follow the steps below for a successful installation:
     .. code-block:: none
 
         $ python -c "import torch; print(torch.__version__)"
+        >>> 0.4.1
 
 #. Ensure CUDA is setup correctly (optional):
 
@@ -23,6 +24,7 @@ Please follow the steps below for a successful installation:
         .. code-block:: none
 
             $ python -c "import torch; print(torch.cuda.is_available())"
+            >>> True
 
     #. Add CUDA to ``$PATH`` and ``$CPATH`` (note that your actual CUDA path may vary from ``/usr/local/cuda``):
 
@@ -30,9 +32,11 @@ Please follow the steps below for a successful installation:
 
             $ PATH=/usr/local/cuda/bin:$PATH
             $ echo $PATH
+            >>> /usr/local/cuda/bin:...
 
             $ CPATH=/usr/local/cuda/install:$CPATH
             $ echo $CPATH
+            >>> /usr/local/cuda/install:...
 
     #. Verify that ``nvcc`` is accessible from terminal:
 

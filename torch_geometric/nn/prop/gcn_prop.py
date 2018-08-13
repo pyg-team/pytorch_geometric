@@ -1,6 +1,6 @@
 import torch
-from torch_geometric.utils import (degree, remove_self_loops, add_self_loops,
-                                   matmul)
+from torch_sparse import spmm
+from torch_geometric.utils import degree, remove_self_loops, add_self_loops
 
 
 class GCNProp(torch.nn.Module):
@@ -27,7 +27,7 @@ class GCNProp(torch.nn.Module):
         edge_index = add_self_loops(edge_index, num_nodes)
 
         # Perform the propagation.
-        out = matmul(edge_index, edge_attr, x)
+        out = spmm(edge_index, edge_attr, x, num_nodes)
 
         return out
 

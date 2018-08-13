@@ -1,6 +1,7 @@
 import torch
 from torch.nn import Parameter
-from torch_geometric.utils import degree, matmul
+from torch_sparse import spmm
+from torch_geometric.utils import degree
 
 from ..inits import uniform
 
@@ -56,11 +57,11 @@ class ChebConv(torch.nn.Module):
         out = torch.mm(Tx_0, self.weight[0])
 
         if K > 1:
-            Tx_1 = matmul(edge_index, lap, x)
+            Tx_1 = spmm(edge_index, lap, x, num_nodes)
             out = out + torch.mm(Tx_1, self.weight[1])
 
         for k in range(2, K):
-            Tx_2 = 2 * matmul(edge_index, lap, Tx_1) - Tx_0
+            Tx_2 = 2 * spmm(edge_index, lap, Tx_1, num_nodes) - Tx_0
             out = out + torch.mm(Tx_2, self.weight[k])
             Tx_0, Tx_1 = Tx_1, Tx_2
 
