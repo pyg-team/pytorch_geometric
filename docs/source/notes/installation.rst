@@ -10,7 +10,7 @@ These packages come with their own CPU and GPU kernel implementations based on `
 
 Please follow the steps below for a successful installation:
 
-#. Ensure that PyTorch 0.4.0 is installed:
+#. Ensure that at least PyTorch 0.4.1 is installed:
 
     .. code-block:: none
 
@@ -46,6 +46,7 @@ Please follow the steps below for a successful installation:
 
         $ pip install cffi
         $ pip install --upgrade torch-scatter
+        $ pip install --upgrade torch-sparse
         $ pip install --upgrade torch-unique
         $ pip install --upgrade torch-cluster
         $ pip install --upgrade torch-spline-conv
@@ -59,9 +60,8 @@ You should therefore clone the respective package and check where the error occu
 
     $ git clone https://github.com/rusty1s/pytorch_scatter
     $ cd pytorch_scatter
-    $ ./build.sh  # Check for CUDA compilation error.
-    $ python setup.py install  # Check for link error.
-    $ python setup.py test  # Verify.
+    $ python setup.py install  # Check for CUDA compilation or link error.
+    $ python setup.py test  # Verify installation by running test suite.
 
 C++/CUDA extensions on macOS
 ----------------------------

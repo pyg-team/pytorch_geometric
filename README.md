@@ -44,32 +44,30 @@ We are constantly encouraged to make PyTorch Geometric even better.
 
 ## Installation
 
-If cuda is available, add CUDA to `$PATH` and `$CPATH` (note that your actual CUDA path may vary from `/usr/local/cuda`)
+Ensure that at least PyTorch 0.4.1 is installed and verify that `cuda/bin` and `cuda/install` are in your `$PATH` and `$CPATH` respectively, *e.g.*:
 
 ```
-$ PATH=/usr/local/cuda/bin:$PATH
+$ python -c "import torch; print(torch.__version__)"
+>>> 0.4.1
+
 $ echo $PATH
+>>> /usr/local/cuda/bin:...
 
-$ CPATH=/usr/local/cuda/install:$CPATH
 $ echo $CPATH
+>>> /usr/local/cuda/install:...
 ```
-
-and verify that `nvcc` is accessible from your terminal:
-
-```
-$ nvcc --version
-```
-
-Then install all needed packages:
 
 ```
 $ pip install cffi
 $ pip install --upgrade torch-scatter
+$ pip install --upgrade torch-sparse
 $ pip install --upgrade torch-unique
 $ pip install --upgrade torch-cluster
 $ pip install --upgrade torch-spline-conv
 $ pip install torch-geometric
 ```
+
+If you are running into any installation problems, please create an [issue](https://github.com/rusty1s/pytorch_geometric/issues).
 
 ## Running examples
 
