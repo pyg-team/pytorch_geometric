@@ -15,7 +15,3 @@ def pool_batch(perm, batch):
 
 def pool_pos(cluster, pos):
     return scatter_mean(pos, cluster, dim=0)
-
-
-def pool_data(cluster, data):
-    pass
