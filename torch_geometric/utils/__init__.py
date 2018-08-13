@@ -1,4 +1,3 @@
-from .matmul import matmul
 from .degree import degree
 from .softmax import softmax
 from .coalesce import is_coalesced, coalesce
@@ -12,7 +11,6 @@ from .sparse import dense_to_sparse
 from .convert import to_scipy_sparse_matrix, to_networkx
 
 __all__ = [
-    'matmul',
     'degree',
     'softmax',
     'is_coalesced',
