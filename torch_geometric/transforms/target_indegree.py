@@ -34,10 +34,10 @@ class TargetIndegree(object):
 
     .. testoutput::
 
-        tensor([[ 1.0000],
-                [ 0.5000],
-                [ 0.5000],
-                [ 1.0000]])
+        tensor([[1.0000],
+                [0.5000],
+                [0.5000],
+                [1.0000]])
     """
 
     def __init__(self, cat=True):

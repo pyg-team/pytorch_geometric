@@ -31,8 +31,8 @@ class Spherical(object):
 
     .. testoutput::
 
-        tensor([[ 1.0000,  0.2500,  0.0000],
-                [ 1.0000,  0.7500,  1.0000]])
+        tensor([[1.0000, 0.2500, 0.0000],
+                [1.0000, 0.7500, 1.0000]])
     """
 
     def __init__(self, cat=True):

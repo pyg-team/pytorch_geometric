@@ -25,8 +25,8 @@ class Compose(object):
 
     .. testoutput::
 
-        tensor([[ 0.7500,  0.5000,  1.0000],
-                [ 1.0000,  0.5000,  1.0000]])
+        tensor([[0.7500, 0.5000, 1.0000],
+                [1.0000, 0.5000, 1.0000]])
     """
 
     def __init__(self, transforms):

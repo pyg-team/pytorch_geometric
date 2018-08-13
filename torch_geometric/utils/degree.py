@@ -30,7 +30,7 @@ def degree(index, num_nodes=None, dtype=None, device=None):
 
     .. testoutput::
 
-       tensor([ 3.,  1.,  1.])
+       tensor([3., 1., 1.])
     """
     num_nodes = maybe_num_nodes(index, num_nodes)
     out = torch.zeros((num_nodes), dtype=dtype, device=device)
