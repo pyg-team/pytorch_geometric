@@ -34,9 +34,9 @@ Please follow the steps below for a successful installation:
             $ echo $PATH
             >>> /usr/local/cuda/bin:...
 
-            $ CPATH=/usr/local/cuda/install:$CPATH
+            $ CPATH=/usr/local/cuda/include:$CPATH
             $ echo $CPATH
-            >>> /usr/local/cuda/install:...
+            >>> /usr/local/cuda/include:...
 
     #. Verify that ``nvcc`` is accessible from terminal:
 
