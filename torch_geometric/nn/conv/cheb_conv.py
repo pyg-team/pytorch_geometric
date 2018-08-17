@@ -57,11 +57,11 @@ class ChebConv(torch.nn.Module):
         out = torch.mm(Tx_0, self.weight[0])
 
         if K > 1:
-            Tx_1 = spmm(edge_index, lap, x, num_nodes)
+            Tx_1 = spmm(edge_index, lap, num_nodes, x)
             out = out + torch.mm(Tx_1, self.weight[1])
 
         for k in range(2, K):
-            Tx_2 = 2 * spmm(edge_index, lap, Tx_1, num_nodes) - Tx_0
+            Tx_2 = 2 * spmm(edge_index, lap, num_nodes, Tx_1) - Tx_0
             out = out + torch.mm(Tx_2, self.weight[k])
             Tx_0, Tx_1 = Tx_1, Tx_2
 

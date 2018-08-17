@@ -46,7 +46,7 @@ class AGNNProp(torch.nn.Module):
         alpha = softmax(alpha * beta, row, num_nodes=x.size(0))
 
         # Perform the propagation.
-        out = spmm(edge_index, alpha, x, num_nodes)
+        out = spmm(edge_index, alpha, num_nodes, x)
 
         return out
 

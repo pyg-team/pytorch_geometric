@@ -27,7 +27,7 @@ class GCNProp(torch.nn.Module):
         edge_index = add_self_loops(edge_index, num_nodes)
 
         # Perform the propagation.
-        out = spmm(edge_index, edge_attr, x, num_nodes)
+        out = spmm(edge_index, edge_attr, num_nodes, x)
 
         return out
 
