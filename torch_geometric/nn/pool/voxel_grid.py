@@ -15,6 +15,10 @@ def voxel_grid(pos, batch, size, start=None, end=None):
     start = None if start is None else start + [0]
     end = None if end is None else end + [batch.max().item() + 1]
 
-    size, start, end = pos.new(size), pos.new(start), pos.new(end)
+    size = torch.tensor(size, dtype=pos.dtype, device=pos.device)
+    if start is not None:
+        start = torch.tensor(start, dtype=pos.dtype, device=pos.device)
+    if end is not None:
+        end = torch.tensor(end, dtype=pos.dtype, device=pos.device)
 
     return grid_cluster(pos, size, start, end)
