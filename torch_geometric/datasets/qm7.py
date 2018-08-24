@@ -1,5 +1,3 @@
-import os
-
 import torch
 import scipy.io
 from torch_geometric.data import InMemoryDataset, download_url, Data
