@@ -1,4 +1,5 @@
 from .compose import Compose
+from .distance import Distance
 from .cartesian import Cartesian
 from .local_cartesian import LocalCartesian
 from .polar import Polar
@@ -21,6 +22,7 @@ from .sample_points import SamplePoints
 
 __all__ = [
     'Compose',
+    'Distance',
     'Cartesian',
     'LocalCartesian',
     'Polar',
