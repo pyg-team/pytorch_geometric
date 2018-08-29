@@ -41,7 +41,7 @@ class FAUST(InMemoryDataset):
         for i in range(100):
             data = read_ply(path.format(i))
             data.y = torch.tensor([i % 10], dtype=torch.long)
-            if not self.pre_filter(data):
+            if self.pre_filter is not None and not self.pre_filter(data):
                 continue
             if self.pre_transform is not None:
                 data = self.pre_transform(data)

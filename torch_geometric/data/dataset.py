@@ -49,11 +49,7 @@ class Dataset(torch.utils.data.Dataset):
         self.processed_dir = osp.join(self.root, 'processed')
         self.transform = transform
         self.pre_transform = pre_transform
-
-        if pre_filter is None:
-            self.pre_filter = lambda x: True
-        else:
-            self.pre_filter = pre_filter
+        self.pre_filter = pre_filter
 
         self._download()
         self._process()
