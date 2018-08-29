@@ -1,14 +1,12 @@
 import os
 
 import torch
-from torch_geometric.data import InMemoryDataset, download_url, extract_tar
-from torch_geometric.read import parse_sdf, parse_txt_array
+from torch_geometric.data import (InMemoryDataset, download_url, extract_tar,
+                                  Data)
 
 
 class QM9(InMemoryDataset):
-    data_url = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/' \
-               'datasets/gdb9.tar.gz'
-    mask_url = 'https://ndownloader.figshare.com/files/3195404'
+    url = 'http://www.roemisch-drei.de/qm9.tar.gz'
 
     def __init__(self,
                  root,
@@ -20,36 +18,27 @@ class QM9(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return ['gdb9.sdf', 'gdb9.sdf.csv', '3195404']
+        return 'qm9.pt'
 
     @property
     def processed_file_names(self):
         return 'data.pt'
 
     def download(self):
-        file_path = download_url(self.data_url, self.raw_dir)
+        file_path = download_url(self.url, self.raw_dir)
         extract_tar(file_path, self.raw_dir, mode='r')
         os.unlink(file_path)
-        download_url(self.mask_url, self.raw_dir)
 
     def process(self):
-        with open(self.raw_paths[0], 'r') as f:
-            data_list = [parse_sdf(x) for x in f.read().split('$$$$\n')[:-1]]
-
-        with open(self.raw_paths[1], 'r') as f:
-            y = parse_txt_array(f.read().split('\n')[1:-1], ',', 4, 16)
-
-        for i, data in enumerate(data_list):
-            data.y = y[i].view(1, -1)
-
-        # Remove invalid data.
-        with open(self.raw_paths[2], 'r') as f:
-            invalid = f.read().split('\n')[9:-2]
-            invalid = parse_txt_array(invalid, end=1, dtype=torch.long)
-            valid = torch.ones(len(data_list), dtype=torch.uint8)
-            valid[invalid] = 0
-            valid = valid.nonzero()
-        data_list = [data_list[idx] for idx in valid]
+        raw_data_list = torch.load(self.raw_paths[0])
+        data_list = [
+            Data(
+                x=d['x'],
+                edge_index=d['edge_index'],
+                edge_attr=d['edge_attr'],
+                y=d['y'],
+                pos=d['pos']) for d in raw_data_list
+        ]
 
         if self.pre_filter is not None:
             data_list = [data for data in data_list if self.pre_filter(data)]

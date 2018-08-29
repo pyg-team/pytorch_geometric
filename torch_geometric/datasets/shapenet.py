@@ -77,7 +77,7 @@ class ShapeNet(InMemoryDataset):
                 pos = read_txt_array(path[0])
                 y = read_txt_array(path[1], dtype=torch.long)
                 data = Data(y=y, pos=pos)
-                if not self.pre_filter(data):
+                if self.pre_filter is not None and not self.pre_filter(data):
                     continue
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
