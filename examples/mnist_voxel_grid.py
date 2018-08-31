@@ -8,30 +8,30 @@ from torch_geometric.data import DataLoader
 from torch_geometric.nn import SplineConv, voxel_grid, max_pool, max_pool_x
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
-train_dataset = MNISTSuperpixels(path, True, transform=T.Cartesian())
-test_dataset = MNISTSuperpixels(path, False, transform=T.Cartesian())
+transform = T.Cartesian(cat=False)
+train_dataset = MNISTSuperpixels(path, True, transform=transform)
+test_dataset = MNISTSuperpixels(path, False, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64)
-d = train_dataset.data
 
 
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(d.num_features, 32, dim=2, kernel_size=5)
+        self.conv1 = SplineConv(1, 32, dim=2, kernel_size=5)
         self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
         self.fc1 = torch.nn.Linear(4 * 64, 128)
-        self.fc2 = torch.nn.Linear(128, d.num_classes)
+        self.fc2 = torch.nn.Linear(128, 10)
 
     def forward(self, data):
         data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
         cluster = voxel_grid(data.pos, data.batch, size=5, start=0, end=28)
-        data = max_pool(cluster, data, transform=T.Cartesian(cat=False))
+        data = max_pool(cluster, data, transform=transform)
 
         data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
         cluster = voxel_grid(data.pos, data.batch, size=7, start=0, end=28)
-        data = max_pool(cluster, data, transform=T.Cartesian(cat=False))
+        data = max_pool(cluster, data, transform=transform)
 
         data.x = F.elu(self.conv3(data.x, data.edge_index, data.edge_attr))
         cluster = voxel_grid(data.pos, data.batch, size=14, start=0, end=27.99)
