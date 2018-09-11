@@ -4,7 +4,7 @@ from .data import Data
 from .batch import Batch
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
-from .dataloader import DataLoader
+from .dataloader import DataLoader, DenseDataLoader
 
 __all__ = [
     'download_url',
@@ -14,6 +14,7 @@ __all__ = [
     'Batch',
     'Dataset',
     'DataLoader',
+    'DenseDataLoader',
     'InMemoryDataset',
     'DataLoader',
 ]

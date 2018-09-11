@@ -19,6 +19,7 @@ from .nn_graph import NNGraph
 from .radius_graph import RadiusGraph
 from .face_to_edge import FaceToEdge
 from .sample_points import SamplePoints
+from .to_dense import ToDense
 
 __all__ = [
     'Compose',
@@ -42,4 +43,5 @@ __all__ = [
     'RadiusGraph',
     'FaceToEdge',
     'SamplePoints',
+    'ToDense',
 ]
