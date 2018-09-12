@@ -1,6 +1,7 @@
-from .diff_pool import DiffPool, diff_pool
+from .sage_conv import DenseSageConv
+from .diff_pool import DenseDiffPool
 
 __all__ = [
-    'DiffPool',
-    'diff_pool',
+    'DenseSageConv',
+    'DenseDiffPool',
 ]
