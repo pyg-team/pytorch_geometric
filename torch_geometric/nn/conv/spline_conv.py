@@ -77,6 +77,11 @@ class SplineConv(torch.nn.Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index, pseudo):
+        if edge_index.numel() == 0:
+            out = torch.mm(x, self.root)
+            out = out + self.bias
+            return out
+
         return Conv.apply(x, edge_index, pseudo, self.weight,
                           self._buffers['kernel_size'],
                           self._buffers['is_open_spline'], self.degree,
