@@ -1,7 +1,7 @@
 import torch
 
 
-class DiffPool(torch.nn.Module):
+class DenseDiffPool(torch.nn.Module):
     """Differentiable Pooling Operator based on dense learned asssignments
     with :math:`F^{(l+1)} = S^{(l)} X^{l}` and :math:`A^{(l+1)} = {S^{(l)}}^{T}
     A^{l} S^{(l)}` from the `"Hierarchical Graph Representation Learning with
@@ -13,7 +13,7 @@ class DiffPool(torch.nn.Module):
     """
 
     def __init__(self, gnn_pool):
-        super(DiffPool, self).__init__()
+        super(DenseDiffPool, self).__init__()
 
         self.gnn_pool = gnn_pool
 
