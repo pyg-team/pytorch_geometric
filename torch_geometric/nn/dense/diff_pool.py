@@ -2,10 +2,17 @@ import torch
 
 
 class DenseDiffPool(torch.nn.Module):
-    """Differentiable Pooling Operator based on dense learned asssignments
-    with :math:`F^{(l+1)} = S^{(l)} X^{l}` and :math:`A^{(l+1)} = {S^{(l)}}^{T}
-    A^{l} S^{(l)}` from the `"Hierarchical Graph Representation Learning with
-    Differentiable Pooling" <https://arxiv.org/abs/1806.08804>`_ paper.
+    r"""Differentiable Pooling Operator based on dense learned assignments
+    :math:`S` with
+
+    .. math::
+        \begin{align}
+        F^{(l+1)} &= S^{(l)} X^{(l)}\\
+        A^{(l+1)} &= {S^{(l)}}^{T}A^{(l)} S^{(l)}
+        \end{align}
+
+    from the `"Hierarchical Graph Representation Learning with Differentiable
+    Pooling" <https://arxiv.org/abs/1806.08804>`_ paper.
 
     Args:
         gnn_pool (torch.nn.Module): An instance of a GNN module to compute soft
@@ -27,14 +34,13 @@ class DenseDiffPool(torch.nn.Module):
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         s = s.unsqueeze(0) if s.dim() == 2 else s
-        batch_size = x.size(0)
 
         out = torch.matmul(s.transpose(1, 2), x)
         out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
         reg = adj - torch.matmul(s, s.transpose(1, 2))
         reg = torch.norm(reg, p=2)
-        reg = reg / batch_size
+        reg = reg / reg.numel()
 
         return out, out_adj, reg
 
