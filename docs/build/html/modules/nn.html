@@ -480,6 +480,39 @@ layer will not be trainable. (default: <a class="reference external" href="https
 <code class="descname">voxel_grid</code><span class="sig-paren">(</span><em>pos</em>, <em>batch</em>, <em>size</em>, <em>start=None</em>, <em>end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/voxel_grid.html#voxel_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.voxel_grid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<span class="target" id="module-torch_geometric.nn.dense.diff_pool"></span><dl class="class">
+<dt id="torch_geometric.nn.dense.diff_pool.DenseDiffPool">
+<em class="property">class </em><code class="descname">DenseDiffPool</code><span class="sig-paren">(</span><em>gnn_pool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/diff_pool.html#DenseDiffPool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.diff_pool.DenseDiffPool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Differentiable Pooling Operator based on dense learned assignments
+<span class="math">\(S\)</span> with</p>
+<div class="math">
+\[\begin{split}\begin{align}
+F^{(l+1)} &amp;= S^{(l)} X^{(l)}\\
+A^{(l+1)} &amp;= {S^{(l)}}^{T}A^{(l)} S^{(l)}
+\end{align}\end{split}\]</div>
+<p>from the <a class="reference external" href="https://arxiv.org/abs/1806.08804">“Hierarchical Graph Representation Learning with Differentiable
+Pooling”</a> paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>gnn_pool</strong> (<em>torch.nn.Module</em>) – An instance of a GNN module to compute soft
+assignments.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.dense.diff_pool.DenseDiffPool.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>adj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/diff_pool.html#DenseDiffPool.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.diff_pool.DenseDiffPool.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.dense.diff_pool.DenseDiffPool.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/diff_pool.html#DenseDiffPool.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.diff_pool.DenseDiffPool.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 

@@ -284,8 +284,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data.html#torch_geometric.data.Data">Data (class in torch_geometric.data)</a>
 </li>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.data_url">data_url (QM9 attribute)</a>
-</li>
       <li><a href="modules/data.html#torch_geometric.data.DataLoader">DataLoader (class in torch_geometric.data)</a>, <a href="modules/data.html#torch_geometric.data.DataLoader">[1]</a>
 </li>
       <li><a href="modules/data.html#torch_geometric.data.Dataset">Dataset (class in torch_geometric.data)</a>
@@ -293,6 +291,12 @@
       <li><a href="modules/utils.html#torch_geometric.utils.degree">degree() (in module torch_geometric.utils)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.dense_to_sparse">dense_to_sparse() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/data.html#torch_geometric.data.DenseDataLoader">DenseDataLoader (class in torch_geometric.data)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.dense.diff_pool.DenseDiffPool">DenseDiffPool (class in torch_geometric.nn.dense.diff_pool)</a>
+</li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.Distance">Distance (class in torch_geometric.transforms)</a>
 </li>
       <li><a href="modules/data.html#torch_geometric.data.Dataset.download">download() (Dataset method)</a>
 
@@ -308,6 +312,8 @@
         <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.download">(PPI method)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.download">(Planetoid method)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7.download">(QM7 method)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.download">(QM9 method)</a>
 </li>
@@ -346,6 +352,8 @@
 
       <ul>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.forward">(ChebConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.dense.diff_pool.DenseDiffPool.forward">(DenseDiffPool method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv.forward">(GATConv method)</a>
 </li>
@@ -436,14 +444,12 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.mask_url">mask_url (QM9 attribute)</a>
-</li>
       <li><a href="modules/nn.html#torch_geometric.nn.pool.max_pool">max_pool() (in module torch_geometric.nn.pool)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.pool.max_pool_x">max_pool_x() (in module torch_geometric.nn.pool)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/nn.html#torch_geometric.nn.pool.max_pool_x">max_pool_x() (in module torch_geometric.nn.pool)</a>
-</li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels">MNISTSuperpixels (class in torch_geometric.datasets)</a>
 </li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet">ModelNet (class in torch_geometric.datasets)</a>
@@ -519,6 +525,8 @@
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.process">(Planetoid method)</a>
 </li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7.process">(QM7 method)</a>
+</li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.process">(QM9 method)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.process">(ShapeNet method)</a>
@@ -545,6 +553,8 @@
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.processed_file_names">(Planetoid attribute)</a>
 </li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7.processed_file_names">(QM7 attribute)</a>
+</li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.processed_file_names">(QM9 attribute)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.processed_file_names">(ShapeNet attribute)</a>
@@ -559,6 +569,10 @@
 
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.QM7">QM7 (class in torch_geometric.datasets)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/datasets.html#torch_geometric.datasets.QM9">QM9 (class in torch_geometric.datasets)</a>
 </li>
@@ -595,6 +609,8 @@
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.raw_file_names">(Planetoid attribute)</a>
 </li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7.raw_file_names">(QM7 attribute)</a>
+</li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.raw_file_names">(QM9 attribute)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.raw_file_names">(ShapeNet attribute)</a>
@@ -612,6 +628,8 @@
 
       <ul>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.reset_parameters">(ChebConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.dense.diff_pool.DenseDiffPool.reset_parameters">(DenseDiffPool method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv.reset_parameters">(GATConv method)</a>
 </li>
@@ -664,6 +682,8 @@
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.to_undirected">to_undirected() (in module torch_geometric.utils)</a>
 </li>
+      <li><a href="modules/transforms.html#torch_geometric.transforms.ToDense">ToDense (class in torch_geometric.transforms)</a>
+</li>
       <li><a href="modules/data.html#module-torch_geometric.data">torch_geometric.data (module)</a>
 </li>
   </ul></td>
@@ -671,6 +691,8 @@
       <li><a href="modules/datasets.html#module-torch_geometric.datasets">torch_geometric.datasets (module)</a>
 </li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.conv">torch_geometric.nn.conv (module)</a>
+</li>
+      <li><a href="modules/nn.html#module-torch_geometric.nn.dense.diff_pool">torch_geometric.nn.dense.diff_pool (module)</a>
 </li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.pool">torch_geometric.nn.pool (module)</a>
 </li>
@@ -696,6 +718,10 @@
         <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.url">(PPI attribute)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.url">(Planetoid attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7.url">(QM7 attribute)</a>
+</li>
+        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.url">(QM9 attribute)</a>
 </li>
         <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.url">(ShapeNet attribute)</a>
 </li>

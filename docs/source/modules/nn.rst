@@ -24,3 +24,7 @@ Pooling Layers
 .. automodule:: torch_geometric.nn.pool
     :members:
     :undoc-members:
+
+.. automodule:: torch_geometric.nn.dense.diff_pool
+    :members:
+    :undoc-members:

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.datasets.qm9 &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.datasets.qm7 &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -172,7 +172,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.datasets.qm9</li>
+      <li>torch_geometric.datasets.qm7</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -189,54 +189,53 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.datasets.qm9</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="p">(</span><span class="n">InMemoryDataset</span><span class="p">,</span> <span class="n">download_url</span><span class="p">,</span> <span class="n">extract_tar</span><span class="p">,</span>
-                                  <span class="n">Data</span><span class="p">)</span>
+  <h1>Source code for torch_geometric.datasets.qm7</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">scipy.io</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">InMemoryDataset</span><span class="p">,</span> <span class="n">download_url</span><span class="p">,</span> <span class="n">Data</span>
 
 
-<div class="viewcode-block" id="QM9"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.QM9">[docs]</a><span class="k">class</span> <span class="nc">QM9</span><span class="p">(</span><span class="n">InMemoryDataset</span><span class="p">):</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://www.roemisch-drei.de/qm9.tar.gz&#39;</span>
+<div class="viewcode-block" id="QM7"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.QM7">[docs]</a><span class="k">class</span> <span class="nc">QM7</span><span class="p">(</span><span class="n">InMemoryDataset</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://deepchem.io.s3-website-us-west-1.amazonaws.com/&#39;</span> \
+          <span class="s1">&#39;datasets/qm7b.mat&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">root</span><span class="p">,</span>
                  <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">pre_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">pre_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">QM9</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">pre_transform</span><span class="p">,</span> <span class="n">pre_filter</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QM7</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">pre_transform</span><span class="p">,</span> <span class="n">pre_filter</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">raw_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;qm9.pt&#39;</span>
+        <span class="k">return</span> <span class="s1">&#39;qm7b.mat&#39;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">processed_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;data.pt&#39;</span>
 
-<div class="viewcode-block" id="QM9.download"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.QM9.download">[docs]</a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">file_path</span> <span class="o">=</span> <span class="n">download_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">)</span>
-        <span class="n">extract_tar</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span></div>
+<div class="viewcode-block" id="QM7.download"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.QM7.download">[docs]</a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">download_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="QM9.process"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.QM9.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">raw_data_list</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">Data</span><span class="p">(</span>
-                <span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span>
-                <span class="n">edge_index</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;edge_index&#39;</span><span class="p">],</span>
-                <span class="n">edge_attr</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;edge_attr&#39;</span><span class="p">],</span>
-                <span class="n">y</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">],</span>
-                <span class="n">pos</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;pos&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">raw_data_list</span>
-        <span class="p">]</span>
+<div class="viewcode-block" id="QM7.process"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.QM7.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">loadmat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">coulomb_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">])</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">edge_index</span> <span class="o">=</span> <span class="n">coulomb_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+            <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">coulomb_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_filter</span><span class="p">(</span><span class="n">data</span><span class="p">)]</span>
+            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data_list</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_filter</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
+            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
 
         <span class="n">data</span><span class="p">,</span> <span class="n">slices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">slices</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div></div>
