@@ -8,9 +8,9 @@ from torch_geometric.utils import remove_self_loops, add_self_loops
 from ..inits import uniform
 
 
-class GraphSAGEMean(torch.nn.Module):
+class SAGEMeanConv(torch.nn.Module):
     def __init__(self, in_channels, out_channels, normalize=True, bias=True):
-        super(GraphSAGEMean, self).__init__()
+        super(SAGEMeanConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
