@@ -8,7 +8,7 @@ class DenseDiffPool(torch.nn.Module):
     .. math::
         \begin{align}
         F^{(l+1)} &= S^{(l)} X^{(l)}\\
-        A^{(l+1)} &= {S^{(l)}}^{T}A^{(l)} S^{(l)}
+        A^{(l+1)} &= {S^{(l)}}^{\top}A^{(l)} S^{(l)}
         \end{align}
 
     from the `"Hierarchical Graph Representation Learning with Differentiable
