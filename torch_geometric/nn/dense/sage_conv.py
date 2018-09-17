@@ -25,7 +25,12 @@ class DenseSAGEMeanConv(torch.nn.Module):
         uniform(size, self.bias)
 
     def forward(self, x, adj):
-        pass
+        x = x.unsqueeze(0) if x.dim() == 2 else x
+        adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
+
+        # Add self loops.
+        arange = torch.arange(adj.size(-1), dtype=torch.long, device=x.device)
+        adj[:, arange, arange] = 1
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
