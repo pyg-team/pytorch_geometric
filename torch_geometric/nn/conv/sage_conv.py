@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Parameter
-from torch_scatter import scatter_mean
+from torch_scatter import scatter_add, scatter_mean
 
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
@@ -9,11 +9,18 @@ from ..inits import uniform
 
 
 class SAGEMeanConv(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, normalize=True, bias=True):
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 norm=True,
+                 norm_embed=True,
+                 bias=True):
         super(SAGEMeanConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.norm = norm
+        self.norm_embed = norm_embed
         self.weight = Parameter(torch.Tensor(self.in_channels, out_channels))
 
         if bias:
@@ -33,13 +40,18 @@ class SAGEMeanConv(torch.nn.Module):
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
 
         row, col = edge_index
-        out = scatter_mean(x[row], row, dim=0, dim_size=x.size(0))
+
+        if self.norm:
+            out = scatter_mean(x[row], row, dim=0, dim_size=x.size(0))
+        else:
+            out = scatter_add(x[row], row, dim=0, dim_size=x.size(0))
+
         out = torch.matmul(out, self.weight)
 
         if self.bias is not None:
             out = out + self.bias
 
-        if self.normalize:
+        if self.norm_embed:
             out = F.normalize(out, p=2, dim=-1)
 
         return out
