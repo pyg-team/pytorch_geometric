@@ -21,7 +21,6 @@ class DenseDiffPool(torch.nn.Module):
 
     def __init__(self, gnn_pool):
         super(DenseDiffPool, self).__init__()
-
         self.gnn_pool = gnn_pool
 
     def reset_parameters(self):
