@@ -5,14 +5,14 @@ from torch.nn import Parameter
 from ..inits import uniform
 
 
-class DenseSAGEMeanConv(torch.nn.Module):
+class DenseSAGEConv(torch.nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
                  norm=True,
                  norm_embed=True,
                  bias=True):
-        super(DenseSAGEMeanConv, self).__init__()
+        super(DenseSAGEConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels

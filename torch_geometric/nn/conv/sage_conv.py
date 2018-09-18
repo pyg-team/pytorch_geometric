@@ -8,14 +8,14 @@ from torch_geometric.utils import remove_self_loops, add_self_loops
 from ..inits import uniform
 
 
-class SAGEMeanConv(torch.nn.Module):
+class SAGEConv(torch.nn.Module):
     def __init__(self,
                  in_channels,
                  out_channels,
                  norm=True,
                  norm_embed=True,
                  bias=True):
-        super(SAGEMeanConv, self).__init__()
+        super(SAGEConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
