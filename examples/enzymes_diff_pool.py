@@ -18,7 +18,7 @@ class MyFilter(object):
 class MyTransform(object):
     def __call__(self, data):
         # Only use node attributes.
-        data.x = data.x[:, -3:]
+        data.x = data.x[:, :-3]
 
         # Add self loops.
         arange = torch.arange(data.adj.size(-1), dtype=torch.long)
@@ -99,8 +99,9 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
 
         num_nodes = int(0.1 * max_nodes)
-        self.gnn1_pool = GNN(3, 64, num_nodes, norm=False)
-        self.gnn1_embed = GNN(3, 64, 64, lin=False, norm=False)
+        self.gnn1_pool = GNN(18, 64, num_nodes, norm=False)
+        self.gnn1_embed = GNN(18, 64, 64, lin=False, norm=False)
+
         self.gnn2_embed = GNN(3 * 64, 64, 64, lin=False, norm=False)
 
         self.lin1 = torch.nn.Linear(3 * 64, 64)
@@ -108,8 +109,9 @@ class Net(torch.nn.Module):
 
     def forward(self, data):
         x, adj = data.x, data.adj
+        # mask = data.mask.unsqueeze(-1).to(torch.float)
 
-        s = torch.softmax(self.gnn1_pool(x, adj), dim=-1)
+        s = self.gnn1_pool(x, adj)
         x = self.gnn1_embed(x, adj)
         x, adj, reg1 = dense_diff_pool(x, adj, s)
         x = self.gnn2_embed(x, adj)
