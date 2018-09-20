@@ -35,10 +35,6 @@ class DenseSAGEConv(torch.nn.Module):
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
 
-        # Add self loops.
-        arange = torch.arange(adj.size(-1), dtype=torch.long, device=x.device)
-        adj[:, arange, arange] = 1
-
         out = torch.matmul(adj, x)
 
         if self.norm:
