@@ -54,14 +54,14 @@ class GNN(torch.nn.Module):
                  norm_embed=True):
         super(GNN, self).__init__()
 
-        self.cn1 = DenseSAGEConv(in_channels, hidden_channels, norm,
-                                 norm_embed)
+        self.conv1 = DenseSAGEConv(in_channels, hidden_channels, norm,
+                                   norm_embed)
         self.bn1 = torch.nn.BatchNorm1d(hidden_channels)
-        self.cn2 = DenseSAGEConv(hidden_channels, hidden_channels, norm,
-                                 norm_embed)
+        self.conv2 = DenseSAGEConv(hidden_channels, hidden_channels, norm,
+                                   norm_embed)
         self.bn2 = torch.nn.BatchNorm1d(hidden_channels)
-        self.cn3 = DenseSAGEConv(hidden_channels, out_channels, norm,
-                                 norm_embed)
+        self.conv3 = DenseSAGEConv(hidden_channels, out_channels, norm,
+                                   norm_embed)
         self.bn3 = torch.nn.BatchNorm1d(out_channels)
 
         if lin is True:
@@ -82,9 +82,9 @@ class GNN(torch.nn.Module):
         batch_size, num_nodes, in_channels = x.size()
 
         x0 = x
-        x1 = self.bn(1, F.relu(self.cn1(x0, adj)))
-        x2 = self.bn(2, F.relu(self.cn2(x1, adj)))
-        x3 = self.bn(3, F.relu(self.cn3(x2, adj)))
+        x1 = self.bn(1, F.relu(self.conv1(x0, adj)))
+        x2 = self.bn(2, F.relu(self.conv2(x1, adj)))
+        x3 = self.bn(3, F.relu(self.conv3(x2, adj)))
 
         x = torch.cat([x1, x2, x3], dim=-1)
 
