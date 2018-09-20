@@ -19,6 +19,8 @@ def dense_diff_pool(x, adj, s):
     adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
     s = s.unsqueeze(0) if s.dim() == 2 else s
 
+    s = torch.softmax(s, dim=-1)
+
     out = torch.matmul(s.transpose(1, 2), x)
     out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
