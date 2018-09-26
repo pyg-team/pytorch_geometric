@@ -28,9 +28,9 @@ class Set2Set(torch.nn.Module):
 
         # Bring x into shape [batch_size, max_nodes, in_channels].
         xs = x.split(torch.bincount(batch).tolist())
-        max_nodes = max([x.size(0) for x in xs])
-        xs = [[x, x.new_zeros(max_nodes - x.size(0), x.size(1))] for x in xs]
-        xs = [torch.cat(x, dim=0) for x in xs]
+        max_nodes = max([t.size(0) for t in xs])
+        xs = [[t, t.new_zeros(max_nodes - t.size(0), t.size(1))] for t in xs]
+        xs = [torch.cat(t, dim=0) for t in xs]
         x = torch.stack(xs, dim=0)
 
         h = (x.new_zeros((self.num_layers, batch_size, self.hidden_channels)),
