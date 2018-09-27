@@ -18,7 +18,7 @@ class MyTransform(object):
     def __call__(self, data):
         # Pad features.
         x = data.x
-        data.x = torch.cat([x, x.new_zeros(x.size(0), 64 - x.size(1))], dim=1)
+        data.x = torch.cat([x, x.new_zeros(x.size(0), dim - x.size(1))], dim=1)
 
         # Specify target.
         data.y = data.y[:, target]
