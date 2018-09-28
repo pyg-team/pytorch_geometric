@@ -98,8 +98,7 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        num_nodes = int(0.1 * max_nodes)
-        self.gnn1_pool = GNN(18, 64, num_nodes, norm=False)
+        self.gnn1_pool = GNN(18, 64, int(0.1 * max_nodes), norm=False)
         self.gnn1_embed = GNN(18, 64, 64, lin=False, norm=False)
 
         self.gnn2_embed = GNN(3 * 64, 64, 64, lin=False, norm=False)
@@ -109,11 +108,10 @@ class Net(torch.nn.Module):
 
     def forward(self, data):
         x, adj = data.x, data.adj
-        # mask = data.mask.unsqueeze(-1).to(torch.float)
 
         s = self.gnn1_pool(x, adj)
         x = self.gnn1_embed(x, adj)
-        x, adj, reg1 = dense_diff_pool(x, adj, s)
+        x, adj, reg1 = dense_diff_pool(x, adj, s, data.mask)
         x = self.gnn2_embed(x, adj)
 
         x = x.mean(dim=1)
