@@ -1,7 +1,7 @@
 import torch
 
 
-def dense_diff_pool(x, adj, s):
+def dense_diff_pool(x, adj, s, mask=None):
     r"""Differentiable Pooling Operator based on dense learned assignments
     :math:`S` with
 
@@ -19,7 +19,13 @@ def dense_diff_pool(x, adj, s):
     adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
     s = s.unsqueeze(0) if s.dim() == 2 else s
 
+    batch_size, num_nodes, _ = x.size()
+
     s = torch.softmax(s, dim=-1)
+
+    if mask is not None:
+        mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
+        x, s = x * mask, s * mask
 
     out = torch.matmul(s.transpose(1, 2), x)
     out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
