@@ -59,6 +59,8 @@ $ echo $CPATH
 >>> /usr/local/cuda/include:...
 ```
 
+Then run:
+
 ```
 $ pip install --upgrade torch-scatter
 $ pip install --upgrade torch-sparse
