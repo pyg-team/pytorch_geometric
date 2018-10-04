@@ -30,7 +30,7 @@ class InMemoryDataset(Dataset):
 
     @property
     def num_features(self):
-        return 1 if self.data.x.dim() == 1 else self.data.x.size(1)
+        return self[0].num_features
 
     @property
     def num_classes(self):
