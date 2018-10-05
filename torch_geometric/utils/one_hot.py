@@ -2,6 +2,7 @@ import torch
 
 
 def one_hot(src, num_classes=None, dtype=None):
+    src = src.to(torch.long)
     src = src.unsqueeze(-1) if src.dim() == 1 else src
     assert src.dim() == 2
 
