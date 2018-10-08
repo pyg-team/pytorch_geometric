@@ -1,3 +1,4 @@
+from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .planetoid import Planetoid
 from .mnist_superpixels import MNISTSuperpixels
@@ -9,6 +10,7 @@ from .shapenet import ShapeNet
 from .modelnet import ModelNet
 
 __all__ = [
+    'KarateClub',
     'TUDataset',
     'Planetoid',
     'MNISTSuperpixels',
