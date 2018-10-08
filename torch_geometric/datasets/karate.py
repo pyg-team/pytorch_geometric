@@ -4,16 +4,17 @@ from torch_geometric.data import InMemoryDataset, Data
 
 
 class KarateClub(InMemoryDataset):
-    url = 'http://faust.is.tue.mpg.de/'
-
     def __init__(self, transform=None):
         super(KarateClub, self).__init__('.', transform, None, None)
 
-        adj = nx.to_scipy_sparse_matrix(nx.karate_club_graph()).tocoo()
+        G = nx.karate_club_graph()
+        adj = nx.to_scipy_sparse_matrix(G).tocoo()
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
-        self.data, self.slices = self.collate([Data(edge_index=edge_index)])
+        data = Data(edge_index=edge_index)
+        data.x = torch.eye(data.num_nodes, dtype=torch.float)
+        self.data, self.slices = self.collate([data])
 
     def _download(self):
         return
