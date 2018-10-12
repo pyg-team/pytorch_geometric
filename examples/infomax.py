@@ -137,5 +137,5 @@ print('Train logistic regression classifier.')
 for epoch in range(1, 51):
     train_classifier()
     accs = test_classifier()
-    log = 'Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
+    log = 'Epoch: {:02d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
     print(log.format(epoch, *accs))
