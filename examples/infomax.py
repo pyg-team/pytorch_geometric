@@ -75,7 +75,7 @@ infomax_optimizer = torch.optim.Adam(infomax.parameters(), lr=0.001)
 def train_infomax(epoch):
     infomax.train()
 
-    if epoch == 400:
+    if epoch == 200:
         for param_group in infomax_optimizer.param_groups:
             param_group['lr'] = 0.0001
 
@@ -87,7 +87,7 @@ def train_infomax(epoch):
 
 
 print('Train deep graph infomax.')
-for epoch in range(1, 501):
+for epoch in range(1, 301):
     loss = train_infomax(epoch)
     print('Epoch: {:03d}, Loss: {:.7f}'.format(epoch, loss))
 
