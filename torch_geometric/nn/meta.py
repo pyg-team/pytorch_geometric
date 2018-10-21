@@ -15,7 +15,8 @@ class MetaLayer(torch.nn.Module):
             if hasattr(item, 'reset_parameters'):
                 item.reset_parameters()
 
-    def forward(self, x, edge_index, edge_attr=None, global_x=None):
+    def forward(self, x, edge_index, edge_attr=None, global_x=None,
+                batch=None):
         row, col = edge_index
 
         if self.edge_model is not None:
@@ -25,7 +26,8 @@ class MetaLayer(torch.nn.Module):
             x = self.node_model(x, edge_index, edge_attr, global_x)
 
         if self.global_model is not None:
-            global_x = self.global_model(x, edge_index, edge_attr, global_x)
+            global_x = self.global_model(x, edge_index, edge_attr, global_x,
+                                         batch)
 
         return x, edge_attr, global_x
 
