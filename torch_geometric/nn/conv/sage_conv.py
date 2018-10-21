@@ -42,9 +42,9 @@ class SAGEConv(torch.nn.Module):
         row, col = edge_index
 
         if self.norm:
-            out = scatter_mean(x[row], row, dim=0, dim_size=x.size(0))
+            out = scatter_mean(x[col], row, dim=0, dim_size=x.size(0))
         else:
-            out = scatter_add(x[row], row, dim=0, dim_size=x.size(0))
+            out = scatter_add(x[col], row, dim=0, dim_size=x.size(0))
 
         out = torch.matmul(out, self.weight)
 
