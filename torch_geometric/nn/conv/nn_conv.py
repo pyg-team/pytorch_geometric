@@ -70,7 +70,7 @@ class NNConv(torch.nn.Module):
         out = out.view(-1, self.in_channels, self.out_channels)
 
         out = torch.matmul(x[col].unsqueeze(1), out).squeeze(1)
-        out = scatter_add(out, row, dim=0)
+        out = scatter_add(out, row, dim=0, dim_size=x.size(0))
 
         # Normalize by node degree (if wished).
         if self.norm:
