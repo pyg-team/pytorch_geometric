@@ -8,6 +8,8 @@ from .grid import grid
 from .normalized_cut import normalized_cut
 from .sparse import dense_to_sparse
 from .convert import to_scipy_sparse_matrix, to_networkx
+from .metric import (accuracy, true_positive, true_negative, false_positive,
+                     false_negative, precision, recall, f1_score)
 
 __all__ = [
     'degree',
@@ -24,4 +26,12 @@ __all__ = [
     'dense_to_sparse',
     'to_scipy_sparse_matrix',
     'to_networkx',
+    'accuracy',
+    'true_positive',
+    'true_negative',
+    'false_positive',
+    'false_negative',
+    'precision',
+    'recall',
+    'f1_score',
 ]
