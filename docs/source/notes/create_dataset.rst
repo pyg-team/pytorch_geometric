@@ -18,21 +18,20 @@ Creating "in memory datasets"
 In order to create a :class:`torch_geometric.data.InMemoryDataset`, you need to implement four fundamental methods:
 
 :meth:`torch_geometric.data.InMemoryDataset.raw_file_names`:
-    A list of files in the ``raw_dir`` which needs to be found, so the download is being skipped.
+    A list of files in the ``raw_dir`` which needs to be found in order to skip the download.
 :meth:`torch_geometric.data.InMemoryDataset.processed_file_names`:
-    A list of files in the ``processed_dir`` which needs to be found, so the processing is being skipped.
+    A list of files in the ``processed_dir`` which needs to be found in order to skip the processing.
 :meth:`torch_geometric.data.InMemoryDataset.download`:
-    Should download all needed data into ``raw_dir``.
+    Downloads raw data into ``raw_dir``.
 :meth:`torch_geometric.data.InMemoryDataset.process`:
-    Should process downloaded data and save it into the ``processed_dir``.
+    Processes raw data and saves it into the ``processed_dir``.
 
 You can find helpful methods to download and extract data in :mod:`torch_geometric.data`.
 
 The real magic happens in the body of :meth:`torch_geometric.data.InMemoryDataset.process`.
 Here, we need to read and create a list of :class:`torch_geometric.data.Data` objects and save it into the ``processed_dir``.
-Because saving a huge python list is really slow, we must collate the list into one huge ``Data`` object before saving.
-The collated data object simply concatenates all examples (similar to :class:`torch_geometric.data.DataLoader`).
-In addition, the :meth:`torch_geometric.data.InMemoryDataset.collate` method returns a ``slices`` dictionary to reconstruct single examples from the object.
+Because saving a huge python list is really slow, we collate the list into one huge ``Data`` object before saving via :meth:`torch_geometric.data.InMemoryDataset.collate`.
+The collated data object has simply concatenated all examples (similar to :class:`torch_geometric.data.DataLoader`) and, in addition, returns a ``slices`` dictionary to reconstruct single examples from the object.
 
 Let's see this process in a simplified example:
 
