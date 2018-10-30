@@ -12,7 +12,7 @@ class RandomRotate(object):
             degrees = (-abs(degrees), abs(degrees))
         assert isinstance(degrees, (tuple, list)) and len(degrees) == 2
         self.degrees = degrees
-        self.axis = 0
+        self.axis = axis
 
     def __call__(self, data):
         degree = math.pi * random.uniform(*self.degrees) / 180.0
