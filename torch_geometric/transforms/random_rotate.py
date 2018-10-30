@@ -19,14 +19,14 @@ class RandomRotate(object):
         sin, cos = math.sin(degree), math.cos(degree)
 
         if data.pos.size(1) == 2:
-            matrix = [[cos, -sin], [sin, cos]]
+            matrix = [[cos, sin], [-sin, cos]]
         else:
             if self.axis == 0:
-                matrix = [[1, 0, 0], [0, cos, -sin], [0, sin, cos]]
+                matrix = [[1, 0, 0], [0, cos, sin], [0, -sin, cos]]
             elif self.axis == 1:
-                matrix = [[cos, 0, sin], [0, 1, 0], [-sin, 0, cos]]
+                matrix = [[cos, 0, -sin], [0, 1, 0], [sin, 0, cos]]
             else:
-                matrix = [[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]]
+                matrix = [[cos, sin, 0], [-sin, cos, 0], [0, 0, 1]]
         return LinearTransformation(torch.tensor(matrix))(data)
 
     def __repr__(self):
