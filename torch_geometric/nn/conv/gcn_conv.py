@@ -6,7 +6,7 @@ from ..prop import GCNProp
 
 
 class GCNConv(torch.nn.Module):
-    """Graph Convolutional Operator :math:`F_{out} = \hat{D}^{-1/2} \hat{A}
+    r"""Graph Convolutional Operator :math:`F_{out} = \hat{D}^{-1/2} \hat{A}
     \hat{D}^{-1/2} F_{in} W` with :math:`\hat{A} = A + I` and
     :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` from the `"Semi-Supervised
     Classfication with Graph Convolutional Networks"
