@@ -49,7 +49,7 @@ class LinearTransformation(object):
             'Node position matrix and transformation matrix have incompatible '
             'shape.')
 
-        data.pos = torch.mm(pos, self.matrix.type_as(pos))
+        data.pos = torch.mm(pos, self.matrix.to(pos.dtype).to(pos.device))
 
         return data
 
