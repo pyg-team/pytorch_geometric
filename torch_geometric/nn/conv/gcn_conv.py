@@ -1,7 +1,7 @@
 import torch
 from torch.nn import Parameter
 
-from ..inits import uniform
+from ..inits import glorot, zeros
 from ..prop import GCNProp
 
 
@@ -35,7 +35,6 @@ class GCNConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.in_channels
         glorot(self.weight)
         zeros(self.bias)
 

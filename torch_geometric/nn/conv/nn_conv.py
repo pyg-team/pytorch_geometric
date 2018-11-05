@@ -74,7 +74,7 @@ class NNConv(torch.nn.Module):
 
         # Normalize by node degree (if wished).
         if self.norm:
-            deg = degree(row, x.size(0), x.dtype, x.device)
+            deg = degree(row, x.size(0), x.dtype)
             out = out / deg.unsqueeze(-1).clamp(min=1)
 
         # Weight root node separately (if wished).

@@ -16,7 +16,7 @@ class GCNProp(torch.nn.Module):
         assert edge_attr.dim() == 1
 
         # Normalize adjacency matrix.
-        deg = degree(row, num_nodes, dtype=x.dtype, device=x.device)
+        deg = degree(row, num_nodes, dtype=x.dtype)
         deg = deg.pow(-0.5)
         deg[deg == float('inf')] = 0
         edge_attr = deg[row] * edge_attr * deg[col]
