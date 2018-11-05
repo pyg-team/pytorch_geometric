@@ -3,7 +3,7 @@ import torch
 from .num_nodes import maybe_num_nodes
 
 
-def degree(index, num_nodes=None, dtype=None, device=None):
+def degree(index, num_nodes=None, dtype=None):
     """Computes the degree of a given index tensor.
 
     Args:
@@ -11,8 +11,6 @@ def degree(index, num_nodes=None, dtype=None, device=None):
         num_nodes (int, optional): The number of nodes in :attr:`index`.
             (default: :obj:`None`)
         dtype (:obj:`torch.dtype`, optional). The desired data type of returned
-            tensor.
-        device (:obj:`torch.device`, optional): The desired device of returned
             tensor.
 
     :rtype: :class:`Tensor`
@@ -33,5 +31,5 @@ def degree(index, num_nodes=None, dtype=None, device=None):
        tensor([3., 1., 1.])
     """
     num_nodes = maybe_num_nodes(index, num_nodes)
-    out = torch.zeros((num_nodes), dtype=dtype, device=device)
+    out = torch.zeros((num_nodes), dtype=dtype, device=index.device)
     return out.scatter_add_(0, index, out.new_ones((index.size(0))))
