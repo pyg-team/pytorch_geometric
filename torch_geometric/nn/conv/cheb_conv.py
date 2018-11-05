@@ -45,7 +45,7 @@ class ChebConv(torch.nn.Module):
         if edge_attr is None:
             edge_attr = x.new_ones((num_edges, ))
 
-        deg = degree(row, num_nodes, dtype=x.dtype, device=x.device)
+        deg = degree(row, num_nodes, dtype=x.dtype)
 
         # Compute normalized and rescaled Laplacian.
         deg = deg.pow(-0.5)
