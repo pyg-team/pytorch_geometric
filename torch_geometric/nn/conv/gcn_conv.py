@@ -36,8 +36,8 @@ class GCNConv(torch.nn.Module):
 
     def reset_parameters(self):
         size = self.in_channels
-        uniform(size, self.weight)
-        uniform(size, self.bias)
+        glorot(self.weight)
+        zeros(self.bias)
 
     def forward(self, x, edge_index, edge_attr=None):
         out = torch.mm(x, self.weight)
