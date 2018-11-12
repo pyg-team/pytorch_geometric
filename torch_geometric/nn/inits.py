@@ -15,4 +15,9 @@ def glorot(tensor):
 
 def zeros(tensor):
     if tensor is not None:
-        tensor.data.zero_()
+        tensor.data.fill_(0)
+
+
+def ones(tensor):
+    if tensor is not None:
+        tensor.data.fill_(1)
