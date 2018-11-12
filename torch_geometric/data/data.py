@@ -90,7 +90,7 @@ class Data(object):
         return is_undirected(self.edge_index, self.num_nodes)
 
     def is_directed(self):
-        return not self.is_undirected
+        return not self.is_undirected()
 
     def apply(self, func, *keys):
         for key, item in self(*keys):
