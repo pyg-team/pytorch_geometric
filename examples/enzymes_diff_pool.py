@@ -27,7 +27,7 @@ class MyTransform(object):
         return data
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES_d')
 dataset = TUDataset(
     path,
     name='ENZYMES',

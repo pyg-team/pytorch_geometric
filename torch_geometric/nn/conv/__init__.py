@@ -1,3 +1,4 @@
+from .graph_conv import GraphConv
 from .spline_conv import SplineConv
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
@@ -7,6 +8,7 @@ from .sage_conv import SAGEConv
 from .gin_conv import GINConv
 
 __all__ = [
+    'GraphConv',
     'SplineConv',
     'GCNConv',
     'ChebConv',

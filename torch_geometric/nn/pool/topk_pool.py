@@ -42,7 +42,8 @@ class TopKPooling(torch.nn.Module):
         index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
         index = (index - cum_num_nodes[batch]) + (batch * max_num_nodes)
 
-        dense_x = x.new_full((batch_size * max_num_nodes, ), x.min() - 1)
+        x_min_value = x.min().item()
+        dense_x = x.new_full((batch_size * max_num_nodes, ), x_min_value - 1)
         dense_x[index] = x
         dense_x = dense_x.view(batch_size, max_num_nodes)
         _, perm = dense_x.sort(dim=-1, descending=True)
@@ -82,14 +83,13 @@ class TopKPooling(torch.nn.Module):
 
         weight = F.normalize(self.weight, p=2, dim=-1)
         score = (x * weight).sum(dim=-1)
-        perm = self.topk(score, self.k, batch)
-
-        x = x[perm] * self.tanh(score[perm])
+        perm = self.topk(score, self.ratio, batch)
+        x = x[perm] * torch.tanh(score[perm]).view(-1, 1)
         batch = batch[perm]
         edge_index, edge_attr = self.filter_adj(
-            edge_index, edge_attr, perm, num_nodes=x.size(0))
+            edge_index, edge_attr, perm, num_nodes=score.size(0))
 
-        return x, edge_index, edge_attr, batch
+        return x, edge_index, edge_attr, batch, perm
 
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__, self.ratio)
