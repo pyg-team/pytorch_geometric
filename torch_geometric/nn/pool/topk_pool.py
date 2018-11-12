@@ -1,6 +1,5 @@
 import torch
 from torch.nn import Parameter
-import torch.nn.functional as F
 from torch_scatter import scatter_add
 
 from ..inits import uniform
@@ -81,8 +80,8 @@ class TopKPooling(torch.nn.Module):
     def forward(self, x, edge_index, edge_attr, batch):
         x = x.unsqueeze(-1) if x.dim() == 1 else x
 
-        weight = F.normalize(self.weight, p=2, dim=-1)
-        score = (x * weight).sum(dim=-1)
+        score = (x * self.weight).sum(dim=-1)
+        score = score / self.weight.norm(p=2, dim=-1)
         perm = self.topk(score, self.ratio, batch)
         x = x[perm] * torch.tanh(score[perm]).view(-1, 1)
         batch = batch[perm]
