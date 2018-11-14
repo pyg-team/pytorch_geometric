@@ -28,9 +28,9 @@ class OneHotDegree(object):
 
     .. testoutput::
 
-        tensor([[0.0, 1.0, 0.0],
-                [0.0, 0.0, 1.0],
-                [0.0, 1.0, 0.0]])
+        tensor([[0., 1., 0.],
+                [0., 0., 1.],
+                [0., 1., 0.]])
     """
 
     def __init__(self, max_degree, cat=True):
