@@ -4,6 +4,7 @@ from .cartesian import Cartesian
 from .local_cartesian import LocalCartesian
 from .polar import Polar
 from .spherical import Spherical
+from .one_hot_degree import OneHotDegree
 from .target_indegree import TargetIndegree
 from .center import Center
 from .normalize_scale import NormalizeScale
@@ -28,6 +29,7 @@ __all__ = [
     'LocalCartesian',
     'Polar',
     'Spherical',
+    'OneHotDegree',
     'TargetIndegree',
     'Center',
     'NormalizeScale',
