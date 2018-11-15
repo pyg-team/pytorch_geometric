@@ -22,6 +22,7 @@ from .radius_graph import RadiusGraph
 from .face_to_edge import FaceToEdge
 from .sample_points import SamplePoints
 from .to_dense import ToDense
+from .two_hop import TwoHop
 
 __all__ = [
     'Compose',
@@ -48,4 +49,5 @@ __all__ = [
     'FaceToEdge',
     'SamplePoints',
     'ToDense',
+    'TwoHop',
 ]
