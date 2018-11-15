@@ -1,4 +1,5 @@
 from .compose import Compose
+from .constant import Constant
 from .distance import Distance
 from .cartesian import Cartesian
 from .local_cartesian import LocalCartesian
@@ -24,6 +25,7 @@ from .to_dense import ToDense
 
 __all__ = [
     'Compose',
+    'Constant',
     'Distance',
     'Cartesian',
     'LocalCartesian',

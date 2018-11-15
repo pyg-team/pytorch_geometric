@@ -44,7 +44,7 @@ class OneHotDegree(object):
 
         if x is not None and self.cat:
             x = x.view(-1, 1) if x.dim() == 1 else x
-            data.x = torch.cat([x, deg.type_as(x)], dim=-1)
+            data.x = torch.cat([x, deg.to(x.dtype)], dim=-1)
         else:
             data.x = deg
 
