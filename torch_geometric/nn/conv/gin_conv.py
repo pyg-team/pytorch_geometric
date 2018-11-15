@@ -20,9 +20,11 @@ class GINConv(nn.Module):
             if hasattr(self.nn, 'reset_parameters'):
                 self.nn.reset_parameters()
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index, size=None):
+        size = x.size(0) if size is None else size
+
         row, col = edge_index
-        out = scatter_add(x[col], row, dim=0, dim_size=x.size(0))
+        out = scatter_add(x[col], row, dim=0, dim_size=size)
         if self.add_root:
             out = out + x
         out = self.nn(out)
