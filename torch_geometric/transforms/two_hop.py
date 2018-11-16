@@ -21,7 +21,7 @@ class TwoHop(object):
             data.edge_index, _ = coalesce(edge_index, None, n, n)
         else:
             value = value.view(-1, *[1 for _ in range(edge_attr.dim() - 1)])
-            value = value.expand_as(edge_attr)
+            value = value.expand(-1, *list(edge_attr.size())[1:])
             edge_attr = torch.cat([edge_attr, value], dim=0)
             data.edge_index, edge_attr = coalesce(
                 edge_index, edge_attr, n, n, op='min', fill_value=fill)
