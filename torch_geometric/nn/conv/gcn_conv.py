@@ -15,16 +15,18 @@ class GCNConv(torch.nn.Module):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
+        improved (bool, optional): If :obj:`True`, computes :math:`\hat{A}` as
+        :math:`A + 2I`. (default: False)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
 
-    def __init__(self, in_channels, out_channels, bias=True):
+    def __init__(self, in_channels, out_channels, improved=False, bias=True):
         super(GCNConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.prop = GCNProp()
+        self.prop = GCNProp(improved)
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
 
         if bias:
