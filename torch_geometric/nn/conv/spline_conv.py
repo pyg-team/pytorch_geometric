@@ -77,7 +77,7 @@ class SplineConv(torch.nn.Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index, pseudo):
-        if edge_index.numel() == 0:
+        if edge_index is None or edge_index.numel() == 0:
             out = torch.mm(x, self.root)
             out = out + self.bias
             return out
