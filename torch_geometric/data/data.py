@@ -50,13 +50,13 @@ class Data(object):
             if self[key] is not None:
                 yield key, self[key]
 
-    def cat_dim(self, key):
-        return -1 if self[key].dtype == torch.long else 0
+    def cat_dim(self, key, item):
+        return -1 if item.dtype == torch.long else 0
 
     @property
     def num_nodes(self):
         for key, item in self('x', 'pos'):
-            return item.size(self.cat_dim(key))
+            return item.size(self.cat_dim(key, item))
         if self.edge_index is not None:
             return maybe_num_nodes(self.edge_index)
         return None
@@ -64,7 +64,7 @@ class Data(object):
     @property
     def num_edges(self):
         for key, item in self('edge_index', 'edge_attr'):
-            return item.size(self.cat_dim(key))
+            return item.size(self.cat_dim(key, item))
         return None
 
     @property

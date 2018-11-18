@@ -64,7 +64,8 @@ class InMemoryDataset(Dataset):
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
             s = list(repeat(slice(None), item.dim()))
-            s[self.data.cat_dim(key)] = slice(slices[idx], slices[idx + 1])
+            s[self.data.cat_dim(key, item)] = slice(slices[idx],
+                                                    slices[idx + 1])
             data[key] = item[s]
         return data
 
