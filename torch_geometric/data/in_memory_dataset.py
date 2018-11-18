@@ -85,12 +85,12 @@ class InMemoryDataset(Dataset):
 
         for item, key in product(data_list, keys):
             data[key].append(item[key])
-            s = slices[key][-1] + item[key].size(item.cat_dim(key, item))
+            s = slices[key][-1] + item[key].size(item.cat_dim(key, item[key]))
             slices[key].append(s)
 
         for key in keys:
             data[key] = torch.cat(
-                data[key], dim=data_list[0].cat_dim(key, item))
+                data[key], dim=data_list[0].cat_dim(key, data_list[0][key]))
             slices[key] = torch.LongTensor(slices[key])
 
         return data, slices
