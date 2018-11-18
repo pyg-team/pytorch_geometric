@@ -14,8 +14,8 @@ def test_data():
     assert len(data) == 2
     assert 'x' in data and 'edge_index' in data and 'pos' not in data
 
-    assert data.cat_dim('x') == 0
-    assert data.cat_dim('edge_index') == -1
+    assert data.cat_dim('x', data.x) == 0
+    assert data.cat_dim('edge_index', data.edge_index) == -1
 
     data.to(torch.device('cpu'))
     assert not data.x.is_contiguous()
