@@ -9,7 +9,8 @@ class Batch(Data):
 
     @staticmethod
     def from_data_list(data_list):
-        keys = data_list[0].keys
+        keys = [set(data.keys) for data in data_list]
+        keys = list(set.union(*keys))
         assert 'batch' not in keys
 
         batch = Batch()
@@ -22,14 +23,15 @@ class Batch(Data):
         for i, data in enumerate(data_list):
             num_nodes = data.num_nodes
             batch.batch.append(torch.full((num_nodes, ), i, dtype=torch.long))
-            for key in keys:
+            for key in data.keys:
                 item = data[key]
                 item = item + cumsum if batch.cumsum(key, item) else item
                 batch[key].append(item)
             cumsum += num_nodes
 
         for key in keys:
-            batch[key] = torch.cat(batch[key], dim=data_list[0].cat_dim(key))
+            batch[key] = torch.cat(
+                batch[key], dim=data_list[0].cat_dim(key, batch[key][0]))
         batch.batch = torch.cat(batch.batch, dim=-1)
         return batch.contiguous()
 
