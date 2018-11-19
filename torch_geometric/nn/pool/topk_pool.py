@@ -79,7 +79,10 @@ class TopKPooling(torch.nn.Module):
         size = self.in_channels
         uniform(size, self.weight)
 
-    def forward(self, x, edge_index, edge_attr, batch):
+    def forward(self, x, edge_index, edge_attr=None, batch=None):
+        if batch is None:
+            batch = edge_index.new_zeros(x.size(0))
+
         x = x.unsqueeze(-1) if x.dim() == 1 else x
 
         score = (x * self.weight).sum(dim=-1)
