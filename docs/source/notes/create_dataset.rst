@@ -90,7 +90,7 @@ Therefore, the following methods need to be further implemented:
     Logic to load a single graph.
     The ``Data`` object will be automatically transformed according to ``self.transform``.
 
-Note that `torch_geometric.data.Dataset.__getitem__` is already implemented, which simply gets the data object from :meth:`torch_geometric.data.Dataset.get` and optionally transforms it.
+Note that :meth:`torch_geometric.data.Dataset.__getitem__` is already implemented, which simply gets the data object from :meth:`torch_geometric.data.Dataset.get` and optionally transforms it.
 
 Let's see this process in a simplified example:
 
@@ -132,11 +132,11 @@ Let's see this process in a simplified example:
                 if self.pre_transform is not None:
                      data = self.pre_transform(data)
 
-                torch.save(data, ops.join(self.processed_dir, '{}.pt'.format(i)))
+                torch.save(data, ops.join(self.processed_dir, 'data_{}.pt'.format(i)))
                 i += 1
 
         def get(self, idx):
-            data = torch.load(osp.join(self.processed_dir, '{}.pt'.format(idx))
+            data = torch.load(osp.join(self.processed_dir, 'data_{}.pt'.format(idx))
             return data
 
 Here, each graph data object gets saved individually in :meth:`torch_geometric.data.Dataset.process`, and is manually loaded in :meth:`torch_geometric.data.Dataset.get`.
