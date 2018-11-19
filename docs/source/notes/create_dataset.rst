@@ -36,8 +36,9 @@ You can find helpful methods to download and extract data in :mod:`torch_geometr
 
 The real magic happens in the body of :meth:`torch_geometric.data.InMemoryDataset.process`.
 Here, we need to read and create a list of :class:`torch_geometric.data.Data` objects and save it into the ``processed_dir``.
-Because saving a huge python list is really slow, we collate the list into one huge ``Data`` object before saving via :meth:`torch_geometric.data.InMemoryDataset.collate`.
+Because saving a huge python list is really slow, we collate the list into one huge ``Data`` object via :meth:`torch_geometric.data.InMemoryDataset.collate` before saving .
 The collated data object has simply concatenated all examples (similar to :class:`torch_geometric.data.DataLoader`) and, in addition, returns a ``slices`` dictionary to reconstruct single examples from the object.
+Finally, these objects get loaded in the constructor and must be accessible via ``self.data`` and ``self.slices``.
 
 Let's see this process in a simplified example:
 
