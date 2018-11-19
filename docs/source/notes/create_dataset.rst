@@ -16,7 +16,7 @@ In addition, each dataset can be passed a ``transform``, a ``pre_transform`` and
 The ``transform`` function dynamically transforms the data object before accessing (so it is best used for data augmentation).
 The ``pre_transform`` function applies the transformation before saving the data objects to disk (so it is best used for heavy precomputation which needs to be only done once).
 The ``pre_filter`` function can manually filter out data objects before saving.
-Use cases may involve to restrict the data objects to be of a specific class.
+Use cases may involve the restriction of data objects being of a specific class.
 
 Creating "in memory datasets"
 -----------------------------
