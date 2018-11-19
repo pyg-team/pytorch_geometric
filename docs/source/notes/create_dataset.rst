@@ -9,8 +9,14 @@ However, we give a brief introduction on what is needed to setup your own datase
 We provide two abstract classes for datasets: :class:`torch_geometric.data.Dataset` and :class:`torch_geometric.data.InMemoryDataset`.
 :class:`torch_geometric.data.InMemoryDataset` inherits from :class:`torch_geometric.data.Dataset` and should be used if the whole dataset fits into memory.
 
-Each dataset gets passed a root folder, a ``transform`` and a ``pre_transform`` object (``None`` by default).
-We basically split up the root folder into two folders: the ``raw_dir``, where the dataset gets downloaded to, and the ``processed_dir``, where the processed dataset is being saved.
+Each dataset gets passed a root folder.
+We split up the root folder into two folders: the ``raw_dir``, where the dataset gets downloaded to, and the ``processed_dir``, where the processed dataset is being saved.
+
+In addition, each dataset can be passed a ``transform``, a ``pre_transform`` and a ``pre_filter`` function, which are ``None`` by default.
+The ``transform`` function dynamically transforms the data object before accessing (so it is best used for data augmentation).
+The ``pre_transform`` function applies the transformation before saving the data objects to disk (so it is best used for heavy precomputation which needs to be only done once).
+The ``pre_filter`` function can manually filter out data objects before saving.
+Use cases may involve to restrict the data objects to be of a specific class.
 
 Creating "in memory datasets"
 -----------------------------
@@ -55,11 +61,14 @@ Let's see this process in a simplified example:
             return ['data.pt']
 
         def download(self):
-            # Download to `self.raw_dir`
+            # Download to `self.raw_dir`.
 
         def process(self):
             # Read data into huge `Data` list.
             data_list = [...]
+
+            if self.pre_filter is not None:
+                data_list [data for data in data_list if self.pre_filter(data)]
 
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(data) for data in data_list]
@@ -70,13 +79,64 @@ Let's see this process in a simplified example:
 Creating "larger" datasets
 --------------------------
 
-Analogous to the datasets in ``torchvision``, you need to further implement the following methods:
+For creating datasets which do not fit into memory, the :class:`torch_geometric.data.Dataset` must be used, where we follow an analogous concept of the ``torchvision`` datasets.
+
+Therefore, the following methods need to be further implemented:
 
 :meth:`torch_geometric.data.Dataset.__len__`:
     How many graphs are in your dataset?
 
 :meth:`torch_geometric.data.Dataset.get`:
     Logic to load a single graph.
-    The ``Data`` object will automatically be transformed according to ``self.transform``.
+    The ``Data`` object will be automatically transformed according to ``self.transform``.
 
-In :meth:`torch_geometric.data.Dataset.process`, each graph data object should be saved individually and be manually loaded in :meth:`torch_geometric.data.Dataset.get`.
+Note that `torch_geometric.data.Dataset.__getitem__` is already implemented, which simply gets the data object from :meth:`torch_geometric.data.Dataset.get` and optionally transforms it.
+
+Let's see this process in a simplified example:
+
+.. code-block:: python
+
+    import os.path as osp
+
+    import torch
+    from torch_geometric.data import Dataset
+
+
+    class MyOwnDataset(Dataset):
+        def __init__(self, root, transform=None, pre_transform=None):
+            super(MyOwnDataset, self).__init__(root, transform, pre_transform)
+
+        @property
+        def raw_file_names(self):
+            return ['some_file_1', 'some_file_2', ...]
+
+        @property
+        def processed_file_names(self):
+            return ['data_1.pt', 'data_2.pt', ...]
+
+        def __len__(self):
+            return len(self.processed_file_names)
+
+        def download(self):
+            # Download to `self.raw_dir`.
+
+        def process(self):
+            i = 0
+            for raw_path in self.raw_paths:
+                 # Read data from `raw_path`.
+                 data = Data(...)
+
+                 if self.pre_filter is not None and not self.pre_filter(data):
+                     continue
+
+                if self.pre_transform is not None:
+                     data = self.pre_transform(data)
+
+                torch.save(data, ops.join(self.processed_dir, '{}.pt'.format(i)))
+                i += 1
+
+        def get(self, idx):
+            data = torch.load(osp.join(self.processed_dir, '{}.pt'.format(idx))
+            return data
+
+Here, each graph data object gets saved individually in :meth:`torch_geometric.data.Dataset.process`, and is manually loaded in :meth:`torch_geometric.data.Dataset.get`.
