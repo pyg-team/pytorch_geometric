@@ -1,7 +1,7 @@
-import collections
-
 import torch.nn as nn
 from torch_scatter import scatter_add
+
+from ..inits import reset
 
 
 class GINConv(nn.Module):
@@ -12,13 +12,7 @@ class GINConv(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        if isinstance(self.nn, collections.Iterable):
-            for item in self.nn:
-                if hasattr(item, 'reset_parameters'):
-                    item.reset_parameters()
-        else:
-            if hasattr(self.nn, 'reset_parameters'):
-                self.nn.reset_parameters()
+        reset(self.nn)
 
     def forward(self, x, edge_index, size=None):
         size = x.size(0) if size is None else size

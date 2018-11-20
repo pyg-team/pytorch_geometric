@@ -1,4 +1,5 @@
 import math
+import collections
 
 
 def uniform(size, tensor):
@@ -21,3 +22,10 @@ def zeros(tensor):
 def ones(tensor):
     if tensor is not None:
         tensor.data.fill_(1)
+
+
+def reset(nn):
+    nn = nn if isinstance(nn, collections.Iterable) else [nn]
+    for item in nn:
+        if hasattr(item, 'reset_parameters'):
+            item.reset_parameters()
