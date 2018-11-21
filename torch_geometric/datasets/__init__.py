@@ -8,6 +8,7 @@ from .qm9 import QM9
 from .ppi import PPI
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
+from .coma import CoMA
 
 __all__ = [
     'KarateClub',
@@ -20,4 +21,5 @@ __all__ = [
     'PPI',
     'ShapeNet',
     'ModelNet',
+    'CoMA',
 ]
