@@ -48,7 +48,7 @@ class CoMA(InMemoryDataset):
 
     def process(self):
         folders = sorted(glob(osp.join(self.raw_dir, 'FaceTalk_*')))
-        if len(folders) != 12:
+        if len(folders) == 0:
             extract_zip(self.raw_paths[0], self.raw_dir, log=False)
             folders = sorted(glob(osp.join(self.raw_dir, 'FaceTalk_*')))
 
