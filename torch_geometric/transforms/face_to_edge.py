@@ -10,6 +10,7 @@ class FaceToEdge(object):
         edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
 
         data.edge_index = edge_index
+        data.face = None
         return data
 
     def __repr__(self):
