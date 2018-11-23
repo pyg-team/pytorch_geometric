@@ -7,7 +7,6 @@ import numpy as np
 from torch_sparse import coalesce
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
-from torch_geometric.utils import remove_self_loops
 
 
 class PPI(InMemoryDataset):
@@ -48,7 +47,6 @@ class PPI(InMemoryDataset):
             row.append(i['source'])
             col.append(i['target'])
         edge_index = torch.stack([torch.tensor(row), torch.tensor(col)], dim=0)
-        edge_index, _ = remove_self_loops(edge_index)
         edge_index, _ = coalesce(edge_index, None, mask.size(0), mask.size(0))
 
         x = torch.from_numpy(np.load(self.raw_paths[1])).float()
