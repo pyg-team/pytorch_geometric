@@ -1,5 +1,4 @@
 import math
-import collections
 
 
 def uniform(size, tensor):
