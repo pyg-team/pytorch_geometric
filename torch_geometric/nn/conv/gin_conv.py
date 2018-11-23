@@ -24,7 +24,7 @@ class GINConv(torch.nn.Module):
 
         row, col = edge_index
         out = scatter_add(x[col], row, dim=0, dim_size=size)
-        out = (1 + self.eps) * out + x
+        out = (1 + self.eps) * x + out
         out = self.nn(out)
         return out
 
