@@ -58,7 +58,7 @@ class MetaLayer(torch.nn.Module):
 
                 def node_model(x, edge_index, edge_attr, u):
                     # x: [N, F_x], where N is the number of nodes.
-                    # edge_index: [2, E] with max entry E - 1.
+                    # edge_index: [2, E] with max entry N - 1.
                     # edge_attr: [E, F_e]
                     # u: [B, F_u]
                     row, col = edge_index
@@ -68,7 +68,7 @@ class MetaLayer(torch.nn.Module):
 
                 def global_model(x, edge_index, edge_attr, u, batch):
                     # x: [N, F_x], where N is the number of nodes.
-                    # edge_index: [2, E] with max entry E - 1.
+                    # edge_index: [2, E] with max entry N - 1.
                     # edge_attr: [E, F_e]
                     # u: [B, F_u]
                     # batch: [N] with max entry B - 1.

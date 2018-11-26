@@ -259,7 +259,7 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 
         <span class="k">def</span> <span class="nf">node_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
             <span class="c1"># x: [N, F_x], where N is the number of nodes.</span>
-            <span class="c1"># edge_index: [2, E] with max entry E - 1.</span>
+            <span class="c1"># edge_index: [2, E] with max entry N - 1.</span>
             <span class="c1"># edge_attr: [E, F_e]</span>
             <span class="c1"># u: [B, F_u]</span>
             <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
@@ -269,7 +269,7 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 
         <span class="k">def</span> <span class="nf">global_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
             <span class="c1"># x: [N, F_x], where N is the number of nodes.</span>
-            <span class="c1"># edge_index: [2, E] with max entry E - 1.</span>
+            <span class="c1"># edge_index: [2, E] with max entry N - 1.</span>
             <span class="c1"># edge_attr: [E, F_e]</span>
             <span class="c1"># u: [B, F_u]</span>
             <span class="c1"># batch: [N] with max entry B - 1.</span>

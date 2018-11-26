@@ -250,7 +250,7 @@
 
 <span class="sd">                def node_model(x, edge_index, edge_attr, u):</span>
 <span class="sd">                    # x: [N, F_x], where N is the number of nodes.</span>
-<span class="sd">                    # edge_index: [2, E] with max entry E - 1.</span>
+<span class="sd">                    # edge_index: [2, E] with max entry N - 1.</span>
 <span class="sd">                    # edge_attr: [E, F_e]</span>
 <span class="sd">                    # u: [B, F_u]</span>
 <span class="sd">                    row, col = edge_index</span>
@@ -260,7 +260,7 @@
 
 <span class="sd">                def global_model(x, edge_index, edge_attr, u, batch):</span>
 <span class="sd">                    # x: [N, F_x], where N is the number of nodes.</span>
-<span class="sd">                    # edge_index: [2, E] with max entry E - 1.</span>
+<span class="sd">                    # edge_index: [2, E] with max entry N - 1.</span>
 <span class="sd">                    # edge_attr: [E, F_e]</span>
 <span class="sd">                    # u: [B, F_u]</span>
 <span class="sd">                    # batch: [N] with max entry B - 1.</span>
