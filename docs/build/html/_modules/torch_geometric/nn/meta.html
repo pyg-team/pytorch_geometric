@@ -242,16 +242,28 @@
 <span class="sd">                self.global_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
 
 <span class="sd">                def edge_model(source, target, edge_attr, u):</span>
+<span class="sd">                    # source, target: [E, F_x], where E is the number of edges.</span>
+<span class="sd">                    # edge_attr: [E, F_e]</span>
+<span class="sd">                    # u: [B, F_u], where B is the number of graphs.</span>
 <span class="sd">                    out = torch.cat([src, target, edge_attr], dim=1)</span>
 <span class="sd">                    return self.edge_mlp(out)</span>
 
 <span class="sd">                def node_model(x, edge_index, edge_attr, u):</span>
+<span class="sd">                    # x: [N, F_x], where N is the number of nodes.</span>
+<span class="sd">                    # edge_index: [2, E] with max entry E - 1.</span>
+<span class="sd">                    # edge_attr: [E, F_e]</span>
+<span class="sd">                    # u: [B, F_u]</span>
 <span class="sd">                    row, col = edge_index</span>
 <span class="sd">                    out = torch.cat([x[col], edge_attr], dim=1)</span>
 <span class="sd">                    out = self.node_mlp(out)</span>
 <span class="sd">                    return scatter_mean(out, row, dim=0, dim_size=x.size(0))</span>
 
 <span class="sd">                def global_model(x, edge_index, edge_attr, u, batch):</span>
+<span class="sd">                    # x: [N, F_x], where N is the number of nodes.</span>
+<span class="sd">                    # edge_index: [2, E] with max entry E - 1.</span>
+<span class="sd">                    # edge_attr: [E, F_e]</span>
+<span class="sd">                    # u: [B, F_u]</span>
+<span class="sd">                    # batch: [N] with max entry B - 1.</span>
 <span class="sd">                    out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)</span>
 <span class="sd">                    return self.global_mlp(out)</span>
 
