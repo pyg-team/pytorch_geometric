@@ -31,11 +31,7 @@ class MetaLayer(torch.nn.Module):
             :obj:`batch`, which determines the assignment of nodes to their
             specific graphs. (default: :obj:`None`)
 
-    .. testsetup::
-
-        import torch
-
-    .. testcode::
+    .. code-block:: python
 
         from torch.nn import Sequential as Seq, Linear as Lin, ReLU
         from torch_scatter import scatter_mean
