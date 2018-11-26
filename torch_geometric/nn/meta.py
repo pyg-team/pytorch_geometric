@@ -53,7 +53,7 @@ class MetaLayer(torch.nn.Module):
                     # source, target: [E, F_x], where E is the number of edges.
                     # edge_attr: [E, F_e]
                     # u: [B, F_u], where B is the number of graphs.
-                    out = torch.cat([src, target, edge_attr], dim=1)
+                    out = torch.cat([source, target, edge_attr], dim=1)
                     return self.edge_mlp(out)
 
                 def node_model(x, edge_index, edge_attr, u):

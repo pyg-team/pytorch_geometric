@@ -254,7 +254,7 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
             <span class="c1"># source, target: [E, F_x], where E is the number of edges.</span>
             <span class="c1"># edge_attr: [E, F_e]</span>
             <span class="c1"># u: [B, F_u], where B is the number of graphs.</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">src</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_mlp</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">node_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>

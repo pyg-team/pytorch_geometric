@@ -245,7 +245,7 @@
 <span class="sd">                    # source, target: [E, F_x], where E is the number of edges.</span>
 <span class="sd">                    # edge_attr: [E, F_e]</span>
 <span class="sd">                    # u: [B, F_u], where B is the number of graphs.</span>
-<span class="sd">                    out = torch.cat([src, target, edge_attr], dim=1)</span>
+<span class="sd">                    out = torch.cat([source, target, edge_attr], dim=1)</span>
 <span class="sd">                    return self.edge_mlp(out)</span>
 
 <span class="sd">                def node_model(x, edge_index, edge_attr, u):</span>
