@@ -7,11 +7,10 @@ from ..inits import uniform
 
 
 class NNConv(torch.nn.Module):
-    """Convolution operator using a continuous kernel function computed by a
-       neural network. The neural network kernel function maps
-       pseudo-coordinates (adj) to in_channels x out_channels weights for the
-       feature aggregation. (adapted from Gilmer et al.: Neural Message Passing
-       for Quantum Chemistry, https://arxiv.org/abs/1704.01212)
+    r"""Convolution operator using a continuous kernel function computed by a
+    neural network. The neural network kernel function maps :obj:`edge_attr` to
+    :obj:`in_channels` times :obj:`out_channels` weights for the feature
+    aggregation.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -61,20 +60,21 @@ class NNConv(torch.nn.Module):
             if hasattr(item, 'reset_parameters'):
                 item.reset_parameters()
 
-    def forward(self, x, edge_index, pseudo):
+    def forward(self, x, edge_index, pseudo, size=None):
         row, col = edge_index
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
+        size = x.size(0) if size is None else size
 
         out = self.nn(pseudo)
         out = out.view(-1, self.in_channels, self.out_channels)
 
         out = torch.matmul(x[col].unsqueeze(1), out).squeeze(1)
-        out = scatter_add(out, row, dim=0, dim_size=x.size(0))
+        out = scatter_add(out, row, dim=0, dim_size=size)
 
         # Normalize by node degree (if wished).
         if self.norm:
-            deg = degree(row, x.size(0), x.dtype)
+            deg = degree(row, size, x.dtype)
             out = out / deg.unsqueeze(-1).clamp(min=1)
 
         # Weight root node separately (if wished).
