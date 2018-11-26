@@ -267,9 +267,9 @@
 <span class="sd">                    out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)</span>
 <span class="sd">                    return self.global_mlp(out)</span>
 
-<span class="sd">                self.op = MetaLayer(edge_model, node_model, global_model))</span>
+<span class="sd">                self.op = MetaLayer(edge_model, node_model, global_model)</span>
 
-<span class="sd">            def forward(self, x, edge_index, edge_attr, u, batch)</span>
+<span class="sd">            def forward(self, x, edge_index, edge_attr, u, batch):</span>
 <span class="sd">                return self.op(x, edge_index, edge_attr, u, batch)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

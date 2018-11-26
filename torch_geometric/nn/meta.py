@@ -75,9 +75,9 @@ class MetaLayer(torch.nn.Module):
                     out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)
                     return self.global_mlp(out)
 
-                self.op = MetaLayer(edge_model, node_model, global_model))
+                self.op = MetaLayer(edge_model, node_model, global_model)
 
-            def forward(self, x, edge_index, edge_attr, u, batch)
+            def forward(self, x, edge_index, edge_attr, u, batch):
                 return self.op(x, edge_index, edge_attr, u, batch)
     """
 
