@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -199,11 +199,10 @@
 
 
 <div class="viewcode-block" id="NNConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.NNConv">[docs]</a><span class="k">class</span> <span class="nc">NNConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convolution operator using a continuous kernel function computed by a</span>
-<span class="sd">       neural network. The neural network kernel function maps</span>
-<span class="sd">       pseudo-coordinates (adj) to in_channels x out_channels weights for the</span>
-<span class="sd">       feature aggregation. (adapted from Gilmer et al.: Neural Message Passing</span>
-<span class="sd">       for Quantum Chemistry, https://arxiv.org/abs/1704.01212)</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Convolution operator using a continuous kernel function computed by a</span>
+<span class="sd">    neural network. The neural network kernel function maps :obj:`edge_attr` to</span>
+<span class="sd">    :obj:`in_channels` times :obj:`out_channels` weights for the feature</span>
+<span class="sd">    aggregation.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>
@@ -253,20 +252,21 @@
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;reset_parameters&#39;</span><span class="p">):</span>
                 <span class="n">item</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="NNConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.NNConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">):</span>
+<div class="viewcode-block" id="NNConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.NNConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span>
         <span class="n">pseudo</span> <span class="o">=</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">pseudo</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn</span><span class="p">(</span><span class="n">pseudo</span><span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">out</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
 
         <span class="c1"># Normalize by node degree (if wished).</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">:</span>
-            <span class="n">deg</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">deg</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="n">deg</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># Weight root node separately (if wished).</span>

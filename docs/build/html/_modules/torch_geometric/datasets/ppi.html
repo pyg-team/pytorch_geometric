@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -199,7 +199,6 @@
 <span class="kn">from</span> <span class="nn">torch_sparse</span> <span class="k">import</span> <span class="n">coalesce</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="p">(</span><span class="n">InMemoryDataset</span><span class="p">,</span> <span class="n">Data</span><span class="p">,</span> <span class="n">download_url</span><span class="p">,</span>
                                   <span class="n">extract_zip</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">remove_self_loops</span>
 
 
 <div class="viewcode-block" id="PPI"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.PPI">[docs]</a><span class="k">class</span> <span class="nc">PPI</span><span class="p">(</span><span class="n">InMemoryDataset</span><span class="p">):</span>
@@ -240,7 +239,6 @@
             <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">])</span>
             <span class="n">col</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])</span>
         <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">col</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">edge_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
         <span class="n">edge_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_paths</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>

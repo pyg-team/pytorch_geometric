@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>torch_geometric.nn.meta &mdash; pytorch_geometric master documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/logo.svg" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master (0.3.1)
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA extensions on macOS</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes/introduction.html">Introduction by example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-transforms">Data transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes/create_dataset.html">Create your own dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#creating-larger-datasets">Creating “larger” datasets</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/nn.html">torch_geometric.nn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">torch_geometric.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/datasets.html">torch_geometric.datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/transforms.html">torch_geometric.transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/utils.html">torch_geometric.utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pytorch_geometric</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>torch_geometric.nn.meta</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for torch_geometric.nn.meta</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+
+
+<div class="viewcode-block" id="MetaLayer"><a class="viewcode-back" href="../../../modules/nn.html#torch_geometric.nn.meta.MetaLayer">[docs]</a><span class="k">class</span> <span class="nc">MetaLayer</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A meta layer for building any kind of graph network, inspired by the</span>
+<span class="sd">    `&quot;Relational Inductive Biases, Deep Learning, and Graph Networks&quot;</span>
+<span class="sd">    &lt;https://arxiv.org/abs/1806.01261&gt;`_ paper.</span>
+
+<span class="sd">    A graph network takes a graph as input and returns an updated graph as</span>
+<span class="sd">    output (with same connectivity).</span>
+<span class="sd">    The input graph has node features :obj:`x`, edge features :obj:`edge_attr`</span>
+<span class="sd">    as well as global-level features :obj:`u`.</span>
+<span class="sd">    The output graph has the same structure, but updated features.</span>
+
+<span class="sd">    Edge features, node features as well as global features are updated by</span>
+<span class="sd">    calling the functions :obj:`edge_model`, :obj:`node_model` and</span>
+<span class="sd">    :obj:`global_model`, respectively.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        edge_model (func, optional): A callable which updates a graph&#39;s edge</span>
+<span class="sd">            features based on its source and target node features, its current</span>
+<span class="sd">            edge features and its global features. (default: :obj:`None`)</span>
+<span class="sd">        node_model (func, optional): A callable which updates a graph&#39;s node</span>
+<span class="sd">            features based on its current node features, its graph</span>
+<span class="sd">            connectivity, its edge features and its global features.</span>
+<span class="sd">            (default: :obj:`None`)</span>
+<span class="sd">        global_model (func, optional): A callable which updates a graph&#39;s</span>
+<span class="sd">            global features based on its node features, its graph connectivity,</span>
+<span class="sd">            its edge features and its current global features. To allow for</span>
+<span class="sd">            batch-wise graph processing, the callable takes a fifth argument</span>
+<span class="sd">            :obj:`batch`, which determines the assignment of nodes to their</span>
+<span class="sd">            specific graphs. (default: :obj:`None`)</span>
+
+<span class="sd">    .. testsetup::</span>
+
+<span class="sd">        import torch</span>
+
+<span class="sd">    .. testcode::</span>
+
+<span class="sd">        from torch.nn import Sequential as Seq, Linear as Lin, ReLU</span>
+<span class="sd">        from torch_scatter import scatter_mean</span>
+<span class="sd">        from torch_geometric.nn import MetaLayer</span>
+
+<span class="sd">        class Net(torch.nn.Module):</span>
+<span class="sd">            def __init__(self):</span>
+<span class="sd">                super(Net, self).__init__()</span>
+
+<span class="sd">                self.edge_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
+<span class="sd">                self.node_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
+<span class="sd">                self.global_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
+
+<span class="sd">                def edge_model(source, target, edge_attr, u):</span>
+<span class="sd">                    out = torch.cat([src, target, edge_attr], dim=1)</span>
+<span class="sd">                    return self.edge_mlp(out)</span>
+
+<span class="sd">                def node_model(x, edge_index, edge_attr, u):</span>
+<span class="sd">                    row, col = edge_index</span>
+<span class="sd">                    out = torch.cat([x[col], edge_attr], dim=1)</span>
+<span class="sd">                    out = self.node_mlp(out)</span>
+<span class="sd">                    return scatter_mean(out, row, dim=0, dim_size=x.size(0))</span>
+
+<span class="sd">                def global_model(x, edge_index, edge_attr, u, batch):</span>
+<span class="sd">                    out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)</span>
+<span class="sd">                    return self.global_mlp(out)</span>
+
+<span class="sd">                self.op = MetaLayer(edge_model, node_model, global_model))</span>
+
+<span class="sd">            def forward(self, x, edge_index, edge_attr, u, batch)</span>
+<span class="sd">                return self.op(x, edge_index, edge_attr, u, batch)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">node_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">global_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MetaLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_model</span> <span class="o">=</span> <span class="n">edge_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_model</span> <span class="o">=</span> <span class="n">node_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_model</span> <span class="o">=</span> <span class="n">global_model</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MetaLayer.reset_parameters"><a class="viewcode-back" href="../../../modules/nn.html#torch_geometric.nn.meta.MetaLayer.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">node_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_model</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;reset_parameters&#39;</span><span class="p">):</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MetaLayer.forward"><a class="viewcode-back" href="../../../modules/nn.html#torch_geometric.nn.meta.MetaLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">edge_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_model</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">global_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">global_x</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(edge_model=</span><span class="si">{}</span><span class="s1">, node_model=</span><span class="si">{}</span><span class="s1">, global_model=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_model</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_model</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Matthias Fey.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

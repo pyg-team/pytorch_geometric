@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -193,12 +193,12 @@
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
 
-<span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">uniform</span>
+<span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">glorot</span><span class="p">,</span> <span class="n">zeros</span>
 <span class="kn">from</span> <span class="nn">..prop</span> <span class="k">import</span> <span class="n">GCNProp</span>
 
 
 <div class="viewcode-block" id="GCNConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GCNConv">[docs]</a><span class="k">class</span> <span class="nc">GCNConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Graph Convolutional Operator :math:`F_{out} = \hat{D}^{-1/2} \hat{A}</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Graph Convolutional Operator :math:`F_{out} = \hat{D}^{-1/2} \hat{A}</span>
 <span class="sd">    \hat{D}^{-1/2} F_{in} W` with :math:`\hat{A} = A + I` and</span>
 <span class="sd">    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` from the `&quot;Semi-Supervised</span>
 <span class="sd">    Classfication with Graph Convolutional Networks&quot;</span>
@@ -207,16 +207,18 @@
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>
 <span class="sd">        out_channels (int): Size of each output sample.</span>
+<span class="sd">        improved (bool, optional): If :obj:`True`, computes :math:`\hat{A}` as</span>
+<span class="sd">            :math:`A + 2I`. (default: :obj:`False`)</span>
 <span class="sd">        bias (bool, optional): If set to :obj:`False`, the layer will not learn</span>
 <span class="sd">            an additive bias. (default: :obj:`True`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">improved</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GCNConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prop</span> <span class="o">=</span> <span class="n">GCNProp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prop</span> <span class="o">=</span> <span class="n">GCNProp</span><span class="p">(</span><span class="n">improved</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
@@ -227,9 +229,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
 <div class="viewcode-block" id="GCNConv.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GCNConv.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span>
-        <span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
-        <span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
+        <span class="n">glorot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+        <span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GCNConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GCNConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>

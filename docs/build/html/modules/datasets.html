@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -193,6 +193,11 @@
   <div class="section" id="module-torch_geometric.datasets">
 <span id="torch-geometric-datasets"></span><h1>torch_geometric.datasets<a class="headerlink" href="#module-torch_geometric.datasets" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
+<dt id="torch_geometric.datasets.KarateClub">
+<em class="property">class </em><code class="descname">KarateClub</code><span class="sig-paren">(</span><em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/karate.html#KarateClub"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.KarateClub" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
 <dt id="torch_geometric.datasets.TUDataset">
 <em class="property">class </em><code class="descname">TUDataset</code><span class="sig-paren">(</span><em>root</em>, <em>name</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
@@ -313,21 +318,41 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="torch_geometric.datasets.QM9">
-<em class="property">class </em><code class="descname">QM9</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
-<dt id="torch_geometric.datasets.QM9.data_url">
-<code class="descname">data_url</code><em class="property"> = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/gdb9.tar.gz'</em><a class="headerlink" href="#torch_geometric.datasets.QM9.data_url" title="Permalink to this definition">¶</a></dt>
+<dt id="torch_geometric.datasets.QM7">
+<em class="property">class </em><code class="descname">QM7</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.datasets.QM7.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7.download" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="torch_geometric.datasets.QM9.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9.download" title="Permalink to this definition">¶</a></dt>
+<dt id="torch_geometric.datasets.QM7.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7.process" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="torch_geometric.datasets.QM9.mask_url">
-<code class="descname">mask_url</code><em class="property"> = 'https://ndownloader.figshare.com/files/3195404'</em><a class="headerlink" href="#torch_geometric.datasets.QM9.mask_url" title="Permalink to this definition">¶</a></dt>
+<dt id="torch_geometric.datasets.QM7.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM7.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.QM7.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM7.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.QM7.url">
+<code class="descname">url</code><em class="property"> = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/qm7b.mat'</em><a class="headerlink" href="#torch_geometric.datasets.QM7.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.datasets.QM9">
+<em class="property">class </em><code class="descname">QM9</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.datasets.QM9.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9.download" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -343,6 +368,11 @@
 <dl class="attribute">
 <dt id="torch_geometric.datasets.QM9.raw_file_names">
 <code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM9.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.QM9.url">
+<code class="descname">url</code><em class="property"> = 'http://www.roemisch-drei.de/qm9.tar.gz'</em><a class="headerlink" href="#torch_geometric.datasets.QM9.url" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -443,6 +473,41 @@
 <dl class="attribute">
 <dt id="torch_geometric.datasets.ModelNet.urls">
 <code class="descname">urls</code><em class="property"> = {'10': 'http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip', '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'}</em><a class="headerlink" href="#torch_geometric.datasets.ModelNet.urls" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.datasets.CoMA">
+<em class="property">class </em><code class="descname">CoMA</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/coma.html#CoMA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CoMA" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="torch_geometric.datasets.CoMA.categories">
+<code class="descname">categories</code><em class="property"> = ['bareteeth', 'cheeks_in', 'eyebrow', 'high_smile', 'lips_back', 'lips_up', 'mouth_down', 'mouth_extreme', 'mouth_middle', 'mouth_open', 'mouth_side', 'mouth_up']</em><a class="headerlink" href="#torch_geometric.datasets.CoMA.categories" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.CoMA.download">
+<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/coma.html#CoMA.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CoMA.download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.datasets.CoMA.process">
+<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/coma.html#CoMA.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CoMA.process" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.CoMA.processed_file_names">
+<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.CoMA.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.CoMA.raw_file_names">
+<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.CoMA.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.datasets.CoMA.url">
+<code class="descname">url</code><em class="property"> = 'https://coma.is.tue.mpg.de/'</em><a class="headerlink" href="#torch_geometric.datasets.CoMA.url" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

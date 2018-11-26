@@ -7,6 +7,10 @@ torch_geometric.nn
 Convolution Layers
 ------------------
 
+.. automodule:: torch_geometric.nn.meta
+    :members:
+    :undoc-members:
+
 .. automodule:: torch_geometric.nn.conv
     :members:
     :undoc-members:

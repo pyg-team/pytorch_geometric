@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -195,7 +195,7 @@
 
 <div class="viewcode-block" id="normalized_cut"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.normalized_cut">[docs]</a><span class="k">def</span> <span class="nf">normalized_cut</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
-    <span class="n">deg</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">degree</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">deg</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">degree</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
     <span class="n">deg</span> <span class="o">=</span> <span class="n">deg</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">+</span> <span class="n">deg</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
     <span class="n">cut</span> <span class="o">=</span> <span class="n">edge_attr</span> <span class="o">*</span> <span class="n">deg</span>
     <span class="k">return</span> <span class="n">cut</span></div>

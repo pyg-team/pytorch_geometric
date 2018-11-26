@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -118,7 +118,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#convolution-layers">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -219,6 +219,40 @@ compose.</td>
 </div>
 <div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[0.7500, 0.5000, 1.0000],
         [1.0000, 0.5000, 1.0000]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.Constant">
+<em class="property">class </em><code class="descname">Constant</code><span class="sig-paren">(</span><em>value</em>, <em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/constant.html#Constant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Constant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a constant value to each node feature.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The value to add.</li>
+<li><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat value to node features instead
+of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">Constant</span>
+
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[1.],
+        [1.],
+        [1.]])
 </pre></div>
 </div>
 </dd></dl>
@@ -391,6 +425,40 @@ instead of replacing them. (default: <a class="reference external" href="https:/
 </div>
 <div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[1.0000, 0.2500, 0.0000],
         [1.0000, 0.7500, 1.0000]])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.OneHotDegree">
+<em class="property">class </em><code class="descname">OneHotDegree</code><span class="sig-paren">(</span><em>max_degree</em>, <em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/one_hot_degree.html#OneHotDegree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.OneHotDegree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the node degree as one hot encodings to the node features.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_degree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Maximum degree.</li>
+<li><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat node degrees to node features instead
+of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="k">import</span> <span class="n">OneHotDegree</span>
+
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">OneHotDegree</span><span class="p">(</span><span class="n">max_degree</span><span class="o">=</span><span class="mi">2</span><span class="p">)(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([[0., 1., 0.],
+        [0., 0., 1.],
+        [0., 1., 0.]])
 </pre></div>
 </div>
 </dd></dl>
@@ -612,6 +680,21 @@ given interval, e.g., resulting in the transformation matrix</p>
 <dl class="class">
 <dt id="torch_geometric.transforms.ToDense">
 <em class="property">class </em><code class="descname">ToDense</code><span class="sig-paren">(</span><em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/to_dense.html#ToDense"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.ToDense" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.TwoHop">
+<em class="property">class </em><code class="descname">TwoHop</code><a class="reference internal" href="../_modules/torch_geometric/transforms/two_hop.html#TwoHop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.TwoHop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.DropoutX">
+<em class="property">class </em><code class="descname">DropoutX</code><span class="sig-paren">(</span><em>p=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/dropout_x.html#DropoutX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.DropoutX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.DropoutEdge">
+<em class="property">class </em><code class="descname">DropoutEdge</code><span class="sig-paren">(</span><em>p=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/dropout_edge.html#DropoutEdge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.DropoutEdge" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>

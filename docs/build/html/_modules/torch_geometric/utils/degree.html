@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -195,7 +195,7 @@
 <span class="kn">from</span> <span class="nn">.num_nodes</span> <span class="k">import</span> <span class="n">maybe_num_nodes</span>
 
 
-<div class="viewcode-block" id="degree"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.degree">[docs]</a><span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="degree"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.degree">[docs]</a><span class="k">def</span> <span class="nf">degree</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computes the degree of a given index tensor.</span>
 
 <span class="sd">    Args:</span>
@@ -203,8 +203,6 @@
 <span class="sd">        num_nodes (int, optional): The number of nodes in :attr:`index`.</span>
 <span class="sd">            (default: :obj:`None`)</span>
 <span class="sd">        dtype (:obj:`torch.dtype`, optional). The desired data type of returned</span>
-<span class="sd">            tensor.</span>
-<span class="sd">        device (:obj:`torch.device`, optional): The desired device of returned</span>
 <span class="sd">            tensor.</span>
 
 <span class="sd">    :rtype: :class:`Tensor`</span>
@@ -222,10 +220,10 @@
 
 <span class="sd">    .. testoutput::</span>
 
-<span class="sd">       tensor([ 3.,  1.,  1.])</span>
+<span class="sd">       tensor([3., 1., 1.])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_nodes</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_nodes</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">scatter_add_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">new_ones</span><span class="p">((</span><span class="n">index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))))</span></div>
 </pre></div>
 

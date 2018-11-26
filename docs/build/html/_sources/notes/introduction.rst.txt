@@ -308,7 +308,7 @@ In addition, we can use the ``transform`` argument to randomly augment a ``Data`
 
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
                         pre_transform=T.NNGraph(k=6),
-                        transform=RandomTranslate(0.01))
+                        transform=T.RandomTranslate(0.01))
 
     data[0]
     >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])

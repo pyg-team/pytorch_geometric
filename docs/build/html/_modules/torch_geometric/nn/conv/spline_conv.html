@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -199,7 +199,7 @@
 
 
 <div class="viewcode-block" id="SplineConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.SplineConv">[docs]</a><span class="k">class</span> <span class="nc">SplineConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Spline-based Convolutional Operator :math:`(f \star g)(i) =</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Spline-based Convolutional Operator :math:`(f \star g)(i) =</span>
 <span class="sd">    1/|\mathcal{N}(i)| \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}</span>
 <span class="sd">    f_l(j) \cdot g_l(u(i, j))`, where :math:`g_l` is a kernel function defined</span>
 <span class="sd">    over the weighted B-Spline tensor product basis for a single input feature</span>
@@ -269,7 +269,7 @@
         <span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SplineConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.SplineConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">edge_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span>
             <span class="k">return</span> <span class="n">out</span>

@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -192,34 +192,36 @@
   <h1>Source code for torch_geometric.nn.prop.gcn_prop</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_sparse</span> <span class="k">import</span> <span class="n">spmm</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">degree</span><span class="p">,</span> <span class="n">remove_self_loops</span><span class="p">,</span> <span class="n">add_self_loops</span>
+<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter_add</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">remove_self_loops</span><span class="p">,</span> <span class="n">add_self_loops</span>
 
 
 <div class="viewcode-block" id="GCNProp"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.prop.GCNProp">[docs]</a><span class="k">class</span> <span class="nc">GCNProp</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">improved</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GCNProp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">improved</span> <span class="o">=</span> <span class="n">improved</span>
 
 <div class="viewcode-block" id="GCNProp.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.prop.GCNProp.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
-        <span class="n">num_nodes</span><span class="p">,</span> <span class="n">num_edges</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">row</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">edge_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">new_ones</span><span class="p">((</span><span class="n">num_edges</span><span class="p">,</span> <span class="p">))</span>
+            <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">new_ones</span><span class="p">((</span><span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">))</span>
         <span class="k">assert</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
 
+        <span class="c1"># Add self-loops to adjacency matrix.</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">loop_value</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">new_full</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="p">),</span> <span class="mi">1</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">improved</span> <span class="k">else</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">loop_value</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
         <span class="c1"># Normalize adjacency matrix.</span>
-        <span class="n">deg</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
         <span class="n">deg</span> <span class="o">=</span> <span class="n">deg</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
         <span class="n">deg</span><span class="p">[</span><span class="n">deg</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">deg</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">edge_attr</span> <span class="o">*</span> <span class="n">deg</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
 
-        <span class="c1"># Add self-loops to adjacency matrix.</span>
-        <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">)</span>
-        <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">deg</span> <span class="o">*</span> <span class="n">deg</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
-
         <span class="c1"># Perform the propagation.</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">spmm</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">spmm</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">out</span></div>
 

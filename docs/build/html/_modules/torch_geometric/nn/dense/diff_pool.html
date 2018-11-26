@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.0)
+                master (0.3.1)
               </div>
             
           
@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -193,53 +193,40 @@
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="DenseDiffPool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.dense.diff_pool.DenseDiffPool">[docs]</a><span class="k">class</span> <span class="nc">DenseDiffPool</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="dense_diff_pool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.dense.diff_pool.dense_diff_pool">[docs]</a><span class="k">def</span> <span class="nf">dense_diff_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Differentiable Pooling Operator based on dense learned assignments</span>
 <span class="sd">    :math:`S` with</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \begin{align}</span>
 <span class="sd">        F^{(l+1)} &amp;= S^{(l)} X^{(l)}\\</span>
-<span class="sd">        A^{(l+1)} &amp;= {S^{(l)}}^{T}A^{(l)} S^{(l)}</span>
+<span class="sd">        A^{(l+1)} &amp;= {S^{(l)}}^{\top}A^{(l)} S^{(l)}</span>
 <span class="sd">        \end{align}</span>
 
 <span class="sd">    from the `&quot;Hierarchical Graph Representation Learning with Differentiable</span>
 <span class="sd">    Pooling&quot; &lt;https://arxiv.org/abs/1806.08804&gt;`_ paper.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        gnn_pool (torch.nn.Module): An instance of a GNN module to compute soft</span>
-<span class="sd">            assignments.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gnn_pool</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">DenseDiffPool</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">x</span>
+    <span class="n">adj</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">adj</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">adj</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">s</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">gnn_pool</span> <span class="o">=</span> <span class="n">gnn_pool</span>
+    <span class="n">batch_size</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
 
-<div class="viewcode-block" id="DenseDiffPool.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.dense.diff_pool.DenseDiffPool.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gnn_pool</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span></div>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DenseDiffPool.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.dense.diff_pool.DenseDiffPool.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">adj</span><span class="p">):</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gnn_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">adj</span><span class="p">)</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">mask</span><span class="p">,</span> <span class="n">s</span> <span class="o">*</span> <span class="n">mask</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">x</span>
-        <span class="n">adj</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">adj</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">adj</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">s</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">out_adj</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">adj</span><span class="p">),</span> <span class="n">s</span><span class="p">)</span>
 
-        <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
-        <span class="n">out_adj</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">adj</span><span class="p">),</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">reg</span> <span class="o">=</span> <span class="n">adj</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">reg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span> <span class="o">/</span> <span class="n">adj</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
 
-        <span class="n">reg</span> <span class="o">=</span> <span class="n">adj</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-        <span class="n">reg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">reg</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">reg</span> <span class="o">=</span> <span class="n">reg</span> <span class="o">/</span> <span class="n">reg</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">out_adj</span><span class="p">,</span> <span class="n">reg</span></div>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                                   <span class="bp">self</span><span class="o">.</span><span class="n">gnn_pool</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span>
-                                   <span class="bp">self</span><span class="o">.</span><span class="n">gnn_pool</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">out_adj</span><span class="p">,</span> <span class="n">reg</span></div>
 </pre></div>
 
            </div>
