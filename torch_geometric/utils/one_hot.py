@@ -8,8 +8,8 @@ def one_hot(src, num_classes=None, dtype=None):
 
     if num_classes is None:
         num_classes = src.max(dim=0)[0] + 1
-    elif isinstance(num_classes, int):
-        num_classes = torch.tensor(num_classes)
+    else:
+        num_classes = torch.tensor(int(num_classes))
 
     if src.size(1) > 1:
         zero = torch.tensor([0], device=src.device)
