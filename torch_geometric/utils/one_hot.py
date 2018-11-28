@@ -8,7 +8,7 @@ def one_hot(src, num_classes=None, dtype=None):
 
     if num_classes is None:
         num_classes = src.max(dim=0)[0] + 1
-    else:
+    elif isinstance(num_classes, int) or isinstance(num_classes, float):
         num_classes = torch.tensor(int(num_classes))
 
     if src.size(1) > 1:
