@@ -10,10 +10,10 @@ def to_batch(x, batch, fill_value=0):
     index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
     index = (index - cum_nodes[batch]) + (batch * max_num_nodes)
 
-    size = (batch_size * max_num_nodes, *list(x.size())[1:])
+    size = [batch_size * max_num_nodes] + list(x.size())[1:]
     batch_x = x.new_full(size, fill_value)
     batch_x[index] = x
-    size = (batch_size, max_num_nodes, *list(x.size())[1:])
+    size = [batch_size, max_num_nodes] + list(x.size())[1:]
     batch_x = batch_x.view(size)
 
     return batch_x, num_nodes
