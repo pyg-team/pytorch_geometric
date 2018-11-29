@@ -16,4 +16,4 @@ def to_batch(x, batch, fill_value=0):
     size = (batch_size, max_num_nodes, *list(x.size())[1:])
     batch_x = batch_x.view(size)
 
-    return batch_x
+    return batch_x, num_nodes
