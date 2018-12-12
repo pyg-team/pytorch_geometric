@@ -77,6 +77,7 @@ $ pip install torch-geometric
 ```
 
 If you are running into any installation problems, please create an [issue](https://github.com/rusty1s/pytorch_geometric/issues).
+Beforehand, please check that the [official extension example](https://github.com/pytorch/extension-cpp) runs on your machine.
 
 ## Running examples
 
