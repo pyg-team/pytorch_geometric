@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.conv.gcn_conv &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.nn.conv.edge_conv &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -174,7 +174,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.nn.conv.gcn_conv</li>
+      <li>torch_geometric.nn.conv.edge_conv</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -191,70 +191,52 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.nn.conv.gcn_conv</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.nn.conv.edge_conv</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">scatter_</span>
 
-<span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">uniform</span>
-<span class="kn">from</span> <span class="nn">..prop</span> <span class="k">import</span> <span class="n">GCNProp</span>
+<span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">reset</span>
 
 
-<div class="viewcode-block" id="GCNConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GCNConv">[docs]</a><span class="k">class</span> <span class="nc">GCNConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The graph convolutional operator from the `&quot;Semi-supervised</span>
-<span class="sd">    Classfication with Graph Convolutional Networks&quot;</span>
-<span class="sd">    &lt;https://arxiv.org/abs/1609.02907&gt;`_ paper</span>
+<div class="viewcode-block" id="EdgeConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.EdgeConv">[docs]</a><span class="k">class</span> <span class="nc">EdgeConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The edge convolutional operator from the `&quot;Dynamic Graph CNN for</span>
+<span class="sd">    Learning on Point Clouds&quot; &lt;https://arxiv.org/abs/1801.07829&gt;`_ paper</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}</span>
-<span class="sd">        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta},</span>
+<span class="sd">        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)}</span>
+<span class="sd">        h_{\mathbf{\Theta}}(\mathbf{x}_i \, \Vert \,</span>
+<span class="sd">        \mathbf{x}_j - \mathbf{x}_i),</span>
 
-<span class="sd">    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the</span>
-<span class="sd">    adjacency matrix with inserted self-loops and</span>
-<span class="sd">    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.</span>
+<span class="sd">    where :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.* a MLP.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        in_channels (int): Size of each input sample.</span>
-<span class="sd">        out_channels (int): Size of each output sample.</span>
-<span class="sd">        improved (bool, optional): If set to :obj:`True`, the layer computes</span>
-<span class="sd">            :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.</span>
-<span class="sd">            (default: :obj:`False`)</span>
-<span class="sd">        bias (bool, optional): If set to :obj:`False`, the layer will not learn</span>
-<span class="sd">            an additive bias. (default: :obj:`True`)</span>
+<span class="sd">        nn (nn.Sequential): Neural network.</span>
+<span class="sd">        aggr (string): The aggregation operator to use (one of :obj:`&quot;add&quot;`,</span>
+<span class="sd">            :obj:`&quot;mean&quot;`, :obj:`&quot;max&quot;`). (default: :obj:`&quot;add&quot;`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">improved</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GCNConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prop</span> <span class="o">=</span> <span class="n">GCNProp</span><span class="p">(</span><span class="n">improved</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">out_channels</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nn</span><span class="p">,</span> <span class="n">aggr</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EdgeConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nn</span> <span class="o">=</span> <span class="n">nn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggr</span> <span class="o">=</span> <span class="n">aggr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
-<div class="viewcode-block" id="GCNConv.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GCNConv.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span>
-        <span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
-        <span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">att_weight</span><span class="p">)</span></div>
+<div class="viewcode-block" id="EdgeConv.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.EdgeConv.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nn</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GCNConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GCNConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EdgeConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.EdgeConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">)</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aggr</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">out</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span>
-                                   <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

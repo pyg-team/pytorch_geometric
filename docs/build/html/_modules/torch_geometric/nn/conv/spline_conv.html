@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">torch_geometric.data</a></li>
@@ -199,25 +201,29 @@
 
 
 <div class="viewcode-block" id="SplineConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.SplineConv">[docs]</a><span class="k">class</span> <span class="nc">SplineConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Spline-based Convolutional Operator :math:`(f \star g)(i) =</span>
-<span class="sd">    1/|\mathcal{N}(i)| \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}</span>
-<span class="sd">    f_l(j) \cdot g_l(u(i, j))`, where :math:`g_l` is a kernel function defined</span>
-<span class="sd">    over the weighted B-Spline tensor product basis for a single input feature</span>
-<span class="sd">    map. (Fey et al: SplineCNN: Fast Geometric Deep Learning with Continuous</span>
-<span class="sd">    B-Spline Kernels, CVPR 2018, https://arxiv.org/abs/1711.08920)</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The spline-based convolutional operator from the `&quot;SplineCNN: Fast</span>
+<span class="sd">    Geometric Deep Learning with Continuous B-Spline Kernels&quot;</span>
+<span class="sd">    &lt;https://arxiv.org/abs/1711.08920&gt;`_ paper</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|} \sum_{j \in</span>
+<span class="sd">        \mathcal{N}(i)} \mathbf{x}_j \cdot</span>
+<span class="sd">        h_{\mathbf{\Theta}}(\mathbf{e}_{i,j}),</span>
+
+<span class="sd">    where :math:`h_{\mathbf{\Theta}}` denotes a kernel function defined</span>
+<span class="sd">    over the weighted B-Spline tensor product basis.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>
 <span class="sd">        out_channels (int): Size of each output sample.</span>
 <span class="sd">        dim (int): Pseudo-coordinate dimensionality.</span>
 <span class="sd">        kernel_size (int or [int]): Size of the convolving kernel.</span>
-<span class="sd">        is_open_spline (bool or [bool], optional): Whether to use open or</span>
-<span class="sd">            closed B-spline bases. (default :obj:`True`)</span>
+<span class="sd">        is_open_spline (bool or [bool], optional): If set to :obj:`False`, the</span>
+<span class="sd">            operator will use a closed B-spline basis in this dimension.</span>
+<span class="sd">            (default :obj:`True`)</span>
 <span class="sd">        degree (int, optional): B-spline basis degrees. (default: :obj:`1`)</span>
-<span class="sd">        norm (bool, optional): Whether to normalize output by node degree.</span>
-<span class="sd">            (default: :obj:`True`)</span>
-<span class="sd">        root_weight (bool, optional): If set to :obj:`True`, the layer will</span>
-<span class="sd">            add the weighted root node features to the output.</span>
+<span class="sd">        root_weight (bool, optional): If set to :obj:`False`, the layer will</span>
+<span class="sd">            not add the transformed root node features to the output.</span>
 <span class="sd">            (default: :obj:`True`)</span>
 <span class="sd">        bias (bool, optional): If set to :obj:`False`, the layer will not learn</span>
 <span class="sd">            an additive bias. (default: :obj:`True`)</span>
@@ -238,7 +244,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span>
 
         <span class="n">kernel_size</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">repeat</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;kernel_size&#39;</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">)</span>
@@ -269,15 +274,11 @@
         <span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SplineConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.SplineConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">edge_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span>
-            <span class="k">return</span> <span class="n">out</span>
-
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Conv</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span>
                           <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;kernel_size&#39;</span><span class="p">],</span>
-                          <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;is_open_spline&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>
-                          <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;is_open_spline&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span>

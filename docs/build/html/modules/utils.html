@@ -117,7 +117,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
 </ul>
@@ -201,24 +201,64 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>index</strong> (<em>LongTensor</em>) – Source or target indices of edges.</li>
-<li><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nodes in <code class="xref py py-attr docutils literal"><span class="pre">index</span></code>.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>)</li>
-<li><strong>dtype</strong> (<code class="xref py py-obj docutils literal"><span class="pre">torch.dtype</span></code>, optional) – tensor.</li>
+<li><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nodes in <code class="xref py py-attr docutils literal notranslate"><span class="pre">index</span></code>.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>dtype</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.dtype</span></code>, optional) – tensor.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal"><span class="pre">Tensor</span></code></p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </td>
 </tr>
 </tbody>
 </table>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">degree</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">degree</span>
 <span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="n">output</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-none"><div class="highlight"><pre><span></span>tensor([3., 1., 1.])
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>tensor([3., 1., 1.])
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.scatter_">
+<code class="descname">scatter_</code><span class="sig-paren">(</span><em>name</em>, <em>src</em>, <em>index</em>, <em>dim_size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/scatter.html#scatter_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.scatter_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregates all values from the <code class="xref py py-attr docutils literal notranslate"><span class="pre">src</span></code> tensor at the indices
+specified in the <code class="xref py py-attr docutils literal notranslate"><span class="pre">index</span></code> tensor along the first dimension.
+If multiple indices reference the same location, their contributions
+are aggregated according to <code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) – The aggregation to use (one of <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>).</li>
+<li><strong>src</strong> (<em>Tensor</em>) – The source tensor.</li>
+<li><strong>index</strong> (<em>LongTensor</em>) – The indices of elements to scatter.</li>
+<li><strong>dim_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Automatically create output tensor with size
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">dim_size</span></code> in the first dimension. If <code class="xref py py-attr docutils literal notranslate"><span class="pre">None</span></code>, a minimal
+sized output tensor is returned. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">scatter_</span>
+<span class="n">src</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">scatter_</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>tensor([0., 4., 1.])
 </pre></div>
 </div>
 </dd></dl>
@@ -276,6 +316,11 @@
 <dl class="function">
 <dt id="torch_geometric.utils.dense_to_sparse">
 <code class="descname">dense_to_sparse</code><span class="sig-paren">(</span><em>tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/sparse.html#dense_to_sparse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.dense_to_sparse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.to_batch">
+<code class="descname">to_batch</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>fill_value=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/to_batch.html#to_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.to_batch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">

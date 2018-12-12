@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.pool.set2set &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.nn.glob.set2set &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -174,7 +174,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.nn.pool.set2set</li>
+      <li>torch_geometric.nn.glob.set2set</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -191,11 +191,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.nn.pool.set2set</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.nn.glob.set2set</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="Set2Set"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.Set2Set">[docs]</a><span class="k">class</span> <span class="nc">Set2Set</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="Set2Set"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.Set2Set">[docs]</a><span class="k">class</span> <span class="nc">Set2Set</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">in_channels</span><span class="p">,</span>
                  <span class="n">hidden_channels</span><span class="p">,</span>
@@ -214,10 +214,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Set2Set.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.Set2Set.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Set2Set.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.Set2Set.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Set2Set.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.Set2Set.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<div class="viewcode-block" id="Set2Set.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.Set2Set.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
 

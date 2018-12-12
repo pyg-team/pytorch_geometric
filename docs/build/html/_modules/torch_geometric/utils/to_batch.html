@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.utils.coalesce &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.utils.to_batch &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">torch_geometric.data</a></li>
@@ -172,7 +174,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.utils.coalesce</li>
+      <li>torch_geometric.utils.to_batch</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -189,37 +191,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.utils.coalesce</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.utils.to_batch</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch_unique</span> <span class="k">import</span> <span class="n">unique</span>
-
-<span class="kn">from</span> <span class="nn">.num_nodes</span> <span class="k">import</span> <span class="n">maybe_num_nodes</span>
+<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter_add</span>
 
 
-<div class="viewcode-block" id="is_coalesced"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.is_coalesced">[docs]</a><span class="k">def</span> <span class="nf">is_coalesced</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
-    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
+<div class="viewcode-block" id="to_batch"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.to_batch">[docs]</a><span class="k">def</span> <span class="nf">to_batch</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">new_ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">batch_size</span><span class="p">,</span> <span class="n">max_num_nodes</span> <span class="o">=</span> <span class="n">num_nodes</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">num_nodes</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="n">cum_nodes</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">batch</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">num_nodes</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">index</span> <span class="o">=</span> <span class="n">num_nodes</span> <span class="o">*</span> <span class="n">row</span> <span class="o">+</span> <span class="n">col</span>
-    <span class="k">return</span> <span class="n">index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">unique</span><span class="p">(</span><span class="n">index</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">index</span> <span class="o">-</span> <span class="n">cum_nodes</span><span class="p">[</span><span class="n">batch</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="n">batch</span> <span class="o">*</span> <span class="n">max_num_nodes</span><span class="p">)</span>
 
+    <span class="n">size</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch_size</span> <span class="o">*</span> <span class="n">max_num_nodes</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">batch_x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">new_full</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span>
+    <span class="n">batch_x</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">max_num_nodes</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">())[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">batch_x</span> <span class="o">=</span> <span class="n">batch_x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 
-<div class="viewcode-block" id="coalesce"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.coalesce">[docs]</a><span class="k">def</span> <span class="nf">coalesce</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
-    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
-
-    <span class="k">if</span> <span class="n">edge_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">row</span> <span class="o">+</span> <span class="n">col</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">perm</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[:,</span> <span class="n">perm</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span> <span class="k">if</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">is_cuda</span> <span class="k">else</span> <span class="n">torch</span>
-        <span class="n">sparse</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">sparse</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">.</span><span class="n">type</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">edge_attr</span><span class="o">.</span><span class="n">size</span><span class="p">())[</span><span class="mi">1</span><span class="p">:])</span>
-        <span class="n">adj</span> <span class="o">=</span> <span class="n">sparse</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
-        <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">_indices</span><span class="p">(),</span> <span class="n">adj</span><span class="o">.</span><span class="n">_values</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span></div>
+    <span class="k">return</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">num_nodes</span></div>
 </pre></div>
 
            </div>

@@ -102,7 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -116,9 +116,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/data.html">torch_geometric.data</a></li>
@@ -206,6 +208,7 @@
 <li><a href="torch_geometric/datasets/shapenet.html">torch_geometric.datasets.shapenet</a></li>
 <li><a href="torch_geometric/datasets/tu_dataset.html">torch_geometric.datasets.tu_dataset</a></li>
 <li><a href="torch_geometric/nn/conv/cheb_conv.html">torch_geometric.nn.conv.cheb_conv</a></li>
+<li><a href="torch_geometric/nn/conv/edge_conv.html">torch_geometric.nn.conv.edge_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gat_conv.html">torch_geometric.nn.conv.gat_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gcn_conv.html">torch_geometric.nn.conv.gcn_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gin_conv.html">torch_geometric.nn.conv.gin_conv</a></li>
@@ -214,12 +217,17 @@
 <li><a href="torch_geometric/nn/conv/sage_conv.html">torch_geometric.nn.conv.sage_conv</a></li>
 <li><a href="torch_geometric/nn/conv/spline_conv.html">torch_geometric.nn.conv.spline_conv</a></li>
 <li><a href="torch_geometric/nn/dense/diff_pool.html">torch_geometric.nn.dense.diff_pool</a></li>
+<li><a href="torch_geometric/nn/dense/sage_conv.html">torch_geometric.nn.dense.sage_conv</a></li>
+<li><a href="torch_geometric/nn/glob/glob.html">torch_geometric.nn.glob.glob</a></li>
+<li><a href="torch_geometric/nn/glob/set2set.html">torch_geometric.nn.glob.set2set</a></li>
+<li><a href="torch_geometric/nn/glob/sort.html">torch_geometric.nn.glob.sort</a></li>
 <li><a href="torch_geometric/nn/meta.html">torch_geometric.nn.meta</a></li>
 <li><a href="torch_geometric/nn/pool/avg_pool.html">torch_geometric.nn.pool.avg_pool</a></li>
 <li><a href="torch_geometric/nn/pool/global_pool.html">torch_geometric.nn.pool.global_pool</a></li>
 <li><a href="torch_geometric/nn/pool/graclus.html">torch_geometric.nn.pool.graclus</a></li>
 <li><a href="torch_geometric/nn/pool/max_pool.html">torch_geometric.nn.pool.max_pool</a></li>
 <li><a href="torch_geometric/nn/pool/set2set.html">torch_geometric.nn.pool.set2set</a></li>
+<li><a href="torch_geometric/nn/pool/sort_pool.html">torch_geometric.nn.pool.sort_pool</a></li>
 <li><a href="torch_geometric/nn/pool/topk_pool.html">torch_geometric.nn.pool.topk_pool</a></li>
 <li><a href="torch_geometric/nn/pool/voxel_grid.html">torch_geometric.nn.pool.voxel_grid</a></li>
 <li><a href="torch_geometric/nn/prop/agnn_prop.html">torch_geometric.nn.prop.agnn_prop</a></li>
@@ -230,8 +238,6 @@
 <li><a href="torch_geometric/transforms/compose.html">torch_geometric.transforms.compose</a></li>
 <li><a href="torch_geometric/transforms/constant.html">torch_geometric.transforms.constant</a></li>
 <li><a href="torch_geometric/transforms/distance.html">torch_geometric.transforms.distance</a></li>
-<li><a href="torch_geometric/transforms/dropout_edge.html">torch_geometric.transforms.dropout_edge</a></li>
-<li><a href="torch_geometric/transforms/dropout_x.html">torch_geometric.transforms.dropout_x</a></li>
 <li><a href="torch_geometric/transforms/face_to_edge.html">torch_geometric.transforms.face_to_edge</a></li>
 <li><a href="torch_geometric/transforms/linear_transformation.html">torch_geometric.transforms.linear_transformation</a></li>
 <li><a href="torch_geometric/transforms/local_cartesian.html">torch_geometric.transforms.local_cartesian</a></li>
@@ -251,18 +257,18 @@
 <li><a href="torch_geometric/transforms/target_indegree.html">torch_geometric.transforms.target_indegree</a></li>
 <li><a href="torch_geometric/transforms/to_dense.html">torch_geometric.transforms.to_dense</a></li>
 <li><a href="torch_geometric/transforms/two_hop.html">torch_geometric.transforms.two_hop</a></li>
-<li><a href="torch_geometric/utils/coalesce.html">torch_geometric.utils.coalesce</a></li>
 <li><a href="torch_geometric/utils/convert.html">torch_geometric.utils.convert</a></li>
 <li><a href="torch_geometric/utils/degree.html">torch_geometric.utils.degree</a></li>
 <li><a href="torch_geometric/utils/grid.html">torch_geometric.utils.grid</a></li>
 <li><a href="torch_geometric/utils/isolated.html">torch_geometric.utils.isolated</a></li>
 <li><a href="torch_geometric/utils/loop.html">torch_geometric.utils.loop</a></li>
-<li><a href="torch_geometric/utils/matmul.html">torch_geometric.utils.matmul</a></li>
 <li><a href="torch_geometric/utils/metric.html">torch_geometric.utils.metric</a></li>
 <li><a href="torch_geometric/utils/normalized_cut.html">torch_geometric.utils.normalized_cut</a></li>
 <li><a href="torch_geometric/utils/one_hot.html">torch_geometric.utils.one_hot</a></li>
+<li><a href="torch_geometric/utils/scatter.html">torch_geometric.utils.scatter</a></li>
 <li><a href="torch_geometric/utils/softmax.html">torch_geometric.utils.softmax</a></li>
 <li><a href="torch_geometric/utils/sparse.html">torch_geometric.utils.sparse</a></li>
+<li><a href="torch_geometric/utils/to_batch.html">torch_geometric.utils.to_batch</a></li>
 <li><a href="torch_geometric/utils/undirected.html">torch_geometric.utils.undirected</a></li>
 </ul>
 

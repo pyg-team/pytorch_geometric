@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">torch_geometric.data</a></li>
@@ -200,20 +202,37 @@
 
 
 <div class="viewcode-block" id="GATConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GATConv">[docs]</a><span class="k">class</span> <span class="nc">GATConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Graph Attentional Layer from the `&quot;Graph Attention Networks (GAT)&quot;</span>
-<span class="sd">    &lt;https://arxiv.org/abs/1710.10903&gt;`_ paper.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The graph attentional operator from the `&quot;Graph Attention Networks&quot;</span>
+<span class="sd">    &lt;https://arxiv.org/abs/1710.10903&gt;`_ paper</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{j} +</span>
+<span class="sd">        \sum_{j \in \mathcal{N}(i)} \alpha_{i,j}\mathbf{\Theta}\mathbf{x}_{j},</span>
+
+<span class="sd">    where the attention coefficients :math:`\alpha_{i,j}` are computed as</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \alpha_{i,j} =</span>
+<span class="sd">        \frac{</span>
+<span class="sd">        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}</span>
+<span class="sd">        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_j]</span>
+<span class="sd">        \right)\right)}</span>
+<span class="sd">        {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}</span>
+<span class="sd">        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}</span>
+<span class="sd">        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_k]</span>
+<span class="sd">        \right)\right)}.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>
 <span class="sd">        out_channels (int): Size of each output sample.</span>
 <span class="sd">        heads (int, optional): Number of multi-head-attentions. (default:</span>
 <span class="sd">            :obj:`1`)</span>
-<span class="sd">        concat (bool, optional): Whether to concat or average multi-head</span>
-<span class="sd">            attentions (default: :obj:`True`)</span>
-<span class="sd">        negative_slope (float, optional): LeakyRELU angle of the negative</span>
+<span class="sd">        concat (bool, optional): If set to :obj:`False`, the multi-head</span>
+<span class="sd">        attentions are averaged instead of concatenated. (default: :obj:`True`)</span>
+<span class="sd">        negative_slope (float, optional): LeakyReLU angle of the negative</span>
 <span class="sd">            slope. (default: :obj:`0.2`)</span>
 <span class="sd">        dropout (float, optional): Dropout propbability of the normalized</span>
-<span class="sd">            attention coefficients, i.e. exposes each node to a stochastically</span>
+<span class="sd">            attention coefficients which exposes each node to a stochastically</span>
 <span class="sd">            sampled neighborhood during training. (default: :obj:`0`)</span>
 <span class="sd">        bias (bool, optional): If set to :obj:`False`, the layer will not learn</span>
 <span class="sd">            an additive bias. (default: :obj:`True`)</span>
@@ -256,12 +275,13 @@
         <span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GATConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GATConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span>
 
         <span class="c1"># Add self-loops to adjacency matrix.</span>
-        <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
+        <span class="n">edge_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
         <span class="n">edge_index</span> <span class="o">=</span> <span class="n">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
         <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
 
