@@ -43,6 +43,7 @@ class GCNConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        size = self.in_channels
         uniform(size, self.weight)
         uniform(size, self.att_weight)
 

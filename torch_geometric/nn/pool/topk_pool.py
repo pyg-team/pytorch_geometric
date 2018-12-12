@@ -56,7 +56,7 @@ def filter_adj(edge_index, edge_attr, perm, num_nodes=None):
 
 
 class TopKPooling(torch.nn.Module):
-    """:math:`\mathrm{top}_k` pooling from the `"Graph U-Net"
+    r""":math:`\mathrm{top}_k` pooling from the `"Graph U-Net"
     <https://openreview.net/forum?id=HJePRoAct7>`_ paper.
 
     Args:
