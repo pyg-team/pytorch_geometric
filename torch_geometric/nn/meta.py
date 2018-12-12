@@ -91,6 +91,7 @@ class MetaLayer(torch.nn.Module):
                 item.reset_parameters()
 
     def forward(self, x, edge_index, edge_attr=None, u=None, batch=None):
+        """"""
         row, col = edge_index
 
         if self.edge_model is not None:

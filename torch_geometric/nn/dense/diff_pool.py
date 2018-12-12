@@ -2,17 +2,17 @@ import torch
 
 
 def dense_diff_pool(x, adj, s, mask=None):
-    r"""Differentiable Pooling Operator based on dense learned assignments
-    :math:`S` with
+    r"""Differentiable pooling operator from the `"Hierarchical Graph
+    Representation Learning with Differentiable Pooling"
+    <https://arxiv.org/abs/1806.08804>`_ paper
 
     .. math::
-        \begin{align}
-        F^{(l+1)} &= S^{(l)} X^{(l)}\\
-        A^{(l+1)} &= {S^{(l)}}^{\top}A^{(l)} S^{(l)}
-        \end{align}
+        \mathbf{X}^{\prime} &= \mathbf{S} \cdot \mathbf{X}
 
-    from the `"Hierarchical Graph Representation Learning with Differentiable
-    Pooling" <https://arxiv.org/abs/1806.08804>`_ paper.
+        \mathbf{A}^{\prime} &= \mathbf{S}^{\top} \cdot \mathbf{A} \cdot
+        \mathbf{S}
+
+    based on dense learned assignments :math:`\mathbf{S}`.
     """
 
     x = x.unsqueeze(0) if x.dim() == 2 else x

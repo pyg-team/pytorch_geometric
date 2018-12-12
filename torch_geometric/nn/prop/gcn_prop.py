@@ -14,7 +14,7 @@ class GCNProp(torch.nn.Module):
 
         if edge_attr is None:
             edge_attr = x.new_ones((edge_index.size(1), ))
-        assert edge_attr.dim() == 1
+        assert edge_attr.dim() == 1 and edge_attr.numel() == edge_index.size(1)
 
         # Add self-loops to adjacency matrix.
         edge_index = add_self_loops(edge_index, x.size(0))

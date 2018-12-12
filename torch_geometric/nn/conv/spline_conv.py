@@ -7,25 +7,29 @@ from ..repeat import repeat
 
 
 class SplineConv(torch.nn.Module):
-    r"""Spline-based Convolutional Operator :math:`(f \star g)(i) =
-    1/|\mathcal{N}(i)| \sum_{l=1}^{M_{in}} \sum_{j \in \mathcal{N}(j)}
-    f_l(j) \cdot g_l(u(i, j))`, where :math:`g_l` is a kernel function defined
-    over the weighted B-Spline tensor product basis for a single input feature
-    map. (Fey et al: SplineCNN: Fast Geometric Deep Learning with Continuous
-    B-Spline Kernels, CVPR 2018, https://arxiv.org/abs/1711.08920)
+    r"""The spline-based convolutional operator from the `"SplineCNN: Fast
+    Geometric Deep Learning with Continuous B-Spline Kernels"
+    <https://arxiv.org/abs/1711.08920>`_ paper
+
+    .. math::
+        \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|} \sum_{j \in
+        \mathcal{N}(i)} \mathbf{x}_j \cdot
+        h_{\mathbf{\Theta}}(\mathbf{e}_{i,j}),
+
+    where :math:`h_{\mathbf{\Theta}}` denotes a kernel function defined
+    over the weighted B-Spline tensor product basis.
 
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int or [int]): Size of the convolving kernel.
-        is_open_spline (bool or [bool], optional): Whether to use open or
-            closed B-spline bases. (default :obj:`True`)
+        is_open_spline (bool or [bool], optional): If set to :obj:`False`, the
+            operator will use a closed B-spline basis in this dimension.
+            (default :obj:`True`)
         degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
-        norm (bool, optional): Whether to normalize output by node degree.
-            (default: :obj:`True`)
-        root_weight (bool, optional): If set to :obj:`True`, the layer will
-            add the weighted root node features to the output.
+        root_weight (bool, optional): If set to :obj:`False`, the layer will
+            not add the transformed root node features to the output.
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
@@ -46,7 +50,6 @@ class SplineConv(torch.nn.Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.degree = degree
-        self.norm = norm
 
         kernel_size = torch.tensor(repeat(kernel_size, dim), dtype=torch.long)
         self.register_buffer('kernel_size', kernel_size)
@@ -77,15 +80,11 @@ class SplineConv(torch.nn.Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index, pseudo):
-        if edge_index is None or edge_index.numel() == 0:
-            out = torch.mm(x, self.root)
-            out = out + self.bias
-            return out
-
+        """"""
         return Conv.apply(x, edge_index, pseudo, self.weight,
                           self._buffers['kernel_size'],
-                          self._buffers['is_open_spline'], self.degree,
-                          self.norm, self.root, self.bias)
+                          self._buffers['is_open_spline'], self.degree, True,
+                          self.root, self.bias)
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,

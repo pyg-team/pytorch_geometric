@@ -9,14 +9,15 @@ class EdgeConv(torch.nn.Module):
     Learning on Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper
 
     .. math::
-        x^{\prime}_i = \sum_{j \in \mathcal{N}(i)}
-        h_{\Theta}(x_i \, \Vert \, x_j - x_i),
+        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i)}
+        h_{\mathbf{\Theta}}(\mathbf{x}_i \, \Vert \,
+        \mathbf{x}_j - \mathbf{x}_i),
 
-    here :math:`h_{\Theta}` denotes a neural network, *.e.g.* a MLP.
+    where :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.* a MLP.
 
     Args:
         nn (nn.Sequential): Neural network.
-        aggr (string): The aggregation to use (one of :obj:`"add"`,
+        aggr (string): The aggregation operator to use (one of :obj:`"add"`,
             :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
     """
 
