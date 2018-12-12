@@ -6,6 +6,7 @@ from .nn_conv import NNConv
 from .gat_conv import GATConv
 from .sage_conv import SAGEConv
 from .gin_conv import GINConv
+from .edge_conv import EdgeConv
 
 __all__ = [
     'GraphConv',
@@ -16,4 +17,5 @@ __all__ = [
     'GATConv',
     'SAGEConv',
     'GINConv',
+    'EdgeConv',
 ]

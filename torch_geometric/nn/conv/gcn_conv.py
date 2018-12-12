@@ -6,10 +6,15 @@ from ..prop import GCNProp
 
 
 class GCNConv(torch.nn.Module):
-    r"""Graph Convolutional Operator :math:`F_{out} = \hat{D}^{-1/2} \hat{A}
-    \hat{D}^{-1/2} F_{in} W` with :math:`\hat{A} = A + I` and
-    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` from the `"Semi-Supervised
-    Classfication with Graph Convolutional Networks"
+    r"""The graph convolutional operator
+
+    .. math::
+        \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
+        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{W}
+
+    with :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` and diagonal degree
+    matrix :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` from the
+    `"Semi-supervised Classfication with Graph Convolutional Networks"
     <https://arxiv.org/abs/1609.02907>`_ paper.
 
     Args:
@@ -41,6 +46,7 @@ class GCNConv(torch.nn.Module):
         zeros(self.bias)
 
     def forward(self, x, edge_index, edge_attr=None):
+        """"""
         out = torch.mm(x, self.weight)
         out = self.prop(out, edge_index, edge_attr)
 

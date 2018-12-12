@@ -3,7 +3,7 @@ from torch.nn import Parameter
 from torch_scatter import scatter_add
 from torch_geometric.utils import degree
 
-from ..inits import uniform
+from ..inits import reset, uniform
 
 
 class NNConv(torch.nn.Module):
@@ -52,13 +52,10 @@ class NNConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        reset(self.nn)
         size = self.in_channels
         uniform(size, self.root)
         uniform(size, self.bias)
-
-        for item in self.nn:
-            if hasattr(item, 'reset_parameters'):
-                item.reset_parameters()
 
     def forward(self, x, edge_index, pseudo, size=None):
         row, col = edge_index

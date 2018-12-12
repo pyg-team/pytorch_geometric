@@ -1,4 +1,5 @@
 from .degree import degree
+from .scatter import scatter_
 from .softmax import softmax
 from .undirected import is_undirected, to_undirected
 from .isolated import contains_isolated_nodes
@@ -14,6 +15,7 @@ from .metric import (accuracy, true_positive, true_negative, false_positive,
 
 __all__ = [
     'degree',
+    'scatter_',
     'softmax',
     'is_undirected',
     'to_undirected',
