@@ -48,7 +48,6 @@ Please follow the steps below for a successful installation:
 
     .. code-block:: none
 
-        $ pip install cffi
         $ pip install --upgrade torch-scatter
         $ pip install --upgrade torch-sparse
         $ pip install --upgrade torch-cluster

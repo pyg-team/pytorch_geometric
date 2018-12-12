@@ -4,26 +4,32 @@ torch_geometric.nn
 .. contents:: Contents
     :local:
 
-Convolution Layers
-------------------
-
-.. automodule:: torch_geometric.nn.meta
-    :members:
-    :undoc-members:
+Sparse Convolutional Layers
+---------------------------
 
 .. automodule:: torch_geometric.nn.conv
     :members:
     :undoc-members:
 
+.. automodule:: torch_geometric.nn.meta
+    :members:
+    :undoc-members:
+
+Dense Convolutional Layers
+--------------------------
+
 Global Pooling Layers
 ---------------------
 
-Hierarchical Pooling Layers
---------------
+Sparse Hierarchical Pooling Layers
+----------------------------------
 
 .. automodule:: torch_geometric.nn.pool
     :members:
     :undoc-members:
+
+Dense Hierarchical Pooling Layers
+---------------------------------
 
 .. automodule:: torch_geometric.nn.dense.diff_pool
     :members:

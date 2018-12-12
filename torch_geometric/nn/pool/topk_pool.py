@@ -12,8 +12,7 @@ def topk(x, ratio, batch):
     k = (ratio * num_nodes.to(torch.float)).round().to(torch.long)
 
     cum_num_nodes = torch.cat(
-        [num_nodes.new_zeros(1),
-         num_nodes.cumsum(dim=0)[:-1]], dim=0)
+        [num_nodes.new_zeros(1), num_nodes.cumsum(dim=0)[:-1]], dim=0)
 
     index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
     index = (index - cum_num_nodes[batch]) + (batch * max_num_nodes)
@@ -28,8 +27,8 @@ def topk(x, ratio, batch):
     perm = perm.view(-1)
 
     mask = [
-        torch.arange(k[i], dtype=torch.long, device=x.device) +
-        i * max_num_nodes for i in range(len(num_nodes))
+        torch.arange(k[i], dtype=torch.long, device=x.device) + i *
+        max_num_nodes for i in range(len(num_nodes))
     ]
     mask = torch.cat(mask, dim=0)
 
@@ -57,7 +56,7 @@ def filter_adj(edge_index, edge_attr, perm, num_nodes=None):
 
 
 class TopKPooling(torch.nn.Module):
-    """Top-k Pooling Layer from the `"Graph U-Net"
+    """:math:`\mathrm{top}_k` pooling from the `"Graph U-Net"
     <https://openreview.net/forum?id=HJePRoAct7>`_ paper.
 
     Args:
@@ -80,6 +79,7 @@ class TopKPooling(torch.nn.Module):
         uniform(size, self.weight)
 
     def forward(self, x, edge_index, edge_attr=None, batch=None):
+        """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 

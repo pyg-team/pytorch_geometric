@@ -1,21 +1,21 @@
-from .graph_conv import GraphConv
-from .spline_conv import SplineConv
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
-from .nn_conv import NNConv
-from .gat_conv import GATConv
 from .sage_conv import SAGEConv
+from .graph_conv import GraphConv
+from .gat_conv import GATConv
 from .gin_conv import GINConv
+from .spline_conv import SplineConv
+from .nn_conv import NNConv
 from .edge_conv import EdgeConv
 
 __all__ = [
-    'GraphConv',
-    'SplineConv',
     'GCNConv',
     'ChebConv',
-    'NNConv',
-    'GATConv',
     'SAGEConv',
+    'GraphConv',
+    'GATConv',
     'GINConv',
+    'SplineConv',
+    'NNConv',
     'EdgeConv',
 ]

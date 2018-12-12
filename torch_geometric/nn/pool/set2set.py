@@ -24,6 +24,7 @@ class Set2Set(torch.nn.Module):
         self.lstm.reset_parameters()
 
     def forward(self, x, batch):
+        """"""
         batch_size = batch.max().item() + 1
 
         # Bring x into shape [batch_size, max_nodes, in_channels].
