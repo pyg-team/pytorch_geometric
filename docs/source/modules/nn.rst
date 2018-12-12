@@ -18,8 +18,16 @@ Sparse Convolutional Layers
 Dense Convolutional Layers
 --------------------------
 
+.. automodule:: torch_geometric.nn.dense.sage_conv
+    :members:
+    :undoc-members:
+
 Global Pooling Layers
 ---------------------
+
+.. automodule:: torch_geometric.nn.glob
+    :members:
+    :undoc-members:
 
 Sparse Hierarchical Pooling Layers
 ----------------------------------

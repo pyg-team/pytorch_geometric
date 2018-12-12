@@ -56,12 +56,28 @@ def filter_adj(edge_index, edge_attr, perm, num_nodes=None):
 
 
 class TopKPooling(torch.nn.Module):
-    r""":math:`\mathrm{top}_k` pooling from the `"Graph U-Net"
-    <https://openreview.net/forum?id=HJePRoAct7>`_ paper.
+    r""":math:`\mathrm{top}_k` pooling operator from the `"Graph U-Net"
+    <https://openreview.net/forum?id=HJePRoAct7>`_ and `"Towards Sparse
+    Hierarchical Graph Classifiers" <https://arxiv.org/abs/1811.01287>`_ papers
+
+    .. math::
+        \mathbf{y} &= \frac{\mathbf{X}\mathbf{p}}{\| \mathbf{p} \|}
+
+        \mathbf{i} &= \mathrm{top}_k(\mathbf{y})
+
+        \mathbf{X}^{\prime} &= (\mathbf{X} \odot
+        \mathrm{tanh}(\mathbf{y}))_{\mathbf{i}}
+
+        \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}},
+
+    where nodes are dropped based on a learnable projection score
+    :math:`\mathbf{p}`.
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float): Graph pooling ratio. (default: :obj:`0.5`)
+        ratio (float): Graph pooling ratio, which is used to drop
+            :math:`k = N - \lceil \mathrm{ratio} \cdot N \rceil` nodes.
+            (default: :obj:`0.5`)
     """
 
     def __init__(self, in_channels, ratio=0.5):

@@ -2,7 +2,7 @@ import torch
 from torch_geometric.utils import to_batch
 
 
-def sort_pool(x, batch, k):
+def global_sort_pool(x, batch, k):
     x, _ = x.sort(dim=-1)
 
     fill_value = x.min().item() - 1

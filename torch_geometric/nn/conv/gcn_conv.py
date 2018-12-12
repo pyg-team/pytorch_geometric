@@ -22,7 +22,8 @@ class GCNConv(torch.nn.Module):
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         improved (bool, optional): If set to :obj:`True`, the layer computes
-            :math:`\hat{A}` as :math:`A + 2I`. (default: :obj:`False`)
+            :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
+            (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """

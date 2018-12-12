@@ -6,18 +6,15 @@ from ..inits import uniform
 
 
 class DenseSAGEConv(torch.nn.Module):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 norm=True,
-                 norm_embed=True,
-                 bias=True):
+    r"""See :class:`torch_geometric.nn.conv.sage_conv.SAGEConv`.
+    """
+
+    def __init__(self, in_channels, out_channels, normalize=True, bias=True):
         super(DenseSAGEConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.norm = norm
-        self.norm_embed = norm_embed
+        self.normalize = normalize
         self.weight = Parameter(torch.Tensor(self.in_channels, out_channels))
 
         if bias:
@@ -32,20 +29,19 @@ class DenseSAGEConv(torch.nn.Module):
         uniform(self.in_channels, self.bias)
 
     def forward(self, x, adj):
+        """"""
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
 
+        # TODO: Add self loops.
         out = torch.matmul(adj, x)
-
-        if self.norm:
-            out = out / adj.sum(dim=-1, keepdim=True)
-
+        out = out / adj.sum(dim=-1, keepdim=True)
         out = torch.matmul(out, self.weight)
 
         if self.bias is not None:
             out = out + self.bias
 
-        if self.norm_embed:
+        if self.normalize:
             out = F.normalize(out, p=2, dim=-1)
 
         return out
