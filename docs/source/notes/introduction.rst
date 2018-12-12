@@ -21,14 +21,14 @@ A single graph in PyTorch Geometric is decribed by an instance of :class:`torch_
 
 None of these attributes is required.
 In fact, the ``Data`` object is not even restricted to these attributes.
-We can, e.g., extend it by ``data.face`` to save the connectivity of triangles from a 3D mesh in a tensor with shape ``[3, num_faces]`` and type ``torch.long``.
+We can, *e.g.*, extend it by ``data.face`` to save the connectivity of triangles from a 3D mesh in a tensor with shape ``[3, num_faces]`` and type ``torch.long``.
 
 .. Note::
     PyTorch and ``torchvision`` define an example as a tuple of an image and a target.
-    We omit this notation in PyTorch Geometric to allow for various data structures in a clean und understandable way.
+    We omit this notation in PyTorch Geometric to allow for various data structures in a clean and understandable way.
 
 We show a simple example of an unweighted and undirected graph with three nodes and four edges.
-Each node is assigned exactly one feature:
+Each node contains exactly one feature:
 
 .. code-block:: python
 
@@ -48,10 +48,29 @@ Each node is assigned exactly one feature:
 
 |
 
+Note that ``edge_index``, *i.e.* the tensor defining the source and target nodes of all edges, is NOT a list of index tuples.
+If you want to write your indices this way, you should transpose and call ``contiguous`` on it before passing them to the data constructor:
+
+.. code-block:: python
+
+    import torch
+    from torch_geometric.data import Data
+
+    edge_index = torch.tensor([[0, 1],
+                               [1, 0],
+                               [1, 2],
+                               [2, 1]], dtype=torch.long)
+    x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
+
+    data = Data(x=x, edge_index=edge_index.t().contiguous())
+    >>> Data(x=[3, 1], edge_index=[2, 4])
+
+Although the graph has only two edges, we need to define four index tuples to account for both directions of a edge.
+
 .. Note::
     You can print out your data object anytime and receive a short information about its attributes and their shapes.
 
-Besides of being a plain old python object, :class:`torch_geometric.data.Data` provides a number of utility functions, e.g.:
+Besides of being a plain old python object, :class:`torch_geometric.data.Data` provides a number of utility functions, *e.g.*:
 
 .. code-block:: python
 
@@ -87,7 +106,7 @@ Besides of being a plain old python object, :class:`torch_geometric.data.Data` p
     >>> False
 
     data.is_directed()
-    >>> True
+    >>> False
 
     # Transfer data object to GPU.
     device = torch.device('cuda')
@@ -98,11 +117,11 @@ You can find a complete list of all methods at :class:`torch_geometric.data.Data
 Common benchmark datasets
 -------------------------
 
-PyTorch Geometric contains a large number of common benchmark datasets, e.g. all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM9 dataset, and a handful of 3D mesh/point cloud datasets (FAUST, ModelNet10/40, ShapeNet).
+PyTorch Geometric contains a large number of common benchmark datasets, *e.g.* all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
 
 Initializing a dataset is straightforward.
-The dataset will be automatically downloaded and process the graphs to the previously decribed ``Data`` format.
-E.g., to load the ENZYMES dataset (consisting of 600 graphs within 6 classes), type:
+An initalization of adataset will automatically download its raw files and process them to the previously decribed ``Data`` format.
+*E.g.*, to load the ENZYMES dataset (consisting of 600 graphs within 6 classes), type:
 
 .. code-block:: python
 
@@ -134,7 +153,7 @@ We can see that the first graph in the dataset contains 37 nodes, each one havin
 There are 168/2 = 84 undirected edges and the graph is assigned to exactly one class.
 
 We can even use slices, long or byte tensors to split the dataset.
-E.g., to create a 90/10 train/test split, type:
+*E.g.*, to create a 90/10 train/test split, type:
 
 .. code-block:: python
 
@@ -144,7 +163,7 @@ E.g., to create a 90/10 train/test split, type:
     test_dataset = dataset[540:]
     >>> ENZYMES(60)
 
-If you are unsure whether the dataset is already shuffled before you split, you can random permutate it by running:
+If you are unsure whether the dataset is already shuffled before you split, you can randomly permutate it by running:
 
 .. code-block:: python
 
@@ -158,6 +177,15 @@ This is equivalent of doing:
     perm = torch.randperm(len(dataset))
     dataset = dataset[perm]
     >> ENZYMES(600)
+
+For splitting the dataset into a 90/10 train/test split, we can simply use Python slice notation:
+
+.. code-block:: python
+
+    train_dataset = dataset[60:]
+    >>> ENZYMES(540)
+    test_dataset = dataset[:60]
+    >>> ENZYMES(60)
 
 Let's try another one! Let's download Cora, the standard benchmark dataset for semi-supervised graph node classification:
 
@@ -200,10 +228,10 @@ Here, the dataset contains only a single, undirected citation graph:
 This time, the ``Data`` objects holds additional attributes: ``train_mask``, ``val_mask`` and ``test_mask``:
 
 - ``train_mask`` denotes against which nodes to train (140 nodes)
-- ``val_mask`` denotes which nodes to use for validation, e.g., to perform early stopping (500 nodes)
+- ``val_mask`` denotes which nodes to use for validation, *e.g.*, to perform early stopping (500 nodes)
 - ``test_mask`` denotes against which nodes to test (1000 nodes)
 
-Mini-Batches
+Mini-batches
 ------------
 
 Neural networks are usually trained in a batch-wise fashion.
@@ -240,7 +268,7 @@ Let's learn about it in an example:
 
     \mathrm{batch} = {\begin{bmatrix} 0 & \cdots & 0 & 1 & \cdots & n - 2 & n -1 & \cdots & n - 1 \end{bmatrix}}^{\top}
 
-You can use it to, e.g., average node features in the node dimension for each graph individually:
+You can use it to, *e.g.*, average node features in the node dimension for each graph individually:
 
 .. code-block:: python
 
@@ -299,7 +327,7 @@ We can convert the point cloud dataset into a graph dataset by generating neares
     We use the ``pre_transform`` to convert the data before saving it to disk (leading to faster loading times).
     Note that the next time the dataset is initialized it will already contain graph edges, even if you do not pass any transform.
 
-In addition, we can use the ``transform`` argument to randomly augment a ``Data`` object, e.g. translating each node position by a small number:
+In addition, we can use the ``transform`` argument to randomly augment a ``Data`` object, *e.g.* translating each node position by a small number:
 
 .. code-block:: python
 

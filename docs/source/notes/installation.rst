@@ -2,7 +2,7 @@ Installation
 ============
 
 We have outsourced a lot of functionality of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ to other packages, which needs to be installed in advance.
-These packages come with their own CPU and GPU kernel implementations based on `C FFI <https://github.com/pytorch/extension-ffi/>`_ and the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ in PyTorch 0.4.0.
+These packages come with their own CPU and GPU kernel implementations based on the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ in PyTorch 0.4.0.
 
 .. note::
     We do not recommend installation as root user on your system python.
@@ -68,7 +68,10 @@ You should therefore clone the respective package and check where the error occu
 C++/CUDA extensions on macOS
 ----------------------------
 
-In order to compile C++/CUDA extensions on macOS, you need to replace the call
+.. note::
+    As reported by some users, the use of miniconda is absolutely necessary on macOS.
+
+In order to compile CUDA extensions on macOS, you need to replace the call
 
 .. code-block:: python
 
@@ -79,8 +82,9 @@ with
 
 .. code-block:: python
 
+    import subprocess
+
     def spawn(self, cmd):
         subprocess.call(cmd)
 
-in ``distutils/ccompiler.py``.
-Do not forget to ``import subprocess`` at the top of the file.
+in ``lib/python{xxx}/distutils/ccompiler.py``.
