@@ -71,9 +71,6 @@ Beforehand, please check that the `official extension example <https://github.co
 C++/CUDA extensions on macOS
 ----------------------------
 
-.. note::
-    As reported by some users, the use of miniconda is absolutely necessary on macOS.
-
 In order to compile CUDA extensions on macOS, you need to replace the call
 
 .. code-block:: python
