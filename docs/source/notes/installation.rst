@@ -65,6 +65,9 @@ You should therefore clone the respective package and check where the error occu
     $ python setup.py install  # Check for CUDA compilation or link error.
     $ python setup.py test  # Verify installation by running test suite.
 
+In case the error messages are not very meaningful to you, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
+Beforehand, please check that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
+
 C++/CUDA extensions on macOS
 ----------------------------
 
