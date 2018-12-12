@@ -5,14 +5,14 @@ from ..inits import reset
 
 
 class EdgeConv(torch.nn.Module):
-    r"""The edge convolutional operator
+    r"""The edge convolutional operator from the `"Dynamic Graph CNN for
+    Learning on Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper
 
     .. math::
         x^{\prime}_i = \sum_{j \in \mathcal{N}(i)}
-        h_{\Theta}(x_i \, \Vert \, x_j - x_i)
+        h_{\Theta}(x_i \, \Vert \, x_j - x_i),
 
-    with a neural network :math:`h_{\Theta}` from the `"Dynamic Graph CNN for
-    Learning on Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper.
+    here :math:`h_{\Theta}` denotes a neural network, *.e.g.* a MLP.
 
     Args:
         nn (nn.Sequential): Neural network.

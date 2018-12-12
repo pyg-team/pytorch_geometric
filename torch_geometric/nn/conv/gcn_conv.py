@@ -6,16 +6,17 @@ from ..prop import GCNProp
 
 
 class GCNConv(torch.nn.Module):
-    r"""The graph convolutional operator
+    r"""The graph convolutional operator from the `"Semi-supervised
+    Classfication with Graph Convolutional Networks"
+    <https://arxiv.org/abs/1609.02907>`_ paper
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
-        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{W}
+        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{W},
 
-    with :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` and diagonal degree
-    matrix :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` from the
-    `"Semi-supervised Classfication with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1609.02907>`_ paper.
+    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
+    adjacency matrix with inserted self-loops and
+    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
 
     Args:
         in_channels (int): Size of each input sample.
