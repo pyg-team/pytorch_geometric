@@ -4,6 +4,7 @@ from .sage_conv import SAGEConv
 from .graph_conv import GraphConv
 from .gat_conv import GATConv
 from .gin_conv import GINConv
+from .point_conv import PointConv
 from .spline_conv import SplineConv
 from .nn_conv import NNConv
 from .edge_conv import EdgeConv
@@ -15,6 +16,7 @@ __all__ = [
     'GraphConv',
     'GATConv',
     'GINConv',
+    'PointConv',
     'SplineConv',
     'NNConv',
     'EdgeConv',

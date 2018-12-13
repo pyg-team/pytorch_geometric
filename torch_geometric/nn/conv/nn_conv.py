@@ -11,17 +11,17 @@ class NNConv(torch.nn.Module):
     <https://arxiv.org/abs/1704.01212>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{(1)} \mathbf{x}_i +
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \mathbf{x}_i +
         \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \cdot
-        h_{\mathbf{\Theta^{(2)}}}(\mathbf{e}_{i,j}),
+        h_{\mathbf{\Theta}}(\mathbf{e}_{i,j}),
 
-    where :math:`h_{\mathbf{\Theta^{(2)}}}` denotes a neural network, *.i.e.*
+    where :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.*
     a MLP.
 
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        nn (nn.Sequential): Neural network.
+        nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
         aggr (string): The aggregation operator to use (one of :obj:`"add"`,
             :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
