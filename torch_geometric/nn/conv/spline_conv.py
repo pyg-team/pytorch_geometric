@@ -28,10 +28,10 @@ class SplineConv(torch.nn.Module):
             operator will use a closed B-spline basis in this dimension.
             (default :obj:`True`)
         degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
-        norm (bool, optional): If set to :obj:`False`, the output node features
-            will not be normalized by its degree. (default: :obj:`True`)
+        norm (bool, optional): If set to :obj:`False`, output node features
+            will not be degree-normalized. (default: :obj:`True`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
-            not add the transformed root node features to the output.
+            not add transformed root node features to the output.
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
