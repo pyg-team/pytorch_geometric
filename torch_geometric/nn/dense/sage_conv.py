@@ -28,12 +28,29 @@ class DenseSAGEConv(torch.nn.Module):
         uniform(self.in_channels, self.weight)
         uniform(self.in_channels, self.bias)
 
-    def forward(self, x, adj):
-        """"""
+    def forward(self, x, adj, mask=None, add_loop=True):
+        r"""
+        Args:
+            x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
+                \times N \times F}`, with batch-size :math:`B`, (maximum)
+                number of nodes :math:`N`, and feature dimension :math:`F`.
+            adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B
+                \times N \times N}`.
+            mask (ByteTensor, optional): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+                the valid nodes for each graph. (default: :obj:`None`)
+            add_loop (bool, optional): If set to :obj:`False`, the layer will
+                not automatically add self-loops to the adjacency matrices.
+                (default: :obj:`True`)
+        """
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
+        B, N, _ = x.size()
 
-        # TODO: Add self loops.
+        if add_loop:
+            arange = torch.arange(0, N, dtype=torch.long, device=adj.device)
+            adj[:, arange, arange] = 1
+
         out = torch.matmul(adj, x)
         out = out / adj.sum(dim=-1, keepdim=True)
         out = torch.matmul(out, self.weight)
@@ -43,6 +60,10 @@ class DenseSAGEConv(torch.nn.Module):
 
         if self.normalize:
             out = F.normalize(out, p=2, dim=-1)
+
+        if mask is not None:
+            mask = mask.view(B, N, 1).to(x.dtype)
+            out = out * mask
 
         return out
 
