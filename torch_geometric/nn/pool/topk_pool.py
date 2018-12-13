@@ -12,7 +12,8 @@ def topk(x, ratio, batch):
     k = (ratio * num_nodes.to(torch.float)).round().to(torch.long)
 
     cum_num_nodes = torch.cat(
-        [num_nodes.new_zeros(1), num_nodes.cumsum(dim=0)[:-1]], dim=0)
+        [num_nodes.new_zeros(1),
+         num_nodes.cumsum(dim=0)[:-1]], dim=0)
 
     index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
     index = (index - cum_num_nodes[batch]) + (batch * max_num_nodes)
@@ -27,8 +28,8 @@ def topk(x, ratio, batch):
     perm = perm.view(-1)
 
     mask = [
-        torch.arange(k[i], dtype=torch.long, device=x.device) + i *
-        max_num_nodes for i in range(len(num_nodes))
+        torch.arange(k[i], dtype=torch.long, device=x.device) +
+        i * max_num_nodes for i in range(len(num_nodes))
     ]
     mask = torch.cat(mask, dim=0)
 
@@ -75,8 +76,8 @@ class TopKPooling(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float): Graph pooling ratio, which is used to drop
-            :math:`k = N - \lceil \mathrm{ratio} \cdot N \rceil` nodes.
+        ratio (float): Graph pooling ratio, which is used to compute
+            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
             (default: :obj:`0.5`)
     """
 
