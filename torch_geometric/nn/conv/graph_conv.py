@@ -11,8 +11,8 @@ class GraphConv(torch.nn.Module):
     <https://arxiv.org/abs/1810.02244>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{(1)} \mathbf{x}_i +
-        \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta}^{(2)} \mathbf{x}_j.
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \mathbf{x}_i +
+        \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta} \mathbf{x}_j.
 
     Args:
         in_channels (int): Size of each input sample.

@@ -16,7 +16,7 @@ class EdgeConv(torch.nn.Module):
     where :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.* a MLP.
 
     Args:
-        nn (nn.Sequential): Neural network.
+        nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
         aggr (string): The aggregation operator to use (one of :obj:`"add"`,
             :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
     """
