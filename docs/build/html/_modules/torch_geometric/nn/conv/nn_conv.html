@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -205,17 +205,17 @@
 <span class="sd">    &lt;https://arxiv.org/abs/1704.01212&gt;`_ paper</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{(1)} \mathbf{x}_i +</span>
+<span class="sd">        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \mathbf{x}_i +</span>
 <span class="sd">        \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \cdot</span>
-<span class="sd">        h_{\mathbf{\Theta^{(2)}}}(\mathbf{e}_{i,j}),</span>
+<span class="sd">        h_{\mathbf{\Theta}}(\mathbf{e}_{i,j}),</span>
 
-<span class="sd">    where :math:`h_{\mathbf{\Theta^{(2)}}}` denotes a neural network, *.i.e.*</span>
+<span class="sd">    where :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.*</span>
 <span class="sd">    a MLP.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>
 <span class="sd">        out_channels (int): Size of each output sample.</span>
-<span class="sd">        nn (nn.Sequential): Neural network.</span>
+<span class="sd">        nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.</span>
 <span class="sd">        aggr (string): The aggregation operator to use (one of :obj:`&quot;add&quot;`,</span>
 <span class="sd">            :obj:`&quot;mean&quot;`, :obj:`&quot;max&quot;`). (default: :obj:`&quot;add&quot;`)</span>
 <span class="sd">        root_weight (bool, optional): If set to :obj:`False`, the layer will</span>

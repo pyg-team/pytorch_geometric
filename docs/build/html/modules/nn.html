@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -330,8 +330,8 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dd><p>The graph neural network operator from the <a class="reference external" href="https://arxiv.org/abs/1810.02244">“Weisfeiler and Leman Go
 Neural: Higher-order Graph Neural Networks”</a> paper</p>
 <div class="math notranslate nohighlight">
-\[\mathbf{x}^{\prime}_i = \mathbf{\Theta}^{(1)} \mathbf{x}_i +
-\sum_{j \in \mathcal{N}(i)} \mathbf{\Theta}^{(2)} \mathbf{x}_j.\]</div>
+\[\mathbf{x}^{\prime}_i = \mathbf{\Theta} \mathbf{x}_i +
+\sum_{j \in \mathcal{N}(i)} \mathbf{\Theta} \mathbf{x}_j.\]</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -414,6 +414,40 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 </dd></dl>
 
 <dl class="class">
+<dt id="torch_geometric.nn.conv.AGNNConv">
+<em class="property">class </em><code class="descname">AGNNConv</code><span class="sig-paren">(</span><em>requires_grad=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graph attentional propagation layer from the
+<a class="reference external" href="https://arxiv.org/abs/1803.03735">“Attention-based Graph Neural Network for Semi-Supervised Learning”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{X}^{\prime} = \mathbf{P} \mathbf{X},\]</div>
+<p>where the propagation matrix <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is computed as</p>
+<div class="math notranslate nohighlight">
+\[P_{i,j} = \frac{\exp( \beta \cdot \cos(\mathbf{x}_i, \mathbf{x}_j))}
+{\sum_{k \in \mathcal{N}(i)\cup \{ i \}} \exp( \beta \cdot
+\cos(\mathbf{x}_i, \mathbf{x}_k))}\]</div>
+<p>with trainable parameter <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>requires_grad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, <span class="math notranslate nohighlight">\(\beta\)</span>
+will not be trainable. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.AGNNConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.AGNNConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="torch_geometric.nn.conv.GINConv">
 <em class="property">class </em><code class="descname">GINConv</code><span class="sig-paren">(</span><em>nn</em>, <em>eps=0</em>, <em>train_eps=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gin_conv.html#GINConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GINConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>The graph isomorphism operator from the <a class="reference external" href="https://arxiv.org/abs/1810.00826">“How Powerful are
@@ -427,7 +461,7 @@ Graph Neural Networks?”</a> paper</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>nn</strong> (<em>nn.Sequential</em>) – Neural network.</li>
+<li><strong>nn</strong> (<em>nn.Sequential</em>) – Neural network <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span>.</li>
 <li><strong>eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – (Initial) <span class="math notranslate nohighlight">\(\epsilon\)</span> value.
 (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0</span></code>)</li>
 <li><strong>train_eps</strong> (<em>bool optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, <span class="math notranslate nohighlight">\(\epsilon\)</span> will
@@ -445,6 +479,89 @@ be a trainable parameter. (default: <a class="reference external" href="https://
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GINConv.reset_parameters">
 <code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gin_conv.html#GINConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GINConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.PointConv">
+<em class="property">class </em><code class="descname">PointConv</code><span class="sig-paren">(</span><em>local_nn=None</em>, <em>global_nn=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/point_conv.html#PointConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.PointConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The PointNet set layer from the <a class="reference external" href="https://arxiv.org/abs/1612.00593">“PointNet: Deep Learning on Point Sets
+for 3D Classification and Segmentation”</a> and <a class="reference external" href="https://arxiv.org/abs/1706.02413">“PointNet++: Deep Hierarchical
+Feature Learning on Point Sets in a Metric Space”</a> papers</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in
+\mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j \,
+\Vert \, \mathbf{p}_j - \mathbf{p}_i) \right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> and
+<span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span> denote neural
+networks, <em>.i.e.</em> MLPs, and <span class="math notranslate nohighlight">\(\mathbf{P} \in \mathbb{R}^{N \times D}\)</span>
+defines the position of each point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>local_nn</strong> (<em>nn.Sequential</em><em>, </em><em>optional</em>) – Neural network
+<span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>global_nn</strong> (<em>nn.Sequential</em><em>, </em><em>optional</em>) – Neural network
+<span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.PointConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>pos</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/point_conv.html#PointConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.PointConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.PointConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/point_conv.html#PointConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.PointConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.GMMConv">
+<em class="property">class </em><code class="descname">GMMConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gmm_conv.html#GMMConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GMMConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The gaussian mixture model convolutional operator from the <a class="reference external" href="https://arxiv.org/abs/1611.08402">“Geometric
+Deep Learning on Graphs and Manifolds using Mixture Model CNNs”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}^{\prime}_i = \mathbf{\Theta} \cdot
+\sum_{j \in \mathcal{N}(i) \cup \{ i \}} w(\mathbf{e}_{i,j}) \odot
+\mathbf{x}_j,\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[w_m(\mathbf{e}) = \exp \left( -\frac{1}{2} {\left( \mathbf{e} -
+\mathbf{\mu}_m \right)}^{\top} \Sigma_m^{-1} \left( \mathbf{e} -
+\mathbf{\mu}_m \right) \right)\]</div>
+<p>with trainable mean vector <span class="math notranslate nohighlight">\(\mathbf{\mu}_m\)</span> and diagonal covariance
+matrix <span class="math notranslate nohighlight">\(\mathbf{\Sigma}_m\)</span> for each input channel <span class="math notranslate nohighlight">\(m\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Pseudo-coordinate dimensionality.</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.GMMConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>pseudo</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gmm_conv.html#GMMConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GMMConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.GMMConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gmm_conv.html#GMMConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GMMConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -473,8 +590,10 @@ over the weighted B-Spline tensor product basis.</p>
 operator will use a closed B-spline basis in this dimension.
 (default <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 <li><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – B-spline basis degrees. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
+<li><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, output node features
+will not be degree-normalized. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 <li><strong>root_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will
-not add the transformed root node features to the output.
+not add transformed root node features to the output.
 (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 <li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
 an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
@@ -501,10 +620,10 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dd><p>The continuous kernel-based convolutional operator adapted from the
 <a class="reference external" href="https://arxiv.org/abs/1704.01212">“Neural Message Passing for Quantum Chemistry”</a> paper</p>
 <div class="math notranslate nohighlight">
-\[\mathbf{x}^{\prime}_i = \mathbf{\Theta}^{(1)} \mathbf{x}_i +
+\[\mathbf{x}^{\prime}_i = \mathbf{\Theta} \mathbf{x}_i +
 \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \cdot
-h_{\mathbf{\Theta^{(2)}}}(\mathbf{e}_{i,j}),\]</div>
-<p>where <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta^{(2)}}}\)</span> denotes a neural network, <em>.i.e.</em>
+h_{\mathbf{\Theta}}(\mathbf{e}_{i,j}),\]</div>
+<p>where <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span> denotes a neural network, <em>.i.e.</em>
 a MLP.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -513,7 +632,7 @@ a MLP.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
 <li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
-<li><strong>nn</strong> (<em>nn.Sequential</em>) – Neural network.</li>
+<li><strong>nn</strong> (<em>nn.Sequential</em>) – Neural network <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span>.</li>
 <li><strong>aggr</strong> (<em>string</em>) – The aggregation operator to use (one of <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>). (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>)</li>
 <li><strong>root_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will
@@ -553,7 +672,7 @@ h_{\mathbf{\Theta}}(\mathbf{x}_i \, \Vert \,
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>nn</strong> (<em>nn.Sequential</em>) – Neural network.</li>
+<li><strong>nn</strong> (<em>nn.Sequential</em>) – Neural network <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span>.</li>
 <li><strong>aggr</strong> (<em>string</em>) – The aggregation operator to use (one of <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>). (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>)</li>
 </ul>
@@ -569,6 +688,60 @@ h_{\mathbf{\Theta}}(\mathbf{x}_i \, \Vert \,
 <dl class="method">
 <dt id="torch_geometric.nn.conv.EdgeConv.reset_parameters">
 <code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/edge_conv.html#EdgeConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.EdgeConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.XConv">
+<em class="property">class </em><code class="descname">XConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>hidden_channels=None</em>, <em>dilation=1</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/x_conv.html#XConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.XConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The convolutional operator on <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>-transformed points
+from the <a class="reference external" href="https://arxiv.org/abs/1801.07791">“PointCNN: Convolution On X-Transformed Points”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}^{\prime}_i = \mathrm{Conv}\left(\mathbf{K},
+\gamma_{\mathbf{\Theta}}(\mathbf{P}_i - \mathbf{p}_i) \times
+\left( h_\mathbf{\Theta}(\mathbf{P}_i - \mathbf{p}_i) \, \Vert \,
+\mathbf{x}_i \right) \right),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{K}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{P}_i\)</span> denote the trainable
+filter and neighboring point positions of <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span>,
+respectively.
+<span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> and <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span> describe
+neural networks, <em>i.e.</em> MLPs, where <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span>
+individually lifts each point into a higher-dimensional space, and
+<span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> computes the <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>-
+transformation matrix based on <em>all</em> points in a neighborhood.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>kernel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of the convolving kernel, <em>i.e.</em> number of
+neighbors including self-loops.</li>
+<li><strong>hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Output size of
+<span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span>, <em>i.e.</em> dimensionality of lifted
+points. If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, will be automatically set to
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">in_channels</span> <span class="pre">/</span> <span class="pre">4</span></code>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>dilation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The factor by which the neighborhood is
+extended, from which <code class="xref py py-obj docutils literal notranslate"><span class="pre">kernel_size</span></code> neighbors are then
+uniformly sampled. Can be interpreted as the dilation rate of
+classical convolutional operators. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.XConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>pos</em>, <em>batch=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/x_conv.html#XConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.XConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.XConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/x_conv.html#XConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.XConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -672,10 +845,40 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 <dt id="torch_geometric.nn.dense.sage_conv.DenseSAGEConv">
 <em class="property">class </em><code class="descname">DenseSAGEConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>normalize=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/sage_conv.html#DenseSAGEConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.sage_conv.DenseSAGEConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.nn.conv.sage_conv.SAGEConv</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="torch_geometric.nn.dense.sage_conv.DenseSAGEConv.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>adj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/sage_conv.html#DenseSAGEConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.sage_conv.DenseSAGEConv.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>adj</em>, <em>mask=None</em>, <em>add_loop=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/sage_conv.html#DenseSAGEConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.sage_conv.DenseSAGEConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature tensor <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{B
+\times N \times F}\)</span>, with batch-size <span class="math notranslate nohighlight">\(B\)</span>, (maximum)
+number of nodes <span class="math notranslate nohighlight">\(N\)</span> for each graph, and feature
+dimension <span class="math notranslate nohighlight">\(F\)</span>.</li>
+<li><strong>adj</strong> (<em>Tensor</em>) – Adjacency tensor <span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{B
+\times N \times N}\)</span>.</li>
+<li><strong>mask</strong> (<em>ByteTensor</em><em>, </em><em>optional</em>) – Mask matrix
+<span class="math notranslate nohighlight">\(\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}\)</span> indicating
+the valid nodes for each graph. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>add_loop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will
+not automatically add self-loops to the adjacency matrices.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.dense.sage_conv.DenseSAGEConv.reset_parameters">
@@ -690,27 +893,144 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 <dl class="function">
 <dt id="torch_geometric.nn.glob.global_add_pool">
 <code class="descname">global_add_pool</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/glob.html#global_add_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.global_add_pool" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns batch-wise graph-level-outputs by adding node features
+across the node node dimension, so that for a single graph
+<span class="math notranslate nohighlight">\(\mathcal{G}_i\)</span> its output is computed by</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{r}_i = \sum_{n=1}^{N_i} \mathbf{x}_n\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</li>
+<li><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
+B-1\}}^N\)</span>, which assigns each node to a specific graph.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Batch-size <span class="math notranslate nohighlight">\(B\)</span>.
+Automatically calculated if not given. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="torch_geometric.nn.glob.global_mean_pool">
 <code class="descname">global_mean_pool</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/glob.html#global_mean_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.global_mean_pool" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns batch-wise graph-level-outputs by averaging node features
+across the node node dimension, so that for a single graph
+<span class="math notranslate nohighlight">\(\mathcal{G}_i\)</span> its output is computed by</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</li>
+<li><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
+B-1\}}^N\)</span>, which assigns each node to a specific graph.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Batch-size <span class="math notranslate nohighlight">\(B\)</span>.
+Automatically calculated if not given. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="torch_geometric.nn.glob.global_max_pool">
 <code class="descname">global_max_pool</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/glob.html#global_max_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.global_max_pool" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns batch-wise graph-level-outputs by taking the channel-wise
+maximum node features across the node dimension, so that for a single graph
+<span class="math notranslate nohighlight">\(\mathcal{G}_i\)</span> its output is computed by</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{r}_i = \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</li>
+<li><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
+B-1\}}^N\)</span>, which assigns each node to a specific graph.</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Batch-size <span class="math notranslate nohighlight">\(B\)</span>.
+Automatically calculated if not given. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="torch_geometric.nn.glob.global_sort_pool">
 <code class="descname">global_sort_pool</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/sort.html#global_sort_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.global_sort_pool" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The global pooling operator from the <a class="reference external" href="https://www.cse.wustl.edu/~muhan/papers/AAAI_2018_DGCNN.pdf">“An End-to-End Deep Learning
+Architecture for Graph Classification”</a> paper,
+where node features are first sorted individually and then  sorted in
+descending order based on their last features. The first <span class="math notranslate nohighlight">\(k\)</span> nodes
+form the output of the layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
+<li><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
+B-1\}}^N\)</span>, which assigns each node to a specific graph.</li>
+<li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of nodes to hold for each graph.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="class">
 <dt id="torch_geometric.nn.glob.Set2Set">
-<em class="property">class </em><code class="descname">Set2Set</code><span class="sig-paren">(</span><em>in_channels</em>, <em>hidden_channels</em>, <em>processing_steps</em>, <em>num_layers=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/set2set.html#Set2Set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.Set2Set" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="descname">Set2Set</code><span class="sig-paren">(</span><em>in_channels</em>, <em>processing_steps</em>, <em>num_layers=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/set2set.html#Set2Set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.Set2Set" title="Permalink to this definition">¶</a></dt>
+<dd><p>The global pooling operator based on iterative content-based attention
+from the <a class="reference external" href="https://arxiv.org/abs/1511.06391">“Order Matters: Sequence to sequence for sets”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\mathbf{q}_t &amp;= \mathrm{LSTM}(\mathbf{q}^{*}_{t-1})\\\alpha_{i,t} &amp;= \mathrm{softmax}(\mathbf{x}_i \cdot \mathbf{q}_t)\\\mathbf{r}_t &amp;= \sum_{i=1}^N \alpha_{i,t} \mathbf{x}_i\\\mathbf{q}^{*}_t &amp;= \mathbf{q}_t \, \Vert \, \mathbf{r}_t,\end{aligned}\end{align} \]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{q}^{*}_T\)</span> defines the output of the layer with twice
+the dimensionality as the input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>processing_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of iterations <span class="math notranslate nohighlight">\(T\)</span>.</li>
+<li><strong>num_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of recurrent layers, <em>.e.g</em>, setting
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">num_layers=2</span></code> would mean stacking two LSTMs together to form
+a stacked LSTM, with the second LSTM taking in outputs of the first
+LSTM and computing the final results. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
 <dt id="torch_geometric.nn.glob.Set2Set.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/set2set.html#Set2Set.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.Set2Set.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -771,8 +1091,8 @@ Hierarchical Graph Classifiers”</a> papers</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
-<li><strong>ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Graph pooling ratio, which is used to drop
-<span class="math notranslate nohighlight">\(k = N - \lceil \mathrm{ratio} \cdot N \rceil\)</span> nodes.
+<li><strong>ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Graph pooling ratio, which is used to compute
+<span class="math notranslate nohighlight">\(k = \lceil \mathrm{ratio} \cdot N \rceil\)</span>.
 (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0.5</span></code>)</li>
 </ul>
 </td>
@@ -800,9 +1120,35 @@ Hierarchical Graph Classifiers”</a> papers</p>
 <dd><p>Differentiable pooling operator from the <a class="reference external" href="https://arxiv.org/abs/1806.08804">“Hierarchical Graph
 Representation Learning with Differentiable Pooling”</a> paper</p>
 <div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}\mathbf{X}^{\prime} &amp;= \mathbf{S} \cdot \mathbf{X}\\\mathbf{A}^{\prime} &amp;= \mathbf{S}^{\top} \cdot \mathbf{A} \cdot
-\mathbf{S}\end{aligned}\end{align} \]</div>
+\[ \begin{align}\begin{aligned}\mathbf{X}^{\prime} &amp;= \mathrm{softmax}(\mathbf{S}) \cdot \mathbf{X}\\\mathbf{A}^{\prime} &amp;= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
+\mathbf{A} \cdot \mathrm{softmax}(\mathbf{S})\end{aligned}\end{align} \]</div>
 <p>based on dense learned assignments <span class="math notranslate nohighlight">\(\mathbf{S}\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature tensor <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{B
+\times N \times F}\)</span> with batch-size <span class="math notranslate nohighlight">\(B\)</span>, (maximum)
+number of nodes <span class="math notranslate nohighlight">\(N\)</span> for each graph, and feature dimension
+<span class="math notranslate nohighlight">\(F\)</span>.</li>
+<li><strong>adj</strong> (<em>Tensor</em>) – Adjacency tensor <span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{B
+\times N \times N}\)</span>.</li>
+<li><strong>s</strong> (<em>Tensor</em>) – Assignment tensor <span class="math notranslate nohighlight">\(\mathbf{S} \in \mathbb{R}^{B
+\times N \times C}\)</span> with number of clusters <span class="math notranslate nohighlight">\(C\)</span>. The softmax
+does not have to be applied beforehand, since it is executed
+within this method.</li>
+<li><strong>mask</strong> (<em>ByteTensor</em><em>, </em><em>optional</em>) – Mask matrix
+<span class="math notranslate nohighlight">\(\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}\)</span> indicating
+the valid nodes for each graph. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -119,8 +119,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/nn.html">torch_geometric.nn</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#dense-convolutional-layers">Dense Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#global-pooling-layers">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
@@ -203,10 +203,10 @@ Please setup an <a class="reference external" href="https://conda.io/docs/user-g
 </div>
 <p>Please follow the steps below for a successful installation:</p>
 <ol class="arabic">
-<li><p class="first">Ensure that at least PyTorch 0.4.1 is installed:</p>
+<li><p class="first">Ensure that at least PyTorch 1.0.0 is installed:</p>
 <blockquote>
 <div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ python -c &quot;import torch; print(torch.__version__)&quot;
-&gt;&gt;&gt; 0.4.1
+&gt;&gt;&gt; 1.0.0
 </pre></div>
 </div>
 </div></blockquote>
@@ -266,12 +266,10 @@ $ python setup.py install  # Check for CUDA compilation or link error.
 $ python setup.py test  # Verify installation by running test suite.
 </pre></div>
 </div>
+<p>In case the error messages are not very meaningful to you, please create an <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues">issue</a>.
+Beforehand, please check that the <a class="reference external" href="https://github.com/pytorch/extension-cpp">official extension example</a> runs on your machine.</p>
 <div class="section" id="c-cuda-extensions-on-macos">
 <h2>C++/CUDA extensions on macOS<a class="headerlink" href="#c-cuda-extensions-on-macos" title="Permalink to this headline">¶</a></h2>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">As reported by some users, the use of miniconda is absolutely necessary on macOS.</p>
-</div>
 <p>In order to compile CUDA extensions on macOS, you need to replace the call</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
     <span class="n">spawn</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dry_run</span><span class="p">)</span>

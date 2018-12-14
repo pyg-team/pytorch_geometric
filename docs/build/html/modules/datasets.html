@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -118,9 +118,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">torch_geometric.data</a></li>
@@ -200,317 +202,52 @@
 <dl class="class">
 <dt id="torch_geometric.datasets.TUDataset">
 <em class="property">class </em><code class="descname">TUDataset</code><span class="sig-paren">(</span><em>root</em>, <em>name</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="torch_geometric.datasets.TUDataset.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset.download" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.TUDataset.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.TUDataset.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.TUDataset.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.TUDataset.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.TUDataset.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.TUDataset.url">
-<code class="descname">url</code><em class="property"> = 'https://ls11-www.cs.uni-dortmund.de/people/morris/graphkerneldatasets'</em><a class="headerlink" href="#torch_geometric.datasets.TUDataset.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
 
 <dl class="class">
 <dt id="torch_geometric.datasets.Planetoid">
 <em class="property">class </em><code class="descname">Planetoid</code><span class="sig-paren">(</span><em>root</em>, <em>name</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/planetoid.html#Planetoid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Planetoid" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="torch_geometric.datasets.Planetoid.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/planetoid.html#Planetoid.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Planetoid.download" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.Planetoid.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/planetoid.html#Planetoid.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Planetoid.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.Planetoid.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.Planetoid.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.Planetoid.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.Planetoid.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.Planetoid.url">
-<code class="descname">url</code><em class="property"> = 'https://github.com/kimiyoung/planetoid/raw/master/data'</em><a class="headerlink" href="#torch_geometric.datasets.Planetoid.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.datasets.MNISTSuperpixels">
-<em class="property">class </em><code class="descname">MNISTSuperpixels</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.download" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.url">
-<code class="descname">url</code><em class="property"> = 'http://ls7-www.cs.uni-dortmund.de/cvpr_geometric_dl/mnist_superpixels.tar.gz'</em><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.datasets.FAUST">
-<em class="property">class </em><code class="descname">FAUST</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="torch_geometric.datasets.FAUST.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST.download" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.FAUST.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.FAUST.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.FAUST.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.FAUST.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.FAUST.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.FAUST.url">
-<code class="descname">url</code><em class="property"> = 'http://faust.is.tue.mpg.de/'</em><a class="headerlink" href="#torch_geometric.datasets.FAUST.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.datasets.QM7">
-<em class="property">class </em><code class="descname">QM7</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="torch_geometric.datasets.QM7.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7.download" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.QM7.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM7.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM7.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM7.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM7.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM7.url">
-<code class="descname">url</code><em class="property"> = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/datasets/qm7b.mat'</em><a class="headerlink" href="#torch_geometric.datasets.QM7.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.datasets.QM9">
-<em class="property">class </em><code class="descname">QM9</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="torch_geometric.datasets.QM9.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9.download" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.QM9.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM9.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM9.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM9.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM9.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM9.url">
-<code class="descname">url</code><em class="property"> = 'http://www.roemisch-drei.de/qm9.tar.gz'</em><a class="headerlink" href="#torch_geometric.datasets.QM9.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
 
 <dl class="class">
 <dt id="torch_geometric.datasets.PPI">
 <em class="property">class </em><code class="descname">PPI</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/ppi.html#PPI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.PPI" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="torch_geometric.datasets.PPI.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/ppi.html#PPI.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.PPI.download" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="torch_geometric.datasets.PPI.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/ppi.html#PPI.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.PPI.process" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="torch_geometric.datasets.QM7">
+<em class="property">class </em><code class="descname">QM7</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="torch_geometric.datasets.PPI.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.PPI.processed_file_names" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="torch_geometric.datasets.QM9">
+<em class="property">class </em><code class="descname">QM9</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="torch_geometric.datasets.PPI.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.PPI.raw_file_names" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="torch_geometric.datasets.MNISTSuperpixels">
+<em class="property">class </em><code class="descname">MNISTSuperpixels</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="torch_geometric.datasets.PPI.url">
-<code class="descname">url</code><em class="property"> = 'http://snap.stanford.edu/graphsage/ppi.zip'</em><a class="headerlink" href="#torch_geometric.datasets.PPI.url" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="torch_geometric.datasets.FAUST">
+<em class="property">class </em><code class="descname">FAUST</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-</dd></dl>
 
 <dl class="class">
 <dt id="torch_geometric.datasets.ShapeNet">
 <em class="property">class </em><code class="descname">ShapeNet</code><span class="sig-paren">(</span><em>root</em>, <em>category</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/shapenet.html#ShapeNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ShapeNet" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
-<dt id="torch_geometric.datasets.ShapeNet.categories">
-<code class="descname">categories</code><em class="property"> = {'Airplane': '02691156', 'Bag': '02773838', 'Cap': '02954340', 'Car': '02958343', 'Chair': '03001627', 'Earphone': '03261776', 'Guitar': '03467517', 'Knife': '03624134', 'Lamp': '03636649', 'Laptop': '03642806', 'Motorbike': '03790512', 'Mug': '03797390', 'Pistol': '03948459', 'Rocket': '04099429', 'Skateboard': '04225987', 'Table': '04379243'}</em><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.categories" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.ShapeNet.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/shapenet.html#ShapeNet.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.download" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.ShapeNet.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/shapenet.html#ShapeNet.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ShapeNet.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ShapeNet.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ShapeNet.url">
-<code class="descname">url</code><em class="property"> = 'https://shapenet.cs.stanford.edu/iccv17/partseg'</em><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
 
 <dl class="class">
 <dt id="torch_geometric.datasets.ModelNet">
 <em class="property">class </em><code class="descname">ModelNet</code><span class="sig-paren">(</span><em>root</em>, <em>name='10'</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="torch_geometric.datasets.ModelNet.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet.download" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.ModelNet.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.ModelNet.process_set">
-<code class="descname">process_set</code><span class="sig-paren">(</span><em>dataset</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet.process_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet.process_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ModelNet.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ModelNet.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ModelNet.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ModelNet.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ModelNet.urls">
-<code class="descname">urls</code><em class="property"> = {'10': 'http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip', '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'}</em><a class="headerlink" href="#torch_geometric.datasets.ModelNet.urls" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
 
 <dl class="class">
 <dt id="torch_geometric.datasets.CoMA">
 <em class="property">class </em><code class="descname">CoMA</code><span class="sig-paren">(</span><em>root</em>, <em>train=True</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/coma.html#CoMA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CoMA" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
-<dt id="torch_geometric.datasets.CoMA.categories">
-<code class="descname">categories</code><em class="property"> = ['bareteeth', 'cheeks_in', 'eyebrow', 'high_smile', 'lips_back', 'lips_up', 'mouth_down', 'mouth_extreme', 'mouth_middle', 'mouth_open', 'mouth_side', 'mouth_up']</em><a class="headerlink" href="#torch_geometric.datasets.CoMA.categories" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.CoMA.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/coma.html#CoMA.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CoMA.download" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.CoMA.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/coma.html#CoMA.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CoMA.process" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.CoMA.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.CoMA.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.CoMA.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.CoMA.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.CoMA.url">
-<code class="descname">url</code><em class="property"> = 'https://coma.is.tue.mpg.de/'</em><a class="headerlink" href="#torch_geometric.datasets.CoMA.url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
 
 </div>
 

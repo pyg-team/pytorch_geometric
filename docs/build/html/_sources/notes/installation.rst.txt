@@ -10,12 +10,12 @@ These packages come with their own CPU and GPU kernel implementations based on t
 
 Please follow the steps below for a successful installation:
 
-#. Ensure that at least PyTorch 0.4.1 is installed:
+#. Ensure that at least PyTorch 1.0.0 is installed:
 
     .. code-block:: none
 
         $ python -c "import torch; print(torch.__version__)"
-        >>> 0.4.1
+        >>> 1.0.0
 
 #. Ensure CUDA is setup correctly (optional):
 
@@ -65,11 +65,11 @@ You should therefore clone the respective package and check where the error occu
     $ python setup.py install  # Check for CUDA compilation or link error.
     $ python setup.py test  # Verify installation by running test suite.
 
+In case the error messages are not very meaningful to you, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
+Beforehand, please check that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
+
 C++/CUDA extensions on macOS
 ----------------------------
-
-.. note::
-    As reported by some users, the use of miniconda is absolutely necessary on macOS.
 
 In order to compile CUDA extensions on macOS, you need to replace the call
 

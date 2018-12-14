@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -222,8 +222,10 @@
 <span class="sd">            operator will use a closed B-spline basis in this dimension.</span>
 <span class="sd">            (default :obj:`True`)</span>
 <span class="sd">        degree (int, optional): B-spline basis degrees. (default: :obj:`1`)</span>
+<span class="sd">        norm (bool, optional): If set to :obj:`False`, output node features</span>
+<span class="sd">            will not be degree-normalized. (default: :obj:`True`)</span>
 <span class="sd">        root_weight (bool, optional): If set to :obj:`False`, the layer will</span>
-<span class="sd">            not add the transformed root node features to the output.</span>
+<span class="sd">            not add transformed root node features to the output.</span>
 <span class="sd">            (default: :obj:`True`)</span>
 <span class="sd">        bias (bool, optional): If set to :obj:`False`, the layer will not learn</span>
 <span class="sd">            an additive bias. (default: :obj:`True`)</span>
@@ -244,6 +246,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span>
 
         <span class="n">kernel_size</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">repeat</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;kernel_size&#39;</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">)</span>
@@ -277,8 +280,8 @@
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Conv</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span>
                           <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;kernel_size&#39;</span><span class="p">],</span>
-                          <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;is_open_spline&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span>
-                          <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;is_open_spline&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span>

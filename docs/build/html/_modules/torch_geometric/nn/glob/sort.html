@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -197,6 +197,22 @@
 
 
 <div class="viewcode-block" id="global_sort_pool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.global_sort_pool">[docs]</a><span class="k">def</span> <span class="nf">global_sort_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The global pooling operator from the `&quot;An End-to-End Deep Learning</span>
+<span class="sd">    Architecture for Graph Classification&quot;</span>
+<span class="sd">    &lt;https://www.cse.wustl.edu/~muhan/papers/AAAI_2018_DGCNN.pdf&gt;`_ paper,</span>
+<span class="sd">    where node features are first sorted individually and then  sorted in</span>
+<span class="sd">    descending order based on their last features. The first :math:`k` nodes</span>
+<span class="sd">    form the output of the layer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (Tensor): Node feature matrix</span>
+<span class="sd">            :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.</span>
+<span class="sd">        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,</span>
+<span class="sd">            B-1\}}^N`, which assigns each node to a specific graph.</span>
+<span class="sd">        k (int): The number of nodes to hold for each graph.</span>
+
+<span class="sd">    :rtype: :class:`Tensor`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">fill_value</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>

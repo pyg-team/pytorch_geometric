@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -118,9 +118,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.data</a></li>
@@ -192,21 +194,6 @@
             
   <div class="section" id="module-torch_geometric.data">
 <span id="torch-geometric-data"></span><h1>torch_geometric.data<a class="headerlink" href="#module-torch_geometric.data" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="torch_geometric.data.download_url">
-<code class="descname">download_url</code><span class="sig-paren">(</span><em>url</em>, <em>folder</em>, <em>log=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/download.html#download_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.download_url" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="torch_geometric.data.extract_tar">
-<code class="descname">extract_tar</code><span class="sig-paren">(</span><em>path</em>, <em>folder</em>, <em>mode='r:gz'</em>, <em>log=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/extract.html#extract_tar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.extract_tar" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="torch_geometric.data.extract_zip">
-<code class="descname">extract_zip</code><span class="sig-paren">(</span><em>path</em>, <em>folder</em>, <em>log=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/extract.html#extract_zip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.extract_zip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="class">
 <dt id="torch_geometric.data.Data">
 <em class="property">class </em><code class="descname">Data</code><span class="sig-paren">(</span><em>x=None</em>, <em>edge_index=None</em>, <em>edge_attr=None</em>, <em>y=None</em>, <em>pos=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data" title="Permalink to this definition">¶</a></dt>
@@ -258,11 +245,6 @@
 <dl class="attribute">
 <dt id="torch_geometric.data.Data.keys">
 <code class="descname">keys</code><a class="headerlink" href="#torch_geometric.data.Data.keys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.data.Data.num_classes">
-<code class="descname">num_classes</code><a class="headerlink" href="#torch_geometric.data.Data.num_classes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -320,6 +302,11 @@
 <code class="descname">get</code><span class="sig-paren">(</span><em>idx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataset.html#Dataset.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Dataset.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="torch_geometric.data.Dataset.num_features">
+<code class="descname">num_features</code><a class="headerlink" href="#torch_geometric.data.Dataset.num_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="torch_geometric.data.Dataset.process">
 <code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataset.html#Dataset.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Dataset.process" title="Permalink to this definition">¶</a></dt>
@@ -348,16 +335,6 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="torch_geometric.data.DataLoader">
-<em class="property">class </em><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DataLoader" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.data.DenseDataLoader">
-<em class="property">class </em><code class="descname">DenseDataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DenseDataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DenseDataLoader" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
 <dt id="torch_geometric.data.InMemoryDataset">
 <em class="property">class </em><code class="descname">InMemoryDataset</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/in_memory_dataset.html#InMemoryDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.InMemoryDataset" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
@@ -378,11 +355,6 @@
 <dl class="attribute">
 <dt id="torch_geometric.data.InMemoryDataset.num_classes">
 <code class="descname">num_classes</code><a class="headerlink" href="#torch_geometric.data.InMemoryDataset.num_classes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.data.InMemoryDataset.num_features">
-<code class="descname">num_features</code><a class="headerlink" href="#torch_geometric.data.InMemoryDataset.num_features" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -413,8 +385,28 @@
 </dd></dl>
 
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a></dt>
+<dt id="torch_geometric.data.DataLoader">
+<em class="property">class </em><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DataLoader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.data.DenseDataLoader">
+<em class="property">class </em><code class="descname">DenseDataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DenseDataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DenseDataLoader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.data.download_url">
+<code class="descname">download_url</code><span class="sig-paren">(</span><em>url</em>, <em>folder</em>, <em>log=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/download.html#download_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.download_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.data.extract_tar">
+<code class="descname">extract_tar</code><span class="sig-paren">(</span><em>path</em>, <em>folder</em>, <em>mode='r:gz'</em>, <em>log=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/extract.html#extract_tar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.extract_tar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.data.extract_zip">
+<code class="descname">extract_zip</code><span class="sig-paren">(</span><em>path</em>, <em>folder</em>, <em>log=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/extract.html#extract_zip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.extract_zip" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>

@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -118,9 +118,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">torch_geometric.data</a></li>
@@ -291,7 +293,7 @@ instead of replacing them. (default: <a class="reference external" href="https:/
 
 <dl class="class">
 <dt id="torch_geometric.transforms.Cartesian">
-<em class="property">class </em><code class="descname">Cartesian</code><span class="sig-paren">(</span><em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/cartesian.html#Cartesian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Cartesian" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">Cartesian</code><span class="sig-paren">(</span><em>max_distance=None</em>, <em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/cartesian.html#Cartesian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Cartesian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the globally normalized spatial relation of linked nodes as
 Cartesian coordinates (mapped to the fixed interval <span class="math notranslate nohighlight">\([0, 1]\)</span>)</p>
 <div class="math notranslate nohighlight">
@@ -302,8 +304,12 @@ Cartesian coordinates (mapped to the fixed interval <span class="math notranslat
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat pseudo-coordinates to edge attributes
-instead of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_distance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – </li>
+<li><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Concat pseudo-coordinates to edge attributes
+instead of replacing them. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -499,16 +505,6 @@ instead of replacing them. (default: <a class="reference external" href="https:/
 </dd></dl>
 
 <dl class="class">
-<dt id="torch_geometric.transforms.Center">
-<em class="property">class </em><code class="descname">Center</code><a class="reference internal" href="../_modules/torch_geometric/transforms/center.html#Center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Center" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.NormalizeScale">
-<em class="property">class </em><code class="descname">NormalizeScale</code><a class="reference internal" href="../_modules/torch_geometric/transforms/normalize_scale.html#NormalizeScale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.NormalizeScale" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
 <dt id="torch_geometric.transforms.RandomTranslate">
 <em class="property">class </em><code class="descname">RandomTranslate</code><span class="sig-paren">(</span><em>translate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/random_translate.html#RandomTranslate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RandomTranslate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translates node positions by randomly sampled translation values
@@ -620,11 +616,6 @@ is randomly sampled from the range
 </dd></dl>
 
 <dl class="class">
-<dt id="torch_geometric.transforms.RandomRotate">
-<em class="property">class </em><code class="descname">RandomRotate</code><span class="sig-paren">(</span><em>degrees</em>, <em>axis=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/random_rotate.html#RandomRotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RandomRotate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
 <dt id="torch_geometric.transforms.RandomShear">
 <em class="property">class </em><code class="descname">RandomShear</code><span class="sig-paren">(</span><em>shear</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/random_shear.html#RandomShear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RandomShear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shears node positions by randomly sampled factors <span class="math notranslate nohighlight">\(s\)</span> within a
@@ -646,46 +637,6 @@ given interval, e.g., resulting in the transformation matrix</p>
 </tbody>
 </table>
 </dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.NormalizeFeatures">
-<em class="property">class </em><code class="descname">NormalizeFeatures</code><a class="reference internal" href="../_modules/torch_geometric/transforms/normalize_features.html#NormalizeFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.NormalizeFeatures" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.AddSelfLoops">
-<em class="property">class </em><code class="descname">AddSelfLoops</code><a class="reference internal" href="../_modules/torch_geometric/transforms/add_self_loops.html#AddSelfLoops"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.AddSelfLoops" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.NNGraph">
-<em class="property">class </em><code class="descname">NNGraph</code><span class="sig-paren">(</span><em>k=6</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/nn_graph.html#NNGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.NNGraph" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.RadiusGraph">
-<em class="property">class </em><code class="descname">RadiusGraph</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/radius_graph.html#RadiusGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RadiusGraph" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.FaceToEdge">
-<em class="property">class </em><code class="descname">FaceToEdge</code><a class="reference internal" href="../_modules/torch_geometric/transforms/face_to_edge.html#FaceToEdge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.FaceToEdge" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.SamplePoints">
-<em class="property">class </em><code class="descname">SamplePoints</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/sample_points.html#SamplePoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.SamplePoints" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.ToDense">
-<em class="property">class </em><code class="descname">ToDense</code><span class="sig-paren">(</span><em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/to_dense.html#ToDense"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.ToDense" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="torch_geometric.transforms.TwoHop">
-<em class="property">class </em><code class="descname">TwoHop</code><a class="reference internal" href="../_modules/torch_geometric/transforms/two_hop.html#TwoHop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.TwoHop" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 
