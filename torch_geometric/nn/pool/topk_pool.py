@@ -9,7 +9,7 @@ from ...utils.num_nodes import maybe_num_nodes
 def topk(x, ratio, batch):
     num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
     batch_size, max_num_nodes = num_nodes.size(0), num_nodes.max().item()
-    k = (ratio * num_nodes.to(torch.float)).round().to(torch.long)
+    k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)
 
     cum_num_nodes = torch.cat(
         [num_nodes.new_zeros(1),
