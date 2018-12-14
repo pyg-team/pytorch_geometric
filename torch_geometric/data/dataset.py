@@ -98,5 +98,5 @@ class Dataset(torch.utils.data.Dataset):
         data = data if self.transform is None else self.transform(data)
         return data
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '{}({})'.format(self.__class__.__name__, len(self))
