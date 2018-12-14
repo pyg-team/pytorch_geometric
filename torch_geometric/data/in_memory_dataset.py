@@ -7,16 +7,20 @@ from torch_geometric.data import Dataset, Data
 class InMemoryDataset(Dataset):
     @property
     def raw_file_names(self):
+        """"""
         raise NotImplementedError
 
     @property
     def processed_file_names(self):
+        """"""
         raise NotImplementedError
 
     def download(self):
+        """"""
         raise NotImplementedError
 
     def process(self):
+        """"""
         raise NotImplementedError
 
     def __init__(self,
@@ -30,10 +34,12 @@ class InMemoryDataset(Dataset):
 
     @property
     def num_features(self):
+        """"""
         return self[0].num_features
 
     @property
     def num_classes(self):
+        """"""
         data = self.data
         return data.y.max().item() + 1 if data.y.dim() == 1 else data.y.size(1)
 
@@ -57,6 +63,7 @@ class InMemoryDataset(Dataset):
             'indices (got {}).'.format(type(idx).__name__))
 
     def shuffle(self):
+        """"""
         return self.split(torch.randperm(len(self)))
 
     def get(self, idx):
@@ -76,6 +83,7 @@ class InMemoryDataset(Dataset):
         return copy
 
     def collate(self, data_list):
+        """"""
         keys = data_list[0].keys
         data = Data()
 

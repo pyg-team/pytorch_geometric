@@ -1,11 +1,11 @@
 from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .planetoid import Planetoid
-from .mnist_superpixels import MNISTSuperpixels
-from .faust import FAUST
+from .ppi import PPI
 from .qm7 import QM7
 from .qm9 import QM9
-from .ppi import PPI
+from .mnist_superpixels import MNISTSuperpixels
+from .faust import FAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
 from .coma import CoMA
@@ -14,11 +14,11 @@ __all__ = [
     'KarateClub',
     'TUDataset',
     'Planetoid',
-    'MNISTSuperpixels',
-    'FAUST',
+    'PPI',
     'QM7',
     'QM9',
-    'PPI',
+    'MNISTSuperpixels',
+    'FAUST',
     'ShapeNet',
     'ModelNet',
     'CoMA',
