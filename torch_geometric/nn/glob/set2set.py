@@ -1,21 +1,40 @@
 import torch
+from torch_geometric.utils import to_batch
 
 
 class Set2Set(torch.nn.Module):
-    def __init__(self,
-                 in_channels,
-                 hidden_channels,
-                 processing_steps,
-                 num_layers=1):
+    r"""Global pooling based on iterative content-based attention
+
+    .. math::
+        \mathbf{q}_t &= \mathrm{LSTM}(\mathbf{q}^{*}_{t-1})
+
+        \alpha_{i,t} &= \mathrm{softmax}(\mathbf{x}_i \cdot \mathbf{q}_t)
+
+        \mathbf{r}_t &= \sum_{i=1}^N \alpha_{i,t} \mathbf{x}_i
+
+        \mathbf{q}^{*}_t &= \mathbf{q}_t \, \Vert \, \mathbf{r}_t
+
+    where :math:`\mathbf{q}^{*}_T` defines the output of the layer with twiche
+    the dimensionality as the input.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        processing_steps (int): Number of iterations :math:`T`.
+        num_layers (int, optional): Number of recurrent layers, *.e.g*, setting
+            :obj:`num_layers=2` would mean stacking two LSTMs together to form
+            a stacked LSTM, with the second LSTM taking in outputs of the first
+            LSTM and computing the final results. (default: :obj:`1`)
+    """
+
+    def __init__(self, in_channels, processing_steps, num_layers=1):
         super(Set2Set, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = 2 * in_channels
-        self.hidden_channels = in_channels
         self.processing_steps = processing_steps
         self.num_layers = num_layers
 
-        self.lstm = torch.nn.LSTM(self.out_channels, hidden_channels,
+        self.lstm = torch.nn.LSTM(self.out_channels, self.in_channels,
                                   num_layers)
 
         self.reset_parameters()
@@ -25,17 +44,11 @@ class Set2Set(torch.nn.Module):
 
     def forward(self, x, batch):
         """"""
-        batch_size = batch.max().item() + 1
+        x, _ = to_batch(x, batch)
+        batch_size, max_nodes, _ = x.size()
 
-        # Bring x into shape [batch_size, max_nodes, in_channels].
-        xs = x.split(torch.bincount(batch).tolist())
-        max_nodes = max([t.size(0) for t in xs])
-        xs = [[t, t.new_zeros(max_nodes - t.size(0), t.size(1))] for t in xs]
-        xs = [torch.cat(t, dim=0) for t in xs]
-        x = torch.stack(xs, dim=0)
-
-        h = (x.new_zeros((self.num_layers, batch_size, self.hidden_channels)),
-             x.new_zeros((self.num_layers, batch_size, self.hidden_channels)))
+        h = (x.new_zeros((self.num_layers, batch_size, self.in_channels)),
+             x.new_zeros((self.num_layers, batch_size, self.in_channels)))
         q_star = x.new_zeros(1, batch_size, self.out_channels)
 
         for i in range(self.processing_steps):
