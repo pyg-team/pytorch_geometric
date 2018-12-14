@@ -21,7 +21,7 @@ def test_enzymes():
     assert dataset.num_classes == 6
     assert dataset.__repr__() == 'ENZYMES(600)'
 
-    assert len(dataset[0]) == 3
+    assert len(dataset.__getitem__(0)) == 3
 
     assert len(dataset.shuffle()) == 600
     assert len(dataset[:100]) == 100
