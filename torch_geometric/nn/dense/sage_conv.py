@@ -16,7 +16,6 @@ class DenseSAGEConv(torch.nn.Module):
         self.out_channels = out_channels
         self.normalize = normalize
         self.weight = Parameter(torch.Tensor(self.in_channels, out_channels))
-
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
@@ -33,7 +32,8 @@ class DenseSAGEConv(torch.nn.Module):
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
                 \times N \times F}`, with batch-size :math:`B`, (maximum)
-                number of nodes :math:`N`, and feature dimension :math:`F`.
+                number of nodes :math:`N` for each graph, and feature
+                dimension :math:`F`.
             adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B
                 \times N \times N}`.
             mask (ByteTensor, optional): Mask matrix
