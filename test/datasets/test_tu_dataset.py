@@ -7,17 +7,18 @@ import shutil
 
 import pytest
 from torch_geometric.datasets import TUDataset
-from torch_geometric.data import DataLoader
+from torch_geometric.data import DataLoader, DenseDataLoader
+from torch_geometric.transforms import ToDense
 
 
 def test_enzymes():
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)), 'test')
     dataset = TUDataset(root, 'ENZYMES')
-    loader = DataLoader(dataset, batch_size=len(dataset))
 
     assert len(dataset) == 600
     assert dataset.__repr__() == 'ENZYMES(600)'
 
+    loader = DataLoader(dataset, batch_size=len(dataset))
     for data in loader:
         assert data.num_graphs == 600
 
@@ -36,5 +37,14 @@ def test_enzymes():
         assert data.contains_isolated_nodes()
         assert not data.contains_self_loops()
         assert data.is_undirected()
+
+    dataset.transform = ToDense(num_nodes=126)
+    loader = DenseDataLoader(dataset, batch_size=len(dataset))
+    for data in loader:
+        assert len(data) == 4
+        assert list(data.x.size()) == [600, 126, 21]
+        assert list(data.adj.size()) == [600, 126, 126]
+        assert list(data.mask.size()) == [600, 126]
+        assert list(data.y.size()) == [600, 1]
 
     shutil.rmtree(root)
