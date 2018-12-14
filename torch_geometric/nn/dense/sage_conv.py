@@ -48,8 +48,8 @@ class DenseSAGEConv(torch.nn.Module):
         B, N, _ = x.size()
 
         if add_loop:
-            arange = torch.arange(0, N, dtype=torch.long, device=adj.device)
-            adj[:, arange, arange] = 1
+            eye = torch.eye(N, dtype=adj.dtype, device=adj.device)
+            adj = adj + eye.unsqueeze(0).expand_as(adj)
 
         out = torch.matmul(adj, x)
         out = out / adj.sum(dim=-1, keepdim=True)
