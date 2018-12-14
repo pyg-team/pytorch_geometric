@@ -11,13 +11,14 @@ hidden_dim = 512
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-data = Planetoid(path, dataset)[0]
+dataset = Planetoid(path, dataset)
+data = dataset[0]
 
 
 class Encoder(nn.Module):
     def __init__(self, hidden_dim):
         super(Encoder, self).__init__()
-        self.conv = GCNConv(data.num_features, hidden_dim)
+        self.conv = GCNConv(dataset.num_features, hidden_dim)
         self.prelu = nn.PReLU(hidden_dim)
 
     def forward(self, x, edge_index, corrupt=False):
@@ -95,7 +96,7 @@ for epoch in range(1, 301):
 class Classifier(nn.Module):
     def __init__(self, hidden_dim):
         super(Classifier, self).__init__()
-        self.lin = nn.Linear(hidden_dim, data.num_classes)
+        self.lin = nn.Linear(hidden_dim, dataset.num_classes)
 
     def reset_parameters(self):
         self.lin.reset_parameters()

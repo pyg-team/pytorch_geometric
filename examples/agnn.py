@@ -8,16 +8,17 @@ from torch_geometric.nn import AGNNConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-data = Planetoid(path, dataset, T.NormalizeFeatures())[0]
+dataset = Planetoid(path, dataset, T.NormalizeFeatures())
+data = dataset[0]
 
 
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.lin1 = torch.nn.Linear(data.num_features, 16)
+        self.lin1 = torch.nn.Linear(dataset.num_features, 16)
         self.prop1 = AGNNConv(requires_grad=False)
         self.prop2 = AGNNConv(requires_grad=True)
-        self.lin2 = torch.nn.Linear(16, data.num_classes)
+        self.lin2 = torch.nn.Linear(16, dataset.num_classes)
 
     def forward(self):
         x = F.dropout(data.x, training=self.training)

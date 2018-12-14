@@ -61,6 +61,11 @@ class Dataset(torch.utils.data.Dataset):
         self._process()
 
     @property
+    def num_features(self):
+        """"""
+        return self[0].num_features
+
+    @property
     def raw_paths(self):
         files = to_list(self.raw_file_names)
         return [osp.join(self.raw_dir, f) for f in files]
