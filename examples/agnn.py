@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric.nn import AGNNProp
+from torch_geometric.nn import AGNNConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -14,18 +14,18 @@ data = Planetoid(path, dataset, T.NormalizeFeatures())[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.fc1 = torch.nn.Linear(data.num_features, 16)
-        self.prop1 = AGNNProp(requires_grad=False)
-        self.prop2 = AGNNProp(requires_grad=True)
-        self.fc2 = torch.nn.Linear(16, data.num_classes)
+        self.lin1 = torch.nn.Linear(data.num_features, 16)
+        self.prop1 = AGNNConv(requires_grad=False)
+        self.prop2 = AGNNConv(requires_grad=True)
+        self.lin2 = torch.nn.Linear(16, data.num_classes)
 
     def forward(self):
         x = F.dropout(data.x, training=self.training)
-        x = F.relu(self.fc1(x))
+        x = F.relu(self.lin1(data.x))
         x = self.prop1(x, data.edge_index)
         x = self.prop2(x, data.edge_index)
         x = F.dropout(x, training=self.training)
-        x = self.fc2(x)
+        x = self.lin2(x)
         return F.log_softmax(x, dim=1)
 
 
@@ -51,7 +51,12 @@ def test():
     return accs
 
 
-for epoch in range(1, 101):
+best_val_acc = test_acc = 0
+for epoch in range(1, 201):
     train()
+    train_acc, val_acc, tmp_test_acc = test()
+    if val_acc > best_val_acc:
+        best_val_acc = val_acc
+        test_acc = tmp_test_acc
     log = 'Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
-    print(log.format(epoch, *test()))
+    print(log.format(epoch, train_acc, best_val_acc, test_acc))
