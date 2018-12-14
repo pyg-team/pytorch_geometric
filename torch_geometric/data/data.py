@@ -86,7 +86,7 @@ class Data(object):
         """"""
         row, col = self.edge_index
         index = self.num_nodes * row + col
-        return self.row.size(0) == torch.unique(index).size(0)
+        return row.size(0) == torch.unique(index).size(0)
 
     def contains_isolated_nodes(self):
         """"""
