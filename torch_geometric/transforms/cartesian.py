@@ -12,6 +12,7 @@ class Cartesian(object):
     in its edge attributes.
 
     Args:
+        max_distance (float, optional)
         cat (bool, optional): Concat pseudo-coordinates to edge attributes
             instead of replacing them. (default: :obj:`True`)
 
@@ -40,14 +41,20 @@ class Cartesian(object):
                 [0.0000, 0.5000]])
     """
 
-    def __init__(self, cat=True):
+    def __init__(self, max_distance=None, cat=True):
+        self.max_distance = max_distance
         self.cat = cat
 
     def __call__(self, data):
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
 
         cart = pos[col] - pos[row]
-        cart = cart / (2 * cart.abs().max())
+
+        max_distance = self.max_distance
+        if max_distance is None:
+            max_distance = cart.abs().max().item()
+
+        cart = cart / (2 * max_distance)
         cart += 0.5
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
