@@ -7,12 +7,14 @@ def dense_diff_pool(x, adj, s, mask=None):
     <https://arxiv.org/abs/1806.08804>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} &= \mathrm{softmax}(\mathbf{S}) \cdot \mathbf{X}
+        \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
+        \mathbf{X}
 
         \mathbf{A}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
         \mathbf{A} \cdot \mathrm{softmax}(\mathbf{S})
 
-    based on dense learned assignments :math:`\mathbf{S}`.
+    based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
+    \times N \times C}`.
 
     Args:
         x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
