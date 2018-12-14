@@ -3,6 +3,7 @@ from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
 from .graph_conv import GraphConv
 from .gat_conv import GATConv
+from .agnn_conv import AGNNConv
 from .gin_conv import GINConv
 from .point_conv import PointConv
 from .gmm_conv import GMMConv
@@ -17,6 +18,7 @@ __all__ = [
     'SAGEConv',
     'GraphConv',
     'GATConv',
+    'AGNNConv',
     'GINConv',
     'PointConv',
     'GMMConv',
