@@ -17,7 +17,8 @@ def dense_diff_pool(x, adj, s, mask=None):
     Args:
         x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
             \times N \times F}` with batch-size :math:`B`, (maximum)
-            number of nodes :math:`N`, and feature dimension :math:`F`.
+            number of nodes :math:`N` for each graph, and feature dimension
+            :math:`F`.
         adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B
             \times N \times N}`.
         s (Tensor): Assignment tensor :math:`\mathbf{S} \in \mathbb{R}^{B
