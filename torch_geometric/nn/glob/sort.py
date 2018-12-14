@@ -3,6 +3,20 @@ from torch_geometric.utils import to_batch
 
 
 def global_sort_pool(x, batch, k):
+    r"""The global pooling operator from the `"An End-to-End Deep Learning
+    Architecture for Graph Classification"
+    <https://www.cse.wustl.edu/~muhan/papers/AAAI_2018_DGCNN.pdf>`_ paper,
+    where node features are first sorted individually and then  sorted in
+    descending order based on their last features. The first :math:`k` nodes
+    form the output of the layer.
+
+    Args:
+        x (Tensor): Node feature matrix
+            :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
+        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
+            B-1\}}^N`, which assigns each node to a specific graph.
+        k (int): The number of nodes to hold for each graph.
+    """
     x, _ = x.sort(dim=-1)
 
     fill_value = x.min().item() - 1

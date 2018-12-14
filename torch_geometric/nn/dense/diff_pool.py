@@ -22,7 +22,7 @@ def dense_diff_pool(x, adj, s, mask=None):
         adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B
             \times N \times N}`.
         s (Tensor): Assignment tensor :math:`\mathbf{S} \in \mathbb{R}^{B
-            \times N \times C}` with number of clusters :math:`C`.The softmax
+            \times N \times C}` with number of clusters :math:`C`. The softmax
             does not have to be applied beforehand, since it is executed
             within this method.
         mask (ByteTensor, optional): Mask matrix
