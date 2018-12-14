@@ -9,6 +9,7 @@ from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
 from .nn_conv import NNConv
 from .edge_conv import EdgeConv
+from .x_conv import XConv
 
 __all__ = [
     'GCNConv',
@@ -22,4 +23,5 @@ __all__ = [
     'SplineConv',
     'NNConv',
     'EdgeConv',
+    'XConv',
 ]
