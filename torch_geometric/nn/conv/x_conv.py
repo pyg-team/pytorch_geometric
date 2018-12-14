@@ -2,7 +2,7 @@ from math import ceil
 
 import torch
 from torch.nn import Sequential as S, Linear as L, BatchNorm1d as BN
-from torch.nn import ELU, Conv1d, Conv2d
+from torch.nn import ELU, Conv1d
 from torch_cluster import knn_graph
 from torch_geometric.nn import Reshape
 
