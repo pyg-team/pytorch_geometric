@@ -19,22 +19,28 @@ def files_exist(files):
 class Dataset(torch.utils.data.Dataset):
     @property
     def raw_file_names(self):
+        """"""
         raise NotImplementedError
 
     @property
     def processed_file_names(self):
+        """"""
         raise NotImplementedError
 
     def download(self):
+        """"""
         raise NotImplementedError
 
     def process(self):
+        """"""
         raise NotImplementedError
 
     def __len__(self):
+        """"""
         raise NotImplementedError
 
     def get(self, idx):
+        """"""
         raise NotImplementedError
 
     def __init__(self,
