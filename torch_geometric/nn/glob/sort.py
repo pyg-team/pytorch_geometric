@@ -16,6 +16,8 @@ def global_sort_pool(x, batch, k):
         batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
             B-1\}}^N`, which assigns each node to a specific graph.
         k (int): The number of nodes to hold for each graph.
+
+    :rtype: :class:`Tensor`
     """
     x, _ = x.sort(dim=-1)
 

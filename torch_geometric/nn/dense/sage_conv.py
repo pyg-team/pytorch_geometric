@@ -7,6 +7,8 @@ from ..inits import uniform
 
 class DenseSAGEConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.sage_conv.SAGEConv`.
+
+    :rtype: :class:`Tensor`
     """
 
     def __init__(self, in_channels, out_channels, normalize=True, bias=True):

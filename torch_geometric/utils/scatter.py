@@ -14,8 +14,8 @@ def scatter_(name, src, index, dim_size=None):
         src (Tensor): The source tensor.
         index (LongTensor): The indices of elements to scatter.
         dim_size (int, optional): Automatically create output tensor with size
-            :attr:`dim_size` in the first dimension. If :attr:`None`, a minimal
-            sized output tensor is returned. (default: :obj:`None`)
+            :attr:`dim_size` in the first dimension. If set to :attr:`None`, a
+            minimal sized output tensor is returned. (default: :obj:`None`)
 
     :rtype: :class:`Tensor`
 

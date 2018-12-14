@@ -28,6 +28,8 @@ def dense_diff_pool(x, adj, s, mask=None):
         mask (ByteTensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
+
+    :rtype: (:class:`Tensor`, :class:`Tensor`)
     """
 
     x = x.unsqueeze(0) if x.dim() == 2 else x

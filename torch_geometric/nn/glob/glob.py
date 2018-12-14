@@ -16,6 +16,8 @@ def global_add_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific graph.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
+
+    :rtype: :class:`Tensor`
     """
 
     size = batch[-1].item() + 1 if size is None else size
@@ -37,6 +39,8 @@ def global_mean_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific graph.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
+
+    :rtype: :class:`Tensor`
     """
 
     size = batch[-1].item() + 1 if size is None else size
@@ -58,6 +62,8 @@ def global_max_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific graph.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
+
+    :rtype: :class:`Tensor`
     """
 
     size = batch[-1].item() + 1 if size is None else size
