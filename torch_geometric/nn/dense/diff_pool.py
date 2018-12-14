@@ -7,12 +7,26 @@ def dense_diff_pool(x, adj, s, mask=None):
     <https://arxiv.org/abs/1806.08804>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} &= \mathbf{S} \cdot \mathbf{X}
+        \mathbf{X}^{\prime} &= \mathrm{softmax}(\mathbf{S}) \cdot \mathbf{X}
 
-        \mathbf{A}^{\prime} &= \mathbf{S}^{\top} \cdot \mathbf{A} \cdot
-        \mathbf{S}
+        \mathbf{A}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
+        \mathbf{A} \cdot \mathrm{softmax}(\mathbf{S})
 
     based on dense learned assignments :math:`\mathbf{S}`.
+
+    Args:
+        x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
+            \times N \times F}` with batch-size :math:`B`, (maximum)
+            number of nodes :math:`N`, and feature dimension :math:`F`.
+        adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B
+            \times N \times N}`.
+        s (Tensor): Assignment tensor :math:`\mathbf{S} \in \mathbb{R}^{B
+            \times N \times C}` with number of clusters :math:`C`.The softmax
+            does not have to be applied beforehand, since it is executed
+            within this method.
+        mask (ByteTensor, optional): Mask matrix
+            :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+            the valid nodes for each graph. (default: :obj:`None`)
     """
 
     x = x.unsqueeze(0) if x.dim() == 2 else x
