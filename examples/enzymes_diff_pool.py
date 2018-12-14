@@ -1,4 +1,5 @@
 import os.path as osp
+from math import ceil
 
 import torch
 import torch.nn.functional as F
@@ -18,12 +19,7 @@ class MyFilter(object):
 class MyTransform(object):
     def __call__(self, data):
         # Only use node attributes.
-        data.x = data.x[:, :-3]
-
-        # Add self loops.
-        arange = torch.arange(data.adj.size(-1), dtype=torch.long)
-        data.adj[arange, arange] = 1
-
+        data.x = data.x[:, -3:]
         return data
 
 
@@ -49,19 +45,18 @@ class GNN(torch.nn.Module):
                  in_channels,
                  hidden_channels,
                  out_channels,
-                 lin=True,
-                 norm=True,
-                 norm_embed=True):
+                 normalize=False,
+                 add_loop=False,
+                 lin=True):
         super(GNN, self).__init__()
 
-        self.conv1 = DenseSAGEConv(in_channels, hidden_channels, norm,
-                                   norm_embed)
+        self.add_loop = add_loop
+
+        self.conv1 = DenseSAGEConv(in_channels, hidden_channels, normalize)
         self.bn1 = torch.nn.BatchNorm1d(hidden_channels)
-        self.conv2 = DenseSAGEConv(hidden_channels, hidden_channels, norm,
-                                   norm_embed)
+        self.conv2 = DenseSAGEConv(hidden_channels, hidden_channels, normalize)
         self.bn2 = torch.nn.BatchNorm1d(hidden_channels)
-        self.conv3 = DenseSAGEConv(hidden_channels, out_channels, norm,
-                                   norm_embed)
+        self.conv3 = DenseSAGEConv(hidden_channels, out_channels, normalize)
         self.bn3 = torch.nn.BatchNorm1d(out_channels)
 
         if lin is True:
@@ -78,13 +73,13 @@ class GNN(torch.nn.Module):
         x = x.view(batch_size, num_nodes, num_channels)
         return x
 
-    def forward(self, x, adj):
+    def forward(self, x, adj, mask=None):
         batch_size, num_nodes, in_channels = x.size()
 
         x0 = x
-        x1 = self.bn(1, F.relu(self.conv1(x0, adj)))
-        x2 = self.bn(2, F.relu(self.conv2(x1, adj)))
-        x3 = self.bn(3, F.relu(self.conv3(x2, adj)))
+        x1 = self.bn(1, F.relu(self.conv1(x0, adj, mask, self.add_loop)))
+        x2 = self.bn(2, F.relu(self.conv2(x1, adj, mask, self.add_loop)))
+        x3 = self.bn(3, F.relu(self.conv3(x2, adj, mask, self.add_loop)))
 
         x = torch.cat([x1, x2, x3], dim=-1)
 
@@ -98,26 +93,26 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.gnn1_pool = GNN(18, 64, int(0.1 * max_nodes), norm=False)
-        self.gnn1_embed = GNN(18, 64, 64, lin=False, norm=False)
+        self.gnn1_pool = GNN(3, 64, ceil(0.1 * max_nodes), add_loop=True)
+        self.gnn1_embed = GNN(3, 64, 64, add_loop=True, lin=False)
 
-        self.gnn2_embed = GNN(3 * 64, 64, 64, lin=False, norm=False)
+        self.gnn2_embed = GNN(3 * 64, 64, 64, lin=False)
 
         self.lin1 = torch.nn.Linear(3 * 64, 64)
         self.lin2 = torch.nn.Linear(64, 6)
 
-    def forward(self, data):
-        x, adj = data.x, data.adj
+    def forward(self, x, adj, mask=None):
+        s = self.gnn1_pool(x, adj, mask)
+        x = self.gnn1_embed(x, adj, mask)
 
-        s = self.gnn1_pool(x, adj)
-        x = self.gnn1_embed(x, adj)
-        x, adj, reg1 = dense_diff_pool(x, adj, s, data.mask)
+        x, adj, reg = dense_diff_pool(x, adj, s, mask)
+
         x = self.gnn2_embed(x, adj)
 
         x = x.mean(dim=1)
         x = F.relu(self.lin1(x))
         x = self.lin2(x)
-        return F.log_softmax(x, dim=-1), reg1
+        return F.log_softmax(x, dim=-1), reg
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -132,7 +127,7 @@ def train(epoch):
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        output, reg = model(data)
+        output, reg = model(data.x, data.adj, data.mask)
         loss = F.nll_loss(output, data.y.view(-1)) + reg
         loss.backward()
         loss_all += data.y.size(0) * loss.item()
@@ -146,7 +141,7 @@ def test(loader):
 
     for data in loader:
         data = data.to(device)
-        pred = model(data)[0].max(dim=1)[1]
+        pred = model(data.x, data.adj, data.mask)[0].max(dim=1)[1]
         correct += pred.eq(data.y.view(-1)).sum().item()
     return correct / len(loader.dataset)
 
