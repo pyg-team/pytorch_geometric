@@ -3,7 +3,9 @@ from torch_geometric.utils import to_batch
 
 
 class Set2Set(torch.nn.Module):
-    r"""Global pooling based on iterative content-based attention
+    r"""The global pooling operator based on iterative content-based attention
+    from the `"Order Matters: Sequence to sequence for sets"
+    <https://arxiv.org/abs/1511.06391>`_ paper
 
     .. math::
         \mathbf{q}_t &= \mathrm{LSTM}(\mathbf{q}^{*}_{t-1})
@@ -12,9 +14,9 @@ class Set2Set(torch.nn.Module):
 
         \mathbf{r}_t &= \sum_{i=1}^N \alpha_{i,t} \mathbf{x}_i
 
-        \mathbf{q}^{*}_t &= \mathbf{q}_t \, \Vert \, \mathbf{r}_t
+        \mathbf{q}^{*}_t &= \mathbf{q}_t \, \Vert \, \mathbf{r}_t,
 
-    where :math:`\mathbf{q}^{*}_T` defines the output of the layer with twiche
+    where :math:`\mathbf{q}^{*}_T` defines the output of the layer with twice
     the dimensionality as the input.
 
     Args:
