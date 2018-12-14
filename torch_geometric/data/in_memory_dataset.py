@@ -33,11 +33,6 @@ class InMemoryDataset(Dataset):
         self.data, self.slices = None, None
 
     @property
-    def num_features(self):
-        """"""
-        return self[0].num_features
-
-    @property
     def num_classes(self):
         """"""
         data = self.data
