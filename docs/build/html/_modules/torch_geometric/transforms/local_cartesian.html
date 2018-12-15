@@ -197,18 +197,13 @@
 
 
 <div class="viewcode-block" id="LocalCartesian"><a class="viewcode-back" href="../../../modules/transforms.html#torch_geometric.transforms.LocalCartesian">[docs]</a><span class="k">class</span> <span class="nc">LocalCartesian</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Saves the locally normalized spatial relation of linked nodes as</span>
-<span class="sd">    Cartesian coordinates (mapped to the fixed interval :math:`[0, 1]`)</span>
-
-<span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{u}(i,j) = 0.5 + \frac{\mathbf{pos}_j - \mathbf{pos}_i}{2 \cdot</span>
-<span class="sd">        \max_{v \in \mathcal{N}(i)} | \mathbf{pos}_v - \mathbf{pos}_i|}</span>
-
-<span class="sd">    in its edge attributes.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Saves the relative Cartesian coordinates of linked nodes in its edge</span>
+<span class="sd">    attributes. Each coordinate gets *neighborhood-normalized* to lay in</span>
+<span class="sd">    :math:`{[0, 1]}^D`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cat (bool, optional): Concat pseudo-coordinates to edge attributes</span>
-<span class="sd">            instead of replacing them. (default: :obj:`True`)</span>
+<span class="sd">        cat (bool, optional): If set to :obj:`False`, all existing edge</span>
+<span class="sd">            attributes will be replaced. (default: :obj:`True`)</span>
 
 <span class="sd">    .. testsetup::</span>
 
@@ -224,15 +219,6 @@
 <span class="sd">        data = Data(edge_index=edge_index, pos=pos)</span>
 
 <span class="sd">        data = LocalCartesian()(data)</span>
-
-<span class="sd">        print(data.edge_attr)</span>
-
-<span class="sd">    .. testoutput::</span>
-
-<span class="sd">        tensor([[1.0000, 0.5000],</span>
-<span class="sd">                [0.2500, 0.5000],</span>
-<span class="sd">                [1.0000, 0.5000],</span>
-<span class="sd">                [0.0000, 0.5000]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -242,10 +228,11 @@
         <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pseudo</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span>
 
         <span class="n">cart</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
-        <span class="n">max_cart</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scatter_max</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">abs</span><span class="p">(),</span> <span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">cart</span> <span class="o">=</span> <span class="n">cart</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">max_cart</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="n">row</span><span class="p">])</span>
-        <span class="n">cart</span> <span class="o">+=</span> <span class="mf">0.5</span>
         <span class="n">cart</span> <span class="o">=</span> <span class="n">cart</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">cart</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">cart</span>
+
+        <span class="n">max_value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scatter_max</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">abs</span><span class="p">(),</span> <span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">max_value</span> <span class="o">=</span> <span class="n">max_value</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cart</span> <span class="o">=</span> <span class="n">cart</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">max_value</span><span class="p">[</span><span class="n">row</span><span class="p">])</span> <span class="o">+</span> <span class="mf">0.5</span>
 
         <span class="k">if</span> <span class="n">pseudo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="p">:</span>
             <span class="n">pseudo</span> <span class="o">=</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">pseudo</span>
@@ -256,7 +243,7 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(cat=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">()&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

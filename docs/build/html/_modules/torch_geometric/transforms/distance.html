@@ -199,8 +199,13 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Saves the Euclidean distance of linked nodes in its edge attributes.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cat (bool, optional): Concat pseudo-coordinates to edge attributes</span>
-<span class="sd">            instead of replacing them. (default: :obj:`True`)</span>
+<span class="sd">        norm (bool, optional): If set to :obj:`False`, the output will not be</span>
+<span class="sd">            normalized to lay in :math:`[0, 1]`. (default: :obj:`True`)</span>
+<span class="sd">        max_value (float, optional): If set and :obj:`norm=True`, normalization</span>
+<span class="sd">            will be performed based on this value instead of the maximum value</span>
+<span class="sd">            found in the data. (default: :obj:`None`)</span>
+<span class="sd">        cat (bool, optional): If set to :obj:`False`, all existing edge</span>
+<span class="sd">            attributes will be replaced. (default: :obj:`True`)</span>
 
 <span class="sd">    .. testsetup::</span>
 
@@ -211,29 +216,29 @@
 
 <span class="sd">        from torch_geometric.transforms import Distance</span>
 
-<span class="sd">        pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)</span>
+<span class="sd">        pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])</span>
 <span class="sd">        edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])</span>
 <span class="sd">        data = Data(edge_index=edge_index, pos=pos)</span>
 
 <span class="sd">        data = Distance()(data)</span>
-
-<span class="sd">        print(data.edge_attr)</span>
-
-<span class="sd">    .. testoutput::</span>
-
-<span class="sd">        tensor([[1.],</span>
-<span class="sd">                [1.],</span>
-<span class="sd">                [2.],</span>
-<span class="sd">                [2.]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="n">max_value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cat</span> <span class="o">=</span> <span class="n">cat</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pseudo</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span>
 
         <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">max_value</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">max_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_value</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">/</span> <span class="n">max_value</span>
 
         <span class="k">if</span> <span class="n">pseudo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="p">:</span>
             <span class="n">pseudo</span> <span class="o">=</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">pseudo</span>
@@ -244,7 +249,8 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(cat=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(norm=</span><span class="si">{}</span><span class="s1">, max_value=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_value</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

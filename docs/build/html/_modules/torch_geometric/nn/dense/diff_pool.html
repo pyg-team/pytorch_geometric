@@ -201,12 +201,14 @@
 <span class="sd">    &lt;https://arxiv.org/abs/1806.08804&gt;`_ paper</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{X}^{\prime} &amp;= \mathrm{softmax}(\mathbf{S}) \cdot \mathbf{X}</span>
+<span class="sd">        \mathbf{X}^{\prime} &amp;= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot</span>
+<span class="sd">        \mathbf{X}</span>
 
 <span class="sd">        \mathbf{A}^{\prime} &amp;= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot</span>
 <span class="sd">        \mathbf{A} \cdot \mathrm{softmax}(\mathbf{S})</span>
 
-<span class="sd">    based on dense learned assignments :math:`\mathbf{S}`.</span>
+<span class="sd">    based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B</span>
+<span class="sd">    \times N \times C}`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B</span>

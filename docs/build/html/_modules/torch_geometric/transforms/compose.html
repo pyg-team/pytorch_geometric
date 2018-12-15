@@ -198,29 +198,6 @@
 <span class="sd">    Args:</span>
 <span class="sd">        transforms (list of :obj:`transform` objects): List of transforms to</span>
 <span class="sd">            compose.</span>
-
-<span class="sd">    .. testsetup::</span>
-
-<span class="sd">        import torch</span>
-<span class="sd">        from torch_geometric.data import Data</span>
-
-<span class="sd">    .. testcode::</span>
-
-<span class="sd">        import torch_geometric.transforms as T</span>
-
-<span class="sd">        pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)</span>
-<span class="sd">        edge_index = torch.tensor([[0, 1], [1, 2]])</span>
-<span class="sd">        data = Data(edge_index=edge_index, pos=pos)</span>
-
-<span class="sd">        transform = T.Compose([T.Cartesian(), T.TargetIndegree()])</span>
-<span class="sd">        data = transform(data)</span>
-
-<span class="sd">        print(data.edge_attr)</span>
-
-<span class="sd">    .. testoutput::</span>
-
-<span class="sd">        tensor([[0.7500, 0.5000, 1.0000],</span>
-<span class="sd">                [1.0000, 0.5000, 1.0000]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">):</span>

@@ -1120,9 +1120,11 @@ Hierarchical Graph Classifiers”</a> papers</p>
 <dd><p>Differentiable pooling operator from the <a class="reference external" href="https://arxiv.org/abs/1806.08804">“Hierarchical Graph
 Representation Learning with Differentiable Pooling”</a> paper</p>
 <div class="math notranslate nohighlight">
-\[ \begin{align}\begin{aligned}\mathbf{X}^{\prime} &amp;= \mathrm{softmax}(\mathbf{S}) \cdot \mathbf{X}\\\mathbf{A}^{\prime} &amp;= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
+\[ \begin{align}\begin{aligned}\mathbf{X}^{\prime} &amp;= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
+\mathbf{X}\\\mathbf{A}^{\prime} &amp;= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
 \mathbf{A} \cdot \mathrm{softmax}(\mathbf{S})\end{aligned}\end{align} \]</div>
-<p>based on dense learned assignments <span class="math notranslate nohighlight">\(\mathbf{S}\)</span>.</p>
+<p>based on dense learned assignments <span class="math notranslate nohighlight">\(\mathbf{S} \in \mathbb{R}^{B
+\times N \times C}\)</span>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
