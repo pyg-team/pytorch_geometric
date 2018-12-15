@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.utils import to_batch
+from torch_scatter import scatter_add
+from torch_geometric.utils import softmax
 
 
 class Set2Set(torch.nn.Module):
@@ -46,24 +47,20 @@ class Set2Set(torch.nn.Module):
 
     def forward(self, x, batch):
         """"""
-        x, _ = to_batch(x, batch)
-        batch_size, max_nodes, _ = x.size()
+        batch_size = batch.max().item() + 1
 
         h = (x.new_zeros((self.num_layers, batch_size, self.in_channels)),
              x.new_zeros((self.num_layers, batch_size, self.in_channels)))
-        q_star = x.new_zeros(1, batch_size, self.out_channels)
+        q_star = x.new_zeros(batch_size, self.out_channels)
 
         for i in range(self.processing_steps):
-            q, h = self.lstm(q_star, h)
-            q = q.view(batch_size, 1, self.in_channels)
-            e = (x * q).sum(dim=-1)  # Dot product.
-            a = torch.softmax(e, dim=-1)
-            a = a.view(batch_size, max_nodes, 1)
-            r = (a * x).sum(dim=1, keepdim=True)
+            q, h = self.lstm(q_star.unsqueeze(0), h)
+            q = q.view(batch_size, self.in_channels)
+            e = (x * q[batch]).sum(dim=-1, keepdim=True)
+            a = softmax(e, batch, num_nodes=batch_size)
+            r = scatter_add(a * x, batch, dim=0, dim_size=batch_size)
             q_star = torch.cat([q, r], dim=-1)
-            q_star = q_star.view(1, batch_size, self.out_channels)
 
-        q_star = q_star.view(batch_size, self.out_channels)
         return q_star
 
     def __repr__(self):
