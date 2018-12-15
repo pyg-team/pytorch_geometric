@@ -52,7 +52,7 @@ class Complete(object):
 
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
-transform = T.Compose([MyTransform(), Complete(), T.Distance()])
+transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
 dataset = QM9(path, transform=transform).shuffle()
 
 # Normalize targets to mean = 0 and std = 1.
