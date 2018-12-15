@@ -4,7 +4,7 @@ from torch_geometric.data import Data
 
 
 def test_spherical():
-    assert Spherical().__repr__() == 'Spherical(cat=True)'
+    assert Spherical().__repr__() == 'Spherical(norm=True, max_value=None)'
 
     pos = torch.tensor([[0, 0, 0], [0, 1, 1]], dtype=torch.float)
     edge_index = torch.tensor([[0, 1], [1, 0]])

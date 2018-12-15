@@ -5,10 +5,11 @@ from torch_geometric.data import Data
 
 def test_compose():
     transform = T.Compose([T.Cartesian(), T.TargetIndegree()])
-    assert transform.__repr__() == ('Compose([\n'
-                                    '    Cartesian(cat=True),\n'
-                                    '    TargetIndegree(cat=True),\n'
-                                    '])')
+    out = ('Compose([\n'
+           '    Cartesian(norm=True, max_value=None),\n'
+           '    TargetIndegree(cat=True),\n'
+           '])')
+    assert transform.__repr__() == out
 
     pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)
     edge_index = torch.tensor([[0, 1], [1, 2]])

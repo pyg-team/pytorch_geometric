@@ -19,5 +19,8 @@ def test_global_sort_pool():
     assert out[0, -1].tolist() == [0, 0, 0, 0]
 
     # Nodes are sorted.
-    expected = 4 - torch.arange(5).view(1, 5).expand(2, 5)
-    assert out.argsort(dim=1)[:, :, -1].tolist() == expected.tolist()
+    expected = 3 - torch.arange(4)
+    assert out[0, :4, -1].argsort().tolist() == expected.tolist()
+
+    expected = 4 - torch.arange(5)
+    assert out[1, :, -1].argsort().tolist() == expected.tolist()
