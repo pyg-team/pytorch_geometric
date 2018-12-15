@@ -3,7 +3,7 @@ import scipy.spatial
 from torch_geometric.utils import to_undirected
 
 
-class NNGraph(object):
+class KNNGraph(object):
     def __init__(self, k=6):
         self.k = k
 
