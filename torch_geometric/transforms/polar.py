@@ -48,7 +48,7 @@ class Polar(object):
         rho = torch.norm(cart, p=2, dim=-1).view(-1, 1)
 
         theta = torch.atan2(cart[..., 1], cart[..., 0]).view(-1, 1)
-        theta += (theta < 0).type_as(theta)
+        theta = theta + (theta < 0).type_as(theta) + (2 * PI)
 
         if self.norm:
             if self.max_value is None:
