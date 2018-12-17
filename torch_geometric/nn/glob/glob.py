@@ -13,7 +13,7 @@ def global_add_pool(x, batch, size=None):
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
         batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
-            B-1\}}^N`, which assigns each node to a specific graph.
+            B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
 
@@ -36,7 +36,7 @@ def global_mean_pool(x, batch, size=None):
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
         batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
-            B-1\}}^N`, which assigns each node to a specific graph.
+            B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
 
@@ -59,7 +59,7 @@ def global_max_pool(x, batch, size=None):
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
         batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
-            B-1\}}^N`, which assigns each node to a specific graph.
+            B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
 
