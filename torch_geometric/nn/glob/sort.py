@@ -14,7 +14,7 @@ def global_sort_pool(x, batch, k):
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
         batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
-            B-1\}}^N`, which assigns each node to a specific graph.
+            B-1\}}^N`, which assigns each node to a specific example.
         k (int): The number of nodes to hold for each graph.
 
     :rtype: :class:`Tensor`
