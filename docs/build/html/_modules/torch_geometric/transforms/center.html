@@ -193,12 +193,25 @@
             
   <h1>Source code for torch_geometric.transforms.center</h1><div class="highlight"><pre>
 <div class="viewcode-block" id="Center"><a class="viewcode-back" href="../../../modules/transforms.html#torch_geometric.transforms.Center">[docs]</a><span></span><span class="k">class</span> <span class="nc">Center</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Centers node positions around the origin.</span>
+
+<span class="sd">    .. testsetup::</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch_geometric.data import Data</span>
+
+<span class="sd">    .. testcode::</span>
+
+<span class="sd">        from torch_geometric.transforms import Center</span>
+
+<span class="sd">        pos = torch.Tensor([[0, 0], [2, 0], [4, 0]])</span>
+<span class="sd">        data = Data(pos=pos)</span>
+
+<span class="sd">        data = Center()(data)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span>
-
-        <span class="n">mean</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">data</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">-</span> <span class="n">mean</span>
-
+        <span class="n">data</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

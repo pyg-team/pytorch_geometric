@@ -466,7 +466,16 @@ instead of replacing them. (default: <a class="reference external" href="https:/
 <dl class="class">
 <dt id="torch_geometric.transforms.Center">
 <em class="property">class </em><code class="descname">Center</code><a class="reference internal" href="../_modules/torch_geometric/transforms/center.html#Center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Center" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Centers node positions around the origin.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="kn">import</span> <span class="n">Center</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">Center</span><span class="p">()(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="class">
 <dt id="torch_geometric.transforms.NormalizeScale">
@@ -620,7 +629,16 @@ given interval, e.g., resulting in the transformation matrix</p>
 <dl class="class">
 <dt id="torch_geometric.transforms.AddSelfLoops">
 <em class="property">class </em><code class="descname">AddSelfLoops</code><a class="reference internal" href="../_modules/torch_geometric/transforms/add_self_loops.html#AddSelfLoops"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.AddSelfLoops" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Adds self-loops to edge indices.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.transforms</span> <span class="kn">import</span> <span class="n">AddSelfLoops</span>
+
+<span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">AddSelfLoops</span><span class="p">()(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="class">
 <dt id="torch_geometric.transforms.KNNGraph">

@@ -197,15 +197,15 @@
 <div class="contents local topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#module-torch_geometric.nn.conv" id="id1">Sparse Convolutional Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.dense.sage_conv" id="id2">Dense Convolutional Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.glob" id="id3">Global Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id4">Sparse Hierarchical Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.dense.diff_pool" id="id5">Dense Hierarchical Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.conv" id="id2">Sparse Convolutional Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.dense.sage_conv" id="id3">Dense Convolutional Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.glob" id="id4">Global Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id5">Sparse Hierarchical Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.dense.diff_pool" id="id6">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </div>
 <div class="section" id="module-torch_geometric.nn.conv">
-<span id="sparse-convolutional-layers"></span><h2><a class="toc-backref" href="#id1">Sparse Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv" title="Permalink to this headline">¶</a></h2>
+<span id="sparse-convolutional-layers"></span><h2><a class="toc-backref" href="#id2">Sparse Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.conv.GCNConv">
 <em class="property">class </em><code class="descname">GCNConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>improved=False</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv" title="Permalink to this definition">¶</a></dt>
@@ -840,7 +840,7 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 
 </div>
 <div class="section" id="module-torch_geometric.nn.dense.sage_conv">
-<span id="dense-convolutional-layers"></span><h2><a class="toc-backref" href="#id2">Dense Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.sage_conv" title="Permalink to this headline">¶</a></h2>
+<span id="dense-convolutional-layers"></span><h2><a class="toc-backref" href="#id3">Dense Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.sage_conv" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.dense.sage_conv.DenseSAGEConv">
 <em class="property">class </em><code class="descname">DenseSAGEConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>normalize=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/sage_conv.html#DenseSAGEConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.sage_conv.DenseSAGEConv" title="Permalink to this definition">¶</a></dt>
@@ -889,7 +889,7 @@ not automatically add self-loops to the adjacency matrices.
 
 </div>
 <div class="section" id="module-torch_geometric.nn.glob">
-<span id="global-pooling-layers"></span><h2><a class="toc-backref" href="#id3">Global Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.glob" title="Permalink to this headline">¶</a></h2>
+<span id="global-pooling-layers"></span><h2><a class="toc-backref" href="#id4">Global Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.glob" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="torch_geometric.nn.glob.global_add_pool">
 <code class="descname">global_add_pool</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/glob.html#global_add_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.global_add_pool" title="Permalink to this definition">¶</a></dt>
@@ -906,7 +906,7 @@ across the node node dimension, so that for a single graph
 <li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</li>
 <li><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
-B-1\}}^N\)</span>, which assigns each node to a specific graph.</li>
+B-1\}}^N\)</span>, which assigns each node to a specific example.</li>
 <li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Batch-size <span class="math notranslate nohighlight">\(B\)</span>.
 Automatically calculated if not given. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 </ul>
@@ -935,7 +935,7 @@ across the node node dimension, so that for a single graph
 <li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</li>
 <li><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
-B-1\}}^N\)</span>, which assigns each node to a specific graph.</li>
+B-1\}}^N\)</span>, which assigns each node to a specific example.</li>
 <li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Batch-size <span class="math notranslate nohighlight">\(B\)</span>.
 Automatically calculated if not given. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 </ul>
@@ -964,7 +964,7 @@ maximum node features across the node dimension, so that for a single graph
 <li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}\)</span>.</li>
 <li><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
-B-1\}}^N\)</span>, which assigns each node to a specific graph.</li>
+B-1\}}^N\)</span>, which assigns each node to a specific example.</li>
 <li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Batch-size <span class="math notranslate nohighlight">\(B\)</span>.
 Automatically calculated if not given. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 </ul>
@@ -993,7 +993,7 @@ form the output of the layer.</p>
 <li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
 <li><strong>batch</strong> (<em>LongTensor</em>) – Batch vector <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots,
-B-1\}}^N\)</span>, which assigns each node to a specific graph.</li>
+B-1\}}^N\)</span>, which assigns each node to a specific example.</li>
 <li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of nodes to hold for each graph.</li>
 </ul>
 </td>
@@ -1044,37 +1044,7 @@ LSTM and computing the final results. (default: <code class="xref py py-obj docu
 
 </div>
 <div class="section" id="module-torch_geometric.nn.pool">
-<span id="sparse-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id4">Sparse Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="torch_geometric.nn.pool.max_pool">
-<code class="descname">max_pool</code><span class="sig-paren">(</span><em>cluster</em>, <em>data</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/max_pool.html#max_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.max_pool" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="torch_geometric.nn.pool.max_pool_x">
-<code class="descname">max_pool_x</code><span class="sig-paren">(</span><em>cluster</em>, <em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/max_pool.html#max_pool_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.max_pool_x" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="torch_geometric.nn.pool.avg_pool">
-<code class="descname">avg_pool</code><span class="sig-paren">(</span><em>cluster</em>, <em>data</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/avg_pool.html#avg_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.avg_pool" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="torch_geometric.nn.pool.avg_pool_x">
-<code class="descname">avg_pool_x</code><span class="sig-paren">(</span><em>cluster</em>, <em>x</em>, <em>batch=None</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/avg_pool.html#avg_pool_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.avg_pool_x" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="torch_geometric.nn.pool.graclus">
-<code class="descname">graclus</code><span class="sig-paren">(</span><em>edge_index</em>, <em>weight=None</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/graclus.html#graclus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.graclus" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="torch_geometric.nn.pool.voxel_grid">
-<code class="descname">voxel_grid</code><span class="sig-paren">(</span><em>pos</em>, <em>batch</em>, <em>size</em>, <em>start=None</em>, <em>end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/voxel_grid.html#voxel_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.voxel_grid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<span id="sparse-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id5">Sparse Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.pool.TopKPooling">
 <em class="property">class </em><code class="descname">TopKPooling</code><span class="sig-paren">(</span><em>in_channels</em>, <em>ratio=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/topk_pool.html#TopKPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.TopKPooling" title="Permalink to this definition">¶</a></dt>
@@ -1111,9 +1081,251 @@ Hierarchical Graph Classifiers”</a> papers</p>
 
 </dd></dl>
 
+<dl class="function">
+<dt id="torch_geometric.nn.pool.max_pool">
+<code class="descname">max_pool</code><span class="sig-paren">(</span><em>cluster</em>, <em>data</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/max_pool.html#max_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.max_pool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.max_pool_x">
+<code class="descname">max_pool_x</code><span class="sig-paren">(</span><em>cluster</em>, <em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/max_pool.html#max_pool_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.max_pool_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.avg_pool">
+<code class="descname">avg_pool</code><span class="sig-paren">(</span><em>cluster</em>, <em>data</em>, <em>transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/avg_pool.html#avg_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.avg_pool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.avg_pool_x">
+<code class="descname">avg_pool_x</code><span class="sig-paren">(</span><em>cluster</em>, <em>x</em>, <em>batch=None</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/avg_pool.html#avg_pool_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.avg_pool_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.graclus">
+<code class="descname">graclus</code><span class="sig-paren">(</span><em>edge_index</em>, <em>weight=None</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/graclus.html#graclus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.graclus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.voxel_grid">
+<code class="descname">voxel_grid</code><span class="sig-paren">(</span><em>pos</em>, <em>batch</em>, <em>size</em>, <em>start=None</em>, <em>end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/voxel_grid.html#voxel_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.voxel_grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.fps">
+<code class="descname">fps</code><span class="sig-paren">(</span><em>x</em>, <em>batch=None</em>, <em>ratio=0.5</em>, <em>random_start=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_cluster/fps.html#fps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.fps" title="Permalink to this definition">¶</a></dt>
+<dd><p>“A sampling algorithm from the <a class="reference external" href="https://arxiv.org/abs/1706.02413">“PointNet++: Deep Hierarchical Feature
+Learning on Point Sets in a Metric Space”</a> paper, which iteratively samples the
+most distant point with regard to the rest points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
+<li><strong>batch</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Sampling ratio. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0.5</span></code>)</li>
+<li><strong>random_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, use the first
+node in <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> as starting node. (default: obj:<cite>True</cite>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">fps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.knn">
+<code class="descname">knn</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>k</em>, <em>batch_x=None</em>, <em>batch_y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_cluster/knn.html#knn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.knn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code> the <code class="xref py py-obj docutils literal notranslate"><span class="pre">k</span></code> nearest points in
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
+<li><strong>y</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{M \times F}\)</span>.</li>
+<li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of neighbors.</li>
+<li><strong>batch_x</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>batch_y</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assign_index</span> <span class="o">=</span> <span class="n">knn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.knn_graph">
+<code class="descname">knn_graph</code><span class="sig-paren">(</span><em>x</em>, <em>k</em>, <em>batch=None</em>, <em>loop=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_cluster/knn.html#knn_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.knn_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes graph edges to the nearest <code class="xref py py-obj docutils literal notranslate"><span class="pre">k</span></code> points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
+<li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of neighbors.</li>
+<li><strong>batch</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>loop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the graph will contain
+self-loops. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">knn_graph</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.radius">
+<code class="descname">radius</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>r</em>, <em>batch_x=None</em>, <em>batch_y=None</em>, <em>max_num_neighbors=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_cluster/radius.html#radius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code> all points in <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> within
+distance <code class="xref py py-obj docutils literal notranslate"><span class="pre">r</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
+<li><strong>y</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{M \times F}\)</span>.</li>
+<li><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – The radius.</li>
+<li><strong>batch_x</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>batch_y</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>max_num_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of neighbors to
+return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assign_index</span> <span class="o">=</span> <span class="n">radius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.radius_graph">
+<code class="descname">radius_graph</code><span class="sig-paren">(</span><em>x</em>, <em>r</em>, <em>batch=None</em>, <em>loop=False</em>, <em>max_num_neighbors=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_cluster/radius.html#radius_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.radius_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes graph edges to all points within a given distance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
+<li><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – The radius.</li>
+<li><strong>batch</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>loop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the graph will contain
+self-loops. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+<li><strong>max_num_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of neighbors to
+return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">radius_graph</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.nn.pool.nearest">
+<code class="descname">nearest</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>batch_x=None</em>, <em>batch_y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_cluster/nearest.html#nearest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.nearest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clusters points in <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> together which are nearest to a given query
+point in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
+<li><strong>y</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{M \times F}\)</span>.</li>
+<li><strong>batch_x</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>batch_y</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M\)</span>, which assigns each
+node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cluster</span> <span class="o">=</span> <span class="n">nearest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 <div class="section" id="module-torch_geometric.nn.dense.diff_pool">
-<span id="dense-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id5">Dense Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.diff_pool" title="Permalink to this headline">¶</a></h2>
+<span id="dense-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id6">Dense Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.diff_pool" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="torch_geometric.nn.dense.diff_pool.dense_diff_pool">
 <code class="descname">dense_diff_pool</code><span class="sig-paren">(</span><em>x</em>, <em>adj</em>, <em>s</em>, <em>mask=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/diff_pool.html#dense_diff_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.diff_pool.dense_diff_pool" title="Permalink to this definition">¶</a></dt>
