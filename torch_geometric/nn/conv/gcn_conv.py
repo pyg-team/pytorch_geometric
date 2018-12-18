@@ -4,7 +4,7 @@ from torch_sparse import spmm
 from torch_scatter import scatter_add
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
-from ..inits import uniform
+from ..inits import glorot, zeros
 
 
 class GCNConv(torch.nn.Module):
@@ -47,9 +47,8 @@ class GCNConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.in_channels
-        uniform(size, self.weight)
-        uniform(size, self.bias)
+        glorot(self.weight)
+        zeros(self.bias)
 
     def forward(self, x, edge_index, edge_attr=None):
         """"""
