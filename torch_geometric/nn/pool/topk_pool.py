@@ -9,7 +9,7 @@ from ...utils.num_nodes import maybe_num_nodes
 def topk(x, ratio, batch):
     num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
     batch_size, max_num_nodes = num_nodes.size(0), num_nodes.max().item()
-    k = (ratio * num_nodes.to(torch.float)).round().to(torch.long)
+    k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)
 
     cum_num_nodes = torch.cat(
         [num_nodes.new_zeros(1),
@@ -57,12 +57,28 @@ def filter_adj(edge_index, edge_attr, perm, num_nodes=None):
 
 
 class TopKPooling(torch.nn.Module):
-    """Top-k Pooling Layer from the `"Graph U-Net"
-    <https://openreview.net/forum?id=HJePRoAct7>`_ paper.
+    r""":math:`\mathrm{top}_k` pooling operator from the `"Graph U-Net"
+    <https://openreview.net/forum?id=HJePRoAct7>`_ and `"Towards Sparse
+    Hierarchical Graph Classifiers" <https://arxiv.org/abs/1811.01287>`_ papers
+
+    .. math::
+        \mathbf{y} &= \frac{\mathbf{X}\mathbf{p}}{\| \mathbf{p} \|}
+
+        \mathbf{i} &= \mathrm{top}_k(\mathbf{y})
+
+        \mathbf{X}^{\prime} &= (\mathbf{X} \odot
+        \mathrm{tanh}(\mathbf{y}))_{\mathbf{i}}
+
+        \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}},
+
+    where nodes are dropped based on a learnable projection score
+    :math:`\mathbf{p}`.
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float): Graph pooling ratio. (default: :obj:`0.5`)
+        ratio (float): Graph pooling ratio, which is used to compute
+            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
+            (default: :obj:`0.5`)
     """
 
     def __init__(self, in_channels, ratio=0.5):
@@ -80,6 +96,7 @@ class TopKPooling(torch.nn.Module):
         uniform(size, self.weight)
 
     def forward(self, x, edge_index, edge_attr=None, batch=None):
+        """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 

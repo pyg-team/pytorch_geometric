@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.prop.agnn_prop &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.nn.conv.agnn_conv &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">torch_geometric.data</a></li>
@@ -172,7 +174,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.nn.prop.agnn_prop</li>
+      <li>torch_geometric.nn.conv.agnn_conv</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -189,56 +191,67 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.nn.prop.agnn_prop</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.nn.conv.agnn_conv</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">from</span> <span class="nn">torch_sparse</span> <span class="k">import</span> <span class="n">spmm</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">remove_self_loops</span><span class="p">,</span> <span class="n">add_self_loops</span><span class="p">,</span> <span class="n">softmax</span>
 
 
-<div class="viewcode-block" id="AGNNProp"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.prop.AGNNProp">[docs]</a><span class="k">class</span> <span class="nc">AGNNProp</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Graph Attentional Propagation Layer from the</span>
-<span class="sd">    `&quot;Attention-based Graph Neural Network for Semi-Supervised Learning (AGNN)&quot;</span>
-<span class="sd">    &lt;https://arxiv.org/abs/1803.03735&gt;`_ paper.</span>
+<div class="viewcode-block" id="AGNNConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.AGNNConv">[docs]</a><span class="k">class</span> <span class="nc">AGNNConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Graph attentional propagation layer from the</span>
+<span class="sd">    `&quot;Attention-based Graph Neural Network for Semi-Supervised Learning&quot;</span>
+<span class="sd">    &lt;https://arxiv.org/abs/1803.03735&gt;`_ paper</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{X}^{\prime} = \mathbf{P} \mathbf{X},</span>
+
+<span class="sd">    where the propagation matrix :math:`\mathbf{P}` is computed as</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        P_{i,j} = \frac{\exp( \beta \cdot \cos(\mathbf{x}_i, \mathbf{x}_j))}</span>
+<span class="sd">        {\sum_{k \in \mathcal{N}(i)\cup \{ i \}} \exp( \beta \cdot</span>
+<span class="sd">        \cos(\mathbf{x}_i, \mathbf{x}_k))}</span>
+
+<span class="sd">    with trainable parameter :math:`\beta`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        requires_grad (bool, optional): If set to :obj:`False`, the propagation</span>
-<span class="sd">            layer will not be trainable. (default: :obj:`True`)</span>
+<span class="sd">        requires_grad (bool, optional): If set to :obj:`False`, :math:`\beta`</span>
+<span class="sd">            will not be trainable. (default: :obj:`True`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">AGNNProp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AGNNConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span>
 
         <span class="k">if</span> <span class="n">requires_grad</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
-<div class="viewcode-block" id="AGNNProp.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.prop.AGNNProp.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AGNNConv.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.AGNNConv.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AGNNProp.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.prop.AGNNProp.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
-        <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<div class="viewcode-block" id="AGNNConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.AGNNConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="n">edge_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span>
 
-        <span class="c1"># Add self-loops to adjacency matrix.</span>
-        <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
-        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
-
-        <span class="c1"># Compute attention coefficients.</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">norm</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">beta</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 
         <span class="c1"># Perform the propagation.</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">spmm</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">spmm</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">out</span></div>
 

@@ -8,14 +8,15 @@ from torch_geometric.nn import GCNConv, ChebConv  # noqa
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-data = Planetoid(path, dataset, T.NormalizeFeatures())[0]
+dataset = Planetoid(path, dataset, T.NormalizeFeatures())
+data = dataset[0]
 
 
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GCNConv(data.num_features, 16, improved=False)
-        self.conv2 = GCNConv(16, data.num_classes, improved=False)
+        self.conv1 = GCNConv(dataset.num_features, 16, improved=False)
+        self.conv2 = GCNConv(16, dataset.num_classes, improved=False)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
         # self.conv2 = ChebConv(16, data.num_features, K=2)
 
@@ -50,7 +51,7 @@ def test():
 
 
 best_val_acc = test_acc = 0
-for epoch in range(1, 101):
+for epoch in range(1, 201):
     train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:

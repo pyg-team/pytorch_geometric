@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.pool.global_pool &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.nn.glob.glob &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">torch_geometric.data</a></li>
@@ -172,7 +174,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.nn.pool.global_pool</li>
+      <li>torch_geometric.nn.glob.glob</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -189,24 +191,77 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.nn.pool.global_pool</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter_add</span><span class="p">,</span> <span class="n">scatter_mean</span><span class="p">,</span> <span class="n">scatter_max</span>
+  <h1>Source code for torch_geometric.nn.glob.glob</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">scatter_</span>
 
 
-<div class="viewcode-block" id="global_add_pool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.global_add_pool">[docs]</a><span class="k">def</span> <span class="nf">global_add_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="global_add_pool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.global_add_pool">[docs]</a><span class="k">def</span> <span class="nf">global_add_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns batch-wise graph-level-outputs by adding node features</span>
+<span class="sd">    across the node node dimension, so that for a single graph</span>
+<span class="sd">    :math:`\mathcal{G}_i` its output is computed by</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{r}_i = \sum_{n=1}^{N_i} \mathbf{x}_n</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (Tensor): Node feature matrix</span>
+<span class="sd">            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.</span>
+<span class="sd">        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,</span>
+<span class="sd">            B-1\}}^N`, which assigns each node to a specific graph.</span>
+<span class="sd">        size (int, optional): Batch-size :math:`B`.</span>
+<span class="sd">            Automatically calculated if not given. (default: :obj:`None`)</span>
+
+<span class="sd">    :rtype: :class:`Tensor`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">size</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span>
-    <span class="k">return</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">scatter_</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="global_mean_pool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.global_mean_pool">[docs]</a><span class="k">def</span> <span class="nf">global_mean_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="global_mean_pool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.global_mean_pool">[docs]</a><span class="k">def</span> <span class="nf">global_mean_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns batch-wise graph-level-outputs by averaging node features</span>
+<span class="sd">    across the node node dimension, so that for a single graph</span>
+<span class="sd">    :math:`\mathcal{G}_i` its output is computed by</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (Tensor): Node feature matrix</span>
+<span class="sd">            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.</span>
+<span class="sd">        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,</span>
+<span class="sd">            B-1\}}^N`, which assigns each node to a specific graph.</span>
+<span class="sd">        size (int, optional): Batch-size :math:`B`.</span>
+<span class="sd">            Automatically calculated if not given. (default: :obj:`None`)</span>
+
+<span class="sd">    :rtype: :class:`Tensor`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">size</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span>
-    <span class="k">return</span> <span class="n">scatter_mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">scatter_</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="global_max_pool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.global_max_pool">[docs]</a><span class="k">def</span> <span class="nf">global_max_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="global_max_pool"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.global_max_pool">[docs]</a><span class="k">def</span> <span class="nf">global_max_pool</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns batch-wise graph-level-outputs by taking the channel-wise</span>
+<span class="sd">    maximum node features across the node dimension, so that for a single graph</span>
+<span class="sd">    :math:`\mathcal{G}_i` its output is computed by</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{r}_i = \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (Tensor): Node feature matrix</span>
+<span class="sd">            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.</span>
+<span class="sd">        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,</span>
+<span class="sd">            B-1\}}^N`, which assigns each node to a specific graph.</span>
+<span class="sd">        size (int, optional): Batch-size :math:`B`.</span>
+<span class="sd">            Automatically calculated if not given. (default: :obj:`None`)</span>
+
+<span class="sd">    :rtype: :class:`Tensor`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">size</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span>
-    <span class="n">fill</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999999</span>
-    <span class="k">return</span> <span class="n">scatter_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">scatter_</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

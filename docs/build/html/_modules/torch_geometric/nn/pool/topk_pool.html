@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">torch_geometric.data</a></li>
@@ -201,7 +203,7 @@
 <span class="k">def</span> <span class="nf">topk</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
     <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">new_ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">batch_size</span><span class="p">,</span> <span class="n">max_num_nodes</span> <span class="o">=</span> <span class="n">num_nodes</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">num_nodes</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">ratio</span> <span class="o">*</span> <span class="n">num_nodes</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">ratio</span> <span class="o">*</span> <span class="n">num_nodes</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">))</span><span class="o">.</span><span class="n">ceil</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
 
     <span class="n">cum_num_nodes</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
         <span class="p">[</span><span class="n">num_nodes</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
@@ -249,12 +251,28 @@
 
 
 <div class="viewcode-block" id="TopKPooling"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.TopKPooling">[docs]</a><span class="k">class</span> <span class="nc">TopKPooling</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Top-k Pooling Layer from the `&quot;Graph U-Net&quot;</span>
-<span class="sd">    &lt;https://openreview.net/forum?id=HJePRoAct7&gt;`_ paper.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;:math:`\mathrm{top}_k` pooling operator from the `&quot;Graph U-Net&quot;</span>
+<span class="sd">    &lt;https://openreview.net/forum?id=HJePRoAct7&gt;`_ and `&quot;Towards Sparse</span>
+<span class="sd">    Hierarchical Graph Classifiers&quot; &lt;https://arxiv.org/abs/1811.01287&gt;`_ papers</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{y} &amp;= \frac{\mathbf{X}\mathbf{p}}{\| \mathbf{p} \|}</span>
+
+<span class="sd">        \mathbf{i} &amp;= \mathrm{top}_k(\mathbf{y})</span>
+
+<span class="sd">        \mathbf{X}^{\prime} &amp;= (\mathbf{X} \odot</span>
+<span class="sd">        \mathrm{tanh}(\mathbf{y}))_{\mathbf{i}}</span>
+
+<span class="sd">        \mathbf{A}^{\prime} &amp;= \mathbf{A}_{\mathbf{i},\mathbf{i}},</span>
+
+<span class="sd">    where nodes are dropped based on a learnable projection score</span>
+<span class="sd">    :math:`\mathbf{p}`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>
-<span class="sd">        ratio (float): Graph pooling ratio. (default: :obj:`0.5`)</span>
+<span class="sd">        ratio (float): Graph pooling ratio, which is used to compute</span>
+<span class="sd">            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.</span>
+<span class="sd">            (default: :obj:`0.5`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
@@ -272,6 +290,7 @@
         <span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TopKPooling.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.TopKPooling.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">batch</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 

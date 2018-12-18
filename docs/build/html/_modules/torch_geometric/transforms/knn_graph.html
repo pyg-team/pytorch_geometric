@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.transforms.dropout_edge &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.transforms.knn_graph &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">torch_geometric.data</a></li>
@@ -172,7 +174,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.transforms.dropout_edge</li>
+      <li>torch_geometric.transforms.knn_graph</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -189,26 +191,34 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.transforms.dropout_edge</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.transforms.knn_graph</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">scipy.spatial</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">to_undirected</span>
 
 
-<div class="viewcode-block" id="DropoutEdge"><a class="viewcode-back" href="../../../modules/transforms.html#torch_geometric.transforms.DropoutEdge">[docs]</a><span class="k">class</span> <span class="nc">DropoutEdge</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span>
+<div class="viewcode-block" id="KNNGraph"><a class="viewcode-back" href="../../../modules/transforms.html#torch_geometric.transforms.KNNGraph">[docs]</a><span class="k">class</span> <span class="nc">KNNGraph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">data</span><span class="o">.</span><span class="n">num_edges</span><span class="p">,</span> <span class="p">),</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">pos</span><span class="o">.</span><span class="n">is_cuda</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
+        <span class="n">_</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">col</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="n">mask</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">to_undirected</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(p=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(k=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

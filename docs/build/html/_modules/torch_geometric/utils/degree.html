@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">torch_geometric.data</a></li>
@@ -202,7 +204,7 @@
 <span class="sd">        index (LongTensor): Source or target indices of edges.</span>
 <span class="sd">        num_nodes (int, optional): The number of nodes in :attr:`index`.</span>
 <span class="sd">            (default: :obj:`None`)</span>
-<span class="sd">        dtype (:obj:`torch.dtype`, optional). The desired data type of returned</span>
+<span class="sd">        dtype (:obj:`torch.dtype`, optional): The desired data type of returned</span>
 <span class="sd">            tensor.</span>
 
 <span class="sd">    :rtype: :class:`Tensor`</span>
@@ -222,6 +224,7 @@
 
 <span class="sd">       tensor([3., 1., 1.])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_nodes</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">scatter_add_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">new_ones</span><span class="p">((</span><span class="n">index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))))</span></div>

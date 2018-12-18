@@ -70,7 +70,9 @@ jQuery.fn.highlightText = function(text, className) {
     if (node.nodeType === 3) {
       var val = node.nodeValue;
       var pos = val.toLowerCase().indexOf(text);
-      if (pos >= 0 && !jQuery(node.parentNode).hasClass(className)) {
+      if (pos >= 0 &&
+          !jQuery(node.parentNode).hasClass(className) &&
+          !jQuery(node.parentNode).hasClass("nohighlight")) {
         var span;
         var isInSVG = jQuery(node).closest("body, svg, foreignObject").is("svg");
         if (isInSVG) {
@@ -148,7 +150,9 @@ var Documentation = {
     this.fixFirefoxAnchorBug();
     this.highlightSearchWords();
     this.initIndexTable();
-    
+    if (DOCUMENTATION_OPTIONS.NAVIGATION_WITH_KEYS) {
+      this.initOnKeyListeners();
+    }
   },
 
   /**

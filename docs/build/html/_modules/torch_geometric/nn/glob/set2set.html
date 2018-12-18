@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.pool.set2set &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.nn.glob.set2set &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">torch_geometric.data</a></li>
@@ -172,7 +174,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.nn.pool.set2set</li>
+      <li>torch_geometric.nn.glob.set2set</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -189,57 +191,70 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.nn.pool.set2set</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.nn.glob.set2set</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter_add</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">softmax</span>
 
 
-<div class="viewcode-block" id="Set2Set"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.Set2Set">[docs]</a><span class="k">class</span> <span class="nc">Set2Set</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">in_channels</span><span class="p">,</span>
-                 <span class="n">hidden_channels</span><span class="p">,</span>
-                 <span class="n">processing_steps</span><span class="p">,</span>
-                 <span class="n">num_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Set2Set"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.Set2Set">[docs]</a><span class="k">class</span> <span class="nc">Set2Set</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The global pooling operator based on iterative content-based attention</span>
+<span class="sd">    from the `&quot;Order Matters: Sequence to sequence for sets&quot;</span>
+<span class="sd">    &lt;https://arxiv.org/abs/1511.06391&gt;`_ paper</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{q}_t &amp;= \mathrm{LSTM}(\mathbf{q}^{*}_{t-1})</span>
+
+<span class="sd">        \alpha_{i,t} &amp;= \mathrm{softmax}(\mathbf{x}_i \cdot \mathbf{q}_t)</span>
+
+<span class="sd">        \mathbf{r}_t &amp;= \sum_{i=1}^N \alpha_{i,t} \mathbf{x}_i</span>
+
+<span class="sd">        \mathbf{q}^{*}_t &amp;= \mathbf{q}_t \, \Vert \, \mathbf{r}_t,</span>
+
+<span class="sd">    where :math:`\mathbf{q}^{*}_T` defines the output of the layer with twice</span>
+<span class="sd">    the dimensionality as the input.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_channels (int): Size of each input sample.</span>
+<span class="sd">        processing_steps (int): Number of iterations :math:`T`.</span>
+<span class="sd">        num_layers (int, optional): Number of recurrent layers, *.e.g*, setting</span>
+<span class="sd">            :obj:`num_layers=2` would mean stacking two LSTMs together to form</span>
+<span class="sd">            a stacked LSTM, with the second LSTM taking in outputs of the first</span>
+<span class="sd">            LSTM and computing the final results. (default: :obj:`1`)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">processing_steps</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Set2Set</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">in_channels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processing_steps</span> <span class="o">=</span> <span class="n">processing_steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">,</span> <span class="n">hidden_channels</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span>
                                   <span class="n">num_layers</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Set2Set.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.Set2Set.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Set2Set.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.Set2Set.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Set2Set.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.pool.Set2Set.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+<div class="viewcode-block" id="Set2Set.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.glob.Set2Set.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
 
-        <span class="c1"># Bring x into shape [batch_size, max_nodes, in_channels].</span>
-        <span class="n">xs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-        <span class="n">max_nodes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">])</span>
-        <span class="n">xs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">t</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">max_nodes</span> <span class="o">-</span> <span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">]</span>
-        <span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">]</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_channels</span><span class="p">)),</span>
-             <span class="n">x</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_channels</span><span class="p">)))</span>
-        <span class="n">q_star</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">)),</span>
+             <span class="n">x</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">)))</span>
+        <span class="n">q_star</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processing_steps</span><span class="p">):</span>
-            <span class="n">q</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">q_star</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
-            <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">)</span>
-            <span class="n">e</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Dot product.</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">max_nodes</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">q</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">q_star</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">h</span><span class="p">)</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">)</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">q</span><span class="p">[</span><span class="n">batch</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
             <span class="n">q_star</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">q</span><span class="p">,</span> <span class="n">r</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">q_star</span> <span class="o">=</span> <span class="n">q_star</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span>
 
-        <span class="n">q_star</span> <span class="o">=</span> <span class="n">q_star</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">q_star</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -103,7 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -117,9 +117,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.meta">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/data.html">torch_geometric.data</a></li>
@@ -232,18 +234,18 @@
     <span class="k">def</span> <span class="nf">processed_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;training.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pt&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="ModelNet.download"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.ModelNet.download">[docs]</a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">download_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">urls</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
         <span class="n">extract_zip</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;ModelNet</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">)</span></div>
+        <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ModelNet.process"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.ModelNet.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_set</span><span class="p">(</span><span class="s1">&#39;train&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_set</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_set</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<div class="viewcode-block" id="ModelNet.process_set"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.ModelNet.process_set">[docs]</a>    <span class="k">def</span> <span class="nf">process_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">categories</span><span class="p">])</span>
 
@@ -262,7 +264,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>

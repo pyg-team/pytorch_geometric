@@ -9,6 +9,7 @@ class Batch(Data):
 
     @staticmethod
     def from_data_list(data_list):
+        """"""
         keys = [set(data.keys) for data in data_list]
         keys = list(set.union(*keys))
         assert 'batch' not in keys
@@ -40,4 +41,5 @@ class Batch(Data):
 
     @property
     def num_graphs(self):
+        """"""
         return self.batch[-1].item() + 1

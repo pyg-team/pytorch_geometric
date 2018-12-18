@@ -1,29 +1,36 @@
 import torch
 from torch.nn import Parameter
-from torch_scatter import scatter_add
-from torch_geometric.utils import degree
+from torch_geometric.utils import remove_self_loops, scatter_
 
 from ..inits import uniform
 
 
 class GraphConv(torch.nn.Module):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 norm=True,
-                 root_weight=True,
-                 bias=True):
+    r"""The graph neural network operator from the `"Weisfeiler and Leman Go
+    Neural: Higher-order Graph Neural Networks"
+    <https://arxiv.org/abs/1810.02244>`_ paper
+
+    .. math::
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \mathbf{x}_i +
+        \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta} \mathbf{x}_j.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        aggr (string): The aggregation operator to use (one of :obj:`"add"`,
+            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+            an additive bias. (default: :obj:`True`)
+    """
+
+    def __init__(self, in_channels, out_channels, aggr='add', bias=True):
         super(GraphConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.norm = norm
+        self.aggr = aggr
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
-
-        if root_weight:
-            self.root = Parameter(torch.Tensor(in_channels, out_channels))
-        else:
-            self.register_parameter('root', None)
+        self.root = Parameter(torch.Tensor(in_channels, out_channels))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -39,19 +46,14 @@ class GraphConv(torch.nn.Module):
         uniform(size, self.bias)
 
     def forward(self, x, edge_index):
+        """"""
+        x = x.unsqueeze(-1) if x.dim() == 1 else x
+        edge_index, _ = remove_self_loops(edge_index)
         row, col = edge_index
 
         out = torch.mm(x, self.weight)
-        out = scatter_add(out[col], row, dim=0, dim_size=x.size(0))
-
-        # Normalize by node degree (if wished).
-        if self.norm:
-            deg = degree(row, x.size(0), x.dtype)
-            out = out / deg.unsqueeze(-1).clamp(min=1)
-
-        # Weight root node separately (if wished).
-        if self.root is not None:
-            out = out + torch.mm(x, self.root)
+        out = scatter_(self.aggr, out[col], row, dim_size=x.size(0))
+        out = out + torch.mm(x, self.root)
 
         if self.bias is not None:
             out = out + self.bias

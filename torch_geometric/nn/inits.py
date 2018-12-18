@@ -28,8 +28,9 @@ def reset(nn):
         if hasattr(item, 'reset_parameters'):
             item.reset_parameters()
 
-    if hasattr(nn, 'children'):
-        for item in nn.children():
-            _reset(item)
-    else:
-        _reset(nn)
+    if nn is not None:
+        if hasattr(nn, 'children') and len(list(nn.children())) > 0:
+            for item in nn.children():
+                _reset(item)
+        else:
+            _reset(nn)

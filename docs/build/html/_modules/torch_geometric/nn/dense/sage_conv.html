@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>torch_geometric.nn.dense.sage_conv &mdash; pytorch_geometric master documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html">
+          
+
+          
+            
+            <img src="../../../../_static/logo.svg" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master (1.0.0)
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA extensions on macOS</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-transforms">Data transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes/create_dataset.html">Create your own dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/create_dataset.html#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/create_dataset.html#creating-larger-datasets">Creating “larger” datasets</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">torch_geometric.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/datasets.html">torch_geometric.datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/transforms.html">torch_geometric.transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/utils.html">torch_geometric.utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">pytorch_geometric</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>torch_geometric.nn.dense.sage_conv</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for torch_geometric.nn.dense.sage_conv</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
+
+<span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">uniform</span>
+
+
+<div class="viewcode-block" id="DenseSAGEConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.dense.sage_conv.DenseSAGEConv">[docs]</a><span class="k">class</span> <span class="nc">DenseSAGEConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;See :class:`torch_geometric.nn.conv.sage_conv.SAGEConv`.</span>
+
+<span class="sd">    :rtype: :class:`Tensor`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DenseSAGEConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span> <span class="o">=</span> <span class="n">normalize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">out_channels</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+
+<div class="viewcode-block" id="DenseSAGEConv.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.dense.sage_conv.DenseSAGEConv.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+        <span class="n">uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DenseSAGEConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.dense.sage_conv.DenseSAGEConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">adj</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_loop</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B</span>
+<span class="sd">                \times N \times F}`, with batch-size :math:`B`, (maximum)</span>
+<span class="sd">                number of nodes :math:`N` for each graph, and feature</span>
+<span class="sd">                dimension :math:`F`.</span>
+<span class="sd">            adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B</span>
+<span class="sd">                \times N \times N}`.</span>
+<span class="sd">            mask (ByteTensor, optional): Mask matrix</span>
+<span class="sd">                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating</span>
+<span class="sd">                the valid nodes for each graph. (default: :obj:`None`)</span>
+<span class="sd">            add_loop (bool, optional): If set to :obj:`False`, the layer will</span>
+<span class="sd">                not automatically add self-loops to the adjacency matrices.</span>
+<span class="sd">                (default: :obj:`True`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">x</span>
+        <span class="n">adj</span> <span class="o">=</span> <span class="n">adj</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">adj</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">adj</span>
+        <span class="n">B</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">add_loop</span><span class="p">:</span>
+            <span class="n">eye</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">adj</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">adj</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">adj</span> <span class="o">=</span> <span class="n">adj</span> <span class="o">+</span> <span class="n">eye</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">adj</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">adj</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">/</span> <span class="n">adj</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span> <span class="o">*</span> <span class="n">mask</span>
+
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Matthias Fey.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

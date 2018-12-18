@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (0.3.1)
+                master (1.0.0)
               </div>
             
           
@@ -104,7 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction by example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="introduction.html#mini-batches">Mini-Batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#mini-batches">Mini-batches</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#data-transforms">Data transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
@@ -118,9 +118,11 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv">Convolution Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.prop">Propagation Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/data.html">torch_geometric.data</a></li>
@@ -193,7 +195,7 @@
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>We have outsourced a lot of functionality of <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric">PyTorch Geometric</a> to other packages, which needs to be installed in advance.
-These packages come with their own CPU and GPU kernel implementations based on <a class="reference external" href="https://github.com/pytorch/extension-ffi/">C FFI</a> and the newly introduced <a class="reference external" href="https://github.com/pytorch/extension-cpp/">C++/CUDA extensions</a> in PyTorch 0.4.0.</p>
+These packages come with their own CPU and GPU kernel implementations based on the newly introduced <a class="reference external" href="https://github.com/pytorch/extension-cpp/">C++/CUDA extensions</a> in PyTorch 0.4.0.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">We do not recommend installation as root user on your system python.
@@ -201,10 +203,10 @@ Please setup an <a class="reference external" href="https://conda.io/docs/user-g
 </div>
 <p>Please follow the steps below for a successful installation:</p>
 <ol class="arabic">
-<li><p class="first">Ensure that at least PyTorch 0.4.1 is installed:</p>
+<li><p class="first">Ensure that at least PyTorch 1.0.0 is installed:</p>
 <blockquote>
-<div><div class="highlight-none"><div class="highlight"><pre><span></span>$ python -c &quot;import torch; print(torch.__version__)&quot;
-&gt;&gt;&gt; 0.4.1
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ python -c &quot;import torch; print(torch.__version__)&quot;
+&gt;&gt;&gt; 1.0.0
 </pre></div>
 </div>
 </div></blockquote>
@@ -214,15 +216,15 @@ Please setup an <a class="reference external" href="https://conda.io/docs/user-g
 <div><ol class="arabic">
 <li><p class="first">Check if PyTorch is installed with CUDA support:</p>
 <blockquote>
-<div><div class="highlight-none"><div class="highlight"><pre><span></span>$ python -c &quot;import torch; print(torch.cuda.is_available())&quot;
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ python -c &quot;import torch; print(torch.cuda.is_available())&quot;
 &gt;&gt;&gt; True
 </pre></div>
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">Add CUDA to <code class="docutils literal"><span class="pre">$PATH</span></code> and <code class="docutils literal"><span class="pre">$CPATH</span></code> (note that your actual CUDA path may vary from <code class="docutils literal"><span class="pre">/usr/local/cuda</span></code>):</p>
+<li><p class="first">Add CUDA to <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> and <code class="docutils literal notranslate"><span class="pre">$CPATH</span></code> (note that your actual CUDA path may vary from <code class="docutils literal notranslate"><span class="pre">/usr/local/cuda</span></code>):</p>
 <blockquote>
-<div><div class="highlight-none"><div class="highlight"><pre><span></span>$ PATH=/usr/local/cuda/bin:$PATH
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ PATH=/usr/local/cuda/bin:$PATH
 $ echo $PATH
 &gt;&gt;&gt; /usr/local/cuda/bin:...
 
@@ -233,9 +235,9 @@ $ echo $CPATH
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">Verify that <code class="docutils literal"><span class="pre">nvcc</span></code> is accessible from terminal:</p>
+<li><p class="first">Verify that <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> is accessible from terminal:</p>
 <blockquote>
-<div><div class="highlight-none"><div class="highlight"><pre><span></span>$ nvcc --version
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ nvcc --version
 </pre></div>
 </div>
 </div></blockquote>
@@ -245,8 +247,7 @@ $ echo $CPATH
 </li>
 <li><p class="first">Install all needed packages:</p>
 <blockquote>
-<div><div class="highlight-none"><div class="highlight"><pre><span></span>$ pip install cffi
-$ pip install --upgrade torch-scatter
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ pip install --upgrade torch-scatter
 $ pip install --upgrade torch-sparse
 $ pip install --upgrade torch-cluster
 $ pip install --upgrade torch-spline-conv
@@ -257,28 +258,31 @@ $ pip install torch-geometric
 </li>
 </ol>
 <p>In rare cases, CUDA or python path issues can prevent a succesful installation.
-Unfortunately, the error messages of <code class="docutils literal"><span class="pre">pip</span></code> are not very meaningful.
+Unfortunately, the error messages of <code class="docutils literal notranslate"><span class="pre">pip</span></code> are not very meaningful.
 You should therefore clone the respective package and check where the error occurs, e.g.:</p>
-<div class="highlight-none"><div class="highlight"><pre><span></span>$ git clone https://github.com/rusty1s/pytorch_scatter
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/rusty1s/pytorch_scatter
 $ cd pytorch_scatter
 $ python setup.py install  # Check for CUDA compilation or link error.
 $ python setup.py test  # Verify installation by running test suite.
 </pre></div>
 </div>
+<p>In case the error messages are not very meaningful to you, please create an <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues">issue</a>.
+Beforehand, please check that the <a class="reference external" href="https://github.com/pytorch/extension-cpp">official extension example</a> runs on your machine.</p>
 <div class="section" id="c-cuda-extensions-on-macos">
 <h2>C++/CUDA extensions on macOS<a class="headerlink" href="#c-cuda-extensions-on-macos" title="Permalink to this headline">¶</a></h2>
-<p>In order to compile C++/CUDA extensions on macOS, you need to replace the call</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+<p>In order to compile CUDA extensions on macOS, you need to replace the call</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
     <span class="n">spawn</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dry_run</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>with</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
     <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>in <code class="docutils literal"><span class="pre">distutils/ccompiler.py</span></code>.
-Do not forget to <code class="docutils literal"><span class="pre">import</span> <span class="pre">subprocess</span></code> at the top of the file.</p>
+<p>in <code class="docutils literal notranslate"><span class="pre">lib/python{xxx}/distutils/ccompiler.py</span></code>.</p>
 </div>
 </div>
 

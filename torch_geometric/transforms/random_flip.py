@@ -7,8 +7,8 @@ class RandomFlip(object):
 
     Args:
         axis (int): The axis along the position of nodes being flipped.
-        p (float, optional): Probability of the position of nodes being
-            flipped. (default: :obj:`0.5`)
+        p (float, optional): Probability that node positions will be flipped.
+            (default: :obj:`0.5`)
 
     .. testsetup::
 
