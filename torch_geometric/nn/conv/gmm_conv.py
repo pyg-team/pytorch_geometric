@@ -41,8 +41,8 @@ class GMMConv(torch.nn.Module):
         self.out_channels = out_channels
         self.dim = dim
 
-        self.mu = Parameter(in_channels, dim)
-        self.sigma = Parameter(in_channels, dim)
+        self.mu = Parameter(torch.Tensor(in_channels, dim))
+        self.sigma = Parameter(torch.Tensor(in_channels, dim))
         self.lin = torch.nn.Linear(in_channels, out_channels, bias=bias)
 
         self.reset_parameters()
@@ -50,7 +50,7 @@ class GMMConv(torch.nn.Module):
     def reset_parameters(self):
         size = self.in_channels
         uniform(size, self.mu)
-        uniform(size, self.cov)
+        uniform(size, self.sigma)
         reset(self.lin)
 
     def forward(self, x, edge_index, pseudo):
