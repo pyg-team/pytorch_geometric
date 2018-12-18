@@ -14,7 +14,7 @@ train_dataset = MNISTSuperpixels(path, True, transform=T.Cartesian())
 test_dataset = MNISTSuperpixels(path, False, transform=T.Cartesian())
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64)
-d = train_dataset.data
+d = train_dataset
 
 
 def normalized_cut_2d(edge_index, pos):

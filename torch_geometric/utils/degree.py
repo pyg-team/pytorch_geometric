@@ -10,7 +10,7 @@ def degree(index, num_nodes=None, dtype=None):
         index (LongTensor): Source or target indices of edges.
         num_nodes (int, optional): The number of nodes in :attr:`index`.
             (default: :obj:`None`)
-        dtype (:obj:`torch.dtype`, optional). The desired data type of returned
+        dtype (:obj:`torch.dtype`, optional): The desired data type of returned
             tensor.
 
     :rtype: :class:`Tensor`
@@ -30,6 +30,7 @@ def degree(index, num_nodes=None, dtype=None):
 
        tensor([3., 1., 1.])
     """
+
     num_nodes = maybe_num_nodes(index, num_nodes)
     out = torch.zeros((num_nodes), dtype=dtype, device=index.device)
     return out.scatter_add_(0, index, out.new_ones((index.size(0))))

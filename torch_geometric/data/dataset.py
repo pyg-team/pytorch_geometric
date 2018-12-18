@@ -19,22 +19,28 @@ def files_exist(files):
 class Dataset(torch.utils.data.Dataset):
     @property
     def raw_file_names(self):
+        """"""
         raise NotImplementedError
 
     @property
     def processed_file_names(self):
+        """"""
         raise NotImplementedError
 
     def download(self):
+        """"""
         raise NotImplementedError
 
     def process(self):
+        """"""
         raise NotImplementedError
 
     def __len__(self):
+        """"""
         raise NotImplementedError
 
     def get(self, idx):
+        """"""
         raise NotImplementedError
 
     def __init__(self,
@@ -55,6 +61,11 @@ class Dataset(torch.utils.data.Dataset):
         self._process()
 
     @property
+    def num_features(self):
+        """"""
+        return self[0].num_features
+
+    @property
     def raw_paths(self):
         files = to_list(self.raw_file_names)
         return [osp.join(self.raw_dir, f) for f in files]
@@ -65,14 +76,14 @@ class Dataset(torch.utils.data.Dataset):
         return [osp.join(self.processed_dir, f) for f in files]
 
     def _download(self):
-        if files_exist(self.raw_paths):
+        if files_exist(self.raw_paths):  # pragma: no cover
             return
 
         makedirs(self.raw_dir)
         self.download()
 
     def _process(self):
-        if files_exist(self.processed_paths):
+        if files_exist(self.processed_paths):  # pragma: no cover
             return
 
         print('Processing...')
@@ -87,5 +98,5 @@ class Dataset(torch.utils.data.Dataset):
         data = data if self.transform is None else self.transform(data)
         return data
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '{}({})'.format(self.__class__.__name__, len(self))

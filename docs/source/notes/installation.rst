@@ -2,7 +2,7 @@ Installation
 ============
 
 We have outsourced a lot of functionality of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ to other packages, which needs to be installed in advance.
-These packages come with their own CPU and GPU kernel implementations based on `C FFI <https://github.com/pytorch/extension-ffi/>`_ and the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ in PyTorch 0.4.0.
+These packages come with their own CPU and GPU kernel implementations based on the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ in PyTorch 0.4.0.
 
 .. note::
     We do not recommend installation as root user on your system python.
@@ -10,12 +10,12 @@ These packages come with their own CPU and GPU kernel implementations based on `
 
 Please follow the steps below for a successful installation:
 
-#. Ensure that at least PyTorch 0.4.1 is installed:
+#. Ensure that at least PyTorch 1.0.0 is installed:
 
     .. code-block:: none
 
         $ python -c "import torch; print(torch.__version__)"
-        >>> 0.4.1
+        >>> 1.0.0
 
 #. Ensure CUDA is setup correctly (optional):
 
@@ -48,7 +48,6 @@ Please follow the steps below for a successful installation:
 
     .. code-block:: none
 
-        $ pip install cffi
         $ pip install --upgrade torch-scatter
         $ pip install --upgrade torch-sparse
         $ pip install --upgrade torch-cluster
@@ -66,10 +65,13 @@ You should therefore clone the respective package and check where the error occu
     $ python setup.py install  # Check for CUDA compilation or link error.
     $ python setup.py test  # Verify installation by running test suite.
 
+In case the error messages are not very meaningful to you, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
+Beforehand, please check that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
+
 C++/CUDA extensions on macOS
 ----------------------------
 
-In order to compile C++/CUDA extensions on macOS, you need to replace the call
+In order to compile CUDA extensions on macOS, you need to replace the call
 
 .. code-block:: python
 
@@ -80,8 +82,9 @@ with
 
 .. code-block:: python
 
+    import subprocess
+
     def spawn(self, cmd):
         subprocess.call(cmd)
 
-in ``distutils/ccompiler.py``.
-Do not forget to ``import subprocess`` at the top of the file.
+in ``lib/python{xxx}/distutils/ccompiler.py``.

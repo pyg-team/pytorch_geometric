@@ -5,9 +5,9 @@ class Constant(object):
     r"""Adds a constant value to each node feature.
 
     Args:
-        value (int): The value to add.
-        cat (bool, optional): Concat value to node features instead
-            of replacing them. (default: :obj:`True`)
+        value (int, optional): The value to add. (default: :obj:`1`)
+        cat (bool, optional): If set to :obj:`False`, all existing node
+            features will be replaced. (default: :obj:`True`)
 
     .. testsetup::
 
@@ -21,18 +21,10 @@ class Constant(object):
         edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
         data = Data(edge_index=edge_index)
 
-        data = Constant(value=1)(data)
-
-        print(data.x)
-
-    .. testoutput::
-
-        tensor([[1.],
-                [1.],
-                [1.]])
+        data = Constant()(data)
     """
 
-    def __init__(self, value, cat=True):
+    def __init__(self, value=1, cat=True):
         self.value = value
         self.cat = cat
 
@@ -50,5 +42,4 @@ class Constant(object):
         return data
 
     def __repr__(self):
-        return '{}({}, cat={})'.format(self.__class__.__name__, self.value,
-                                       self.cat)
+        return '{}(value={})'.format(self.__class__.__name__, self.value)
