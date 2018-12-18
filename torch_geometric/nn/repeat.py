@@ -3,6 +3,8 @@ import itertools
 
 
 def repeat(src, length):
+    if src is None:
+        return src
     if isinstance(src, numbers.Number):
         return list(itertools.repeat(src, length))
     if (len(src) > length):
