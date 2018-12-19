@@ -57,14 +57,11 @@ class GMMConv(torch.nn.Module):
         """"""
         # See https://github.com/shchur/gnn-benchmark for the reference
         # TensorFlow implementation.
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
-
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
         row, col = edge_index
 
-        F, (E, D) = x.size(0), pseudo.size()
+        F, (E, D) = x.size(1), pseudo.size()
 
         gaussian = -0.5 * (pseudo.view(E, 1, D) - self.mu.view(1, F, D))**2
         gaussian = torch.exp(gaussian / (1e-14 + self.sigma.view(1, F, D)**2))
