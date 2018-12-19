@@ -1,7 +1,6 @@
 import torch
 from torch.nn import Parameter
 from torch_scatter import scatter_add
-from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from ..inits import uniform, reset
 
