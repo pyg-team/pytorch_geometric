@@ -9,27 +9,34 @@ class MessagePassing(torch.nn.Module):
         assert aggr in ['add', 'mean', 'max']
         self.aggr = aggr
 
-    def prepare(x, edge_index, edge_attr=None):
-        return x, edge_index, edge_attr
-
-    def message(x_i, x_j, edge_attr=None):
+    def message(self, x_i, x_j, **kwargs):
         return x_j
 
-    def combine(x_old, x):
+    def update(self, x_old, x):
         return x
 
-    def forward(self, x, edge_index, edge_attr=None):
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
+    def forward(self, x, edge_index, edge_attr=None, **kwargs):
+        kwargs['x'] = x
+        (row, col) = edge_index
 
-        if edge_attr is not None and edge_attr.dim() == 1:
-            edge_attr = edge_attr.view(-1, 1)
+        gathered_dict = {}
+        for key, value in kwargs.items():
+            value = value.unsqueeze(-1) if value.dim() == 1 else value
+            if value.size(0) == x.size(0):
+                gathered_dict['{}_i'.format(key)] = value[row]
+                gathered_dict['{}_j'.format(key)] = value[col]
+            else:
+                gathered_dict[key] = value
 
-        x, edge_index, edge_attr = self.prepare(x, edge_index, edge_attr)
+        gathered_dict['edge_index'] = edge_index
+        if edge_attr is not None:
+            if edge_attr.dim() == 1:
+                edge_attr = edge_attr.unsqueeze(-1)
+            gathered_dict['edge_attr'] = edge_attr
 
-        row, col = edge_index
-        out = self.messages(x[row], x[col], edge_attr)
-        out = scatter_(self.aggr, out, row, dim_size=x.size(0))
-        out = self.combine(x, out)
+        out = self.message(**gathered_dict)
+        h = scatter_(self.aggr, out, row, dim_size=x.size(0))
+        out = self.update(x, h)
 
         return out
 
