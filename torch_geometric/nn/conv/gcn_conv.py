@@ -63,6 +63,7 @@ class GCNConv(MessagePassing):
         row, col = edge_index
         deg = scatter_add(edge_attr, row, dim=0, dim_size=x.size(0))
         deg_inv = deg.pow(-0.5)
+        deg_inv[deg_inv == float('inf')] = 0
         edge_attr = deg_inv[row] * edge_attr * deg_inv[col]
 
         out = torch.matmul(x, self.weight)

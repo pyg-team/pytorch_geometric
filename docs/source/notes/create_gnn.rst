@@ -31,9 +31,19 @@ A GCN layer is mathematically defined as
 
     \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{deg(j)}} \cdot \mathbf{\Theta} \cdot \mathbf{x}_j^{(k-1)},
 
-where input node features are first transformed by a weight matrix :math:`\mathbf{\Theta}`, neighborhood-normalized and finally added together afterwards.
+where input node features are first transformed by a weight matrix :math:`\mathbf{\Theta}`, neighborhood-normalized and finally aggregated together.
+We can identify six steps to compute this layer:
 
+1. Add self-loops to the adjacency matrix.
+2. Normalize adjacency matrix based on in- and out-degree.
+3. Linearly transform node feature matrix.
+4. Normalize node features in :math:`\phi`.
+5. Sum up neighboring node features (:obj:`"add"` aggregation)
+6. Discard old node features and replace them with the new ones in :math:`\gamma`.
 
+Step 1-3 are typically computed before message passing takes place.
+Step 4-6 can be easily processed using the :class:`torch_geometric.nn.MessagePassing` base class.
+The full layer implementation is shown below.
 
 .. code-block:: python
 
@@ -52,17 +62,25 @@ where input node features are first transformed by a weight matrix :math:`\mathb
             row, col = edge_index
             deg = degree(row, num_nodes=x.size(0), dtype=x.dtype)
             deg_inv = deg.pow(-0.5)
-            edge_attr = deg_inv[row] * deg_inv[col]
+            norm = deg_inv[row] * deg_inv[col]
 
             x = self.lin(x)
 
-            return super(GCNLayer, self).forward(x, edge_index, edge_attr)
+            return super(GCNLayer, self).forward(x, edge_index, norm)
 
-        def message(self, x_i, x_j, edge_attr, **kwargs):
+        def message(self, x_i, x_j, norm, **kwargs):
             return edge_attr * x_j
 
         def update(self, x_old, x):
             return x
+
+:class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing` and implements an :obj:`"add"` aggregation scheme.
+
+The :meth:`forward` function contains the logic of this layer.
+We first add self-loops to our edge indices using the :meth:`torch_geometric.utils.add_self_loops` functionality, as well as
+computing node degrees :math:`\deg(i)` for each node :math:`i` and saving :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` in :obj:`norm` for each edge :math:`(i,j) \in \mathcal{E}`.
+
+We initialize a :class:`torch.nn.Linear` layer in the constructor to transform node features.
 
 Graph Nets
 ----------
