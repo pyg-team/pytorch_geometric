@@ -8,7 +8,7 @@ At its core, PyTorch Geometric provides the following main features:
     :local:
 
 Data handling of graphs
-------------------------------------
+-----------------------
 
 A graph is used to model pairwise relations (edges) between objects (nodes).
 A single graph in PyTorch Geometric is decribed by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
@@ -293,7 +293,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
 You can learn more about scatter operations in the `documentation <http://rusty1s.github.io/pytorch_scatter>`_ of ``torch_scatter``.
 
 Data transforms
---------------------
+---------------
 
 Transforms are a common way in ``torchvision`` to transform images and perform augmentation.
 PyTorch Geometric comes with its own transforms, which expect a ``Data`` object as input and return a new transformed ``Data`` object.
