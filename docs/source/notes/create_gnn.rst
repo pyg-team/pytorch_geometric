@@ -21,7 +21,7 @@ where :math:`\square` denotes a differentiable, permutation invariant function, 
 
 Nearly all of the already implemented methods in PyTorch Geometric follow this simple scheme.
 Using the :class:`torch_geometric.nn.MessagePassing` base class, it is really simple to create them by yourself.
-All you need to do is implement :math:`\gamma` (*.i.e.* the :meth:`combine` method) and :math:`\phi` (*i.e.* the :meth:`send` method), and choose between various permutation invariant functions :math:`\square` (:attr:`aggr`).
+All you need to do is implement :math:`\gamma` (*.i.e.* the :meth:`update` method) and :math:`\phi` (*i.e.* the :meth:`message` method), and choose between various permutation invariant functions :math:`\square` (:attr:`aggr`).
 
 Let us verify this by re-implementing two popular GNN variants, GCN and GraphSAGE:
 
@@ -52,10 +52,10 @@ Let us verify this by re-implementing two popular GNN variants, GCN and GraphSAG
 
             return x, edge_index, edge_attr
 
-        def messages(x_i, x_j, edge_attr):
+        def message(x_i, x_j, edge_attr):
             return x_j * edge_attr
 
-        def combine(x_old, x):
+        def update(x_old, x):
             return self.lin(x)
 
 Graph Nets
