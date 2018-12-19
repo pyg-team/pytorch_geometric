@@ -1,3 +1,4 @@
+from .message_passing import MessagePassing
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
@@ -13,6 +14,7 @@ from .edge_conv import EdgeConv
 from .x_conv import XConv
 
 __all__ = [
+    'MessagePassing',
     'GCNConv',
     'ChebConv',
     'SAGEConv',

@@ -20,14 +20,20 @@ In its most general form, message passing graph neural networks can then be desc
 where :math:`\square` denotes a differentiable, permutation invariant function, *e.g.*, sum, mean or max, and :math:`\gamma` and :math:`\phi` denote differentiable functions such as MLPs.
 
 Nearly all of the already implemented methods in PyTorch Geometric follow this simple scheme.
-Using the :class:`torch_geometric.nn.MessagePassing` base class, it is really simple to create them by yourself.
-All you need to do is implement :math:`\gamma` (*.i.e.* the :meth:`update` method) and :math:`\phi` (*i.e.* the :meth:`message` method), and choose between various permutation invariant functions :math:`\square` (:attr:`aggr`).
+In addition, using the :class:`torch_geometric.nn.MessagePassing` base class, it is really simple to create them by yourself.
+The :class:`torch_geometric.nn.MessagePassing` base class automatically takes care of message propagation, so that the user only needs to define the methods :math:`\phi` ,*i.e.* the :meth:`message` method, and :math:`\gamma` ,*.i.e.* the :meth:`update` method, as well as choosing between various permutation invariant functions :math:`\square`, *.e.g.* :obj:`aggr='add'`.
 
-Let us verify this by re-implementing two popular GNN variants, GCN and GraphSAGE:
+Let us verify this by re-implementing two popular GNN variants, `GCN from Kipf and Welling <https://arxiv.org/abs/1609.02907>`_ and the `Message Passing Layer from Gilmer et al. <https://arxiv.org/abs/1704.01212>`_:
+
+A GCN layer is mathematically defined as
 
 .. math::
 
-    \mathbf{x}_i^{(k)} = \mathbf{\Theta} \cdot \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{deg(j)}} \cdot \mathbf{x}_j^{(k-1)}
+    \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{deg(j)}} \cdot \mathbf{\Theta} \cdot \mathbf{x}_j^{(k-1)},
+
+where input node features are first transformed by a weight matrix :math:`\mathbf{\Theta}`, neighborhood-normalized and finally added together afterwards.
+
+
 
 .. code-block:: python
 
@@ -36,27 +42,27 @@ Let us verify this by re-implementing two popular GNN variants, GCN and GraphSAG
     from torch_geometric.utils import add_self_loops, degree
 
     class GCNConv(MessagePassing):
-        def __init__(in_channels, out_channels):
-            super(GCNConv, self).__init__(aggr='add')
+        def __init__(self, in_channels, out_channels):
+            super(GCNLayer, self).__init__(aggr='add')
             self.lin = torch.nn.Linear(in_channels, out_channels)
 
-        def prepare(x, edge_index):
-            # We need to add self-loops to the adjaceny matrix.
+        def forward(self, x, edge_index):
             edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
 
-            # Compute normalized adjacency matrix.
             row, col = edge_index
             deg = degree(row, num_nodes=x.size(0), dtype=x.dtype)
             deg_inv = deg.pow(-0.5)
             edge_attr = deg_inv[row] * deg_inv[col]
 
-            return x, edge_index, edge_attr
+            x = self.lin(x)
 
-        def message(x_i, x_j, edge_attr):
-            return x_j * edge_attr
+            return super(GCNLayer, self).forward(x, edge_index, edge_attr)
 
-        def update(x_old, x):
-            return self.lin(x)
+        def message(self, x_i, x_j, edge_attr, **kwargs):
+            return edge_attr * x_j
+
+        def update(self, x_old, x):
+            return x
 
 Graph Nets
 ----------

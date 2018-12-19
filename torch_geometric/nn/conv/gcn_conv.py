@@ -1,13 +1,13 @@
 import torch
 from torch.nn import Parameter
-from torch_sparse import spmm
 from torch_scatter import scatter_add
+from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from ..inits import glorot, zeros
 
 
-class GCNConv(torch.nn.Module):
+class GCNConv(MessagePassing):
     r"""The graph convolutional operator from the `"Semi-supervised
     Classfication with Graph Convolutional Networks"
     <https://arxiv.org/abs/1609.02907>`_ paper
@@ -31,7 +31,7 @@ class GCNConv(torch.nn.Module):
     """
 
     def __init__(self, in_channels, out_channels, improved=False, bias=True):
-        super(GCNConv, self).__init__()
+        super(GCNConv, self).__init__(aggr='add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -50,35 +50,31 @@ class GCNConv(torch.nn.Module):
         glorot(self.weight)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, edge_attr=None):
+    def forward(self, x, edge_index):
         """"""
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
+        edge_index, _ = remove_self_loops(edge_index)
+        edge_attr = x.new_ones((edge_index.size(1), ))
 
-        edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
-        if edge_attr is None:
-            edge_attr = x.new_ones((edge_index.size(1), ))
-        assert edge_attr.dim() == 1 and edge_attr.numel() == edge_index.size(1)
-
-        # Add self-loops to adjacency matrix.
-        edge_index = add_self_loops(edge_index, x.size(0))
+        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
         loop_value = x.new_full((x.size(0), ), 1 if not self.improved else 2)
         edge_attr = torch.cat([edge_attr, loop_value], dim=0)
 
-        # Normalize adjacency matrix.
         row, col = edge_index
         deg = scatter_add(edge_attr, row, dim=0, dim_size=x.size(0))
-        deg = deg.pow(-0.5)
-        deg[deg == float('inf')] = 0
-        edge_attr = deg[row] * edge_attr * deg[col]
+        deg_inv = deg.pow(-0.5)
+        edge_attr = deg_inv[row] * edge_attr * deg_inv[col]
 
-        # Perform the convolution.
-        out = torch.mm(x, self.weight)
-        out = spmm(edge_index, edge_attr, out.size(0), out)
+        out = torch.matmul(x, self.weight)
+
+        out = super(GCNConv, self).forward(out, edge_index, edge_attr)
 
         if self.bias is not None:
             out = out + self.bias
 
         return out
+
+    def message(self, x_j, edge_attr, **kwargs):
+        return edge_attr * x_j
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
