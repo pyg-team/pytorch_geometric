@@ -11,7 +11,7 @@ Message Passing Graph Neural Networks
 -------------------------------------
 
 Generalizing the convolution operator to irregular domains is typically expressed as a *neighborhood aggregation* or *message passing* scheme.
-Let therefore :math:`\mathbf{x}^{(k-1)}_i \in \mathbb{R}^F` denote node features in layer :math:`(k-1)` and let :math:`\mathbf{e}_{i,j} \in \mathbb{R}^D` denote (optional) edge features from node :math:`i` to node :math:`j`.
+Let therefore :math:`\mathbf{x}^{(k-1)}_i \in \mathbb{R}^F` denote node features of node :math:`i` in layer :math:`(k-1)` and let :math:`\mathbf{e}_{i,j} \in \mathbb{R}^D` denote (optional) edge features from node :math:`i` to node :math:`j`.
 In its most general form, message passing graph neural networks can then be described as
 
 .. math::
@@ -24,6 +24,10 @@ Using the :class:`torch_geometric.nn.MessagePassing` base class, it is really si
 All you need to do is implement :math:`\gamma` (*.i.e.* the :meth:`combine` method) and :math:`\phi` (*i.e.* the :meth:`send` method), and choose between various permutation invariant functions :math:`\square` (:attr:`aggr`).
 
 Let us verify this by re-implementing two popular GNN variants, GCN and GraphSAGE:
+
+.. math::
+
+    \mathbf{x}_i^{(k)} = \mathbf{\Theta} \cdot \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{deg(j)}} \cdot \mathbf{x}_j^{(k-1)}
 
 .. code-block:: python
 
@@ -43,8 +47,8 @@ Let us verify this by re-implementing two popular GNN variants, GCN and GraphSAG
             # Compute normalized adjacency matrix.
             row, col = edge_index
             deg = degree(row, num_nodes=x.size(0), dtype=x.dtype)
-            deg = deg.pow(-0.5)
-            edge_attr = deg[row] * deg[col]
+            deg_inv = deg.pow(-0.5)
+            edge_attr = deg_inv[row] * deg_inv[col]
 
             return x, edge_index, edge_attr
 
