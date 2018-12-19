@@ -4,7 +4,7 @@ from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
 from .dataloader import DataLoader, DenseDataLoader
 from .download import download_url
-from .extract import extract_tar, extract_zip
+from .extract import extract_tar, extract_zip, extract_gz
 
 __all__ = [
     'Data',
@@ -16,4 +16,5 @@ __all__ = [
     'download_url',
     'extract_tar',
     'extract_zip',
+    'extract_gz',
 ]
