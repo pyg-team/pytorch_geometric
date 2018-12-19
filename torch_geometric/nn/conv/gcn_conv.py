@@ -50,9 +50,11 @@ class GCNConv(MessagePassing):
         glorot(self.weight)
         zeros(self.bias)
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index, edge_attr=None):
         """"""
-        edge_attr = x.new_ones((edge_index.size(1), ))
+        if edge_attr is None:
+            edge_attr = x.new_ones((edge_index.size(1), ))
+        assert edge_attr.dim() == 1 and edge_attr.numel() == edge_index.size(1)
 
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
         loop_value = x.new_full((x.size(0), ), 1 if not self.improved else 2)
