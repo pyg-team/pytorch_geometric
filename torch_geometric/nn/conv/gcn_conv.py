@@ -1,8 +1,8 @@
 import torch
 from torch.nn import Parameter
 from torch_scatter import scatter_add
-from torch_geometric.nn import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import add_self_loops
 
 from ..inits import glorot, zeros
 
@@ -52,7 +52,6 @@ class GCNConv(MessagePassing):
 
     def forward(self, x, edge_index):
         """"""
-        edge_index, _ = remove_self_loops(edge_index)
         edge_attr = x.new_ones((edge_index.size(1), ))
 
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
@@ -65,7 +64,6 @@ class GCNConv(MessagePassing):
         edge_attr = deg_inv[row] * edge_attr * deg_inv[col]
 
         out = torch.matmul(x, self.weight)
-
         out = super(GCNConv, self).forward(out, edge_index, edge_attr)
 
         if self.bias is not None:
