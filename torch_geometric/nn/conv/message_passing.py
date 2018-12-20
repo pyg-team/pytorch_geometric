@@ -8,33 +8,37 @@ class MessagePassing(torch.nn.Module):
     def __init__(self, aggr='add'):
         super(MessagePassing, self).__init__()
 
-        assert aggr in ['add', 'mean', 'max']
-        self.aggr = aggr
-
         self.message_args = inspect.getargspec(self.message)[0][1:]
         self.update_args = inspect.getargspec(self.update)[0][2:]
+        print("DRIN")
 
-    def forward(self, x, edge_index, **kwargs):
-        kwargs['x'] = x
+    def propagate(self, aggr, edge_index, **kwargs):
+        assert aggr in ['add', 'mean', 'max']
+
         for key, value in kwargs.items():
             kwargs[key] = value.unsqueeze(-1) if value.dim() == 1 else value
         kwargs['edge_index'] = edge_index
 
         row, col = edge_index
 
+        size = None
         message_args = []
         for arg in self.message_args:
             if arg[-2:] == '_i':
-                message_args.append(kwargs[arg[:-2]][row])
+                tmp = kwargs[arg[:-2]]
+                size = tmp.size(0)
+                message_args.append(tmp[row])
             elif arg[-2:] == '_j':
-                message_args.append(kwargs[arg[:-2]][col])
+                tmp = kwargs[arg[:-2]]
+                size = tmp.size(0)
+                message_args.append(tmp[col])
             else:
                 message_args.append(kwargs[arg])
 
         update_args = [kwargs[arg] for arg in self.update_args]
 
         out = self.message(*message_args)
-        out = scatter_(self.aggr, out, row, dim_size=x.size(0))
+        out = scatter_(aggr, out, row, dim_size=size)
         out = self.update(out, *update_args)
 
         return out

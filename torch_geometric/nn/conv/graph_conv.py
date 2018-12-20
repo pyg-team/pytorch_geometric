@@ -24,10 +24,12 @@ class GraphConv(MessagePassing):
     """
 
     def __init__(self, in_channels, out_channels, aggr='add', bias=True):
-        super(GraphConv, self).__init__(aggr=aggr)
+        super(GraphConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.aggr = aggr
+
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
         self.lin = torch.nn.Linear(in_channels, out_channels, bias=bias)
 
@@ -41,7 +43,7 @@ class GraphConv(MessagePassing):
     def forward(self, x, edge_index):
         """"""
         h = torch.matmul(x, self.weight)
-        return super(GraphConv, self).forward(x, edge_index, h=h)
+        return self.propagate(self.aggr, edge_index, x=x, h=h)
 
     def message(self, h_j):
         return h_j
