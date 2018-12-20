@@ -50,32 +50,34 @@ class GCNConv(MessagePassing):
         glorot(self.weight)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, edge_attr=None):
+    def forward(self, x, edge_index, edge_weight=None):
         """"""
-        if edge_attr is None:
-            edge_attr = x.new_ones((edge_index.size(1), ))
-        assert edge_attr.dim() == 1 and edge_attr.numel() == edge_index.size(1)
+        if edge_weight is None:
+            edge_weight = x.new_ones((edge_index.size(1), ))
+        edge_weight = edge_weight.view(-1)
+        assert edge_weight.size(0) == edge_index.size(1)
 
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
-        loop_value = x.new_full((x.size(0), ), 1 if not self.improved else 2)
-        edge_attr = torch.cat([edge_attr, loop_value], dim=0)
+        loop_weight = x.new_full((x.size(0), ), 1 if not self.improved else 2)
+        edge_weight = torch.cat([edge_weight, loop_weight], dim=0)
 
         row, col = edge_index
-        deg = scatter_add(edge_attr, row, dim=0, dim_size=x.size(0))
+        deg = scatter_add(edge_weight, row, dim=0, dim_size=x.size(0))
         deg_inv = deg.pow(-0.5)
         deg_inv[deg_inv == float('inf')] = 0
-        edge_attr = deg_inv[row] * edge_attr * deg_inv[col]
 
-        out = torch.matmul(x, self.weight)
-        out = super(GCNConv, self).forward(out, edge_index, edge_attr)
+        norm = deg_inv[row] * edge_weight * deg_inv[col]
+
+        x = torch.matmul(x, self.weight)
+        out = super(GCNConv, self).forward(x, edge_index, norm=norm)
 
         if self.bias is not None:
             out = out + self.bias
 
         return out
 
-    def message(self, x_j, edge_attr, **kwargs):
-        return edge_attr * x_j
+    def message(self, x_j, norm):
+        return norm * x_j
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
