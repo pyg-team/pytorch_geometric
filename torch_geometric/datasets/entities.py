@@ -58,7 +58,9 @@ class Entities(InMemoryDataset):
             g.parse(file=f, format='nt')
 
         freq_ = Counter(g.predicates())
-        freq = lambda rel: freq_[rel] if rel in freq_ else 0  # noqa
+
+        def freq(rel):
+            return freq_[rel] if rel in freq_ else 0
 
         relations = sorted(set(g.predicates()), key=lambda rel: -freq(rel))
         subjects = set(g.subjects())
