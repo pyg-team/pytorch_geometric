@@ -102,6 +102,8 @@ class MetaLayer(torch.nn.Module):
 
         if self.global_model is not None:
             global_x = self.global_model(x, edge_index, edge_attr, u, batch)
+        else:
+            global_x = None
 
         return x, edge_attr, global_x
 
