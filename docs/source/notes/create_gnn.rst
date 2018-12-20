@@ -20,8 +20,17 @@ In its most general form, message passing graph neural networks can then be desc
 where :math:`\square` denotes a differentiable, permutation invariant function, *e.g.*, sum, mean or max, and :math:`\gamma` and :math:`\phi` denote differentiable functions such as MLPs.
 
 Nearly all of the already implemented methods in PyTorch Geometric follow this simple scheme.
-In addition, using the :class:`torch_geometric.nn.MessagePassing` base class, it is really simple to create them by yourself.
-The :class:`torch_geometric.nn.MessagePassing` base class automatically takes care of message propagation, so that the user only needs to define the methods :math:`\phi` ,*i.e.* the :meth:`message` method, and :math:`\gamma` ,*.i.e.* the :meth:`update` method, as well as choosing between various permutation invariant functions :math:`\square`, *.e.g.* :obj:`aggr='add'`.
+Using the :class:`torch_geometric.nn.MessagePassing` base class, it is really simple to create them by yourself.
+This base class automatically takes care of message propagation, so that the user only has to define the methods :math:`\phi` , *i.e.* the :meth:`message` method, and :math:`\gamma` , *.i.e.* the :meth:`update` method, as well as the aggregation scheme to use, *.i.e.* :obj:`aggr='add'`, :obj:`aggr='mean'` or :obj:`aggr='max'`.
+
+This is done with 3 convenient methods:
+
+* :obj:`torch_geometric.nn.MessagePassing.propagate(aggr, edge_index, **kwargs)`:
+  The initial call to start propagating messages.
+  Takes in an aggregation scheme, the edge indices, and all additional data which is needed to construct messages and to update features.
+* :meth:`torch_geometric.nn.MessagePassing.message`: Constructs messages in analogy to :math:`\phi`.
+  Can take any argument which was initially passed to :meth:`propagate`.
+  In addition, features can be lifted to the source and target node of each edge.
 
 Let us verify this by re-implementing two popular GNN variants, `GCN from Kipf and Welling <https://arxiv.org/abs/1609.02907>`_ and the `Message Passing Layer from Gilmer et al. <https://arxiv.org/abs/1704.01212>`_:
 
