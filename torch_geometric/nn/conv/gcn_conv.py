@@ -31,7 +31,7 @@ class GCNConv(MessagePassing):
     """
 
     def __init__(self, in_channels, out_channels, improved=False, bias=True):
-        super(GCNConv, self).__init__(aggr='add')
+        super(GCNConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -69,7 +69,7 @@ class GCNConv(MessagePassing):
         norm = deg_inv[row] * edge_weight * deg_inv[col]
 
         x = torch.matmul(x, self.weight)
-        out = super(GCNConv, self).forward(x, edge_index, norm=norm)
+        out = self.propagate('add', edge_index, x=x, norm=norm)
 
         if self.bias is not None:
             out = out + self.bias
