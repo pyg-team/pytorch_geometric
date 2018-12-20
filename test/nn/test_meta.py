@@ -1,4 +1,4 @@
-import unittest.mock as mock
+import mock
 from torch_geometric.nn.meta import MetaLayer
 
 
