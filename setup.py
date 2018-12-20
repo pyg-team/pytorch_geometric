@@ -8,6 +8,7 @@ install_requires = [
     'scipy',
     'networkx',
     'plyfile',
+    'rdflib',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov']

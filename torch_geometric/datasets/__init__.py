@@ -4,6 +4,7 @@ from .planetoid import Planetoid
 from .ppi import PPI
 from .qm7 import QM7
 from .qm9 import QM9
+from .entities import Entities
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
 from .shapenet import ShapeNet
@@ -17,6 +18,7 @@ __all__ = [
     'PPI',
     'QM7',
     'QM9',
+    'Entities',
     'MNISTSuperpixels',
     'FAUST',
     'ShapeNet',
