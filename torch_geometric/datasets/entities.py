@@ -1,82 +1,130 @@
 import os
-import os.path as osp
-import rdflib as rdf
 from collections import Counter
-from torch_sparse import coalesce
 
+import gzip
+import rdflib as rdf
+import pandas as pd
+import numpy as np
 import torch
-from torch_geometric.data import InMemoryDataset, download_url, extract_gz
+
+from torch_geometric.data import (InMemoryDataset, Data, download_url,
+                                  extract_tar)
 
 
 class Entities(InMemoryDataset):
+    url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/{}.tgz'
+
     def __init__(self, root, name, transform=None, pre_transform=None):
         assert name in ['AIFB', 'AM', 'MUTAG', 'BGS']
-        self.name = name
+        self.name = name.lower()
         super(Entities, self).__init__(root, transform, pre_transform)
+        self.data, self.slices = torch.load(self.processed_paths[0])
+
+    @property
+    def num_relations(self):
+        return self.data.edge_type.max().item() + 1
+
+    @property
+    def num_classes(self):
+        return self.data.train_y.max().item() + 1
 
     @property
     def raw_file_names(self):
-        return 'mutag_stripped.nt'
+        return [
+            '{}_stripped.nt.gz'.format(self.name),
+            'completeDataset.tsv',
+            'trainingSet.tsv',
+            'testSet.tsv',
+        ]
 
     @property
     def processed_file_names(self):
         return 'data.pt'
 
     def download(self):
-        url = 'https://www.dropbox.com/s/qy8j3p8eacvm4ir/'\
-              'mutag_stripped.nt.gz?dl=1'
-        path = download_url(url, self.root)
-        extract_gz(path, self.raw_dir, 'mutag_stripped.nt')
+        path = download_url(self.url.format(self.name), self.root)
+        extract_tar(path, self.raw_dir)
         os.unlink(path)
-
-    def freq(self, freq, relation):
-        if relation not in freq:
-            return 0
-        return freq[relation]
 
     def triples(self, graph, relation=None):
         for s, p, o in graph.triples((None, relation, None)):
             yield s, p, o
 
     def process(self):
-        graph = rdf.Graph()
-        with open(osp.join(self.raw_dir, 'mutag_stripped.nt'), 'rb') as f:
-            graph.parse(file=f, format='nt')
-        freq = Counter(graph.predicates())
+        graph_file, task_file, train_file, test_file = self.raw_paths
 
-        relations = list(set(graph.predicates()))
-        relations.sort(key=lambda rel: -self.freq(freq, rel))
+        g = rdf.Graph()
+        with gzip.open(graph_file, 'rb') as f:
+            g.parse(file=f, format='nt')
 
-        subjects = set(graph.subjects())
-        objects = set(graph.objects())
+        freq_ = Counter(g.predicates())
+        freq = lambda rel: freq_[rel] if rel in freq_ else 0  # noqa
 
+        relations = sorted(set(g.predicates()), key=lambda rel: -freq(rel))
+        subjects = set(g.subjects())
+        objects = set(g.objects())
         nodes = list(subjects.union(objects))
-        # adj_shape = (len(nodes), len(nodes))
 
-        # relations_dict = {rel: i for i, rel in enumerate(list(relations))}
+        relations_dict = {rel: i for i, rel in enumerate(list(relations))}
         nodes_dict = {node: i for i, node in enumerate(nodes)}
-        # adjacencies = []
 
-        size = 0
-        all_edges = []
-        for i, rel in enumerate(relations):
-            print('relation {}: {}, frequency {}'.format(i, rel,
-                                                         self.freq(freq, rel)))
-            edges = torch.empty((self.freq(freq, rel), 2), dtype=torch.long)
+        edge_list = []
+        for s, p, o in g.triples((None, None, None)):
+            src, dst, rel = nodes_dict[s], nodes_dict[o], relations_dict[p]
+            edge_list.append([src, dst, 2 * rel])
+            edge_list.append([dst, src, 2 * rel + 1])
 
-            for j, (s, p, o) in enumerate(self.triples(graph, rel)):
-                if nodes_dict[s] > len(nodes) or nodes_dict[o] > len(nodes):
-                    print(s, o, nodes_dict[s], nodes_dict[o])
+        edge_list = sorted(edge_list, key=lambda x: (x[0], x[1], x[2]))
+        edge = torch.tensor(edge_list, dtype=torch.long).t().contiguous()
+        edge_index, edge_type = edge[:2], edge[2]
 
-                edges[j, 0] = nodes_dict[s]
-                edges[j, 1] = nodes_dict[o]
-                size += 1
-            all_edges.append(edges)
+        if self.name == 'am':
+            label_header = 'label_cateogory'
+            nodes_header = 'proxy'
+        elif self.name == 'aifb':
+            label_header = 'label_affiliation'
+            nodes_header = 'person'
+        elif self.name == 'mutag':
+            label_header = 'label_mutagenic'
+            nodes_header = 'bond'
+        elif self.name == 'bgs':
+            label_header = 'label_lithogenesis'
+            nodes_header = 'rock'
 
-        edges = torch.cat(all_edges, dim=0)
+        labels_df = pd.read_csv(task_file, sep='\t')
+        labels_set = set(labels_df[label_header].values.tolist())
+        labels_dict = {lab: i for i, lab in enumerate(list(labels_set))}
+        nodes_dict = {np.unicode(key): val for key, val in nodes_dict.items()}
 
-        edges, _ = coalesce(edges.t().contiguous(), None,
-                            len(nodes), len(nodes))
+        train_labels_df = pd.read_csv(train_file, sep='\t')
+        train_indices, train_labels = [], []
+        for nod, lab in zip(train_labels_df[nodes_header].values,
+                            train_labels_df[label_header].values):
+            train_indices.append(nodes_dict[nod])
+            train_labels.append(labels_dict[lab])
+
+        train_idx = torch.tensor(train_indices, dtype=torch.long)
+        train_y = torch.tensor(train_labels, dtype=torch.long)
+
+        test_labels_df = pd.read_csv(test_file, sep='\t')
+        test_indices, test_labels = [], []
+        for nod, lab in zip(test_labels_df[nodes_header].values,
+                            test_labels_df[label_header].values):
+            test_indices.append(nodes_dict[nod])
+            test_labels.append(labels_dict[lab])
+
+        test_idx = torch.tensor(test_indices, dtype=torch.long)
+        test_y = torch.tensor(test_labels, dtype=torch.long)
+
+        data = Data(edge_index=edge_index)
+        data.edge_type = edge_type
+        data.train_idx = train_idx
+        data.train_y = train_y
+        data.test_idx = test_idx
+        data.test_y = test_y
+
+        data, slices = self.collate([data])
+        torch.save((data, slices), self.processed_paths[0])
 
     def __repr__(self):
-        return '{}({})'.format(self.name, len(self))
+        return '{}{}()'.format(self.name.upper(), self.__class__.__name__)
