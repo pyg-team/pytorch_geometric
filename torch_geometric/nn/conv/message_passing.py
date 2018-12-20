@@ -10,7 +10,6 @@ class MessagePassing(torch.nn.Module):
 
         self.message_args = inspect.getargspec(self.message)[0][1:]
         self.update_args = inspect.getargspec(self.update)[0][2:]
-        print("DRIN")
 
     def propagate(self, aggr, edge_index, **kwargs):
         assert aggr in ['add', 'mean', 'max']
