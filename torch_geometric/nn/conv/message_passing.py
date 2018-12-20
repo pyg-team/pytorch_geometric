@@ -1,3 +1,5 @@
+import inspect
+
 import torch
 from torch_geometric.utils import scatter_
 
@@ -9,36 +11,39 @@ class MessagePassing(torch.nn.Module):
         assert aggr in ['add', 'mean', 'max']
         self.aggr = aggr
 
-    def message(self, x_i, x_j, **kwargs):
-        return x_j
+        self.message_args = inspect.getargspec(self.message)[0][1:]
+        self.update_args = inspect.getargspec(self.update)[0][2:]
 
-    def update(self, x_old, x):
-        return x
-
-    def forward(self, x, edge_index, edge_attr=None, **kwargs):
+    def forward(self, x, edge_index, **kwargs):
         kwargs['x'] = x
-        (row, col) = edge_index
-
-        gathered_dict = {}
         for key, value in kwargs.items():
-            value = value.unsqueeze(-1) if value.dim() == 1 else value
-            if value.size(0) == x.size(0):
-                gathered_dict['{}_i'.format(key)] = value[row]
-                gathered_dict['{}_j'.format(key)] = value[col]
+            kwargs[key] = value.unsqueeze(-1) if value.dim() == 1 else value
+        kwargs['edge_index'] = edge_index
+
+        row, col = edge_index
+
+        message_args = []
+        for arg in self.message_args:
+            if arg[-2:] == '_i':
+                message_args.append(kwargs[arg[:-2]][row])
+            elif arg[-2:] == '_j':
+                message_args.append(kwargs[arg[:-2]][col])
             else:
-                gathered_dict[key] = value
+                message_args.append(kwargs[arg])
 
-        gathered_dict['edge_index'] = edge_index
-        if edge_attr is not None:
-            if edge_attr.dim() == 1:
-                edge_attr = edge_attr.unsqueeze(-1)
-            gathered_dict['edge_attr'] = edge_attr
+        update_args = [kwargs[arg] for arg in self.update_args]
 
-        out = self.message(**gathered_dict)
-        h = scatter_(self.aggr, out, row, dim_size=x.size(0))
-        out = self.update(x, h)
+        out = self.message(*message_args)
+        out = scatter_(self.aggr, out, row, dim_size=x.size(0))
+        out = self.update(out, *update_args)
 
         return out
+
+    def message(self, x_j):
+        return x_j
+
+    def update(self, aggr_out):
+        return aggr_out
 
     def __repr__(self):
         return '{}()'.format(self.__class__.__name__)

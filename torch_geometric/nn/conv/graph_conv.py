@@ -40,10 +40,14 @@ class GraphConv(MessagePassing):
 
     def forward(self, x, edge_index):
         """"""
-        out = torch.matmul(x, self.weight)
-        out = super(GraphConv, self).forward(out, edge_index)
-        out = out + self.lin(x)
-        return out
+        h = torch.matmul(x, self.weight)
+        return super(GraphConv, self).forward(x, edge_index, h=h)
+
+    def message(self, h_j):
+        return h_j
+
+    def update(self, aggr_out, x):
+        return aggr_out + self.lin(x)
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
