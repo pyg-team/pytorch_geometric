@@ -14,11 +14,7 @@ class MessagePassing(torch.nn.Module):
 
     def propagate(self, aggr, edge_index, **kwargs):
         assert aggr in ['add', 'mean', 'max']
-
-        for key, value in kwargs.items():
-            kwargs[key] = value.unsqueeze(-1) if value.dim() == 1 else value
         kwargs['edge_index'] = edge_index
-
         row, col = edge_index
 
         size = None

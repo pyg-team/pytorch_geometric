@@ -77,7 +77,7 @@ class GCNConv(MessagePassing):
         return out
 
     def message(self, x_j, norm):
-        return norm * x_j
+        return norm.view(-1, 1) * x_j
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
