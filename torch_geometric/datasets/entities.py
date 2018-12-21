@@ -6,9 +6,11 @@ import rdflib as rdf
 import pandas as pd
 import numpy as np
 import torch
+from torch_scatter import scatter_add
 
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_tar)
+from torch_geometric.utils import one_hot
 
 
 class Entities(InMemoryDataset):
@@ -80,6 +82,11 @@ class Entities(InMemoryDataset):
         edge = torch.tensor(edge_list, dtype=torch.long).t().contiguous()
         edge_index, edge_type = edge[:2], edge[2]
 
+        oh = one_hot(edge_type, 2 * len(relations), dtype=torch.float)
+        deg = scatter_add(oh, edge_index[0], dim=0, dim_size=len(nodes))
+        index = edge_type + torch.arange(len(edge_list)) * 2 * len(relations)
+        edge_norm = 1 / deg[edge_index[0]].view(-1)[index]
+
         if self.name == 'am':
             label_header = 'label_cateogory'
             nodes_header = 'proxy'
@@ -120,6 +127,7 @@ class Entities(InMemoryDataset):
 
         data = Data(edge_index=edge_index)
         data.edge_type = edge_type
+        data.edge_norm = edge_norm
         data.train_idx = train_idx
         data.train_y = train_y
         data.test_idx = test_idx

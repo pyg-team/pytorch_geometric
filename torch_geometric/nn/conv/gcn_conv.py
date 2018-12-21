@@ -69,15 +69,15 @@ class GCNConv(MessagePassing):
         norm = deg_inv[row] * edge_weight * deg_inv[col]
 
         x = torch.matmul(x, self.weight)
-        out = self.propagate('add', edge_index, x=x, norm=norm)
-
-        if self.bias is not None:
-            out = out + self.bias
-
-        return out
+        return self.propagate('add', edge_index, x=x, norm=norm)
 
     def message(self, x_j, norm):
         return norm.view(-1, 1) * x_j
+
+    def update(self, aggr_out):
+        if self.bias is not None:
+            aggr_out = aggr_out + self.bias
+        return aggr_out
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
