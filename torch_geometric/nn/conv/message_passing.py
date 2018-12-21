@@ -14,7 +14,6 @@ class MessagePassing(torch.nn.Module):
     def propagate(self, aggr, edge_index, **kwargs):
         assert aggr in ['add', 'mean', 'max']
         kwargs['edge_index'] = edge_index
-        row, col = edge_index
 
         size = None
         message_args = []
@@ -22,18 +21,18 @@ class MessagePassing(torch.nn.Module):
             if arg[-2:] == '_i':
                 tmp = kwargs[arg[:-2]]
                 size = tmp.size(0)
-                message_args.append(tmp[row])
+                message_args.append(tmp[edge_index[0]])
             elif arg[-2:] == '_j':
                 tmp = kwargs[arg[:-2]]
                 size = tmp.size(0)
-                message_args.append(tmp[col])
+                message_args.append(tmp[edge_index[1]])
             else:
                 message_args.append(kwargs[arg])
 
         update_args = [kwargs[arg] for arg in self.update_args]
 
         out = self.message(*message_args)
-        out = scatter_(aggr, out, row, dim_size=size)
+        out = scatter_(aggr, out, edge_index[0], dim_size=size)
         out = self.update(out, *update_args)
 
         return out
