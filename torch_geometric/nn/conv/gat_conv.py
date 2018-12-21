@@ -1,13 +1,13 @@
 import torch
 from torch.nn import Parameter
 import torch.nn.functional as F
-from torch_scatter import scatter_add
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import add_self_loops, softmax
 
 from ..inits import uniform
 
 
-class GATConv(torch.nn.Module):
+class GATConv(MessagePassing):
     r"""The graph attentional operator from the `"Graph Attention Networks"
     <https://arxiv.org/abs/1710.10903>`_ paper
 
@@ -63,10 +63,10 @@ class GATConv(torch.nn.Module):
 
         self.weight = Parameter(
             torch.Tensor(in_channels, heads * out_channels))
-        self.att_weight = Parameter(torch.Tensor(1, heads, 2 * out_channels))
+        self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(out_channels * heads))
+            self.bias = Parameter(torch.Tensor(heads * out_channels))
         elif bias and not concat:
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
@@ -77,43 +77,37 @@ class GATConv(torch.nn.Module):
     def reset_parameters(self):
         size = self.heads * self.in_channels
         uniform(size, self.weight)
-        uniform(size, self.att_weight)
+        uniform(size, self.att)
         uniform(size, self.bias)
 
     def forward(self, x, edge_index):
         """"""
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        x = torch.mm(x, self.weight)
-        x = x.view(-1, self.heads, self.out_channels)
-
-        # Add self-loops to adjacency matrix.
-        edge_index, _ = remove_self_loops(edge_index)
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
-        row, col = edge_index
 
+        x = torch.mm(x, self.weight).view(-1, self.heads, self.out_channels)
+        return self.propagate('add', edge_index, x=x, num_nodes=x.size(0))
+
+    def message(self, x_i, x_j, edge_index, num_nodes):
         # Compute attention coefficients.
-        alpha = torch.cat([x[row], x[col]], dim=-1)
-        alpha = (alpha * self.att_weight).sum(dim=-1)
+        alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = softmax(alpha, row, num_nodes=x.size(0))
+        alpha = softmax(alpha, edge_index[0], num_nodes)
 
         # Sample attention coefficients stochastically.
-        dropout = self.dropout if self.training else 0
-        alpha = F.dropout(alpha, p=dropout, training=True)
+        if self.training and self.dropout > 0:
+            alpha = F.dropout(alpha, p=self.dropout, training=True)
 
-        # Sum up neighborhoods.
-        out = alpha.view(-1, self.heads, 1) * x[col]
-        out = scatter_add(out, row, dim=0, dim_size=x.size(0))
+        return x_j * alpha.view(-1, self.heads, 1)
 
+    def update(self, aggr_out):
         if self.concat is True:
-            out = out.view(-1, self.heads * self.out_channels)
+            aggr_out = aggr_out.view(-1, self.heads * self.out_channels)
         else:
-            out = out.sum(dim=1) / self.heads
+            aggr_out = aggr_out.mean(dim=1)
 
         if self.bias is not None:
-            out = out + self.bias
-
-        return out
+            aggr_out = aggr_out + self.bias
+        return aggr_out
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
