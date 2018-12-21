@@ -10,16 +10,16 @@ def test_MetaLayer_mock():
     for em in (edge_model, None):
         for nm in (node_model, None):
             for gm in (global_model, None):
-                lay = MetaLayer(edge_model=em, node_model=nm, global_model=gm)
-                out = lay(
-                    x=mock.MagicMock(),
+                model = MetaLayer(em, nm, gm)
+                out = model(
+                    mock.MagicMock(),
                     edge_index=("row", "col"),
                     edge_attr="edge_attr",
                     u="u",
-                    batch="batch"
-                )
-                assert isinstance(out, tuple)
-                assert len(out) == 3
+                    batch="batch")
+
+                assert isinstance(out, tuple) and len(out) == 3
+
                 if em is not None:
                     em.assert_called_once()
                 if nm is not None:

@@ -101,11 +101,9 @@ class MetaLayer(torch.nn.Module):
             x = self.node_model(x, edge_index, edge_attr, u)
 
         if self.global_model is not None:
-            global_x = self.global_model(x, edge_index, edge_attr, u, batch)
-        else:
-            global_x = None
+            u = self.global_model(x, edge_index, edge_attr, u, batch)
 
-        return x, edge_attr, global_x
+        return x, edge_attr, u
 
     def __repr__(self):
         return '{}(edge_model={}, node_model={}, global_model={})'.format(
