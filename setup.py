@@ -12,7 +12,7 @@ install_requires = [
     'rdflib',
 ]
 setup_requires = ['pytest-runner']
-tests_require = ['pytest', 'pytest-cov']
+tests_require = ['pytest', 'pytest-cov', 'mock']
 
 setup(
     name='torch_geometric',
