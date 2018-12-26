@@ -15,11 +15,21 @@ class TUDataset(InMemoryDataset):
                  name,
                  transform=None,
                  pre_transform=None,
-                 pre_filter=None):
+                 pre_filter=None,
+                 use_node_attr=False):
         self.name = name
         super(TUDataset, self).__init__(root, transform, pre_transform,
                                         pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        try:
+            self.data, self.slices, self.props = torch.load(self.processed_paths[0])
+        except ValueError as e:
+            raise type(e)(str(e) + '. This can be probably solved by removing old dataset file %s and running the code again.' % self.processed_paths[0])
+
+        if use_node_attr:
+            if self.props['node_attr_dim'] == 0:
+                raise ValueError('Continuous node attributes are not found in this dataset. Try running with use_node_attr=False.')
+        else:
+            self.data.x = self.data.x[:, self.props['node_attr_dim']:]  # omit continuous node attributes
 
     @property
     def raw_file_names(self):
@@ -37,7 +47,7 @@ class TUDataset(InMemoryDataset):
         os.rename(osp.join(self.root, self.name), self.raw_dir)
 
     def process(self):
-        self.data, self.slices = read_tu_data(self.raw_dir, self.name)
+        self.data, self.slices, self.props = read_tu_data(self.raw_dir, self.name)
 
         if self.pre_filter is not None:
             data_list = [self.get(idx) for idx in range(len(self))]
@@ -49,7 +59,7 @@ class TUDataset(InMemoryDataset):
             data_list = [self.pre_transform(data) for data in data_list]
             self.data, self.slices = self.collate(data_list)
 
-        torch.save((self.data, self.slices), self.processed_paths[0])
+        torch.save((self.data, self.slices, self.props), self.processed_paths[0])
 
     def __repr__(self):
         return '{}({})'.format(self.name, len(self))

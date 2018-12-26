@@ -17,7 +17,7 @@ def test_enzymes():
     dataset = TUDataset(root, 'ENZYMES')
 
     assert len(dataset) == 600
-    assert dataset.num_features == 21
+    assert dataset.num_features == 3
     assert dataset.num_classes == 6
     assert dataset.__repr__() == 'ENZYMES(600)'
 
@@ -40,7 +40,7 @@ def test_enzymes():
         assert pytest.approx(avg_num_edges, abs=1e-2) == 62.14
 
         assert len(data) == 4
-        assert list(data.x.size()) == [data.num_nodes, 21]
+        assert list(data.x.size()) == [data.num_nodes, 3]
         assert list(data.y.size()) == [data.num_graphs]
         assert data.y.max() + 1 == 6
         assert list(data.batch.size()) == [data.num_nodes]
@@ -53,7 +53,7 @@ def test_enzymes():
     loader = DenseDataLoader(dataset, batch_size=len(dataset))
     for data in loader:
         assert len(data) == 4
-        assert list(data.x.size()) == [600, 126, 21]
+        assert list(data.x.size()) == [600, 126, 3]
         assert list(data.adj.size()) == [600, 126, 126]
         assert list(data.mask.size()) == [600, 126]
         assert list(data.y.size()) == [600, 1]
