@@ -22,8 +22,10 @@ def read_tu_data(folder, prefix):
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1
 
     node_attributes, node_labels = None, None
+    node_attr_dim = 0
     if 'node_attributes' in names:
         node_attributes = read_file(folder, prefix, 'node_attributes')
+        node_attr_dim = 1 if len(node_attributes.shape) == 1 else node_attributes.shape[1]
     if 'node_labels' in names:
         node_labels = read_file(folder, prefix, 'node_labels', torch.long)
         node_labels = one_hot(node_labels - node_labels.min(dim=0)[0])
@@ -52,7 +54,7 @@ def read_tu_data(folder, prefix):
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
     data, slices = split(data, batch)
 
-    return data, slices
+    return data, slices, {'node_attr_dim': node_attr_dim}
 
 
 def read_file(folder, prefix, name, dtype=None):
