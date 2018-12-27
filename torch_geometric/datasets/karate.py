@@ -4,7 +4,7 @@ from torch_geometric.data import InMemoryDataset, Data
 
 
 class KarateClub(InMemoryDataset):
-    r""""Zachary's Karate Club Network from the `"An Information Flow Model for
+    r""""Zachary's karate club network from the `"An Information Flow Model for
     Conflict and Fission in Small Groups"
     <http://www1.ind.ku.dk/complexLearning/zachary1977.pdf>`_ paper, containing
     34 nodes, connected by 154 (undirected and unweighted) edges.
@@ -12,8 +12,8 @@ class KarateClub(InMemoryDataset):
 
     Args:
         transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
-            version. (default: :obj:`None`)
+            :obj:`torch_geometric.data.Data` object and returns, for each
+            access, a transformed version. (default: :obj:`None`)
     """
 
     def __init__(self, transform=None):
