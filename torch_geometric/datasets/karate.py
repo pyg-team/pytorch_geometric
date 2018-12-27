@@ -4,7 +4,7 @@ from torch_geometric.data import InMemoryDataset, Data
 
 
 class KarateClub(InMemoryDataset):
-    r""""Zachary's karate club network from the `"An Information Flow Model for
+    r"""Zachary's karate club network from the `"An Information Flow Model for
     Conflict and Fission in Small Groups"
     <http://www1.ind.ku.dk/complexLearning/zachary1977.pdf>`_ paper, containing
     34 nodes, connected by 154 (undirected and unweighted) edges.

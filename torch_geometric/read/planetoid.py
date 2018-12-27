@@ -15,9 +15,6 @@ except ImportError:
 
 
 def read_planetoid_data(folder, prefix):
-    """Reads the planetoid data format.
-    ind.{}.x
-    """
     names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
     items = [read_file(folder, prefix, name) for name in names]
     x, tx, allx, y, ty, ally, graph, test_index = items

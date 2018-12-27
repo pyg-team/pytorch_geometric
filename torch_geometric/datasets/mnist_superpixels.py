@@ -6,7 +6,7 @@ from torch_geometric.data import (InMemoryDataset, Data, download_url,
 
 
 class MNISTSuperpixels(InMemoryDataset):
-    r""""MNIST superpixels dataset from the `"Geometric Deep Learning on
+    r"""MNIST superpixels dataset from the `"Geometric Deep Learning on
     Graphs and Manifolds Using Mixture Model CNNs"
     <https://arxiv.org/abs/1611.08402>`_ paper, containing 70,000 graphs with
     75 nodes each.
@@ -24,7 +24,7 @@ class MNISTSuperpixels(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        filter (callabla, optional): A function that takes in an
+        pre_filter (callable, optional): A function that takes in an
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
