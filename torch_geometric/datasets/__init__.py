@@ -2,7 +2,7 @@ from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .planetoid import Planetoid
 from .ppi import PPI
-from .qm7 import QM7
+from .qm7 import QM7b
 from .qm9 import QM9
 from .entities import Entities
 from .mnist_superpixels import MNISTSuperpixels
@@ -16,7 +16,7 @@ __all__ = [
     'TUDataset',
     'Planetoid',
     'PPI',
-    'QM7',
+    'QM7b',
     'QM9',
     'Entities',
     'MNISTSuperpixels',
