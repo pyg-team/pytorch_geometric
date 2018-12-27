@@ -11,6 +11,37 @@ from ..data.makedirs import makedirs
 
 
 class ShapeNet(InMemoryDataset):
+    r""" The ShapeNet part level segmentation dataset from the `"A Scalable
+    Active Framework for Region Annotation in 3D Shape Collections"
+    <http://web.stanford.edu/~ericyi/papers/part_annotation_16_small.pdf>`_
+    paper, containing about 17,000 3D shape point clouds from 16 shape
+    categories.
+    Each category is annotated with 2 to 6 parts.
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        category (string): The category of the CAD models (one of
+            :obj:`"Airplane"`, :obj:`"Bag"`, :obj:`"Cap"`, :obj:`"Car"`,
+            :obj:`"Chair"`, :obj:`"Earphone"`, :obj:`"Guitar"`,
+            :obj:`"Knife"`, :obj:`"Lamp"`, :obj:`"Laptop"`,
+            :obj:`"Motorbike"`, :obj:`"Mug"`, :obj:`"Pistol"`,
+            :obj:`"Rocket"`, :obj:`"Skateboard"`, :obj:`"Table"`).
+        train (bool, optional): If :obj:`True`, loads the training dataset,
+            otherwise the test dataset. (default: :obj:`True`)
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
+    """
+
     url = 'https://shapenet.cs.stanford.edu/iccv17/partseg'
 
     categories = {
@@ -90,5 +121,5 @@ class ShapeNet(InMemoryDataset):
         torch.save(self.collate(datasets[2]), self.processed_paths[1])
 
     def __repr__(self):
-        return '{}({}, category={})'.format(self.__class__.__name__, len(self),
-                                            self.category)
+        return '{}({}, category={})'.format(self.__class__.__name__,
+                                            len(self), self.category)

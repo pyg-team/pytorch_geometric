@@ -12,7 +12,7 @@ class Planetoid(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (one of :obj:`"Cora"`,
+        name (string): The name of the dataset (:obj:`"Cora"`,
             :obj:`"CiteSeer"`, :obj:`"PubMed"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
