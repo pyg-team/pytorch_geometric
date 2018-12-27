@@ -7,8 +7,8 @@ from torch_geometric.read import read_tu_data
 
 
 class TUDataset(InMemoryDataset):
-    r"""A variety of graph kernel benchmark datasets, *.e.g.* IMDB, REDDIT and
-    PROTEINS, collected from the `TU Dortmund University
+    r"""A variety of graph kernel benchmark datasets, *.e.g.* "IMDB-BINARY",
+    "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
     <http://graphkernels.cs.tu-dortmund.de>`_.
 
     Args:
@@ -23,7 +23,7 @@ class TUDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        filter (callabla, optional): A function that takes in an
+        pre_filter (callable, optional): A function that takes in an
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
