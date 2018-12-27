@@ -8,7 +8,7 @@ from torch_geometric.data import (InMemoryDataset, Data, download_url,
 class MNISTSuperpixels(InMemoryDataset):
     r""""MNIST superpixels dataset from the `"Geometric Deep Learning on
     Graphs and Manifolds Using Mixture Model CNNs"
-    <https://arxiv.org/abs/1611.08402>`_ paper, containing 60,000 graphs with
+    <https://arxiv.org/abs/1611.08402>`_ paper, containing 70,000 graphs with
     75 nodes each.
     Every graph is labeled by one of ten classes.
 

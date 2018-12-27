@@ -19,8 +19,8 @@ class GINConv(torch.nn.Module):
         nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
         eps (float, optional): (Initial) :math:`\epsilon` value.
             (default: :obj:`0`)
-        train_eps (bool optional): If set to :obj:`True`, :math:`\epsilon` will
-            be a trainable parameter. (default: :obj:`False`)
+        train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`
+            will be a trainable parameter. (default: :obj:`False`)
     """
 
     def __init__(self, nn, eps=0, train_eps=False):
