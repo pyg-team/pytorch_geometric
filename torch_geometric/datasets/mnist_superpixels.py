@@ -10,7 +10,7 @@ class MNISTSuperpixels(InMemoryDataset):
     Graphs and Manifolds Using Mixture Model CNNs"
     <https://arxiv.org/abs/1611.08402>`_ paper, containing 70,000 graphs with
     75 nodes each.
-    Every graph is labeled by one of ten classes.
+    Every graph is labeled by one of 10 classes.
 
     Args:
         root (string): Root directory where the dataset should be saved.
