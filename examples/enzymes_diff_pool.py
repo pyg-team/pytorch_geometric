@@ -16,19 +16,11 @@ class MyFilter(object):
         return data.num_nodes <= max_nodes
 
 
-class MyTransform(object):
-    def __call__(self, data):
-        # Only use node attributes.
-        data.x = data.x[:, -3:]
-        return data
-
-
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES_d')
 dataset = TUDataset(
     path,
     name='ENZYMES',
-    transform=T.Compose([T.ToDense(max_nodes),
-                         MyTransform()]),
+    transform=T.ToDense(max_nodes),
     pre_filter=MyFilter())
 dataset = dataset.shuffle()
 n = (len(dataset) + 9) // 10
