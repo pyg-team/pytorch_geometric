@@ -58,4 +58,7 @@ def test_enzymes():
         assert list(data.mask.size()) == [600, 126]
         assert list(data.y.size()) == [600, 1]
 
+    dataset = TUDataset(root, 'ENZYMES', use_node_attr=True)
+    assert dataset.num_features == 21
+
     shutil.rmtree(root)
