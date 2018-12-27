@@ -3,7 +3,27 @@ import scipy.io
 from torch_geometric.data import InMemoryDataset, download_url, Data
 
 
-class QM7(InMemoryDataset):
+class QM7b(InMemoryDataset):
+    r"""The QM7b dataset from the `"MoleculeNet: A Benchmark for Molecular
+    Machine Learning" <https://arxiv.org/abs/1703.00564>`_ paper, consisting of
+    7,211 molecules with 14 regression targets.
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
+    """
+
     url = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/' \
           'datasets/qm7b.mat'
 
@@ -12,7 +32,7 @@ class QM7(InMemoryDataset):
                  transform=None,
                  pre_transform=None,
                  pre_filter=None):
-        super(QM7, self).__init__(root, transform, pre_transform, pre_filter)
+        super(QM7b, self).__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
