@@ -12,8 +12,9 @@ class KarateClub(InMemoryDataset):
 
     Args:
         transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns, for each
-            access, a transformed version. (default: :obj:`None`)
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
     """
 
     def __init__(self, transform=None):
