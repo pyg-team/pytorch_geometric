@@ -7,7 +7,7 @@ from .loop import contains_self_loops, remove_self_loops, add_self_loops
 from .one_hot import one_hot
 from .grid import grid
 from .normalized_cut import normalized_cut
-from .sparse import dense_to_sparse
+from .sparse import dense_to_sparse, sparse_to_dense
 from .to_batch import to_batch
 from .convert import to_scipy_sparse_matrix, to_networkx
 from .metric import (accuracy, true_positive, true_negative, false_positive,
@@ -27,6 +27,7 @@ __all__ = [
     'grid',
     'normalized_cut',
     'dense_to_sparse',
+    'sparse_to_dense',
     'to_batch',
     'to_scipy_sparse_matrix',
     'to_networkx',

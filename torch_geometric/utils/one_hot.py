@@ -1,4 +1,5 @@
 import torch
+from torch_geometric.nn.repeat import repeat
 
 
 def one_hot(src, num_classes=None, dtype=None):
@@ -8,8 +9,11 @@ def one_hot(src, num_classes=None, dtype=None):
 
     if num_classes is None:
         num_classes = src.max(dim=0)[0] + 1
-    elif isinstance(num_classes, int) or isinstance(num_classes, float):
-        num_classes = torch.tensor(int(num_classes))
+    else:
+        num_classes = torch.tensor(
+            repeat(num_classes, length=src.size(1)),
+            dtype=torch.long,
+            device=src.device)
 
     if src.size(1) > 1:
         zero = torch.tensor([0], device=src.device)
