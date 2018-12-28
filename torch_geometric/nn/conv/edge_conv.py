@@ -42,4 +42,4 @@ class EdgeConv(torch.nn.Module):
         return out
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.nn)
+        return '{}(nn={})'.format(self.__class__.__name__, self.nn)
