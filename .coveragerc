@@ -1,5 +1,8 @@
 [run]
 source=torch_geometric
+omit=
+    torch_geometric/datasets/*
+    torch_geometric/read/*
 [report]
 exclude_lines =
     pragma: no cover
