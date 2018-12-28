@@ -9,6 +9,6 @@ def test_x_conv():
     x = torch.randn((num_nodes, in_channels))
     pos = torch.rand((num_nodes, 3))
 
-    conv = XConv(in_channels, out_channels, dim=3, kernel_size=3)
+    conv = XConv(in_channels, out_channels, dim=3, kernel_size=2, dilation=2)
     assert conv.__repr__() == 'XConv(16, 32)'
     assert conv(x, pos).size() == (num_nodes, out_channels)
