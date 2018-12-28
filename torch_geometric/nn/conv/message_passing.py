@@ -37,11 +37,8 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def message(self, x_j):
+    def message(self, x_j):  # pragma: no cover
         return x_j
 
-    def update(self, aggr_out):
+    def update(self, aggr_out):  # pragma: no cover
         return aggr_out
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)
