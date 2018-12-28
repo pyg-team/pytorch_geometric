@@ -1,7 +1,6 @@
 import torch
 from torch_cluster import grid_cluster
-
-from ..repeat import repeat
+from torch_geometric.utils.repeat import repeat
 
 
 def voxel_grid(pos, batch, size, start=None, end=None):
