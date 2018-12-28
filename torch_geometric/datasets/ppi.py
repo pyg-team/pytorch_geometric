@@ -10,6 +10,25 @@ from torch_geometric.data import (InMemoryDataset, Data, download_url,
 
 
 class PPI(InMemoryDataset):
+    r"""Protein-protein interaction networks from the `"Predicting
+    Multicellular Function through Multi-layer Tissue Networks"
+    <https://arxiv.org/abs/1707.04638>`_ paper, containing positional gene
+    sets, motif gene sets and immunological signatures as features (50 in
+    total) and gene ontology sets as labels (121 in total).
+    Training, validation and test splits are given by binary masks.
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+    """
+
     url = 'http://snap.stanford.edu/graphsage/ppi.zip'
 
     def __init__(self, root, transform=None, pre_transform=None):

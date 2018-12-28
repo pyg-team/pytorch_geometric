@@ -14,6 +14,25 @@ from torch_geometric.utils import one_hot
 
 
 class Entities(InMemoryDataset):
+    r"""The relational entities networks "AIFB", "MUTAG", "BGS" and "AM" from
+    the `"Modeling Relational Data with Graph Convolutional Networks"
+    <https://arxiv.org/abs/1703.06103>`_ paper.
+    Training and test splits are given by node indices.
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        name (string): The name of the dataset (:obj:`"AIFB"`,
+            :obj:`"MUTAG"`, :obj:`"BGS"`, :obj:`"AM"`).
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+    """
+
     url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/{}.tgz'
 
     def __init__(self, root, name, transform=None, pre_transform=None):
