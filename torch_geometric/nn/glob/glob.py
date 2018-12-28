@@ -49,7 +49,7 @@ def global_mean_pool(x, batch, size=None):
 
 def global_max_pool(x, batch, size=None):
     r"""Returns batch-wise graph-level-outputs by taking the channel-wise
-    maximum node features across the node dimension, so that for a single graph
+    maximum across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
 
     .. math::
