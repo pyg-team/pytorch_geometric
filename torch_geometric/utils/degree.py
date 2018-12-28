@@ -10,8 +10,8 @@ def degree(index, num_nodes=None, dtype=None):
         index (LongTensor): Source or target indices of edges.
         num_nodes (int, optional): The number of nodes in :attr:`index`.
             (default: :obj:`None`)
-        dtype (:obj:`torch.dtype`, optional): The desired data type of returned
-            tensor.
+        dtype (:obj:`torch.dtype`, optional): The desired data type of the
+            returned tensor.
 
     :rtype: :class:`Tensor`
 
@@ -23,12 +23,7 @@ def degree(index, num_nodes=None, dtype=None):
 
         from torch_geometric.utils import degree
         index = torch.tensor([0, 1, 0, 2, 0])
-        output = degree(index)
-        print(output)
-
-    .. testoutput::
-
-       tensor([3., 1., 1.])
+        out = degree(index)
     """
 
     num_nodes = maybe_num_nodes(index, num_nodes)

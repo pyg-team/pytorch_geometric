@@ -22,7 +22,7 @@ class NNConv(torch.nn.Module):
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
-        aggr (string): The aggregation operator to use (one of :obj:`"add"`,
+        aggr (string): The aggregation operator to use (:obj:`"add"`,
             :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add the transformed root node features to the output.

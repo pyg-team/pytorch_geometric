@@ -17,7 +17,7 @@ class EdgeConv(torch.nn.Module):
 
     Args:
         nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
-        aggr (string): The aggregation operator to use (one of :obj:`"add"`,
+        aggr (string): The aggregation operator to use (:obj:`"add"`,
             :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
     """
 
