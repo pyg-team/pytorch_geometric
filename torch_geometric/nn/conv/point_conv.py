@@ -56,7 +56,7 @@ class PointConv(torch.nn.Module):
         if self.local_nn is not None:
             out = self.local_nn(out)
 
-        out, _ = scatter_('max', x, row, dim_size=pos.size(0))
+        out = scatter_('max', out, row, dim_size=pos.size(0))
 
         if self.global_nn is not None:
             out = self.global_nn(out)
