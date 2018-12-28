@@ -24,7 +24,7 @@ def to_networkx(edge_index, x=None, edge_attr=None, pos=None, num_nodes=None):
     num_nodes = num_nodes if pos is None else pos.size(0)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    G = nx.Graph()
+    G = nx.DiGraph()
 
     for i in range(num_nodes):
         G.add_node(i)
