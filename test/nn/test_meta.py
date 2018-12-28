@@ -1,8 +1,8 @@
 import mock
-from torch_geometric.nn.meta import MetaLayer
+from torch_geometric.nn import MetaLayer
 
 
-def test_MetaLayer_mock():
+def test_meta_layer():
     edge_model = mock.MagicMock()
     node_model = mock.MagicMock()
     global_model = mock.MagicMock()
