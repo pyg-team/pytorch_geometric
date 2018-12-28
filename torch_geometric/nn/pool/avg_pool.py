@@ -1,22 +1,17 @@
-from torch_scatter import scatter_mean
 from torch_geometric.data import Batch
+from torch_geometric.utils import scatter_
 
 from .consecutive import consecutive_cluster
 from .pool import pool_edge, pool_batch, pool_pos
 
 
 def _avg_pool_x(cluster, x, size=None):
-    fill = -9999999
-    x, _ = scatter_mean(x, cluster, dim=0, dim_size=size, fill_value=fill)
-    x[x == fill] = 0
-    return x
+    return scatter_('mean', x, cluster, dim_size=size)
 
 
-def avg_pool_x(cluster, x, batch=None, size=None):
-    assert batch is None or size is None
-
+def avg_pool_x(cluster, x, batch, size=None):
     if size is not None:
-        return _avg_pool_x(cluster, x, size)
+        return _avg_pool_x(cluster, x, (batch.max().item() + 1) * size)
 
     cluster, perm = consecutive_cluster(cluster)
     x = _avg_pool_x(cluster, x)
