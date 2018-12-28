@@ -94,7 +94,7 @@ class XConv(torch.nn.Module):
             Reshape(-1, K, K), )
 
         C_in = C_in + C_delta
-        depth_multiplier = ceil(C_out / C_in)
+        depth_multiplier = int(ceil(C_out / C_in))
         self.conv = S(
             Conv1d(C_in, C_in * depth_multiplier, K, groups=C_in),
             Reshape(-1, C_in * depth_multiplier),
