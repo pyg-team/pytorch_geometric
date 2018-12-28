@@ -93,4 +93,4 @@ class ChebConv(torch.nn.Module):
     def __repr__(self):
         return '{}({}, {}, K={})'.format(self.__class__.__name__,
                                          self.in_channels, self.out_channels,
-                                         self.weight.size(0) - 1)
+                                         self.weight.size(0))
