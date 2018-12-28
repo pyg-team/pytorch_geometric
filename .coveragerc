@@ -1,3 +1,5 @@
+[run]
+source=torch_geometric
 [report]
 exclude_lines =
     pragma: no cover
