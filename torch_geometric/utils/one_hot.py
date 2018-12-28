@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.nn.repeat import repeat
+
+from .repeat import repeat
 
 
 def one_hot(src, num_classes=None, dtype=None):

@@ -1,9 +1,9 @@
 import torch
 from torch.nn import Parameter
 from torch_spline_conv import SplineConv as Conv
+from torch_geometric.utils.repeat import repeat
 
 from ..inits import uniform
-from ..repeat import repeat
 
 
 class SplineConv(torch.nn.Module):
