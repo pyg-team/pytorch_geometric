@@ -3,6 +3,7 @@ source=torch_geometric
 omit=
     torch_geometric/datasets/*
     torch_geometric/read/*
+    torch_geometric/data/extract.py
 [report]
 exclude_lines =
     pragma: no cover

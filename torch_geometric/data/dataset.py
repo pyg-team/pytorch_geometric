@@ -93,7 +93,7 @@ class Dataset(torch.utils.data.Dataset):
 
         print('Done!')
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx):  # pragma: no cover
         data = self.get(idx)
         data = data if self.transform is None else self.transform(data)
         return data
