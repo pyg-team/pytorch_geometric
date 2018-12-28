@@ -4,3 +4,4 @@ source=torch_geometric
 exclude_lines =
     pragma: no cover
     raise
+    register_parameter
