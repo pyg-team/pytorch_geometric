@@ -9,7 +9,7 @@ def test_gin_conv():
     num_nodes = edge_index.max().item() + 1
     x = torch.randn((num_nodes, in_channels))
 
-    nn = Sequential(Linear(16, 32), ReLU(), Linear(32, 32))
+    nn = Sequential(Linear(in_channels, 32), ReLU(), Linear(32, out_channels))
     conv = GINConv(nn, train_eps=True)
     assert conv.__repr__() == (
         'GINConv(nn=Sequential(\n'
