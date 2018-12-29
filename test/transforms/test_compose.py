@@ -10,11 +10,12 @@ def test_compose():
                                     '    AddSelfLoops(),\n'
                                     '])')
 
-    pos = torch.tensor([[0, 0], [2, 0], [4, 0]], dtype=torch.float)
+    pos = torch.Tensor([[0, 0], [2, 0], [4, 0]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-    data = Data(edge_index=edge_index, pos=pos)
 
-    out = transform(data)
-    assert out.pos.tolist() == [[-2, 0], [0, 0], [2, 0]]
-    assert out.edge_index.tolist() == [[0, 0, 1, 1, 1, 2, 2],
-                                       [0, 1, 0, 1, 2, 1, 2]]
+    data = Data(edge_index=edge_index, pos=pos)
+    data = transform(data)
+    assert len(data) == 2
+    assert data.pos.tolist() == [[-2, 0], [0, 0], [2, 0]]
+    assert data.edge_index.tolist() == [[0, 0, 1, 1, 1, 2, 2],
+                                        [0, 1, 0, 1, 2, 1, 2]]
