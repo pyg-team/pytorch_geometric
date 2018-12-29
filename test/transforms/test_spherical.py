@@ -1,3 +1,5 @@
+from math import pi as PI
+
 import torch
 from torch_geometric.transforms import Spherical
 from torch_geometric.data import Data
@@ -6,14 +8,41 @@ from torch_geometric.data import Data
 def test_spherical():
     assert Spherical().__repr__() == 'Spherical(norm=True, max_value=None)'
 
-    pos = torch.tensor([[0, 0, 0], [0, 1, 1]], dtype=torch.float)
+    pos = torch.Tensor([[0, 0, 0], [1, 0, 0]])
     edge_index = torch.tensor([[0, 1], [1, 0]])
+    edge_attr = torch.Tensor([1, 1])
+
     data = Data(edge_index=edge_index, pos=pos)
-    print(data)
+    data = Spherical(norm=False)(data)
+    assert len(data) == 3
+    assert data.pos.tolist() == pos.tolist()
+    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.allclose(data.edge_attr,
+                          torch.Tensor([[1, 0, PI / 2], [1, PI, PI / 2]]))
 
-    # out = Spherical()(data).edge_attr.view(-1).tolist()
-    # assert approx(out) == [1, 0.25, 0, 1, 0.75, 1]
+    data = Data(edge_index=edge_index, pos=pos, edge_attr=edge_attr)
+    data = Spherical(norm=True)(data)
+    assert len(data) == 3
+    assert data.pos.tolist() == pos.tolist()
+    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.allclose(data.edge_attr,
+                          torch.Tensor([[1, 1, 0, 0.5], [1, 1, 0.5, 0.5]]))
 
-    # data.edge_attr = torch.tensor([1, 1], dtype=torch.float)
-    # out = Spherical()(data).edge_attr.view(-1).tolist()
-    # assert approx(out) == [1, 1, 0.25, 0, 1, 1, 0.75, 1]
+    pos = torch.Tensor([[0, 0, 0], [0, 0, 1]])
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+
+    data = Data(edge_index=edge_index, pos=pos)
+    data = Spherical(norm=False)(data)
+    assert len(data) == 3
+    assert data.pos.tolist() == pos.tolist()
+    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.allclose(data.edge_attr,
+                          torch.Tensor([[1, 0, 0], [1, 0, PI]]))
+
+    data = Data(edge_index=edge_index, pos=pos, edge_attr=edge_attr)
+    data = Spherical(norm=True)(data)
+    assert len(data) == 3
+    assert data.pos.tolist() == pos.tolist()
+    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.allclose(data.edge_attr,
+                          torch.Tensor([[1, 1, 0, 0], [1, 1, 0, 1]]))
