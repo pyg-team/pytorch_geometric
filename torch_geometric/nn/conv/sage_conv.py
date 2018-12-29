@@ -55,8 +55,8 @@ class SAGEConv(torch.nn.Module):
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         row, col = edge_index
 
+        x = torch.matmul(x, self.weight)
         out = scatter_mean(x[col], row, dim=0, dim_size=x.size(0))
-        out = torch.matmul(out, self.weight)
 
         if self.bias is not None:
             out = out + self.bias
