@@ -31,7 +31,7 @@ class Distance(object):
 
     def __init__(self, norm=True, max_value=None, cat=True):
         self.norm = norm
-        self.max_value = max_value
+        self.max = max_value
         self.cat = cat
 
     def __call__(self, data):
@@ -40,11 +40,7 @@ class Distance(object):
         dist = torch.norm(pos[col] - pos[row], p=2, dim=-1).view(-1, 1)
 
         if self.norm:
-            if self.max_value is None:
-                max_value = dist.max().item()
-            else:
-                max_value = self.max_value
-            dist = dist / max_value
+            dist = dist / dist.max() if self.max is None else self.max
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
@@ -56,4 +52,4 @@ class Distance(object):
 
     def __repr__(self):
         return '{}(norm={}, max_value={})'.format(self.__class__.__name__,
-                                                  self.norm, self.max_value)
+                                                  self.norm, self.max)
