@@ -1,3 +1,5 @@
+from math import pi as PI
+
 import torch
 from torch_geometric.transforms import Polar
 from torch_geometric.data import Data
@@ -6,14 +8,21 @@ from torch_geometric.data import Data
 def test_polar():
     assert Polar().__repr__() == 'Polar(norm=True, max_value=None)'
 
-    pos = torch.tensor([[-1, 0], [0, 0], [0, 2]], dtype=torch.float)
-    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    pos = torch.Tensor([[0, 0], [1, 0]])
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+    edge_attr = torch.Tensor([1, 1])
+
     data = Data(edge_index=edge_index, pos=pos)
-    print(data)
+    data = Polar(norm=False)(data)
+    assert len(data) == 3
+    assert data.pos.tolist() == pos.tolist()
+    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.allclose(data.edge_attr, torch.Tensor([[1, 0], [1, PI]]))
 
-    # out = Polar()(data).edge_attr.view(-1).tolist()
-    # assert approx(out) == [0.5, 0, 0.5, 0.5, 1, 0.25, 1, 0.75]
-
-    # data.edge_attr = torch.tensor([1, 1, 1, 1], dtype=torch.float)
-    # out = Polar()(data).edge_attr.view(-1).tolist()
-    # assert approx(out) == [1, 0.5, 0, 1, 0.5, 0.5, 1, 1, 0.25, 1, 1, 0.75]
+    data = Data(edge_index=edge_index, pos=pos, edge_attr=edge_attr)
+    data = Polar(norm=True)(data)
+    assert len(data) == 3
+    assert data.pos.tolist() == pos.tolist()
+    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.allclose(data.edge_attr,
+                          torch.Tensor([[1, 1, 0], [1, 1, 0.5]]))

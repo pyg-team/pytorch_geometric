@@ -35,7 +35,7 @@ class Spherical(object):
 
     def __init__(self, norm=True, max_value=None, cat=True):
         self.norm = norm
-        self.max_value = max_value
+        self.max = max_value
         self.cat = cat
 
     def __call__(self, data):
@@ -47,16 +47,12 @@ class Spherical(object):
         rho = torch.norm(cart, p=2, dim=-1).view(-1, 1)
 
         theta = torch.atan2(cart[..., 1], cart[..., 0]).view(-1, 1)
-        theta = theta + (theta < 0).type_as(theta) + (2 * PI)
+        theta = theta + (theta < 0).type_as(theta) * (2 * PI)
 
         phi = torch.acos(cart[..., 2] / rho.view(-1)).view(-1, 1)
 
         if self.norm:
-            if self.max_value is None:
-                max_value = rho.max().item()
-            else:
-                max_value = self.max_value
-            rho = rho / max_value
+            rho = rho / (rho.max() if self.max is None else self.max)
             theta = theta / (2 * PI)
             phi = phi / PI
 
@@ -71,6 +67,5 @@ class Spherical(object):
         return data
 
     def __repr__(self):
-
         return '{}(norm={}, max_value={})'.format(self.__class__.__name__,
-                                                  self.norm, self.max_value)
+                                                  self.norm, self.max)
