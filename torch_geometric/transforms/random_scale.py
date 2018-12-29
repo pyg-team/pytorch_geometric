@@ -21,6 +21,7 @@ class RandomScale(object):
     """
 
     def __init__(self, scales):
+        assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales
 
     def __call__(self, data):
