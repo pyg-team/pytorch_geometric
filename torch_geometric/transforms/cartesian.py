@@ -32,7 +32,7 @@ class Cartesian(object):
 
     def __init__(self, norm=True, max_value=None, cat=True):
         self.norm = norm
-        self.max_value = max_value
+        self.max = max_value
         self.cat = cat
 
     def __call__(self, data):
@@ -42,10 +42,7 @@ class Cartesian(object):
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
         if self.norm:
-            if self.max_value is None:
-                max_value = cart.abs().max().item()
-            else:
-                max_value = self.max_value
+            max_value = cart.abs().max() if self.max is None else self.max
             cart = cart / (2 * max_value) + 0.5
 
         if pseudo is not None and self.cat:
@@ -58,4 +55,4 @@ class Cartesian(object):
 
     def __repr__(self):
         return '{}(norm={}, max_value={})'.format(self.__class__.__name__,
-                                                  self.norm, self.max_value)
+                                                  self.norm, self.max)
