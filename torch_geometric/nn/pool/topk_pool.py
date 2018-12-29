@@ -12,8 +12,7 @@ def topk(x, ratio, batch):
     k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)
 
     cum_num_nodes = torch.cat(
-        [num_nodes.new_zeros(1),
-         num_nodes.cumsum(dim=0)[:-1]], dim=0)
+        [num_nodes.new_zeros(1), num_nodes.cumsum(dim=0)[:-1]], dim=0)
 
     index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
     index = (index - cum_num_nodes[batch]) + (batch * max_num_nodes)
@@ -28,8 +27,8 @@ def topk(x, ratio, batch):
     perm = perm.view(-1)
 
     mask = [
-        torch.arange(k[i], dtype=torch.long, device=x.device) +
-        i * max_num_nodes for i in range(len(num_nodes))
+        torch.arange(k[i], dtype=torch.long, device=x.device) + i *
+        max_num_nodes for i in range(len(num_nodes))
     ]
     mask = torch.cat(mask, dim=0)
 
@@ -113,4 +112,5 @@ class TopKPooling(torch.nn.Module):
         return x, edge_index, edge_attr, batch, perm
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.ratio)
+        return '{}({}, ratio={})'.format(self.__class__.__name__,
+                                         self.in_channels, self.ratio)
