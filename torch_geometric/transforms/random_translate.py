@@ -23,15 +23,15 @@ class RandomTranslate(object):
     def __call__(self, data):
         (n, dim), t = data.pos.size(), self.translate
         if isinstance(t, numbers.Number):
-            t = repeat(t, dim)
+            t = list(repeat(t, times=dim))
+        assert len(t) == dim
 
         ts = []
         for d in range(dim):
             ts.append(data.pos.new_empty(n).uniform_(-abs(t[d]), abs(t[d])))
-        t = torch.stack(ts, dim=-1)
 
-        data.pos = data.pos + t
+        data.pos = data.pos + torch.stack(ts, dim=-1)
         return data
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, *self.scale)
+        return '{}({})'.format(self.__class__.__name__, self.translate)
