@@ -51,5 +51,4 @@ class OneHotDegree(object):
         return data
 
     def __repr__(self):
-        return '{}({}, cat={})'.format(self.__class__.__name__,
-                                       self.max_degree, self.cat)
+        return '{}({})'.format(self.__class__.__name__, self.max_degree)
