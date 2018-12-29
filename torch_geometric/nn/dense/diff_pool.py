@@ -15,6 +15,10 @@ def dense_diff_pool(x, adj, s, mask=None):
 
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
+    Returns pooled node feature matrix, coarsened adjacency matrix and the
+    auxiliary link prediction objective :math:`\| \mathbf{A} -
+    \mathrm{softmax}(\mathbf{S}) \cdot {\mathrm{softmax}(\mathbf{S})}^{\top}
+    \|_F`.
 
     Args:
         x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
@@ -31,7 +35,7 @@ def dense_diff_pool(x, adj, s, mask=None):
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
 
-    :rtype: (:class:`Tensor`, :class:`Tensor`)
+    :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`)
     """
 
     x = x.unsqueeze(0) if x.dim() == 2 else x
