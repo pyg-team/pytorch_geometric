@@ -39,7 +39,9 @@ class RandomFlip(object):
 
     def __call__(self, data):
         if random.random() < self.p:
-            data.pos[:, self.axis] = -data.pos[:, self.axis]
+            pos = data.pos.clone()
+            pos[:, self.axis] = -pos[:, self.axis]
+            data.pos = pos
         return data
 
     def __repr__(self):
