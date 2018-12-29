@@ -30,4 +30,5 @@ class RandomRotate(object):
         return LinearTransformation(torch.tensor(matrix))(data)
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.degrees)
+        return '{}({}, axis={})'.format(self.__class__.__name__, self.degrees,
+                                        self.axis)
