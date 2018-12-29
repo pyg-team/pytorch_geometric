@@ -40,14 +40,15 @@ class TargetIndegree(object):
                 [1.0000]])
     """
 
-    def __init__(self, cat=True):
+    def __init__(self, max_value=None, cat=True):
+        self.max_value = max_value
         self.cat = cat
 
     def __call__(self, data):
         col, pseudo = data.edge_index[1], data.edge_attr
 
         deg = degree(col, data.num_nodes)
-        deg = deg / deg.max()
+        deg = deg / (deg.max() if self.max_value is None else self.max_value)
         deg = deg[col]
         deg = deg.view(-1, 1)
 
@@ -60,4 +61,5 @@ class TargetIndegree(object):
         return data
 
     def __repr__(self):
-        return '{}(cat={})'.format(self.__class__.__name__, self.cat)
+        return '{}(max_value={})'.format(self.__class__.__name__,
+                                         self.max_value)
