@@ -18,7 +18,7 @@ Sparse Convolutional Layers
 Dense Convolutional Layers
 --------------------------
 
-.. automodule:: torch_geometric.nn.dense.sage_conv
+.. automodule:: torch_geometric.nn.dense.dense_sage_conv
     :members:
     :undoc-members:
 
