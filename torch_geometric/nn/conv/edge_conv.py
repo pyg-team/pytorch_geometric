@@ -18,10 +18,10 @@ class EdgeConv(torch.nn.Module):
     Args:
         nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
         aggr (string): The aggregation operator to use (:obj:`"add"`,
-            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
+            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"max"`)
     """
 
-    def __init__(self, nn, aggr='add'):
+    def __init__(self, nn, aggr='max'):
         super(EdgeConv, self).__init__()
         self.nn = nn
         self.aggr = aggr

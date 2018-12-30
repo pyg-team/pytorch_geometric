@@ -29,23 +29,23 @@ This is done with the help of the following methods:
 * :meth:`torch_geometric.nn.MessagePassing.update`: Updates node embeddings in analogy to :math:`\gamma` for each node :math:`i \in \mathcal{V}`.
   Takes in the output of aggregation as first argument and any argument which was initially passed to :meth:`propagate`.
 
-Let us verify this by re-implementing two popular GNN variants, the `GCN Layer from Kipf and Welling <https://arxiv.org/abs/1609.02907>`_ and the `Message Passing Layer from Gilmer et al. <https://arxiv.org/abs/1704.01212>`_.
+Let us verify this by re-implementing two popular GNN variants, the `GCN layer from Kipf and Welling <https://arxiv.org/abs/1609.02907>`_ and the `EdgeConv layer from Wang et al. <https://arxiv.org/abs/1801.07829>`_.
 
 Implementing the GCN layer
 --------------------------
 
-A GCN layer is mathematically defined as
+The `GCN layer <https://arxiv.org/abs/1609.02907>`_ is mathematically defined as
 
 .. math::
 
     \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{deg(j)}} \cdot \left( \mathbf{\Theta} \cdot \mathbf{x}_j^{(k-1)} \right),
 
-where neighboring node features are first transformed by a weight matrix :math:`\mathbf{\Theta}`, normalized by their in- and out-degree, and finally summed up.
+where neighboring node features are first transformed by a weight matrix :math:`\mathbf{\Theta}`, normalized by their degree, and finally summed up.
 This formula can be divided into the following steps:
 
 1. Add self-loops to the adjacency matrix.
 2. Linearly transform node feature matrix.
-3. Normalize node features based on in- and out-degree in :math:`\phi`.
+3. Normalize node features in :math:`\phi`.
 4. Sum up neighboring node features (:obj:`"add"` aggregation).
 5. Return new node embeddings in :math:`\gamma`.
 
@@ -80,7 +80,7 @@ The full layer implementation is shown below:
         def message(self, x_j, edge_index, num_nodes):
             # x_j has shape [E, out_channels]
 
-            # Step 3: Normalize node features based on in- and out-degree.
+            # Step 3: Normalize node features.
             row, col = edge_index
             deg = degree(row, num_nodes, dtype=x_j.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
@@ -94,14 +94,15 @@ The full layer implementation is shown below:
             # Step 5: Return new node embeddings.
             return aggr_out
 
-:class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing` and its :meth:`forward` function contains the logic of the layer.
+:class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing`.
+All the logic of the layer takes place in :meth:`forward`.
 Here, we first add self-loops to our edge indices using the :meth:`torch_geometric.utils.add_self_loops` (step 1), as well as linearly transform node features by calling the :class:`torch.nn.Linear` instance (step 2).
 
 We then proceed to call :meth:`propagate`, which internally calls the :meth:`message` and :meth:`update` functions.
 As additional arguments for message propagation, we pass the node embeddings :obj:`x` and the number of nodes (given by :obj:`x.size(0)`).
 
 In the :meth:`message` function, we need to normalize the target node features :obj:`x_j`.
-:obj:`x_j` indicates that this is a *lifted* tensor, collecting the target node features of each edge.
+Here, :obj:`x_j` denotes a *lifted* tensor, which contains the target node features of each edge.
 Node features can be automatically lifted by appending :obj:`_i` or :obj:`_j` to the variable name.
 In fact, any tensor can be lifted this way, as long as they have :math:`N` entries in its first dimension.
 
@@ -109,7 +110,7 @@ The target node features are normalized by computing node degrees :math:`\deg(i)
 
 In the :meth:`update` function, we simply return the output of the aggregation.
 
-That is all that it takes to create a message passing layer.
+That is all that it takes to create a simple message passing layer.
 You can use this layer as a building block for deep architectures.
 Initializing and calling it is straightforward:
 
@@ -118,10 +119,72 @@ Initializing and calling it is straightforward:
     conv = GCNConv(16, 32)
     x = conv(x, edge_index)
 
-Graph Nets
-----------
+Implementing the EdgeConv layer
+-------------------------------
 
-Other Graph Neural Networks
----------------------------
+The `EdgeConv layer <https://arxiv.org/abs/1801.07829>`_ processes graphs or point clouds and is mathematically defined as
 
-The beauty of PyTorch Geometric is that one can easily create new message passing layer or more general graph nets, but is not limited to do.
+.. math::
+
+    \mathbf{x}_i^{(k)} = \max_{j \in \mathcal{N}(i)} h_{\mathbf{\Theta}} \left( \mathbf{x}_i^{(k-1)}, \mathbf{x}_j^{(k-1)} - \mathbf{x}_i^{(k-1)} \right),
+
+where :math:`h_{\mathbf{\Theta}}` denotes a MLP.
+Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePassing` class to implement this layer, this time using the :obj:`"max"` aggregation:
+
+.. code-block:: python
+
+    import torch
+    from torch.nn import Sequential, Linear, ReLU
+    from torch_geometric.nn import MessagePassing
+
+    class EdgeConv(MessagePassing):
+        def __init__(self, in_channels, out_channels):
+            super(EdgeConv, self).__init__()
+            self.mlp = Seq(Linear(2 * in_channels, out_channels),
+                           ReLU(),
+                           Linear(out_channels, out_channels))
+
+        def forward(self, x, edge_index):
+            # x has shape [N, in_channels]
+            # edge_index has shape [2, E]
+
+            return self.propagate('max', edge_index, x=x)
+
+        def message(self, x_i, x_j):
+            # x_i has shape [E, in_channels]
+            # x_j has shape [E, in_channels]
+
+            tmp = torch.cat([x_i, x_j - x_i], dim=1)  # tmp has shape [E, 2 * in_channels]
+            return self.mlp(tmp)
+
+        def update(self, aggr_out):
+            # aggr_out has shape [N, out_channels]
+
+            return aggr_out
+
+Inside the :meth:`message` function, we use :obj:`self.mlp` to transform both the source node features :obj:`x_i` and the target node features :obj:`x_j` for each edge.
+
+The edge convolution is actual a dynamic convolution, which recomputes the graph for each layer using nearest neighbors in the feature space.
+Luckily, PyTorch Geometric comes with a batch-wise k-NN graph generation method named :meth:`torch_geometric.nn.knn_graph`:
+
+.. code-block:: python
+
+    from torch_geometric.nn import knn_graph
+
+    class DynamicEdgeConv(EdgeConv):
+        def __init__(self, in_channels, out_channels, k=6):
+            super(DynamicEdgeConv, self).__init__(in_channels, out_channels)
+            self.k = k
+
+        def forward(self, x, batch=None):
+            edge_index = knn_graph(x, self.k, batch, loop=False)
+            return super(DynamicEdgeConv, self).forward(x, edge_index)
+
+Here, :meth:`knn_graph` computes a nearest neighbor graph, which is further used to call the :meth:`forward` method of :class:`EdgeConv`.
+
+This leaves us with a clean interface for initializing and calling this layer:
+
+.. code-block:: python
+
+    conv = DynamicEdgeConv(3, 128, k=6)
+    x = conv(pos, batch)
