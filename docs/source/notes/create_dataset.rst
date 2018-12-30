@@ -1,5 +1,5 @@
-Create your own dataset
-=======================
+Creating your own datasets
+==========================
 
 Although `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ already contains a lot of useful datasets, you may wish to create your own because you recorded data by yourself or want to use a dataset which is not publicly available.
 

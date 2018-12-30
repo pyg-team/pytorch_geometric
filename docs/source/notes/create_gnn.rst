@@ -12,7 +12,7 @@ where :math:`\square` denotes a differentiable, permutation invariant function, 
 .. contents::
     :local:
 
-The "Message Passing" base class
+The "MessagePassing" base class
 --------------------------------
 
 PyTorch Geometric provides the :class:`torch_geometric.nn.MessagePassing` base class, which helps in creating such kinds of message passing graph neural networks by automatically taking care of message propagation.
@@ -119,10 +119,10 @@ Initializing and calling it is straightforward:
     conv = GCNConv(16, 32)
     x = conv(x, edge_index)
 
-Implementing the EdgeConv layer
--------------------------------
+Implementing the edge convolution
+---------------------------------
 
-The `EdgeConv layer <https://arxiv.org/abs/1801.07829>`_ processes graphs or point clouds and is mathematically defined as
+The `edge convolution layer <https://arxiv.org/abs/1801.07829>`_ processes graphs or point clouds and is mathematically defined as
 
 .. math::
 
