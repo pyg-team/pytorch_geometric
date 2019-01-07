@@ -6,7 +6,22 @@ from ..utils.num_nodes import maybe_num_nodes
 
 
 class Data(object):
-    """"""
+    r"""A plain old python object modeling a single graph with various
+    (optional) attributes:
+
+    - :obj:`x`: Node feature matrix with shape
+      :obj:`[num_nodes, num_node_features]`
+    - :obj:`edge_index`: Graph connectivity in COO format with shape
+      :obj:`[2, num_edges]` and type :obj:`torch.long`
+    - :obj:`edge_attr`: Edge feature matrix with shape
+      :obj:`[num_edges, num_edge_features]`
+    - :obj:`y`: Graph or node targets with arbitrary shape
+    - :obj:`pos`: Node position matrix with shape
+      :obj:`[num_nodes, num_dimensions]`
+
+    The data object is not restricted to these attributes and can be extented
+    by any attributes.
+    """
 
     def __init__(self,
                  x=None,
@@ -22,6 +37,7 @@ class Data(object):
 
     @staticmethod
     def from_dict(dictionary):
+        r"""Creates a data object from a python dictionary."""
         data = Data()
         for key, item in dictionary.items():
             data[key] = item
@@ -37,7 +53,7 @@ class Data(object):
 
     @property
     def keys(self):
-        """"""
+        r"""Returns all names of graph attributes."""
         return [key for key in self.__dict__.keys() if self[key] is not None]
 
     def __len__(self):
@@ -63,7 +79,7 @@ class Data(object):
 
     @property
     def num_nodes(self):
-        """"""
+        r"""Returns the number of nodes in the graph."""
         for key, item in self('x', 'pos'):
             return item.size(self.cat_dim(key, item))
         if self.edge_index is not None:
@@ -72,49 +88,58 @@ class Data(object):
 
     @property
     def num_edges(self):
-        """"""
+        r"""Returns the number of edges in the graph."""
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.cat_dim(key, item))
         return None
 
     @property
     def num_features(self):
-        """"""
+        """Returns the number of node features in the graph."""
         return 1 if self.x.dim() == 1 else self.x.size(1)
 
     def is_coalesced(self):
-        """"""
+        r"""Returns :obj:`True`, if edge indices are ordered and do not contain
+        duplicate entries."""
         row, col = self.edge_index
         index = self.num_nodes * row + col
         return row.size(0) == torch.unique(index).size(0)
 
     def contains_isolated_nodes(self):
-        """"""
+        r"""Returns :obj:`True`, if the graph does not contain isolated
+        nodes."""
         return contains_isolated_nodes(self.edge_index, self.num_nodes)
 
     def contains_self_loops(self):
-        """"""
+        """Returns :obj:`True`, if the graph does not contain self-loops."""
         return contains_self_loops(self.edge_index)
 
     def is_undirected(self):
-        """"""
+        r"""Returns :obj:`True`, if graph edges are undirected."""
         return is_undirected(self.edge_index, self.num_nodes)
 
     def is_directed(self):
-        """"""
+        r"""Returns :obj:`True`, if graph edges are directed."""
         return not self.is_undirected()
 
     def apply(self, func, *keys):
+        r"""Applies the function :obj:`func` to all attributes :obj:`*keys`.
+        If :obj:`*keys` is not given, :obj:`func` is applied to all attributes.
+        """
         for key, item in self(*keys):
             self[key] = func(item)
         return self
 
     def contiguous(self, *keys):
-        """"""
+        r"""Ensures a contiguous memory layout for all attributes :obj:`*keys`.
+        If :obj:`*keys` is not given, all attributes are ensured to have a
+        contiguous memory layout."""
         return self.apply(lambda x: x.contiguous(), *keys)
 
     def to(self, device, *keys):
-        """"""
+        r"""Performs tensor dtype and/or device conversion to all attributes
+        :obj:`*keys`. If :obj:`*keys` is not given, the conversion is applied
+        to all attributes."""
         return self.apply(lambda x: x.to(device), *keys)
 
     def __repr__(self):
