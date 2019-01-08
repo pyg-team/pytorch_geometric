@@ -49,7 +49,7 @@ class EdgeConv(MessagePassing):
         return self.mlp(edge_features)  # shape [E, F_out]
 ```
 
-In addition, PyTorch Geometric is **fast** by leveraging custom CUDA kernels, even compared to other deep graph neural net libraries:
+In addition, PyTorch Geometric is **fast**, even compared to other deep graph neural net libraries:
 
 <table>
   <thead>
