@@ -15,6 +15,7 @@ In addition, it consists of an easy-to-use mini-batch loader, a large number of 
 
    notes/installation
    notes/introduction
+   notes/create_gnn
    notes/create_dataset
 
 .. toctree::

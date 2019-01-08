@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Create your own dataset &mdash; pytorch_geometric master documentation</title>
+  <title>Creating your own datasets &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -24,29 +24,20 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
-        <link rel="next" title="torch_geometric.nn" href="../modules/nn.html"/>
-        <link rel="prev" title="Introduction by example" href="introduction.html"/> 
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="torch_geometric.nn" href="../modules/nn.html" />
+    <link rel="prev" title="Creating message passing networks" href="create_gnn.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -63,7 +54,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" />
+            <img src="../_static/logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -109,7 +100,13 @@
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Create your own dataset</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="create_gnn.html">Creating message passing networks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="create_gnn.html#the-messagepassing-base-class">The “MessagePassing” base class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_gnn.html#implementing-the-gcn-layer">Implementing the GCN layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_gnn.html#implementing-the-edge-convolution">Implementing the edge convolution</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Creating your own datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creating-larger-datasets">Creating “larger” datasets</a></li>
 </ul>
@@ -119,7 +116,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/nn.html">torch_geometric.nn</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
@@ -140,7 +137,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pytorch_geometric</a>
@@ -148,9 +145,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -173,7 +171,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Create your own dataset</li>
+      <li>Creating your own datasets</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -192,8 +190,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="create-your-own-dataset">
-<h1>Create your own dataset<a class="headerlink" href="#create-your-own-dataset" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="creating-your-own-datasets">
+<h1>Creating your own datasets<a class="headerlink" href="#creating-your-own-datasets" title="Permalink to this headline">¶</a></h1>
 <p>Although <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric">PyTorch Geometric</a> already contains a lot of useful datasets, you may wish to create your own because you recorded data by yourself or want to use a dataset which is not publicly available.</p>
 <p>Implementing datasets by yourself is straightforward and you may have a look at the source code to find out how the various datasets are implemented.
 However, we give a brief introduction on what is needed to setup your own dataset.</p>
@@ -266,13 +264,13 @@ Finally, these objects get loaded in the constructor and must be accessible via 
 <p>For creating datasets which do not fit into memory, the <a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset" title="torch_geometric.data.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Dataset</span></code></a> must be used, where we follow an analogous concept of the <code class="docutils literal notranslate"><span class="pre">torchvision</span></code> datasets.</p>
 <p>Therefore, the following methods need to be further implemented:</p>
 <dl class="docutils">
-<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.data.Dataset.__len__()</span></code>:</dt>
+<dt><a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset.__len__" title="torch_geometric.data.Dataset.__len__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.data.Dataset.__len__()</span></code></a>:</dt>
 <dd>How many graphs are in your dataset?</dd>
 <dt><a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset.get" title="torch_geometric.data.Dataset.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.data.Dataset.get()</span></code></a>:</dt>
 <dd>Logic to load a single graph.
 The <code class="docutils literal notranslate"><span class="pre">Data</span></code> object will be automatically transformed according to <code class="docutils literal notranslate"><span class="pre">self.transform</span></code>.</dd>
 </dl>
-<p>Note that <code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.data.Dataset.__getitem__()</span></code> is already implemented, which simply gets the data object from <a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset.get" title="torch_geometric.data.Dataset.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.data.Dataset.get()</span></code></a> and optionally transforms it.</p>
+<p>Note that <a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset.__getitem__" title="torch_geometric.data.Dataset.__getitem__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.data.Dataset.__getitem__()</span></code></a> is already implemented, which simply gets the data object from <a class="reference internal" href="../modules/data.html#torch_geometric.data.Dataset.get" title="torch_geometric.data.Dataset.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.data.Dataset.get()</span></code></a> and optionally transforms it.</p>
 <p>Let’s see this process in a simplified example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os.path</span> <span class="kn">as</span> <span class="nn">osp</span>
 
@@ -324,9 +322,7 @@ The <code class="docutils literal notranslate"><span class="pre">Data</span></co
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -335,7 +331,7 @@ The <code class="docutils literal notranslate"><span class="pre">Data</span></co
         <a href="../modules/nn.html" class="btn btn-neutral float-right" title="torch_geometric.nn" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="introduction.html" class="btn btn-neutral" title="Introduction by example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="create_gnn.html" class="btn btn-neutral" title="Creating message passing networks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -344,11 +340,11 @@ The <code class="docutils literal notranslate"><span class="pre">Data</span></co
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Matthias Fey.
+        &copy; Copyright 2019, Matthias Fey
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -363,36 +359,24 @@ The <code class="docutils literal notranslate"><span class="pre">Data</span></co
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'master',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>
