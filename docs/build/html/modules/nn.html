@@ -207,7 +207,17 @@
 <dl class="class">
 <dt id="torch_geometric.nn.conv.MessagePassing">
 <em class="property">class </em><code class="descname">MessagePassing</code><span class="sig-paren">(</span><em>aggr='add'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.MessagePassing" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>Base class for creating message passing layers</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
+\square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
+\left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{i,j}\right) \right),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\square\)</span> denotes a differentiable, permutation invariant
+function, <em>e.g.</em>, sum, mean or max, and <span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span>
+and <span class="math notranslate nohighlight">\(\phi_{\mathbf{\Theta}}\)</span> denote differentiable functions such as
+MLPs.
+See <a class="reference external" href="https://rusty1s.github.io/pytorch_geometric/build/html/notes/create_gnn.html">here</a> for the accompanying tutorial.</p>
+<dl class="method">
 <dt id="torch_geometric.nn.conv.MessagePassing.message">
 <code class="descname">message</code><span class="sig-paren">(</span><em>x_j</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.MessagePassing.message" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>

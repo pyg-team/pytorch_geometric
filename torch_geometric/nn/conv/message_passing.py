@@ -5,6 +5,22 @@ from torch_geometric.utils import scatter_
 
 
 class MessagePassing(torch.nn.Module):
+    r"""Base class for creating message passing layers
+
+    .. math::
+        \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
+        \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
+        \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{i,j}\right) \right),
+
+    where :math:`\square` denotes a differentiable, permutation invariant
+    function, *e.g.*, sum, mean or max, and :math:`\gamma_{\mathbf{\Theta}}`
+    and :math:`\phi_{\mathbf{\Theta}}` denote differentiable functions such as
+    MLPs.
+    See `here <https://rusty1s.github.io/pytorch_geometric/build/html/notes/
+    create_gnn.html>`__ for the accompanying tutorial.
+
+    """
+
     def __init__(self, aggr='add'):
         super(MessagePassing, self).__init__()
 

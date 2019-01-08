@@ -194,6 +194,22 @@
 
 
 <div class="viewcode-block" id="MessagePassing"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.MessagePassing">[docs]</a><span class="k">class</span> <span class="nc">MessagePassing</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base class for creating message passing layers</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,</span>
+<span class="sd">        \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}</span>
+<span class="sd">        \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{i,j}\right) \right),</span>
+
+<span class="sd">    where :math:`\square` denotes a differentiable, permutation invariant</span>
+<span class="sd">    function, *e.g.*, sum, mean or max, and :math:`\gamma_{\mathbf{\Theta}}`</span>
+<span class="sd">    and :math:`\phi_{\mathbf{\Theta}}` denote differentiable functions such as</span>
+<span class="sd">    MLPs.</span>
+<span class="sd">    See `here &lt;https://rusty1s.github.io/pytorch_geometric/build/html/notes/</span>
+<span class="sd">    create_gnn.html&gt;`__ for the accompanying tutorial.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggr</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MessagePassing</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 

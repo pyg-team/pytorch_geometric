@@ -18,6 +18,8 @@ def files_exist(files):
 
 class Dataset(torch.utils.data.Dataset):
     r"""Dataset base class for creating graph datasets.
+    See `here <https://rusty1s.github.io/pytorch_geometric/build/html/notes/
+    create_dataset.html>`__ for the accompanying tutorial.
 
     Args:
         root (string): Root directory where the dataset should be saved.

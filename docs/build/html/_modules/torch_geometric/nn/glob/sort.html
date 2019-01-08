@@ -222,7 +222,13 @@
     <span class="n">batch_x</span> <span class="o">=</span> <span class="n">batch_x</span><span class="p">[</span><span class="n">perm</span><span class="p">]</span>
     <span class="n">batch_x</span> <span class="o">=</span> <span class="n">batch_x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
 
-    <span class="n">batch_x</span> <span class="o">=</span> <span class="n">batch_x</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">N</span> <span class="o">&gt;=</span> <span class="n">k</span><span class="p">:</span>
+        <span class="n">batch_x</span> <span class="o">=</span> <span class="n">batch_x</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">expand_batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">D</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+        <span class="n">expand_batch_x</span><span class="p">[:,</span> <span class="p">:</span><span class="n">N</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">batch_x</span>
+        <span class="n">batch_x</span> <span class="o">=</span> <span class="n">expand_batch_x</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+
     <span class="n">batch_x</span><span class="p">[</span><span class="n">batch_x</span> <span class="o">==</span> <span class="n">fill_value</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">batch_x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">k</span> <span class="o">*</span> <span class="n">D</span><span class="p">)</span>
 
