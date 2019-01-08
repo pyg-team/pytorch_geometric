@@ -108,7 +108,7 @@ In addition, PyTorch Geometric is **fast** by leveraging custom CUDA kernels, ev
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="5"><i>runtimes obtained on a NVIDIA GTX 1080Ti</i></td>
+      <td colspan="5"><i>training runtimes obtained on a NVIDIA GTX 1080Ti</i></td>
     </tr>
   </tfoot>
 </table>
