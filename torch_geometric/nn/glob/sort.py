@@ -33,7 +33,13 @@ def global_sort_pool(x, batch, k):
     batch_x = batch_x[perm]
     batch_x = batch_x.view(B, N, D)
 
-    batch_x = batch_x[:, :k].contiguous()
+    if N >= k:
+        batch_x = batch_x[:, :k].contiguous()
+    else:
+        expand_batch_x = torch.full(size=(B, k, D), fill_value=fill_value)
+        expand_batch_x[:, :N, :] = batch_x
+        batch_x = expand_batch_x.contiguous()
+
     batch_x[batch_x == fill_value] = 0
     x = batch_x.view(B, k * D)
 
