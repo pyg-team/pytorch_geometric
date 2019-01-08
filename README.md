@@ -49,6 +49,70 @@ class EdgeConv(MessagePassing):
         return self.mlp(edge_features)  # shape [E, F_out]
 ```
 
+In addition, PyTorch Geometric is **fast** by leveraging custom CUDA kernels, even compared to other deep graph neural net libraries:
+
+<table>
+  <thead>
+    <tr>
+      <th>Dataset</th>
+      <th>Epochs</th>
+      <th>Model</th>
+      <th>DGL</th>
+      <th>PyTorch Geometric</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2">Cora</td>
+      <td rowspan="2" align="center">200</td>
+      <td align="center">GCN</td>
+      <td align="right">4.2s</td>
+      <td align="right">**0.7s**</td>
+    </tr>
+    <tr>
+      <td align="center">GAT</td>
+      <td align="right">33.4s</td>
+      <td align="right">**2.2s**</td>
+    </tr>
+    <tr>
+      <td rowspan="2">CiteSeer</td>
+      <td rowspan="2" align="center">200</td>
+      <td align="center">GCN</td>
+      <td align="right">3.9s</td>
+      <td align="right">**0.8s**</td>
+    </tr>
+    <tr>
+      <td align="center">GAT</td>
+      <td align="right">28.9s</td>
+      <td align="right">**2.4s**</td>
+    </tr>
+    <tr>
+      <td rowspan="2">PubMed</td>
+      <td rowspan="2" align="center">200</td>
+      <td align="center">GCN</td>
+      <td align="right">12.7s</td>
+      <td align="right">**2.0s**</td>
+    </tr>
+    <tr>
+      <td align="center">GAT</td>
+      <td align="right">87.7s</td>
+      <td align="right">**12.3s**</td>
+    </tr>
+    <tr>
+      <td>MUTAG</td>
+      <td align="center">50</td>
+      <td align="center">R-GCN</td>
+      <td align="right">3.3s</td>
+      <td align="right">**2.4s**</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5">*runtimes obtained on a NVIDIA GTX 1080Ti*</td>
+    </tr>
+  </tfoot>
+</table>
+
 --------------------------------------------------------------------------------
 
 In detail, the following methods are currently implemented:
@@ -79,7 +143,6 @@ In detail, the following methods are currently implemented:
 Head over to our [documentation](http://rusty1s.github.io/pytorch_geometric) to find out more about installation, data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
 For a quick start, check out our provided [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in the `examples/` directory.
 
-We are currently in our first major release.
 If you notice anything unexpected, please open an [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
 If you are missing a specific method, feel free to open a [feature request](https://github.com/rusty1s/pytorch_geometric/issues).
 We are constantly encouraged to make PyTorch Geometric even better.
