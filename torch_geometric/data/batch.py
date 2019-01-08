@@ -4,8 +4,8 @@ from torch_geometric.data import Data
 
 class Batch(Data):
     r"""A plain old python object modeling a batch of graphs as one big
-    (unconnected) graph. With :class:`torch_geometric.data.Data` being the base
-    class, all its methods can also be used here.
+    (dicconnected) graph. With :class:`torch_geometric.data.Data` being the
+    base class, all its methods can also be used here.
     In addition, single graphs can be reconstructed via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
