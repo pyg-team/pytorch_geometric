@@ -28,6 +28,11 @@ class MessagePassing(torch.nn.Module):
         self.update_args = inspect.getargspec(self.update)[0][2:]
 
     def propagate(self, aggr, edge_index, **kwargs):
+        r"""The initial call to start propagating messages.
+        Takes in an aggregation scheme (:obj:`"add"`, :obj:`"mean"` or
+        :obj:`"max"`), the edge indices, and all additional data which is
+        needed to construct messages and to update node embeddings."""
+
         assert aggr in ['add', 'mean', 'max']
         kwargs['edge_index'] = edge_index
 
@@ -54,7 +59,20 @@ class MessagePassing(torch.nn.Module):
         return out
 
     def message(self, x_j):  # pragma: no cover
+        r"""Constructs messages in analogy to :math:`\phi_{\mathbf{\Theta}}`
+        for each edge in :math:`(i,j) \in \mathcal{E}`.
+        Can take any argument which was initially passed to :meth:`propagate`.
+        In addition, features can be lifted to the source node :math:`i` and
+        target node :math:`j` by appending :obj:`_i` or :obj:`_j` to the
+        variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`."""
+
         return x_j
 
     def update(self, aggr_out):  # pragma: no cover
+        r"""Updates node embeddings in analogy to
+        :math:`\gamma_{\mathbf{\Theta}}` for each node
+        :math:`i \in \mathcal{V}`.
+        Takes in the output of aggregation as first argument and any argument
+        which was initially passed to :meth:`propagate`."""
+
         return aggr_out
