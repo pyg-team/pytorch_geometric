@@ -9,15 +9,17 @@ class Data(object):
     r"""A plain old python object modeling a single graph with various
     (optional) attributes:
 
-    - :obj:`x`: Node feature matrix with shape
-      :obj:`[num_nodes, num_node_features]`
-    - :obj:`edge_index`: Graph connectivity in COO format with shape
-      :obj:`[2, num_edges]` and type :obj:`torch.long`
-    - :obj:`edge_attr`: Edge feature matrix with shape
-      :obj:`[num_edges, num_edge_features]`
-    - :obj:`y`: Graph or node targets with arbitrary shape
-    - :obj:`pos`: Node position matrix with shape
-      :obj:`[num_nodes, num_dimensions]`
+    Args:
+        x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
+            num_node_features]`. (default: :obj:`None`)
+        edge_index (LongTensor, optional): Graph connectivity in COO format
+            with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
+        edge_attr (Tensor, optional): Edge feature matrix with shape
+            :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
+        y (Tensor, optional): Graph or node targets with arbitrary shape.
+            (default: :obj:`None`)
+        pos (Tensor, optional): Node position matrix with shape
+            :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
 
     The data object is not restricted to these attributes and can be extented
     by any other additional data.
@@ -73,17 +75,22 @@ class Data(object):
 
     def __call__(self, *keys):
         r"""Iterates over all attributes :obj:`*keys` in the data, yielding
-        their attribute names and content. If :obj:`*keys` is not given this
-        method will iterative over all present attributes."""
+        their attribute names and content.
+        If :obj:`*keys` is not given this method will iterative over all
+        present attributes."""
         for key in sorted(self.keys) if not keys else keys:
             if self[key] is not None:
                 yield key, self[key]
 
     def cat_dim(self, key, value):
         r"""Returns the dimension in which the attribute :obj:`key` with
-        content :obj:`value` gets concatenated when creating batches. This
-        method is for internal use only, and should only be overridden if the
-        batch concatenation process is corrupted for a specific data attribute.
+        content :obj:`value` gets concatenated when creating batches.
+
+        .. note::
+
+            This method is for internal use only, and should only be overridden
+            if the batch concatenation process is corrupted for a specific data
+            attribute.
         """
         # `edge_index` and `face` should be concatenated in the last dimension,
         # everything else in the first dimension.
@@ -107,7 +114,7 @@ class Data(object):
 
     @property
     def num_features(self):
-        """Returns the number of node features in the graph."""
+        r"""Returns the number of features per node in the graph."""
         return 1 if self.x.dim() == 1 else self.x.size(1)
 
     def is_coalesced(self):
@@ -151,8 +158,9 @@ class Data(object):
 
     def to(self, device, *keys):
         r"""Performs tensor dtype and/or device conversion to all attributes
-        :obj:`*keys`. If :obj:`*keys` is not given, the conversion is applied
-        to all present attributes."""
+        :obj:`*keys`.
+        If :obj:`*keys` is not given, the conversion is applied to all present 
+        attributes."""
         return self.apply(lambda x: x.to(device), *keys)
 
     def __repr__(self):

@@ -3,13 +3,22 @@ from torch_geometric.data import Data
 
 
 class Batch(Data):
+    r"""A plain old python object modeling a batch of graphs as one big
+    (unconnected) graph. With :class:`torch_geometric.data.Data` being the base
+    class, all its methods can also be used here.
+    In addition, single graphs can be reconstructed via the assignment vector
+    :obj:`batch`, which maps each node to its respective graph identifier.
+    """
+
     def __init__(self, batch=None, **kwargs):
         super(Batch, self).__init__(**kwargs)
         self.batch = batch
 
     @staticmethod
     def from_data_list(data_list):
-        """"""
+        r"""Constructs a batch object from a python list holding
+        :class:`torch_geometric.data.Data` objects.
+        The assignment vector :obj:`batch` is created on the fly."""
         keys = [set(data.keys) for data in data_list]
         keys = list(set.union(*keys))
         assert 'batch' not in keys
@@ -37,9 +46,18 @@ class Batch(Data):
         return batch.contiguous()
 
     def cumsum(self, key, item):
-        return item.dim() > 1 and item.dtype == torch.long
+        r"""If :obj:`True`, the attribute :obj:`key` with content :obj:`item`
+        should be added up cumulatively before concatenated together.
+
+        .. note::
+
+            This method is for internal use only, and should only be overridden
+            if the batch concatenation process is corrupted for a specific data
+            attribute.
+        """
+        return key in ['edge_index', 'face']
 
     @property
     def num_graphs(self):
-        """"""
+        """Returns the number of graphs in the batch."""
         return self.batch[-1].item() + 1
