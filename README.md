@@ -22,6 +22,33 @@
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
 In addition, it consists of an easy-to-use mini-batch loader, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
 
+PyTorch Geometric makes implementing graph convolutional networks a breeze (see [here](https://rusty1s.github.io/pytorch_geometric/build/html/index.html) for the accompanying tutorial).
+For example, this is all it takes to implement a single layer like the [edge convolution layer](https://arxiv.org/abs/1801.07829):
+
+```python
+import torch
+from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from torch_geometric.nn import MessagePassing
+
+class EdgeConv(MessagePassing):
+    def __init__(self, F_in, F_out):
+        super(EdgeConv, self).__init__()
+        self.mlp = Seq(Lin(2 * F_in, F_out), ReLU(), Lin(F_out, F_out))
+
+    def forward(self, x, edge_index):
+        # x has shape [N, F_in]
+        # edge_index has shape [2, E]
+        return self.propagate(aggr='max', edge_index=edge_index, x=x)  # shape [N, F_out]
+
+    def message(self, x_i, x_j):
+        # x_i has shape [E, F_in]
+        # x_j has shape [E, F_in]
+        edge_features = torch.cat([x_i, x_j - x_i], dim=1)  # shape [E, 2 * F_in]
+        return self.mlp(edge_features)  # shape [E, F_out]
+```
+
+--------------------------------------------------------------------------------
+
 In detail, the following methods are currently implemented:
 
 * **[SplineConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.SplineConv)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018)
@@ -50,7 +77,7 @@ In detail, the following methods are currently implemented:
 Head over to our [documentation](http://rusty1s.github.io/pytorch_geometric) to find out more about installation, data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
 For a quick start, check out our provided [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in the `examples/` directory.
 
-We are currently in our first alpha release and work on completing [documentation](http://rusty1s.github.io/pytorch_geometric).
+We are currently in our first major release.
 If you notice anything unexpected, please open an [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
 If you are missing a specific method, feel free to open a [feature request](https://github.com/rusty1s/pytorch_geometric/issues).
 We are constantly encouraged to make PyTorch Geometric even better.

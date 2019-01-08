@@ -220,17 +220,32 @@ See <a class="reference external" href="https://rusty1s.github.io/pytorch_geomet
 <dl class="method">
 <dt id="torch_geometric.nn.conv.MessagePassing.message">
 <code class="descname">message</code><span class="sig-paren">(</span><em>x_j</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.MessagePassing.message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Constructs messages in analogy to <span class="math notranslate nohighlight">\(\phi_{\mathbf{\Theta}}\)</span>
+for each edge in <span class="math notranslate nohighlight">\((i,j) \in \mathcal{E}\)</span>.
+Can take any argument which was initially passed to <a class="reference internal" href="#torch_geometric.nn.conv.MessagePassing.propagate" title="torch_geometric.nn.conv.MessagePassing.propagate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code></a>.
+In addition, features can be lifted to the source node <span class="math notranslate nohighlight">\(i\)</span> and
+target node <span class="math notranslate nohighlight">\(j\)</span> by appending <code class="xref py py-obj docutils literal notranslate"><span class="pre">_i</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">_j</span></code> to the
+variable name, <em>.e.g.</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_i</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_j</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.conv.MessagePassing.propagate">
 <code class="descname">propagate</code><span class="sig-paren">(</span><em>aggr</em>, <em>edge_index</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.MessagePassing.propagate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The initial call to start propagating messages.
+Takes in an aggregation scheme (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> or
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>), the edge indices, and all additional data which is
+needed to construct messages and to update node embeddings.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.conv.MessagePassing.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>aggr_out</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.MessagePassing.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Updates node embeddings in analogy to
+<span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> for each node
+<span class="math notranslate nohighlight">\(i \in \mathcal{V}\)</span>.
+Takes in the output of aggregation as first argument and any argument
+which was initially passed to <a class="reference internal" href="#torch_geometric.nn.conv.MessagePassing.propagate" title="torch_geometric.nn.conv.MessagePassing.propagate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code></a>.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -270,7 +285,13 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GCNConv.message">
 <code class="descname">message</code><span class="sig-paren">(</span><em>x_j</em>, <em>norm</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv.message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Constructs messages in analogy to <span class="math notranslate nohighlight">\(\phi_{\mathbf{\Theta}}\)</span>
+for each edge in <span class="math notranslate nohighlight">\((i,j) \in \mathcal{E}\)</span>.
+Can take any argument which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.
+In addition, features can be lifted to the source node <span class="math notranslate nohighlight">\(i\)</span> and
+target node <span class="math notranslate nohighlight">\(j\)</span> by appending <code class="xref py py-obj docutils literal notranslate"><span class="pre">_i</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">_j</span></code> to the
+variable name, <em>.e.g.</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_i</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_j</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GCNConv.reset_parameters">
@@ -280,7 +301,12 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GCNConv.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>aggr_out</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Updates node embeddings in analogy to
+<span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> for each node
+<span class="math notranslate nohighlight">\(i \in \mathcal{V}\)</span>.
+Takes in the output of aggregation as first argument and any argument
+which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -394,7 +420,13 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GraphConv.message">
 <code class="descname">message</code><span class="sig-paren">(</span><em>h_j</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/graph_conv.html#GraphConv.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GraphConv.message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Constructs messages in analogy to <span class="math notranslate nohighlight">\(\phi_{\mathbf{\Theta}}\)</span>
+for each edge in <span class="math notranslate nohighlight">\((i,j) \in \mathcal{E}\)</span>.
+Can take any argument which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.
+In addition, features can be lifted to the source node <span class="math notranslate nohighlight">\(i\)</span> and
+target node <span class="math notranslate nohighlight">\(j\)</span> by appending <code class="xref py py-obj docutils literal notranslate"><span class="pre">_i</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">_j</span></code> to the
+variable name, <em>.e.g.</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_i</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_j</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GraphConv.reset_parameters">
@@ -404,7 +436,12 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GraphConv.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>aggr_out</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/graph_conv.html#GraphConv.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GraphConv.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Updates node embeddings in analogy to
+<span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> for each node
+<span class="math notranslate nohighlight">\(i \in \mathcal{V}\)</span>.
+Takes in the output of aggregation as first argument and any argument
+which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -457,7 +494,13 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GATConv.message">
 <code class="descname">message</code><span class="sig-paren">(</span><em>x_i</em>, <em>x_j</em>, <em>edge_index</em>, <em>num_nodes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gat_conv.html#GATConv.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GATConv.message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Constructs messages in analogy to <span class="math notranslate nohighlight">\(\phi_{\mathbf{\Theta}}\)</span>
+for each edge in <span class="math notranslate nohighlight">\((i,j) \in \mathcal{E}\)</span>.
+Can take any argument which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.
+In addition, features can be lifted to the source node <span class="math notranslate nohighlight">\(i\)</span> and
+target node <span class="math notranslate nohighlight">\(j\)</span> by appending <code class="xref py py-obj docutils literal notranslate"><span class="pre">_i</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">_j</span></code> to the
+variable name, <em>.e.g.</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_i</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_j</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GATConv.reset_parameters">
@@ -467,7 +510,12 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GATConv.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>aggr_out</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gat_conv.html#GATConv.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GATConv.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Updates node embeddings in analogy to
+<span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> for each node
+<span class="math notranslate nohighlight">\(i \in \mathcal{V}\)</span>.
+Takes in the output of aggregation as first argument and any argument
+which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -575,7 +623,13 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.RGCNConv.message">
 <code class="descname">message</code><span class="sig-paren">(</span><em>x_j</em>, <em>edge_type</em>, <em>edge_norm</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/rgcn_conv.html#RGCNConv.message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.RGCNConv.message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Constructs messages in analogy to <span class="math notranslate nohighlight">\(\phi_{\mathbf{\Theta}}\)</span>
+for each edge in <span class="math notranslate nohighlight">\((i,j) \in \mathcal{E}\)</span>.
+Can take any argument which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.
+In addition, features can be lifted to the source node <span class="math notranslate nohighlight">\(i\)</span> and
+target node <span class="math notranslate nohighlight">\(j\)</span> by appending <code class="xref py py-obj docutils literal notranslate"><span class="pre">_i</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">_j</span></code> to the
+variable name, <em>.e.g.</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_i</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_j</span></code>.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.conv.RGCNConv.reset_parameters">
@@ -585,7 +639,12 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.RGCNConv.update">
 <code class="descname">update</code><span class="sig-paren">(</span><em>aggr_out</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/rgcn_conv.html#RGCNConv.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.RGCNConv.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Updates node embeddings in analogy to
+<span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> for each node
+<span class="math notranslate nohighlight">\(i \in \mathcal{V}\)</span>.
+Takes in the output of aggregation as first argument and any argument
+which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.</p>
+</dd></dl>
 
 </dd></dl>
 

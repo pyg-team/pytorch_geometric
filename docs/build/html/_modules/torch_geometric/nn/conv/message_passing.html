@@ -217,6 +217,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
 
 <div class="viewcode-block" id="MessagePassing.propagate"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.MessagePassing.propagate">[docs]</a>    <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggr</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The initial call to start propagating messages.</span>
+<span class="sd">        Takes in an aggregation scheme (:obj:`&quot;add&quot;`, :obj:`&quot;mean&quot;` or</span>
+<span class="sd">        :obj:`&quot;max&quot;`), the edge indices, and all additional data which is</span>
+<span class="sd">        needed to construct messages and to update node embeddings.&quot;&quot;&quot;</span>
+
         <span class="k">assert</span> <span class="n">aggr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">]</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;edge_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_index</span>
 
@@ -243,9 +248,22 @@
         <span class="k">return</span> <span class="n">out</span></div>
 
 <div class="viewcode-block" id="MessagePassing.message"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.MessagePassing.message">[docs]</a>    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_j</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Constructs messages in analogy to :math:`\phi_{\mathbf{\Theta}}`</span>
+<span class="sd">        for each edge in :math:`(i,j) \in \mathcal{E}`.</span>
+<span class="sd">        Can take any argument which was initially passed to :meth:`propagate`.</span>
+<span class="sd">        In addition, features can be lifted to the source node :math:`i` and</span>
+<span class="sd">        target node :math:`j` by appending :obj:`_i` or :obj:`_j` to the</span>
+<span class="sd">        variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.&quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="n">x_j</span></div>
 
 <div class="viewcode-block" id="MessagePassing.update"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.MessagePassing.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggr_out</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Updates node embeddings in analogy to</span>
+<span class="sd">        :math:`\gamma_{\mathbf{\Theta}}` for each node</span>
+<span class="sd">        :math:`i \in \mathcal{V}`.</span>
+<span class="sd">        Takes in the output of aggregation as first argument and any argument</span>
+<span class="sd">        which was initially passed to :meth:`propagate`.&quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="n">aggr_out</span></div></div>
 </pre></div>
 

@@ -134,7 +134,7 @@ Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePas
 .. code-block:: python
 
     import torch
-    from torch.nn import Sequential, Linear, ReLU
+    from torch.nn import Sequential as Seq, Linear, ReLU
     from torch_geometric.nn import MessagePassing
 
     class EdgeConv(MessagePassing):
