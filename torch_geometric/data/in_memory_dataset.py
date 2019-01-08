@@ -7,6 +7,9 @@ from torch_geometric.data import Dataset, Data
 class InMemoryDataset(Dataset):
     r"""Dataset base class for creating graph datasets which fit completely
     into memory.
+    See `here <https://rusty1s.github.io/pytorch_geometric/build/html/notes/
+    create_dataset.html#creating-in-memory-datasets>`__ for the accompanying
+    tutorial.
 
     Args:
         root (string): Root directory where the dataset should be saved.

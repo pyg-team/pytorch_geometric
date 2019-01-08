@@ -159,7 +159,7 @@ class Data(object):
     def to(self, device, *keys):
         r"""Performs tensor dtype and/or device conversion to all attributes
         :obj:`*keys`.
-        If :obj:`*keys` is not given, the conversion is applied to all present 
+        If :obj:`*keys` is not given, the conversion is applied to all present
         attributes."""
         return self.apply(lambda x: x.to(device), *keys)
 
