@@ -24,7 +24,7 @@ In addition, it consists of an easy-to-use mini-batch loader, a large number of 
 
 --------------------------------------------------------------------------------
 
-PyTorch Geometric makes implementing graph convolutional networks a breeze (see [here](https://rusty1s.github.io/pytorch_geometric/build/html/index.html) for the accompanying tutorial).
+PyTorch Geometric makes implementing graph convolutional networks a breeze (see [here](https://rusty1s.github.io/pytorch_geometric/build/html/notes/create_gnn.html) for the accompanying tutorial).
 For example, this is all it takes to implement a single layer like the [edge convolution layer](https://arxiv.org/abs/1801.07829):
 
 ```python
