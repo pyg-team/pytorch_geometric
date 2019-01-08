@@ -20,7 +20,7 @@ class Data(object):
       :obj:`[num_nodes, num_dimensions]`
 
     The data object is not restricted to these attributes and can be extented
-    by any attributes.
+    by any other additional data.
     """
 
     def __init__(self,
@@ -44,12 +44,12 @@ class Data(object):
         return data
 
     def __getitem__(self, key):
-        """"""
+        r"""Gets the data of the attribute :obj:`key`."""
         return getattr(self, key)
 
-    def __setitem__(self, key, item):
-        """"""
-        setattr(self, key, item)
+    def __setitem__(self, key, value):
+        """Sets the attribute :obj:`key` to :obj:`value`."""
+        setattr(self, key, value)
 
     @property
     def keys(self):
@@ -57,25 +57,37 @@ class Data(object):
         return [key for key in self.__dict__.keys() if self[key] is not None]
 
     def __len__(self):
-        """"""
+        r"""Returns the number of all present attributes."""
         return len(self.keys)
 
     def __contains__(self, key):
-        """"""
+        r"""Returns :obj:`True`, if the attribute :obj:`key` is present in the
+        data."""
         return key in self.keys
 
     def __iter__(self):
-        """"""
+        r"""Iterates over all present attributes in the data, yielding their
+        attribute names and content."""
         for key in sorted(self.keys):
             yield key, self[key]
 
     def __call__(self, *keys):
+        r"""Iterates over all attributes :obj:`*keys` in the data, yielding
+        their attribute names and content. If :obj:`*keys` is not given this
+        method will iterative over all present attributes."""
         for key in sorted(self.keys) if not keys else keys:
             if self[key] is not None:
                 yield key, self[key]
 
-    def cat_dim(self, key, item):
-        return -1 if item.dtype == torch.long else 0
+    def cat_dim(self, key, value):
+        r"""Returns the dimension in which the attribute :obj:`key` with
+        content :obj:`value` gets concatenated when creating batches. This
+        method is for internal use only, and should only be overridden if the
+        batch concatenation process is corrupted for a specific data attribute.
+        """
+        # `edge_index` and `face` should be concatenated in the last dimension,
+        # everything else in the first dimension.
+        return -1 if key in ['edge_index', 'face'] else 0
 
     @property
     def num_nodes(self):
@@ -124,7 +136,8 @@ class Data(object):
 
     def apply(self, func, *keys):
         r"""Applies the function :obj:`func` to all attributes :obj:`*keys`.
-        If :obj:`*keys` is not given, :obj:`func` is applied to all attributes.
+        If :obj:`*keys` is not given, :obj:`func` is applied to all present
+        attributes.
         """
         for key, item in self(*keys):
             self[key] = func(item)
@@ -132,14 +145,14 @@ class Data(object):
 
     def contiguous(self, *keys):
         r"""Ensures a contiguous memory layout for all attributes :obj:`*keys`.
-        If :obj:`*keys` is not given, all attributes are ensured to have a
-        contiguous memory layout."""
+        If :obj:`*keys` is not given, all present attributes are ensured to
+        have a contiguous memory layout."""
         return self.apply(lambda x: x.contiguous(), *keys)
 
     def to(self, device, *keys):
         r"""Performs tensor dtype and/or device conversion to all attributes
         :obj:`*keys`. If :obj:`*keys` is not given, the conversion is applied
-        to all attributes."""
+        to all present attributes."""
         return self.apply(lambda x: x.to(device), *keys)
 
     def __repr__(self):
