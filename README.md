@@ -67,48 +67,48 @@ In addition, PyTorch Geometric is **fast** by leveraging custom CUDA kernels, ev
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
       <td align="right">4.2s</td>
-      <td align="right">**0.7s**</td>
+      <td align="right"><b>0.7s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
       <td align="right">33.4s</td>
-      <td align="right">**2.2s**</td>
+      <td align="right"><b>2.2s</b></td>
     </tr>
     <tr>
       <td rowspan="2">CiteSeer</td>
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
       <td align="right">3.9s</td>
-      <td align="right">**0.8s**</td>
+      <td align="right"><b>0.8s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
       <td align="right">28.9s</td>
-      <td align="right">**2.4s**</td>
+      <td align="right"><b>2.4s</b></td>
     </tr>
     <tr>
       <td rowspan="2">PubMed</td>
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
       <td align="right">12.7s</td>
-      <td align="right">**2.0s**</td>
+      <td align="right"><b>2.0s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
       <td align="right">87.7s</td>
-      <td align="right">**12.3s**</td>
+      <td align="right"><b>12.3s</b></td>
     </tr>
     <tr>
       <td>MUTAG</td>
       <td align="center">50</td>
       <td align="center">R-GCN</td>
       <td align="right">3.3s</td>
-      <td align="right">**2.4s**</td>
+      <td align="right"><b>2.4s</b></td>
     </tr>
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="5">*runtimes obtained on a NVIDIA GTX 1080Ti*</td>
+      <td colspan="5"><i>runtimes obtained on a NVIDIA GTX 1080Ti</i></td>
     </tr>
   </tfoot>
 </table>
