@@ -40,3 +40,11 @@ html_static_path = ['_static']
 html_context = {'css_files': ['_static/css/custom.css']}
 
 add_module_names = False
+
+
+def setup(app):
+    def skip(app, what, name, obj, skip, options):
+        members = ['__init__', '__repr__', '__weakref__']
+        return True if name in members else skip
+
+    app.connect('autodoc-skip-member', skip)
