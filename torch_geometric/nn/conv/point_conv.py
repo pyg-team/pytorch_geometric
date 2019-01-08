@@ -43,7 +43,7 @@ class PointConv(torch.nn.Module):
     def forward(self, x, pos, edge_index):
         """"""
         edge_index, _ = remove_self_loops(edge_index)
-        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
+        edge_index = add_self_loops(edge_index, num_nodes=pos.size(0))
         row, col = edge_index
 
         pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
