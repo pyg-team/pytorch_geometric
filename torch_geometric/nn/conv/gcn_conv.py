@@ -53,12 +53,12 @@ class GCNConv(MessagePassing):
     def forward(self, x, edge_index, edge_weight=None):
         """"""
         if edge_weight is None:
-            edge_weight = x.new_ones((edge_index.size(1), ))
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=x.dtype, device=x.device)
         edge_weight = edge_weight.view(-1)
         assert edge_weight.size(0) == edge_index.size(1)
 
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
-        loop_weight = x.new_full((x.size(0), ), 1 if not self.improved else 2)
+        loop_weight = torch.full((x.size(0), ), 1 if not self.improved else 2, dtype=x.dtype, device=x.device)
         edge_weight = torch.cat([edge_weight, loop_weight], dim=0)
 
         row, col = edge_index
