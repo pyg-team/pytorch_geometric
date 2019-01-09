@@ -6,6 +6,13 @@ from torch_geometric.utils import remove_self_loops
 
 
 class RadiusGraph(object):
+    r"""Creates edges based on node positions to all points within a given
+    distance.
+
+    Args:
+        r (float): The distance.
+    """
+
     def __init__(self, r):
         self.r = r
 

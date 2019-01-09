@@ -8,29 +8,6 @@ class LinearTransformation(object):
     Args:
         matrix (Tensor): tensor with shape :math:`[D, D]` where :math:`D`
             corresponds to the dimensionality of node positions.
-
-    .. testsetup::
-
-        import torch
-        from torch_geometric.data import Data
-
-    .. testcode::
-
-        from torch_geometric.transforms import LinearTransformation
-
-        pos = torch.tensor([[-1, 1], [-3, 0], [2, -1]], dtype=torch.float)
-        data = Data(pos=pos)
-
-        matrix = torch.tensor([[2, 0], [0, 2]], dtype=torch.float)
-        data = LinearTransformation(matrix)(data)
-
-        print(data.pos)
-
-    .. testoutput::
-
-        tensor([[-2.,  2.],
-                [-6.,  0.],
-                [ 4., -2.]])
     """
 
     def __init__(self, matrix):

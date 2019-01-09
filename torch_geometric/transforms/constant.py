@@ -8,20 +8,6 @@ class Constant(object):
         value (int, optional): The value to add. (default: :obj:`1`)
         cat (bool, optional): If set to :obj:`False`, all existing node
             features will be replaced. (default: :obj:`True`)
-
-    .. testsetup::
-
-        import torch
-        from torch_geometric.data import Data
-
-    .. testcode::
-
-        from torch_geometric.transforms import Constant
-
-        edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-        data = Data(edge_index=edge_index)
-
-        data = Constant()(data)
     """
 
     def __init__(self, value=1, cat=True):

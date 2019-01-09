@@ -4,6 +4,12 @@ from torch_geometric.utils import to_undirected
 
 
 class KNNGraph(object):
+    r"""Creates a k-NN graph based on node positions.
+
+    Args:
+        k (int, optional): The number of neighbors. (default: :obj:`6`)
+    """
+
     def __init__(self, k=6):
         self.k = k
 
