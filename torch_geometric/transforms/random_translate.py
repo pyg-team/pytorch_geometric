@@ -7,10 +7,10 @@ import torch
 class RandomTranslate(object):
     r"""Translates node positions by randomly sampled translation values
     within a given interval. In contrast to other random transformations,
-    translation is applied randomly at each position.
+    translation is applied separately at each position.
 
     Args:
-        translate (sequence or float or int): maximum translation in each
+        translate (sequence or float or int): Maximum translation in each
             dimension, defining the range
             :math:`(-\mathrm{translate}, +\mathrm{translate})` to sample from.
             If :obj:`translate` is a number instead of a sequence, the same

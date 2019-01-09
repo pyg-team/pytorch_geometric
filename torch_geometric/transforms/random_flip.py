@@ -9,28 +9,6 @@ class RandomFlip(object):
         axis (int): The axis along the position of nodes being flipped.
         p (float, optional): Probability that node positions will be flipped.
             (default: :obj:`0.5`)
-
-    .. testsetup::
-
-        import torch
-        from torch_geometric.data import Data
-
-    .. testcode::
-
-        from torch_geometric.transforms import RandomFlip
-
-        pos = torch.tensor([[-1, 1], [-3, 0], [2, -1]], dtype=torch.float)
-        data = Data(pos=pos)
-
-        data = RandomFlip(axis=0, p=1)(data)
-
-        print(data.pos)
-
-    .. testoutput::
-
-        tensor([[ 1.,  1.],
-                [ 3.,  0.],
-                [-2., -1.]])
     """
 
     def __init__(self, axis, p=0.5):

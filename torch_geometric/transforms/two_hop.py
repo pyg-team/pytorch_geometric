@@ -5,6 +5,8 @@ from torch_geometric.utils import remove_self_loops
 
 
 class TwoHop(object):
+    r"""Adds the two hop edges to the edge indices."""
+
     def __call__(self, data):
         edge_index, edge_attr = data.edge_index, data.edge_attr
         n = data.num_nodes

@@ -2,6 +2,9 @@ from torch_geometric.transforms import Center
 
 
 class NormalizeScale(object):
+    r"""Centers and normalizes node positions to the interval :math:`(-1, 1)`.
+    """
+
     def __init__(self):
         self.center = Center()
 

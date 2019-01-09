@@ -4,27 +4,12 @@ from torch_scatter import scatter_max
 
 class LocalCartesian(object):
     r"""Saves the relative Cartesian coordinates of linked nodes in its edge
-    attributes. Each coordinate gets *neighborhood-normalized* to lay in
-    :math:`{[0, 1]}^D`.
+    attributes. Each coordinate gets *neighborhood-normalized* to the
+    interval :math:`{[0, 1]}^D`.
 
     Args:
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
-
-    .. testsetup::
-
-        import torch
-        from torch_geometric.data import Data
-
-    .. testcode::
-
-        from torch_geometric.transforms import LocalCartesian
-
-        pos = torch.tensor([[-1, 0], [0, 0], [2, 0]], dtype=torch.float)
-        edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-        data = Data(edge_index=edge_index, pos=pos)
-
-        data = LocalCartesian()(data)
     """
 
     def __init__(self, cat=True):

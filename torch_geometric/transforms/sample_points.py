@@ -2,8 +2,18 @@ import torch
 
 
 class SamplePoints(object):
-    def __init__(self, num):
+    r"""Uniformly samples :obj:`num` points on the mesh faces according to
+    their face area.
+
+    Args:
+        num (int): The number of points to sample.
+        remove_faces (bool, optional): If set to :obj:`False`, the face tensor
+            will not be removed.
+    """
+
+    def __init__(self, num, remove_faces=True):
         self.num = num
+        self.remove_faces = remove_faces
 
     def __call__(self, data):
         pos, face = data.pos, data.face
@@ -26,7 +36,8 @@ class SamplePoints(object):
         pos_sampled += frac[:, 1:] * (pos[face[2]] - pos[face[0]])
 
         data.pos = pos_sampled
-        data.face = None
+        if self.remove_faces:
+            data.face = None
         return data
 
     def __repr__(self):

@@ -3,8 +3,7 @@ from torch_geometric.utils import degree
 
 
 class TargetIndegree(object):
-    r"""Saves the globally normalized degree of target nodes (mapped to the
-    fixed interval :math:`[0, 1]`)
+    r"""Saves the globally normalized degree of target nodes
 
     .. math::
 
@@ -15,29 +14,6 @@ class TargetIndegree(object):
     Args:
         cat (bool, optional): Concat pseudo-coordinates to edge attributes
             instead of replacing them. (default: :obj:`True`)
-
-    .. testsetup::
-
-        import torch
-        from torch_geometric.data import Data
-
-    .. testcode::
-
-        from torch_geometric.transforms import TargetIndegree
-
-        edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-        data = Data(edge_index=edge_index)
-
-        data = TargetIndegree()(data)
-
-        print(data.edge_attr)
-
-    .. testoutput::
-
-        tensor([[1.0000],
-                [0.5000],
-                [0.5000],
-                [1.0000]])
     """
 
     def __init__(self, norm=True, max_value=None, cat=True):

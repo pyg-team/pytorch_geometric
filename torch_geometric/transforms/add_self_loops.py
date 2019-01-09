@@ -3,22 +3,7 @@ from torch_geometric.utils import add_self_loops
 
 
 class AddSelfLoops(object):
-    r"""Adds self-loops to edge indices.
-
-    .. testsetup::
-
-        import torch
-        from torch_geometric.data import Data
-
-    .. testcode::
-
-        from torch_geometric.transforms import AddSelfLoops
-
-        edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
-        data = Data(edge_index=edge_index)
-
-        data = AddSelfLoops()(data)
-    """
+    r"""Adds self-loops to edge indices."""
 
     def __call__(self, data):
         N = data.num_nodes
