@@ -34,6 +34,7 @@ class XConv(torch.nn.Module):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
+        dim (int): Point cloud dimensionality.
         kernel_size (int): Size of the convolving kernel, *i.e.* number of
             neighbors including self-loops.
         hidden_channels (int, optional): Output size of
@@ -78,7 +79,8 @@ class XConv(torch.nn.Module):
             L(C_delta, C_delta),
             ELU(),
             BN(C_delta),
-            Reshape(-1, K, C_delta), )
+            Reshape(-1, K, C_delta),
+        )
 
         self.mlp2 = S(
             L(D * K, K**2),
@@ -91,14 +93,16 @@ class XConv(torch.nn.Module):
             Reshape(-1, K, K),
             Conv1d(K, K**2, K, groups=K),
             BN(K**2),
-            Reshape(-1, K, K), )
+            Reshape(-1, K, K),
+        )
 
         C_in = C_in + C_delta
         depth_multiplier = int(ceil(C_out / C_in))
         self.conv = S(
             Conv1d(C_in, C_in * depth_multiplier, K, groups=C_in),
             Reshape(-1, C_in * depth_multiplier),
-            L(C_in * depth_multiplier, C_out, bias=bias), )
+            L(C_in * depth_multiplier, C_out, bias=bias),
+        )
 
         self.reset_parameters()
 
