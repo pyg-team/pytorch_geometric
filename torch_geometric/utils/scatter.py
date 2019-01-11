@@ -18,17 +18,6 @@ def scatter_(name, src, index, dim_size=None):
             minimal sized output tensor is returned. (default: :obj:`None`)
 
     :rtype: :class:`Tensor`
-
-    .. testsetup::
-
-        import torch
-
-    .. testcode::
-
-        from torch_geometric.utils import scatter_
-        src = torch.Tensor([2, 3, -2, 1, 1])
-        index = torch.tensor([0, 1, 0, 1, 2])
-        out = scatter_("add", src, index)
     """
 
     assert name in ['add', 'mean', 'max']

@@ -15,17 +15,6 @@ def softmax(src, index, num_nodes=None):
             minimal sized output tensor is returned. (default: :obj:`None`)
 
     :rtype: :class:`Tensor`
-
-    .. testsetup::
-
-        import torch
-
-    .. testcode::
-
-        from torch_geometric.utils import softmax
-        src = torch.Tensor([2, 3, -2, 1, 1])
-        index = torch.tensor([0, 1, 0, 1, 2])
-        out = softmax(src, index)
     """
 
     num_nodes = maybe_num_nodes(index, num_nodes)
