@@ -43,22 +43,24 @@ class AGNNConv(torch.nn.Module):
         if self.requires_grad:
             self.beta.data.fill_(1)
 
-    def forward(self, x, edge_index):
-        """"""
+    def propagation_matrix(self, x, edge_index):
         edge_index, _ = remove_self_loops(edge_index)
         edge_index = add_self_loops(edge_index, x.size(0))
         row, col = edge_index
 
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
         beta = self.beta if self.requires_grad else self._buffers['beta']
 
+        x = x.unsqueeze(-1) if x.dim() == 1 else x
         x = F.normalize(x, p=2, dim=-1)
-        alpha = beta * (x[row] * x[col]).sum(dim=-1)
-        alpha = softmax(alpha, row, num_nodes=x.size(0))
+        edge_weight = beta * (x[row] * x[col]).sum(dim=-1)
+        edge_weight = softmax(edge_weight, row, num_nodes=x.size(0))
 
-        # Perform the propagation.
-        out = spmm(edge_index, alpha, x.size(0), x)
+        return edge_index, edge_weight
 
+    def forward(self, x, edge_index):
+        """"""
+        edge_index, edge_weight = self.propagation_matrix(x, edge_index)
+        out = spmm(edge_index, edge_weight, x.size(0), x)
         return out
 
     def __repr__(self):
