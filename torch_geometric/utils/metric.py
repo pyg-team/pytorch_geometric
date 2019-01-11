@@ -4,10 +4,27 @@ import torch
 
 
 def accuracy(pred, target):
+    r"""Computes the accuracy of correct predictions.
+
+    Args:
+        pred (Tensor): The predictions.
+        target (Tensor): The targets.
+
+    :rtype: int
+    """
     return (pred == target).sum().item() / target.numel()
 
 
 def true_positive(pred, target, num_classes):
+    r"""Computes the number of true positive predictions.
+
+    Args:
+        pred (Tensor): The predictions.
+        target (Tensor): The targets.
+        num_classes (int): The number of classes.
+
+    :rtype: :class:`LongTensor`
+    """
     out = []
     for i in range(num_classes):
         out.append(((pred == i) & (target == i)).sum())
@@ -16,6 +33,15 @@ def true_positive(pred, target, num_classes):
 
 
 def true_negative(pred, target, num_classes):
+    r"""Computes the number of true negative predictions.
+
+    Args:
+        pred (Tensor): The predictions.
+        target (Tensor): The targets.
+        num_classes (int): The number of classes.
+
+    :rtype: :class:`LongTensor`
+    """
     out = []
     for i in range(num_classes):
         out.append(((pred != i) & (target != i)).sum())
@@ -24,6 +50,15 @@ def true_negative(pred, target, num_classes):
 
 
 def false_positive(pred, target, num_classes):
+    r"""Computes the number of false positive predictions.
+
+    Args:
+        pred (Tensor): The predictions.
+        target (Tensor): The targets.
+        num_classes (int): The number of classes.
+
+    :rtype: :class:`LongTensor`
+    """
     out = []
     for i in range(num_classes):
         out.append(((pred == i) & (target != i)).sum())
@@ -32,6 +67,15 @@ def false_positive(pred, target, num_classes):
 
 
 def false_negative(pred, target, num_classes):
+    r"""Computes the number of false negative predictions.
+
+    Args:
+        pred (Tensor): The predictions.
+        target (Tensor): The targets.
+        num_classes (int): The number of classes.
+
+    :rtype: :class:`LongTensor`
+    """
     out = []
     for i in range(num_classes):
         out.append(((pred != i) & (target == i)).sum())
@@ -40,6 +84,16 @@ def false_negative(pred, target, num_classes):
 
 
 def precision(pred, target, num_classes):
+    r"""Computes the precision:
+    :math:`\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}`.
+
+    Args:
+        pred (Tensor): The predictions.
+        target (Tensor): The targets.
+        num_classes (int): The number of classes.
+
+    :rtype: :class:`Tensor`
+    """
     tp = true_positive(pred, target, num_classes).to(torch.float)
     fp = false_positive(pred, target, num_classes).to(torch.float)
 
@@ -50,6 +104,16 @@ def precision(pred, target, num_classes):
 
 
 def recall(pred, target, num_classes):
+    r"""Computes the recall:
+    :math:`\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}`.
+
+    Args:
+        pred (Tensor): The predictions.
+        target (Tensor): The targets.
+        num_classes (int): The number of classes.
+
+    :rtype: :class:`Tensor`
+    """
     tp = true_positive(pred, target, num_classes).to(torch.float)
     fn = false_negative(pred, target, num_classes).to(torch.float)
 
@@ -60,6 +124,17 @@ def recall(pred, target, num_classes):
 
 
 def f1_score(pred, target, num_classes):
+    r"""Computes the :math:`F_1` score:
+    :math:`2 \cdot \frac{\mathrm{precision} \cdot \mathrm{recall}}
+    {\mathrm{precision}+\mathrm{recall}}`.
+
+    Args:
+        pred (Tensor): The predictions.
+        target (Tensor): The targets.
+        num_classes (int): The number of classes.
+
+    :rtype: :class:`Tensor`
+    """
     prec = precision(pred, target, num_classes)
     rec = recall(pred, target, num_classes)
 

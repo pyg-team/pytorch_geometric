@@ -4,6 +4,18 @@ from .repeat import repeat
 
 
 def one_hot(src, num_classes=None, dtype=None):
+    r"""Converts labels into a one-hot format.
+
+    Args:
+        src (Tensor): The labels.
+        num_classes (int or list, optional): The number of classes.
+            (default: :obj:`None`)
+        dtype (:obj:`torch.dtype`, optional): The desired data type of the
+            returned tensor.
+
+    :rtype: :class:`Tensor`
+    """
+
     src = src.to(torch.long)
     src = src.unsqueeze(-1) if src.dim() == 1 else src
     assert src.dim() == 2
