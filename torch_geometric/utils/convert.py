@@ -6,6 +6,16 @@ from .num_nodes import maybe_num_nodes
 
 
 def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
+    r"""Converts a graph given by edge indices and edge attributes to a scipy
+    sparse matrix.
+
+    Args:
+        edge_index (LongTensor): The edge_indices.
+        edge_attr (Tensor, optional): Edge weights or multi-dimensional
+            edge features. (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
+    """
     row, col = edge_index.cpu()
 
     if edge_attr is None:
@@ -20,6 +30,19 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
 
 
 def to_networkx(edge_index, x=None, edge_attr=None, pos=None, num_nodes=None):
+    r"""Converts a graph given by edge indices, node features, node positions
+    and edge attributes to a networkx graph.
+
+    Args:
+        edge_index (LongTensor): The edge_indices.
+        x (Tensor, optional): The node feature matrix. (default: :obj:`None`)
+        edge_attr (Tensor, optional): Edge weights or multi-dimensional
+            edge features. (default: :obj:`None`)
+        pos (Tensor, optional): The node position matrix.
+            (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
+    """
     num_nodes = num_nodes if x is None else x.size(0)
     num_nodes = num_nodes if pos is None else pos.size(0)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
