@@ -7,9 +7,13 @@ torch_geometric.nn
 Sparse Convolutional Layers
 ---------------------------
 
+.. automodule:: torch_geometric.nn.conv.message_passing
+    :members:
+
 .. automodule:: torch_geometric.nn.conv
     :members:
     :undoc-members:
+    :exclude-members: message, update, MessagePassing
 
 .. automodule:: torch_geometric.nn.meta
     :members:
