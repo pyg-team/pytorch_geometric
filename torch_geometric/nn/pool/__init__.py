@@ -8,8 +8,8 @@ from torch_cluster import fps, knn, knn_graph, radius, radius_graph, nearest
 __all__ = [
     'TopKPooling',
     'max_pool',
-    'max_pool_x',
     'avg_pool',
+    'max_pool_x',
     'avg_pool_x',
     'graclus',
     'voxel_grid',

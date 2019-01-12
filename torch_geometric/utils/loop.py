@@ -8,7 +8,7 @@ def contains_self_loops(edge_index):
     contain self-loops.
 
     Args:
-        edge_src (LongTensor): The edge_indices.
+        edge_index (LongTensor): The edge_indices.
 
     :rtype: bool
     """
