@@ -24,20 +24,29 @@
 
   
 
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="torch_geometric.transforms" href="transforms.html" />
-    <link rel="prev" title="torch_geometric.data" href="data.html" /> 
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
+        <link rel="next" title="torch_geometric.transforms" href="transforms.html"/>
+        <link rel="prev" title="torch_geometric.data" href="data.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -54,7 +63,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../_static/logo.svg" class="logo" />
           
           </a>
 
@@ -115,7 +124,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv.message_passing">Sparse Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
@@ -137,7 +146,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pytorch_geometric</a>
@@ -145,10 +154,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -245,32 +253,6 @@ contain additional continuous node features (if present).
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.TUDataset.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.TUDataset.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/tu_dataset.html#TUDataset.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.TUDataset.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.TUDataset.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.TUDataset.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.TUDataset.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.TUDataset.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -301,32 +283,6 @@ being saved to disk. (default: <a class="reference external" href="https://docs.
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.Planetoid.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/planetoid.html#Planetoid.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Planetoid.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.Planetoid.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/planetoid.html#Planetoid.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Planetoid.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.Planetoid.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.Planetoid.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.Planetoid.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.Planetoid.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -356,32 +312,6 @@ being saved to disk. (default: <a class="reference external" href="https://docs.
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.PPI.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/ppi.html#PPI.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.PPI.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.PPI.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/ppi.html#PPI.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.PPI.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.PPI.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.PPI.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.PPI.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.PPI.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -413,32 +343,6 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.QM7b.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7b.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7b.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.QM7b.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm7.html#QM7b.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM7b.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM7b.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM7b.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM7b.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM7b.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -474,32 +378,6 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.QM9.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.QM9.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/qm9.html#QM9.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.QM9.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM9.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM9.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.QM9.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.QM9.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -529,38 +407,6 @@ being saved to disk. (default: <a class="reference external" href="https://docs.
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.Entities.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/entities.html#Entities.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Entities.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.Entities.num_classes">
-<code class="descname">num_classes</code><a class="headerlink" href="#torch_geometric.datasets.Entities.num_classes" title="Permalink to this definition">¶</a></dt>
-<dd><p>The number of classes in the dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.Entities.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/entities.html#Entities.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.Entities.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.Entities.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.Entities.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.Entities.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.Entities.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -595,32 +441,6 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/mnist_superpixels.html#MNISTSuperpixels.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.MNISTSuperpixels.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.MNISTSuperpixels.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -665,32 +485,6 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.FAUST.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.FAUST.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/faust.html#FAUST.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.FAUST.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.FAUST.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.FAUST.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.FAUST.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.FAUST.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -732,32 +526,6 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.ShapeNet.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/shapenet.html#ShapeNet.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.ShapeNet.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/shapenet.html#ShapeNet.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ShapeNet.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ShapeNet.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ShapeNet.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -803,32 +571,6 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.ModelNet.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.ModelNet.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/modelnet.html#ModelNet.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ModelNet.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ModelNet.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ModelNet.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.ModelNet.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.ModelNet.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -873,39 +615,15 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="torch_geometric.datasets.CoMA.download">
-<code class="descname">download</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/coma.html#CoMA.download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CoMA.download" title="Permalink to this definition">¶</a></dt>
-<dd><p>Downloads the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.datasets.CoMA.process">
-<code class="descname">process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/coma.html#CoMA.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.CoMA.process" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the dataset to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code> folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.CoMA.processed_file_names">
-<code class="descname">processed_file_names</code><a class="headerlink" href="#torch_geometric.datasets.CoMA.processed_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.processed_dir</span></code>
-folder in order to skip the processing.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="torch_geometric.datasets.CoMA.raw_file_names">
-<code class="descname">raw_file_names</code><a class="headerlink" href="#torch_geometric.datasets.CoMA.raw_file_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>The name of the files to find in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">self.raw_dir</span></code> folder in
-order to skip the download.</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -923,11 +641,11 @@ order to skip the download.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matthias Fey
+        &copy; Copyright 2019, Matthias Fey.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -942,24 +660,36 @@ order to skip the download.</p>
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>

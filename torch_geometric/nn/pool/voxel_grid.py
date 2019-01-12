@@ -21,6 +21,8 @@ def voxel_grid(pos, batch, size, start=None, end=None):
         end (float or [float], optional): End coordinates of the grid (in
             each dimension). If set to :obj:`None`, will be set to the maximum
             coordinates found in :attr:`pos`. (default: :obj:`None`)
+
+    :rtype: :class:`LongTensor`
     """
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
     num_nodes, dim = pos.size()

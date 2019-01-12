@@ -25,18 +25,27 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
-    <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Search" href="search.html" /> 
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="#"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -53,7 +62,7 @@
 
           
             
-            <img src="_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="_static/logo.svg" class="logo" />
           
           </a>
 
@@ -114,7 +123,7 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.conv">Sparse Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.conv.message_passing">Sparse Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
@@ -136,7 +145,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">pytorch_geometric</a>
@@ -144,10 +153,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -332,42 +340,20 @@
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.dense_to_sparse">dense_to_sparse() (in module torch_geometric.utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data.html#torch_geometric.data.DenseDataLoader">DenseDataLoader (class in torch_geometric.data)</a>
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv">DenseSAGEConv (class in torch_geometric.nn.dense.dense_sage_conv)</a>
 </li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.Distance">Distance (class in torch_geometric.transforms)</a>
 </li>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.CoMA.download">download() (CoMA method)</a>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.download">download() (Dataset method)</a>
 
       <ul>
-        <li><a href="modules/data.html#torch_geometric.data.Dataset.download">(Dataset method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.Entities.download">(Entities method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.download">(FAUST method)</a>
-</li>
         <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.download">(InMemoryDataset method)</a>
 </li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.download">(MNISTSuperpixels method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.download">(ModelNet method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.download">(PPI method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.download">(Planetoid method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7b.download">(QM7b method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.download">(QM9 method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.download">(ShapeNet method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.download">(TUDataset method)</a>
-</li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data.html#torch_geometric.data.download_url">download_url() (in module torch_geometric.data)</a>
 </li>
   </ul></td>
@@ -544,21 +530,11 @@
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.pool.max_pool_x">max_pool_x() (in module torch_geometric.nn.pool)</a>
 </li>
-      <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv.message">message() (GATConv method)</a>
-
-      <ul>
-        <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv.message">(GCNConv method)</a>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing.message">message() (MessagePassing method)</a>
 </li>
-        <li><a href="modules/nn.html#torch_geometric.nn.conv.GraphConv.message">(GraphConv method)</a>
-</li>
-        <li><a href="modules/nn.html#torch_geometric.nn.conv.MessagePassing.message">(MessagePassing method)</a>
-</li>
-        <li><a href="modules/nn.html#torch_geometric.nn.conv.RGCNConv.message">(RGCNConv method)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/nn.html#torch_geometric.nn.conv.MessagePassing">MessagePassing (class in torch_geometric.nn.conv)</a>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing">MessagePassing (class in torch_geometric.nn.conv.message_passing)</a>
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.meta.MetaLayer">MetaLayer (class in torch_geometric.nn.meta)</a>
 </li>
@@ -582,14 +558,10 @@
 </li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.NormalizeScale">NormalizeScale (class in torch_geometric.transforms)</a>
 </li>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.Entities.num_classes">num_classes (Entities attribute)</a>
-
-      <ul>
-        <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.num_classes">(InMemoryDataset attribute)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.num_classes">num_classes (InMemoryDataset attribute)</a>
+</li>
       <li><a href="modules/data.html#torch_geometric.data.Data.num_edges">num_edges (Data attribute)</a>
 </li>
       <li><a href="modules/data.html#torch_geometric.data.Data.num_features">num_features (Data attribute)</a>
@@ -630,67 +602,25 @@
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.precision">precision() (in module torch_geometric.utils)</a>
 </li>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.CoMA.process">process() (CoMA method)</a>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.process">process() (Dataset method)</a>
 
       <ul>
-        <li><a href="modules/data.html#torch_geometric.data.Dataset.process">(Dataset method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.Entities.process">(Entities method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.process">(FAUST method)</a>
-</li>
         <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.process">(InMemoryDataset method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.process">(MNISTSuperpixels method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.process">(ModelNet method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.process">(PPI method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.process">(Planetoid method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7b.process">(QM7b method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.process">(QM9 method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.process">(ShapeNet method)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.process">(TUDataset method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.CoMA.processed_file_names">processed_file_names (CoMA attribute)</a>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.processed_file_names">processed_file_names (Dataset attribute)</a>
 
       <ul>
-        <li><a href="modules/data.html#torch_geometric.data.Dataset.processed_file_names">(Dataset attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.Entities.processed_file_names">(Entities attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.processed_file_names">(FAUST attribute)</a>
-</li>
         <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.processed_file_names">(InMemoryDataset attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.processed_file_names">(MNISTSuperpixels attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.processed_file_names">(ModelNet attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.processed_file_names">(PPI attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.processed_file_names">(Planetoid attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7b.processed_file_names">(QM7b attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.processed_file_names">(QM9 attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.processed_file_names">(ShapeNet attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.processed_file_names">(TUDataset attribute)</a>
 </li>
       </ul></li>
       <li><a href="modules/data.html#torch_geometric.data.Dataset.processed_paths">processed_paths (Dataset attribute)</a>
 </li>
-      <li><a href="modules/nn.html#torch_geometric.nn.conv.MessagePassing.propagate">propagate() (MessagePassing method)</a>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing.propagate">propagate() (MessagePassing method)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.AGNNConv.propagation_matrix">propagation_matrix() (AGNNConv method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -726,36 +656,12 @@
 </li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.RandomTranslate">RandomTranslate (class in torch_geometric.transforms)</a>
 </li>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.CoMA.raw_file_names">raw_file_names (CoMA attribute)</a>
+      <li><a href="modules/data.html#torch_geometric.data.Dataset.raw_file_names">raw_file_names (Dataset attribute)</a>
 
       <ul>
-        <li><a href="modules/data.html#torch_geometric.data.Dataset.raw_file_names">(Dataset attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.Entities.raw_file_names">(Entities attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.FAUST.raw_file_names">(FAUST attribute)</a>
-</li>
         <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.raw_file_names">(InMemoryDataset attribute)</a>
 </li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.MNISTSuperpixels.raw_file_names">(MNISTSuperpixels attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.ModelNet.raw_file_names">(ModelNet attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.PPI.raw_file_names">(PPI attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.Planetoid.raw_file_names">(Planetoid attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.QM7b.raw_file_names">(QM7b attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.QM9.raw_file_names">(QM9 attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet.raw_file_names">(ShapeNet attribute)</a>
-</li>
-        <li><a href="modules/datasets.html#torch_geometric.datasets.TUDataset.raw_file_names">(TUDataset attribute)</a>
-</li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data.html#torch_geometric.data.Dataset.raw_paths">raw_paths (Dataset attribute)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.recall">recall() (in module torch_geometric.utils)</a>
@@ -800,6 +706,8 @@
         <li><a href="modules/nn.html#torch_geometric.nn.conv.XConv.reset_parameters">(XConv method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/nn.html#torch_geometric.nn.conv.RGCNConv">RGCNConv (class in torch_geometric.nn.conv)</a>
 </li>
   </ul></td>
@@ -840,7 +748,7 @@
 </li>
       <li><a href="modules/data.html#torch_geometric.data.Data.to">to() (Data method)</a>
 </li>
-      <li><a href="modules/utils.html#torch_geometric.utils.to_batch">to_batch() (in module torch_geometric.utils)</a>
+      <li><a href="modules/utils.html#torch_geometric.utils.to_dense_batch">to_dense_batch() (in module torch_geometric.utils)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.to_networkx">to_networkx() (in module torch_geometric.utils)</a>
 </li>
@@ -860,6 +768,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/nn.html#module-torch_geometric.nn.conv.message_passing">torch_geometric.nn.conv.message_passing (module)</a>
+</li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.dense.dense_sage_conv">torch_geometric.nn.dense.dense_sage_conv (module)</a>
 </li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.dense.diff_pool">torch_geometric.nn.dense.diff_pool (module)</a>
@@ -888,18 +798,8 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/nn.html#torch_geometric.nn.conv.GATConv.update">update() (GATConv method)</a>
-
-      <ul>
-        <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv.update">(GCNConv method)</a>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing.update">update() (MessagePassing method)</a>
 </li>
-        <li><a href="modules/nn.html#torch_geometric.nn.conv.GraphConv.update">(GraphConv method)</a>
-</li>
-        <li><a href="modules/nn.html#torch_geometric.nn.conv.MessagePassing.update">(MessagePassing method)</a>
-</li>
-        <li><a href="modules/nn.html#torch_geometric.nn.conv.RGCNConv.update">(RGCNConv method)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -922,7 +822,9 @@
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -931,11 +833,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matthias Fey
+        &copy; Copyright 2019, Matthias Fey.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -950,24 +852,36 @@
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>

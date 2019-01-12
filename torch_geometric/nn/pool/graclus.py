@@ -17,6 +17,8 @@ def graclus(edge_index, weight=None, num_nodes=None):
             (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+
+    :rtype: :class:`LongTensor`
     """
     row, col = edge_index
     return graclus_cluster(row, col, weight, num_nodes)

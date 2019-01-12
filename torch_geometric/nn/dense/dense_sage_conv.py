@@ -6,7 +6,7 @@ from ..inits import uniform
 
 
 class DenseSAGEConv(torch.nn.Module):
-    r"""See :class:`torch_geometric.nn.conv.sage_conv.SAGEConv`.
+    r"""See :class:`torch_geometric.nn.conv.SAGEConv`.
 
     :rtype: :class:`Tensor`
     """

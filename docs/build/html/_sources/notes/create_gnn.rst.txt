@@ -16,7 +16,7 @@ The "MessagePassing" base class
 --------------------------------
 
 PyTorch Geometric provides the :class:`torch_geometric.nn.MessagePassing` base class, which helps in creating such kinds of message passing graph neural networks by automatically taking care of message propagation.
-The user only has to define the methods :math:`\phi` , *i.e.* the :meth:`message` method, and :math:`\gamma` , *.i.e.* the :meth:`update` method, as well as the aggregation scheme to use, *.i.e.* :obj:`aggr='add'`, :obj:`aggr='mean'` or :obj:`aggr='max'`.
+The user only has to define the functions :math:`\phi` , *i.e.* :meth:`message`, and :math:`\gamma` , *.i.e.* :meth:`update`, as well as the aggregation scheme to use, *.i.e.* :obj:`aggr='add'`, :obj:`aggr='mean'` or :obj:`aggr='max'`.
 
 This is done with the help of the following methods:
 
@@ -96,7 +96,7 @@ The full layer implementation is shown below:
 
 :class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing`.
 All the logic of the layer takes place in :meth:`forward`.
-Here, we first add self-loops to our edge indices using the :meth:`torch_geometric.utils.add_self_loops` (step 1), as well as linearly transform node features by calling the :class:`torch.nn.Linear` instance (step 2).
+Here, we first add self-loops to our edge indices using the :meth:`torch_geometric.utils.add_self_loops` function (step 1), as well as linearly transform node features by calling the :class:`torch.nn.Linear` instance (step 2).
 
 We then proceed to call :meth:`propagate`, which internally calls the :meth:`message` and :meth:`update` functions.
 As additional arguments for message propagation, we pass the node embeddings :obj:`x` and the number of nodes (given by :obj:`x.size(0)`).
@@ -134,7 +134,7 @@ Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePas
 .. code-block:: python
 
     import torch
-    from torch.nn import Sequential, Linear, ReLU
+    from torch.nn import Sequential as Seq, Linear, ReLU
     from torch_geometric.nn import MessagePassing
 
     class EdgeConv(MessagePassing):
@@ -162,7 +162,7 @@ Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePas
 
             return aggr_out
 
-Inside the :meth:`message` function, we use :obj:`self.mlp` to transform both the source node features :obj:`x_i` and the target node features :obj:`x_j` for each edge.
+Inside the :meth:`message` function, we use :obj:`self.mlp` to transform both the source node features :obj:`x_i` and the relative target node features :obj:`x_j - x_i` for each edge.
 
 The edge convolution is actual a dynamic convolution, which recomputes the graph for each layer using nearest neighbors in the feature space.
 Luckily, PyTorch Geometric comes with a GPU accelerated batch-wise k-NN graph generation method named :meth:`torch_geometric.nn.knn_graph`:
