@@ -10,9 +10,8 @@ def softmax(src, index, num_nodes=None):
     Args:
         src (Tensor): The source tensor.
         index (LongTensor): The indices of elements for applying the softmax.
-        num_nodes (int, optional): Automatically create output tensor with size
-            :attr:`num_nodes` in the first dimension. If set to :attr:`None`, a
-            minimal sized output tensor is returned. (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
 
     :rtype: :class:`Tensor`
     """

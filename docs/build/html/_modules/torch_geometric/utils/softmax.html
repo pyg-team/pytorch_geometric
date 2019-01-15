@@ -210,9 +210,8 @@
 <span class="sd">    Args:</span>
 <span class="sd">        src (Tensor): The source tensor.</span>
 <span class="sd">        index (LongTensor): The indices of elements for applying the softmax.</span>
-<span class="sd">        num_nodes (int, optional): Automatically create output tensor with size</span>
-<span class="sd">            :attr:`num_nodes` in the first dimension. If set to :attr:`None`, a</span>
-<span class="sd">            minimal sized output tensor is returned. (default: :obj:`None`)</span>
+<span class="sd">        num_nodes (int, optional): The number of nodes, *i.e.*</span>
+<span class="sd">            :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)</span>
 
 <span class="sd">    :rtype: :class:`Tensor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>

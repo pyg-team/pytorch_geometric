@@ -586,7 +586,7 @@ Feature Learning on Point Sets in a Metric Space”</a> papers</p>
 <div class="math notranslate nohighlight">
 \[\mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in
 \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j \,
-\Vert \, \mathbf{p}_j - \mathbf{p}_i) \right)\]</div>
+\Vert \, \mathbf{p}_j - \mathbf{p}_i) \right),\]</div>
 <p>where <span class="math notranslate nohighlight">\(\gamma_{\mathbf{\Theta}}\)</span> and
 <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span> denote neural
 networks, <em>.i.e.</em> MLPs, and <span class="math notranslate nohighlight">\(\mathbf{P} \in \mathbb{R}^{N \times D}\)</span>
@@ -1098,6 +1098,44 @@ B-1\}}^N\)</span>, which assigns each node to a specific example.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.glob.GlobalAttention">
+<em class="property">class </em><code class="descname">GlobalAttention</code><span class="sig-paren">(</span><em>gate_nn</em>, <em>nn=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/attention.html#GlobalAttention"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.GlobalAttention" title="Permalink to this definition">¶</a></dt>
+<dd><p>Global soft attention layer from the <a class="reference external" href="https://arxiv.org/abs/1511.05493">“Gated Graph Sequence Neural
+Networks”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{r}_i = \sum_{n=1}^{N_i} \mathrm{softmax} \left(
+h_{\mathrm{gate}} ( \mathbf{x}_n ) \right) \odot
+h_{\mathbf{\Theta}} ( \mathbf{x}_n ),\]</div>
+<p>where <span class="math notranslate nohighlight">\(h_{\mathrm{gate}} \colon \mathbb{R}^F \to
+\mathbb{R}\)</span> and <span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span> denote neural networks, <em>i.e.</em>
+MLPS.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>gate_nn</strong> (<em>nn.Sequential</em>) – Neural network
+<span class="math notranslate nohighlight">\(h_{\mathrm{gate}} \colon \mathbb{R}^F \to \mathbb{R}\)</span>.</li>
+<li><strong>nn</strong> (<em>nn.Sequential</em><em>, </em><em>optional</em>) – Neural network
+<span class="math notranslate nohighlight">\(h_{\mathbf{\Theta}}\)</span>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.glob.GlobalAttention.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/attention.html#GlobalAttention.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.GlobalAttention.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.glob.GlobalAttention.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/attention.html#GlobalAttention.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.GlobalAttention.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
