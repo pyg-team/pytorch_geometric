@@ -14,7 +14,7 @@ class PointConv(torch.nn.Module):
     .. math::
         \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in
         \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j \,
-        \Vert \, \mathbf{p}_j - \mathbf{p}_i) \right)
+        \Vert \, \mathbf{p}_j - \mathbf{p}_i) \right),
 
     where :math:`\gamma_{\mathbf{\Theta}}` and
     :math:`h_{\mathbf{\Theta}}` denote neural
