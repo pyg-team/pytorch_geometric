@@ -6,6 +6,7 @@ from .graph_conv import GraphConv
 from .gat_conv import GATConv
 from .agnn_conv import AGNNConv
 from .gin_conv import GINConv
+from .arma_conv import ARMAConv
 from .rgcn_conv import RGCNConv
 from .point_conv import PointConv
 from .gmm_conv import GMMConv
@@ -23,6 +24,7 @@ __all__ = [
     'GATConv',
     'AGNNConv',
     'GINConv',
+    'ARMAConv',
     'RGCNConv',
     'PointConv',
     'GMMConv',
