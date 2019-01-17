@@ -25,7 +25,7 @@ class ChebConv(torch.nn.Module):
         \mathbf{\hat{X}}_k &= 2 \cdot \mathbf{\hat{L}} \cdot
         \mathbf{\hat{X}}_{k-1} - \mathbf{\hat{X}}_{k-2}
 
-    and :math:`\mathbf{\hat{L}}` denotes the scaled and normalized Lalplacian.
+    and :math:`\mathbf{\hat{L}}` denotes the scaled and normalized Laplacian.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -54,23 +54,24 @@ class ChebConv(torch.nn.Module):
         uniform(size, self.weight)
         uniform(size, self.bias)
 
-    def forward(self, x, edge_index, edge_attr=None):
+    def forward(self, x, edge_index, edge_weight=None):
         """"""
-        edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
+        edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
         row, col = edge_index
         num_nodes, num_edges, K = x.size(0), row.size(0), self.weight.size(0)
 
-        if edge_attr is None:
-            edge_attr = x.new_ones((num_edges, ))
-        assert edge_attr.dim() == 1 and edge_attr.numel() == edge_index.size(1)
+        if edge_weight is None:
+            edge_weight = x.new_ones((num_edges, ))
+        edge_weight = edge_weight.view(-1)
+        assert edge_weight.size(0) == edge_index.size(1)
 
         deg = degree(row, num_nodes, dtype=x.dtype)
 
         # Compute normalized and rescaled Laplacian.
         deg = deg.pow(-0.5)
         deg[deg == float('inf')] = 0
-        lap = -deg[row] * edge_attr * deg[col]
+        lap = -deg[row] * edge_weight * deg[col]
 
         # Perform filter operation recurrently.
         Tx_0 = x

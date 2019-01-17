@@ -37,7 +37,7 @@ class GATConv(MessagePassing):
         attentions are averaged instead of concatenated. (default: :obj:`True`)
         negative_slope (float, optional): LeakyReLU angle of the negative
             slope. (default: :obj:`0.2`)
-        dropout (float, optional): Dropout propbability of the normalized
+        dropout (float, optional): Dropout probability of the normalized
             attention coefficients which exposes each node to a stochastically
             sampled neighborhood during training. (default: :obj:`0`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn

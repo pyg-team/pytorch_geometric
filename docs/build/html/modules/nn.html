@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                master (1.0.0)
+                master (1.0.1)
               </div>
             
           
@@ -310,7 +310,7 @@ Filtering”</a> paper</p>
 <div class="math notranslate nohighlight">
 \[ \begin{align}\begin{aligned}\mathbf{\hat{X}}_0 &amp;= \mathbf{X}\\\mathbf{\hat{X}}_1 &amp;= \mathbf{\hat{L}} \cdot \mathbf{X}\\\mathbf{\hat{X}}_k &amp;= 2 \cdot \mathbf{\hat{L}} \cdot
 \mathbf{\hat{X}}_{k-1} - \mathbf{\hat{X}}_{k-2}\end{aligned}\end{align} \]</div>
-<p>and <span class="math notranslate nohighlight">\(\mathbf{\hat{L}}\)</span> denotes the scaled and normalized Lalplacian.</p>
+<p>and <span class="math notranslate nohighlight">\(\mathbf{\hat{L}}\)</span> denotes the scaled and normalized Laplacian.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -328,7 +328,7 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 </table>
 <dl class="method">
 <dt id="torch_geometric.nn.conv.ChebConv.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>edge_attr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/cheb_conv.html#ChebConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ChebConv.forward" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>edge_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/cheb_conv.html#ChebConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ChebConv.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -442,7 +442,7 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <li><strong>are averaged instead of concatenated.</strong><strong> (</strong><strong>default</strong> (<em>attentions</em>) – <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 <li><strong>negative_slope</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – LeakyReLU angle of the negative
 slope. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0.2</span></code>)</li>
-<li><strong>dropout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Dropout propbability of the normalized
+<li><strong>dropout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Dropout probability of the normalized
 attention coefficients which exposes each node to a stochastically
 sampled neighborhood during training. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0</span></code>)</li>
 <li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
@@ -535,6 +535,51 @@ will be a trainable parameter. (default: <a class="reference external" href="htt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GINConv.reset_parameters">
 <code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gin_conv.html#GINConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GINConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.ARMAConv">
+<em class="property">class </em><code class="descname">ARMAConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>initial_channels</em>, <em>num_stacks=1</em>, <em>dropout=0</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/arma_conv.html#ARMAConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ARMAConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ARMA graph convolutional operator from the <a class="reference external" href="https://arxiv.org/abs/1901.01343">“Graph Neural Networks
+with Convolutional ARMA Filters”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{X}_k^{(t+1)} = \mathbf{\hat{L}} \mathbf{X}_k^{(t)}
+\mathbf{W} + \mathbf{X}^{(0)} \mathbf{V},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{\hat{L}} = \mathbf{I} - \mathbf{L} = \mathbf{D}^{-1/2}
+\mathbf{A} \mathbf{D}^{-1/2}\)</span> denotes the
+modified Laplacian <span class="math notranslate nohighlight">\(\mathbf{L} = \mathbf{I} - \mathbf{D}^{-1/2}
+\mathbf{A} \mathbf{D}^{-1/2}\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample <span class="math notranslate nohighlight">\(\mathbf{x}^{(t)}\)</span>.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample
+<span class="math notranslate nohighlight">\(\mathbf{x}^{(t+1)}\)</span>.</li>
+<li><strong>initial_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each initial sample
+<span class="math notranslate nohighlight">\(\mathbf{x}^{(0)}\)</span>.</li>
+<li><strong>num_stacks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of parallel stacks <span class="math notranslate nohighlight">\(K\)</span>.
+(default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>).</li>
+<li><strong>dropout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Dropout probability of the skip connection.
+(default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0</span></code>)</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.ARMAConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>x_init</em>, <em>edge_index</em>, <em>edge_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/arma_conv.html#ARMAConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ARMAConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.ARMAConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/arma_conv.html#ARMAConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ARMAConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
