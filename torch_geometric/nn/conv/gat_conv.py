@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import add_self_loops, softmax
 
-from ..inits import uniform
+from ..inits import glorot, zeros
 
 
 class GATConv(MessagePassing):
@@ -75,10 +75,9 @@ class GATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.heads * self.in_channels
-        uniform(size, self.weight)
-        uniform(size, self.att)
-        uniform(size, self.bias)
+        glorot(self.weight)
+        glorot(self.att)
+        zeros(self.bias)
 
     def forward(self, x, edge_index):
         """"""
