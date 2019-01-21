@@ -1,7 +1,6 @@
 import torch
-import torch.nn.functional as F
-from torch import Tensor
 from torch.nn import Parameter
+import torch.nn.functional as F
 from torch_scatter import scatter_add
 
 from ..inits import glorot, zeros
@@ -62,34 +61,21 @@ class ARMAConv(torch.nn.Module):
         self.shared_weights = shared_weights
         self.dropout = dropout
 
-        w = Parameter(torch.Tensor(num_stacks, in_channels, out_channels))
+        K, T, F_in, F_out = num_stacks, num_layers, in_channels, out_channels
+
+        w = torch.nn.Parameter(torch.Tensor(K, F_in, F_out))
         self.ws = torch.nn.ParameterList([w])
+        for i in range(min(1, T - 1) if shared_weights else T - 1):
+            self.ws.append(Parameter(torch.Tensor(K, F_out, F_out)))
+
         self.vs = torch.nn.ParameterList([])
-        if shared_weights:
-            w = Parameter(torch.Tensor(num_stacks, out_channels, out_channels))
-            for i in range(num_layers - 1):
-                self.ws.append(w)
-            v = Parameter(torch.Tensor(num_stacks, in_channels, out_channels))
-            for i in range(num_layers):
-                self.vs.append(v)
-        else:
-            for i in range(self.num_layers - 1):
-                w = Parameter(Tensor(num_stacks, out_channels, out_channels))
-                self.ws.append(w)
-            for i in range(self.num_layers):
-                v = Parameter(Tensor(num_stacks, in_channels, out_channels))
-                self.vs.append(v)
+        for i in range(1 if shared_weights else T):
+            self.vs.append(Parameter(torch.Tensor(K, F_in, F_out)))
 
         if bias:
             self.bias = torch.nn.ParameterList([])
-            if shared_weights:
-                bias = Parameter(torch.Tensor(num_stacks, 1, out_channels))
-                for i in range(num_layers):
-                    self.bias.append(bias)
-            else:
-                for i in range(num_layers):
-                    bias = Parameter(torch.Tensor(num_stacks, 1, out_channels))
-                    self.bias.append(bias)
+            for i in range(1 if shared_weights else T):
+                self.bias.append(Parameter(torch.Tensor(K, 1, F_out)))
         else:
             self.register_parameter('bias', None)
 
@@ -118,25 +104,32 @@ class ARMAConv(torch.nn.Module):
 
         lap = deg_inv[row] * edge_weight * deg_inv[col]
 
-        x, x_init = x.unsqueeze(0), x.unsqueeze(0)
-        for i, (w, v) in enumerate(zip(self.ws, self.vs)):
-            x = torch.matmul(x, w)
-            x = x[:, col] * lap.view(1, -1, 1)
-            x = scatter_add(x, row, dim=1, dim_size=x_init.size(1))
+        x = x.unsqueeze(0)
+        out = x
+        for t in range(self.num_layers):
+            w = self.ws[min(t, 1) if self.shared_weights else t]
+            out = torch.matmul(out, w)
+            if self.training and self.dropout > 0:
+                out = F.dropout(out, p=self.dropout, training=True)
+            out = out[:, col] * lap.view(1, -1, 1)
+            out = scatter_add(out, row, dim=1, dim_size=x.size(1))
 
-            skip = torch.matmul(x_init, v)
+            skip = x
             if self.training and self.dropout > 0:
                 skip = F.dropout(skip, p=self.dropout, training=True)
+            v = self.vs[0 if self.shared_weights else t]
+            skip = torch.matmul(skip, v)
 
-            x = x + skip
+            out = out + skip
 
             if self.bias is not None:
-                x = x + self.bias[i]
+                bias = self.bias[0 if self.shared_weights else t]
+                out = out + bias
 
-            if self.act is not None and i < self.num_layers - 1:
-                x = self.act(x)
+            if self.act:
+                out = self.act(out)
 
-        return x.sum(dim=0)
+        return out.mean(dim=0)
 
     def __repr__(self):
         return '{}({}, {}, num_stacks={}, num_layers={})'.format(

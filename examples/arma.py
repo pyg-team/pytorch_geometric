@@ -30,10 +30,12 @@ class Net(torch.nn.Module):
             num_stacks=3,
             num_layers=2,
             shared_weights=True,
-            dropout=0.25)
+            dropout=0.25,
+            act=None)
 
     def forward(self):
         x, edge_index = data.x, data.edge_index
+        x = F.dropout(x, training=self.training)
         x = F.relu(self.conv1(x, edge_index))
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index)
@@ -63,7 +65,7 @@ def test():
 
 
 best_val_acc = test_acc = 0
-for epoch in range(1, 201):
+for epoch in range(1, 401):
     train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
