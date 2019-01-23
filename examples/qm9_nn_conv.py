@@ -75,7 +75,7 @@ class Net(torch.nn.Module):
         nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
         self.conv = NNConv(dim, dim, nn, root_weight=False)
         self.gru = GRU(dim, dim, batch_first=True)
-        self.set2set = Set2Set(dim, dim, processing_steps=3)
+        self.set2set = Set2Set(dim, processing_steps=3)
         self.fc1 = torch.nn.Linear(2 * dim, dim)
         self.fc2 = torch.nn.Linear(dim, 1)
 
