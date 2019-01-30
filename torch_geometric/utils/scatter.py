@@ -23,13 +23,13 @@ def scatter_(name, src, index, dim_size=None):
     assert name in ['add', 'mean', 'max']
 
     op = getattr(torch_scatter, 'scatter_{}'.format(name))
-    fill_value = -1e38 if name is 'max' else 0
+    fill_value = -1e38 if name == 'max' else 0
 
     out = op(src, index, 0, None, dim_size, fill_value)
     if isinstance(out, tuple):
         out = out[0]
 
-    if name is 'max':
+    if name == 'max':
         out[out == fill_value] = 0
 
     return out
