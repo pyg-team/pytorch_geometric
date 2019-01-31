@@ -2,6 +2,8 @@ from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .planetoid import Planetoid
 from .cora_full import CoraFull
+from .coauthor import Coauthor
+from .amazon import Amazon
 from .ppi import PPI
 from .qm7 import QM7b
 from .qm9 import QM9
@@ -17,6 +19,8 @@ __all__ = [
     'TUDataset',
     'Planetoid',
     'CoraFull',
+    'Coauthor',
+    'Amazon',
     'PPI',
     'QM7b',
     'QM9',

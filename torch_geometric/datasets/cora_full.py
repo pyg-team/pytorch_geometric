@@ -1,8 +1,6 @@
-import numpy as np
-from scipy.sparse import csr_matrix
 import torch
-from torch_geometric.data import InMemoryDataset, download_url, Data
-from torch_geometric.utils import remove_self_loops, to_undirected
+from torch_geometric.data import InMemoryDataset, download_url
+from torch_geometric.read import read_npz
 
 
 class CoraFull(InMemoryDataset):
@@ -41,22 +39,10 @@ class CoraFull(InMemoryDataset):
         download_url(self.url, self.raw_dir)
 
     def process(self):
-        with np.load(self.raw_paths[0]) as f:
-            x = csr_matrix(
-                (f['attr_data'], f['attr_indices'], f['attr_indptr']),
-                f['attr_shape']).todense()
-            x = torch.from_numpy(x).to(torch.float)
-
-            adj = csr_matrix(
-                (f['adj_data'], f['adj_indices'], f['adj_indptr']),
-                f['adj_shape']).tocoo()
-            edge_index = torch.tensor([adj.row, adj.col])
-            edge_index, _ = remove_self_loops(edge_index)
-            edge_index = to_undirected(edge_index, x.size(0))
-
-            y = torch.from_numpy(f['labels']).to(torch.long)
-
-        data = Data(x=x, edge_index=edge_index, y=y)
+        data = read_npz(self.raw_paths[0])
         data = data if self.pre_transform is None else self.pre_transform(data)
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])
+
+    def __repr__(self):
+        return '{}()'.format(self.__class__.__name__)
