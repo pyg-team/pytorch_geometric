@@ -41,6 +41,7 @@ class Data(object):
     def from_dict(dictionary):
         r"""Creates a data object from a python dictionary."""
         data = Data()
+        print(dictionary)
         for key, item in dictionary.items():
             data[key] = item
         return data
@@ -162,6 +163,9 @@ class Data(object):
         If :obj:`*keys` is not given, the conversion is applied to all present
         attributes."""
         return self.apply(lambda x: x.to(device), *keys)
+
+    def clone(self):
+        return Data.from_dict({k: v.clone() for k, v in self})
 
     def __repr__(self):
         info = ['{}={}'.format(key, list(item.size())) for key, item in self]
