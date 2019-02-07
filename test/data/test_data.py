@@ -28,6 +28,12 @@ def test_data():
     data.edge_index, _ = coalesce(data.edge_index, None, N, N)
     assert data.is_coalesced()
 
+    clone = data.clone()
+    assert clone != data
+    assert len(clone) == len(data)
+    assert clone.x.tolist() == data.x.tolist()
+    assert clone.edge_index.tolist() == data.edge_index.tolist()
+
     data['x'] = x + 1
     assert data.x.tolist() == (x + 1).tolist()
 
