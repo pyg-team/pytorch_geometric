@@ -41,7 +41,6 @@ class Data(object):
     def from_dict(dictionary):
         r"""Creates a data object from a python dictionary."""
         data = Data()
-        print(dictionary)
         for key, item in dictionary.items():
             data[key] = item
         return data
