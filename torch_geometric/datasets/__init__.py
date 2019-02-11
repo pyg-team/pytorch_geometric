@@ -13,6 +13,7 @@ from .faust import FAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
 from .coma import CoMA
+from .geometry import GeometricShapes
 
 __all__ = [
     'KarateClub',
@@ -30,4 +31,5 @@ __all__ = [
     'ShapeNet',
     'ModelNet',
     'CoMA',
+    'GeometricShapes',
 ]
