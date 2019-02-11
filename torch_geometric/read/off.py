@@ -15,7 +15,6 @@ def parse_off(src):
     pos = parse_txt_array(src[1:1 + num_nodes])
 
     face = src[1 + num_nodes:1 + num_nodes + num_faces]
-
     face = face_to_tri(face)
 
     data = Data(pos=pos)
@@ -25,23 +24,20 @@ def parse_off(src):
 
 
 def face_to_tri(face):
-    # Triangles to triangles list.
-    tri = [[float(x) for x in line.split(None)[1:]] for line in face
-           if line[0] == '3']
+    face = [[int(x) for x in line.split(' ')] for line in face]
 
-    # Squares to triangle list.
-    first = [1, 2, 3]
-    second = [1, 3, 4]
-    rects = [[float(x) for x in line.split(None)] for line in face
-             if line[0] == '4']
-    rects = [[[a[i] for i in first], [a[i] for i in second]] for a in rects]
-    rects = [item for sublist in rects for item in sublist]
+    triangle = torch.tensor([line[1:] for line in face if line[0] == 3])
+    triangle = triangle.to(torch.int64)
 
-    # Put all lists together, convert and return.
-    tri.extend(rects)
-    tensor = torch.tensor(tri, dtype=torch.long)
+    rect = torch.tensor([line[1:] for line in face if line[0] == 4])
+    rect = rect.to(torch.int64)
 
-    return tensor.t().contiguous()
+    if rect.numel() > 0:
+        first, second = rect[:, [0, 1, 2]], rect[:, [0, 2, 3]]
+    else:
+        first, second = rect, rect
+
+    return torch.cat([triangle, first, second], dim=0).t().contiguous()
 
 
 def read_off(path):
