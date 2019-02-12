@@ -23,6 +23,9 @@ def one_hot(src, num_classes=None, dtype=None):
     if num_classes is None:
         num_classes = src.max(dim=0)[0] + 1
     else:
+        if torch.is_tensor(num_classes):
+            num_classes = num_classes.tolist()
+
         num_classes = torch.tensor(
             repeat(num_classes, length=src.size(1)),
             dtype=torch.long,

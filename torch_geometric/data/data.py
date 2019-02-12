@@ -163,6 +163,9 @@ class Data(object):
         attributes."""
         return self.apply(lambda x: x.to(device), *keys)
 
+    def clone(self):
+        return Data.from_dict({k: v.clone() for k, v in self})
+
     def __repr__(self):
         info = ['{}={}'.format(key, list(item.size())) for key, item in self]
         return '{}({})'.format(self.__class__.__name__, ', '.join(info))
