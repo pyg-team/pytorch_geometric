@@ -32,6 +32,6 @@ __all__ = [
     'ShapeNet',
     'ModelNet',
     'CoMA',
-    'PCPNetDataset'
+    'PCPNetDataset',
     'GeometricShapes',
 ]
