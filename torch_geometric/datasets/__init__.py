@@ -13,6 +13,7 @@ from .faust import FAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
 from .coma import CoMA
+from .pcpnet_dataset import PCPNetDataset
 from .geometry import GeometricShapes
 
 __all__ = [
@@ -31,5 +32,6 @@ __all__ = [
     'ShapeNet',
     'ModelNet',
     'CoMA',
+    'PCPNetDataset'
     'GeometricShapes',
 ]
