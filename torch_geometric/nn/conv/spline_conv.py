@@ -1,9 +1,13 @@
 import torch
 from torch.nn import Parameter
-from torch_spline_conv import SplineConv as Conv
 from torch_geometric.utils.repeat import repeat
 
 from ..inits import uniform
+
+try:
+    from torch_spline_conv import SplineConv as Conv
+except ImportError:
+    Conv = None
 
 
 class SplineConv(torch.nn.Module):
@@ -48,6 +52,9 @@ class SplineConv(torch.nn.Module):
                  root_weight=True,
                  bias=True):
         super(SplineConv, self).__init__()
+
+        if Conv is None:
+            raise ImportError('`SplineConv` requires `torch-spline-conv`.')
 
         self.in_channels = in_channels
         self.out_channels = out_channels

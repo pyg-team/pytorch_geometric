@@ -168,11 +168,11 @@ $ echo $CPATH
 
 Then run:
 
-```
+```sh
 $ pip install --upgrade torch-scatter
 $ pip install --upgrade torch-sparse
 $ pip install --upgrade torch-cluster
-$ pip install --upgrade torch-spline-conv
+$ pip install --upgrade torch-spline-conv  " optional
 $ pip install torch-geometric
 ```
 
