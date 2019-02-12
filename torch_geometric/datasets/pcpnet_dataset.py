@@ -122,8 +122,9 @@ class PCPNetDataset(InMemoryDataset):
             normals = read_txt_array(normal_path)
             curv = read_txt_array(curv_path)
             normals_and_curv = torch.cat([normals, curv], dim=1)
-            pidx = read_txt_array(idx_path, dtype=torch.long)
-            data = Data(pos=pos, x=normals_and_curv, y=pidx)
+            test_idx = read_txt_array(idx_path, dtype=torch.long)
+            data = Data(pos=pos, x=normals_and_curv)
+            data.test_idx = test_idx
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
             if self.pre_transform is not None:
