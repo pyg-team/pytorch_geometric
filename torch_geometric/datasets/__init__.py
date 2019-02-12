@@ -11,7 +11,7 @@ from .faust import FAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
 from .coma import CoMA
-
+from .pcpnet_dataset import PCPNetDataset
 __all__ = [
     'KarateClub',
     'TUDataset',
@@ -26,4 +26,5 @@ __all__ = [
     'ShapeNet',
     'ModelNet',
     'CoMA',
+    'PCPNetDataset'
 ]
