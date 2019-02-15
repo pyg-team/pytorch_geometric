@@ -181,7 +181,7 @@ Beforehand, please check that the [official extension example](https://github.co
 
 ### Docker image
 
-You can run PyTorch Geometric with CUDA-9.0 inside a [docker image](https://hub.docker.com/r/shengwenliang/pytorch_graph) by running:
+You can also run PyTorch Geometric with CUDA-9.0 inside a [docker image](https://hub.docker.com/r/shengwenliang/pytorch_graph):
 
 ```
 $ docker pull shengwenliang/pytorch_graph
