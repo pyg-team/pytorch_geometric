@@ -179,6 +179,14 @@ $ pip install torch-geometric
 If you are running into any installation problems, please create an [issue](https://github.com/rusty1s/pytorch_geometric/issues).
 Beforehand, please check that the [official extension example](https://github.com/pytorch/extension-cpp) runs on your machine.
 
+### Docker image
+
+You can run PyTorch Geometric with CUDA-9.0 inside a [docker image](https://hub.docker.com/r/shengwenliang/pytorch_graph) by running:
+
+```
+$ docker pull shengwenliang/pytorch_graph
+```
+
 ## Running examples
 
 ```
