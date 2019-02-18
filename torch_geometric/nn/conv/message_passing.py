@@ -1,7 +1,6 @@
 import inspect
 
 import torch
-import torch.nn.functional as F
 from torch_geometric.utils import scatter_
 
 
@@ -43,12 +42,12 @@ class MessagePassing(torch.nn.Module):
             if arg[-2:] == '_i':
                 tmp = kwargs[arg[:-2]]
                 size = tmp.size(0)
-                tmp = F.embedding(edge_index[0], tmp)
+                tmp = torch.index_select(tmp, 0, edge_index[0])
                 message_args.append(tmp)
             elif arg[-2:] == '_j':
                 tmp = kwargs[arg[:-2]]
                 size = tmp.size(0)
-                tmp = F.embedding(edge_index[1], tmp)
+                tmp = torch.index_select(tmp, 0, edge_index[1])
                 message_args.append(tmp)
             else:
                 message_args.append(kwargs[arg])
