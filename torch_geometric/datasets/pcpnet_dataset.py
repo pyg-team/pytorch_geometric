@@ -74,7 +74,7 @@ class PCPNetDataset(InMemoryDataset):
                  pre_transform=None,
                  pre_filter=None):
 
-        assert (split == 'train' or split == 'val' or split == 'test')
+        assert split in ['train', 'val', 'test']
 
         if split == 'train':
             assert category in self.category_files_train.keys()
