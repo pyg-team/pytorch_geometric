@@ -9,6 +9,7 @@ import networkx as nx
 from networkx.readwrite import json_graph
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
+from torch_geometric.utils import remove_self_loops
 
 
 class PPI(InMemoryDataset):
@@ -97,6 +98,7 @@ class PPI(InMemoryDataset):
                 G_s = G.subgraph(mask.nonzero().view(-1).tolist())
                 edge_index = torch.tensor(list(G_s.edges)).t().contiguous()
                 edge_index = edge_index - edge_index.min()
+                edge_index, _ = remove_self_loops(edge_index)
 
                 data = Data(edge_index=edge_index, x=x[mask], y=y[mask])
 

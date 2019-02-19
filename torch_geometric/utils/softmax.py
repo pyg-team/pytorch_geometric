@@ -20,6 +20,7 @@ def softmax(src, index, num_nodes=None):
 
     out = src - scatter_max(src, index, dim=0, dim_size=num_nodes)[0][index]
     out = out.exp()
-    out = out / scatter_add(out, index, dim=0, dim_size=num_nodes)[index]
+    out = out / (
+        scatter_add(out, index, dim=0, dim_size=num_nodes)[index] + 1e-16)
 
     return out
