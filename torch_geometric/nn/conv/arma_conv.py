@@ -102,7 +102,7 @@ class ARMAConv(torch.nn.Module):
         deg_inv = deg.pow(-0.5)
         deg_inv[deg_inv == float('inf')] = 0
 
-        lap = deg_inv[row] * edge_weight * deg_inv[col]
+        lap = -deg_inv[row] * edge_weight * deg_inv[col]
 
         x = x.unsqueeze(0)
         out = x
