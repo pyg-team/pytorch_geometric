@@ -24,20 +24,29 @@
 
   
 
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="torch_geometric.transforms" href="transforms.html" />
-    <link rel="prev" title="torch_geometric.data" href="data.html" /> 
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
+        <link rel="next" title="torch_geometric.transforms" href="transforms.html"/>
+        <link rel="prev" title="torch_geometric.data" href="data.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -54,7 +63,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../_static/logo.svg" class="logo" />
           
           </a>
 
@@ -137,7 +146,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pytorch_geometric</a>
@@ -145,10 +154,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -371,18 +379,20 @@ being saved to disk. (default: <a class="reference external" href="https://docs.
 
 <dl class="class">
 <dt id="torch_geometric.datasets.PPI">
-<em class="property">class </em><code class="descname">PPI</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/ppi.html#PPI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.PPI" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">PPI</code><span class="sig-paren">(</span><em>root</em>, <em>split='train'</em>, <em>transform=None</em>, <em>pre_transform=None</em>, <em>pre_filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/ppi.html#PPI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.PPI" title="Permalink to this definition">¶</a></dt>
 <dd><p>Protein-protein interaction networks from the <a class="reference external" href="https://arxiv.org/abs/1707.04638">“Predicting
 Multicellular Function through Multi-layer Tissue Networks”</a> paper, containing positional gene
 sets, motif gene sets and immunological signatures as features (50 in
-total) and gene ontology sets as labels (121 in total).
-Training, validation and test splits are given by binary masks.</p>
+total) and gene ontology sets as labels (121 in total).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>root</strong> (<em>string</em>) – Root directory where the dataset should be saved.</li>
+<li><strong>split</strong> (<em>string</em>) – If <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;train&quot;</span></code>, loads the training dataset.
+If <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;val&quot;</span></code>, loads the validation dataset.
+If <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;test&quot;</span></code>, loads the test dataset. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;train&quot;</span></code>)</li>
 <li><strong>transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that takes in an
 <a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object and returns a transformed
 version. The data object will be transformed before every access.
@@ -391,6 +401,10 @@ version. The data object will be transformed before every access.
 an <a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object and returns a
 transformed version. The data object will be transformed before
 being saved to disk. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>pre_filter</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that takes in an
+<a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object and returns a boolean
+value, indicating whether the data object should be included in the
+final dataset. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 </ul>
 </td>
 </tr>
@@ -790,7 +804,9 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -808,11 +824,11 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matthias Fey
+        &copy; Copyright 2019, Matthias Fey.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -827,25 +843,36 @@ final dataset. (default: <a class="reference external" href="https://docs.python
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>

@@ -54,7 +54,7 @@ Please follow the steps below for a successful installation:
         $ pip install --upgrade torch-spline-conv
         $ pip install torch-geometric
 
-In rare cases, CUDA or python path issues can prevent a succesful installation.
+In rare cases, CUDA or python path issues can prevent a successful installation.
 Unfortunately, the error messages of ``pip`` are not very meaningful.
 You should therefore clone the respective package and check where the error occurs, e.g.:
 

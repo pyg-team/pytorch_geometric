@@ -24,20 +24,29 @@
 
   
 
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Creating message passing networks" href="create_gnn.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
+        <link rel="next" title="Creating message passing networks" href="create_gnn.html"/>
+        <link rel="prev" title="Installation" href="installation.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -54,7 +63,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../_static/logo.svg" class="logo" />
           
           </a>
 
@@ -137,7 +146,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pytorch_geometric</a>
@@ -145,10 +154,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -206,7 +214,7 @@ At its core, PyTorch Geometric provides the following main features:</p>
 <div class="section" id="data-handling-of-graphs">
 <h2><a class="toc-backref" href="#id1">Data handling of graphs</a><a class="headerlink" href="#data-handling-of-graphs" title="Permalink to this headline">¶</a></h2>
 <p>A graph is used to model pairwise relations (edges) between objects (nodes).
-A single graph in PyTorch Geometric is decribed by an instance of <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a>, which holds the following attributes by default:</p>
+A single graph in PyTorch Geometric is described by an instance of <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a>, which holds the following attributes by default:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">data.x</span></code>: Node feature matrix with shape <code class="docutils literal notranslate"><span class="pre">[num_nodes,</span> <span class="pre">num_node_features]</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">data.edge_index</span></code>: Graph connectivity in COO format with shape <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">num_edges]</span></code> and type <code class="docutils literal notranslate"><span class="pre">torch.long</span></code></li>
@@ -306,7 +314,7 @@ If you want to write your indices this way, you should transpose and call <code 
 <h2><a class="toc-backref" href="#id2">Common benchmark datasets</a><a class="headerlink" href="#common-benchmark-datasets" title="Permalink to this headline">¶</a></h2>
 <p>PyTorch Geometric contains a large number of common benchmark datasets, <em>e.g.</em> all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from <a class="reference external" href="http://graphkernels.cs.tu-dortmund.de/">http://graphkernels.cs.tu-dortmund.de/</a>, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.</p>
 <p>Initializing a dataset is straightforward.
-An initalization of adataset will automatically download its raw files and process them to the previously decribed <code class="docutils literal notranslate"><span class="pre">Data</span></code> format.
+An initialization of a dataset will automatically download its raw files and process them to the previously described <code class="docutils literal notranslate"><span class="pre">Data</span></code> format.
 <em>E.g.</em>, to load the ENZYMES dataset (consisting of 600 graphs within 6 classes), type:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.datasets</span> <span class="kn">import</span> <span class="n">TUDataset</span>
 
@@ -529,7 +537,7 @@ Now let’s implement a two-layer GCN:</p>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We use ReLU as our non-linearity acitivation function and output a softmax distribution over the number of classes.
+<p>We use ReLU as our non-linearity activation function and output a softmax distribution over the number of classes.
 Let’s train this model on the train nodes for 200 epochs:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -562,7 +570,9 @@ Happy hacking!</p>
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -580,11 +590,11 @@ Happy hacking!</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matthias Fey
+        &copy; Copyright 2019, Matthias Fey.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -599,25 +609,36 @@ Happy hacking!</p>
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>

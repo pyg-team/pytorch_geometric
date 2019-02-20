@@ -24,20 +24,29 @@
 
   
 
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="torch_geometric.data" href="data.html" />
-    <link rel="prev" title="Creating your own datasets" href="../notes/create_dataset.html" /> 
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
+        <link rel="next" title="torch_geometric.data" href="data.html"/>
+        <link rel="prev" title="Creating your own datasets" href="../notes/create_dataset.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -54,7 +63,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../_static/logo.svg" class="logo" />
           
           </a>
 
@@ -137,7 +146,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pytorch_geometric</a>
@@ -145,10 +154,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -282,6 +290,11 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>edge_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="staticmethod">
+<dt id="torch_geometric.nn.conv.GCNConv.norm">
+<em class="property">static </em><code class="descname">norm</code><span class="sig-paren">(</span><em>edge_index</em>, <em>num_nodes</em>, <em>edge_weight</em>, <em>improved=False</em>, <em>dtype=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv.norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv.norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GCNConv.reset_parameters">
 <code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gcn_conv.html#GCNConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GCNConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
@@ -310,7 +323,7 @@ Filtering”</a> paper</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
 <li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
-<li><strong>K</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Chebyshev filter size, <em>i.e.</em> number of hops.</li>
+<li><strong>K</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Chebyshev filter size, <em>i.e.</em> number of hops <span class="math notranslate nohighlight">\(K\)</span>.</li>
 <li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
 an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 </ul>
@@ -457,45 +470,6 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 </dd></dl>
 
 <dl class="class">
-<dt id="torch_geometric.nn.conv.AGNNConv">
-<em class="property">class </em><code class="descname">AGNNConv</code><span class="sig-paren">(</span><em>requires_grad=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Graph attentional propagation layer from the
-<a class="reference external" href="https://arxiv.org/abs/1803.03735">“Attention-based Graph Neural Network for Semi-Supervised Learning”</a> paper</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{X}^{\prime} = \mathbf{P} \mathbf{X},\]</div>
-<p>where the propagation matrix <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is computed as</p>
-<div class="math notranslate nohighlight">
-\[P_{i,j} = \frac{\exp( \beta \cdot \cos(\mathbf{x}_i, \mathbf{x}_j))}
-{\sum_{k \in \mathcal{N}(i)\cup \{ i \}} \exp( \beta \cdot
-\cos(\mathbf{x}_i, \mathbf{x}_k))}\]</div>
-<p>with trainable parameter <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>requires_grad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, <span class="math notranslate nohighlight">\(\beta\)</span>
-will not be trainable. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="torch_geometric.nn.conv.AGNNConv.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.nn.conv.AGNNConv.propagation_matrix">
-<code class="descname">propagation_matrix</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.propagation_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.propagation_matrix" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.nn.conv.AGNNConv.reset_parameters">
-<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="torch_geometric.nn.conv.GINConv">
 <em class="property">class </em><code class="descname">GINConv</code><span class="sig-paren">(</span><em>nn</em>, <em>eps=0</em>, <em>train_eps=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gin_conv.html#GINConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GINConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>The graph isomorphism operator from the <a class="reference external" href="https://arxiv.org/abs/1810.00826">“How Powerful are
@@ -579,6 +553,87 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.ARMAConv.reset_parameters">
 <code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/arma_conv.html#ARMAConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.ARMAConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.SGConv">
+<em class="property">class </em><code class="descname">SGConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>K=1</em>, <em>cached=False</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/sg_conv.html#SGConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.SGConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The simgple graph convolutional operator from the <a class="reference external" href="https://arxiv.org/abs/1902.07153">“Simplifying Graph
+Convolutional Networks”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{X}^{\prime} = {\left(\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
+\mathbf{\hat{D}}^{-1/2} \right)}^K \mathbf{X} \mathbf{\Theta},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}\)</span> denotes the
+adjacency matrix with inserted self-loops and
+<span class="math notranslate nohighlight">\(\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}\)</span> its diagonal degree matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>K</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of hops <span class="math notranslate nohighlight">\(K\)</span>. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
+<li><strong>cached</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the layer will cache
+the computation of <span class="math notranslate nohighlight">\({\left(\mathbf{\hat{D}}^{-1/2}
+\mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}^K \mathbf{X}\)</span>.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.SGConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>edge_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/sg_conv.html#SGConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.SGConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.SGConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/sg_conv.html#SGConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.SGConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.AGNNConv">
+<em class="property">class </em><code class="descname">AGNNConv</code><span class="sig-paren">(</span><em>requires_grad=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graph attentional propagation layer from the
+<a class="reference external" href="https://arxiv.org/abs/1803.03735">“Attention-based Graph Neural Network for Semi-Supervised Learning”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{X}^{\prime} = \mathbf{P} \mathbf{X},\]</div>
+<p>where the propagation matrix <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> is computed as</p>
+<div class="math notranslate nohighlight">
+\[P_{i,j} = \frac{\exp( \beta \cdot \cos(\mathbf{x}_i, \mathbf{x}_j))}
+{\sum_{k \in \mathcal{N}(i)\cup \{ i \}} \exp( \beta \cdot
+\cos(\mathbf{x}_i, \mathbf{x}_k))}\]</div>
+<p>with trainable parameter <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>requires_grad</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, <span class="math notranslate nohighlight">\(\beta\)</span>
+will not be trainable. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.AGNNConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.AGNNConv.propagation_matrix">
+<code class="descname">propagation_matrix</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.propagation_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.propagation_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.AGNNConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1571,8 +1626,7 @@ node to a specific example. (default: <a class="reference external" href="https:
 <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M\)</span>, which assigns each
 node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 <li><strong>max_num_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of neighbors to
-return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>.
-This flag is only needed for CUDA tensors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
+return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
 </ul>
 </td>
 </tr>
@@ -1709,7 +1763,9 @@ the valid nodes for each graph. (default: <a class="reference external" href="ht
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -1727,11 +1783,11 @@ the valid nodes for each graph. (default: <a class="reference external" href="ht
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matthias Fey
+        &copy; Copyright 2019, Matthias Fey.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -1746,25 +1802,36 @@ the valid nodes for each graph. (default: <a class="reference external" href="ht
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>

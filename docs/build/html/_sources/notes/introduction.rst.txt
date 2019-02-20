@@ -11,7 +11,7 @@ Data handling of graphs
 -----------------------
 
 A graph is used to model pairwise relations (edges) between objects (nodes).
-A single graph in PyTorch Geometric is decribed by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
+A single graph in PyTorch Geometric is described by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
 
 - ``data.x``: Node feature matrix with shape ``[num_nodes, num_node_features]``
 - ``data.edge_index``: Graph connectivity in COO format with shape ``[2, num_edges]`` and type ``torch.long``
@@ -120,7 +120,7 @@ Common benchmark datasets
 PyTorch Geometric contains a large number of common benchmark datasets, *e.g.* all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
 
 Initializing a dataset is straightforward.
-An initalization of adataset will automatically download its raw files and process them to the previously decribed ``Data`` format.
+An initialization of a dataset will automatically download its raw files and process them to the previously described ``Data`` format.
 *E.g.*, to load the ENZYMES dataset (consisting of 600 graphs within 6 classes), type:
 
 .. code-block:: python
@@ -385,7 +385,7 @@ Now let's implement a two-layer GCN:
 
             return F.log_softmax(x, dim=1)
 
-We use ReLU as our non-linearity acitivation function and output a softmax distribution over the number of classes.
+We use ReLU as our non-linearity activation function and output a softmax distribution over the number of classes.
 Let's train this model on the train nodes for 200 epochs:
 
 .. code-block:: python

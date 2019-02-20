@@ -30,7 +30,7 @@ class ChebConv(torch.nn.Module):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        K (int): Chebyshev filter size, *i.e.* number of hops.
+        K (int): Chebyshev filter size, *i.e.* number of hops :math:`K`.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """

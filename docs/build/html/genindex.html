@@ -25,18 +25,27 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
-    <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Search" href="search.html" /> 
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="#"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pytorch_geometric master documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav">
+<body class="wy-body-for-nav" role="document">
 
    
   <div class="wy-grid-for-nav">
@@ -53,7 +62,7 @@
 
           
             
-            <img src="_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="_static/logo.svg" class="logo" />
           
           </a>
 
@@ -136,7 +145,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" aria-label="top navigation">
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">pytorch_geometric</a>
@@ -144,10 +153,9 @@
       </nav>
 
 
+      
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
           
 
 
@@ -423,6 +431,8 @@
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.SAGEConv.forward">(SAGEConv method)</a>
 </li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.SGConv.forward">(SGConv method)</a>
+</li>
         <li><a href="modules/nn.html#torch_geometric.nn.glob.Set2Set.forward">(Set2Set method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.SplineConv.forward">(SplineConv method)</a>
@@ -561,6 +571,8 @@
       <li><a href="modules/nn.html#torch_geometric.nn.pool.nearest">nearest() (in module torch_geometric.nn.pool)</a>
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.conv.NNConv">NNConv (class in torch_geometric.nn.conv)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.GCNConv.norm">norm() (GCNConv static method)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.normalized_cut">normalized_cut() (in module torch_geometric.utils)</a>
 </li>
@@ -713,6 +725,8 @@
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.SAGEConv.reset_parameters">(SAGEConv method)</a>
 </li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.SGConv.reset_parameters">(SGConv method)</a>
+</li>
         <li><a href="modules/nn.html#torch_geometric.nn.glob.Set2Set.reset_parameters">(Set2Set method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.SplineConv.reset_parameters">(SplineConv method)</a>
@@ -740,10 +754,12 @@
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.glob.Set2Set">Set2Set (class in torch_geometric.nn.glob)</a>
 </li>
-      <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet">ShapeNet (class in torch_geometric.datasets)</a>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.SGConv">SGConv (class in torch_geometric.nn.conv)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet">ShapeNet (class in torch_geometric.datasets)</a>
+</li>
       <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.shuffle">shuffle() (InMemoryDataset method)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.softmax">softmax() (in module torch_geometric.utils)</a>
@@ -838,7 +854,9 @@
 
 
            </div>
-           
+           <div class="articleComments">
+            
+           </div>
           </div>
           <footer>
   
@@ -847,11 +865,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matthias Fey
+        &copy; Copyright 2019, Matthias Fey.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -866,25 +884,36 @@
 
   
 
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'master',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
 
+  
+  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
+          SphinxRtdTheme.StickyNav.enable();
       });
-  </script> 
+  </script>
+   
 
 </body>
 </html>
