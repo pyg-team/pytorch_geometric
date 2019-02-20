@@ -12,18 +12,18 @@ class ChebConv(torch.nn.Module):
     Filtering" <https://arxiv.org/abs/1606.09375>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} = \sum_{k=0}^{K-1} \mathbf{\hat{X}}_k \cdot
-        \mathbf{\Theta}_k
+        \mathbf{X}^{\prime} = \sum_{k=0}^{K-1} \mathbf{Z}^{(k)} \cdot
+        \mathbf{\Theta}^{(k)}
 
     where :math:`\mathbf{\hat{X}}_k` is computed recursively by
 
     .. math::
-        \mathbf{\hat{X}}_0 &= \mathbf{X}
+        \mathbf{Z}^{(0)} &= \mathbf{X}
 
-        \mathbf{\hat{X}}_1 &= \mathbf{\hat{L}} \cdot \mathbf{X}
+        \mathbf{Z}^{(1)} &= \mathbf{\hat{L}} \cdot \mathbf{X}
 
-        \mathbf{\hat{X}}_k &= 2 \cdot \mathbf{\hat{L}} \cdot
-        \mathbf{\hat{X}}_{k-1} - \mathbf{\hat{X}}_{k-2}
+        \mathbf{Z}^{(k)} &= 2 \cdot \mathbf{\hat{L}} \cdot
+        \mathbf{Z}^{(k-1)} - \mathbf{Z}^{(k-2)}
 
     and :math:`\mathbf{\hat{L}}` denotes the scaled and normalized Laplacian.
 

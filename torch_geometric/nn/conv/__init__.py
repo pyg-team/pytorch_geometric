@@ -4,10 +4,11 @@ from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
 from .graph_conv import GraphConv
 from .gat_conv import GATConv
+from .agnn_conv import AGNNConv
 from .gin_conv import GINConv
 from .arma_conv import ARMAConv
 from .sg_conv import SGConv
-from .agnn_conv import AGNNConv
+from .appnp import APPNP
 from .rgcn_conv import RGCNConv
 from .point_conv import PointConv
 from .gmm_conv import GMMConv
@@ -23,10 +24,11 @@ __all__ = [
     'SAGEConv',
     'GraphConv',
     'GATConv',
+    'AGNNConv',
     'GINConv',
     'ARMAConv',
     'SGConv',
-    'AGNNConv',
+    'APPNP',
     'RGCNConv',
     'PointConv',
     'GMMConv',
