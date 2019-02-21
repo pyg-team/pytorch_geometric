@@ -15,7 +15,7 @@ class ChebConv(torch.nn.Module):
         \mathbf{X}^{\prime} = \sum_{k=0}^{K-1} \mathbf{Z}^{(k)} \cdot
         \mathbf{\Theta}^{(k)}
 
-    where :math:`\mathbf{\hat{X}}_k` is computed recursively by
+    where :math:`\mathbf{Z}^{(k)}` is computed recursively by
 
     .. math::
         \mathbf{Z}^{(0)} &= \mathbf{X}
