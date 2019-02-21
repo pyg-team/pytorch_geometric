@@ -212,18 +212,18 @@
 <span class="sd">    Filtering&quot; &lt;https://arxiv.org/abs/1606.09375&gt;`_ paper</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{X}^{\prime} = \sum_{k=0}^{K-1} \mathbf{\hat{X}}_k \cdot</span>
-<span class="sd">        \mathbf{\Theta}_k</span>
+<span class="sd">        \mathbf{X}^{\prime} = \sum_{k=0}^{K-1} \mathbf{Z}^{(k)} \cdot</span>
+<span class="sd">        \mathbf{\Theta}^{(k)}</span>
 
-<span class="sd">    where :math:`\mathbf{\hat{X}}_k` is computed recursively by</span>
+<span class="sd">    where :math:`\mathbf{Z}^{(k)}` is computed recursively by</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{\hat{X}}_0 &amp;= \mathbf{X}</span>
+<span class="sd">        \mathbf{Z}^{(0)} &amp;= \mathbf{X}</span>
 
-<span class="sd">        \mathbf{\hat{X}}_1 &amp;= \mathbf{\hat{L}} \cdot \mathbf{X}</span>
+<span class="sd">        \mathbf{Z}^{(1)} &amp;= \mathbf{\hat{L}} \cdot \mathbf{X}</span>
 
-<span class="sd">        \mathbf{\hat{X}}_k &amp;= 2 \cdot \mathbf{\hat{L}} \cdot</span>
-<span class="sd">        \mathbf{\hat{X}}_{k-1} - \mathbf{\hat{X}}_{k-2}</span>
+<span class="sd">        \mathbf{Z}^{(k)} &amp;= 2 \cdot \mathbf{\hat{L}} \cdot</span>
+<span class="sd">        \mathbf{Z}^{(k-1)} - \mathbf{Z}^{(k-2)}</span>
 
 <span class="sd">    and :math:`\mathbf{\hat{L}}` denotes the scaled and normalized Laplacian.</span>
 

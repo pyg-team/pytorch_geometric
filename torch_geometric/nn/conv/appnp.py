@@ -9,9 +9,11 @@ class APPNP(MessagePassing):
 
     .. math::
         \mathbf{Z}^{(0)} &= \mathbf{X} \mathbf{\Theta}
+
         \mathbf{Z}^{(k)} &= (1 - \alpha) \mathbf{\hat{D}}^{-1/2}
         \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \mathbf{Z}^{(k-1)} + \alpha
         \mathbf{Z}^{(0)}
+
         \mathbf{X}^{\prime} &= \mathbf{Z}^{(K)},
 
     where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the

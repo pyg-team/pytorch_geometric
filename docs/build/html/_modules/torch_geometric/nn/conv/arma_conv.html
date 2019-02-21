@@ -302,7 +302,7 @@
         <span class="n">deg_inv</span> <span class="o">=</span> <span class="n">deg</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
         <span class="n">deg_inv</span><span class="p">[</span><span class="n">deg_inv</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">lap</span> <span class="o">=</span> <span class="n">deg_inv</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">edge_weight</span> <span class="o">*</span> <span class="n">deg_inv</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+        <span class="n">lap</span> <span class="o">=</span> <span class="o">-</span><span class="n">deg_inv</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="o">*</span> <span class="n">edge_weight</span> <span class="o">*</span> <span class="n">deg_inv</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
 
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">x</span>
