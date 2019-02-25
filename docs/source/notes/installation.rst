@@ -51,7 +51,7 @@ Please follow the steps below for a successful installation:
         $ pip install --upgrade torch-scatter
         $ pip install --upgrade torch-sparse
         $ pip install --upgrade torch-cluster
-        $ pip install --upgrade torch-spline-conv
+        $ pip install --upgrade torch-spline-conv (optional)
         $ pip install torch-geometric
 
 In rare cases, CUDA or python path issues can prevent a successful installation.
