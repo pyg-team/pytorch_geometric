@@ -22,7 +22,7 @@ class SAGEConv(torch.nn.Module):
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         normalize (bool, optional): If set to :obj:`False`, output features
-            will not be :math:`\ell^2`-normalized.
+            will not be :math:`\ell_2`-normalized.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
