@@ -61,7 +61,7 @@ The full layer implementation is shown below:
 
     class GCNConv(MessagePassing):
         def __init__(self, in_channels, out_channels):
-            super(GCNLayer, self).__init__()
+            super(GCNConv, self).__init__()
             self.lin = torch.nn.Linear(in_channels, out_channels)
 
         def forward(self, x, edge_index):
