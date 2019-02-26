@@ -23,6 +23,11 @@ class SplineConv(torch.nn.Module):
     where :math:`h_{\mathbf{\Theta}}` denotes a kernel function defined
     over the weighted B-Spline tensor product basis.
 
+    .. note::
+
+        Pseudo-coordinates must lay in the fixed interval :math:`[0, 1]` for
+        this method to work as intended.
+
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
@@ -60,6 +65,7 @@ class SplineConv(torch.nn.Module):
         self.out_channels = out_channels
         self.degree = degree
         self.norm = norm
+        self.check_pseudo = True
 
         kernel_size = torch.tensor(repeat(kernel_size, dim), dtype=torch.long)
         self.register_buffer('kernel_size', kernel_size)
@@ -91,6 +97,15 @@ class SplineConv(torch.nn.Module):
 
     def forward(self, x, edge_index, pseudo):
         """"""
+        if self.check_pseudo:
+            self.check_pseudo = False
+            if pseudo.min().item() < 0 or pseudo.max().item() > 1:
+                raise RuntimeError(
+                    ('Pseudo-coordinates must lay in the fixed interval [0, 1]'
+                     ' but found them in the interval [{}, {}]').format(
+                         pseudo.min().item(),
+                         pseudo.max().item()))
+
         return Conv.apply(x, edge_index, pseudo, self.weight,
                           self._buffers['kernel_size'],
                           self._buffers['is_open_spline'], self.degree,
