@@ -88,8 +88,6 @@ class PPI(InMemoryDataset):
             data_list = []
             path = osp.join(self.raw_dir, '{}_graph_id.npy').format(split)
             idx = torch.from_numpy(np.load(path)).to(torch.long)
-            if idx.numel() != x.size(0):  # There is a bug in `test_graph_id`
-                idx = torch.zeros(x.size(0), dtype=torch.long)
             idx = idx - idx.min()
 
             for i in range(idx.max().item() + 1):
