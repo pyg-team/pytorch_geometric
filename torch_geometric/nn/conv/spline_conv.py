@@ -99,12 +99,12 @@ class SplineConv(torch.nn.Module):
         """"""
         if self.check_pseudo:
             self.check_pseudo = False
-            if pseudo.min().item() < 0 or pseudo.max().item() > 1:
+            min_pseudo, max_pseudo = pseudo.min().item(), pseudo.max().item()
+            if min_pseudo < 0 or max_pseudo > 1:
                 raise RuntimeError(
                     ('Pseudo-coordinates must lay in the fixed interval [0, 1]'
                      ' but found them in the interval [{}, {}]').format(
-                         pseudo.min().item(),
-                         pseudo.max().item()))
+                         min_pseudo, max_pseudo))
 
         return Conv.apply(x, edge_index, pseudo, self.weight,
                           self._buffers['kernel_size'],
