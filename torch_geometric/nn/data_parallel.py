@@ -30,7 +30,7 @@ class DataParallel(torch.nn.DataParallel):
         device_ids (list of int or torch.device): CUDA devices.
             (default: all devices)
         output_device (int or torch.device): Device location of output.
-            (default: device_ids[0])
+            (default: :obj:`device_ids[0]`)
     """
 
     def __init__(self, module, device_ids=None, output_device=None):
