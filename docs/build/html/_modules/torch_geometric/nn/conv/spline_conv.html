@@ -215,6 +215,11 @@
 <span class="sd">    where :math:`h_{\mathbf{\Theta}}` denotes a kernel function defined</span>
 <span class="sd">    over the weighted B-Spline tensor product basis.</span>
 
+<span class="sd">    .. note::</span>
+
+<span class="sd">        Pseudo-coordinates must lay in the fixed interval :math:`[0, 1]` for</span>
+<span class="sd">        this method to work as intended.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>
 <span class="sd">        out_channels (int): Size of each output sample.</span>
@@ -252,6 +257,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">degree</span> <span class="o">=</span> <span class="n">degree</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pseudo</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">kernel_size</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">repeat</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;kernel_size&#39;</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">)</span>
@@ -283,6 +289,15 @@
 
 <div class="viewcode-block" id="SplineConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.SplineConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_pseudo</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_pseudo</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="p">(</span><span class="s1">&#39;Pseudo-coordinates must lay in the fixed interval [0, 1]&#39;</span>
+                     <span class="s1">&#39;but found them in the interval [</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                         <span class="n">pseudo</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
+                         <span class="n">pseudo</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()))</span>
+
         <span class="k">return</span> <span class="n">Conv</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span>
                           <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;kernel_size&#39;</span><span class="p">],</span>
                           <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="s1">&#39;is_open_spline&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>
