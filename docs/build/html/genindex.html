@@ -122,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/data.html">torch_geometric.data</a></li>
@@ -337,7 +338,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data.html#torch_geometric.data.Data">Data (class in torch_geometric.data)</a>
 </li>
+      <li><a href="modules/data.html#torch_geometric.data.DataListLoader">DataListLoader (class in torch_geometric.data)</a>
+</li>
       <li><a href="modules/data.html#torch_geometric.data.DataLoader">DataLoader (class in torch_geometric.data)</a>
+</li>
+      <li><a href="modules/nn.html#torch_geometric.nn.data_parallel.DataParallel">DataParallel (class in torch_geometric.nn.data_parallel)</a>
 </li>
       <li><a href="modules/data.html#torch_geometric.data.Dataset">Dataset (class in torch_geometric.data)</a>
 </li>
@@ -345,10 +350,10 @@
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.dense.diff_pool.dense_diff_pool">dense_diff_pool() (in module torch_geometric.nn.dense.diff_pool)</a>
 </li>
-      <li><a href="modules/utils.html#torch_geometric.utils.dense_to_sparse">dense_to_sparse() (in module torch_geometric.utils)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/utils.html#torch_geometric.utils.dense_to_sparse">dense_to_sparse() (in module torch_geometric.utils)</a>
+</li>
       <li><a href="modules/data.html#torch_geometric.data.DenseDataLoader">DenseDataLoader (class in torch_geometric.data)</a>
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv">DenseSAGEConv (class in torch_geometric.nn.dense.dense_sage_conv)</a>
@@ -403,6 +408,8 @@
         <li><a href="modules/nn.html#torch_geometric.nn.conv.ARMAConv.forward">(ARMAConv method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.ChebConv.forward">(ChebConv method)</a>
+</li>
+        <li><a href="modules/nn.html#torch_geometric.nn.data_parallel.DataParallel.forward">(DataParallel method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv.forward">(DenseSAGEConv method)</a>
 </li>
@@ -751,6 +758,8 @@
 </li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.SamplePoints">SamplePoints (class in torch_geometric.transforms)</a>
 </li>
+      <li><a href="modules/nn.html#torch_geometric.nn.data_parallel.DataParallel.scatter">scatter() (DataParallel method)</a>
+</li>
       <li><a href="modules/utils.html#torch_geometric.utils.scatter_">scatter_() (in module torch_geometric.utils)</a>
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.glob.Set2Set">Set2Set (class in torch_geometric.nn.glob)</a>
@@ -799,9 +808,11 @@
 </li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.conv">torch_geometric.nn.conv (module)</a>
 </li>
+      <li><a href="modules/nn.html#module-torch_geometric.nn.conv.message_passing">torch_geometric.nn.conv.message_passing (module)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/nn.html#module-torch_geometric.nn.conv.message_passing">torch_geometric.nn.conv.message_passing (module)</a>
+      <li><a href="modules/nn.html#module-torch_geometric.nn.data_parallel">torch_geometric.nn.data_parallel (module)</a>
 </li>
       <li><a href="modules/nn.html#module-torch_geometric.nn.dense.dense_sage_conv">torch_geometric.nn.dense.dense_sage_conv (module)</a>
 </li>

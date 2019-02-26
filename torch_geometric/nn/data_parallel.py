@@ -9,7 +9,7 @@ class DataParallel(torch.nn.DataParallel):
 
     This container parallelizes the application of the given :attr:`module` by
     splitting a list of :class:`torch_geometric.data.Data` objects and copying
-    them as `torch_geometric.data.Batch` objects to each device.
+    them as :class:`torch_geometric.data.Batch` objects to each device.
     In the forward pass, the module is replicated on each device, and each
     replica handles a portion of the input.
     During the backwards pass, gradients from each replica are summed into the
@@ -22,8 +22,8 @@ class DataParallel(torch.nn.DataParallel):
 
     .. note::
 
-        You need to use the :class:`torch_geometric.data.DataListLoader` in
-        order to use this module.
+        You need to use the :class:`torch_geometric.data.DataListLoader` for
+        this module.
 
     Args:
         module (Module): Module to be parallelized.

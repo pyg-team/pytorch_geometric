@@ -123,6 +123,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.data</a></li>
@@ -605,6 +606,33 @@ order to skip the download.</p>
 <em class="property">class </em><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DataLoader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data loader which merges data objects from a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.dataset</span></code> to a mini-batch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset</strong> (<a class="reference internal" href="#torch_geometric.data.Dataset" title="torch_geometric.data.Dataset"><em>Dataset</em></a>) – The dataset from which to load the data.</li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – How may samples per batch to load.
+(default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
+<li><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the data will be
+reshuffled at every epoch (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.data.DataListLoader">
+<em class="property">class </em><code class="descname">DataListLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DataListLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DataListLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data loader which merges data objects from a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.dataset</span></code> to a python list.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This data loader should be used for multi-gpu support via
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.nn.DataParallel</span></code>.</p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
