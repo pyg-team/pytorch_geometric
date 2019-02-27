@@ -1,7 +1,9 @@
 from __future__ import print_function
 
+import os.path as osp
 import tarfile
 import zipfile
+import bz2
 
 
 def maybe_log(path, log=True):
@@ -36,3 +38,10 @@ def extract_zip(path, folder, log=True):
     maybe_log(path, log)
     with zipfile.ZipFile(path, 'r') as f:
         f.extractall(folder)
+
+
+def extract_bz2(path, folder, log=True):
+    maybe_log(path, log)
+    with bz2.open(path) as r:
+        with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
+            w.write(r.read())
