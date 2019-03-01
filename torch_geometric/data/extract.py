@@ -4,6 +4,7 @@ import os.path as osp
 import tarfile
 import zipfile
 import bz2
+import gzip
 
 
 def maybe_log(path, log=True):
@@ -42,6 +43,13 @@ def extract_zip(path, folder, log=True):
 
 def extract_bz2(path, folder, log=True):
     maybe_log(path, log)
-    with bz2.open(path) as r:
+    with bz2.open(path, 'r') as r:
+        with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
+            w.write(r.read())
+
+
+def extract_gz(path, folder, log=True):
+    maybe_log(path, log)
+    with gzip.open(path, 'r') as r:
         with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
             w.write(r.read())
