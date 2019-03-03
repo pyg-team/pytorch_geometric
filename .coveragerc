@@ -4,6 +4,7 @@ omit=
     torch_geometric/datasets/*
     torch_geometric/read/*
     torch_geometric/data/extract.py
+    torch_geometric/nn/data_parallel.py
 [report]
 exclude_lines =
     pragma: no cover
