@@ -7,7 +7,7 @@ from torch_geometric.datasets import TUDataset
 
 
 def test_mutag():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)), 'test')
+    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dataset = TUDataset(root, 'MUTAG')
 
     assert len(dataset) == 188
