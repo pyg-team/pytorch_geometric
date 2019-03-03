@@ -13,7 +13,7 @@ from torch_geometric.transforms import ToDense
 
 
 def test_enzymes():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)), 'test')
+    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dataset = TUDataset(root, 'ENZYMES')
 
     assert len(dataset) == 600
