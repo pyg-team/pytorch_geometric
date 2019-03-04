@@ -24,7 +24,7 @@ class Distance(object):
 
         dist = torch.norm(pos[col] - pos[row], p=2, dim=-1).view(-1, 1)
 
-        if self.norm:
+        if self.norm and dist.numel() > 0:
             dist = dist / dist.max() if self.max is None else self.max
 
         if pseudo is not None and self.cat:
