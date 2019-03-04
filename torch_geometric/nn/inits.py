@@ -9,7 +9,6 @@ def uniform(size, tensor):
 
 def glorot(tensor):
     stdv = math.sqrt(6.0 / (tensor.size(-2) + tensor.size(-1)))
-    print('std', stdv)
     if tensor is not None:
         tensor.data.uniform_(-stdv, stdv)
 
