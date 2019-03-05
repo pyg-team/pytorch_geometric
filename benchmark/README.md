@@ -8,5 +8,3 @@ In particular, we take care to avoid to perform hyperparameter and model selecti
 ```
 $ python setup.py install
 ```
-
-
