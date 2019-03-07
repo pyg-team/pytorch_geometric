@@ -198,7 +198,7 @@ python cora.py
 
 ## Cite
 
-Please cite our paper (and the respective papers of the methods used) if you use this code in your own work:
+Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective papers of the methods used) if you use this code in your own work:
 
 ```
 @article{Fey/Lenssen/2019,
