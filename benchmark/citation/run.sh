@@ -24,8 +24,8 @@ python arma.py --dataset=Cora --num_stacks=2 --num_layers=1 --shared_weights=Tru
 python arma.py --dataset=Cora --num_stacks=3 --num_layers=1 --shared_weights=True --random_splits=True
 
 echo "APPNP"
-python appnp.py --dataset=Cora --alpha=0.3
-python appnp.py --dataset=Cora --alpha=0.3 --random_splits=True
+python appnp.py --dataset=Cora --alpha=0.1
+python appnp.py --dataset=Cora --alpha=0.1 --random_splits=True
 
 echo "CiteSeer"
 echo "========"
