@@ -191,59 +191,45 @@
            <div itemprop="articleBody">
             
   <h1>Source code for torch_geometric.nn.conv.appnp</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Linear</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.nn.conv</span> <span class="k">import</span> <span class="n">MessagePassing</span><span class="p">,</span> <span class="n">GCNConv</span>
+<span></span><span class="kn">from</span> <span class="nn">torch_geometric.nn.conv</span> <span class="k">import</span> <span class="n">MessagePassing</span><span class="p">,</span> <span class="n">GCNConv</span>
 
 
 <div class="viewcode-block" id="APPNP"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.APPNP">[docs]</a><span class="k">class</span> <span class="nc">APPNP</span><span class="p">(</span><span class="n">MessagePassing</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The approximate personalized propagation of neural predictions layer</span>
-<span class="sd">    from the `&quot;Combining Neural Networks with Personalized PageRank for</span>
-<span class="sd">    Classification on Graphs&quot; &lt;https://arxiv.org/abs/1810.05997&gt;`_ paper</span>
+<span class="sd">    from the `&quot;Predict then Propagate: Graph Neural Networks meet Personalized</span>
+<span class="sd">    PageRank&quot; &lt;https://arxiv.org/abs/1810.05997&gt;`_ paper</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{Z}^{(0)} &amp;= \mathbf{X} \mathbf{\Theta}</span>
+<span class="sd">        \mathbf{X}^{(0)} &amp;= \mathbf{X}</span>
 
-<span class="sd">        \mathbf{Z}^{(k)} &amp;= (1 - \alpha) \mathbf{\hat{D}}^{-1/2}</span>
-<span class="sd">        \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \mathbf{Z}^{(k-1)} + \alpha</span>
-<span class="sd">        \mathbf{Z}^{(0)}</span>
+<span class="sd">        \mathbf{X}^{(k)} &amp;= (1 - \alpha) \mathbf{\hat{D}}^{-1/2}</span>
+<span class="sd">        \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \mathbf{X}^{(k-1)} + \alpha</span>
+<span class="sd">        \mathbf{X}^{(0)}</span>
 
-<span class="sd">        \mathbf{X}^{\prime} &amp;= \mathbf{Z}^{(K)},</span>
+<span class="sd">        \mathbf{X}^{\prime} &amp;= \mathbf{X}^{(K)},</span>
 
 <span class="sd">    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the</span>
 <span class="sd">    adjacency matrix with inserted self-loops and</span>
 <span class="sd">    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        in_channels (int): Size of each input sample.</span>
-<span class="sd">        out_channels (int): Size of each output sample.</span>
 <span class="sd">        K (int): Number of iterations :math:`K`.</span>
 <span class="sd">        alpha (float): Teleport probability :math:`\alpha`.</span>
 <span class="sd">        bias (bool, optional): If set to :obj:`False`, the layer will not learn</span>
 <span class="sd">            an additive bias. (default: :obj:`True`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">APPNP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">K</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
-
-<div class="viewcode-block" id="APPNP.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.APPNP.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lin</span><span class="o">.</span><span class="n">reset_parameters</span></div>
 
 <div class="viewcode-block" id="APPNP.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.APPNP.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="n">edge_index</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">GCNConv</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
             <span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">edge_weight</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
-        <span class="n">hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">hidden</span>
+        <span class="n">hidden</span> <span class="o">=</span> <span class="n">x</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
