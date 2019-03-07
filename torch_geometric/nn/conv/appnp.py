@@ -42,7 +42,7 @@ class APPNP(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin.reset_parameters
+        self.lin.reset_parameters()
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
