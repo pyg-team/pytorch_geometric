@@ -202,7 +202,7 @@ Please cite our paper (and the respective papers of the methods used) if you use
 
 ```
 @article{Fey/Lenssen/2019,
-  title={Fast Graph Representation Learning with PyTorch Geometric},
+  title={Fast Graph Representation Learning with {PyTorch Geometric}},
   author={Fey, Matthias and Lenssen, Jan E.},
   journal={CoRR},
   volume={abs/1903.02428},
