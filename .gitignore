@@ -8,6 +8,7 @@ alpha/
 *.egg-info/
 .coverage
 
-!docs/build/
 !torch_geometric/data/
 !test/data/
+!docs/build/
+!docs/build/html/_modules/torch_geometric/data/
