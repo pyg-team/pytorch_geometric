@@ -8,6 +8,7 @@ def test_appnp():
     num_nodes = edge_index.max().item() + 1
     x = torch.randn((num_nodes, in_channels))
 
-    conv = APPNP(in_channels, out_channels, K=10, alpha=0.1)
-    assert conv.__repr__() == 'APPNP(16, 32, K=10, alpha=0.1)'
-    assert conv(x, edge_index).size() == (num_nodes, out_channels)
+    lin = torch.nn.Linear(in_channels, out_channels)
+    conv = APPNP(K=10, alpha=0.1)
+    assert conv.__repr__() == 'APPNP(K=10, alpha=0.1)'
+    assert conv(lin(x), edge_index).size() == (num_nodes, out_channels)
