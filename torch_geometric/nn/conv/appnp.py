@@ -48,6 +48,5 @@ class APPNP(MessagePassing):
         return norm.view(-1, 1) * x_j
 
     def __repr__(self):
-        return '{}({}, {}, K={}, alpha={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.K, self.alpha)
+        return '{}(K={}, alpha={})'.format(self.__class__.__name__, self.K,
+                                           self.alpha)
