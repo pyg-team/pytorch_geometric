@@ -41,7 +41,7 @@ class SGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin.reset_parameters
+        self.lin.reset_parameters()
         self.cached_result = None
 
     def forward(self, x, edge_index, edge_weight=None):
