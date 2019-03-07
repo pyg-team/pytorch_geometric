@@ -15,7 +15,7 @@
 [![Build Status][build-image]][build-url]
 [![Code Coverage][coverage-image]][coverage-url]
 
-**[Documentation](http://rusty1s.github.io/pytorch_geometric)**
+**[Documentation](http://rusty1s.github.io/pytorch_geometric)** | **[Paper](https://arxiv.org/abs/1903.02428)**
 
 *PyTorch Geometric* is a geometric deep learning extension library for [PyTorch](https://pytorch.org/).
 
@@ -201,11 +201,12 @@ python cora.py
 Please cite our paper (and the respective papers of the methods used) if you use this code in your own work:
 
 ```
-@inproceedings{Fey/etal/2018,
-  title={{SplineCNN}: Fast Geometric Deep Learning with Continuous {B}-Spline Kernels},
-  author={Fey, Matthias and Lenssen, Jan Eric and Weichert, Frank and M{\"u}ller, Heinrich},
-  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-  year={2018},
+@article{Fey/Lenssen/2019,
+  title={Fast Graph Representation Learning with PyTorch Geometric},
+  author={Fey, Matthias and Lenssen, Jan E.},
+  journal={CoRR},
+  volume={abs/1903.02428},
+  year={2019},
 }
 ```
 
