@@ -209,6 +209,9 @@
 <span class="sd">        \frac{1}{|\mathcal{N}_r(i)|} \mathbf{\Theta}_r \cdot \mathbf{x}_j,</span>
 
 <span class="sd">    where :math:`\mathcal{R}` denotes the set of relations, *i.e.* edge types.</span>
+<span class="sd">    Edge type needs to be a one-dimensional :obj:`torch.long` tensor which</span>
+<span class="sd">    stores a relation identifier</span>
+<span class="sd">    :math:`\in \{ 0, \ldots, |\mathcal{R}| - 1\}` for each edge.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>

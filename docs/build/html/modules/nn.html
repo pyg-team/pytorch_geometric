@@ -685,7 +685,10 @@ Relational Data with Graph Convolutional Networks”</a> paper</p>
 \[\mathbf{x}^{\prime}_i = \mathbf{\Theta}_0 \cdot \mathbf{x}_i +
 \sum_{r \in \mathcal{R}} \sum_{j \in \mathcal{N}_r(i)}
 \frac{1}{|\mathcal{N}_r(i)|} \mathbf{\Theta}_r \cdot \mathbf{x}_j,\]</div>
-<p>where <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> denotes the set of relations, <em>i.e.</em> edge types.</p>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> denotes the set of relations, <em>i.e.</em> edge types.
+Edge type needs to be a one-dimensional <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.long</span></code> tensor which
+stores a relation identifier
+<span class="math notranslate nohighlight">\(\in \{ 0, \ldots, |\mathcal{R}| - 1\}\)</span> for each edge.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1833,7 +1836,7 @@ this module.</p>
 <li><strong>device_ids</strong> (<em>list of int</em><em> or </em><em>torch.device</em>) – CUDA devices.
 (default: all devices)</li>
 <li><strong>output_device</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em> or </em><em>torch.device</em>) – Device location of output.
-(default: device_ids[0])</li>
+(default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">device_ids[0]</span></code>)</li>
 </ul>
 </td>
 </tr>
