@@ -30,8 +30,9 @@ class MessagePassing(torch.nn.Module):
     def propagate(self, aggr, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
         Takes in an aggregation scheme (:obj:`"add"`, :obj:`"mean"` or
-        :obj:`"max"`), the edge indices, and all additional data which is
-        needed to construct messages and to update node embeddings."""
+        :obj:`"max"`), the edge indices, an optional output node size, and all
+        additional data which is needed to construct messages and to update
+        node embeddings."""
 
         assert aggr in ['add', 'mean', 'max']
         kwargs['edge_index'] = edge_index
