@@ -27,7 +27,7 @@ class MessagePassing(torch.nn.Module):
         self.message_args = inspect.getargspec(self.message)[0][1:]
         self.update_args = inspect.getargspec(self.update)[0][2:]
 
-    def propagate(self, aggr, edge_index, **kwargs):
+    def propagate(self, aggr, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
         Takes in an aggregation scheme (:obj:`"add"`, :obj:`"mean"` or
         :obj:`"max"`), the edge indices, and all additional data which is
@@ -36,17 +36,16 @@ class MessagePassing(torch.nn.Module):
         assert aggr in ['add', 'mean', 'max']
         kwargs['edge_index'] = edge_index
 
-        size = None
         message_args = []
         for arg in self.message_args:
             if arg[-2:] == '_i':
                 tmp = kwargs[arg[:-2]]
-                size = tmp.size(0)
+                size = size = tmp.size(0) if size is None else size
                 tmp = torch.index_select(tmp, 0, edge_index[0])
                 message_args.append(tmp)
             elif arg[-2:] == '_j':
                 tmp = kwargs[arg[:-2]]
-                size = tmp.size(0)
+                size = size = tmp.size(0) if size is None else size
                 tmp = torch.index_select(tmp, 0, edge_index[1])
                 message_args.append(tmp)
             else:
