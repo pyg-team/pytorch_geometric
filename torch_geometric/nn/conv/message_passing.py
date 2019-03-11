@@ -40,9 +40,7 @@ class MessagePassing(torch.nn.Module):
         message_args = []
         for arg in self.message_args:
             if arg[-2:] == '_i':
-                tmp = kwargs[arg[:-2]]
-                size = tmp.size(0) if size is None else size
-                tmp = torch.index_select(tmp, 0, edge_index[0])
+                tmp = torch.index_select(kwargs[arg[:-2]], 0, edge_index[0])
                 message_args.append(tmp)
             elif arg[-2:] == '_j':
                 tmp = kwargs[arg[:-2]]
