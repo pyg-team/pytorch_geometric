@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.0.2)
+                master (1.0.3)
               </div>
             
           
@@ -232,8 +232,7 @@
 <span class="sd">            final dataset. (default: :obj:`None`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://drive.google.com/uc?export=download&amp;id=</span><span class="si">{}</span><span class="s1">&#39;</span>
-    <span class="n">file_id</span> <span class="o">=</span> <span class="s1">&#39;1VE-EMIPKWsxJTvFRacrY_YZHB1-fH9Mr&#39;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">root</span><span class="p">,</span>
@@ -248,14 +247,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">raw_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;cone&#39;</span><span class="p">,</span> <span class="s1">&#39;cube&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;2d_circle&#39;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">processed_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;training.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pt&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">download_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_id</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">download_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
         <span class="n">extract_zip</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 

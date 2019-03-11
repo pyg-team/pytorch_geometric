@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.0.2)
+                master (1.0.3)
               </div>
             
           
@@ -214,9 +214,10 @@ With <span class="math notranslate nohighlight">\(\mathbf{x}^{(k-1)}_i \in \math
 The user only has to define the functions <span class="math notranslate nohighlight">\(\phi\)</span> , <em>i.e.</em> <code class="xref py py-meth docutils literal notranslate"><span class="pre">message()</span></code>, and <span class="math notranslate nohighlight">\(\gamma\)</span> , <em>.i.e.</em> <code class="xref py py-meth docutils literal notranslate"><span class="pre">update()</span></code>, as well as the aggregation scheme to use, <em>.i.e.</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">aggr='add'</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">aggr='mean'</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">aggr='max'</span></code>.</p>
 <p>This is done with the help of the following methods:</p>
 <ul class="simple">
-<li><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.nn.MessagePassing.propagate(aggr,</span> <span class="pre">edge_index,</span> <span class="pre">**kwargs)</span></code>:
+<li><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.nn.MessagePassing.propagate(aggr,</span> <span class="pre">edge_index,</span> <span class="pre">size=None,</span> <span class="pre">**kwargs)</span></code>:
 The initial call to start propagating messages.
-Takes in an aggregation scheme (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>), the edge indices, and all additional data which is needed to construct messages and to update node embeddings.</li>
+Takes in an aggregation scheme (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>), the edge indices, and all additional data which is needed to construct messages and to update node embeddings.
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code> is not limited to exchange messages in symmetric adjacency matrices of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[N,</span> <span class="pre">N]</span></code>, but can even exchange messages in general sparse assignment matrices of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[M,</span> <span class="pre">N]</span></code> by passing <code class="xref py py-obj docutils literal notranslate"><span class="pre">size=M</span></code> as an additional argument.</li>
 <li><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.nn.MessagePassing.message()</span></code>: Constructs messages in analogy to <span class="math notranslate nohighlight">\(\phi\)</span> for each edge in <span class="math notranslate nohighlight">\((i,j) \in \mathcal{E}\)</span>.
 Can take any argument which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.
 In addition, features can be lifted to the source node <span class="math notranslate nohighlight">\(i\)</span> and target node <span class="math notranslate nohighlight">\(j\)</span> by appending <code class="xref py py-obj docutils literal notranslate"><span class="pre">_i</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">_j</span></code> to the variable name, <em>.e.g.</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_i</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_j</span></code>.</li>

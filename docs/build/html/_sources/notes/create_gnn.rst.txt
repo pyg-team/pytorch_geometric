@@ -20,9 +20,10 @@ The user only has to define the functions :math:`\phi` , *i.e.* :meth:`message`,
 
 This is done with the help of the following methods:
 
-* :obj:`torch_geometric.nn.MessagePassing.propagate(aggr, edge_index, **kwargs)`:
+* :obj:`torch_geometric.nn.MessagePassing.propagate(aggr, edge_index, size=None, **kwargs)`:
   The initial call to start propagating messages.
   Takes in an aggregation scheme (:obj:`"add"`, :obj:`"mean"` or :obj:`"max"`), the edge indices, and all additional data which is needed to construct messages and to update node embeddings.
+  :meth:`propagate` is not limited to exchange messages in symmetric adjacency matrices of shape :obj:`[N, N]`, but can even exchange messages in general sparse assignment matrices of shape :obj:`[M, N]` by passing :obj:`size=M` as an additional argument.
 * :meth:`torch_geometric.nn.MessagePassing.message`: Constructs messages in analogy to :math:`\phi` for each edge in :math:`(i,j) \in \mathcal{E}`.
   Can take any argument which was initially passed to :meth:`propagate`.
   In addition, features can be lifted to the source node :math:`i` and target node :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.

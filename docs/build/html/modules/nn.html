@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.0.2)
+                master (1.0.3)
               </div>
             
           
@@ -235,11 +235,28 @@ variable name, <em>.e.g.</em> <code class="xref py py-obj docutils literal notra
 
 <dl class="method">
 <dt id="torch_geometric.nn.conv.message_passing.MessagePassing.propagate">
-<code class="descname">propagate</code><span class="sig-paren">(</span><em>aggr</em>, <em>edge_index</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.message_passing.MessagePassing.propagate" title="Permalink to this definition">¶</a></dt>
-<dd><p>The initial call to start propagating messages.
-Takes in an aggregation scheme (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> or
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>), the edge indices, and all additional data which is
-needed to construct messages and to update node embeddings.</p>
+<code class="descname">propagate</code><span class="sig-paren">(</span><em>aggr</em>, <em>edge_index</em>, <em>size=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.message_passing.MessagePassing.propagate" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initial call to start propagating messages.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>aggr</strong> (<em>string</em>) – Takes in an aggregation scheme (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>).</li>
+<li><strong>edge_index</strong> (<em>Tensor</em>) – The indices of a general (sparse) assignment
+matrix with shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[M,</span> <span class="pre">N]</span></code> (can be directed or
+undirected).</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The output node size <span class="math notranslate nohighlight">\(M\)</span>. If
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the output node size will get automatically
+inferrred by assuming a symmetric adjacency matrix as input.</li>
+<li><strong>**kwargs</strong> – Any additional data which is needed to construct messages
+and to update node embeddings.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
