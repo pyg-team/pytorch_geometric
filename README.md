@@ -17,7 +17,7 @@
 
 **[Documentation](http://rusty1s.github.io/pytorch_geometric)** | **[Paper](https://arxiv.org/abs/1903.02428)**
 
-*PyTorch Geometric* is a geometric deep learning extension library for [PyTorch](https://pytorch.org/).
+*PyTorch Geometric* (PyG) is a geometric deep learning extension library for [PyTorch](https://pytorch.org/).
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
 In addition, it consists of an easy-to-use mini-batch loader, multi gpu-support, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
@@ -57,8 +57,8 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <th>Dataset</th>
       <th>Epochs</th>
       <th>Model</th>
-      <th>DGL</th>
-      <th>PyTorch Geometric</th>
+      <th>DGL 0.1.3</th>
+      <th>PyG</th>
     </tr>
   </thead>
   <tbody>
