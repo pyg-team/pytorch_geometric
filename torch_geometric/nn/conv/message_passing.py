@@ -41,12 +41,12 @@ class MessagePassing(torch.nn.Module):
         for arg in self.message_args:
             if arg[-2:] == '_i':
                 tmp = kwargs[arg[:-2]]
-                size = size = tmp.size(0) if size is None else size
+                size = tmp.size(0) if size is None else size
                 tmp = torch.index_select(tmp, 0, edge_index[0])
                 message_args.append(tmp)
             elif arg[-2:] == '_j':
                 tmp = kwargs[arg[:-2]]
-                size = size = tmp.size(0) if size is None else size
+                size = tmp.size(0) if size is None else size
                 tmp = torch.index_select(tmp, 0, edge_index[1])
                 message_args.append(tmp)
             else:
