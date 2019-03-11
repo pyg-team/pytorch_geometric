@@ -29,10 +29,19 @@ class MessagePassing(torch.nn.Module):
 
     def propagate(self, aggr, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
-        Takes in an aggregation scheme (:obj:`"add"`, :obj:`"mean"` or
-        :obj:`"max"`), the edge indices, an optional output node size, and all
-        additional data which is needed to construct messages and to update
-        node embeddings."""
+
+        Args:
+            aggr (string): Takes in an aggregation scheme (:obj:`"add"`,
+                :obj:`"mean"` or :obj:`"max"`).
+            edge_index (Tensor): The indices of a general (sparse) assignment
+                matrix with shape :obj:`[M, N]` (can be directed or
+                undirected).
+            size (int, optional): The output node size :math:`M`. If
+                :obj:`None`, the output node size will get automatically
+                inferrred by assuming a symmetric adjacency matrix as input.
+            **kwargs: Any additional data which is needed to construct messages
+                and to update node embeddings.
+        """
 
         assert aggr in ['add', 'mean', 'max']
         kwargs['edge_index'] = edge_index
@@ -40,7 +49,9 @@ class MessagePassing(torch.nn.Module):
         message_args = []
         for arg in self.message_args:
             if arg[-2:] == '_i':
-                tmp = torch.index_select(kwargs[arg[:-2]], 0, edge_index[0])
+                tmp = kwargs[arg[:-2]]
+                size = tmp.size(0) if size is None else size
+                tmp = torch.index_select(tmp, 0, edge_index[0])
                 message_args.append(tmp)
             elif arg[-2:] == '_j':
                 tmp = kwargs[arg[:-2]]
