@@ -92,7 +92,8 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#c-cuda-extensions-on-macos">C++/CUDA extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction by example</a><ul>
@@ -237,9 +238,34 @@ $ echo $CPATH
 </div>
 </div></blockquote>
 </li>
+<li><p class="first">Add CUDA to <code class="docutils literal notranslate"><span class="pre">$LD_LIBRARY_PATH</span></code> on Linux and to <code class="docutils literal notranslate"><span class="pre">$DYLD_LIBRARY_PATH</span></code> on macOS (note that your actual CUDA path may vary from <code class="docutils literal notranslate"><span class="pre">/usr/local/cuda</span></code>):</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+$ echo $LD_LIBRARY_PATH
+&gt;&gt;&gt; /usr/local/cuda/lib64:...
+
+$ DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
+$ echo $DYLD_LIBRARY_PATH
+&gt;&gt;&gt; /usr/local/cuda/lib:...
+</pre></div>
+</div>
+</div></blockquote>
+</li>
 <li><p class="first">Verify that <code class="docutils literal notranslate"><span class="pre">nvcc</span></code> is accessible from terminal:</p>
 <blockquote>
 <div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ nvcc --version
+&gt;&gt;&gt; 10.0
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Ensure that PyTorch and system CUDA versions match:</p>
+<blockquote>
+<div><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ python -c &quot;import torch; print(torch.version.cuda)&quot;
+&gt;&gt;&gt; 10.0
+
+$ nvcc --version
+&gt;&gt;&gt; 10.0
 </pre></div>
 </div>
 </div></blockquote>
@@ -261,7 +287,8 @@ $ pip install torch-geometric
 </ol>
 <p>In rare cases, CUDA or python path issues can prevent a successful installation.
 Unfortunately, the error messages of <code class="docutils literal notranslate"><span class="pre">pip</span></code> are not very meaningful.
-You should therefore clone the respective package and check where the error occurs, e.g.:</p>
+You should therefore clone the respective package and check where the error occurs, e.g.:
+In case of reinstallation, ensure that you remove the <code class="docutils literal notranslate"><span class="pre">build/</span></code> directory to force a recompilation of all kernels.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/rusty1s/pytorch_scatter
 $ cd pytorch_scatter
 $ python setup.py install  # Check for CUDA compilation or link error.
@@ -271,7 +298,7 @@ $ python setup.py test  # Verify installation by running test suite.
 <p>In case the error messages are not very meaningful to you, please create an <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues">issue</a>.
 Beforehand, please check that the <a class="reference external" href="https://github.com/pytorch/extension-cpp">official extension example</a> runs on your machine.</p>
 <div class="section" id="c-cuda-extensions-on-macos">
-<h2>C++/CUDA extensions on macOS<a class="headerlink" href="#c-cuda-extensions-on-macos" title="Permalink to this headline">¶</a></h2>
+<h2>C++/CUDA Extensions on macOS<a class="headerlink" href="#c-cuda-extensions-on-macos" title="Permalink to this headline">¶</a></h2>
 <p>In order to compile CUDA extensions on macOS, you need to replace the call</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
     <span class="n">spawn</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dry_run</span><span class="p">)</span>
@@ -285,6 +312,33 @@ Beforehand, please check that the <a class="reference external" href="https://gi
 </pre></div>
 </div>
 <p>in <code class="docutils literal notranslate"><span class="pre">lib/python{xxx}/distutils/ccompiler.py</span></code>.</p>
+</div>
+<div class="section" id="frequently-asked-questions">
+<h2>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">libcu***:</span> <span class="pre">cannot</span> <span class="pre">open</span> <span class="pre">shared</span> <span class="pre">object</span> <span class="pre">file:</span> <span class="pre">No</span> <span class="pre">such</span> <span class="pre">file</span> <span class="pre">or</span> <span class="pre">directory</span></code>: Add CUDA to your <code class="docutils literal notranslate"><span class="pre">$LD_LIBRARY_PATH</span></code> (see <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues/43">Issue#43</a>)</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">undefined</span> <span class="pre">symbol:</span></code>, <em>e.g.</em> <code class="docutils literal notranslate"><span class="pre">_ZN2at6detail20DynamicCUDAInterface10set_deviceE</span></code>: Clear the pip cache and reinstall the respective package. On macOS, install clang compilers (see <a class="reference external" href="https://github.com/rusty1s/pytorch_scatter/issues/7">Issue#7</a> and <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues/18">Issue#18</a>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>conda install -y clang_osx-64 clangxx_osx-64 gfortran_osx-64
+</pre></div>
+</div>
+</li>
+<li><p class="first">Unable to import <code class="docutils literal notranslate"><span class="pre">*_cuda</span></code>: Import torch first before importing the extension packages (see <a class="reference external" href="https://github.com/rusty1s/pytorch_scatter/issues/6">Issue#6</a>)</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">error:</span> <span class="pre">command</span> <span class="pre">'/usr/bin/nvcc'</span> <span class="pre">failed</span> <span class="pre">with</span> <span class="pre">exit</span> <span class="pre">status</span> <span class="pre">2</span></code>: Ensure that at least CUDA &gt;= 8 is installed (see <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues/25">Issue#25a</a> and <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues/106">Issue#106</a>).</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">__and_&lt;is_constructible&lt;_Elements,</span> <span class="pre">_UElements&amp;&amp;&gt;...&gt;::value</span></code>: Ensure that GCC version is at least 4.9 and below 6 (see <a class="reference external" href="https://github.com/rusty1s/pytorch_scatter/issues/25">Issue#25b</a>)</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">undefined</span> <span class="pre">symbol:</span> <span class="pre">__cudaPopCallConfiguration</span></code>: Ensure same PyTorch and system CUDA version (see <a class="reference external" href="https://github.com/rusty1s/pytorch_scatter/issues/19">Issue#19</a>).</p>
+</li>
+<li><p class="first">On macOS: <code class="docutils literal notranslate"><span class="pre">'gcc'</span> <span class="pre">failed</span> <span class="pre">with</span> <span class="pre">exit</span> <span class="pre">status</span> <span class="pre">1</span></code>: Install the respective package with the following environment variables (see <a class="reference external" href="https://github.com/rusty1s/pytorch_scatter/issues/21">Issue#21</a>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ pip install ...
+</pre></div>
+</div>
+</li>
+<li><p class="first">On macOS: <code class="docutils literal notranslate"><span class="pre">The</span> <span class="pre">version</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">host</span> <span class="pre">compiler</span> <span class="pre">('Apple</span> <span class="pre">clang')</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">supported</span></code>: Downgrade your command line tools (see this <a class="reference external" href="https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116">StackOverflow thread</a>)</p>
+</li>
+</ol>
 </div>
 </div>
 
