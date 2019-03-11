@@ -166,8 +166,19 @@ $ echo $PATH
 
 $ echo $CPATH
 >>> /usr/local/cuda/include:...
+
+$ echo $LD_LIBRARY_PATH
+>>> /usr/local/cuda/lib64
 ```
 
+on Linux or
+
+```
+$ echo $DYLD_LIBRARY_PATH
+>>> /usr/local/cuda/lib
+```
+
+on macOS.
 Then run:
 
 ```sh
