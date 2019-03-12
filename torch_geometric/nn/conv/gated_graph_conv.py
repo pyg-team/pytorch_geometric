@@ -55,7 +55,7 @@ class GatedGraphConv(MessagePassing):
         assert h.size(1) <= self.out_channels
 
         if h.size(1) < self.out_channels:
-            zero = x.new_zeros(h.size(0), self.out_channels - h.size(1))
+            zero = h.new_zeros(h.size(0), self.out_channels - h.size(1))
             h = torch.cat([h, zero], dim=1)
 
         for i in range(self.num_layers):
