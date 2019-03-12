@@ -93,7 +93,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#frequently-asked-questions">Frequently Asked Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#id2">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a><ul>
@@ -200,16 +200,16 @@
 <div class="contents local topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#module-torch_geometric.nn.conv.message_passing" id="id2">Sparse Convolutional Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.dense.dense_sage_conv" id="id3">Dense Convolutional Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.glob" id="id4">Global Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id5">Sparse Hierarchical Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.dense.diff_pool" id="id6">Dense Hierarchical Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.data_parallel" id="id7">DataParallel layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.conv.message_passing" id="id3">Sparse Convolutional Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.dense.dense_sage_conv" id="id4">Dense Convolutional Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.glob" id="id5">Global Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id6">Sparse Hierarchical Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.dense.diff_pool" id="id7">Dense Hierarchical Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.data_parallel" id="id8">DataParallel layers</a></li>
 </ul>
 </div>
 <div class="section" id="module-torch_geometric.nn.conv.message_passing">
-<span id="sparse-convolutional-layers"></span><h2><a class="toc-backref" href="#id2">Sparse Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv.message_passing" title="Permalink to this headline">¶</a></h2>
+<span id="sparse-convolutional-layers"></span><h2><a class="toc-backref" href="#id3">Sparse Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv.message_passing" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.conv.message_passing.MessagePassing">
 <em class="property">class </em><code class="descname">MessagePassing</code><span class="sig-paren">(</span><em>aggr='add'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.message_passing.MessagePassing" title="Permalink to this definition">¶</a></dt>
@@ -427,6 +427,46 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GraphConv.reset_parameters">
 <code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/graph_conv.html#GraphConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GraphConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.GatedGraphConv">
+<em class="property">class </em><code class="descname">GatedGraphConv</code><span class="sig-paren">(</span><em>out_channels</em>, <em>num_layers</em>, <em>aggr='add'</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gated_graph_conv.html#GatedGraphConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GatedGraphConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The gated graph convolution operator from the <a class="reference external" href="https://arxiv.org/abs/1511.05493">“Gated Graph Sequence
+Neural Networks”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\mathbf{h}_i^{(0)} &amp;= \mathbf{x}_i \, \Vert \, \mathbf{0}\\\mathbf{m}_i^{(l+1)} &amp;= \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta}
+\cdot \mathbf{h}_j^{(l)}\\\mathbf{h}_i^{(l+1)} &amp;= \textrm{GRU} (\mathbf{m}_i^{(l+1)},
+\mathbf{h}_i^{(l)})\end{aligned}\end{align} \]</div>
+<p>up to representation <span class="math notranslate nohighlight">\(\mathbf{h}_i^{(L)}\)</span>.
+The number of input channels of <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span> needs to be less or
+equal than <code class="xref py py-obj docutils literal notranslate"><span class="pre">out_channels</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>num_layers</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The sequence length <span class="math notranslate nohighlight">\(L\)</span>.</li>
+<li><strong>aggr</strong> (<em>string</em>) – The aggregation operator to use (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>). (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>)</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.GatedGraphConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gated_graph_conv.html#GatedGraphConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GatedGraphConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.GatedGraphConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gated_graph_conv.html#GatedGraphConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GatedGraphConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1091,7 +1131,7 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 
 </div>
 <div class="section" id="module-torch_geometric.nn.dense.dense_sage_conv">
-<span id="dense-convolutional-layers"></span><h2><a class="toc-backref" href="#id3">Dense Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.dense_sage_conv" title="Permalink to this headline">¶</a></h2>
+<span id="dense-convolutional-layers"></span><h2><a class="toc-backref" href="#id4">Dense Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.dense_sage_conv" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv">
 <em class="property">class </em><code class="descname">DenseSAGEConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>normalize=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/dense_sage_conv.html#DenseSAGEConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv" title="Permalink to this definition">¶</a></dt>
@@ -1140,7 +1180,7 @@ not automatically add self-loops to the adjacency matrices.
 
 </div>
 <div class="section" id="module-torch_geometric.nn.glob">
-<span id="global-pooling-layers"></span><h2><a class="toc-backref" href="#id4">Global Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.glob" title="Permalink to this headline">¶</a></h2>
+<span id="global-pooling-layers"></span><h2><a class="toc-backref" href="#id5">Global Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.glob" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="torch_geometric.nn.glob.global_add_pool">
 <code class="descname">global_add_pool</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/glob.html#global_add_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.global_add_pool" title="Permalink to this definition">¶</a></dt>
@@ -1333,7 +1373,7 @@ LSTM and computing the final results. (default: <code class="xref py py-obj docu
 
 </div>
 <div class="section" id="module-torch_geometric.nn.pool">
-<span id="sparse-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id5">Sparse Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
+<span id="sparse-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id6">Sparse Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.pool.TopKPooling">
 <em class="property">class </em><code class="descname">TopKPooling</code><span class="sig-paren">(</span><em>in_channels</em>, <em>ratio=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/topk_pool.html#TopKPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.TopKPooling" title="Permalink to this definition">¶</a></dt>
@@ -1683,7 +1723,8 @@ node to a specific example. (default: <a class="reference external" href="https:
 <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M\)</span>, which assigns each
 node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 <li><strong>max_num_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of neighbors to
-return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
+return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>.
+This flag is only needed for CUDA tensors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
 </ul>
 </td>
 </tr>
@@ -1771,7 +1812,7 @@ node to a specific example. (default: <a class="reference external" href="https:
 
 </div>
 <div class="section" id="module-torch_geometric.nn.dense.diff_pool">
-<span id="dense-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id6">Dense Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.diff_pool" title="Permalink to this headline">¶</a></h2>
+<span id="dense-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id7">Dense Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.diff_pool" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="torch_geometric.nn.dense.diff_pool.dense_diff_pool">
 <code class="descname">dense_diff_pool</code><span class="sig-paren">(</span><em>x</em>, <em>adj</em>, <em>s</em>, <em>mask=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/diff_pool.html#dense_diff_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.diff_pool.dense_diff_pool" title="Permalink to this definition">¶</a></dt>
@@ -1817,7 +1858,7 @@ the valid nodes for each graph. (default: <a class="reference external" href="ht
 
 </div>
 <div class="section" id="module-torch_geometric.nn.data_parallel">
-<span id="dataparallel-layers"></span><h2><a class="toc-backref" href="#id7">DataParallel layers</a><a class="headerlink" href="#module-torch_geometric.nn.data_parallel" title="Permalink to this headline">¶</a></h2>
+<span id="dataparallel-layers"></span><h2><a class="toc-backref" href="#id8">DataParallel layers</a><a class="headerlink" href="#module-torch_geometric.nn.data_parallel" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.data_parallel.DataParallel">
 <em class="property">class </em><code class="descname">DataParallel</code><span class="sig-paren">(</span><em>module</em>, <em>device_ids=None</em>, <em>output_device=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/data_parallel.html#DataParallel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.data_parallel.DataParallel" title="Permalink to this definition">¶</a></dt>
