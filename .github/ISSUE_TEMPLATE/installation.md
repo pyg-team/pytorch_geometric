@@ -19,13 +19,13 @@ about: Report error messages related to installation of PyTorch Geometric
 
 ## Checklist
 
-- [] I followed the installation guide.
-- [] I cannot find my error message in the FAQ.
-- [] I set up CUDA correctly and can compile CUDA code via nvcc.
-- [] I have cloned the repository and tried a manual installation from source.
-- [] I do have multiple CUDA versions on my machine.
-- [] I verified that the official extension example runs on my machine.
-- [] The offical extension example runs on my machine.
+- [ ] I followed the installation guide.
+- [ ] I cannot find my error message in the FAQ.
+- [ ] I set up CUDA correctly and can compile CUDA code via nvcc.
+- [ ] I have cloned the repository and tried a manual installation from source.
+- [ ] I do have multiple CUDA versions on my machine.
+- [ ] I verified that the official extension example runs on my machine.
+- [ ] The offical extension example runs on my machine.
 
 ## Additional context
 
