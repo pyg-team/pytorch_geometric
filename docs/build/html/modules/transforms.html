@@ -93,7 +93,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#frequently-asked-questions">Frequently Asked Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#id2">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a><ul>
@@ -381,6 +381,18 @@ instead of replacing them. (default: <a class="reference external" href="https:/
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.LocalDegreeProfile">
+<em class="property">class </em><code class="descname">LocalDegreeProfile</code><a class="reference internal" href="../_modules/torch_geometric/transforms/local_degree_profile.html#LocalDegreeProfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.LocalDegreeProfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends the Local Degree Profile (LDP) from the <a class="reference external" href="https://arxiv.org/abs/1811.03508">“A Simple yet
+Effective Baseline for Non-attribute Graph Classification”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}_i = \mathbf{x}_i \, \Vert \, (\deg(i), \min(DN(i)),
+\max(DN(i)), \textrm{mean}(DN(i)), \textrm{std}(DN(i)))\]</div>
+<p>to the node features, where <span class="math notranslate nohighlight">\(DN(i) = \{ \deg(j) \mid j \in
+\mathcal{N}(i) \}\)</span>.</p>
 </dd></dl>
 
 <dl class="class">
