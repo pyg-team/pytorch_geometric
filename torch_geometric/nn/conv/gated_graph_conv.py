@@ -52,7 +52,7 @@ class GatedGraphConv(MessagePassing):
     def forward(self, x, edge_index):
         """"""
         h = x if x.dim() == 2 else x.unsqueeze(-1)
-        assert x.size(1) <= self.out_channels
+        assert h.size(1) <= self.out_channels
 
         if h.size(1) < self.out_channels:
             zero = x.new_zeros(h.size(0), self.out_channels - h.size(1))
