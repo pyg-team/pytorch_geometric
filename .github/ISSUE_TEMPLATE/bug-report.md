@@ -1,5 +1,5 @@
 ---
-name: "\U0001F41B  Bug Report"
+name: "\U0001F41B Bug Report"
 about: Submit a bug report to help us improve PyTorch Geometric
 ---
 
@@ -15,7 +15,7 @@ Steps to reproduce the behavior:
 1.
 1.
 
-<!-- If you have a code sample, error messages, stack traces, please provide it here as well -->
+<!-- If you have a code sample, error messages, stack traces, please provide it here as well. -->
 
 ## Expected behavior
 

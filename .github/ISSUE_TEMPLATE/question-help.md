@@ -1,6 +1,6 @@
 ---
 name: "❓Questions & Help"
-about: General discussions related to PyTorch Geometric
+about: Start a general discussion related to PyTorch Geometric
 ---
 
 ## ❓ Questions & Help
