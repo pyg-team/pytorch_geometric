@@ -5,7 +5,7 @@ about: Submit a proposal/request for a new PyTorch Geometric feature
 
 ## 🚀 Feature
 
-<!-- A clear and concise description of the feature proposal. -->
+<!-- A clear and concise description of the feature proposal. Please provide a link to the paper and code in case they exist. -->
 
 ## Motivation
 
