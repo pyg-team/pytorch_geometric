@@ -78,9 +78,9 @@ Please follow the steps below for a successful installation:
         $ pip install torch-geometric
 
 In rare cases, CUDA or python path issues can prevent a successful installation.
-Unfortunately, the error messages of ``pip`` are not very meaningful.
-You should therefore clone the respective package and check where the error occurs, e.g.:
-In case of reinstallation, ensure that you remove the ``build/`` directory to force a recompilation of all kernels.
+You can verify that your CUDA is set up correctly by following the offical `installation guides <https://docs.nvidia.com/cuda/index.html>`_.
+If an error occurs during installation, ``pip`` may not issue a reasonable error message or even pretend that everything went well (resulting in runtime errors).
+You should then clone the respective package and check the error message by installing from source, *e.g.*:
 
 .. code-block:: none
 
@@ -89,8 +89,10 @@ In case of reinstallation, ensure that you remove the ``build/`` directory to fo
     $ python setup.py install  # Check for CUDA compilation or link error.
     $ python setup.py test  # Verify installation by running test suite.
 
-In case the error messages are not very meaningful to you, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
-Beforehand, please check that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
+We collected a lot of common installation errors in the `Frequently Asked Questions <https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions>`_ subsection.
+Please note that if you make any changes, you need to force a recompilation of the CUDA kernels by removing the ``build/`` directory in the root folder of the respective package.
+In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
+You can additionaly check that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
 
 C++/CUDA Extensions on macOS
 ----------------------------
@@ -116,26 +118,31 @@ in ``lib/python{xxx}/distutils/ccompiler.py``.
 Frequently Asked Questions
 --------------------------
 
-#. ``ImportError: libcu***: cannot open shared object file: No such file or directory``: Add CUDA to your ``$LD_LIBRARY_PATH`` (see `Issue#43 <https://github.com/rusty1s/pytorch_geometric/issues/43>`_)
+#. ``ImportError: ***: cannot open shared object file: No such file or directory``: Add CUDA to your ``$LD_LIBRARY_PATH`` (see `Issue#43 <https://github.com/rusty1s/pytorch_geometric/issues/43>`_).
 
-#. ``undefined symbol:``, *e.g.* ``_ZN2at6detail20DynamicCUDAInterface10set_deviceE``: Clear the pip cache and reinstall the respective package. On macOS, install clang compilers (see `Issue#7 <https://github.com/rusty1s/pytorch_scatter/issues/7>`_ and `Issue#18 <https://github.com/rusty1s/pytorch_geometric/issues/18>`_):
+#. ``undefined symbol:``, *e.g.* ``_ZN2at6detail20DynamicCUDAInterface10set_deviceE``: Clear the pip cache and reinstall the respective package (see `Issue#7 <https://github.com/rusty1s/pytorch_scatter/issues/7>`_). On macOS, it may help to install clang compilers via conda (see `Issue#18 <https://github.com/rusty1s/pytorch_geometric/issues/18>`_):
 
    .. code-block:: none
 
-      conda install -y clang_osx-64 clangxx_osx-64 gfortran_osx-64
+      $ conda install -y clang_osx-64 clangxx_osx-64 gfortran_osx-64
 
-#. Unable to import ``*_cuda``: Import torch first before importing the extension packages (see `Issue#6 <https://github.com/rusty1s/pytorch_scatter/issues/6>`_)
+#. Unable to import ``*_cuda``: You need to ``import torch`` first before importing any of the extension packages (see `Issue#6 <https://github.com/rusty1s/pytorch_scatter/issues/6>`_).
 
 #. ``error: command '/usr/bin/nvcc' failed with exit status 2``: Ensure that at least CUDA >= 8 is installed (see `Issue#25a <https://github.com/rusty1s/pytorch_geometric/issues/25>`_ and `Issue#106 <https://github.com/rusty1s/pytorch_geometric/issues/106>`_).
 
-#. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that GCC version is at least 4.9 and below 6 (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_)
+#. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your GCC version is at least 4.9 and below 6 (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
 
-#. ``undefined symbol: __cudaPopCallConfiguration``: Ensure same PyTorch and system CUDA version (see `Issue#19 <https://github.com/rusty1s/pytorch_scatter/issues/19>`_).
-
-#. On macOS: ``'gcc' failed with exit status 1``: Install the respective package with the following environment variables (see `Issue#21 <https://github.com/rusty1s/pytorch_scatter/issues/21>`_):
+#. ``undefined symbol: __cudaPopCallConfiguration``: Ensure that your PyTorch CUDA version and system CUDA version match (see `Issue#19 <https://github.com/rusty1s/pytorch_scatter/issues/19>`_):
 
    .. code-block:: none
 
-       MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ pip install ...
+      $ python -c "import torch; print(torch.version.cuda)"
+      $ nvcc --version
 
-#. On macOS: ``The version of the host compiler ('Apple clang') is not supported``: Downgrade your command line tools (see this `StackOverflow thread <https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116>`_)
+#. On macOS: ``'gcc' failed with exit status 1``: Install the respective packages by using the following environment variables (see `Issue#21 <https://github.com/rusty1s/pytorch_scatter/issues/21>`_):
+
+   .. code-block:: none
+
+       $ MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py install
+
+#. On macOS: ``The version of the host compiler ('Apple clang') is not supported``: Downgrade your command line tools (see this `StackOverflow thread <https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116>`_) with the respective version annotated in the `CUDA Installation Guide for Mac <https://developer.download.nvidia.com/compute/cuda/10.1/Prod/docs/sidebar/CUDA_Installation_Guide_Mac.pdf>`_ (Section 1.1) for your specific CUDA version. You can download previous command line tool versions `here <https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Fdownload%2Fmore%2F&rv=1>`_.
