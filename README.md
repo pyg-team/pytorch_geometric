@@ -190,6 +190,7 @@ $ pip install torch-geometric
 ```
 
 See the [Frequently Asked Questions](https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions) for common installation errors.
+Verify that your CUDA is set up correctly by following the offical [installation guides](https://docs.nvidia.com/cuda/index.html).
 If you are running into any installation problems, please create an [issue](https://github.com/rusty1s/pytorch_geometric/issues).
 Beforehand, please check that the [official extension example](https://github.com/pytorch/extension-cpp) runs on your machine.
 
