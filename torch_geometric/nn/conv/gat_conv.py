@@ -52,7 +52,7 @@ class GATConv(MessagePassing):
                  negative_slope=0.2,
                  dropout=0,
                  bias=True):
-        super(GATConv, self).__init__()
+        super(GATConv, self).__init__('add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -84,7 +84,7 @@ class GATConv(MessagePassing):
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
 
         x = torch.mm(x, self.weight).view(-1, self.heads, self.out_channels)
-        return self.propagate('add', edge_index, x=x, num_nodes=x.size(0))
+        return self.propagate(edge_index, x=x, num_nodes=x.size(0))
 
     def message(self, x_i, x_j, edge_index, num_nodes):
         # Compute attention coefficients.

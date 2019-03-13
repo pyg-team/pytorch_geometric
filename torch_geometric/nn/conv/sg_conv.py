@@ -28,7 +28,7 @@ class SGConv(MessagePassing):
 
     def __init__(self, in_channels, out_channels, K=1, cached=False,
                  bias=True):
-        super(SGConv, self).__init__()
+        super(SGConv, self).__init__('add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -51,7 +51,7 @@ class SGConv(MessagePassing):
                 edge_index, x.size(0), edge_weight, dtype=x.dtype)
 
             for k in range(self.K):
-                x = self.propagate('add', edge_index, x=x, norm=norm)
+                x = self.propagate(edge_index, x=x, norm=norm)
             self.cached_result = x
 
         return self.lin(self.cached_result)

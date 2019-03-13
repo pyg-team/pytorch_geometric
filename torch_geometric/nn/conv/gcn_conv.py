@@ -31,7 +31,7 @@ class GCNConv(MessagePassing):
     """
 
     def __init__(self, in_channels, out_channels, improved=False, bias=True):
-        super(GCNConv, self).__init__()
+        super(GCNConv, self).__init__('add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -79,7 +79,7 @@ class GCNConv(MessagePassing):
         edge_index, norm = GCNConv.norm(edge_index,
                                         x.size(0), edge_weight, self.improved,
                                         x.dtype)
-        return self.propagate('add', edge_index, x=x, norm=norm)
+        return self.propagate(edge_index, x=x, norm=norm)
 
     def message(self, x_j, norm):
         return norm.view(-1, 1) * x_j

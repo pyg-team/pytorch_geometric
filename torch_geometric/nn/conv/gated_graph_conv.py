@@ -26,18 +26,18 @@ class GatedGraphConv(MessagePassing):
     Args:
         out_channels (int): Size of each input sample.
         num_layers (int): The sequence length :math:`L`.
-        aggr (string): The aggregation operator to use (:obj:`"add"`,
-            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
+        aggr (string): The aggregation scheme to use
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
+            (default: :obj:`"add"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
 
     def __init__(self, out_channels, num_layers, aggr='add', bias=True):
-        super(GatedGraphConv, self).__init__()
+        super(GatedGraphConv, self).__init__(aggr)
 
         self.out_channels = out_channels
         self.num_layers = num_layers
-        self.aggr = aggr
 
         self.weight = Param(Tensor(num_layers, out_channels, out_channels))
         self.rnn = torch.nn.GRUCell(out_channels, out_channels, bias=bias)
@@ -60,7 +60,7 @@ class GatedGraphConv(MessagePassing):
 
         for i in range(self.num_layers):
             m = torch.matmul(h, self.weight[i])
-            m = self.propagate(self.aggr, edge_index, x=m)
+            m = self.propagate(edge_index, x=m)
             h = self.rnn(m, h)
 
         return h
