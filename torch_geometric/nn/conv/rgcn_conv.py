@@ -35,7 +35,7 @@ class RGCNConv(MessagePassing):
                  num_relations,
                  num_bases,
                  bias=True):
-        super(RGCNConv, self).__init__()
+        super(RGCNConv, self).__init__('add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -69,7 +69,7 @@ class RGCNConv(MessagePassing):
                 device=edge_index.device)
 
         return self.propagate(
-            'add', edge_index, x=x, edge_type=edge_type, edge_norm=edge_norm)
+            edge_index, x=x, edge_type=edge_type, edge_norm=edge_norm)
 
     def message(self, x_j, edge_type, edge_norm):
         w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))

@@ -178,15 +178,6 @@ This is equivalent of doing:
     dataset = dataset[perm]
     >> ENZYMES(600)
 
-For splitting the dataset into a 90/10 train/test split, we can simply use Python slice notation:
-
-.. code-block:: python
-
-    train_dataset = dataset[60:]
-    >>> ENZYMES(540)
-    test_dataset = dataset[:60]
-    >>> ENZYMES(60)
-
 Let's try another one! Let's download Cora, the standard benchmark dataset for semi-supervised graph node classification:
 
 .. code-block:: python
@@ -297,7 +288,7 @@ Data transforms
 
 Transforms are a common way in ``torchvision`` to transform images and perform augmentation.
 PyTorch Geometric comes with its own transforms, which expect a ``Data`` object as input and return a new transformed ``Data`` object.
-Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset (``pre_transform``) on disk or before accessing a graph in a dataset (``transform``).
+Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset on disk (``pre_transform``) or before accessing a graph in a dataset (``transform``).
 
 Let's look at an example, where we apply transforms on the ShapeNet dataset (containing 17,000 3D shape point clouds and per point labels from 16 shape categories).
 
@@ -414,6 +405,6 @@ Finally we can evaluate our model on the test nodes:
     print('Accuracy: {:.4f}'.format(acc))
     >>> Accuracy: 0.8150
 
-That all it takes to implement a graph neural network.
+That is all it takes to implement your first graph neural network.
 The easiest way to learn more about graph convolution and pooling is to study the examples in the ``examples/`` directory and to browse :mod:`torch_geometric.nn`.
 Happy hacking!

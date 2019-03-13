@@ -213,52 +213,69 @@
 <span class="sd">    See `here &lt;https://rusty1s.github.io/pytorch_geometric/build/html/notes/</span>
 <span class="sd">    create_gnn.html&gt;`__ for the accompanying tutorial.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        aggr (string, optional): The aggregation scheme to use</span>
+<span class="sd">            (:obj:`&quot;add&quot;`, :obj:`&quot;mean&quot;` or :obj:`&quot;max&quot;`).</span>
+<span class="sd">            (default: :obj:`&quot;add&quot;`)</span>
+<span class="sd">        flow (string, optional): The flow direction of message passing</span>
+<span class="sd">            (:obj:`&quot;source_to_target&quot;` or :obj:`&quot;target_to_source&quot;`).</span>
+<span class="sd">            (default: :obj:`&quot;source_to_target&quot;`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggr</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggr</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">flow</span><span class="o">=</span><span class="s1">&#39;target_to_source&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MessagePassing</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggr</span> <span class="o">=</span> <span class="n">aggr</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="o">=</span> <span class="n">flow</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;target_to_source&#39;</span><span class="p">,</span> <span class="s1">&#39;source_to_target&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">message_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
 
-<div class="viewcode-block" id="MessagePassing.propagate"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing.propagate">[docs]</a>    <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggr</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="MessagePassing.propagate"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing.propagate">[docs]</a>    <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The initial call to start propagating messages.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            aggr (string): Takes in an aggregation scheme (:obj:`&quot;add&quot;`,</span>
-<span class="sd">                :obj:`&quot;mean&quot;` or :obj:`&quot;max&quot;`).</span>
 <span class="sd">            edge_index (Tensor): The indices of a general (sparse) assignment</span>
-<span class="sd">                matrix with shape :obj:`[M, N]` (can be directed or</span>
+<span class="sd">                matrix with shape :obj:`[N, M]` (can be directed or</span>
 <span class="sd">                undirected).</span>
-<span class="sd">            size (int, optional): The output node size :math:`M`. If</span>
-<span class="sd">                :obj:`None`, the output node size will get automatically</span>
-<span class="sd">                inferrred by assuming a symmetric adjacency matrix as input.</span>
+<span class="sd">            size (list or tuple, optional): The size :obj:`[N, M]` of the</span>
+<span class="sd">                assignment matrix. If set to :obj:`None`, the size is tried to</span>
+<span class="sd">                get automatically inferrred. (default: :obj:`None`)</span>
 <span class="sd">            **kwargs: Any additional data which is needed to construct messages</span>
 <span class="sd">                and to update node embeddings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">assert</span> <span class="n">aggr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">]</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;edge_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_index</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="o">==</span> <span class="s1">&#39;target_to_source&#39;</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="n">message_args</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_args</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">arg</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;_i&#39;</span><span class="p">:</span>
                 <span class="n">tmp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span>
-                <span class="n">size</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span>
-                <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                 <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">arg</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;_j&#39;</span><span class="p">:</span>
                 <span class="n">tmp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span>
-                <span class="n">size</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span>
-                <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">size</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
                 <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
 
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
         <span class="n">update_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_args</span><span class="p">]</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="o">*</span><span class="n">message_args</span><span class="p">)</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_</span><span class="p">(</span><span class="n">aggr</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">aggr</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="o">*</span><span class="n">update_args</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">out</span></div>
