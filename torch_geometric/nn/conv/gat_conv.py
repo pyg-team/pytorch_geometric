@@ -2,7 +2,7 @@ import torch
 from torch.nn import Parameter
 import torch.nn.functional as F
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import add_self_loops, softmax
+from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 from ..inits import glorot, zeros
 
@@ -81,6 +81,7 @@ class GATConv(MessagePassing):
 
     def forward(self, x, edge_index):
         """"""
+        edge_index, _ = remove_self_loops(edge_index)
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
 
         x = torch.mm(x, self.weight).view(-1, self.heads, self.out_channels)
