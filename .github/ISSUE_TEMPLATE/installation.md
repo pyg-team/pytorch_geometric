@@ -1,6 +1,6 @@
 ---
 name: "\U0001F4DA Installation"
-about: Report an installation problem of PyTorch Geometric
+about: Report an installation problem with PyTorch Geometric
 ---
 
 ## 📚 Installation
