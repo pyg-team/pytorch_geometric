@@ -2,7 +2,7 @@ import torch
 from torch.nn import Parameter
 from torch_scatter import scatter_add
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import add_self_loops
+from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from ..inits import glorot, zeros
 
@@ -58,6 +58,7 @@ class GCNConv(MessagePassing):
         edge_weight = edge_weight.view(-1)
         assert edge_weight.size(0) == edge_index.size(1)
 
+        edge_index, _ = remove_self_loops(edge_index)
         edge_index = add_self_loops(edge_index, num_nodes)
         loop_weight = torch.full(
             (num_nodes, ),

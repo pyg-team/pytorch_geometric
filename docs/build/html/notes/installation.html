@@ -342,6 +342,11 @@ $ nvcc --version
 </pre></div>
 </div>
 </li>
+<li><p class="first">On macOS: <code class="docutils literal notranslate"><span class="pre">ld:</span> <span class="pre">warning:</span> <span class="pre">directory</span> <span class="pre">not</span> <span class="pre">found</span> <span class="pre">for</span> <span class="pre">option</span> <span class="pre">'-L/usr/local/cuda/lib64'</span></code> and <code class="docutils literal notranslate"><span class="pre">ld:</span> <span class="pre">library</span> <span class="pre">not</span> <span class="pre">found</span> <span class="pre">for</span> <span class="pre">-lcudart</span></code>: Symlink <code class="docutils literal notranslate"><span class="pre">cuda/lib</span></code> to <code class="docutils literal notranslate"><span class="pre">cuda/lib64</span></code> (see <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues/116">Issue#116</a>):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ sudo ln -s /usr/local/cuda/lib /usr/local/cuda/lib64
+</pre></div>
+</div>
+</li>
 <li><p class="first">On macOS: <code class="docutils literal notranslate"><span class="pre">The</span> <span class="pre">version</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">host</span> <span class="pre">compiler</span> <span class="pre">('Apple</span> <span class="pre">clang')</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">supported</span></code>: Downgrade your command line tools (see this <a class="reference external" href="https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116">StackOverflow thread</a>) with the respective version annotated in the <a class="reference external" href="https://developer.download.nvidia.com/compute/cuda/10.1/Prod/docs/sidebar/CUDA_Installation_Guide_Mac.pdf">CUDA Installation Guide for Mac</a> (Section 1.1) for your specific CUDA version. You can download previous command line tool versions <a class="reference external" href="https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&amp;path=%2Fdownload%2Fmore%2F&amp;rv=1">here</a>.</p>
 </li>
 </ol>
