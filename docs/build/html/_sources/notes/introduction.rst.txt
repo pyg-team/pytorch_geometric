@@ -376,7 +376,7 @@ Now let's implement a two-layer GCN:
 
             return F.log_softmax(x, dim=1)
 
-We use ReLU as our non-linearity activation function and output a softmax distribution over the number of classes.
+We use ReLU as our non-linear activation function and output a softmax distribution over the number of classes.
 Let's train this model on the train nodes for 200 epochs:
 
 .. code-block:: python
