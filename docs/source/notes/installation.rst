@@ -130,8 +130,10 @@ Frequently Asked Questions
 
 #. ``error: command '/usr/bin/nvcc' failed with exit status 2``: Ensure that at least CUDA >= 8 is installed (see `Issue#25a <https://github.com/rusty1s/pytorch_geometric/issues/25>`_ and `Issue#106 <https://github.com/rusty1s/pytorch_geometric/issues/106>`_).
 
-#. ``Segmentation fault (core dumped)``` or ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your ``gcc`` version is at least 4.9 and below 6 (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
+#. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your ``gcc`` version is at least 4.9 and below 6 (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
    You will also need to reinstall PyTorch because ``gcc`` versions must be consistent across all PyTorch packages.
+
+#. ``file not recognized: file format not recognized``: Clean the repository and temporarily rename Anaconda's ``ld`` linker (see `Issue#16683 <https://github.com/pytorch/pytorch/issues/16683>`_).
 
 #. ``undefined symbol: __cudaPopCallConfiguration``: Ensure that your PyTorch CUDA version and system CUDA version match (see `Issue#19 <https://github.com/rusty1s/pytorch_scatter/issues/19>`_):
 
