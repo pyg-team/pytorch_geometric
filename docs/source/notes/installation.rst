@@ -77,10 +77,10 @@ Please follow the steps below for a successful installation:
         $ pip install --upgrade torch-spline-conv (optional)
         $ pip install torch-geometric
 
-In rare cases, CUDA or python path issues can prevent a successful installation.
-You can verify that your CUDA is set up correctly by following the offical `installation guides <https://docs.nvidia.com/cuda/index.html>`_.
-If an error occurs during installation, ``pip`` may not issue a reasonable error message or even pretend that everything went well (resulting in runtime errors).
-You should then clone the respective package and check the error message by installing from source, *e.g.*:
+In rare cases, CUDA or Python path problems can prevent a successful installation.
+``pip`` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, ``No module named 'torch_*.*_cuda'``.
+Usually, this means that the installation of one (or all) of the extension packages failed.
+You should then clone the respective package and look for the error in the installation log, *e.g.*:
 
 .. code-block:: none
 
@@ -92,7 +92,7 @@ You should then clone the respective package and check the error message by inst
 We collected a lot of common installation errors in the `Frequently Asked Questions <https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions>`_ subsection.
 Please note that if you make any changes, you need to force a recompilation of the CUDA kernels by removing the ``build/`` directory in the root folder of the respective package.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
-You can additionaly check that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
+You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda/index.html>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
 
 C++/CUDA Extensions on macOS
 ----------------------------

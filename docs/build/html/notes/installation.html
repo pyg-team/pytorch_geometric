@@ -285,10 +285,10 @@ $ pip install torch-geometric
 </div></blockquote>
 </li>
 </ol>
-<p>In rare cases, CUDA or python path issues can prevent a successful installation.
-You can verify that your CUDA is set up correctly by following the offical <a class="reference external" href="https://docs.nvidia.com/cuda/index.html">installation guides</a>.
-If an error occurs during installation, <code class="docutils literal notranslate"><span class="pre">pip</span></code> may not issue a reasonable error message or even pretend that everything went well (resulting in runtime errors).
-You should then clone the respective package and check the error message by installing from source, <em>e.g.</em>:</p>
+<p>In rare cases, CUDA or Python path problems can prevent a successful installation.
+<code class="docutils literal notranslate"><span class="pre">pip</span></code> may even signal a successful installation, but runtime errors complain about missing modules, <em>.e.g.</em>, <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">module</span> <span class="pre">named</span> <span class="pre">'torch_*.*_cuda'</span></code>.
+Usually, this means that the installation of one (or all) of the extension packages failed.
+You should then clone the respective package and look for the error in the installation log, <em>e.g.</em>:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/rusty1s/pytorch_scatter
 $ cd pytorch_scatter
 $ python setup.py install  # Check for CUDA compilation or link error.
@@ -298,7 +298,7 @@ $ python setup.py test  # Verify installation by running test suite.
 <p>We collected a lot of common installation errors in the <a class="reference external" href="https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions">Frequently Asked Questions</a> subsection.
 Please note that if you make any changes, you need to force a recompilation of the CUDA kernels by removing the <code class="docutils literal notranslate"><span class="pre">build/</span></code> directory in the root folder of the respective package.
 In case the FAQ does not help you in solving your problem, please create an <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues">issue</a>, please create an <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues">issue</a>.
-You can additionaly check that the <a class="reference external" href="https://github.com/pytorch/extension-cpp">official extension example</a> runs on your machine.</p>
+You should additionally verify that your CUDA is set up correctly by following the official <a class="reference external" href="https://docs.nvidia.com/cuda/index.html">installation guide</a>, and that the <a class="reference external" href="https://github.com/pytorch/extension-cpp">official extension example</a> runs on your machine.</p>
 <div class="section" id="c-cuda-extensions-on-macos">
 <h2>C++/CUDA Extensions on macOS<a class="headerlink" href="#c-cuda-extensions-on-macos" title="Permalink to this headline">¶</a></h2>
 <p>In order to compile CUDA extensions on macOS, you need to replace the call</p>

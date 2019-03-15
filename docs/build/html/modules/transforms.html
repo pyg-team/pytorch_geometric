@@ -591,7 +591,7 @@ will not be removed.</td>
 
 <dl class="class">
 <dt id="torch_geometric.transforms.SamplePoints">
-<em class="property">class </em><code class="descname">SamplePoints</code><span class="sig-paren">(</span><em>num</em>, <em>remove_faces=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/sample_points.html#SamplePoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.SamplePoints" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">SamplePoints</code><span class="sig-paren">(</span><em>num</em>, <em>remove_faces=True</em>, <em>include_normals=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/sample_points.html#SamplePoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.SamplePoints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uniformly samples <code class="xref py py-obj docutils literal notranslate"><span class="pre">num</span></code> points on the mesh faces according to
 their face area.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -601,7 +601,9 @@ their face area.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>num</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of points to sample.</li>
 <li><strong>remove_faces</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the face tensor
-will not be removed.</li>
+will not be removed. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+<li><strong>include_normals</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, then compute
+normals for each sampled point. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
 </ul>
 </td>
 </tr>
