@@ -192,7 +192,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for torch_geometric.data.batch</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span>
 
 
@@ -249,7 +251,7 @@
 <span class="sd">            if the batch concatenation process is corrupted for a specific data</span>
 <span class="sd">            attribute.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;edge_index&#39;</span><span class="p">,</span> <span class="s1">&#39;face&#39;</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(index|face)&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_graphs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
