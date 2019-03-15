@@ -36,14 +36,16 @@ class SamplePoints(object):
 
         vec1 = pos[face[1]] - pos[face[0]]
         vec2 = pos[face[2]] - pos[face[0]]
+
         if self.include_normals:
-            data.norm = torch.nn.functional(vec1.cross(vec2), p=2)
+            data.norm = torch.nn.functional.normalize(vec1.cross(vec2), p=2)
 
         pos_sampled = pos[face[0]]
         pos_sampled += frac[:, :1] * vec1
         pos_sampled += frac[:, 1:] * vec2
 
         data.pos = pos_sampled
+
         if self.remove_faces:
             data.face = None
 
