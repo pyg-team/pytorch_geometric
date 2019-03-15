@@ -130,7 +130,10 @@ Frequently Asked Questions
 
 #. ``error: command '/usr/bin/nvcc' failed with exit status 2``: Ensure that at least CUDA >= 8 is installed (see `Issue#25a <https://github.com/rusty1s/pytorch_geometric/issues/25>`_ and `Issue#106 <https://github.com/rusty1s/pytorch_geometric/issues/106>`_).
 
-#. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your GCC version is at least 4.9 and below 6 (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
+#. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your ``gcc`` version is at least 4.9 and below 6 (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
+   You will also need to reinstall PyTorch because ``gcc`` versions must be consistent across all PyTorch packages.
+
+#. ``file not recognized: file format not recognized``: Clean the repository and temporarily rename Anaconda's ``ld`` linker (see `Issue#16683 <https://github.com/pytorch/pytorch/issues/16683>`_).
 
 #. ``undefined symbol: __cudaPopCallConfiguration``: Ensure that your PyTorch CUDA version and system CUDA version match (see `Issue#19 <https://github.com/rusty1s/pytorch_scatter/issues/19>`_):
 
@@ -151,4 +154,5 @@ Frequently Asked Questions
 
        $ sudo ln -s /usr/local/cuda/lib /usr/local/cuda/lib64
 
-#. On macOS: ``The version of the host compiler ('Apple clang') is not supported``: Downgrade your command line tools (see this `StackOverflow thread <https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116>`_) with the respective version annotated in the `CUDA Installation Guide for Mac <https://developer.download.nvidia.com/compute/cuda/10.1/Prod/docs/sidebar/CUDA_Installation_Guide_Mac.pdf>`_ (Section 1.1) for your specific CUDA version. You can download previous command line tool versions `here <https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Fdownload%2Fmore%2F&rv=1>`_.
+#. On macOS: ``The version of the host compiler ('Apple clang') is not supported``: Downgrade your command line tools (see this `StackOverflow thread <https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116>`_) with the respective version annotated in the `CUDA Installation Guide for Mac <https://developer.download.nvidia.com/compute/cuda/10.1/Prod/docs/sidebar/CUDA_Installation_Guide_Mac.pdf>`_ (Section 1.1) for your specific CUDA version.
+   You can download previous command line tool versions `here <https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Fdownload%2Fmore%2F&rv=1>`_.

@@ -1,3 +1,5 @@
+import re
+
 import torch
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
@@ -92,9 +94,9 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # `edge_index` and `face` should be concatenated in the last dimension,
+        # `*index*` and `*face*` should be concatenated in the last dimension,
         # everything else in the first dimension.
-        return -1 if key in ['edge_index', 'face'] else 0
+        return -1 if bool(re.search('(index|face)', key)) else 0
 
     @property
     def num_nodes(self):
