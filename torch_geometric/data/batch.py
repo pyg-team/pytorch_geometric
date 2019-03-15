@@ -1,3 +1,5 @@
+import re
+
 import torch
 from torch_geometric.data import Data
 
@@ -55,7 +57,7 @@ class Batch(Data):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        return key in ['edge_index', 'face']
+        return bool(re.search('(index|face)', key))
 
     @property
     def num_graphs(self):
