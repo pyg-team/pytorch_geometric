@@ -70,18 +70,9 @@ class GAE(torch.nn.Module):
 
     def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
         row, col = edge_index
-
-        pos_y = adj.new_ones(row.size(0))
-        neg_y = adj.new_zeros(neg_adj_mask.sum().item())
-
-        y = torch.cat([pos_y, neg_y], dim=0)
-        pred = torch.cat([adj[row, col], adj[neg_adj_mask]], dim=0)
-
-        pos_weight = torch.tensor([neg_y.size(0) / pos_y.size(0)])
-        pos_weight = pos_weight.to(adj.device)
-        self.loss_op = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-
-        return self.loss_op(pred, y)
+        loss = -torch.log(torch.sigmoid(adj[row, col])).mean()
+        loss = loss - torch.log(1 - torch.sigmoid(adj[neg_adj_mask])).mean()
+        return loss
 
     def eval(self, adj, edge_index, neg_edge_index):
         pos_y = adj.new_ones(edge_index.size(1))

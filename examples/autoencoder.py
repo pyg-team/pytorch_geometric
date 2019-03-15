@@ -27,7 +27,6 @@ class Encoder(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu')
 model = GAE(Encoder(dataset.num_features, out_channels=16)).to(device)
 data.train_mask = data.val_mask = data.test_mask = data.y = None
 data = model.generate_edge_splits(data)
@@ -43,11 +42,11 @@ def train():
                                      data.train_neg_adj_mask)
     loss.backward()
     optimizer.step()
-    return adj, loss.item()
+    return adj
 
 
 for epoch in range(1, 401):
-    adj, loss = train()
+    adj = train()
     val_auc, val_ap = model.eval(adj, data.val_edge_index,
                                  data.val_neg_edge_index)
     print('Epoch: {:03d}, AUC: {:.4f}, AP: {:.4f}'.format(
