@@ -56,6 +56,7 @@ class GAE(torch.nn.Module):
         neg_row, neg_col = neg_adj_mask.nonzero().t()
 
         perm = torch.randperm(neg_row.size(0))
+        perm = perm[:n_v + n_t]
         neg_row, neg_col = neg_row[perm], neg_col[perm]
 
         r, c = neg_row[:n_v], neg_col[:n_v]
