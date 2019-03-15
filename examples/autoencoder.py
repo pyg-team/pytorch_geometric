@@ -55,4 +55,4 @@ for epoch in range(1, 401):
 
 test_auc, test_ap = model.eval(adj, data.test_edge_index,
                                data.test_neg_edge_index)
-print('Test AUC: {:.4f}, Test AP'.format(test_auc, test_ap))
+print('Test AUC: {:.4f}, Test AP: {:.4f}'.format(test_auc, test_ap))
