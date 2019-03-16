@@ -168,31 +168,30 @@ $ echo $PATH
 
 $ echo $CPATH
 >>> /usr/local/cuda/include:...
-
+```
+and
+```
 $ echo $LD_LIBRARY_PATH
 >>> /usr/local/cuda/lib64
 ```
-
 on Linux or
-
 ```
 $ echo $DYLD_LIBRARY_PATH
 >>> /usr/local/cuda/lib
 ```
-
 on macOS.
 Then run:
 
 ```sh
-$ pip install --upgrade torch-scatter
-$ pip install --upgrade torch-sparse
-$ pip install --upgrade torch-cluster
-$ pip install --upgrade torch-spline-conv (optional)
+$ pip install --verbose --no-cache-dir torch-scatter
+$ pip install --verbose --no-cache-dir torch-sparse
+$ pip install --verbose --no-cache-dir torch-cluster
+$ pip install --verbose --no-cache-dir torch-spline-conv (optional)
 $ pip install torch-geometric
 ```
 
-See the [Frequently Asked Questions](https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions) for common installation errors.
-Verify that your CUDA is set up correctly by following the offical [installation guides](https://docs.nvidia.com/cuda/index.html).
+See the [Frequently Asked Questions](https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions) if you encounter any installation errors.
+Verify that your CUDA is set up correctly by following the offical [installation guide](https://docs.nvidia.com/cuda/index.html).
 If you are running into any installation problems, please create an [issue](https://github.com/rusty1s/pytorch_geometric/issues).
 You can additionally check that the [official extension example](https://github.com/pytorch/extension-cpp) runs on your machine.
 
