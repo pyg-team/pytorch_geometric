@@ -14,7 +14,7 @@ root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 Cora = Planetoid(osp.join(root, 'Cora'), 'Cora')
 CiteSeer = Planetoid(osp.join(root, 'CiteSeer'), 'CiteSeer')
 PubMed = Planetoid(osp.join(root, 'PubMed'), 'PubMed')
-MUTAG = Entities(osp.join(root, 'MUTAG'), 'MUTAG')
+MUTAG = Entities(osp.join(root, 'EntitiesMUTAG'), 'MUTAG')
 
 for d, Net in product([Cora, CiteSeer, PubMed], [GCN, GAT]):
     model = Net(d.num_features, d.num_classes)
