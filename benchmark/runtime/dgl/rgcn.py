@@ -1,6 +1,12 @@
 import torch
 import torch.nn as nn
 import dgl.function as fn
+import argparse
+import time
+import torch.nn.functional as F
+from dgl import DGLGraph
+from dgl.contrib.data import load_data
+from functools import partial
 
 
 class RGCNLayer(nn.Module):
@@ -181,17 +187,6 @@ class BaseRGCN(nn.Module):
         return g.ndata.pop('h')
 
 
-import argparse
-import numpy as np
-import time
-import torch
-import torch.nn.functional as F
-from dgl import DGLGraph
-from dgl.contrib.data import load_data
-import dgl.function as fn
-from functools import partial
-
-
 class EntityClassify(BaseRGCN):
     def create_features(self):
         features = torch.arange(self.num_nodes)
@@ -234,7 +229,6 @@ def main(args):
     num_classes = data.num_classes
     labels = data.labels
     train_idx = data.train_idx
-    test_idx = data.test_idx
 
     # edge type and normalization factor
     edge_type = torch.from_numpy(data.edge_type)
