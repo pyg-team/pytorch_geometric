@@ -56,7 +56,7 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <th>Dataset</th>
       <th>Epochs</th>
       <th>Model</th>
-      <th>DGL 2.0.0</th>
+      <th>DGL 0.2</th>
       <th>PyG</th>
     </tr>
   </thead>
