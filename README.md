@@ -1,8 +1,7 @@
 [pypi-image]: https://badge.fury.io/py/torch-geometric.svg
 [pypi-url]: https://pypi.python.org/pypi/torch-geometric
 [build-image]: https://travis-ci.org/rusty1s/pytorch_geometric.svg?branch=master
-[build-url]: https://travis-ci.org/rusty1s/pytorch_geometric
-[coverage-image]: https://codecov.io/gh/rusty1s/pytorch_geometric/branch/master/graph/badge.svg
+[build-url]: https://travis-ci.org/rusty1s/pytorch_geometric [coverage-image]: https://codecov.io/gh/rusty1s/pytorch_geometric/branch/master/graph/badge.svg
 [coverage-url]: https://codecov.io/github/rusty1s/pytorch_geometric?branch=master
 
 <p align="center">
@@ -57,7 +56,7 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <th>Dataset</th>
       <th>Epochs</th>
       <th>Model</th>
-      <th>DGL 0.1.3</th>
+      <th>DGL 2.0.0</th>
       <th>PyG</th>
     </tr>
   </thead>
@@ -66,37 +65,37 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <td rowspan="2">Cora</td>
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
-      <td align="right">4.2s</td>
-      <td align="right"><b>0.7s</b></td>
+      <td align="right">0.51s</td>
+      <td align="right"><b>0.40s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
-      <td align="right">33.4s</td>
-      <td align="right"><b>2.2s</b></td>
+      <td align="right">5.39s</td>
+      <td align="right"><b>0.81s</b></td>
     </tr>
     <tr>
       <td rowspan="2">CiteSeer</td>
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
-      <td align="right">3.9s</td>
-      <td align="right"><b>0.8s</b></td>
+      <td align="right">0.32s</td>
+      <td align="right"><b>0.29s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
-      <td align="right">28.9s</td>
-      <td align="right"><b>2.4s</b></td>
+      <td align="right">4.96s</td>
+      <td align="right"><b>0.88s</b></td>
     </tr>
     <tr>
       <td rowspan="2">PubMed</td>
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
-      <td align="right">12.7s</td>
-      <td align="right"><b>2.0s</b></td>
+      <td align="right">0.33s</td>
+      <td align="right"><b>0.32s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
-      <td align="right">87.7s</td>
-      <td align="right"><b>12.3s</b></td>
+      <td align="right">14.31s</td>
+      <td align="right"><b>2.41s</b></td>
     </tr>
     <tr>
       <td>MUTAG</td>
