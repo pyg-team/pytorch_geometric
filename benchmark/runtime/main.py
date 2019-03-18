@@ -2,10 +2,11 @@ import os.path as osp
 from itertools import product
 
 import torch
-from runtime import train_runtime
+
 from runtime.gcn import GCN
 from runtime.gat import GAT
 from runtime.rgcn import RGCN
+from runtime.train import train_runtime
 
 from torch_geometric.datasets import Planetoid, Entities
 
