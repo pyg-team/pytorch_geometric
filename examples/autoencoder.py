@@ -42,12 +42,12 @@ def train():
     return adj
 
 
-for epoch in range(1, 401):
+for epoch in range(1, 201):
     adj = train()
     val_auc, val_ap = model.eval(adj, data.val_edge_index,
                                  data.val_neg_edge_index)
-    print('Epoch: {:03d}, AUC: {:.4f}, AP: {:.4f}'.format(
-        epoch, val_auc, val_ap))
+    print('Epoch: {:03d}, AUC: {:.4f}, AP: {:.4f}'.format(epoch, val_auc,
+                                                          val_ap))
 
 test_auc, test_ap = model.eval(adj, data.test_edge_index,
                                data.test_neg_edge_index)

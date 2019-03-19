@@ -71,9 +71,10 @@ class GAE(torch.nn.Module):
 
     def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
         row, col = edge_index
-        loss = -torch.log(torch.sigmoid(adj[row, col])).mean()
-        loss = loss - torch.log(1 - torch.sigmoid(adj[neg_adj_mask])).mean()
-        return loss
+        loss_pos = -torch.log(torch.sigmoid(adj[row, col])).mean()
+        loss_neg = -torch.log(
+            (1 - torch.sigmoid(adj[neg_adj_mask])).clamp(min=1e-8)).mean()
+        return loss_pos + loss_neg
 
     def eval(self, adj, edge_index, neg_edge_index):
         pos_y = adj.new_ones(edge_index.size(1))
