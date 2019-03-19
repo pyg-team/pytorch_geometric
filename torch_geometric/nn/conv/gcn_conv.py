@@ -90,7 +90,7 @@ class GCNConv(MessagePassing):
         """"""
         x = torch.matmul(x, self.weight)
 
-        if not self.checked or self.cached_result is None:
+        if not self.cached or self.cached_result is None:
             edge_index, norm = GCNConv.norm(edge_index,
                                             x.size(0), edge_weight,
                                             self.improved, x.dtype)
