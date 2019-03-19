@@ -57,7 +57,8 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <th>Dataset</th>
       <th>Epochs</th>
       <th>Model</th>
-      <th>DGL 0.2</th>
+      <th>DGL-DB</th>
+      <th>DGL-SPMV</th>
       <th>PyG</th>
     </tr>
   </thead>
@@ -66,44 +67,51 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <td rowspan="2">Cora</td>
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
-      <td align="right">0.51s</td>
-      <td align="right"><b>0.40s</b></td>
+      <td align="right">4.19s</td>
+      <td align="right">0.32s</td>
+      <td align="right"><b>0.25s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
-      <td align="right">5.39s</td>
-      <td align="right"><b>0.81s</b></td>
+      <td align="right">6.31s</td>
+      <td align="right">5.36s</td>
+      <td align="right"><b>0.80s</b></td>
     </tr>
     <tr>
       <td rowspan="2">CiteSeer</td>
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
-      <td align="right">0.32s</td>
-      <td align="right"><b>0.29s</b></td>
+      <td align="right">3.78s</td>
+      <td align="right">0.34s</td>
+      <td align="right"><b>0.30s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
-      <td align="right">4.96s</td>
+      <td align="right">5.61s</td>
+      <td align="right">4.91s</td>
       <td align="right"><b>0.88s</b></td>
     </tr>
     <tr>
       <td rowspan="2">PubMed</td>
       <td rowspan="2" align="center">200</td>
       <td align="center">GCN</td>
-      <td align="right">0.33s</td>
+      <td align="right">12.91s</td>
+      <td align="right">0.36s</td>
       <td align="right"><b>0.32s</b></td>
     </tr>
     <tr>
       <td align="center">GAT</td>
-      <td align="right">14.31s</td>
-      <td align="right"><b>2.41s</b></td>
+      <td align="right">18.69s</td>
+      <td align="right">13.76s</td>
+      <td align="right"><b>2.42s</b></td>
     </tr>
     <tr>
       <td>MUTAG</td>
       <td align="center">50</td>
       <td align="center">R-GCN</td>
-      <td align="right">3.3s</td>
-      <td align="right"><b>2.4s</b></td>
+      <td align="right"></td>
+      <td align="right"></td>
+      <td align="right"><b>0.53s</b></td>
     </tr>
   </tbody>
   <tfoot>
