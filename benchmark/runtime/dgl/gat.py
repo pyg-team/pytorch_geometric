@@ -72,7 +72,7 @@ class GAT(torch.nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-class GATImprovedConv(torch.nn.Module):
+class GATSPMVConv(torch.nn.Module):
     def __init__(self,
                  g,
                  in_channels,
@@ -80,7 +80,7 @@ class GATImprovedConv(torch.nn.Module):
                  heads=1,
                  negative_slope=0.2,
                  dropout=0):
-        super(GATImprovedConv, self).__init__()
+        super(GATSPMVConv, self).__init__()
         self.g = g
         self.out_channels = out_channels
         self.heads = heads
@@ -125,12 +125,12 @@ class GATImprovedConv(torch.nn.Module):
         self.g.edata['a'] = alpha
 
 
-class GATImproved(torch.nn.Module):
+class GATSPMV(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
-        super(GATImproved, self).__init__()
+        super(GATSPMV, self).__init__()
         self.g = g
-        self.conv1 = GATImprovedConv(g, in_channels, 8, 8, 0.6, 0.2)
-        self.conv2 = GATImprovedConv(g, 64, out_channels, 1, 0.6, 0.2)
+        self.conv1 = GATSPMVConv(g, in_channels, 8, 8, 0.6, 0.2)
+        self.conv2 = GATSPMVConv(g, 64, out_channels, 1, 0.6, 0.2)
 
     def forward(self, x):
         x = F.dropout(x, p=0.6, training=self.training)

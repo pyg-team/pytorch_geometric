@@ -87,7 +87,7 @@ class RGCNConv(MessagePassing):
 
     def update(self, aggr_out, x):
         if x.dtype == torch.long:
-            out = aggr_out + torch.index_select(self.root, 0, x)
+            out = aggr_out + self.root
         else:
             out = aggr_out + torch.matmul(x, self.root)
 
