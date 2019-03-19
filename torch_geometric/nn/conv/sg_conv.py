@@ -46,9 +46,7 @@ class SGConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
-        if not self.cached:
-            self.cached_result = None
-        if self.cached_result is None:
+        if not self.checked or self.cached_result is None:
             edge_index, norm = GCNConv.norm(
                 edge_index, x.size(0), edge_weight, dtype=x.dtype)
 
