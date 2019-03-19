@@ -27,5 +27,5 @@ for d, Net in product([Cora, CiteSeer, PubMed], [GCN, GAT]):
 
 for d, Net in product([MUTAG], [RGCN]):
     model = Net(d[0].num_nodes, d.num_classes, d.num_relations)
-    t = train_runtime(model, d[0], epochs=50, device=device)
+    t = train_runtime(model, d[0], epochs=200, device=device)
     print('{} - {}: {:.2f}s'.format(d.__repr__()[:-2], Net.__name__, t))

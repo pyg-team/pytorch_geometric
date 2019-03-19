@@ -49,5 +49,5 @@ for d, Net in product([MUTAG], [RGCN, RGCNSPMV]):
     g.edata.update({'type': edge_type, 'norm': edge_norm})
     g.ndata['id'] = torch.arange(d.num_nodes, dtype=torch.long, device=device)
     model = Net(g, d.num_nodes, d.num_classes, d.num_rels)
-    t = train_runtime(model, d, epochs=50, device=device)
+    t = train_runtime(model, d, epochs=200, device=device)
     print('{} - {}: {:.2f}s'.format(d.name, Net.__name__, t))
