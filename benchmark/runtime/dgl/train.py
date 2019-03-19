@@ -2,22 +2,17 @@ import time
 
 import torch
 import torch.nn.functional as F
-import dgl
-from dgl import DGLGraph
 
 
-def train_runtime(Net, data, epochs, device):
-    g = DGLGraph(data.graph)
-    g.set_n_initializer(dgl.init.zero_initializer)
-    x = torch.tensor(data.features, dtype=torch.float, device=device)
-    mask = torch.tensor(data.train_mask, dtype=torch.uint8, device=device)
+def train_runtime(model, data, epochs, device):
+    if hasattr(data, 'features'):
+        x = torch.tensor(data.features, dtype=torch.float, device=device)
+    else:
+        x = None
+    mask = data.train_mask if hasattr(data, 'train_mask') else data.train_idx
     y = torch.tensor(data.labels, dtype=torch.long, device=device)[mask]
-    g.add_edges(g.nodes(), g.nodes())
-    norm = torch.pow(g.in_degrees().float(), -0.5)
-    norm[torch.isinf(norm)] = 0
-    g.ndata['norm'] = norm.unsqueeze(1).to(device)
 
-    model = Net(g, x.size(1), data.num_labels).to(device)
+    model = model.to(device)
     model.train()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
@@ -28,7 +23,7 @@ def train_runtime(Net, data, epochs, device):
     for epoch in range(epochs):
         optimizer.zero_grad()
         out = model(x)
-        loss = F.nll_loss(out[mask], y)
+        loss = F.nll_loss(out[mask], y.view(-1))
         loss.backward()
         optimizer.step()
 
