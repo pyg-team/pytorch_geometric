@@ -107,11 +107,11 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
     </tr>
     <tr>
       <td>MUTAG</td>
-      <td align="center">50</td>
+      <td align="center">200</td>
       <td align="center">RGCN</td>
-      <td align="right">4.64s</td>
-      <td align="right">0.60s</td>
-      <td align="right"><b>0.53s</b></td>
+      <td align="right">18.81s</td>
+      <td align="right">2.40s</td>
+      <td align="right"><b>2.14s</b></td>
     </tr>
   </tbody>
   <tfoot>
