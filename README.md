@@ -116,7 +116,13 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="5"><i>training runtimes obtained on a NVIDIA GTX 1080Ti</i></td>
+      <td colspan="6"><b>DGL-DB:</b> DGL 0.2 with <i>Degree Bucketing</i>.</td>
+    </tr>
+    <tr>
+      <td colspan="6"><b>DGL-SPMV:</b> DGL 0.2 with <i>SPMV optimization</i>.</td>
+    </tr>
+    <tr>
+      <td colspan="6">Training runtimes obtained on a NVIDIA GTX 1080Ti.</td>
     </tr>
   </tfoot>
 </table>
