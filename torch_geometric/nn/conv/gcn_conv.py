@@ -60,22 +60,23 @@ class GCNConv(MessagePassing):
     def reset_parameters(self):
         glorot(self.weight)
         zeros(self.bias)
+        self.cached_result = None
 
     @staticmethod
     def norm(edge_index, num_nodes, edge_weight, improved=False, dtype=None):
         if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1), ),
-                                     dtype=dtype,
-                                     device=edge_index.device)
+            edge_weight = torch.ones(
+                (edge_index.size(1), ), dtype=dtype, device=edge_index.device)
         edge_weight = edge_weight.view(-1)
         assert edge_weight.size(0) == edge_index.size(1)
 
         edge_index, _ = remove_self_loops(edge_index)
         edge_index = add_self_loops(edge_index, num_nodes)
-        loop_weight = torch.full((num_nodes, ),
-                                 1 if not improved else 2,
-                                 dtype=edge_weight.dtype,
-                                 device=edge_weight.device)
+        loop_weight = torch.full(
+            (num_nodes, ),
+            1 if not improved else 2,
+            dtype=edge_weight.dtype,
+            device=edge_weight.device)
         edge_weight = torch.cat([edge_weight, loop_weight], dim=0)
 
         row, col = edge_index
@@ -89,10 +90,9 @@ class GCNConv(MessagePassing):
         """"""
         x = torch.matmul(x, self.weight)
 
-        if not self.cached:
-            self.cached_result = None
-        if self.cached_result is None:
-            edge_index, norm = GCNConv.norm(edge_index, x.size(0), edge_weight,
+        if not self.checked or self.cached_result is None:
+            edge_index, norm = GCNConv.norm(edge_index,
+                                            x.size(0), edge_weight,
                                             self.improved, x.dtype)
             self.cached_result = edge_index, norm
 
