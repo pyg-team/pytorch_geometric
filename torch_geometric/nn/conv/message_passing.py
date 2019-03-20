@@ -28,7 +28,7 @@ class MessagePassing(torch.nn.Module):
             (default: :obj:`"source_to_target"`)
     """
 
-    def __init__(self, aggr='add', flow='target_to_source'):
+    def __init__(self, aggr='add', flow='source_to_target'):
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
@@ -64,15 +64,17 @@ class MessagePassing(torch.nn.Module):
         for arg in self.message_args:
             if arg[-2:] == '_i':
                 tmp = kwargs[arg[:-2]]
-                if size[i] is None:
-                    size[i] = tmp.size(0)
-                tmp = torch.index_select(tmp, 0, edge_index[i])
+                if tmp is not None:
+                    if size[i] is None:
+                        size[i] = tmp.size(0)
+                    tmp = torch.index_select(tmp, 0, edge_index[i])
                 message_args.append(tmp)
             elif arg[-2:] == '_j':
                 tmp = kwargs[arg[:-2]]
-                if size[j] is None:
-                    size[j] = tmp.size(0)
-                tmp = torch.index_select(tmp, 0, edge_index[j])
+                if tmp is not None:
+                    if size[j] is None:
+                        size[j] = tmp.size(0)
+                    tmp = torch.index_select(tmp, 0, edge_index[j])
                 message_args.append(tmp)
             else:
                 message_args.append(kwargs[arg])
