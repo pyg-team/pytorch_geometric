@@ -35,7 +35,7 @@ html_theme_options = {
     'logo_only': True,
 }
 
-html_logo = '_static/img/logo.svg'
+html_logo = '_static/img/pyg_logo_text.svg'
 html_static_path = ['_static']
 html_context = {'css_files': ['_static/css/custom.css']}
 
