@@ -41,10 +41,10 @@ def train():
 
 
 def test(pos_edge_index, neg_edge_index):
-    model.encoder.eval()
+    model.eval()
     with torch.no_grad():
         z = model.encode(x, edge_index)
-    return model.eval(z, pos_edge_index, neg_edge_index)
+    return model.evaluate(z, pos_edge_index, neg_edge_index)
 
 
 for epoch in range(1, 201):
