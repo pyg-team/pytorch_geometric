@@ -1,31 +1,29 @@
 import math
+import random
 
-import numpy as np
 import torch
-
 from sklearn.metrics import roc_auc_score, average_precision_score
-
-
-class Decoder(torch.nn.Module):
-    def __init__(self):
-        super(Decoder, self).__init__()
-
-    def forward(self, z):
-        adj = torch.matmul(z, z.t())
-        return adj
 
 
 class GAE(torch.nn.Module):
     def __init__(self, encoder):
         super(GAE, self).__init__()
         self.encoder = encoder
-        self.decoder = Decoder()
 
-    def forward(self, *args, **kwargs):
-        z = self.encoder(*args, **kwargs)
-        return self.decoder(z)
+    def encode(self, *args, **kwargs):
+        return self.encoder(*args, **kwargs)
 
-    def generate_edge_splits(self, data, val_ratio=0.05, test_ratio=0.1):
+    def decode_all(self, z, sigmoid=False):
+        adj = torch.matmul(z, z.t())
+        adj = torch.sigmoid(adj) if sigmoid else adj
+        return adj
+
+    def decode_for_indices(self, z, edge_index, sigmoid=False):
+        value = (z[edge_index[0]] * z[edge_index[1]]).sum(dim=1)
+        value = torch.sigmoid(value) if sigmoid else value
+        return value
+
+    def split_edges(self, data, val_ratio=0.05, test_ratio=0.1):
         assert 'batch' not in data  # No batch-mode.
 
         row, col = data.edge_index
@@ -42,52 +40,52 @@ class GAE(torch.nn.Module):
         row, col = row[perm], col[perm]
 
         r, c = row[:n_v], col[:n_v]
-        data.val_edge_index = torch.stack([r, c], dim=0)
+        data.val_pos_edge_index = torch.stack([r, c], dim=0)
         r, c = row[n_v:n_v + n_t], col[n_v:n_v + n_t]
-        data.test_edge_index = torch.stack([r, c], dim=0)
+        data.test_pos_edge_index = torch.stack([r, c], dim=0)
         r, c = row[n_v + n_t:], col[n_v + n_t:]
-        data.train_edge_index = torch.stack([r, c], dim=0)
+        data.train_pos_edge_index = torch.stack([r, c], dim=0)
 
         # Negative edges.
         num_nodes = data.num_nodes
-        neg_adj_mask = torch.zeros(num_nodes, num_nodes, dtype=torch.uint8)
-        neg_adj_mask[np.triu_indices(data.num_nodes, k=1)] = 1
+        neg_adj_mask = torch.ones(num_nodes, num_nodes, dtype=torch.uint8)
+        neg_adj_mask = neg_adj_mask.triu(diagonal=1)
         neg_adj_mask[row, col] = 0
-        neg_row, neg_col = neg_adj_mask.nonzero().t()
 
-        perm = torch.randperm(neg_row.size(0))
-        perm = perm[:n_v + n_t]
+        neg_row, neg_col = neg_adj_mask.nonzero().t()
+        perm = torch.tensor(random.sample(range(neg_row.size(0)), n_v + n_t))
         neg_row, neg_col = neg_row[perm], neg_col[perm]
 
-        r, c = neg_row[:n_v], neg_col[:n_v]
-        data.val_neg_edge_index = torch.stack([r, c], dim=0)
-        neg_adj_mask[r, c] = 0
-        r, c = neg_row[n_v:n_v + n_t], neg_col[n_v:n_v + n_t]
-        data.test_neg_edge_index = torch.stack([r, c], dim=0)
-        neg_adj_mask[r, c] = 0
+        neg_adj_mask[neg_row, neg_col] = 0
         data.train_neg_adj_mask = neg_adj_mask
+
+        row, col = neg_row[:n_v], neg_col[:n_v]
+        data.val_neg_edge_index = torch.stack([row, col], dim=0)
+
+        row, col = neg_row[n_v:n_v + n_t], neg_col[n_v:n_v + n_t]
+        data.test_neg_edge_index = torch.stack([row, col], dim=0)
 
         return data
 
-    def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
-        row, col = edge_index
-        loss_pos = -torch.log(torch.sigmoid(adj[row, col])).mean()
-        loss_neg = -torch.log(
-            (1 - torch.sigmoid(adj[neg_adj_mask])).clamp(min=1e-8)).mean()
-        return loss_pos + loss_neg
+    def loss(self, z, pos_edge_index, neg_adj_mask):
+        pos_loss = -torch.log(
+            self.decode_for_indices(z, pos_edge_index, sigmoid=True)).mean()
 
-    def eval(self, adj, edge_index, neg_edge_index):
-        pos_y = adj.new_ones(edge_index.size(1))
-        neg_y = adj.new_zeros(neg_edge_index.size(1))
+        neg_loss = -torch.log(
+            (1 - self.decode_all(z, sigmoid=True)[neg_adj_mask]).clamp(
+                min=1e-8)).mean()
 
-        adj = torch.sigmoid(adj.detach())
-        pos_pred = adj[edge_index[0], edge_index[1]]
-        neg_pred = adj[neg_edge_index[0], neg_edge_index[1]]
+        return pos_loss + neg_loss
 
-        y = torch.cat([pos_y, neg_y], dim=0).cpu()
-        pred = torch.cat([pos_pred, neg_pred], dim=0).cpu()
+    def eval(self, z, pos_edge_index, neg_edge_index):
+        pos_y = z.new_ones(pos_edge_index.size(1))
+        neg_y = z.new_zeros(neg_edge_index.size(1))
+        y = torch.cat([pos_y, neg_y], dim=0)
 
-        roc_score = roc_auc_score(y, pred)
-        ap_score = average_precision_score(y, pred)
+        pos_pred = self.decode_for_indices(z, pos_edge_index, sigmoid=True)
+        neg_pred = self.decode_for_indices(z, neg_edge_index, sigmoid=True)
+        pred = torch.cat([pos_pred, neg_pred], dim=0)
 
-        return roc_score, ap_score
+        y, pred = y.detach().cpu().numpy(), pred.detach().cpu().numpy()
+
+        return roc_auc_score(y, pred), average_precision_score(y, pred)
