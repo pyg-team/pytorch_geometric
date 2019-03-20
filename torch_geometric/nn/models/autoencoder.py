@@ -39,7 +39,7 @@ class GAE(torch.nn.Module):
         adj = torch.sigmoid(adj) if sigmoid else adj
         return adj
 
-    def decode_for_indices(self, z, edge_index, sigmoid=True):
+    def decode_indices(self, z, edge_index, sigmoid=True):
         r"""Decodes the latent variables :obj:`z` into edge-probabilties for
         the given node-pairs :obj:`edge_index`.
 
@@ -123,7 +123,7 @@ class GAE(torch.nn.Module):
         """
 
         pos_loss = -torch.log(
-            self.decode_for_indices(z, pos_edge_index, sigmoid=True)).mean()
+            self.decode_indices(z, pos_edge_index, sigmoid=True)).mean()
 
         neg_loss = -torch.log(
             (1 - self.decode_all(z, sigmoid=True)[neg_adj_mask]).clamp(
@@ -148,8 +148,8 @@ class GAE(torch.nn.Module):
         neg_y = z.new_zeros(neg_edge_index.size(1))
         y = torch.cat([pos_y, neg_y], dim=0)
 
-        pos_pred = self.decode_for_indices(z, pos_edge_index, sigmoid=True)
-        neg_pred = self.decode_for_indices(z, neg_edge_index, sigmoid=True)
+        pos_pred = self.decode_indices(z, pos_edge_index, sigmoid=True)
+        neg_pred = self.decode_indices(z, neg_edge_index, sigmoid=True)
         pred = torch.cat([pos_pred, neg_pred], dim=0)
 
         y, pred = y.detach().cpu().numpy(), pred.detach().cpu().numpy()
