@@ -14,7 +14,7 @@ def test_gae():
     assert adj.tolist() == [[+2, -1, +1], [-1, +5, +4], [+1, +4, +5]]
 
     edge_index = torch.tensor([[0, 1], [1, 2]])
-    value = model.decode_for_indices(z, edge_index, sigmoid=False)
+    value = model.decode_indices(z, edge_index, sigmoid=False)
     assert value.tolist() == [-1, 4]
 
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],

@@ -1884,9 +1884,10 @@ the valid nodes for each graph. (default: <a class="reference external" href="ht
 <dl class="class">
 <dt id="torch_geometric.nn.models.GAE">
 <em class="property">class </em><code class="descname">GAE</code><span class="sig-paren">(</span><em>encoder</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Graph Auto-Encoder model from the <a class="reference external" href="https://arxiv.org/abs/1611.07308">“Variational Graph Auto-Encoders”</a> paper based on a user-defined encoder
-model and a simple inner product decoder
-<span class="math notranslate nohighlight">\(\sigma(\mathbf{Z}\mathbf{Z}^{\top})\)</span> where
+<dd><p>The Graph Auto-Encoder model from the
+<a class="reference external" href="https://arxiv.org/abs/1611.07308">“Variational Graph Auto-Encoders”</a>
+paper based on a user-defined encoder model and a simple inner product
+decoder <span class="math notranslate nohighlight">\(\sigma(\mathbf{Z}\mathbf{Z}^{\top})\)</span> where
 <span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{N \times d}\)</span> denotes the latent space
 produced by the encoder.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1919,8 +1920,8 @@ the logistic sigmoid function to the output.
 </dd></dl>
 
 <dl class="method">
-<dt id="torch_geometric.nn.models.GAE.decode_for_indices">
-<code class="descname">decode_for_indices</code><span class="sig-paren">(</span><em>z</em>, <em>edge_index</em>, <em>sigmoid=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.decode_for_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.decode_for_indices" title="Permalink to this definition">¶</a></dt>
+<dt id="torch_geometric.nn.models.GAE.decode_indices">
+<code class="descname">decode_indices</code><span class="sig-paren">(</span><em>z</em>, <em>edge_index</em>, <em>sigmoid=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.decode_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.decode_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decodes the latent variables <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code> into edge-probabilties for
 the given node-pairs <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_index</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1995,7 +1996,7 @@ adjacency matrix mask <code class="xref py py-obj docutils literal notranslate">
 <dl class="method">
 <dt id="torch_geometric.nn.models.GAE.split_edges">
 <code class="descname">split_edges</code><span class="sig-paren">(</span><em>data</em>, <em>val_ratio=0.05</em>, <em>test_ratio=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.split_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.split_edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Splits the edges of a <a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object
+<dd><p>Splits the edges of a <a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object
 into positve and negative train/val/test edges.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

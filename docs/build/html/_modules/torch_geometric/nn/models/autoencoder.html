@@ -201,10 +201,10 @@
 
 
 <div class="viewcode-block" id="GAE"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.GAE">[docs]</a><span class="k">class</span> <span class="nc">GAE</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Graph Auto-Encoder model from the `&quot;Variational Graph Auto-Encoders&quot;</span>
-<span class="sd">    &lt;https://arxiv.org/abs/1611.07308&gt;`_ paper based on a user-defined encoder</span>
-<span class="sd">    model and a simple inner product decoder</span>
-<span class="sd">    :math:`\sigma(\mathbf{Z}\mathbf{Z}^{\top})` where</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Graph Auto-Encoder model from the</span>
+<span class="sd">    `&quot;Variational Graph Auto-Encoders&quot; &lt;https://arxiv.org/abs/1611.07308&gt;`_</span>
+<span class="sd">    paper based on a user-defined encoder model and a simple inner product</span>
+<span class="sd">    decoder :math:`\sigma(\mathbf{Z}\mathbf{Z}^{\top})` where</span>
 <span class="sd">    :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent space</span>
 <span class="sd">    produced by the encoder.</span>
 
@@ -234,7 +234,7 @@
         <span class="n">adj</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">adj</span><span class="p">)</span> <span class="k">if</span> <span class="n">sigmoid</span> <span class="k">else</span> <span class="n">adj</span>
         <span class="k">return</span> <span class="n">adj</span></div>
 
-<div class="viewcode-block" id="GAE.decode_for_indices"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.GAE.decode_for_indices">[docs]</a>    <span class="k">def</span> <span class="nf">decode_for_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="GAE.decode_indices"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.GAE.decode_indices">[docs]</a>    <span class="k">def</span> <span class="nf">decode_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Decodes the latent variables :obj:`z` into edge-probabilties for</span>
 <span class="sd">        the given node-pairs :obj:`edge_index`.</span>
 
@@ -250,7 +250,7 @@
         <span class="k">return</span> <span class="n">value</span></div>
 
 <div class="viewcode-block" id="GAE.split_edges"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.GAE.split_edges">[docs]</a>    <span class="k">def</span> <span class="nf">split_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">val_ratio</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">test_ratio</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;&quot;Splits the edges of a :obj:`torch_geometric.data.Data` object</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Splits the edges of a :obj:`torch_geometric.data.Data` object</span>
 <span class="sd">        into positve and negative train/val/test edges.</span>
 
 <span class="sd">        Args:</span>
@@ -291,6 +291,7 @@
 
         <span class="n">neg_row</span><span class="p">,</span> <span class="n">neg_col</span> <span class="o">=</span> <span class="n">neg_adj_mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
         <span class="n">perm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">neg_row</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">n_v</span> <span class="o">+</span> <span class="n">n_t</span><span class="p">))</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="n">perm</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
         <span class="n">neg_row</span><span class="p">,</span> <span class="n">neg_col</span> <span class="o">=</span> <span class="n">neg_row</span><span class="p">[</span><span class="n">perm</span><span class="p">],</span> <span class="n">neg_col</span><span class="p">[</span><span class="n">perm</span><span class="p">]</span>
 
         <span class="n">neg_adj_mask</span><span class="p">[</span><span class="n">neg_row</span><span class="p">,</span> <span class="n">neg_col</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -317,7 +318,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">pos_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">decode_for_indices</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">decode_indices</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
         <span class="n">neg_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
             <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_all</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="n">neg_adj_mask</span><span class="p">])</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span>
@@ -342,8 +343,8 @@
         <span class="n">neg_y</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">neg_edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pos_y</span><span class="p">,</span> <span class="n">neg_y</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="n">pos_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_for_indices</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">neg_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_for_indices</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">pos_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_indices</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">neg_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decode_indices</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pos_pred</span><span class="p">,</span> <span class="n">neg_pred</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="n">y</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">pred</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
