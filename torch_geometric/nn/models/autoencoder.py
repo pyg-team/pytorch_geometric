@@ -6,10 +6,10 @@ from sklearn.metrics import roc_auc_score, average_precision_score
 
 
 class GAE(torch.nn.Module):
-    r"""The Graph Auto-Encoder model from the `"Variational Graph Auto-Encoders"
-    <https://arxiv.org/abs/1611.07308>`_ paper based on a user-defined encoder
-    model and a simple inner product decoder
-    :math:`\sigma(\mathbf{Z}\mathbf{Z}^{\top})` where
+    r"""The Graph Auto-Encoder model from the
+    `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
+    paper based on a user-defined encoder model and a simple inner product
+    decoder :math:`\sigma(\mathbf{Z}\mathbf{Z}^{\top})` where
     :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent space
     produced by the encoder.
 
