@@ -85,7 +85,7 @@ def test(loader):
     return correct / len(loader.dataset)
 
 
-for epoch in range(1, 31):
+for epoch in range(1, 201):
     train(epoch)
     test_acc = test(test_loader)
     print('Epoch: {:02d}, Test: {:.4f}'.format(epoch, test_acc))
