@@ -96,6 +96,7 @@ class GAE(torch.nn.Module):
 
         neg_row, neg_col = neg_adj_mask.nonzero().t()
         perm = torch.tensor(random.sample(range(neg_row.size(0)), n_v + n_t))
+        perm = perm.to(torch.long)
         neg_row, neg_col = neg_row[perm], neg_col[perm]
 
         neg_adj_mask[neg_row, neg_col] = 0
