@@ -7,6 +7,15 @@ from torch_geometric.utils import (contains_isolated_nodes,
 from ..utils.num_nodes import maybe_num_nodes
 
 
+def size_repr(value):
+    if torch.is_tensor(value):
+        return list(value.size())
+    elif isinstance(value, int) or isinstance(value, float):
+        return [1]
+    else:
+        return ValueError('Unsupported attribute type.')
+
+
 class Data(object):
     r"""A plain old python object modeling a single graph with various
     (optional) attributes:
@@ -84,9 +93,9 @@ class Data(object):
             if self[key] is not None:
                 yield key, self[key]
 
-    def cat_dim(self, key, value):
-        r"""Returns the dimension in which the attribute :obj:`key` with
-        content :obj:`value` gets concatenated when creating batches.
+    def __cat_dim__(self, key, value):
+        r"""Returns the dimension for which :obj:`value` of attribute
+        :obj:`key` will get concatenated when creating batches.
 
         .. note::
 
@@ -98,11 +107,23 @@ class Data(object):
         # everything else in the first dimension.
         return -1 if bool(re.search('(index|face)', key)) else 0
 
+    def __cumsum__(self, key, value):
+        r"""If :obj:`True`, :obj:`value` of attribute :obj:`key` is
+        cumulatively summed up when creating batches.
+
+        .. note::
+
+            This method is for internal use only, and should only be overridden
+            if the batch concatenation process is corrupted for a specific data
+            attribute.
+        """
+        return bool(re.search('(index|face)', key))
+
     @property
     def num_nodes(self):
         r"""Returns the number of nodes in the graph."""
         for key, item in self('x', 'pos'):
-            return item.size(self.cat_dim(key, item))
+            return item.size(self.__cat_dim__(key, item))
         if self.edge_index is not None:
             return maybe_num_nodes(self.edge_index)
         return None
@@ -111,7 +132,7 @@ class Data(object):
     def num_edges(self):
         r"""Returns the number of edges in the graph."""
         for key, item in self('edge_index', 'edge_attr'):
-            return item.size(self.cat_dim(key, item))
+            return item.size(self.__cat_dim__(key, item))
         return None
 
     @property
@@ -166,8 +187,9 @@ class Data(object):
         return self.apply(lambda x: x.to(device), *keys)
 
     def clone(self):
-        return Data.from_dict({k: v.clone() for k, v in self})
+        return self.__class__.from_dict({k: v.clone() for k, v in self})
 
     def __repr__(self):
-        info = ['{}={}'.format(key, list(item.size())) for key, item in self]
+
+        info = ['{}={}'.format(key, size_repr(item)) for key, item in self]
         return '{}({})'.format(self.__class__.__name__, ', '.join(info))
