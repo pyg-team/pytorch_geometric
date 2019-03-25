@@ -141,7 +141,6 @@ class VGAE(GAE):
 
     def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
         row, col = edge_index
-        #print(adj[row, col])
         loss = -torch.log(torch.sigmoid(adj[row, col])).mean()
         print(loss)
         loss = loss - torch.log(1 - torch.sigmoid(adj[neg_adj_mask])).mean()
@@ -196,7 +195,7 @@ class ARGVA(ARGA):
         z=self.sample_z(mean,logvar)
         return z, mean, logvar
 
-####### tests
+###### tests
 
 class Discriminator(nn.Module):
     def __init__(self, n_input, hidden_layers=[30,20]):
@@ -237,7 +236,7 @@ def train_vgae():
     model.train()
     optimizer.zero_grad()
     z, mean, logvar = model.encode(x, edge_index)
-    loss = beta*model.kl_loss(mean, logvar)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) # model.
+    loss = beta*model.kl_loss(mean, logvar)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) 
     print(loss.item())
     loss.backward()
     optimizer.step()
@@ -247,7 +246,7 @@ def train_arga():
     optimizer.zero_grad()
     z = model.encoder(x, edge_index)
     d_real, d_fake = model.discriminate(z)
-    loss = model.discriminator_loss(d_real, d_fake)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) # model.
+    loss = model.discriminator_loss(d_real, d_fake)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) 
     print(loss.item())
     loss.backward()
     optimizer.step()
@@ -257,7 +256,7 @@ def train_argva():
     optimizer.zero_grad()
     z, mean, logvar = model.encode(x, edge_index)
     d_real, d_fake = model.discriminate(z)
-    loss = beta*model.kl_loss(mean, logvar)+model.discriminator_loss(d_real, d_fake)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) # model.
+    loss = beta*model.kl_loss(mean, logvar)+model.discriminator_loss(d_real, d_fake)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) 
     print(loss.item())
     loss.backward()
     optimizer.step()
@@ -265,22 +264,22 @@ def train_argva():
 def simulate():
     model.train(False)
     with torch.no_grad():
-        return model.decoder(model.encode(x, edge_index)[0]).detach().numpy() # model.
+        return model.decoder(model.encode(x, edge_index)[0]).detach().numpy() 
 
 def test(pos_edge_index, neg_edge_index):
     model.train(False)
     with torch.no_grad():
         z = model.encoder(x, edge_index)
         print(z.size())
-    return model.eval(model.decoder(z), pos_edge_index, neg_edge_index) # model.
+    return model.eval(model.decoder(z), pos_edge_index, neg_edge_index)
 
 train = train_argva
 
 from copy import deepcopy
 top_model=None
 top_score=0.
-for i in range(1000): # 000
-    train() # don't train for too long, else test performance will reduce due to overfitting, maybe need val set of edges, for now it is okay for demo purposes. That's why some are wrong no matter what
+for i in range(1000):
+    train() 
     val_score=np.mean(test(data.val_edge_index, data.val_neg_edge_index))
     print(val_score)
     print(np.mean(test(data.test_edge_index, data.test_neg_edge_index)))
