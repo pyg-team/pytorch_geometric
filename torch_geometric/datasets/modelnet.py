@@ -95,8 +95,6 @@ class ModelNet(InMemoryDataset):
             folder = osp.join(self.raw_dir, category, dataset)
             paths = glob.glob('{}/{}_*.off'.format(folder, category))
             for path in paths:
-                path = '/tmp/ModelNet40/raw/guitar/test/guitar_0255.off'
-                print(path)
                 data = read_off(path)
                 data.y = torch.tensor([target])
                 data_list.append(data)
