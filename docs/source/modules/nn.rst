@@ -47,6 +47,13 @@ Dense Hierarchical Pooling Layers
     :members:
     :undoc-members:
 
+Models
+------
+
+.. automodule:: torch_geometric.nn.models
+    :members:
+    :undoc-members:
+
 DataParallel layers
 -------------------
 

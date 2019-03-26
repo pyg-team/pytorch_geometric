@@ -7,6 +7,7 @@ from .polar import Polar
 from .spherical import Spherical
 from .one_hot_degree import OneHotDegree
 from .target_indegree import TargetIndegree
+from .local_degree_profile import LocalDegreeProfile
 from .center import Center
 from .normalize_scale import NormalizeScale
 from .random_translate import RandomTranslate
@@ -34,6 +35,7 @@ __all__ = [
     'Spherical',
     'OneHotDegree',
     'TargetIndegree',
+    'LocalDegreeProfile',
     'Center',
     'NormalizeScale',
     'RandomTranslate',

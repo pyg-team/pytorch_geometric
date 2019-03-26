@@ -55,7 +55,7 @@
 
           
             
-            <img src="../../../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../../../_static/pyg_logo_text.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.0.2)
+                master (1.0.3)
               </div>
             
           
@@ -90,7 +90,8 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/installation.html#id1">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/introduction.html">Introduction by example</a><ul>
@@ -121,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
@@ -191,7 +193,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for torch_geometric.data.data</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">contains_isolated_nodes</span><span class="p">,</span>
                                    <span class="n">contains_self_loops</span><span class="p">,</span> <span class="n">is_undirected</span><span class="p">)</span>
 
@@ -285,9 +289,9 @@
 <span class="sd">            if the batch concatenation process is corrupted for a specific data</span>
 <span class="sd">            attribute.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># `edge_index` and `face` should be concatenated in the last dimension,</span>
+        <span class="c1"># `*index*` and `*face*` should be concatenated in the last dimension,</span>
         <span class="c1"># everything else in the first dimension.</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;edge_index&#39;</span><span class="p">,</span> <span class="s1">&#39;face&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span></div>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(index|face)&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span> <span class="k">else</span> <span class="mi">0</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

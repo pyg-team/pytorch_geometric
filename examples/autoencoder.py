@@ -18,10 +18,7 @@ class Encoder(torch.nn.Module):
         self.conv1 = GCNConv(in_channels, 2 * out_channels)
         self.conv2 = GCNConv(2 * out_channels, out_channels)
 
-        self.lin1 = torch.nn.Linear(in_channels, 16)
-
     def forward(self, x, edge_index):
-        return self.lin1(x)
         x = F.relu(self.conv1(x, edge_index))
         return self.conv2(x, edge_index)
 
@@ -29,7 +26,7 @@ class Encoder(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GAE(Encoder(dataset.num_features, out_channels=16)).to(device)
 data.train_mask = data.val_mask = data.test_mask = data.y = None
-data = model.generate_edge_splits(data)
+data = model.split_edges(data)
 x, edge_index = data.x.to(device), data.edge_index.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
@@ -37,21 +34,23 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train():
     model.train()
     optimizer.zero_grad()
-    adj = model(x, edge_index)
-    loss = model.reconstruction_loss(adj, data.train_edge_index,
-                                     data.train_neg_adj_mask)
+    z = model.encode(x, edge_index)
+    loss = model.loss(z, data.train_pos_edge_index, data.train_neg_adj_mask)
     loss.backward()
     optimizer.step()
-    return adj
 
 
-for epoch in range(1, 401):
-    adj = train()
-    val_auc, val_ap = model.eval(adj, data.val_edge_index,
-                                 data.val_neg_edge_index)
-    print('Epoch: {:03d}, AUC: {:.4f}, AP: {:.4f}'.format(
-        epoch, val_auc, val_ap))
+def test(pos_edge_index, neg_edge_index):
+    model.eval()
+    with torch.no_grad():
+        z = model.encode(x, edge_index)
+    return model.evaluate(z, pos_edge_index, neg_edge_index)
 
-test_auc, test_ap = model.eval(adj, data.test_edge_index,
-                               data.test_neg_edge_index)
-print('Test AUC: {:.4f}, Test AP: {:.4f}'.format(test_auc, test_ap))
+
+for epoch in range(1, 201):
+    train()
+    auc, ap = test(data.val_pos_edge_index, data.val_neg_edge_index)
+    print('Epoch: {:03d}, AUC: {:.4f}, AP: {:.4f}'.format(epoch, auc, ap))
+
+auc, ap = test(data.test_pos_edge_index, data.test_neg_edge_index)
+print('Test AUC: {:.4f}, Test AP: {:.4f}'.format(auc, ap))

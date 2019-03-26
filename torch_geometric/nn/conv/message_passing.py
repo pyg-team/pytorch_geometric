@@ -19,43 +19,71 @@ class MessagePassing(torch.nn.Module):
     See `here <https://rusty1s.github.io/pytorch_geometric/build/html/notes/
     create_gnn.html>`__ for the accompanying tutorial.
 
+    Args:
+        aggr (string, optional): The aggregation scheme to use
+            (:obj:`"add"`, :obj:`"mean"` or :obj:`"max"`).
+            (default: :obj:`"add"`)
+        flow (string, optional): The flow direction of message passing
+            (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
+            (default: :obj:`"source_to_target"`)
     """
 
-    def __init__(self, aggr='add'):
+    def __init__(self, aggr='add', flow='source_to_target'):
         super(MessagePassing, self).__init__()
+
+        self.aggr = aggr
+        assert self.aggr in ['add', 'mean', 'max']
+
+        self.flow = flow
+        assert self.flow in ['target_to_source', 'source_to_target']
 
         self.message_args = inspect.getargspec(self.message)[0][1:]
         self.update_args = inspect.getargspec(self.update)[0][2:]
 
-    def propagate(self, aggr, edge_index, **kwargs):
+    def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
-        Takes in an aggregation scheme (:obj:`"add"`, :obj:`"mean"` or
-        :obj:`"max"`), the edge indices, and all additional data which is
-        needed to construct messages and to update node embeddings."""
 
-        assert aggr in ['add', 'mean', 'max']
+        Args:
+            edge_index (Tensor): The indices of a general (sparse) assignment
+                matrix with shape :obj:`[N, M]` (can be directed or
+                undirected).
+            size (list or tuple, optional): The size :obj:`[N, M]` of the
+                assignment matrix. If set to :obj:`None`, the size is tried to
+                get automatically inferrred. (default: :obj:`None`)
+            **kwargs: Any additional data which is needed to construct messages
+                and to update node embeddings.
+        """
+
+        size = [None, None] if size is None else list(size)
+        assert len(size) >= 2
+
         kwargs['edge_index'] = edge_index
+        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
 
-        size = None
         message_args = []
         for arg in self.message_args:
             if arg[-2:] == '_i':
                 tmp = kwargs[arg[:-2]]
-                size = tmp.size(0)
-                tmp = torch.index_select(tmp, 0, edge_index[0])
+                if tmp is not None:
+                    if size[i] is None:
+                        size[i] = tmp.size(0)
+                    tmp = torch.index_select(tmp, 0, edge_index[i])
                 message_args.append(tmp)
             elif arg[-2:] == '_j':
                 tmp = kwargs[arg[:-2]]
-                size = tmp.size(0)
-                tmp = torch.index_select(tmp, 0, edge_index[1])
+                if tmp is not None:
+                    if size[j] is None:
+                        size[j] = tmp.size(0)
+                    tmp = torch.index_select(tmp, 0, edge_index[j])
                 message_args.append(tmp)
             else:
                 message_args.append(kwargs[arg])
 
+        kwargs['size'] = size
         update_args = [kwargs[arg] for arg in self.update_args]
 
         out = self.message(*message_args)
-        out = scatter_(aggr, out, edge_index[0], dim_size=size)
+        out = scatter_(self.aggr, out, edge_index[i], dim_size=size[i])
         out = self.update(out, *update_args)
 
         return out

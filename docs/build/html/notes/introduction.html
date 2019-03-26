@@ -57,7 +57,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../_static/pyg_logo_text.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.0.2)
+                master (1.0.3)
               </div>
             
           
@@ -92,7 +92,8 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#c-cuda-extensions-on-macos">C++/CUDA extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#id1">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction by example</a><ul>
@@ -123,6 +124,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
@@ -357,13 +359,6 @@ There are 168/2 = 84 undirected edges and the graph is assigned to exactly one c
 <span class="o">&gt;&gt;</span> <span class="n">ENZYMES</span><span class="p">(</span><span class="mi">600</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For splitting the dataset into a 90/10 train/test split, we can simply use Python slice notation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">60</span><span class="p">:]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ENZYMES</span><span class="p">(</span><span class="mi">540</span><span class="p">)</span>
-<span class="n">test_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[:</span><span class="mi">60</span><span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ENZYMES</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
-</pre></div>
-</div>
 <p>Let’s try another one! Let’s download Cora, the standard benchmark dataset for semi-supervised graph node classification:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.datasets</span> <span class="kn">import</span> <span class="n">Planetoid</span>
 
@@ -458,7 +453,7 @@ Let’s learn about it in an example:</p>
 <h2><a class="toc-backref" href="#id4">Data transforms</a><a class="headerlink" href="#data-transforms" title="Permalink to this headline">¶</a></h2>
 <p>Transforms are a common way in <code class="docutils literal notranslate"><span class="pre">torchvision</span></code> to transform images and perform augmentation.
 PyTorch Geometric comes with its own transforms, which expect a <code class="docutils literal notranslate"><span class="pre">Data</span></code> object as input and return a new transformed <code class="docutils literal notranslate"><span class="pre">Data</span></code> object.
-Transforms can be chained together using <a class="reference internal" href="../modules/transforms.html#torch_geometric.transforms.Compose" title="torch_geometric.transforms.Compose"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.transforms.Compose</span></code></a> and are applied before saving a processed dataset (<code class="docutils literal notranslate"><span class="pre">pre_transform</span></code>) on disk or before accessing a graph in a dataset (<code class="docutils literal notranslate"><span class="pre">transform</span></code>).</p>
+Transforms can be chained together using <a class="reference internal" href="../modules/transforms.html#torch_geometric.transforms.Compose" title="torch_geometric.transforms.Compose"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.transforms.Compose</span></code></a> and are applied before saving a processed dataset on disk (<code class="docutils literal notranslate"><span class="pre">pre_transform</span></code>) or before accessing a graph in a dataset (<code class="docutils literal notranslate"><span class="pre">transform</span></code>).</p>
 <p>Let’s look at an example, where we apply transforms on the ShapeNet dataset (containing 17,000 3D shape point clouds and per point labels from 16 shape categories).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch_geometric.datasets</span> <span class="kn">import</span> <span class="n">ShapeNet</span>
 
@@ -533,7 +528,7 @@ Now let’s implement a two-layer GCN:</p>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We use ReLU as our non-linearity activation function and output a softmax distribution over the number of classes.
+<p>We use ReLU as our non-linear activation function and output a softmax distribution over the number of classes.
 Let’s train this model on the train nodes for 200 epochs:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -558,7 +553,7 @@ Let’s train this model on the train nodes for 200 epochs:</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">Accuracy</span><span class="p">:</span> <span class="mf">0.8150</span>
 </pre></div>
 </div>
-<p>That all it takes to implement a graph neural network.
+<p>That is all it takes to implement your first graph neural network.
 The easiest way to learn more about graph convolution and pooling is to study the examples in the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> directory and to browse <code class="xref py py-mod docutils literal notranslate"><span class="pre">torch_geometric.nn</span></code>.
 Happy hacking!</p>
 </div>

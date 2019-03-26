@@ -55,7 +55,7 @@
 
           
             
-            <img src="../../../../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../../../../_static/pyg_logo_text.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.0.2)
+                master (1.0.3)
               </div>
             
           
@@ -90,7 +90,8 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notes/installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/installation.html#id1">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
@@ -121,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
@@ -228,7 +230,7 @@
                  <span class="n">num_relations</span><span class="p">,</span>
                  <span class="n">num_bases</span><span class="p">,</span>
                  <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">RGCNConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RGCNConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;add&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
@@ -262,7 +264,7 @@
                 <span class="n">device</span><span class="o">=</span><span class="n">edge_index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span>
-            <span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_type</span><span class="o">=</span><span class="n">edge_type</span><span class="p">,</span> <span class="n">edge_norm</span><span class="o">=</span><span class="n">edge_norm</span><span class="p">)</span></div>
+            <span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_type</span><span class="o">=</span><span class="n">edge_type</span><span class="p">,</span> <span class="n">edge_norm</span><span class="o">=</span><span class="n">edge_norm</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_j</span><span class="p">,</span> <span class="n">edge_type</span><span class="p">,</span> <span class="n">edge_norm</span><span class="p">):</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">att</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_bases</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
@@ -270,17 +272,17 @@
         <span class="k">if</span> <span class="n">x_j</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">:</span>
             <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">edge_type</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">+</span> <span class="n">x_j</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">out</span> <span class="k">if</span> <span class="n">edge_norm</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">out</span> <span class="o">*</span> <span class="n">edge_norm</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_relations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span><span class="p">)</span>
-            <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">edge_type</span><span class="p">]</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_type</span><span class="p">)</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">x_j</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">out</span> <span class="k">if</span> <span class="n">edge_norm</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">out</span> <span class="o">*</span> <span class="n">edge_norm</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggr_out</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">aggr_out</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">aggr_out</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">aggr_out</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 
