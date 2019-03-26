@@ -24,7 +24,7 @@ class Encoder(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GAE(Encoder(dataset.num_features, out_channels=16)).to(device)
+model = GAE(Encoder(dataset.num_features, out_channels=32)).to(device)
 data.train_mask = data.val_mask = data.test_mask = data.y = None
 data = model.split_edges(data)
 x, edge_index = data.x.to(device), data.edge_index.to(device)
@@ -35,7 +35,8 @@ def train():
     model.train()
     optimizer.zero_grad()
     z = model.encode(x, edge_index)
-    loss = model.loss(z, data.train_pos_edge_index, data.train_neg_adj_mask)
+    loss = model.recon_loss(z, data.train_pos_edge_index,
+                            data.train_neg_adj_mask)
     loss.backward()
     optimizer.step()
 
