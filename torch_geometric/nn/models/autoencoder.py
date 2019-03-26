@@ -131,7 +131,7 @@ class GAE(torch.nn.Module):
 
         return pos_loss + neg_loss
 
-    def evaluate(self, z, pos_edge_index, neg_edge_index):
+    def test(self, z, pos_edge_index, neg_edge_index):
         r"""Given latent variables :obj:`z`, positive edges
         :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`,
         computes area under the ROC curve (AUC) and average precision (AP)
@@ -155,41 +155,6 @@ class GAE(torch.nn.Module):
         y, pred = y.detach().cpu().numpy(), pred.detach().cpu().numpy()
 
         return roc_auc_score(y, pred), average_precision_score(y, pred)
-
-
-class ARGA(GAE):
-    def __init__(self, encoder, discriminator, n_latent):
-        super(ARGA, self).__init__(encoder)
-        self.discriminator = discriminator
-
-    def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
-        row, col = edge_index
-        loss = -torch.log(torch.sigmoid(adj[row, col])).mean()
-        loss = loss - torch.log(1 - torch.sigmoid(adj[neg_adj_mask])).mean()
-        return loss
-
-    def discriminate(self, z):
-        z_real = torch.randn(z.size())
-        d_real = self.discriminator(z_real)
-        d_fake = self.discriminator(z)
-        return d_real, d_fake
-
-    def discriminator_loss(self, d_real, d_fake):
-        dc_real_loss = torch.nn.BCELoss(reduction='mean')(
-            d_real, torch.ones(d_real.size()))
-        dc_fake_loss = torch.nn.BCELoss(reduction='mean')(
-            d_fake, torch.zeros(d_fake.size()))
-        dc_gen_loss = torch.nn.BCELoss(reduction='mean')(
-            d_fake, torch.ones(d_fake.size()))
-        return dc_real_loss + dc_fake_loss + dc_gen_loss
-
-    def loss(self, d_real, d_fake, *args):
-        args = list(args)
-        args[0] = self.decoder(args[0])
-        recon_loss = self.reconstruction_loss(*args)
-        d_loss = self.discriminator_loss(d_real, d_fake)
-        total_loss = recon_loss + d_loss
-        return total_loss
 
 
 class VGAE(GAE):
@@ -232,6 +197,41 @@ class VGAE(GAE):
         recon_loss = self.reconstruction_loss(*args)
         kl_loss = self.kl_loss(mean, logvar)
         total_loss = recon_loss + kl_loss
+        return total_loss
+
+
+class ARGA(GAE):
+    def __init__(self, encoder, discriminator, n_latent):
+        super(ARGA, self).__init__(encoder)
+        self.discriminator = discriminator
+
+    def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
+        row, col = edge_index
+        loss = -torch.log(torch.sigmoid(adj[row, col])).mean()
+        loss = loss - torch.log(1 - torch.sigmoid(adj[neg_adj_mask])).mean()
+        return loss
+
+    def discriminate(self, z):
+        z_real = torch.randn(z.size())
+        d_real = self.discriminator(z_real)
+        d_fake = self.discriminator(z)
+        return d_real, d_fake
+
+    def discriminator_loss(self, d_real, d_fake):
+        dc_real_loss = torch.nn.BCELoss(reduction='mean')(
+            d_real, torch.ones(d_real.size()))
+        dc_fake_loss = torch.nn.BCELoss(reduction='mean')(
+            d_fake, torch.zeros(d_fake.size()))
+        dc_gen_loss = torch.nn.BCELoss(reduction='mean')(
+            d_fake, torch.ones(d_fake.size()))
+        return dc_real_loss + dc_fake_loss + dc_gen_loss
+
+    def loss(self, d_real, d_fake, *args):
+        args = list(args)
+        args[0] = self.decoder(args[0])
+        recon_loss = self.reconstruction_loss(*args)
+        d_loss = self.discriminator_loss(d_real, d_fake)
+        total_loss = recon_loss + d_loss
         return total_loss
 
 
