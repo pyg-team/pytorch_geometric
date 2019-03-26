@@ -32,7 +32,8 @@ def test_gae():
     assert data.train_neg_adj_mask.sum().item() == (11**2 - 11) / 2 - 4 - 6 - 5
 
     z = torch.randn(11, 16)
-    loss = model.loss(z, data.train_pos_edge_index, data.train_neg_adj_mask)
+    loss = model.recon_loss(z, data.train_pos_edge_index,
+                            data.train_neg_adj_mask)
     assert loss.item() > 0
 
     auc, ap = model.test(z, data.val_pos_edge_index, data.val_neg_edge_index)
