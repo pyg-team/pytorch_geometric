@@ -163,12 +163,14 @@ class VGAE(GAE):
         return mu + torch.randn_like(logvar) * torch.exp(0.5 * logvar)
 
     def kl_loss(self, mu, logvar):
-        return -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
+        bla = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
+        return bla
 
     def loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
         z = self.sample(mu, logvar)
         recon_loss = self.reconstruction_loss(z, pos_edge_index, neg_adj_mask)
-        kl_loss = self.kl_loss(z, mu, logvar)
+        kl_loss = self.kl_loss(mu, logvar)
+        print('recon', recon_loss, 'kl', kl_loss)
         return recon_loss + kl_loss
 
 
@@ -211,6 +213,6 @@ class ARGVA(ARGA):
     def loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
         z = self.sample(mu, logvar)
         recon_loss = self.reconstruction_loss(z, pos_edge_index, neg_adj_mask)
-        kl_loss = self.kl_loss(z, mu, logvar)
+        kl_loss = self.kl_loss(mu, logvar)
         d_loss = self.discriminator_loss(*self.discriminate(z))
         return recon_loss + kl_loss + d_loss
