@@ -6,6 +6,8 @@ from sklearn.metrics import roc_auc_score, average_precision_score
 
 from ..inits import reset
 
+EPS = 1e-15
+
 
 class GAE(torch.nn.Module):
     r"""The Graph Auto-Encoder model from the
@@ -107,7 +109,7 @@ class GAE(torch.nn.Module):
 
         return data
 
-    def reconstruction_loss(self, z, pos_edge_index, neg_adj_mask):
+    def recon_loss(self, z, pos_edge_index, neg_adj_mask):
         r"""Given latent variables :obj:`z`, computes the binary cross
         entropy loss for positive edges :obj:`pos_edge_index` and a negative
         adjacency matrix mask :obj:`neg_adj_mask`.
@@ -119,15 +121,11 @@ class GAE(torch.nn.Module):
                 :obj:`[N, N]` denoting the negative edges to train against.
         """
 
-        pos_loss = -torch.log(self.decode_indices(z, pos_edge_index)).mean()
-
-        neg_loss = -torch.log(
-            (1 - self.decode(z)[neg_adj_mask]).clamp(min=1e-8)).mean()
+        pos_loss = -torch.log(self.decode_indices(z, pos_edge_index) +
+                              EPS).mean()
+        neg_loss = -torch.log(1 - self.decode(z)[neg_adj_mask] + EPS).mean()
 
         return pos_loss + neg_loss
-
-    def loss(self, z, pos_edge_index, neg_adj_mask):
-        return self.reconstruction_loss(z, pos_edge_index, neg_adj_mask)
 
     def test(self, z, pos_edge_index, neg_edge_index):
         r"""Given latent variables :obj:`z`, positive edges
@@ -165,11 +163,9 @@ class VGAE(GAE):
     def kl_loss(self, mu, logvar):
         return -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
 
-    def loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
+    def recon_loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
         z = self.sample(mu, logvar)
-        recon_loss = self.reconstruction_loss(z, pos_edge_index, neg_adj_mask)
-        kl_loss = self.kl_loss(mu, logvar)
-        return recon_loss + kl_loss
+        return self.recon_loss(z, pos_edge_index, neg_adj_mask)
 
 
 class ARGA(GAE):
@@ -181,20 +177,17 @@ class ARGA(GAE):
         super(ARGA, self).reset_parameters(self)
         reset(self.discriminator)
 
-    def discriminate(self, z):
+    def reg_loss(self, z):
+        real = torch.sigmoid(self.discriminator(z))
+        real_loss = -torch.log(real + EPS).mean()
+        return real_loss
+
+    def discriminator_loss(self, z):
         real = torch.sigmoid(self.discriminator(torch.randn_like(z)))
-        fake = torch.sigmoid(self.discriminator(z))
-        return real, fake
-
-    def discriminator_loss(self, real, fake):
-        real_loss = -torch.log(real).mean()
-        fake_loss = -torch.log((1 - fake).clamp(min=1e-8)).mean()
+        fake = torch.sigmoid(self.discriminator(z.detach()))
+        real_loss = -torch.log(real + EPS).mean()
+        fake_loss = -torch.log(1 - fake + EPS).mean()
         return real_loss + fake_loss
-
-    def loss(self, z, pos_edge_index, neg_adj_mask):
-        recon_loss = self.reconstruction_loss(z, pos_edge_index, neg_adj_mask)
-        d_loss = self.discriminator_loss(*self.discriminate(z))
-        return recon_loss + d_loss
 
 
 class ARGVA(ARGA):
@@ -208,9 +201,5 @@ class ARGVA(ARGA):
     def kl_loss(self, mu, logvar):
         return self.VGAE.kl_loss(mu, logvar)
 
-    def loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
-        z = self.sample(mu, logvar)
-        recon_loss = self.reconstruction_loss(z, pos_edge_index, neg_adj_mask)
-        kl_loss = self.kl_loss(mu, logvar)
-        d_loss = self.discriminator_loss(*self.discriminate(z))
-        return recon_loss + kl_loss + d_loss
+    def recon_loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
+        return self.VGAE.recon_loss(mu, logvar, pos_edge_index, neg_adj_mask)
