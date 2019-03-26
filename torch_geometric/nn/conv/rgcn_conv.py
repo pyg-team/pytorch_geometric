@@ -35,7 +35,7 @@ class RGCNConv(MessagePassing):
                  num_relations,
                  num_bases,
                  bias=True):
-        super(RGCNConv, self).__init__()
+        super(RGCNConv, self).__init__('add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -69,7 +69,7 @@ class RGCNConv(MessagePassing):
                 device=edge_index.device)
 
         return self.propagate(
-            'add', edge_index, x=x, edge_type=edge_type, edge_norm=edge_norm)
+            edge_index, x=x, edge_type=edge_type, edge_norm=edge_norm)
 
     def message(self, x_j, edge_type, edge_norm):
         w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))
@@ -77,17 +77,17 @@ class RGCNConv(MessagePassing):
         if x_j.dtype == torch.long:
             w = w.view(-1, self.out_channels)
             index = edge_type * self.in_channels + x_j
-            out = w[index]
+            out = torch.index_select(w, 0, index)
             return out if edge_norm is None else out * edge_norm.view(-1, 1)
         else:
             w = w.view(self.num_relations, self.in_channels, self.out_channels)
-            w = w[edge_type]
+            w = torch.index_select(w, 0, edge_type)
             out = torch.bmm(x_j.unsqueeze(1), w).squeeze(-2)
             return out if edge_norm is None else out * edge_norm.view(-1, 1)
 
     def update(self, aggr_out, x):
         if x.dtype == torch.long:
-            out = aggr_out + self.root[x]
+            out = aggr_out + self.root
         else:
             out = aggr_out + torch.matmul(x, self.root)
 

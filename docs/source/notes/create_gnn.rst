@@ -20,12 +20,16 @@ The user only has to define the functions :math:`\phi` , *i.e.* :meth:`message`,
 
 This is done with the help of the following methods:
 
-* :obj:`torch_geometric.nn.MessagePassing.propagate(aggr, edge_index, **kwargs)`:
+* :obj:`torch_geometric.nn.MessagePassing(aggr="add", flow="source_to_target")`: Defines the aggregation scheme to use (:obj:`"add"`, :obj:`"mean"` or :obj:`"max"`) and the flow direction of message passing (either :obj:`"source_to_target"` or :obj:`"target_to_source"`).
+* :obj:`torch_geometric.nn.MessagePassing.propagate(edge_index, size=None, **kwargs)`:
   The initial call to start propagating messages.
-  Takes in an aggregation scheme (:obj:`"add"`, :obj:`"mean"` or :obj:`"max"`), the edge indices, and all additional data which is needed to construct messages and to update node embeddings.
-* :meth:`torch_geometric.nn.MessagePassing.message`: Constructs messages in analogy to :math:`\phi` for each edge in :math:`(i,j) \in \mathcal{E}`.
+  Takes in the edge indices and all additional data which is needed to construct messages and to update node embeddings.
+  Note that :meth:`propagate` is not limited to exchange messages in symmetric adjacency matrices of shape :obj:`[N, N]`, but can even exchange messages in general sparse assignment matrices, *.e.g.*, bipartite graphs, of shape :obj:`[M, N]` by passing :obj:`size=(M, N)` as an additional argument.
+  If set to :obj:`None`, the assignment matrix is assumed to be symmetric.
+  We generally recommend to always set this parameter to allow for both message passing in arbitrary graphs as well as bipartite graphs.
+* :meth:`torch_geometric.nn.MessagePassing.message`: Constructs messages to node :math:`i` in analogy to :math:`\phi` for each edge in :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and :math:`(i,j) \in \mathcal{E}` if :obj:`flow="target_to_source"`.
   Can take any argument which was initially passed to :meth:`propagate`.
-  In addition, features can be lifted to the source node :math:`i` and target node :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+  In addition, features can be lifted to the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
 * :meth:`torch_geometric.nn.MessagePassing.update`: Updates node embeddings in analogy to :math:`\gamma` for each node :math:`i \in \mathcal{V}`.
   Takes in the output of aggregation as first argument and any argument which was initially passed to :meth:`propagate`.
 
@@ -61,7 +65,7 @@ The full layer implementation is shown below:
 
     class GCNConv(MessagePassing):
         def __init__(self, in_channels, out_channels):
-            super(GCNConv, self).__init__()
+            super(GCNConv, self).__init__(aggr='add') # "Add" aggregation.
             self.lin = torch.nn.Linear(in_channels, out_channels)
 
         def forward(self, x, edge_index):
@@ -74,15 +78,15 @@ The full layer implementation is shown below:
             # Step 2: Linearly transform node feature matrix.
             x = self.lin(x)
 
-            # Step 3-5: Start propagating messages with "add" aggregation.
-            return self.propagate('add', edge_index, x=x, num_nodes=x.size(0))
+            # Step 3-5: Start propagating messages.
+            return self.propagate(edge_index, x=x, size=(x.size(0), x.size(0)))
 
-        def message(self, x_j, edge_index, num_nodes):
+        def message(self, x_j, edge_index, size):
             # x_j has shape [E, out_channels]
 
             # Step 3: Normalize node features.
             row, col = edge_index
-            deg = degree(row, num_nodes, dtype=x_j.dtype)
+            deg = degree(row, size[0], dtype=x_j.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 
@@ -94,12 +98,12 @@ The full layer implementation is shown below:
             # Step 5: Return new node embeddings.
             return aggr_out
 
-:class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing`.
+:class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing` with :obj:`"add"` propagation.
 All the logic of the layer takes place in :meth:`forward`.
 Here, we first add self-loops to our edge indices using the :meth:`torch_geometric.utils.add_self_loops` function (step 1), as well as linearly transform node features by calling the :class:`torch.nn.Linear` instance (step 2).
 
 We then proceed to call :meth:`propagate`, which internally calls the :meth:`message` and :meth:`update` functions.
-As additional arguments for message propagation, we pass the node embeddings :obj:`x` and the number of nodes (given by :obj:`x.size(0)`).
+As additional arguments for message propagation, we pass the node embeddings :obj:`x`.
 
 In the :meth:`message` function, we need to normalize the target node features :obj:`x_j`.
 Here, :obj:`x_j` denotes a *lifted* tensor, which contains the target node features of each edge.
@@ -139,7 +143,7 @@ Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePas
 
     class EdgeConv(MessagePassing):
         def __init__(self, in_channels, out_channels):
-            super(EdgeConv, self).__init__()
+            super(EdgeConv, self).__init__(aggr='max') #  "Max" aggregation.
             self.mlp = Seq(Linear(2 * in_channels, out_channels),
                            ReLU(),
                            Linear(out_channels, out_channels))
@@ -148,7 +152,7 @@ Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePas
             # x has shape [N, in_channels]
             # edge_index has shape [2, E]
 
-            return self.propagate('max', edge_index, x=x)
+            return self.propagate(edge_index, x=x, size=(x.size(0), x.size(0)))
 
         def message(self, x_i, x_j):
             # x_i has shape [E, in_channels]

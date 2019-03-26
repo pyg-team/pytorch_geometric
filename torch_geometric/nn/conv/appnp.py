@@ -27,7 +27,7 @@ class APPNP(MessagePassing):
     """
 
     def __init__(self, K, alpha, bias=True):
-        super(APPNP, self).__init__()
+        super(APPNP, self).__init__('add')
         self.K = K
         self.alpha = alpha
 
@@ -38,7 +38,7 @@ class APPNP(MessagePassing):
 
         hidden = x
         for k in range(self.K):
-            x = self.propagate('add', edge_index, x=x, norm=norm)
+            x = self.propagate(edge_index, x=x, norm=norm)
             x = x * (1 - self.alpha)
             x = x + self.alpha * hidden
 

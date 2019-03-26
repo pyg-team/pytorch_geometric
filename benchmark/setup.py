@@ -7,5 +7,5 @@ setup(
     author='Matthias Fey',
     author_email='matthias.fey@tu-dortmund.de',
     url='https://github.com/rusty1s/pytorch_geometric_benchmark',
-    install_requires=['sklearn'],
+    install_requires=['scikit-learn'],
     packages=find_packages())

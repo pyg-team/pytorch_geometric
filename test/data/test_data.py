@@ -17,8 +17,10 @@ def test_data():
     assert len(data) == 2
     assert 'x' in data and 'edge_index' in data and 'pos' not in data
 
-    assert data.cat_dim('x', data.x) == 0
-    assert data.cat_dim('edge_index', data.edge_index) == -1
+    assert data.__cat_dim__('x', data.x) == 0
+    assert data.__cat_dim__('edge_index', data.edge_index) == -1
+    assert data.__cumsum__('x', data.x) is False
+    assert data.__cumsum__('edge_index', data.edge_index) is True
 
     assert not data.x.is_contiguous()
     data.contiguous()

@@ -1,31 +1,71 @@
 import math
+import random
 
-import numpy as np
 import torch
-
 from sklearn.metrics import roc_auc_score, average_precision_score
 
 
-class Decoder(torch.nn.Module):
-    def __init__(self):
-        super(Decoder, self).__init__()
-
-    def forward(self, z):
-        adj = torch.matmul(z, z.t())
-        return adj
-
-
 class GAE(torch.nn.Module):
+    r"""The Graph Auto-Encoder model from the
+    `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
+    paper based on a user-defined encoder model and a simple inner product
+    decoder :math:`\sigma(\mathbf{Z}\mathbf{Z}^{\top})` where
+    :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent space
+    produced by the encoder.
+
+    Args:
+        encoder (Module): The encoder module.
+    """
+
     def __init__(self, encoder):
         super(GAE, self).__init__()
         self.encoder = encoder
-        self.decoder = Decoder()
 
-    def forward(self, *args, **kwargs):
-        z = self.encoder(*args, **kwargs)
-        return self.decoder(z)
+    def encode(self, *args, **kwargs):
+        r"""Runs the encoder and computes latent variables for each node."""
+        return self.encoder(*args, **kwargs)
 
-    def generate_edge_splits(self, data, val_ratio=0.05, test_ratio=0.1):
+    def decode_all(self, z, sigmoid=True):
+        r"""Decodes the latent variables :obj:`z` into a probabilistic
+        dense adjacency matrix.
+
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            sigmoid (bool, optional): If set to :obj:`False`, does not apply
+                the logistic sigmoid function to the output.
+                (default :obj:`False`)
+        """
+        adj = torch.matmul(z, z.t())
+        adj = torch.sigmoid(adj) if sigmoid else adj
+        return adj
+
+    def decode_indices(self, z, edge_index, sigmoid=True):
+        r"""Decodes the latent variables :obj:`z` into edge-probabilties for
+        the given node-pairs :obj:`edge_index`.
+
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            edge_index (LongTensor): The edge indices to predict.
+            sigmoid (bool, optional): If set to :obj:`False`, does not apply
+                the logistic sigmoid function to the output.
+                (default :obj:`False`)
+        """
+        value = (z[edge_index[0]] * z[edge_index[1]]).sum(dim=1)
+        value = torch.sigmoid(value) if sigmoid else value
+        return value
+
+    def split_edges(self, data, val_ratio=0.05, test_ratio=0.1):
+        r"""Splits the edges of a :obj:`torch_geometric.data.Data` object
+        into positve and negative train/val/test edges.
+
+        Args:
+            data (Data): The data object.
+            val_ratio (float, optional): The ratio of positive validation
+                edges. (default: :obj:`0.05`)
+            test_ratio (float, optional): The ratio of positive test
+                edges. (default: :obj:`0.1`)
+        """
+
         assert 'batch' not in data  # No batch-mode.
 
         row, col = data.edge_index
@@ -42,54 +82,80 @@ class GAE(torch.nn.Module):
         row, col = row[perm], col[perm]
 
         r, c = row[:n_v], col[:n_v]
-        data.val_edge_index = torch.stack([r, c], dim=0)
+        data.val_pos_edge_index = torch.stack([r, c], dim=0)
         r, c = row[n_v:n_v + n_t], col[n_v:n_v + n_t]
-        data.test_edge_index = torch.stack([r, c], dim=0)
+        data.test_pos_edge_index = torch.stack([r, c], dim=0)
         r, c = row[n_v + n_t:], col[n_v + n_t:]
-        data.train_edge_index = torch.stack([r, c], dim=0)
+        data.train_pos_edge_index = torch.stack([r, c], dim=0)
 
         # Negative edges.
         num_nodes = data.num_nodes
-        neg_adj_mask = torch.zeros(num_nodes, num_nodes, dtype=torch.uint8)
-        neg_adj_mask[np.triu_indices(data.num_nodes, k=1)] = 1
+        neg_adj_mask = torch.ones(num_nodes, num_nodes, dtype=torch.uint8)
+        neg_adj_mask = neg_adj_mask.triu(diagonal=1)
         neg_adj_mask[row, col] = 0
-        neg_row, neg_col = neg_adj_mask.nonzero().t()
 
-        perm = torch.randperm(neg_row.size(0))
-        perm = perm[:n_v + n_t]
+        neg_row, neg_col = neg_adj_mask.nonzero().t()
+        perm = torch.tensor(random.sample(range(neg_row.size(0)), n_v + n_t))
+        perm = perm.to(torch.long)
         neg_row, neg_col = neg_row[perm], neg_col[perm]
 
-        r, c = neg_row[:n_v], neg_col[:n_v]
-        data.val_neg_edge_index = torch.stack([r, c], dim=0)
-        neg_adj_mask[r, c] = 0
-        r, c = neg_row[n_v:n_v + n_t], neg_col[n_v:n_v + n_t]
-        data.test_neg_edge_index = torch.stack([r, c], dim=0)
-        neg_adj_mask[r, c] = 0
+        neg_adj_mask[neg_row, neg_col] = 0
         data.train_neg_adj_mask = neg_adj_mask
 
+        row, col = neg_row[:n_v], neg_col[:n_v]
+        data.val_neg_edge_index = torch.stack([row, col], dim=0)
+
+        row, col = neg_row[n_v:n_v + n_t], neg_col[n_v:n_v + n_t]
+        data.test_neg_edge_index = torch.stack([row, col], dim=0)
+        
         return data
 
-    def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
-        row, col = edge_index
-        loss = -torch.log(torch.sigmoid(adj[row, col])).mean()
-        loss = loss - torch.log(1 - torch.sigmoid(adj[neg_adj_mask])).mean()
-        return loss
+    def loss(self, z, pos_edge_index, neg_adj_mask):
+        r"""Given latent variables :obj:`z`, computes the binary cross
+        entropy loss for positive edges :obj:`pos_edge_index` and a negative
+        adjacency matrix mask :obj:`neg_adj_mask`.
 
-    def evaluate(self, adj, edge_index, neg_edge_index):
-        pos_y = adj.new_ones(edge_index.size(1))
-        neg_y = adj.new_zeros(neg_edge_index.size(1))
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            pos_edge_index (LongTensor): The positive edges to train against.
+            neg_adj_mask (ByteTensor): A symmetric mask with shape
+                :obj:`[N, N]` denoting the negative edges to train against.
+        """
 
-        adj = torch.sigmoid(adj.detach())
-        pos_pred = adj[edge_index[0], edge_index[1]]
-        neg_pred = adj[neg_edge_index[0], neg_edge_index[1]]
+        pos_loss = -torch.log(
+            self.decode_indices(z, pos_edge_index, sigmoid=True)).mean()
 
-        y = torch.cat([pos_y, neg_y], dim=0).cpu()
-        pred = torch.cat([pos_pred, neg_pred], dim=0).cpu()
+        neg_loss = -torch.log(
+            (1 - self.decode_all(z, sigmoid=True)[neg_adj_mask]).clamp(
+                min=1e-8)).mean()
 
-        roc_score = roc_auc_score(y, pred)
-        ap_score = average_precision_score(y, pred)
+        return pos_loss + neg_loss
 
-        return roc_score, ap_score
+    def evaluate(self, z, pos_edge_index, neg_edge_index):
+        r"""Given latent variables :obj:`z`, positive edges
+        :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`,
+        computes area under the ROC curve (AUC) and average precision (AP)
+        scores.
+
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            pos_edge_index (LongTensor): The positive edges to evaluate
+                against.
+            neg_edge_index (LongTensor): The negative edges to evaluate
+                against.
+        """
+        pos_y = z.new_ones(pos_edge_index.size(1))
+        neg_y = z.new_zeros(neg_edge_index.size(1))
+        y = torch.cat([pos_y, neg_y], dim=0)
+
+        pos_pred = self.decode_indices(z, pos_edge_index, sigmoid=True)
+        neg_pred = self.decode_indices(z, neg_edge_index, sigmoid=True)
+        pred = torch.cat([pos_pred, neg_pred], dim=0)
+
+        y, pred = y.detach().cpu().numpy(), pred.detach().cpu().numpy()
+
+        return roc_auc_score(y, pred), average_precision_score(y, pred)
+
 
 class ARGA(GAE):
     def __init__(self, encoder, discriminator, n_latent):
@@ -125,6 +191,7 @@ class ARGA(GAE):
         d_loss = self.discriminator_loss(d_real, d_fake)
         total_loss = recon_loss+d_loss
         return total_loss
+
 
 class VGAE(GAE):
     def __init__(self, encoder, out_channels, n_latent):
@@ -167,6 +234,7 @@ class VGAE(GAE):
         total_loss = recon_loss+kl_loss
         return total_loss
 
+
 class ARGVA(ARGA):
     def __init__(self, encoder, discriminator, out_channels):
         n_latent = out_channels
@@ -194,97 +262,3 @@ class ARGVA(ARGA):
         mean,logvar = self.z_mean(z), self.z_var(z)
         z=self.sample_z(mean,logvar)
         return z, mean, logvar
-
-###### tests
-
-class Discriminator(nn.Module):
-    def __init__(self, n_input, hidden_layers=[30,20]):
-        super(Discriminator, self).__init__()
-        self.fc1 = nn.Linear(n_input,hidden_layers[0])
-        self.fc2 = nn.Linear(hidden_layers[0],hidden_layers[1])
-        self.fc3 = nn.Linear(hidden_layers[1],1)
-        torch.nn.init.xavier_uniform(self.fc1.weight)
-        torch.nn.init.xavier_uniform(self.fc2.weight)
-        torch.nn.init.xavier_uniform(self.fc3.weight)
-        self.fc1 = nn.Sequential(self.fc1, nn.ReLU())
-        self.fc2 = nn.Sequential(self.fc2, nn.ReLU())
-        self.fc3 = nn.Sequential(self.fc3,nn.Sigmoid())
-
-    def forward(self, z):
-        z=self.fc1(z)
-        z=self.fc2(z)
-        out=self.fc3(z)
-        return out
-
-model=gae=GAE(Encoder(17,30))
-
-data.train_mask = data.val_mask = data.test_mask = data.y = None
-data = model.generate_edge_splits(data)
-x, edge_index = data.x, data.edge_index
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-
-
-model=VGAE(Encoder(data.num_features,45),45,20)
-optimizer=torch.optim.Adam(params=model.parameters(),lr=1e-3,weight_decay=1e-1)
-model=ARGA(Encoder(data.num_features,45),Discriminator(45,[100,50]),45)
-optimizer=torch.optim.Adam(params=model.parameters(),lr=1e-4,weight_decay=1e-2)
-model=ARGVA(Encoder(data.num_features,10),Discriminator(10,[500,20]),10)
-optimizer=torch.optim.Adam(params=model.parameters(),lr=1e-5,weight_decay=5e-1)
-
-beta=1.
-def train_vgae():
-    model.train()
-    optimizer.zero_grad()
-    z, mean, logvar = model.encode(x, edge_index)
-    loss = beta*model.kl_loss(mean, logvar)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) 
-    print(loss.item())
-    loss.backward()
-    optimizer.step()
-
-def train_arga():
-    model.train()
-    optimizer.zero_grad()
-    z = model.encoder(x, edge_index)
-    d_real, d_fake = model.discriminate(z)
-    loss = model.discriminator_loss(d_real, d_fake)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) 
-    print(loss.item())
-    loss.backward()
-    optimizer.step()
-
-def train_argva():
-    model.train()
-    optimizer.zero_grad()
-    z, mean, logvar = model.encode(x, edge_index)
-    d_real, d_fake = model.discriminate(z)
-    loss = beta*model.kl_loss(mean, logvar)+model.discriminator_loss(d_real, d_fake)+model.reconstruction_loss(model.decoder(z), data.train_edge_index, data.train_neg_adj_mask) 
-    print(loss.item())
-    loss.backward()
-    optimizer.step()
-
-def simulate():
-    model.train(False)
-    with torch.no_grad():
-        return model.decoder(model.encode(x, edge_index)[0]).detach().numpy() 
-
-def test(pos_edge_index, neg_edge_index):
-    model.train(False)
-    with torch.no_grad():
-        z = model.encoder(x, edge_index)
-        print(z.size())
-    return model.eval(model.decoder(z), pos_edge_index, neg_edge_index)
-
-train = train_argva
-
-from copy import deepcopy
-top_model=None
-top_score=0.
-for i in range(1000):
-    train() 
-    val_score=np.mean(test(data.val_edge_index, data.val_neg_edge_index))
-    print(val_score)
-    print(np.mean(test(data.test_edge_index, data.test_neg_edge_index)))
-    if val_score >= top_score:
-        top_model = deepcopy(model)
-        top_score = val_score
-
-model = top_model

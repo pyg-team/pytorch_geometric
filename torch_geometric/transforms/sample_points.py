@@ -8,12 +8,15 @@ class SamplePoints(object):
     Args:
         num (int): The number of points to sample.
         remove_faces (bool, optional): If set to :obj:`False`, the face tensor
-            will not be removed.
+            will not be removed. (default: :obj:`True`)
+        include_normals (bool, optional): If set to :obj:`True`, then compute
+            normals for each sampled point. (default: :obj:`False`)
     """
 
-    def __init__(self, num, remove_faces=True):
+    def __init__(self, num, remove_faces=True, include_normals=False):
         self.num = num
         self.remove_faces = remove_faces
+        self.include_normals = include_normals
 
     def __call__(self, data):
         pos, face = data.pos, data.face
@@ -31,13 +34,21 @@ class SamplePoints(object):
         mask = frac.sum(dim=-1) > 1
         frac[mask] = 1 - frac[mask]
 
+        vec1 = pos[face[1]] - pos[face[0]]
+        vec2 = pos[face[2]] - pos[face[0]]
+
+        if self.include_normals:
+            data.norm = torch.nn.functional.normalize(vec1.cross(vec2), p=2)
+
         pos_sampled = pos[face[0]]
-        pos_sampled += frac[:, :1] * (pos[face[1]] - pos[face[0]])
-        pos_sampled += frac[:, 1:] * (pos[face[2]] - pos[face[0]])
+        pos_sampled += frac[:, :1] * vec1
+        pos_sampled += frac[:, 1:] * vec2
 
         data.pos = pos_sampled
+
         if self.remove_faces:
             data.face = None
+
         return data
 
     def __repr__(self):

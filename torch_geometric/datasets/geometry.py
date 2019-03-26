@@ -39,8 +39,7 @@ class GeometricShapes(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://drive.google.com/uc?export=download&id={}'
-    file_id = '1VE-EMIPKWsxJTvFRacrY_YZHB1-fH9Mr'
+    url = 'https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip'
 
     def __init__(self,
                  root,
@@ -55,14 +54,14 @@ class GeometricShapes(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return ['cone', 'cube']
+        return ['2d_circle']
 
     @property
     def processed_file_names(self):
         return ['training.pt', 'test.pt']
 
     def download(self):
-        path = download_url(self.url.format(self.file_id), self.root)
+        path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
 
@@ -72,7 +71,7 @@ class GeometricShapes(InMemoryDataset):
 
     def process_set(self, dataset):
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
-        categories = sorted([x.split('/')[-2] for x in categories])
+        categories = sorted([x.split(os.sep)[-2] for x in categories])
 
         data_list = []
         for target, category in enumerate(categories):
