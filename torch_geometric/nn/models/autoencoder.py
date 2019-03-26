@@ -107,7 +107,7 @@ class GAE(torch.nn.Module):
 
         row, col = neg_row[n_v:n_v + n_t], neg_col[n_v:n_v + n_t]
         data.test_neg_edge_index = torch.stack([row, col], dim=0)
-
+        
         return data
 
     def loss(self, z, pos_edge_index, neg_adj_mask):
@@ -155,3 +155,110 @@ class GAE(torch.nn.Module):
         y, pred = y.detach().cpu().numpy(), pred.detach().cpu().numpy()
 
         return roc_auc_score(y, pred), average_precision_score(y, pred)
+
+
+class ARGA(GAE):
+    def __init__(self, encoder, discriminator, n_latent):
+        super(ARGA,self).__init__(encoder)
+        self.discriminator = discriminator
+
+
+    def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
+        print(adj)
+        row, col = edge_index
+        loss = -torch.log(torch.sigmoid(adj[row, col])).mean()
+        print(loss)
+        loss = loss - torch.log(1 - torch.sigmoid(adj[neg_adj_mask])).mean()
+        print(loss)
+        return loss
+
+    def discriminate(self, z):
+        z_real=torch.randn(z.size())
+        d_real=self.discriminator(z_real)
+        d_fake=self.discriminator(z)
+        return d_real, d_fake
+
+    def discriminator_loss(self, d_real, d_fake):
+        dc_real_loss=nn.BCELoss(reduction='mean')(d_real,torch.ones(d_real.size()))
+        dc_fake_loss=nn.BCELoss(reduction='mean')(d_fake,torch.zeros(d_fake.size()))
+        dc_gen_loss=nn.BCELoss(reduction='mean')(d_fake,torch.ones(d_fake.size()))
+        return dc_real_loss + dc_fake_loss + dc_gen_loss
+
+    def loss(self, d_real, d_fake, *args):
+        args=list(args)
+        args[0] = self.decoder(args[0])
+        recon_loss = self.reconstruction_loss(*args)
+        d_loss = self.discriminator_loss(d_real, d_fake)
+        total_loss = recon_loss+d_loss
+        return total_loss
+
+
+class VGAE(GAE):
+    def __init__(self, encoder, out_channels, n_latent):
+        super(VGAE,self).__init__(encoder)
+        self.z_mean=nn.Linear(out_channels,n_latent)
+        self.z_var=nn.Linear(out_channels,n_latent)
+        torch.nn.init.xavier_uniform(self.z_mean.weight)
+        torch.nn.init.xavier_uniform(self.z_var.weight)
+
+    def kl_loss(self, mean, logvar):
+        loss=torch.mean(0.5 * torch.sum(torch.exp(logvar) + mean**2 - 1. - logvar, 1))
+        print(loss)
+        return loss
+
+    def reconstruction_loss(self, adj, edge_index, neg_adj_mask):
+        row, col = edge_index
+        loss = -torch.log(torch.sigmoid(adj[row, col])).mean()
+        print(loss)
+        loss = loss - torch.log(1 - torch.sigmoid(adj[neg_adj_mask])).mean()
+        return loss
+
+    def sample_z(self, mean, logvar):
+        stddev = torch.exp(0.5 * logvar)
+        noise = Variable(torch.randn(stddev.size()))
+        if torch.cuda.is_available():
+            noise=noise.cuda()
+        return (noise * stddev) + mean
+
+    def encode(self, x, edge_index):
+        z=F.relu(self.encoder(x, edge_index))
+        mean,logvar = self.z_mean(z), self.z_var(z)
+        z=self.sample_z(mean,logvar)
+        return z, mean, logvar
+
+    def loss(self, z, mean, logvar, *args):
+        args=list(args)
+        args[0] = self.decoder(args[0])
+        recon_loss = self.reconstruction_loss(*args)
+        kl_loss = self.kl_loss(mean, logvar)
+        total_loss = recon_loss+kl_loss
+        return total_loss
+
+
+class ARGVA(ARGA):
+    def __init__(self, encoder, discriminator, out_channels):
+        n_latent = out_channels
+        super(ARGVA,self).__init__(encoder,discriminator,n_latent)
+        self.discriminator = discriminator
+        self.z_mean=nn.Linear(out_channels,n_latent)
+        self.z_var=nn.Linear(out_channels,n_latent)
+        torch.nn.init.xavier_uniform(self.z_mean.weight)
+        torch.nn.init.xavier_uniform(self.z_var.weight)
+
+    def kl_loss(self, mean, logvar):
+        loss=torch.mean(0.5 * torch.sum(torch.exp(logvar) + mean**2 - 1. - logvar, 1))
+        print(loss)
+        return loss
+
+    def sample_z(self, mean, logvar):
+        stddev = torch.exp(0.5 * logvar)
+        noise = Variable(torch.randn(stddev.size()))
+        if torch.cuda.is_available():
+            noise=noise.cuda()
+        return (noise * stddev) + mean
+
+    def encode(self, x, edge_index):
+        z=F.relu(self.encoder(x, edge_index))
+        mean,logvar = self.z_mean(z), self.z_var(z)
+        z=self.sample_z(mean,logvar)
+        return z, mean, logvar
