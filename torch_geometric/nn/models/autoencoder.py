@@ -165,7 +165,7 @@ class VGAE(GAE):
 
     def recon_loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
         z = self.sample(mu, logvar)
-        return self.recon_loss(z, pos_edge_index, neg_adj_mask)
+        return super(VGAE, self).recon_loss(z, pos_edge_index, neg_adj_mask)
 
 
 class ARGA(GAE):
