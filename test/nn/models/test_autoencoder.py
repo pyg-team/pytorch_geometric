@@ -10,12 +10,13 @@ def test_gae():
     z = model.encode(x)
     assert z.tolist() == x.tolist()
 
-    adj = model.decode_all(z, sigmoid=False)
-    assert adj.tolist() == [[+2, -1, +1], [-1, +5, +4], [+1, +4, +5]]
+    adj = model.decode(z)
+    assert adj.tolist() == torch.sigmoid(
+        torch.Tensor([[+2, -1, +1], [-1, +5, +4], [+1, +4, +5]])).tolist()
 
     edge_index = torch.tensor([[0, 1], [1, 2]])
-    value = model.decode_indices(z, edge_index, sigmoid=False)
-    assert value.tolist() == [-1, 4]
+    value = model.decode_indices(z, edge_index)
+    assert value.tolist() == torch.sigmoid(torch.Tensor([-1, 4])).tolist()
 
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]])
@@ -34,6 +35,5 @@ def test_gae():
     loss = model.loss(z, data.train_pos_edge_index, data.train_neg_adj_mask)
     assert loss.item() > 0
 
-    auc, ap = model.evaluate(z, data.val_pos_edge_index,
-                             data.val_neg_edge_index)
+    auc, ap = model.test(z, data.val_pos_edge_index, data.val_neg_edge_index)
     assert auc >= 0 and auc <= 1 and ap >= 0 and ap <= 1
