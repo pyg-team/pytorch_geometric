@@ -2,6 +2,7 @@ import math
 import random
 
 import torch
+import numpy as np
 from sklearn.metrics import roc_auc_score, average_precision_score
 
 from ..inits import reset
@@ -32,26 +33,32 @@ class GAE(torch.nn.Module):
         r"""Runs the encoder and computes latent variables for each node."""
         return self.encoder(*args, **kwargs)
 
-    def decode(self, z):
+    def decode(self, z, sigmoid=True):
         r"""Decodes the latent variables :obj:`z` into a probabilistic
         dense adjacency matrix.
 
         Args:
             z (Tensor): The latent space :math:`\mathbf{Z}`.
+            sigmoid (bool, optional): If set to :obj:`False`, does not apply
+                the logistic sigmoid function to the output.
+                (default: :obj:`True`)
         """
         adj = torch.matmul(z, z.t())
-        return torch.sigmoid(adj)
+        return torch.sigmoid(adj) if sigmoid else adj
 
-    def decode_indices(self, z, edge_index):
+    def decode_indices(self, z, edge_index, sigmoid=True):
         r"""Decodes the latent variables :obj:`z` into edge-probabilties for
         the given node-pairs :obj:`edge_index`.
 
         Args:
             z (Tensor): The latent space :math:`\mathbf{Z}`.
             edge_index (LongTensor): The edge indices to predict.
+            sigmoid (bool, optional): If set to :obj:`False`, does not apply
+                the logistic sigmoid function to the output.
+                (default: :obj:`True`)
         """
         value = (z[edge_index[0]] * z[edge_index[1]]).sum(dim=1)
-        return torch.sigmoid(value)
+        return torch.sigmoid(value) if sigmoid else value
 
     def split_edges(self, data, val_ratio=0.05, test_ratio=0.1):
         r"""Splits the edges of a :obj:`torch_geometric.data.Data` object
@@ -109,21 +116,39 @@ class GAE(torch.nn.Module):
 
         return data
 
-    def recon_loss(self, z, pos_edge_index, neg_adj_mask):
+    def negative_sampling(self, pos_edge_index, num_nodes):
+        idx = (pos_edge_index[0] * num_nodes + pos_edge_index[1])
+        idx = idx.to(torch.device('cpu'))
+
+        rng = range(num_nodes**2)
+        perm = torch.tensor(random.sample(rng, idx.size(0)))
+        mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
+        rest = mask.nonzero().view(-1)
+        while rest.numel() > 0:
+            tmp = torch.tensor(random.sample(rng, rest.size(0)))
+            mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
+            perm[rest] = tmp
+            rest = mask.view(-1).nonzero()
+
+        row, col = perm / num_nodes, perm % num_nodes
+        return torch.stack([row, col], dim=0).to(pos_edge_index.device)
+
+    def recon_loss(self, z, pos_edge_index):
         r"""Given latent variables :obj:`z`, computes the binary cross
-        entropy loss for positive edges :obj:`pos_edge_index` and a negative
-        adjacency matrix mask :obj:`neg_adj_mask`.
+        entropy loss for positive edges :obj:`pos_edge_index` and negative
+        sampled edges.
 
         Args:
             z (Tensor): The latent space :math:`\mathbf{Z}`.
             pos_edge_index (LongTensor): The positive edges to train against.
-            neg_adj_mask (ByteTensor): A symmetric mask with shape
-                :obj:`[N, N]` denoting the negative edges to train against.
         """
 
         pos_loss = -torch.log(self.decode_indices(z, pos_edge_index) +
                               EPS).mean()
-        neg_loss = -torch.log(1 - self.decode(z)[neg_adj_mask] + EPS).mean()
+
+        neg_edge_index = self.negative_sampling(pos_edge_index, z.size(0))
+        neg_loss = -torch.log(1 - self.decode_indices(z, neg_edge_index) +
+                              EPS).mean()
 
         return pos_loss + neg_loss
 
@@ -157,15 +182,22 @@ class VGAE(GAE):
     def __init__(self, encoder):
         super(VGAE, self).__init__(encoder)
 
-    def sample(self, mu, logvar):
-        return mu + torch.randn_like(logvar) * torch.exp(0.5 * logvar)
+    def reparametrize(self, mu, logvar):
+        if self.training:
+            return mu + torch.randn_like(logvar) * torch.exp(logvar)
+        else:
+            return mu
 
-    def kl_loss(self, mu, logvar):
-        return -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())
+    def encode(self, *args, **kwargs):
+        self.mu, self.logvar = self.encoder(*args, **kwargs)
+        z = self.reparametrize(self.mu, self.logvar)
+        return z
 
-    def recon_loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
-        z = self.sample(mu, logvar)
-        return super(VGAE, self).recon_loss(z, pos_edge_index, neg_adj_mask)
+    def kl_loss(self, mu=None, logvar=None):
+        mu = self.mu if mu is None else mu
+        logvar = self.logvar if logvar is None else logvar
+        return -0.5 * torch.mean(
+            torch.sum(1 + logvar - mu**2 - logvar.exp(), dim=1))
 
 
 class ARGA(GAE):
@@ -195,11 +227,11 @@ class ARGVA(ARGA):
         super(ARGVA, self).__init__(encoder, discriminator)
         self.VGAE = VGAE(encoder)
 
-    def sample(self, mu, logvar):
-        return self.VGAE.sample(mu, logvar)
+    def reparametrize(self, mu, logvar):
+        return self.VGAE.reparametrize(mu, logvar)
 
-    def kl_loss(self, mu, logvar):
-        return self.VGAE.kl_loss(mu, logvar)
+    def encode(self, *args, **kwargs):
+        return self.VGAE.encode(*args, **kwargs)
 
-    def recon_loss(self, mu, logvar, pos_edge_index, neg_adj_mask):
-        return self.VGAE.recon_loss(mu, logvar, pos_edge_index, neg_adj_mask)
+    def kl_loss(self, mu=None, logvar=None):
+        return self.VGAEkl_loss(mu, logvar)
