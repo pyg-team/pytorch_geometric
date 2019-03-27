@@ -165,12 +165,13 @@ class Data(object):
         return not self.is_undirected()
 
     def apply(self, func, *keys):
-        r"""Applies the function :obj:`func` to all attributes :obj:`*keys`.
-        If :obj:`*keys` is not given, :obj:`func` is applied to all present
-        attributes.
+        r"""Applies the function :obj:`func` to all tensor attributes
+        :obj:`*keys`. If :obj:`*keys` is not given, :obj:`func` is applied to
+        all present attributes.
         """
         for key, item in self(*keys):
-            self[key] = func(item)
+            if torch.is_tensor(item):
+                self[key] = func(item)
         return self
 
     def contiguous(self, *keys):
