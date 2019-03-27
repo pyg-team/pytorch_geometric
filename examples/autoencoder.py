@@ -7,7 +7,7 @@ from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, GAE, VGAE
 
-dataset = 'PubMed'
+dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, T.NormalizeFeatures())
 data = dataset[0]
