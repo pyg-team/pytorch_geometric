@@ -234,4 +234,4 @@ class ARGVA(ARGA):
         return self.VGAE.encode(*args, **kwargs)
 
     def kl_loss(self, mu=None, logvar=None):
-        return self.VGAEkl_loss(mu, logvar)
+        return self.VGAE.kl_loss(mu, logvar)
