@@ -206,7 +206,7 @@ class ARGA(GAE):
         self.discriminator = discriminator
 
     def reset_parameters(self):
-        super(ARGA, self).reset_parameters(self)
+        super(ARGA, self).reset_parameters()
         reset(self.discriminator)
 
     def reg_loss(self, z):
