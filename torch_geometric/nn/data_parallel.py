@@ -65,9 +65,12 @@ class DataParallel(torch.nn.DataParallel):
         device_id = (device_id[:-1] + device_id[1:]) / 2.0
         device_id = device_id.to(torch.long)  # round.
         split = device_id.bincount().cumsum(0)
-        split = torch.cat([split.new_zeros(1), split], dim=0).tolist()
+        split = torch.cat([split.new_zeros(1), split], dim=0)
+        split = torch.unique(split, sorted=True)
+        split = split.tolist()
 
         return [
             Batch.from_data_list(data_list[split[i]:split[i + 1]]).to(
-                torch.device('cuda:{}'.format(i))) for i in range(num_devices)
+                torch.device('cuda:{}'.format(device_ids[i])))
+            for i in range(len(split) - 1)
         ]

@@ -26,16 +26,27 @@ class GCNConv(MessagePassing):
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
             (default: :obj:`False`)
+        cached (bool, optional): If set to :obj:`True`, the layer will cache
+            the computation of :math:`{\left(\mathbf{\hat{D}}^{-1/2}
+            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}`.
+            (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
 
-    def __init__(self, in_channels, out_channels, improved=False, bias=True):
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 improved=False,
+                 cached=False,
+                 bias=True):
         super(GCNConv, self).__init__('add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.improved = improved
+        self.cached = cached
+        self.cached_result = None
 
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
 
@@ -49,22 +60,23 @@ class GCNConv(MessagePassing):
     def reset_parameters(self):
         glorot(self.weight)
         zeros(self.bias)
+        self.cached_result = None
 
     @staticmethod
     def norm(edge_index, num_nodes, edge_weight, improved=False, dtype=None):
         if edge_weight is None:
-            edge_weight = torch.ones(
-                (edge_index.size(1), ), dtype=dtype, device=edge_index.device)
+            edge_weight = torch.ones((edge_index.size(1), ),
+                                     dtype=dtype,
+                                     device=edge_index.device)
         edge_weight = edge_weight.view(-1)
         assert edge_weight.size(0) == edge_index.size(1)
 
-        edge_index, _ = remove_self_loops(edge_index)
+        edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         edge_index = add_self_loops(edge_index, num_nodes)
-        loop_weight = torch.full(
-            (num_nodes, ),
-            1 if not improved else 2,
-            dtype=edge_weight.dtype,
-            device=edge_weight.device)
+        loop_weight = torch.full((num_nodes, ),
+                                 1 if not improved else 2,
+                                 dtype=edge_weight.dtype,
+                                 device=edge_weight.device)
         edge_weight = torch.cat([edge_weight, loop_weight], dim=0)
 
         row, col = edge_index
@@ -77,9 +89,13 @@ class GCNConv(MessagePassing):
     def forward(self, x, edge_index, edge_weight=None):
         """"""
         x = torch.matmul(x, self.weight)
-        edge_index, norm = GCNConv.norm(edge_index,
-                                        x.size(0), edge_weight, self.improved,
-                                        x.dtype)
+
+        if not self.cached or self.cached_result is None:
+            edge_index, norm = GCNConv.norm(edge_index, x.size(0), edge_weight,
+                                            self.improved, x.dtype)
+            self.cached_result = edge_index, norm
+
+        edge_index, norm = self.cached_result
         return self.propagate(edge_index, x=x, norm=norm)
 
     def message(self, x_j, norm):

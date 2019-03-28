@@ -55,7 +55,7 @@
 
           
             
-            <img src="../../../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../../../_static/pyg_logo_text.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -91,7 +91,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../notes/installation.html#id2">Frequently Asked Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/installation.html#id1">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/introduction.html">Introduction by example</a><ul>
@@ -122,6 +122,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
@@ -192,9 +193,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for torch_geometric.data.batch</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">re</span>
-
-<span class="kn">import</span> <span class="nn">torch</span>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">Data</span>
 
 
@@ -231,27 +230,21 @@
             <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">num_nodes</span><span class="p">,</span> <span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-                <span class="n">item</span> <span class="o">=</span> <span class="n">item</span> <span class="o">+</span> <span class="n">cumsum</span> <span class="k">if</span> <span class="n">batch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="k">else</span> <span class="n">item</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">item</span> <span class="o">+</span> <span class="n">cumsum</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">__cumsum__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="k">else</span> <span class="n">item</span>
                 <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
             <span class="n">cumsum</span> <span class="o">+=</span> <span class="n">num_nodes</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-            <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
-                <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cat_dim</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+                    <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__cat_dim__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported attribute type.&#39;</span><span class="p">)</span>
         <span class="n">batch</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">batch</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="Batch.cumsum"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Batch.cumsum">[docs]</a>    <span class="k">def</span> <span class="nf">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;If :obj:`True`, the attribute :obj:`key` with content :obj:`item`</span>
-<span class="sd">        should be added up cumulatively before concatenated together.</span>
-
-<span class="sd">        .. note::</span>
-
-<span class="sd">            This method is for internal use only, and should only be overridden</span>
-<span class="sd">            if the batch concatenation process is corrupted for a specific data</span>
-<span class="sd">            attribute.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(index|face)&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_graphs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

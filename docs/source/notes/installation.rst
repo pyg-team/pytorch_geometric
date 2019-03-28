@@ -71,16 +71,16 @@ Please follow the steps below for a successful installation:
 
     .. code-block:: none
 
-        $ pip install --upgrade torch-scatter
-        $ pip install --upgrade torch-sparse
-        $ pip install --upgrade torch-cluster
-        $ pip install --upgrade torch-spline-conv (optional)
+        $ pip install --verbose --no-cache-dir torch-scatter
+        $ pip install --verbose --no-cache-dir torch-sparse
+        $ pip install --verbose --no-cache-dir torch-cluster
+        $ pip install --verbose --no-cache-dir torch-spline-conv (optional)
         $ pip install torch-geometric
 
-In rare cases, CUDA or python path issues can prevent a successful installation.
-You can verify that your CUDA is set up correctly by following the offical `installation guides <https://docs.nvidia.com/cuda/index.html>`_.
-If an error occurs during installation, ``pip`` may not issue a reasonable error message or even pretend that everything went well (resulting in runtime errors).
-You should then clone the respective package and check the error message by installing from source, *e.g.*:
+In rare cases, CUDA or Python path problems can prevent a successful installation.
+``pip`` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, ``No module named 'torch_*.*_cuda'``, or execution simply crashes with ``Segmentation fault (core dumped)``.
+Usually, this means that the installation of one (or all) of the extension packages failed.
+You should then clone the respective package and look for the error in the installation log, *e.g.*:
 
 .. code-block:: none
 
@@ -91,8 +91,8 @@ You should then clone the respective package and check the error message by inst
 
 We collected a lot of common installation errors in the `Frequently Asked Questions <https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions>`_ subsection.
 Please note that if you make any changes, you need to force a recompilation of the CUDA kernels by removing the ``build/`` directory in the root folder of the respective package.
-In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
-You can additionaly check that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
+In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
+You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda/index.html>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
 
 C++/CUDA Extensions on macOS
 ----------------------------
@@ -130,7 +130,7 @@ Frequently Asked Questions
 
 #. ``error: command '/usr/bin/nvcc' failed with exit status 2``: Ensure that at least CUDA >= 8 is installed (see `Issue#25a <https://github.com/rusty1s/pytorch_geometric/issues/25>`_ and `Issue#106 <https://github.com/rusty1s/pytorch_geometric/issues/106>`_).
 
-#. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your ``gcc`` version is at least 4.9 and below 6 (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
+#. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your ``gcc`` version is at least 4.9 (and below 6) (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
    You will also need to reinstall PyTorch because ``gcc`` versions must be consistent across all PyTorch packages.
 
 #. ``file not recognized: file format not recognized``: Clean the repository and temporarily rename Anaconda's ``ld`` linker (see `Issue#16683 <https://github.com/pytorch/pytorch/issues/16683>`_).
@@ -141,6 +141,9 @@ Frequently Asked Questions
 
       $ python -c "import torch; print(torch.version.cuda)"
       $ nvcc --version
+
+#. ``undefined symbol: _ZN3c105ErrorC1ENS_14SourceLocationERKSs``: The ``std::string`` abi does not match between building PyTorch and its extensions.
+   This is fixable by building extensions with ``-D_GLIBCXX_USE_CXX11_ABI=1`` or building PyTorch from source (see `this PyTorch thread <https://discuss.pytorch.org/t/undefined-symbol-when-import-lltm-cpp-extension/32627>`_).
 
 #. On macOS: ``'gcc' failed with exit status 1``: Install the respective packages by using the following environment variables (see `Issue#21 <https://github.com/rusty1s/pytorch_scatter/issues/21>`_):
 
@@ -154,5 +157,5 @@ Frequently Asked Questions
 
        $ sudo ln -s /usr/local/cuda/lib /usr/local/cuda/lib64
 
-#. On macOS: ``The version of the host compiler ('Apple clang') is not supported``: Downgrade your command line tools (see this `StackOverflow thread <https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116>`_) with the respective version annotated in the `CUDA Installation Guide for Mac <https://developer.download.nvidia.com/compute/cuda/10.1/Prod/docs/sidebar/CUDA_Installation_Guide_Mac.pdf>`_ (Section 1.1) for your specific CUDA version.
+#. On macOS: ``The version of the host compiler ('Apple clang') is not supported``: Downgrade your command line tools (see `this StackOverflow thread <https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116>`_) with the respective version annotated in the `CUDA Installation Guide for Mac <https://developer.download.nvidia.com/compute/cuda/10.1/Prod/docs/sidebar/CUDA_Installation_Guide_Mac.pdf>`_ (Section 1.1) for your specific CUDA version.
    You can download previous command line tool versions `here <https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Fdownload%2Fmore%2F&rv=1>`_.

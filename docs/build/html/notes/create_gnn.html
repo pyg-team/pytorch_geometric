@@ -57,7 +57,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" alt="Logo"/>
+            <img src="../_static/pyg_logo_text.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -93,7 +93,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#id2">Frequently Asked Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#id1">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction by example</a><ul>
@@ -124,6 +124,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
@@ -219,9 +220,9 @@ The user only has to define the functions <span class="math notranslate nohighli
 <li><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.nn.MessagePassing.propagate(edge_index,</span> <span class="pre">size=None,</span> <span class="pre">**kwargs)</span></code>:
 The initial call to start propagating messages.
 Takes in the edge indices and all additional data which is needed to construct messages and to update node embeddings.
-Note that <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code> is not limited to exchange messages in symmetric adjacency matrices of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[N,</span> <span class="pre">N]</span></code>, but can even exchange messages in general sparse assignment matrices of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[M,</span> <span class="pre">N]</span></code> by passing <code class="xref py py-obj docutils literal notranslate"><span class="pre">size=(M,</span> <span class="pre">N)</span></code> as an additional argument.
-If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, this <code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code> is tried to get automatically inferred.
-We generally recommend to always set this parameter in order to avoid unexpected behaviour.</li>
+Note that <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code> is not limited to exchange messages in symmetric adjacency matrices of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[N,</span> <span class="pre">N]</span></code>, but can even exchange messages in general sparse assignment matrices, <em>.e.g.</em>, bipartite graphs, of shape <code class="xref py py-obj docutils literal notranslate"><span class="pre">[M,</span> <span class="pre">N]</span></code> by passing <code class="xref py py-obj docutils literal notranslate"><span class="pre">size=(M,</span> <span class="pre">N)</span></code> as an additional argument.
+If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, the assignment matrix is assumed to be symmetric.
+We generally recommend to always set this parameter to allow for both message passing in arbitrary graphs as well as bipartite graphs.</li>
 <li><code class="xref py py-meth docutils literal notranslate"><span class="pre">torch_geometric.nn.MessagePassing.message()</span></code>: Constructs messages to node <span class="math notranslate nohighlight">\(i\)</span> in analogy to <span class="math notranslate nohighlight">\(\phi\)</span> for each edge in <span class="math notranslate nohighlight">\((j,i) \in \mathcal{E}\)</span> if <code class="xref py py-obj docutils literal notranslate"><span class="pre">flow=&quot;source_to_target&quot;</span></code> and <span class="math notranslate nohighlight">\((i,j) \in \mathcal{E}\)</span> if <code class="xref py py-obj docutils literal notranslate"><span class="pre">flow=&quot;target_to_source&quot;</span></code>.
 Can take any argument which was initially passed to <code class="xref py py-meth docutils literal notranslate"><span class="pre">propagate()</span></code>.
 In addition, features can be lifted to the respective nodes <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\(j\)</span> by appending <code class="xref py py-obj docutils literal notranslate"><span class="pre">_i</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">_j</span></code> to the variable name, <em>.e.g.</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_i</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_j</span></code>.</li>
@@ -267,7 +268,7 @@ The full layer implementation is shown below:</p>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="c1"># Step 3-5: Start propagating messages.</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_j</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="c1"># x_j has shape [E, out_channels]</span>
@@ -328,7 +329,7 @@ Analogous to the GCN layer, we can use the <code class="xref py py-class docutil
         <span class="c1"># x has shape [N, in_channels]</span>
         <span class="c1"># edge_index has shape [2, E]</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_i</span><span class="p">,</span> <span class="n">x_j</span><span class="p">):</span>
         <span class="c1"># x_i has shape [E, in_channels]</span>
