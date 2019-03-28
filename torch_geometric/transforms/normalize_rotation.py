@@ -1,5 +1,4 @@
 import torch
-import math
 
 r"""Rotates all points given in the data object so that the eigenvectors of the positions
     overlie the axes of the cartesian coordinate system. If the data object contains normals 
