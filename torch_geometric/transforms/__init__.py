@@ -9,6 +9,7 @@ from .one_hot_degree import OneHotDegree
 from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
 from .center import Center
+from .normalize_rotation import NormalizeRotation
 from .normalize_scale import NormalizeScale
 from .random_translate import RandomTranslate
 from .random_flip import RandomFlip
@@ -38,7 +39,8 @@ __all__ = [
     'TargetIndegree',
     'LocalDegreeProfile',
     'Center',
-    'NormalizeScale',
+	'NormalizeRotation',
+    'NormalizeScale',	
     'RandomTranslate',
     'RandomFlip',
     'LinearTransformation',
