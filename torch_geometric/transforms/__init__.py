@@ -24,6 +24,7 @@ from .face_to_edge import FaceToEdge
 from .sample_points import SamplePoints
 from .to_dense import ToDense
 from .two_hop import TwoHop
+from .line_graph import LineGraph
 
 __all__ = [
     'Compose',
@@ -52,4 +53,5 @@ __all__ = [
     'SamplePoints',
     'ToDense',
     'TwoHop',
+    'LineGraph',
 ]
