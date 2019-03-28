@@ -374,6 +374,15 @@
 
 
 <div class="viewcode-block" id="VGAE"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.VGAE">[docs]</a><span class="k">class</span> <span class="nc">VGAE</span><span class="p">(</span><span class="n">GAE</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Variational Graph Auto-Encoder model from the</span>
+<span class="sd">    `&quot;Variational Graph Auto-Encoders&quot; &lt;https://arxiv.org/abs/1611.07308&gt;`_</span>
+<span class="sd">    paper.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        encoder (Module): The encoder module to compute :math:`\mu` and</span>
+<span class="sd">            :math:`\log \sigma^2`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">VGAE</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoder</span><span class="p">)</span>
 
@@ -384,11 +393,21 @@
             <span class="k">return</span> <span class="n">mu</span></div>
 
 <div class="viewcode-block" id="VGAE.encode"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.VGAE.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reparametrize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logvar</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">z</span></div>
 
 <div class="viewcode-block" id="VGAE.kl_loss"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.VGAE.kl_loss">[docs]</a>    <span class="k">def</span> <span class="nf">kl_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logvar</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the KL loss, either for the passed arguments :obj:`mu`</span>
+<span class="sd">        and :obj:`logvar`, or based on latent variables from last encoding.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mu (Tensor, optional): The latent space for :math:`\mu`.</span>
+<span class="sd">                (default: :obj:`None`)</span>
+<span class="sd">            logvar (Tensor, optional): The latent space for</span>
+<span class="sd">                :math:`\log\sigma^2`. (default: :obj:`None`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">mu</span>
         <span class="n">logvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logvar</span> <span class="k">if</span> <span class="n">logvar</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">logvar</span>
         <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
@@ -396,20 +415,40 @@
 
 
 <div class="viewcode-block" id="ARGA"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.ARGA">[docs]</a><span class="k">class</span> <span class="nc">ARGA</span><span class="p">(</span><span class="n">GAE</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Adversarially Regularized Graph Auto-Encoder model from the</span>
+<span class="sd">    `&quot;Adversarially Regularized Graph Autoencoder for Graph Embedding&quot;</span>
+<span class="sd">    &lt;https://arxiv.org/abs/1802.04407&gt;`_ paper.</span>
+<span class="sd">    paper.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        encoder (Module): The encoder module.</span>
+<span class="sd">        discriminator (Module): The discriminator module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">discriminator</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ARGA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoder</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span> <span class="o">=</span> <span class="n">discriminator</span>
 
 <div class="viewcode-block" id="ARGA.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.ARGA.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ARGA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ARGA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
         <span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ARGA.reg_loss"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.ARGA.reg_loss">[docs]</a>    <span class="k">def</span> <span class="nf">reg_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the regularization loss of the encoder.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (Tensor): The latent space :math:`\mathbf{Z}`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">real</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
         <span class="n">real_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">real</span> <span class="o">+</span> <span class="n">EPS</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">real_loss</span></div>
 
 <div class="viewcode-block" id="ARGA.discriminator_loss"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.ARGA.discriminator_loss">[docs]</a>    <span class="k">def</span> <span class="nf">discriminator_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the loss of the discriminator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (Tensor): The latent space :math:`\mathbf{Z}`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">real</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">z</span><span class="p">)))</span>
         <span class="n">fake</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">detach</span><span class="p">()))</span>
         <span class="n">real_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">real</span> <span class="o">+</span> <span class="n">EPS</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -418,6 +457,17 @@
 
 
 <div class="viewcode-block" id="ARGVA"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.ARGVA">[docs]</a><span class="k">class</span> <span class="nc">ARGVA</span><span class="p">(</span><span class="n">ARGA</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Adversarially Regularized Variational Graph Auto-Encoder model from</span>
+<span class="sd">    the `&quot;Adversarially Regularized Graph Autoencoder for Graph Embedding&quot;</span>
+<span class="sd">    &lt;https://arxiv.org/abs/1802.04407&gt;`_ paper.</span>
+<span class="sd">    paper.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        encoder (Module): The encoder module to compute :math:`\mu` and</span>
+<span class="sd">            :math:`\log \sigma^2`.</span>
+<span class="sd">        discriminator (Module): The discriminator module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">discriminator</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ARGVA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoder</span><span class="p">,</span> <span class="n">discriminator</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">VGAE</span> <span class="o">=</span> <span class="n">VGAE</span><span class="p">(</span><span class="n">encoder</span><span class="p">)</span>
@@ -426,6 +476,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">VGAE</span><span class="o">.</span><span class="n">reparametrize</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">logvar</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ARGVA.encode"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.ARGVA.encode">[docs]</a>    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">VGAE</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ARGVA.kl_loss"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.ARGVA.kl_loss">[docs]</a>    <span class="k">def</span> <span class="nf">kl_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logvar</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

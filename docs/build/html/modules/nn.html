@@ -201,17 +201,17 @@
 <div class="contents local topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#module-torch_geometric.nn.conv.message_passing" id="id3">Sparse Convolutional Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.dense.dense_sage_conv" id="id4">Dense Convolutional Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.glob" id="id5">Global Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id6">Sparse Hierarchical Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.dense.diff_pool" id="id7">Dense Hierarchical Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.models" id="id8">Models</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.data_parallel" id="id9">DataParallel layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.conv.message_passing" id="id5">Sparse Convolutional Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.dense.dense_sage_conv" id="id6">Dense Convolutional Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.glob" id="id7">Global Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id8">Sparse Hierarchical Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.dense.diff_pool" id="id9">Dense Hierarchical Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.models" id="id10">Models</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.data_parallel" id="id11">DataParallel layers</a></li>
 </ul>
 </div>
 <div class="section" id="module-torch_geometric.nn.conv.message_passing">
-<span id="sparse-convolutional-layers"></span><h2><a class="toc-backref" href="#id3">Sparse Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv.message_passing" title="Permalink to this headline">¶</a></h2>
+<span id="sparse-convolutional-layers"></span><h2><a class="toc-backref" href="#id5">Sparse Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv.message_passing" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.conv.message_passing.MessagePassing">
 <em class="property">class </em><code class="descname">MessagePassing</code><span class="sig-paren">(</span><em>aggr='add'</em>, <em>flow='source_to_target'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.message_passing.MessagePassing" title="Permalink to this definition">¶</a></dt>
@@ -1153,7 +1153,7 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 
 </div>
 <div class="section" id="module-torch_geometric.nn.dense.dense_sage_conv">
-<span id="dense-convolutional-layers"></span><h2><a class="toc-backref" href="#id4">Dense Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.dense_sage_conv" title="Permalink to this headline">¶</a></h2>
+<span id="dense-convolutional-layers"></span><h2><a class="toc-backref" href="#id6">Dense Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.dense_sage_conv" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv">
 <em class="property">class </em><code class="descname">DenseSAGEConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>normalize=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/dense_sage_conv.html#DenseSAGEConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv" title="Permalink to this definition">¶</a></dt>
@@ -1202,7 +1202,7 @@ not automatically add self-loops to the adjacency matrices.
 
 </div>
 <div class="section" id="module-torch_geometric.nn.glob">
-<span id="global-pooling-layers"></span><h2><a class="toc-backref" href="#id5">Global Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.glob" title="Permalink to this headline">¶</a></h2>
+<span id="global-pooling-layers"></span><h2><a class="toc-backref" href="#id7">Global Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.glob" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="torch_geometric.nn.glob.global_add_pool">
 <code class="descname">global_add_pool</code><span class="sig-paren">(</span><em>x</em>, <em>batch</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/glob/glob.html#global_add_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.glob.global_add_pool" title="Permalink to this definition">¶</a></dt>
@@ -1395,7 +1395,7 @@ LSTM and computing the final results. (default: <code class="xref py py-obj docu
 
 </div>
 <div class="section" id="module-torch_geometric.nn.pool">
-<span id="sparse-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id6">Sparse Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
+<span id="sparse-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id8">Sparse Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.pool.TopKPooling">
 <em class="property">class </em><code class="descname">TopKPooling</code><span class="sig-paren">(</span><em>in_channels</em>, <em>ratio=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/topk_pool.html#TopKPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.TopKPooling" title="Permalink to this definition">¶</a></dt>
@@ -1834,7 +1834,7 @@ node to a specific example. (default: <a class="reference external" href="https:
 
 </div>
 <div class="section" id="module-torch_geometric.nn.dense.diff_pool">
-<span id="dense-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id7">Dense Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.diff_pool" title="Permalink to this headline">¶</a></h2>
+<span id="dense-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id9">Dense Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.diff_pool" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="torch_geometric.nn.dense.diff_pool.dense_diff_pool">
 <code class="descname">dense_diff_pool</code><span class="sig-paren">(</span><em>x</em>, <em>adj</em>, <em>s</em>, <em>mask=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/diff_pool.html#dense_diff_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.diff_pool.dense_diff_pool" title="Permalink to this definition">¶</a></dt>
@@ -1880,7 +1880,7 @@ the valid nodes for each graph. (default: <a class="reference external" href="ht
 
 </div>
 <div class="section" id="module-torch_geometric.nn.models">
-<span id="models"></span><h2><a class="toc-backref" href="#id8">Models</a><a class="headerlink" href="#module-torch_geometric.nn.models" title="Permalink to this headline">¶</a></h2>
+<span id="models"></span><h2><a class="toc-backref" href="#id10">Models</a><a class="headerlink" href="#module-torch_geometric.nn.models" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.models.GAE">
 <em class="property">class </em><code class="descname">GAE</code><span class="sig-paren">(</span><em>encoder</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE" title="Permalink to this definition">¶</a></dt>
@@ -2028,16 +2028,43 @@ against.</li>
 <dl class="class">
 <dt id="torch_geometric.nn.models.VGAE">
 <em class="property">class </em><code class="descname">VGAE</code><span class="sig-paren">(</span><em>encoder</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#VGAE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.VGAE" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>The Variational Graph Auto-Encoder model from the
+<a class="reference external" href="https://arxiv.org/abs/1611.07308">“Variational Graph Auto-Encoders”</a>
+paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>encoder</strong> (<em>Module</em>) – The encoder module to compute <span class="math notranslate nohighlight">\(\mu\)</span> and
+<span class="math notranslate nohighlight">\(\log \sigma^2\)</span>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
 <dt id="torch_geometric.nn.models.VGAE.encode">
 <code class="descname">encode</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#VGAE.encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.VGAE.encode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the encoder and computes latent variables for each node.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.models.VGAE.kl_loss">
 <code class="descname">kl_loss</code><span class="sig-paren">(</span><em>mu=None</em>, <em>logvar=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#VGAE.kl_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.VGAE.kl_loss" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes the KL loss, either for the passed arguments <code class="xref py py-obj docutils literal notranslate"><span class="pre">mu</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">logvar</span></code>, or based on latent variables from last encoding.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mu</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – The latent space for <span class="math notranslate nohighlight">\(\mu\)</span>.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>logvar</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – The latent space for
+<span class="math notranslate nohighlight">\(\log\sigma^2\)</span>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.models.VGAE.reparametrize">
@@ -2049,15 +2076,48 @@ against.</li>
 <dl class="class">
 <dt id="torch_geometric.nn.models.ARGA">
 <em class="property">class </em><code class="descname">ARGA</code><span class="sig-paren">(</span><em>encoder</em>, <em>discriminator</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGA" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>The Adversarially Regularized Graph Auto-Encoder model from the
+<a class="reference external" href="https://arxiv.org/abs/1802.04407">“Adversarially Regularized Graph Autoencoder for Graph Embedding”</a> paper.
+paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>encoder</strong> (<em>Module</em>) – The encoder module.</li>
+<li><strong>discriminator</strong> (<em>Module</em>) – The discriminator module.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
 <dt id="torch_geometric.nn.models.ARGA.discriminator_loss">
 <code class="descname">discriminator_loss</code><span class="sig-paren">(</span><em>z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGA.discriminator_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGA.discriminator_loss" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes the loss of the discriminator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>z</strong> (<em>Tensor</em>) – The latent space <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.models.ARGA.reg_loss">
 <code class="descname">reg_loss</code><span class="sig-paren">(</span><em>z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGA.reg_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGA.reg_loss" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes the regularization loss of the encoder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>z</strong> (<em>Tensor</em>) – The latent space <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.models.ARGA.reset_parameters">
@@ -2069,11 +2129,26 @@ against.</li>
 <dl class="class">
 <dt id="torch_geometric.nn.models.ARGVA">
 <em class="property">class </em><code class="descname">ARGVA</code><span class="sig-paren">(</span><em>encoder</em>, <em>discriminator</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGVA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGVA" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>The Adversarially Regularized Variational Graph Auto-Encoder model from
+the <a class="reference external" href="https://arxiv.org/abs/1802.04407">“Adversarially Regularized Graph Autoencoder for Graph Embedding”</a> paper.
+paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>encoder</strong> (<em>Module</em>) – The encoder module to compute <span class="math notranslate nohighlight">\(\mu\)</span> and
+<span class="math notranslate nohighlight">\(\log \sigma^2\)</span>.</li>
+<li><strong>discriminator</strong> (<em>Module</em>) – The discriminator module.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
 <dt id="torch_geometric.nn.models.ARGVA.encode">
 <code class="descname">encode</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGVA.encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGVA.encode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the encoder and computes latent variables for each node.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.models.ARGVA.kl_loss">
@@ -2089,7 +2164,7 @@ against.</li>
 
 </div>
 <div class="section" id="module-torch_geometric.nn.data_parallel">
-<span id="dataparallel-layers"></span><h2><a class="toc-backref" href="#id9">DataParallel layers</a><a class="headerlink" href="#module-torch_geometric.nn.data_parallel" title="Permalink to this headline">¶</a></h2>
+<span id="dataparallel-layers"></span><h2><a class="toc-backref" href="#id11">DataParallel layers</a><a class="headerlink" href="#module-torch_geometric.nn.data_parallel" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.data_parallel.DataParallel">
 <em class="property">class </em><code class="descname">DataParallel</code><span class="sig-paren">(</span><em>module</em>, <em>device_ids=None</em>, <em>output_device=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/data_parallel.html#DataParallel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.data_parallel.DataParallel" title="Permalink to this definition">¶</a></dt>

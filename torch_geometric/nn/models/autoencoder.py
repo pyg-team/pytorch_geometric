@@ -179,6 +179,15 @@ class GAE(torch.nn.Module):
 
 
 class VGAE(GAE):
+    r"""The Variational Graph Auto-Encoder model from the
+    `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
+    paper.
+
+    Args:
+        encoder (Module): The encoder module to compute :math:`\mu` and
+            :math:`\log \sigma^2`.
+    """
+
     def __init__(self, encoder):
         super(VGAE, self).__init__(encoder)
 
@@ -189,11 +198,21 @@ class VGAE(GAE):
             return mu
 
     def encode(self, *args, **kwargs):
+        r""""""
         self.mu, self.logvar = self.encoder(*args, **kwargs)
         z = self.reparametrize(self.mu, self.logvar)
         return z
 
     def kl_loss(self, mu=None, logvar=None):
+        r"""Computes the KL loss, either for the passed arguments :obj:`mu`
+        and :obj:`logvar`, or based on latent variables from last encoding.
+
+        Args:
+            mu (Tensor, optional): The latent space for :math:`\mu`.
+                (default: :obj:`None`)
+            logvar (Tensor, optional): The latent space for
+                :math:`\log\sigma^2`. (default: :obj:`None`)
+        """
         mu = self.mu if mu is None else mu
         logvar = self.logvar if logvar is None else logvar
         return -0.5 * torch.mean(
@@ -201,6 +220,16 @@ class VGAE(GAE):
 
 
 class ARGA(GAE):
+    r"""The Adversarially Regularized Graph Auto-Encoder model from the
+    `"Adversarially Regularized Graph Autoencoder for Graph Embedding"
+    <https://arxiv.org/abs/1802.04407>`_ paper.
+    paper.
+
+    Args:
+        encoder (Module): The encoder module.
+        discriminator (Module): The discriminator module.
+    """
+
     def __init__(self, encoder, discriminator):
         super(ARGA, self).__init__(encoder)
         self.discriminator = discriminator
@@ -210,11 +239,21 @@ class ARGA(GAE):
         reset(self.discriminator)
 
     def reg_loss(self, z):
+        r"""Computes the regularization loss of the encoder.
+
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+        """
         real = torch.sigmoid(self.discriminator(z))
         real_loss = -torch.log(real + EPS).mean()
         return real_loss
 
     def discriminator_loss(self, z):
+        r"""Computes the loss of the discriminator.
+
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+        """
         real = torch.sigmoid(self.discriminator(torch.randn_like(z)))
         fake = torch.sigmoid(self.discriminator(z.detach()))
         real_loss = -torch.log(real + EPS).mean()
@@ -223,6 +262,17 @@ class ARGA(GAE):
 
 
 class ARGVA(ARGA):
+    r"""The Adversarially Regularized Variational Graph Auto-Encoder model from
+    the `"Adversarially Regularized Graph Autoencoder for Graph Embedding"
+    <https://arxiv.org/abs/1802.04407>`_ paper.
+    paper.
+
+    Args:
+        encoder (Module): The encoder module to compute :math:`\mu` and
+            :math:`\log \sigma^2`.
+        discriminator (Module): The discriminator module.
+    """
+
     def __init__(self, encoder, discriminator):
         super(ARGVA, self).__init__(encoder, discriminator)
         self.VGAE = VGAE(encoder)
@@ -231,6 +281,7 @@ class ARGVA(ARGA):
         return self.VGAE.reparametrize(mu, logvar)
 
     def encode(self, *args, **kwargs):
+        r""""""
         return self.VGAE.encode(*args, **kwargs)
 
     def kl_loss(self, mu=None, logvar=None):
