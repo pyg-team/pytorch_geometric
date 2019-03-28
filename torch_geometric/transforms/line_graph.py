@@ -1,4 +1,7 @@
 import torch
+from torch_sparse import coalesce
+from torch_scatter import scatter_add
+from torch_geometric.utils import remove_self_loops
 
 
 class LineGraph(object):
@@ -11,52 +14,65 @@ class LineGraph(object):
 
         \mathcal{E}^{\prime} &= \{ (e_1, e_2) : e_1 \cap e_2 \neq \emptyset \}
 
-    New node features are given by old edge attributes.
+    New node features are given by (scattered) old edge attributes.
     """
 
     def __call__(self, data):
-        data.x = data.edge_attr
-        data.edge_attr = None
+        N = data.num_nodes
+        edge_index, edge_attr = data.edge_index, data.edge_attr
+        (row, col), edge_attr = coalesce(edge_index, edge_attr, N, N)
 
         if data.is_directed():
-            beg_index = 0
-            new_edge_index = torch.tensor([], dtype=data.edge_index.dtype)
-            for node_beg in data.edge_index.t():
-                end_array = (
-                    data.edge_index[0, :] == node_beg[1]).nonzero().squeeze(
-                        dim=1)
-                if (end_array.size()[0]):
-                    for node_end_index in end_array:
-                        to_cat = torch.tensor([[beg_index], [node_end_index]])
-                        new_edge_index = torch.cat((new_edge_index, to_cat), 1)
-                beg_index += 1
-            data.edge_index = new_edge_index
+            i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
+
+            count = scatter_add(
+                torch.ones_like(row), row, dim=0, dim_size=data.num_nodes)
+            cumsum = torch.cat([count.new_zeros(1), count.cumsum(0)], dim=0)
+
+            cols = [
+                i[cumsum[col[j]]:cumsum[col[j] + 1]]
+                for j in range(col.size(0))
+            ]
+            rows = [row.new_full((c.numel(), ), j) for j, c in enumerate(cols)]
+
+            row, col = torch.cat(rows, dim=0), torch.cat(cols, dim=0)
+
+            data.edge_index = torch.stack([row, col], dim=0)
+            data.x = data.edge_attr
 
         else:
-            beg_index = 0
-            new_edge_index = torch.tensor([], dtype=data.edge_index.dtype)
-            for i in range(data.edge_index.shape[1]):
-                if i % 2:
-                    continue
-                beg_index = i
-                for j in range(data.edge_index[:, i + 2:].shape[1]):
-                    if j % 2:
-                        continue
-                    end_index = i + 2 + j
-                    data_beg = data.edge_index[:, beg_index]
-                    data_end = data.edge_index[:, end_index]
-                    if (data_beg[0] == data_end[0]
-                            or data_beg[0] == data_end[1]
-                            or data_beg[1] == data_end[0]
-                            or data_beg[1] == data_end[1]):
-                        to_cat = torch.tensor(
-                            [[beg_index / 2], [end_index / 2]],
-                            dtype=data.edge_index.dtype)
-                        new_edge_index = torch.cat((new_edge_index, to_cat), 1)
-                        to_cat = to_cat.flip(0)
-                        new_edge_index = torch.cat((new_edge_index, to_cat), 1)
+            # Compute node indices.
+            mask = row < col
+            row, col = row[mask], col[mask]
+            i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
 
-            data.edge_index = new_edge_index
+            (row, col), i = coalesce(
+                torch.stack([
+                    torch.cat([row, col], dim=0),
+                    torch.cat([col, row], dim=0)
+                ],
+                            dim=0), torch.cat([i, i], dim=0), N, N)
+
+            # Compute new edge indices according to `i`.
+            count = scatter_add(
+                torch.ones_like(row), row, dim=0, dim_size=data.num_nodes)
+            joints = torch.split(i, count.tolist())
+
+            def generate_grid(x):
+                row = x.view(-1, 1).repeat(1, x.numel()).view(-1)
+                col = x.repeat(x.numel())
+                return torch.stack([row, col], dim=0)
+
+            joints = [generate_grid(joint) for joint in joints]
+            joints = torch.cat(joints, dim=1)
+            joints, _ = remove_self_loops(joints)
+            N = row.size(0) // 2
+            joints, _ = coalesce(joints, None, N, N)
+
+            if edge_attr is not None:
+                data.x = scatter_add(edge_attr, i, dim=0, dim_size=N)
+            data.edge_index = joints
+
         return data
 
     def __repr__(self):
