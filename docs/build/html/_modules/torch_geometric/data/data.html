@@ -202,6 +202,15 @@
 <span class="kn">from</span> <span class="nn">..utils.num_nodes</span> <span class="k">import</span> <span class="n">maybe_num_nodes</span>
 
 
+<span class="k">def</span> <span class="nf">size_repr</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported attribute type.&#39;</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A plain old python object modeling a single graph with various</span>
 <span class="sd">    (optional) attributes:</span>
@@ -279,9 +288,9 @@
             <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Data.cat_dim"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Data.cat_dim">[docs]</a>    <span class="k">def</span> <span class="nf">cat_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the dimension in which the attribute :obj:`key` with</span>
-<span class="sd">        content :obj:`value` gets concatenated when creating batches.</span>
+<div class="viewcode-block" id="Data.__cat_dim__"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Data.__cat_dim__">[docs]</a>    <span class="k">def</span> <span class="nf">__cat_dim__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the dimension for which :obj:`value` of attribute</span>
+<span class="sd">        :obj:`key` will get concatenated when creating batches.</span>
 
 <span class="sd">        .. note::</span>
 
@@ -293,11 +302,23 @@
         <span class="c1"># everything else in the first dimension.</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(index|face)&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span> <span class="k">else</span> <span class="mi">0</span></div>
 
+<div class="viewcode-block" id="Data.__cumsum__"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Data.__cumsum__">[docs]</a>    <span class="k">def</span> <span class="nf">__cumsum__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;If :obj:`True`, :obj:`value` of attribute :obj:`key` is</span>
+<span class="sd">        cumulatively summed up when creating batches.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            This method is for internal use only, and should only be overridden</span>
+<span class="sd">            if the batch concatenation process is corrupted for a specific data</span>
+<span class="sd">            attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(index|face)&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the number of nodes in the graph.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;pos&#39;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_dim</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__cat_dim__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -306,7 +327,7 @@
     <span class="k">def</span> <span class="nf">num_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the number of edges in the graph.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">(</span><span class="s1">&#39;edge_index&#39;</span><span class="p">,</span> <span class="s1">&#39;edge_attr&#39;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_dim</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__cat_dim__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -339,12 +360,13 @@
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_undirected</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Data.apply"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Data.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Applies the function :obj:`func` to all attributes :obj:`*keys`.</span>
-<span class="sd">        If :obj:`*keys` is not given, :obj:`func` is applied to all present</span>
-<span class="sd">        attributes.</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Applies the function :obj:`func` to all tensor attributes</span>
+<span class="sd">        :obj:`*keys`. If :obj:`*keys` is not given, :obj:`func` is applied to</span>
+<span class="sd">        all present attributes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">(</span><span class="o">*</span><span class="n">keys</span><span class="p">):</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Data.contiguous"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Data.contiguous">[docs]</a>    <span class="k">def</span> <span class="nf">contiguous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">):</span>
@@ -361,10 +383,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="o">*</span><span class="n">keys</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Data.clone"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Data.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">Data</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">})</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">})</span></div>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">size</span><span class="p">()))</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">info</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">size_repr</span><span class="p">(</span><span class="n">item</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">))</span></div>
 </pre></div>
 

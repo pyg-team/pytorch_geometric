@@ -79,7 +79,7 @@ The full layer implementation is shown below:
             x = self.lin(x)
 
             # Step 3-5: Start propagating messages.
-            return self.propagate(edge_index, x=x, size=(x.size(0), x.size(0)))
+            return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x)
 
         def message(self, x_j, edge_index, size):
             # x_j has shape [E, out_channels]
@@ -152,7 +152,7 @@ Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePas
             # x has shape [N, in_channels]
             # edge_index has shape [2, E]
 
-            return self.propagate(edge_index, x=x, size=(x.size(0), x.size(0)))
+            return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x)
 
         def message(self, x_i, x_j):
             # x_i has shape [E, in_channels]

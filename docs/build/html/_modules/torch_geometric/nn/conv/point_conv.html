@@ -194,12 +194,12 @@
             
   <h1>Source code for torch_geometric.nn.conv.point_conv</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">remove_self_loops</span><span class="p">,</span> <span class="n">add_self_loops</span><span class="p">,</span> <span class="n">scatter_</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn.conv</span> <span class="k">import</span> <span class="n">MessagePassing</span>
 
 <span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">reset</span>
 
 
-<div class="viewcode-block" id="PointConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PointConv">[docs]</a><span class="k">class</span> <span class="nc">PointConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="PointConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PointConv">[docs]</a><span class="k">class</span> <span class="nc">PointConv</span><span class="p">(</span><span class="n">MessagePassing</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The PointNet set layer from the `&quot;PointNet: Deep Learning on Point Sets</span>
 <span class="sd">    for 3D Classification and Segmentation&quot;</span>
 <span class="sd">    &lt;https://arxiv.org/abs/1612.00593&gt;`_ and `&quot;PointNet++: Deep Hierarchical</span>
@@ -224,7 +224,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_nn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">global_nn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PointConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PointConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">local_nn</span> <span class="o">=</span> <span class="n">local_nn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_nn</span> <span class="o">=</span> <span class="n">global_nn</span>
@@ -237,26 +237,21 @@
 
 <div class="viewcode-block" id="PointConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PointConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">edge_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
-        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
+        <span class="n">N</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">M</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span></div>
 
-        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">pos</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="n">row</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">out</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
+    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_i</span><span class="p">,</span> <span class="n">pos_i</span><span class="p">,</span> <span class="n">pos_j</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">pos_i</span> <span class="o">-</span> <span class="n">pos_j</span>
+        <span class="k">if</span> <span class="n">x_i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x_i</span><span class="p">,</span> <span class="n">msg</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_nn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_nn</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_nn</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">msg</span>
 
-        <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aggr_out</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_nn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_nn</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">out</span></div>
+            <span class="n">aggr_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_nn</span><span class="p">(</span><span class="n">aggr_out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">aggr_out</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(local_nn=</span><span class="si">{}</span><span class="s1">, global_nn=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>

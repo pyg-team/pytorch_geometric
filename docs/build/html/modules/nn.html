@@ -214,7 +214,7 @@
 <span id="sparse-convolutional-layers"></span><h2><a class="toc-backref" href="#id3">Sparse Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv.message_passing" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.conv.message_passing.MessagePassing">
-<em class="property">class </em><code class="descname">MessagePassing</code><span class="sig-paren">(</span><em>aggr='add'</em>, <em>flow='target_to_source'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.message_passing.MessagePassing" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">MessagePassing</code><span class="sig-paren">(</span><em>aggr='add'</em>, <em>flow='source_to_target'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.message_passing.MessagePassing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for creating message passing layers</p>
 <div class="math notranslate nohighlight">
 \[\mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
@@ -1745,8 +1745,7 @@ node to a specific example. (default: <a class="reference external" href="https:
 <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M\)</span>, which assigns each
 node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 <li><strong>max_num_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of neighbors to
-return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>.
-This flag is only needed for CUDA tensors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
+return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
 </ul>
 </td>
 </tr>
@@ -1899,8 +1898,8 @@ produced by the encoder.</p>
 </tbody>
 </table>
 <dl class="method">
-<dt id="torch_geometric.nn.models.GAE.decode_all">
-<code class="descname">decode_all</code><span class="sig-paren">(</span><em>z</em>, <em>sigmoid=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.decode_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.decode_all" title="Permalink to this definition">¶</a></dt>
+<dt id="torch_geometric.nn.models.GAE.decode">
+<code class="descname">decode</code><span class="sig-paren">(</span><em>z</em>, <em>sigmoid=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.decode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.decode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decodes the latent variables <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code> into a probabilistic
 dense adjacency matrix.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1911,7 +1910,7 @@ dense adjacency matrix.</p>
 <li><strong>z</strong> (<em>Tensor</em>) – The latent space <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>.</li>
 <li><strong>sigmoid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, does not apply
 the logistic sigmoid function to the output.
-(default <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 </ul>
 </td>
 </tr>
@@ -1933,7 +1932,7 @@ the given node-pairs <code class="xref py py-obj docutils literal notranslate"><
 <li><strong>edge_index</strong> (<em>LongTensor</em>) – The edge indices to predict.</li>
 <li><strong>sigmoid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, does not apply
 the logistic sigmoid function to the output.
-(default <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 </ul>
 </td>
 </tr>
@@ -1948,22 +1947,23 @@ the logistic sigmoid function to the output.
 </dd></dl>
 
 <dl class="method">
-<dt id="torch_geometric.nn.models.GAE.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>z</em>, <em>pos_edge_index</em>, <em>neg_edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given latent variables <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code>, positive edges
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">pos_edge_index</span></code> and negative edges <code class="xref py py-obj docutils literal notranslate"><span class="pre">neg_edge_index</span></code>,
-computes area under the ROC curve (AUC) and average precision (AP)
-scores.</p>
+<dt id="torch_geometric.nn.models.GAE.negative_sampling">
+<code class="descname">negative_sampling</code><span class="sig-paren">(</span><em>pos_edge_index</em>, <em>num_nodes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.negative_sampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.negative_sampling" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.GAE.recon_loss">
+<code class="descname">recon_loss</code><span class="sig-paren">(</span><em>z</em>, <em>pos_edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.recon_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.recon_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given latent variables <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code>, computes the binary cross
+entropy loss for positive edges <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos_edge_index</span></code> and negative
+sampled edges.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>z</strong> (<em>Tensor</em>) – The latent space <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>.</li>
-<li><strong>pos_edge_index</strong> (<em>LongTensor</em>) – The positive edges to evaluate
-against.</li>
-<li><strong>neg_edge_index</strong> (<em>LongTensor</em>) – The negative edges to evaluate
-against.</li>
+<li><strong>pos_edge_index</strong> (<em>LongTensor</em>) – The positive edges to train against.</li>
 </ul>
 </td>
 </tr>
@@ -1972,26 +1972,9 @@ against.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="torch_geometric.nn.models.GAE.loss">
-<code class="descname">loss</code><span class="sig-paren">(</span><em>z</em>, <em>pos_edge_index</em>, <em>neg_adj_mask</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.loss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given latent variables <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code>, computes the binary cross
-entropy loss for positive edges <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos_edge_index</span></code> and a negative
-adjacency matrix mask <code class="xref py py-obj docutils literal notranslate"><span class="pre">neg_adj_mask</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>z</strong> (<em>Tensor</em>) – The latent space <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>.</li>
-<li><strong>pos_edge_index</strong> (<em>LongTensor</em>) – The positive edges to train against.</li>
-<li><strong>neg_adj_mask</strong> (<em>ByteTensor</em>) – A symmetric mask with shape
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">[N,</span> <span class="pre">N]</span></code> denoting the negative edges to train against.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+<dt id="torch_geometric.nn.models.GAE.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.models.GAE.split_edges">
@@ -2014,6 +1997,92 @@ edges. (default: <code class="xref py py-obj docutils literal notranslate"><span
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.GAE.test">
+<code class="descname">test</code><span class="sig-paren">(</span><em>z</em>, <em>pos_edge_index</em>, <em>neg_edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE.test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given latent variables <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code>, positive edges
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">pos_edge_index</span></code> and negative edges <code class="xref py py-obj docutils literal notranslate"><span class="pre">neg_edge_index</span></code>,
+computes area under the ROC curve (AUC) and average precision (AP)
+scores.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>z</strong> (<em>Tensor</em>) – The latent space <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>.</li>
+<li><strong>pos_edge_index</strong> (<em>LongTensor</em>) – The positive edges to evaluate
+against.</li>
+<li><strong>neg_edge_index</strong> (<em>LongTensor</em>) – The negative edges to evaluate
+against.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.models.VGAE">
+<em class="property">class </em><code class="descname">VGAE</code><span class="sig-paren">(</span><em>encoder</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#VGAE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.VGAE" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.nn.models.VGAE.encode">
+<code class="descname">encode</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#VGAE.encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.VGAE.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the encoder and computes latent variables for each node.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.VGAE.kl_loss">
+<code class="descname">kl_loss</code><span class="sig-paren">(</span><em>mu=None</em>, <em>logvar=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#VGAE.kl_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.VGAE.kl_loss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.VGAE.reparametrize">
+<code class="descname">reparametrize</code><span class="sig-paren">(</span><em>mu</em>, <em>logvar</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#VGAE.reparametrize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.VGAE.reparametrize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.models.ARGA">
+<em class="property">class </em><code class="descname">ARGA</code><span class="sig-paren">(</span><em>encoder</em>, <em>discriminator</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGA" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.nn.models.ARGA.discriminator_loss">
+<code class="descname">discriminator_loss</code><span class="sig-paren">(</span><em>z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGA.discriminator_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGA.discriminator_loss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.ARGA.reg_loss">
+<code class="descname">reg_loss</code><span class="sig-paren">(</span><em>z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGA.reg_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGA.reg_loss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.ARGA.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGA.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGA.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.models.ARGVA">
+<em class="property">class </em><code class="descname">ARGVA</code><span class="sig-paren">(</span><em>encoder</em>, <em>discriminator</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGVA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGVA" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="torch_geometric.nn.models.ARGVA.encode">
+<code class="descname">encode</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGVA.encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGVA.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the encoder and computes latent variables for each node.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.ARGVA.kl_loss">
+<code class="descname">kl_loss</code><span class="sig-paren">(</span><em>mu=None</em>, <em>logvar=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGVA.kl_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGVA.kl_loss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.ARGVA.reparametrize">
+<code class="descname">reparametrize</code><span class="sig-paren">(</span><em>mu</em>, <em>logvar</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#ARGVA.reparametrize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.ARGVA.reparametrize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

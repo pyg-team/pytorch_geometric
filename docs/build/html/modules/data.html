@@ -235,10 +235,36 @@ present attributes.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="torch_geometric.data.Data.__cat_dim__">
+<code class="descname">__cat_dim__</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.__cat_dim__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.__cat_dim__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the dimension for which <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> of attribute
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> will get concatenated when creating batches.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is for internal use only, and should only be overridden
+if the batch concatenation process is corrupted for a specific data
+attribute.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="torch_geometric.data.Data.__contains__">
 <code class="descname">__contains__</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.__contains__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.__contains__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, if the attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> is present in the
 data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.data.Data.__cumsum__">
+<code class="descname">__cumsum__</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.__cumsum__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.__cumsum__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> of attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> is
+cumulatively summed up when creating batches.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is for internal use only, and should only be overridden
+if the batch concatenation process is corrupted for a specific data
+attribute.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -269,22 +295,9 @@ attribute names and content.</p>
 <dl class="method">
 <dt id="torch_geometric.data.Data.apply">
 <code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.apply" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies the function <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> to all attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">*keys</span></code>.
-If <code class="xref py py-obj docutils literal notranslate"><span class="pre">*keys</span></code> is not given, <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> is applied to all present
-attributes.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="torch_geometric.data.Data.cat_dim">
-<code class="descname">cat_dim</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.cat_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.cat_dim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the dimension in which the attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> with
-content <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> gets concatenated when creating batches.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This method is for internal use only, and should only be overridden
-if the batch concatenation process is corrupted for a specific data
-attribute.</p>
-</div>
+<dd><p>Applies the function <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> to all tensor attributes
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">*keys</span></code>. If <code class="xref py py-obj docutils literal notranslate"><span class="pre">*keys</span></code> is not given, <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> is applied to
+all present attributes.</p>
 </dd></dl>
 
 <dl class="method">
@@ -381,19 +394,6 @@ attributes.</p>
 base class, all its methods can also be used here.
 In addition, single graphs can be reconstructed via the assignment vector
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">batch</span></code>, which maps each node to its respective graph identifier.</p>
-<dl class="method">
-<dt id="torch_geometric.data.Batch.cumsum">
-<code class="descname">cumsum</code><span class="sig-paren">(</span><em>key</em>, <em>item</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/batch.html#Batch.cumsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Batch.cumsum" title="Permalink to this definition">¶</a></dt>
-<dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> with content <code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code>
-should be added up cumulatively before concatenated together.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This method is for internal use only, and should only be overridden
-if the batch concatenation process is corrupted for a specific data
-attribute.</p>
-</div>
-</dd></dl>
-
 <dl class="staticmethod">
 <dt id="torch_geometric.data.Batch.from_data_list">
 <em class="property">static </em><code class="descname">from_data_list</code><span class="sig-paren">(</span><em>data_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/batch.html#Batch.from_data_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Batch.from_data_list" title="Permalink to this definition">¶</a></dt>
