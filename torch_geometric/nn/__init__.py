@@ -5,6 +5,7 @@ from .conv import *  # noqa
 from .glob import *  # noqa
 from .pool import *  # noqa
 from .dense import *  # noqa
+from .models import *  # noqa
 
 __all__ = [
     'MetaLayer',

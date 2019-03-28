@@ -1,3 +1,4 @@
+import os
 import os.path as osp
 import glob
 
@@ -16,7 +17,7 @@ names = [
 
 def read_tu_data(folder, prefix):
     files = glob.glob(osp.join(folder, '{}_*.txt'.format(prefix)))
-    names = [f.split('/')[-1][len(prefix) + 1:-4] for f in files]
+    names = [f.split(os.sep)[-1][len(prefix) + 1:-4] for f in files]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1

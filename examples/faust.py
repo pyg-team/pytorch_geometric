@@ -16,7 +16,7 @@ class MyTransform(object):
 
 
 def norm(x, edge_index):
-    deg = degree(edge_index[0], x.size(0), x.dtype, x.device) + 1
+    deg = degree(edge_index[0], x.size(0), x.dtype) + 1
     return x / deg.unsqueeze(-1)
 
 

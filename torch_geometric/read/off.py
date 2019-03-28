@@ -24,7 +24,7 @@ def parse_off(src):
 
 
 def face_to_tri(face):
-    face = [[int(x) for x in line.split(' ')] for line in face]
+    face = [[int(x) for x in line.strip().split(' ')] for line in face]
 
     triangle = torch.tensor([line[1:] for line in face if line[0] == 3])
     triangle = triangle.to(torch.int64)
