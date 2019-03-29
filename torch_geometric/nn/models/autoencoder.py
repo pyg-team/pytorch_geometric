@@ -124,7 +124,7 @@ class GAE(torch.nn.Module):
         perm = torch.tensor(random.sample(rng, idx.size(0)))
         mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
         rest = mask.nonzero().view(-1)
-        while rest.numel() > 0:
+        while rest.numel() > 0:  # pragma: no cover
             tmp = torch.tensor(random.sample(rng, rest.size(0)))
             mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
             perm[rest] = tmp
