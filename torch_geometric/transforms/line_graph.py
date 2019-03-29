@@ -47,11 +47,12 @@ class LineGraph(object):
             i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
 
             (row, col), i = coalesce(
-                torch.stack([
-                    torch.cat([row, col], dim=0),
-                    torch.cat([col, row], dim=0)
-                ],
-                            dim=0), torch.cat([i, i], dim=0), N, N)
+                torch.stack(
+                    [
+                        torch.cat([row, col], dim=0),
+                        torch.cat([col, row], dim=0)
+                    ],
+                    dim=0), torch.cat([i, i], dim=0), N, N)
 
             # Compute new edge indices according to `i`.
             count = scatter_add(
@@ -70,9 +71,11 @@ class LineGraph(object):
             joints, _ = coalesce(joints, None, N, N)
 
             if edge_attr is not None:
+                print("DRIN")
                 data.x = scatter_add(edge_attr, i, dim=0, dim_size=N)
             data.edge_index = joints
 
+        data.edge_attr = None
         return data
 
     def __repr__(self):
