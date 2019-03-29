@@ -634,6 +634,15 @@ of nodes will get automatically inferred. (default: <a class="reference external
 <dd><p>Adds the two hop edges to the edge indices.</p>
 </dd></dl>
 
+<dl class="class">
+<dt id="torch_geometric.transforms.LineGraph">
+<em class="property">class </em><code class="descname">LineGraph</code><a class="reference internal" href="../_modules/torch_geometric/transforms/line_graph.html#LineGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.LineGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a graph to its corresponding line-graph:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}L(\mathcal{G}) &amp;= (\mathcal{V}^{\prime}, \mathcal{E}^{\prime})\\\mathcal{V}^{\prime} &amp;= \mathcal{E}\\\mathcal{E}^{\prime} &amp;= \{ (e_1, e_2) : e_1 \cap e_2 \neq \emptyset \}\end{aligned}\end{align} \]</div>
+<p>New node features are given by (scattered) old edge attributes.</p>
+</dd></dl>
+
 </div>
 
 
