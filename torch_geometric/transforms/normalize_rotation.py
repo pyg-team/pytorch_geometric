@@ -1,54 +1,37 @@
 import torch
 
-r"""Rotates all points given in the data object so that the eigenvectors of the positions
-    overlie the axes of the cartesian coordinate system. If the data object contains normals 
-    saved in data.norm these will be also rotated.
+
+class NormalizeRotation(object):
+    r"""Rotates all points so that the eigenvectors overlie the axes of the
+    Cartesian coordinate system.
+    If the data additionally holds normals saved in :obj:`data.norm` these will
+    be also rotated.
 
     Args:
-        center (bool, optional): If set to :obj:`True` the points are also shifted so that their mean lies in zero. (default: :obj:`False`)
-        maxPointsPCA (int, optional): If set to a value greater than 0, only a maximum of :obj: points 
-            taken from the original points to calculate the eigenvectors in order to save memory and computation time (default: :obj:`-1`)
-"""
-class NormalizeRotation(object):
-    def __init__(self, center=False, maxPointsPCA=-1):
-        self.center = center
-        self.maxPointsPCA = maxPointsPCA
+        max_points (int, optional): If set to a value greater than :obj:`0`,
+            only a random number of :obj:`max_points` points are sampled and
+            used to compute eigenvectors. (default: :obj:`-1`)
+    """
+
+    def __init__(self, max_points=-1):
+        self.max_points = max_points
 
     def __call__(self, data):
         pos = data.pos
-        numPoints = data.pos.shape[0]           
-        
-        if self.maxPointsPCA > 0 and numPoints > self.maxPointsPCA:
-            prob = torch.ones(numPoints) / numPoints
-            randSamples = torch.multinomial(prob, self.maxPointsPCA, replacement=False)        
-            pos = data.pos[randSamples]
-                        
-        hasNormals = False
-        if hasattr(data, 'norm'):
-            assert data.pos.shape == data.norm.shape
-            hasNormals = True
 
-        X_mean, eigenvec = PCA(pos)        
-        data.pos = data.pos - X_mean
-        transf = eigenvec.inverse()  
+        if self.max_points > 0 and pos.size(0) > self.max_points:
+            perm = torch.randperm(pos.size(0))
+            pos = pos[perm[:self.max_points]]
 
-        for i in range(data.pos.shape[0]):
-            data.pos[i] = torch.mv(transf, data.pos[i])
-            if hasNormals:
-                data.norm[i] = torch.mv(transf, data.norm[i])
-                
-        if not self.center:
-            data.pos = data.pos + X_mean            
+        pos = pos - pos.mean(dim=0, keepdim=True)
+        C = torch.matmul(pos.t(), pos)
+        e, v = torch.eig(C, eigenvectors=True)  # v[:,j] is j-th eigenvector
+
+        data.pos = torch.matmul(pos, v)
+        if 'norm' in data:
+            data.norm = torch.matmul(data.norm, v)
 
         return data
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.num)
-
-    
-def PCA(pos):
-     pos_mean = torch.mean(pos,0)
-     pos_centered = pos - pos_mean.expand_as(pos)
-     U,_,_ = torch.svd(torch.t(pos_centered))
-     eigenvec = U[:,:3]
-     return (pos_mean, eigenvec)
+        return '{}()'.format(self.__class__.__name__)
