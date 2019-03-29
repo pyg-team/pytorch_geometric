@@ -1,4 +1,5 @@
 import torch
+import torch.nn.functional as F
 
 
 class NormalizeRotation(object):
@@ -28,8 +29,9 @@ class NormalizeRotation(object):
         e, v = torch.eig(C, eigenvectors=True)  # v[:,j] is j-th eigenvector
 
         data.pos = torch.matmul(pos, v)
+
         if 'norm' in data:
-            data.norm = torch.matmul(data.norm, v)
+            data.norm = F.normalize(torch.matmul(data.norm, v))
 
         return data
 
