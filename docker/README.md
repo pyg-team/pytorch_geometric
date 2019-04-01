@@ -1,6 +1,6 @@
 # Docker
 
-You can run PyTorch Geometric with CUDA 9.0 inside a docker image:
+You can run PyTorch Geometric with CUDA 9.0 inside a docker image.
 The creation of [our dockerfile](https://github.com/rusty1s/pytorch_geometric/blob/master/docker/Dockerfile) refers to the dockerfiles provided by [NVIDIA](https://gitlab.com/nvidia/cuda/tree/ubuntu16.04) and [PyTorch](https://github.com/anibali/docker-pytorch).
 
 1. Download the dockerfile to your host server.
