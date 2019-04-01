@@ -47,7 +47,7 @@ class Batch(Data):
             elif isinstance(item, int) or isinstance(item, float):
                 batch[key] = torch.tensor(batch[key])
             else:
-                return ValueError('Unsupported attribute type.')
+                raise ValueError('Unsupported attribute type.')
         batch.batch = torch.cat(batch.batch, dim=-1)
         return batch.contiguous()
 

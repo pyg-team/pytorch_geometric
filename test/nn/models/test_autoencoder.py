@@ -48,6 +48,9 @@ def test_vgae():
     model.encode(x)
     assert model.kl_loss().item() > 0
 
+    model.test()
+    model.encode(x)
+
 
 def test_arga():
     model = ARGA(encoder=lambda x: x, discriminator=lambda x: T([0.5]))

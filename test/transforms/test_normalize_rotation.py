@@ -15,12 +15,22 @@ def test_normalize_rotation():
     data = NormalizeRotation()(data)
     assert len(data) == 2
 
-    assert torch.allclose(data.pos,
-                          torch.Tensor([
-                              [-2 * sqrt(2), 0],
-                              [-sqrt(2), 0],
-                              [0, 0],
-                              [sqrt(2), 0],
-                              [2 * sqrt(2), 0],
-                          ]))
-    assert data.norm.tolist() == [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
+    expected_pos = torch.Tensor([
+        [-2 * sqrt(2), 0],
+        [-sqrt(2), 0],
+        [0, 0],
+        [sqrt(2), 0],
+        [2 * sqrt(2), 0],
+    ])
+    expected_norm = [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
+
+    assert torch.allclose(data.pos, expected_pos)
+    assert data.norm.tolist() == expected_norm
+
+    data = Data(pos=pos)
+    data.norm = norm
+    data = NormalizeRotation(max_points=3)(data)
+    assert len(data) == 2
+
+    assert torch.allclose(data.pos, expected_pos)
+    assert data.norm.tolist() == expected_norm
