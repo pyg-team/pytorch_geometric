@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.conv.gin_conv &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.nn.unpool.knn_interpolate &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -176,7 +176,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.nn.conv.gin_conv</li>
+      <li>torch_geometric.nn.unpool.knn_interpolate</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -191,59 +191,52 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.nn.conv.gin_conv</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.nn.unpool.knn_interpolate</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="k">import</span> <span class="n">knn</span>
 <span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter_add</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">remove_self_loops</span>
-
-<span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">reset</span>
 
 
-<div class="viewcode-block" id="GINConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GINConv">[docs]</a><span class="k">class</span> <span class="nc">GINConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The graph isomorphism operator from the `&quot;How Powerful are</span>
-<span class="sd">    Graph Neural Networks?&quot; &lt;https://arxiv.org/abs/1810.00826&gt;`_ paper</span>
+<div class="viewcode-block" id="knn_interpolate"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.unpool.knn_interpolate">[docs]</a><span class="k">def</span> <span class="nf">knn_interpolate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span><span class="p">,</span> <span class="n">batch_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The k-NN interpolation from the `&quot;PointNet++: Deep Hierarchical</span>
+<span class="sd">    Feature Learning on Point Sets in a Metric Space&quot;</span>
+<span class="sd">    &lt;https://arxiv.org/abs/1706.02413&gt;`_ paper.</span>
+<span class="sd">    For each point :obj:`y`, its interpolated features are given by</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \mathbf{x}^{\prime}_i = h_{\mathbf{\Theta}} \left( (1 + \epsilon) \cdot</span>
-<span class="sd">        \mathbf{x}_i + \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \right),</span>
-
-<span class="sd">    here :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.* a MLP.</span>
+<span class="sd">        f(\mathbf{x}) = \frac{\sum_{i=1}^k w_i(y) f_i}{\sum_{i=1}^k w_i(y)}</span>
+<span class="sd">        \textrm{, where } w_i(y) = \frac{1}{d(y, x_i)^2}.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.</span>
-<span class="sd">        eps (float, optional): (Initial) :math:`\epsilon` value.</span>
-<span class="sd">            (default: :obj:`0`)</span>
-<span class="sd">        train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`</span>
-<span class="sd">            will be a trainable parameter. (default: :obj:`False`)</span>
+<span class="sd">        x (Tensor): Node feature matrix</span>
+<span class="sd">            :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.</span>
+<span class="sd">        pos_x (Tensor): Node position matrix</span>
+<span class="sd">            :math:`\in \mathbb{R}^{N \times d}`.</span>
+<span class="sd">        pos_y (Tensor): Upsampled node position matrix</span>
+<span class="sd">            :math:`\in \mathbb{R}^{M \times d}`.</span>
+<span class="sd">        batch_x (LongTensor, optional): Batch vector</span>
+<span class="sd">            :math:`\mathbf{b_x} \in {\{ 0, \ldots, B-1\}}^N`, which assigns</span>
+<span class="sd">            each node from :math:`\mathbf{X}` to a specific example.</span>
+<span class="sd">            (default: :obj:`None`)</span>
+<span class="sd">        batch_y (LongTensor, optional): Batch vector</span>
+<span class="sd">            :math:`\mathbf{b_y} \in {\{ 0, \ldots, B-1\}}^N`, which assigns</span>
+<span class="sd">            each node from :math:`\mathbf{Y}` to a specific example.</span>
+<span class="sd">            (default: :obj:`None`)</span>
+<span class="sd">        k (int, optional): Number of neighbors. (default: :obj:`3`)</span>
+
+<span class="sd">    :rtype: :class:`Tensor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nn</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">train_eps</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GINConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nn</span> <span class="o">=</span> <span class="n">nn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial_eps</span> <span class="o">=</span> <span class="n">eps</span>
-        <span class="k">if</span> <span class="n">train_eps</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">eps</span><span class="p">]))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;eps&#39;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">eps</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">y_idx</span><span class="p">,</span> <span class="n">x_idx</span> <span class="o">=</span> <span class="n">knn</span><span class="p">(</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">batch_x</span><span class="o">=</span><span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span><span class="o">=</span><span class="n">batch_y</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">pos_x</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_x</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+        <span class="n">squared_distance</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span> <span class="o">*</span> <span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">squared_distance</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-16</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GINConv.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GINConv.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nn</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_eps</span><span class="p">)</span></div>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">pos_y</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">pos_y</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 
-<div class="viewcode-block" id="GINConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GINConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span>
-        <span class="n">edge_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
-        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
-
-        <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">out</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span></div>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(nn=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">y</span></div>
 </pre></div>
 
            </div>

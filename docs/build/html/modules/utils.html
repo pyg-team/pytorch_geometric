@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                master (1.0.3)
+                master (1.1.1)
               </div>
             
           
@@ -118,11 +118,10 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv.message_passing">Sparse Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv.message_passing">Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.unpool">Unpooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
@@ -511,7 +510,7 @@ by edge indices and edge attributes.</p>
 
 <dl class="function">
 <dt id="torch_geometric.utils.sparse_to_dense">
-<code class="descname">sparse_to_dense</code><span class="sig-paren">(</span><em>edge_index</em>, <em>edge_attr</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/sparse.html#sparse_to_dense"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.sparse_to_dense" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sparse_to_dense</code><span class="sig-paren">(</span><em>edge_index</em>, <em>edge_attr=None</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/sparse.html#sparse_to_dense"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.sparse_to_dense" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a sparse adjacency matrix given by edge indices and edge
 attributes to a dense adjacency matrix.</p>
 <table class="docutils field-list" frame="void" rules="none">

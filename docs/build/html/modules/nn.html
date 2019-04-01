@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.0.3)
+                master (1.1.1)
               </div>
             
           
@@ -119,11 +119,10 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.conv.message_passing">Sparse Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.conv.message_passing">Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.unpool">Unpooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
@@ -201,17 +200,16 @@
 <div class="contents local topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#module-torch_geometric.nn.conv.message_passing" id="id5">Sparse Convolutional Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.dense.dense_sage_conv" id="id6">Dense Convolutional Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.conv.message_passing" id="id6">Convolutional Layers</a></li>
 <li><a class="reference internal" href="#module-torch_geometric.nn.glob" id="id7">Global Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id8">Sparse Hierarchical Pooling Layers</a></li>
-<li><a class="reference internal" href="#module-torch_geometric.nn.dense.diff_pool" id="id9">Dense Hierarchical Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.pool" id="id8">Pooling Layers</a></li>
+<li><a class="reference internal" href="#module-torch_geometric.nn.unpool" id="id9">Unpooling Layers</a></li>
 <li><a class="reference internal" href="#module-torch_geometric.nn.models" id="id10">Models</a></li>
 <li><a class="reference internal" href="#module-torch_geometric.nn.data_parallel" id="id11">DataParallel layers</a></li>
 </ul>
 </div>
 <div class="section" id="module-torch_geometric.nn.conv.message_passing">
-<span id="sparse-convolutional-layers"></span><h2><a class="toc-backref" href="#id5">Sparse Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv.message_passing" title="Permalink to this headline">¶</a></h2>
+<span id="convolutional-layers"></span><h2><a class="toc-backref" href="#id6">Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.conv.message_passing" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.conv.message_passing.MessagePassing">
 <em class="property">class </em><code class="descname">MessagePassing</code><span class="sig-paren">(</span><em>aggr='add'</em>, <em>flow='source_to_target'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/message_passing.html#MessagePassing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.message_passing.MessagePassing" title="Permalink to this definition">¶</a></dt>
@@ -1151,10 +1149,7 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-torch_geometric.nn.dense.dense_sage_conv">
-<span id="dense-convolutional-layers"></span><h2><a class="toc-backref" href="#id6">Dense Convolutional Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.dense_sage_conv" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<span class="target" id="module-torch_geometric.nn.dense.dense_sage_conv"></span><dl class="class">
 <dt id="torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv">
 <em class="property">class </em><code class="descname">DenseSAGEConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>normalize=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/dense_sage_conv.html#DenseSAGEConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>See <a class="reference internal" href="#torch_geometric.nn.conv.SAGEConv" title="torch_geometric.nn.conv.SAGEConv"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.nn.conv.SAGEConv</span></code></a>.</p>
@@ -1395,7 +1390,7 @@ LSTM and computing the final results. (default: <code class="xref py py-obj docu
 
 </div>
 <div class="section" id="module-torch_geometric.nn.pool">
-<span id="sparse-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id8">Sparse Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
+<span id="pooling-layers"></span><h2><a class="toc-backref" href="#id8">Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.pool" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="torch_geometric.nn.pool.TopKPooling">
 <em class="property">class </em><code class="descname">TopKPooling</code><span class="sig-paren">(</span><em>in_channels</em>, <em>ratio=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/pool/topk_pool.html#TopKPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.pool.TopKPooling" title="Permalink to this definition">¶</a></dt>
@@ -1832,10 +1827,7 @@ node to a specific example. (default: <a class="reference external" href="https:
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-torch_geometric.nn.dense.diff_pool">
-<span id="dense-hierarchical-pooling-layers"></span><h2><a class="toc-backref" href="#id9">Dense Hierarchical Pooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.dense.diff_pool" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<span class="target" id="module-torch_geometric.nn.dense.diff_pool"></span><dl class="function">
 <dt id="torch_geometric.nn.dense.diff_pool.dense_diff_pool">
 <code class="descname">dense_diff_pool</code><span class="sig-paren">(</span><em>x</em>, <em>adj</em>, <em>s</em>, <em>mask=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/dense/diff_pool.html#dense_diff_pool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.dense.diff_pool.dense_diff_pool" title="Permalink to this definition">¶</a></dt>
 <dd><p>Differentiable pooling operator from the <a class="reference external" href="https://arxiv.org/abs/1806.08804">“Hierarchical Graph
@@ -1872,6 +1864,48 @@ the valid nodes for each graph. (default: <a class="reference external" href="ht
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-torch_geometric.nn.unpool">
+<span id="unpooling-layers"></span><h2><a class="toc-backref" href="#id9">Unpooling Layers</a><a class="headerlink" href="#module-torch_geometric.nn.unpool" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="torch_geometric.nn.unpool.knn_interpolate">
+<code class="descname">knn_interpolate</code><span class="sig-paren">(</span><em>x</em>, <em>pos_x</em>, <em>pos_y</em>, <em>batch_x=None</em>, <em>batch_y=None</em>, <em>k=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/unpool/knn_interpolate.html#knn_interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.unpool.knn_interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>The k-NN interpolation from the <a class="reference external" href="https://arxiv.org/abs/1706.02413">“PointNet++: Deep Hierarchical
+Feature Learning on Point Sets in a Metric Space”</a> paper.
+For each point <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>, its interpolated features are given by</p>
+<div class="math notranslate nohighlight">
+\[f(\mathbf{x}) = \frac{\sum_{i=1}^k w_i(y) f_i}{\sum_{i=1}^k w_i(y)}
+\textrm{, where } w_i(y) = \frac{1}{d(y, x_i)^2}.\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
+<li><strong>pos_x</strong> (<em>Tensor</em>) – Node position matrix
+<span class="math notranslate nohighlight">\(\in \mathbb{R}^{N \times d}\)</span>.</li>
+<li><strong>pos_y</strong> (<em>Tensor</em>) – Upsampled node position matrix
+<span class="math notranslate nohighlight">\(\in \mathbb{R}^{M \times d}\)</span>.</li>
+<li><strong>batch_x</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b_x} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns
+each node from <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> to a specific example.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>batch_y</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
+<span class="math notranslate nohighlight">\(\mathbf{b_y} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns
+each node from <span class="math notranslate nohighlight">\(\mathbf{Y}\)</span> to a specific example.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of neighbors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">3</span></code>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </td>
 </tr>
 </tbody>

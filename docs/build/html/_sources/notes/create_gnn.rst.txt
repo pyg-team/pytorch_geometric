@@ -126,7 +126,7 @@ Initializing and calling it is straightforward:
 Implementing the edge convolution
 ---------------------------------
 
-The `edge convolution layer <https://arxiv.org/abs/1801.07829>`_ processes graphs or point clouds and is mathematically defined as
+The `edge convolutional layer <https://arxiv.org/abs/1801.07829>`_ processes graphs or point clouds and is mathematically defined as
 
 .. math::
 

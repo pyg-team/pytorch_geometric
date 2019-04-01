@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.0.3)
+                master (1.1.1)
               </div>
             
           
@@ -119,11 +119,10 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv.message_passing">Sparse Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv.message_passing">Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.unpool">Unpooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
@@ -400,6 +399,25 @@ Effective Baseline for Non-attribute Graph Classification”</a> paper</p>
 <dt id="torch_geometric.transforms.Center">
 <em class="property">class </em><code class="descname">Center</code><a class="reference internal" href="../_modules/torch_geometric/transforms/center.html#Center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.Center" title="Permalink to this definition">¶</a></dt>
 <dd><p>Centers node positions around the origin.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.NormalizeRotation">
+<em class="property">class </em><code class="descname">NormalizeRotation</code><span class="sig-paren">(</span><em>max_points=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/normalize_rotation.html#NormalizeRotation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.NormalizeRotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates all points so that the eigenvectors overlie the axes of the
+Cartesian coordinate system.
+If the data additionally holds normals saved in <code class="xref py py-obj docutils literal notranslate"><span class="pre">data.norm</span></code> these will
+be also rotated.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – If set to a value greater than <code class="xref py py-obj docutils literal notranslate"><span class="pre">0</span></code>,
+only a random number of <code class="xref py py-obj docutils literal notranslate"><span class="pre">max_points</span></code> points are sampled and
+used to compute eigenvectors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">-1</span></code>)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">

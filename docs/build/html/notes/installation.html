@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.0.3)
+                master (1.1.1)
               </div>
             
           
@@ -119,11 +119,10 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv.message_passing">Sparse Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv.message_passing">Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.unpool">Unpooling Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
@@ -288,16 +287,7 @@ $ pip install torch-geometric
 </ol>
 <p>In rare cases, CUDA or Python path problems can prevent a successful installation.
 <code class="docutils literal notranslate"><span class="pre">pip</span></code> may even signal a successful installation, but runtime errors complain about missing modules, <em>.e.g.</em>, <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">module</span> <span class="pre">named</span> <span class="pre">'torch_*.*_cuda'</span></code>, or execution simply crashes with <code class="docutils literal notranslate"><span class="pre">Segmentation</span> <span class="pre">fault</span> <span class="pre">(core</span> <span class="pre">dumped)</span></code>.
-Usually, this means that the installation of one (or all) of the extension packages failed.
-You should then clone the respective package and look for the error in the installation log, <em>e.g.</em>:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/rusty1s/pytorch_scatter
-$ cd pytorch_scatter
-$ python setup.py install  # Check for CUDA compilation or link error.
-$ python setup.py test  # Verify installation by running test suite.
-</pre></div>
-</div>
-<p>We collected a lot of common installation errors in the <a class="reference external" href="https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions">Frequently Asked Questions</a> subsection.
-Please note that if you make any changes, you need to force a recompilation of the CUDA kernels by removing the <code class="docutils literal notranslate"><span class="pre">build/</span></code> directory in the root folder of the respective package.
+We collected a lot of common installation errors in the <a class="reference external" href="https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions">Frequently Asked Questions</a> subsection.
 In case the FAQ does not help you in solving your problem, please create an <a class="reference external" href="https://github.com/rusty1s/pytorch_geometric/issues">issue</a>.
 You should additionally verify that your CUDA is set up correctly by following the official <a class="reference external" href="https://docs.nvidia.com/cuda/index.html">installation guide</a>, and that the <a class="reference external" href="https://github.com/pytorch/extension-cpp">official extension example</a> runs on your machine.</p>
 <div class="section" id="c-cuda-extensions-on-macos">
