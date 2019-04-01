@@ -28,7 +28,7 @@ class NormalizeRotation(object):
         C = torch.matmul(pos.t(), pos)
         e, v = torch.eig(C, eigenvectors=True)  # v[:,j] is j-th eigenvector
 
-        data.pos = torch.matmul(pos, v)
+        data.pos = torch.matmul(data.pos, v)
 
         if 'norm' in data:
             data.norm = F.normalize(torch.matmul(data.norm, v))
