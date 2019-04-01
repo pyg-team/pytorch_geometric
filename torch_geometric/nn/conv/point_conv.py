@@ -45,10 +45,10 @@ class PointConv(MessagePassing):
         N, M = edge_index[0].max().item() + 1, edge_index[1].max().item() + 1
         return self.propagate(edge_index, size=(N, M), x=x, pos=pos)
 
-    def message(self, x_i, pos_i, pos_j):
-        msg = pos_i - pos_j
-        if x_i is not None:
-            msg = torch.cat([x_i, msg], dim=1)
+    def message(self, x_j, pos_j, pos_i):
+        msg = pos_j - pos_i
+        if x_j is not None:
+            msg = torch.cat([x_j, msg], dim=1)
         if self.local_nn is not None:
             msg = self.local_nn(msg)
         return msg
