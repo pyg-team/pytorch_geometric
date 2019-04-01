@@ -79,18 +79,7 @@ Please follow the steps below for a successful installation:
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
 ``pip`` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, ``No module named 'torch_*.*_cuda'``, or execution simply crashes with ``Segmentation fault (core dumped)``.
-Usually, this means that the installation of one (or all) of the extension packages failed.
-You should then clone the respective package and look for the error in the installation log, *e.g.*:
-
-.. code-block:: none
-
-    $ git clone https://github.com/rusty1s/pytorch_scatter
-    $ cd pytorch_scatter
-    $ python setup.py install  # Check for CUDA compilation or link error.
-    $ python setup.py test  # Verify installation by running test suite.
-
 We collected a lot of common installation errors in the `Frequently Asked Questions <https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions>`_ subsection.
-Please note that if you make any changes, you need to force a recompilation of the CUDA kernels by removing the ``build/`` directory in the root folder of the respective package.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
 You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda/index.html>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
 
