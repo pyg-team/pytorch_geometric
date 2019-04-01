@@ -48,7 +48,7 @@ def test_vgae():
     model.encode(x)
     assert model.kl_loss().item() > 0
 
-    model.test()
+    model.eval()
     model.encode(x)
 
 
