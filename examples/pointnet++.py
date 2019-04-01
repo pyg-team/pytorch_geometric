@@ -37,12 +37,12 @@ class Net(torch.nn.Module):
         pos, batch = data.pos, data.batch
 
         idx = fps(pos, batch, ratio=0.5)  # 512 points
-        edge_index = radius(pos[idx], pos, 0.1, batch[idx], batch, 48)
+        edge_index = radius(pos[idx], pos, 0.1, batch[idx], batch, 64)
         x = F.relu(self.local_sa1(None, pos, edge_index))
         pos, batch = pos[idx], batch[idx]
 
         idx = fps(pos, batch, ratio=0.25)  # 128 points
-        edge_index = radius(pos[idx], pos, 0.2, batch[idx], batch, 48)
+        edge_index = radius(pos[idx], pos, 0.2, batch[idx], batch, 64)
         x = F.relu(self.local_sa2(x, pos, edge_index))
         pos, batch = pos[idx], batch[idx]
 
