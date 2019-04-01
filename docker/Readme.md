@@ -1,16 +1,10 @@
-Dockerfile
-==
-# note 
+# Docker
 
-The creation of this dockerfile refers to the code of project [nvidia](https://gitlab.com/nvidia/cuda/tree/ubuntu16.04) and [pytorch](https://github.com/anibali/docker-pytorch).
+You can run PyTorch Geometric with CUDA 9.0 inside a docker image:
+The creation of [this dockerfile](https://github.com/rusty1s/pytorch_geometric/blob/master/docker/Dockerfile) refers to the dockerfiles provided by [NVIDIA](https://gitlab.com/nvidia/cuda/tree/ubuntu16.04) and [PyTorch](https://github.com/anibali/docker-pytorch).
 
-# How to use?
-before using it, please ensure you server with GPU have been install the nvidia-docker
-```
-1. download this project to your host server.
-2. cd pytorch_geometric/docker
-3. docker build -t "the name (defined by yourself)" .
-4. docker run --rm -it --init --runtime=nvidia --ipc=host --network=host --volume=$PWD:/app -e NVIDIA_VISIBLE_DEVICES=0 "name defined in step 3" /bin/bash
-```
+1. Download the dockerfile to your host server.
+2. `$ docker build -t "custom image name"`
+3. `$ docker run --rm -it --init --runtime=nvidia --ipc=host --network=host --volume=$PWD:/app -e NVIDIA_VISIBLE_DEVICES=0 "custom image name" /bin/bash`
 
-if you have any question, please free contact to me by email: liangshengwen@ict.ac.cn
+If you encounter any problems, please feel free to contact <liangshengwen@ict.ac.cn>.
