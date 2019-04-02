@@ -59,22 +59,21 @@ class MessagePassing(torch.nn.Module):
 
         kwargs['edge_index'] = edge_index
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
+        ij = {"_i": i, "_j": j}
 
         message_args = []
         for arg in self.message_args:
-            if arg[-2:] == '_i':
+            if arg[-2:] in ij.keys():
                 tmp = kwargs[arg[:-2]]
                 if tmp is not None:
-                    if size[i] is None:
-                        size[i] = tmp.size(0)
-                    tmp = torch.index_select(tmp, 0, edge_index[i])
-                message_args.append(tmp)
-            elif arg[-2:] == '_j':
-                tmp = kwargs[arg[:-2]]
-                if tmp is not None:
-                    if size[j] is None:
-                        size[j] = tmp.size(0)
-                    tmp = torch.index_select(tmp, 0, edge_index[j])
+                    if not isinstance(tmp, tuple) and not isinstance(tmp, list):
+                        tmp = (tmp, tmp)
+                    assert len(tmp) == 2
+                    
+                    idx = ij[arg[-2:]]
+                    if size[idx] is None:
+                        size[idx] = tmp[idx].size(0)
+                    tmp = torch.index_select(tmp[idx], 0, edge_index[idx])
                 message_args.append(tmp)
             else:
                 message_args.append(kwargs[arg])

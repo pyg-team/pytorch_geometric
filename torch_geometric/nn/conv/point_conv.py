@@ -43,7 +43,7 @@ class PointConv(MessagePassing):
     def forward(self, x, pos, edge_index):
         """"""
         return self.propagate(
-            edge_index, size=(pos.size(0), pos.size(0)), x=x, pos=pos)
+            edge_index, size=None, x=x, pos=pos)
 
     def message(self, x_j, pos_j, pos_i):
         msg = pos_j - pos_i
