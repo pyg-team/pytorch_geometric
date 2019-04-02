@@ -40,13 +40,10 @@ class PointConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x, pos, edge_index, size=None):
+    def forward(self, x, pos, edge_index):
         """"""
-        if size is None:
-            N = edge_index[0].max().item() + 1
-            M = edge_index[1].max().item() + 1
-            size = (N, M)
-        return self.propagate(edge_index, size=size, x=x, pos=pos)
+        return self.propagate(
+            edge_index, size=(pos.size(0), pos.size(0)), x=x, pos=pos)
 
     def message(self, x_j, pos_j, pos_i):
         msg = pos_j - pos_i
