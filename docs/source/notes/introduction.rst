@@ -309,7 +309,7 @@ We can convert the point cloud dataset into a graph dataset by generating neares
     from torch_geometric.datasets import ShapeNet
 
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
-                        pre_transform=T.NNGraph(k=6))
+                        pre_transform=T.KNNGraph(k=6))
 
     data[0]
     >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
