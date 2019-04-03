@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.1.1)
+                master (1.1.2)
               </div>
             
           
@@ -467,7 +467,7 @@ Transforms can be chained together using <a class="reference internal" href="../
 <span class="kn">from</span> <span class="nn">torch_geometric.datasets</span> <span class="kn">import</span> <span class="n">ShapeNet</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">ShapeNet</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">&#39;/tmp/ShapeNet&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;Airplane&#39;</span><span class="p">,</span>
-                    <span class="n">pre_transform</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">NNGraph</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+                    <span class="n">pre_transform</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">KNNGraph</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
 
 <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">17768</span><span class="p">],</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">2518</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">2518</span><span class="p">])</span>

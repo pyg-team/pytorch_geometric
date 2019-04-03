@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.1.1)
+                master (1.1.2)
               </div>
             
           
@@ -201,11 +201,16 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The k-NN interpolation from the `&quot;PointNet++: Deep Hierarchical</span>
 <span class="sd">    Feature Learning on Point Sets in a Metric Space&quot;</span>
 <span class="sd">    &lt;https://arxiv.org/abs/1706.02413&gt;`_ paper.</span>
-<span class="sd">    For each point :obj:`y`, its interpolated features are given by</span>
+<span class="sd">    For each point :math:`y` with position :math:`\mathbf{p}(y)`, its</span>
+<span class="sd">    interpolated features :math:`\mathbf{f}(y)` are given by</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        f(\mathbf{x}) = \frac{\sum_{i=1}^k w_i(y) f_i}{\sum_{i=1}^k w_i(y)}</span>
-<span class="sd">        \textrm{, where } w_i(y) = \frac{1}{d(y, x_i)^2}.</span>
+<span class="sd">        \mathbf{f}(y) = \frac{\sum_{i=1}^k w(x_i) \mathbf{f}(x_i)}{\sum_{i=1}^k</span>
+<span class="sd">        w(x_i)} \textrm{, where } w(x_i) = \frac{1}{d(\mathbf{p}(y),</span>
+<span class="sd">        \mathbf{p}(x_i))^2}</span>
+
+<span class="sd">    and :math:`\{ x_1, \ldots, x_k \}` denoting the :math:`k` nearest points</span>
+<span class="sd">    to :math:`y`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x (Tensor): Node feature matrix</span>
@@ -223,15 +228,13 @@
 <span class="sd">            each node from :math:`\mathbf{Y}` to a specific example.</span>
 <span class="sd">            (default: :obj:`None`)</span>
 <span class="sd">        k (int, optional): Number of neighbors. (default: :obj:`3`)</span>
-
-<span class="sd">    :rtype: :class:`Tensor`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
         <span class="n">y_idx</span><span class="p">,</span> <span class="n">x_idx</span> <span class="o">=</span> <span class="n">knn</span><span class="p">(</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">batch_x</span><span class="o">=</span><span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span><span class="o">=</span><span class="n">batch_y</span><span class="p">)</span>
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">pos_x</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_x</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
-        <span class="n">squared_distance</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span> <span class="o">*</span> <span class="n">diff</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">squared_distance</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-16</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">pos_x</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos_y</span><span class="p">[</span><span class="n">y_idx</span><span class="p">]</span>
+        <span class="n">squared_distance</span> <span class="o">=</span> <span class="p">(</span><span class="n">diff</span> <span class="o">*</span> <span class="n">diff</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">squared_distance</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-16</span><span class="p">)</span>
 
     <span class="n">y</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">x_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">pos_y</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">y_idx</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">pos_y</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>

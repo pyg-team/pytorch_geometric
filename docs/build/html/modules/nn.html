@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.1.1)
+                master (1.1.2)
               </div>
             
           
@@ -819,7 +819,22 @@ defines the position of each point.</p>
 <dl class="method">
 <dt id="torch_geometric.nn.conv.PointConv.forward">
 <code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>pos</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/point_conv.html#PointConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.PointConv.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Tensor</em>) – The node feature matrix Can be set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</li>
+<li><strong>pos</strong> (<em>Tensor</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a>) – The node position matrix. Either given as
+tensor for use in general message passing or as tuple for use
+in message passing in bipartite graphs.</li>
+<li><strong>edge_index</strong> (<em>LongTensor</em>) – The edge indices.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.nn.conv.PointConv.reset_parameters">
@@ -1878,15 +1893,19 @@ the valid nodes for each graph. (default: <a class="reference external" href="ht
 <code class="descname">knn_interpolate</code><span class="sig-paren">(</span><em>x</em>, <em>pos_x</em>, <em>pos_y</em>, <em>batch_x=None</em>, <em>batch_y=None</em>, <em>k=3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/unpool/knn_interpolate.html#knn_interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.unpool.knn_interpolate" title="Permalink to this definition">¶</a></dt>
 <dd><p>The k-NN interpolation from the <a class="reference external" href="https://arxiv.org/abs/1706.02413">“PointNet++: Deep Hierarchical
 Feature Learning on Point Sets in a Metric Space”</a> paper.
-For each point <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>, its interpolated features are given by</p>
+For each point <span class="math notranslate nohighlight">\(y\)</span> with position <span class="math notranslate nohighlight">\(\mathbf{p}(y)\)</span>, its
+interpolated features <span class="math notranslate nohighlight">\(\mathbf{f}(y)\)</span> are given by</p>
 <div class="math notranslate nohighlight">
-\[f(\mathbf{x}) = \frac{\sum_{i=1}^k w_i(y) f_i}{\sum_{i=1}^k w_i(y)}
-\textrm{, where } w_i(y) = \frac{1}{d(y, x_i)^2}.\]</div>
+\[\mathbf{f}(y) = \frac{\sum_{i=1}^k w(x_i) \mathbf{f}(x_i)}{\sum_{i=1}^k
+w(x_i)} \textrm{, where } w(x_i) = \frac{1}{d(\mathbf{p}(y),
+\mathbf{p}(x_i))^2}\]</div>
+<p>and <span class="math notranslate nohighlight">\(\{ x_1, \ldots, x_k \}\)</span> denoting the <span class="math notranslate nohighlight">\(k\)</span> nearest points
+to <span class="math notranslate nohighlight">\(y\)</span>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
 <li><strong>pos_x</strong> (<em>Tensor</em>) – Node position matrix
@@ -1903,9 +1922,6 @@ each node from <span class="math notranslate nohighlight">\(\mathbf{Y}\)</span> 
 (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 <li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of neighbors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">3</span></code>)</li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
 </td>
 </tr>
 </tbody>

@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.1.1)
+                master (1.1.2)
               </div>
             
           
@@ -241,7 +241,7 @@
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
                 <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported attribute type.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported attribute type.&#39;</span><span class="p">)</span>
         <span class="n">batch</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">batch</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span></div>
 

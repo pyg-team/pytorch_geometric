@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.1.1)
+                master (1.1.2)
               </div>
             
           
@@ -222,7 +222,7 @@
         <span class="n">C</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">t</span><span class="p">(),</span> <span class="n">pos</span><span class="p">)</span>
         <span class="n">e</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">eigenvectors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># v[:,j] is j-th eigenvector</span>
 
-        <span class="n">data</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="s1">&#39;norm&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>

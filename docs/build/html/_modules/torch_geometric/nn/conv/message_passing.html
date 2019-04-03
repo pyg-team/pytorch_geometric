@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.1.1)
+                master (1.1.2)
               </div>
             
           
@@ -229,7 +229,7 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="o">=</span> <span class="n">flow</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;target_to_source&#39;</span><span class="p">,</span> <span class="s1">&#39;source_to_target&#39;</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;source_to_target&#39;</span><span class="p">,</span> <span class="s1">&#39;target_to_source&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">message_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
@@ -249,29 +249,36 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">size</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
 
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;edge_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_index</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flow</span> <span class="o">==</span> <span class="s1">&#39;target_to_source&#39;</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ij</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_i&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;_j&quot;</span><span class="p">:</span> <span class="n">j</span><span class="p">}</span>
 
         <span class="n">message_args</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_args</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">arg</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;_i&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">arg</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="ow">in</span> <span class="n">ij</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">tmp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span>
-                <span class="k">if</span> <span class="n">tmp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                    <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-                <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">arg</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;_j&#39;</span><span class="p">:</span>
-                <span class="n">tmp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span>
-                <span class="k">if</span> <span class="n">tmp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">size</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                    <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
-                <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">tmp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">ij</span><span class="p">[</span><span class="n">arg</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]]</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+                        <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">size</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">size</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                    <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
+
+        <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
         <span class="n">update_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_args</span><span class="p">]</span>
