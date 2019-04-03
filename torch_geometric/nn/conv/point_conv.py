@@ -45,8 +45,8 @@ class PointConv(MessagePassing):
         Args:
             x (Tensor): The node feature matrix Can be set to :obj:`None`.
             pos (Tensor or tuple): The node position matrix. Either given as
-                tensor (general message passing) or as tuple (message passing
-                in bipartite graphs).
+                tensor for use in general message passing or as tuple for use
+                in message passing in bipartite graphs.
             edge_index (LongTensor): The edge indices.
         """
         return self.propagate(edge_index, x=x, pos=pos)
