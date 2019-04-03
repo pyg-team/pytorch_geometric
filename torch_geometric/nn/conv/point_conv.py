@@ -41,9 +41,15 @@ class PointConv(MessagePassing):
         reset(self.global_nn)
 
     def forward(self, x, pos, edge_index):
-        """"""
-        return self.propagate(
-            edge_index, size=None, x=x, pos=pos)
+        r"""
+        Args:
+            x (Tensor): The node feature matrix Can be set to :obj:`None`.
+            pos (Tensor or tuple): The node position matrix. Either given as
+                tensor (general message passing) or as tuple (message passing
+                in bipartite graphs).
+            edge_index (LongTensor): The edge indices.
+        """
+        return self.propagate(edge_index, x=x, pos=pos)
 
     def message(self, x_j, pos_j, pos_i):
         msg = pos_j - pos_i

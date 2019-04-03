@@ -37,19 +37,21 @@ class Net(torch.nn.Module):
         pos, batch = data.pos, data.batch
 
         idx = fps(pos, batch, ratio=0.5)  # 512 points
-        edge_index = radius(
-            pos[idx], pos, 0.1, batch[idx], batch, max_num_neighbors=64)
+        row, col = radius(
+            pos, pos[idx], 0.1, batch, batch[idx], max_num_neighbors=64)
+        edge_index = torch.stack([col, row], dim=0)  # Transpose.
         x = F.relu(self.local_sa1(None, (pos, pos[idx]), edge_index))
         pos, batch = pos[idx], batch[idx]
 
         idx = fps(pos, batch, ratio=0.25)  # 128 points
-        edge_index = radius(
-            pos[idx], pos, 0.2, batch[idx], batch, max_num_neighbors=64)
-        x = F.relu(self.local_sa2((x, x[idx]), (pos, pos[idx]), edge_index))
+        row, col = radius(
+            pos, pos[idx], 0.2, batch, batch[idx], max_num_neighbors=64)
+        edge_index = torch.stack([col, row], dim=0)  # Transpose.
+        x = F.relu(self.local_sa2(x, (pos, pos[idx]), edge_index))
         pos, batch = pos[idx], batch[idx]
 
         x = self.global_sa(torch.cat([x, pos], dim=1))
-        x = x.view(-1, 128, 1024).max(dim=1)[0]
+        x = x.view(-1, 128, self.lin1.in_features).max(dim=1)[0]
 
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
