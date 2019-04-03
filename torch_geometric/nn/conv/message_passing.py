@@ -80,6 +80,8 @@ class MessagePassing(torch.nn.Module):
 
                     tmp = torch.index_select(tmp, 0, edge_index[idx])
                     message_args.append(tmp)
+            else:
+                message_args.append(kwargs[arg])
 
         size[0] = size[1] if size[0] is None else size[0]
         size[1] = size[0] if size[1] is None else size[1]
