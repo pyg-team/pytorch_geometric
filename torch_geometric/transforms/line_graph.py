@@ -14,26 +14,30 @@ class LineGraph(object):
 
         \mathcal{E}^{\prime} &= \{ (e_1, e_2) : e_1 \cap e_2 \neq \emptyset \}
 
-    For directed graphs, line graph vertex indices are equal to indices in the
-    original graph's `edge_index`. For undirected graphs, line graph vertex
-    indices are obtained by ordering `(row, col)` edges with `row < col`, so
-    that the maximum line graph vertex index is
-    `original.edge_index.size(1) // 2 - 1`.
+    For directed graphs, line graph node indices are equal to indices in the
+    original graph's (coalesced) :obj:`edge_index`.
+    For undirected graphs, line graph node indices are obtained by ordering
+    obj:`(row, col)` edges with :obj:`row < col`, so that the maximum line
+    graph node index is :obj:`(data.edge_index.size(1) // 2) - 1`.
 
-    New node features are given by (scattered) old edge attributes: for
-    undirected graphs, edge attributes for reciprocal edges `(row, col)` and
-    `(col, row)` get summed together.
+    New node features are given by old edge attributes.
+    For undirected graphs, edge attributes for reciprocal edges
+    `:obj:`(row, col)` and `obj:`(col, row)` get summed together.
 
-    If `force_directed` is `True`, the graph will be treated as a directed
-    graph even if `data.is_directed() == False`.
+    Args:
+        force_directed (bool, optional): If set to `:obj:True`, the graph will
+            be always treated as a directed graph. (default: :obj:`False`)
     """
 
-    def __call__(self, data, force_directed=False):
+    def __init__(self, force_directed=False):
+        self.force_directed = force_directed
+
+    def __call__(self, data):
         N = data.num_nodes
         edge_index, edge_attr = data.edge_index, data.edge_attr
         (row, col), edge_attr = coalesce(edge_index, edge_attr, N, N)
 
-        if force_directed or data.is_directed():
+        if self.force_directed or data.is_directed():
             i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
 
             count = scatter_add(
@@ -58,12 +62,11 @@ class LineGraph(object):
             i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
 
             (row, col), i = coalesce(
-                torch.stack(
-                    [
-                        torch.cat([row, col], dim=0),
-                        torch.cat([col, row], dim=0)
-                    ],
-                    dim=0), torch.cat([i, i], dim=0), N, N)
+                torch.stack([
+                    torch.cat([row, col], dim=0),
+                    torch.cat([col, row], dim=0)
+                ],
+                            dim=0), torch.cat([i, i], dim=0), N, N)
 
             # Compute new edge indices according to `i`.
             count = scatter_add(
