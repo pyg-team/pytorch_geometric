@@ -56,6 +56,10 @@ class MessagePassing(torch.nn.Module):
 
         size = [None, None] if size is None else list(size)
         assert len(size) == 2
+        _size_error_msg = ('All variables which is used in message with '
+                           'the same subscript should be of the same size '
+                           'in 0 dimension and should match the given '
+                           'size (if any was given)')
 
         kwargs['edge_index'] = edge_index
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
@@ -73,10 +77,14 @@ class MessagePassing(torch.nn.Module):
                         assert len(tmp) == 2
                         if size[1 - idx] is None:
                             size[1 - idx] = tmp[1 - idx].size(0)
+                        if size[1 - idx] != tmp[1 - idx].size(0):
+                            raise ValueError(_size_error_msg)
                         tmp = tmp[idx]
 
                     if size[idx] is None:
                         size[idx] = tmp.size(0)
+                    if size[idx] != tmp.size(0):
+                        raise ValueError(_size_error_msg)
 
                     tmp = torch.index_select(tmp, 0, edge_index[idx])
                     message_args.append(tmp)
