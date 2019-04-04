@@ -13,7 +13,7 @@ def size_repr(value):
     elif isinstance(value, int) or isinstance(value, float):
         return [1]
     else:
-        return ValueError('Unsupported attribute type.')
+        raise ValueError('Unsupported attribute type.')
 
 
 class Data(object):

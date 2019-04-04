@@ -60,7 +60,7 @@ def test_arga():
     z = model.encode(x)
 
     assert model.reg_loss(z).item() > 0
-    assert model.discriminator(z).item() > 0
+    assert model.discriminator_loss(z).item() > 0
 
 
 def test_argva():
@@ -68,4 +68,5 @@ def test_argva():
 
     x = torch.Tensor([[1, -1], [1, 2], [2, 1]])
     model.encode(x)
+    model.reparametrize(model.mu, model.logvar)
     assert model.kl_loss().item() > 0
