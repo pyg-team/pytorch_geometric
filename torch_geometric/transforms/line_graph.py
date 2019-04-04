@@ -14,18 +14,17 @@ class LineGraph(object):
 
         \mathcal{E}^{\prime} &= \{ (e_1, e_2) : e_1 \cap e_2 \neq \emptyset \}
 
-    For directed graphs, line graph node indices are equal to indices in the
-    original graph's (coalesced) :obj:`edge_index`.
-    For undirected graphs, line graph node indices are obtained by ordering
-    obj:`(row, col)` edges with :obj:`row < col`, so that the maximum line
-    graph node index is :obj:`(data.edge_index.size(1) // 2) - 1`.
+    Line-graph node indices are equal to indices in the original graph's
+    coalesced :obj:`edge_index`.
+    For undirected graphs, the maximum line-graph node index is
+    :obj:`(data.edge_index.size(1) // 2) - 1`.
 
     New node features are given by old edge attributes.
     For undirected graphs, edge attributes for reciprocal edges
-    `:obj:`(row, col)` and `obj:`(col, row)` get summed together.
+    :obj:`(row, col)` and :obj:`(col, row)` get summed together.
 
     Args:
-        force_directed (bool, optional): If set to `:obj:True`, the graph will
+        force_directed (bool, optional): If set to :obj:`True`, the graph will
             be always treated as a directed graph. (default: :obj:`False`)
     """
 
