@@ -56,10 +56,8 @@ class MessagePassing(torch.nn.Module):
 
         size = [None, None] if size is None else list(size)
         assert len(size) == 2
-        _size_error_msg = ('All variables which is used in message with '
-                           'the same subscript should be of the same size '
-                           'in 0 dimension and should match the given '
-                           'size (if any was given)')
+        _size_error_msg = ('All tensors mapped to source or target nodes must '
+                           'be of same size in dimension 0.')
 
         kwargs['edge_index'] = edge_index
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
