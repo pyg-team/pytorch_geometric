@@ -69,7 +69,7 @@ class MessagePassing(torch.nn.Module):
                     message_args.append(tmp)
                 else:
                     idx = ij[arg[-2:]]
-                    if isinstance(tmp, tuple) or isinstance(tmp, tuple):
+                    if isinstance(tmp, tuple) or isinstance(tmp, list):
                         assert len(tmp) == 2
                         if size[1 - idx] is None:
                             size[1 - idx] = tmp[1 - idx].size(0)
@@ -85,7 +85,6 @@ class MessagePassing(torch.nn.Module):
 
         size[0] = size[1] if size[0] is None else size[0]
         size[1] = size[0] if size[1] is None else size[1]
-        print(size)
 
         kwargs['size'] = size
         update_args = [kwargs[arg] for arg in self.update_args]
