@@ -84,7 +84,6 @@ class LineGraph(object):
             joints, _ = coalesce(joints, None, N, N)
 
             if edge_attr is not None:
-                print("DRIN")
                 data.x = scatter_add(edge_attr, i, dim=0, dim_size=N)
             data.edge_index = joints
 
