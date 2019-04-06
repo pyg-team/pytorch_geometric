@@ -1,9 +1,13 @@
 import torch
 from torch.nn import Parameter
-from torch_spline_conv import SplineConv as Conv
 from torch_geometric.utils.repeat import repeat
 
 from ..inits import uniform
+
+try:
+    from torch_spline_conv import SplineConv as Conv
+except ImportError:
+    Conv = None
 
 
 class SplineConv(torch.nn.Module):
@@ -18,6 +22,11 @@ class SplineConv(torch.nn.Module):
 
     where :math:`h_{\mathbf{\Theta}}` denotes a kernel function defined
     over the weighted B-Spline tensor product basis.
+
+    .. note::
+
+        Pseudo-coordinates must lay in the fixed interval :math:`[0, 1]` for
+        this method to work as intended.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -49,10 +58,14 @@ class SplineConv(torch.nn.Module):
                  bias=True):
         super(SplineConv, self).__init__()
 
+        if Conv is None:
+            raise ImportError('`SplineConv` requires `torch-spline-conv`.')
+
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.degree = degree
         self.norm = norm
+        self.check_pseudo = True
 
         kernel_size = torch.tensor(repeat(kernel_size, dim), dtype=torch.long)
         self.register_buffer('kernel_size', kernel_size)
@@ -84,6 +97,15 @@ class SplineConv(torch.nn.Module):
 
     def forward(self, x, edge_index, pseudo):
         """"""
+        if self.check_pseudo:
+            self.check_pseudo = False
+            min_pseudo, max_pseudo = pseudo.min().item(), pseudo.max().item()
+            if min_pseudo < 0 or max_pseudo > 1:
+                raise RuntimeError(
+                    ('Pseudo-coordinates must lay in the fixed interval [0, 1]'
+                     ' but found them in the interval [{}, {}]').format(
+                         min_pseudo, max_pseudo))
+
         return Conv.apply(x, edge_index, pseudo, self.weight,
                           self._buffers['kernel_size'],
                           self._buffers['is_open_spline'], self.degree,

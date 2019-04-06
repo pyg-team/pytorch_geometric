@@ -35,27 +35,21 @@ class Batch(Data):
             batch.batch.append(torch.full((num_nodes, ), i, dtype=torch.long))
             for key in data.keys:
                 item = data[key]
-                item = item + cumsum if batch.cumsum(key, item) else item
+                item = item + cumsum if data.__cumsum__(key, item) else item
                 batch[key].append(item)
             cumsum += num_nodes
 
         for key in keys:
-            batch[key] = torch.cat(
-                batch[key], dim=data_list[0].cat_dim(key, batch[key][0]))
+            item = batch[key][0]
+            if torch.is_tensor(item):
+                batch[key] = torch.cat(
+                    batch[key], dim=data_list[0].__cat_dim__(key, item))
+            elif isinstance(item, int) or isinstance(item, float):
+                batch[key] = torch.tensor(batch[key])
+            else:
+                raise ValueError('Unsupported attribute type.')
         batch.batch = torch.cat(batch.batch, dim=-1)
         return batch.contiguous()
-
-    def cumsum(self, key, item):
-        r"""If :obj:`True`, the attribute :obj:`key` with content :obj:`item`
-        should be added up cumulatively before concatenated together.
-
-        .. note::
-
-            This method is for internal use only, and should only be overridden
-            if the batch concatenation process is corrupted for a specific data
-            attribute.
-        """
-        return key in ['edge_index', 'face']
 
     @property
     def num_graphs(self):

@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import shutil
 
 import torch
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
@@ -80,6 +81,7 @@ class TUDataset(InMemoryDataset):
         path = download_url('{}/{}.zip'.format(self.url, self.name), self.root)
         extract_zip(path, self.root)
         os.unlink(path)
+        shutil.rmtree(self.raw_dir)
         os.rename(osp.join(self.root, self.name), self.raw_dir)
 
     def process(self):

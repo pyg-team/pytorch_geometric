@@ -1,10 +1,10 @@
 import torch
-from torch_geometric.utils import remove_self_loops, add_self_loops, scatter_
+from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import reset
 
 
-class PointConv(torch.nn.Module):
+class PointConv(MessagePassing):
     r"""The PointNet set layer from the `"PointNet: Deep Learning on Point Sets
     for 3D Classification and Segmentation"
     <https://arxiv.org/abs/1612.00593>`_ and `"PointNet++: Deep Hierarchical
@@ -29,7 +29,7 @@ class PointConv(torch.nn.Module):
     """
 
     def __init__(self, local_nn=None, global_nn=None):
-        super(PointConv, self).__init__()
+        super(PointConv, self).__init__('max')
 
         self.local_nn = local_nn
         self.global_nn = global_nn
@@ -41,27 +41,28 @@ class PointConv(torch.nn.Module):
         reset(self.global_nn)
 
     def forward(self, x, pos, edge_index):
-        """"""
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index = add_self_loops(edge_index, num_nodes=pos.size(0))
-        row, col = edge_index
+        r"""
+        Args:
+            x (Tensor): The node feature matrix Can be set to :obj:`None`.
+            pos (Tensor or tuple): The node position matrix. Either given as
+                tensor for use in general message passing or as tuple for use
+                in message passing in bipartite graphs.
+            edge_index (LongTensor): The edge indices.
+        """
+        return self.propagate(edge_index, x=x, pos=pos)
 
-        pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
-        out = pos[col] - pos[row]
-
-        if x is not None:
-            x = x.unsqueeze(-1) if x.dim() == 1 else x
-            out = torch.cat([x[col], out], dim=1)
-
+    def message(self, x_j, pos_j, pos_i):
+        msg = pos_j - pos_i
+        if x_j is not None:
+            msg = torch.cat([x_j, msg], dim=1)
         if self.local_nn is not None:
-            out = self.local_nn(out)
+            msg = self.local_nn(msg)
+        return msg
 
-        out = scatter_('max', out, row, dim_size=pos.size(0))
-
+    def update(self, aggr_out):
         if self.global_nn is not None:
-            out = self.global_nn(out)
-
-        return out
+            aggr_out = self.global_nn(aggr_out)
+        return aggr_out
 
     def __repr__(self):
         return '{}(local_nn={}, global_nn={})'.format(

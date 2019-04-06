@@ -15,8 +15,8 @@ data = dataset[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GCNConv(dataset.num_features, 16, improved=False)
-        self.conv2 = GCNConv(16, dataset.num_classes, improved=False)
+        self.conv1 = GCNConv(dataset.num_features, 16, cached=True)
+        self.conv2 = GCNConv(16, dataset.num_classes, cached=True)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
         # self.conv2 = ChebConv(16, data.num_features, K=2)
 

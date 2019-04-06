@@ -1,12 +1,15 @@
+from itertools import product
 import os
 import os.path as osp
 import json
 
 import torch
 import numpy as np
-from torch_sparse import coalesce
+import networkx as nx
+from networkx.readwrite import json_graph
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
+from torch_geometric.utils import remove_self_loops
 
 
 class PPI(InMemoryDataset):
@@ -15,10 +18,12 @@ class PPI(InMemoryDataset):
     <https://arxiv.org/abs/1707.04638>`_ paper, containing positional gene
     sets, motif gene sets and immunological signatures as features (50 in
     total) and gene ontology sets as labels (121 in total).
-    Training, validation and test splits are given by binary masks.
 
     Args:
         root (string): Root directory where the dataset should be saved.
+        split (string): If :obj:`"train"`, loads the training dataset.
+            If :obj:`"val"`, loads the validation dataset.
+            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -27,65 +32,79 @@ class PPI(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
     """
 
-    url = 'http://snap.stanford.edu/graphsage/ppi.zip'
+    url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/ppi.zip'
 
-    def __init__(self, root, transform=None, pre_transform=None):
-        super(PPI, self).__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+    def __init__(self,
+                 root,
+                 split='train',
+                 transform=None,
+                 pre_transform=None,
+                 pre_filter=None):
+
+        assert split in ['train', 'val', 'test']
+
+        super(PPI, self).__init__(root, transform, pre_transform, pre_filter)
+
+        if split == 'train':
+            self.data, self.slices = torch.load(self.processed_paths[0])
+        elif split == 'val':
+            self.data, self.slices = torch.load(self.processed_paths[1])
+        elif split == 'test':
+            self.data, self.slices = torch.load(self.processed_paths[2])
 
     @property
     def raw_file_names(self):
-        prefix = self.__class__.__name__.lower()
-        suffix = ['G.json', 'feats.npy', 'class_map.json']
-        return ['{}-{}'.format(prefix, s) for s in suffix]
+        splits = ['train', 'valid', 'test']
+        files = ['feats.npy', 'graph_id.npy', 'graph.json', 'labels.npy']
+        return ['{}_{}'.format(s, f) for s, f in product(splits, files)]
 
     @property
     def processed_file_names(self):
-        return 'data.pt'
+        return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
         path = download_url(self.url, self.root)
-        extract_zip(path, self.root)
+        extract_zip(path, self.raw_dir)
         os.unlink(path)
-        name = self.__class__.__name__.lower()
-        os.rename(osp.join(self.root, name), self.raw_dir)
 
     def process(self):
-        with open(self.raw_paths[0], 'r') as f:
-            graph_data = json.load(f)
+        for s, split in enumerate(['train', 'valid', 'test']):
+            path = osp.join(self.raw_dir, '{}_graph.json').format(split)
+            with open(path, 'r') as f:
+                G = nx.DiGraph(json_graph.node_link_graph(json.load(f)))
 
-        mask = torch.zeros(len(graph_data['nodes']), dtype=torch.uint8)
-        for i in graph_data['nodes']:
-            mask[i['id']] = 1 if i['val'] else (2 if i['test'] else 0)
-        train_mask, val_mask, test_mask = mask == 0, mask == 1, mask == 2
+            x = np.load(osp.join(self.raw_dir, '{}_feats.npy').format(split))
+            x = torch.from_numpy(x).to(torch.float)
 
-        row, col = [], []
-        for i in graph_data['links']:
-            row.append(i['source'])
-            col.append(i['target'])
-        edge_index = torch.stack([torch.tensor(row), torch.tensor(col)], dim=0)
-        edge_index, _ = coalesce(edge_index, None, mask.size(0), mask.size(0))
+            y = np.load(osp.join(self.raw_dir, '{}_labels.npy').format(split))
+            y = torch.from_numpy(y).to(torch.float)
 
-        x = torch.from_numpy(np.load(self.raw_paths[1])).float()
+            data_list = []
+            path = osp.join(self.raw_dir, '{}_graph_id.npy').format(split)
+            idx = torch.from_numpy(np.load(path)).to(torch.long)
+            idx = idx - idx.min()
 
-        with open(self.raw_paths[2], 'r') as f:
-            y_data = json.load(f)
+            for i in range(idx.max().item() + 1):
+                mask = idx == i
 
-        y = []
-        for i in range(len(y_data)):
-            y.append(y_data[str(i)])
-        y = torch.tensor(y, dtype=torch.float)
+                G_s = G.subgraph(mask.nonzero().view(-1).tolist())
+                edge_index = torch.tensor(list(G_s.edges)).t().contiguous()
+                edge_index = edge_index - edge_index.min()
+                edge_index, _ = remove_self_loops(edge_index)
 
-        data = Data(x=x, edge_index=edge_index, y=y)
-        data.train_mask = train_mask
-        data.val_mask = val_mask
-        data.test_mask = test_mask
+                data = Data(edge_index=edge_index, x=x[mask], y=y[mask])
 
-        data = data if self.pre_transform is None else self.pre_transform(data)
-        data, slices = self.collate([data])
-        torch.save((data, slices), self.processed_paths[0])
+                if self.pre_filter is not None and not self.pre_filter(data):
+                    continue
 
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)
+                if self.pre_transform is not None:
+                    data = self.pre_transform(data)
+
+                data_list.append(data)
+            torch.save(self.collate(data_list), self.processed_paths[s])

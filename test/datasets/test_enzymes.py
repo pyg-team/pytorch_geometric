@@ -8,12 +8,12 @@ import shutil
 import pytest
 import torch
 from torch_geometric.datasets import TUDataset
-from torch_geometric.data import DataLoader, DenseDataLoader
+from torch_geometric.data import DataLoader, DenseDataLoader, DataListLoader
 from torch_geometric.transforms import ToDense
 
 
 def test_enzymes():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)), 'test')
+    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dataset = TUDataset(root, 'ENZYMES')
 
     assert len(dataset) == 600
@@ -48,6 +48,10 @@ def test_enzymes():
         assert data.contains_isolated_nodes()
         assert not data.contains_self_loops()
         assert data.is_undirected()
+
+    loader = DataListLoader(dataset, batch_size=len(dataset))
+    for data_list in loader:
+        assert len(data_list) == 600
 
     dataset.transform = ToDense(num_nodes=126)
     loader = DenseDataLoader(dataset, batch_size=len(dataset))

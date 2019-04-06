@@ -1,12 +1,13 @@
 from setuptools import setup, find_packages
 
-__version__ = '1.0.1'
+__version__ = '1.1.3'
 url = 'https://github.com/rusty1s/pytorch_geometric'
 
 install_requires = [
     'numpy',
     'scipy',
     'networkx',
+    'scikit-learn',
     'plyfile',
     'pandas',
     'rdflib',
