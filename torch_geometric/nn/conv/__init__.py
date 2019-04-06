@@ -11,6 +11,7 @@ from .arma_conv import ARMAConv
 from .sg_conv import SGConv
 from .appnp import APPNP
 from .rgcn_conv import RGCNConv
+from .dna_conv import DNAConv
 from .point_conv import PointConv
 from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
@@ -32,6 +33,7 @@ __all__ = [
     'SGConv',
     'APPNP',
     'RGCNConv',
+    'DNAConv',
     'PointConv',
     'GMMConv',
     'SplineConv',
