@@ -277,6 +277,14 @@ class ARGVA(ARGA):
         super(ARGVA, self).__init__(encoder, discriminator)
         self.VGAE = VGAE(encoder)
 
+    @property
+    def mu(self):
+        return self.VGAE.mu
+
+    @property
+    def logvar(self):
+        return self.VGAE.logvar
+
     def reparametrize(self, mu, logvar):
         return self.VGAE.reparametrize(mu, logvar)
 

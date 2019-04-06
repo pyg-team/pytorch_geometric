@@ -3,6 +3,9 @@ import inspect
 import torch
 from torch_geometric.utils import scatter_
 
+_size_error_msg = ('All tensors which should get mapped to the same source'
+                   'or target nodes must be of same size in dimension 0.')
+
 
 class MessagePassing(torch.nn.Module):
     r"""Base class for creating message passing layers
@@ -65,18 +68,22 @@ class MessagePassing(torch.nn.Module):
         for arg in self.message_args:
             if arg[-2:] in ij.keys():
                 tmp = kwargs[arg[:-2]]
-                if tmp is None:
+                if tmp is None:  # pragma: no cover
                     message_args.append(tmp)
                 else:
                     idx = ij[arg[-2:]]
-                    if isinstance(tmp, tuple) or isinstance(tmp, tuple):
+                    if isinstance(tmp, tuple) or isinstance(tmp, list):
                         assert len(tmp) == 2
                         if size[1 - idx] is None:
                             size[1 - idx] = tmp[1 - idx].size(0)
+                        if size[1 - idx] != tmp[1 - idx].size(0):
+                            raise ValueError(_size_error_msg)
                         tmp = tmp[idx]
 
                     if size[idx] is None:
                         size[idx] = tmp.size(0)
+                    if size[idx] != tmp.size(0):
+                        raise ValueError(_size_error_msg)
 
                     tmp = torch.index_select(tmp, 0, edge_index[idx])
                     message_args.append(tmp)
