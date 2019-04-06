@@ -94,8 +94,8 @@ class GCNConv(MessagePassing):
             edge_index, norm = GCNConv.norm(edge_index, x.size(0), edge_weight,
                                             self.improved, x.dtype)
             self.cached_result = edge_index, norm
-
         edge_index, norm = self.cached_result
+
         return self.propagate(edge_index, x=x, norm=norm)
 
     def message(self, x_j, norm):
