@@ -219,11 +219,10 @@ python cora.py
 Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective papers of the methods used) if you use this code in your own work:
 
 ```
-@article{Fey/Lenssen/2019,
+@inproceedings{Fey/Lenssen/2019,
   title={Fast Graph Representation Learning with {PyTorch Geometric}},
   author={Fey, Matthias and Lenssen, Jan E.},
-  journal={CoRR},
-  volume={abs/1903.02428},
+  booktitle={ICLR Workshop on Representation Learning on Graphs and Manifolds},
   year={2019},
 }
 ```
