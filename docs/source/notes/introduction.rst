@@ -11,7 +11,7 @@ Data handling of graphs
 -----------------------
 
 A graph is used to model pairwise relations (edges) between objects (nodes).
-A single graph in PyTorch Geometric is decribed by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
+A single graph in PyTorch Geometric is described by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
 
 - ``data.x``: Node feature matrix with shape ``[num_nodes, num_node_features]``
 - ``data.edge_index``: Graph connectivity in COO format with shape ``[2, num_edges]`` and type ``torch.long``
@@ -120,7 +120,7 @@ Common benchmark datasets
 PyTorch Geometric contains a large number of common benchmark datasets, *e.g.* all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
 
 Initializing a dataset is straightforward.
-An initalization of adataset will automatically download its raw files and process them to the previously decribed ``Data`` format.
+An initialization of a dataset will automatically download its raw files and process them to the previously described ``Data`` format.
 *E.g.*, to load the ENZYMES dataset (consisting of 600 graphs within 6 classes), type:
 
 .. code-block:: python
@@ -177,15 +177,6 @@ This is equivalent of doing:
     perm = torch.randperm(len(dataset))
     dataset = dataset[perm]
     >> ENZYMES(600)
-
-For splitting the dataset into a 90/10 train/test split, we can simply use Python slice notation:
-
-.. code-block:: python
-
-    train_dataset = dataset[60:]
-    >>> ENZYMES(540)
-    test_dataset = dataset[:60]
-    >>> ENZYMES(60)
 
 Let's try another one! Let's download Cora, the standard benchmark dataset for semi-supervised graph node classification:
 
@@ -297,7 +288,7 @@ Data transforms
 
 Transforms are a common way in ``torchvision`` to transform images and perform augmentation.
 PyTorch Geometric comes with its own transforms, which expect a ``Data`` object as input and return a new transformed ``Data`` object.
-Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset (``pre_transform``) on disk or before accessing a graph in a dataset (``transform``).
+Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset on disk (``pre_transform``) or before accessing a graph in a dataset (``transform``).
 
 Let's look at an example, where we apply transforms on the ShapeNet dataset (containing 17,000 3D shape point clouds and per point labels from 16 shape categories).
 
@@ -318,7 +309,7 @@ We can convert the point cloud dataset into a graph dataset by generating neares
     from torch_geometric.datasets import ShapeNet
 
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
-                        pre_transform=T.NNGraph(k=6))
+                        pre_transform=T.KNNGraph(k=6))
 
     data[0]
     >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
@@ -385,7 +376,7 @@ Now let's implement a two-layer GCN:
 
             return F.log_softmax(x, dim=1)
 
-We use ReLU as our non-linearity acitivation function and output a softmax distribution over the number of classes.
+We use ReLU as our non-linear activation function and output a softmax distribution over the number of classes.
 Let's train this model on the train nodes for 200 epochs:
 
 .. code-block:: python
@@ -414,6 +405,6 @@ Finally we can evaluate our model on the test nodes:
     print('Accuracy: {:.4f}'.format(acc))
     >>> Accuracy: 0.8150
 
-That all it takes to implement a graph neural network.
+That is all it takes to implement your first graph neural network.
 The easiest way to learn more about graph convolution and pooling is to study the examples in the ``examples/`` directory and to browse :mod:`torch_geometric.nn`.
 Happy hacking!

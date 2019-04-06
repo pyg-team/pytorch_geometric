@@ -17,44 +17,38 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/>
-        <link rel="next" title="torch_geometric.datasets" href="datasets.html"/>
-        <link rel="prev" title="torch_geometric.nn" href="nn.html"/> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="torch_geometric.datasets" href="datasets.html" />
+    <link rel="prev" title="torch_geometric.nn" href="nn.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -63,7 +57,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" />
+            <img src="../_static/pyg_logo_text.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -71,7 +65,7 @@
             
             
               <div class="version">
-                master (1.0.1)
+                master (1.1.2)
               </div>
             
           
@@ -98,7 +92,8 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#id1">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a><ul>
@@ -124,11 +119,12 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv.message_passing">Sparse Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.conv.message_passing">Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.unpool">Unpooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">torch_geometric.data</a></li>
@@ -146,7 +142,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pytorch_geometric</a>
@@ -154,9 +150,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -237,10 +234,36 @@ present attributes.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="torch_geometric.data.Data.__cat_dim__">
+<code class="descname">__cat_dim__</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.__cat_dim__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.__cat_dim__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the dimension for which <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> of attribute
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> will get concatenated when creating batches.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is for internal use only, and should only be overridden
+if the batch concatenation process is corrupted for a specific data
+attribute.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="torch_geometric.data.Data.__contains__">
 <code class="descname">__contains__</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.__contains__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.__contains__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, if the attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> is present in the
 data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.data.Data.__cumsum__">
+<code class="descname">__cumsum__</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.__cumsum__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.__cumsum__" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> of attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> is
+cumulatively summed up when creating batches.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is for internal use only, and should only be overridden
+if the batch concatenation process is corrupted for a specific data
+attribute.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -271,23 +294,15 @@ attribute names and content.</p>
 <dl class="method">
 <dt id="torch_geometric.data.Data.apply">
 <code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.apply" title="Permalink to this definition">¶</a></dt>
-<dd><p>Applies the function <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> to all attributes <code class="xref py py-obj docutils literal notranslate"><span class="pre">*keys</span></code>.
-If <code class="xref py py-obj docutils literal notranslate"><span class="pre">*keys</span></code> is not given, <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> is applied to all present
-attributes.</p>
+<dd><p>Applies the function <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> to all tensor attributes
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">*keys</span></code>. If <code class="xref py py-obj docutils literal notranslate"><span class="pre">*keys</span></code> is not given, <code class="xref py py-obj docutils literal notranslate"><span class="pre">func</span></code> is applied to
+all present attributes.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="torch_geometric.data.Data.cat_dim">
-<code class="descname">cat_dim</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.cat_dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.cat_dim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the dimension in which the attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> with
-content <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> gets concatenated when creating batches.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This method is for internal use only, and should only be overridden
-if the batch concatenation process is corrupted for a specific data
-attribute.</p>
-</div>
-</dd></dl>
+<dt id="torch_geometric.data.Data.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.clone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.data.Data.contains_isolated_nodes">
@@ -378,19 +393,6 @@ attributes.</p>
 base class, all its methods can also be used here.
 In addition, single graphs can be reconstructed via the assignment vector
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">batch</span></code>, which maps each node to its respective graph identifier.</p>
-<dl class="method">
-<dt id="torch_geometric.data.Batch.cumsum">
-<code class="descname">cumsum</code><span class="sig-paren">(</span><em>key</em>, <em>item</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/batch.html#Batch.cumsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Batch.cumsum" title="Permalink to this definition">¶</a></dt>
-<dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the attribute <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> with content <code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code>
-should be added up cumulatively before concatenated together.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This method is for internal use only, and should only be overridden
-if the batch concatenation process is corrupted for a specific data
-attribute.</p>
-</div>
-</dd></dl>
-
 <dl class="staticmethod">
 <dt id="torch_geometric.data.Batch.from_data_list">
 <em class="property">static </em><code class="descname">from_data_list</code><span class="sig-paren">(</span><em>data_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/batch.html#Batch.from_data_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Batch.from_data_list" title="Permalink to this definition">¶</a></dt>
@@ -623,6 +625,33 @@ reshuffled at every epoch (default: <a class="reference external" href="https://
 </dd></dl>
 
 <dl class="class">
+<dt id="torch_geometric.data.DataListLoader">
+<em class="property">class </em><code class="descname">DataListLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DataListLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DataListLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data loader which merges data objects from a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.dataset</span></code> to a python list.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This data loader should be used for multi-gpu support via
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.nn.DataParallel</span></code>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset</strong> (<a class="reference internal" href="#torch_geometric.data.Dataset" title="torch_geometric.data.Dataset"><em>Dataset</em></a>) – The dataset from which to load the data.</li>
+<li><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – How may samples per batch to load.
+(default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
+<li><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the data will be
+reshuffled at every epoch (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
 <dt id="torch_geometric.data.DenseDataLoader">
 <em class="property">class </em><code class="descname">DenseDataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DenseDataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DenseDataLoader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data loader which merges data objects from a
@@ -712,13 +741,21 @@ console. (default: <a class="reference external" href="https://docs.python.org/3
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="torch_geometric.data.extract_bz2">
+<code class="descname">extract_bz2</code><span class="sig-paren">(</span><em>path</em>, <em>folder</em>, <em>log=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/extract.html#extract_bz2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.extract_bz2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.data.extract_gz">
+<code class="descname">extract_gz</code><span class="sig-paren">(</span><em>path</em>, <em>folder</em>, <em>log=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/extract.html#extract_gz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.extract_gz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -727,7 +764,7 @@ console. (default: <a class="reference external" href="https://docs.python.org/3
         <a href="datasets.html" class="btn btn-neutral float-right" title="torch_geometric.datasets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="nn.html" class="btn btn-neutral" title="torch_geometric.nn" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="nn.html" class="btn btn-neutral float-left" title="torch_geometric.nn" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -736,11 +773,11 @@ console. (default: <a class="reference external" href="https://docs.python.org/3
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matthias Fey.
+        &copy; Copyright 2019, Matthias Fey
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -753,37 +790,15 @@ console. (default: <a class="reference external" href="https://docs.python.org/3
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'master',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

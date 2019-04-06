@@ -7,7 +7,9 @@ from .polar import Polar
 from .spherical import Spherical
 from .one_hot_degree import OneHotDegree
 from .target_indegree import TargetIndegree
+from .local_degree_profile import LocalDegreeProfile
 from .center import Center
+from .normalize_rotation import NormalizeRotation
 from .normalize_scale import NormalizeScale
 from .random_translate import RandomTranslate
 from .random_flip import RandomFlip
@@ -23,6 +25,7 @@ from .face_to_edge import FaceToEdge
 from .sample_points import SamplePoints
 from .to_dense import ToDense
 from .two_hop import TwoHop
+from .line_graph import LineGraph
 
 __all__ = [
     'Compose',
@@ -34,7 +37,9 @@ __all__ = [
     'Spherical',
     'OneHotDegree',
     'TargetIndegree',
+    'LocalDegreeProfile',
     'Center',
+    'NormalizeRotation',
     'NormalizeScale',
     'RandomTranslate',
     'RandomFlip',
@@ -50,4 +55,5 @@ __all__ = [
     'SamplePoints',
     'ToDense',
     'TwoHop',
+    'LineGraph',
 ]

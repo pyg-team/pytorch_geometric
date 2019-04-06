@@ -95,8 +95,8 @@ class InMemoryDataset(Dataset):
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
             s = list(repeat(slice(None), item.dim()))
-            s[self.data.cat_dim(key, item)] = slice(slices[idx],
-                                                    slices[idx + 1])
+            s[self.data.__cat_dim__(key, item)] = slice(
+                slices[idx], slices[idx + 1])
             data[key] = item[s]
         return data
 
@@ -110,7 +110,7 @@ class InMemoryDataset(Dataset):
         r"""Collates a python list of data objects to the internal storage
         format of :class:`torch_geometric.data.InMemoryDataset`."""
         keys = data_list[0].keys
-        data = Data()
+        data = data_list[0].__class__()
 
         for key in keys:
             data[key] = []
@@ -118,12 +118,13 @@ class InMemoryDataset(Dataset):
 
         for item, key in product(data_list, keys):
             data[key].append(item[key])
-            s = slices[key][-1] + item[key].size(item.cat_dim(key, item[key]))
+            s = slices[key][-1] + item[key].size(
+                item.__cat_dim__(key, item[key]))
             slices[key].append(s)
 
         for key in keys:
             data[key] = torch.cat(
-                data[key], dim=data_list[0].cat_dim(key, data_list[0][key]))
-            slices[key] = torch.LongTensor(slices[key])
+                data[key], dim=data.__cat_dim__(key, data_list[0][key]))
+            slices[key] = torch.tensor(slices[key], dtype=torch.long)
 
         return data, slices

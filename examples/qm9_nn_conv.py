@@ -11,15 +11,11 @@ from torch_geometric.data import DataLoader
 from torch_geometric.utils import remove_self_loops
 
 target = 0
-dim = 73
+dim = 64
 
 
 class MyTransform(object):
     def __call__(self, data):
-        # Pad features.
-        x = data.x
-        data.x = torch.cat([x, x.new_zeros(x.size(0), dim - x.size(1))], dim=1)
-
         # Specify target.
         data.y = data.y[:, target]
         return data
@@ -72,27 +68,29 @@ train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
+        self.lin0 = torch.nn.Linear(dataset.num_features, dim)
+
         nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
-        self.conv = NNConv(dim, dim, nn, root_weight=False)
-        self.gru = GRU(dim, dim, batch_first=True)
-        self.set2set = Set2Set(dim, dim, processing_steps=3)
-        self.fc1 = torch.nn.Linear(2 * dim, dim)
-        self.fc2 = torch.nn.Linear(dim, 1)
+        self.conv = NNConv(dim, dim, nn, aggr='mean', root_weight=False)
+        self.gru = GRU(dim, dim)
+
+        self.set2set = Set2Set(dim, processing_steps=3)
+        self.lin1 = torch.nn.Linear(2 * dim, dim)
+        self.lin2 = torch.nn.Linear(dim, 1)
 
     def forward(self, data):
-        out = data.x
-        h = data.x.unsqueeze(0)
+        out = F.relu(self.lin0(data.x))
+        h = out.unsqueeze(0)
 
         for i in range(3):
             m = F.relu(self.conv(out, data.edge_index, data.edge_attr))
-            out, h = self.gru(m.unsqueeze(1), h)
-            out = out.squeeze(1)
+            out, h = self.gru(m.unsqueeze(0), h)
+            out = out.squeeze(0)
 
         out = self.set2set(out, data.batch)
-        out = F.relu(self.fc1(out))
-        out = self.fc2(out)
-        out = out.view(-1)
-        return out
+        out = F.relu(self.lin1(out))
+        out = self.lin2(out)
+        return out.view(-1)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

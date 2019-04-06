@@ -19,7 +19,7 @@ def dense_to_sparse(tensor):
     return index, value
 
 
-def sparse_to_dense(edge_index, edge_attr, num_nodes=None):
+def sparse_to_dense(edge_index, edge_attr=None, num_nodes=None):
     r"""Converts a sparse adjacency matrix given by edge indices and edge
     attributes to a dense adjacency matrix.
 
@@ -32,6 +32,9 @@ def sparse_to_dense(edge_index, edge_attr, num_nodes=None):
     :rtype: :class:`Tensor`
     """
     N = maybe_num_nodes(edge_index, num_nodes)
+
+    if edge_attr is None:
+        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
 
     adj = torch.sparse_coo_tensor(edge_index, edge_attr, torch.Size([N, N]))
     return adj.to_dense()

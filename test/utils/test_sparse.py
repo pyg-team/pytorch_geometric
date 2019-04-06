@@ -16,3 +16,6 @@ def test_sparse_to_dense():
 
     tensor = sparse_to_dense(edge_index, edge_attr)
     assert tensor.tolist() == [[3, 1], [2, 0]]
+
+    tensor = sparse_to_dense(edge_index)
+    assert tensor.tolist() == [[1, 1], [1, 0]]

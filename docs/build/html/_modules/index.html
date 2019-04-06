@@ -17,42 +17,36 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="pytorch_geometric master documentation" href="../index.html"/> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -61,7 +55,7 @@
 
           
             
-            <img src="../_static/logo.svg" class="logo" />
+            <img src="../_static/pyg_logo_text.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -69,7 +63,7 @@
             
             
               <div class="version">
-                master (1.0.1)
+                master (1.1.2)
               </div>
             
           
@@ -96,7 +90,8 @@
               <p class="caption"><span class="caption-text">Notes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../notes/installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/installation.html#id1">Frequently Asked Questions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../notes/introduction.html">Introduction by example</a><ul>
@@ -122,11 +117,12 @@
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/nn.html">torch_geometric.nn</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv.message_passing">Sparse Convolutional Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.dense_sage_conv">Dense Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.conv.message_passing">Convolutional Layers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Sparse Hierarchical Pooling Layers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.dense.diff_pool">Dense Hierarchical Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.unpool">Unpooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/data.html">torch_geometric.data</a></li>
@@ -144,7 +140,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pytorch_geometric</a>
@@ -152,9 +148,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -182,8 +179,6 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
-        
       </li>
     
   </ul>
@@ -206,12 +201,18 @@
 <li><a href="torch_geometric/data/download.html">torch_geometric.data.download</a></li>
 <li><a href="torch_geometric/data/extract.html">torch_geometric.data.extract</a></li>
 <li><a href="torch_geometric/data/in_memory_dataset.html">torch_geometric.data.in_memory_dataset</a></li>
+<li><a href="torch_geometric/datasets/amazon.html">torch_geometric.datasets.amazon</a></li>
+<li><a href="torch_geometric/datasets/bitcoin_otc.html">torch_geometric.datasets.bitcoin_otc</a></li>
+<li><a href="torch_geometric/datasets/coauthor.html">torch_geometric.datasets.coauthor</a></li>
 <li><a href="torch_geometric/datasets/coma.html">torch_geometric.datasets.coma</a></li>
+<li><a href="torch_geometric/datasets/cora_full.html">torch_geometric.datasets.cora_full</a></li>
 <li><a href="torch_geometric/datasets/entities.html">torch_geometric.datasets.entities</a></li>
 <li><a href="torch_geometric/datasets/faust.html">torch_geometric.datasets.faust</a></li>
+<li><a href="torch_geometric/datasets/geometry.html">torch_geometric.datasets.geometry</a></li>
 <li><a href="torch_geometric/datasets/karate.html">torch_geometric.datasets.karate</a></li>
 <li><a href="torch_geometric/datasets/mnist_superpixels.html">torch_geometric.datasets.mnist_superpixels</a></li>
 <li><a href="torch_geometric/datasets/modelnet.html">torch_geometric.datasets.modelnet</a></li>
+<li><a href="torch_geometric/datasets/pcpnet_dataset.html">torch_geometric.datasets.pcpnet_dataset</a></li>
 <li><a href="torch_geometric/datasets/planetoid.html">torch_geometric.datasets.planetoid</a></li>
 <li><a href="torch_geometric/datasets/ppi.html">torch_geometric.datasets.ppi</a></li>
 <li><a href="torch_geometric/datasets/qm7.html">torch_geometric.datasets.qm7</a></li>
@@ -219,10 +220,12 @@
 <li><a href="torch_geometric/datasets/shapenet.html">torch_geometric.datasets.shapenet</a></li>
 <li><a href="torch_geometric/datasets/tu_dataset.html">torch_geometric.datasets.tu_dataset</a></li>
 <li><a href="torch_geometric/nn/conv/agnn_conv.html">torch_geometric.nn.conv.agnn_conv</a></li>
+<li><a href="torch_geometric/nn/conv/appnp.html">torch_geometric.nn.conv.appnp</a></li>
 <li><a href="torch_geometric/nn/conv/arma_conv.html">torch_geometric.nn.conv.arma_conv</a></li>
 <li><a href="torch_geometric/nn/conv/cheb_conv.html">torch_geometric.nn.conv.cheb_conv</a></li>
 <li><a href="torch_geometric/nn/conv/edge_conv.html">torch_geometric.nn.conv.edge_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gat_conv.html">torch_geometric.nn.conv.gat_conv</a></li>
+<li><a href="torch_geometric/nn/conv/gated_graph_conv.html">torch_geometric.nn.conv.gated_graph_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gcn_conv.html">torch_geometric.nn.conv.gcn_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gin_conv.html">torch_geometric.nn.conv.gin_conv</a></li>
 <li><a href="torch_geometric/nn/conv/gmm_conv.html">torch_geometric.nn.conv.gmm_conv</a></li>
@@ -232,8 +235,10 @@
 <li><a href="torch_geometric/nn/conv/point_conv.html">torch_geometric.nn.conv.point_conv</a></li>
 <li><a href="torch_geometric/nn/conv/rgcn_conv.html">torch_geometric.nn.conv.rgcn_conv</a></li>
 <li><a href="torch_geometric/nn/conv/sage_conv.html">torch_geometric.nn.conv.sage_conv</a></li>
+<li><a href="torch_geometric/nn/conv/sg_conv.html">torch_geometric.nn.conv.sg_conv</a></li>
 <li><a href="torch_geometric/nn/conv/spline_conv.html">torch_geometric.nn.conv.spline_conv</a></li>
 <li><a href="torch_geometric/nn/conv/x_conv.html">torch_geometric.nn.conv.x_conv</a></li>
+<li><a href="torch_geometric/nn/data_parallel.html">torch_geometric.nn.data_parallel</a></li>
 <li><a href="torch_geometric/nn/dense/dense_sage_conv.html">torch_geometric.nn.dense.dense_sage_conv</a></li>
 <li><a href="torch_geometric/nn/dense/diff_pool.html">torch_geometric.nn.dense.diff_pool</a></li>
 <li><a href="torch_geometric/nn/glob/attention.html">torch_geometric.nn.glob.attention</a></li>
@@ -241,11 +246,13 @@
 <li><a href="torch_geometric/nn/glob/set2set.html">torch_geometric.nn.glob.set2set</a></li>
 <li><a href="torch_geometric/nn/glob/sort.html">torch_geometric.nn.glob.sort</a></li>
 <li><a href="torch_geometric/nn/meta.html">torch_geometric.nn.meta</a></li>
+<li><a href="torch_geometric/nn/models/autoencoder.html">torch_geometric.nn.models.autoencoder</a></li>
 <li><a href="torch_geometric/nn/pool/avg_pool.html">torch_geometric.nn.pool.avg_pool</a></li>
 <li><a href="torch_geometric/nn/pool/graclus.html">torch_geometric.nn.pool.graclus</a></li>
 <li><a href="torch_geometric/nn/pool/max_pool.html">torch_geometric.nn.pool.max_pool</a></li>
 <li><a href="torch_geometric/nn/pool/topk_pool.html">torch_geometric.nn.pool.topk_pool</a></li>
 <li><a href="torch_geometric/nn/pool/voxel_grid.html">torch_geometric.nn.pool.voxel_grid</a></li>
+<li><a href="torch_geometric/nn/unpool/knn_interpolate.html">torch_geometric.nn.unpool.knn_interpolate</a></li>
 <li><a href="torch_geometric/transforms/add_self_loops.html">torch_geometric.transforms.add_self_loops</a></li>
 <li><a href="torch_geometric/transforms/cartesian.html">torch_geometric.transforms.cartesian</a></li>
 <li><a href="torch_geometric/transforms/center.html">torch_geometric.transforms.center</a></li>
@@ -254,9 +261,12 @@
 <li><a href="torch_geometric/transforms/distance.html">torch_geometric.transforms.distance</a></li>
 <li><a href="torch_geometric/transforms/face_to_edge.html">torch_geometric.transforms.face_to_edge</a></li>
 <li><a href="torch_geometric/transforms/knn_graph.html">torch_geometric.transforms.knn_graph</a></li>
+<li><a href="torch_geometric/transforms/line_graph.html">torch_geometric.transforms.line_graph</a></li>
 <li><a href="torch_geometric/transforms/linear_transformation.html">torch_geometric.transforms.linear_transformation</a></li>
 <li><a href="torch_geometric/transforms/local_cartesian.html">torch_geometric.transforms.local_cartesian</a></li>
+<li><a href="torch_geometric/transforms/local_degree_profile.html">torch_geometric.transforms.local_degree_profile</a></li>
 <li><a href="torch_geometric/transforms/normalize_features.html">torch_geometric.transforms.normalize_features</a></li>
+<li><a href="torch_geometric/transforms/normalize_rotation.html">torch_geometric.transforms.normalize_rotation</a></li>
 <li><a href="torch_geometric/transforms/normalize_scale.html">torch_geometric.transforms.normalize_scale</a></li>
 <li><a href="torch_geometric/transforms/one_hot_degree.html">torch_geometric.transforms.one_hot_degree</a></li>
 <li><a href="torch_geometric/transforms/polar.html">torch_geometric.transforms.polar</a></li>
@@ -287,9 +297,7 @@
 </ul>
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -298,11 +306,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Matthias Fey.
+        &copy; Copyright 2019, Matthias Fey
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -315,37 +323,15 @@
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'master',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

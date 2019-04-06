@@ -63,12 +63,8 @@ class GMMConv(torch.nn.Module):
         F, (E, D) = x.size(1), pseudo.size()
 
         gaussian = -0.5 * (pseudo.view(E, 1, D) - self.mu.view(1, F, D))**2
-        gaussian = torch.exp(gaussian / (1e-14 + self.sigma.view(1, F, D)**2))
-        gaussian = gaussian.prod(dim=-1)
-
-        # Normalize gaussians in edge dimension.
-        gaussian_mean = scatter_add(gaussian, row, dim=0, dim_size=x.size(0))
-        gaussian = gaussian / (1e-14 + gaussian_mean[row]).view(E, F)
+        gaussian = gaussian / (1e-14 + self.sigma.view(1, F, D)**2)
+        gaussian = torch.exp(gaussian.sum(dim=-1))
 
         out = scatter_add(x[col] * gaussian, row, dim=0, dim_size=x.size(0))
         out = self.lin(out)

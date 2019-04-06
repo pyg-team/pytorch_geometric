@@ -1,3 +1,4 @@
+import os
 import os.path as osp
 import glob
 
@@ -16,7 +17,7 @@ names = [
 
 def read_tu_data(folder, prefix):
     files = glob.glob(osp.join(folder, '{}_*.txt'.format(prefix)))
-    names = [f.split('/')[-1][len(prefix) + 1:-4] for f in files]
+    names = [f.split(os.sep)[-1][len(prefix) + 1:-4] for f in files]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
     batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1
@@ -40,9 +41,9 @@ def read_tu_data(folder, prefix):
     y = None
     if 'graph_attributes' in names:  # Regression problem.
         y = read_file(folder, prefix, 'graph_attributes')
-    if 'graph_labels' in names:  # Classification problem.
+    elif 'graph_labels' in names:  # Classification problem.
         y = read_file(folder, prefix, 'graph_labels', torch.long)
-        y -= y.min(dim=0)[0]
+        _, y = y.unique(sorted=True, return_inverse=True)
 
     num_nodes = edge_index.max().item() + 1 if x is None else x.size(0)
     edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
