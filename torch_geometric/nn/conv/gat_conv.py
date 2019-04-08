@@ -31,8 +31,8 @@ class GATConv(MessagePassing):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        heads (int, optional): Number of multi-head-attentions. (default:
-            :obj:`1`)
+        heads (int, optional): Number of multi-head-attentions.
+            (default: :obj:`1`)
         concat (bool, optional): If set to :obj:`False`, the multi-head
         attentions are averaged instead of concatenated. (default: :obj:`True`)
         negative_slope (float, optional): LeakyReLU angle of the negative
