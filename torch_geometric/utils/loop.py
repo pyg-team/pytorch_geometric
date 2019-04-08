@@ -8,7 +8,7 @@ def contains_self_loops(edge_index):
     contain self-loops.
 
     Args:
-        edge_index (LongTensor): The edge_indices.
+        edge_index (LongTensor): The edge indices.
 
     :rtype: bool
     """
@@ -22,7 +22,7 @@ def remove_self_loops(edge_index, edge_attr=None):
     that :math:`(i,i) \not\in \mathcal{E}` for every :math:`i \in \mathcal{V}`.
 
     Args:
-        edge_index (LongTensor): The edge_indices.
+        edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
 
@@ -42,7 +42,7 @@ def add_self_loops(edge_index, num_nodes=None):
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
 
     Args:
-        edge_index (LongTensor): The edge_indices.
+        edge_index (LongTensor): The edge indices.
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 

@@ -12,7 +12,7 @@ def graclus(edge_index, weight=None, num_nodes=None):
     paper.
 
     Args:
-        edge_index (LongTensor): The edge_indices.
+        edge_index (LongTensor): The edge indices.
         weight (Tensor, optional): One-dimensional edge weights.
             (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
