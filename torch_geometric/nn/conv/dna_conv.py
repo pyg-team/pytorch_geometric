@@ -32,7 +32,7 @@ class Linear(torch.nn.Module):
 
     def reset_parameters(self):
         kaiming_uniform(self.weight, fan=self.weight.size(1), a=math.sqrt(5))
-        uniform(self.bias, self.weight.size(1))
+        uniform(self.weight.size(1), self.bias)
 
     def forward(self, src):
         # Input: [*, in_channels]
