@@ -10,7 +10,7 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
     sparse matrix.
 
     Args:
-        edge_index (LongTensor): The edge_indices.
+        edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
@@ -34,7 +34,7 @@ def to_networkx(edge_index, x=None, edge_attr=None, pos=None, num_nodes=None):
     and edge attributes to a networkx graph.
 
     Args:
-        edge_index (LongTensor): The edge_indices.
+        edge_index (LongTensor): The edge indices.
         x (Tensor, optional): The node feature matrix. (default: :obj:`None`)
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)

@@ -1,6 +1,7 @@
 from .degree import degree
 from .scatter import scatter_
 from .softmax import softmax
+from .dropout import dropout_adj
 from .undirected import is_undirected, to_undirected
 from .loop import contains_self_loops, remove_self_loops, add_self_loops
 from .isolated import contains_isolated_nodes
@@ -17,6 +18,7 @@ __all__ = [
     'degree',
     'scatter_',
     'softmax',
+    'dropout_adj',
     'is_undirected',
     'to_undirected',
     'contains_self_loops',

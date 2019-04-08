@@ -9,7 +9,7 @@ def contains_isolated_nodes(edge_index, num_nodes=None):
     isolated nodes.
 
     Args:
-        edge_index (LongTensor): The edge_indices.
+        edge_index (LongTensor): The edge indices.
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
