@@ -1,4 +1,5 @@
 import torch
+from torch.nn import Linear
 from torch_geometric.nn.conv import MessagePassing
 
 
@@ -45,11 +46,11 @@ class SignedConv(MessagePassing):
         self.first_aggr = first_aggr
 
         if first_aggr:
-            self.lin_pos = self.lin(2 * in_channels, out_channels, bias=bias)
-            self.lin_neg = self.lin(2 * in_channels, out_channels, bias=bias)
+            self.lin_pos = Linear(2 * in_channels, out_channels, bias=bias)
+            self.lin_neg = Linear(2 * in_channels, out_channels, bias=bias)
         else:
-            self.lin_pos = self.lin(3 * in_channels, out_channels, bias=bias)
-            self.lin_neg = self.lin(3 * in_channels, out_channels, bias=bias)
+            self.lin_pos = Linear(3 * in_channels, out_channels, bias=bias)
+            self.lin_neg = Linear(3 * in_channels, out_channels, bias=bias)
 
         self.reset_parameters()
 
@@ -87,5 +88,6 @@ class SignedConv(MessagePassing):
         return torch.cat([self.lin_pos(x_pos), self.lin_neg(x_neg)], dim=1)
 
     def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+        return '{}({}, {}, first_aggr={})'.format(
+            self.__class__.__name__, self.in_channels, self.out_channels,
+            self.first_aggr)
