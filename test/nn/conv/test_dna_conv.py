@@ -12,3 +12,7 @@ def test_dna_conv():
     conv = DNAConv(channels, heads=4, groups=8, dropout=0.5)
     assert conv.__repr__() == 'DNAConv(32, heads=4, groups=8)'
     assert conv(x, edge_index).size() == (num_nodes, channels)
+
+    conv = DNAConv(channels, heads=1, groups=1, dropout=0.5)
+    assert conv.__repr__() == 'DNAConv(32, heads=1, groups=1)'
+    assert conv(x, edge_index).size() == (num_nodes, channels)
