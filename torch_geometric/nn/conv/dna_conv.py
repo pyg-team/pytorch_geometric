@@ -169,7 +169,7 @@ class MultiHead(Attention):
 
 
 class DNAConv(MessagePassing):
-    r"""The Dynamic Neighborhood Aggregation operator from the `"Just Jump:
+    r"""The dynamic neighborhood aggregation operator from the `"Just Jump:
     Towards Dynamic Neighborhood Aggregation in Graph Neural Networks"
     <https://arxiv.org/abs/>`_ paper
 
@@ -183,8 +183,8 @@ class DNAConv(MessagePassing):
     .. math::
         \mathbf{x}_{v \leftarrow w}^{(t)} = \textrm{Attention} \left(
         \mathbf{x}^{(t-1)}_v \, \mathbf{\Theta}_Q^{(t)}, [\mathbf{x}_w^{(1)},
-        \ldots \mathbf{x}_w^{(t-1)}] \, \mathbf{Q}_K^{(t)}, \,
-        [\mathbf{x}_w^{(1)}, \ldots \mathbf{x}_w^{(t-1)}] \,
+        \ldots, \mathbf{x}_w^{(t-1)}] \, \mathbf{Q}_K^{(t)}, \,
+        [\mathbf{x}_w^{(1)}, \ldots, \mathbf{x}_w^{(t-1)}] \,
         \mathbf{Q}_V^{(t)} \right)
 
     with :math:`\mathbf{\Theta}_Q^{(t)}, \mathbf{\Theta}_K^{(t)},
