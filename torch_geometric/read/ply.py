@@ -10,9 +10,11 @@ def read_ply(path):
     pos = ([torch.tensor(data['vertex'][axis]) for axis in ['x', 'y', 'z']])
     pos = torch.stack(pos, dim=-1)
 
-    faces = data['face']['vertex_indices']
-    faces = [torch.tensor(face, dtype=torch.long) for face in faces]
-    face = torch.stack(faces, dim=-1)
+    face = None
+    if 'face' in data:
+        faces = data['face']['vertex_indices']
+        faces = [torch.tensor(face, dtype=torch.long) for face in faces]
+        face = torch.stack(faces, dim=-1)
 
     data = Data(pos=pos)
     data.face = face
