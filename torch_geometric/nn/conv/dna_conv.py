@@ -53,7 +53,7 @@ class Linear(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '{}({}, {}, groups={}, bias={})'.format(
             self.__class__.__name__, self.in_channels, self.out_channels,
             self.groups, self.bias is not None)
@@ -91,7 +91,7 @@ class Attention(torch.nn.Module):
 
         return torch.matmul(score, value)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '{}(dropout={})'.format(self.__class__.__name__, self.dropout)
 
 
@@ -162,7 +162,7 @@ class MultiHead(Attention):
 
         return out
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         return '{}({}, {}, heads={}, groups={}, dropout={}, bias={})'.format(
             self.__class__.__name__, self.in_channels, self.out_channels,
             self.heads, self.groups, self.dropout, self.bias)
