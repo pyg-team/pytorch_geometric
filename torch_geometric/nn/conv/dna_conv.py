@@ -188,9 +188,10 @@ class DNAConv(MessagePassing):
         self.multi_head.reset_parameters()
         self.cached_result = None
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index, edge_weight=None):
         # X: [num_nodes, num_layers, channels]
-        # EdgeIndex: [2, num_edges]
+        # Edge Index: [2, num_edges]
+        # Edge Weight: [num_edges]
 
         if x.dim() != 3:
             raise ValueError('Feature shape must be [num_nodes, num_layers, '
@@ -199,7 +200,7 @@ class DNAConv(MessagePassing):
 
         if not self.cached or self.cached_result is None:
             edge_index, norm = GCNConv.norm(
-                edge_index, x.size(0), None, dtype=x.dtype)
+                edge_index, x.size(0), edge_weight, dtype=x.dtype)
             self.cached_result = edge_index, norm
         edge_index, norm = self.cached_result
 
