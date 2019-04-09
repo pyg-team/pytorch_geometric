@@ -22,7 +22,7 @@ class Net(torch.nn.Module):
 
     def forward(self):
         x = F.dropout(data.x, training=self.training)
-        x = F.relu(self.lin1(data.x))
+        x = F.relu(self.lin1(x))
         x = self.prop1(x, data.edge_index)
         x = self.prop2(x, data.edge_index)
         x = F.dropout(x, training=self.training)
