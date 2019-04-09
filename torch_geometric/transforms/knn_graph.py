@@ -15,7 +15,14 @@ class KNNGraph(object):
 
     def __call__(self, data):
         pos = data.pos
-        assert not pos.is_cuda
+
+        if pos.is_cuda:
+            raise ValueError('The KNNGraph transform is only implemented '
+                             'for CPU')
+
+        if 'batch' in data:
+            raise ValueError('The KNNGraph transform should not be used '
+                             'for mini-batches')
 
         row = torch.arange(pos.size(0), dtype=torch.long)
         row = row.view(-1, 1).repeat(1, self.k).view(-1)
