@@ -59,17 +59,22 @@ def train():
 def test(loader):
     model.eval()
 
-    total_micro_f1 = 0
+    ys, preds = [], []
     for data in loader:
+        ys.append(data.y)
         with torch.no_grad():
             out = model(data.x.to(device), data.edge_index.to(device))
-        pred = (out > 0).float().cpu()
-        micro_f1 = metrics.f1_score(data.y, pred, average='micro')
-        total_micro_f1 += micro_f1 * data.num_graphs
-    return total_micro_f1 / len(loader.dataset)
+        preds.append((out > 0).float().cpu())
+
+    y, pred = torch.cat(ys, dim=0), torch.cat(preds, dim=0)
+    if pred.sum().item() > 0:
+        return metrics.f1_score(y.numpy(), pred.numpy(), average='micro')
+    else:
+        return 0
 
 
 for epoch in range(1, 101):
     loss = train()
     acc = test(val_loader)
-    print('Epoch: {:02d}, Loss: {:.4f}, Acc: {:.4f}'.format(epoch, loss, acc))
+    print('Epoch: {:02d}, Loss: {:.4f}, Micro-F1: {:.4f}'.format(
+        epoch, loss, acc))
