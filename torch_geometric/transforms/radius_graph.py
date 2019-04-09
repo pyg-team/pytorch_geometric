@@ -18,7 +18,14 @@ class RadiusGraph(object):
 
     def __call__(self, data):
         pos = data.pos
-        assert not pos.is_cuda
+
+        if pos.is_cuda:
+            raise ValueError('The RadiusGraph transform is only implemented '
+                             'for CPU')
+
+        if 'batch' in data:
+            raise ValueError('The RadiusGraph transform should not be used '
+                             'for mini-batches')
 
         tree = scipy.spatial.cKDTree(pos)
         indices = tree.query_ball_tree(tree, self.r)
