@@ -67,10 +67,9 @@ def test(loader):
         preds.append((out > 0).float().cpu())
 
     y, pred = torch.cat(ys, dim=0), torch.cat(preds, dim=0)
-    if pred.sum().item() > 0:
-        return metrics.f1_score(y.numpy(), pred.numpy(), average='micro')
-    else:
+    if pred.sum().item() == 0:
         return 0
+    return metrics.f1_score(y.numpy(), pred.numpy(), average='micro')
 
 
 for epoch in range(1, 101):
