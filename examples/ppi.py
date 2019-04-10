@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch_geometric.datasets import PPI
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import GATConv
-from sklearn import metrics
+from sklearn.metrics import f1_score
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
 train_dataset = PPI(path, split='train')
@@ -66,14 +66,11 @@ def test(loader):
             out = model(data.x.to(device), data.edge_index.to(device))
         preds.append((out > 0).float().cpu())
 
-    y, pred = torch.cat(ys, dim=0), torch.cat(preds, dim=0)
-    if pred.sum().item() == 0:
-        return 0
-    return metrics.f1_score(y.numpy(), pred.numpy(), average='micro')
+    y, pred = torch.cat(ys, dim=0).numpy(), torch.cat(preds, dim=0).numpy()
+    return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
 for epoch in range(1, 101):
     loss = train()
     acc = test(val_loader)
-    print('Epoch: {:02d}, Loss: {:.4f}, Micro-F1: {:.4f}'.format(
-        epoch, loss, acc))
+    print('Epoch: {:02d}, Loss: {:.4f}, F1: {:.4f}'.format(epoch, loss, acc))

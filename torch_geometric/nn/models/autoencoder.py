@@ -10,6 +10,24 @@ from ..inits import reset
 EPS = 1e-15
 
 
+def negative_sampling(pos_edge_index, num_nodes):
+    idx = (pos_edge_index[0] * num_nodes + pos_edge_index[1])
+    idx = idx.to(torch.device('cpu'))
+
+    rng = range(num_nodes**2)
+    perm = torch.tensor(random.sample(rng, idx.size(0)))
+    mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
+    rest = mask.nonzero().view(-1)
+    while rest.numel() > 0:  # pragma: no cover
+        tmp = torch.tensor(random.sample(rng, rest.size(0)))
+        mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
+        perm[rest] = tmp
+        rest = mask.nonzero().view(-1)
+
+    row, col = perm / num_nodes, perm % num_nodes
+    return torch.stack([row, col], dim=0).to(pos_edge_index.device)
+
+
 class GAE(torch.nn.Module):
     r"""The Graph Auto-Encoder model from the
     `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
@@ -116,23 +134,6 @@ class GAE(torch.nn.Module):
 
         return data
 
-    def negative_sampling(self, pos_edge_index, num_nodes):
-        idx = (pos_edge_index[0] * num_nodes + pos_edge_index[1])
-        idx = idx.to(torch.device('cpu'))
-
-        rng = range(num_nodes**2)
-        perm = torch.tensor(random.sample(rng, idx.size(0)))
-        mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
-        rest = mask.nonzero().view(-1)
-        while rest.numel() > 0:  # pragma: no cover
-            tmp = torch.tensor(random.sample(rng, rest.size(0)))
-            mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
-            perm[rest] = tmp
-            rest = mask.nonzero().view(-1)
-
-        row, col = perm / num_nodes, perm % num_nodes
-        return torch.stack([row, col], dim=0).to(pos_edge_index.device)
-
     def recon_loss(self, z, pos_edge_index):
         r"""Given latent variables :obj:`z`, computes the binary cross
         entropy loss for positive edges :obj:`pos_edge_index` and negative
@@ -146,7 +147,7 @@ class GAE(torch.nn.Module):
         pos_loss = -torch.log(self.decode_indices(z, pos_edge_index) +
                               EPS).mean()
 
-        neg_edge_index = self.negative_sampling(pos_edge_index, z.size(0))
+        neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
         neg_loss = -torch.log(1 - self.decode_indices(z, neg_edge_index) +
                               EPS).mean()
 
