@@ -1,5 +1,4 @@
-import torch
-import scipy.spatial
+from torch_geometric.nn import knn_graph
 from torch_geometric.utils import to_undirected
 
 
@@ -8,32 +7,27 @@ class KNNGraph(object):
 
     Args:
         k (int, optional): The number of neighbors. (default: :obj:`6`)
+        loop (bool, optional): If :obj:`True`, the graph will contain
+            self-loops. (default: :obj:`False`)
+        force_undirected (bool, optional): If set to :obj:`True`, new edges
+            will be undirected. (default: :obj:`False`)
     """
 
-    def __init__(self, k=6):
+    def __init__(self, k=6, loop=False, force_undirected=False):
         self.k = k
+        self.loop = loop
+        self.force_undirected = force_undirected
 
     def __call__(self, data):
-        pos = data.pos
+        data.edge_attr = None
+        batch = data.batch if 'batch' in data else None
+        edge_index = knn_graph(data.pos, self.k, batch, loop=self.loop)
 
-        if pos.is_cuda:
-            raise ValueError('The KNNGraph transform is only implemented '
-                             'for CPU')
-
-        if 'batch' in data:
-            raise ValueError('The KNNGraph transform should not be used '
-                             'for mini-batches')
-
-        row = torch.arange(pos.size(0), dtype=torch.long)
-        row = row.view(-1, 1).repeat(1, self.k).view(-1)
-
-        _, col = scipy.spatial.cKDTree(pos).query(pos, self.k + 1)
-        col = torch.tensor(col)[:, 1:].contiguous().view(-1)
-        mask = col < pos.size(0)
-        edge_index = torch.stack([row[mask], col[mask]], dim=0)
-        edge_index = to_undirected(edge_index, num_nodes=pos.size(0))
+        if self.force_undirected:
+            edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
 
         data.edge_index = edge_index
+
         return data
 
     def __repr__(self):
