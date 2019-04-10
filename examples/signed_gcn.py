@@ -43,7 +43,7 @@ def test():
     return model.test(z, test_pos_edge_index, test_neg_edge_index)
 
 
-for epoch in range(201):
+for epoch in range(101):
     loss = train()
     auc, f1 = test()
     print('Epoch: {:03d}, Loss: {:.4f}, AUC: {:.4f}, F1: {:.4f}'.format(
