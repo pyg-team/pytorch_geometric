@@ -143,7 +143,7 @@ class SignedGCN(torch.nn.Module):
         with torch.no_grad():
             pos_p = self.discriminate(z, pos_edge_index)[:, :2].max(dim=1)[1]
             neg_p = self.discriminate(z, neg_edge_index)[:, :2].max(dim=1)[1]
-        pred = 1 - torch.cat([pos_p, neg_p]).cpu()
+        pred = (1 - torch.cat([pos_p, neg_p])).cpu()
         y = torch.cat(
             [pred.new_ones((pos_p.size(0))),
              pred.new_zeros(neg_p.size(0))])
