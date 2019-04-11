@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.utils.sparse &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.utils.dropout &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -176,7 +176,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.utils.sparse</li>
+      <li>torch_geometric.utils.dropout</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -191,47 +191,70 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.utils.sparse</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.utils.dropout</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_sparse</span> <span class="k">import</span> <span class="n">coalesce</span>
 
 <span class="kn">from</span> <span class="nn">.num_nodes</span> <span class="k">import</span> <span class="n">maybe_num_nodes</span>
 
 
-<div class="viewcode-block" id="dense_to_sparse"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.dense_to_sparse">[docs]</a><span class="k">def</span> <span class="nf">dense_to_sparse</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Converts a dense adjacency matrix to a sparse adjacency matrix defined</span>
-<span class="sd">    by edge indices and edge attributes.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        tensor (Tensor): The dense adjacency matrix.</span>
-
-<span class="sd">    :rtype: (:class:`LongTensor`, :class:`Tensor`)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">index</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-    <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span></div>
+<span class="k">def</span> <span class="nf">filter_adj</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">edge_attr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">edge_attr</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="sparse_to_dense"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.sparse_to_dense">[docs]</a><span class="k">def</span> <span class="nf">sparse_to_dense</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Converts a sparse adjacency matrix given by edge indices and edge</span>
-<span class="sd">    attributes to a dense adjacency matrix.</span>
+<div class="viewcode-block" id="dropout_adj"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.dropout_adj">[docs]</a><span class="k">def</span> <span class="nf">dropout_adj</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span>
+                <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                <span class="n">force_undirected</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">training</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Randomly drops edges from the adjacency matrix</span>
+<span class="sd">    :obj:`(edge_index, edge_attr)` with propability :obj:`p` using samples from</span>
+<span class="sd">    a Bernoulli distribution.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edge_index (LongTensor): The edge indices.</span>
-<span class="sd">        edge_attr (Tensor): Edge weights or multi-dimensional edge features.</span>
+<span class="sd">        edge_attr (Tensor, optional): Edge weights or multi-dimensional</span>
+<span class="sd">            edge features. (default: :obj:`None`)</span>
+<span class="sd">        p (float, optional): Dropout probability. (default: :obj:`0.5`)</span>
+<span class="sd">        force_undirected (bool, optional): If set to :obj:`True`, will either</span>
+<span class="sd">            drop or keep both edges of an undirected edge.</span>
+<span class="sd">            (default: :obj:`False`)</span>
 <span class="sd">        num_nodes (int, optional): The number of nodes, *i.e.*</span>
-<span class="sd">            :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)</span>
-
-<span class="sd">    :rtype: :class:`Tensor`</span>
+<span class="sd">            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)</span>
+<span class="sd">        training (bool, optional): If set to :obj:`False`, this operation is a</span>
+<span class="sd">            no-op. (default: :obj:`True`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mf">0.</span> <span class="ow">or</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mf">1.</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dropout probability has to be between 0 and 1, &#39;</span>
+                         <span class="s1">&#39;but got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">training</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span>
+
     <span class="n">N</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
 
-    <span class="k">if</span> <span class="n">edge_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">edge_index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">force_undirected</span><span class="p">:</span>
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">filter_adj</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="n">col</span><span class="p">)</span>
 
-    <span class="n">adj</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sparse_coo_tensor</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Size</span><span class="p">([</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">]))</span>
-    <span class="k">return</span> <span class="n">adj</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span></div>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">new_full</span><span class="p">((</span><span class="n">row</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="p">),</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">filter_adj</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">force_undirected</span><span class="p">:</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+             <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span>
+            <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span></div>
 </pre></div>
 
            </div>

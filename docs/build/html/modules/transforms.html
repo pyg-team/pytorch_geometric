@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.1.2)
+                master (1.1.3)
               </div>
             
           
@@ -565,13 +565,20 @@ given interval, <em>e.g.</em>, resulting in the transformation matrix</p>
 
 <dl class="class">
 <dt id="torch_geometric.transforms.KNNGraph">
-<em class="property">class </em><code class="descname">KNNGraph</code><span class="sig-paren">(</span><em>k=6</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/knn_graph.html#KNNGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.KNNGraph" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">KNNGraph</code><span class="sig-paren">(</span><em>k=6</em>, <em>loop=False</em>, <em>force_undirected=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/knn_graph.html#KNNGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.KNNGraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a k-NN graph based on node positions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of neighbors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">6</span></code>)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of neighbors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">6</span></code>)</li>
+<li><strong>loop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the graph will contain
+self-loops. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+<li><strong>force_undirected</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, new edges
+will be undirected. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -579,14 +586,22 @@ given interval, <em>e.g.</em>, resulting in the transformation matrix</p>
 
 <dl class="class">
 <dt id="torch_geometric.transforms.RadiusGraph">
-<em class="property">class </em><code class="descname">RadiusGraph</code><span class="sig-paren">(</span><em>r</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/radius_graph.html#RadiusGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RadiusGraph" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">RadiusGraph</code><span class="sig-paren">(</span><em>r</em>, <em>loop=False</em>, <em>max_num_neighbors=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/radius_graph.html#RadiusGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RadiusGraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates edges based on node positions to all points within a given
 distance.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – The distance.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – The distance.</li>
+<li><strong>loop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the graph will contain
+self-loops. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+<li><strong>max_num_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum number of neighbors to
+return for each element in <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code>.
+This flag is only needed for CUDA tensors. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">32</span></code>)</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -654,11 +669,26 @@ of nodes will get automatically inferred. (default: <a class="reference external
 
 <dl class="class">
 <dt id="torch_geometric.transforms.LineGraph">
-<em class="property">class </em><code class="descname">LineGraph</code><a class="reference internal" href="../_modules/torch_geometric/transforms/line_graph.html#LineGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.LineGraph" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">LineGraph</code><span class="sig-paren">(</span><em>force_directed=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/line_graph.html#LineGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.LineGraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a graph to its corresponding line-graph:</p>
 <div class="math notranslate nohighlight">
 \[ \begin{align}\begin{aligned}L(\mathcal{G}) &amp;= (\mathcal{V}^{\prime}, \mathcal{E}^{\prime})\\\mathcal{V}^{\prime} &amp;= \mathcal{E}\\\mathcal{E}^{\prime} &amp;= \{ (e_1, e_2) : e_1 \cap e_2 \neq \emptyset \}\end{aligned}\end{align} \]</div>
-<p>New node features are given by (scattered) old edge attributes.</p>
+<p>Line-graph node indices are equal to indices in the original graph’s
+coalesced <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_index</span></code>.
+For undirected graphs, the maximum line-graph node index is
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">(data.edge_index.size(1)</span> <span class="pre">//</span> <span class="pre">2)</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p>
+<p>New node features are given by old edge attributes.
+For undirected graphs, edge attributes for reciprocal edges
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">col)</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">(col,</span> <span class="pre">row)</span></code> get summed together.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>force_directed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the graph will
+be always treated as a directed graph. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

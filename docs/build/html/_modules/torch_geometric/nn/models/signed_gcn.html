@@ -1,0 +1,482 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>torch_geometric.nn.models.signed_gcn &mdash; pytorch_geometric master documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html">
+          
+
+          
+            
+            <img src="../../../../_static/pyg_logo_text.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master (1.1.3)
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/installation.html#c-cuda-extensions-on-macos">C++/CUDA Extensions on macOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/installation.html#id1">Frequently Asked Questions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes/introduction.html">Introduction by example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-handling-of-graphs">Data handling of graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#common-benchmark-datasets">Common benchmark datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#mini-batches">Mini-batches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#data-transforms">Data transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/introduction.html#learning-methods-on-graphs">Learning methods on graphs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes/create_gnn.html">Creating message passing networks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/create_gnn.html#the-messagepassing-base-class">The “MessagePassing” base class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/create_gnn.html#implementing-the-gcn-layer">Implementing the GCN layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/create_gnn.html#implementing-the-edge-convolution">Implementing the edge convolution</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes/create_dataset.html">Creating your own datasets</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/create_dataset.html#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../notes/create_dataset.html#creating-larger-datasets">Creating “larger” datasets</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/nn.html">torch_geometric.nn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.conv.message_passing">Convolutional Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.glob">Global Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.pool">Pooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.unpool">Unpooling Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/nn.html#module-torch_geometric.nn.data_parallel">DataParallel layers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/data.html">torch_geometric.data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/datasets.html">torch_geometric.datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/transforms.html">torch_geometric.transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/utils.html">torch_geometric.utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">pytorch_geometric</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>torch_geometric.nn.models.signed_gcn</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for torch_geometric.nn.models.signed_gcn</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.sparse</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">TruncatedSVD</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">f1_score</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">torch_sparse</span> <span class="k">import</span> <span class="n">coalesce</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="k">import</span> <span class="n">SignedConv</span>
+
+<span class="kn">from</span> <span class="nn">.autoencoder</span> <span class="k">import</span> <span class="n">negative_sampling</span>
+
+
+<span class="k">def</span> <span class="nf">negative_triangle_sampling</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">):</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">edge_index</span>
+    <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">))</span>
+    <span class="n">idx_1</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">num_nodes</span> <span class="o">+</span> <span class="n">j</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+    <span class="n">idx_2</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="n">num_nodes</span> <span class="o">+</span> <span class="n">i</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">idx_2</span><span class="p">,</span> <span class="n">idx_1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+    <span class="n">rest</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">rest</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">,</span> <span class="p">(</span><span class="n">rest</span><span class="o">.</span><span class="n">numel</span><span class="p">(),</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+        <span class="n">idx_2</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="n">num_nodes</span> <span class="o">+</span> <span class="n">i</span><span class="p">[</span><span class="n">rest</span><span class="p">]</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">idx_2</span><span class="p">,</span> <span class="n">idx_1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
+        <span class="n">k</span><span class="p">[</span><span class="n">rest</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+        <span class="n">rest</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">j</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">k</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SignedGCN"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN">[docs]</a><span class="k">class</span> <span class="nc">SignedGCN</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The signed graph convolutional network model from the `&quot;Signed Graph</span>
+<span class="sd">    Convolutional Network&quot; &lt;https://arxiv.org/abs/1808.06354&gt;`_ paper.</span>
+<span class="sd">    Internally, this module uses the</span>
+<span class="sd">    :class:`torch_geometric.nn.conv.SignedConv` operator.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_channels (int): Size of each input sample.</span>
+<span class="sd">        out_channels (int): Size of each output sample.</span>
+<span class="sd">        num_layers (int): Number of layers.</span>
+<span class="sd">        lamb (float, optional): Balances the contributions of the overall</span>
+<span class="sd">            objective. (default: :obj:`5`)</span>
+<span class="sd">        bias (bool, optional): If set to :obj:`False`, all layers will not</span>
+<span class="sd">            learn an additive bias. (default: :obj:`True`)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">in_channels</span><span class="p">,</span>
+                 <span class="n">hidden_channels</span><span class="p">,</span>
+                 <span class="n">num_layers</span><span class="p">,</span>
+                 <span class="n">lamb</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                 <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SignedGCN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lamb</span> <span class="o">=</span> <span class="n">lamb</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">SignedConv</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="p">,</span> <span class="n">hidden_channels</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">first_aggr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">convs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">SignedConv</span><span class="p">(</span>
+                    <span class="n">hidden_channels</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="n">hidden_channels</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="n">first_aggr</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">hidden_channels</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SignedGCN.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">conv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">convs</span><span class="p">:</span>
+            <span class="n">conv</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lin</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SignedGCN.split_edges"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.split_edges">[docs]</a>    <span class="k">def</span> <span class="nf">split_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">test_ratio</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Splits the edges :obj:`edge_index` into train and test edges.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            edge_index (LongTensor): The edge indices.</span>
+<span class="sd">            test_ratio (float, optional): The ratio of test edges.</span>
+<span class="sd">                (default: :obj:`0.2`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">mask</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))[:</span><span class="nb">int</span><span class="p">(</span><span class="n">test_ratio</span> <span class="o">*</span> <span class="n">mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))]]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">train_edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>
+        <span class="n">test_edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[:,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">mask</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">train_edge_index</span><span class="p">,</span> <span class="n">test_edge_index</span></div>
+
+<div class="viewcode-block" id="SignedGCN.create_spectral_features"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.create_spectral_features">[docs]</a>    <span class="k">def</span> <span class="nf">create_spectral_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">pos_edge_index</span><span class="p">,</span>
+                                 <span class="n">neg_edge_index</span><span class="p">,</span>
+                                 <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Creates :obj:`in_channels` spectral node features based on</span>
+<span class="sd">        positive and negative edges.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos_edge_index (LongTensor): The positive edge indices.</span>
+<span class="sd">            neg_edge_index (LongTensor): The negative edge indices.</span>
+<span class="sd">            num_nodes (int, optional): The number of nodes, *i.e.*</span>
+<span class="sd">                :obj:`max_val + 1` of :attr:`pos_edge_index` and</span>
+<span class="sd">                :attr:`neg_edge_index`. (default: :obj:`None`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">num_nodes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">num_nodes</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">))</span>
+
+        <span class="n">pos_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">pos_edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">neg_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">neg_edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pos_val</span><span class="p">,</span> <span class="n">neg_val</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">])],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">val</span><span class="p">,</span> <span class="n">val</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">edge_index</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c1"># Borrowed from:</span>
+        <span class="c1"># https://github.com/benedekrozemberczki/SGCN/blob/master/src/utils.py</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">coo_matrix</span><span class="p">((</span><span class="n">val</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+        <span class="n">svd</span> <span class="o">=</span> <span class="n">TruncatedSVD</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">n_iter</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+        <span class="n">svd</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">svd</span><span class="o">.</span><span class="n">components_</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">pos_edge_index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SignedGCN.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes node embeddings :obj:`z` based on positive edges</span>
+<span class="sd">        :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (Tensor): The input node features.</span>
+<span class="sd">            pos_edge_index (LongTensor): The positive edge indices.</span>
+<span class="sd">            neg_edge_index (LongTensor): The negative edge indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">conv</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">convs</span><span class="p">:</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">conv</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">z</span></div>
+
+<div class="viewcode-block" id="SignedGCN.discriminate"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.discriminate">[docs]</a>    <span class="k">def</span> <span class="nf">discriminate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Given node embeddings :obj:`z`, classifies the link relation</span>
+<span class="sd">        between node pairs :obj:`edge_index` to be either positive,</span>
+<span class="sd">        negative or non-existent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (Tensor): The input node features.</span>
+<span class="sd">            edge_index (LongTensor): The edge indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">z</span><span class="p">[</span><span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">z</span><span class="p">[</span><span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SignedGCN.nll_loss"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.nll_loss">[docs]</a>    <span class="k">def</span> <span class="nf">nll_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the discriminator loss based on node embeddings :obj:`z`,</span>
+<span class="sd">        and positive edges :obj:`pos_edge_index` and negative nedges</span>
+<span class="sd">        :obj:`neg_edge_index`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (Tensor): The node embeddings.</span>
+<span class="sd">            pos_edge_index (LongTensor): The positive edge indices.</span>
+<span class="sd">            neg_edge_index (LongTensor): The negative edge indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">none_edge_index</span> <span class="o">=</span> <span class="n">negative_sampling</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">nll_loss</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">nll_loss</span> <span class="o">+=</span> <span class="n">F</span><span class="o">.</span><span class="n">nll_loss</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">discriminate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">),</span>
+            <span class="n">pos_edge_index</span><span class="o">.</span><span class="n">new_full</span><span class="p">((</span><span class="n">pos_edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">nll_loss</span> <span class="o">+=</span> <span class="n">F</span><span class="o">.</span><span class="n">nll_loss</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">discriminate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">),</span>
+            <span class="n">neg_edge_index</span><span class="o">.</span><span class="n">new_full</span><span class="p">((</span><span class="n">neg_edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">nll_loss</span> <span class="o">+=</span> <span class="n">F</span><span class="o">.</span><span class="n">nll_loss</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">discriminate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">none_edge_index</span><span class="p">),</span>
+            <span class="n">none_edge_index</span><span class="o">.</span><span class="n">new_full</span><span class="p">((</span><span class="n">none_edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">nll_loss</span> <span class="o">/</span> <span class="mf">3.0</span></div>
+
+<div class="viewcode-block" id="SignedGCN.pos_embedding_loss"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.pos_embedding_loss">[docs]</a>    <span class="k">def</span> <span class="nf">pos_embedding_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the triplet loss between positive node pairs and sampled</span>
+<span class="sd">        non-node pairs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (Tensor): The node embeddings.</span>
+<span class="sd">            pos_edge_index (LongTensor): The positive edge indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">negative_triangle_sampling</span><span class="p">(</span><span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">])</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SignedGCN.neg_embedding_loss"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.neg_embedding_loss">[docs]</a>    <span class="k">def</span> <span class="nf">neg_embedding_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the triplet loss between negative node pairs and sampled</span>
+<span class="sd">        non-node pairs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (Tensor): The node embeddings.</span>
+<span class="sd">            neg_edge_index (LongTensor): The negative edge indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">negative_triangle_sampling</span><span class="p">(</span><span class="n">neg_edge_index</span><span class="p">,</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">])</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">z</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SignedGCN.loss"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.loss">[docs]</a>    <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Computes the overall objective.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (Tensor): The node embeddings.</span>
+<span class="sd">            pos_edge_index (LongTensor): The positive edge indices.</span>
+<span class="sd">            neg_edge_index (LongTensor): The negative edge indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nll_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nll_loss</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">)</span>
+        <span class="n">loss_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_embedding_loss</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">)</span>
+        <span class="n">loss_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neg_embedding_loss</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nll_loss</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lamb</span> <span class="o">*</span> <span class="p">(</span><span class="n">loss_1</span> <span class="o">+</span> <span class="n">loss_2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SignedGCN.test"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.SignedGCN.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluates node embeddings :obj:`z` on positive and negative test</span>
+<span class="sd">        edges by computing AUC and F1 scores.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            z (Tensor): The node embeddings.</span>
+<span class="sd">            pos_edge_index (LongTensor): The positive edge indices.</span>
+<span class="sd">            neg_edge_index (LongTensor): The negative edge indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">pos_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discriminate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">pos_edge_index</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">neg_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discriminate</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">neg_edge_index</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pos_p</span><span class="p">,</span> <span class="n">neg_p</span><span class="p">]))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">pred</span><span class="o">.</span><span class="n">new_ones</span><span class="p">((</span><span class="n">pos_p</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))),</span>
+             <span class="n">pred</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">neg_p</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))])</span>
+        <span class="n">pred</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+        <span class="n">auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+        <span class="n">f1</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">pred</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="n">auc</span><span class="p">,</span> <span class="n">f1</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Matthias Fey
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
