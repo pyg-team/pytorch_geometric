@@ -22,9 +22,6 @@ class LinearTransformation(object):
     def __call__(self, data):
         pos = data.pos.view(-1, 1) if data.pos.dim() == 1 else data.pos
 
-        print(pos.size())
-        print(self.matrix.size())
-
         assert pos.size(-1) == self.matrix.size(-2), (
             'Node position matrix and transformation matrix have incompatible '
             'shape.')
