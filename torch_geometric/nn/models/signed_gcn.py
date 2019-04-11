@@ -10,6 +10,23 @@ from torch_geometric.nn import SignedConv
 from .autoencoder import negative_sampling
 
 
+def negative_triangle_sampling(edge_index, num_nodes):
+    device = edge_index
+    i, j = edge_index.to(torch.device('cpu'))
+    idx_1 = i * num_nodes + j
+    k = torch.randint(num_nodes, (i.size(0), ), dtype=torch.long)
+    idx_2 = k * num_nodes + i
+    mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
+    rest = mask.nonzero().view(-1)
+    while rest.numel() > 0:  # pragma: no cover
+        tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
+        idx_2 = tmp * num_nodes + i[rest]
+        mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
+        k[rest] = tmp
+        rest = mask.nonzero().view(-1)
+    return i.to(device), j.to(device), k.to(device)
+
+
 class SignedGCN(torch.nn.Module):
     r"""The signed graph convolutional network model from the `"Signed Graph
     Convolutional Network" <https://arxiv.org/abs/1808.06354>`_ paper.
@@ -114,18 +131,43 @@ class SignedGCN(torch.nn.Module):
         return torch.from_numpy(x).to(torch.float).to(pos_edge_index.device)
 
     def forward(self, x, pos_edge_index, neg_edge_index):
-        """"""
+        """Computes node embeddings :obj:`z` based on positive edges
+        :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`.
+
+        Args:
+            x (Tensor): The input node features.
+            pos_edge_index (LongTensor): The positive edge indices.
+            neg_edge_index (LongTensor): The negative edge indices.
+        """
         z = F.relu(self.conv1(x, pos_edge_index, neg_edge_index))
         for conv in self.convs:
             z = F.relu(conv(z, pos_edge_index, neg_edge_index))
         return z
 
     def discriminate(self, z, edge_index):
+        """Given node embeddings :obj:`z`, classifies the link relation
+        between node pairs :obj:`edge_index` to be either positive,
+        negative or non-existent.
+
+        Args:
+            x (Tensor): The input node features.
+            edge_index (LongTensor): The edge indices.
+        """
         value = torch.cat([z[edge_index[0]], z[edge_index[1]]], dim=1)
         value = self.lin(value)
         return torch.log_softmax(value, dim=1)
 
     def nll_loss(self, z, pos_edge_index, neg_edge_index):
+        """Computes the discriminator loss based on node embeddings :obj:`z`,
+        and positive edges :obj:`pos_edge_index` and negative nedges
+        :obj:`neg_edge_index`.
+
+        Args:
+            z (Tensor): The node embeddings.
+            pos_edge_index (LongTensor): The positive edge indices.
+            neg_edge_index (LongTensor): The negative edge indices.
+        """
+
         edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=1)
         none_edge_index = negative_sampling(edge_index, z.size(0))
 
@@ -141,41 +183,54 @@ class SignedGCN(torch.nn.Module):
             none_edge_index.new_full((none_edge_index.size(1), ), 2))
         return nll_loss / 3.0
 
-    def negative_sampling(self, pos_edge_index, num_nodes):
-        device = pos_edge_index
-        i, j = pos_edge_index.to(torch.device('cpu'))
-        idx_1 = i * num_nodes + j
-        k = torch.randint(num_nodes, (i.size(0), ), dtype=torch.long)
-        idx_2 = k * num_nodes + i
-        mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
-        rest = mask.nonzero().view(-1)
-        while rest.numel() > 0:  # pragma: no cover
-            tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
-            idx_2 = tmp * num_nodes + i[rest]
-            mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
-            k[rest] = tmp
-            rest = mask.nonzero().view(-1)
-        return i.to(device), j.to(device), k.to(device)
-
     def pos_embedding_loss(self, z, pos_edge_index):
-        i, j, k = self.negative_sampling(pos_edge_index, z.size(0))
+        """Computes the triplet loss between positive node pairs and sampled
+        non-node pairs.
+
+        Args:
+            z (Tensor): The node embeddings.
+            pos_edge_index (LongTensor): The positive edge indices.
+        """
+        i, j, k = negative_triangle_sampling(pos_edge_index, z.size(0))
 
         out = (z[i] - z[j]).pow(2).sum(dim=1) - (z[i] - z[k]).pow(2).sum(dim=1)
         return torch.clamp(out, min=0).mean()
 
     def neg_embedding_loss(self, z, neg_edge_index):
-        i, j, k = self.negative_sampling(neg_edge_index, z.size(0))
+        """Computes the triplet loss between negative node pairs and sampled
+        non-node pairs.
+
+        Args:
+            z (Tensor): The node embeddings.
+            neg_edge_index (LongTensor): The negative edge indices.
+        """
+        i, j, k = negative_triangle_sampling(neg_edge_index, z.size(0))
 
         out = (z[i] - z[k]).pow(2).sum(dim=1) - (z[i] - z[j]).pow(2).sum(dim=1)
         return torch.clamp(out, min=0).mean()
 
     def loss(self, z, pos_edge_index, neg_edge_index):
+        """Computes the overall objective.
+
+        Args:
+            z (Tensor): The node embeddings.
+            pos_edge_index (LongTensor): The positive edge indices.
+            neg_edge_index (LongTensor): The negative edge indices.
+        """
         nll_loss = self.nll_loss(z, pos_edge_index, neg_edge_index)
         loss_1 = self.pos_embedding_loss(z, pos_edge_index)
         loss_2 = self.neg_embedding_loss(z, neg_edge_index)
         return nll_loss + self.lamb * (loss_1 + loss_2)
 
     def test(self, z, pos_edge_index, neg_edge_index):
+        """Evaluates node embeddings :obj:`z` on positive and negative test
+        edges by computing AUC and F1 scores.
+
+        Args:
+            z (Tensor): The node embeddings.
+            pos_edge_index (LongTensor): The positive edge indices.
+            neg_edge_index (LongTensor): The negative edge indices.
+        """
         with torch.no_grad():
             pos_p = self.discriminate(z, pos_edge_index)[:, :2].max(dim=1)[1]
             neg_p = self.discriminate(z, neg_edge_index)[:, :2].max(dim=1)[1]
