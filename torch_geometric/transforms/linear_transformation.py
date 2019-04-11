@@ -22,11 +22,14 @@ class LinearTransformation(object):
     def __call__(self, data):
         pos = data.pos.view(-1, 1) if data.pos.dim() == 1 else data.pos
 
-        assert pos.size(1) == self.matrix.size(0), (
+        print(pos.size())
+        print(self.matrix.size())
+
+        assert pos.size(-1) == self.matrix.size(-2), (
             'Node position matrix and transformation matrix have incompatible '
             'shape.')
 
-        data.pos = torch.mm(pos, self.matrix.to(pos.dtype).to(pos.device))
+        data.pos = torch.matmul(pos, self.matrix.to(pos.dtype).to(pos.device))
 
         return data
 
