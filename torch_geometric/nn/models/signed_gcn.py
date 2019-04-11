@@ -13,8 +13,8 @@ from .autoencoder import negative_sampling
 class SignedGCN(torch.nn.Module):
     r"""The signed graph convolutional network model from the `"Signed Graph
     Convolutional Network" <https://arxiv.org/abs/1808.06354>`_ paper.
-    Internally, this module uses the :class:`torch_geometric.nn.SignedConv`
-    operator.
+    Internally, this module uses the
+    :class:`torch_geometric.nn.conv.SignedConv` operator.
 
     Args:
         in_channels (int): Size of each input sample.
