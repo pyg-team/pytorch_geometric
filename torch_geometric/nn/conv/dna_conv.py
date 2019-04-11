@@ -171,7 +171,7 @@ class MultiHead(Attention):
 class DNAConv(MessagePassing):
     r"""The dynamic neighborhood aggregation operator from the `"Just Jump:
     Towards Dynamic Neighborhood Aggregation in Graph Neural Networks"
-    <https://arxiv.org/abs/>`_ paper
+    <https://arxiv.org/abs/1904.04849>`_ paper
 
     .. math::
         \mathbf{x}_v^{(t)} = h_{\mathbf{\Theta}}^{(t)} \left( \mathbf{x}_{v
