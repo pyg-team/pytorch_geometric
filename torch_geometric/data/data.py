@@ -41,12 +41,15 @@ class Data(object):
                  edge_index=None,
                  edge_attr=None,
                  y=None,
-                 pos=None):
+                 pos=None,
+                 **kwargs):
         self.x = x
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.y = y
         self.pos = pos
+        for key, item in kwargs.items():
+            self[key] = item
 
     @staticmethod
     def from_dict(dictionary):
