@@ -7,9 +7,15 @@ class TemporalDataset(InMemoryDataset):
     url = 'https://github.com/INK-USC/RENet/raw/master/data'
     names = ['ICEWS18', 'GDELT']
 
-    def __init__(self, root, name, transform=None, pre_transform=None):
+    def __init__(self,
+                 root,
+                 name,
+                 granularity,
+                 transform=None,
+                 pre_transform=None):
         assert name in self.names
         self.name = name
+        self.granularity = granularity
         super(TemporalDataset, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
         self.splits = torch.load(self.processed_paths[1])
@@ -36,10 +42,12 @@ class TemporalDataset(InMemoryDataset):
             download_url(url, self.raw_dir)
 
     def process(self):
+        data_list = []
         splits = [0]
         for raw_path in self.raw_paths:
             srot = read_txt_array(raw_path, sep='\t', end=4, dtype=torch.long)
             row, rel, col, time = srot.t().contiguous()
+            time = time / self.granularity
 
             count = time.bincount()
             split_sections = count[count > 0].tolist()
@@ -50,7 +58,6 @@ class TemporalDataset(InMemoryDataset):
             times = time.split(split_sections)
             splits.append(splits[-1] + len(rows))
 
-            data_list = []
             for row, col, rel, time in zip(rows, cols, rels, times):
                 edge_index = torch.stack([row, col], dim=0)
                 data = Data(edge_index=edge_index, edge_type=rel, time=time)
@@ -84,4 +91,5 @@ class ICEWS(TemporalDataset):
     """
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(ICEWS, self).__init__(root, 'ICEWS18', transform, pre_transform)
+        super(ICEWS, self).__init__(root, 'ICEWS18', 24, transform,
+                                    pre_transform)
