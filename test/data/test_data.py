@@ -60,3 +60,8 @@ def test_data():
     data.edge_index = None
     assert data.num_nodes is None
     assert data.num_edges is None
+
+    data = Data(x=x, attribute=x)
+    assert len(data) == 2
+    assert data.x.tolist() == x.tolist()
+    assert data.attribute.tolist() == x.tolist()
