@@ -24,6 +24,23 @@ class TemporalDataset(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
+    def num_nodes(self):
+        if hasattr(self, '_num_nodes'):
+            return self._num_nodes
+        ns = [torch.load(path)[0].num_nodes for path in self.processed_paths]
+        self._num_nodes = max(ns)
+        return self._num_nodes
+
+    @property
+    def num_rels(self):
+        if hasattr(self, '_num_rels'):
+            return self._num_rels
+        ps = self.processed_paths
+        rs = [torch.load(path)[0].edge_attr.max().item() + 1 for path in ps]
+        self._num_rels = max(rs)
+        return self._num_rels
+
+    @property
     def raw_file_names(self):
         return ['{}.txt'.format(name) for name in ['train', 'valid', 'test']]
 
