@@ -20,4 +20,5 @@ class GDELT(TemporalDataset):
     """
 
     def __init__(self, root, transform=None, pre_transform=None):
-        super(GDELT, self).__init__(root, 'GDELT', transform, pre_transform)
+        super(GDELT, self).__init__(root, 'GDELT', 15, transform,
+                                    pre_transform)
