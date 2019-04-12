@@ -6,39 +6,21 @@ from torch_geometric.read import read_txt_array
 class TemporalDataset(InMemoryDataset):
     url = 'https://github.com/INK-USC/RENet/raw/master/data'
     names = ['ICEWS18', 'GDELT']
-    splits = ['train', 'val', 'test']
 
-    def __init__(self,
-                 root,
-                 name,
-                 split='train',
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root, name, transform=None, pre_transform=None):
         assert name in self.names
-        assert split in self.splits
         self.name = name
-        super(TemporalDataset, self).__init__(root, transform, pre_transform,
-                                              pre_filter)
-        path = self.processed_paths[self.splits.index(split)]
-        self.data, self.slices = torch.load(path)
+        super(TemporalDataset, self).__init__(root, transform, pre_transform)
+        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.splits = torch.load(self.processed_paths[1])
 
     @property
     def num_nodes(self):
-        if hasattr(self, '_num_nodes'):
-            return self._num_nodes
-        ns = [torch.load(path)[0].num_nodes for path in self.processed_paths]
-        self._num_nodes = max(ns)
-        return self._num_nodes
+        return self.data.num_nodes
 
     @property
     def num_rels(self):
-        if hasattr(self, '_num_rels'):
-            return self._num_rels
-        ps = self.processed_paths
-        rs = [torch.load(path)[0].edge_attr.max().item() + 1 for path in ps]
-        self._num_rels = max(rs)
-        return self._num_rels
+        return self.data.edge_type.max().item() + 1
 
     @property
     def raw_file_names(self):
@@ -46,7 +28,7 @@ class TemporalDataset(InMemoryDataset):
 
     @property
     def processed_file_names(self):
-        return ['train.pt', 'val.pt', 'test.pt']
+        return ['data.pt', 'splits.pt']
 
     def download(self):
         for filename in self.raw_file_names:
@@ -54,8 +36,9 @@ class TemporalDataset(InMemoryDataset):
             download_url(url, self.raw_dir)
 
     def process(self):
-        for r_path, p_path in zip(self.raw_paths, self.processed_paths):
-            srot = read_txt_array(r_path, sep='\t', end=4, dtype=torch.long)
+        splits = [0]
+        for raw_path in self.raw_paths:
+            srot = read_txt_array(raw_path, sep='\t', end=4, dtype=torch.long)
             row, rel, col, time = srot.t().contiguous()
 
             count = time.bincount()
@@ -65,19 +48,18 @@ class TemporalDataset(InMemoryDataset):
             cols = col.split(split_sections)
             rels = rel.split(split_sections)
             times = time.split(split_sections)
+            splits.append(splits[-1] + len(rows))
 
             data_list = []
             for row, col, rel, time in zip(rows, cols, rels, times):
                 edge_index = torch.stack([row, col], dim=0)
-                data = Data(edge_index=edge_index, edge_attr=rel)
-                data.time = time
-                if self.pre_filter is not None and not self.pre_filter(data):
-                    continue
+                data = Data(edge_index=edge_index, edge_type=rel, time=time)
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
                 data_list.append(data)
 
-            torch.save(self.collate(data_list), p_path)
+        torch.save(self.collate(data_list), self.processed_paths[0])
+        torch.save(splits, self.processed_paths[1])
 
 
 class ICEWS(TemporalDataset):
@@ -99,17 +81,7 @@ class ICEWS(TemporalDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
     """
 
-    def __init__(self,
-                 root,
-                 split='train',
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
-        super(ICEWS, self).__init__(root, 'ICEWS18', split, transform,
-                                    pre_transform, pre_filter)
+    def __init__(self, root, transform=None, pre_transform=None):
+        super(ICEWS, self).__init__(root, 'ICEWS18', transform, pre_transform)
