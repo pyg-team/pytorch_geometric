@@ -1,15 +1,15 @@
 Creating your own datasets
 ==========================
 
-Although `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ already contains a lot of useful datasets, you may wish to create your own because you recorded data by yourself or want to use a dataset which is not publicly available.
+Although `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ already contains a lot of useful datasets, you may wish to create your own dataset with self-recorded or non-publicly available data.
 
-Implementing datasets by yourself is straightforward and you may have a look at the source code to find out how the various datasets are implemented.
+Implementing datasets by yourself is straightforward and you may want to take a look at the source code to find out how the various datasets are implemented.
 However, we give a brief introduction on what is needed to setup your own dataset.
 
 We provide two abstract classes for datasets: :class:`torch_geometric.data.Dataset` and :class:`torch_geometric.data.InMemoryDataset`.
 :class:`torch_geometric.data.InMemoryDataset` inherits from :class:`torch_geometric.data.Dataset` and should be used if the whole dataset fits into memory.
 
-Each dataset gets passed a root folder.
+Following the :obj:`torchvision` convention, each dataset gets passed a root folder which indicates where the dataset should be stored.
 We split up the root folder into two folders: the ``raw_dir``, where the dataset gets downloaded to, and the ``processed_dir``, where the processed dataset is being saved.
 
 In addition, each dataset can be passed a ``transform``, a ``pre_transform`` and a ``pre_filter`` function, which are ``None`` by default.
@@ -37,8 +37,8 @@ You can find helpful methods to download and extract data in :mod:`torch_geometr
 The real magic happens in the body of :meth:`torch_geometric.data.InMemoryDataset.process`.
 Here, we need to read and create a list of :class:`torch_geometric.data.Data` objects and save it into the ``processed_dir``.
 Because saving a huge python list is really slow, we collate the list into one huge ``Data`` object via :meth:`torch_geometric.data.InMemoryDataset.collate` before saving .
-The collated data object has simply concatenated all examples (similar to :class:`torch_geometric.data.DataLoader`) and, in addition, returns a ``slices`` dictionary to reconstruct single examples from the object.
-Finally, these objects get loaded in the constructor and must be accessible via ``self.data`` and ``self.slices``.
+The collated data object has concatenated all examples into one big data object and, in addition, returns a ``slices`` dictionary to reconstruct single examples from this object.
+Finally, we need to load these two objects in the constructor into the properties ``self.data`` and ``self.slices``.
 
 Let's see this process in a simplified example:
 
@@ -80,18 +80,17 @@ Let's see this process in a simplified example:
 Creating "larger" datasets
 --------------------------
 
-For creating datasets which do not fit into memory, the :class:`torch_geometric.data.Dataset` must be used, where we follow an analogous concept of the ``torchvision`` datasets.
+For creating datasets which do not fit into memory, the :class:`torch_geometric.data.Dataset` must be used, where we closely follow the concepts of the ``torchvision`` datasets.
 
 Therefore, the following methods need to be further implemented:
 
 :meth:`torch_geometric.data.Dataset.__len__`:
-    How many graphs are in your dataset?
+    Returns the number of examples in your dataset.
 
 :meth:`torch_geometric.data.Dataset.get`:
-    Logic to load a single graph.
-    The ``Data`` object will be automatically transformed according to ``self.transform``.
+    Implements the logic to load a single graph.
 
-Note that :meth:`torch_geometric.data.Dataset.__getitem__` is already implemented, which simply gets the data object from :meth:`torch_geometric.data.Dataset.get` and optionally transforms it.
+Internally, :meth:`torch_geometric.data.Dataset.__getitem__` gets data objects from :meth:`torch_geometric.data.Dataset.get` and optionally transforms them according to ``transform``.
 
 Let's see this process in a simplified example:
 
