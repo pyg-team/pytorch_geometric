@@ -52,7 +52,9 @@ class GatedGraphConv(MessagePassing):
     def forward(self, x, edge_index):
         """"""
         h = x if x.dim() == 2 else x.unsqueeze(-1)
-        assert h.size(1) <= self.out_channels
+        if h.size(1) > self.out_channels:
+            raise ValueError('The number of input channels is not allowed to '
+                             'be larger than the number of output channels')
 
         if h.size(1) < self.out_channels:
             zero = h.new_zeros(h.size(0), self.out_channels - h.size(1))
@@ -60,7 +62,7 @@ class GatedGraphConv(MessagePassing):
 
         for i in range(self.num_layers):
             m = torch.matmul(h, self.weight[i])
-            m = self.propagate(edge_index, x=m)
+            m = self.propagate(edge_index, size=(x.size(0), x.size(0)), x=m)
             h = self.rnn(m, h)
 
         return h
