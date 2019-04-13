@@ -111,6 +111,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notes/create_dataset.html">Creating your own datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#creating-larger-datasets">Creating “larger” datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
 </ul>
@@ -235,12 +236,15 @@
                  <span class="n">edge_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">edge_attr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="n">edge_attr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
 
 <div class="viewcode-block" id="Data.from_dict"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Data.from_dict">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">):</span>

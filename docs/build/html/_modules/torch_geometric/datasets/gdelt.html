@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.transforms.distance &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.datasets.gdelt &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -177,7 +177,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.transforms.distance</li>
+      <li>torch_geometric.datasets.gdelt</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -192,47 +192,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.transforms.distance</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
+  <h1>Source code for torch_geometric.datasets.gdelt</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">.icews</span> <span class="k">import</span> <span class="n">TemporalDataset</span>
 
 
-<div class="viewcode-block" id="Distance"><a class="viewcode-back" href="../../../modules/transforms.html#torch_geometric.transforms.Distance">[docs]</a><span class="k">class</span> <span class="nc">Distance</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Saves the Euclidean distance of linked nodes in its edge attributes.</span>
+<div class="viewcode-block" id="GDELT"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.GDELT">[docs]</a><span class="k">class</span> <span class="nc">GDELT</span><span class="p">(</span><span class="n">TemporalDataset</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Global Database of Events, Language, and Tone (GDELT) dataset used</span>
+<span class="sd">    in the, *e.g.*, `&quot;Recurrent Event Network for Reasoning over Temporal</span>
+<span class="sd">    Knowledge Graphs&quot; &lt;https://arxiv.org/abs/1904.05530&gt;`_ paper, consisting of</span>
+<span class="sd">    events collected from 4/1/2015 to 3/31/2016 (15 minutes time granularity).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        norm (bool, optional): If set to :obj:`False`, the output will not be</span>
-<span class="sd">            normalized to the interval :math:`[0, 1]`. (default: :obj:`True`)</span>
-<span class="sd">        max_value (float, optional): If set and :obj:`norm=True`, normalization</span>
-<span class="sd">            will be performed based on this value instead of the maximum value</span>
-<span class="sd">            found in the data. (default: :obj:`None`)</span>
-<span class="sd">        cat (bool, optional): If set to :obj:`False`, all existing edge</span>
-<span class="sd">            attributes will be replaced. (default: :obj:`True`)</span>
+<span class="sd">        root (string): Root directory where the dataset should be saved.</span>
+<span class="sd">        transform (callable, optional): A function/transform that takes in an</span>
+<span class="sd">            :obj:`torch_geometric.data.Data` object and returns a transformed</span>
+<span class="sd">            version. The data object will be transformed before every access.</span>
+<span class="sd">            (default: :obj:`None`)</span>
+<span class="sd">        pre_transform (callable, optional): A function/transform that takes in</span>
+<span class="sd">            an :obj:`torch_geometric.data.Data` object and returns a</span>
+<span class="sd">            transformed version. The data object will be transformed before</span>
+<span class="sd">            being saved to disk. (default: :obj:`None`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">max_value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cat</span> <span class="o">=</span> <span class="n">cat</span>
-
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span> <span class="n">pos</span><span class="p">,</span> <span class="n">pseudo</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span>
-
-        <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="ow">and</span> <span class="n">dist</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">/</span> <span class="n">dist</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span>
-
-        <span class="k">if</span> <span class="n">pseudo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat</span><span class="p">:</span>
-            <span class="n">pseudo</span> <span class="o">=</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">pseudo</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">pseudo</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">pseudo</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="n">dist</span>
-
-        <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(norm=</span><span class="si">{}</span><span class="s1">, max_value=</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                                                  <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pre_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GDELT</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;GDELT&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span>
+                                    <span class="n">pre_transform</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

@@ -113,6 +113,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../notes/create_dataset.html">Creating your own datasets</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#creating-in-memory-datasets">Creating “in memory datasets”</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#creating-larger-datasets">Creating “larger” datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
 </ul>
@@ -812,6 +813,65 @@ who-trusts-whom networks of sequential time steps.</p>
 <li><strong>edge_window_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The window size for the existence of
 an edge in the graph sequence since its initial creation.
 (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">10</span></code>)</li>
+<li><strong>transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that takes in an
+<a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object and returns a transformed
+version. The data object will be transformed before every access.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>pre_transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that takes in
+an <a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object and returns a
+transformed version. The data object will be transformed before
+being saved to disk. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.datasets.ICEWS">
+<em class="property">class </em><code class="descname">ICEWS</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/icews.html#ICEWS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.ICEWS" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Integrated Crisis Early Warning System (ICEWS) dataset used in
+the, <em>e.g.</em>, <a class="reference external" href="https://arxiv.org/abs/1904.05530">“Recurrent Event Network for Reasoning over Temporal
+Knowledge Graphs”</a> paper, consisting of
+events collected from 1/1/2014 to 12/31/2014 (24 hours time granularity).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> (<em>string</em>) – Root directory where the dataset should be saved.</li>
+<li><strong>split</strong> (<em>string</em>) – If <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;train&quot;</span></code>, loads the training dataset.
+If <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;val&quot;</span></code>, loads the validation dataset.
+If <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;test&quot;</span></code>, loads the test dataset. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;train&quot;</span></code>)</li>
+<li><strong>transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that takes in an
+<a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object and returns a transformed
+version. The data object will be transformed before every access.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>pre_transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that takes in
+an <a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object and returns a
+transformed version. The data object will be transformed before
+being saved to disk. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.datasets.GDELT">
+<em class="property">class </em><code class="descname">GDELT</code><span class="sig-paren">(</span><em>root</em>, <em>transform=None</em>, <em>pre_transform=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/datasets/gdelt.html#GDELT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.datasets.GDELT" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Global Database of Events, Language, and Tone (GDELT) dataset used
+in the, <em>e.g.</em>, <a class="reference external" href="https://arxiv.org/abs/1904.05530">“Recurrent Event Network for Reasoning over Temporal
+Knowledge Graphs”</a> paper, consisting of
+events collected from 4/1/2015 to 3/31/2016 (15 minutes time granularity).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> (<em>string</em>) – Root directory where the dataset should be saved.</li>
 <li><strong>transform</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function/transform that takes in an
 <a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> object and returns a transformed
 version. The data object will be transformed before every access.
