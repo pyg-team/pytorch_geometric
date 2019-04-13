@@ -31,15 +31,7 @@ class RENet(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.rel, gain=math.sqrt(2.0))
 
     def precompute_history(self, dataset):
-        for i, data in enumerate(dataset):
-            print(data)
-            pass
+        pass
 
     def forward(self, edge_index, rel, history):
-        row, col = edge_index
-
-        e_s = self.obj.index_select(0, row)
-        e_r = self.rel.index_select(0, rel)
-
-        # TODO:
         pass
