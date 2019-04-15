@@ -16,7 +16,7 @@ from .coma import CoMA
 from .pcpnet_dataset import PCPNetDataset
 from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
-from .icews import ICEWS
+from .icews import ICEWS18
 from .gdelt import GDELT
 
 __all__ = [
@@ -38,6 +38,6 @@ __all__ = [
     'PCPNetDataset',
     'GeometricShapes',
     'BitcoinOTC',
-    'ICEWS',
+    'ICEWS18',
     'GDELT',
 ]
