@@ -88,7 +88,7 @@ class RENet(torch.nn.Module):
             def __call__(self, data):
                 sub, rel, obj, t = data.sub, data.rel, data.obj, data.t
 
-                if max(sub, obj) + 1 > len(self.sub_hist):
+                if max(sub, obj) + 1 > len(self.sub_hist):  # pragma: no cover
                     self.sub_hist = self.increase_hist_node_size(self.sub_hist)
                     self.obj_hist = self.increase_hist_node_size(self.obj_hist)
 
@@ -110,7 +110,7 @@ class RENet(torch.nn.Module):
 
                 return data
 
-            def __repr__(self):
+            def __repr__(self):  # pragma: no cover
                 return '{}(seq_len={})'.format(self.__class__.__name__,
                                                self.seq_len)
 
