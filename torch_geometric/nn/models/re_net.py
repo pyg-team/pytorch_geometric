@@ -213,8 +213,8 @@ class RENet(torch.nn.Module):
         return log_prob_obj, log_prob_sub
 
     def test(self, logits, y):
-        """Given ground-truth :math:`y`, computes Mean Reciprocal Rank (MRR)
-        and Hits@1/3/10."""
+        """Given ground-truth :obj:`y`, computes Mean Reciprocal Rank (MRR)
+        and Hits at 1/3/10."""
 
         _, perm = logits.sort(dim=1, descending=True)
         mask = (y.view(-1, 1) == perm)

@@ -408,8 +408,8 @@
         <span class="k">return</span> <span class="n">log_prob_obj</span><span class="p">,</span> <span class="n">log_prob_sub</span></div>
 
 <div class="viewcode-block" id="RENet.test"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.RENet.test">[docs]</a>    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Given ground-truth :math:`y`, computes Mean Reciprocal Rank (MRR)</span>
-<span class="sd">        and Hits@1/3/10.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Given ground-truth :obj:`y`, computes Mean Reciprocal Rank (MRR)</span>
+<span class="sd">        and Hits at 1/3/10.&quot;&quot;&quot;</span>
 
         <span class="n">_</span><span class="p">,</span> <span class="n">perm</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">perm</span><span class="p">)</span>
