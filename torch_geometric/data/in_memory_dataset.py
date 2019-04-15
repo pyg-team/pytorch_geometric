@@ -118,13 +118,21 @@ class InMemoryDataset(Dataset):
 
         for item, key in product(data_list, keys):
             data[key].append(item[key])
-            s = slices[key][-1] + item[key].size(
-                item.__cat_dim__(key, item[key]))
+            if torch.is_tensor(item[key]):
+                s = slices[key][-1] + item[key].size(
+                    item.__cat_dim__(key, item[key]))
+            elif isinstance(item[key], int) or isinstance(item[key], float):
+                s = slices[key][-1] + 1
+            else:
+                raise ValueError('Unsupported attribute type.')
             slices[key].append(s)
 
         for key in keys:
-            data[key] = torch.cat(
-                data[key], dim=data.__cat_dim__(key, data_list[0][key]))
+            if torch.is_tensor(data_list[0][key]):
+                data[key] = torch.cat(
+                    data[key], dim=data.__cat_dim__(key, data_list[0][key]))
+            else:
+                data[key] = torch.tensor(data[key])
             slices[key] = torch.tensor(slices[key], dtype=torch.long)
 
         return data, slices
