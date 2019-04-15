@@ -31,7 +31,7 @@ class Batch(Data):
             batch[key] = []
 
         for key in follow_batch:
-            batch['batch_{}'.format(key)] = []
+            batch['{}_batch'.format(key)] = []
 
         batch.batch = []
 
@@ -45,7 +45,7 @@ class Batch(Data):
             for key in follow_batch:
                 size = data[key].size(data.__cat_dim__(key, data[key]))
                 item = torch.full((size, ), i, dtype=torch.long)
-                batch['batch_{}'.format(key)].append(item)
+                batch['{}_batch'.format(key)].append(item)
 
             num_nodes = data.num_nodes
             if num_nodes is not None:
