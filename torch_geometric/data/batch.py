@@ -31,13 +31,16 @@ class Batch(Data):
 
         cumsum = 0
         for i, data in enumerate(data_list):
-            num_nodes = data.num_nodes
-            batch.batch.append(torch.full((num_nodes, ), i, dtype=torch.long))
             for key in data.keys:
                 item = data[key]
                 item = item + cumsum if data.__cumsum__(key, item) else item
                 batch[key].append(item)
-            cumsum += num_nodes
+
+            num_nodes = data.num_nodes
+            if num_nodes is not None:
+                batch.batch.append(
+                    torch.full((num_nodes, ), i, dtype=torch.long))
+                cumsum += num_nodes
 
         for key in keys:
             item = batch[key][0]
@@ -48,7 +51,12 @@ class Batch(Data):
                 batch[key] = torch.tensor(batch[key])
             else:
                 raise ValueError('Unsupported attribute type.')
-        batch.batch = torch.cat(batch.batch, dim=-1)
+
+        if num_nodes is not None:
+            batch.batch = torch.cat(batch.batch, dim=-1)
+        else:
+            batch.batch = None
+
         return batch.contiguous()
 
     @property
