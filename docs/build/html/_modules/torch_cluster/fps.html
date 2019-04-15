@@ -194,10 +194,10 @@
             
   <h1>Source code for torch_cluster.fps</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">fps_cpu</span>
+<span class="kn">import</span> <span class="nn">torch_cluster.fps_cpu</span>
 
 <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-    <span class="kn">import</span> <span class="nn">fps_cuda</span>
+    <span class="kn">import</span> <span class="nn">torch_cluster.fps_cuda</span>
 
 
 <div class="viewcode-block" id="fps"><a class="viewcode-back" href="../../modules/nn.html#torch_geometric.nn.pool.fps">[docs]</a><span class="k">def</span> <span class="nf">fps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">random_start</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -240,9 +240,9 @@
     <span class="k">assert</span> <span class="n">ratio</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ratio</span> <span class="o">&lt;</span> <span class="mi">1</span>
 
     <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_cuda</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">fps_cuda</span><span class="o">.</span><span class="n">fps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">random_start</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch_cluster</span><span class="o">.</span><span class="n">fps_cuda</span><span class="o">.</span><span class="n">fps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">random_start</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">fps_cpu</span><span class="o">.</span><span class="n">fps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">random_start</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">torch_cluster</span><span class="o">.</span><span class="n">fps_cpu</span><span class="o">.</span><span class="n">fps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">random_start</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

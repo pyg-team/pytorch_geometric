@@ -53,7 +53,7 @@ class Batch(Data):
                 batch.batch.append(item)
                 cumsum += num_nodes
 
-        if num_nodes is None:
+        if num_nodes is None:  # pragma: no cover
             batch.batch = None
 
         for key in batch.keys:
