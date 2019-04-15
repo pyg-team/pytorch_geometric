@@ -160,7 +160,7 @@ Frequently Asked Questions
         def _process(self):
             pass
 
-#. **Do I really need to use those datasets?**
+#. **Do I really need to use these dataset interfaces?**
 
     No! Just as in regular PyTorch, you do not have to use datasets, *e.g.*, when you want to create synthetic data on the fly without saving them explicitly to disk.
     In this case, simply pass a regular python list holding :class:`torch_geometric.data.Data` objects and pass them to :class:`torch_geometric.data.DataLoader`:

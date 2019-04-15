@@ -209,14 +209,22 @@
 <span class="sd">            (default: :obj:`1`)</span>
 <span class="sd">        shuffle (bool, optional): If set to :obj:`True`, the data will be</span>
 <span class="sd">            reshuffled at every epoch (default: :obj:`True`)</span>
+<span class="sd">        follow_batch (list or tuple, optional): Creates assignment batch</span>
+<span class="sd">            vectors for each key in the list. (default: :obj:`[]`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">dataset</span><span class="p">,</span>
+                 <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">follow_batch</span><span class="o">=</span><span class="p">[],</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataLoader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">dataset</span><span class="p">,</span>
             <span class="n">batch_size</span><span class="p">,</span>
             <span class="n">shuffle</span><span class="p">,</span>
-            <span class="n">collate_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">Batch</span><span class="o">.</span><span class="n">from_data_list</span><span class="p">(</span><span class="n">data_list</span><span class="p">),</span>
+            <span class="n">collate_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">data_list</span><span class="p">:</span> <span class="n">Batch</span><span class="o">.</span><span class="n">from_data_list</span><span class="p">(</span>
+                <span class="n">data_list</span><span class="p">,</span> <span class="n">follow_batch</span><span class="p">),</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 

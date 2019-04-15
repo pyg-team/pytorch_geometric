@@ -396,10 +396,12 @@ In addition, single graphs can be reconstructed via the assignment vector
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">batch</span></code>, which maps each node to its respective graph identifier.</p>
 <dl class="staticmethod">
 <dt id="torch_geometric.data.Batch.from_data_list">
-<em class="property">static </em><code class="descname">from_data_list</code><span class="sig-paren">(</span><em>data_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/batch.html#Batch.from_data_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Batch.from_data_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_data_list</code><span class="sig-paren">(</span><em>data_list</em>, <em>follow_batch=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/batch.html#Batch.from_data_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Batch.from_data_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs a batch object from a python list holding
 <a class="reference internal" href="#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> objects.
-The assignment vector <code class="xref py py-obj docutils literal notranslate"><span class="pre">batch</span></code> is created on the fly.</p>
+The assignment vector <code class="xref py py-obj docutils literal notranslate"><span class="pre">batch</span></code> is created on the fly.
+Additionally, creates assignment batch vectors for each key in
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">follow_batch</span></code>.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -605,7 +607,7 @@ order to skip the download.</p>
 
 <dl class="class">
 <dt id="torch_geometric.data.DataLoader">
-<em class="property">class </em><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DataLoader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">DataLoader</code><span class="sig-paren">(</span><em>dataset</em>, <em>batch_size=1</em>, <em>shuffle=True</em>, <em>follow_batch=[]</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/dataloader.html#DataLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.DataLoader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data loader which merges data objects from a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.dataset</span></code> to a mini-batch.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -618,6 +620,8 @@ order to skip the download.</p>
 (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
 <li><strong>shuffle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the data will be
 reshuffled at every epoch (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+<li><strong>follow_batch</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><em>optional</em>) – Creates assignment batch
+vectors for each key in the list. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">[]</span></code>)</li>
 </ul>
 </td>
 </tr>
