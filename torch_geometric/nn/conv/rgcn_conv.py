@@ -72,7 +72,8 @@ class RGCNConv(MessagePassing):
         # loopkup based on the target node index and its edge type.
         if x_j is None:
             w = w.view(-1, self.out_channels)
-            index = edge_type * self.in_channels + edge_index[1]
+            j = 1 if self.flow == 'target_to_source' else 0
+            index = edge_type * self.in_channels + edge_index[j]
             out = torch.index_select(w, 0, index)
         else:
             w = w.view(self.num_relations, self.in_channels, self.out_channels)
@@ -82,7 +83,7 @@ class RGCNConv(MessagePassing):
         return out if edge_norm is None else out * edge_norm.view(-1, 1)
 
     def update(self, aggr_out, x):
-        if x.dtype == torch.long:
+        if x is None:
             out = aggr_out + self.root
         else:
             out = aggr_out + torch.matmul(x, self.root)
