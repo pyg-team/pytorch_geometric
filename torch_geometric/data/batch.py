@@ -15,10 +15,12 @@ class Batch(Data):
         self.batch = batch
 
     @staticmethod
-    def from_data_list(data_list):
+    def from_data_list(data_list, follow_batch=[]):
         r"""Constructs a batch object from a python list holding
         :class:`torch_geometric.data.Data` objects.
-        The assignment vector :obj:`batch` is created on the fly."""
+        The assignment vector :obj:`batch` is created on the fly.
+        Additionally, creates assignment batch vectors for each key in
+        :obj:`follow_batch`."""
         keys = [set(data.keys) for data in data_list]
         keys = list(set.union(*keys))
         assert 'batch' not in keys
@@ -27,19 +29,34 @@ class Batch(Data):
 
         for key in keys:
             batch[key] = []
+
+        for key in follow_batch:
+            batch['{}_batch'.format(key)] = []
+
         batch.batch = []
 
         cumsum = 0
         for i, data in enumerate(data_list):
-            num_nodes = data.num_nodes
-            batch.batch.append(torch.full((num_nodes, ), i, dtype=torch.long))
             for key in data.keys:
                 item = data[key]
                 item = item + cumsum if data.__cumsum__(key, item) else item
                 batch[key].append(item)
-            cumsum += num_nodes
 
-        for key in keys:
+            for key in follow_batch:
+                size = data[key].size(data.__cat_dim__(key, data[key]))
+                item = torch.full((size, ), i, dtype=torch.long)
+                batch['{}_batch'.format(key)].append(item)
+
+            num_nodes = data.num_nodes
+            if num_nodes is not None:
+                item = torch.full((num_nodes, ), i, dtype=torch.long)
+                batch.batch.append(item)
+                cumsum += num_nodes
+
+        if num_nodes is None:  # pragma: no cover
+            batch.batch = None
+
+        for key in batch.keys:
             item = batch[key][0]
             if torch.is_tensor(item):
                 batch[key] = torch.cat(
@@ -48,7 +65,7 @@ class Batch(Data):
                 batch[key] = torch.tensor(batch[key])
             else:
                 raise ValueError('Unsupported attribute type.')
-        batch.batch = torch.cat(batch.batch, dim=-1)
+
         return batch.contiguous()
 
     @property
