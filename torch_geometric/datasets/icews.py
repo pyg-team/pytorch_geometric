@@ -11,11 +11,6 @@ class EventDataset(InMemoryDataset):
                  pre_filter=None):
         super(EventDataset, self).__init__(root, transform, pre_transform,
                                            pre_filter)
-        self.data, self.slices = torch.load(self.processed_paths[0])
-
-    @property
-    def processed_file_names(self):
-        return 'data.pt'
 
     @property
     def num_nodes(self):
@@ -41,7 +36,7 @@ class EventDataset(InMemoryDataset):
                 data = self.pre_transform(data)
             data_list.append(data)
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        return data_list
 
 
 class ICEWS18(EventDataset):
@@ -52,6 +47,9 @@ class ICEWS18(EventDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
+        split (string): If :obj:`"train"`, loads the training dataset.
+            If :obj:`"val"`, loads the validation dataset.
+            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -67,14 +65,19 @@ class ICEWS18(EventDataset):
     """
 
     url = 'https://github.com/INK-USC/RENet/raw/master/data/ICEWS18'
+    splits = [0, 373018, 419013, 468558]  # Train/Val/Test splits.
 
     def __init__(self,
                  root,
+                 split='train',
                  transform=None,
                  pre_transform=None,
                  pre_filter=None):
+        assert split in ['train', 'val', 'test']
         super(ICEWS18, self).__init__(root, transform, pre_transform,
                                       pre_filter)
+        idx = self.processed_file_names.index('{}.pt'.format(split))
+        self.data, self.slices = torch.load(self.processed_paths[idx])
 
     @property
     def num_nodes(self):
@@ -85,12 +88,12 @@ class ICEWS18(EventDataset):
         return 256
 
     @property
-    def splits(self):
-        return [0, 373018, 419013, 468558]  # Train/Val/Test splits.
-
-    @property
     def raw_file_names(self):
         return ['{}.txt'.format(name) for name in ['train', 'valid', 'test']]
+
+    @property
+    def processed_file_names(self):
+        return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
         for filename in self.raw_file_names:
@@ -103,3 +106,10 @@ class ICEWS18(EventDataset):
             data[:, 3] = data[:, 3] / 24
             events += [data]
         return torch.cat(events, dim=0)
+
+    def process(self):
+        s = self.splits
+        data_list = super(ICEWS18, self).process()
+        torch.save(self.collate(data_list[s[0]:s[1]]), self.processed_paths[0])
+        torch.save(self.collate(data_list[s[1]:s[2]]), self.processed_paths[1])
+        torch.save(self.collate(data_list[s[2]:s[3]]), self.processed_paths[2])

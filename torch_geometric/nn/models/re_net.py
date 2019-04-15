@@ -64,7 +64,7 @@ class RENet(torch.nn.Module):
                 self.obj_hist = self.increase_hist_node_size([])
 
             def increase_hist_node_size(self, hist):
-                hist_inc = torch.zeros((self.inc, self.seq_len, 0))
+                hist_inc = torch.zeros((self.inc, self.seq_len + 1, 0))
                 return hist + hist_inc.tolist()
 
             def get_history(self, hist, node, rel):
@@ -73,10 +73,10 @@ class RENet(torch.nn.Module):
                     h = hist[node][s]
                     hists += h
                     ts.append(torch.full((len(h), ), s, dtype=torch.long))
-                node, rels = torch.tensor(
+                node, r = torch.tensor(
                     hists, dtype=torch.long).view(-1, 2).t().contiguous()
-                node = node[rels == rel]
-                t = torch.cat(ts, dim=0)[rels == rel]
+                node = node[r == rel]
+                t = torch.cat(ts, dim=0)[r == rel]
                 return node, t
 
             def step(self, hist):
@@ -92,17 +92,17 @@ class RENet(torch.nn.Module):
                     self.sub_hist = self.increase_hist_node_size(self.sub_hist)
                     self.obj_hist = self.increase_hist_node_size(self.obj_hist)
 
-                # Save history in data object.
-                data.h_sub, data.h_sub_t = self.get_history(
-                    self.sub_hist, sub, rel)
-                data.h_obj, data.h_obj_t = self.get_history(
-                    self.obj_hist, obj, rel)
-
                 # Delete last timestamp in history.
                 if t > self.t_last:
                     self.sub_hist = self.step(self.sub_hist)
                     self.obj_hist = self.step(self.obj_hist)
                     self.t_last = t
+
+                # Save history in data object.
+                data.h_sub, data.h_sub_t = self.get_history(
+                    self.sub_hist, sub, rel)
+                data.h_obj, data.h_obj_t = self.get_history(
+                    self.obj_hist, obj, rel)
 
                 # Add new event to history.
                 self.sub_hist[sub][-1].append([obj, rel])
@@ -117,6 +117,7 @@ class RENet(torch.nn.Module):
         return PreTransform(seq_len)
 
     def forward(self, data):
+        assert 'h_sub_batch' in data and 'h_obj_batch' in data
         batch_size, seq_len = data.sub.size(0), self.seq_len
 
         h_sub_t = data.h_sub_t + data.h_sub_batch * seq_len
@@ -149,7 +150,18 @@ class RENet(torch.nn.Module):
         h_sub = F.dropout(h_sub, p=self.dropout, training=self.training)
         h_obj = F.dropout(h_obj, p=self.dropout, training=self.training)
 
-        pred_sub = F.log_softmax(self.sub_lin(h_sub), dim=1)
-        pred_obj = F.log_softmax(self.obj_lin(h_obj), dim=1)
+        log_prob_obj = F.log_softmax(self.sub_lin(h_sub), dim=1)
+        log_prob_sub = F.log_softmax(self.obj_lin(h_obj), dim=1)
 
-        return pred_sub, pred_obj
+        return log_prob_obj, log_prob_sub
+
+    def test(self, logits, y):
+        _, perm = logits.sort(dim=1, descending=True)
+        mask = (y.view(-1, 1) == perm)
+
+        mrr = (1 / (mask.nonzero()[:, -1] + 1).to(torch.float)).mean().item()
+        hits1 = mask[:, :1].sum().item() / y.size(0)
+        hits3 = mask[:, :3].sum().item() / y.size(0)
+        hits10 = mask[:, :10].sum().item() / y.size(0)
+
+        return torch.tensor([mrr, hits1, hits3, hits10])
