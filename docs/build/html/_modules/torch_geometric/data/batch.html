@@ -210,10 +210,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="n">batch</span>
 
 <div class="viewcode-block" id="Batch.from_data_list"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.Batch.from_data_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">from_data_list</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_data_list</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="n">follow_batch</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Constructs a batch object from a python list holding</span>
 <span class="sd">        :class:`torch_geometric.data.Data` objects.</span>
-<span class="sd">        The assignment vector :obj:`batch` is created on the fly.&quot;&quot;&quot;</span>
+<span class="sd">        The assignment vector :obj:`batch` is created on the fly.</span>
+<span class="sd">        Additionally, creates assignment batch vectors for each key in</span>
+<span class="sd">        :obj:`follow_batch`.&quot;&quot;&quot;</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="n">keys</span><span class="p">))</span>
         <span class="k">assert</span> <span class="s1">&#39;batch&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span>
@@ -222,19 +224,34 @@
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">follow_batch</span><span class="p">:</span>
+            <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_batch&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="n">batch</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">cumsum</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
-            <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span>
-            <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">num_nodes</span><span class="p">,</span> <span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="n">item</span> <span class="o">+</span> <span class="n">cumsum</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">__cumsum__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="k">else</span> <span class="n">item</span>
                 <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-            <span class="n">cumsum</span> <span class="o">+=</span> <span class="n">num_nodes</span>
 
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">follow_batch</span><span class="p">:</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">__cat_dim__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">size</span><span class="p">,</span> <span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+                <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_batch&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+            <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span>
+            <span class="k">if</span> <span class="n">num_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">num_nodes</span><span class="p">,</span> <span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+                <span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="n">cumsum</span> <span class="o">+=</span> <span class="n">num_nodes</span>
+
+        <span class="k">if</span> <span class="n">num_nodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+            <span class="n">batch</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">batch</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
             <span class="n">item</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
                 <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
@@ -243,7 +260,7 @@
                 <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported attribute type.&#39;</span><span class="p">)</span>
-        <span class="n">batch</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">batch</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>

@@ -198,77 +198,47 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.read</span> <span class="k">import</span> <span class="n">read_txt_array</span>
 
 
-<span class="k">class</span> <span class="nc">TemporalDataset</span><span class="p">(</span><span class="n">InMemoryDataset</span><span class="p">):</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/INK-USC/RENet/raw/master/data&#39;</span>
-    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ICEWS18&#39;</span><span class="p">,</span> <span class="s1">&#39;GDELT&#39;</span><span class="p">]</span>
-
+<span class="k">class</span> <span class="nc">EventDataset</span><span class="p">(</span><span class="n">InMemoryDataset</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">root</span><span class="p">,</span>
-                 <span class="n">name</span><span class="p">,</span>
-                 <span class="n">granularity</span><span class="p">,</span>
                  <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">pre_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">granularity</span> <span class="o">=</span> <span class="n">granularity</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">TemporalDataset</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">pre_transform</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">splits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                 <span class="n">pre_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">pre_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EventDataset</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">pre_transform</span><span class="p">,</span>
+                                           <span class="n">pre_filter</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_rels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">edge_type</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">raw_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.txt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]]</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">processed_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;data.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;splits.pt&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_file_names</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-            <span class="n">download_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">process_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_events</span><span class="p">()</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">events</span> <span class="o">-</span> <span class="n">events</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
         <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">raw_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_paths</span><span class="p">:</span>
-            <span class="n">srot</span> <span class="o">=</span> <span class="n">read_txt_array</span><span class="p">(</span><span class="n">raw_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
-            <span class="n">row</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="n">srot</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
-            <span class="n">time</span> <span class="o">=</span> <span class="n">time</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">granularity</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="n">events</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">sub</span><span class="o">=</span><span class="n">sub</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="n">rel</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_filter</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-            <span class="n">count</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">bincount</span><span class="p">()</span>
-            <span class="n">split_sections</span> <span class="o">=</span> <span class="n">count</span><span class="p">[</span><span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-
-            <span class="n">rows</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split_sections</span><span class="p">)</span>
-            <span class="n">cols</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split_sections</span><span class="p">)</span>
-            <span class="n">rels</span> <span class="o">=</span> <span class="n">rel</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split_sections</span><span class="p">)</span>
-            <span class="n">times</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split_sections</span><span class="p">)</span>
-            <span class="n">splits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">splits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
-
-            <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">time</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">rels</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
-                <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_type</span><span class="o">=</span><span class="n">rel</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">data_list</span>
 
 
-<div class="viewcode-block" id="ICEWS"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.ICEWS">[docs]</a><span class="k">class</span> <span class="nc">ICEWS</span><span class="p">(</span><span class="n">TemporalDataset</span><span class="p">):</span>
+<div class="viewcode-block" id="ICEWS18"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.ICEWS18">[docs]</a><span class="k">class</span> <span class="nc">ICEWS18</span><span class="p">(</span><span class="n">EventDataset</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Integrated Crisis Early Warning System (ICEWS) dataset used in</span>
 <span class="sd">    the, *e.g.*, `&quot;Recurrent Event Network for Reasoning over Temporal</span>
 <span class="sd">    Knowledge Graphs&quot; &lt;https://arxiv.org/abs/1904.05530&gt;`_ paper, consisting of</span>
-<span class="sd">    events collected from 1/1/2014 to 12/31/2014 (24 hours time granularity).</span>
+<span class="sd">    events collected from 1/1/2018 to 10/31/2018 (24 hours time granularity).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root (string): Root directory where the dataset should be saved.</span>
@@ -283,11 +253,61 @@
 <span class="sd">            an :obj:`torch_geometric.data.Data` object and returns a</span>
 <span class="sd">            transformed version. The data object will be transformed before</span>
 <span class="sd">            being saved to disk. (default: :obj:`None`)</span>
+<span class="sd">        pre_filter (callable, optional): A function that takes in an</span>
+<span class="sd">            :obj:`torch_geometric.data.Data` object and returns a boolean</span>
+<span class="sd">            value, indicating whether the data object should be included in the</span>
+<span class="sd">            final dataset. (default: :obj:`None`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pre_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ICEWS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;ICEWS18&#39;</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span>
-                                    <span class="n">pre_transform</span><span class="p">)</span></div>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/INK-USC/RENet/raw/master/data/ICEWS18&#39;</span>
+    <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">373018</span><span class="p">,</span> <span class="mi">419013</span><span class="p">,</span> <span class="mi">468558</span><span class="p">]</span>  <span class="c1"># Train/Val/Test splits.</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">root</span><span class="p">,</span>
+                 <span class="n">split</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span>
+                 <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">pre_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">pre_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">split</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ICEWS18</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">pre_transform</span><span class="p">,</span>
+                                      <span class="n">pre_filter</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_file_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.pt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">split</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">23033</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_rels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">256</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">raw_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.txt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">processed_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;train.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;val.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pt&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_file_names</span><span class="p">:</span>
+            <span class="n">download_url</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_paths</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">read_txt_array</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="mi">24</span>
+            <span class="n">events</span> <span class="o">+=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splits</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ICEWS18</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">]]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
 </pre></div>
 
            </div>

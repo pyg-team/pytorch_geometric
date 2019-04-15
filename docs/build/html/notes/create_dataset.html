@@ -342,7 +342,7 @@ Finally, we need to load these two objects in the constructor into the propertie
 </div>
 </div></blockquote>
 </li>
-<li><p class="first"><strong>Do I really need to use those datasets?</strong></p>
+<li><p class="first"><strong>Do I really need to use these dataset interfaces?</strong></p>
 <blockquote>
 <div><p>No! Just as in regular PyTorch, you do not have to use datasets, <em>e.g.</em>, when you want to create synthetic data on the fly without saving them explicitly to disk.
 In this case, simply pass a regular python list holding <a class="reference internal" href="../modules/data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code></a> objects and pass them to <a class="reference internal" href="../modules/data.html#torch_geometric.data.DataLoader" title="torch_geometric.data.DataLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">torch_geometric.data.DataLoader</span></code></a>:</p>

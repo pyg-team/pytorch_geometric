@@ -193,17 +193,24 @@
            <div itemprop="articleBody">
             
   <h1>Source code for torch_geometric.datasets.gdelt</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.icews</span> <span class="k">import</span> <span class="n">TemporalDataset</span>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="k">import</span> <span class="n">download_url</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.read</span> <span class="k">import</span> <span class="n">read_txt_array</span>
+
+<span class="kn">from</span> <span class="nn">.icews</span> <span class="k">import</span> <span class="n">EventDataset</span>
 
 
-<div class="viewcode-block" id="GDELT"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.GDELT">[docs]</a><span class="k">class</span> <span class="nc">GDELT</span><span class="p">(</span><span class="n">TemporalDataset</span><span class="p">):</span>
+<div class="viewcode-block" id="GDELT"><a class="viewcode-back" href="../../../modules/datasets.html#torch_geometric.datasets.GDELT">[docs]</a><span class="k">class</span> <span class="nc">GDELT</span><span class="p">(</span><span class="n">EventDataset</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The Global Database of Events, Language, and Tone (GDELT) dataset used</span>
 <span class="sd">    in the, *e.g.*, `&quot;Recurrent Event Network for Reasoning over Temporal</span>
 <span class="sd">    Knowledge Graphs&quot; &lt;https://arxiv.org/abs/1904.05530&gt;`_ paper, consisting of</span>
-<span class="sd">    events collected from 4/1/2015 to 3/31/2016 (15 minutes time granularity).</span>
+<span class="sd">    events collected from 1/1/2018 to 1/31/2018 (15 minutes time granularity).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        root (string): Root directory where the dataset should be saved.</span>
+<span class="sd">        split (string): If :obj:`&quot;train&quot;`, loads the training dataset.</span>
+<span class="sd">            If :obj:`&quot;val&quot;`, loads the validation dataset.</span>
+<span class="sd">            If :obj:`&quot;test&quot;`, loads the test dataset. (default: :obj:`&quot;train&quot;`)</span>
 <span class="sd">        transform (callable, optional): A function/transform that takes in an</span>
 <span class="sd">            :obj:`torch_geometric.data.Data` object and returns a transformed</span>
 <span class="sd">            version. The data object will be transformed before every access.</span>
@@ -212,11 +219,60 @@
 <span class="sd">            an :obj:`torch_geometric.data.Data` object and returns a</span>
 <span class="sd">            transformed version. The data object will be transformed before</span>
 <span class="sd">            being saved to disk. (default: :obj:`None`)</span>
+<span class="sd">        pre_filter (callable, optional): A function that takes in an</span>
+<span class="sd">            :obj:`torch_geometric.data.Data` object and returns a boolean</span>
+<span class="sd">            value, indicating whether the data object should be included in the</span>
+<span class="sd">            final dataset. (default: :obj:`None`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pre_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GDELT</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;GDELT&#39;</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span>
-                                    <span class="n">pre_transform</span><span class="p">)</span></div>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/INK-USC/RENet/raw/master/data/GDELT&#39;</span>
+    <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1734399</span><span class="p">,</span> <span class="mi">1973164</span><span class="p">,</span> <span class="mi">2278405</span><span class="p">]</span>  <span class="c1"># Train/Val/Test splits.</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">root</span><span class="p">,</span>
+                 <span class="n">split</span><span class="o">=</span><span class="s1">&#39;train&#39;</span><span class="p">,</span>
+                 <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">pre_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">pre_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">split</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GDELT</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">pre_transform</span><span class="p">,</span> <span class="n">pre_filter</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_file_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.pt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">split</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">7691</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_rels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">240</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">raw_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.txt&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">]]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">processed_file_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;train.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;val.pt&#39;</span><span class="p">,</span> <span class="s1">&#39;test.pt&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_file_names</span><span class="p">:</span>
+            <span class="n">download_url</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_paths</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">read_txt_array</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="mi">15</span>
+            <span class="n">events</span> <span class="o">+=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splits</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">GDELT</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">]]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed_paths</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
 </pre></div>
 
            </div>
