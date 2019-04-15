@@ -17,9 +17,9 @@ def test_in_memory_dataset():
     x = torch.Tensor([[1], [1], [1]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     face = torch.tensor([[0], [1], [2]])
+    test_int = 1
 
-    data = Data(x=x, edge_index=edge_index)
-    data.face = face
+    data = Data(x=x, edge_index=edge_index, face=face, test_int=test_int)
 
     dataset = TestDataset([data, data])
     assert len(dataset) == 2
