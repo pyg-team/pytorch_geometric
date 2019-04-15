@@ -1,7 +1,7 @@
 import torch.utils.data
 from torch.utils.data.dataloader import default_collate
 
-from torch_geometric.data import Batch
+from torch_geometric.data import Data, Batch
 
 
 class DataLoader(torch.utils.data.DataLoader):
@@ -17,12 +17,14 @@ class DataLoader(torch.utils.data.DataLoader):
     """
 
     def __init__(self, dataset, batch_size=1, shuffle=True, **kwargs):
+        def collate(data_list):
+            if isinstance(data_list[0], Data):
+                return Batch.from_data_list(data_list)
+            else:
+                return default_collate(data_list)
+
         super(DataLoader, self).__init__(
-            dataset,
-            batch_size,
-            shuffle,
-            collate_fn=lambda data_list: Batch.from_data_list(data_list),
-            **kwargs)
+            dataset, batch_size, shuffle, collate_fn=collate, **kwargs)
 
 
 class DataListLoader(torch.utils.data.DataLoader):
