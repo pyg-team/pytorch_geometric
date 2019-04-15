@@ -62,28 +62,24 @@ class RGCNConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_type, edge_norm=None):
         """"""
-        if x is None:
-            x = torch.arange(
-                edge_index.max().item() + 1,
-                dtype=torch.long,
-                device=edge_index.device)
-
         return self.propagate(
             edge_index, x=x, edge_type=edge_type, edge_norm=edge_norm)
 
-    def message(self, x_j, edge_type, edge_norm):
+    def message(self, x_j, edge_index, edge_type, edge_norm):
         w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))
 
-        if x_j.dtype == torch.long:
+        # If no node features are given, we implement a simple embedding
+        # loopkup based on the target node index and its edge type.
+        if x_j is None:
             w = w.view(-1, self.out_channels)
-            index = edge_type * self.in_channels + x_j
+            index = edge_type * self.in_channels + edge_index[1]
             out = torch.index_select(w, 0, index)
-            return out if edge_norm is None else out * edge_norm.view(-1, 1)
         else:
             w = w.view(self.num_relations, self.in_channels, self.out_channels)
             w = torch.index_select(w, 0, edge_type)
             out = torch.bmm(x_j.unsqueeze(1), w).squeeze(-2)
-            return out if edge_norm is None else out * edge_norm.view(-1, 1)
+
+        return out if edge_norm is None else out * edge_norm.view(-1, 1)
 
     def update(self, aggr_out, x):
         if x.dtype == torch.long:
