@@ -1,33 +1,29 @@
 import torch
-from torch_scatter import scatter_mean
+import torch.nn.functional as F
+from torch_scatter import scatter_add
+
 
 class GenerateMeshNormals(object):
-    r"""Generate a normal for each mesh node based on the neighboring faces."""
-
-    def __init__(self):
-        pass
+    r"""Generate normal vectors for each mesh node based on neighboring
+    faces."""
 
     def __call__(self, data):
+        assert 'face' in data
         pos, face = data.pos, data.face
-        assert not pos.is_cuda and not face.is_cuda
-        assert pos.size(1) == 3 and face.size(0) == 3
-                 
+
         vec1 = pos[face[1]] - pos[face[0]]
         vec2 = pos[face[2]] - pos[face[0]]
-        fn = torch.nn.functional.normalize(vec1.cross(vec2), p=2)
-        numFaces = data.face.size(1)
+        face_norm = F.normalize(vec1.cross(vec2), p=2, dim=-1)  # [F, 3]
 
-        fn_x = (fn.t()[0]).reshape(numFaces, 1).expand(numFaces, 3).flatten()
-        fn_y = (fn.t()[1]).reshape(numFaces, 1).expand(numFaces, 3).flatten()
-        fn_z = (fn.t()[2]).reshape(numFaces, 1).expand(numFaces, 3).flatten()        
-        faceIdxList = face.flatten()   
-        res_x = scatter_mean(fn_x, faceIdxList)
-        res_y = scatter_mean(fn_y, faceIdxList)
-        res_z = scatter_mean(fn_z, faceIdxList)                       
-        res = torch.stack([res_x, res_y, res_z]).t()
-        res = torch.nn.functional.normalize(res, p=0)
-        data.norm = res
-        return data        
+        idx = torch.cat([face[0], face[1], face[2]], dim=0)
+        face_norm = face_norm.repeat(3, 1)
+
+        norm = scatter_add(face_norm, idx, dim=0, dim_size=pos.size(0))
+        norm = F.normalize(norm, p=2, dim=-1)  # [N, 3]
+
+        data.norm = norm
+
+        return data
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.num)
+        return '{}()'.format(self.__class__.__name__)
