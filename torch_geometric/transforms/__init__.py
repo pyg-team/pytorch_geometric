@@ -57,5 +57,5 @@ __all__ = [
     'ToDense',
     'TwoHop',
     'LineGraph',
-	'GenerateMeshNormals',
+    'GenerateMeshNormals',
 ]
