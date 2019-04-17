@@ -33,4 +33,4 @@ def test_dense_sage_conv():
     dense_out = dense_conv(x, adj, mask)
     assert dense_out.size() == (2, 3, channels)
     dense_out = dense_out.view(6, channels)[:-1]
-    assert torch.allclose(sparse_out, dense_out)
+    assert torch.allclose(sparse_out, dense_out, atol=1e-04)

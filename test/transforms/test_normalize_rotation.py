@@ -24,7 +24,7 @@ def test_normalize_rotation():
     ])
     expected_norm = [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
 
-    assert torch.allclose(data.pos, expected_pos)
+    assert torch.allclose(data.pos, expected_pos, atol=1e-04)
     assert data.norm.tolist() == expected_norm
 
     data = Data(pos=pos)
@@ -32,5 +32,5 @@ def test_normalize_rotation():
     data = NormalizeRotation(max_points=3)(data)
     assert len(data) == 2
 
-    assert torch.allclose(data.pos, expected_pos)
+    assert torch.allclose(data.pos, expected_pos, atol=1e-04)
     assert data.norm.tolist() == expected_norm
