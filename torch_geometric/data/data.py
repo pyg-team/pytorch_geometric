@@ -55,6 +55,7 @@ class Data(object):
                  norm=None,
                  face=None,
                  **kwargs):
+        self.__num_nodes__ = None
         self.x = x
         self.edge_index = edge_index
         self.edge_attr = edge_attr
@@ -84,7 +85,10 @@ class Data(object):
     @property
     def keys(self):
         r"""Returns all names of graph attributes."""
-        return [key for key in self.__dict__.keys() if self[key] is not None]
+        arr = [key for key in self.__dict__.keys() if self[key] is not None]
+        if '__num_nodes__' in arr:
+            arr.remove('__num_nodes__')
+        return arr
 
     def __len__(self):
         r"""Returns the number of all present attributes."""
@@ -107,7 +111,7 @@ class Data(object):
         If :obj:`*keys` is not given this method will iterative over all
         present attributes."""
         for key in sorted(self.keys) if not keys else keys:
-            if self[key] is not None:
+            if key in self:
                 yield key, self[key]
 
     def __cat_dim__(self, key, value):
@@ -139,14 +143,22 @@ class Data(object):
     @property
     def num_nodes(self):
         r"""Returns the number of nodes in the graph."""
-        for key, item in self('x', 'pos', 'norm'):
+        if self.__num_nodes__ is not None:
+            return self.__num_nodes__
+        for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
         if self.face is not None:
+            # TODO: Print warning.
             return maybe_num_nodes(self.face)
         if self.edge_index is not None:
             # TODO: Print warning.
             return maybe_num_nodes(self.edge_index)
         return None
+
+    @num_nodes.setter
+    def num_nodes(self, num_nodes):
+        assert num_nodes > 0
+        self.__num_nodes__ = num_nodes
 
     @property
     def num_edges(self):
@@ -218,6 +230,5 @@ class Data(object):
         return self.__class__.from_dict({k: v.clone() for k, v in self})
 
     def __repr__(self):
-
         info = ['{}={}'.format(key, size_repr(item)) for key, item in self]
         return '{}({})'.format(self.__class__.__name__, ', '.join(info))

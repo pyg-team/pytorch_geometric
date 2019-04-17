@@ -40,8 +40,8 @@ class MessagePassing(torch.nn.Module):
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
 
-        self.message_args = inspect.getargspec(self.message)[0][1:]
-        self.update_args = inspect.getargspec(self.update)[0][2:]
+        self.message_args = inspect.getfullargspec(self.message)[0][1:]
+        self.update_args = inspect.getfullargspec(self.update)[0][2:]
 
     def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.

@@ -76,11 +76,11 @@ class InMemoryDataset(Dataset):
             data = data if self.transform is None else self.transform(data)
             return data
         elif isinstance(idx, slice):
-            return self._indexing(range(*idx.indices(len(self))))
+            return self.__indexing__(range(*idx.indices(len(self))))
         elif isinstance(idx, torch.LongTensor):
-            return self._indexing(idx)
+            return self.__indexing__(idx)
         elif isinstance(idx, torch.ByteTensor):
-            return self._indexing(idx.nonzero())
+            return self.__indexing__(idx.nonzero())
 
         raise IndexError(
             'Only integers, slices (`:`) and long or byte tensors are valid '
@@ -88,10 +88,14 @@ class InMemoryDataset(Dataset):
 
     def shuffle(self):
         r"""Randomly shuffles the examples in the dataset."""
-        return self._indexing(torch.randperm(len(self)))
+        return self.__indexing__(torch.randperm(len(self)))
 
     def get(self, idx):
         data = Data()
+
+        if self.data.__num_nodes__ is not None:
+            data.num_nodes = self.data.__num_nodes__[idx].item()
+
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
             s = list(repeat(slice(None), item.dim()))
@@ -100,7 +104,7 @@ class InMemoryDataset(Dataset):
             data[key] = item[s]
         return data
 
-    def _indexing(self, index):
+    def __indexing__(self, index):
         copy = self.__class__.__new__(self.__class__)
         copy.__dict__ = self.__dict__.copy()
         copy.data, copy.slices = self.collate([self.get(i) for i in index])
@@ -126,6 +130,12 @@ class InMemoryDataset(Dataset):
             else:
                 raise ValueError('Unsupported attribute type.')
             slices[key].append(s)
+
+        if data_list[0].__num_nodes__ is not None:
+            data.__num_nodes__ = []
+            for item in data_list:
+                data.__num_nodes__.append(item.num_nodes)
+            data.__num_nodes__ = torch.tensor(data.__num_nodes__)
 
         for key in keys:
             if torch.is_tensor(data_list[0][key]):
