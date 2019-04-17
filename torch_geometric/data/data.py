@@ -141,6 +141,8 @@ class Data(object):
         r"""Returns the number of nodes in the graph."""
         for key, item in self('x', 'pos'):
             return item.size(self.__cat_dim__(key, item))
+        if self.face is not None:
+            return maybe_num_nodes(self.face)
         if self.edge_index is not None:
             return maybe_num_nodes(self.edge_index)
         return None
@@ -150,6 +152,13 @@ class Data(object):
         r"""Returns the number of edges in the graph."""
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
+        return None
+
+    @property
+    def num_faces(self):
+        r"""Returns the number of faces in the mesh."""
+        if self.face is not None:
+            return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
     @property
