@@ -27,6 +27,7 @@ class KarateClub(InMemoryDataset):
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
         data = Data(edge_index=edge_index)
+        data.num_nodes = edge_index.max().item() + 1
         data.x = torch.eye(data.num_nodes, dtype=torch.float)
         y = [0 if G.node[i]['club'] == 'Mr. Hi' else 1 for i in G.nodes]
         data.y = torch.tensor(y)

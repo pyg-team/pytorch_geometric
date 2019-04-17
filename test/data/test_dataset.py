@@ -19,7 +19,13 @@ def test_in_memory_dataset():
     face = torch.tensor([[0], [1], [2]])
     test_int = 1
 
-    data = Data(x=x, edge_index=edge_index, face=face, test_int=test_int)
+    data1 = Data(x=x, edge_index=edge_index, face=face, test_int=test_int)
+    data1.num_nodes = 10
 
-    dataset = TestDataset([data, data])
+    data2 = Data(x=x, edge_index=edge_index, face=face, test_int=test_int)
+    data2.num_nodes = 5
+
+    dataset = TestDataset([data1, data2])
     assert len(dataset) == 2
+    assert dataset[0].num_nodes == 10
+    assert dataset[1].num_nodes == 5
