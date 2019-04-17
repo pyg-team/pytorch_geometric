@@ -139,11 +139,12 @@ class Data(object):
     @property
     def num_nodes(self):
         r"""Returns the number of nodes in the graph."""
-        for key, item in self('x', 'pos'):
+        for key, item in self('x', 'pos', 'norm'):
             return item.size(self.__cat_dim__(key, item))
         if self.face is not None:
             return maybe_num_nodes(self.face)
         if self.edge_index is not None:
+            # TODO: Print warning.
             return maybe_num_nodes(self.edge_index)
         return None
 
