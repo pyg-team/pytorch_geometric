@@ -211,6 +211,10 @@
 <span class="sd">    calling the functions :obj:`edge_model`, :obj:`node_model` and</span>
 <span class="sd">    :obj:`global_model`, respectively.</span>
 
+<span class="sd">    To allow for batch-wise graph processing, all callable functions take an</span>
+<span class="sd">    additional argument :obj:`batch`, which determines the assignment of</span>
+<span class="sd">    edges or nodes to their specific graphs.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        edge_model (func, optional): A callable which updates a graph&#39;s edge</span>
 <span class="sd">            features based on its source and target node features, its current</span>
@@ -221,41 +225,42 @@
 <span class="sd">            (default: :obj:`None`)</span>
 <span class="sd">        global_model (func, optional): A callable which updates a graph&#39;s</span>
 <span class="sd">            global features based on its node features, its graph connectivity,</span>
-<span class="sd">            its edge features and its current global features. To allow for</span>
-<span class="sd">            batch-wise graph processing, the callable takes a fifth argument</span>
-<span class="sd">            :obj:`batch`, which determines the assignment of nodes to their</span>
-<span class="sd">            specific graphs. (default: :obj:`None`)</span>
-
+<span class="sd">            its edge features and its current global features.</span>
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        from torch.nn import Sequential as Seq, Linear as Lin, ReLU</span>
 <span class="sd">        from torch_scatter import scatter_mean</span>
 <span class="sd">        from torch_geometric.nn import MetaLayer</span>
 
-<span class="sd">        class Net(torch.nn.Module):</span>
+<span class="sd">        class MyLayer(torch.nn.Module):</span>
 <span class="sd">            def __init__(self):</span>
-<span class="sd">                super(Net, self).__init__()</span>
+<span class="sd">                super(MyLayer, self).__init__()</span>
 
 <span class="sd">                self.edge_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
-<span class="sd">                self.node_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
+<span class="sd">                self.node_mlp_1 = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
+<span class="sd">                self.node_mlp_2 = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
 <span class="sd">                self.global_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))</span>
 
-<span class="sd">                def edge_model(source, target, edge_attr, u):</span>
+<span class="sd">                def edge_model(src, dest, edge_attr, u, batch):</span>
 <span class="sd">                    # source, target: [E, F_x], where E is the number of edges.</span>
 <span class="sd">                    # edge_attr: [E, F_e]</span>
 <span class="sd">                    # u: [B, F_u], where B is the number of graphs.</span>
-<span class="sd">                    out = torch.cat([source, target, edge_attr], dim=1)</span>
+<span class="sd">                    # batch: [E] with max entry B - 1.</span>
+<span class="sd">                    out = torch.cat([src, dest, edge_attr, u[batch]], 1)</span>
 <span class="sd">                    return self.edge_mlp(out)</span>
 
-<span class="sd">                def node_model(x, edge_index, edge_attr, u):</span>
+<span class="sd">                def node_model(x, edge_index, edge_attr, u, batch):</span>
 <span class="sd">                    # x: [N, F_x], where N is the number of nodes.</span>
 <span class="sd">                    # edge_index: [2, E] with max entry N - 1.</span>
 <span class="sd">                    # edge_attr: [E, F_e]</span>
 <span class="sd">                    # u: [B, F_u]</span>
+<span class="sd">                    # batch: [N] with max entry B - 1.</span>
 <span class="sd">                    row, col = edge_index</span>
 <span class="sd">                    out = torch.cat([x[col], edge_attr], dim=1)</span>
 <span class="sd">                    out = self.node_mlp(out)</span>
-<span class="sd">                    return scatter_mean(out, row, dim=0, dim_size=x.size(0))</span>
+<span class="sd">                    out = scatter_mean(out, row, dim=0, dim_size=x.size(0))</span>
+<span class="sd">                    out = torch.cat([out, u[batch]], dim=1)</span>
+<span class="sd">                    return self.node_mlp_2(out)</span>
 
 <span class="sd">                def global_model(x, edge_index, edge_attr, u, batch):</span>
 <span class="sd">                    # x: [N, F_x], where N is the number of nodes.</span>
@@ -290,10 +295,11 @@
         <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">edge_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_model</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+            <span class="n">edge_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_model</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span>
+                                        <span class="n">batch</span><span class="p">[</span><span class="n">row</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>

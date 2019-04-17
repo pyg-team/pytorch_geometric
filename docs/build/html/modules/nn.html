@@ -1201,6 +1201,9 @@ The output graph has the same structure, but updated features.</p>
 <p>Edge features, node features as well as global features are updated by
 calling the functions <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_model</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">node_model</span></code> and
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">global_model</span></code>, respectively.</p>
+<p>To allow for batch-wise graph processing, all callable functions take an
+additional argument <code class="xref py py-obj docutils literal notranslate"><span class="pre">batch</span></code>, which determines the assignment of
+edges or nodes to their specific graphs.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1215,10 +1218,7 @@ connectivity, its edge features and its global features.
 (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 <li><strong>global_model</strong> (<em>func</em><em>, </em><em>optional</em>) – A callable which updates a graph’s
 global features based on its node features, its graph connectivity,
-its edge features and its current global features. To allow for
-batch-wise graph processing, the callable takes a fifth argument
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">batch</span></code>, which determines the assignment of nodes to their
-specific graphs. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+its edge features and its current global features.</li>
 </ul>
 </td>
 </tr>
@@ -1228,30 +1228,35 @@ specific graphs. (default: <a class="reference external" href="https://docs.pyth
 <span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="kn">import</span> <span class="n">scatter_mean</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.nn</span> <span class="kn">import</span> <span class="n">MetaLayer</span>
 
-<span class="k">class</span> <span class="nc">Net</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MyLayer</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Net</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyLayer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_mlp</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">),</span> <span class="n">ReLU</span><span class="p">(),</span> <span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">node_mlp</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">),</span> <span class="n">ReLU</span><span class="p">(),</span> <span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_mlp_1</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">),</span> <span class="n">ReLU</span><span class="p">(),</span> <span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_mlp_2</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">),</span> <span class="n">ReLU</span><span class="p">(),</span> <span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_mlp</span> <span class="o">=</span> <span class="n">Seq</span><span class="p">(</span><span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">),</span> <span class="n">ReLU</span><span class="p">(),</span> <span class="n">Lin</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
 
-        <span class="k">def</span> <span class="nf">edge_model</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">edge_model</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
             <span class="c1"># source, target: [E, F_x], where E is the number of edges.</span>
             <span class="c1"># edge_attr: [E, F_e]</span>
             <span class="c1"># u: [B, F_u], where B is the number of graphs.</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># batch: [E] with max entry B - 1.</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">batch</span><span class="p">]],</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_mlp</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">node_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">node_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
             <span class="c1"># x: [N, F_x], where N is the number of nodes.</span>
             <span class="c1"># edge_index: [2, E] with max entry N - 1.</span>
             <span class="c1"># edge_attr: [E, F_e]</span>
             <span class="c1"># u: [B, F_u]</span>
+            <span class="c1"># batch: [N] with max entry B - 1.</span>
             <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
             <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">edge_attr</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_mlp</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">scatter_mean</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_mean</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">out</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">batch</span><span class="p">]],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_mlp_2</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">global_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
             <span class="c1"># x: [N, F_x], where N is the number of nodes.</span>
@@ -1862,7 +1867,7 @@ distance <code class="xref py py-obj docutils literal notranslate"><span class="
 <li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
 <li><strong>y</strong> (<em>Tensor</em>) – Node feature matrix
-<span class="math notranslate nohighlight">\(\mathbf{Y} \in \mathbb{R}^{M \times F}\)</span>.</li>
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{M \times F}\)</span>.</li>
 <li><strong>r</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – The radius.</li>
 <li><strong>batch_x</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
 <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
@@ -1883,7 +1888,7 @@ return for each element in <code class="xref py py-obj docutils literal notransl
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">assign_index</span> <span class="o">=</span> <span class="n">radius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1936,7 +1941,7 @@ point in <code class="xref py py-obj docutils literal notranslate"><span class="
 <li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix
 <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{N \times F}\)</span>.</li>
 <li><strong>y</strong> (<em>Tensor</em>) – Node feature matrix
-<span class="math notranslate nohighlight">\(\mathbf{Y} \in \mathbb{R}^{M \times F}\)</span>.</li>
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{M \times F}\)</span>.</li>
 <li><strong>batch_x</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Batch vector
 <span class="math notranslate nohighlight">\(\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N\)</span>, which assigns each
 node to a specific example. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
@@ -1951,7 +1956,7 @@ node to a specific example. (default: <a class="reference external" href="https:
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">batch_x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cluster</span> <span class="o">=</span> <span class="n">nearest</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">batch_x</span><span class="p">,</span> <span class="n">batch_y</span><span class="p">)</span>
 </pre></div>
 </div>

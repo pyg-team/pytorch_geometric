@@ -29,7 +29,7 @@ This is done with the help of the following methods:
   For bipartite graphs with two independent sets of nodes and indices, and each set holding its own information, this split can be marked by passing the information as a tuple, *e.g.* :obj:`x=(x_row, x_col)` and to indicate the memberships to the different sets.
 * :meth:`torch_geometric.nn.MessagePassing.message`: Constructs messages to node :math:`i` in analogy to :math:`\phi` for each edge in :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and :math:`(i,j) \in \mathcal{E}` if :obj:`flow="target_to_source"`.
   Can take any argument which was initially passed to :meth:`propagate`.
-  In addition, features can be lifted to the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+  In addition, features can be mapped to the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
 * :meth:`torch_geometric.nn.MessagePassing.update`: Updates node embeddings in analogy to :math:`\gamma` for each node :math:`i \in \mathcal{V}`.
   Takes in the output of aggregation as first argument and any argument which was initially passed to :meth:`propagate`.
 
@@ -105,12 +105,12 @@ Here, we first add self-loops to our edge indices using the :meth:`torch_geometr
 We then proceed to call :meth:`propagate`, which internally calls the :meth:`message` and :meth:`update` functions.
 As additional arguments for message propagation, we pass the node embeddings :obj:`x`.
 
-In the :meth:`message` function, we need to normalize the target node features :obj:`x_j`.
-Here, :obj:`x_j` denotes a *lifted* tensor, which contains the target node features of each edge.
-Node features can be automatically lifted by appending :obj:`_i` or :obj:`_j` to the variable name.
-In fact, any tensor can be lifted this way, as long as they have :math:`N` entries in its first dimension.
+In the :meth:`message` function, we need to normalize the neighboring node features :obj:`x_j`.
+Here, :obj:`x_j` denotes a *mapped* tensor, which contains the neighboring node features of each edge.
+Node features can be automatically mapped by appending :obj:`_i` or :obj:`_j` to the variable name.
+In fact, any tensor can be mapped this way, as long as they have :math:`N` entries in its first dimension.
 
-The target node features are normalized by computing node degrees :math:`\deg(i)` for each node :math:`i` and saving :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` in :obj:`norm` for each edge :math:`(i,j) \in \mathcal{E}`.
+The neighboring node features are normalized by computing node degrees :math:`\deg(i)` for each node :math:`i` and saving :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` in :obj:`norm` for each edge :math:`(i,j) \in \mathcal{E}`.
 
 In the :meth:`update` function, we simply return the output of the aggregation.
 

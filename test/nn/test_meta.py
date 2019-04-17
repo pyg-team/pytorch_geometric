@@ -22,7 +22,7 @@ def test_meta_layer():
                     edge_index=("row", "col"),
                     edge_attr="edge_attr",
                     u="u",
-                    batch="batch")
+                    batch=mock.MagicMock())
 
                 assert isinstance(out, tuple) and len(out) == 3
 

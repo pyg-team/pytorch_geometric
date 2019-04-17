@@ -200,7 +200,7 @@
 <span id="torch-geometric-data"></span><h1>torch_geometric.data<a class="headerlink" href="#module-torch_geometric.data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="torch_geometric.data.Data">
-<em class="property">class </em><code class="descname">Data</code><span class="sig-paren">(</span><em>x=None</em>, <em>edge_index=None</em>, <em>edge_attr=None</em>, <em>y=None</em>, <em>pos=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">Data</code><span class="sig-paren">(</span><em>x=None</em>, <em>edge_index=None</em>, <em>edge_attr=None</em>, <em>y=None</em>, <em>pos=None</em>, <em>norm=None</em>, <em>face=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>A plain old python object modeling a single graph with various
 (optional) attributes:</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -218,6 +218,10 @@ with shape <code class="xref py py-obj docutils literal notranslate"><span class
 (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 <li><strong>pos</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Node position matrix with shape
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">[num_nodes,</span> <span class="pre">num_dimensions]</span></code>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>norm</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Normal vector matrix with shape
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">[num_nodes,</span> <span class="pre">num_dimensions]</span></code>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>face</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – Face adjacency matrix with shape
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">[3,</span> <span class="pre">num_faces]</span></code>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 </ul>
 </td>
 </tr>
@@ -225,6 +229,12 @@ with shape <code class="xref py py-obj docutils literal notranslate"><span class
 </table>
 <p>The data object is not restricted to these attributes and can be extented
 by any other additional data.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">=</span><span class="n">edge_index</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">train_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">...</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">test_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="o">...</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="torch_geometric.data.Data.__call__">
 <code class="descname">__call__</code><span class="sig-paren">(</span><em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/data.html#Data.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.Data.__call__" title="Permalink to this definition">¶</a></dt>
@@ -361,6 +371,12 @@ duplicate entries.</p>
 <dt id="torch_geometric.data.Data.num_edges">
 <code class="descname">num_edges</code><a class="headerlink" href="#torch_geometric.data.Data.num_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the number of edges in the graph.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="torch_geometric.data.Data.num_faces">
+<code class="descname">num_faces</code><a class="headerlink" href="#torch_geometric.data.Data.num_faces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of faces in the mesh.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -545,6 +561,11 @@ Returns a data object, if <code class="xref py py-obj docutils literal notransla
 case <code class="xref py py-obj docutils literal notranslate"><span class="pre">idx</span></code> is a slicing object, <em>e.g.</em>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">[2:5]</span></code>, a LongTensor
 or a ByteTensor.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.data.InMemoryDataset.__indexing__">
+<code class="descname">__indexing__</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/data/in_memory_dataset.html#InMemoryDataset.__indexing__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.data.InMemoryDataset.__indexing__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="torch_geometric.data.InMemoryDataset.__len__">
