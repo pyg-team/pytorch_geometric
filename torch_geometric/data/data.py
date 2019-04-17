@@ -31,9 +31,19 @@ class Data(object):
             (default: :obj:`None`)
         pos (Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
+        norm (Tensor, optional): Normal vector matrix with shape
+            :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
+        face (LongTensor, optional): Face adjacency matrix with shape
+            :obj:`[3, num_faces]`. (default: :obj:`None`)
 
     The data object is not restricted to these attributes and can be extented
     by any other additional data.
+
+    Example::
+
+        data = Data(x=x, edge_index=edge_index)
+        data.train_idx = torch.tensor([...], dtype=torch.long)
+        data.test_mask = torch.tensor([...], dtype=torch.uint8)
     """
 
     def __init__(self,
@@ -42,12 +52,16 @@ class Data(object):
                  edge_attr=None,
                  y=None,
                  pos=None,
+                 norm=None,
+                 face=None,
                  **kwargs):
         self.x = x
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.y = y
         self.pos = pos
+        self.norm = norm
+        self.face = face
         for key, item in kwargs.items():
             self[key] = item
 
