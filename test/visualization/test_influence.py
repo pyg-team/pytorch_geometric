@@ -23,4 +23,4 @@ def test_influence():
     out = influence(Net(x.size(1), 16), x, data.edge_index)
     assert out.size() == (data.num_nodes, data.num_nodes)
     assert torch.allclose(
-        out.sum(dim=-1), torch.ones(data.num_nodes, atol=1e-04))
+        out.sum(dim=-1), torch.ones(data.num_nodes), atol=1e-04)
