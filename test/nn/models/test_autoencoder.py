@@ -12,17 +12,18 @@ def test_gae():
     z = model.encode(x)
     assert z.tolist() == x.tolist()
 
-    adj = model.decode(z)
+    adj = model.decoder.forward_all(z)
     assert adj.tolist() == torch.sigmoid(
         torch.Tensor([[+2, -1, +1], [-1, +5, +4], [+1, +4, +5]])).tolist()
 
     edge_index = torch.tensor([[0, 1], [1, 2]])
-    value = model.decode_indices(z, edge_index)
+    value = model.decode(z, edge_index)
     assert value.tolist() == torch.sigmoid(torch.Tensor([-1, 4])).tolist()
 
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]])
     data = Data(edge_index=edge_index)
+    data.num_nodes = edge_index.max().item() + 1
     data = model.split_edges(data, val_ratio=0.2, test_ratio=0.3)
 
     assert data.val_pos_edge_index.size() == (2, 2)
@@ -68,5 +69,5 @@ def test_argva():
 
     x = torch.Tensor([[1, -1], [1, 2], [2, 1]])
     model.encode(x)
-    model.reparametrize(model.mu, model.logvar)
+    model.reparametrize(model.__mu__, model.__logvar__)
     assert model.kl_loss().item() > 0
