@@ -288,7 +288,7 @@
 <div class="viewcode-block" id="InMemoryDataset.get"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.InMemoryDataset.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">__num_nodes__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;__num_nodes__&#39;</span><span class="p">):</span>
             <span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">__num_nodes__</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
@@ -326,7 +326,7 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported attribute type.&#39;</span><span class="p">)</span>
             <span class="n">slices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__num_nodes__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;__num_nodes__&#39;</span><span class="p">):</span>
             <span class="n">data</span><span class="o">.</span><span class="n">__num_nodes__</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">__num_nodes__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">)</span>

@@ -194,12 +194,20 @@
             
   <h1>Source code for torch_geometric.data.data</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">contains_isolated_nodes</span><span class="p">,</span>
                                    <span class="n">contains_self_loops</span><span class="p">,</span> <span class="n">is_undirected</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">..utils.num_nodes</span> <span class="k">import</span> <span class="n">maybe_num_nodes</span>
+
+<span class="n">__num_nodes_warn_msg__</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;The number of nodes in your data object can only be inferred by its </span><span class="si">{}</span><span class="s1"> &#39;</span>
+    <span class="s1">&#39;indices, and hence may result in unexpected batch-wise behavior, e.g., &#39;</span>
+    <span class="s1">&#39;in case there exists isolated nodes. Please consider explicitly setting &#39;</span>
+    <span class="s1">&#39;the number of nodes for this data object by assigning it to &#39;</span>
+    <span class="s1">&#39;data.num_nodes.&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">size_repr</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
@@ -250,7 +258,6 @@
                  <span class="n">norm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">face</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes__</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="n">edge_attr</span>
@@ -337,16 +344,30 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the number of nodes in the graph.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns or sets the number of nodes in the graph.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            The number of nodes in your data object is typically automatically</span>
+<span class="sd">            inferred, *e.g.*, when node features :obj:`x` are present.</span>
+<span class="sd">            In some cases however, a graph may only be given by its edge</span>
+<span class="sd">            indices :obj:`edge_index`.</span>
+<span class="sd">            PyTorch Geometric then *guesses* the number of nodes</span>
+<span class="sd">            according to :obj:`edge_index.max().item() + 1`, but in case there</span>
+<span class="sd">            exists isolated nodes, this number has not to be correct and can</span>
+<span class="sd">            therefore result in unexpected batch-wise behavior.</span>
+<span class="sd">            Thus, we recommend to set the number of nodes in your data object</span>
+<span class="sd">            explicitly via :obj:`data.num_nodes = ...`.</span>
+<span class="sd">            You will be given a warning that requests you to do so.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;__num_nodes__&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__num_nodes__</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;pos&#39;</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="s1">&#39;batch&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__cat_dim__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">face</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># TODO: Print warning.</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">__num_nodes_warn_msg__</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;face&#39;</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">face</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># TODO: Print warning.</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">__num_nodes_warn_msg__</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;edge&#39;</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 

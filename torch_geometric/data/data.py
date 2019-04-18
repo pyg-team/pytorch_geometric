@@ -149,7 +149,21 @@ class Data(object):
 
     @property
     def num_nodes(self):
-        r"""Returns the number of nodes in the graph."""
+        r"""Returns or sets the number of nodes in the graph.
+
+        .. note::
+            The number of nodes in your data object is typically automatically
+            inferred, *e.g.*, when node features :obj:`x` are present.
+            In some cases however, a graph may only be given by its edge
+            indices :obj:`edge_index`.
+            PyTorch Geometric then *guesses* the number of nodes
+            according to :obj:`edge_index.max().item() + 1`, but in case there
+            exists isolated nodes, this number has not to be correct and can
+            therefore result in unexpected batch-wise behavior.
+            Thus, we recommend to set the number of nodes in your data object
+            explicitly via :obj:`data.num_nodes = ...`.
+            You will be given a warning that requests you to do so.
+        """
         if hasattr(self, '__num_nodes__'):
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'norm', 'batch'):

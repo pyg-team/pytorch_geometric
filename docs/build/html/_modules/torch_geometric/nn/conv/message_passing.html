@@ -198,8 +198,8 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">scatter_</span>
 
-<span class="n">_size_error_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;All tensors which should get mapped to the same source&#39;</span>
-                   <span class="s1">&#39;or target nodes must be of same size in dimension 0.&#39;</span><span class="p">)</span>
+<span class="n">__size_error_msg__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;All tensors which should get mapped to the same source&#39;</span>
+                      <span class="s1">&#39;or target nodes must be of same size in dimension 0.&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MessagePassing"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing">[docs]</a><span class="k">class</span> <span class="nc">MessagePassing</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -272,13 +272,13 @@
                         <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                             <span class="n">size</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span><span class="p">]</span> <span class="o">!=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
-                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">_size_error_msg</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">__size_error_msg__</span><span class="p">)</span>
                         <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
                     <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="n">size</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">size</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">!=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">_size_error_msg</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">__size_error_msg__</span><span class="p">)</span>
 
                     <span class="n">tmp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
                     <span class="n">message_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>

@@ -260,6 +260,7 @@
             <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
             <span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span> <span class="o">-</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
             <span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">t</span><span class="p">()</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>
+            <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
 
             <span class="n">edge_attr</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
             <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
@@ -280,6 +281,7 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">()</span>
             <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>
             <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="n">edge_attr</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">=</span> <span class="n">num_nodes</span>
             <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_filter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

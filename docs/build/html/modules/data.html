@@ -388,7 +388,21 @@ duplicate entries.</p>
 <dl class="attribute">
 <dt id="torch_geometric.data.Data.num_nodes">
 <code class="descname">num_nodes</code><a class="headerlink" href="#torch_geometric.data.Data.num_nodes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of nodes in the graph.</p>
+<dd><p>Returns or sets the number of nodes in the graph.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The number of nodes in your data object is typically automatically
+inferred, <em>e.g.</em>, when node features <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> are present.
+In some cases however, a graph may only be given by its edge
+indices <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_index</span></code>.
+PyTorch Geometric then <em>guesses</em> the number of nodes
+according to <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_index.max().item()</span> <span class="pre">+</span> <span class="pre">1</span></code>, but in case there
+exists isolated nodes, this number has not to be correct and can
+therefore result in unexpected batch-wise behavior.
+Thus, we recommend to set the number of nodes in your data object
+explicitly via <code class="xref py py-obj docutils literal notranslate"><span class="pre">data.num_nodes</span> <span class="pre">=</span> <span class="pre">...</span></code>.
+You will be given a warning that requests you to do so.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
