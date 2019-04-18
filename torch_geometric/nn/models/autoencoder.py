@@ -90,11 +90,11 @@ class GAE(torch.nn.Module):
         reset(self.decoder)
 
     def encode(self, *args, **kwargs):
-        r"""Runs the encoder and computes latent variables for each node."""
+        r"""Runs the encoder and computes node-wise latent variables."""
         return self.encoder(*args, **kwargs)
 
     def decode(self, *args, **kwargs):
-        r"""Runs the decoder and computes probabilties for each edge."""
+        r"""Runs the decoder and computes edge probabilties."""
         return self.decoder(*args, **kwargs)
 
     def split_edges(self, data, val_ratio=0.05, test_ratio=0.1):
