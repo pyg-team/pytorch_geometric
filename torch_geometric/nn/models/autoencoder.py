@@ -36,7 +36,7 @@ class InnerProductDecoder(torch.nn.Module):
         \sigma(\mathbf{Z}\mathbf{Z}^{\top})
 
     where :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent
-    space produced by the encoder"""
+    space produced by the encoder."""
 
     def forward(self, z, edge_index, sigmoid=True):
         r"""Decodes the latent variables :obj:`z` into edge probabilties for
@@ -261,8 +261,8 @@ class ARGA(GAE):
     """
 
     def __init__(self, encoder, discriminator, decoder=None):
-        super(ARGA, self).__init__(encoder, decoder)
         self.discriminator = discriminator
+        super(ARGA, self).__init__(encoder, decoder)
 
     def reset_parameters(self):
         super(ARGA, self).reset_parameters()
