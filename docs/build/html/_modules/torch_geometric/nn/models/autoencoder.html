@@ -231,7 +231,7 @@
 <span class="sd">        \sigma(\mathbf{Z}\mathbf{Z}^{\top})</span>
 
 <span class="sd">    where :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent</span>
-<span class="sd">    space produced by the encoder&quot;&quot;&quot;</span>
+<span class="sd">    space produced by the encoder.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="InnerProductDecoder.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.InnerProductDecoder.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">sigmoid</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Decodes the latent variables :obj:`z` into edge probabilties for</span>
@@ -456,8 +456,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">discriminator</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ARGA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span> <span class="o">=</span> <span class="n">discriminator</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ARGA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ARGA.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.models.ARGA.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ARGA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
