@@ -52,6 +52,7 @@ def test_data():
 
     assert data.num_nodes == 3
     assert data.num_edges == 4
+    assert data.num_faces is None
     assert data.num_features == 2
 
     data.x = None
