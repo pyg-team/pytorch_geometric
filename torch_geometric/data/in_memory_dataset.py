@@ -93,7 +93,7 @@ class InMemoryDataset(Dataset):
     def get(self, idx):
         data = Data()
 
-        if self.data.__num_nodes__ is not None:
+        if hasattr(self.data, '__num_nodes__'):
             data.num_nodes = self.data.__num_nodes__[idx].item()
 
         for key in self.data.keys:
@@ -131,7 +131,7 @@ class InMemoryDataset(Dataset):
                 raise ValueError('Unsupported attribute type.')
             slices[key].append(s)
 
-        if data_list[0].__num_nodes__ is not None:
+        if hasattr(data_list[0], '__num_nodes__'):
             data.__num_nodes__ = []
             for item in data_list:
                 data.__num_nodes__.append(item.num_nodes)

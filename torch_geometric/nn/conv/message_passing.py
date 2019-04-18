@@ -3,8 +3,8 @@ import inspect
 import torch
 from torch_geometric.utils import scatter_
 
-_size_error_msg = ('All tensors which should get mapped to the same source'
-                   'or target nodes must be of same size in dimension 0.')
+__size_error_msg__ = ('All tensors which should get mapped to the same source'
+                      'or target nodes must be of same size in dimension 0.')
 
 
 class MessagePassing(torch.nn.Module):
@@ -77,13 +77,13 @@ class MessagePassing(torch.nn.Module):
                         if size[1 - idx] is None:
                             size[1 - idx] = tmp[1 - idx].size(0)
                         if size[1 - idx] != tmp[1 - idx].size(0):
-                            raise ValueError(_size_error_msg)
+                            raise ValueError(__size_error_msg__)
                         tmp = tmp[idx]
 
                     if size[idx] is None:
                         size[idx] = tmp.size(0)
                     if size[idx] != tmp.size(0):
-                        raise ValueError(_size_error_msg)
+                        raise ValueError(__size_error_msg__)
 
                     tmp = torch.index_select(tmp, 0, edge_index[idx])
                     message_args.append(tmp)
