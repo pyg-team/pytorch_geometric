@@ -164,7 +164,7 @@ class Data(object):
             explicitly via :obj:`data.num_nodes = ...`.
             You will be given a warning that requests you to do so.
         """
-        if hasattr(self, '__num_nodes__'):
+        if hasattr(self, '__num_nodes__') and self.__num_nodes__ is not None:
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
@@ -178,7 +178,6 @@ class Data(object):
 
     @num_nodes.setter
     def num_nodes(self, num_nodes):
-        assert num_nodes > 0
         self.__num_nodes__ = num_nodes
 
     @property
