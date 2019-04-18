@@ -28,32 +28,32 @@ def negative_sampling(pos_edge_index, num_nodes):
     return torch.stack([row, col], dim=0).to(pos_edge_index.device)
 
 
-class GAE(torch.nn.Module):
-    r"""The Graph Auto-Encoder model from the
-    `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
-    paper based on a user-defined encoder model and a simple inner product
-    decoder :math:`\sigma(\mathbf{Z}\mathbf{Z}^{\top})` where
-    :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent space
-    produced by the encoder.
+class InnerProductDecoder(torch.nn.Module):
+    r"""The inner product decoder from the `"Variational Graph Auto-Encoders"
+    <https://arxiv.org/abs/1611.07308>`_ paper
 
-    Args:
-        encoder (Module): The encoder module.
-    """
+    .. math::
+        \sigma(\mathbf{Z}\mathbf{Z}^{\top})
 
-    def __init__(self, encoder):
-        super(GAE, self).__init__()
-        self.encoder = encoder
+    where :math:`\mathbf{Z} \in \mathbb{R}^{N \times d}` denotes the latent
+    space produced by the encoder"""
 
-    def reset_parameters(self):
-        reset(self.encoder)
+    def forward(self, z, edge_index, sigmoid=True):
+        r"""Decodes the latent variables :obj:`z` into edge probabilties for
+        the given node-pairs :obj:`edge_index`.
 
-    def encode(self, *args, **kwargs):
-        r"""Runs the encoder and computes latent variables for each node."""
-        return self.encoder(*args, **kwargs)
+        Args:
+            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            sigmoid (bool, optional): If set to :obj:`False`, does not apply
+                the logistic sigmoid function to the output.
+                (default: :obj:`True`)
+        """
+        value = (z[edge_index[0]] * z[edge_index[1]]).sum(dim=1)
+        return torch.sigmoid(value) if sigmoid else value
 
-    def decode(self, z, sigmoid=True):
-        r"""Decodes the latent variables :obj:`z` into a probabilistic
-        dense adjacency matrix.
+    def forward_all(self, z, sigmoid=True):
+        r"""Decodes the latent variables :obj:`z` into a probabilistic dense
+        adjacency matrix.
 
         Args:
             z (Tensor): The latent space :math:`\mathbf{Z}`.
@@ -64,19 +64,38 @@ class GAE(torch.nn.Module):
         adj = torch.matmul(z, z.t())
         return torch.sigmoid(adj) if sigmoid else adj
 
-    def decode_indices(self, z, edge_index, sigmoid=True):
-        r"""Decodes the latent variables :obj:`z` into edge-probabilties for
-        the given node-pairs :obj:`edge_index`.
 
-        Args:
-            z (Tensor): The latent space :math:`\mathbf{Z}`.
-            edge_index (LongTensor): The edge indices to predict.
-            sigmoid (bool, optional): If set to :obj:`False`, does not apply
-                the logistic sigmoid function to the output.
-                (default: :obj:`True`)
-        """
-        value = (z[edge_index[0]] * z[edge_index[1]]).sum(dim=1)
-        return torch.sigmoid(value) if sigmoid else value
+class GAE(torch.nn.Module):
+    r"""The Graph Auto-Encoder model from the
+    `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
+    paper based on a user-defined encoder and decoder model.
+
+    Args:
+        encoder (Module): The encoder module.
+        decoder (Module, optional): The decoder module. If set to :obj:`None`,
+            will default to the
+            :class:`torch_geometric.nn.models.InnerProductDecoder`.
+            (default: :obj:`None`)
+    """
+
+    def __init__(self, encoder, decoder=None):
+        super(GAE, self).__init__()
+        self.encoder = encoder
+        self.decoder = InnerProductDecoder() if decoder is None else decoder
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        reset(self.encoder)
+        reset(self.decoder)
+
+    def encode(self, *args, **kwargs):
+        r"""Runs the encoder and computes latent variables for each node."""
+        return self.encoder(*args, **kwargs)
+
+    def decode(self, *args, **kwargs):
+        r"""Runs the decoder and computes probabilties for each edge."""
+        return self.decoder(*args, **kwargs)
 
     def split_edges(self, data, val_ratio=0.05, test_ratio=0.1):
         r"""Splits the edges of a :obj:`torch_geometric.data.Data` object
@@ -144,12 +163,10 @@ class GAE(torch.nn.Module):
             pos_edge_index (LongTensor): The positive edges to train against.
         """
 
-        pos_loss = -torch.log(self.decode_indices(z, pos_edge_index) +
-                              EPS).mean()
+        pos_loss = -torch.log(self.decoder(z, pos_edge_index) + EPS).mean()
 
         neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
-        neg_loss = -torch.log(1 - self.decode_indices(z, neg_edge_index) +
-                              EPS).mean()
+        neg_loss = -torch.log(1 - self.decoder(z, neg_edge_index) + EPS).mean()
 
         return pos_loss + neg_loss
 
@@ -170,8 +187,8 @@ class GAE(torch.nn.Module):
         neg_y = z.new_zeros(neg_edge_index.size(1))
         y = torch.cat([pos_y, neg_y], dim=0)
 
-        pos_pred = self.decode_indices(z, pos_edge_index)
-        neg_pred = self.decode_indices(z, neg_edge_index)
+        pos_pred = self.decoder(z, pos_edge_index)
+        neg_pred = self.decoder(z, neg_edge_index)
         pred = torch.cat([pos_pred, neg_pred], dim=0)
 
         y, pred = y.detach().cpu().numpy(), pred.detach().cpu().numpy()
@@ -186,11 +203,15 @@ class VGAE(GAE):
 
     Args:
         encoder (Module): The encoder module to compute :math:`\mu` and
-            :math:`\log \sigma^2`.
+            :math:`\log\sigma^2`.
+        decoder (Module, optional): The decoder module. If set to :obj:`None`,
+            will default to the
+            :class:`torch_geometric.nn.models.InnerProductDecoder`.
+            (default: :obj:`None`)
     """
 
-    def __init__(self, encoder):
-        super(VGAE, self).__init__(encoder)
+    def __init__(self, encoder, decoder=None):
+        super(VGAE, self).__init__(encoder, decoder)
 
     def reparametrize(self, mu, logvar):
         if self.training:
@@ -199,9 +220,9 @@ class VGAE(GAE):
             return mu
 
     def encode(self, *args, **kwargs):
-        r""""""
-        self.mu, self.logvar = self.encoder(*args, **kwargs)
-        z = self.reparametrize(self.mu, self.logvar)
+        """"""
+        self.__mu__, self.__logvar__ = self.encoder(*args, **kwargs)
+        z = self.reparametrize(self.__mu__, self.__logvar__)
         return z
 
     def kl_loss(self, mu=None, logvar=None):
@@ -209,13 +230,15 @@ class VGAE(GAE):
         and :obj:`logvar`, or based on latent variables from last encoding.
 
         Args:
-            mu (Tensor, optional): The latent space for :math:`\mu`.
+            mu (Tensor, optional): The latent space for :math:`\mu`. If set to
+                :obj:`None`, uses the last computation of :math:`mu`.
                 (default: :obj:`None`)
             logvar (Tensor, optional): The latent space for
-                :math:`\log\sigma^2`. (default: :obj:`None`)
+                :math:`\log\sigma^2`.  If set to :obj:`None`, uses the last
+                computation of :math:`\log\sigma^2`.(default: :obj:`None`)
         """
-        mu = self.mu if mu is None else mu
-        logvar = self.logvar if logvar is None else logvar
+        mu = self.__mu__ if mu is None else mu
+        logvar = self.__logvar__ if logvar is None else logvar
         return -0.5 * torch.mean(
             torch.sum(1 + logvar - mu**2 - logvar.exp(), dim=1))
 
@@ -229,10 +252,14 @@ class ARGA(GAE):
     Args:
         encoder (Module): The encoder module.
         discriminator (Module): The discriminator module.
+        decoder (Module, optional): The decoder module. If set to :obj:`None`,
+            will default to the
+            :class:`torch_geometric.nn.models.InnerProductDecoder`.
+            (default: :obj:`None`)
     """
 
-    def __init__(self, encoder, discriminator):
-        super(ARGA, self).__init__(encoder)
+    def __init__(self, encoder, discriminator, decoder=None):
+        super(ARGA, self).__init__(encoder, decoder)
         self.discriminator = discriminator
 
     def reset_parameters(self):
@@ -270,27 +297,31 @@ class ARGVA(ARGA):
 
     Args:
         encoder (Module): The encoder module to compute :math:`\mu` and
-            :math:`\log \sigma^2`.
+            :math:`\log\sigma^2`.
         discriminator (Module): The discriminator module.
+        decoder (Module, optional): The decoder module. If set to :obj:`None`,
+            will default to the
+            :class:`torch_geometric.nn.models.InnerProductDecoder`.
+            (default: :obj:`None`)
     """
 
-    def __init__(self, encoder, discriminator):
-        super(ARGVA, self).__init__(encoder, discriminator)
-        self.VGAE = VGAE(encoder)
+    def __init__(self, encoder, discriminator, decoder=None):
+        super(ARGVA, self).__init__(encoder, discriminator, decoder)
+        self.VGAE = VGAE(encoder, decoder)
 
     @property
-    def mu(self):
-        return self.VGAE.mu
+    def __mu__(self):
+        return self.VGAE.__mu__
 
     @property
-    def logvar(self):
-        return self.VGAE.logvar
+    def __logvar__(self):
+        return self.VGAE.__logvar__
 
     def reparametrize(self, mu, logvar):
         return self.VGAE.reparametrize(mu, logvar)
 
     def encode(self, *args, **kwargs):
-        r""""""
+        """"""
         return self.VGAE.encode(*args, **kwargs)
 
     def kl_loss(self, mu=None, logvar=None):
