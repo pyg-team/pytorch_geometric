@@ -1,10 +1,18 @@
 import re
+import warnings
 
 import torch
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
 from ..utils.num_nodes import maybe_num_nodes
+
+__num_nodes_warn_msg__ = (
+    'The number of nodes in your data object can only be inferred by its {} '
+    'indices, and hence may result in unexpected batch-wise behavior, e.g., '
+    'in case there exists isolated nodes. Please consider explicitly setting '
+    'the number of nodes for this data object by assigning it to '
+    'data.num_nodes.')
 
 
 def size_repr(value):
@@ -55,7 +63,6 @@ class Data(object):
                  norm=None,
                  face=None,
                  **kwargs):
-        self.__num_nodes__ = None
         self.x = x
         self.edge_index = edge_index
         self.edge_attr = edge_attr
@@ -143,15 +150,15 @@ class Data(object):
     @property
     def num_nodes(self):
         r"""Returns the number of nodes in the graph."""
-        if self.__num_nodes__ is not None:
+        if hasattr(self, '__num_nodes__'):
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
         if self.face is not None:
-            # TODO: Print warning.
+            warnings.warn(__num_nodes_warn_msg__.format('face'))
             return maybe_num_nodes(self.face)
         if self.edge_index is not None:
-            # TODO: Print warning.
+            warnings.warn(__num_nodes_warn_msg__.format('edge'))
             return maybe_num_nodes(self.edge_index)
         return None
 

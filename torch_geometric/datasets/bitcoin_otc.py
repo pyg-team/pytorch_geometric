@@ -65,6 +65,7 @@ class BitcoinOTC(InMemoryDataset):
             edge_index = torch.tensor(edge_index, dtype=torch.long)
             edge_index = edge_index - edge_index.min()
             edge_index = edge_index.t().contiguous()
+            num_nodes = edge_index.max().item() + 1
 
             edge_attr = [float(line[2]) for line in data]
             edge_attr = torch.tensor(edge_attr, dtype=torch.long)
@@ -85,6 +86,7 @@ class BitcoinOTC(InMemoryDataset):
             data = Data()
             data.edge_index = edge_index[:, mask]
             data.edge_attr = edge_attr[mask]
+            data.num_nodes = num_nodes
             data_list.append(data)
 
             if self.pre_filter is not None:
