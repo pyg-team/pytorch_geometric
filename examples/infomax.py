@@ -2,141 +2,64 @@ import os.path as osp
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv
-from torch_geometric.nn.inits import uniform
-
-hidden_dim = 512
+from torch_geometric.nn import GCNConv, DeepGraphInfomax
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset)
-data = dataset[0]
 
 
 class Encoder(nn.Module):
-    def __init__(self, hidden_dim):
+    def __init__(self, in_channels, hidden_channels):
         super(Encoder, self).__init__()
-        self.conv = GCNConv(dataset.num_features, hidden_dim)
-        self.prelu = nn.PReLU(hidden_dim)
+        self.conv = GCNConv(in_channels, hidden_channels, cached=True)
+        self.prelu = nn.PReLU(hidden_channels)
 
-    def forward(self, x, edge_index, corrupt=False):
-        if corrupt:
-            perm = torch.randperm(data.num_nodes)
-            x = x[perm]
-
+    def forward(self, x, edge_index):
         x = self.conv(x, edge_index)
         x = self.prelu(x)
         return x
 
 
-class Discriminator(nn.Module):
-    def __init__(self, hidden_dim):
-        super(Discriminator, self).__init__()
-        self.weight = nn.Parameter(torch.Tensor(hidden_dim, hidden_dim))
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        size = self.weight.size(0)
-        uniform(size, self.weight)
-
-    def forward(self, x, summary):
-        x = torch.matmul(x, torch.matmul(self.weight, summary))
-        return x
-
-
-class Infomax(nn.Module):
-    def __init__(self, hidden_dim):
-        super(Infomax, self).__init__()
-        self.encoder = Encoder(hidden_dim)
-        self.discriminator = Discriminator(hidden_dim)
-        self.loss = nn.BCEWithLogitsLoss()
-
-    def forward(self, x, edge_index):
-        positive = self.encoder(x, edge_index, corrupt=False)
-        negative = self.encoder(x, edge_index, corrupt=True)
-        summary = torch.sigmoid(positive.mean(dim=0))
-
-        positive = self.discriminator(positive, summary)
-        negative = self.discriminator(negative, summary)
-
-        l1 = self.loss(positive, torch.ones_like(positive))
-        l2 = self.loss(negative, torch.zeros_like(negative))
-
-        return l1 + l2
+def corruption(x, edge_index):
+    return x[torch.randperm(x.size(0))], edge_index
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-data = data.to(device)
-infomax = Infomax(hidden_dim).to(device)
-infomax_optimizer = torch.optim.Adam(infomax.parameters(), lr=0.001)
+model = DeepGraphInfomax(
+    hidden_channels=512,
+    encoder=Encoder(dataset.num_features, 512),
+    summary=lambda z, *args, **kwargs: z.mean(dim=0),
+    corruption=corruption).to(device)
+data = dataset[0].to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
-def train_infomax(epoch):
-    infomax.train()
-
-    if epoch == 200:
-        for param_group in infomax_optimizer.param_groups:
-            param_group['lr'] = 0.0001
-
-    infomax_optimizer.zero_grad()
-    loss = infomax(data.x, data.edge_index)
+def train():
+    model.train()
+    optimizer.zero_grad()
+    pos_z, neg_z, summary = model(data.x, data.edge_index)
+    loss = model.loss(pos_z, neg_z, summary)
     loss.backward()
-    infomax_optimizer.step()
+    optimizer.step()
     return loss.item()
 
 
-print('Train deep graph infomax.')
+def test():
+    model.eval()
+    z, _, _ = model(data.x, data.edge_index)
+    acc = model.test(
+        z[data.train_mask],
+        data.y[data.train_mask],
+        z[data.test_mask],
+        data.y[data.test_mask],
+        max_iter=150)
+    return acc
+
+
 for epoch in range(1, 301):
-    loss = train_infomax(epoch)
-    print('Epoch: {:03d}, Loss: {:.7f}'.format(epoch, loss))
-
-
-class Classifier(nn.Module):
-    def __init__(self, hidden_dim):
-        super(Classifier, self).__init__()
-        self.lin = nn.Linear(hidden_dim, dataset.num_classes)
-
-    def reset_parameters(self):
-        self.lin.reset_parameters()
-
-    def forward(self, x, edge_index):
-        x = infomax.encoder(x, edge_index, corrupt=False)
-        x = x.detach()
-        x = self.lin(x)
-        return torch.log_softmax(x, dim=-1)
-
-
-classifier = Classifier(hidden_dim).to(device)
-classifier_optimizer = torch.optim.Adam(classifier.parameters(), lr=0.01)
-
-
-def train_classifier():
-    infomax.eval()
-    classifier.train()
-    classifier_optimizer.zero_grad()
-    output = classifier(data.x, data.edge_index)
-    loss = F.nll_loss(output[data.train_mask], data.y[data.train_mask])
-    loss.backward()
-    classifier_optimizer.step()
-    return loss.item()
-
-
-def test_classifier():
-    infomax.eval()
-    classifier.eval()
-    logits, accs = classifier(data.x, data.edge_index), []
-    for _, mask in data('train_mask', 'val_mask', 'test_mask'):
-        pred = logits[mask].max(1)[1]
-        acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
-        accs.append(acc)
-    return accs
-
-
-print('Train logistic regression classifier.')
-for epoch in range(1, 51):
-    train_classifier()
-    accs = test_classifier()
-    log = 'Epoch: {:02d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
-    print(log.format(epoch, *accs))
+    loss = train()
+    print('Epoch: {:03d}, Loss: {:.4f}'.format(epoch, loss))
+acc = test()
+print('Accuracy: {:.4f}'.format(acc))
