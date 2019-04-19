@@ -68,7 +68,7 @@ class InnerProductDecoder(torch.nn.Module):
 class GAE(torch.nn.Module):
     r"""The Graph Auto-Encoder model from the
     `"Variational Graph Auto-Encoders" <https://arxiv.org/abs/1611.07308>`_
-    paper based on a user-defined encoder and decoder model.
+    paper based on user-defined encoder and decoder models.
 
     Args:
         encoder (Module): The encoder module.

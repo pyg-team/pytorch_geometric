@@ -573,11 +573,6 @@ will not be trainable. (default: <a class="reference external" href="https://doc
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="torch_geometric.nn.conv.AGNNConv.propagation_matrix">
-<code class="descname">propagation_matrix</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.propagation_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.propagation_matrix" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="torch_geometric.nn.conv.AGNNConv.reset_parameters">
 <code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/agnn_conv.html#AGNNConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.AGNNConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2106,6 +2101,76 @@ be only set for LSTM-style aggregation. (default: <a class="reference external" 
 </dd></dl>
 
 <dl class="class">
+<dt id="torch_geometric.nn.models.DeepGraphInfomax">
+<em class="property">class </em><code class="descname">DeepGraphInfomax</code><span class="sig-paren">(</span><em>hidden_channels</em>, <em>encoder</em>, <em>summary</em>, <em>corruption</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/deep_graph_infomax.html#DeepGraphInfomax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.DeepGraphInfomax" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Deep Graph Infomax model from the
+<a class="reference external" href="https://arxiv.org/abs/1809.10341">“Deep Graph Infomax”</a>
+paper based on user-defined encoder and summary model <span class="math notranslate nohighlight">\(\mathcal{E}\)</span>
+and <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> respectively, and a corruption function
+<span class="math notranslate nohighlight">\(\mathcal{C}\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>hidden_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The latent space dimensionality.</li>
+<li><strong>encoder</strong> (<em>Module</em>) – The encoder module <span class="math notranslate nohighlight">\(\mathcal{E}\)</span>.</li>
+<li><strong>summary</strong> (<em>callable</em>) – The readout function <span class="math notranslate nohighlight">\(\mathcal{R}\)</span>.</li>
+<li><strong>corruption</strong> (<em>callable</em>) – The corruption function <span class="math notranslate nohighlight">\(\mathcal{C}\)</span>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.models.DeepGraphInfomax.discriminate">
+<code class="descname">discriminate</code><span class="sig-paren">(</span><em>z</em>, <em>summary</em>, <em>sigmoid=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/deep_graph_infomax.html#DeepGraphInfomax.discriminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.DeepGraphInfomax.discriminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the patch-summary pair <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">summary</span></code>, computes
+the probability scores assigned to this patch-summary pair.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>z</strong> (<em>Tensor</em>) – The latent space.</li>
+<li><strong>sigmoid</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, does not apply
+the logistic sigmoid function to the output.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.DeepGraphInfomax.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/deep_graph_infomax.html#DeepGraphInfomax.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.DeepGraphInfomax.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the latent space for the input arguments, their
+corruptions and their summary representation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.DeepGraphInfomax.loss">
+<code class="descname">loss</code><span class="sig-paren">(</span><em>pos_z</em>, <em>neg_z</em>, <em>summary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/deep_graph_infomax.html#DeepGraphInfomax.loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.DeepGraphInfomax.loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the mutal information maximization objective.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.DeepGraphInfomax.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/deep_graph_infomax.html#DeepGraphInfomax.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.DeepGraphInfomax.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.models.DeepGraphInfomax.test">
+<code class="descname">test</code><span class="sig-paren">(</span><em>train_z</em>, <em>train_y</em>, <em>test_z</em>, <em>test_y</em>, <em>solver='lbfgs'</em>, <em>multi_class='auto'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/deep_graph_infomax.html#DeepGraphInfomax.test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.DeepGraphInfomax.test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates latent space quality via a logistic regression downstream
+task.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="torch_geometric.nn.models.InnerProductDecoder">
 <em class="property">class </em><code class="descname">InnerProductDecoder</code><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#InnerProductDecoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.InnerProductDecoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>The inner product decoder from the <a class="reference external" href="https://arxiv.org/abs/1611.07308">“Variational Graph Auto-Encoders”</a> paper</p>
@@ -2162,7 +2227,7 @@ the logistic sigmoid function to the output.
 <em class="property">class </em><code class="descname">GAE</code><span class="sig-paren">(</span><em>encoder</em>, <em>decoder=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/models/autoencoder.html#GAE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.models.GAE" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Graph Auto-Encoder model from the
 <a class="reference external" href="https://arxiv.org/abs/1611.07308">“Variational Graph Auto-Encoders”</a>
-paper based on a user-defined encoder and decoder model.</p>
+paper based on user-defined encoder and decoder models.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
