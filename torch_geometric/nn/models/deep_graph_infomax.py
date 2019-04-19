@@ -26,7 +26,9 @@ class DeepGraphInfomax(torch.nn.Module):
 
     def forward(self, *args, **kwargs):
         pos_z = self.encoder(*args, **kwargs)
-        neg_z = self.encoder(*self.corruption(*args, **kwargs))
+        cor = self.corruption(*args, **kwargs)
+        cor = cor if isinstance(cor, tuple) else (cor, )
+        neg_z = self.encoder(*cor)
         summary = self.summary(pos_z, *args, **kwargs)
         return pos_z, neg_z, summary
 
