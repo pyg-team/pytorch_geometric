@@ -9,6 +9,6 @@ def test_gmm_conv():
     x = torch.randn((num_nodes, in_channels))
     pseudo = torch.rand((edge_index.size(1), 3))
 
-    conv = GMMConv(in_channels, out_channels, dim=3)
+    conv = GMMConv(in_channels, out_channels, dim=3, kernel_size=25)
     assert conv.__repr__() == 'GMMConv(16, 32)'
     assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
