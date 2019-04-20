@@ -13,17 +13,17 @@ class GMMConv(MessagePassing):
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta} \cdot
         \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \sum_{k=1}^K
-        w_k(\mathbf{e}_{i,j}) \odot \mathbf{x}_j,
+        \mathbf{w}_k(\mathbf{e}_{i,j}) \odot \mathbf{x}_j,
 
     where
 
     .. math::
-        w_k(\mathbf{e}) = \exp \left( -\frac{1}{2} {\left( \mathbf{e} -
-        \mathbf{\mu}_k \right)}^{\top} \Sigma_k^{-1} \left( \mathbf{e} -
-        \mathbf{\mu}_k \right) \right)
+        \mathbf{w}_k(\mathbf{e}) = \exp \left( -\frac{1}{2} {\left(
+        \mathbf{e} - \mathbf{\mu}_k \right)}^{\top} \Sigma_k^{-1}
+        \left( \mathbf{e} - \mathbf{\mu}_k \right) \right)
 
-    denotes :math:`K` kernels with trainable mean vectors
-    :math:`\mathbf{\mu}_k` and diagonal covariance matrices
+    denotes a weighting function based on trainable mean vector
+    :math:`\mathbf{\mu}_k` and diagonal covariance matrix
     :math:`\mathbf{\Sigma}_k`.
 
     Args:

@@ -956,20 +956,21 @@ in message passing in bipartite graphs.</li>
 
 <dl class="class">
 <dt id="torch_geometric.nn.conv.GMMConv">
-<em class="property">class </em><code class="descname">GMMConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gmm_conv.html#GMMConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GMMConv" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">GMMConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gmm_conv.html#GMMConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GMMConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>The gaussian mixture model convolutional operator from the <a class="reference external" href="https://arxiv.org/abs/1611.08402">“Geometric
 Deep Learning on Graphs and Manifolds using Mixture Model CNNs”</a> paper</p>
 <div class="math notranslate nohighlight">
 \[\mathbf{x}^{\prime}_i = \mathbf{\Theta} \cdot
-\sum_{j \in \mathcal{N}(i) \cup \{ i \}} w(\mathbf{e}_{i,j}) \odot
-\mathbf{x}_j,\]</div>
+\sum_{j \in \mathcal{N}(i) \cup \{ i \}} \sum_{k=1}^K
+\mathbf{w}_k(\mathbf{e}_{i,j}) \odot \mathbf{x}_j,\]</div>
 <p>where</p>
 <div class="math notranslate nohighlight">
-\[w_m(\mathbf{e}) = \exp \left( -\frac{1}{2} {\left( \mathbf{e} -
-\mathbf{\mu}_m \right)}^{\top} \Sigma_m^{-1} \left( \mathbf{e} -
-\mathbf{\mu}_m \right) \right)\]</div>
-<p>with trainable mean vector <span class="math notranslate nohighlight">\(\mathbf{\mu}_m\)</span> and diagonal covariance
-matrix <span class="math notranslate nohighlight">\(\mathbf{\Sigma}_m\)</span> for each input channel <span class="math notranslate nohighlight">\(m\)</span>.</p>
+\[\mathbf{w}_k(\mathbf{e}) = \exp \left( -\frac{1}{2} {\left(
+\mathbf{e} - \mathbf{\mu}_k \right)}^{\top} \Sigma_k^{-1}
+\left( \mathbf{e} - \mathbf{\mu}_k \right) \right)\]</div>
+<p>denotes a weighting function based on trainable mean vector
+<span class="math notranslate nohighlight">\(\mathbf{\mu}_k\)</span> and diagonal covariance matrix
+<span class="math notranslate nohighlight">\(\mathbf{\Sigma}_k\)</span>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -978,6 +979,7 @@ matrix <span class="math notranslate nohighlight">\(\mathbf{\Sigma}_m\)</span> f
 <li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
 <li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
 <li><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Pseudo-coordinate dimensionality.</li>
+<li><strong>kernel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of kernels <span class="math notranslate nohighlight">\(K\)</span>.</li>
 <li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
 an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 </ul>

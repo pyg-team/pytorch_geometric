@@ -195,48 +195,51 @@
   <h1>Source code for torch_geometric.nn.conv.gmm_conv</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="k">import</span> <span class="n">scatter_add</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn.conv</span> <span class="k">import</span> <span class="n">MessagePassing</span>
 
 <span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">uniform</span><span class="p">,</span> <span class="n">reset</span>
 
 
-<div class="viewcode-block" id="GMMConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GMMConv">[docs]</a><span class="k">class</span> <span class="nc">GMMConv</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="GMMConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GMMConv">[docs]</a><span class="k">class</span> <span class="nc">GMMConv</span><span class="p">(</span><span class="n">MessagePassing</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The gaussian mixture model convolutional operator from the `&quot;Geometric</span>
 <span class="sd">    Deep Learning on Graphs and Manifolds using Mixture Model CNNs&quot;</span>
 <span class="sd">    &lt;https://arxiv.org/abs/1611.08402&gt;`_ paper</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \cdot</span>
-<span class="sd">        \sum_{j \in \mathcal{N}(i) \cup \{ i \}} w(\mathbf{e}_{i,j}) \odot</span>
-<span class="sd">        \mathbf{x}_j,</span>
+<span class="sd">        \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \sum_{k=1}^K</span>
+<span class="sd">        \mathbf{w}_k(\mathbf{e}_{i,j}) \odot \mathbf{x}_j,</span>
 
 <span class="sd">    where</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        w_m(\mathbf{e}) = \exp \left( -\frac{1}{2} {\left( \mathbf{e} -</span>
-<span class="sd">        \mathbf{\mu}_m \right)}^{\top} \Sigma_m^{-1} \left( \mathbf{e} -</span>
-<span class="sd">        \mathbf{\mu}_m \right) \right)</span>
+<span class="sd">        \mathbf{w}_k(\mathbf{e}) = \exp \left( -\frac{1}{2} {\left(</span>
+<span class="sd">        \mathbf{e} - \mathbf{\mu}_k \right)}^{\top} \Sigma_k^{-1}</span>
+<span class="sd">        \left( \mathbf{e} - \mathbf{\mu}_k \right) \right)</span>
 
-<span class="sd">    with trainable mean vector :math:`\mathbf{\mu}_m` and diagonal covariance</span>
-<span class="sd">    matrix :math:`\mathbf{\Sigma}_m` for each input channel :math:`m`.</span>
+<span class="sd">    denotes a weighting function based on trainable mean vector</span>
+<span class="sd">    :math:`\mathbf{\mu}_k` and diagonal covariance matrix</span>
+<span class="sd">    :math:`\mathbf{\Sigma}_k`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        in_channels (int): Size of each input sample.</span>
 <span class="sd">        out_channels (int): Size of each output sample.</span>
 <span class="sd">        dim (int): Pseudo-coordinate dimensionality.</span>
+<span class="sd">        kernel_size (int): Number of kernels :math:`K`.</span>
 <span class="sd">        bias (bool, optional): If set to :obj:`False`, the layer will not learn</span>
 <span class="sd">            an additive bias. (default: :obj:`True`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">GMMConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GMMConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>  <span class="c1"># Use normalized gaussians.</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span> <span class="o">=</span> <span class="n">in_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_channels</span> <span class="o">=</span> <span class="n">out_channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span> <span class="o">=</span> <span class="n">kernel_size</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">in_channels</span> <span class="o">*</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">in_channels</span> <span class="o">*</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lin</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
@@ -249,22 +252,21 @@
 
 <div class="viewcode-block" id="GMMConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.GMMConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
-        <span class="c1"># See https://github.com/shchur/gnn-benchmark for the reference</span>
-        <span class="c1"># TensorFlow implementation.</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span>
         <span class="n">pseudo</span> <span class="o">=</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">pseudo</span>
-        <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
 
-        <span class="n">F</span><span class="p">,</span> <span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">pseudo</span><span class="o">=</span><span class="n">pseudo</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lin</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
-        <span class="n">gaussian</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pseudo</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">D</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
-        <span class="n">gaussian</span> <span class="o">=</span> <span class="n">gaussian</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1e-14</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_j</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">):</span>
+        <span class="n">F</span><span class="p">,</span> <span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">D</span><span class="p">),</span> <span class="n">K</span> <span class="o">=</span> <span class="n">x_j</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># See: https://github.com/shchur/gnn-benchmark</span>
+        <span class="n">gaussian</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">pseudo</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">D</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">gaussian</span> <span class="o">=</span> <span class="n">gaussian</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1e-14</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">gaussian</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">gaussian</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
 
-        <span class="n">out</span> <span class="o">=</span> <span class="n">scatter_add</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">gaussian</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lin</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">out</span></div>
+        <span class="k">return</span> <span class="n">x_j</span> <span class="o">*</span> <span class="n">gaussian</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">(</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span>
