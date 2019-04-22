@@ -136,4 +136,4 @@ for epoch in range(1, 301):
         best_val_error = val_error
 
     print('Epoch: {:03d}, LR: {:7f}, Loss: {:.7f}, Validation MAE: {:.7f}, '
-          'Test MAE: {:.7f},'.format(epoch, lr, loss, val_error, test_error))
+          'Test MAE: {:.7f}'.format(epoch, lr, loss, val_error, test_error))
