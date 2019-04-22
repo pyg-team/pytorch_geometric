@@ -65,15 +65,14 @@ class RGCNConv(MessagePassing):
         return self.propagate(
             edge_index, x=x, edge_type=edge_type, edge_norm=edge_norm)
 
-    def message(self, x_j, edge_index, edge_type, edge_norm):
+    def message(self, x_j, edge_index_j, edge_type, edge_norm):
         w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))
 
         # If no node features are given, we implement a simple embedding
         # loopkup based on the target node index and its edge type.
         if x_j is None:
             w = w.view(-1, self.out_channels)
-            j = 1 if self.flow == 'target_to_source' else 0
-            index = edge_type * self.in_channels + edge_index[j]
+            index = edge_type * self.in_channels + edge_index_j
             out = torch.index_select(w, 0, index)
         else:
             w = w.view(self.num_relations, self.in_channels, self.out_channels)

@@ -3,6 +3,9 @@ import inspect
 import torch
 from torch_geometric.utils import scatter_
 
+special_args = [
+    'edge_index', 'edge_index_i', 'edge_index_j', 'size', 'size_i', 'size_j'
+]
 __size_error_msg__ = ('All tensors which should get mapped to the same source'
                       'or target nodes must be of same size in dimension 0.')
 
@@ -40,8 +43,14 @@ class MessagePassing(torch.nn.Module):
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
 
-        self.message_args = inspect.getfullargspec(self.message)[0][1:]
-        self.update_args = inspect.getfullargspec(self.update)[0][2:]
+        self.__message_args__ = inspect.getfullargspec(self.message)[0][1:]
+        self.__special_args__ = [(i, arg)
+                                 for i, arg in enumerate(self.__message_args__)
+                                 if arg in special_args]
+        self.__message_args__ = [
+            arg for arg in self.__message_args__ if arg not in special_args
+        ]
+        self.__update_args__ = inspect.getfullargspec(self.update)[0][2:]
 
     def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
@@ -60,12 +69,11 @@ class MessagePassing(torch.nn.Module):
         size = [None, None] if size is None else list(size)
         assert len(size) == 2
 
-        kwargs['edge_index'] = edge_index
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
         ij = {"_i": i, "_j": j}
 
         message_args = []
-        for arg in self.message_args:
+        for arg in self.__message_args__:
             if arg[-2:] in ij.keys():
                 tmp = kwargs[arg[:-2]]
                 if tmp is None:  # pragma: no cover
@@ -93,8 +101,16 @@ class MessagePassing(torch.nn.Module):
         size[0] = size[1] if size[0] is None else size[0]
         size[1] = size[0] if size[1] is None else size[1]
 
+        kwargs['edge_index'] = edge_index
         kwargs['size'] = size
-        update_args = [kwargs[arg] for arg in self.update_args]
+
+        for (idx, arg) in self.__special_args__:
+            if arg[-2:] in ij.keys():
+                message_args.insert(idx, kwargs[arg[:-2]][ij[arg[-2:]]])
+            else:
+                message_args.insert(idx, kwargs[arg])
+
+        update_args = [kwargs[arg] for arg in self.__update_args__]
 
         out = self.message(*message_args)
         out = scatter_(self.aggr, out, edge_index[i], dim_size=size[i])

@@ -29,7 +29,7 @@ This is done with the help of the following methods:
   For bipartite graphs with two independent sets of nodes and indices, and each set holding its own information, this split can be marked by passing the information as a tuple, *e.g.* :obj:`x=(x_row, x_col)` and to indicate the memberships to the different sets.
 * :meth:`torch_geometric.nn.MessagePassing.message`: Constructs messages to node :math:`i` in analogy to :math:`\phi` for each edge in :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and :math:`(i,j) \in \mathcal{E}` if :obj:`flow="target_to_source"`.
   Can take any argument which was initially passed to :meth:`propagate`.
-  In addition, features can be mapped to the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+  In addition, node features and tuples can be mapped to the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
 * :meth:`torch_geometric.nn.MessagePassing.update`: Updates node embeddings in analogy to :math:`\gamma` for each node :math:`i \in \mathcal{V}`.
   Takes in the output of aggregation as first argument and any argument which was initially passed to :meth:`propagate`.
 
@@ -65,7 +65,7 @@ The full layer implementation is shown below:
 
     class GCNConv(MessagePassing):
         def __init__(self, in_channels, out_channels):
-            super(GCNConv, self).__init__(aggr='add') # "Add" aggregation.
+            super(GCNConv, self).__init__(aggr='add')  # "Add" aggregation.
             self.lin = torch.nn.Linear(in_channels, out_channels)
 
         def forward(self, x, edge_index):

@@ -87,12 +87,11 @@ class GATConv(MessagePassing):
         x = torch.mm(x, self.weight).view(-1, self.heads, self.out_channels)
         return self.propagate(edge_index, x=x, num_nodes=x.size(0))
 
-    def message(self, edge_index, x_i, x_j, num_nodes):
+    def message(self, edge_index_i, x_i, x_j, num_nodes):
         # Compute attention coefficients.
         alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        i = 0 if self.flow == 'target_to_source' else 1
-        alpha = softmax(alpha, edge_index[i], num_nodes)
+        alpha = softmax(alpha, edge_index_i, num_nodes)
 
         # Sample attention coefficients stochastically.
         if self.training and self.dropout > 0:
