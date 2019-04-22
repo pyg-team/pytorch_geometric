@@ -1,6 +1,6 @@
 import torch
 from torch.nn import Parameter
-from torch_geometric.nn import MessagePassing
+from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import reset, uniform
 
