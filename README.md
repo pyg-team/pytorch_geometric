@@ -215,7 +215,7 @@ See the [Frequently Asked Questions](https://rusty1s.github.io/pytorch_geometric
 
 ```
 cd examples
-python cora.py
+python gcn.py
 ```
 
 ## Cite
