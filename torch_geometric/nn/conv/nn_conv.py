@@ -1,11 +1,11 @@
 import torch
 from torch.nn import Parameter
-from torch_geometric.utils import scatter_
+from torch_geometric.nn import MessagePassing
 
 from ..inits import reset, uniform
 
 
-class NNConv(torch.nn.Module):
+class NNConv(MessagePassing):
     r"""The continuous kernel-based convolutional operator adapted from the
     `"Neural Message Passing for Quantum Chemistry"
     <https://arxiv.org/abs/1704.01212>`_ paper
@@ -35,10 +35,10 @@ class NNConv(torch.nn.Module):
                  in_channels,
                  out_channels,
                  nn,
-                 aggr="add",
+                 aggr='add',
                  root_weight=True,
                  bias=True):
-        super(NNConv, self).__init__()
+        super(NNConv, self).__init__(aggr)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -63,24 +63,22 @@ class NNConv(torch.nn.Module):
         uniform(size, self.root)
         uniform(size, self.bias)
 
-    def forward(self, x, edge_index, pseudo):
+    def forward(self, x, edge_index, edge_attr):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
-        pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
-        row, col = edge_index
+        pseudo = edge_attr.unsqueeze(-1) if edge_attr.dim() == 1 else edge_attr
+        return self.propagate(edge_index, x=x, pseudo=pseudo)
 
-        out = self.nn(pseudo)
-        out = out.view(-1, self.in_channels, self.out_channels)
-        out = torch.matmul(x[col].unsqueeze(1), out).squeeze(1)
-        out = scatter_(self.aggr, out, row, dim_size=x.size(0))
+    def message(self, x_j, pseudo):
+        weight = self.nn(pseudo).view(-1, self.in_channels, self.out_channels)
+        return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
 
+    def update(self, aggr_out, x):
         if self.root is not None:
-            out = out + torch.mm(x, self.root)
-
+            aggr_out = aggr_out + torch.mm(x, self.root)
         if self.bias is not None:
-            out = out + self.bias
-
-        return out
+            aggr_out = aggr_out + self.bias
+        return aggr_out
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
