@@ -53,12 +53,11 @@ class AGNNConv(MessagePassing):
         return self.propagate(
             edge_index, x=x, x_norm=x_norm, num_nodes=x.size(0))
 
-    def message(self, edge_index, x_j, x_norm_i, x_norm_j, num_nodes):
+    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes):
         # Compute attention coefficients.
         beta = self.beta if self.requires_grad else self._buffers['beta']
         alpha = beta * (x_norm_i * x_norm_j).sum(dim=-1)
-        i = 0 if self.flow == 'target_to_source' else 1
-        alpha = softmax(alpha, edge_index[i], num_nodes)
+        alpha = softmax(alpha, edge_index_i, num_nodes)
 
         return x_j * alpha.view(-1, 1)
 
