@@ -14,7 +14,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 train_dataset = MNISTSuperpixels(path, True, transform=T.Cartesian())
 test_dataset = MNISTSuperpixels(path, False, transform=T.Cartesian())
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 d = train_dataset
 
 
@@ -27,11 +27,11 @@ def normalized_cut_2d(edge_index, pos):
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        n1 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 32))
-        self.conv1 = NNConv(d.num_features, 32, n1)
+        nn1 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 32))
+        self.conv1 = NNConv(d.num_features, 32, nn1, aggr='mean')
 
-        n2 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 2048))
-        self.conv2 = NNConv(32, 64, n2)
+        nn2 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 2048))
+        self.conv2 = NNConv(32, 64, nn2, aggr='mean')
 
         self.fc1 = torch.nn.Linear(64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
