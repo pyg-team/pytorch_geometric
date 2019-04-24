@@ -11,7 +11,7 @@ class ARMAConv(torch.nn.Module):
     with Convolutional ARMA Filters" <https://arxiv.org/abs/1901.01343>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} = \sum_{k=1}^K \mathbf{X}_k^{(T)},
+        \mathbf{X}^{\prime} = \frac{1}{K} \sum_{k=1}^K \mathbf{X}_k^{(T)},
 
     with :math:`\mathbf{X}_k^{(T)}` being recursively defined by
 
@@ -109,14 +109,10 @@ class ARMAConv(torch.nn.Module):
         for t in range(self.num_layers):
             w = self.ws[min(t, 1) if self.shared_weights else t]
             out = torch.matmul(out, w)
-            if self.training and self.dropout > 0:
-                out = F.dropout(out, p=self.dropout, training=True)
             out = out[:, col] * lap.view(1, -1, 1)
             out = scatter_add(out, row, dim=1, dim_size=x.size(1))
 
-            skip = x
-            if self.training and self.dropout > 0:
-                skip = F.dropout(skip, p=self.dropout, training=True)
+            skip = F.dropout(x, p=self.dropout, training=self.training)
             v = self.vs[0 if self.shared_weights else t]
             skip = torch.matmul(skip, v)
 
