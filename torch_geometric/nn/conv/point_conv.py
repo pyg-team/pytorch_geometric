@@ -52,7 +52,7 @@ class PointConv(MessagePassing):
         """
         if torch.is_tensor(x):
             edge_index, _ = remove_self_loops(edge_index)
-            edge_index = add_self_loops(edge_index, num_nodes=x.size(1))
+            edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
 
         return self.propagate(edge_index, x=x, pos=pos)
 
