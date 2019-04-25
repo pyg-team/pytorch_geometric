@@ -1,5 +1,7 @@
 import torch
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import remove_self_loops, add_self_loops
+
 from ..inits import reset
 
 
@@ -19,23 +21,20 @@ def point_pair_features(pos_i, pos_j, norm_i, norm_j):
 
 
 class PPFConv(MessagePassing):
-    r"""The PPF-Net operator from the `"PPFNet: Global Context Aware Local
+    r"""The PPFNet operator from the `"PPFNet: Global Context Aware Local
     Features for Robust 3D Point Matching" <https://arxiv.org/abs/1802.02669>`_
     paper
 
     .. math::
         \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in
-        \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \Vert l \Vert
-        \angle(n1, d) \Vert \angle(n2, d) \Vert \angle(n1,n2)  )\right)
+        \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j, \|
+        \mathbf{d_{j,i}} \|, \angle(\mathbf{n}_i, \mathbf{d_{j,i}}),
+        \angle(\mathbf{n}_j, \mathbf{d_{j,i}}), \angle(\mathbf{n}_i,
+        \mathbf{n}_j) \right)
 
     where :math:`\gamma_{\mathbf{\Theta}}` and :math:`h_{\mathbf{\Theta}}`
-    denote neural networks, *.i.e.* MLPs,
-    :math:`\mathbf{P} \in \mathbb{R}^{N \times D}` defines the position of
-    each point, :math:`d' the vector defining the distance between two points,
-    :math:`l' the normalized length of :math:`d', :math:`n1' and :math:`n2' the
-    normal vectors of the points.
-    The angle calculation is defined by :math:`\angle(v_1, v_2) =
-    atan2(\lVert v_1 \times v_2 \rVert, v_1 \cdot v_2)'.
+    denote neural networks, *.i.e.* MLPs, which takes in node features and
+    :class:`torch_geometric.transforms.PointPairFeatures`.
 
     Args:
         local_nn (nn.Sequential, optional): Neural network
@@ -68,6 +67,10 @@ class PPFConv(MessagePassing):
                 for use in message passing in bipartite graphs.
             edge_index (LongTensor): The edge indices.
         """
+        if torch.is_tensor(x):
+            edge_index, _ = remove_self_loops(edge_index)
+            edge_index = add_self_loops(edge_index, num_nodes=x.size(1))
+
         return self.propagate(edge_index, x=x, pos=pos, norm=norm)
 
     def message(self, x_j, pos_i, pos_j, norm_i, norm_j):
