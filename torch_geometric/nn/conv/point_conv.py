@@ -43,7 +43,7 @@ class PointConv(MessagePassing):
     def forward(self, x, pos, edge_index):
         r"""
         Args:
-            x (Tensor): The node feature matrix Can be set to :obj:`None`.
+            x (Tensor): The node feature matrix. Allowed to be :obj:`None`.
             pos (Tensor or tuple): The node position matrix. Either given as
                 tensor for use in general message passing or as tuple for use
                 in message passing in bipartite graphs.
@@ -51,7 +51,7 @@ class PointConv(MessagePassing):
         """
         return self.propagate(edge_index, x=x, pos=pos)
 
-    def message(self, x_j, pos_j, pos_i):
+    def message(self, x_j, pos_i, pos_j):
         msg = pos_j - pos_i
         if x_j is not None:
             msg = torch.cat([x_j, msg], dim=1)

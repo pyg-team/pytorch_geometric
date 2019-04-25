@@ -5,6 +5,7 @@ from .cartesian import Cartesian
 from .local_cartesian import LocalCartesian
 from .polar import Polar
 from .spherical import Spherical
+from .point_pair_features import PointPairFeatures
 from .one_hot_degree import OneHotDegree
 from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
@@ -36,6 +37,7 @@ __all__ = [
     'LocalCartesian',
     'Polar',
     'Spherical',
+    'PointPairFeatures',
     'OneHotDegree',
     'TargetIndegree',
     'LocalDegreeProfile',

@@ -1,9 +1,24 @@
 import torch
-from torch_geometric.utils import remove_self_loops, add_self_loops, scatter_
+from torch_geometric.nn.conv import MessagePassing
 from ..inits import reset
 
 
-class PPFConv(torch.nn.Module):
+def point_pair_features(pos_i, pos_j, norm_i, norm_j):
+    def get_angle(v1, v2):
+        return torch.atan2(
+            torch.cross(v1, v2, dim=1).norm(p=2, dim=1), (v1 * v2).sum(dim=1))
+
+    pseudo = pos_j - pos_i
+    return torch.stack([
+        pseudo.norm(p=2, dim=1),
+        get_angle(norm_i, pseudo),
+        get_angle(norm_j, pseudo),
+        get_angle(norm_i, norm_j)
+    ],
+                       dim=1)
+
+
+class PPFConv(MessagePassing):
     r"""The PPF-Net operator from the `"PPFNet: Global Context Aware Local
     Features for Robust 3D Point Matching" <https://arxiv.org/abs/1802.02669>`_
     paper
@@ -30,58 +45,43 @@ class PPFConv(torch.nn.Module):
     """
 
     def __init__(self, local_nn=None, global_nn=None):
-        super(PPFConv, self).__init__()
+        super(PPFConv, self).__init__('max')
+
         self.local_nn = local_nn
         self.global_nn = global_nn
+
         self.reset_parameters()
-
-    def get_angle(self, v1, v2):
-        return torch.atan2(
-            torch.cross(v1, v2, dim=1).norm(dim=1), (v1 * v2).sum(dim=1))
-
-    def getPointFeatures(self, pos, norm, edge_index):
-        row, col = edge_index
-        n1 = norm[row]
-        n2 = norm[col]
-        d = pos[col] - pos[row]
-
-        # normalize distance vector
-        dist = d.pow(2).sum(1)
-        dist = torch.div(dist, dist.sum(0) / d.size(0))
-
-        pf = torch.stack([
-            dist,
-            self.get_angle(n1, d),
-            self.get_angle(n2, d),
-            self.get_angle(n1, n2)
-        ])
-        return pf
 
     def reset_parameters(self):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x, pos, edge_index, norm, batch):
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index = add_self_loops(edge_index, num_nodes=pos.size(0))
-        row, col = edge_index
+    def forward(self, x, pos, norm, edge_index):
+        r"""
+        Args:
+            x (Tensor): The node feature matrix. Allowed to be :obj:`None`.
+            pos (Tensor or tuple): The node position matrix. Either given as
+                tensor for use in general message passing or as tuple for use
+                in message passing in bipartite graphs.
+            norm (Tensor or tuple): The normal vectors of each node. Either
+                given as tensor for use in general message passing or as tuple
+                for use in message passing in bipartite graphs.
+            edge_index (LongTensor): The edge indices.
+        """
+        return self.propagate(edge_index, x=x, pos=pos, norm=norm)
 
-        ppf = self.getPointFeatures(pos, norm, edge_index)
-        out = ppf.t()
-
-        if x is not None:
-            x = x.unsqueeze(-1) if x.dim() == 1 else x
-            out = torch.cat([x[col], out], dim=1)
-
+    def message(self, x_j, pos_i, pos_j, norm_i, norm_j):
+        msg = point_pair_features(pos_i, pos_j, norm_i, norm_j)
+        if x_j is not None:
+            msg = torch.cat([x_j, msg], dim=1)
         if self.local_nn is not None:
-            out = self.local_nn(out)
+            msg = self.local_nn(msg)
+        return msg
 
-        out = scatter_('max', out, row, dim_size=pos.size(0))
-
+    def update(self, aggr_out):
         if self.global_nn is not None:
-            out = self.global_nn(out)
-
-        return out
+            aggr_out = self.global_nn(aggr_out)
+        return aggr_out
 
     def __repr__(self):
         return '{}(local_nn={}, global_nn={})'.format(
