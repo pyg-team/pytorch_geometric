@@ -58,7 +58,7 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <th>Epochs</th>
       <th>Model</th>
       <th>DGL-DB</th>
-      <th>DGL-SPMV</th>
+      <th>DGL-GS</th>
       <th>PyG</th>
     </tr>
   </thead>
@@ -119,7 +119,7 @@ In addition, PyTorch Geometric is **fast**, even compared to other deep graph ne
       <td colspan="6"><b>DGL-DB:</b> DGL 0.2 with <i>Degree Bucketing</i>.</td>
     </tr>
     <tr>
-      <td colspan="6"><b>DGL-SPMV:</b> DGL 0.2 with <i>SPMV optimization</i> inspired by PyG.</td>
+      <td colspan="6"><b>DGL-GS:</b> DGL 0.2 with <i>Gather/Scatter</i> optimization inspired by PyG.</td>
     </tr>
     <tr>
       <td colspan="6">Training runtimes obtained on a NVIDIA GTX 1080Ti.</td>
