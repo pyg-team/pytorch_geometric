@@ -19,6 +19,7 @@ from .spline_conv import SplineConv
 from .nn_conv import NNConv
 from .edge_conv import EdgeConv
 from .x_conv import XConv
+from .ppf_conv import PPFConv
 
 __all__ = [
     'MessagePassing',
@@ -42,4 +43,5 @@ __all__ = [
     'NNConv',
     'EdgeConv',
     'XConv',
+	'PPFConv',
 ]
