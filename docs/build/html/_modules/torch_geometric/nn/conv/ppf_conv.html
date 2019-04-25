@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch_geometric.nn.conv.point_conv &mdash; pytorch_geometric master documentation</title>
+  <title>torch_geometric.nn.conv.ppf_conv &mdash; pytorch_geometric master documentation</title>
   
 
   
@@ -177,7 +177,7 @@
         
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
         
-      <li>torch_geometric.nn.conv.point_conv</li>
+      <li>torch_geometric.nn.conv.ppf_conv</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -192,7 +192,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for torch_geometric.nn.conv.point_conv</h1><div class="highlight"><pre>
+  <h1>Source code for torch_geometric.nn.conv.ppf_conv</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.nn.conv</span> <span class="k">import</span> <span class="n">MessagePassing</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="k">import</span> <span class="n">remove_self_loops</span><span class="p">,</span> <span class="n">add_self_loops</span>
@@ -200,22 +200,36 @@
 <span class="kn">from</span> <span class="nn">..inits</span> <span class="k">import</span> <span class="n">reset</span>
 
 
-<div class="viewcode-block" id="PointConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PointConv">[docs]</a><span class="k">class</span> <span class="nc">PointConv</span><span class="p">(</span><span class="n">MessagePassing</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The PointNet set layer from the `&quot;PointNet: Deep Learning on Point Sets</span>
-<span class="sd">    for 3D Classification and Segmentation&quot;</span>
-<span class="sd">    &lt;https://arxiv.org/abs/1612.00593&gt;`_ and `&quot;PointNet++: Deep Hierarchical</span>
-<span class="sd">    Feature Learning on Point Sets in a Metric Space&quot;</span>
-<span class="sd">    &lt;https://arxiv.org/abs/1706.02413&gt;`_ papers</span>
+<span class="k">def</span> <span class="nf">point_pair_features</span><span class="p">(</span><span class="n">pos_i</span><span class="p">,</span> <span class="n">pos_j</span><span class="p">,</span> <span class="n">norm_i</span><span class="p">,</span> <span class="n">norm_j</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_angle</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">v1</span> <span class="o">*</span> <span class="n">v2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">pseudo</span> <span class="o">=</span> <span class="n">pos_j</span> <span class="o">-</span> <span class="n">pos_i</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span>
+        <span class="n">pseudo</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">get_angle</span><span class="p">(</span><span class="n">norm_i</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">),</span>
+        <span class="n">get_angle</span><span class="p">(</span><span class="n">norm_j</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">),</span>
+        <span class="n">get_angle</span><span class="p">(</span><span class="n">norm_i</span><span class="p">,</span> <span class="n">norm_j</span><span class="p">)</span>
+    <span class="p">],</span>
+                       <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PPFConv"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PPFConv">[docs]</a><span class="k">class</span> <span class="nc">PPFConv</span><span class="p">(</span><span class="n">MessagePassing</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The PPFNet operator from the `&quot;PPFNet: Global Context Aware Local</span>
+<span class="sd">    Features for Robust 3D Point Matching&quot; &lt;https://arxiv.org/abs/1802.02669&gt;`_</span>
+<span class="sd">    paper</span>
 
 <span class="sd">    .. math::</span>
 <span class="sd">        \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in</span>
-<span class="sd">        \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j,</span>
-<span class="sd">        \mathbf{p}_j - \mathbf{p}_i) \right),</span>
+<span class="sd">        \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j, \|</span>
+<span class="sd">        \mathbf{d_{j,i}} \|, \angle(\mathbf{n}_i, \mathbf{d_{j,i}}),</span>
+<span class="sd">        \angle(\mathbf{n}_j, \mathbf{d_{j,i}}), \angle(\mathbf{n}_i,</span>
+<span class="sd">        \mathbf{n}_j) \right)</span>
 
-<span class="sd">    where :math:`\gamma_{\mathbf{\Theta}}` and</span>
-<span class="sd">    :math:`h_{\mathbf{\Theta}}` denote neural</span>
-<span class="sd">    networks, *.i.e.* MLPs, and :math:`\mathbf{P} \in \mathbb{R}^{N \times D}`</span>
-<span class="sd">    defines the position of each point.</span>
+<span class="sd">    where :math:`\gamma_{\mathbf{\Theta}}` and :math:`h_{\mathbf{\Theta}}`</span>
+<span class="sd">    denote neural networks, *.i.e.* MLPs, which takes in node features and</span>
+<span class="sd">    :class:`torch_geometric.transforms.PointPairFeatures`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        local_nn (nn.Sequential, optional): Neural network</span>
@@ -225,34 +239,37 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_nn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">global_nn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PointConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PPFConv</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">local_nn</span> <span class="o">=</span> <span class="n">local_nn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_nn</span> <span class="o">=</span> <span class="n">global_nn</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PointConv.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PointConv.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PPFConv.reset_parameters"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PPFConv.reset_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_nn</span><span class="p">)</span>
         <span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_nn</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PointConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PointConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
+<div class="viewcode-block" id="PPFConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.PPFConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            x (Tensor): The node feature matrix. Allowed to be :obj:`None`.</span>
 <span class="sd">            pos (Tensor or tuple): The node position matrix. Either given as</span>
 <span class="sd">                tensor for use in general message passing or as tuple for use</span>
 <span class="sd">                in message passing in bipartite graphs.</span>
+<span class="sd">            norm (Tensor or tuple): The normal vectors of each node. Either</span>
+<span class="sd">                given as tensor for use in general message passing or as tuple</span>
+<span class="sd">                for use in message passing in bipartite graphs.</span>
 <span class="sd">            edge_index (LongTensor): The edge indices.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="n">edge_index</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">remove_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
             <span class="n">edge_index</span> <span class="o">=</span> <span class="n">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_j</span><span class="p">,</span> <span class="n">pos_i</span><span class="p">,</span> <span class="n">pos_j</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="n">pos_j</span> <span class="o">-</span> <span class="n">pos_i</span>
+    <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_j</span><span class="p">,</span> <span class="n">pos_i</span><span class="p">,</span> <span class="n">pos_j</span><span class="p">,</span> <span class="n">norm_i</span><span class="p">,</span> <span class="n">norm_j</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">point_pair_features</span><span class="p">(</span><span class="n">pos_i</span><span class="p">,</span> <span class="n">pos_j</span><span class="p">,</span> <span class="n">norm_i</span><span class="p">,</span> <span class="n">norm_j</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">x_j</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x_j</span><span class="p">,</span> <span class="n">msg</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_nn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

@@ -1,5 +1,6 @@
 import torch
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from ..inits import reset
 
@@ -13,8 +14,8 @@ class PointConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \max_{j \in
-        \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j \,
-        \Vert \, \mathbf{p}_j - \mathbf{p}_i) \right),
+        \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j,
+        \mathbf{p}_j - \mathbf{p}_i) \right),
 
     where :math:`\gamma_{\mathbf{\Theta}}` and
     :math:`h_{\mathbf{\Theta}}` denote neural
@@ -49,6 +50,10 @@ class PointConv(MessagePassing):
                 in message passing in bipartite graphs.
             edge_index (LongTensor): The edge indices.
         """
+        if torch.is_tensor(x):
+            edge_index, _ = remove_self_loops(edge_index)
+            edge_index = add_self_loops(edge_index, num_nodes=x.size(1))
+
         return self.propagate(edge_index, x=x, pos=pos)
 
     def message(self, x_j, pos_i, pos_j):

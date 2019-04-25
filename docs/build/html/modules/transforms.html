@@ -348,6 +348,29 @@ attributes will be replaced. (default: <a class="reference external" href="https
 </dd></dl>
 
 <dl class="class">
+<dt id="torch_geometric.transforms.PointPairFeatures">
+<em class="property">class </em><code class="descname">PointPairFeatures</code><span class="sig-paren">(</span><em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/point_pair_features.html#PointPairFeatures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.PointPairFeatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the rotation-invariant Point Pair Features</p>
+<div class="math notranslate nohighlight">
+\[\left( \| \mathbf{d_{j,i}} \|, \angle(\mathbf{n}_i, \mathbf{d_{j,i}}),
+\angle(\mathbf{n}_j, \mathbf{d_{j,i}}), \angle(\mathbf{n}_i,
+\mathbf{n}_j) \right)\]</div>
+<p>of linked nodes in its edge attributes, where <span class="math notranslate nohighlight">\(\mathbf{d}_{j,i}\)</span>
+denotes the difference vector between, and <span class="math notranslate nohighlight">\(\mathbf{n}_i\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{n}_j\)</span> denote the surface normals of node <span class="math notranslate nohighlight">\(i\)</span> and
+<span class="math notranslate nohighlight">\(j\)</span> respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, all existing edge
+attributes will be replaced. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
 <dt id="torch_geometric.transforms.OneHotDegree">
 <em class="property">class </em><code class="descname">OneHotDegree</code><span class="sig-paren">(</span><em>max_degree</em>, <em>cat=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/one_hot_degree.html#OneHotDegree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.OneHotDegree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds the node degree as one hot encodings to the node features.</p>
