@@ -60,6 +60,6 @@ def dense_diff_pool(x, adj, s, mask=None):
     link_loss = torch.norm(link_loss, p=2)
     link_loss = link_loss / adj.numel()
 
-    ent_loss = (-s * torch.log(s + EPS)).mean()
+    ent_loss = (-s * torch.log(s + EPS)).sum(dim=-1).mean()
 
     return out, out_adj, link_loss, ent_loss
