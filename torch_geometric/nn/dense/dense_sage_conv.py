@@ -50,6 +50,7 @@ class DenseSAGEConv(torch.nn.Module):
         B, N, _ = x.size()
 
         if add_loop:
+            adj = adj.clone()
             idx = torch.arange(N, dtype=torch.long, device=adj.device)
             adj[:, idx, idx] = 1
 

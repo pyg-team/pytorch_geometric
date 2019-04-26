@@ -85,10 +85,15 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.gnn1_pool = GNN(3, 64, ceil(0.1 * max_nodes), add_loop=True)
+        num_nodes = ceil(0.25 * max_nodes)
+        self.gnn1_pool = GNN(3, 64, num_nodes, add_loop=True)
         self.gnn1_embed = GNN(3, 64, 64, add_loop=True, lin=False)
 
+        num_nodes = ceil(0.25 * max_nodes)
+        self.gnn2_pool = GNN(3 * 64, 64, num_nodes)
         self.gnn2_embed = GNN(3 * 64, 64, 64, lin=False)
+
+        self.gnn3_embed = GNN(3 * 64, 64, 64, lin=False)
 
         self.lin1 = torch.nn.Linear(3 * 64, 64)
         self.lin2 = torch.nn.Linear(64, 6)
@@ -97,14 +102,19 @@ class Net(torch.nn.Module):
         s = self.gnn1_pool(x, adj, mask)
         x = self.gnn1_embed(x, adj, mask)
 
-        x, adj, reg = dense_diff_pool(x, adj, s, mask)
+        x, adj, l1, e1 = dense_diff_pool(x, adj, s, mask)
 
+        s = self.gnn2_pool(x, adj)
         x = self.gnn2_embed(x, adj)
+
+        x, adj, l2, e2 = dense_diff_pool(x, adj, s)
+
+        x = self.gnn3_embed(x, adj)
 
         x = x.mean(dim=1)
         x = F.relu(self.lin1(x))
         x = self.lin2(x)
-        return F.log_softmax(x, dim=-1), reg
+        return F.log_softmax(x, dim=-1), l1 + l2, e1 + e2
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -119,8 +129,8 @@ def train(epoch):
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        output, reg = model(data.x, data.adj, data.mask)
-        loss = F.nll_loss(output, data.y.view(-1)) + reg
+        output, link_loss, ent_loss = model(data.x, data.adj, data.mask)
+        loss = F.nll_loss(output, data.y.view(-1))
         loss.backward()
         loss_all += data.y.size(0) * loss.item()
         optimizer.step()
