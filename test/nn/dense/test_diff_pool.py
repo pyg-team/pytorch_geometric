@@ -9,7 +9,8 @@ def test_dense_diff_pool():
     s = torch.randn((batch_size, num_nodes, num_clusters))
     mask = torch.randint(0, 1, (batch_size, num_nodes), dtype=torch.uint8)
 
-    x, adj, reg = dense_diff_pool(x, adj, s, mask)
+    x, adj, link_loss, ent_loss = dense_diff_pool(x, adj, s, mask)
     assert x.size() == (2, 10, 16)
     assert adj.size() == (2, 10, 10)
-    assert reg.item() >= 0
+    assert link_loss.item() >= 0
+    assert ent_loss.item() >= 0
