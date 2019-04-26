@@ -1,5 +1,7 @@
 import torch
 
+EPS = 1e-15
+
 
 def dense_diff_pool(x, adj, s, mask=None):
     r"""Differentiable pooling operator from the `"Hierarchical Graph
@@ -58,6 +60,6 @@ def dense_diff_pool(x, adj, s, mask=None):
     link_loss = torch.norm(link_loss, p=2)
     link_loss = link_loss / adj.numel()
 
-    ent_loss = 0
+    ent_loss = (-s * torch.log(s + EPS)).mean()
 
     return out, out_adj, link_loss, ent_loss
