@@ -151,7 +151,7 @@ def test(loader):
 
 
 best_val_acc = test_acc = 0
-for epoch in range(1, 1001):
+for epoch in range(1, 151):
     train_loss = train(epoch)
     val_acc = test(val_loader)
     if val_acc > best_val_acc:
