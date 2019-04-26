@@ -10,6 +10,8 @@ from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
 
 max_nodes = 100
 
+torch.manual_seed(1245)
+
 
 class MyFilter(object):
     def __call__(self, data):
@@ -130,7 +132,7 @@ def train(epoch):
         data = data.to(device)
         optimizer.zero_grad()
         output, link_loss, ent_loss = model(data.x, data.adj, data.mask)
-        loss = F.nll_loss(output, data.y.view(-1))
+        loss = F.nll_loss(output, data.y.view(-1)) + link_loss + ent_loss
         loss.backward()
         loss_all += data.y.size(0) * loss.item()
         optimizer.step()
