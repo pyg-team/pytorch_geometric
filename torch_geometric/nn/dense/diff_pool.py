@@ -38,7 +38,7 @@ def dense_diff_pool(x, adj, s, mask=None):
             the valid nodes for each graph. (default: :obj:`None`)
 
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
-    :class:`Tensor`)
+        :class:`Tensor`)
     """
 
     x = x.unsqueeze(0) if x.dim() == 2 else x
