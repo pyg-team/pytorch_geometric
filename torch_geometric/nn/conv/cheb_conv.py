@@ -1,6 +1,7 @@
 import torch
 from torch.nn import Parameter
 from torch_sparse import spmm
+from torch_scatter import scatter_add
 from torch_geometric.utils import degree, remove_self_loops
 
 from ..inits import uniform
@@ -66,7 +67,7 @@ class ChebConv(torch.nn.Module):
         edge_weight = edge_weight.view(-1)
         assert edge_weight.size(0) == edge_index.size(1)
 
-        deg = degree(row, num_nodes, dtype=x.dtype)
+        deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
 
         # Compute normalized and rescaled Laplacian.
         deg = deg.pow(-0.5)
