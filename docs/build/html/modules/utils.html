@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                master (1.1.3)
+                master (1.2.0)
               </div>
             
           
@@ -255,8 +255,10 @@ minimal sized output tensor is returned. (default: <a class="reference external"
 <dl class="function">
 <dt id="torch_geometric.utils.softmax">
 <code class="descname">softmax</code><span class="sig-paren">(</span><em>src</em>, <em>index</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/softmax.html#softmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.softmax" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sparse softmax of all values from the <code class="xref py py-attr docutils literal notranslate"><span class="pre">src</span></code> tensor at the indices
-specified in the <code class="xref py py-attr docutils literal notranslate"><span class="pre">index</span></code> tensor along the first dimension.</p>
+<dd><p>Computes a sparsely evaluated softmax.
+Given a value tensor <code class="xref py py-attr docutils literal notranslate"><span class="pre">src</span></code>, this function first groups those values
+along the first dimension based on the indices specified in <code class="xref py py-attr docutils literal notranslate"><span class="pre">index</span></code>,
+and then proceeds to compute the softmax individually for each group.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -585,25 +587,49 @@ edge features. (default: <a class="reference external" href="https://docs.python
 </dd></dl>
 
 <dl class="function">
+<dt id="torch_geometric.utils.from_scipy_sparse_matrix">
+<code class="descname">from_scipy_sparse_matrix</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/convert.html#from_scipy_sparse_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.from_scipy_sparse_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Converts a scipy sparse matrix to edge indices and edge attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>A</strong> (<em>scipy.sparse</em>) – A sparse matrix.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="torch_geometric.utils.to_networkx">
-<code class="descname">to_networkx</code><span class="sig-paren">(</span><em>edge_index</em>, <em>x=None</em>, <em>edge_attr=None</em>, <em>pos=None</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/convert.html#to_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.to_networkx" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a graph given by edge indices, node features, node positions
-and edge attributes to a networkx graph.</p>
+<code class="descname">to_networkx</code><span class="sig-paren">(</span><em>data</em>, <em>node_attrs=None</em>, <em>edge_attrs=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/convert.html#to_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.to_networkx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a data object graph to a networkx graph.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>edge_index</strong> (<em>LongTensor</em>) – The edge indices.</li>
-<li><strong>x</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – The node feature matrix. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
-<li><strong>edge_attr</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Edge weights or multi-dimensional
-edge features. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
-<li><strong>pos</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – The node position matrix.
-(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
-<li><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nodes, <em>i.e.</em>
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">max_val</span> <span class="pre">+</span> <span class="pre">1</span></code> of <code class="xref py py-attr docutils literal notranslate"><span class="pre">index</span></code>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>data</strong> (<a class="reference internal" href="data.html#torch_geometric.data.Data" title="torch_geometric.data.Data"><em>torch_geometric.data.Data</em></a>) – The data object.</li>
+<li><strong>node_attrs</strong> (<em>iterable of str</em><em>, </em><em>optional</em>) – The node attributes to be
+copied. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>edge_attrs</strong> (<em>iterable of str</em><em>, </em><em>optional</em>) – The edge attributes to be
+copied. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 </ul>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.from_networkx">
+<code class="descname">from_networkx</code><span class="sig-paren">(</span><em>G</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/convert.html#from_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.from_networkx" title="Permalink to this definition">¶</a></dt>
+<dd><p>“Converts a networkx graph to a data object graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>G</strong> (<em>networkx.Graph</em>) – A networkx graph.</td>
 </tr>
 </tbody>
 </table>

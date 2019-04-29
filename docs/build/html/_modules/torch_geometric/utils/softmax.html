@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.1.3)
+                master (1.2.0)
               </div>
             
           
@@ -199,8 +199,10 @@
 
 
 <div class="viewcode-block" id="softmax"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.softmax">[docs]</a><span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sparse softmax of all values from the :attr:`src` tensor at the indices</span>
-<span class="sd">    specified in the :attr:`index` tensor along the first dimension.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes a sparsely evaluated softmax.</span>
+<span class="sd">    Given a value tensor :attr:`src`, this function first groups those values</span>
+<span class="sd">    along the first dimension based on the indices specified in :attr:`index`,</span>
+<span class="sd">    and then proceeds to compute the softmax individually for each group.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        src (Tensor): The source tensor.</span>
