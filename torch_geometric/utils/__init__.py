@@ -9,7 +9,8 @@ from .to_dense_batch import to_dense_batch
 from .normalized_cut import normalized_cut
 from .grid import grid
 from .sparse import dense_to_sparse, sparse_to_dense
-from .convert import to_scipy_sparse_matrix, to_networkx
+from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
+from .convert import to_networkx, from_networkx
 from .one_hot import one_hot
 from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score)
@@ -31,7 +32,9 @@ __all__ = [
     'dense_to_sparse',
     'sparse_to_dense',
     'to_scipy_sparse_matrix',
+    'from_scipy_sparse_matrix',
     'to_networkx',
+    'from_networkx',
     'one_hot',
     'accuracy',
     'true_positive',
