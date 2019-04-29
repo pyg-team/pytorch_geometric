@@ -6,7 +6,7 @@ from torch_geometric.utils import scatter_
 special_args = [
     'edge_index', 'edge_index_i', 'edge_index_j', 'size', 'size_i', 'size_j'
 ]
-__size_error_msg__ = ('All tensors which should get mapped to the same source'
+__size_error_msg__ = ('All tensors which should get mapped to the same source '
                       'or target nodes must be of same size in dimension 0.')
 
 
