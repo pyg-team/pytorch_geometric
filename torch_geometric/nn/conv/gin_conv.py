@@ -1,11 +1,11 @@
 import torch
-from torch_scatter import scatter_add
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops
 
 from ..inits import reset
 
 
-class GINConv(torch.nn.Module):
+class GINConv(MessagePassing):
     r"""The graph isomorphism operator from the `"How Powerful are
     Graph Neural Networks?" <https://arxiv.org/abs/1810.00826>`_ paper
 
@@ -24,7 +24,7 @@ class GINConv(torch.nn.Module):
     """
 
     def __init__(self, nn, eps=0, train_eps=False):
-        super(GINConv, self).__init__()
+        super(GINConv, self).__init__('add')
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
@@ -41,12 +41,11 @@ class GINConv(torch.nn.Module):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         edge_index, _ = remove_self_loops(edge_index)
-        row, col = edge_index
-
-        out = scatter_add(x[col], row, dim=0, dim_size=x.size(0))
-        out = (1 + self.eps) * x + out
-        out = self.nn(out)
+        out = self.nn((1 + self.eps) * x + self.propagate(edge_index, x=x))
         return out
+
+    def message(self, x_j):
+        return x_j
 
     def __repr__(self):
         return '{}(nn={})'.format(self.__class__.__name__, self.nn)
