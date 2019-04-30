@@ -1,8 +1,11 @@
 import torch
 from torch.nn import Parameter
+from torch_scatter import scatter_add
 from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import uniform, reset
+
+EPS = 1e-15
 
 
 class GMMConv(MessagePassing):
@@ -31,12 +34,21 @@ class GMMConv(MessagePassing):
         out_channels (int): Size of each output sample.
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int): Number of kernels :math:`K`.
+        root_weight (bool, optional): If set to :obj:`False`, the layer will
+            not add transformed root node features to the output.
+            (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
 
-    def __init__(self, in_channels, out_channels, dim, kernel_size, bias=True):
-        super(GMMConv, self).__init__('mean')  # Use normalized gaussians.
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 dim,
+                 kernel_size,
+                 root_weight=True,
+                 bias=True):
+        super(GMMConv, self).__init__('add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -45,14 +57,19 @@ class GMMConv(MessagePassing):
 
         self.mu = Parameter(torch.Tensor(in_channels * kernel_size, dim))
         self.sigma = Parameter(torch.Tensor(in_channels * kernel_size, dim))
+        if root_weight:
+            self.root = Parameter(torch.Tensor(in_channels, out_channels))
+        else:
+            self.register_parameter('root', None)
         self.lin = torch.nn.Linear(in_channels, out_channels, bias=bias)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.in_channels
+        size = self.kernel_size * self.in_channels
         uniform(size, self.mu)
         uniform(size, self.sigma)
+        uniform(size, self.root)
         reset(self.lin)
 
     def forward(self, x, edge_index, pseudo):
@@ -61,15 +78,24 @@ class GMMConv(MessagePassing):
         pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
 
         out = self.propagate(edge_index, x=x, pseudo=pseudo)
-        return self.lin(out)
 
-    def message(self, x_j, pseudo):
+        out = self.lin(out)
+        if self.root is not None:
+            out = out + torch.matmul(x, self.root)
+        return out
+
+    def message(self, edge_index_i, size_i, x_j, pseudo):
         F, (E, D), K = x_j.size(1), pseudo.size(), self.mu.size(0)
 
         # See: https://github.com/shchur/gnn-benchmark
         gaussian = -0.5 * (pseudo.view(E, 1, D) - self.mu.view(1, K, D))**2
         gaussian = gaussian / (1e-14 + self.sigma.view(1, K, D)**2)
-        gaussian = torch.exp(gaussian.sum(dim=-1))
+        gaussian = torch.exp(gaussian.sum(dim=-1))  # [E, K]
+
+        # Normalize gaussians across edge dimension.
+        gaussian_sum = scatter_add(
+            gaussian, edge_index_i, dim=0, dim_size=size_i)[edge_index_i]
+        gaussian = gaussian / (gaussian_sum + EPS)
 
         return x_j * gaussian.view(E, F, -1).sum(dim=-1)
 
