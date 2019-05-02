@@ -11,3 +11,6 @@ def test_gcn_conv():
     conv = GatedGraphConv(out_channels, num_layers=3)
     assert conv.__repr__() == 'GatedGraphConv(32, num_layers=3)'
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
+
+    edge_weight = torch.randn(6)
+    assert conv(x, edge_index, edge_weight).size() == (num_nodes, out_channels)
