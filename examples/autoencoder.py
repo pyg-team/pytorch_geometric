@@ -39,19 +39,19 @@ class Encoder(torch.nn.Module):
 
 
 channels = 16
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = kwargs[args.model](Encoder(dataset.num_features, channels)).to(device)
+dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = kwargs[args.model](Encoder(dataset.num_features, channels)).to(dev)
 data.train_mask = data.val_mask = data.test_mask = data.y = None
 data = model.split_edges(data)
-x, edge_index = data.x.to(device), data.edge_index.to(device)
+x, train_pos_edge_index = data.x.to(dev), data.train_pos_edge_index.to(dev)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train():
     model.train()
     optimizer.zero_grad()
-    z = model.encode(x, edge_index)
-    loss = model.recon_loss(z, data.train_pos_edge_index)
+    z = model.encode(x, train_pos_edge_index)
+    loss = model.recon_loss(z, train_pos_edge_index)
     if args.model in ['VGAE']:
         loss = loss + 0.001 * model.kl_loss()
     loss.backward()
@@ -61,7 +61,7 @@ def train():
 def test(pos_edge_index, neg_edge_index):
     model.eval()
     with torch.no_grad():
-        z = model.encode(x, edge_index)
+        z = model.encode(x, train_pos_edge_index)
     return model.test(z, pos_edge_index, neg_edge_index)
 
 
