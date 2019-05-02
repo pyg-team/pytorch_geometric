@@ -132,8 +132,8 @@ class GAE(torch.nn.Module):
         data.test_pos_edge_index = torch.stack([r, c], dim=0)
 
         r, c = row[n_v + n_t:], col[n_v + n_t:]
-        edge_index = torch.stack([r, c], dim=0)
-        data.train_pos_edge_index = to_undirected(edge_index)
+        data.train_pos_edge_index = torch.stack([r, c], dim=0)
+        data.train_pos_edge_index = to_undirected(data.train_pos_edge_index)
 
         # Negative edges.
         num_nodes = data.num_nodes
