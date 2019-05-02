@@ -34,6 +34,8 @@ class GMMConv(MessagePassing):
         out_channels (int): Size of each output sample.
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int): Number of kernels :math:`K`.
+        aggr (string): The aggregation operator to use (:obj:`"add"`,
+            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
@@ -46,9 +48,10 @@ class GMMConv(MessagePassing):
                  out_channels,
                  dim,
                  kernel_size,
+                 aggr='add',
                  root_weight=True,
                  bias=True):
-        super(GMMConv, self).__init__('add')
+        super(GMMConv, self).__init__(aggr)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -89,13 +92,8 @@ class GMMConv(MessagePassing):
 
         # See: https://github.com/shchur/gnn-benchmark
         gaussian = -0.5 * (pseudo.view(E, 1, D) - self.mu.view(1, K, D))**2
-        gaussian = gaussian / (1e-14 + self.sigma.view(1, K, D)**2)
+        gaussian = gaussian / (EPS + self.sigma.view(1, K, D)**2)
         gaussian = torch.exp(gaussian.sum(dim=-1))  # [E, K]
-
-        # Normalize gaussians across edge dimension.
-        gaussian_sum = scatter_add(
-            gaussian, edge_index_i, dim=0, dim_size=size_i)[edge_index_i]
-        gaussian = gaussian / (gaussian_sum + EPS)
 
         return x_j * gaussian.view(E, F, -1).sum(dim=-1)
 
