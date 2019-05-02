@@ -87,7 +87,7 @@ class GMMConv(MessagePassing):
             out = out + torch.matmul(x, self.root)
         return out
 
-    def message(self, edge_index_i, size_i, x_j, pseudo):
+    def message(self, x_j, pseudo):
         F, (E, D), K = x_j.size(1), pseudo.size(), self.mu.size(0)
 
         # See: https://github.com/shchur/gnn-benchmark
