@@ -4,6 +4,7 @@ import random
 import torch
 import numpy as np
 from sklearn.metrics import roc_auc_score, average_precision_score
+from torch_geometric.utils import to_undirected
 
 from ..inits import reset
 
@@ -112,6 +113,7 @@ class GAE(torch.nn.Module):
         assert 'batch' not in data  # No batch-mode.
 
         row, col = data.edge_index
+        data.edge_index = None
 
         # Return upper triangular portion.
         mask = row < col
@@ -128,8 +130,10 @@ class GAE(torch.nn.Module):
         data.val_pos_edge_index = torch.stack([r, c], dim=0)
         r, c = row[n_v:n_v + n_t], col[n_v:n_v + n_t]
         data.test_pos_edge_index = torch.stack([r, c], dim=0)
+
         r, c = row[n_v + n_t:], col[n_v + n_t:]
-        data.train_pos_edge_index = torch.stack([r, c], dim=0)
+        edge_index = torch.stack([r, c], dim=0)
+        data.train_pos_edge_index = to_undirected(edge_index)
 
         # Negative edges.
         num_nodes = data.num_nodes
