@@ -48,7 +48,6 @@ class SamplePoints(object):
         pos_sampled += frac[:, 1:] * vec2
 
         pos_sampled = pos_sampled * pos_max
-        
         data.pos = pos_sampled
 
         if self.remove_faces:
