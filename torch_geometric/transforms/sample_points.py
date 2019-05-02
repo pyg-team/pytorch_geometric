@@ -23,6 +23,9 @@ class SamplePoints(object):
         assert not pos.is_cuda and not face.is_cuda
         assert pos.size(1) == 3 and face.size(0) == 3
 
+        pos_max = pos.max()
+        pos = pos / pos_max
+        
         area = (pos[face[1]] - pos[face[0]]).cross(pos[face[2]] - pos[face[0]])
         area = torch.sqrt((area**2).sum(dim=-1)) / 2
 
@@ -44,6 +47,7 @@ class SamplePoints(object):
         pos_sampled += frac[:, :1] * vec1
         pos_sampled += frac[:, 1:] * vec2
 
+        pos_sampled = pos_sampled * pos_max
         data.pos = pos_sampled
 
         if self.remove_faces:
