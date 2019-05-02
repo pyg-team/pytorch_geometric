@@ -49,7 +49,7 @@ class GatedGraphConv(MessagePassing):
         uniform(size, self.weight)
         self.rnn.reset_parameters()
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index, edge_weight=None):
         """"""
         h = x if x.dim() == 2 else x.unsqueeze(-1)
         if h.size(1) > self.out_channels:
@@ -62,10 +62,19 @@ class GatedGraphConv(MessagePassing):
 
         for i in range(self.num_layers):
             m = torch.matmul(h, self.weight[i])
-            m = self.propagate(edge_index, size=(x.size(0), x.size(0)), x=m)
+            m = self.propagate(
+                edge_index,
+                size=(x.size(0), x.size(0)),
+                x=m,
+                edge_weight=edge_weight)
             h = self.rnn(m, h)
 
         return h
+
+    def message(self, x_j, edge_weight):
+        if edge_weight is not None:
+            return edge_weight.view(-1, 1) * x_j
+        return x_j
 
     def __repr__(self):
         return '{}({}, num_layers={})'.format(
