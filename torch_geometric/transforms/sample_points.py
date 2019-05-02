@@ -25,7 +25,7 @@ class SamplePoints(object):
 
         pos_max = pos.max()
         pos = pos / pos_max
-        
+
         area = (pos[face[1]] - pos[face[0]]).cross(pos[face[2]] - pos[face[0]])
         area = torch.sqrt((area**2).sum(dim=-1)) / 2
 
