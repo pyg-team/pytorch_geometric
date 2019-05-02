@@ -62,11 +62,7 @@ class GatedGraphConv(MessagePassing):
 
         for i in range(self.num_layers):
             m = torch.matmul(h, self.weight[i])
-            m = self.propagate(
-                edge_index,
-                size=(x.size(0), x.size(0)),
-                x=m,
-                edge_weight=edge_weight)
+            m = self.propagate(edge_index, x=m, edge_weight=edge_weight)
             h = self.rnn(m, h)
 
         return h
