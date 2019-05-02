@@ -7,16 +7,20 @@ from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, GAE, VGAE
 
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-dataset = Planetoid(path, dataset, T.NormalizeFeatures())
-data = dataset[0]
+torch.manual_seed(12345)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='GAE')
+parser.add_argument('--dataset', type=str, default='Cora')
 args = parser.parse_args()
 assert args.model in ['GAE', 'VGAE']
+assert args.dataset in ['Cora', 'CiteSeer', 'PubMed']
 kwargs = {'GAE': GAE, 'VGAE': VGAE}
+
+path = osp.join(
+    osp.dirname(osp.realpath(__file__)), '..', 'data', args.dataset)
+dataset = Planetoid(path, args.dataset, T.NormalizeFeatures())
+data = dataset[0]
 
 
 class Encoder(torch.nn.Module):
@@ -53,7 +57,7 @@ def train():
     z = model.encode(x, train_pos_edge_index)
     loss = model.recon_loss(z, train_pos_edge_index)
     if args.model in ['VGAE']:
-        loss = loss + 0.001 * model.kl_loss()
+        loss = loss + (1 / 100000) * model.kl_loss()
     loss.backward()
     optimizer.step()
 
@@ -67,8 +71,5 @@ def test(pos_edge_index, neg_edge_index):
 
 for epoch in range(1, 401):
     train()
-    auc, ap = test(data.val_pos_edge_index, data.val_neg_edge_index)
+    auc, ap = test(data.test_pos_edge_index, data.test_neg_edge_index)
     print('Epoch: {:03d}, AUC: {:.4f}, AP: {:.4f}'.format(epoch, auc, ap))
-
-auc, ap = test(data.test_pos_edge_index, data.test_neg_edge_index)
-print('Test AUC: {:.4f}, Test AP: {:.4f}'.format(auc, ap))
