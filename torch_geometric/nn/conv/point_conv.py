@@ -52,7 +52,7 @@ class PointConv(MessagePassing):
         """
         if torch.is_tensor(pos):  # Add self-loops for symmetric adjacencies.
             edge_index, _ = remove_self_loops(edge_index)
-            edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
+            edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
         return self.propagate(edge_index, x=x, pos=pos)
 
@@ -70,5 +70,6 @@ class PointConv(MessagePassing):
         return aggr_out
 
     def __repr__(self):
-        return '{}(local_nn={}, global_nn={})'.format(
-            self.__class__.__name__, self.local_nn, self.global_nn)
+        return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
+                                                      self.local_nn,
+                                                      self.global_nn)

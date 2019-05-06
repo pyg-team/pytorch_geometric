@@ -50,7 +50,7 @@ class SAGEConv(torch.nn.Module):
     def forward(self, x, edge_index):
         """"""
         edge_index, _ = remove_self_loops(edge_index)
-        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
+        edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         row, col = edge_index

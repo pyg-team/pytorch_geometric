@@ -61,8 +61,8 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(
-            torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
 
         if bias and concat:
@@ -82,7 +82,7 @@ class GATConv(MessagePassing):
     def forward(self, x, edge_index):
         """"""
         edge_index, _ = remove_self_loops(edge_index)
-        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
+        edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
         x = torch.mm(x, self.weight).view(-1, self.heads, self.out_channels)
         return self.propagate(edge_index, x=x, num_nodes=x.size(0))
