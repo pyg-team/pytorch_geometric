@@ -46,7 +46,7 @@ class AGNNConv(MessagePassing):
     def forward(self, x, edge_index):
         """"""
         edge_index, _ = remove_self_loops(edge_index)
-        edge_index = add_self_loops(edge_index, x.size(0))
+        edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
 
         x_norm = F.normalize(x, p=2, dim=-1)
 
