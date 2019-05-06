@@ -20,7 +20,7 @@ from .nn_conv import NNConv
 from .edge_conv import EdgeConv
 from .x_conv import XConv
 from .ppf_conv import PPFConv
-from .hypergcn_conv import HypergraphConv
+from .hypergraph_conv import HypergraphConv
 
 __all__ = [
     'MessagePassing',

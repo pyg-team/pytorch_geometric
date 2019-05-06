@@ -34,7 +34,8 @@ class GATConv(MessagePassing):
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
         concat (bool, optional): If set to :obj:`False`, the multi-head
-        attentions are averaged instead of concatenated. (default: :obj:`True`)
+            attentions are averaged instead of concatenated.
+            (default: :obj:`True`)
         negative_slope (float, optional): LeakyReLU angle of the negative
             slope. (default: :obj:`0.2`)
         dropout (float, optional): Dropout probability of the normalized
