@@ -68,8 +68,10 @@ class HypergraphConv(MessagePassing):
             self.concat = True
             self.weight = Parameter(torch.Tensor(in_channels, out_channels))
 
-        if bias:
-            self.bias = Parameter(torch.Tensor(self.heads * out_channels))
+        if bias and concat:
+            self.bias = Parameter(torch.Tensor(heads * out_channels))
+        elif bias and not concat:
+            self.bias = Parameter(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
 
