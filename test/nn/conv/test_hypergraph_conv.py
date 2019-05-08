@@ -29,7 +29,7 @@ def test_hypergraph_conv():
                           out_channels,
                           use_attention=True,
                           heads=2,
-                          concat=True,
+                          concat=False,
                           dropout=0.5)
     out = conv(x, hyperedge_index, hyperedge_weight)
-    assert out.size() == (num_nodes, 2 * out_channels)
+    assert out.size() == (num_nodes, out_channels)
