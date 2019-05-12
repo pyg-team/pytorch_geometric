@@ -63,7 +63,9 @@ class ChebConv(torch.nn.Module):
         num_nodes, num_edges, K = x.size(0), row.size(0), self.weight.size(0)
 
         if edge_weight is None:
-            edge_weight = x.new_ones((num_edges, ))
+            edge_weight = torch.ones((num_edges, ),
+                                     dtype=x.dtype,
+                                     device=edge_index.device)
         edge_weight = edge_weight.view(-1)
         assert edge_weight.size(0) == edge_index.size(1)
 
