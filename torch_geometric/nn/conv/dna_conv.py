@@ -44,7 +44,7 @@ class Linear(torch.nn.Module):
             src = src.transpose(0, 1).contiguous()
             out = torch.matmul(src, self.weight)
             out = out.transpose(1, 0).contiguous()
-            out = out.view(*size, self.out_channels)
+            out = out.view(*(size + [self.out_channels]))
         else:
             out = torch.matmul(src, self.weight.squeeze(0))
 
@@ -146,19 +146,21 @@ class MultiHead(Attention):
         size = list(query.size())[:-2]
         out_channels_per_head = self.out_channels // self.heads
 
-        query = query.view(*size, query.size(-2), self.heads,
-                           out_channels_per_head).transpose(-2, -3)
-        key = key.view(*size, key.size(-2), self.heads,
-                       out_channels_per_head).transpose(-2, -3)
-        value = value.view(*size, value.size(-2), self.heads,
-                           out_channels_per_head).transpose(-2, -3)
+        query_size = size + [query.size(-2), self.heads, out_channels_per_head]
+        query = query.view(*query_size).transpose(-2, -3)
+
+        key_size = size + [key.size(-2), self.heads, out_channels_per_head]
+        key = key.view(*key_size).transpose(-2, -3)
+
+        value_size = size + [value.size(-2), self.heads, out_channels_per_head]
+        value = value.view(*value_size).transpose(-2, -3)
 
         # Output: [*, heads, query_entries, out_channels // heads]
         out = super(MultiHead, self).forward(query, key, value)
         # Output: [*, query_entries, heads, out_channels // heads]
         out = out.transpose(-3, -2).contiguous()
         # Output: [*, query_entries, out_channels]
-        out = out.view(*size, query.size(-2), self.out_channels)
+        out = out.view(*(size + [query.size(-2), self.out_channels]))
 
         return out
 
