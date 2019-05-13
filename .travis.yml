@@ -3,6 +3,7 @@ sudo: required
 dist: trusty
 matrix:
   include:
+    - python: 2.7
     - python: 3.5
     - python: 3.6
 addons:
