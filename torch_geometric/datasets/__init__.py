@@ -13,6 +13,7 @@ from .faust import FAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
 from .coma import CoMA
+from .shrec2016 import SHREC2016
 from .pcpnet_dataset import PCPNetDataset
 from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
@@ -35,6 +36,7 @@ __all__ = [
     'ShapeNet',
     'ModelNet',
     'CoMA',
+    'SHREC2016',
     'PCPNetDataset',
     'GeometricShapes',
     'BitcoinOTC',
