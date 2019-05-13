@@ -119,8 +119,8 @@ class GAE(torch.nn.Module):
         mask = row < col
         row, col = row[mask], col[mask]
 
-        n_v = math.floor(val_ratio * row.size(0))
-        n_t = math.floor(test_ratio * row.size(0))
+        n_v = int(math.floor(val_ratio * row.size(0)))
+        n_t = int(math.floor(test_ratio * row.size(0)))
 
         # Positive edges.
         perm = torch.randperm(row.size(0))
