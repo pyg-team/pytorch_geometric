@@ -106,9 +106,10 @@ class SHREC2016(InMemoryDataset):
         train_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
         paths = glob.glob(osp.join(self.raw_paths[0], self.part, name))
-        for i in range(1, len(paths) + 1):
-            path = osp.join(self.raw_paths[0], self.part,
-                            '{}_{}_shape_{}'.format(self.part, self.cat, i))
+        paths = [path[:-4] for path in paths]
+        paths = sorted(paths, key=lambda e: (len(e), e))
+
+        for path in paths:
             data = read_off('{}.off'.format(path))
             y = read_txt_array('{}.baryc_gt'.format(path))
             data.y = y[:, 0].to(torch.long) - 1
@@ -118,9 +119,10 @@ class SHREC2016(InMemoryDataset):
         test_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
         paths = glob.glob(osp.join(self.raw_paths[1], self.part, name))
-        for i in range(1, len(paths) + 1):
-            path = osp.join(self.raw_paths[1], self.part,
-                            '{}_{}_shape_{}'.format(self.part, self.cat, i))
+        paths = [path[:-4] for path in paths]
+        paths = sorted(paths, key=lambda e: (len(e), e))
+
+        for path in paths:
             test_list.append(read_off('{}.off'.format(path)))
 
         if self.pre_filter is not None:

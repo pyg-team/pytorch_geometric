@@ -14,6 +14,7 @@ from .shapenet import ShapeNet
 from .modelnet import ModelNet
 from .coma import CoMA
 from .shrec2016 import SHREC2016
+from .tosca import TOSCA
 from .pcpnet_dataset import PCPNetDataset
 from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
@@ -37,6 +38,7 @@ __all__ = [
     'ModelNet',
     'CoMA',
     'SHREC2016',
+    'TOSCA',
     'PCPNetDataset',
     'GeometricShapes',
     'BitcoinOTC',
