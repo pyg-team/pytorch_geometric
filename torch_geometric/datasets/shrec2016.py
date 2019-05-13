@@ -102,7 +102,7 @@ class SHREC2016(InMemoryDataset):
         ref_data = read_off(
             osp.join(self.raw_paths[0], 'null', '{}.off'.format(self.cat)))
 
-        trai_data_list = []
+        train_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
         paths = glob.glob(osp.join(self.raw_paths[0], self.part, name))
         for i in range(1, len(paths) + 1):
@@ -112,28 +112,28 @@ class SHREC2016(InMemoryDataset):
             y = read_txt_array('{}.baryc_gt'.format(path))
             data.y_idx = y[:, 0].to(torch.long)
             data.y_baryc = y[:, 1:]
-            trai_data_list.append(data)
+            train_list.append(data)
 
-        test_data_list = []
+        test_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
         paths = glob.glob(osp.join(self.raw_paths[1], self.part, name))
         for i in range(1, len(paths) + 1):
             path = osp.join(self.raw_paths[1], self.part,
                             '{}_{}_shape_{}'.format(self.part, self.cat, i))
-            test_data_list.append(read_off('{}.off'.format(path)))
+            test_list.append(read_off('{}.off'.format(path)))
 
         if self.pre_filter is not None:
-            trai_data_list = [d for d in trai_data_list if self.pre_filter(d)]
-            test_data_list = [d for d in test_data_list if self.pre_filter(d)]
+            train_list = [d for d in train_list if self.pre_filter(d)]
+            test_list = [d for d in test_list if self.pre_filter(d)]
 
         if self.pre_transform is not None:
             ref_data = self.pre_transform(ref_data)
-            trai_data_list = [self.pre_transform(d) for d in trai_data_list]
-            test_data_list = [self.pre_transform(d) for d in test_data_list]
+            train_list = [self.pre_transform(d) for d in train_list]
+            test_list = [self.pre_transform(d) for d in test_list]
 
         torch.save(ref_data, self.processed_paths[0])
-        torch.save(self.collate(trai_data_list), self.processed_paths[1])
-        torch.save(self.collate(test_data_list), self.processed_paths[2])
+        torch.save(self.collate(train_list), self.processed_paths[1])
+        torch.save(self.collate(test_list), self.processed_paths[2])
 
     def __repr__(self):
         return '{}({}, partiality={}, category={})'.format(
