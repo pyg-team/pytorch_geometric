@@ -13,7 +13,7 @@ def read_ply(path):
     face = None
     if 'face' in data:
         faces = data['face']['vertex_indices']
-        faces = [torch.tensor(face, dtype=torch.long) for face in faces]
+        faces = [torch.tensor(f, dtype=torch.long) for f in faces]
         face = torch.stack(faces, dim=-1)
 
     data = Data(pos=pos)

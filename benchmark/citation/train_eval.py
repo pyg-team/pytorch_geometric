@@ -28,9 +28,9 @@ def random_planetoid_splits(data, num_classes):
         index = index[torch.randperm(index.size(0))]
         indices.append(index)
 
-    train_index = torch.cat([index[:20] for index in indices], dim=0)
+    train_index = torch.cat([i[:20] for i in indices], dim=0)
 
-    rest_index = torch.cat([index[20:] for index in indices], dim=0)
+    rest_index = torch.cat([i[20:] for i in indices], dim=0)
     rest_index = rest_index[torch.randperm(rest_index.size(0))]
 
     data.train_mask = index_to_mask(train_index, size=data.num_nodes)
