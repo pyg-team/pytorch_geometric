@@ -13,3 +13,8 @@ def test_gcn_conv():
     assert conv.__repr__() == 'GCNConv(16, 32)'
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
     assert conv(x, edge_index, edge_weight).size() == (num_nodes, out_channels)
+
+    x = torch.sparse_coo_tensor(
+        torch.tensor([[0, 0], [0, 1]]), torch.Tensor([1, 1]),
+        torch.Size([num_nodes, in_channels]))
+    conv(x, edge_index).size() == (num_nodes, out_channels)

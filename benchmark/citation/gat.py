@@ -32,6 +32,7 @@ class Net(torch.nn.Module):
         self.conv2 = GATConv(
             args.hidden * args.heads,
             dataset.num_classes,
+            heads=args.output_heads,
             concat=False,
             dropout=args.dropout)
 
