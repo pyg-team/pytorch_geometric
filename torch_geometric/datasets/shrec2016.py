@@ -11,6 +11,7 @@ class SHREC2016(InMemoryDataset):
     r"""The SHREC 2016 partial matching dataset from the `"SHREC'16: Partial
     Matching of Deformable Shapes"
     <http://www.dais.unive.it/~shrec2016/shrec16-partial.pdf>`_ paper.
+    The reference shape can be referenced via :obj:`dataset.ref`.
 
     .. note::
 
