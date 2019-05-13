@@ -143,7 +143,7 @@ class PointNet2FPModule(torch.nn.Module):
         return x1, pos1, batch1
 
 
-def make_mlp(in_channels, mlp_channels, batch_norm=False):
+def make_mlp(in_channels, mlp_channels, batch_norm=True):
     assert len(mlp_channels) >= 1
     layers = []
 
