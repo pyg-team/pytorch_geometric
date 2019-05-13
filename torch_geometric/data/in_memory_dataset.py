@@ -92,7 +92,7 @@ class InMemoryDataset(Dataset):
         Args:
             return_perm (bool, optional): If set to :obj:`True`, will
                 additionally return the random permutation used to shuffle the
-                data. (default: :obj:`False`)
+                dataset. (default: :obj:`False`)
         """
         perm = torch.randperm(len(self))
         dataset = self.__indexing__(perm)
