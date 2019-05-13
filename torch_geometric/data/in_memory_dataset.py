@@ -86,9 +86,17 @@ class InMemoryDataset(Dataset):
             'Only integers, slices (`:`) and long or byte tensors are valid '
             'indices (got {}).'.format(type(idx).__name__))
 
-    def shuffle(self):
-        r"""Randomly shuffles the examples in the dataset."""
-        return self.__indexing__(torch.randperm(len(self)))
+    def shuffle(self, return_perm=False):
+        r"""Randomly shuffles the examples in the dataset.
+
+        Args:
+            return_perm (bool, optional): If set to :obj:`True`, will
+                additionally return the random permutation used to shuffle the
+                data. (default: :obj:`False`)
+        """
+        perm = torch.randperm(len(self))
+        dataset = self.__indexing__(perm)
+        return (dataset, perm) if return_perm is True else dataset
 
     def get(self, idx):
         data = Data()
