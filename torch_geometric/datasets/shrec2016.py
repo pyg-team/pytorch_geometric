@@ -111,7 +111,7 @@ class SHREC2016(InMemoryDataset):
                             '{}_{}_shape_{}'.format(self.part, self.cat, i))
             data = read_off('{}.off'.format(path))
             y = read_txt_array('{}.baryc_gt'.format(path))
-            data.y_idx = y[:, 0].to(torch.long)
+            data.y = y[:, 0].to(torch.long) - 1
             data.y_baryc = y[:, 1:]
             train_list.append(data)
 
