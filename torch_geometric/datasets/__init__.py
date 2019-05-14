@@ -10,6 +10,7 @@ from .qm9 import QM9
 from .entities import Entities
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
+from .dynamic_faust import DynamicFAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
 from .coma import CoMA
@@ -34,6 +35,7 @@ __all__ = [
     'Entities',
     'MNISTSuperpixels',
     'FAUST',
+    'DynamicFAUST',
     'ShapeNet',
     'ModelNet',
     'CoMA',
