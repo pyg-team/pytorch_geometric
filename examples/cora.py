@@ -1,5 +1,7 @@
 import os.path as osp
 
+from tqdm import tqdm
+
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
@@ -55,7 +57,7 @@ def test():
     return accs
 
 
-for epoch in range(1, 201):
+for epoch in tqdm(range(1, 201)):
     train()
     log = 'Epoch: {:03d}, Train: {:.4f}, Test: {:.4f}'
     print(log.format(epoch, *test()))

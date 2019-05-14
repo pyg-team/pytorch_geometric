@@ -12,6 +12,7 @@ install_requires = [
     'pandas',
     'rdflib',
     'h5py',
+    'tqdm',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov', 'mock']
