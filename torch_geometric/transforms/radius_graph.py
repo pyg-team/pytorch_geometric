@@ -2,8 +2,8 @@ from torch_geometric.nn import radius_graph
 
 
 class RadiusGraph(object):
-    r"""Creates edges based on node positions to all points within a given
-    distance.
+    r"""Creates edges based on node positions :obj:`pos` to all points within a
+    given distance.
 
     Args:
         r (float): The distance.
