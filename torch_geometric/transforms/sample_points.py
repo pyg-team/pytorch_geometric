@@ -20,7 +20,6 @@ class SamplePoints(object):
 
     def __call__(self, data):
         pos, face = data.pos, data.face
-        assert not pos.is_cuda and not face.is_cuda
         assert pos.size(1) == 3 and face.size(0) == 3
 
         pos_max = pos.max()
