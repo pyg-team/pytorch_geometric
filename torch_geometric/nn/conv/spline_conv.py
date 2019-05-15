@@ -1,3 +1,5 @@
+import warnings
+
 import torch
 from torch.nn import Parameter
 from torch_geometric.utils.repeat import repeat
@@ -97,6 +99,11 @@ class SplineConv(torch.nn.Module):
 
     def forward(self, x, edge_index, pseudo):
         """"""
+        if not x.is_cuda:
+            warnings.warn('We do not recommend using the non-optimized CPU '
+                          'version of SplineConv. If possible, please convert '
+                          'your data to the GPU first.')
+
         if self.check_pseudo:
             self.check_pseudo = False
             min_pseudo, max_pseudo = pseudo.min().item(), pseudo.max().item()
