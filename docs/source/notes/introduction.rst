@@ -326,7 +326,7 @@ In addition, we can use the ``transform`` argument to randomly augment a ``Data`
     from torch_geometric.datasets import ShapeNet
 
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
-                        pre_transform=T.NNGraph(k=6),
+                        pre_transform=T.KNNGraph(k=6),
                         transform=T.RandomTranslate(0.01))
 
     data[0]
