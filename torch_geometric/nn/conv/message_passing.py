@@ -86,10 +86,11 @@ class MessagePassing(torch.nn.Module):
                     idx = ij[arg[-2:]]
                     if isinstance(tmp, tuple) or isinstance(tmp, list):
                         assert len(tmp) == 2
-                        if size[1 - idx] is None:
-                            size[1 - idx] = tmp[1 - idx].size(0)
-                        if size[1 - idx] != tmp[1 - idx].size(0):
-                            raise ValueError(__size_error_msg__)
+                        if tmp[1 - idx] is not None:
+                            if size[1 - idx] is None:
+                                size[1 - idx] = tmp[1 - idx].size(0)
+                            if size[1 - idx] != tmp[1 - idx].size(0):
+                                raise ValueError(__size_error_msg__)
                         tmp = tmp[idx]
 
                     if size[idx] is None:
