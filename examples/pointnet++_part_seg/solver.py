@@ -1,7 +1,3 @@
-r"""
-Modified from https://github.com/fxia22/pointnet.pytorch/blob/master/utils/train_segmentation.py
-"""
-
 import torch
 import numpy as np
 
@@ -24,7 +20,9 @@ def train_epoch(model, criterion, optimizer, dataloader, device):
         pred_label = pred.detach().max(1)[1]
         correct = pred_label.eq(target.detach()).cpu().sum()
         total = pred_label.shape[0]
-        print('[{}/{}] train loss: {} accuracy: {}'.format(batch_idx+1, len(dataloader), loss.item(), float(correct.item())/total))
+        print('[{}/{}] train loss: {} accuracy: {}'.format(
+            batch_idx + 1, len(dataloader), loss.item(),
+            float(correct.item()) / total))
 
 
 def test_epoch(model, dataloader, device):
@@ -44,7 +42,7 @@ def test_epoch(model, dataloader, device):
             correct += pred_label.eq(target).cpu().sum()
             total += pred_label.shape[0]
 
-        print('test accuracy: {}'.format(float(correct.item())/total))
+        print('test accuracy: {}'.format(float(correct.item()) / total))
 
 
 def eval_mIOU(model, dataloader, device, num_classes):
@@ -59,7 +57,8 @@ def eval_mIOU(model, dataloader, device, num_classes):
             # pred: (batch_size * ~n, num_classes)
             pred, pred_batch = model(data)
             pred_label = pred.max(1)[1]  # (batch_size * ~n,)
-            pred_label, pred_batch = pred_label.cpu().numpy(), pred_batch.cpu().numpy()
+            pred_label, pred_batch = pred_label.cpu().numpy(), pred_batch.cpu(
+            ).numpy()
             target_label = data.y.cpu().numpy()
 
             batch_size = pred_batch.max() + 1
@@ -72,10 +71,16 @@ def eval_mIOU(model, dataloader, device, num_classes):
 
                 part_ious = []
                 for part in part_labels:
-                    I = np.sum(np.logical_and(pred_label_curr == part, target_label_curr == part))
-                    U = np.sum(np.logical_or(pred_label_curr == part, target_label_curr == part))
-                    if U == 0: iou = 1
-                    else: iou = float(I) / U
+                    I = np.sum(
+                        np.logical_and(pred_label_curr == part,
+                                       target_label_curr == part))
+                    U = np.sum(
+                        np.logical_or(pred_label_curr == part,
+                                      target_label_curr == part))
+                    if U == 0:
+                        iou = 1
+                    else:
+                        iou = float(I) / U
                     part_ious.append(iou)
                 shape_ious.append(np.mean(part_ious))
 
