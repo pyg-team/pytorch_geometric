@@ -33,8 +33,8 @@ def geodesic_distance(pos,
         norm (bool, optional): Normalizes geodesic distances by
             :math:`\sqrt{\textrm{area}(\mathcal{M})}`. (default: :obj:`True`)
         max_distance (float, optional): If given, only yields results for
-            geodesic distances less than :obj:`max_distance`. This will fasten
-            runtime dramatically. (default: :obj:`None`)
+            geodesic distances less than :obj:`max_distance`. This will speed
+            up runtime dramatically. (default: :obj:`None`)
 
     :rtype: Tensor
     """
