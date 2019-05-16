@@ -21,7 +21,7 @@ def geodesic_distance(pos,
     .. note::
 
         This function requires the :obj:`gdist` package.
-        To install, run :obj:`pip install cython gdist`.
+        To install, run :obj:`pip install cython && pip install gdist`.
 
     Args:
         pos (Tensor): The node positions.
