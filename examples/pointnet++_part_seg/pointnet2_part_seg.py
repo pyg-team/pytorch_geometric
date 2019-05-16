@@ -109,10 +109,8 @@ class PointConvFP(MessagePassing):
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
         x_target, pos_target = x[i], pos[i]
 
-        add = [
-            pos_target,
-        ] if x_target is None else [x_target, pos_target]
-        aggr_out = torch.cat([aggr_out, *add], dim=1)
+        add = [pos_target] if x_target is None else [x_target, pos_target]
+        aggr_out = torch.cat([aggr_out] + add, dim=1)
 
         # Apply mlp
         if self.mlp is not None:

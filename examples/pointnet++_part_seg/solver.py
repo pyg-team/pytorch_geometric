@@ -71,16 +71,16 @@ def eval_mIOU(model, dataloader, device, num_classes):
 
                 part_ious = []
                 for part in part_labels:
-                    I = np.sum(
+                    i = np.sum(
                         np.logical_and(pred_label_curr == part,
                                        target_label_curr == part))
-                    U = np.sum(
+                    u = np.sum(
                         np.logical_or(pred_label_curr == part,
                                       target_label_curr == part))
-                    if U == 0:
+                    if u == 0:
                         iou = 1
                     else:
-                        iou = float(I) / U
+                        iou = float(i) / u
                     part_ious.append(iou)
                 shape_ious.append(np.mean(part_ious))
 
