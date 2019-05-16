@@ -9,7 +9,7 @@ from pointnet2_part_seg import PointNet2PartSegmentNet
 from solver import train_epoch, test_epoch, eval_mIOU
 
 # Configuration
-shapenet_dataset = 'shapenet'
+shapenet_dataset = '../../data/shapenet'
 category = 'Airplane'
 # npoints = 0  # Do not sample when npoints <= 0
 npoints = 2500  # Sample to fixed number of points when npoints > 0
