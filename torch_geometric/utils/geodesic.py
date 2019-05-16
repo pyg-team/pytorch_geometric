@@ -15,7 +15,7 @@ def geodesic_distance(pos,
                       max_distance=None):
     r"""Computes (normalized) geodesic distances of a mesh given by :obj:`pos`
     and :obj:`face`. If :obj:`src` and :obj:`dest` are given, this method only
-    computes the geodesic distances for the respective sourc and target
+    computes the geodesic distances for the respective source and target
     node-pairs.
 
     .. note::
