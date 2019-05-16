@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.2.1)
               </div>
             
           
@@ -482,7 +482,7 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 </table>
 <dl class="method">
 <dt id="torch_geometric.nn.conv.GatedGraphConv.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gated_graph_conv.html#GatedGraphConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GatedGraphConv.forward" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>edge_index</em>, <em>edge_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gated_graph_conv.html#GatedGraphConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GatedGraphConv.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -519,8 +519,9 @@ an additive bias. (default: <a class="reference external" href="https://docs.pyt
 <li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
 <li><strong>heads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of multi-head-attentions.
 (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
-<li><strong>concat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the multi-head</li>
-<li><strong>are averaged instead of concatenated.</strong><strong> (</strong><strong>default</strong> (<em>attentions</em>) – <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+<li><strong>concat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the multi-head
+attentions are averaged instead of concatenated.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 <li><strong>negative_slope</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – LeakyReLU angle of the negative
 slope. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0.2</span></code>)</li>
 <li><strong>dropout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Dropout probability of the normalized
@@ -956,7 +957,7 @@ in message passing in bipartite graphs.</li>
 
 <dl class="class">
 <dt id="torch_geometric.nn.conv.GMMConv">
-<em class="property">class </em><code class="descname">GMMConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gmm_conv.html#GMMConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GMMConv" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">GMMConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>dim</em>, <em>kernel_size</em>, <em>aggr='add'</em>, <em>root_weight=True</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/gmm_conv.html#GMMConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.GMMConv" title="Permalink to this definition">¶</a></dt>
 <dd><p>The gaussian mixture model convolutional operator from the <a class="reference external" href="https://arxiv.org/abs/1611.08402">“Geometric
 Deep Learning on Graphs and Manifolds using Mixture Model CNNs”</a> paper</p>
 <div class="math notranslate nohighlight">
@@ -980,6 +981,11 @@ Deep Learning on Graphs and Manifolds using Mixture Model CNNs”</a> paper</p>
 <li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
 <li><strong>dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Pseudo-coordinate dimensionality.</li>
 <li><strong>kernel_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of kernels <span class="math notranslate nohighlight">\(K\)</span>.</li>
+<li><strong>aggr</strong> (<em>string</em>) – The aggregation operator to use (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>). (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>)</li>
+<li><strong>root_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will
+not add transformed root node features to the output.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 <li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
 an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
 </ul>
@@ -1240,6 +1246,71 @@ for use in message passing in bipartite graphs.</li>
 <dl class="method">
 <dt id="torch_geometric.nn.conv.PPFConv.reset_parameters">
 <code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/ppf_conv.html#PPFConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.PPFConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.nn.conv.HypergraphConv">
+<em class="property">class </em><code class="descname">HypergraphConv</code><span class="sig-paren">(</span><em>in_channels</em>, <em>out_channels</em>, <em>use_attention=False</em>, <em>heads=1</em>, <em>concat=True</em>, <em>negative_slope=0.2</em>, <em>dropout=0</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/hypergraph_conv.html#HypergraphConv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.HypergraphConv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The hypergraph convolutional operator from the <a class="reference external" href="https://arxiv.org/abs/1901.08150">“Hypergraph Convolution
+and Hypergraph Attention”</a> paper</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{X}^{\prime} = \mathbf{D}^{-1} \mathbf{H} \mathbf{W}
+\mathbf{B}^{-1} \mathbf{H}^{\top} \mathbf{X} \mathbf{\Theta}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}\)</span> is the incidence
+matrix, <span class="math notranslate nohighlight">\(\mathbf{W}\)</span> is the diagonal hyperedge weight matrix, and
+<span class="math notranslate nohighlight">\(\mathbf{D}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{B}\)</span> are the corresponding degree
+matrices.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each input sample.</li>
+<li><strong>out_channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Size of each output sample.</li>
+<li><strong>use_attention</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, attention
+will be added to this layer. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
+<li><strong>heads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of multi-head-attentions.
+(default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
+<li><strong>concat</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the multi-head
+attentions are averaged instead of concatenated.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+<li><strong>negative_slope</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – LeakyReLU angle of the negative
+slope. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0.2</span></code>)</li>
+<li><strong>dropout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – Dropout probability of the normalized
+attention coefficients which exposes each node to a stochastically
+sampled neighborhood during training. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">0</span></code>)</li>
+<li><strong>bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, the layer will not learn
+an additive bias. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="torch_geometric.nn.conv.HypergraphConv.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em>, <em>hyperedge_index</em>, <em>hyperedge_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/hypergraph_conv.html#HypergraphConv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.HypergraphConv.forward" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Tensor</em>) – Node feature matrix <span class="math notranslate nohighlight">\(\mathbf{X}\)</span></li>
+<li><strong>hyper_edge_index</strong> (<em>LongTensor</em>) – Hyperedge indices from
+<span class="math notranslate nohighlight">\(\mathbf{H}\)</span>.</li>
+<li><strong>hyperedge_weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Sparse hyperedge weights from
+<span class="math notranslate nohighlight">\(\mathbf{W}\)</span>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="torch_geometric.nn.conv.HypergraphConv.reset_parameters">
+<code class="descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/nn/conv/hypergraph_conv.html#HypergraphConv.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.nn.conv.HypergraphConv.reset_parameters" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

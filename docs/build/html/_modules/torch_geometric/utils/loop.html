@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.2.1)
               </div>
             
           
@@ -226,31 +226,93 @@
     <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">row</span> <span class="o">!=</span> <span class="n">col</span>
     <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">edge_attr</span> <span class="k">if</span> <span class="n">edge_attr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">edge_attr</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
-    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">edge_index</span><span class="p">)</span>
-    <span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">edge_index</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span></div>
 
 
-<div class="viewcode-block" id="add_self_loops"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.add_self_loops">[docs]</a><span class="k">def</span> <span class="nf">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="add_self_loops"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.add_self_loops">[docs]</a><span class="k">def</span> <span class="nf">add_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node</span>
 <span class="sd">    :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.</span>
+<span class="sd">    In case the graph is weighted, all existent self-loops will be removed and</span>
+<span class="sd">    replaced by weights denoted by :obj:`fill_value`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        edge_index (LongTensor): The edge indices.</span>
+<span class="sd">        edge_weight (Tensor, optional): One-dimensional edge weights.</span>
+<span class="sd">            (default: :obj:`None`)</span>
+<span class="sd">        fill_value (int, optional): If :obj:`edge_weight` is not :obj:`None`,</span>
+<span class="sd">            will add self-loops with edge weights of :obj:`fill_value` to the</span>
+<span class="sd">            graph. (default: :obj:`1`)</span>
 <span class="sd">        num_nodes (int, optional): The number of nodes, *i.e.*</span>
 <span class="sd">            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)</span>
 
-<span class="sd">    :rtype: :class:`LongTensor`</span>
+<span class="sd">    :rtype: (:class:`LongTensor`, :class:`Tensor`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
 
-    <span class="n">dtype</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">device</span>
-    <span class="n">loop</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-    <span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">loop</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">loop_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>
+                              <span class="n">num_nodes</span><span class="p">,</span>
+                              <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">=</span><span class="n">edge_index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">loop_index</span> <span class="o">=</span> <span class="n">loop_index</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">edge_index</span></div>
+    <span class="k">if</span> <span class="n">edge_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">edge_weight</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">loop_weight</span> <span class="o">=</span> <span class="n">edge_weight</span><span class="o">.</span><span class="n">new_full</span><span class="p">((</span><span class="n">num_nodes</span><span class="p">,</span> <span class="p">),</span> <span class="n">fill_value</span><span class="p">)</span>
+        <span class="n">edge_weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_weight</span><span class="p">,</span> <span class="n">loop_weight</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">loop_index</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_weight</span></div>
+
+
+<div class="viewcode-block" id="add_remaining_self_loops"><a class="viewcode-back" href="../../../modules/utils.html#torch_geometric.utils.add_remaining_self_loops">[docs]</a><span class="k">def</span> <span class="nf">add_remaining_self_loops</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span>
+                             <span class="n">edge_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">fill_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                             <span class="n">num_nodes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node</span>
+<span class="sd">    :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.</span>
+<span class="sd">    In case the graph is weighted and already contains a few self-loops, only</span>
+<span class="sd">    non-existent self-loops will be added with weights denoted by</span>
+<span class="sd">    :obj:`fill_value`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        edge_index (LongTensor): The edge indices.</span>
+<span class="sd">        edge_weight (Tensor, optional): One-dimensional edge weights.</span>
+<span class="sd">            (default: :obj:`None`)</span>
+<span class="sd">        fill_value (int, optional): If :obj:`edge_weight` is not :obj:`None`,</span>
+<span class="sd">            will add self-loops with edge weights of :obj:`fill_value` to the</span>
+<span class="sd">            graph. (default: :obj:`1`)</span>
+<span class="sd">        num_nodes (int, optional): The number of nodes, *i.e.*</span>
+<span class="sd">            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)</span>
+
+<span class="sd">    :rtype: (:class:`LongTensor`, :class:`Tensor`)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">edge_index</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">row</span> <span class="o">!=</span> <span class="n">col</span>
+    <span class="n">inv_mask</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">mask</span>
+    <span class="n">loop_weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">num_nodes</span><span class="p">,</span> <span class="p">),</span>
+        <span class="n">fill_value</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">edge_weight</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">edge_weight</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="n">edge_index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">edge_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">edge_weight</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">loop_weight</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">inv_mask</span><span class="p">]]</span> <span class="o">=</span> <span class="n">edge_weight</span><span class="p">[</span><span class="n">inv_mask</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">edge_weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_weight</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">loop_weight</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">loop_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>
+                              <span class="n">num_nodes</span><span class="p">,</span>
+                              <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">loop_index</span> <span class="o">=</span> <span class="n">loop_index</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_index</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">],</span> <span class="n">loop_index</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_weight</span></div>
 </pre></div>
 
            </div>

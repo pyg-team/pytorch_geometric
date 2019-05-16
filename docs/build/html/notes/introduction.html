@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.2.1)
               </div>
             
           
@@ -484,7 +484,7 @@ Note that the next time the dataset is initialized it will already contain graph
 <span class="kn">from</span> <span class="nn">torch_geometric.datasets</span> <span class="kn">import</span> <span class="n">ShapeNet</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">ShapeNet</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">&#39;/tmp/ShapeNet&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;Airplane&#39;</span><span class="p">,</span>
-                    <span class="n">pre_transform</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">NNGraph</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span>
+                    <span class="n">pre_transform</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">KNNGraph</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span>
                     <span class="n">transform</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">RandomTranslate</span><span class="p">(</span><span class="mf">0.01</span><span class="p">))</span>
 
 <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -528,7 +528,9 @@ Now let’s implement a two-layer GCN:</p>
         <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We use ReLU as our non-linear activation function and output a softmax distribution over the number of classes.
+<p>The constructor defines two <code class="docutils literal notranslate"><span class="pre">GCNConv</span></code> layers which get called in the forward pass of our network.
+Note that the non-linearity is not integrated in the <code class="docutils literal notranslate"><span class="pre">conv</span></code> calls and hence needs to be applied afterwards (something which is consistent accross all operators in PyTorch Geometric).
+Here, we chose to use ReLU as our intermediate non-linearity between and finally output a softmax distribution over the number of classes.
 Let’s train this model on the train nodes for 200 epochs:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>

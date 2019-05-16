@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.2.1)
               </div>
             
           
@@ -590,7 +590,7 @@ given interval, <em>e.g.</em>, resulting in the transformation matrix</p>
 <dl class="class">
 <dt id="torch_geometric.transforms.KNNGraph">
 <em class="property">class </em><code class="descname">KNNGraph</code><span class="sig-paren">(</span><em>k=6</em>, <em>loop=False</em>, <em>force_undirected=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/knn_graph.html#KNNGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.KNNGraph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a k-NN graph based on node positions.</p>
+<dd><p>Creates a k-NN graph based on node positions <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -611,8 +611,8 @@ will be undirected. (default: <a class="reference external" href="https://docs.p
 <dl class="class">
 <dt id="torch_geometric.transforms.RadiusGraph">
 <em class="property">class </em><code class="descname">RadiusGraph</code><span class="sig-paren">(</span><em>r</em>, <em>loop=False</em>, <em>max_num_neighbors=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/radius_graph.html#RadiusGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RadiusGraph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates edges based on node positions to all points within a given
-distance.</p>
+<dd><p>Creates edges based on node positions <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos</span></code> to all points within a
+given distance.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.2.1)
               </div>
             
           
@@ -215,11 +215,13 @@
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">pos</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">face</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="n">pos</span><span class="o">.</span><span class="n">is_cuda</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">face</span><span class="o">.</span><span class="n">is_cuda</span>
         <span class="k">assert</span> <span class="n">pos</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">face</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
 
+        <span class="n">pos_max</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">/</span> <span class="n">pos_max</span>
+
         <span class="n">area</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="n">face</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="n">face</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="n">face</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[</span><span class="n">face</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
-        <span class="n">area</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">area</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="n">area</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
         <span class="n">prob</span> <span class="o">=</span> <span class="n">area</span> <span class="o">/</span> <span class="n">area</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="n">sample</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -239,6 +241,7 @@
         <span class="n">pos_sampled</span> <span class="o">+=</span> <span class="n">frac</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">vec1</span>
         <span class="n">pos_sampled</span> <span class="o">+=</span> <span class="n">frac</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">vec2</span>
 
+        <span class="n">pos_sampled</span> <span class="o">=</span> <span class="n">pos_sampled</span> <span class="o">*</span> <span class="n">pos_max</span>
         <span class="n">data</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">pos_sampled</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_faces</span><span class="p">:</span>

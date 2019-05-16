@@ -9,6 +9,7 @@ from .isolated import contains_isolated_nodes
 from .to_dense_batch import to_dense_batch
 from .normalized_cut import normalized_cut
 from .grid import grid
+from .geodesic import geodesic_distance
 from .sparse import dense_to_sparse, sparse_to_dense
 from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
@@ -31,6 +32,7 @@ __all__ = [
     'to_dense_batch',
     'normalized_cut',
     'grid',
+    'geodesic_distance',
     'dense_to_sparse',
     'sparse_to_dense',
     'to_scipy_sparse_matrix',

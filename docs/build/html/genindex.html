@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.2.1)
               </div>
             
           
@@ -205,6 +205,7 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#J"><strong>J</strong></a>
  | <a href="#K"><strong>K</strong></a>
@@ -265,6 +266,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/utils.html#torch_geometric.utils.accuracy">accuracy() (in module torch_geometric.utils)</a>
 </li>
+      <li><a href="modules/utils.html#torch_geometric.utils.add_remaining_self_loops">add_remaining_self_loops() (in module torch_geometric.utils)</a>
+</li>
       <li><a href="modules/utils.html#torch_geometric.utils.add_self_loops">add_self_loops() (in module torch_geometric.utils)</a>
 </li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.AddSelfLoops">AddSelfLoops (class in torch_geometric.transforms)</a>
@@ -273,10 +276,10 @@
 </li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.Amazon">Amazon (class in torch_geometric.datasets)</a>
 </li>
-      <li><a href="modules/data.html#torch_geometric.data.Data.apply">apply() (Data method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.Data.apply">apply() (Data method)</a>
+</li>
       <li><a href="modules/nn.html#torch_geometric.nn.conv.APPNP">APPNP (class in torch_geometric.nn.conv)</a>
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.models.ARGA">ARGA (class in torch_geometric.nn.models)</a>
@@ -371,10 +374,10 @@
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.dense_to_sparse">dense_to_sparse() (in module torch_geometric.utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data.html#torch_geometric.data.DenseDataLoader">DenseDataLoader (class in torch_geometric.data)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/nn.html#torch_geometric.nn.dense.dense_sage_conv.DenseSAGEConv">DenseSAGEConv (class in torch_geometric.nn.dense.dense_sage_conv)</a>
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.models.DeepGraphInfomax.discriminate">discriminate() (DeepGraphInfomax method)</a>
@@ -398,6 +401,8 @@
       <li><a href="modules/data.html#torch_geometric.data.download_url">download_url() (in module torch_geometric.data)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.dropout_adj">dropout_adj() (in module torch_geometric.utils)</a>
+</li>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.DynamicFAUST">DynamicFAUST (class in torch_geometric.datasets)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -476,6 +481,8 @@
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.GraphConv.forward">(GraphConv method)</a>
 </li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.HypergraphConv.forward">(HypergraphConv method)</a>
+</li>
         <li><a href="modules/nn.html#torch_geometric.nn.models.InnerProductDecoder.forward">(InnerProductDecoder method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.models.JumpingKnowledge.forward">(JumpingKnowledge method)</a>
@@ -541,6 +548,8 @@
 </li>
       <li><a href="modules/transforms.html#torch_geometric.transforms.GenerateMeshNormals">GenerateMeshNormals (class in torch_geometric.transforms)</a>
 </li>
+      <li><a href="modules/utils.html#torch_geometric.utils.geodesic_distance">geodesic_distance() (in module torch_geometric.utils)</a>
+</li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.GeometricShapes">GeometricShapes (class in torch_geometric.datasets)</a>
 </li>
       <li><a href="modules/data.html#torch_geometric.data.Dataset.get">get() (Dataset method)</a>
@@ -570,6 +579,14 @@
       <li><a href="modules/nn.html#torch_geometric.nn.conv.GraphConv">GraphConv (class in torch_geometric.nn.conv)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.grid">grid() (in module torch_geometric.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/nn.html#torch_geometric.nn.conv.HypergraphConv">HypergraphConv (class in torch_geometric.nn.conv)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -862,6 +879,8 @@
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.conv.GraphConv.reset_parameters">(GraphConv method)</a>
 </li>
+        <li><a href="modules/nn.html#torch_geometric.nn.conv.HypergraphConv.reset_parameters">(HypergraphConv method)</a>
+</li>
         <li><a href="modules/nn.html#torch_geometric.nn.models.JumpingKnowledge.reset_parameters">(JumpingKnowledge method)</a>
 </li>
         <li><a href="modules/nn.html#torch_geometric.nn.meta.MetaLayer.reset_parameters">(MetaLayer method)</a>
@@ -917,10 +936,12 @@
 </li>
       <li><a href="modules/datasets.html#torch_geometric.datasets.ShapeNet">ShapeNet (class in torch_geometric.datasets)</a>
 </li>
-      <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.shuffle">shuffle() (InMemoryDataset method)</a>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.SHREC2016">SHREC2016 (class in torch_geometric.datasets)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data.html#torch_geometric.data.InMemoryDataset.shuffle">shuffle() (InMemoryDataset method)</a>
+</li>
       <li><a href="modules/nn.html#torch_geometric.nn.conv.SignedConv">SignedConv (class in torch_geometric.nn.conv)</a>
 </li>
       <li><a href="modules/nn.html#torch_geometric.nn.models.SignedGCN">SignedGCN (class in torch_geometric.nn.models)</a>
@@ -1000,6 +1021,8 @@
       <li><a href="modules/transforms.html#module-torch_geometric.transforms">torch_geometric.transforms (module)</a>
 </li>
       <li><a href="modules/utils.html#module-torch_geometric.utils">torch_geometric.utils (module)</a>
+</li>
+      <li><a href="modules/datasets.html#torch_geometric.datasets.TOSCA">TOSCA (class in torch_geometric.datasets)</a>
 </li>
       <li><a href="modules/utils.html#torch_geometric.utils.true_negative">true_negative() (in module torch_geometric.utils)</a>
 </li>

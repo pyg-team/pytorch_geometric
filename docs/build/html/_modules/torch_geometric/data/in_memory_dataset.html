@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.2.1)
               </div>
             
           
@@ -281,9 +281,17 @@
             <span class="s1">&#39;Only integers, slices (`:`) and long or byte tensors are valid &#39;</span>
             <span class="s1">&#39;indices (got </span><span class="si">{}</span><span class="s1">).&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="InMemoryDataset.shuffle"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.InMemoryDataset.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Randomly shuffles the examples in the dataset.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__indexing__</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span></div>
+<div class="viewcode-block" id="InMemoryDataset.shuffle"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.InMemoryDataset.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_perm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Randomly shuffles the examples in the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            return_perm (bool, optional): If set to :obj:`True`, will</span>
+<span class="sd">                additionally return the random permutation used to shuffle the</span>
+<span class="sd">                dataset. (default: :obj:`False`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randperm</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__indexing__</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">perm</span><span class="p">)</span> <span class="k">if</span> <span class="n">return_perm</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="n">dataset</span></div>
 
 <div class="viewcode-block" id="InMemoryDataset.get"><a class="viewcode-back" href="../../../modules/data.html#torch_geometric.data.InMemoryDataset.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">()</span>
