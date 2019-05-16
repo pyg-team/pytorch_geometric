@@ -79,7 +79,7 @@ class MessagePassing(torch.nn.Module):
         message_args = []
         for arg in self.__message_args__:
             if arg[-2:] in ij.keys():
-                tmp = kwargs[arg[:-2]]
+                tmp = kwargs.get(arg[:-2], None)
                 if tmp is None:  # pragma: no cover
                     message_args.append(tmp)
                 else:
@@ -101,7 +101,7 @@ class MessagePassing(torch.nn.Module):
                     tmp = torch.index_select(tmp, 0, edge_index[idx])
                     message_args.append(tmp)
             else:
-                message_args.append(kwargs[arg])
+                message_args.append(kwargs.get(arg, None))
 
         size[0] = size[1] if size[0] is None else size[0]
         size[1] = size[0] if size[1] is None else size[1]
