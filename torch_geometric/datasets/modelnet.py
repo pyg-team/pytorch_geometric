@@ -46,8 +46,7 @@ class ModelNet(InMemoryDataset):
     urls = {
         '10':
         'http://vision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip',
-        '40':
-        'http://modelnet.cs.princeton.edu/ModelNet40.zip'
+        '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
     }
 
     def __init__(self,
@@ -88,7 +87,7 @@ class ModelNet(InMemoryDataset):
 
     def process_set(self, dataset):
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
-        categories = sorted([x.split('/')[-2] for x in categories])
+        categories = sorted([x.split(os.sep)[-2] for x in categories])
 
         data_list = []
         for target, category in enumerate(categories):
