@@ -27,14 +27,14 @@ def geodesic_distance(pos,
         pos (Tensor): The node positions.
         face (LongTensor): The face indices.
         src (LongTensor, optional): If given, only compute geodesic distances
-            for the specified sourced indices. (default: :obj:`None`)
+            for the specified source indices. (default: :obj:`None`)
         dest (LongTensor, optional): If given, only compute geodesic distances
             for the specified target indices. (default: :obj:`None`)
         norm (bool, optional): Normalizes geodesic distances by
             :math:`\sqrt{\textrm{area}(\mathcal{M})}`. (default: :obj:`True`)
         max_distance (float, optional): If given, only yields results for
-            geodesic distances less than :obj:`max_distance`.
-            (default: :obj:`None`)
+            geodesic distances less than :obj:`max_distance`. Can fasten
+            computation dramatically. (default: :obj:`None`)
 
     :rtype: Tensor
     """
