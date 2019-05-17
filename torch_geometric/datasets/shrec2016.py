@@ -26,7 +26,7 @@ class SHREC2016(InMemoryDataset):
     Args:
         root (string): Root directory where the dataset should be saved.
         partiality (string): The partiality of the dataset (one of
-            :obj:`"Holes"`, :obj:`"Cuts"`)
+            :obj:`"Holes"`, :obj:`"Cuts"`).
         category (string): The category of the dataset (one of
             :obj:`"Cat"`, :obj:`"Centaur"`, :obj:`"David"`, :obj:`"Dog"`,
             :obj:`"Horse"`, :obj:`"Michael"`, :obj:`"Victoria"`,
