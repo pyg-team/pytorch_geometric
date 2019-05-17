@@ -8,6 +8,7 @@ from .ppi import PPI
 from .qm7 import QM7b
 from .qm9 import QM9
 from .entities import Entities
+from .ged_dataset import GEDDataset
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
 from .dynamic_faust import DynamicFAUST
@@ -33,6 +34,7 @@ __all__ = [
     'QM7b',
     'QM9',
     'Entities',
+    'GEDDataset',
     'MNISTSuperpixels',
     'FAUST',
     'DynamicFAUST',
