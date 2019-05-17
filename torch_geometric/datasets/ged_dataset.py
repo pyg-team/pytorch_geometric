@@ -112,6 +112,7 @@ class GEDDataset(InMemoryDataset):
 
             data_list = []
             for i, idx in enumerate(ids[-1]):
+                i = i if len(ids) == 1 else i + len(ids[0])
                 G = nx.read_gexf(osp.join(r_path, '{}.gexf'.format(idx)))
                 mapping = {idx: i for i, idx in enumerate(G.nodes())}
                 G = nx.relabel_nodes(G, mapping)
