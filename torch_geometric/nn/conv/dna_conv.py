@@ -185,9 +185,9 @@ class DNAConv(MessagePassing):
     .. math::
         \mathbf{x}_{v \leftarrow w}^{(t)} = \textrm{Attention} \left(
         \mathbf{x}^{(t-1)}_v \, \mathbf{\Theta}_Q^{(t)}, [\mathbf{x}_w^{(1)},
-        \ldots, \mathbf{x}_w^{(t-1)}] \, \mathbf{Q}_K^{(t)}, \,
+        \ldots, \mathbf{x}_w^{(t-1)}] \, \mathbf{\Theta}_K^{(t)}, \,
         [\mathbf{x}_w^{(1)}, \ldots, \mathbf{x}_w^{(t-1)}] \,
-        \mathbf{Q}_V^{(t)} \right)
+        \mathbf{\Theta}_V^{(t)} \right)
 
     with :math:`\mathbf{\Theta}_Q^{(t)}, \mathbf{\Theta}_K^{(t)},
     \mathbf{\Theta}_V^{(t)}` denoting (grouped) projection matrices for query,
