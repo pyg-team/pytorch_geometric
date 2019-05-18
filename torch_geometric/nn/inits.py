@@ -8,14 +8,14 @@ def uniform(size, tensor):
 
 
 def kaiming_uniform(tensor, fan, a):
-    bound = math.sqrt(6 / ((1 + a**2) * fan))
     if tensor is not None:
+        bound = math.sqrt(6 / ((1 + a**2) * fan))
         tensor.data.uniform_(-bound, bound)
 
 
 def glorot(tensor):
-    stdv = math.sqrt(6.0 / (tensor.size(-2) + tensor.size(-1)))
     if tensor is not None:
+        stdv = math.sqrt(6.0 / (tensor.size(-2) + tensor.size(-1)))
         tensor.data.uniform_(-stdv, stdv)
 
 
