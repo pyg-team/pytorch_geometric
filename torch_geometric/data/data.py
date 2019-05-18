@@ -1,5 +1,6 @@
 import re
 import warnings
+import numpy as np
 
 import torch
 from torch_geometric.utils import (contains_isolated_nodes,
@@ -20,6 +21,8 @@ def size_repr(value):
         return list(value.size())
     elif isinstance(value, int) or isinstance(value, float):
         return [1]
+    elif isinstance(value, np.ndarray):
+        return value.shape
     else:
         raise ValueError('Unsupported attribute type.')
 
