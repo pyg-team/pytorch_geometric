@@ -3,7 +3,7 @@ from torch_geometric.nn.conv import MessagePassing, GCNConv
 
 
 class SGConv(MessagePassing):
-    r"""The simgple graph convolutional operator from the `"Simplifying Graph
+    r"""The simple graph convolutional operator from the `"Simplifying Graph
     Convolutional Networks" <https://arxiv.org/abs/1902.07153>`_ paper
 
     .. math::
