@@ -1,5 +1,6 @@
 import os.path as osp
 import shutil
+from multiprocessing import Pool
 
 import torch
 from torch_geometric.data import InMemoryDataset, extract_zip
@@ -80,7 +81,9 @@ class FAUST(InMemoryDataset):
             if self.pre_transform is not None:
                 data = self.pre_transform(data)
             data_list.append(data)
-
+        
+        pool = Pool(8)
+        data_list = pool.map(pre_transform, data_list)
         torch.save(self.collate(data_list[:80]), self.processed_paths[0])
         torch.save(self.collate(data_list[80:]), self.processed_paths[1])
 
