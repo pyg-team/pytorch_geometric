@@ -83,7 +83,7 @@ Besides of being a plain old python object, :class:`torch_geometric.data.Data` p
                 [2.0]])
 
     for key, item in data:
-        print('{} found in data)
+        print(key+' found in data)
     >>> x found in data
     >>> edge_index found in data
 
