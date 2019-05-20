@@ -13,7 +13,7 @@ class DataLoader(torch.utils.data.DataLoader):
         batch_size (int, optional): How may samples per batch to load.
             (default: :obj:`1`)
         shuffle (bool, optional): If set to :obj:`True`, the data will be
-            reshuffled at every epoch (default: :obj:`True`)
+            reshuffled at every epoch (default: :obj:`False`)
         follow_batch (list or tuple, optional): Creates assignment batch
             vectors for each key in the list. (default: :obj:`[]`)
     """
@@ -21,7 +21,7 @@ class DataLoader(torch.utils.data.DataLoader):
     def __init__(self,
                  dataset,
                  batch_size=1,
-                 shuffle=True,
+                 shuffle=False,
                  follow_batch=[],
                  **kwargs):
         super(DataLoader, self).__init__(
@@ -47,10 +47,10 @@ class DataListLoader(torch.utils.data.DataLoader):
         batch_size (int, optional): How may samples per batch to load.
             (default: :obj:`1`)
         shuffle (bool, optional): If set to :obj:`True`, the data will be
-            reshuffled at every epoch (default: :obj:`True`)
+            reshuffled at every epoch (default: :obj:`False`)
     """
 
-    def __init__(self, dataset, batch_size=1, shuffle=True, **kwargs):
+    def __init__(self, dataset, batch_size=1, shuffle=False, **kwargs):
         super(DataListLoader, self).__init__(
             dataset,
             batch_size,
@@ -75,10 +75,10 @@ class DenseDataLoader(torch.utils.data.DataLoader):
         batch_size (int, optional): How may samples per batch to load.
             (default: :obj:`1`)
         shuffle (bool, optional): If set to :obj:`True`, the data will be
-            reshuffled at every epoch (default: :obj:`True`)
+            reshuffled at every epoch (default: :obj:`False`)
     """
 
-    def __init__(self, dataset, batch_size=1, shuffle=True, **kwargs):
+    def __init__(self, dataset, batch_size=1, shuffle=False, **kwargs):
         def dense_collate(data_list):
             batch = Batch()
             for key in data_list[0].keys:
