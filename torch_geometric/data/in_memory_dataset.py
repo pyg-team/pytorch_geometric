@@ -99,7 +99,7 @@ class InMemoryDataset(Dataset):
         return (dataset, perm) if return_perm is True else dataset
 
     def get(self, idx):
-        data = Data()
+        data = self.data.__class__()
 
         if hasattr(self.data, '__num_nodes__'):
             data.num_nodes = self.data.__num_nodes__[idx].item()

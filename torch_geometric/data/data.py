@@ -1,6 +1,5 @@
 import re
 import warnings
-
 import torch
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
@@ -92,10 +91,10 @@ class Data(object):
     @property
     def keys(self):
         r"""Returns all names of graph attributes."""
-        arr = [key for key in self.__dict__.keys() if self[key] is not None]
-        if '__num_nodes__' in arr:
-            arr.remove('__num_nodes__')
-        return arr
+        keys = [key for key in self.__dict__.keys() if self[key] is not None]
+        if '__num_nodes__' in keys:
+            keys.remove('__num_nodes__')
+        return keys
 
     def __len__(self):
         r"""Returns the number of all present attributes."""
