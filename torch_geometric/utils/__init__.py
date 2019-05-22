@@ -15,7 +15,7 @@ from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .one_hot import one_hot
 from .metric import (accuracy, true_positive, true_negative, false_positive,
-                     false_negative, precision, recall, f1_score)
+                     false_negative, precision, recall, f1_score, mean_IoU)
 
 __all__ = [
     'degree',
@@ -48,4 +48,5 @@ __all__ = [
     'precision',
     'recall',
     'f1_score',
+    'mean_IoU',
 ]
