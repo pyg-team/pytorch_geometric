@@ -1,85 +1,75 @@
+import os.path as osp
+
 import torch
-import numpy as np
-
-import torch_geometric.transforms as GT
+import torch.nn.functional as F
+from torch_geometric.datasets import ShapeNet
+import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
+from torch_geometric.utils import mean_IoU
 
-from shapenet2 import ShapeNet2
-from pointnet2_part_seg import PointNet2PartSegmentNet
-from solver import train_epoch, test_epoch, eval_mIOU
+from pointnet2_part_seg import PointNet2PartSegmentNet as Net
 
-# Configuration
-shapenet_dataset = '../../data/shapenet'
 category = 'Airplane'
-# npoints = 0  # Do not sample when npoints <= 0
-npoints = 2500  # Sample to fixed number of points when npoints > 0
-batch_size = 8
-num_workers = 6
-nepochs = 25
-
-manual_seed = 123
-np.random.seed(manual_seed)
-torch.manual_seed(manual_seed)
-torch.cuda.manual_seed(manual_seed)
-
-# Transform
-rot_max_angle = 15
-trans_max_distance = 0.01
-
-RotTransform = GT.Compose([
-    GT.RandomRotate(rot_max_angle, 0),
-    GT.RandomRotate(rot_max_angle, 1),
-    GT.RandomRotate(rot_max_angle, 2)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
+train_transform = T.Compose([
+    T.NormalizeScale(),
+    T.RandomTranslate(0.01),
+    T.RandomRotate(15, axis=0),
+    T.RandomRotate(15, axis=1),
+    T.RandomRotate(15, axis=2)
 ])
-TransTransform = GT.RandomTranslate(trans_max_distance)
+test_transform = T.NormalizeScale()
+train_dataset = ShapeNet(path, category, train=True, transform=train_transform)
+test_dataset = ShapeNet(path, category, train=False, transform=test_transform)
+train_loader = DataLoader(
+    train_dataset, batch_size=12, shuffle=True, num_workers=6)
+test_loader = DataLoader(
+    test_dataset, batch_size=12, shuffle=False, num_workers=6)
 
-train_transform = GT.Compose(
-    [GT.NormalizeScale(), RotTransform, TransTransform])
-test_transform = GT.Compose([
-    GT.NormalizeScale(),
-])
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = Net(train_dataset.num_classes).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-# Dataset
-train_dataset = ShapeNet2(
-    shapenet_dataset,
-    npoints=npoints,
-    category=category,
-    train=True,
-    transform=train_transform)
-train_dataloader = DataLoader(
-    train_dataset,
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=num_workers)
-num_classes = train_dataset.num_classes
 
-test_dataset = ShapeNet2(
-    shapenet_dataset,
-    npoints=npoints,
-    category=category,
-    train=False,
-    transform=test_transform)
-test_dataloader = DataLoader(
-    test_dataset,
-    batch_size=batch_size,
-    shuffle=False,
-    num_workers=num_workers)
+def train():
+    model.train()
 
-# Model, criterion and optimizer
-device = torch.device('cuda') if torch.cuda.is_available() else torch.device(
-    'cpu')
-dtype = torch.float
+    total_loss = correct_nodes = total_nodes = 0
+    for i, data in enumerate(train_loader):
+        data = data.to(device)
+        optimizer.zero_grad()
+        out = model(data)
+        loss = F.nll_loss(out, data.y)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+        correct_nodes += out.max(dim=1)[1].eq(data.y).sum().item()
+        total_nodes += data.num_nodes
 
-model = PointNet2PartSegmentNet(num_classes).to(device, dtype)
-criterion = torch.nn.NLLLoss()
-optimizer = torch.optim.Adam(model.parameters())
+        if (i + 1) % 10 == 0:
+            print('[{}/{}] Loss: {:.4f}, Train Accuracy: {:.4f}'.format(
+                i + 1, len(train_loader), total_loss / 10,
+                correct_nodes / total_nodes))
+            total_loss = correct_nodes = total_nodes = 0
 
-# Train
-for epoch in range(0, nepochs):
-    print('Epoch {}/{}'.format(epoch + 1, nepochs))
-    train_epoch(model, criterion, optimizer, train_dataloader, device)
-    test_epoch(model, test_dataloader, device)
 
-# mIOU
-mIOU = eval_mIOU(model, test_dataloader, device, num_classes)
-print('mIOU for category {}: {}'.format(category, mIOU))
+def test(loader):
+    model.eval()
+
+    correct_nodes = total_nodes = 0
+    ious = []
+    for data in loader:
+        data = data.to(device)
+        with torch.no_grad():
+            out = model(data)
+        pred = out.max(dim=1)[1]
+        correct_nodes += pred.eq(data.y).sum().item()
+        ious += [mean_IoU(pred, data.y, test_dataset.num_classes, data.batch)]
+        total_nodes += data.num_nodes
+    return correct_nodes / total_nodes, torch.cat(ious, dim=0).mean().item()
+
+
+for epoch in range(1, 26):
+    train()
+    acc, iou = test(test_loader)
+    print('Epoch: {:02d}, Acc: {:.4f}, IoU: {:.4f}'.format(epoch, acc, iou))
