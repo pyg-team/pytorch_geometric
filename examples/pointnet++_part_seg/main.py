@@ -7,7 +7,7 @@ import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import mean_IoU
 
-from pointnet2_part_seg import PointNet2PartSegmentNet as Net
+from pointnet2_part_seg import Net
 
 category = 'Airplane'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
