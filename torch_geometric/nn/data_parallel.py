@@ -1,3 +1,4 @@
+import warnings
 from itertools import chain
 
 import torch
@@ -39,6 +40,11 @@ class DataParallel(torch.nn.DataParallel):
 
     def forward(self, data_list):
         """"""
+        if len(data_list) == 0:
+            warnings.warn('DataParallel received an empty data list, which '
+                          'may result in unexpected behaviour.')
+            return None
+
         if not self.device_ids or len(self.device_ids) == 1:  # Fallback
             data = Batch.from_data_list(data_list).to(self.src_device)
             return self.module(data)
