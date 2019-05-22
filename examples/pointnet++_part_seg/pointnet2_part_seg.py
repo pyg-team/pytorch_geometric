@@ -242,7 +242,7 @@ class PointNet2PartSegmentNet(torch.nn.Module):
         x = self.fc2(self.dropout1(self.fc1(fp1_out_x)))
         x = F.log_softmax(x, dim=-1)
 
-        return x, fp1_out_batch
+        return x
 
 
 if __name__ == '__main__':
