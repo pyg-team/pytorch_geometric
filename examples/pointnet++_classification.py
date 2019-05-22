@@ -2,7 +2,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU
+from torch.nn import Sequential as Seq, Linear as Lin, ReLU, BatchNorm1d as BN
 from torch_geometric.datasets import ModelNet
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
@@ -14,6 +14,30 @@ train_dataset = ModelNet(path, '10', True, transform, pre_transform)
 test_dataset = ModelNet(path, '10', False, transform, pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+
+
+class SAModule(torch.nn.Module):
+    def __init__(self, ratio, r, nn):
+        super(SAModule, self).__init__()
+        self.ratio = ratio
+        self.r = r
+        self.conv = PointConv(nn)
+
+    def forward(self, x, pos, batch):
+        idx = fps(pos, batch, ratio=self.ratio)
+        row, col = radius(
+            pos, pos[idx], self.r, batch, batch[idx], max_num_neighbors=64)
+        edge_index = torch.stack([col, row], dim=0)
+        x = self.conv(x, (pos, pos[idx]), edge_index)
+        pos, batch = pos[idx], batch[idx]
+        return x, pos, batch
+
+
+def MLP(channels, batch_norm=True):
+    return Seq(*[
+        Seq(Lin(channels[i - 1], channels[i]), ReLU(), BN(channels[i]))
+        for i in range(1, len(channels))
+    ])
 
 
 class Net(torch.nn.Module):
@@ -38,14 +62,14 @@ class Net(torch.nn.Module):
 
         idx = fps(pos, batch, ratio=0.5)  # 512 points
         row, col = radius(
-            pos, pos[idx], 0.1, batch, batch[idx], max_num_neighbors=64)
+            pos, pos[idx], 0.2, batch, batch[idx], max_num_neighbors=64)
         edge_index = torch.stack([col, row], dim=0)  # Transpose.
         x = F.relu(self.local_sa1(None, (pos, pos[idx]), edge_index))
         pos, batch = pos[idx], batch[idx]
 
         idx = fps(pos, batch, ratio=0.25)  # 128 points
         row, col = radius(
-            pos, pos[idx], 0.2, batch, batch[idx], max_num_neighbors=64)
+            pos, pos[idx], 0.4, batch, batch[idx], max_num_neighbors=64)
         edge_index = torch.stack([col, row], dim=0)  # Transpose.
         x = F.relu(self.local_sa2(x, (pos, pos[idx]), edge_index))
         pos, batch = pos[idx], batch[idx]
