@@ -1,7 +1,7 @@
 from itertools import repeat, product
 
 import torch
-from torch_geometric.data import Dataset, Data
+from torch_geometric.data import Dataset
 
 
 class InMemoryDataset(Dataset):
