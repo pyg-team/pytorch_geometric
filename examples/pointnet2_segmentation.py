@@ -2,59 +2,35 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU, BatchNorm1d as BN
 from torch_geometric.datasets import ShapeNet
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
-from torch_geometric.nn import PointConv, fps, radius, knn_interpolate
-from torch_geometric.utils import scatter_, mean_IoU
+from torch_geometric.nn import knn_interpolate
+from torch_geometric.utils import mean_IoU
+
+from pointnet2_classification import SAModule, GlobalSAModule, MLP
 
 category = 'Airplane'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
-train_transform = T.Compose([
-    T.NormalizeScale(),
+transform = T.Compose([
     T.RandomTranslate(0.01),
     T.RandomRotate(15, axis=0),
     T.RandomRotate(15, axis=1),
     T.RandomRotate(15, axis=2)
 ])
-test_transform = T.NormalizeScale()
-train_dataset = ShapeNet(path, category, train=True, transform=train_transform)
-test_dataset = ShapeNet(path, category, train=False, transform=test_transform)
+pre_transform = T.NormalizeScale()
+train_dataset = ShapeNet(
+    path,
+    category,
+    train=True,
+    transform=transform,
+    pre_transform=pre_transform)
+test_dataset = ShapeNet(
+    path, category, train=False, pre_transform=pre_transform)
 train_loader = DataLoader(
     train_dataset, batch_size=12, shuffle=True, num_workers=6)
 test_loader = DataLoader(
     test_dataset, batch_size=12, shuffle=False, num_workers=6)
-
-
-class SAModule(torch.nn.Module):
-    def __init__(self, ratio, r, nn):
-        super(SAModule, self).__init__()
-        self.ratio = ratio
-        self.r = r
-        self.conv = PointConv(nn)
-
-    def forward(self, x, pos, batch):
-        idx = fps(pos, batch, ratio=self.ratio)
-        row, col = radius(
-            pos, pos[idx], self.r, batch, batch[idx], max_num_neighbors=64)
-        edge_index = torch.stack([col, row], dim=0)
-        x = self.conv(x, (pos, pos[idx]), edge_index)
-        pos, batch = pos[idx], batch[idx]
-        return x, pos, batch
-
-
-class GlobalSAModule(torch.nn.Module):
-    def __init__(self, nn):
-        super(GlobalSAModule, self).__init__()
-        self.nn = nn
-
-    def forward(self, x, pos, batch):
-        x = self.nn(torch.cat([x, pos], dim=1))
-        x = scatter_('max', x, batch)
-        pos = pos.new_zeros((x.size(0), 3))
-        batch = torch.arange(x.size(0), device=batch.device)
-        return x, pos, batch
 
 
 class FPModule(torch.nn.Module):
@@ -71,13 +47,6 @@ class FPModule(torch.nn.Module):
         return x, pos_skip, batch_skip
 
 
-def MLP(channels, batch_norm=True):
-    return Seq(*[
-        Seq(Lin(channels[i - 1], channels[i]), ReLU(), BN(channels[i]))
-        for i in range(1, len(channels))
-    ])
-
-
 class Net(torch.nn.Module):
     def __init__(self, num_classes):
         super(Net, self).__init__()
@@ -89,9 +58,9 @@ class Net(torch.nn.Module):
         self.fp2_module = FPModule(3, MLP([256 + 128, 256, 128]))
         self.fp1_module = FPModule(3, MLP([128, 128, 128, 128]))
 
-        self.lin1 = Lin(128, 128)
-        self.lin2 = Lin(128, 128)
-        self.lin3 = Lin(128, num_classes)
+        self.lin1 = torch.nn.Linear(128, 128)
+        self.lin2 = torch.nn.Linear(128, 128)
+        self.lin3 = torch.nn.Linear(128, num_classes)
 
     def forward(self, data):
         sa0_out = (data.x, data.pos, data.batch)
@@ -104,9 +73,9 @@ class Net(torch.nn.Module):
         x, _, _ = self.fp1_module(*fp2_out, *sa0_out)
 
         x = F.relu(self.lin1(x))
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin2(x)
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin3(x)
         return F.log_softmax(x, dim=-1)
 
