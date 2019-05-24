@@ -146,7 +146,7 @@ def f1_score(pred, target, num_classes):
     return score
 
 
-def mean_IoU(pred, target, num_classes, batch=None):
+def mean_iou(pred, target, num_classes, batch=None):
     r"""Computes the mean Intersection over Union score.
 
     Args:
@@ -166,7 +166,7 @@ def mean_IoU(pred, target, num_classes, batch=None):
         u = scatter_add(pred | target, batch, dim=0).to(torch.float)
     else:
         i = (pred & target).sum(dim=0).to(torch.float)
-        u = (pred + target).sum(dim=0).to(torch.float)
+        u = (pred | target).sum(dim=0).to(torch.float)
 
     iou = i / u
     iou[torch.isnan(iou)] = 1
