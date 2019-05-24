@@ -1,8 +1,10 @@
+import torch
 import numpy as np
 
 
 class FixedPoints(object):
-    r"""Samples a fixed number of :obj:`num` points from a point cloud.
+    r"""Samples a fixed number of :obj:`num` points and features from a point
+    cloud.
 
     Args:
         num (int): The number of points to sample.
@@ -16,7 +18,7 @@ class FixedPoints(object):
         choice = np.random.choice(data.num_nodes, self.num, replace=True)
 
         for key, item in data:
-            if item.size(0) == num_nodes:
+            if torch.is_tensor(item) and item.size(0) == num_nodes:
                 data[key] = item[choice]
 
         return data
