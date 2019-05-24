@@ -95,8 +95,7 @@ class GATConv(MessagePassing):
         alpha = softmax(alpha, edge_index_i, num_nodes)
 
         # Sample attention coefficients stochastically.
-        if self.training and self.dropout > 0:
-            alpha = F.dropout(alpha, p=self.dropout, training=True)
+        alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
         return x_j * alpha.view(-1, self.heads, 1)
 
