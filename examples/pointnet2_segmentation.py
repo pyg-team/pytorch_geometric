@@ -6,7 +6,7 @@ from torch_geometric.datasets import ShapeNet
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import knn_interpolate
-from torch_geometric.utils import mean_IoU
+from torch_geometric.utils import mean_iou
 
 from pointnet2_classification import SAModule, GlobalSAModule, MLP
 
@@ -118,7 +118,7 @@ def test(loader):
             out = model(data)
         pred = out.max(dim=1)[1]
         correct_nodes += pred.eq(data.y).sum().item()
-        ious += [mean_IoU(pred, data.y, test_dataset.num_classes, data.batch)]
+        ious += [mean_iou(pred, data.y, test_dataset.num_classes, data.batch)]
         total_nodes += data.num_nodes
     return correct_nodes / total_nodes, torch.cat(ious, dim=0).mean().item()
 
