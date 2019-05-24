@@ -32,6 +32,7 @@ __all__ = [
     'Coauthor',
     'Amazon',
     'PPI',
+    'Reddit',
     'QM7b',
     'QM9',
     'Entities',
