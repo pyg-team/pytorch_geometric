@@ -42,8 +42,7 @@ class GATConv(torch.nn.Module):
 
     def gat_reduce(self, node):
         alpha = torch.softmax(node.mailbox['a'], dim=1)
-        if self.training and self.dropout > 0:
-            alpha = F.dropout(alpha, p=self.dropout, training=True)
+        alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         x = (node.mailbox['m'] * alpha.unsqueeze(-1)).sum(dim=1)
         return {'x': x}
 
