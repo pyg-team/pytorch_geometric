@@ -27,8 +27,8 @@ install:
   - pip install codecov
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install scikit-learn==0.20 networkx==2.2; fi
 script:
-  - pycodestyle .
-  - flake8 .
+  - if [[ $TRAVIS_PYTHON_VERSION != 2.7 ]]; then pycodestyle . fi
+  - if [[ $TRAVIS_PYTHON_VERSION != 2.7 ]]; then flake8 . fi
   - python setup.py install
   - python setup.py test
   - cd docs && pip install -r requirements.txt && make clean && make html && cd ..
