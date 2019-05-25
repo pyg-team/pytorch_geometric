@@ -85,9 +85,7 @@ class Attention(torch.nn.Module):
         score = torch.matmul(query, key.transpose(-2, -1))
         score = score / math.sqrt(key.size(-1))
         score = restricted_softmax(score, dim=-1)
-
-        if self.dropout > 0:
-            score = F.dropout(score, p=self.dropout, training=self.training)
+        score = F.dropout(score, p=self.dropout, training=self.training)
 
         return torch.matmul(score, value)
 
