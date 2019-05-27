@@ -77,9 +77,9 @@ class InMemoryDataset(Dataset):
             return data
         elif isinstance(idx, slice):
             return self.__indexing__(range(*idx.indices(len(self))))
-        elif isinstance(idx, torch.LongTensor):
+        elif torch.is_tensor(idx) and idx.dtype == torch.long:
             return self.__indexing__(idx)
-        elif isinstance(idx, torch.ByteTensor):
+        elif torch.is_tensor(idx) and idx.dtype == torch.uint8:
             return self.__indexing__(idx.nonzero())
 
         raise IndexError(
