@@ -3,7 +3,7 @@ from torch_geometric.utils import scatter_
 
 def global_add_pool(x, batch, size=None):
     r"""Returns batch-wise graph-level-outputs by adding node features
-    across the node node dimension, so that for a single graph
+    across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
 
     .. math::
@@ -26,7 +26,7 @@ def global_add_pool(x, batch, size=None):
 
 def global_mean_pool(x, batch, size=None):
     r"""Returns batch-wise graph-level-outputs by averaging node features
-    across the node node dimension, so that for a single graph
+    across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
 
     .. math::
