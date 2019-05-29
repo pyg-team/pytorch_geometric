@@ -202,9 +202,9 @@ class Data(object):
     def is_coalesced(self):
         r"""Returns :obj:`True`, if edge indices are ordered and do not contain
         duplicate entries."""
-        row, col = self.edge_index
-        index = self.num_nodes * row + col
-        return row.size(0) == torch.unique(index).size(0)
+        edge_index, _ = coalesce(self.edge_index, None, self.num_nodes,
+                                 self.num_nodes)
+        return (self.edge_index != edge_index).sum().item() == 0
 
     def coalesce(self):
         r""""Orders and removes duplicated entries from edge indices."""
