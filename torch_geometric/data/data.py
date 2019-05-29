@@ -1,6 +1,7 @@
 import re
 import warnings
 import torch
+from torch_sparse import coalesce
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
@@ -20,7 +21,7 @@ def size_repr(value):
     elif isinstance(value, int) or isinstance(value, float):
         return [1]
     else:
-        raise ValueError('Unsupported attribute type.')
+        return value
 
 
 class Data(object):
@@ -204,6 +205,12 @@ class Data(object):
         row, col = self.edge_index
         index = self.num_nodes * row + col
         return row.size(0) == torch.unique(index).size(0)
+
+    def coalesce(self):
+        r""""Orders and removes duplicated entries from edge indices."""
+        self.edge_index, self.edge_attr = coalesce(
+            self.edge_index, self.edge_attr, self.num_nodes, self.num_nodes)
+        return self
 
     def contains_isolated_nodes(self):
         r"""Returns :obj:`True`, if the graph does not contain isolated
