@@ -56,10 +56,8 @@ def add_self_loops(edge_index, edge_weight=None, fill_value=1, num_nodes=None):
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    loop_index = torch.arange(0,
-                              num_nodes,
-                              dtype=torch.long,
-                              device=edge_index.device)
+    loop_index = torch.arange(
+        0, num_nodes, dtype=torch.long, device=edge_index.device)
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
 
     if edge_weight is not None:
@@ -110,10 +108,7 @@ def add_remaining_self_loops(edge_index,
         loop_weight[row[inv_mask]] = edge_weight[inv_mask].view(-1)
         edge_weight = torch.cat([edge_weight[mask], loop_weight], dim=0)
 
-    loop_index = torch.arange(0,
-                              num_nodes,
-                              dtype=torch.long,
-                              device=row.device)
+    loop_index = torch.arange(0, num_nodes, dtype=row.dtype, device=row.device)
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
     edge_index = torch.cat([edge_index[:, mask], loop_index], dim=1)
 
