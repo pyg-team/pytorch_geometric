@@ -91,11 +91,6 @@ class NeighborSampler(object):
 
         self.tmp = torch.empty(data.num_nodes, dtype=torch.long)
 
-    def __len__(self):
-        if self.drop_last:
-            return self.subset.size(0) // self.batch_size
-        return (self.subset.size(0) + self.batch_size - 1) // self.batch_size
-
     def __subsets__(self, subset=None):
         if subset is None and not self.shuffle:
             subset = torch.arange(self.data.num_nodes, dtype=torch.long)
