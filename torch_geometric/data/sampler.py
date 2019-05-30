@@ -37,7 +37,7 @@ class DataFlow(object):
         size = [None, None]
         size[i] = self.__last_n_id__.size(0)
         size[j] = n_id.size(0)
-        block = Block(n_id, e_id, edge_index, size)
+        block = Block(n_id, e_id, edge_index, tuple(size))
         self.blocks.append(block)
         self.__last_n_id__ = n_id
 
