@@ -47,9 +47,9 @@ def cross_validation_with_val_set(dataset,
         t_start = time.perf_counter()
 
         for epoch in range(1, epochs + 1):
-            train_loss = train(model, optimizer, train_loader, device)
-            val_losses.append(eval_loss(model, val_loader, device))
-            accs.append(eval_acc(model, test_loader, device))
+            train_loss = train(model, optimizer, train_loader)
+            val_losses.append(eval_loss(model, val_loader))
+            accs.append(eval_acc(model, test_loader))
             eval_info = {
                 'fold': fold,
                 'epoch': epoch,
@@ -110,7 +110,7 @@ def num_graphs(data):
         return data.x.size(0)
 
 
-def train(model, optimizer, loader, device):
+def train(model, optimizer, loader):
     model.train()
 
     total_loss = 0
@@ -125,7 +125,7 @@ def train(model, optimizer, loader, device):
     return total_loss / len(loader.dataset)
 
 
-def eval_acc(model, loader, device):
+def eval_acc(model, loader):
     model.eval()
 
     correct = 0
@@ -137,7 +137,7 @@ def eval_acc(model, loader, device):
     return correct / len(loader.dataset)
 
 
-def eval_loss(model, loader, device):
+def eval_loss(model, loader):
     model.eval()
 
     loss = 0
