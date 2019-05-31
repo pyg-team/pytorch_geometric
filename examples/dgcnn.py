@@ -49,7 +49,6 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
 
 def train():
     model.train()
-    scheduler.step()
 
     total_loss = 0
     for data in train_loader:
@@ -80,3 +79,4 @@ for epoch in range(1, 201):
     test_acc = test(test_loader)
     print('Epoch {:03d}, Loss: {:.4f}, Test: {:.4f}'.format(
         epoch, loss, test_acc))
+    scheduler.step()
