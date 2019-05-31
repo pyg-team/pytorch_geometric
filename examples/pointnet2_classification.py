@@ -87,8 +87,8 @@ def train(epoch):
 
 def test(loader):
     model.eval()
-    correct = 0
 
+    correct = 0
     for data in loader:
         data = data.to(device)
         with torch.no_grad():
@@ -103,8 +103,10 @@ if __name__ == '__main__':
     pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
     train_dataset = ModelNet(path, '10', True, transform, pre_transform)
     test_dataset = ModelNet(path, '10', False, transform, pre_transform)
-    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    train_loader = DataLoader(
+        train_dataset, batch_size=32, shuffle=True, num_workers=6)
+    test_loader = DataLoader(
+        test_dataset, batch_size=32, shuffle=False, num_workers=6)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Net().to(device)
@@ -113,4 +115,4 @@ if __name__ == '__main__':
     for epoch in range(1, 201):
         train(epoch)
         test_acc = test(test_loader)
-        print('Epoch: {:02d}, Test: {:.4f}'.format(epoch, test_acc))
+        print('Epoch: {:03d}, Test: {:.4f}'.format(epoch, test_acc))
