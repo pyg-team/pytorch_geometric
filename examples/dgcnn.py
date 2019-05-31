@@ -59,7 +59,6 @@ def train():
         loss = F.nll_loss(out, data.y)
         loss.backward()
         total_loss += loss.item() * data.num_graphs
-        print(loss.item())
         optimizer.step()
     return total_loss / len(train_dataset)
 
