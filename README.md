@@ -20,7 +20,7 @@
 *PyTorch Geometric* (PyG) is a geometric deep learning extension library for [PyTorch](https://pytorch.org/).
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
-In addition, it consists of an easy-to-use mini-batch loader, multi gpu-support, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
+In addition, it consists of an easy-to-use mini-batch loader for many small and single giant graphs, multi gpu-support, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
 
 --------------------------------------------------------------------------------
 
@@ -166,6 +166,7 @@ In detail, the following methods are currently implemented:
 * **[Deep Graph Infomax](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.models.DeepGraphInfomax)** from Veličković *et al.*: [Deep Graph Infomax](https://arxiv.org/abs/1809.10341) (ICLR 2019)
 * All variants of **[Graph Auto-Encoders](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.models.GAE)** from Kipf and Welling: [Variational Graph Auto-Encoders](https://arxiv.org/abs/1611.07308) (NIPS-W 2016) and Pan *et al.*: [Adversarially Regularized Graph Autoencoder for Graph Embedding](https://arxiv.org/abs/1802.04407) (IJCAI 2018)
 * **[RENet](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.models.RENet)** from Jin *et al.*: [Recurrent Event Network for Reasoning over Temporal Knowledge Graphs](https://arxiv.org/abs/1904.05530) (ICLR-W 2019)
+* **[NeighborSampler](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.data.NeighborSampler)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017)
 
 --------------------------------------------------------------------------------
 
