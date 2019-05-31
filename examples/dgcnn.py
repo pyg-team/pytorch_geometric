@@ -20,7 +20,7 @@ test_loader = DataLoader(
     test_dataset, batch_size=32, shuffle=False, num_workers=6)
 
 
-class DGCNN(torch.nn.Module):
+class Net(torch.nn.Module):
     def __init__(self, out_channels, k=20, aggr='max'):
         super().__init__()
 
@@ -42,7 +42,7 @@ class DGCNN(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = DGCNN(train_dataset.num_classes, k=20).to(device)
+model = Net(train_dataset.num_classes, k=20).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
 
