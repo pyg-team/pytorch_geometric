@@ -65,8 +65,7 @@ class DynamicEdgeConv(torch.nn.Module):
         self.nn = nn
         self.k = k
         assert aggr in ['add', 'mean', 'max']
-        aggr = 'sum' if aggr == 'add' else aggr
-        self.aggr = getattr(torch, self.aggr)
+        self.aggr = aggr
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -80,7 +79,14 @@ class DynamicEdgeConv(torch.nn.Module):
         x_row, x_col = x.index_select(0, row), x.index_select(0, col)
         out = torch.cat([x_row, x_col - x_row], dim=1)
         out = self.nn(out)
-        out = self.aggr(out.view(-1, self.k, out.size(-1)), dim=1)
+        out = out.view(-1, self.k, out.size(-1))
+
+        if self.aggr == 'add':
+            out = out.sum(dim=1)
+        elif self.aggr == 'mean':
+            out = out.mean(dim=1)
+        else:
+            out = out.max(dim=1)[0]
 
         return out
 
