@@ -6,18 +6,13 @@ from torch_geometric.nn import MessagePassing
 from torch.nn import Parameter
 from torch_geometric.nn.inits import glorot, zeros
 
-batch_size = 1000
-size = [25, 10]
-num_hops = 2
-
 dataset = Reddit('/tmp/reddit')
 data = dataset[0]
-
 loader = NeighborSampler(
     data,
-    size=size,
-    num_hops=num_hops,
-    batch_size=batch_size,
+    size=[25, 10],
+    num_hops=2,
+    batch_size=1000,
     shuffle=True,
     add_self_loops=True)
 
