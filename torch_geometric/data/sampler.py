@@ -71,7 +71,7 @@ class NeighborSampler(object):
                  batch_size=1,
                  shuffle=False,
                  drop_last=False,
-                 add_self_loop=False,
+                 add_self_loops=False,
                  flow='source_to_target'):
 
         self.data = data
@@ -80,7 +80,7 @@ class NeighborSampler(object):
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.drop_last = drop_last
-        self.add_self_loop = add_self_loop
+        self.add_self_loops = add_self_loops
         self.flow = flow
 
         assert flow in ['source_to_target', 'target_to_source']
@@ -119,7 +119,7 @@ class NeighborSampler(object):
                 e_id = neighbor_sampler(n_id, self.cumdeg, self.size[l])
 
                 new_n_id = self.edge_index_j.index_select(0, e_id)
-                if self.add_self_loop:
+                if self.add_self_loops:
                     new_n_id = torch.cat([new_n_id, n_id], dim=0)
                 new_n_id = new_n_id.unique(sorted=False)
                 e_id = self.e_assoc[e_id]
@@ -127,13 +127,13 @@ class NeighborSampler(object):
                 edges = [None, None]
 
                 edge_index_i = self.data.edge_index[self.i, e_id]
-                if self.add_self_loop:
+                if self.add_self_loops:
                     edge_index_i = torch.cat([edge_index_i, n_id], dim=0)
                 edges[self.i] = self.tmp[edge_index_i]
 
                 self.tmp[new_n_id] = torch.arange(new_n_id.size(0))
                 edge_index_j = self.data.edge_index[self.j, e_id]
-                if self.add_self_loop:
+                if self.add_self_loops:
                     edge_index_j = torch.cat([edge_index_j, n_id], dim=0)
                 edges[self.j] = self.tmp[edge_index_j]
 
@@ -141,7 +141,7 @@ class NeighborSampler(object):
 
                 # Remove the edge identifier when adding self-loops to prevent
                 # misused behavior.
-                e_id = None if self.add_self_loop else e_id
+                e_id = None if self.add_self_loops else e_id
                 n_id = new_n_id
 
                 data_flow.append(n_id, e_id, edge_index)
