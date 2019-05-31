@@ -110,40 +110,46 @@ class NeighborSampler(object):
         assert len(subsets) > 0
         return subsets
 
+    def produce(self, n_id):
+        data_flow = DataFlow(n_id, self.flow)
+
+        for l in range(self.num_hops):
+            e_id = neighbor_sampler(n_id, self.cumdeg, self.size[l])
+
+            new_n_id = self.edge_index_j.index_select(0, e_id)
+            if self.add_self_loops:
+                new_n_id = torch.cat([new_n_id, n_id], dim=0)
+            new_n_id = new_n_id.unique(sorted=False)
+            e_id = self.e_assoc[e_id]
+
+            edges = [None, None]
+
+            edge_index_i = self.data.edge_index[self.i, e_id]
+            if self.add_self_loops:
+                edge_index_i = torch.cat([edge_index_i, n_id], dim=0)
+
+            self.tmp[n_id] = torch.arange(n_id.size(0))
+            edges[self.i] = self.tmp[edge_index_i]
+
+            edge_index_j = self.data.edge_index[self.j, e_id]
+            if self.add_self_loops:
+                edge_index_j = torch.cat([edge_index_j, n_id], dim=0)
+
+            self.tmp[new_n_id] = torch.arange(new_n_id.size(0))
+            edges[self.j] = self.tmp[edge_index_j]
+
+            edge_index = torch.stack(edges, dim=0)
+
+            # Remove the edge identifier when adding self-loops to prevent
+            # misused behavior.
+            e_id = None if self.add_self_loops else e_id
+            n_id = new_n_id
+
+            data_flow.append(n_id, e_id, edge_index)
+
+        return data_flow
+
     def __call__(self, subset=None):
         for n_id in self.__get_batches__(subset):
-            data_flow = DataFlow(n_id, self.flow)
-            self.tmp[n_id] = torch.arange(n_id.size(0), dtype=torch.long)
-
-            for l in range(self.num_hops):
-                e_id = neighbor_sampler(n_id, self.cumdeg, self.size[l])
-
-                new_n_id = self.edge_index_j.index_select(0, e_id)
-                if self.add_self_loops:
-                    new_n_id = torch.cat([new_n_id, n_id], dim=0)
-                new_n_id = new_n_id.unique(sorted=False)
-                e_id = self.e_assoc[e_id]
-
-                edges = [None, None]
-
-                edge_index_i = self.data.edge_index[self.i, e_id]
-                if self.add_self_loops:
-                    edge_index_i = torch.cat([edge_index_i, n_id], dim=0)
-                edges[self.i] = self.tmp[edge_index_i]
-
-                self.tmp[new_n_id] = torch.arange(new_n_id.size(0))
-                edge_index_j = self.data.edge_index[self.j, e_id]
-                if self.add_self_loops:
-                    edge_index_j = torch.cat([edge_index_j, n_id], dim=0)
-                edges[self.j] = self.tmp[edge_index_j]
-
-                edge_index = torch.stack(edges, dim=0)
-
-                # Remove the edge identifier when adding self-loops to prevent
-                # misused behavior.
-                e_id = None if self.add_self_loops else e_id
-                n_id = new_n_id
-
-                data_flow.append(n_id, e_id, edge_index)
-
+            data_flow = self.produce(n_id)
             yield data_flow
