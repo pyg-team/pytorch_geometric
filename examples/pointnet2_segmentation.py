@@ -123,7 +123,7 @@ def test(loader):
     return correct_nodes / total_nodes, torch.cat(ious, dim=0).mean().item()
 
 
-for epoch in range(1, 26):
+for epoch in range(1, 31):
     train()
     acc, iou = test(test_loader)
     print('Epoch: {:02d}, Acc: {:.4f}, IoU: {:.4f}'.format(epoch, acc, iou))
