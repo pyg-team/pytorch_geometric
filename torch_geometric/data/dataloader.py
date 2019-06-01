@@ -10,10 +10,10 @@ class DataLoader(torch.utils.data.DataLoader):
 
     Args:
         dataset (Dataset): The dataset from which to load the data.
-        batch_size (int, optional): How may samples per batch to load.
+        batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         shuffle (bool, optional): If set to :obj:`True`, the data will be
-            reshuffled at every epoch (default: :obj:`False`)
+            reshuffled at every epoch. (default: :obj:`False`)
         follow_batch (list or tuple, optional): Creates assignment batch
             vectors for each key in the list. (default: :obj:`[]`)
     """
@@ -44,7 +44,7 @@ class DataListLoader(torch.utils.data.DataLoader):
 
     Args:
         dataset (Dataset): The dataset from which to load the data.
-        batch_size (int, optional): How may samples per batch to load.
+        batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch (default: :obj:`False`)
@@ -72,7 +72,7 @@ class DenseDataLoader(torch.utils.data.DataLoader):
 
     Args:
         dataset (Dataset): The dataset from which to load the data.
-        batch_size (int, optional): How may samples per batch to load.
+        batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch (default: :obj:`False`)

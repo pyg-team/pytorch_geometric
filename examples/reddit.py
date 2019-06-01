@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Reddit
-from torch_geometric.data.sampler import NeighborSampler
+from torch_geometric.data import NeighborSampler
 from torch_geometric.nn import MessagePassing
 from torch.nn import Parameter
 from torch_geometric.nn.inits import glorot, zeros

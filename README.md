@@ -15,7 +15,7 @@
 [![Build Status][build-image]][build-url]
 [![Code Coverage][coverage-image]][coverage-url]
 
-**[Documentation](http://rusty1s.github.io/pytorch_geometric)** | **[Paper](https://arxiv.org/abs/1903.02428)**
+**[Documentation](http://rusty1s.github.io/pytorch_geometric)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[External Resources](https://rusty1s.github.io/pytorch_geometric/build/html/notes/resources.html)**
 
 *PyTorch Geometric* (PyG) is a geometric deep learning extension library for [PyTorch](https://pytorch.org/).
 
@@ -233,6 +233,8 @@ Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective pa
   year={2019},
 }
 ```
+
+Feel free to [email us](mailto:matthias.fey@tu-dortmund.de) if you wish your work to be listed in the [external resources](https://rusty1s.github.io/pytorch_geometric/build/html/notes/resources.html).
 
 ## Running tests
 
