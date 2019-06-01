@@ -329,8 +329,8 @@ In addition, we can use the ``transform`` argument to randomly augment a ``Data`
                         pre_transform=T.KNNGraph(k=6),
                         transform=T.RandomTranslate(0.01))
 
-    data[0]
-    >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
+    dataset[0]
+    >>> Data(edge_index=[2, 15108], pos=[2518, 3], y=[2518])
 
 You can find a complete list of all implemented transforms at :mod:`torch_geometric.transforms`.
 
