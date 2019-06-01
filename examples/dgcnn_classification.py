@@ -32,7 +32,8 @@ class Net(torch.nn.Module):
             MLP([1024, 512]), Dropout(0.5), MLP([512, 256]), Dropout(0.5),
             Lin(256, out_channels))
 
-    def forward(self, pos, batch):
+    def forward(self, data):
+        pos, batch = data.pos, data.batch
         x1 = self.conv1(pos, batch)
         x2 = self.conv2(x1, batch)
         out = self.lin1(torch.cat([x1, x2], dim=1))
@@ -54,7 +55,7 @@ def train():
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        out = model(data.pos, data.batch)
+        out = model(data)
         loss = F.nll_loss(out, data.y)
         loss.backward()
         total_loss += loss.item() * data.num_graphs
@@ -69,7 +70,7 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         with torch.no_grad():
-            pred = model(data.pos, data.batch).max(dim=1)[1]
+            pred = model(data).max(dim=1)[1]
         correct += pred.eq(data.y).sum().item()
     return correct / len(loader.dataset)
 
