@@ -20,8 +20,7 @@ def test_sampler():
         assert data_flow.batch_size == 2
         assert len(data_flow) == 2
         block = data_flow[0]
-        out = 'Block(n_id=[1], e_id=[1], edge_index=[2, 1], size=(1, 1))'
-        assert block.__repr__() == out
+        assert block.__repr__()[:5] == 'Block'
         for block in data_flow:
             pass
         data_flow = data_flow.to(torch.long)
