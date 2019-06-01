@@ -6,5 +6,3 @@ External resources
 * Soumith Chintala: **Automatic Differentation, PyTorch and Graph Neural Networks** [`Talk starting from 26:15 <http://www.ipam.ucla.edu/abstract/?tid=15592&pcode=GLWS4>`_]
 
 * Steeve Huang: **Hands-on Graph Neural Networks with PyTorch & PyTorch Geometric** [`Blogpost <https://towardsdatascience.com/hands-on-graph-neural-networks-with-pytorch-pytorch-geometric-359487e221a8>`_, `Code <https://github.com/khuangaf/Pytorch-Geometric-YooChoose>`_]
-
-
