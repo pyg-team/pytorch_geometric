@@ -14,8 +14,6 @@ from global_attention import GlobalAttentionNet
 from set2set import Set2SetNet
 from sort_pool import SortPool
 
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=100)
 parser.add_argument('--batch_size', type=int, default=128)
@@ -52,7 +50,7 @@ def logger(info):
 
 results = []
 for dataset_name, Net in product(datasets, nets):
-    best_result = (float('inf'), 0, 0) #(loss, acc, std)
+    best_result = (float('inf'), 0, 0)  # (loss, acc, std)
     print('-----\n{} - {}'.format(dataset_name, Net.__name__))
     for num_layers, hidden in product(layers, hiddens):
         dataset = get_dataset(dataset_name, sparse=Net != DiffPool)
