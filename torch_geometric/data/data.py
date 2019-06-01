@@ -1,7 +1,7 @@
 import re
 import warnings
-
 import torch
+from torch_sparse import coalesce
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
@@ -21,7 +21,7 @@ def size_repr(value):
     elif isinstance(value, int) or isinstance(value, float):
         return [1]
     else:
-        raise ValueError('Unsupported attribute type.')
+        return value
 
 
 class Data(object):
@@ -92,10 +92,10 @@ class Data(object):
     @property
     def keys(self):
         r"""Returns all names of graph attributes."""
-        arr = [key for key in self.__dict__.keys() if self[key] is not None]
-        if '__num_nodes__' in arr:
-            arr.remove('__num_nodes__')
-        return arr
+        keys = [key for key in self.__dict__.keys() if self[key] is not None]
+        if '__num_nodes__' in keys:
+            keys.remove('__num_nodes__')
+        return keys
 
     def __len__(self):
         r"""Returns the number of all present attributes."""
@@ -202,9 +202,16 @@ class Data(object):
     def is_coalesced(self):
         r"""Returns :obj:`True`, if edge indices are ordered and do not contain
         duplicate entries."""
-        row, col = self.edge_index
-        index = self.num_nodes * row + col
-        return row.size(0) == torch.unique(index).size(0)
+        edge_index, _ = coalesce(self.edge_index, None, self.num_nodes,
+                                 self.num_nodes)
+        return self.edge_index.numel() == edge_index.numel() and (
+            self.edge_index != edge_index).sum().item() == 0
+
+    def coalesce(self):
+        r""""Orders and removes duplicated entries from edge indices."""
+        self.edge_index, self.edge_attr = coalesce(
+            self.edge_index, self.edge_attr, self.num_nodes, self.num_nodes)
+        return self
 
     def contains_isolated_nodes(self):
         r"""Returns :obj:`True`, if the graph does not contain isolated

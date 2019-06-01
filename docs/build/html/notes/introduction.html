@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.2.1)
+                master (1.3.0)
               </div>
             
           
@@ -116,6 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -276,7 +277,7 @@ If you want to write your indices this way, you should transpose and call <code 
             <span class="p">[</span><span class="mf">2.0</span><span class="p">]])</span>
 
 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;{} found in data)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s1">&#39; found in data)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="n">found</span> <span class="ow">in</span> <span class="n">data</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">edge_index</span> <span class="n">found</span> <span class="ow">in</span> <span class="n">data</span>
 
@@ -487,8 +488,8 @@ Note that the next time the dataset is initialized it will already contain graph
                     <span class="n">pre_transform</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">KNNGraph</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span>
                     <span class="n">transform</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">RandomTranslate</span><span class="p">(</span><span class="mf">0.01</span><span class="p">))</span>
 
-<span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">17768</span><span class="p">],</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">2518</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">2518</span><span class="p">])</span>
+<span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Data</span><span class="p">(</span><span class="n">edge_index</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">15108</span><span class="p">],</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">2518</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">2518</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>You can find a complete list of all implemented transforms at <a class="reference internal" href="../modules/transforms.html#module-torch_geometric.transforms" title="torch_geometric.transforms"><code class="xref py py-mod docutils literal notranslate"><span class="pre">torch_geometric.transforms</span></code></a>.</p>
@@ -549,7 +550,7 @@ Let’s train this model on the train nodes for 200 epochs:</p>
 <p>Finally we can evaluate our model on the test nodes:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 <span class="n">_</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">correct</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">test_mask</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">test_mask</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="n">correct</span> <span class="o">=</span> <span class="nb">float</span> <span class="p">(</span><span class="n">pred</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">test_mask</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">test_mask</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 <span class="n">acc</span> <span class="o">=</span> <span class="n">correct</span> <span class="o">/</span> <span class="n">data</span><span class="o">.</span><span class="n">test_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Accuracy: {:.4f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">acc</span><span class="p">))</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">Accuracy</span><span class="p">:</span> <span class="mf">0.8150</span>

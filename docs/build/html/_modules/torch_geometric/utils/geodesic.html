@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.1)
+                master (1.3.0)
               </div>
             
           
@@ -114,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes/resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -210,26 +211,26 @@
                       <span class="n">max_distance</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes (normalized) geodesic distances of a mesh given by :obj:`pos`</span>
 <span class="sd">    and :obj:`face`. If :obj:`src` and :obj:`dest` are given, this method only</span>
-<span class="sd">    computes the geodesic distances for the respective sourc and target</span>
+<span class="sd">    computes the geodesic distances for the respective source and target</span>
 <span class="sd">    node-pairs.</span>
 
 <span class="sd">    .. note::</span>
 
 <span class="sd">        This function requires the :obj:`gdist` package.</span>
-<span class="sd">        To install, run :obj:`pip install gdist`.</span>
+<span class="sd">        To install, run :obj:`pip install cython &amp;&amp; pip install gdist`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        pos (Tensor): The node positions.</span>
 <span class="sd">        face (LongTensor): The face indices.</span>
 <span class="sd">        src (LongTensor, optional): If given, only compute geodesic distances</span>
-<span class="sd">            for the specified sourced indices. (default: :obj:`None`)</span>
+<span class="sd">            for the specified source indices. (default: :obj:`None`)</span>
 <span class="sd">        dest (LongTensor, optional): If given, only compute geodesic distances</span>
 <span class="sd">            for the specified target indices. (default: :obj:`None`)</span>
 <span class="sd">        norm (bool, optional): Normalizes geodesic distances by</span>
 <span class="sd">            :math:`\sqrt{\textrm{area}(\mathcal{M})}`. (default: :obj:`True`)</span>
 <span class="sd">        max_distance (float, optional): If given, only yields results for</span>
-<span class="sd">            geodesic distances less than :obj:`max_distance`.</span>
-<span class="sd">            (default: :obj:`None`)</span>
+<span class="sd">            geodesic distances less than :obj:`max_distance`. This will speed</span>
+<span class="sd">            up runtime dramatically. (default: :obj:`None`)</span>
 
 <span class="sd">    :rtype: Tensor</span>
 <span class="sd">    &quot;&quot;&quot;</span>

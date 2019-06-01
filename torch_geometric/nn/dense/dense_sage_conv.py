@@ -55,7 +55,7 @@ class DenseSAGEConv(torch.nn.Module):
             adj[:, idx, idx] = 1
 
         out = torch.matmul(adj, x)
-        out = out / adj.sum(dim=-1, keepdim=True)
+        out = out / adj.sum(dim=-1, keepdim=True).clamp(min=1)
         out = torch.matmul(out, self.weight)
 
         if self.bias is not None:

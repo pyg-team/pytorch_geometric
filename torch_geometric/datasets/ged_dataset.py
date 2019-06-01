@@ -114,13 +114,10 @@ class GEDDataset(InMemoryDataset):
             for i, idx in enumerate(ids[-1]):
                 i = i if len(ids) == 1 else i + len(ids[0])
                 G = nx.read_gexf(osp.join(r_path, '{}.gexf'.format(idx)))
-                mapping = {idx: i for i, idx in enumerate(G.nodes())}
+                mapping = {name: j for j, name in enumerate(G.nodes())}
                 G = nx.relabel_nodes(G, mapping)
                 Ns.append(G.number_of_nodes())
-                edge_indices = [[int(u), int(v)] for (u, v) in G.edges]
-                if len(edge_indices) == 0:
-                    continue
-                edge_index = torch.tensor(edge_indices).t().contiguous()
+                edge_index = torch.tensor(list(G.edges)).t().contiguous()
                 edge_index = to_undirected(edge_index, num_nodes=Ns[-1])
 
                 data = Data(edge_index=edge_index, i=i)

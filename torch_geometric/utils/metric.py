@@ -1,6 +1,8 @@
 from __future__ import division
 
 import torch
+from torch_scatter import scatter_add
+from torch_geometric.utils import one_hot
 
 
 def accuracy(pred, target):
@@ -142,3 +144,31 @@ def f1_score(pred, target, num_classes):
     score[torch.isnan(score)] = 0
 
     return score
+
+
+def mean_iou(pred, target, num_classes, batch=None):
+    r"""Computes the mean Intersection over Union score.
+
+    Args:
+        pred (LongTensor): The predictions.
+        target (LongTensor): The targets.
+        num_classes (int): The number of classes.
+        batch (LongTensor): The assignment vector which maps each pred-target
+            pair to an example.
+
+    :rtype: :class:`Tensor`
+    """
+    pred = one_hot(pred, num_classes, dtype=torch.long)
+    target = one_hot(target, num_classes, dtype=torch.long)
+
+    if batch is not None:
+        i = scatter_add(pred & target, batch, dim=0).to(torch.float)
+        u = scatter_add(pred | target, batch, dim=0).to(torch.float)
+    else:
+        i = (pred & target).sum(dim=0).to(torch.float)
+        u = (pred | target).sum(dim=0).to(torch.float)
+
+    iou = i / u
+    iou[torch.isnan(iou)] = 1
+    iou = iou.mean(dim=-1)
+    return iou

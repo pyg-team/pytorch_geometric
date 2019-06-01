@@ -83,7 +83,7 @@ Besides of being a plain old python object, :class:`torch_geometric.data.Data` p
                 [2.0]])
 
     for key, item in data:
-        print('{} found in data)
+        print(key+' found in data)
     >>> x found in data
     >>> edge_index found in data
 
@@ -329,8 +329,8 @@ In addition, we can use the ``transform`` argument to randomly augment a ``Data`
                         pre_transform=T.KNNGraph(k=6),
                         transform=T.RandomTranslate(0.01))
 
-    data[0]
-    >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
+    dataset[0]
+    >>> Data(edge_index=[2, 15108], pos=[2518, 3], y=[2518])
 
 You can find a complete list of all implemented transforms at :mod:`torch_geometric.transforms`.
 
@@ -402,7 +402,7 @@ Finally we can evaluate our model on the test nodes:
 
     model.eval()
     _, pred = model(data).max(dim=1)
-    correct = pred[data.test_mask].eq(data.y[data.test_mask]).sum().item()
+    correct = float (pred[data.test_mask].eq(data.y[data.test_mask]).sum().item())
     acc = correct / data.test_mask.sum().item()
     print('Accuracy: {:.4f}'.format(acc))
     >>> Accuracy: 0.8150

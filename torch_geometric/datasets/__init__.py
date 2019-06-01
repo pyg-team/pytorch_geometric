@@ -5,6 +5,7 @@ from .cora_full import CoraFull
 from .coauthor import Coauthor
 from .amazon import Amazon
 from .ppi import PPI
+from .reddit import Reddit
 from .qm7 import QM7b
 from .qm9 import QM9
 from .entities import Entities
@@ -31,6 +32,7 @@ __all__ = [
     'Coauthor',
     'Amazon',
     'PPI',
+    'Reddit',
     'QM7b',
     'QM9',
     'Entities',

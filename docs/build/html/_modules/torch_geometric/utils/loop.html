@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.1)
+                master (1.3.0)
               </div>
             
           
@@ -114,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes/resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -251,10 +252,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
 
-    <span class="n">loop_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>
-                              <span class="n">num_nodes</span><span class="p">,</span>
-                              <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span>
-                              <span class="n">device</span><span class="o">=</span><span class="n">edge_index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">loop_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">edge_index</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="n">loop_index</span> <span class="o">=</span> <span class="n">loop_index</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">edge_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -302,13 +301,12 @@
 
     <span class="k">if</span> <span class="n">edge_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">edge_weight</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">loop_weight</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">inv_mask</span><span class="p">]]</span> <span class="o">=</span> <span class="n">edge_weight</span><span class="p">[</span><span class="n">inv_mask</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">remaining_edge_weight</span> <span class="o">=</span> <span class="n">edge_weight</span><span class="p">[</span><span class="n">inv_mask</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">remaining_edge_weight</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">loop_weight</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">inv_mask</span><span class="p">]]</span> <span class="o">=</span> <span class="n">remaining_edge_weight</span>
         <span class="n">edge_weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_weight</span><span class="p">[</span><span class="n">mask</span><span class="p">],</span> <span class="n">loop_weight</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">loop_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>
-                              <span class="n">num_nodes</span><span class="p">,</span>
-                              <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span>
-                              <span class="n">device</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">loop_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="n">loop_index</span> <span class="o">=</span> <span class="n">loop_index</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">edge_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_index</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">],</span> <span class="n">loop_index</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 

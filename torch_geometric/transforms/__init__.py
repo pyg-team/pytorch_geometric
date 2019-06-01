@@ -24,6 +24,7 @@ from .knn_graph import KNNGraph
 from .radius_graph import RadiusGraph
 from .face_to_edge import FaceToEdge
 from .sample_points import SamplePoints
+from .fixed_points import FixedPoints
 from .to_dense import ToDense
 from .two_hop import TwoHop
 from .line_graph import LineGraph
@@ -56,6 +57,7 @@ __all__ = [
     'RadiusGraph',
     'FaceToEdge',
     'SamplePoints',
+    'FixedPoints',
     'ToDense',
     'TwoHop',
     'LineGraph',

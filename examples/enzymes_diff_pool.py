@@ -10,8 +10,6 @@ from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
 
 max_nodes = 100
 
-torch.manual_seed(1245)
-
 
 class MyFilter(object):
     def __call__(self, data):

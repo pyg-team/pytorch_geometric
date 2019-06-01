@@ -37,7 +37,8 @@ def knn_interpolate(x, pos_x, pos_y, batch_x=None, batch_y=None, k=3):
     """
 
     with torch.no_grad():
-        y_idx, x_idx = knn(pos_x, pos_y, k, batch_x=batch_x, batch_y=batch_y)
+        assign_index = knn(pos_x, pos_y, k, batch_x=batch_x, batch_y=batch_y)
+        y_idx, x_idx = assign_index
         diff = pos_x[x_idx] - pos_y[y_idx]
         squared_distance = (diff * diff).sum(dim=-1, keepdim=True)
         weights = 1.0 / torch.clamp(squared_distance, min=1e-16)
