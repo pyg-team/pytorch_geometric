@@ -43,7 +43,7 @@ class GraphSAGEWithJK(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(SAGEConv(hidden, hidden))
-        self.lin1 = torch.nn.Linear(num_layers * hidden, hidden)
+        self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
         self.mode = mode
         self.kwargs = kwargs
