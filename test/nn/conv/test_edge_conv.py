@@ -26,11 +26,17 @@ def test_dynamic_edge_conv_conv():
     x = torch.randn((num_nodes, in_channels))
 
     nn = Seq(Lin(2 * in_channels, 32), ReLU(), Lin(32, out_channels))
-    conv = DynamicEdgeConv(nn, k=6)
+    conv = DynamicEdgeConv(nn, k=6, aggr='add')
     assert conv.__repr__() == (
         'DynamicEdgeConv(nn=Sequential(\n'
         '  (0): Linear(in_features=32, out_features=32, bias=True)\n'
         '  (1): ReLU()\n'
         '  (2): Linear(in_features=32, out_features=32, bias=True)\n'
         '), k=6)')
+    assert conv(x).size() == (num_nodes, out_channels)
+
+    conv = DynamicEdgeConv(nn, k=6, aggr='mean')
+    assert conv(x).size() == (num_nodes, out_channels)
+
+    conv = DynamicEdgeConv(nn, k=6, aggr='max')
     assert conv(x).size() == (num_nodes, out_channels)
