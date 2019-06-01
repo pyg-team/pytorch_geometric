@@ -6,7 +6,7 @@ from train_eval import cross_validation_with_val_set
 
 from gcn import GCN, GCNWithJK
 from graph_sage import GraphSAGE, GraphSAGEWithJK
-from gin import GIN0, GIN
+from gin import GIN0, GIN0WithJK, GIN, GINWithJK
 from graclus import Graclus
 from top_k import TopK
 from diff_pool import DiffPool
@@ -28,13 +28,15 @@ datasets = ['MUTAG', 'PROTEINS', 'IMDB-BINARY', 'REDDIT-BINARY']  # , 'COLLAB']
 nets = [
     GCNWithJK,
     GraphSAGEWithJK,
-    GIN0,
-    GIN,
+    GIN0WithJK,
+    GINWithJK,
     Graclus,
     TopK,
     DiffPool,
     GCN,
     GraphSAGE,
+    GIN0,
+    GIN,
     GlobalAttentionNet,
     Set2SetNet,
     SortPool,
