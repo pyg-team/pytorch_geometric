@@ -6,7 +6,6 @@ import torch.nn.functional as F
 from torch_geometric.utils import scatter_
 from torch_scatter import scatter_add
 from torch_geometric.nn import knn_graph, EdgeConv
-from dgcnn_classification import MLP
 
 from torch_geometric.datasets import ShapeNet
 import torch_geometric.transforms as T
@@ -39,6 +38,34 @@ def mean_iou(pred, target, num_classes, batch=None):
     iou = iou.mean(dim=-1)
     return iou
 
+class MLP(nn.Module):
+    """Wrapping class of a MLP block.
+    Args:
+        layer_dims: list of dimensions as [input_dim, hidden_dims, output_dim],
+                    to specify the mlp neuron numbers.
+        batch_norm: append a batch normalization layer
+        relu: append a ReLu layer
+    """
+    
+    def __init__(self, layer_dims, batch_norm=True, relu=True):
+        super().__init__()
+        self.layer_dims = layer_dims
+        layers = []
+        for i in range(len(layer_dims) - 1):
+            in_dim, out_dim = layer_dims[i], layer_dims[i+1]
+            layers.append(nn.Linear(in_dim, out_dim))
+            if batch_norm:
+                layers.append(nn.BatchNorm1d(out_dim))
+            if relu:
+                layers.append(nn.ReLU()) 
+        self.layer = nn.Sequential(*layers)  
+    
+    def reset_parameters(self):
+        reset(self.layer)
+        
+    def forward(self, x):
+        return self.layer(x)
+    
 class DGCNNSeg(nn.Module):
     """Implementation of Dynamic Graph CNN(https://arxiv.org/abs/1801.07829)
     for segementation task. This is a baseline version that doesn't 
