@@ -1,33 +1,28 @@
 import torch
-import torch.nn.functional as F
-from torch.nn import Parameter
 
-from ..inits import uniform
+from ..inits import reset
 
 
-class DenseSAGEConv(torch.nn.Module):
-    r"""See :class:`torch_geometric.nn.conv.SAGEConv`.
+class DenseGINConv(torch.nn.Module):
+    r"""See :class:`torch_geometric.nn.conv.GINConv`.
 
     :rtype: :class:`Tensor`
     """
 
-    def __init__(self, in_channels, out_channels, normalize=True, bias=True):
-        super(DenseSAGEConv, self).__init__()
+    def __init__(self, nn, eps=0, train_eps=False):
+        super(DenseGINConv, self).__init__()
 
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.normalize = normalize
-        self.weight = Parameter(torch.Tensor(self.in_channels, out_channels))
-        if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+        self.nn = nn
+        self.initial_eps = eps
+        if train_eps:
+            self.eps = torch.nn.Parameter(torch.Tensor([eps]))
         else:
-            self.register_parameter('bias', None)
-
+            self.register_buffer('eps', torch.Tensor([eps]))
         self.reset_parameters()
 
     def reset_parameters(self):
-        uniform(self.in_channels, self.weight)
-        uniform(self.in_channels, self.bias)
+        reset(self.nn)
+        self.eps.data.fill_(self.initial_eps)
 
     def forward(self, x, adj, mask=None, add_loop=True):
         r"""
@@ -49,20 +44,11 @@ class DenseSAGEConv(torch.nn.Module):
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         B, N, _ = x.size()
 
-        if add_loop:
-            adj = adj.clone()
-            idx = torch.arange(N, dtype=torch.long, device=adj.device)
-            adj[:, idx, idx] = 1
-
         out = torch.matmul(adj, x)
-        out = out / adj.sum(dim=-1, keepdim=True).clamp(min=1)
-        out = torch.matmul(out, self.weight)
+        if add_loop:
+            out = (1 + self.eps) * x + out
 
-        if self.bias is not None:
-            out = out + self.bias
-
-        if self.normalize:
-            out = F.normalize(out, p=2, dim=-1)
+        out = self.nn(out)
 
         if mask is not None:
             mask = mask.view(B, N, 1).to(x.dtype)
@@ -71,5 +57,4 @@ class DenseSAGEConv(torch.nn.Module):
         return out
 
     def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+        return '{}(nn={})'.format(self.__class__.__name__, self.nn)

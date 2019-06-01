@@ -116,10 +116,15 @@ class ShapeNet(InMemoryDataset):
             datasets.append(data_list)
 
         makedirs(osp.join(self.processed_dir, self.category))
-        data_list = datasets[0] + datasets[1]
-        torch.save(self.collate(data_list), self.processed_paths[0])
-        torch.save(self.collate(datasets[2]), self.processed_paths[1])
+        train_data, train_slices = self.collate(datasets[0] + datasets[1])
+        test_data, test_slices = self.collate(datasets[2])
+
+        _, train_data.y = train_data.y.unique(return_inverse=True)
+        _, test_data.y = test_data.y.unique(return_inverse=True)
+
+        torch.save((train_data, train_slices), self.processed_paths[0])
+        torch.save((test_data, test_slices), self.processed_paths[1])
 
     def __repr__(self):
-        return '{}({}, category={})'.format(self.__class__.__name__,
-                                            len(self), self.category)
+        return '{}({}, category={})'.format(self.__class__.__name__, len(self),
+                                            self.category)

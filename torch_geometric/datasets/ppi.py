@@ -13,7 +13,7 @@ from torch_geometric.utils import remove_self_loops
 
 
 class PPI(InMemoryDataset):
-    r"""Protein-protein interaction networks from the `"Predicting
+    r"""The protein-protein interaction networks from the `"Predicting
     Multicellular Function through Multi-layer Tissue Networks"
     <https://arxiv.org/abs/1707.04638>`_ paper, containing positional gene
     sets, motif gene sets and immunological signatures as features (50 in
