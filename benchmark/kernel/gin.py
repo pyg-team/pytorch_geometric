@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear, Sequential, ReLU, BatchNorm1d as BN
-from torch_geometric.nn import GINConv, global_mean_pool
+from torch_geometric.nn import GINConv, global_mean_pool, JumpingKnowledge
 
 
 class GIN0(torch.nn.Module):
@@ -28,6 +28,7 @@ class GIN0(torch.nn.Module):
                         BN(hidden),
                     ),
                     train_eps=False))
+        self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = torch.nn.Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
@@ -35,6 +36,7 @@ class GIN0(torch.nn.Module):
         self.conv1.reset_parameters()
         for conv in self.convs:
             conv.reset_parameters()
+        self.jump.reset_parameters()
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
 
@@ -45,7 +47,8 @@ class GIN0(torch.nn.Module):
         for conv in self.convs:
             x = conv(x, edge_index)
             xs += [x]
-        x = global_mean_pool(torch.cat(xs, dim=1), batch)
+        x = self.jump(xs)
+        x = global_mean_pool(x, batch)
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin2(x)
@@ -79,6 +82,7 @@ class GIN(torch.nn.Module):
                         BN(hidden),
                     ),
                     train_eps=True))
+        self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = torch.nn.Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
@@ -86,6 +90,7 @@ class GIN(torch.nn.Module):
         self.conv1.reset_parameters()
         for conv in self.convs:
             conv.reset_parameters()
+        self.jump.reset_parameters()
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
 
@@ -96,7 +101,8 @@ class GIN(torch.nn.Module):
         for conv in self.convs:
             x = conv(x, edge_index)
             xs += [x]
-        x = global_mean_pool(torch.cat(xs, dim=1), batch)
+        x = self.jump(xs)
+        x = global_mean_pool(x, batch)
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin2(x)
