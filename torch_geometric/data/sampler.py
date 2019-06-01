@@ -64,6 +64,37 @@ class DataFlow(object):
 
 
 class NeighborSampler(object):
+    r"""The neighbor sampler from the `"Inductive Representation Learning on
+    Large Graphs" <https://arxiv.org/abs/1706.02216>`_ paper which iterates
+    over graph nodes in a mini-batch fashion and constructs sampled subgraphs
+    of size :obj:`num_hops`.
+
+    It returns a generator of :obj:`DataFlow` that defines the message
+    passing flow to the root nodes via a list of :obj:`num_hops` bipartite
+    graph objects :obj:`edge_index` and the initial start nodes :obj:`n_id`.
+
+    Args:
+        data (torch_geometric.data.Data): The graph data object.
+        size (int or float or [int] or [float]): The number of neighbors to
+            sample (for each layer). The value of this parameter can be either
+            set to be the same for each neighborhood or percentage-based.
+        num_hops (int): The number of layers to sample.
+        batch_size (int, optional): How many samples per batch to load.
+            (default: :obj:`1`)
+        shuffle (bool, optional): If set to :obj:`True`, the data will be
+            reshuffled at every epoch. (default: :obj:`False`)
+        drop_last (bool, optional): If set to :obj:`True`, will drop the last
+            incomplete batch if the number of nodes is not divisible by the
+            batch size. If set to :obj:`False` and the size of graph is not
+            divisible by the batch size, the last batch will be smaller.
+            (default: :obj:`False`)
+        add_self_loops (bool, optional): If set to :obj:`True`, will add
+            self-loops to each sampled neigborhood. (default: :obj:`False`)
+        flow (string, optional): The flow direction of message passing
+            (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
+            (default: :obj:`"source_to_target"`)
+    """
+
     def __init__(self,
                  data,
                  size,
@@ -94,6 +125,9 @@ class NeighborSampler(object):
         self.tmp = torch.empty(data.num_nodes, dtype=torch.long)
 
     def __get_batches__(self, subset=None):
+        r"""Returns a list of mini-batches from the initial nodes in
+        :obj:`subset`."""
+
         if subset is None and not self.shuffle:
             subset = torch.arange(self.data.num_nodes, dtype=torch.long)
         elif subset is None and self.shuffle:
@@ -110,7 +144,10 @@ class NeighborSampler(object):
         assert len(subsets) > 0
         return subsets
 
-    def produce(self, n_id):
+    def __produce__(self, n_id):
+        r"""Produces a :obj:`DataFlow` object for a given mini-batch
+        :obj:`n_id`."""
+
         data_flow = DataFlow(n_id, self.flow)
 
         for l in range(self.num_hops):
@@ -150,6 +187,14 @@ class NeighborSampler(object):
         return data_flow
 
     def __call__(self, subset=None):
+        r"""Returns a generator of :obj:`DataFlow` that iterates over the nodes
+        in :obj:`subset` in a mini-batch fashion.
+
+        Args:
+            subset (LongTensor or ByteTensor, optional): The initial nodes to
+                propagete messages to. If set to :obj:`None`, will iterate over
+                all nodes in the graph. (default: :obj:`None`)
+        """
         for n_id in self.__get_batches__(subset):
-            data_flow = self.produce(n_id)
+            data_flow = self.__produce__(n_id)
             yield data_flow

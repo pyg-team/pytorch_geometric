@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.1)
+                master (1.3.0)
               </div>
             
           
@@ -114,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes/resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -205,10 +206,10 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset (Dataset): The dataset from which to load the data.</span>
-<span class="sd">        batch_size (int, optional): How may samples per batch to load.</span>
+<span class="sd">        batch_size (int, optional): How many samples per batch to load.</span>
 <span class="sd">            (default: :obj:`1`)</span>
 <span class="sd">        shuffle (bool, optional): If set to :obj:`True`, the data will be</span>
-<span class="sd">            reshuffled at every epoch (default: :obj:`True`)</span>
+<span class="sd">            reshuffled at every epoch. (default: :obj:`False`)</span>
 <span class="sd">        follow_batch (list or tuple, optional): Creates assignment batch</span>
 <span class="sd">            vectors for each key in the list. (default: :obj:`[]`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -216,7 +217,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">dataset</span><span class="p">,</span>
                  <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                 <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">follow_batch</span><span class="o">=</span><span class="p">[],</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataLoader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -239,13 +240,13 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset (Dataset): The dataset from which to load the data.</span>
-<span class="sd">        batch_size (int, optional): How may samples per batch to load.</span>
+<span class="sd">        batch_size (int, optional): How many samples per batch to load.</span>
 <span class="sd">            (default: :obj:`1`)</span>
 <span class="sd">        shuffle (bool, optional): If set to :obj:`True`, the data will be</span>
-<span class="sd">            reshuffled at every epoch (default: :obj:`True`)</span>
+<span class="sd">            reshuffled at every epoch (default: :obj:`False`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataListLoader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">dataset</span><span class="p">,</span>
             <span class="n">batch_size</span><span class="p">,</span>
@@ -267,13 +268,13 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset (Dataset): The dataset from which to load the data.</span>
-<span class="sd">        batch_size (int, optional): How may samples per batch to load.</span>
+<span class="sd">        batch_size (int, optional): How many samples per batch to load.</span>
 <span class="sd">            (default: :obj:`1`)</span>
 <span class="sd">        shuffle (bool, optional): If set to :obj:`True`, the data will be</span>
-<span class="sd">            reshuffled at every epoch (default: :obj:`True`)</span>
+<span class="sd">            reshuffled at every epoch (default: :obj:`False`)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">dense_collate</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
             <span class="n">batch</span> <span class="o">=</span> <span class="n">Batch</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
