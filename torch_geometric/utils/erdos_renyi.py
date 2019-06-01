@@ -4,7 +4,7 @@ from torch_geometric.utils import from_networkx, to_undirected
 
 
 def erdos_renyi_graph(num_nodes, prob, seed=None, directed=False):
-    r"""Returns the :obj:`edge_index` of a random Erdős-Rényi graph.
+    r"""Returns the :obj:`edge_index` of a random Erdos-Renyi graph.
 
     Args:
         num_nodes (int): The number of nodes.
