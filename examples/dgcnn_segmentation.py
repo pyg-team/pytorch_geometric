@@ -29,9 +29,9 @@ train_dataset = ShapeNet(
 test_dataset = ShapeNet(
     path, category, train=False, pre_transform=pre_transform)
 train_loader = DataLoader(
-    train_dataset, batch_size=12, shuffle=True, num_workers=6)
+    train_dataset, batch_size=10, shuffle=True, num_workers=6)
 test_loader = DataLoader(
-    test_dataset, batch_size=12, shuffle=False, num_workers=6)
+    test_dataset, batch_size=10, shuffle=False, num_workers=6)
 
 
 class Net(torch.nn.Module):

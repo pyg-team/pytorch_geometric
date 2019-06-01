@@ -26,6 +26,8 @@ def test_sampler():
             pass
         data_flow = data_flow.to(torch.long)
         break
+    for data_flow in loader(torch.tensor([0, 1, 2, 3, 4])):
+        pass
 
     loader = NeighborSampler(
         data,
