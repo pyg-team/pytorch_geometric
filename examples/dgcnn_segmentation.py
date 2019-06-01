@@ -35,17 +35,17 @@ test_loader = DataLoader(
 
 
 class Net(torch.nn.Module):
-    def __init__(self, out_channels, k=20, aggr='max'):
+    def __init__(self, out_channels, k=30, aggr='max'):
         super(Net, self).__init__()
 
-        self.conv1 = DynamicEdgeConv(MLP([2 * 3, 64, 64, 64]), k, aggr)
-        self.conv2 = DynamicEdgeConv(MLP([2 * 64, 64, 64, 64]), k, aggr)
-        self.conv3 = DynamicEdgeConv(MLP([2 * 64, 64, 64, 64]), k, aggr)
+        self.conv1 = DynamicEdgeConv(MLP([2 * 3, 64, 64]), k, aggr)
+        self.conv2 = DynamicEdgeConv(MLP([2 * 64, 64, 64]), k, aggr)
+        self.conv3 = DynamicEdgeConv(MLP([2 * 64, 64, 64]), k, aggr)
         self.lin1 = MLP([3 * 64, 1024])
 
         self.mlp = Seq(
-            MLP([1024, 256]), MLP([256, 256]), Dropout(0.5), MLP([256, 128]),
-            Dropout(0.5), Lin(128, out_channels))
+            MLP([1024, 256]), Dropout(0.5), MLP([256, 128]), Dropout(0.5),
+            Lin(128, out_channels))
 
     def forward(self, data):
         pos, batch = data.pos, data.batch
