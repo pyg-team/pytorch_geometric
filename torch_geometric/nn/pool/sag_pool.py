@@ -35,6 +35,7 @@ class SAGPooling(torch.nn.Module):
 
         self.in_channels = in_channels
         self.ratio = ratio
+        self.gnn_name = gnn
 
         assert gnn in ['GCN', 'GAT', 'SAGE']
         if gnn == 'GCN':
@@ -66,5 +67,6 @@ class SAGPooling(torch.nn.Module):
         return x, edge_index, edge_attr, batch, perm
 
     def __repr__(self):
-        return '{}({}, ratio={}, gnn={})'.format(
-            self.__class__.__name__, self.in_channels, self.ratio, self.gnn)
+        return '{}({}, {}, ratio={})'.format(self.__class__.__name__,
+                                             self.gnn_name, self.in_channels,
+                                             self.ratio)
