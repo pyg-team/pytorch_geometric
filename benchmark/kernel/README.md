@@ -8,6 +8,7 @@ Hyperparameter selection is performed for the number of hidden units and the num
 * **[GIN](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/gin.py)**
 * **[Graclus](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/graclus.py)**
 * **[Top-K-Pooling](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/top_k.py)**
+* **[SAG-Pooling](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/sag_pool.py)**
 * **[DiffPool](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/diff_pool.py)**
 * **[GlobalAttention](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/global_attention.py)**
 * **[Set2Set](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/set2set.py)**
