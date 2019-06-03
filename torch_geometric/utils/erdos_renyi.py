@@ -18,7 +18,6 @@ def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
         idx = idx.view(num_nodes - 1, num_nodes)
         idx = idx + torch.arange(1, num_nodes).view(-1, 1)
         idx = idx.view(-1)
-        print(idx.size())
     else:
         idx = torch.combinations(torch.arange(num_nodes))
 
