@@ -3,12 +3,12 @@ import torch
 from torch_geometric.utils import to_undirected
 
 
-def erdos_renyi_graph(num_nodes, prob, directed=False):
+def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
     r"""Returns the :obj:`edge_index` of a random Erdos-Renyi graph.
 
     Args:
         num_nodes (int): The number of nodes.
-        prob (float): Probability of an edge.
+        edge_prob (float): Probability of an edge.
         directed (bool, optional): If set to :obj:`True`, will return a
             directed graph. (default: :obj:`False`)
     """
@@ -23,7 +23,7 @@ def erdos_renyi_graph(num_nodes, prob, directed=False):
         idx = torch.combinations(torch.arange(num_nodes))
 
     # Filter edges.
-    mask = torch.rand(idx.size(0)) < prob
+    mask = torch.rand(idx.size(0)) < edge_prob
     idx = idx[mask]
 
     if directed:
