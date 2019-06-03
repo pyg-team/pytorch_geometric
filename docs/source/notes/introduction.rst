@@ -298,7 +298,7 @@ Let's look at an example, where we apply transforms on the ShapeNet dataset (con
 
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane')
 
-    data[0]
+    dataset[0]
     >>> Data(pos=[2518, 3], y=[2518])
 
 We can convert the point cloud dataset into a graph dataset by generating nearest neighbor graphs from the point clouds via transforms:
@@ -311,8 +311,8 @@ We can convert the point cloud dataset into a graph dataset by generating neares
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
                         pre_transform=T.KNNGraph(k=6))
 
-    data[0]
-    >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
+    dataset[0]
+    >>> Data(edge_index=[2, 15108], pos=[2518, 3], y=[2518])
 
 .. note::
     We use the ``pre_transform`` to convert the data before saving it to disk (leading to faster loading times).
