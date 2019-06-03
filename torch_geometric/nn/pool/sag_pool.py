@@ -57,9 +57,9 @@ class SAGPooling(torch.nn.Module):
 
         x = x.unsqueeze(-1) if x.dim() == 1 else x
 
-        score = self.gnn(x, edge_index).view(-1)
+        score = torch.tanh(self.gnn(x, edge_index).view(-1))
         perm = topk(score, self.ratio, batch)
-        x = x[perm] * torch.tanh(score[perm]).view(-1, 1)
+        x = x[perm] * score[perm].view(-1, 1)
         batch = batch[perm]
         edge_index, edge_attr = filter_adj(
             edge_index, edge_attr, perm, num_nodes=score.size(0))
