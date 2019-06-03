@@ -8,7 +8,7 @@ def test_sampler():
     torch.manual_seed(12345)
 
     num_nodes = 10
-    data = Data(edge_index=erdos_renyi_graph(num_nodes, 0.1, seed=12345))
+    data = Data(edge_index=erdos_renyi_graph(num_nodes, 0.1))
     data.num_nodes = num_nodes
 
     loader = NeighborSampler(
