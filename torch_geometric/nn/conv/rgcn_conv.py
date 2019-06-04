@@ -27,6 +27,8 @@ class RGCNConv(MessagePassing):
         num_bases (int): Number of bases used for basis-decomposition.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
     def __init__(self,
@@ -34,8 +36,9 @@ class RGCNConv(MessagePassing):
                  out_channels,
                  num_relations,
                  num_bases,
-                 bias=True):
-        super(RGCNConv, self).__init__('add')
+                 bias=True,
+                 **kwargs):
+        super(RGCNConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

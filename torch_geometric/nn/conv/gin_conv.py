@@ -21,10 +21,12 @@ class GINConv(MessagePassing):
             (default: :obj:`0`)
         train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`
             will be a trainable parameter. (default: :obj:`False`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, nn, eps=0, train_eps=False):
-        super(GINConv, self).__init__('add')
+    def __init__(self, nn, eps=0, train_eps=False, **kwargs):
+        super(GINConv, self).__init__(aggr='add', **kwargs)
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
