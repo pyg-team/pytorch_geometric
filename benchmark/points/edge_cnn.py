@@ -2,7 +2,7 @@ import argparse
 import torch
 import torch.nn.functional as F
 from torch.nn import Sequential as Seq, Linear as Lin, ReLU
-from torch_geometric.nn import EdgeConv, knn_graph, global_max_pool
+from torch_geometric.nn import DynamicEdgeConv, global_max_pool
 
 from points.datasets import get_dataset
 from points.train_eval import run
@@ -22,12 +22,12 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
 
         nn = Seq(Lin(6, 64), ReLU(), Lin(64, 64), ReLU(), Lin(64, 64), ReLU())
-        self.conv1 = EdgeConv(nn, aggr='max')
+        self.conv1 = DynamicEdgeConv(nn, k=20, aggr='max')
 
         nn = Seq(
             Lin(128, 128), ReLU(), Lin(128, 128), ReLU(), Lin(128, 256),
             ReLU())
-        self.conv2 = EdgeConv(nn, aggr='max')
+        self.conv2 = DynamicEdgeConv(nn, k=20, aggr='max')
 
         self.lin0 = Lin(256, 512)
 
@@ -36,11 +36,8 @@ class Net(torch.nn.Module):
         self.lin3 = Lin(256, num_classes)
 
     def forward(self, pos, batch):
-        edge_index = knn_graph(pos, k=20, batch=batch)
-        x = self.conv1(pos, edge_index)
-
-        edge_index = knn_graph(x, k=20, batch=batch)
-        x = self.conv2(x, edge_index)
+        x = self.conv1(pos, batch)
+        x = self.conv2(x, batch)
 
         x = F.relu(self.lin0(x))
 
