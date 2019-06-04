@@ -26,8 +26,9 @@ class NNConv(MessagePassing):
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
-        aggr (string): The aggregation operator to use (:obj:`"add"`,
-            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
+        aggr (string, optional): The aggregation scheme to use
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
+            (default: :obj:`"add"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add the transformed root node features to the output.
             (default: :obj:`True`)
