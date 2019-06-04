@@ -116,7 +116,8 @@ class XConv(torch.nn.Module):
         pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
         (N, D), K = pos.size(), self.kernel_size
 
-        row, col = knn_graph(pos, K * self.dilation, batch, loop=True)
+        row, col = knn_graph(
+            pos, K * self.dilation, batch, loop=True, flow='target_to_source')
 
         if self.dilation > 1:
             dil = self.dilation
