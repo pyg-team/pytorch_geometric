@@ -27,10 +27,12 @@ class PointConv(MessagePassing):
             :math:`h_{\mathbf{\Theta}}`. (default: :obj:`None`)
         global_nn (nn.Sequential, optional): Neural network
             :math:`\gamma_{\mathbf{\Theta}}`. (default: :obj:`None`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, local_nn=None, global_nn=None):
-        super(PointConv, self).__init__('max')
+    def __init__(self, local_nn=None, global_nn=None, **kwargs):
+        super(PointConv, self).__init__(aggr='max', **kwargs)
 
         self.local_nn = local_nn
         self.global_nn = global_nn
@@ -70,6 +72,5 @@ class PointConv(MessagePassing):
         return aggr_out
 
     def __repr__(self):
-        return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
-                                                      self.local_nn,
-                                                      self.global_nn)
+        return '{}(local_nn={}, global_nn={})'.format(
+            self.__class__.__name__, self.local_nn, self.global_nn)
