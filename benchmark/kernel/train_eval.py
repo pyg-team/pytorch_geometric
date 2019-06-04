@@ -71,18 +71,21 @@ def cross_validation_with_val_set(dataset,
         t_end = time.perf_counter()
         durations.append(t_end - t_start)
 
-    loss, acc, duration = tensor(val_losses), tensor(accs), tensor(durations)
-    loss, acc = loss.view(folds, epochs), acc.view(folds, epochs)
+    loss, accs, duration = tensor(val_losses), tensor(accs), tensor(durations)
+    loss, accs = loss.view(folds, epochs), accs.view(folds, epochs)
     loss, argmin = loss.min(dim=1)
-    acc = acc[torch.arange(folds, dtype=torch.long), argmin]
+    accs = accs[torch.arange(folds, dtype=torch.long), argmin]
 
+    loss_mean = loss.mean().item()
+    accs_mean = accs.mean().item()
+    accs_std  = accs.std().item()
     print('Val Loss: {:.4f}, Test Accuracy: {:.3f} ± {:.3f}, Duration: {:.3f}'.
-          format(loss.mean().item(),
-                 acc.mean().item(),
-                 acc.std().item(),
+          format(loss_mean,
+                 accs_mean,
+                 accs_std,
                  duration.mean().item()))
 
-    return loss.mean().item(), acc.mean().item(), acc.std().item()
+    return loss_mean, accs_mean, accs_std
 
 
 def k_fold(dataset, folds):
