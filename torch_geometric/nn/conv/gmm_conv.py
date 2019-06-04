@@ -33,8 +33,9 @@ class GMMConv(MessagePassing):
         out_channels (int): Size of each output sample.
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int): Number of kernels :math:`K`.
-        aggr (string): The aggregation operator to use (:obj:`"add"`,
-            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
+        aggr (string, optional): The aggregation scheme to use
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
+            (default: :obj:`"add"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)

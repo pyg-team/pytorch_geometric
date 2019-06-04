@@ -18,8 +18,9 @@ class EdgeConv(MessagePassing):
 
     Args:
         nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
-        aggr (string): The aggregation operator to use (:obj:`"add"`,
-            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"max"`)
+        aggr (string, optional): The aggregation scheme to use
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
+            (default: :obj:`"max"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
