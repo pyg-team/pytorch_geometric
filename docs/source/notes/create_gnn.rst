@@ -181,7 +181,7 @@ Luckily, PyTorch Geometric comes with a GPU accelerated batch-wise k-NN graph ge
             self.k = k
 
         def forward(self, x, batch=None):
-            edge_index = knn_graph(x, self.k, batch, loop=False)
+            edge_index = knn_graph(x, self.k, batch, loop=False, flow=self.flow)
             return super(DynamicEdgeConv, self).forward(x, edge_index)
 
 Here, :meth:`knn_graph` computes a nearest neighbor graph, which is further used to call the :meth:`forward` method of :class:`EdgeConv`.
