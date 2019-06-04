@@ -1,6 +1,5 @@
 import torch
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import scatter_
 from torch_cluster import knn_graph
 
 from ..inits import reset
