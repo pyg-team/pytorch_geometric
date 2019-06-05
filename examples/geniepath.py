@@ -85,7 +85,7 @@ class GeniePathLazy(torch.nn.Module):
         super(GeniePathLazy, self).__init__()
         self.device = device
         self.lin1 = torch.nn.Linear(in_dim, dim)
-        self.breaths = torch.nn.ModuleList([Breadth(dim, dim) for i in range(layer_num)])
+        self.breadths = torch.nn.ModuleList([Breadth(dim, dim) for i in range(layer_num)])
         self.depths = torch.nn.ModuleList([Depth(dim * 2, lstm_hidden) for i in range(layer_num)])
         self.lin2 = torch.nn.Linear(dim, out_dim)
 
@@ -94,8 +94,8 @@ class GeniePathLazy(torch.nn.Module):
         h = torch.zeros(1, x.shape[0], lstm_hidden).to(self.device)
         c = torch.zeros(1, x.shape[0], lstm_hidden).to(self.device)
         h_tmps = []
-        for i, l in enumerate(self.breaths):
-            h_tmps.append(self.breaths[i](x, edge_index))
+        for i, l in enumerate(self.breadths):
+            h_tmps.append(self.breadths[i](x, edge_index))
         x = x[None, :]
         for i, l in enumerate(self.depths):
             in_cat = torch.cat((h_tmps[i][None, :], x), -1)
