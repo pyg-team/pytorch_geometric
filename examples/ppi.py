@@ -72,5 +72,7 @@ def test(loader):
 
 for epoch in range(1, 101):
     loss = train()
-    acc = test(val_loader)
-    print('Epoch: {:02d}, Loss: {:.4f}, F1: {:.4f}'.format(epoch, loss, acc))
+    val_f1 = test(val_loader)
+    test_f1 = test(test_loader)
+    print('Epoch: {:02d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'.format(
+        epoch, loss, val_f1, test_f1))
