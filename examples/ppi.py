@@ -9,7 +9,7 @@ from sklearn.metrics import f1_score
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
 train_dataset = PPI(path, split='train')
-val_dataset = PPI(path, split='test')
+val_dataset = PPI(path, split='val')
 test_dataset = PPI(path, split='test')
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
