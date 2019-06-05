@@ -55,4 +55,3 @@ def test_dense_sage_conv_with_broadcasting():
     assert conv(x, adj).size() == (batch_size, num_nodes, channels)
     mask = torch.tensor([1, 1, 1], dtype=torch.uint8)
     assert conv(x, adj, mask).size() == (batch_size, num_nodes, channels)
-    # mask =
