@@ -83,8 +83,7 @@ class GAE(torch.nn.Module):
         super(GAE, self).__init__()
         self.encoder = encoder
         self.decoder = InnerProductDecoder() if decoder is None else decoder
-
-        self.reset_parameters()
+        GAE.reset_parameters(self)
 
     def reset_parameters(self):
         reset(self.encoder)
@@ -267,6 +266,7 @@ class ARGA(GAE):
     def __init__(self, encoder, discriminator, decoder=None):
         self.discriminator = discriminator
         super(ARGA, self).__init__(encoder, decoder)
+        reset(self.discriminator)
 
     def reset_parameters(self):
         super(ARGA, self).reset_parameters()
