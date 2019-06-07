@@ -49,7 +49,7 @@ class HypergraphConv(MessagePassing):
                  negative_slope=0.2,
                  dropout=0,
                  bias=True):
-        super(HypergraphConv, self).__init__('add')
+        super(HypergraphConv, self).__init__(aggr='add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels

@@ -7,7 +7,7 @@ With :math:`\mathbf{x}^{(k-1)}_i \in \mathbb{R}^F` denoting node features of nod
 .. math::
   \mathbf{x}_i^{(k)} = \gamma^{(k)} \left( \mathbf{x}_i^{(k-1)}, \square_{j \in \mathcal{N}(i)} \, \phi^{(k)}\left(\mathbf{x}_i^{(k-1)}, \mathbf{x}_j^{(k-1)},\mathbf{e}_{i,j}\right) \right),
 
-where :math:`\square` denotes a differentiable, permutation invariant function, *e.g.*, sum, mean or max, and :math:`\gamma` and :math:`\phi` denote differentiable functions such as MLPs.
+where :math:`\square` denotes a differentiable, permutation invariant function, *e.g.*, sum, mean or max, and :math:`\gamma` and :math:`\phi` denote differentiable functions such as MLPs (Multi Layer Perceptrons).
 
 .. contents::
     :local:
@@ -181,7 +181,7 @@ Luckily, PyTorch Geometric comes with a GPU accelerated batch-wise k-NN graph ge
             self.k = k
 
         def forward(self, x, batch=None):
-            edge_index = knn_graph(x, self.k, batch, loop=False)
+            edge_index = knn_graph(x, self.k, batch, loop=False, flow=self.flow)
             return super(DynamicEdgeConv, self).forward(x, edge_index)
 
 Here, :meth:`knn_graph` computes a nearest neighbor graph, which is further used to call the :meth:`forward` method of :class:`EdgeConv`.

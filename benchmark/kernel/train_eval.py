@@ -76,13 +76,14 @@ def cross_validation_with_val_set(dataset,
     loss, argmin = loss.min(dim=1)
     acc = acc[torch.arange(folds, dtype=torch.long), argmin]
 
+    loss_mean = loss.mean().item()
+    acc_mean = acc.mean().item()
+    acc_std = acc.std().item()
+    duration_mean = duration.mean().item()
     print('Val Loss: {:.4f}, Test Accuracy: {:.3f} ± {:.3f}, Duration: {:.3f}'.
-          format(loss.mean().item(),
-                 acc.mean().item(),
-                 acc.std().item(),
-                 duration.mean().item()))
+          format(loss_mean, acc_mean, acc_std, duration_mean))
 
-    return loss.mean().item(), acc.mean().item(), acc.std().item()
+    return loss_mean, acc_mean, acc_std
 
 
 def k_fold(dataset, folds):

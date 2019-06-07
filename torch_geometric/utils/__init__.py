@@ -14,6 +14,7 @@ from .sparse import dense_to_sparse, sparse_to_dense
 from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .erdos_renyi import erdos_renyi_graph
+from .sbm import stochastic_blockmodel_graph
 from .one_hot import one_hot
 from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score, mean_iou)
@@ -41,6 +42,7 @@ __all__ = [
     'to_networkx',
     'from_networkx',
     'erdos_renyi_graph',
+    'stochastic_blockmodel_graph',
     'one_hot',
     'accuracy',
     'true_positive',

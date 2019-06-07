@@ -16,7 +16,7 @@ A single graph in PyTorch Geometric is described by an instance of :class:`torch
 - ``data.x``: Node feature matrix with shape ``[num_nodes, num_node_features]``
 - ``data.edge_index``: Graph connectivity in COO format with shape ``[2, num_edges]`` and type ``torch.long``
 - ``data.edge_attr``: Edge feature matrix with shape ``[num_edges, num_edge_features]``
-- ``data.y``: Target to train against (may have arbitrary shape)
+- ``data.y``: Target to train against (may have arbitrary shape), *e.g.*, node-level targets of shape ``[num_nodes, *]`` or graph-level targets of shape ``[1, *]``
 - ``data.pos``: Node position matrix with shape ``[num_nodes, num_dimensions]``
 
 None of these attributes is required.
@@ -96,7 +96,7 @@ Besides of being a plain old python object, :class:`torch_geometric.data.Data` p
     data.num_edges
     >>> 4
 
-    data.num_features
+    data.num_node_features
     >>> 1
 
     data.contains_isolated_nodes()
@@ -136,7 +136,7 @@ An initialization of a dataset will automatically download its raw files and pro
     dataset.num_classes
     >>> 6
 
-    dataset.num_features
+    dataset.num_node_features
     >>> 21
 
 We now have access to all 600 graphs in the dataset:
@@ -151,6 +151,7 @@ We now have access to all 600 graphs in the dataset:
 
 We can see that the first graph in the dataset contains 37 nodes, each one having 21 features.
 There are 168/2 = 84 undirected edges and the graph is assigned to exactly one class.
+In addition, the data object is holding exactly one graph-level target.
 
 We can even use slices, long or byte tensors to split the dataset.
 *E.g.*, to create a 90/10 train/test split, type:
@@ -193,7 +194,7 @@ Let's try another one! Let's download Cora, the standard benchmark dataset for s
     dataset.num_classes
     >>> 7
 
-    dataset.num_features
+    dataset.num_node_features
     >>> 1433
 
 Here, the dataset contains only a single, undirected citation graph:
@@ -216,7 +217,7 @@ Here, the dataset contains only a single, undirected citation graph:
     data.test_mask.sum()
     >>> 1000
 
-This time, the ``Data`` objects holds additional attributes: ``train_mask``, ``val_mask`` and ``test_mask``:
+This time, the ``Data`` objects holds a label for each node, and additional attributes: ``train_mask``, ``val_mask`` and ``test_mask``:
 
 - ``train_mask`` denotes against which nodes to train (140 nodes)
 - ``val_mask`` denotes which nodes to use for validation, *e.g.*, to perform early stopping (500 nodes)
@@ -298,7 +299,7 @@ Let's look at an example, where we apply transforms on the ShapeNet dataset (con
 
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane')
 
-    data[0]
+    dataset[0]
     >>> Data(pos=[2518, 3], y=[2518])
 
 We can convert the point cloud dataset into a graph dataset by generating nearest neighbor graphs from the point clouds via transforms:
@@ -311,8 +312,8 @@ We can convert the point cloud dataset into a graph dataset by generating neares
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
                         pre_transform=T.KNNGraph(k=6))
 
-    data[0]
-    >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
+    dataset[0]
+    >>> Data(edge_index=[2, 15108], pos=[2518, 3], y=[2518])
 
 .. note::
     We use the ``pre_transform`` to convert the data before saving it to disk (leading to faster loading times).
@@ -363,7 +364,7 @@ Now let's implement a two-layer GCN:
     class Net(torch.nn.Module):
         def __init__(self):
             super(Net, self).__init__()
-            self.conv1 = GCNConv(dataset.num_features, 16)
+            self.conv1 = GCNConv(dataset.num_node_features, 16)
             self.conv2 = GCNConv(16, dataset.num_classes)
 
         def forward(self, data):

@@ -32,6 +32,8 @@ class GCNConv(MessagePassing):
             (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
     def __init__(self,
@@ -39,8 +41,9 @@ class GCNConv(MessagePassing):
                  out_channels,
                  improved=False,
                  cached=False,
-                 bias=True):
-        super(GCNConv, self).__init__('add')
+                 bias=True,
+                 **kwargs):
+        super(GCNConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

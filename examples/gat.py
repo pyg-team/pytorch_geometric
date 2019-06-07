@@ -16,7 +16,9 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6)
-        self.conv2 = GATConv(8 * 8, dataset.num_classes, dropout=0.6)
+        # On the Pubmed dataset, use heads=8 in conv2.
+        self.conv2 = GATConv(
+            8 * 8, dataset.num_classes, heads=1, concat=True, dropout=0.6)
 
     def forward(self):
         x = F.dropout(data.x, p=0.6, training=self.training)

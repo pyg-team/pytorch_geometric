@@ -37,7 +37,9 @@ class DenseSAGEConv(torch.nn.Module):
                 number of nodes :math:`N` for each graph, and feature
                 dimension :math:`F`.
             adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B
-                \times N \times N}`.
+                \times N \times N}`. The adjacency tensor is broadcastable in
+                the batch dimension, resulting in a shared adjacency matrix for
+                the complete batch.
             mask (ByteTensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
                 the valid nodes for each graph. (default: :obj:`None`)
@@ -47,7 +49,7 @@ class DenseSAGEConv(torch.nn.Module):
         """
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
-        B, N, _ = x.size()
+        B, N, _ = adj.size()
 
         if add_loop:
             adj = adj.clone()
@@ -65,8 +67,7 @@ class DenseSAGEConv(torch.nn.Module):
             out = F.normalize(out, p=2, dim=-1)
 
         if mask is not None:
-            mask = mask.view(B, N, 1).to(x.dtype)
-            out = out * mask
+            out = out * mask.view(B, N, 1).to(x.dtype)
 
         return out
 
