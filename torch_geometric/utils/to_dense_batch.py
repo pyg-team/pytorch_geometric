@@ -30,8 +30,9 @@ def to_dense_batch(x, batch, fill_value=0):
     idx = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
     idx = (idx - cum_nodes[batch]) + (batch * max_num_nodes)
 
-    out = x.new_full((batch_size * max_num_nodes, *x.size()[1:]), fill_value)
+    size = [batch_size * max_num_nodes] + list(x.size())[1:]
+    out = x.new_full(size, fill_value)
     out[idx] = x
-    out = out.view(batch_size, max_num_nodes, *x.size()[1:])
+    out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 
     return out, num_nodes
