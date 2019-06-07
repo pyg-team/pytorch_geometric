@@ -4,14 +4,19 @@ from torch.nn import Linear
 from torch_geometric.nn import (GraphConv, TopKPooling, global_mean_pool,
                                 JumpingKnowledge)
 
+
 class TopK(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden):
         super(TopK, self).__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')
         self.convs = torch.nn.ModuleList()
         self.pools = torch.nn.ModuleList()
-        self.convs.extend([GraphConv(hidden, hidden, aggr='mean') for i in range(num_layers-1)])
-        self.pools.extend([TopKPooling(hidden, ratio=0.8) for i in range( (num_layers)//2)])
+        self.convs.extend([
+            GraphConv(hidden, hidden, aggr='mean')
+            for i in range(num_layers - 1)
+        ])
+        self.pools.extend(
+            [TopKPooling(hidden, ratio=0.8) for i in range((num_layers) // 2)])
         self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
@@ -32,8 +37,8 @@ class TopK(torch.nn.Module):
         for i, conv in enumerate(self.convs):
             x = F.relu(conv(x, edge_index))
             xs += [global_mean_pool(x, batch)]
-            if i % 2 == 0 and i < (self.num_layers-2):  # x from last pool is not concatenated
-                pool = self.pools[i//2]
+            if i % 2 == 0 and i < (self.num_layers - 2):
+                pool = self.pools[i // 2]
                 x, edge_index, _, batch, _ = pool(x, edge_index, batch=batch)
         x = self.jump(xs)
         x = F.relu(self.lin1(x))
