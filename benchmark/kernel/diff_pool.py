@@ -62,7 +62,7 @@ class DiffPool(torch.nn.Module):
         s = self.pool_block1(x, adj, mask, add_loop=True)
         x = F.relu(self.embed_block1(x, adj, mask, add_loop=True))
         xs = [x.mean(dim=1)]
-        x, adj, reg = dense_diff_pool(x, adj, s, mask)
+        x, adj, _, _ = dense_diff_pool(x, adj, s, mask)
 
         for embed, pool in zip(self.embed_blocks, self.pool_blocks):
             s = pool(x, adj)
