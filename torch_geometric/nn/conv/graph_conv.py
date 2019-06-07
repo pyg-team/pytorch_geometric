@@ -17,15 +17,22 @@ class GraphConv(MessagePassing):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        aggr (string): The aggregation scheme to use
+        aggr (string, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, in_channels, out_channels, aggr='add', bias=True):
-        super(GraphConv, self).__init__(aggr)
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 aggr='add',
+                 bias=True,
+                 **kwargs):
+        super(GraphConv, self).__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

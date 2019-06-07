@@ -12,13 +12,13 @@ def topk(x, ratio, batch):
     k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)
 
     cum_num_nodes = torch.cat(
-        [num_nodes.new_zeros(1), num_nodes.cumsum(dim=0)[:-1]], dim=0)
+        [num_nodes.new_zeros(1),
+         num_nodes.cumsum(dim=0)[:-1]], dim=0)
 
     index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
     index = (index - cum_num_nodes[batch]) + (batch * max_num_nodes)
 
-    x_min_value = x.min().item()
-    dense_x = x.new_full((batch_size * max_num_nodes, ), x_min_value - 1)
+    dense_x = x.new_full((batch_size * max_num_nodes, ), -2)
     dense_x[index] = x
     dense_x = dense_x.view(batch_size, max_num_nodes)
     _, perm = dense_x.sort(dim=-1, descending=True)
@@ -27,8 +27,8 @@ def topk(x, ratio, batch):
     perm = perm.view(-1)
 
     mask = [
-        torch.arange(k[i], dtype=torch.long, device=x.device) + i *
-        max_num_nodes for i in range(len(num_nodes))
+        torch.arange(k[i], dtype=torch.long, device=x.device) +
+        i * max_num_nodes for i in range(len(num_nodes))
     ]
     mask = torch.cat(mask, dim=0)
 
@@ -102,9 +102,9 @@ class TopKPooling(torch.nn.Module):
         x = x.unsqueeze(-1) if x.dim() == 1 else x
 
         score = (x * self.weight).sum(dim=-1)
-        score = score / self.weight.norm(p=2, dim=-1)
+        score = torch.tanh(score / self.weight.norm(p=2, dim=-1))
         perm = topk(score, self.ratio, batch)
-        x = x[perm] * torch.tanh(score[perm]).view(-1, 1)
+        x = x[perm] * score[perm].view(-1, 1)
         batch = batch[perm]
         edge_index, edge_attr = filter_adj(
             edge_index, edge_attr, perm, num_nodes=score.size(0))

@@ -43,6 +43,8 @@ class GATConv(MessagePassing):
             sampled neighborhood during training. (default: :obj:`0`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
     def __init__(self,
@@ -52,8 +54,9 @@ class GATConv(MessagePassing):
                  concat=True,
                  negative_slope=0.2,
                  dropout=0,
-                 bias=True):
-        super(GATConv, self).__init__('add')
+                 bias=True,
+                 **kwargs):
+        super(GATConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -62,8 +65,8 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(torch.Tensor(in_channels,
-                                             heads * out_channels))
+        self.weight = Parameter(
+            torch.Tensor(in_channels, heads * out_channels))
         self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
 
         if bias and concat:

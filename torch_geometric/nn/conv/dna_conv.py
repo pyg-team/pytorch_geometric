@@ -211,6 +211,8 @@ class DNAConv(MessagePassing):
             (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
     def __init__(self,
@@ -219,8 +221,9 @@ class DNAConv(MessagePassing):
                  groups=1,
                  dropout=0,
                  cached=False,
-                 bias=True):
-        super(DNAConv, self).__init__('add')
+                 bias=True,
+                 **kwargs):
+        super(DNAConv, self).__init__(aggr='add', **kwargs)
         self.bias = bias
         self.cached = cached
         self.cached_result = None

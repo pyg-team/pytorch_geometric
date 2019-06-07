@@ -25,10 +25,12 @@ class AGNNConv(MessagePassing):
     Args:
         requires_grad (bool, optional): If set to :obj:`False`, :math:`\beta`
             will not be trainable. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, requires_grad=True):
-        super(AGNNConv, self).__init__('add')
+    def __init__(self, requires_grad=True, **kwargs):
+        super(AGNNConv, self).__init__(aggr='add', **kwargs)
 
         self.requires_grad = requires_grad
 
@@ -50,10 +52,8 @@ class AGNNConv(MessagePassing):
 
         x_norm = F.normalize(x, p=2, dim=-1)
 
-        return self.propagate(edge_index,
-                              x=x,
-                              x_norm=x_norm,
-                              num_nodes=x.size(0))
+        return self.propagate(
+            edge_index, x=x, x_norm=x_norm, num_nodes=x.size(0))
 
     def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes):
         # Compute attention coefficients.
