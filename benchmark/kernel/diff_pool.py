@@ -7,7 +7,7 @@ from torch_geometric.nn import DenseSAGEConv, dense_diff_pool, JumpingKnowledge
 
 
 class Block(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+    def __init__(self, in_channels, hidden_channels, out_channels, mode='cat'):
         super(Block, self).__init__()
 
         self.conv1 = DenseSAGEConv(in_channels, hidden_channels)
@@ -15,6 +15,8 @@ class Block(torch.nn.Module):
 
         self.lin = torch.nn.Linear(hidden_channels + out_channels,
                                    out_channels)
+        self.jump = JumpingKnowledge(mode=mode)
+        
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -24,11 +26,11 @@ class Block(torch.nn.Module):
     def forward(self, x, adj, mask=None, add_loop=True):
         x1 = F.relu(self.conv1(x, adj, mask, add_loop))
         x2 = F.relu(self.conv2(x1, adj, mask, add_loop))
-        return self.lin(torch.cat([x1, x2], dim=-1))
+        return self.lin(self.jump([x1, x2]))
 
 
 class DiffPool(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden):
+    def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super(DiffPool, self).__init__()
 
         num_nodes = ceil(0.25 * dataset[0].num_nodes)
@@ -42,7 +44,7 @@ class DiffPool(torch.nn.Module):
             self.embed_blocks.append(Block(hidden, hidden, hidden))
             self.pool_blocks.append(Block(hidden, hidden, num_nodes))
 
-        self.jump = JumpingKnowledge(mode='cat')
+        self.jump = JumpingKnowledge(mode=mode)
         self.lin1 = Linear((len(self.embed_blocks) + 1) * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
