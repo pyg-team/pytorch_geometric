@@ -43,8 +43,8 @@ class JumpingKnowledge(torch.nn.Module):
         assert self.mode in ['cat', 'max', 'lstm']
 
         if mode == 'lstm':
-            assert channels is not None
-            assert num_layers is not None
+            assert channels is not None, "channels cannot be None for lstm"
+            assert num_layers is not None, "num_layers cannot be None for lstm"
             self.lstm = LSTM(
                 channels, (num_layers * channels) // 2,
                 bidirectional=True,
