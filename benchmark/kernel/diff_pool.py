@@ -12,10 +12,14 @@ class Block(torch.nn.Module):
 
         self.conv1 = DenseSAGEConv(in_channels, hidden_channels)
         self.conv2 = DenseSAGEConv(hidden_channels, out_channels)
-
-        self.lin = torch.nn.Linear(hidden_channels + out_channels,
-                                   out_channels)
         self.jump = JumpingKnowledge(mode=mode)
+        if mode == 'cat':
+            self.lin = torch.nn.Linear(hidden_channels + out_channels,
+                                       out_channels)
+        else:
+            assert hidden_channels == out_channels, (
+                "output dim for conv1 and conv2 must be same for max or lstm mode")
+            self.lin = torch.nn.Linear(out_channels, out_channels)
         
 
     def reset_parameters(self):
@@ -45,7 +49,10 @@ class DiffPool(torch.nn.Module):
             self.pool_blocks.append(Block(hidden, hidden, num_nodes))
 
         self.jump = JumpingKnowledge(mode=mode)
-        self.lin1 = Linear((len(self.embed_blocks) + 1) * hidden, hidden)
+        if mode == 'cat':
+            self.lin1 = Linear((len(self.embed_blocks) + 1) * hidden, hidden)
+        else:
+            self.lin1 = Linear(hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
     def reset_parameters(self):
