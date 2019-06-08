@@ -37,13 +37,13 @@ class GCN(torch.nn.Module):
 
 
 class GCNWithJK(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden):
+    def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super(GCNWithJK, self).__init__()
         self.conv1 = GCNConv(dataset.num_features, hidden)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(GCNConv(hidden, hidden))
-        self.jump = JumpingKnowledge(mode='cat')
+        self.jump = JumpingKnowledge(mode=mode)
         self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
