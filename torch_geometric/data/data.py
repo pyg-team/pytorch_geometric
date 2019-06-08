@@ -73,10 +73,10 @@ class Data(object):
         for key, item in kwargs.items():
             self[key] = item
 
-    @staticmethod
-    def from_dict(dictionary):
+    @classmethod
+    def from_dict(cls, dictionary):
         r"""Creates a data object from a python dictionary."""
-        data = Data()
+        data = cls()
         for key, item in dictionary.items():
             data[key] = item
         return data
