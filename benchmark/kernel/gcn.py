@@ -44,7 +44,10 @@ class GCNWithJK(torch.nn.Module):
         for i in range(num_layers - 1):
             self.convs.append(GCNConv(hidden, hidden))
         self.jump = JumpingKnowledge(mode=mode)
-        self.lin1 = Linear(num_layers * hidden, hidden)
+        if mode == 'cat':
+            self.lin1 = Linear(num_layers * hidden, hidden)
+        else:
+            self.lin1 = Linear(hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
     def reset_parameters(self):
