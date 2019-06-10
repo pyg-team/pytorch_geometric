@@ -16,7 +16,10 @@ class GINConv(MessagePassing):
     here :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.* a MLP.
 
     Args:
-        nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
+        nn (torch.nn.Module): A neural network :math:`h_{\mathbf{\Theta}}` that
+            maps node features :obj:`x` of shape :obj:`[-1, in_channels]` to
+            shape :obj:`[-1, out_channels]`, *e.g.*, defined by
+            :class:`torch.nn.Sequential`.
         eps (float, optional): (Initial) :math:`\epsilon` value.
             (default: :obj:`0`)
         train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`
