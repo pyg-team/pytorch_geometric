@@ -54,7 +54,7 @@ class GIN0(torch.nn.Module):
 
 
 class GIN0WithJK(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden, mode='cat'):
+    def __init__(self, dataset, num_layers, hidden):
         super(GIN0WithJK, self).__init__()
         self.conv1 = GINConv(
             Sequential(
@@ -77,11 +77,8 @@ class GIN0WithJK(torch.nn.Module):
                         BN(hidden),
                     ),
                     train_eps=False))
-        self.jump = JumpingKnowledge(mode=mode)
-        if mode == 'cat':
-            self.lin1 = Linear(num_layers * hidden, hidden)
-        else:
-            self.lin1 = Linear(hidden, hidden)
+        self.jump = JumpingKnowledge(mode='cat')
+        self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
     def reset_parameters(self):
@@ -160,7 +157,7 @@ class GIN(torch.nn.Module):
 
 
 class GINWithJK(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden, mode='cat'):
+    def __init__(self, dataset, num_layers, hidden):
         super(GINWithJK, self).__init__()
         self.conv1 = GINConv(
             Sequential(
@@ -183,11 +180,8 @@ class GINWithJK(torch.nn.Module):
                         BN(hidden),
                     ),
                     train_eps=True))
-        self.jump = JumpingKnowledge(mode=mode)
-        if mode == 'cat':
-            self.lin1 = Linear(num_layers * hidden, hidden)
-        else:
-            self.lin1 = Linear(hidden, hidden)
+        self.jump = JumpingKnowledge(mode='cat')
+        self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
     def reset_parameters(self):

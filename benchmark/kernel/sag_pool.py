@@ -6,7 +6,7 @@ from torch_geometric.nn import (GraphConv, SAGPooling, global_mean_pool,
 
 
 class SAGPool(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden, ratio=0.8, mode='cat'):
+    def __init__(self, dataset, num_layers, hidden, ratio=0.8):
         super(SAGPool, self).__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')
         self.convs = torch.nn.ModuleList()
@@ -17,11 +17,8 @@ class SAGPool(torch.nn.Module):
         ])
         self.pools.extend(
             [SAGPooling(hidden, ratio=ratio) for i in range((num_layers) // 2)])
-        self.jump = JumpingKnowledge(mode=mode)
-        if mode == 'cat':
-            self.lin1 = Linear(num_layers * hidden, hidden)
-        else:
-            self.lin1 = Linear(hidden, hidden)
+        self.jump = JumpingKnowledge(mode='cat')
+        self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
     def reset_parameters(self):
