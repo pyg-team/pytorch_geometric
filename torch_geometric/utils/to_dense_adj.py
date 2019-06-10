@@ -10,7 +10,8 @@ def to_dense_adj(edge_index, batch, edge_attr=None):
         edge_index (LongTensor): The edge indices.
         batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
             B-1\}}^N`, which assigns each node to a specific example.
-        edge_attr (Tensor): Edge weights or multi-dimensional edge features.
+        edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
+            features. (default: :obj:`None`)
 
     :rtype: :class:`Tensor`
     """
