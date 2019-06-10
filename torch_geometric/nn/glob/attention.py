@@ -18,10 +18,15 @@ class GlobalAttention(torch.nn.Module):
     MLPS.
 
     Args:
-        gate_nn (nn.Sequential): Neural network
-            :math:`h_{\mathrm{gate}} \colon \mathbb{R}^F \to \mathbb{R}`.
-        nn (nn.Sequential, optional): Neural network
-            :math:`h_{\mathbf{\Theta}}`. (default: :obj:`None`)
+        gate_nn (torch.nn.Module): A neural network :math:`h_{\mathrm{gate}}`
+            that computes attention scores by mapping node features :obj:`x` of
+            shape :obj:`[-1, in_channels]` to shape :obj:`[-1, 1]`, *e.g.*,
+            defined by :class:`torch.nn.Sequential`.
+        nn (torch.nn.Module, optional): A neural network
+            :math:`h_{\mathbf{\Theta}}` that maps node features :obj:`x` of
+            shape :obj:`[-1, in_channels]` to shape :obj:`[-1, out_channels]`
+            before combining them with the attention scores, *e.g.*, defined by
+            :class:`torch.nn.Sequential`. (default: :obj:`None`)
     """
 
     def __init__(self, gate_nn, nn=None):

@@ -25,7 +25,11 @@ class NNConv(MessagePassing):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
+        nn (torch.nn.Module): A neural network :math:`h_{\mathbf{\Theta}}` that
+            maps edge features :obj:`edge_attr` of shape :obj:`[-1,
+            num_edge_features]` to shape
+            :obj:`[-1, in_channels * out_channels]`, *e.g.*, defined by
+            :class:`torch.nn.Sequential`.
         aggr (string, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)

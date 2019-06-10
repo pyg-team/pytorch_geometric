@@ -23,10 +23,17 @@ class PointConv(MessagePassing):
     defines the position of each point.
 
     Args:
-        local_nn (nn.Sequential, optional): Neural network
-            :math:`h_{\mathbf{\Theta}}`. (default: :obj:`None`)
-        global_nn (nn.Sequential, optional): Neural network
-            :math:`\gamma_{\mathbf{\Theta}}`. (default: :obj:`None`)
+        local_nn (torch.nn.Module, optional): A neural network
+            :math:`h_{\mathbf{\Theta}}` that maps node features :obj:`x` and
+            relative spatial coordinates :obj:`pos_j - pos_i` of shape
+            :obj:`[-1, in_channels + num_dimensions]` to shape
+            :obj:`[-1, out_channels]`, *e.g.*, defined by
+            :class:`torch.nn.Sequential`. (default: :obj:`None`)
+        global_nn (torch.nn.Module, optional): A neural network
+            :math:`\gamma_{\mathbf{\Theta}}` that maps aggregated node features
+            of shape :obj:`[-1, out_channels]` to shape :obj:`[-1,
+            final_out_channels]`, *e.g.*, defined by
+            :class:`torch.nn.Sequential`. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
