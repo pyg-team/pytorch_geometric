@@ -34,7 +34,7 @@ class Block(torch.nn.Module):
 
 
 class DiffPool(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden, ratio=0.25, mode='cat'):
+    def __init__(self, dataset, num_layers, hidden, ratio=0.25):
         super(DiffPool, self).__init__()
 
         num_nodes = ceil(ratio * dataset[0].num_nodes)
@@ -48,11 +48,8 @@ class DiffPool(torch.nn.Module):
             self.embed_blocks.append(Block(hidden, hidden, hidden))
             self.pool_blocks.append(Block(hidden, hidden, num_nodes))
 
-        self.jump = JumpingKnowledge(mode=mode)
-        if mode == 'cat':
-            self.lin1 = Linear((len(self.embed_blocks) + 1) * hidden, hidden)
-        else:
-            self.lin1 = Linear(hidden, hidden)
+        self.jump = JumpingKnowledge(mode='cat')
+        self.lin1 = Linear((len(self.embed_blocks) + 1) * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
     def reset_parameters(self):
