@@ -6,7 +6,7 @@ from torch_geometric.nn import (GraphConv, TopKPooling, global_mean_pool,
 
 
 class TopK(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden):
+    def __init__(self, dataset, num_layers, hidden, ratio=0.8):
         super(TopK, self).__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')
         self.convs = torch.nn.ModuleList()
@@ -16,7 +16,7 @@ class TopK(torch.nn.Module):
             for i in range(num_layers - 1)
         ])
         self.pools.extend(
-            [TopKPooling(hidden, ratio=0.8) for i in range((num_layers) // 2)])
+            [TopKPooling(hidden, ratio=ratio) for i in range((num_layers) // 2)])
         self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
