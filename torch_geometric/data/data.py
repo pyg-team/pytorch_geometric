@@ -1,7 +1,7 @@
 import re
 import warnings
-
 import torch
+from torch_sparse import coalesce
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
@@ -21,7 +21,7 @@ def size_repr(value):
     elif isinstance(value, int) or isinstance(value, float):
         return [1]
     else:
-        raise ValueError('Unsupported attribute type.')
+        return value
 
 
 class Data(object):
@@ -73,10 +73,10 @@ class Data(object):
         for key, item in kwargs.items():
             self[key] = item
 
-    @staticmethod
-    def from_dict(dictionary):
+    @classmethod
+    def from_dict(cls, dictionary):
         r"""Creates a data object from a python dictionary."""
-        data = Data()
+        data = cls()
         for key, item in dictionary.items():
             data[key] = item
         return data
@@ -92,10 +92,10 @@ class Data(object):
     @property
     def keys(self):
         r"""Returns all names of graph attributes."""
-        arr = [key for key in self.__dict__.keys() if self[key] is not None]
-        if '__num_nodes__' in arr:
-            arr.remove('__num_nodes__')
-        return arr
+        keys = [key for key in self.__dict__.keys() if self[key] is not None]
+        if '__num_nodes__' in keys:
+            keys.remove('__num_nodes__')
+        return keys
 
     def __len__(self):
         r"""Returns the number of all present attributes."""
@@ -195,16 +195,33 @@ class Data(object):
         return None
 
     @property
-    def num_features(self):
+    def num_node_features(self):
         r"""Returns the number of features per node in the graph."""
         return 1 if self.x.dim() == 1 else self.x.size(1)
+
+    @property
+    def num_edge_features(self):
+        r"""Returns the number of features per edge in the graph."""
+        return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(1)
+
+    @property
+    def num_features(self):
+        r"""Alias for :py:attr:`~num_node_features`."""
+        return self.num_node_features
 
     def is_coalesced(self):
         r"""Returns :obj:`True`, if edge indices are ordered and do not contain
         duplicate entries."""
-        row, col = self.edge_index
-        index = self.num_nodes * row + col
-        return row.size(0) == torch.unique(index).size(0)
+        edge_index, _ = coalesce(self.edge_index, None, self.num_nodes,
+                                 self.num_nodes)
+        return self.edge_index.numel() == edge_index.numel() and (
+            self.edge_index != edge_index).sum().item() == 0
+
+    def coalesce(self):
+        r""""Orders and removes duplicated entries from edge indices."""
+        self.edge_index, self.edge_attr = coalesce(
+            self.edge_index, self.edge_attr, self.num_nodes, self.num_nodes)
+        return self
 
     def contains_isolated_nodes(self):
         r"""Returns :obj:`True`, if the graph does not contain isolated

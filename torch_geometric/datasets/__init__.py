@@ -5,15 +5,19 @@ from .cora_full import CoraFull
 from .coauthor import Coauthor
 from .amazon import Amazon
 from .ppi import PPI
+from .reddit import Reddit
 from .qm7 import QM7b
 from .qm9 import QM9
 from .entities import Entities
+from .ged_dataset import GEDDataset
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
+from .dynamic_faust import DynamicFAUST
 from .shapenet import ShapeNet
 from .modelnet import ModelNet
 from .coma import CoMA
 from .shrec2016 import SHREC2016
+from .tosca import TOSCA
 from .pcpnet_dataset import PCPNetDataset
 from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
@@ -28,15 +32,19 @@ __all__ = [
     'Coauthor',
     'Amazon',
     'PPI',
+    'Reddit',
     'QM7b',
     'QM9',
     'Entities',
+    'GEDDataset',
     'MNISTSuperpixels',
     'FAUST',
+    'DynamicFAUST',
     'ShapeNet',
     'ModelNet',
     'CoMA',
     'SHREC2016',
+    'TOSCA',
     'PCPNetDataset',
     'GeometricShapes',
     'BitcoinOTC',

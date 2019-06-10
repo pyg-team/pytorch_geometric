@@ -28,6 +28,7 @@ def test_data():
 
     assert not data.is_coalesced()
     data.edge_index, _ = coalesce(data.edge_index, None, N, N)
+    data = data.coalesce()
     assert data.is_coalesced()
 
     clone = data.clone()
@@ -53,7 +54,12 @@ def test_data():
     assert data.num_nodes == 3
     assert data.num_edges == 4
     assert data.num_faces is None
+    assert data.num_node_features == 2
     assert data.num_features == 2
+
+    data.edge_attr = torch.randn(data.num_edges, 2)
+    assert data.num_edge_features == 2
+    data.edge_attr = None
 
     data.x = None
     assert data.num_nodes == 3
@@ -73,3 +79,6 @@ def test_data():
     face = torch.tensor([[0, 1], [1, 2], [2, 3]])
     data = Data(face=face)
     assert data.num_faces == 2
+
+    data = Data(title="test")
+    assert data.__repr__() == 'Data(title=test)'

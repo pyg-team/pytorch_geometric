@@ -14,7 +14,7 @@ about: Report an installation problem with PyTorch Geometric
 * PyTorch version:
 * CUDA/cuDNN version:
 * GCC version:
-* How you tried to install PyTorch Geometric and its extensions (pip, source):
+* How did you try to install PyTorch Geometric and its extensions (pip, source):
 * Any other relevant information:
 
 ## Checklist

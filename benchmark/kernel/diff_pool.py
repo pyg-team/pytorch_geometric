@@ -3,7 +3,7 @@ from math import ceil
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
+from torch_geometric.nn import DenseSAGEConv, dense_diff_pool, JumpingKnowledge
 
 
 class Block(torch.nn.Module):
@@ -42,6 +42,7 @@ class DiffPool(torch.nn.Module):
             self.embed_blocks.append(Block(hidden, hidden, hidden))
             self.pool_blocks.append(Block(hidden, hidden, num_nodes))
 
+        self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = Linear((len(self.embed_blocks) + 1) * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
@@ -51,6 +52,7 @@ class DiffPool(torch.nn.Module):
         for block1, block2 in zip(self.embed_blocks, self.pool_blocks):
             block1.reset_parameters()
             block2.reset_parameters()
+        self.jump.reset_parameters()
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
 
@@ -60,7 +62,7 @@ class DiffPool(torch.nn.Module):
         s = self.pool_block1(x, adj, mask, add_loop=True)
         x = F.relu(self.embed_block1(x, adj, mask, add_loop=True))
         xs = [x.mean(dim=1)]
-        x, adj, reg = dense_diff_pool(x, adj, s, mask)
+        x, adj, _, _ = dense_diff_pool(x, adj, s, mask)
 
         for embed, pool in zip(self.embed_blocks, self.pool_blocks):
             s = pool(x, adj)
@@ -68,7 +70,7 @@ class DiffPool(torch.nn.Module):
             xs.append(x.mean(dim=1))
             x, adj, _, _ = dense_diff_pool(x, adj, s)
 
-        x = torch.cat(xs, dim=1)
+        x = self.jump(xs)
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin2(x)

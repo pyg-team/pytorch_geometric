@@ -43,10 +43,17 @@ class SignedConv(MessagePassing):
         first_aggr (bool): Denotes which aggregation formula to use.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, in_channels, out_channels, first_aggr, bias=True):
-        super(SignedConv, self).__init__('mean')
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 first_aggr,
+                 bias=True,
+                 **kwargs):
+        super(SignedConv, self).__init__(aggr='mean', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

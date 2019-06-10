@@ -1,8 +1,9 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import GraphConv, global_mean_pool, graclus, max_pool
 from torch_geometric.data import Batch
+from torch_geometric.nn import (GraphConv, graclus, max_pool, global_mean_pool,
+                                JumpingKnowledge)
 
 
 class Graclus(torch.nn.Module):
@@ -12,6 +13,7 @@ class Graclus(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(GraphConv(hidden, hidden, aggr='mean'))
+        self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
@@ -19,6 +21,7 @@ class Graclus(torch.nn.Module):
         self.conv1.reset_parameters()
         for conv in self.convs:
             conv.reset_parameters()
+        self.jump.reset_parameters()
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
 
@@ -34,7 +37,7 @@ class Graclus(torch.nn.Module):
                 data = Batch(x=x, edge_index=edge_index, batch=batch)
                 data = max_pool(cluster, data)
                 x, edge_index, batch = data.x, data.edge_index, data.batch
-        x = torch.cat(xs, dim=1)
+        x = self.jump(xs)
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin2(x)

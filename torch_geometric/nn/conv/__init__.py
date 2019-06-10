@@ -16,8 +16,8 @@ from .dna_conv import DNAConv
 from .point_conv import PointConv
 from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
-from .nn_conv import NNConv
-from .edge_conv import EdgeConv
+from .nn_conv import NNConv, ECConv
+from .edge_conv import EdgeConv, DynamicEdgeConv
 from .x_conv import XConv
 from .ppf_conv import PPFConv
 from .hypergraph_conv import HypergraphConv
@@ -42,7 +42,9 @@ __all__ = [
     'GMMConv',
     'SplineConv',
     'NNConv',
+    'ECConv',
     'EdgeConv',
+    'DynamicEdgeConv',
     'XConv',
     'PPFConv',
     'HypergraphConv',

@@ -24,10 +24,12 @@ class APPNP(MessagePassing):
         alpha (float): Teleport probability :math:`\alpha`.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, K, alpha, bias=True):
-        super(APPNP, self).__init__('add')
+    def __init__(self, K, alpha, bias=True, **kwargs):
+        super(APPNP, self).__init__(aggr='add', **kwargs)
         self.K = K
         self.alpha = alpha
 

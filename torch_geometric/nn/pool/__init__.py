@@ -3,10 +3,12 @@ from .avg_pool import avg_pool, avg_pool_x
 from .graclus import graclus
 from .voxel_grid import voxel_grid
 from .topk_pool import TopKPooling
+from .sag_pool import SAGPooling
 from torch_cluster import fps, knn, knn_graph, radius, radius_graph, nearest
 
 __all__ = [
     'TopKPooling',
+    'SAGPooling',
     'max_pool',
     'avg_pool',
     'max_pool_x',
