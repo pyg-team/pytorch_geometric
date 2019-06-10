@@ -14,13 +14,11 @@ class Block(torch.nn.Module):
         self.conv2 = DenseSAGEConv(hidden_channels, out_channels)
         self.jump = JumpingKnowledge(mode=mode)
         if mode == 'cat':
-            self.lin = torch.nn.Linear(hidden_channels + out_channels,
-                                       out_channels)
+            self.lin = Linear(hidden_channels + out_channels, out_channels)
         else:
             assert hidden_channels == out_channels, (
-                "output dim for conv1 and conv2 must be same for max or lstm mode")
-            self.lin = torch.nn.Linear(out_channels, out_channels)
-        
+                'Output size of conv1 and conv2 must be same for max and lstm')
+            self.lin = Linear(out_channels, out_channels)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
