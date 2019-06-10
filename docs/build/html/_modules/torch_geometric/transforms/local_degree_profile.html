@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.3.0)
               </div>
             
           
@@ -114,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes/resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -218,10 +219,11 @@
         <span class="n">deg</span> <span class="o">=</span> <span class="n">degree</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
         <span class="n">deg_col</span> <span class="o">=</span> <span class="n">deg</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
 
-        <span class="n">value</span> <span class="o">=</span> <span class="mf">1e16</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="mf">1e9</span>
         <span class="n">min_deg</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scatter_min</span><span class="p">(</span><span class="n">deg_col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
         <span class="n">min_deg</span><span class="p">[</span><span class="n">min_deg</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">max_deg</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scatter_max</span><span class="p">(</span><span class="n">deg_col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+        <span class="n">max_deg</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">scatter_max</span><span class="p">(</span><span class="n">deg_col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=-</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">max_deg</span><span class="p">[</span><span class="n">max_deg</span> <span class="o">==</span> <span class="o">-</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">mean_deg</span> <span class="o">=</span> <span class="n">scatter_mean</span><span class="p">(</span><span class="n">deg_col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
         <span class="n">std_deg</span> <span class="o">=</span> <span class="n">scatter_std</span><span class="p">(</span><span class="n">deg_col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">dim_size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
 

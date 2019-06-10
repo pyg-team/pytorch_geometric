@@ -1,18 +1,19 @@
 from itertools import product
 
 import argparse
-from kernel.datasets import get_dataset
-from kernel.train_eval import cross_validation_with_val_set
+from datasets import get_dataset
+from train_eval import cross_validation_with_val_set
 
-from kernel.gcn import GCN
-from kernel.graph_sage import GraphSAGE, GraphSAGEWithoutJK
-from kernel.gin import GIN0, GIN
-from kernel.graclus import Graclus
-from kernel.top_k import TopK
-from kernel.diff_pool import DiffPool
-from kernel.global_attention import GlobalAttentionNet
-from kernel.set2set import Set2SetNet
-from kernel.sort_pool import SortPool
+from gcn import GCN, GCNWithJK
+from graph_sage import GraphSAGE, GraphSAGEWithJK
+from gin import GIN0, GIN0WithJK, GIN, GINWithJK
+from graclus import Graclus
+from top_k import TopK
+from diff_pool import DiffPool
+from sag_pool import SAGPool
+from global_attention import GlobalAttentionNet
+from set2set import Set2SetNet
+from sort_pool import SortPool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=100)
@@ -26,14 +27,18 @@ layers = [1, 2, 3, 4, 5]
 hiddens = [16, 32, 64, 128]
 datasets = ['MUTAG', 'PROTEINS', 'IMDB-BINARY', 'REDDIT-BINARY']  # , 'COLLAB']
 nets = [
+    GCNWithJK,
+    GraphSAGEWithJK,
+    GIN0WithJK,
+    GINWithJK,
+    Graclus,
+    TopK,
+    SAGPool,
+    DiffPool,
     GCN,
     GraphSAGE,
     GIN0,
     GIN,
-    Graclus,
-    TopK,
-    DiffPool,
-    GraphSAGEWithoutJK,
     GlobalAttentionNet,
     Set2SetNet,
     SortPool,
@@ -49,7 +54,7 @@ def logger(info):
 
 results = []
 for dataset_name, Net in product(datasets, nets):
-    best_result = (float('inf'), 0, 0)
+    best_result = (float('inf'), 0, 0)  # (loss, acc, std)
     print('-----\n{} - {}'.format(dataset_name, Net.__name__))
     for num_layers, hidden in product(layers, hiddens):
         dataset = get_dataset(dataset_name, sparse=Net != DiffPool)

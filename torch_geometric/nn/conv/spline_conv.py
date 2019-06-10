@@ -1,16 +1,20 @@
+import warnings
+
 import torch
 from torch.nn import Parameter
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils.repeat import repeat
 
 from ..inits import uniform
 
 try:
-    from torch_spline_conv import SplineConv as Conv
+    from torch_spline_conv import SplineBasis, SplineWeighting
 except ImportError:
-    Conv = None
+    SplineBasis = None
+    SplineWeighting = None
 
 
-class SplineConv(torch.nn.Module):
+class SplineConv(MessagePassing):
     r"""The spline-based convolutional operator from the `"SplineCNN: Fast
     Geometric Deep Learning with Continuous B-Spline Kernels"
     <https://arxiv.org/abs/1711.08920>`_ paper
@@ -37,8 +41,9 @@ class SplineConv(torch.nn.Module):
             operator will use a closed B-spline basis in this dimension.
             (default :obj:`True`)
         degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
-        norm (bool, optional): If set to :obj:`False`, output node features
-            will not be degree-normalized. (default: :obj:`True`)
+        aggr (string, optional): The aggregation operator to use
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
+            (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
@@ -53,18 +58,18 @@ class SplineConv(torch.nn.Module):
                  kernel_size,
                  is_open_spline=True,
                  degree=1,
-                 norm=True,
+                 aggr='mean',
                  root_weight=True,
-                 bias=True):
-        super(SplineConv, self).__init__()
+                 bias=True,
+                 **kwargs):
+        super(SplineConv, self).__init__(aggr=aggr, **kwargs)
 
-        if Conv is None:
+        if SplineBasis is None:
             raise ImportError('`SplineConv` requires `torch-spline-conv`.')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.degree = degree
-        self.norm = norm
         self.check_pseudo = True
 
         kernel_size = torch.tensor(repeat(kernel_size, dim), dtype=torch.long)
@@ -97,6 +102,11 @@ class SplineConv(torch.nn.Module):
 
     def forward(self, x, edge_index, pseudo):
         """"""
+        if not x.is_cuda:
+            warnings.warn('We do not recommend using the non-optimized CPU '
+                          'version of SplineConv. If possible, please convert '
+                          'your data to the GPU first.')
+
         if self.check_pseudo:
             self.check_pseudo = False
             min_pseudo, max_pseudo = pseudo.min().item(), pseudo.max().item()
@@ -106,10 +116,22 @@ class SplineConv(torch.nn.Module):
                      ' but found them in the interval [{}, {}]').format(
                          min_pseudo, max_pseudo))
 
-        return Conv.apply(x, edge_index, pseudo, self.weight,
-                          self._buffers['kernel_size'],
-                          self._buffers['is_open_spline'], self.degree,
-                          self.norm, self.root, self.bias)
+        x = x.unsqueeze(-1) if x.dim() == 1 else x
+        pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
+
+        return self.propagate(edge_index, x=x, pseudo=pseudo)
+
+    def message(self, x_j, pseudo):
+        data = SplineBasis.apply(pseudo, self._buffers['kernel_size'],
+                                 self._buffers['is_open_spline'], self.degree)
+        return SplineWeighting.apply(x_j, self.weight, *data)
+
+    def update(self, aggr_out, x):
+        if self.root is not None:
+            aggr_out = aggr_out + torch.mm(x, self.root)
+        if self.bias is not None:
+            aggr_out = aggr_out + self.bias
+        return aggr_out
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,

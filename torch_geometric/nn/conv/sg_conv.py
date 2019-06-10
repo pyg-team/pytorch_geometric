@@ -3,7 +3,7 @@ from torch_geometric.nn.conv import MessagePassing, GCNConv
 
 
 class SGConv(MessagePassing):
-    r"""The simgple graph convolutional operator from the `"Simplifying Graph
+    r"""The simple graph convolutional operator from the `"Simplifying Graph
     Convolutional Networks" <https://arxiv.org/abs/1902.07153>`_ paper
 
     .. math::
@@ -24,11 +24,18 @@ class SGConv(MessagePassing):
             (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, in_channels, out_channels, K=1, cached=False,
-                 bias=True):
-        super(SGConv, self).__init__('add')
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 K=1,
+                 cached=False,
+                 bias=True,
+                 **kwargs):
+        super(SGConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

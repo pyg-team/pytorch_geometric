@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.3.0)
               </div>
             
           
@@ -114,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../notes/resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -193,7 +194,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for torch_geometric.nn.conv.spline_conv</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="k">import</span> <span class="n">Parameter</span>
 <span class="kn">from</span> <span class="nn">torch_geometric.utils.repeat</span> <span class="k">import</span> <span class="n">repeat</span>
 
@@ -292,6 +295,11 @@
 
 <div class="viewcode-block" id="SplineConv.forward"><a class="viewcode-back" href="../../../../modules/nn.html#torch_geometric.nn.conv.SplineConv.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">pseudo</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">is_cuda</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;We do not recommend using the non-optimized CPU &#39;</span>
+                          <span class="s1">&#39;version of SplineConv. If possible, please convert &#39;</span>
+                          <span class="s1">&#39;your data to the GPU first.&#39;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_pseudo</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_pseudo</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">min_pseudo</span><span class="p">,</span> <span class="n">max_pseudo</span> <span class="o">=</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="n">pseudo</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>

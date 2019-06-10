@@ -1,3 +1,4 @@
+import sys
 import inspect
 
 import torch
@@ -8,6 +9,9 @@ special_args = [
 ]
 __size_error_msg__ = ('All tensors which should get mapped to the same source '
                       'or target nodes must be of same size in dimension 0.')
+
+is_python2 = sys.version_info[0] < 3
+getargspec = inspect.getargspec if is_python2 else inspect.getfullargspec
 
 
 class MessagePassing(torch.nn.Module):
@@ -43,14 +47,14 @@ class MessagePassing(torch.nn.Module):
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
 
-        self.__message_args__ = inspect.getfullargspec(self.message)[0][1:]
+        self.__message_args__ = getargspec(self.message)[0][1:]
         self.__special_args__ = [(i, arg)
                                  for i, arg in enumerate(self.__message_args__)
                                  if arg in special_args]
         self.__message_args__ = [
             arg for arg in self.__message_args__ if arg not in special_args
         ]
-        self.__update_args__ = inspect.getfullargspec(self.update)[0][2:]
+        self.__update_args__ = getargspec(self.update)[0][2:]
 
     def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
@@ -75,17 +79,18 @@ class MessagePassing(torch.nn.Module):
         message_args = []
         for arg in self.__message_args__:
             if arg[-2:] in ij.keys():
-                tmp = kwargs[arg[:-2]]
+                tmp = kwargs.get(arg[:-2], None)
                 if tmp is None:  # pragma: no cover
                     message_args.append(tmp)
                 else:
                     idx = ij[arg[-2:]]
                     if isinstance(tmp, tuple) or isinstance(tmp, list):
                         assert len(tmp) == 2
-                        if size[1 - idx] is None:
-                            size[1 - idx] = tmp[1 - idx].size(0)
-                        if size[1 - idx] != tmp[1 - idx].size(0):
-                            raise ValueError(__size_error_msg__)
+                        if tmp[1 - idx] is not None:
+                            if size[1 - idx] is None:
+                                size[1 - idx] = tmp[1 - idx].size(0)
+                            if size[1 - idx] != tmp[1 - idx].size(0):
+                                raise ValueError(__size_error_msg__)
                         tmp = tmp[idx]
 
                     if size[idx] is None:
@@ -96,7 +101,7 @@ class MessagePassing(torch.nn.Module):
                     tmp = torch.index_select(tmp, 0, edge_index[idx])
                     message_args.append(tmp)
             else:
-                message_args.append(kwargs[arg])
+                message_args.append(kwargs.get(arg, None))
 
         size[0] = size[1] if size[0] is None else size[0]
         size[1] = size[0] if size[1] is None else size[1]

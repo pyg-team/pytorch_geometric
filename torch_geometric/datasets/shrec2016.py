@@ -26,7 +26,7 @@ class SHREC2016(InMemoryDataset):
     Args:
         root (string): Root directory where the dataset should be saved.
         partiality (string): The partiality of the dataset (one of
-            :obj:`"Holes"`, :obj:`"Cuts"`)
+            :obj:`"Holes"`, :obj:`"Cuts"`).
         category (string): The category of the dataset (one of
             :obj:`"Cat"`, :obj:`"Centaur"`, :obj:`"David"`, :obj:`"Dog"`,
             :obj:`"Horse"`, :obj:`"Michael"`, :obj:`"Victoria"`,
@@ -72,9 +72,16 @@ class SHREC2016(InMemoryDataset):
         self.cat = category.lower()
         super(SHREC2016, self).__init__(root, transform, pre_transform,
                                         pre_filter)
-        self.ref = torch.load(self.processed_paths[0])
+        self.__ref__ = torch.load(self.processed_paths[0])
         path = self.processed_paths[1] if train else self.processed_paths[2]
         self.data, self.slices = torch.load(path)
+
+    @property
+    def ref(self):
+        ref = self.__ref__
+        if self.transform is not None:
+            ref = self.transform(ref)
+        return ref
 
     @property
     def raw_file_names(self):
@@ -106,9 +113,10 @@ class SHREC2016(InMemoryDataset):
         train_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
         paths = glob.glob(osp.join(self.raw_paths[0], self.part, name))
-        for i in range(1, len(paths) + 1):
-            path = osp.join(self.raw_paths[0], self.part,
-                            '{}_{}_shape_{}'.format(self.part, self.cat, i))
+        paths = [path[:-4] for path in paths]
+        paths = sorted(paths, key=lambda e: (len(e), e))
+
+        for path in paths:
             data = read_off('{}.off'.format(path))
             y = read_txt_array('{}.baryc_gt'.format(path))
             data.y = y[:, 0].to(torch.long) - 1
@@ -118,9 +126,10 @@ class SHREC2016(InMemoryDataset):
         test_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
         paths = glob.glob(osp.join(self.raw_paths[1], self.part, name))
-        for i in range(1, len(paths) + 1):
-            path = osp.join(self.raw_paths[1], self.part,
-                            '{}_{}_shape_{}'.format(self.part, self.cat, i))
+        paths = [path[:-4] for path in paths]
+        paths = sorted(paths, key=lambda e: (len(e), e))
+
+        for path in paths:
             test_list.append(read_off('{}.off'.format(path)))
 
         if self.pre_filter is not None:

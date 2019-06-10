@@ -21,6 +21,7 @@ class Batch(Data):
         The assignment vector :obj:`batch` is created on the fly.
         Additionally, creates assignment batch vectors for each key in
         :obj:`follow_batch`."""
+
         keys = [set(data.keys) for data in data_list]
         keys = list(set.union(*keys))
         assert 'batch' not in keys
@@ -65,6 +66,14 @@ class Batch(Data):
                 batch[key] = torch.tensor(batch[key])
             else:
                 raise ValueError('Unsupported attribute type.')
+
+        # Copy custom data functions to batch.
+        # if data_list.__class__ != Data:
+        #     org_funcs = set(Data.__dict__.keys())
+        #     funcs = set(data_list[0].__class__.__dict__.keys())
+        #     batch.__custom_funcs__ = funcs.difference(org_funcs)
+        #     for func in funcs.difference(org_funcs):
+        #         setattr(batch, func, getattr(data_list[0], func))
 
         return batch.contiguous()
 

@@ -44,6 +44,7 @@ def grid_index(height, width, device=None):
 
 
 def grid_pos(height, width, dtype=None, device=None):
+    dtype = torch.float if dtype is None else dtype
     x = torch.arange(width, dtype=dtype, device=device)
     y = (height - 1) - torch.arange(height, dtype=dtype, device=device)
 

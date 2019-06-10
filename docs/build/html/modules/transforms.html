@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.3.0)
               </div>
             
           
@@ -116,6 +116,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
@@ -590,7 +591,7 @@ given interval, <em>e.g.</em>, resulting in the transformation matrix</p>
 <dl class="class">
 <dt id="torch_geometric.transforms.KNNGraph">
 <em class="property">class </em><code class="descname">KNNGraph</code><span class="sig-paren">(</span><em>k=6</em>, <em>loop=False</em>, <em>force_undirected=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/knn_graph.html#KNNGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.KNNGraph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a k-NN graph based on node positions.</p>
+<dd><p>Creates a k-NN graph based on node positions <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -611,8 +612,8 @@ will be undirected. (default: <a class="reference external" href="https://docs.p
 <dl class="class">
 <dt id="torch_geometric.transforms.RadiusGraph">
 <em class="property">class </em><code class="descname">RadiusGraph</code><span class="sig-paren">(</span><em>r</em>, <em>loop=False</em>, <em>max_num_neighbors=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/radius_graph.html#RadiusGraph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.RadiusGraph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates edges based on node positions to all points within a given
-distance.</p>
+<dd><p>Creates edges based on node positions <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos</span></code> to all points within a
+given distance.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -664,6 +665,21 @@ will not be removed. (default: <a class="reference external" href="https://docs.
 normals for each sampled point. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>)</li>
 </ul>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="torch_geometric.transforms.FixedPoints">
+<em class="property">class </em><code class="descname">FixedPoints</code><span class="sig-paren">(</span><em>num</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/transforms/fixed_points.html#FixedPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.transforms.FixedPoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Samples a fixed number of <code class="xref py py-obj docutils literal notranslate"><span class="pre">num</span></code> points and features from a point
+cloud.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of points to sample.</td>
 </tr>
 </tbody>
 </table>

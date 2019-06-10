@@ -83,8 +83,7 @@ class GAE(torch.nn.Module):
         super(GAE, self).__init__()
         self.encoder = encoder
         self.decoder = InnerProductDecoder() if decoder is None else decoder
-
-        self.reset_parameters()
+        GAE.reset_parameters(self)
 
     def reset_parameters(self):
         reset(self.encoder)
@@ -119,8 +118,8 @@ class GAE(torch.nn.Module):
         mask = row < col
         row, col = row[mask], col[mask]
 
-        n_v = math.floor(val_ratio * row.size(0))
-        n_t = math.floor(test_ratio * row.size(0))
+        n_v = int(math.floor(val_ratio * row.size(0)))
+        n_t = int(math.floor(test_ratio * row.size(0)))
 
         # Positive edges.
         perm = torch.randperm(row.size(0))
@@ -267,6 +266,7 @@ class ARGA(GAE):
     def __init__(self, encoder, discriminator, decoder=None):
         self.discriminator = discriminator
         super(ARGA, self).__init__(encoder, decoder)
+        reset(self.discriminator)
 
     def reset_parameters(self):
         super(ARGA, self).reset_parameters()

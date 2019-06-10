@@ -83,7 +83,7 @@ Besides of being a plain old python object, :class:`torch_geometric.data.Data` p
                 [2.0]])
 
     for key, item in data:
-        print('{} found in data)
+        print(key+' found in data)
     >>> x found in data
     >>> edge_index found in data
 
@@ -326,11 +326,11 @@ In addition, we can use the ``transform`` argument to randomly augment a ``Data`
     from torch_geometric.datasets import ShapeNet
 
     dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
-                        pre_transform=T.NNGraph(k=6),
+                        pre_transform=T.KNNGraph(k=6),
                         transform=T.RandomTranslate(0.01))
 
-    data[0]
-    >>> Data(edge_index=[2, 17768], pos=[2518, 3], y=[2518])
+    dataset[0]
+    >>> Data(edge_index=[2, 15108], pos=[2518, 3], y=[2518])
 
 You can find a complete list of all implemented transforms at :mod:`torch_geometric.transforms`.
 
@@ -376,7 +376,9 @@ Now let's implement a two-layer GCN:
 
             return F.log_softmax(x, dim=1)
 
-We use ReLU as our non-linear activation function and output a softmax distribution over the number of classes.
+The constructor defines two ``GCNConv`` layers which get called in the forward pass of our network.
+Note that the non-linearity is not integrated in the ``conv`` calls and hence needs to be applied afterwards (something which is consistent accross all operators in PyTorch Geometric).
+Here, we chose to use ReLU as our intermediate non-linearity between and finally output a softmax distribution over the number of classes.
 Let's train this model on the train nodes for 200 epochs:
 
 .. code-block:: python
@@ -400,7 +402,7 @@ Finally we can evaluate our model on the test nodes:
 
     model.eval()
     _, pred = model(data).max(dim=1)
-    correct = pred[data.test_mask].eq(data.y[data.test_mask]).sum().item()
+    correct = float (pred[data.test_mask].eq(data.y[data.test_mask]).sum().item())
     acc = correct / data.test_mask.sum().item()
     print('Accuracy: {:.4f}'.format(acc))
     >>> Accuracy: 0.8150

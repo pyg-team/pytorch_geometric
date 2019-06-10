@@ -6,9 +6,13 @@ from ..inits import reset, uniform
 
 
 class NNConv(MessagePassing):
-    r"""The continuous kernel-based convolutional operator adapted from the
+    r"""The continuous kernel-based convolutional operator from the
     `"Neural Message Passing for Quantum Chemistry"
-    <https://arxiv.org/abs/1704.01212>`_ paper
+    <https://arxiv.org/abs/1704.01212>`_ paper.
+    This convolution is also known as the edge-conditioned convolution from the
+    `"Dynamic Edge-Conditioned Filters in Convolutional Neural Networks on
+    Graphs" <https://arxiv.org/abs/1704.02901>`_ paper (see
+    :class:`torch_geometric.nn.conv.ECConv` for an alias):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta} \mathbf{x}_i +
@@ -22,13 +26,16 @@ class NNConv(MessagePassing):
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
-        aggr (string): The aggregation operator to use (:obj:`"add"`,
-            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"add"`)
+        aggr (string, optional): The aggregation scheme to use
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
+            (default: :obj:`"add"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add the transformed root node features to the output.
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
     def __init__(self,
@@ -37,8 +44,9 @@ class NNConv(MessagePassing):
                  nn,
                  aggr='add',
                  root_weight=True,
-                 bias=True):
-        super(NNConv, self).__init__(aggr)
+                 bias=True,
+                 **kwargs):
+        super(NNConv, self).__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -83,3 +91,6 @@ class NNConv(MessagePassing):
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
                                    self.out_channels)
+
+
+ECConv = NNConv

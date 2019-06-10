@@ -20,14 +20,13 @@ class SamplePoints(object):
 
     def __call__(self, data):
         pos, face = data.pos, data.face
-        assert not pos.is_cuda and not face.is_cuda
         assert pos.size(1) == 3 and face.size(0) == 3
 
         pos_max = pos.max()
         pos = pos / pos_max
 
         area = (pos[face[1]] - pos[face[0]]).cross(pos[face[2]] - pos[face[0]])
-        area = torch.sqrt((area**2).sum(dim=-1)) / 2
+        area = area.norm(p=2, dim=1).abs() / 2
 
         prob = area / area.sum()
         sample = torch.multinomial(prob, self.num, replacement=True)

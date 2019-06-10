@@ -44,7 +44,7 @@ class Linear(torch.nn.Module):
             src = src.transpose(0, 1).contiguous()
             out = torch.matmul(src, self.weight)
             out = out.transpose(1, 0).contiguous()
-            out = out.view(*size, self.out_channels)
+            out = out.view(*(size + [self.out_channels]))
         else:
             out = torch.matmul(src, self.weight.squeeze(0))
 
@@ -72,9 +72,9 @@ class Attention(torch.nn.Module):
         self.dropout = dropout
 
     def forward(self, query, key, value):
-        # Query: [*, query_entries, dim_k]
-        # Key: [*, key_entries, dim_k]
-        # Value: [*, key_entries, dim_v]
+        # query: [*, query_entries, dim_k]
+        # key: [*, key_entries, dim_k]
+        # value: [*, key_entries, dim_v]
         # Output: [*, query_entries, dim_v]
 
         assert query.dim() == key.dim() == value.dim() >= 2
@@ -85,9 +85,7 @@ class Attention(torch.nn.Module):
         score = torch.matmul(query, key.transpose(-2, -1))
         score = score / math.sqrt(key.size(-1))
         score = restricted_softmax(score, dim=-1)
-
-        if self.dropout > 0:
-            score = F.dropout(score, p=self.dropout, training=self.training)
+        score = F.dropout(score, p=self.dropout, training=self.training)
 
         return torch.matmul(score, value)
 
@@ -127,9 +125,9 @@ class MultiHead(Attention):
         self.lin_v.reset_parameters()
 
     def forward(self, query, key, value):
-        # Query: [*, query_entries, in_channels]
-        # Key: [*, key_entries, in_channels]
-        # Value: [*, key_entries, in_channels]
+        # query: [*, query_entries, in_channels]
+        # key: [*, key_entries, in_channels]
+        # value: [*, key_entries, in_channels]
         # Output: [*, query_entries, out_channels]
 
         assert query.dim() == key.dim() == value.dim() >= 2
@@ -140,25 +138,27 @@ class MultiHead(Attention):
         key = self.lin_k(key)
         value = self.lin_v(value)
 
-        # Query: [*, heads, query_entries, out_channels // heads]
-        # Key: [*, heads, key_entries, out_channels // heads]
-        # Value: [*, heads, key_entries, out_channels // heads]
+        # query: [*, heads, query_entries, out_channels // heads]
+        # key: [*, heads, key_entries, out_channels // heads]
+        # value: [*, heads, key_entries, out_channels // heads]
         size = list(query.size())[:-2]
         out_channels_per_head = self.out_channels // self.heads
 
-        query = query.view(*size, query.size(-2), self.heads,
-                           out_channels_per_head).transpose(-2, -3)
-        key = key.view(*size, key.size(-2), self.heads,
-                       out_channels_per_head).transpose(-2, -3)
-        value = value.view(*size, value.size(-2), self.heads,
-                           out_channels_per_head).transpose(-2, -3)
+        query_size = size + [query.size(-2), self.heads, out_channels_per_head]
+        query = query.view(*query_size).transpose(-2, -3)
+
+        key_size = size + [key.size(-2), self.heads, out_channels_per_head]
+        key = key.view(*key_size).transpose(-2, -3)
+
+        value_size = size + [value.size(-2), self.heads, out_channels_per_head]
+        value = value.view(*value_size).transpose(-2, -3)
 
         # Output: [*, heads, query_entries, out_channels // heads]
         out = super(MultiHead, self).forward(query, key, value)
         # Output: [*, query_entries, heads, out_channels // heads]
         out = out.transpose(-3, -2).contiguous()
         # Output: [*, query_entries, out_channels]
-        out = out.view(*size, query.size(-2), self.out_channels)
+        out = out.view(*(size + [query.size(-2), self.out_channels]))
 
         return out
 
@@ -183,9 +183,9 @@ class DNAConv(MessagePassing):
     .. math::
         \mathbf{x}_{v \leftarrow w}^{(t)} = \textrm{Attention} \left(
         \mathbf{x}^{(t-1)}_v \, \mathbf{\Theta}_Q^{(t)}, [\mathbf{x}_w^{(1)},
-        \ldots, \mathbf{x}_w^{(t-1)}] \, \mathbf{Q}_K^{(t)}, \,
+        \ldots, \mathbf{x}_w^{(t-1)}] \, \mathbf{\Theta}_K^{(t)}, \,
         [\mathbf{x}_w^{(1)}, \ldots, \mathbf{x}_w^{(t-1)}] \,
-        \mathbf{Q}_V^{(t)} \right)
+        \mathbf{\Theta}_V^{(t)} \right)
 
     with :math:`\mathbf{\Theta}_Q^{(t)}, \mathbf{\Theta}_K^{(t)},
     \mathbf{\Theta}_V^{(t)}` denoting (grouped) projection matrices for query,
@@ -211,6 +211,8 @@ class DNAConv(MessagePassing):
             (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
     def __init__(self,
@@ -219,8 +221,9 @@ class DNAConv(MessagePassing):
                  groups=1,
                  dropout=0,
                  cached=False,
-                 bias=True):
-        super(DNAConv, self).__init__('add')
+                 bias=True,
+                 **kwargs):
+        super(DNAConv, self).__init__(aggr='add', **kwargs)
         self.bias = bias
         self.cached = cached
         self.cached_result = None
@@ -234,9 +237,9 @@ class DNAConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
-        # X: [num_nodes, num_layers, channels]
-        # Edge Index: [2, num_edges]
-        # Edge Weight: [num_edges]
+        # x: [num_nodes, num_layers, channels]
+        # edge_index: [2, num_edges]
+        # edge_weight: [num_edges]
 
         if x.dim() != 3:
             raise ValueError('Feature shape must be [num_nodes, num_layers, '
@@ -252,9 +255,9 @@ class DNAConv(MessagePassing):
         return self.propagate(edge_index, x=x, norm=norm)
 
     def message(self, x_i, x_j, norm):
-        # X_i: [num_edges, num_layers, channels]
-        # X_j: [num_edges, num_layers, channels]
-        # Norm: [num_edges]
+        # x_i: [num_edges, num_layers, channels]
+        # x_j: [num_edges, num_layers, channels]
+        # norm: [num_edges]
         # Output: [num_edges, channels]
 
         x_i = x_i[:, -1:]  # [num_edges, 1, channels]

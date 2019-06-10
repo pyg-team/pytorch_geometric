@@ -49,7 +49,7 @@ class HypergraphConv(MessagePassing):
                  negative_slope=0.2,
                  dropout=0,
                  bias=True):
-        super().__init__('add')
+        super(HypergraphConv, self).__init__(aggr='add')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -92,10 +92,11 @@ class HypergraphConv(MessagePassing):
         if hyperedge_weight is None:
             D = degree(hyperedge_index[0], x.size(0), x.dtype)
         else:
-            D = scatter_add(hyperedge_weight[hyperedge_index[1]],
-                            hyperedge_index[0],
-                            dim=0,
-                            dim_size=x.size(0))
+            D = scatter_add(
+                hyperedge_weight[hyperedge_index[1]],
+                hyperedge_index[0],
+                dim=0,
+                dim_size=x.size(0))
         D = 1.0 / D
         D[D == float("inf")] = 0
 
@@ -136,9 +137,7 @@ class HypergraphConv(MessagePassing):
             alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
             alpha = F.leaky_relu(alpha, self.negative_slope)
             alpha = softmax(alpha, hyperedge_index[0], x.size(0))
-
-            if self.training and self.dropout > 0:
-                alpha = F.dropout(alpha, p=self.dropout, training=True)
+            alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
         out = self.__forward__(x, hyperedge_index, hyperedge_weight, alpha)
 

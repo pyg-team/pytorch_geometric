@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.3.0)
               </div>
             
           
@@ -114,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notes/resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul>
@@ -216,6 +217,7 @@
 <span class="sd">        The assignment vector :obj:`batch` is created on the fly.</span>
 <span class="sd">        Additionally, creates assignment batch vectors for each key in</span>
 <span class="sd">        :obj:`follow_batch`.&quot;&quot;&quot;</span>
+
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="n">keys</span><span class="p">))</span>
         <span class="k">assert</span> <span class="s1">&#39;batch&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span>
@@ -260,6 +262,14 @@
                 <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unsupported attribute type.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Copy custom data functions to batch.</span>
+        <span class="c1"># if data_list.__class__ != Data:</span>
+        <span class="c1">#     org_funcs = set(Data.__dict__.keys())</span>
+        <span class="c1">#     funcs = set(data_list[0].__class__.__dict__.keys())</span>
+        <span class="c1">#     batch.__custom_funcs__ = funcs.difference(org_funcs)</span>
+        <span class="c1">#     for func in funcs.difference(org_funcs):</span>
+        <span class="c1">#         setattr(batch, func, getattr(data_list[0], func))</span>
 
         <span class="k">return</span> <span class="n">batch</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span></div>
 

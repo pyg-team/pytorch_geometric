@@ -46,11 +46,10 @@ class JumpingKnowledge(torch.nn.Module):
             assert channels is not None
             assert num_layers is not None
             self.lstm = LSTM(
-                channels,
-                channels * num_layers // 2,
+                channels, (num_layers * channels) // 2,
                 bidirectional=True,
                 batch_first=True)
-            self.att = Linear(2 * channels * num_layers // 2, 1)
+            self.att = Linear(2 * ((num_layers * channels) // 2), 1)
 
         self.reset_parameters()
 

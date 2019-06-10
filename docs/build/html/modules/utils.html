@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                master (1.2.0)
+                master (1.3.0)
               </div>
             
           
@@ -115,6 +115,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../notes/create_dataset.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../notes/resources.html">External resources</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package Reference</span></p>
 <ul class="current">
@@ -396,21 +397,59 @@ edge features. (default: <a class="reference external" href="https://docs.python
 
 <dl class="function">
 <dt id="torch_geometric.utils.add_self_loops">
-<code class="descname">add_self_loops</code><span class="sig-paren">(</span><em>edge_index</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/loop.html#add_self_loops"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.add_self_loops" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_self_loops</code><span class="sig-paren">(</span><em>edge_index</em>, <em>edge_weight=None</em>, <em>fill_value=1</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/loop.html#add_self_loops"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.add_self_loops" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a self-loop <span class="math notranslate nohighlight">\((i,i) \in \mathcal{E}\)</span> to every node
-<span class="math notranslate nohighlight">\(i \in \mathcal{V}\)</span> in the graph given by <code class="xref py py-attr docutils literal notranslate"><span class="pre">edge_index</span></code>.</p>
+<span class="math notranslate nohighlight">\(i \in \mathcal{V}\)</span> in the graph given by <code class="xref py py-attr docutils literal notranslate"><span class="pre">edge_index</span></code>.
+In case the graph is weighted, all existent self-loops will be removed and
+replaced by weights denoted by <code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>edge_index</strong> (<em>LongTensor</em>) – The edge indices.</li>
+<li><strong>edge_weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – One-dimensional edge weights.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>fill_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – If <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_weight</span></code> is not <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>,
+will add self-loops with edge weights of <code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code> to the
+graph. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
 <li><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nodes, <em>i.e.</em>
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">max_val</span> <span class="pre">+</span> <span class="pre">1</span></code> of <code class="xref py py-attr docutils literal notranslate"><span class="pre">edge_index</span></code>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.add_remaining_self_loops">
+<code class="descname">add_remaining_self_loops</code><span class="sig-paren">(</span><em>edge_index</em>, <em>edge_weight=None</em>, <em>fill_value=1</em>, <em>num_nodes=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/loop.html#add_remaining_self_loops"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.add_remaining_self_loops" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds remaining self-loop <span class="math notranslate nohighlight">\((i,i) \in \mathcal{E}\)</span> to every node
+<span class="math notranslate nohighlight">\(i \in \mathcal{V}\)</span> in the graph given by <code class="xref py py-attr docutils literal notranslate"><span class="pre">edge_index</span></code>.
+In case the graph is weighted and already contains a few self-loops, only
+non-existent self-loops will be added with weights denoted by
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>edge_index</strong> (<em>LongTensor</em>) – The edge indices.</li>
+<li><strong>edge_weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – One-dimensional edge weights.
+(default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>fill_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – If <code class="xref py py-obj docutils literal notranslate"><span class="pre">edge_weight</span></code> is not <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>,
+will add self-loops with edge weights of <code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code> to the
+graph. (default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">1</span></code>)</li>
+<li><strong>num_nodes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nodes, <em>i.e.</em>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">max_val</span> <span class="pre">+</span> <span class="pre">1</span></code> of <code class="xref py py-attr docutils literal notranslate"><span class="pre">edge_index</span></code>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>)</p>
 </td>
 </tr>
 </tbody>
@@ -517,6 +556,44 @@ returned tensors.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(<code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.geodesic_distance">
+<code class="descname">geodesic_distance</code><span class="sig-paren">(</span><em>pos</em>, <em>face</em>, <em>src=None</em>, <em>dest=None</em>, <em>norm=True</em>, <em>max_distance=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/geodesic.html#geodesic_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.geodesic_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes (normalized) geodesic distances of a mesh given by <code class="xref py py-obj docutils literal notranslate"><span class="pre">pos</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">face</span></code>. If <code class="xref py py-obj docutils literal notranslate"><span class="pre">src</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">dest</span></code> are given, this method only
+computes the geodesic distances for the respective source and target
+node-pairs.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function requires the <code class="xref py py-obj docutils literal notranslate"><span class="pre">gdist</span></code> package.
+To install, run <code class="xref py py-obj docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">cython</span> <span class="pre">&amp;&amp;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gdist</span></code>.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pos</strong> (<em>Tensor</em>) – The node positions.</li>
+<li><strong>face</strong> (<em>LongTensor</em>) – The face indices.</li>
+<li><strong>src</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – If given, only compute geodesic distances
+for the specified source indices. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>dest</strong> (<em>LongTensor</em><em>, </em><em>optional</em>) – If given, only compute geodesic distances
+for the specified target indices. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+<li><strong>norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Normalizes geodesic distances by
+<span class="math notranslate nohighlight">\(\sqrt{\textrm{area}(\mathcal{M})}\)</span>. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>)</li>
+<li><strong>max_distance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a><em>, </em><em>optional</em>) – If given, only yields results for
+geodesic distances less than <code class="xref py py-obj docutils literal notranslate"><span class="pre">max_distance</span></code>. This will speed
+up runtime dramatically. (default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Tensor</p>
 </td>
 </tr>
 </tbody>
@@ -828,6 +905,30 @@ returned tensor.</li>
 <li><strong>pred</strong> (<em>Tensor</em>) – The predictions.</li>
 <li><strong>target</strong> (<em>Tensor</em>) – The targets.</li>
 <li><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of classes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="torch_geometric.utils.mean_iou">
+<code class="descname">mean_iou</code><span class="sig-paren">(</span><em>pred</em>, <em>target</em>, <em>num_classes</em>, <em>batch=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch_geometric/utils/metric.html#mean_iou"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#torch_geometric.utils.mean_iou" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the mean Intersection over Union score.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pred</strong> (<em>LongTensor</em>) – The predictions.</li>
+<li><strong>target</strong> (<em>LongTensor</em>) – The targets.</li>
+<li><strong>num_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – The number of classes.</li>
+<li><strong>batch</strong> (<em>LongTensor</em>) – The assignment vector which maps each pred-target
+pair to an example.</li>
 </ul>
 </td>
 </tr>
