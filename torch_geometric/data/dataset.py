@@ -83,9 +83,9 @@ class Dataset(torch.utils.data.Dataset):
         self._process()
 
     @property
-    def num_features(self):
+    def num_node_features(self):
         r"""Returns the number of features per node in the graph."""
-        return self[0].num_features
+        return self[0].num_node_features
 
     @property
     def raw_paths(self):
