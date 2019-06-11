@@ -40,7 +40,7 @@ Each node contains exactly one feature:
     x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
 
     data = Data(x=x, edge_index=edge_index)
-    >>> Data(x=[3, 1], edge_index=[2, 4])
+    >>> Data(edge_index=[2, 4], x=[3, 1])
 
 .. image:: ../_figures/graph.svg
   :align: center
@@ -63,7 +63,7 @@ If you want to write your indices this way, you should transpose and call ``cont
     x = torch.tensor([[-1], [0], [1]], dtype=torch.float)
 
     data = Data(x=x, edge_index=edge_index.t().contiguous())
-    >>> Data(x=[3, 1], edge_index=[2, 4])
+    >>> Data(edge_index=[2, 4], x=[3, 1])
 
 Although the graph has only two edges, we need to define four index tuples to account for both directions of a edge.
 
@@ -78,12 +78,12 @@ Besides of being a plain old python object, :class:`torch_geometric.data.Data` p
     >>> ['x', 'edge_index']
 
     print(data['x'])
-    >>> tensor([[0.0],
-                [1.0],
-                [2.0]])
+    >>> tensor([[-1.0],
+                [0.0],
+                [1.0]])
 
     for key, item in data:
-        print(key+' found in data)
+        print("{} found in data".format(key))
     >>> x found in data
     >>> edge_index found in data
 
@@ -127,7 +127,7 @@ An initialization of a dataset will automatically download its raw files and pro
 
     from torch_geometric.datasets import TUDataset
 
-    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES')
+    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES', use_node_attr=True)
     >>> ENZYMES(600)
 
     len(dataset)
@@ -144,7 +144,7 @@ We now have access to all 600 graphs in the dataset:
 .. code-block:: python
 
     data = dataset[0]
-    >>> Data(x=[37, 21], edge_index=[2, 168], y=[1])
+    >>> Data(edge_index=[2, 168], x=[37, 21], y=[1])
 
     data.is_undirected()
     >>> True
@@ -202,20 +202,20 @@ Here, the dataset contains only a single, undirected citation graph:
 .. code-block:: python
 
     data = dataset[0]
-    >>> Data(x=[2708, 1433], edge_index=[2, 10556], y=[2708],
-             train_mask=[2708], val_mask=[2708], test_mask=[2708])
+    >>> Data(edge_index=[2, 10556], test_mask=[2708],
+             train_mask=[2708], val_mask=[2708], x=[2708, 1433], y=[2708])
 
     data.is_undirected()
     >>> True
 
     data.train_mask.sum()
-    >>> 140
+    >>> tensor(140)
 
     data.val_mask.sum()
-    >>> 500
+    >>> tensor(500)
 
     data.test_mask.sum()
-    >>> 1000
+    >>> tensor(1000)
 
 This time, the ``Data`` objects holds a label for each node, and additional attributes: ``train_mask``, ``val_mask`` and ``test_mask``:
 
@@ -242,12 +242,12 @@ Let's learn about it in an example:
     from torch_geometric.datasets import TUDataset
     from torch_geometric.data import DataLoader
 
-    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES')
+    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES', use_node_attr=True)
     loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
     for batch in loader:
         batch
-        >>> Batch(x=[1082, 21], edge_index=[2, 4066], y=[32], batch=[1082])
+        >>> Batch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
 
         batch.num_graphs
         >>> 32
@@ -268,12 +268,12 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
     from torch_geometric.datasets import TUDataset
     from torch_geometric.data import DataLoader
 
-    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES')
+    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES', use_node_attr=True)
     loader = DataLoader(dataset, batch_size=32, shuffle=True)
 
     for data in loader:
         data
-        >>> Batch(x=[1082, 21], edge_index=[2, 4066], y=[32], batch=[1082])
+        >>> Batch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
 
         data.num_graphs
         >>> 32
