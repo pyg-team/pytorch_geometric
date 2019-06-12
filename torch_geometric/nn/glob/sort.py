@@ -22,7 +22,7 @@ def global_sort_pool(x, batch, k):
     x, _ = x.sort(dim=-1)
 
     fill_value = x.min().item() - 1
-    batch_x, num_nodes = to_dense_batch(x, batch, fill_value)
+    batch_x, _ = to_dense_batch(x, batch, fill_value)
     B, N, D = batch_x.size()
 
     _, perm = batch_x[:, :, -1].sort(dim=-1, descending=True)
