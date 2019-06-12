@@ -127,7 +127,7 @@ An initialization of a dataset will automatically download its raw files and pro
 
     from torch_geometric.datasets import TUDataset
 
-    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES', use_node_attr=True)
+    dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES')
     >>> ENZYMES(600)
 
     len(dataset)
@@ -137,19 +137,19 @@ An initialization of a dataset will automatically download its raw files and pro
     >>> 6
 
     dataset.num_node_features
-    >>> 21
+    >>> 3
 
 We now have access to all 600 graphs in the dataset:
 
 .. code-block:: python
 
     data = dataset[0]
-    >>> Data(edge_index=[2, 168], x=[37, 21], y=[1])
+    >>> Data(edge_index=[2, 168], x=[37, 3], y=[1])
 
     data.is_undirected()
     >>> True
 
-We can see that the first graph in the dataset contains 37 nodes, each one having 21 features.
+We can see that the first graph in the dataset contains 37 nodes, each one having 3 features.
 There are 168/2 = 84 undirected edges and the graph is assigned to exactly one class.
 In addition, the data object is holding exactly one graph-level target.
 
@@ -208,14 +208,14 @@ Here, the dataset contains only a single, undirected citation graph:
     data.is_undirected()
     >>> True
 
-    data.train_mask.sum()
-    >>> tensor(140)
+    data.train_mask.sum().item()
+    >>> 140
 
-    data.val_mask.sum()
-    >>> tensor(500)
+    data.val_mask.sum().item()
+    >>> 500
 
-    data.test_mask.sum()
-    >>> tensor(1000)
+    data.test_mask.sum().item()
+    >>> 1000
 
 This time, the ``Data`` objects holds a label for each node, and additional attributes: ``train_mask``, ``val_mask`` and ``test_mask``:
 
