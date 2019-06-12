@@ -297,7 +297,7 @@ Let's look at an example, where we apply transforms on the ShapeNet dataset (con
 
     from torch_geometric.datasets import ShapeNet
 
-    dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane')
+    dataset = ShapeNet(root='/tmp/ShapeNet', categories=['Airplane'])
 
     dataset[0]
     >>> Data(pos=[2518, 3], y=[2518])
@@ -309,7 +309,7 @@ We can convert the point cloud dataset into a graph dataset by generating neares
     import torch_geometric.transforms as T
     from torch_geometric.datasets import ShapeNet
 
-    dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
+    dataset = ShapeNet(root='/tmp/ShapeNet', categories=['Airplane'],
                         pre_transform=T.KNNGraph(k=6))
 
     dataset[0]
@@ -326,7 +326,7 @@ In addition, we can use the ``transform`` argument to randomly augment a ``Data`
     import torch_geometric.transforms as T
     from torch_geometric.datasets import ShapeNet
 
-    dataset = ShapeNet(root='/tmp/ShapeNet', category='Airplane',
+    dataset = ShapeNet(root='/tmp/ShapeNet', categories=['Airplane'],
                         pre_transform=T.KNNGraph(k=6),
                         transform=T.RandomTranslate(0.01))
 
