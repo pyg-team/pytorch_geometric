@@ -1,5 +1,7 @@
 import re
+import copy
 import warnings
+
 import torch
 from torch_sparse import coalesce
 from torch_geometric.utils import (contains_isolated_nodes,
@@ -223,10 +225,8 @@ class Data(object):
 
     def coalesce(self):
         r""""Orders and removes duplicated entries from edge indices."""
-        self.edge_index, self.edge_attr = coalesce(self.edge_index,
-                                                   self.edge_attr,
-                                                   self.num_nodes,
-                                                   self.num_nodes)
+        self.edge_index, self.edge_attr = coalesce(
+            self.edge_index, self.edge_attr, self.num_nodes, self.num_nodes)
         return self
 
     def contains_isolated_nodes(self):
@@ -270,7 +270,10 @@ class Data(object):
         return self.apply(lambda x: x.to(device), *keys)
 
     def clone(self):
-        return self.__class__.from_dict({k: v.clone() for k, v in self})
+        return self.__class__.from_dict({
+            k: v.clone() if torch.is_tensor(v) else copy.deepcopy(v)
+            for k, v in self.__dict__.items()
+        })
 
     def __repr__(self):
         info = ['{}={}'.format(key, size_repr(item)) for key, item in self]
