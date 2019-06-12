@@ -21,7 +21,7 @@ def to_dense_batch(x, batch=None, fill_value=0):
         fill_value (float, optional): The value for invalid entries in the
             resulting dense output tensor. (default: :obj:`0`)
 
-    :rtype: (:class:`Tensor`, :class:`LongTensor`)
+    :rtype: (:class:`Tensor`, :class:`ByteTensor`)
     """
     if batch is None:
         batch = x.new_zeros(x.size(0), dtype=torch.long)
@@ -38,4 +38,8 @@ def to_dense_batch(x, batch=None, fill_value=0):
     out[idx] = x
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 
-    return out, num_nodes
+    mask = torch.zeros(
+        batch_size * max_num_nodes, dtype=torch.uint8, device=x.device)
+    mask[idx] = 1
+
+    return out, mask
