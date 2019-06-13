@@ -32,7 +32,7 @@ class SamplePoints(object):
         sample = torch.multinomial(prob, self.num, replacement=True)
         face = face[:, sample]
 
-        frac = torch.rand(self.num, 2)
+        frac = torch.rand(self.num, 2, device=pos.device)
         mask = frac.sum(dim=-1) > 1
         frac[mask] = 1 - frac[mask]
 
