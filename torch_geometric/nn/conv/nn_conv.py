@@ -71,9 +71,8 @@ class NNConv(MessagePassing):
 
     def reset_parameters(self):
         reset(self.nn)
-        size = self.in_channels
-        uniform(size, self.root)
-        uniform(size, self.bias)
+        uniform(self.in_channels, self.root)
+        uniform(self.in_channels, self.bias)
 
     def forward(self, x, edge_index, edge_attr):
         """"""

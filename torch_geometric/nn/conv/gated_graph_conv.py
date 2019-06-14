@@ -52,8 +52,7 @@ class GatedGraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.out_channels
-        uniform(size, self.weight)
+        uniform(self.out_channels, self.weight)
         self.rnn.reset_parameters()
 
     def forward(self, x, edge_index, edge_weight=None):
