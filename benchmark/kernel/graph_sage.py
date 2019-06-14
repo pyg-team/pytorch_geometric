@@ -37,14 +37,17 @@ class GraphSAGE(torch.nn.Module):
 
 
 class GraphSAGEWithJK(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden):
+    def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super(GraphSAGEWithJK, self).__init__()
         self.conv1 = SAGEConv(dataset.num_features, hidden)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(SAGEConv(hidden, hidden))
-        self.jump = JumpingKnowledge(mode='cat')
-        self.lin1 = Linear(num_layers * hidden, hidden)
+        self.jump = JumpingKnowledge(mode)
+        if mode == 'cat':
+            self.lin1 = Linear(num_layers * hidden, hidden)
+        else:
+            self.lin1 = Linear(hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
     def reset_parameters(self):

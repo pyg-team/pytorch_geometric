@@ -82,7 +82,7 @@ def from_networkx(G):
     edge_index = torch.tensor(list(G.edges)).t().contiguous()
 
     keys = []
-    keys += list(G.nodes(data=True)[0].keys())
+    keys += list(list(G.nodes(data=True))[0][1].keys())
     keys += list(list(G.edges(data=True))[0][2].keys())
     data = {key: [] for key in keys}
 
