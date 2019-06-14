@@ -54,15 +54,16 @@ class SAGEConv(MessagePassing):
         uniform(self.in_channels, self.weight)
         uniform(self.in_channels, self.bias)
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index, size=None):
         """"""
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
+        if size is None:
+            edge_index, _ = remove_self_loops(edge_index)
+            edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         x = torch.matmul(x, self.weight)
 
-        return self.propagate(edge_index, x=x)
+        return self.propagate(edge_index, size=size, x=x)
 
     def message(self, x_j):
         return x_j
