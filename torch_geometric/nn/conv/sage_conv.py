@@ -2,12 +2,13 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Parameter
 from torch_scatter import scatter_mean
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from ..inits import uniform
 
 
-class SAGEConv(torch.nn.Module):
+class SAGEConv(MessagePassing):
     r"""The GraphSAGE operator from the `"Inductive Representation Learning on
     Large Graphs" <https://arxiv.org/abs/1706.02216>`_ paper
 
@@ -25,10 +26,17 @@ class SAGEConv(torch.nn.Module):
             will not be :math:`\ell_2`-normalized. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, in_channels, out_channels, normalize=True, bias=True):
-        super(SAGEConv, self).__init__()
+    def __init__(self,
+                 in_channels,
+                 out_channels,
+                 normalize=True,
+                 bias=True,
+                 **kwargs):
+        super(SAGEConv, self).__init__(aggr='mean', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -52,18 +60,19 @@ class SAGEConv(torch.nn.Module):
         edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
         x = x.unsqueeze(-1) if x.dim() == 1 else x
-        row, col = edge_index
-
         x = torch.matmul(x, self.weight)
-        out = scatter_mean(x[col], row, dim=0, dim_size=x.size(0))
 
+        return self.propagate(edge_index, x=x)
+
+    def message(self, x_j):
+        return x_j
+
+    def update(self, aggr_out):
         if self.bias is not None:
-            out = out + self.bias
-
+            aggr_out = aggr_out + self.bias
         if self.normalize:
-            out = F.normalize(out, p=2, dim=-1)
-
-        return out
+            aggr_out = F.normalize(aggr_out, p=2, dim=-1)
+        return aggr_out
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
