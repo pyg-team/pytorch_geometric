@@ -12,3 +12,8 @@ def test_sg_conv():
     assert conv.__repr__() == 'SGConv(16, 32, K=10)'
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
+
+    conv = SGConv(in_channels, out_channels, K=10, cached=False)
+    assert conv.__repr__() == 'SGConv(16, 32, K=10)'
+    assert conv(x, edge_index).size() == (num_nodes, out_channels)
+    assert conv(x, edge_index).size() == (num_nodes, out_channels)
