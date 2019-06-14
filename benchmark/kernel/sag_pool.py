@@ -16,7 +16,7 @@ class SAGPool(torch.nn.Module):
             for i in range(num_layers - 1)
         ])
         self.pools.extend(
-            [SAGPooling(hidden, ratio=ratio) for i in range((num_layers) // 2)])
+            [SAGPooling(hidden, ratio) for i in range((num_layers) // 2)])
         self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)

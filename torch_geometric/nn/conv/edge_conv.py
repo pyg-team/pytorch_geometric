@@ -17,7 +17,10 @@ class EdgeConv(MessagePassing):
     where :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.* a MLP.
 
     Args:
-        nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
+        nn (torch.nn.Module): A neural network :math:`h_{\mathbf{\Theta}}` that
+            maps pair-wise concatenated node features :obj:`x` of shape
+            :obj:`[-1, 2 * in_channels]` to shape :obj:`[-1, out_channels]`,
+            *e.g.*, defined by :class:`torch.nn.Sequential`.
         aggr (string, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"max"`)
@@ -54,7 +57,10 @@ class DynamicEdgeConv(EdgeConv):
     dynamically constructed using nearest neighbors in the feature space.
 
     Args:
-        nn (nn.Sequential): Neural network :math:`h_{\mathbf{\Theta}}`.
+        nn (torch.nn.Module): A neural network :math:`h_{\mathbf{\Theta}}` that
+            maps pair-wise concatenated node features :obj:`x` of shape
+            `:obj:`[-1, 2 * in_channels]` to shape :obj:`[-1, out_channels]`,
+            *e.g.* defined by :class:`torch.nn.Sequential`.
         k (int): Number of nearest neighbors.
         aggr (string): The aggregation operator to use (:obj:`"add"`,
             :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"max"`)

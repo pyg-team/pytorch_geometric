@@ -7,8 +7,6 @@ from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 from torch_geometric.read import read_txt_array
 
-from ..data.makedirs import makedirs
-
 
 class ShapeNet(InMemoryDataset):
     r""" The ShapeNet part level segmentation dataset from the `"A Scalable
@@ -20,12 +18,14 @@ class ShapeNet(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        category (string): The category of the CAD models (one of
-            :obj:`"Airplane"`, :obj:`"Bag"`, :obj:`"Cap"`, :obj:`"Car"`,
-            :obj:`"Chair"`, :obj:`"Earphone"`, :obj:`"Guitar"`,
-            :obj:`"Knife"`, :obj:`"Lamp"`, :obj:`"Laptop"`,
-            :obj:`"Motorbike"`, :obj:`"Mug"`, :obj:`"Pistol"`,
-            :obj:`"Rocket"`, :obj:`"Skateboard"`, :obj:`"Table"`).
+        categories (string or [string], optional): The category of the CAD
+            models (one or a combination of :obj:`"Airplane"`, :obj:`"Bag"`,
+            :obj:`"Cap"`, :obj:`"Car"`, :obj:`"Chair"`, :obj:`"Earphone"`,
+            :obj:`"Guitar"`, :obj:`"Knife"`, :obj:`"Lamp"`, :obj:`"Laptop"`,
+            :obj:`"Motorbike"`, :obj:`"Mug"`, :obj:`"Pistol"`, :obj:`"Rocket"`,
+            :obj:`"Skateboard"`, :obj:`"Table"`).
+            Can be explicitely set to :obj:`None` to load all categories.
+            (default: :obj:`None`)
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
@@ -44,7 +44,7 @@ class ShapeNet(InMemoryDataset):
 
     url = 'https://shapenet.cs.stanford.edu/iccv17/partseg'
 
-    categories = {
+    category_ids = {
         'Airplane': '02691156',
         'Bag': '02773838',
         'Cap': '02954340',
@@ -65,13 +65,17 @@ class ShapeNet(InMemoryDataset):
 
     def __init__(self,
                  root,
-                 category,
+                 categories=None,
                  train=True,
                  transform=None,
                  pre_transform=None,
                  pre_filter=None):
-        assert category in self.categories.keys()
-        self.category = category
+        if categories is None:
+            categories = list(self.category_ids.keys())
+        if isinstance(categories, str):
+            categories = [categories]
+        assert all(category in self.category_ids for category in categories)
+        self.categories = categories
         super(ShapeNet, self).__init__(root, transform, pre_transform,
                                        pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
@@ -86,8 +90,8 @@ class ShapeNet(InMemoryDataset):
 
     @property
     def processed_file_names(self):
-        names = ['training.pt', 'test.pt']
-        return [osp.join(self.category, name) for name in names]
+        cats = '_'.join([cat[:3].lower() for cat in self.categories])
+        return ['{}_{}.pt'.format(cats, s) for s in ['training', 'test']]
 
     def download(self):
         for name in self.raw_file_names:
@@ -96,35 +100,40 @@ class ShapeNet(InMemoryDataset):
             extract_zip(path, self.raw_dir)
             os.unlink(path)
 
-    def process(self):
-        idx = self.categories[self.category]
-        paths = [osp.join(path, idx) for path in self.raw_paths]
-        datasets = []
-        for path in zip(paths[::2], paths[1::2]):
-            pos_paths = sorted(glob.glob(osp.join(path[0], '*.pts')))
-            y_paths = sorted(glob.glob(osp.join(path[1], '*.seg')))
-            data_list = []
-            for path in zip(pos_paths, y_paths):
-                pos = read_txt_array(path[0])
-                y = read_txt_array(path[1], dtype=torch.long)
+    def process_raw_path(self, data_path, label_path):
+        y_offset = 0
+        data_list = []
+        for category in self.categories:
+            idx = self.category_ids[category]
+            point_paths = sorted(glob.glob(osp.join(data_path, idx, '*.pts')))
+            y_paths = sorted(glob.glob(osp.join(label_path, idx, '*.seg')))
+
+            points = [read_txt_array(path) for path in point_paths]
+            ys = [read_txt_array(path, dtype=torch.long) for path in y_paths]
+            lens = [y.size(0) for y in ys]
+
+            y = torch.cat(ys).unique(return_inverse=True)[1] + y_offset
+            y_offset = y.max().item() + 1
+            ys = y.split(lens)
+
+            for (pos, y) in zip(points, ys):
                 data = Data(y=y, pos=pos)
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
                 data_list.append(data)
-            datasets.append(data_list)
+        return data_list
 
-        makedirs(osp.join(self.processed_dir, self.category))
-        train_data, train_slices = self.collate(datasets[0] + datasets[1])
-        test_data, test_slices = self.collate(datasets[2])
+    def process(self):
+        train_data_list = self.process_raw_path(*self.raw_paths[0:2])
+        val_data_list = self.process_raw_path(*self.raw_paths[2:4])
+        test_data_list = self.process_raw_path(*self.raw_paths[4:6])
 
-        _, train_data.y = train_data.y.unique(return_inverse=True)
-        _, test_data.y = test_data.y.unique(return_inverse=True)
-
-        torch.save((train_data, train_slices), self.processed_paths[0])
-        torch.save((test_data, test_slices), self.processed_paths[1])
+        data = self.collate(train_data_list + val_data_list)
+        torch.save(data, self.processed_paths[0])
+        torch.save(self.collate(test_data_list), self.processed_paths[1])
 
     def __repr__(self):
-        return '{}({}, category={})'.format(self.__class__.__name__, len(self),
-                                            self.category)
+        return '{}({}, categories={})'.format(self.__class__.__name__,
+                                              len(self), self.categories)
