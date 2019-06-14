@@ -43,8 +43,7 @@ class GraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.in_channels
-        uniform(size, self.weight)
+        uniform(self.in_channels, self.weight)
         self.lin.reset_parameters()
 
     def forward(self, x, edge_index):
