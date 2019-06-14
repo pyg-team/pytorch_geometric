@@ -43,9 +43,8 @@ class SAGEConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.weight.size(0)
-        uniform(size, self.weight)
-        uniform(size, self.bias)
+        uniform(self.in_channels, self.weight)
+        uniform(self.in_channels, self.bias)
 
     def forward(self, x, edge_index):
         """"""
