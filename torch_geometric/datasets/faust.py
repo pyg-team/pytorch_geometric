@@ -63,8 +63,8 @@ class FAUST(InMemoryDataset):
 
     def download(self):
         raise RuntimeError(
-            'Dataset not found. Please download MPI-FAUST.zip from {} and '
-            'move it to {}'.format(self.url, self.raw_dir))
+            'Dataset not found. Please download {} from {} and move it to {}'.
+            format(self.raw_file_names, self.url, self.raw_dir))
 
     def process(self):
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
