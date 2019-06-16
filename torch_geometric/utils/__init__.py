@@ -8,6 +8,7 @@ from .loop import (contains_self_loops, remove_self_loops, add_self_loops,
 from .isolated import contains_isolated_nodes
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
+from .sparse import dense_to_sparse
 from .normalized_cut import normalized_cut
 from .grid import grid
 from .geodesic import geodesic_distance
@@ -33,6 +34,7 @@ __all__ = [
     'contains_isolated_nodes',
     'to_dense_batch',
     'to_dense_adj',
+    'dense_to_sparse',
     'normalized_cut',
     'grid',
     'geodesic_distance',
