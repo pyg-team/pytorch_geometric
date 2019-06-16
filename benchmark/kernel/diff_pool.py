@@ -51,9 +51,10 @@ class DiffPool(torch.nn.Module):
     def reset_parameters(self):
         self.embed_block1.reset_parameters()
         self.pool_block1.reset_parameters()
-        for block1, block2 in zip(self.embed_blocks, self.pool_blocks):
-            block1.reset_parameters()
-            block2.reset_parameters()
+        for embed_block, pool_block in zip(self.embed_blocks,
+                                           self.pool_blocks):
+            embed_block.reset_parameters()
+            pool_block.reset_parameters()
         self.jump.reset_parameters()
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
@@ -66,10 +67,10 @@ class DiffPool(torch.nn.Module):
         xs = [x.mean(dim=1)]
         x, adj, _, _ = dense_diff_pool(x, adj, s, mask)
 
-        for i, (embed,
-                pool) in enumerate(zip(self.embed_blocks, self.pool_blocks)):
-            s = pool(x, adj)
-            x = F.relu(embed(x, adj))
+        for i, (embed_block, pool_block) in enumerate(
+                zip(self.embed_blocks, self.pool_blocks)):
+            s = pool_block(x, adj)
+            x = F.relu(embed_block(x, adj))
             xs.append(x.mean(dim=1))
             if i < len(self.embed_blocks) - 1:
                 x, adj, _, _ = dense_diff_pool(x, adj, s)
