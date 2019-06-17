@@ -50,7 +50,7 @@ class GMMConv(MessagePassing):
                  root_weight=True,
                  bias=True,
                  **kwargs):
-        super(GMMConv, self).__init__(aggr='mean', **kwargs) #normalized version
+        super(GMMConv, self).__init__(aggr='mean', **kwargs) #normalize
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -58,7 +58,8 @@ class GMMConv(MessagePassing):
         self.kernel_size = kernel_size
         self.root_weight = root_weight
 
-        self.lin = torch.nn.Linear(in_channels, out_channels * kernel_size, bias=False)
+        self.lin = torch.nn.Linear(
+                    in_channels, out_channels * kernel_size, bias=False)
         self.mu = Parameter(torch.Tensor(kernel_size, dim))
         self.sigma = Parameter(torch.Tensor(kernel_size, dim))
         if root_weight:
