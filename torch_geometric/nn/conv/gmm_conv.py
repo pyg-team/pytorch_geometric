@@ -50,7 +50,7 @@ class GMMConv(MessagePassing):
                  root_weight=True,
                  bias=True,
                  **kwargs):
-        super(GMMConv, self).__init__(aggr='mean', **kwargs) #normalize
+        super(GMMConv, self).__init__(aggr='mean', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -59,7 +59,7 @@ class GMMConv(MessagePassing):
         self.root_weight = root_weight
 
         self.lin = torch.nn.Linear(
-                    in_channels, out_channels * kernel_size, bias=False)
+            in_channels, out_channels * kernel_size, bias=False)
         self.mu = Parameter(torch.Tensor(kernel_size, dim))
         self.sigma = Parameter(torch.Tensor(kernel_size, dim))
         if root_weight:
@@ -74,12 +74,11 @@ class GMMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        reset(self.lin)
         glorot(self.mu)
         glorot(self.sigma)
+        glorot(self.root)
         zeros(self.bias)
-        reset(self.lin)
-        if self.root_weight:
-            glorot(self.root)
 
     def forward(self, x, edge_index, pseudo):
         """"""
@@ -94,6 +93,7 @@ class GMMConv(MessagePassing):
 
         if self.bias is not None:
             out = out + self.bias
+
         return out
 
     def message(self, x_j, pseudo):
