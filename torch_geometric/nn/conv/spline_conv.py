@@ -5,7 +5,7 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils.repeat import repeat
 
-from ..inits import uniform
+from ..inits import uniform, zeros
 
 try:
     from torch_spline_conv import SplineBasis, SplineWeighting
@@ -100,7 +100,7 @@ class SplineConv(MessagePassing):
         size = self.in_channels * self.weight.size(0)
         uniform(size, self.weight)
         uniform(size, self.root)
-        uniform(size, self.bias)
+        zeros(self.bias)
 
     def forward(self, x, edge_index, pseudo):
         """"""
