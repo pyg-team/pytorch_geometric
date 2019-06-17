@@ -91,7 +91,6 @@ class GMMConv(MessagePassing):
 
         out = self.lin(x).view(-1, self.kernel_size, self.out_channels)
         out = self.propagate(edge_index, x=out, pseudo=pseudo)
-        out = out.sum(dim=1)
 
         if self.root is not None:
             out = out + torch.matmul(x, self.root)
@@ -109,7 +108,7 @@ class GMMConv(MessagePassing):
         gaussian = gaussian / (EPS + self.sigma.view(1, K, D)**2)
         gaussian = torch.exp(gaussian.sum(dim=-1, keepdim=True))  # [E, K, 1]
 
-        return x_j * gaussian
+        return (x_j * gaussian).sum(dim=1)
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
