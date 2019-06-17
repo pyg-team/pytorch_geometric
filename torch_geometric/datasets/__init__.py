@@ -19,6 +19,7 @@ from .coma import CoMA
 from .shrec2016 import SHREC2016
 from .tosca import TOSCA
 from .pcpnet_dataset import PCPNetDataset
+from .s3dis import S3DIS
 from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
 from .icews import ICEWS18
@@ -46,6 +47,7 @@ __all__ = [
     'SHREC2016',
     'TOSCA',
     'PCPNetDataset',
+    'S3DIS',
     'GeometricShapes',
     'BitcoinOTC',
     'ICEWS18',
