@@ -4,7 +4,8 @@ from .num_nodes import maybe_num_nodes
 
 
 def contains_self_loops(edge_index):
-    r"""Returns :obj:`True` if the graph given by :attr:`edge_index` contains self-loops.
+    r"""Returns :obj:`True` if the graph given by :attr:`edge_index` contains
+    self-loops.
 
     Args:
         edge_index (LongTensor): The edge indices.
