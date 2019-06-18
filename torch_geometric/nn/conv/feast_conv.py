@@ -58,7 +58,7 @@ class FeaStConv(MessagePassing):
         # sum heads
         aggr_out = aggr_out.sum(dim=1)
 
-        if self.bias:
+        if self.bias is not None:
             aggr_out = aggr_out + self.bias
         return aggr_out
 
