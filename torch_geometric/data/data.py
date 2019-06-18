@@ -230,8 +230,7 @@ class Data(object):
         return self
 
     def contains_isolated_nodes(self):
-        r"""Returns :obj:`True`, if the graph does not contain isolated
-        nodes."""
+        r"""Returns :obj:`True`, if the graph contains isolated nodes."""
         return contains_isolated_nodes(self.edge_index, self.num_nodes)
 
     def contains_self_loops(self):
