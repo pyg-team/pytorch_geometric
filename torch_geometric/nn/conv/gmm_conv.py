@@ -1,8 +1,8 @@
 import torch
-from torch.nn import Parameter, Linear
+from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 
-from ..inits import reset, uniform, zeros
+from ..inits import zeros, glorot, reset
 
 EPS = 1e-15
 
@@ -13,9 +13,9 @@ class GMMConv(MessagePassing):
     <https://arxiv.org/abs/1611.08402>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \cdot
-        \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \sum_{k=1}^K
-        \mathbf{w}_k(\mathbf{e}_{i,j}) \odot \mathbf{x}_j,
+        \mathbf{x}^{\prime}_i =
+        \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{K} \sum_{k=1}^K
+        \mathbf{w}_k(\mathbf{e}_{i,j}) \odot \mathbf{\Theta}_k \mathbf{x}_j,
 
     where
 
@@ -33,9 +33,9 @@ class GMMConv(MessagePassing):
         out_channels (int): Size of each output sample.
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int): Number of kernels :math:`K`.
-        aggr (string, optional): The aggregation scheme to use
+        aggr (string, optional): The aggregation operator to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
-            (default: :obj:`"add"`)
+            (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
@@ -50,7 +50,7 @@ class GMMConv(MessagePassing):
                  out_channels,
                  dim,
                  kernel_size,
-                 aggr='add',
+                 aggr='mean',
                  root_weight=True,
                  bias=True,
                  **kwargs):
@@ -60,16 +60,16 @@ class GMMConv(MessagePassing):
         self.out_channels = out_channels
         self.dim = dim
         self.kernel_size = kernel_size
+        self.root_weight = root_weight
 
-        self.lin = Linear(in_channels, out_channels * kernel_size, bias=False)
+        self.lin = torch.nn.Linear(
+            in_channels, out_channels * kernel_size, bias=False)
         self.mu = Parameter(torch.Tensor(kernel_size, dim))
         self.sigma = Parameter(torch.Tensor(kernel_size, dim))
-
         if root_weight:
             self.root = Parameter(torch.Tensor(in_channels, out_channels))
         else:
             self.register_parameter('root', None)
-
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
@@ -79,9 +79,9 @@ class GMMConv(MessagePassing):
 
     def reset_parameters(self):
         reset(self.lin)
-        uniform(self.kernel_size, self.mu)
-        uniform(self.kernel_size, self.sigma)
-        uniform(self.in_channels, self.root)
+        glorot(self.mu)
+        glorot(self.sigma)
+        glorot(self.root)
         zeros(self.bias)
 
     def forward(self, x, edge_index, pseudo):
@@ -103,7 +103,6 @@ class GMMConv(MessagePassing):
     def message(self, x_j, pseudo):
         (E, D), K = pseudo.size(), self.mu.size(0)
 
-        # See: https://github.com/shchur/gnn-benchmark
         gaussian = -0.5 * (pseudo.view(E, 1, D) - self.mu.view(1, K, D))**2
         gaussian = gaussian / (EPS + self.sigma.view(1, K, D)**2)
         gaussian = torch.exp(gaussian.sum(dim=-1, keepdim=True))  # [E, K, 1]
