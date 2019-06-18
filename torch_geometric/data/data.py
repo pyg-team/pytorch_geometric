@@ -234,7 +234,7 @@ class Data(object):
         return contains_isolated_nodes(self.edge_index, self.num_nodes)
 
     def contains_self_loops(self):
-        """Returns :obj:`True`, if the graph does not contain self-loops."""
+        """Returns :obj:`True`, if the graph contains self-loops."""
         return contains_self_loops(self.edge_index)
 
     def is_undirected(self):
