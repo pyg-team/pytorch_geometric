@@ -16,5 +16,6 @@ def contains_isolated_nodes(edge_index, num_nodes=None):
     :rtype: bool
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-    (row, _), _ = remove_self_loops(edge_index)
-    return torch.unique(row).size(0) < num_nodes
+    (row, col), _ = remove_self_loops(edge_index)
+    
+    return torch.unique(torch.cat((row, col))).size(0) < num_nodes
