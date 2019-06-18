@@ -49,7 +49,8 @@ class FeaStConv(MessagePassing):
         q = torch.mm((x_i - x_j), self.u) + self.c
         q = F.softmax(q, dim=1) #[E, heads]
 
-        x_j = torch.mm(x_j, self.weight).view(-1, self.heads, self.out_channels)
+        x_j = torch.mm(
+            x_j, self.weight).view(-1, self.heads, self.out_channels)
         return x_j * q.view(-1, self.heads, 1)
 
     def update(self, aggr_out):
