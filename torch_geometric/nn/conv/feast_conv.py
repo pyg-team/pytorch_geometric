@@ -2,9 +2,10 @@ import torch
 from torch.nn import Parameter
 import torch.nn.functional as F
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
+from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from ..inits import glorot, zeros
+
 
 class FeaStConv(MessagePassing):
     def __init__(self,
@@ -47,7 +48,7 @@ class FeaStConv(MessagePassing):
         # dim: x_i, [E, F_in];
         # with translation invariance
         q = torch.mm((x_i - x_j), self.u) + self.c
-        q = F.softmax(q, dim=1) #[E, heads]
+        q = F.softmax(q, dim=1)  # [E, heads]
 
         x_j = torch.mm(
             x_j, self.weight).view(-1, self.heads, self.out_channels)
