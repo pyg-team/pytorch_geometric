@@ -21,6 +21,7 @@ from .edge_conv import EdgeConv, DynamicEdgeConv
 from .x_conv import XConv
 from .ppf_conv import PPFConv
 from .hypergraph_conv import HypergraphConv
+from .feast_conv import FeaStConv
 
 __all__ = [
     'MessagePassing',
@@ -48,4 +49,5 @@ __all__ = [
     'XConv',
     'PPFConv',
     'HypergraphConv',
+    'FeaStConv'
 ]
