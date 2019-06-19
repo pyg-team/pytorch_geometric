@@ -8,11 +8,22 @@ from ..inits import glorot, zeros
 
 
 class FeaStConv(MessagePassing):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 heads=8,
-                 bias=True,
+    r"""The (translation-invariant) feature-steered convolutional operator from
+    the `"FeaStNet: Feature-Steered Graph Convolutions for 3D Shape Analysis"
+    <https://arxiv.org/abs/1706.05206>`_ paper.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        heads (int, optional): Number of multi-head-attentions.
+            (default: :obj:`1`)
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+            an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
+    """
+
+    def __init__(self, in_channels, out_channels, heads=1, bias=True,
                  **kwargs):
         super(FeaStConv, self).__init__(aggr='mean', **kwargs)
 
@@ -42,24 +53,22 @@ class FeaStConv(MessagePassing):
         edge_index, _ = remove_self_loops(edge_index)
         edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
-        return self.propagate(edge_index, x=x, num_nodes=x.size(0))
+        return self.propagate(edge_index, x=x)
 
     def message(self, x_i, x_j):
-        # dim: x_i, [E, F_in];
-        # with translation invariance
-        q = torch.mm((x_i - x_j), self.u) + self.c
-        q = F.softmax(q, dim=1)  # [E, heads]
+        q = torch.mm((x_i - x_j), self.u) + self.c  # Translation invariance.
+        q = F.softmax(q, dim=1)
 
-        x_j = torch.mm(
-            x_j, self.weight).view(-1, self.heads, self.out_channels)
+        x_j = torch.mm(x_j, self.weight).view(x_j.size(0), self.heads, -1)
+
         return x_j * q.view(-1, self.heads, 1)
 
     def update(self, aggr_out):
-        # sum heads
         aggr_out = aggr_out.sum(dim=1)
 
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
+
         return aggr_out
 
     def __repr__(self):
