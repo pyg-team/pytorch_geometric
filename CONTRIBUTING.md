@@ -50,9 +50,10 @@ python setup.py test
 
 In case an error occurs, please first check if all sub-packages ([`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
 
-## Unit testing
+## Unit Testing
 
-PyTorch Geometric's testing is located under `test/` Run the entire test suite with
+PyTorch Geometric's testing is located under `test/`.
+Run the entire test suite with
 
 ```
 python setup.py test
@@ -75,7 +76,8 @@ flake8 torch-geometric test examples
 
 If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
 
-2. Ensure that the entire test suite passes and that code coverage roughly stays at 100%. Please be encouraged to also provide a test with your submitted code.
+2. Ensure that the entire test suite passes and that code coverage roughly stays at 100%.
+Please feel encouraged to provide a test with your submitted code.
 
 ```
 python setup.py test
