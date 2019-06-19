@@ -27,13 +27,13 @@ git clone https://github.com/rusty1s/pytorch_geometric
 cd pytorch_geometric
 ```
 
-2.1. If you already have a PyTorch Geometric from source, update it:
+3. If you already have a PyTorch Geometric from source, update it:
 
 ```
 git pull
 ```
 
-3. Install PyTorch Geometric in `develop` mode:
+4. Install PyTorch Geometric in `develop` mode:
 
 ```
 python setup.py develop
@@ -42,7 +42,7 @@ python setup.py develop
 This mode will symlink the Python files from the current local source tree into the Python install.
 Hence, if you modify a Python file, you do not need to reinstall PyTorch Geometric again and again.
 
-4. Ensure that you have a working PyTorch Geometric installation by running the entire test suite with
+5. Ensure that you have a working PyTorch Geometric installation by running the entire test suite with
 
 ```
 python setup.py test
