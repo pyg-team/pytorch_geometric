@@ -22,7 +22,6 @@ class MyInMemoryDataset(InMemoryDataset):
         arg = torch.randn(4, 3)
 
         data_list = [MyData(x, edge_index, arg) for _ in range(10)]
-        print(len(data_list))
         self.data, self.slices = self.collate(data_list)
 
     def _download(self):
