@@ -12,7 +12,7 @@ def subgraph(subset,
     containing the nodes in :obj:`subset`.
 
     Args:
-        subset (LongTensor or ByteTensor): The nodes to keep.
+        subset (LongTensor, ByteTensor or [int]): The nodes to keep.
         edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
@@ -24,6 +24,9 @@ def subgraph(subset,
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
     """
+
+    if isinstance(subset, list) or isinstance(subset, tuple):
+        subset = torch.tensor(subset, dtype=torch.long)
 
     if subset.dtype == torch.uint8:
         n_mask = subset
