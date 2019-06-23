@@ -31,6 +31,11 @@ class TUDataset(InMemoryDataset):
         use_node_attr (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous node features (if present).
             (default: :obj:`False`)
+            
+    .. note::
+        Datasets (eg: FRANKENSTEIN) not having any node features can either make use of :obj:`use_node_attr`
+        (if additional data is present) or need to be provided with synthetic node features using transforms
+        like :obj:`torch_geometric.transforms.Constant()` or :obj:`torch_geometric.transforms.OneHotDegree()`.
     """
 
     url = 'https://ls11-www.cs.tu-dortmund.de/people/morris/' \
