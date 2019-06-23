@@ -12,6 +12,14 @@ class TUDataset(InMemoryDataset):
     "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
     <http://graphkernels.cs.tu-dortmund.de>`_.
 
+    .. note::
+        Some datasets may not come with any node labels.
+        You can then either make use of the argument :obj:`use_node_attr`
+        to load additional continuous node attributes (if present) or provide
+        synthetic node features using transforms such as
+        like :class:`torch_geometric.transforms.Constant` or
+        :class:`torch_geometric.transforms.OneHotDegree`.
+
     Args:
         root (string): Root directory where the dataset should be saved.
         name (string): The `name <http://graphkernels.cs.tu-dortmund.de>`_ of
@@ -29,13 +37,8 @@ class TUDataset(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
         use_node_attr (bool, optional): If :obj:`True`, the dataset will
-            contain additional continuous node features (if present).
+            contain additional continuous node attributes (if present).
             (default: :obj:`False`)
-            
-    .. note::
-        Datasets (eg: FRANKENSTEIN) not having any node features can either make use of :obj:`use_node_attr`
-        (if additional data is present) or need to be provided with synthetic node features using transforms
-        like :obj:`torch_geometric.transforms.Constant()` or :obj:`torch_geometric.transforms.OneHotDegree()`.
     """
 
     url = 'https://ls11-www.cs.tu-dortmund.de/people/morris/' \
