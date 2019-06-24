@@ -73,7 +73,10 @@ class Data(object):
         self.norm = norm
         self.face = face
         for key, item in kwargs.items():
-            self[key] = item
+            if key == 'num_nodes':
+                self.__num_nodes__ = item
+            else:
+                self[key] = item
 
     @classmethod
     def from_dict(cls, dictionary):
