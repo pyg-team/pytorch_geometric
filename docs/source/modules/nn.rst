@@ -19,6 +19,9 @@ Convolutional Layers
     :members:
     :undoc-members:
 
+Dense Convolutional Layers
+--------------------------
+
 .. automodule:: torch_geometric.nn.dense.dense_gcn_conv
     :members:
     :undoc-members:
@@ -45,6 +48,9 @@ Pooling Layers
     :members:
     :undoc-members:
 
+Dense Pooling Layers
+--------------------
+
 .. automodule:: torch_geometric.nn.dense.diff_pool
     :members:
     :undoc-members:
@@ -63,7 +69,7 @@ Models
     :members:
     :undoc-members:
 
-DataParallel layers
+DataParallel Layers
 -------------------
 
 .. automodule:: torch_geometric.nn.data_parallel

@@ -24,6 +24,7 @@ In addition, it consists of an easy-to-use mini-batch loader, a large number of 
    :maxdepth: 1
    :caption: Package Reference
 
+   modules/root
    modules/nn
    modules/data
    modules/datasets
