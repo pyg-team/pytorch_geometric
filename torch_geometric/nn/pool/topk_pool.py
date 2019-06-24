@@ -28,7 +28,7 @@ def topk(x, ratio, batch):
 
     mask = [
         torch.arange(k[i], dtype=torch.long, device=x.device) +
-        i * max_num_nodes for i in range(len(num_nodes))
+        i * max_num_nodes for i in range(batch_size)
     ]
     mask = torch.cat(mask, dim=0)
 

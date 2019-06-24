@@ -37,7 +37,7 @@ class TopK(torch.nn.Module):
         for i, conv in enumerate(self.convs):
             x = F.relu(conv(x, edge_index))
             xs += [global_mean_pool(x, batch)]
-            if i % 2 == 0 and i < (self.num_layers - 2):
+            if i % 2 == 0 and i < len(self.convs) - 1:
                 pool = self.pools[i // 2]
                 x, edge_index, _, batch, _ = pool(x, edge_index, batch=batch)
         x = self.jump(xs)

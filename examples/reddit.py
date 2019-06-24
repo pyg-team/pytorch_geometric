@@ -2,9 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Reddit
 from torch_geometric.data import NeighborSampler
-from torch_geometric.nn import MessagePassing
-from torch.nn import Parameter
-from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.nn import SAGEConv
 
 dataset = Reddit('/tmp/reddit')
 data = dataset[0]
@@ -15,29 +13,6 @@ loader = NeighborSampler(
     batch_size=1000,
     shuffle=True,
     add_self_loops=True)
-
-
-class SAGEConv(MessagePassing):
-    def __init__(self, in_channels, out_channels):
-        super(SAGEConv, self).__init__(aggr='mean')
-
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
-        self.bias = Parameter(torch.Tensor(out_channels))
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        glorot(self.weight)
-        zeros(self.bias)
-
-    def forward(self, x, edge_index, size=None):
-        x = torch.matmul(x, self.weight)
-        return self.propagate(edge_index, size=size, x=x)
-
-    def message(self, x_j):
-        return x_j
-
-    def update(self, aggr_out):
-        return aggr_out + self.bias
 
 
 class Net(torch.nn.Module):

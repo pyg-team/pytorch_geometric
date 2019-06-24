@@ -20,6 +20,7 @@ from .nn_conv import NNConv, ECConv
 from .edge_conv import EdgeConv, DynamicEdgeConv
 from .x_conv import XConv
 from .ppf_conv import PPFConv
+from .feast_conv import FeaStConv
 from .hypergraph_conv import HypergraphConv
 
 __all__ = [
@@ -47,5 +48,6 @@ __all__ = [
     'DynamicEdgeConv',
     'XConv',
     'PPFConv',
+    'FeaStConv',
     'HypergraphConv',
 ]

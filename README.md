@@ -4,6 +4,8 @@
 [build-url]: https://travis-ci.org/rusty1s/pytorch_geometric
 [coverage-image]: https://codecov.io/gh/rusty1s/pytorch_geometric/branch/master/graph/badge.svg
 [coverage-url]: https://codecov.io/github/rusty1s/pytorch_geometric?branch=master
+[contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
+[contributing-url]: https://github.com/rusty1s/pytorch_geometric/blob/master/CONTRIBUTING.md
 
 <p align="center">
   <img width="40%" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/pyg_logo_text.svg?sanitize=true" />
@@ -14,6 +16,7 @@
 [![PyPI Version][pypi-image]][pypi-url]
 [![Build Status][build-image]][build-url]
 [![Code Coverage][coverage-image]][coverage-url]
+[![Contributing][contributing-image]][contributing-url]
 
 **[Documentation](http://rusty1s.github.io/pytorch_geometric)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[External Resources](https://rusty1s.github.io/pytorch_geometric/build/html/notes/resources.html)**
 
@@ -49,86 +52,6 @@ class EdgeConv(MessagePassing):
         return self.mlp(edge_features)  # shape [E, F_out]
 ```
 
-In addition, PyTorch Geometric is **fast**, even compared to other deep graph neural net libraries:
-
-<table>
-  <thead>
-    <tr>
-      <th>Dataset</th>
-      <th>Epochs</th>
-      <th>Model</th>
-      <th>DGL-DB</th>
-      <th>DGL-GS</th>
-      <th>PyG</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td rowspan="2">Cora</td>
-      <td rowspan="2" align="center">200</td>
-      <td align="center">GCN</td>
-      <td align="right">4.19s</td>
-      <td align="right">0.32s</td>
-      <td align="right"><b>0.25s</b></td>
-    </tr>
-    <tr>
-      <td align="center">GAT</td>
-      <td align="right">6.31s</td>
-      <td align="right">5.36s</td>
-      <td align="right"><b>0.80s</b></td>
-    </tr>
-    <tr>
-      <td rowspan="2">CiteSeer</td>
-      <td rowspan="2" align="center">200</td>
-      <td align="center">GCN</td>
-      <td align="right">3.78s</td>
-      <td align="right">0.34s</td>
-      <td align="right"><b>0.30s</b></td>
-    </tr>
-    <tr>
-      <td align="center">GAT</td>
-      <td align="right">5.61s</td>
-      <td align="right">4.91s</td>
-      <td align="right"><b>0.88s</b></td>
-    </tr>
-    <tr>
-      <td rowspan="2">PubMed</td>
-      <td rowspan="2" align="center">200</td>
-      <td align="center">GCN</td>
-      <td align="right">12.91s</td>
-      <td align="right">0.36s</td>
-      <td align="right"><b>0.32s</b></td>
-    </tr>
-    <tr>
-      <td align="center">GAT</td>
-      <td align="right">18.69s</td>
-      <td align="right">13.76s</td>
-      <td align="right"><b>2.42s</b></td>
-    </tr>
-    <tr>
-      <td>MUTAG</td>
-      <td align="center">200</td>
-      <td align="center">RGCN</td>
-      <td align="right">18.81s</td>
-      <td align="right">2.40s</td>
-      <td align="right"><b>2.14s</b></td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="6"><b>DGL-DB:</b> DGL 0.2 with <i>Degree Bucketing</i>.</td>
-    </tr>
-    <tr>
-      <td colspan="6"><b>DGL-GS:</b> DGL 0.2 with <i>gather and scatter optimizations</i> inspired by PyG.</td>
-    </tr>
-    <tr>
-      <td colspan="6">Training runtimes obtained on a NVIDIA GTX 1080Ti.</td>
-    </tr>
-  </tfoot>
-</table>
-
---------------------------------------------------------------------------------
-
 In detail, the following methods are currently implemented:
 
 * **[SplineConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.SplineConv)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018)
@@ -153,6 +76,7 @@ In detail, the following methods are currently implemented:
 * **[XConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.XConv)** from Li *et al.*: [PointCNN: Convolution On X-Transformed Points](https://arxiv.org/abs/1801.07791) [(official implementation)](https://github.com/yangyanli/PointCNN) (NeurIPS 2018)
 * **[PPFConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.PPFConv)** from Deng *et al.*: [PPFNet: Global Context Aware Local Features for Robust 3D Point Matching](https://arxiv.org/abs/1802.02669) (CVPR 2018)
 * **[GMMConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.GMMConv)** from Monti *et al.*: [Geometric Deep Learning on Graphs and Manifolds using Mixture Model CNNs](https://arxiv.org/abs/1611.08402) (CVPR 2017)
+* **[FeaStConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.FeaStConv)** from Verma *et al.*: [FeaStNet: Feature-Steered Graph Convolutions for 3D Shape Analysis](https://arxiv.org/abs/1706.05206) (CVPR 2018)
 * **[HypergraphConv](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.conv.HypergraphConv)** from Bai *et al.*: [Hypergraph Convolution and Hypergraph Attention](https://arxiv.org/abs/1901.08150) (CoRR 2019)
 * A **[MetaLayer](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.meta.MetaLayer)** for building any kind of graph network similar to the [TensorFlow Graph Nets library](https://github.com/deepmind/graph_nets) from Battaglia *et al.*: [Relational Inductive Biases, Deep Learning, and Graph Networks](https://arxiv.org/abs/1806.01261) (CoRR 2018)
 * **[GlobalAttention](https://rusty1s.github.io/pytorch_geometric/build/html/modules/nn.html#torch_geometric.nn.glob.GlobalAttention)** from Li *et al.*: [Gated Graph Sequence Neural Networks](https://arxiv.org/abs/1511.05493) (ICLR 2016)
@@ -177,7 +101,7 @@ For a quick start, check out our [examples](https://github.com/rusty1s/pytorch_g
 
 If you notice anything unexpected, please open an [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
 If you are missing a specific method, feel free to open a [feature request](https://github.com/rusty1s/pytorch_geometric/issues).
-We are constantly encouraged to make PyTorch Geometric even better.
+We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation
 
