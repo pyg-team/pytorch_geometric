@@ -55,7 +55,7 @@ class Batch(Data):
                 item = torch.full((num_nodes, ), i, dtype=torch.long)
                 batch.batch.append(item)
 
-        if num_nodes is None:  # pragma: no cover
+        if num_nodes is None:
             batch.batch = None
 
         for key in batch.keys:
