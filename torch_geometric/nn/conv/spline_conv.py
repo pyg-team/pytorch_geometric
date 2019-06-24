@@ -1,6 +1,7 @@
 import warnings
 
 import torch
+import torch_geometric
 from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils.repeat import repeat
@@ -71,8 +72,8 @@ class SplineConv(MessagePassing):
 
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.dim = dim
         self.degree = degree
-        self.check_pseudo = True
 
         kernel_size = torch.tensor(repeat(kernel_size, dim), dtype=torch.long)
         self.register_buffer('kernel_size', kernel_size)
@@ -104,22 +105,38 @@ class SplineConv(MessagePassing):
 
     def forward(self, x, edge_index, pseudo):
         """"""
+        x = x.unsqueeze(-1) if x.dim() == 1 else x
+        pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
+
         if not x.is_cuda:
             warnings.warn('We do not recommend using the non-optimized CPU '
                           'version of SplineConv. If possible, please convert '
                           'your data to the GPU first.')
 
-        if self.check_pseudo:
-            self.check_pseudo = False
-            min_pseudo, max_pseudo = pseudo.min().item(), pseudo.max().item()
+        if torch_geometric.is_debug_enabled():  # pragma: no cover
+            if x.size(1) != self.in_channels:
+                raise RuntimeError(
+                    'Expected {} node features, but found {}'.format(
+                        self.in_channels, x.size(1)))
+
+            if pseudo.size(1) != self.dim:
+                raise RuntimeError(
+                    ('Expected pseudo-coordinate dimensionality of {}, but '
+                     'found {}').format(self.dim, pseudo.size(1)))
+
+            min_index, max_index = edge_index.min(), edge_index.max()
+            if min_index < 0 or max_index > x.size(0) - 1:
+                raise RuntimeError(
+                    ('Edge indices must lay in the interval [0, {}]'
+                     ' but found them in the interval [{}, {}]').format(
+                         x.size(0) - 1, min_index, max_index))
+
+            min_pseudo, max_pseudo = pseudo.min(), pseudo.max()
             if min_pseudo < 0 or max_pseudo > 1:
                 raise RuntimeError(
                     ('Pseudo-coordinates must lay in the fixed interval [0, 1]'
                      ' but found them in the interval [{}, {}]').format(
                          min_pseudo, max_pseudo))
-
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
 
         return self.propagate(edge_index, x=x, pseudo=pseudo)
 
