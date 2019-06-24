@@ -11,8 +11,8 @@ class GraphConv(MessagePassing):
     <https://arxiv.org/abs/1810.02244>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \mathbf{x}_i +
-        \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta} \mathbf{x}_j.
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta}_1 \mathbf{x}_i +
+        \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta}_2 \mathbf{x}_j.
 
     Args:
         in_channels (int): Size of each input sample.
