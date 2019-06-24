@@ -102,7 +102,7 @@ class InMemoryDataset(Dataset):
         data = self.data.__class__()
 
         if hasattr(self.data, '__num_nodes__'):
-            data.num_nodes = self.data.__num_nodes__[idx].item()
+            data.num_nodes = self.data.__num_nodes__[idx]
 
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
@@ -143,7 +143,6 @@ class InMemoryDataset(Dataset):
             data.__num_nodes__ = []
             for item in data_list:
                 data.__num_nodes__.append(item.num_nodes)
-            data.__num_nodes__ = torch.tensor(data.__num_nodes__)
 
         for key in keys:
             if torch.is_tensor(data_list[0][key]):

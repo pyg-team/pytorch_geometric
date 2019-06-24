@@ -77,7 +77,7 @@ def split(data, batch):
 
     # Edge indices should start at zero for every graph.
     data.edge_index -= node_slice[batch[row]].unsqueeze(0)
-    data.__num_nodes__ = torch.bincount(batch)
+    data.__num_nodes__ = torch.bincount(batch).tolist()
 
     slices = {'edge_index': edge_slice}
     if data.x is not None:

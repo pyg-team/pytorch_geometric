@@ -16,7 +16,6 @@ def read_ply(path):
         faces = [torch.tensor(fa, dtype=torch.long) for fa in faces]
         face = torch.stack(faces, dim=-1)
 
-    data = Data(pos=pos)
-    data.face = face
+    data = Data(pos=pos, face=face)
 
     return data
