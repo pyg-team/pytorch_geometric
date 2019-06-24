@@ -254,7 +254,7 @@ Let's learn about it in an example:
 
 :class:`torch_geometric.data.Batch` inherits from :class:`torch_geometric.data.Data` and contains an additional attribute: ``batch``.
 
-``batch`` is a column vector of graph identifiers for all nodes of all graphs in the batch:
+``batch`` is a column vector which maps each node to its respective graph in the batch:
 
 .. math::
 

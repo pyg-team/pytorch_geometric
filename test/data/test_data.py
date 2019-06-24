@@ -19,8 +19,8 @@ def test_data():
 
     assert data.__cat_dim__('x', data.x) == 0
     assert data.__cat_dim__('edge_index', data.edge_index) == -1
-    assert data.__cumsum__('x', data.x) is False
-    assert data.__cumsum__('edge_index', data.edge_index) is True
+    assert data.__inc__('x', data.x) == 0
+    assert data.__inc__('edge_index', data.edge_index) == data.num_nodes
 
     assert not data.x.is_contiguous()
     data.contiguous()
@@ -77,8 +77,9 @@ def test_data():
     assert data.attribute.tolist() == x.tolist()
 
     face = torch.tensor([[0, 1], [1, 2], [2, 3]])
-    data = Data(face=face)
+    data = Data(num_nodes=4, face=face)
     assert data.num_faces == 2
+    assert data.num_nodes == 4
 
     data = Data(title="test")
     assert data.__repr__() == 'Data(title=test)'

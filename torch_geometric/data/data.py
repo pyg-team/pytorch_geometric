@@ -73,7 +73,10 @@ class Data(object):
         self.norm = norm
         self.face = face
         for key, item in kwargs.items():
-            self[key] = item
+            if key == 'num_nodes':
+                self.__num_nodes__ = item
+            else:
+                self[key] = item
 
     @classmethod
     def from_dict(cls, dictionary):
@@ -137,9 +140,9 @@ class Data(object):
         # everything else in the first dimension.
         return -1 if bool(re.search('(index|face)', key)) else 0
 
-    def __cumsum__(self, key, value):
-        r"""If :obj:`True`, :obj:`value` of attribute :obj:`key` is
-        cumulatively summed up when creating batches.
+    def __inc__(self, key, value):
+        r""""Returns the incremental count to cumulatively increase the value
+        of the next attribute of :obj:`key` when creating batches.
 
         .. note::
 
@@ -147,7 +150,9 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        return bool(re.search('(index|face)', key))
+        # Only `*index*` and `*face*` should be cumulatively summed up when
+        # creating batches.
+        return self.num_nodes if bool(re.search('(index|face)', key)) else 0
 
     @property
     def num_nodes(self):
@@ -230,12 +235,11 @@ class Data(object):
         return self
 
     def contains_isolated_nodes(self):
-        r"""Returns :obj:`True`, if the graph does not contain isolated
-        nodes."""
+        r"""Returns :obj:`True`, if the graph contains isolated nodes."""
         return contains_isolated_nodes(self.edge_index, self.num_nodes)
 
     def contains_self_loops(self):
-        """Returns :obj:`True`, if the graph does not contain self-loops."""
+        """Returns :obj:`True`, if the graph contains self-loops."""
         return contains_self_loops(self.edge_index)
 
     def is_undirected(self):
