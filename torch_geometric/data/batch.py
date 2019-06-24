@@ -34,13 +34,15 @@ class Batch(Data):
         for key in follow_batch:
             batch['{}_batch'.format(key)] = []
 
+        cumsum = {}
         batch.batch = []
-
-        cumsum = 0
         for i, data in enumerate(data_list):
             for key in data.keys:
-                item = data[key]
-                item = item + cumsum if data.__cumsum__(key, item) else item
+                item = data[key] + cumsum.get(key, 0)
+                if key in cumsum:
+                    cumsum[key] += data.__inc__(key, item)
+                else:
+                    cumsum[key] = data.__inc__(key, item)
                 batch[key].append(item)
 
             for key in follow_batch:
@@ -52,7 +54,6 @@ class Batch(Data):
             if num_nodes is not None:
                 item = torch.full((num_nodes, ), i, dtype=torch.long)
                 batch.batch.append(item)
-                cumsum += num_nodes
 
         if num_nodes is None:  # pragma: no cover
             batch.batch = None
@@ -67,7 +68,7 @@ class Batch(Data):
             else:
                 raise ValueError('Unsupported attribute type.')
 
-        # Copy custom data functions to batch.
+        # Copy custom data functions to batch (does not work yet):
         # if data_list.__class__ != Data:
         #     org_funcs = set(Data.__dict__.keys())
         #     funcs = set(data_list[0].__class__.__dict__.keys())
