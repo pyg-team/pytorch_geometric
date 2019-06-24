@@ -1,8 +1,7 @@
 import torch
-import torch.nn.functional as F
 from torch.nn import Parameter
 
-from ..inits import uniform
+from ..inits import glorot, zeros
 
 
 class DenseGCNConv(torch.nn.Module):
@@ -11,13 +10,15 @@ class DenseGCNConv(torch.nn.Module):
     :rtype: :class:`Tensor`
     """
 
-    def __init__(self, in_channels, out_channels, normalize=True, bias=True):
+    def __init__(self, in_channels, out_channels, improved=False, bias=True):
         super(DenseGCNConv, self).__init__()
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.normalize = normalize
+        self.improved = improved
+
         self.weight = Parameter(torch.Tensor(self.in_channels, out_channels))
+
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
@@ -26,8 +27,8 @@ class DenseGCNConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        uniform(self.in_channels, self.weight)
-        uniform(self.in_channels, self.bias)
+        glorot(self.weight)
+        zeros(self.bias)
 
     def forward(self, x, adj, mask=None, add_loop=True):
         r"""
@@ -49,18 +50,18 @@ class DenseGCNConv(torch.nn.Module):
         """
         x = x.unsqueeze(0) if x.dim() == 2 else x
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
-        B, N, _ = x.size()
+        B, N, _ = adj.size()
 
         if add_loop:
             adj = adj.clone()
             idx = torch.arange(N, dtype=torch.long, device=adj.device)
-            adj[:, idx, idx] = 1
+            adj[:, idx, idx] = 1 if not self.improved else 2
 
         out = torch.matmul(x, self.weight)
-        deg = adj.sum(dim=-1, keepdim=True).clamp(min=1).pow(-0.5)
-        deg_matrix = torch.bmm(deg, deg.permute(0, 2, 1))
-        adj_deg = deg_matrix * adj
-        out = torch.bmm(adj_deg, out) if B!=1 else torch.matmul(adj_deg, out)
+        deg_inv_sqrt = adj.sum(dim=-1).clamp(min=1).pow(-0.5)
+
+        adj = deg_inv_sqrt.unsqueeze(-1) * adj * deg_inv_sqrt.unsqueeze(-2)
+        out = torch.matmul(adj, out)
 
         if self.bias is not None:
             out = out + self.bias

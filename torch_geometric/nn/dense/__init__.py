@@ -3,10 +3,9 @@ from .dense_gcn_conv import DenseGCNConv
 from .dense_gin_conv import DenseGINConv
 from .diff_pool import dense_diff_pool
 
-
 __all__ = [
-    'DenseSAGEConv',
     'DenseGCNConv',
+    'DenseSAGEConv',
     'DenseGINConv',
     'dense_diff_pool',
 ]
