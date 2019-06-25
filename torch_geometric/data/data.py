@@ -103,9 +103,6 @@ class Data(object):
         """Sets the attribute :obj:`key` to :obj:`value`."""
         setattr(self, key, value)
 
-        if torch_geometric.is_debug_enabled():
-            self.debug()
-
     @property
     def keys(self):
         r"""Returns all names of graph attributes."""
@@ -183,7 +180,7 @@ class Data(object):
             explicitly via :obj:`data.num_nodes = ...`.
             You will be given a warning that requests you to do so.
         """
-        if hasattr(self, '__num_nodes__') and self.__num_nodes__ is not None:
+        if hasattr(self, '__num_nodes__'):
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))

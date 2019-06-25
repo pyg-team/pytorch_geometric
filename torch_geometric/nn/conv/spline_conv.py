@@ -113,7 +113,7 @@ class SplineConv(MessagePassing):
                           'version of SplineConv. If possible, please convert '
                           'your data to the GPU first.')
 
-        if torch_geometric.is_debug_enabled():  # pragma: no cover
+        if torch_geometric.is_debug_enabled():
             if x.size(1) != self.in_channels:
                 raise RuntimeError(
                     'Expected {} node features, but found {}'.format(
