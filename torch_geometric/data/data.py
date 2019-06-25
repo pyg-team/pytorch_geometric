@@ -3,6 +3,7 @@ import copy
 import warnings
 
 import torch
+import torch_geometric
 from torch_sparse import coalesce
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
@@ -78,12 +79,20 @@ class Data(object):
             else:
                 self[key] = item
 
+        if torch_geometric.is_debug_enabled():
+            self.debug()
+
     @classmethod
     def from_dict(cls, dictionary):
         r"""Creates a data object from a python dictionary."""
         data = cls()
+
         for key, item in dictionary.items():
             data[key] = item
+
+        if torch_geometric.is_debug_enabled():
+            data.debug()
+
         return data
 
     def __getitem__(self, key):
@@ -93,6 +102,9 @@ class Data(object):
     def __setitem__(self, key, value):
         """Sets the attribute :obj:`key` to :obj:`value`."""
         setattr(self, key, value)
+
+        if torch_geometric.is_debug_enabled():
+            self.debug()
 
     @property
     def keys(self):
@@ -278,6 +290,63 @@ class Data(object):
             k: v.clone() if torch.is_tensor(v) else copy.deepcopy(v)
             for k, v in self.__dict__.items()
         })
+
+    def debug(self):
+        if self.edge_index is not None:
+            if self.edge_index.dim() != 2 or self.edge_index.size(0) != 2:
+                raise RuntimeError(
+                    ('Edge indices should have shape [2, num_edges] but found'
+                     ' shape {}').format(self.edge_index.size()))
+
+        if self.edge_index is not None and self.num_nodes is not None:
+            min_index, max_index = self.edge_index.min(), self.edge_index.max()
+            if min_index < 0 or max_index > self.num_nodes - 1:
+                raise RuntimeError(
+                    ('Edge indices must lay in the interval [0, {}]'
+                     ' but found them in the interval [{}, {}]').format(
+                         self.num_nodes - 1, min_index, max_index))
+
+        if self.face is not None:
+            if self.face.dim() != 2 or self.face.size(0) != 3:
+                raise RuntimeError(
+                    ('Face indices should have shape [3, num_faces] but found'
+                     ' shape {}').format(self.face.size()))
+
+        if self.face is not None and self.num_nodes is not None:
+            min_index, max_index = self.face.min(), self.face.max()
+            if min_index < 0 or max_index > self.num_nodes - 1:
+                raise RuntimeError(
+                    ('Face indices must lay in the interval [0, {}]'
+                     ' but found them in the interval [{}, {}]').format(
+                         self.num_nodes - 1, min_index, max_index))
+
+        if self.edge_index is not None and self.edge_attr is not None:
+            if self.edge_index.size(1) != self.edge_attr.size(0):
+                raise RuntimeError(
+                    ('Edge indices and edge attributes hold a differing '
+                     'number of edges, found {} and {}').format(
+                         self.edge_index.size(), self.edge_attr.size()))
+
+        if self.x is not None and self.num_nodes is not None:
+            if self.x.size(0) != self.num_nodes:
+                raise RuntimeError(
+                    ('Node features should hold {} elements in the first '
+                     'dimension but found {}').format(self.num_nodes,
+                                                      self.x.size(0)))
+
+        if self.pos is not None and self.num_nodes is not None:
+            if self.pos.size(0) != self.num_nodes:
+                raise RuntimeError(
+                    ('Node positions should hold {} elements in the first '
+                     'dimension but found {}').format(self.num_nodes,
+                                                      self.pos.size(0)))
+
+        if self.norm is not None and self.num_nodes is not None:
+            if self.norm.size(0) != self.num_nodes:
+                raise RuntimeError(
+                    ('Node normals should hold {} elements in the first '
+                     'dimension but found {}').format(self.num_nodes,
+                                                      self.norm.size(0)))
 
     def __repr__(self):
         info = ['{}={}'.format(key, size_repr(item)) for key, item in self]
