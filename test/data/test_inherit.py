@@ -9,16 +9,13 @@ class MyData(Data):
     def random(self):
         return torch.randn(list(self.x.size()) + list(self.arg.size()))
 
-    def __cat_dim__(self, key, value):
-        return 0
-
 
 class MyInMemoryDataset(InMemoryDataset):
     def __init__(self):
         super(MyInMemoryDataset, self).__init__('/tmp/MyInMemoryDataset')
 
         x = torch.randn(4, 5)
-        edge_index = torch.tensor([[0, 1], [0, 2], [0, 3]])
+        edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
         arg = torch.randn(4, 3)
 
         data_list = [MyData(x, edge_index, arg) for _ in range(10)]
@@ -46,7 +43,7 @@ class MyDataset(Dataset):
 
     def get(self, idx):
         x = torch.randn(4, 5)
-        edge_index = torch.tensor([[0, 1], [0, 2], [0, 3]])
+        edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
         arg = torch.randn(4, 3)
         return MyData(x, edge_index, arg)
 
