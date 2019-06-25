@@ -97,6 +97,9 @@ def from_networkx(G):
     for key, item in data.items():
         data[key] = torch.tensor(item)
 
+    if not G.is_directed():
+        edge_index = torch.cat((edge_index, edge_index[[1,0],:]), dim=1)
+        
     data['edge_index'] = edge_index
     data = torch_geometric.data.Data.from_dict(data)
     data.num_nodes = G.number_of_nodes()
