@@ -4,6 +4,7 @@ import networkx as nx
 import torch_geometric.data
 
 from .num_nodes import maybe_num_nodes
+from .undirected import to_undirected
 
 
 def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
