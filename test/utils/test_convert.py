@@ -47,6 +47,7 @@ def test_to_networkx():
     assert G.nodes[1]['x'] == [3, 4]
     assert G.nodes[0]['pos'] == [0, 0]
     assert G.nodes[1]['pos'] == [1, 1]
+    assert list(G.edges) == [(0, 1), (0, 0), (1, 0)]
     assert networkx.to_numpy_matrix(G).tolist() == [[3, 1], [2, 0]]
 
 
