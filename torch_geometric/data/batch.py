@@ -1,4 +1,5 @@
 import torch
+import torch_geometric
 from torch_geometric.data import Data
 
 
@@ -75,6 +76,9 @@ class Batch(Data):
         #     batch.__custom_funcs__ = funcs.difference(org_funcs)
         #     for func in funcs.difference(org_funcs):
         #         setattr(batch, func, getattr(data_list[0], func))
+
+        if torch_geometric.is_debug_enabled():
+            batch.debug()
 
         return batch.contiguous()
 

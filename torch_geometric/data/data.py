@@ -296,7 +296,11 @@ class Data(object):
                      ' shape {}').format(self.edge_index.size()))
 
         if self.edge_index is not None and self.num_nodes is not None:
-            min_index, max_index = self.edge_index.min(), self.edge_index.max()
+            if self.edge_index.numel() > 0:
+                min_index = self.edge_index.min()
+                max_index = self.edge_index.max()
+            else:
+                min_index = max_index = 0
             if min_index < 0 or max_index > self.num_nodes - 1:
                 raise RuntimeError(
                     ('Edge indices must lay in the interval [0, {}]'
@@ -310,7 +314,11 @@ class Data(object):
                      ' shape {}').format(self.face.size()))
 
         if self.face is not None and self.num_nodes is not None:
-            min_index, max_index = self.face.min(), self.face.max()
+            if self.face.numel() > 0:
+                min_index = self.face.min()
+                max_index = self.face.max()
+            else:
+                min_index = max_index = 0
             if min_index < 0 or max_index > self.num_nodes - 1:
                 raise RuntimeError(
                     ('Face indices must lay in the interval [0, {}]'
