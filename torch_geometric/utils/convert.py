@@ -55,7 +55,7 @@ def to_networkx(data, node_attrs=None, edge_attrs=None):
             copied. (default: :obj:`None`)
     """
 
-    G = nx.DiGraph()
+    G = nx.Graph() if data.is_undirected() else nx.DiGraph()
     G.add_nodes_from(range(data.num_nodes))
 
     values = {key: data[key].squeeze().tolist() for key in data.keys}
@@ -97,6 +97,9 @@ def from_networkx(G):
     for key, item in data.items():
         data[key] = torch.tensor(item)
 
+    if not G.is_directed():
+        edge_index = to_undirected(edge_index, G.number_of_nodes())
+        
     data['edge_index'] = edge_index
     data = torch_geometric.data.Data.from_dict(data)
     data.num_nodes = G.number_of_nodes()
