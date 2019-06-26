@@ -2,7 +2,6 @@ import torch
 import scipy.sparse
 import networkx as nx
 import torch_geometric.data
-from torch_geometric.utils import to_undirected
 
 from .num_nodes import maybe_num_nodes
 
