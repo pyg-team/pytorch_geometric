@@ -29,6 +29,11 @@ def ones(tensor):
         tensor.data.fill_(1)
 
 
+def normal(tensor, mean, std):
+    if tensor is not None:
+        tensor.data.normal_(mean, std)
+
+
 def reset(nn):
     def _reset(item):
         if hasattr(item, 'reset_parameters'):

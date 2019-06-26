@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
-# from ..inits import glorot, zeros
+from ..inits import normal
 
 
 class FeaStConv(MessagePassing):
@@ -54,10 +54,10 @@ class FeaStConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.weight.data.normal_(mean=0, std=0.1)
-        self.u.data.normal_(mean=0, std=0.1)
-        self.c.data.normal_(mean=0, std=0.1)
-        self.bias.data.normal_(mean=0, std=0.1)
+        normal(self.weight, mean=0, std=0.1)
+        normal(self.u, mean=0, std=0.1)
+        normal(self.c, mean=0, std=0.1)
+        normal(self.bias, mean=0, std=0.1)
 
     def forward(self, x, edge_index):
         """"""
