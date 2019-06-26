@@ -1,4 +1,5 @@
 import torch
+import torch_geometric
 from torch_geometric.nn import SplineConv
 
 
@@ -11,4 +12,5 @@ def test_spline_conv():
 
     conv = SplineConv(in_channels, out_channels, dim=3, kernel_size=5)
     assert conv.__repr__() == 'SplineConv(16, 32)'
-    assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
+    with torch_geometric.debug():
+        assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
