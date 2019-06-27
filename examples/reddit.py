@@ -1,10 +1,13 @@
+import os.path as osp
+
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Reddit
 from torch_geometric.data import NeighborSampler
 from torch_geometric.nn import SAGEConv
 
-dataset = Reddit('/tmp/reddit')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
+dataset = Reddit(path)
 data = dataset[0]
 loader = NeighborSampler(
     data,
