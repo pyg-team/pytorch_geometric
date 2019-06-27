@@ -50,15 +50,25 @@ class SGConv(MessagePassing):
     def reset_parameters(self):
         self.lin.reset_parameters()
         self.cached_result = None
+        self.cached_num_edges = None
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
+        if self.cached and self.cached_result is not None:
+            if edge_index.size(1) != self.cached_num_edges:
+                raise RuntimeError(
+                    'Cached {} number of edges, but found {}'.format(
+                        self.cached_num_edges, edge_index.size(1)))
+
         if not self.cached:
             x = self.lin(x)
 
         if not self.cached or self.cached_result is None:
-            edge_index, norm = GCNConv.norm(
-                edge_index, x.size(0), edge_weight, dtype=x.dtype)
+            self.cached_num_edges = edge_index.size(1)
+            edge_index, norm = GCNConv.norm(edge_index,
+                                            x.size(0),
+                                            edge_weight,
+                                            dtype=x.dtype)
 
             for k in range(self.K):
                 x = self.propagate(edge_index, x=x, norm=norm)
