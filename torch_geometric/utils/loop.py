@@ -96,7 +96,6 @@ def add_remaining_self_loops(edge_index,
     row, col = edge_index
 
     mask = row != col
-    inv_mask = 1 - mask
     loop_weight = torch.full(
         (num_nodes, ),
         fill_value,
@@ -105,6 +104,7 @@ def add_remaining_self_loops(edge_index,
 
     if edge_weight is not None:
         assert edge_weight.numel() == edge_index.size(1)
+        inv_mask = 1 - mask
         remaining_edge_weight = edge_weight[inv_mask]
         if remaining_edge_weight.numel() > 0:
             loop_weight[row[inv_mask]] = remaining_edge_weight
