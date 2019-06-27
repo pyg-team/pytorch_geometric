@@ -18,8 +18,8 @@ loader = NeighborSampler(
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
         super(Net, self).__init__()
-        self.conv1 = SAGEConv(in_channels, 16)
-        self.conv2 = SAGEConv(16, out_channels)
+        self.conv1 = SAGEConv(in_channels, 16, normalize=False)
+        self.conv2 = SAGEConv(16, out_channels, normalize=False)
 
     def forward(self, x, data_flow):
         data = data_flow[0]
