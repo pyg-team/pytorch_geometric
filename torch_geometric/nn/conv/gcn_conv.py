@@ -64,6 +64,7 @@ class GCNConv(MessagePassing):
         glorot(self.weight)
         zeros(self.bias)
         self.cached_result = None
+        self.cached_num_edges = None
 
     @staticmethod
     def norm(edge_index, num_nodes, edge_weight, improved=False, dtype=None):
@@ -87,10 +88,18 @@ class GCNConv(MessagePassing):
         """"""
         x = torch.matmul(x, self.weight)
 
+        if self.cached and self.cached_result is not None:
+            if edge_index.size(1) != self.cached_num_edges:
+                raise RuntimeError(
+                    'Cached {} number of edges, but found {}'.format(
+                        self.cached_num_edges, edge_index.size(1)))
+
         if not self.cached or self.cached_result is None:
+            self.cached_num_edges = edge_index.size(1)
             edge_index, norm = self.norm(edge_index, x.size(0), edge_weight,
                                          self.improved, x.dtype)
             self.cached_result = edge_index, norm
+
         edge_index, norm = self.cached_result
 
         return self.propagate(edge_index, x=x, norm=norm)
