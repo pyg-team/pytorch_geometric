@@ -8,7 +8,7 @@ class OneHotDegree(object):
 
     Args:
         max_degree (int): Maximum degree.
-        in_degree (bool, optional): If set to :obj:`True`, will save the
+        in_degree (bool, optional): If set to :obj:`True`, will compute the
             in-degree of nodes instead of the out-degree.
             (default: :obj:`False`)
         cat (bool, optional): Concat node degrees to node features instead
