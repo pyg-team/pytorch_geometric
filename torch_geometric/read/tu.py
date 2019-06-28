@@ -3,10 +3,11 @@ import os.path as osp
 import glob
 
 import torch
+import torch.nn.functional as F
 import numpy as np
 from torch_sparse import coalesce
 from torch_geometric.read import read_txt_array
-from torch_geometric.utils import remove_self_loops, one_hot
+from torch_geometric.utils import remove_self_loops
 from torch_geometric.data import Data
 
 names = [
@@ -27,15 +28,25 @@ def read_tu_data(folder, prefix):
         node_attributes = read_file(folder, prefix, 'node_attributes')
     if 'node_labels' in names:
         node_labels = read_file(folder, prefix, 'node_labels', torch.long)
-        node_labels = one_hot(node_labels - node_labels.min(dim=0)[0])
+        if node_labels.dim() == 1:
+            node_labels = node_labels.unsqueeze(-1)
+        node_labels = node_labels - node_labels.min(dim=0)[0]
+        node_labels = node_labels.unbind(dim=-1)
+        node_labels = [F.one_hot(x, num_classes=-1) for x in node_labels]
+        node_labels = torch.cat(node_labels, dim=-1).to(torch.float)
     x = cat([node_attributes, node_labels])
 
     edge_attributes, edge_labels = None, None
     if 'edge_attributes' in names:
         edge_attributes = read_file(folder, prefix, 'edge_attributes')
     if 'edge_labels' in names:
-        edge_labels = read_file(folder, prefix, 'edge_labels', torch.long) - 1
-        edge_labels = one_hot(edge_labels - edge_labels.min(dim=0)[0])
+        edge_labels = read_file(folder, prefix, 'edge_labels', torch.long)
+        if edge_labels.dim() == 1:
+            edge_labels = edge_labels.unsqueeze(-1)
+        node_labels = edge_labels - edge_labels.min(dim=0)[0]
+        edge_labels = edge_labels.unbind(dim=-1)
+        edge_labels = [F.one_hot(e, num_classes=-1) for e in edge_labels]
+        edge_labels = torch.cat(edge_labels, dim=-1).to(torch.float)
     edge_attr = cat([edge_attributes, edge_labels])
 
     y = None

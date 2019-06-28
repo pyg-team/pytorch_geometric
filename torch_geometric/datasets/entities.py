@@ -6,11 +6,11 @@ import rdflib as rdf
 import pandas as pd
 import numpy as np
 import torch
+import torch.nn.functional as F
 from torch_scatter import scatter_add
 
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_tar)
-from torch_geometric.utils import one_hot
 
 
 class Entities(InMemoryDataset):
@@ -101,7 +101,8 @@ class Entities(InMemoryDataset):
         edge = torch.tensor(edge_list, dtype=torch.long).t().contiguous()
         edge_index, edge_type = edge[:2], edge[2]
 
-        oh = one_hot(edge_type, 2 * len(relations), dtype=torch.float)
+        oh = F.one_hot(
+            edge_type, num_classes=2 * len(relations)).to(torch.float)
         deg = scatter_add(oh, edge_index[0], dim=0, dim_size=len(nodes))
         index = edge_type + torch.arange(len(edge_list)) * 2 * len(relations)
         edge_norm = 1 / deg[edge_index[0]].view(-1)[index]

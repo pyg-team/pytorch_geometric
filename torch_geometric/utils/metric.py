@@ -1,8 +1,8 @@
 from __future__ import division
 
 import torch
+import torch.nn.functional as F
 from torch_scatter import scatter_add
-from torch_geometric.utils import one_hot
 
 
 def accuracy(pred, target):
@@ -158,8 +158,7 @@ def mean_iou(pred, target, num_classes, batch=None):
 
     :rtype: :class:`Tensor`
     """
-    pred = one_hot(pred, num_classes, dtype=torch.long)
-    target = one_hot(target, num_classes, dtype=torch.long)
+    pred, target = F.one_hot(pred, num_classes), F.one_hot(target, num_classes)
 
     if batch is not None:
         i = scatter_add(pred & target, batch, dim=0).to(torch.float)

@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.utils import degree, one_hot
+import torch.nn.functional as F
+from torch_geometric.utils import degree
 
 
 class OneHotDegree(object):
@@ -17,8 +18,8 @@ class OneHotDegree(object):
 
     def __call__(self, data):
         row, x = data.edge_index[0], data.x
-        deg = degree(row, data.num_nodes)
-        deg = one_hot(deg, num_classes=self.max_degree + 1)
+        deg = degree(row, data.num_nodes, dtype=torch.long)
+        deg = F.one_hot(deg, num_classes=self.max_degree + 1).to(torch.float)
 
         if x is not None and self.cat:
             x = x.view(-1, 1) if x.dim() == 1 else x

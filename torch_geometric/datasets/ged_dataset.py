@@ -4,10 +4,11 @@ import glob
 import pickle
 
 import torch
+import torch.nn.functional as F
 import networkx as nx
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip, extract_tar)
-from torch_geometric.utils import to_undirected, one_hot
+from torch_geometric.utils import to_undirected
 
 
 class GEDDataset(InMemoryDataset):
@@ -129,7 +130,8 @@ class GEDDataset(InMemoryDataset):
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
                         x[int(node)] = self.types.index(info['type'])
-                    data.x = one_hot(x, num_classes=len(self.types))
+                    data.x = F.one_hot(
+                        x, num_classes=len(self.types)).to(torch.float)
 
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
