@@ -8,17 +8,21 @@ class OneHotDegree(object):
 
     Args:
         max_degree (int): Maximum degree.
+        in_degree (bool, optional): If set to :obj:`True`, will save the
+            in-degree of nodes instead of the out-degree.
+            (default: :obj:`False`)
         cat (bool, optional): Concat node degrees to node features instead
             of replacing them. (default: :obj:`True`)
     """
 
-    def __init__(self, max_degree, cat=True):
+    def __init__(self, max_degree, in_degree=False, cat=True):
         self.max_degree = max_degree
+        self.in_degree = in_degree
         self.cat = cat
 
     def __call__(self, data):
-        row, x = data.edge_index[0], data.x
-        deg = degree(row, data.num_nodes, dtype=torch.long)
+        idx, x = data.edge_index[1 if self.in_degree else 0], data.x
+        deg = degree(idx, data.num_nodes, dtype=torch.long)
         deg = F.one_hot(deg, num_classes=self.max_degree + 1).to(torch.float)
 
         if x is not None and self.cat:
