@@ -3,7 +3,6 @@ sudo: required
 dist: trusty
 matrix:
   include:
-    - python: 2.7
     - python: 3.5
     - python: 3.6
 addons:
@@ -17,9 +16,8 @@ before_install:
   - export CC="gcc-4.9"
   - export CXX="g++-4.9"
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install https://download.pytorch.org/whl/cpu/torch-1.1.0-cp27-cp27mu-linux_x86_64.whl; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then pip install https://download.pytorch.org/whl/cpu/torch-1.1.0-cp35-cp35m-linux_x86_64.whl; fi
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip install https://download.pytorch.org/whl/cpu/torch-1.1.0-cp36-cp36m-linux_x86_64.whl; fi
+  - pip install numpy
+  - pip install torch_nightly -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
   - pip install torch-scatter torch-sparse torch-cluster torch-spline-conv
   - pip install cython && pip install gdist
   - pip install pycodestyle
@@ -27,8 +25,8 @@ install:
   - pip install codecov
   - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install scikit-learn==0.20 networkx==2.2; fi
 script:
-  - if [[ $TRAVIS_PYTHON_VERSION != 2.7 ]]; then pycodestyle .; fi
-  - if [[ $TRAVIS_PYTHON_VERSION != 2.7 ]]; then flake8 .; fi
+  - then pycodestyle .
+  - then flake8 .
   - python setup.py install
   - python setup.py test
   - cd docs && pip install -r requirements.txt && make clean && make html && cd ..
