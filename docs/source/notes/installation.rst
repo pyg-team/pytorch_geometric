@@ -1,7 +1,7 @@
 Installation
 ============
 
-We have outsourced a lot of functionality of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ to other packages, which needs to be installed in advance.
+We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be installed in advance.
 These packages come with their own CPU and GPU kernel implementations based on the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ in PyTorch 0.4.0.
 
 .. note::
@@ -79,7 +79,7 @@ Please follow the steps below for a successful installation:
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
 ``pip`` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, ``No module named 'torch_*.*_cuda'``, or execution simply crashes with ``Segmentation fault (core dumped)``.
-We collected a lot of common installation errors in the `Frequently Asked Questions <https://rusty1s.github.io/pytorch_geometric/build/html/notes/installation.html#frequently-asked-questions>`_ subsection.
+We collected a lot of common installation errors in the `Frequently Asked Questions <https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#frequently-asked-questions>`_ subsection.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
 You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda/index.html>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
 

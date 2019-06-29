@@ -1,7 +1,7 @@
 Introduction by Example
 =======================
 
-We shortly introduce the fundamental concepts of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ through self-contained examples.
+We shortly introduce the fundamental concepts of PyTorch Geometric through self-contained examples.
 At its core, PyTorch Geometric provides the following main features:
 
 .. contents::
@@ -282,7 +282,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
         x.size()
         >>> torch.Size([32, 21])
 
-You can learn more about scatter operations in the `documentation <http://rusty1s.github.io/pytorch_scatter>`_ of ``torch_scatter``.
+You can learn more about scatter operations in the `documentation <https://pytorch-scatter.readthedocs.io>`_ of ``torch_scatter``.
 
 Data Transforms
 ---------------

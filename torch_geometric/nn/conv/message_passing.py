@@ -26,7 +26,7 @@ class MessagePassing(torch.nn.Module):
     function, *e.g.*, sum, mean or max, and :math:`\gamma_{\mathbf{\Theta}}`
     and :math:`\phi_{\mathbf{\Theta}}` denote differentiable functions such as
     MLPs.
-    See `here <https://rusty1s.github.io/pytorch_geometric/build/html/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:

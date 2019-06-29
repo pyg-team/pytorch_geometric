@@ -18,7 +18,7 @@ def files_exist(files):
 
 class Dataset(torch.utils.data.Dataset):
     r"""Dataset base class for creating graph datasets.
-    See `here <https://rusty1s.github.io/pytorch_geometric/build/html/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_dataset.html>`__ for the accompanying tutorial.
 
     Args:
