@@ -5,6 +5,7 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
+    - requirements: docs/additional_requirements.txt
   setup_py_install: true
   system_packages: true
 
