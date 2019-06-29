@@ -4,7 +4,8 @@ build:
 python:
   version: 3.7
   install:
-    - requirements: docs/requirements.txt
+    - requirements: docs/requirements_1.txt
+    - requirements: docs/requirements_2.txt
   setup_py_install: true
   system_packages: true
 
