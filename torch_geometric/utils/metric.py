@@ -6,7 +6,7 @@ from torch_scatter import scatter_add
 
 
 def accuracy(pred, target):
-    r"""Computes the accuracy of correct predictions.
+    r"""Computes the accuracy of predictions.
 
     Args:
         pred (Tensor): The predictions.
@@ -86,8 +86,8 @@ def false_negative(pred, target, num_classes):
 
 
 def precision(pred, target, num_classes):
-    r"""Computes the precision:
-    :math:`\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}`.
+    r"""Computes the precision
+    :math:`\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}` of predictions.
 
     Args:
         pred (Tensor): The predictions.
@@ -106,8 +106,8 @@ def precision(pred, target, num_classes):
 
 
 def recall(pred, target, num_classes):
-    r"""Computes the recall:
-    :math:`\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}`.
+    r"""Computes the recall
+    :math:`\frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}` of predictions.
 
     Args:
         pred (Tensor): The predictions.
@@ -126,9 +126,9 @@ def recall(pred, target, num_classes):
 
 
 def f1_score(pred, target, num_classes):
-    r"""Computes the :math:`F_1` score:
+    r"""Computes the :math:`F_1` score
     :math:`2 \cdot \frac{\mathrm{precision} \cdot \mathrm{recall}}
-    {\mathrm{precision}+\mathrm{recall}}`.
+    {\mathrm{precision}+\mathrm{recall}}` of predictions.
 
     Args:
         pred (Tensor): The predictions.
@@ -147,7 +147,7 @@ def f1_score(pred, target, num_classes):
 
 
 def mean_iou(pred, target, num_classes, batch=None):
-    r"""Computes the mean Intersection over Union score.
+    r"""Computes the mean Intersection over Union score of predictions.
 
     Args:
         pred (LongTensor): The predictions.
