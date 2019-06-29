@@ -54,3 +54,6 @@ def setup(app):
         return True if name in members else skip
 
     app.connect('autodoc-skip-member', skip)
+
+
+autodoc_mock_imports = ['torch_scatter', 'torch_sparse', 'torch_cluster']
