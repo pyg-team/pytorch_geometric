@@ -1,4 +1,4 @@
-Creating your own datasets
+Creating Your Own Datasets
 ==========================
 
 Although `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ already contains a lot of useful datasets, you may wish to create your own dataset with self-recorded or non-publicly available data.
@@ -18,7 +18,7 @@ The :obj:`pre_transform` function applies the transformation before saving the d
 The :obj:`pre_filter` function can manually filter out data objects before saving.
 Use cases may involve the restriction of data objects being of a specific class.
 
-Creating "in memory datasets"
+Creating "In Memory Datasets"
 -----------------------------
 
 In order to create a :class:`torch_geometric.data.InMemoryDataset`, you need to implement four fundamental methods:
@@ -77,7 +77,7 @@ Let's see this process in a simplified example:
             data, slices = self.collate(data_list)
             torch.save((data, slices), self.processed_paths[0])
 
-Creating "larger" datasets
+Creating "Larger" Datasets
 --------------------------
 
 For creating datasets which do not fit into memory, the :class:`torch_geometric.data.Dataset` must be used, where we closely follow the concepts of the :obj:`torchvision` datasets.

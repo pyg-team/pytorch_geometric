@@ -1,4 +1,4 @@
-Introduction by example
+Introduction by Example
 =======================
 
 We shortly introduce the fundamental concepts of `PyTorch Geometric <https://github.com/rusty1s/pytorch_geometric>`_ through self-contained examples.
@@ -7,7 +7,7 @@ At its core, PyTorch Geometric provides the following main features:
 .. contents::
     :local:
 
-Data handling of graphs
+Data Handling of Graphs
 -----------------------
 
 A graph is used to model pairwise relations (edges) between objects (nodes).
@@ -114,7 +114,7 @@ Besides of being a plain old python object, :class:`torch_geometric.data.Data` p
 
 You can find a complete list of all methods at :class:`torch_geometric.data.Data`.
 
-Common benchmark datasets
+Common Benchmark Datasets
 -------------------------
 
 PyTorch Geometric contains a large number of common benchmark datasets, *e.g.* all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
@@ -284,7 +284,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
 
 You can learn more about scatter operations in the `documentation <http://rusty1s.github.io/pytorch_scatter>`_ of ``torch_scatter``.
 
-Data transforms
+Data Transforms
 ---------------
 
 Transforms are a common way in ``torchvision`` to transform images and perform augmentation.
@@ -335,7 +335,7 @@ In addition, we can use the ``transform`` argument to randomly augment a ``Data`
 
 You can find a complete list of all implemented transforms at :mod:`torch_geometric.transforms`.
 
-Learning methods on graphs
+Learning Methods on Graphs
 --------------------------
 
 After learning about data handling, datasets, loader and transforms in PyTorch Geometric, it's time to implement our first graph neural network!

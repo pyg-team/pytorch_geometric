@@ -1,4 +1,4 @@
-Creating message passing networks
+Creating Message Passing Networks
 =================================
 
 Generalizing the convolution operator to irregular domains is typically expressed as a *neighborhood aggregation* or *message passing* scheme.
@@ -12,8 +12,8 @@ where :math:`\square` denotes a differentiable, permutation invariant function, 
 .. contents::
     :local:
 
-The "MessagePassing" base class
---------------------------------
+The "MessagePassing" Base Class
+-------------------------------
 
 PyTorch Geometric provides the :class:`torch_geometric.nn.MessagePassing` base class, which helps in creating such kinds of message passing graph neural networks by automatically taking care of message propagation.
 The user only has to define the functions :math:`\phi` , *i.e.* :meth:`message`, and :math:`\gamma` , *.i.e.* :meth:`update`, as well as the aggregation scheme to use, *.i.e.* :obj:`aggr='add'`, :obj:`aggr='mean'` or :obj:`aggr='max'`.
@@ -35,7 +35,7 @@ This is done with the help of the following methods:
 
 Let us verify this by re-implementing two popular GNN variants, the `GCN layer from Kipf and Welling <https://arxiv.org/abs/1609.02907>`_ and the `EdgeConv layer from Wang et al. <https://arxiv.org/abs/1801.07829>`_.
 
-Implementing the GCN layer
+Implementing the GCN Layer
 --------------------------
 
 The `GCN layer <https://arxiv.org/abs/1609.02907>`_ is mathematically defined as
@@ -123,7 +123,7 @@ Initializing and calling it is straightforward:
     conv = GCNConv(16, 32)
     x = conv(x, edge_index)
 
-Implementing the edge convolution
+Implementing the Edge Convolution
 ---------------------------------
 
 The `edge convolutional layer <https://arxiv.org/abs/1801.07829>`_ processes graphs or point clouds and is mathematically defined as
