@@ -1,2 +1,8 @@
+-f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
+numpy
+torch_nightly
+torch-scatter
+torch-sparse
+torch-spline-cluster
 sphinx
 sphinx_rtd_theme
