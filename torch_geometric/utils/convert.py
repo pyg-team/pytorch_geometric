@@ -31,7 +31,7 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
 
 
 def from_scipy_sparse_matrix(A):
-    r""""Converts a scipy sparse matrix to edge indices and edge attributes.
+    r"""Converts a scipy sparse matrix to edge indices and edge attributes.
 
     Args:
         A (scipy.sparse): A sparse matrix.

@@ -5,7 +5,7 @@ from .num_nodes import maybe_num_nodes
 
 def softmax(src, index, num_nodes=None):
     r"""Computes a sparsely evaluated softmax.
-    Given a value tensor :attr:`src`, this function first groups those values
+    Given a value tensor :attr:`src`, this function first groups the values
     along the first dimension based on the indices specified in :attr:`index`,
     and then proceeds to compute the softmax individually for each group.
 
