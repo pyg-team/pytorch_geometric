@@ -18,14 +18,14 @@ before_install:
 install:
   - pip install numpy
   - pip install torch_nightly -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
-  - pip install torch-scatter torch-sparse torch-cluster==1.4.3a1 torch-spline-conv
+  - pip install torch-scatter torch-sparse torch-cluster==1.4.3-alpha1 torch-spline-conv
   - pip install cython && pip install gdist
   - pip install pycodestyle
   - pip install flake8
   - pip install codecov
 script:
-  - then pycodestyle .
-  - then flake8 .
+  - pycodestyle .
+  - flake8 .
   - python setup.py install
   - python setup.py test
   - cd docs && pip install -r requirements_1.txt && make clean && make html && cd ..
