@@ -30,11 +30,11 @@ Please follow the steps below for a successful installation:
 
         .. code-block:: none
 
-            $ PATH=/usr/local/cuda/bin:$PATH
+            $ export PATH=/usr/local/cuda/bin:$PATH
             $ echo $PATH
             >>> /usr/local/cuda/bin:...
 
-            $ CPATH=/usr/local/cuda/include:$CPATH
+            $ export CPATH=/usr/local/cuda/include:$CPATH
             $ echo $CPATH
             >>> /usr/local/cuda/include:...
 
@@ -42,11 +42,11 @@ Please follow the steps below for a successful installation:
 
         .. code-block:: none
 
-            $ LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+            $ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
             $ echo $LD_LIBRARY_PATH
             >>> /usr/local/cuda/lib64:...
 
-            $ DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
+            $ export DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
             $ echo $DYLD_LIBRARY_PATH
             >>> /usr/local/cuda/lib:...
 
