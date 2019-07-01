@@ -89,7 +89,7 @@ def test(loader):
     model.eval()
 
     correct_nodes = total_nodes = 0
-    intersections, unions = [], []
+    intersections, unions, categories = [], [], []
     for data in loader:
         data = data.to(device)
         with torch.no_grad():
@@ -99,12 +99,25 @@ def test(loader):
         total_nodes += data.num_nodes
         i, u = i_and_u(pred, data.y, test_dataset.num_classes, data.batch)
         intersections.append(i.to(torch.device('cpu')))
-        unions.append(i.to(torch.device('cpu')))
-    i, u = torch.cat(intersections, dim=0), torch.cat(unions, dim=0)
-    iou = i.to(torch.float) / u.to(torch.float)
-    iou[torch.isnan(iou)] = 1
+        unions.append(u.to(torch.device('cpu')))
+        categories.append(data.category.to(torch.device('cpu')))
 
-    return correct_nodes / total_nodes, iou.mean().item()
+    category = torch.cat(categories, dim=0)
+    intersection = torch.cat(intersections, dim=0)
+    union = torch.cat(unions, dim=0)
+
+    ious = [[]] * len(loader.dataset.categories)
+    for j in range(len(loader.dataset)):
+        i = intersection[j, loader.dataset.y_mask[category[j]]]
+        u = union[j, loader.dataset.y_mask[category[j]]]
+        iou = i.to(torch.float) / u.to(torch.float)
+        iou[torch.isnan(iou)] = 1
+        ious[category[j]].append(iou.mean().item())
+
+    for cat in range(len(loader.dataset.categories)):
+        ious[cat] = torch.tensor(ious[cat]).mean().item()
+
+    return correct_nodes / total_nodes, torch.tensor(ious).mean().item()
 
 
 for epoch in range(1, 31):

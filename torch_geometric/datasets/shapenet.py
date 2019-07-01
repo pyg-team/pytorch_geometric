@@ -80,6 +80,7 @@ class ShapeNet(InMemoryDataset):
                                        pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
+        self.y_mask = torch.load(self.processed_paths[2])
 
     @property
     def raw_file_names(self):
@@ -91,7 +92,9 @@ class ShapeNet(InMemoryDataset):
     @property
     def processed_file_names(self):
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
-        return ['{}_{}.pt'.format(cats, s) for s in ['training', 'test']]
+        return [
+            '{}_{}.pt'.format(cats, s) for s in ['training', 'test', 'y_mask']
+        ]
 
     def download(self):
         for name in self.raw_file_names:
@@ -103,8 +106,9 @@ class ShapeNet(InMemoryDataset):
     def process_raw_path(self, data_path, label_path):
         y_offset = 0
         data_list = []
-        for category in self.categories:
-            idx = self.category_ids[category]
+        cat_ys = []
+        for cat_idx, cat in enumerate(self.categories):
+            idx = self.category_ids[cat]
             point_paths = sorted(glob.glob(osp.join(data_path, idx, '*.pts')))
             y_paths = sorted(glob.glob(osp.join(label_path, idx, '*.seg')))
 
@@ -113,26 +117,34 @@ class ShapeNet(InMemoryDataset):
             lens = [y.size(0) for y in ys]
 
             y = torch.cat(ys).unique(return_inverse=True)[1] + y_offset
+            cat_ys.append(y.unique())
             y_offset = y.max().item() + 1
             ys = y.split(lens)
 
             for (pos, y) in zip(points, ys):
-                data = Data(y=y, pos=pos)
+                data = Data(y=y, pos=pos, category=cat_idx)
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
                 data_list.append(data)
-        return data_list
+
+        y_mask = torch.zeros((len(self.categories), y_offset),
+                             dtype=torch.uint8)
+        for i in range(len(cat_ys)):
+            y_mask[i, cat_ys[i]] = 1
+
+        return data_list, y_mask
 
     def process(self):
-        train_data_list = self.process_raw_path(*self.raw_paths[0:2])
-        val_data_list = self.process_raw_path(*self.raw_paths[2:4])
-        test_data_list = self.process_raw_path(*self.raw_paths[4:6])
+        train_data_list, y_mask = self.process_raw_path(*self.raw_paths[0:2])
+        val_data_list, _ = self.process_raw_path(*self.raw_paths[2:4])
+        test_data_list, _ = self.process_raw_path(*self.raw_paths[4:6])
 
         data = self.collate(train_data_list + val_data_list)
         torch.save(data, self.processed_paths[0])
         torch.save(self.collate(test_data_list), self.processed_paths[1])
+        torch.save(y_mask, self.processed_paths[2])
 
     def __repr__(self):
         return '{}({}, categories={})'.format(self.__class__.__name__,
