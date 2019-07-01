@@ -146,8 +146,32 @@ def f1_score(pred, target, num_classes):
     return score
 
 
+def intersection_and_union(pred, target, num_classes, batch=None):
+    r"""Computes intersection and union of predictions.
+
+    Args:
+        pred (LongTensor): The predictions.
+        target (LongTensor): The targets.
+        num_classes (int): The number of classes.
+        batch (LongTensor): The assignment vector which maps each pred-target
+            pair to an example.
+
+    :rtype: (:class:`LongTensor`, :class:`LongTensor`)
+    """
+    pred, target = F.one_hot(pred, num_classes), F.one_hot(target, num_classes)
+
+    if batch is None:
+        i = (pred & target).sum(dim=0)
+        u = (pred | target).sum(dim=0)
+    else:
+        i = scatter_add(pred & target, batch, dim=0)
+        u = scatter_add(pred | target, batch, dim=0)
+
+    return i, u
+
+
 def mean_iou(pred, target, num_classes, batch=None):
-    r"""Computes the mean Intersection over Union score of predictions.
+    r"""Computes the mean intersection over union score of predictions.
 
     Args:
         pred (LongTensor): The predictions.
@@ -158,16 +182,8 @@ def mean_iou(pred, target, num_classes, batch=None):
 
     :rtype: :class:`Tensor`
     """
-    pred, target = F.one_hot(pred, num_classes), F.one_hot(target, num_classes)
-
-    if batch is not None:
-        i = scatter_add(pred & target, batch, dim=0).to(torch.float)
-        u = scatter_add(pred | target, batch, dim=0).to(torch.float)
-    else:
-        i = (pred & target).sum(dim=0).to(torch.float)
-        u = (pred | target).sum(dim=0).to(torch.float)
-
-    iou = i / u
+    i, u = intersection_and_union(pred, target, num_classes, batch)
+    iou = i.to(torch.float) / u.to(torch.float)
     iou[torch.isnan(iou)] = 1
     iou = iou.mean(dim=-1)
     return iou

@@ -6,7 +6,7 @@ from torch_geometric.datasets import ShapeNet
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import knn_interpolate
-from torch_geometric.utils import mean_iou
+from torch_geometric.utils import intersection_and_union as i_and_u
 
 from pointnet2_classification import SAModule, GlobalSAModule, MLP
 
@@ -111,16 +111,22 @@ def test(loader):
     model.eval()
 
     correct_nodes = total_nodes = 0
-    ious = []
+    intersections, unions = [], []
     for data in loader:
         data = data.to(device)
         with torch.no_grad():
             out = model(data)
         pred = out.max(dim=1)[1]
         correct_nodes += pred.eq(data.y).sum().item()
-        ious += [mean_iou(pred, data.y, test_dataset.num_classes, data.batch)]
         total_nodes += data.num_nodes
-    return correct_nodes / total_nodes, torch.cat(ious, dim=0).mean().item()
+        i, u = i_and_u(pred, data.y, test_dataset.num_classes, data.batch)
+        intersections.append(i.to(torch.device('cpu')))
+        unions.append(i.to(torch.device('cpu')))
+    i, u = torch.cat(intersections, dim=0), torch.cat(unions, dim=0)
+    iou = i.to(torch.float) / u.to(torch.float)
+    iou[torch.isnan(iou)] = 1
+
+    return correct_nodes / total_nodes, iou.mean().item()
 
 
 for epoch in range(1, 31):
