@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.nn import (global_add_pool, global_mean_pool,
-                                global_max_pool)
+                                global_max_pool, global_readout)
 
 
 def test_global_pool():
@@ -22,3 +22,10 @@ def test_global_pool():
     assert out.size() == (2, 4)
     assert out[0].tolist() == x[:4].max(dim=0)[0].tolist()
     assert out[1].tolist() == x[4:].max(dim=0)[0].tolist()
+
+    out = global_readout(x, batch)
+    assert out.size() == (2, 8)
+    assert out[0].tolist() == torch.cat((x[:4].mean(dim=0), x[:4].max(dim=0)[0]), dim=-1).tolist()
+    assert out[1].tolist() == torch.cat((x[4:].mean(dim=0), x[4:].max(dim=0)[0]), dim=-1).tolist()
+
+test_global_pool()
