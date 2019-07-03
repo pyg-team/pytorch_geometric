@@ -4,8 +4,7 @@ import torch
 
 
 class Spherical(object):
-    r"""Saves the relative spherical coordinates of linked nodes in its edge
-    attributes.
+    r"""Saves the spherical coordinates of linked nodes in its edge attributes.
 
     Args:
         norm (bool, optional): If set to :obj:`False`, the output will not be
