@@ -1,5 +1,6 @@
 from .max_pool import max_pool, max_pool_x
 from .avg_pool import avg_pool, avg_pool_x
+from .readout import readout, readout_x
 from .graclus import graclus
 from .voxel_grid import voxel_grid
 from .topk_pool import TopKPooling
@@ -11,8 +12,10 @@ __all__ = [
     'SAGPooling',
     'max_pool',
     'avg_pool',
+    'readout',
     'max_pool_x',
     'avg_pool_x',
+    'readout_x',
     'graclus',
     'voxel_grid',
     'fps',

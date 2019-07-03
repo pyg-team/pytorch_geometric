@@ -8,6 +8,7 @@ def global_add_pool(x, batch, size=None):
 
     .. math::
         \mathbf{r}_i = \sum_{n=1}^{N_i} \mathbf{x}_n
+
     Args:
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
@@ -15,6 +16,7 @@ def global_add_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
+
     :rtype: :class:`Tensor`
     """
 
@@ -29,6 +31,7 @@ def global_mean_pool(x, batch, size=None):
 
     .. math::
         \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n
+
     Args:
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
@@ -36,6 +39,7 @@ def global_mean_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
+
     :rtype: :class:`Tensor`
     """
 
@@ -50,6 +54,7 @@ def global_max_pool(x, batch, size=None):
 
     .. math::
         \mathbf{r}_i = \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n
+
     Args:
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
@@ -57,6 +62,7 @@ def global_max_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
+
     :rtype: :class:`Tensor`
     """
 
@@ -74,6 +80,7 @@ def global_readout(x, batch, size=None):
     .. math::
         \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n \, \Vert \, 
         \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n
+
     Args:
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
@@ -81,6 +88,7 @@ def global_readout(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
+            
     :rtype: :class:`Tensor`
     """
 
