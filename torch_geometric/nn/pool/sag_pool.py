@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn import GraphConv, GATConv, SAGEConv
+from torch_geometric.nn import GCNConv, GATConv, SAGEConv, GraphConv
 from torch_geometric.nn.pool.topk_pool import topk, filter_adj
 
 
@@ -33,20 +33,22 @@ class SAGPooling(torch.nn.Module):
             neural network layer.
     """
 
-    def __init__(self, in_channels, ratio=0.5, gnn='GCN', **kwargs):
+    def __init__(self, in_channels, ratio=0.5, gnn='gConv', **kwargs):
         super(SAGPooling, self).__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio
         self.gnn_name = gnn
 
-        assert gnn in ['GCN', 'GAT', 'SAGE']
+        assert gnn in ['GCN', 'GAT', 'SAGE', 'gConv']
         if gnn == 'GCN':
-            self.gnn = GraphConv(self.in_channels, 1, **kwargs)
+            self.gnn = GCNConv(self.in_channels, 1, **kwargs)
         elif gnn == 'GAT':
             self.gnn = GATConv(self.in_channels, 1, **kwargs)
-        else:
+        elif gnn == 'SAGE':
             self.gnn = SAGEConv(self.in_channels, 1, **kwargs)
+        else:
+            self.gnn = GraphConv(self.in_channels, 1, **kwargs)
 
         self.reset_parameters()
 
