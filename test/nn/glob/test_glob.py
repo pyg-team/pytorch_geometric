@@ -27,5 +27,3 @@ def test_global_pool():
     assert out.size() == (2, 8)
     assert out[0].tolist() == torch.cat((x[:4].mean(dim=0), x[:4].max(dim=0)[0]), dim=-1).tolist()
     assert out[1].tolist() == torch.cat((x[4:].mean(dim=0), x[4:].max(dim=0)[0]), dim=-1).tolist()
-
-test_global_pool()

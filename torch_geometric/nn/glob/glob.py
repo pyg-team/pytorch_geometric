@@ -1,3 +1,4 @@
+import torch
 from torch_geometric.utils import scatter_
 
 
@@ -88,7 +89,7 @@ def global_readout(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
-            
+
     :rtype: :class:`Tensor`
     """
 

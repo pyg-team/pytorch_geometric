@@ -1,3 +1,4 @@
+import torch
 from torch_geometric.data import Batch
 from torch_geometric.utils import scatter_
 
@@ -8,8 +9,8 @@ from .pool import pool_edge, pool_batch, pool_pos
 def _readout_x(cluster, x, size=None):
     return torch.cat((
         scatter_('mean', x, cluster, dim_size=size),
-        scatter_('max', x, cluster, dim_size=size),
-        dim=-1))
+        scatter_('max', x, cluster, dim_size=size)),
+        dim=-1)
 
 
 def readout_x(cluster, x, batch, size=None):
