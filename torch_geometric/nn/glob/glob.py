@@ -8,7 +8,6 @@ def global_add_pool(x, batch, size=None):
 
     .. math::
         \mathbf{r}_i = \sum_{n=1}^{N_i} \mathbf{x}_n
-
     Args:
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
@@ -16,7 +15,6 @@ def global_add_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
-
     :rtype: :class:`Tensor`
     """
 
@@ -31,7 +29,6 @@ def global_mean_pool(x, batch, size=None):
 
     .. math::
         \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n
-
     Args:
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
@@ -39,7 +36,6 @@ def global_mean_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
-
     :rtype: :class:`Tensor`
     """
 
@@ -54,7 +50,6 @@ def global_max_pool(x, batch, size=None):
 
     .. math::
         \mathbf{r}_i = \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n
-
     Args:
         x (Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
@@ -62,9 +57,34 @@ def global_max_pool(x, batch, size=None):
             B-1\}}^N`, which assigns each node to a specific example.
         size (int, optional): Batch-size :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
-
     :rtype: :class:`Tensor`
     """
 
     size = batch[-1].item() + 1 if size is None else size
     return scatter_('max', x, batch, dim_size=size)
+
+
+def global_readout(x, batch, size=None):
+    r"""Readout layer from the `"Towards Sparse Hierarchical Graph Classifiers" 
+    <https://arxiv.org/abs/1811.01287>`_ paper.
+    Returns batch-wise graph-level-outputs by concatenating the channel-wise
+    mean and maximum across the node dimension, so that for a single graph
+    :math:`\mathcal{G}_i` its output is computed by
+
+    .. math::
+        \mathbf{r}_i = \frac{1}{N_i} \sum_{n=1}^{N_i} \mathbf{x}_n \, \Vert \, 
+        \mathrm{max}_{n=1}^{N_i} \, \mathbf{x}_n
+    Args:
+        x (Tensor): Node feature matrix
+            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
+        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
+            B-1\}}^N`, which assigns each node to a specific example.
+        size (int, optional): Batch-size :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
+    :rtype: :class:`Tensor`
+    """
+
+    size = batch[-1].item() + 1 if size is None else size
+    x_mean = scatter_('mean', x, batch, dim_size=size)
+    x_max = scatter_('max', x, batch, dim_size=size)
+    return torch.cat((x_mean, x_max), dim=-1)
