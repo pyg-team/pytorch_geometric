@@ -29,11 +29,7 @@ class SAGEConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 normalize=True,
-                 bias=True,
+    def __init__(self, in_channels, out_channels, normalize=True, bias=True,
                  **kwargs):
         super(SAGEConv, self).__init__(aggr='mean', **kwargs)
 
@@ -59,8 +55,11 @@ class SAGEConv(MessagePassing):
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        x = torch.matmul(x, self.weight)
+        if torch.is_tensor(x):
+            x = torch.matmul(x, self.weight)
+        else:
+            x = (None if x[0] is None else torch.matmul(x[0], self.weight),
+                 None if x[1] is None else torch.matmul(x[1], self.weight))
 
         return self.propagate(edge_index, size=size, x=x)
 

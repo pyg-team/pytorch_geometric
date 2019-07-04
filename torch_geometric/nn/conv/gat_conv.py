@@ -47,15 +47,8 @@ class GATConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 heads=1,
-                 concat=True,
-                 negative_slope=0.2,
-                 dropout=0,
-                 bias=True,
-                 **kwargs):
+    def __init__(self, in_channels, out_channels, heads=1, concat=True,
+                 negative_slope=0.2, dropout=0, bias=True, **kwargs):
         super(GATConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
@@ -83,19 +76,31 @@ class GATConv(MessagePassing):
         glorot(self.att)
         zeros(self.bias)
 
-    def forward(self, x, edge_index):
+    def forward(self, x, edge_index, size=None):
         """"""
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
+        if size is None:
+            edge_index, _ = remove_self_loops(edge_index)
+            edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
-        x = torch.mm(x, self.weight).view(-1, self.heads, self.out_channels)
-        return self.propagate(edge_index, x=x, num_nodes=x.size(0))
+        if torch.is_tensor(x):
+            x = torch.matmul(x, self.weight)
+        else:
+            x = (None if x[0] is None else torch.matmul(x[0], self.weight),
+                 None if x[1] is None else torch.matmul(x[1], self.weight))
 
-    def message(self, edge_index_i, x_i, x_j, num_nodes):
+        return self.propagate(edge_index, size=size, x=x)
+
+    def message(self, edge_index_i, x_i, x_j, size_i):
         # Compute attention coefficients.
-        alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
+        x_j = x_j.view(-1, self.heads, self.out_channels)
+        if x_i is None:
+            alpha = (x_j * self.att[:, :, self.out_channels:]).sum(dim=-1)
+        else:
+            x_i = x_i.view(-1, self.heads, self.out_channels)
+            alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
+
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = softmax(alpha, edge_index_i, num_nodes)
+        alpha = softmax(alpha, edge_index_i, size_i)
 
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)

@@ -93,13 +93,16 @@ class MessagePassing(torch.nn.Module):
                                 raise ValueError(__size_error_msg__)
                         tmp = tmp[idx]
 
-                    if size[idx] is None:
-                        size[idx] = tmp.size(0)
-                    if size[idx] != tmp.size(0):
-                        raise ValueError(__size_error_msg__)
+                    if tmp is None:
+                        message_args.append(tmp)
+                    else:
+                        if size[idx] is None:
+                            size[idx] = tmp.size(0)
+                        if size[idx] != tmp.size(0):
+                            raise ValueError(__size_error_msg__)
 
-                    tmp = torch.index_select(tmp, 0, edge_index[idx])
-                    message_args.append(tmp)
+                        tmp = torch.index_select(tmp, 0, edge_index[idx])
+                        message_args.append(tmp)
             else:
                 message_args.append(kwargs.get(arg, None))
 
