@@ -24,6 +24,7 @@ from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
 from .icews import ICEWS18
 from .gdelt import GDELT
+from .synthetic_dataset import SyntheticDataset
 
 __all__ = [
     'KarateClub',
@@ -52,4 +53,5 @@ __all__ = [
     'BitcoinOTC',
     'ICEWS18',
     'GDELT',
+    'SyntheticDataset',
 ]
