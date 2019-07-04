@@ -45,14 +45,17 @@ class Batch(Data):
         for i, data in enumerate(data_list):
             for key in data.keys:
                 item = data[key] + cumsum[key]
-                size = data[key].size(data.__cat_dim__(key, data[key]))
+                if torch.is_tensor(data[key]):
+                    size = data[key].size(data.__cat_dim__(key, data[key]))
+                else:
+                    size = 1
                 batch.__slices__[key].append(size + batch.__slices__[key][-1])
                 cumsum[key] += data.__inc__(key, item)
                 batch[key].append(item)
 
-            for key in follow_batch:
-                item = torch.full((size, ), i, dtype=torch.long)
-                batch['{}_batch'.format(key)].append(item)
+                if key in follow_batch:
+                    item = torch.full((size, ), i, dtype=torch.long)
+                    batch['{}_batch'.format(key)].append(item)
 
             num_nodes = data.num_nodes
             if num_nodes is not None:
