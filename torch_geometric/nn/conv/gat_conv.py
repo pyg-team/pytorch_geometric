@@ -78,7 +78,7 @@ class GATConv(MessagePassing):
 
     def forward(self, x, edge_index, size=None):
         """"""
-        if size is None:
+        if size is None and torch.is_tensor(x):
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 

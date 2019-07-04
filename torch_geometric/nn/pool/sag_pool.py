@@ -28,19 +28,20 @@ class SAGPooling(torch.nn.Module):
             (default: :obj:`0.5`)
         gnn (string, optional): Specifies which graph neural network layer to
             use for calculating projection scores (one of
-            :obj:`"GCN"`, :obj:`"GAT"` or :obj:`"SAGE"`). (default: :obj:`GCN`)
+            :obj:`"GraphConv", `:obj:`"GCN"`, :obj:`"GAT"` or :obj:`"SAGE"`).
+            (default: :obj:`GraphConv`)
         **kwargs (optional): Additional parameters for initializing the graph
             neural network layer.
     """
 
-    def __init__(self, in_channels, ratio=0.5, gnn='gConv', **kwargs):
+    def __init__(self, in_channels, ratio=0.5, gnn='GraphConv', **kwargs):
         super(SAGPooling, self).__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio
         self.gnn_name = gnn
 
-        assert gnn in ['GCN', 'GAT', 'SAGE', 'gConv']
+        assert gnn in ['GraphConv', 'GCN', 'GAT', 'SAGE']
         if gnn == 'GCN':
             self.gnn = GCNConv(self.in_channels, 1, **kwargs)
         elif gnn == 'GAT':
@@ -66,8 +67,8 @@ class SAGPooling(torch.nn.Module):
         perm = topk(score, self.ratio, batch)
         x = x[perm] * score[perm].view(-1, 1)
         batch = batch[perm]
-        edge_index, edge_attr = filter_adj(
-            edge_index, edge_attr, perm, num_nodes=score.size(0))
+        edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
+                                           num_nodes=score.size(0))
 
         return x, edge_index, edge_attr, batch, perm
 

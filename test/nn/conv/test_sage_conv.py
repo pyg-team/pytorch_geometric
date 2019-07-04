@@ -11,3 +11,4 @@ def test_sage_conv():
     conv = SAGEConv(in_channels, out_channels)
     assert conv.__repr__() == 'SAGEConv(16, 32)'
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
+    assert conv((x, None), edge_index).size() == (num_nodes, out_channels)
