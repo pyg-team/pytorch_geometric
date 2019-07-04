@@ -22,5 +22,7 @@ class SyntheticDataset(TUDataset):
                  pre_filter=None,
                  use_node_attr=False):
         self.name = name
-        super(SyntheticDataset, self).__init__(root, name, transform, pre_transform,
-                                               pre_filter, use_node_attr=use_node_attr)
+        super(SyntheticDataset, self).__init__(root, name, transform,
+                                               pre_transform,
+                                               pre_filter,
+                                               use_node_attr=use_node_attr)

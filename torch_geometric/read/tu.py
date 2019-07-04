@@ -67,7 +67,8 @@ def read_tu_data(folder, prefix):
 
     if 'node_attention' in names:
         node_attention = read_file(folder, prefix, 'node_attention')
-        data.node_attention = softmax(node_attention, batch)  # normalize attention to a unit sum
+        # Normalize attention to a unit sum
+        data.node_attention = softmax(node_attention, batch)
 
     data, slices = split(data, batch)
 

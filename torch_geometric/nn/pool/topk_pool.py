@@ -9,7 +9,8 @@ from ...utils import softmax
 
 def topk(x, ratio, batch, min_score=None, tol=1e-7):
     if min_score is not None:
-        scores_max = scatter_max(x, batch)[0][batch] - tol  # make sure that we do not drop all nodes in a graph
+        # make sure that we do not drop all nodes in a graph
+        scores_max = scatter_max(x, batch)[0][batch] - tol
         scores_min = torch.min(scores_max, x.new_full((1,), min_score))
 
         perm = torch.nonzero(x > scores_min).view(-1)
@@ -103,16 +104,18 @@ class TopKPooling(torch.nn.Module):
             :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
             This value is ignored if min_score is not None.
             (default: :obj:`0.5`)
-        min_score (float): Minimal node score, which is used to compute indices of
-            pooled nodes :math:`\mathbf{i} : \mathbf{y}_i > \tilde{\alpha}`.
+        min_score (float): Minimal node score, which is used to compute indices
+            of pooled nodes :math:`\mathbf{i} : \mathbf{y}_i > \tilde{\alpha}`.
             When this value is not None, the ratio argument is ignored.
             (default: None)
-        multiplier (float): Coefficient by which multiply features after pooling.
-            This can be useful for large graphs and when min_score is used.
+        multiplier (float): Coefficient by which multiply features
+            after pooling. This can be useful for large graphs and
+            when min_score is used.
             (default: None)
     """
 
-    def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=None):
+    def __init__(self, in_channels, ratio=0.5, min_score=None,
+                 multiplier=None):
         super(TopKPooling, self).__init__()
 
         self.in_channels = in_channels
@@ -128,14 +131,17 @@ class TopKPooling(torch.nn.Module):
         size = self.in_channels
         uniform(size, self.weight)
 
-    def forward(self, x, edge_index, edge_attr=None, batch=None, attn_input=None):
+    def forward(self, x, edge_index, edge_attr=None, batch=None,
+                attn_input=None):  # attn_input can differ from x in general
         """"""
+
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 
         if attn_input is None:
             attn_input = x
-        attn_input = attn_input.unsqueeze(-1) if attn_input.dim() == 1 else attn_input
+        attn_input = attn_input.unsqueeze(-1) if attn_input.dim() == 1 \
+            else attn_input
 
         score = (attn_input * self.weight).sum(dim=-1)
 
@@ -157,8 +163,13 @@ class TopKPooling(torch.nn.Module):
         return x, edge_index, edge_attr, batch, perm, score[perm]
 
     def __repr__(self):
-        return '{}({}, ratio={}{}, min_score={}, multiplier={})'.format(self.__class__.__name__,
-                                                                        self.in_channels, self.ratio,
-                                                                        '(ignored)' if self.min_score
-                                                                                       is not None else '',
-                                                                        self.min_score, self.multiplier)
+        return '{}({}, ' \
+               'ratio={}{}, ' \
+               'min_score={}, ' \
+               'multiplier={})'.format(self.__class__.__name__,
+                                       self.in_channels,
+                                       self.ratio,
+                                       '(ignored)' if self.
+                                       min_score is not None else '',
+                                       self.min_score,
+                                       self.multiplier)

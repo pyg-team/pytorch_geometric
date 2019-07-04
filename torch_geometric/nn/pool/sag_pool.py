@@ -46,18 +46,20 @@ class SAGPooling(torch.nn.Module):
         gnn (string, optional): Specifies which graph neural network layer to
             use for calculating projection scores (one of
             :obj:`"GCN"`, :obj:`"GAT"` or :obj:`"SAGE"`). (default: :obj:`GCN`)
-        min_score (float): Minimal node score, which is used to compute indices of
-            pooled nodes :math:`\mathbf{i} : \mathbf{y}_i > \tilde{\alpha}`.
+        min_score (float): Minimal node score, which is used to compute indices
+            of pooled nodes :math:`\mathbf{i} : \mathbf{y}_i > \tilde{\alpha}`.
             When this value is not None, the ratio argument is ignored.
             (default: None)
-        multiplier (float): Coefficient by which multiply features after pooling.
-            This can be useful for large graphs and when min_score is used.
+        multiplier (float): Coefficient by which multiply features
+            after pooling. This can be useful for large graphs and
+            when min_score is used.
             (default: None)
         **kwargs (optional): Additional parameters for initializing the graph
             neural network layer.
     """
 
-    def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=None, gnn='GraphConv', **kwargs):
+    def __init__(self, in_channels, ratio=0.5, min_score=None,
+                 multiplier=None, gnn='GraphConv', **kwargs):
         super(SAGPooling, self).__init__()
 
         self.in_channels = in_channels
@@ -81,14 +83,16 @@ class SAGPooling(torch.nn.Module):
     def reset_parameters(self):
         self.gnn.reset_parameters()
 
-    def forward(self, x, edge_index, edge_attr=None, batch=None, attn_input=None):
+    def forward(self, x, edge_index, edge_attr=None, batch=None,
+                attn_input=None):  # attn_input can differ from x in general
         """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 
         if attn_input is None:
             attn_input = x
-        attn_input = attn_input.unsqueeze(-1) if attn_input.dim() == 1 else attn_input
+        attn_input = attn_input.unsqueeze(-1) if attn_input.dim() == 1 \
+            else attn_input
 
         score = self.gnn(attn_input, edge_index).view(-1)
 
@@ -109,9 +113,14 @@ class SAGPooling(torch.nn.Module):
         return x, edge_index, edge_attr, batch, perm, score[perm]
 
     def __repr__(self):
-        return '{}({}, {}, ratio={}{}, min_score={}, multiplier={})'.format(self.__class__.__name__,
-                                                                            self.gnn_name, self.in_channels,
-                                                                            self.ratio,
-                                                                            '(ignored)' if self.min_score
-                                                                                           is not None else '',
-                                                                            self.min_score, self.multiplier)
+        return '{}({}, {}, ' \
+               'ratio={}{}, ' \
+               'min_score={}, ' \
+               'multiplier={})'.format(self.__class__.__name__,
+                                       self.gnn_name,
+                                       self.in_channels,
+                                       self.ratio,
+                                       '(ignored)' if self.
+                                       min_score is not None else '',
+                                       self.min_score,
+                                       self.multiplier)
