@@ -2,7 +2,7 @@ from ..datasets import TUDataset
 
 
 class SyntheticDataset(TUDataset):
-    r""" Synthetic COLOR and TRIANGLES datasets from the
+    r""" Synthetic COLORS and TRIANGLES datasets from the
     `"Understanding Attention and Generalization in Graph Neural
     Networks" <https://arxiv.org/abs/1905.02850>`_ paper
 
