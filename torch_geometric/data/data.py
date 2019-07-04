@@ -57,15 +57,8 @@ class Data(object):
         data.test_mask = torch.tensor([...], dtype=torch.uint8)
     """
 
-    def __init__(self,
-                 x=None,
-                 edge_index=None,
-                 edge_attr=None,
-                 y=None,
-                 pos=None,
-                 norm=None,
-                 face=None,
-                 **kwargs):
+    def __init__(self, x=None, edge_index=None, edge_attr=None, y=None,
+                 pos=None, norm=None, face=None, **kwargs):
         self.x = x
         self.edge_index = edge_index
         self.edge_attr = edge_attr
@@ -107,8 +100,7 @@ class Data(object):
     def keys(self):
         r"""Returns all names of graph attributes."""
         keys = [key for key in self.__dict__.keys() if self[key] is not None]
-        if '__num_nodes__' in keys:
-            keys.remove('__num_nodes__')
+        keys = [key for key in keys if key[:2] != '__' and key[-2:] != '__']
         return keys
 
     def __len__(self):
