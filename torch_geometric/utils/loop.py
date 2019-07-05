@@ -36,6 +36,35 @@ def remove_self_loops(edge_index, edge_attr=None):
     return edge_index, edge_attr
 
 
+def segregate_self_loops(edge_index, edge_weight=None, fill_value=1, num_nodes=None, coalesce=True):
+    r"""Seperates self-loop from the graph.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        edge_weight (Tensor, optional): Edge weights or multi-dimensional
+            edge features. (default: :obj:`None`)
+
+    :rtype: (:class:`LongTensor`, :class:`Tensor`, :class:`LongTensor`, :class:`Tensor`)
+    """
+    edge_index, edge_weight = add_remaining_self_loops(edge_index, edge_weight, fill_value, num_nodes)
+    row, col = edge_index
+    mask = row != col
+    inv_mask = 1 - mask
+
+    edge_weight_of_self_loop = edge_weight if edge_weight is None else edge_weight[inv_mask]
+    edge_index_of_self_loop = edge_index[:, inv_mask]
+    
+    if coalesce:
+        edge_index_of_self_loop[0], perm = edge_index_of_self_loop[0].sort()
+        edge_index_of_self_loop[1] = edge_index_of_self_loop[0]
+        edge_weight_of_self_loop = edge_weight_of_self_loop[perm]
+
+    edge_weight = edge_weight if edge_weight is None else edge_weight[mask]
+    edge_index = edge_index[:, mask]
+
+    return edge_index, edge_weight, edge_index_of_self_loop, edge_weight_of_self_loop
+
+
 def add_self_loops(edge_index, edge_weight=None, fill_value=1, num_nodes=None):
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
