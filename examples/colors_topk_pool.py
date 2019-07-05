@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.datasets import SyntheticDataset
+from torch_geometric.transforms import HandleNodeAttention
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import GraphConv, GINConv, TopKPooling
 from torch_geometric.nn import global_add_pool as gsum
@@ -13,7 +14,8 @@ from torch_scatter import scatter_mean
 
 train_path = osp.join(osp.dirname(osp.realpath(__file__)), '..',
                       'data', 'COLORS-3')
-dataset = SyntheticDataset(train_path, name='COLORS-3', use_node_attr=True)
+dataset = SyntheticDataset(train_path, name='COLORS-3', use_node_attr=True,
+                           transform=HandleNodeAttention())
 
 n_train, n_val, n_test_each = 500, 2500, 2500
 

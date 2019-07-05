@@ -9,7 +9,6 @@ from torch_sparse import coalesce
 from torch_geometric.read import read_txt_array
 from torch_geometric.utils import remove_self_loops
 from torch_geometric.data import Data
-from ..utils import softmax
 
 
 names = [
@@ -64,12 +63,6 @@ def read_tu_data(folder, prefix):
                                      num_nodes)
 
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
-
-    if 'node_attention' in names:
-        node_attention = read_file(folder, prefix, 'node_attention')
-        # Normalize attention to a unit sum
-        data.node_attention = softmax(node_attention, batch)
-
     data, slices = split(data, batch)
 
     return data, slices
@@ -101,8 +94,6 @@ def split(data, batch):
     slices = {'edge_index': edge_slice}
     if data.x is not None:
         slices['x'] = node_slice
-    if hasattr(data, 'node_attention') is not None:
-        slices['node_attention'] = node_slice
     if data.edge_attr is not None:
         slices['edge_attr'] = edge_slice
     if data.y is not None:

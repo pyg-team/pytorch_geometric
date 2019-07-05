@@ -5,14 +5,15 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.datasets import SyntheticDataset
-from torch_geometric.transforms import OneHotDegree
+from torch_geometric.transforms import OneHotDegree, HandleNodeAttention
+from torch_geometric.transforms import Compose
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import GraphConv, GINConv, SAGPooling
 from torch_geometric.nn import global_max_pool as gmp
-from torch_scatter import scatter_mean, scatter_add
+from torch_scatter import scatter_mean
 
 
-transform = OneHotDegree(max_degree=14)
+transform = Compose([HandleNodeAttention(), OneHotDegree(max_degree=14)])
 
 train_path = osp.join(osp.dirname(osp.realpath(__file__)),
                       '..', 'data', 'TRIANGLES')
@@ -50,7 +51,7 @@ class Net(torch.nn.Module):
 
     def forward(self, data):
         x, edge_index, batch = data.x, data.edge_index, data.batch
-        
+
         x = F.relu(self.conv1(x, edge_index))
         x, edge_index, _, batch, perm, score = self.pool1(x, edge_index,
                                                           None, batch)
