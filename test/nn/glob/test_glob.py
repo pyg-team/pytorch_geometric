@@ -30,14 +30,22 @@ def test_permuted_global_pool():
     batch = torch.cat([torch.zeros(N_1), torch.ones(N_2)]).to(torch.long)
     perm = torch.randperm(N_1 + N_2)
 
-    out_1 = global_add_pool(x, batch)
-    out_2 = global_add_pool(x[perm], batch[perm])
-    assert torch.allclose(out_1, out_2)
+    px = x[perm]
+    pbatch = batch[perm]
+    px1 = px[pbatch == 0]
+    px2 = px[pbatch == 1]
 
-    out_1 = global_mean_pool(x, batch)
-    out_2 = global_mean_pool(x[perm], batch[perm])
-    assert torch.allclose(out_1, out_2)
+    out = global_add_pool(px, pbatch)
+    assert out.size() == (2, 4)
+    assert torch.allclose(out[0], px1.sum(dim=0))
+    assert torch.allclose(out[1], px2.sum(dim=0))
 
-    out_1 = global_max_pool(x, batch)
-    out_2 = global_max_pool(x[perm], batch[perm])
-    assert torch.allclose(out_1, out_2)
+    out = global_mean_pool(px, pbatch)
+    assert out.size() == (2, 4)
+    assert torch.allclose(out[0], px1.mean(dim=0))
+    assert torch.allclose(out[1], px2.mean(dim=0))
+
+    out = global_max_pool(px, pbatch)
+    assert out.size() == (2, 4)
+    assert torch.allclose(out[0], px1.max(dim=0)[0])
+    assert torch.allclose(out[1], px2.max(dim=0)[0])
