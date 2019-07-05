@@ -11,26 +11,16 @@ from torch_geometric.nn import global_add_pool as gsum
 from torch_scatter import scatter_mean
 
 
-train_path = osp.join(osp.dirname(osp.realpath(__file__)),
-                      '..', 'data', 'COLORS3_train')
-train_dataset = SyntheticDataset(train_path,
-                                 name='COLORS3_train', use_node_attr=True)
-train_dataset = train_dataset.shuffle()
-train_loader = DataLoader(train_dataset, batch_size=60)
+train_path = osp.join(osp.dirname(osp.realpath(__file__)), '..',
+                      'data', 'COLORS-3')
+dataset = SyntheticDataset(train_path, name='COLORS-3', use_node_attr=True)
 
+n_train, n_val, n_test_each = 500, 2500, 2500
 
-val_path = osp.join(osp.dirname(osp.realpath(__file__)),
-                    '..', 'data', 'COLORS3_val')
-val_dataset = SyntheticDataset(val_path,
-                               name='COLORS3_val', use_node_attr=True)
-val_loader = DataLoader(val_dataset, batch_size=60)
-
-
-test_path = osp.join(osp.dirname(osp.realpath(__file__)),
-                     '..', 'data', 'COLORS3_test')
-test_dataset = SyntheticDataset(test_path,
-                                name='COLORS3_test', use_node_attr=True)
-test_loader = DataLoader(test_dataset, batch_size=60)
+train_dataset = dataset[:n_train]
+train_loader = DataLoader(train_dataset, batch_size=60, shuffle=True)
+val_loader = DataLoader(dataset[n_train:n_train + n_val], batch_size=60)
+test_loader = DataLoader(dataset[n_train + n_val:], batch_size=60)
 
 
 class Net(torch.nn.Module):
@@ -74,7 +64,7 @@ class Net(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
 # Initialize to optimal attention weights:
-model.pool1.weight.data = torch.tensor([0., 1., 0., 0.]).view(1, 4).to(device)
+# model.pool1.weight.data = torch.tensor([0., 1., 0., 0.]).view(1,4).to(device)
 
 print(model)
 print('model size: %d trainable parameters' %
@@ -105,24 +95,38 @@ def train(epoch):
 def test(loader):
     model.eval()
 
-    correct, ratio_all = 0, 0
+    correct, ratio_all = [], 0
     for data in loader:
         data = data.to(device)
         output, _, ratio = model(data)
         pred = output.round().long().view_as(data.y)
-        correct += pred.eq(data.y.long()).sum().item()
+        correct += list(pred.eq(data.y.long()).data.cpu().numpy())
         ratio_all += ratio
-    return correct, correct / len(loader.dataset), ratio_all / len(loader)
+    return np.array(correct), ratio_all / len(loader)
 
 
 for epoch in range(1, 301):
     loss = train(epoch)
-    train_correct, train_acc, train_ratio = test(train_loader)
-    val_correct, val_acc, val_ratio = test(val_loader)
-    test_correct, test_acc, test_ratio = test(test_loader)
-    print('Epoch: {:03d}, Loss: {:.5f}, Train Acc: {:.5f}, Val Acc: {:.5f}, '
-          'Test Acc: {:.5f} ({}/{}), '
+    train_correct, train_ratio = test(train_loader)
+    val_correct, val_ratio = test(val_loader)
+    test_correct, test_ratio = test(test_loader)
+
+    train_acc = train_correct.sum() / len(train_correct)
+    val_acc = val_correct.sum() / len(val_correct)
+
+    # Test on three different subsets
+    test_correct1 = test_correct[:n_test_each].sum()
+    test_correct2 = test_correct[n_test_each: 2*n_test_each].sum()
+    test_correct3 = test_correct[n_test_each*2:].sum()
+    assert len(test_correct) == n_test_each*3, len(test_correct)
+
+    print('Epoch: {:03d}, Loss: {:.5f}, Train Acc: {:.3f}, Val Acc: {:.3f}, '
+          'Test Acc Orig: {:.3f} ({}/{}), '
+          'Test Acc Large: {:.3f} ({}/{}), '
+          'Test Acc LargeC: {:.3f} ({}/{}), '
           'Train/Val/Test Pool Ratio={:.3f}/{:.3f}/{:.3f}'.
           format(epoch, loss, train_acc, val_acc,
-                 test_acc, test_correct, len(test_loader.dataset),
+                 test_correct1 / n_test_each, test_correct1, n_test_each,
+                 test_correct2 / n_test_each, test_correct2, n_test_each,
+                 test_correct3 / n_test_each, test_correct3, n_test_each,
                  train_ratio, val_ratio, test_ratio))

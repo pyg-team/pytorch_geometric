@@ -9,31 +9,22 @@ from torch_geometric.transforms import OneHotDegree
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import GraphConv, GINConv, SAGPooling
 from torch_geometric.nn import global_max_pool as gmp
-from torch_scatter import scatter_mean
+from torch_scatter import scatter_mean, scatter_add
 
 
 transform = OneHotDegree(max_degree=14)
 
 train_path = osp.join(osp.dirname(osp.realpath(__file__)),
-                      '..', 'data', 'TRIANGLES_train')
-train_dataset = SyntheticDataset(train_path,
-                                 name='TRIANGLES_train', transform=transform)
-train_dataset = train_dataset.shuffle()
-train_loader = DataLoader(train_dataset, batch_size=60)
+                      '..', 'data', 'TRIANGLES')
+dataset = SyntheticDataset(train_path, name='TRIANGLES', use_node_attr=True,
+                           transform=transform)
 
+n_train, n_val, n_test_each = 30000, 5000, 5000
 
-val_path = osp.join(osp.dirname(osp.realpath(__file__)),
-                    '..', 'data', 'TRIANGLES_val')
-val_dataset = SyntheticDataset(val_path,
-                               name='TRIANGLES_val', transform=transform)
-val_loader = DataLoader(val_dataset, batch_size=60)
-
-
-test_path = osp.join(osp.dirname(osp.realpath(__file__)),
-                     '..', 'data', 'TRIANGLES_test')
-test_dataset = SyntheticDataset(test_path,
-                                name='TRIANGLES_test', transform=transform)
-test_loader = DataLoader(test_dataset, batch_size=60)
+train_dataset = dataset[:n_train]
+train_loader = DataLoader(train_dataset, batch_size=60, shuffle=True)
+val_loader = DataLoader(dataset[n_train:n_train + n_val], batch_size=60)
+test_loader = DataLoader(dataset[n_train + n_val:], batch_size=60)
 
 
 class Net(torch.nn.Module):
@@ -59,20 +50,18 @@ class Net(torch.nn.Module):
 
     def forward(self, data):
         x, edge_index, batch = data.x, data.edge_index, data.batch
-
+        
         x = F.relu(self.conv1(x, edge_index))
-
         x, edge_index, _, batch, perm, score = self.pool1(x, edge_index,
                                                           None, batch)
         x = F.relu(self.conv2(x, edge_index))
-
         x, edge_index, _, batch, perm, score = self.pool2(x, edge_index,
                                                           None, batch)
         ratio = x.shape[0] / float(data.x.shape[0])
 
         x = F.relu(self.conv3(x, edge_index))
-
         x = gmp(x, batch)
+
         x = self.lin(x)
 
         # supervised node attention
@@ -115,24 +104,35 @@ def train(epoch):
 def test(loader):
     model.eval()
 
-    correct, ratio_all = 0, 0
+    correct, ratio_all = [], 0
     for data in loader:
         data = data.to(device)
         output, _, ratio = model(data)
         pred = output.round().long().view_as(data.y)
-        correct += pred.eq(data.y.long()).sum().item()
+        correct += list(pred.eq(data.y.long()).data.cpu().numpy())
         ratio_all += ratio
-    return correct, correct / len(loader.dataset), ratio_all / len(loader)
+    return np.array(correct), ratio_all / len(loader)
 
 
 for epoch in range(1, 101):
     loss = train(epoch)
-    train_correct, train_acc, train_ratio = test(train_loader)
-    val_correct, val_acc, val_ratio = test(val_loader)
-    test_correct, test_acc, test_ratio = test(test_loader)
-    print('Epoch: {:03d}, Loss: {:.5f}, Train Acc: {:.5f}, Val Acc: {:.5f}, '
-          'Test Acc: {:.5f} ({}/{}), '
+    train_correct, train_ratio = test(train_loader)
+    val_correct, val_ratio = test(val_loader)
+    test_correct, test_ratio = test(test_loader)
+
+    train_acc = train_correct.sum() / len(train_correct)
+    val_acc = val_correct.sum() / len(val_correct)
+
+    # Test on two different subsets
+    test_correct1 = test_correct[:n_test_each].sum()
+    test_correct2 = test_correct[n_test_each:].sum()
+    assert len(test_correct) == n_test_each*2, len(test_correct)
+
+    print('Epoch: {:03d}, Loss: {:.5f}, Train Acc: {:.3f}, Val Acc: {:.3f}, '
+          'Test Acc Orig: {:.3f} ({}/{}), '
+          'Test Acc Large: {:.3f} ({}/{}), '
           'Train/Val/Test Pool Ratio={:.3f}/{:.3f}/{:.3f}'.
           format(epoch, loss, train_acc, val_acc,
-                 test_acc, test_correct, len(test_loader.dataset),
+                 test_correct1 / n_test_each, test_correct1, n_test_each,
+                 test_correct2 / n_test_each, test_correct2, n_test_each,
                  train_ratio, val_ratio, test_ratio))
