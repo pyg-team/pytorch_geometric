@@ -9,6 +9,9 @@ from torch_geometric.nn import GINConv, TopKPooling
 from torch_geometric.nn import global_add_pool
 from torch_scatter import scatter_mean
 
+TUDataset.url = ('https://github.com/bknyaz/graph_attention_pool/raw/master/'
+                 'data')
+
 
 class HandleNodeAttention(object):
     def __call__(self, data):
@@ -30,9 +33,9 @@ class Net(torch.nn.Module):
     def __init__(self, in_channels):
         super(Net, self).__init__()
 
-        self.conv1 = GINConv(Seq(Lin(in_channels, 256), ReLU(), Lin(256, 64)))
+        self.conv1 = GINConv(Seq(Lin(in_channels, 64), ReLU(), Lin(64, 64)))
         self.pool1 = TopKPooling(in_channels, min_score=0.05)
-        self.conv2 = GINConv(Seq(Lin(64, 256), ReLU(), Lin(256, 64)))
+        self.conv2 = GINConv(Seq(Lin(64, 64), ReLU(), Lin(64, 64)))
 
         self.lin = torch.nn.Linear(64, 1)
 
@@ -103,12 +106,7 @@ for epoch in range(1, 301):
     val_acc = val_correct.sum().item() / val_correct.size(0)
     test_acc = test_correct.sum().item() / test_correct.size(0)
 
-    # Test on three different subsets.
-    test_acc1 = test_correct[:2500].sum().item() / 2500
-    test_acc2 = test_correct[2500:5000].sum().item() / 2500
-    test_acc3 = test_correct[5000:].sum().item() / 2500
-
     print(('Epoch: {:03d}, Loss: {:.4f}, Train: {:.3f}, Val: {:.3f}, '
            'Test: {:.3f}, Train/Val/Test Ratio={:.3f}/{:.3f}/{:.3f}').format(
-               epoch, loss, train_acc, val_acc, test_acc1, test_acc2,
-               test_acc3, train_ratio, val_ratio, test_ratio))
+               epoch, loss, train_acc, val_acc, test_acc, train_ratio,
+               val_ratio, test_ratio))
