@@ -31,13 +31,8 @@ class RGCNConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 num_relations,
-                 num_bases,
-                 bias=True,
-                 **kwargs):
+    def __init__(self, in_channels, out_channels, num_relations, num_bases,
+                 bias=True, **kwargs):
         super(RGCNConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
@@ -63,10 +58,10 @@ class RGCNConv(MessagePassing):
         uniform(size, self.root)
         uniform(size, self.bias)
 
-    def forward(self, x, edge_index, edge_type, edge_norm=None):
+    def forward(self, x, edge_index, edge_type, edge_norm=None, size=None):
         """"""
-        return self.propagate(
-            edge_index, x=x, edge_type=edge_type, edge_norm=edge_norm)
+        return self.propagate(edge_index, size=size, x=x, edge_type=edge_type,
+                              edge_norm=edge_norm)
 
     def message(self, x_j, edge_index_j, edge_type, edge_norm):
         w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))
