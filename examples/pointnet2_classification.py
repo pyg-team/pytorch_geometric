@@ -6,8 +6,7 @@ from torch.nn import Sequential as Seq, Linear as Lin, ReLU, BatchNorm1d as BN
 from torch_geometric.datasets import ModelNet
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
-from torch_geometric.nn import PointConv, fps, radius
-from torch_geometric.utils import scatter_
+from torch_geometric.nn import PointConv, fps, radius, global_max_pool
 
 
 class SAModule(torch.nn.Module):
@@ -19,8 +18,8 @@ class SAModule(torch.nn.Module):
 
     def forward(self, x, pos, batch):
         idx = fps(pos, batch, ratio=self.ratio)
-        row, col = radius(
-            pos, pos[idx], self.r, batch, batch[idx], max_num_neighbors=64)
+        row, col = radius(pos, pos[idx], self.r, batch, batch[idx],
+                          max_num_neighbors=64)
         edge_index = torch.stack([col, row], dim=0)
         x = self.conv(x, (pos, pos[idx]), edge_index)
         pos, batch = pos[idx], batch[idx]
@@ -34,7 +33,7 @@ class GlobalSAModule(torch.nn.Module):
 
     def forward(self, x, pos, batch):
         x = self.nn(torch.cat([x, pos], dim=1))
-        x = scatter_('max', x, batch)
+        x = global_max_pool(x, batch)
         pos = pos.new_zeros((x.size(0), 3))
         batch = torch.arange(x.size(0), device=batch.device)
         return x, pos, batch
@@ -103,10 +102,10 @@ if __name__ == '__main__':
     pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
     train_dataset = ModelNet(path, '10', True, transform, pre_transform)
     test_dataset = ModelNet(path, '10', False, transform, pre_transform)
-    train_loader = DataLoader(
-        train_dataset, batch_size=32, shuffle=True, num_workers=6)
-    test_loader = DataLoader(
-        test_dataset, batch_size=32, shuffle=False, num_workers=6)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True,
+                              num_workers=6)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False,
+                             num_workers=6)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Net().to(device)
