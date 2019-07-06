@@ -34,8 +34,9 @@ def test_topk_pooling():
     x = torch.randn((num_nodes, in_channels))
 
     pool = TopKPooling(in_channels, ratio=0.5)
-    assert pool.__repr__() == 'TopKPooling(16, ratio=0.5)'
+    assert pool.__repr__() == 'TopKPooling(16, ratio=0.5, ' \
+                              'min_score=None, multiplier=None)'
 
-    x, edge_index, _, _, _ = pool(x, edge_index)
+    x, edge_index, _, _, _, _ = pool(x, edge_index)
     assert x.size() == (num_nodes // 2, in_channels)
     assert edge_index.size() == (2, 2)
