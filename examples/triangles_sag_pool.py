@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_geometric.datasets import SyntheticDataset
+from torch_geometric.datasets import TUDataset
 from torch_geometric.transforms import OneHotDegree, HandleNodeAttention
 from torch_geometric.transforms import Compose
 from torch_geometric.data import DataLoader
@@ -16,8 +16,8 @@ transform = Compose([HandleNodeAttention(), OneHotDegree(max_degree=14)])
 
 train_path = osp.join(
     osp.dirname(osp.realpath(__file__)), '..', 'data', 'TRIANGLES')
-dataset = SyntheticDataset(train_path, name='TRIANGLES', use_node_attr=True,
-                           transform=transform)
+dataset = TUDataset(train_path, name='TRIANGLES', use_node_attr=True,
+                    transform=transform)
 
 n_train, n_val, n_test_each = 30000, 5000, 5000
 
