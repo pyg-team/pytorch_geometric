@@ -104,18 +104,17 @@ class TopKPooling(torch.nn.Module):
             :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
             This value is ignored if min_score is not None.
             (default: :obj:`0.5`)
-        min_score (float): Minimal node score, which is used to compute indices
-            of pooled nodes :math:`\mathbf{i} : \mathbf{y}_i > \tilde{\alpha}`.
-            When this value is not None, the ratio argument is ignored.
-            (default: None)
-        multiplier (float): Coefficient by which multiply features
-            after pooling. This can be useful for large graphs and
-            when min_score is used.
-            (default: None)
+        min_score (float, optional): Minimal node score :math:`\tilde{\alpha}`
+            which is used to compute indices of pooled nodes
+            :math:`\mathbf{i} = \mathbf{y}_i > \tilde{\alpha}`.
+            When this value is not :obj:`None`, the :arg:`ratio` argument is
+            ignored. (default: :obj:`None`)
+        multiplier (float, optional): Coefficient by which features gets
+            multiplied after pooling. This can be useful for large graphs and
+            when :arg:`min_score` is used. (default: :obj:`1`)
     """
 
-    def __init__(self, in_channels, ratio=0.5, min_score=None,
-                 multiplier=None):
+    def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1):
         super(TopKPooling, self).__init__()
 
         self.in_channels = in_channels
@@ -153,7 +152,7 @@ class TopKPooling(torch.nn.Module):
         perm = topk(score, self.ratio, batch, min_score=self.min_score)
 
         x = x[perm] * score[perm].view(-1, 1)
-        if self.multiplier is not None:
+        if self.multiplier != 1:
             x = x * self.multiplier
 
         batch = batch[perm]
