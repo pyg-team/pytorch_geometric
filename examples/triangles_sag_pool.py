@@ -5,12 +5,28 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.datasets import TUDataset
-from torch_geometric.transforms import OneHotDegree, HandleNodeAttention
+from torch_geometric.transforms import OneHotDegree
 from torch_geometric.transforms import Compose
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import GINConv, SAGPooling
 from torch_geometric.nn import global_max_pool as gmp
 from torch_scatter import scatter_mean
+
+
+class HandleNodeAttention(object):
+    def __call__(self, data):
+        if data.x.dim() == 1:
+            data.x = data.x.unsqueeze(-1)
+        data.node_attention = torch.softmax(data.x[:, 0], dim=0)
+        if data.x.shape[1] > 1:
+            data.x = data.x[:, 1:]
+        else:
+            # not supposed to use node attention as node features,
+            # because it is typically not available in the val/test set
+            data.x = None
+
+        return data
+
 
 transform = Compose([HandleNodeAttention(), OneHotDegree(max_degree=14)])
 

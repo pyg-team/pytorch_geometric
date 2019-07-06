@@ -5,11 +5,26 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.datasets import TUDataset
-from torch_geometric.transforms import HandleNodeAttention
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import GINConv, TopKPooling
 from torch_geometric.nn import global_add_pool as gsum
 from torch_scatter import scatter_mean
+
+
+class HandleNodeAttention(object):
+    def __call__(self, data):
+        if data.x.dim() == 1:
+            data.x = data.x.unsqueeze(-1)
+        data.node_attention = torch.softmax(data.x[:, 0], dim=0)
+        if data.x.shape[1] > 1:
+            data.x = data.x[:, 1:]
+        else:
+            # not supposed to use node attention as node features,
+            # because it is typically not available in the val/test set
+            data.x = None
+
+        return data
+
 
 train_path = osp.join(
     osp.dirname(osp.realpath(__file__)), '..', 'data', 'COLORS-3')
