@@ -1,7 +1,7 @@
 import torch
 from torch_geometric.nn import GCNConv, GATConv, SAGEConv, GraphConv
 from torch_geometric.nn.pool.topk_pool import topk, filter_adj
-from ...utils import softmax
+from torch_geometric.utils import softmax
 
 
 class SAGPooling(torch.nn.Module):
@@ -84,7 +84,7 @@ class SAGPooling(torch.nn.Module):
         self.gnn.reset_parameters()
 
     def forward(self, x, edge_index, edge_attr=None, batch=None,
-                attn_input=None):  # attn_input can differ from x in general
+                attn_input=None):  # `attn_input` can differ from x in general.
         """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
@@ -113,14 +113,8 @@ class SAGPooling(torch.nn.Module):
         return x, edge_index, edge_attr, batch, perm, score[perm]
 
     def __repr__(self):
-        return '{}({}, {}, ' \
-               'ratio={}{}, ' \
-               'min_score={}, ' \
-               'multiplier={})'.format(self.__class__.__name__,
-                                       self.gnn_name,
-                                       self.in_channels,
-                                       self.ratio,
-                                       '(ignored)' if self.
-                                       min_score is not None else '',
-                                       self.min_score,
-                                       self.multiplier)
+        return '{}({}, {}, {}={}, multiplier={})'.format(
+            self.__class__.__name__, self.gnn_name, self.in_channels,
+            'ratio' if self.min_score is None else 'min_score',
+            self.ratio if self.min_score is None else self.min_score,
+            self.multiplier)

@@ -1,10 +1,10 @@
 import torch
 from torch.nn import Parameter
 from torch_scatter import scatter_add, scatter_max
+from torch_geometric.utils import softmax
 
 from ..inits import uniform
 from ...utils.num_nodes import maybe_num_nodes
-from ...utils import softmax
 
 
 def topk(x, ratio, batch, min_score=None, tol=1e-7):
@@ -131,7 +131,7 @@ class TopKPooling(torch.nn.Module):
         uniform(size, self.weight)
 
     def forward(self, x, edge_index, edge_attr=None, batch=None,
-                attn_input=None):  # attn_input can differ from x in general
+                attn_input=None):  # `attn_input` can differ from x in general.
         """"""
 
         if batch is None:
@@ -162,13 +162,8 @@ class TopKPooling(torch.nn.Module):
         return x, edge_index, edge_attr, batch, perm, score[perm]
 
     def __repr__(self):
-        return '{}({}, ' \
-               'ratio={}{}, ' \
-               'min_score={}, ' \
-               'multiplier={})'.format(self.__class__.__name__,
-                                       self.in_channels,
-                                       self.ratio,
-                                       '(ignored)' if self.
-                                       min_score is not None else '',
-                                       self.min_score,
-                                       self.multiplier)
+        return '{}({}, {}={}, multiplier={})'.format(
+            self.__class__.__name__, self.in_channels,
+            'ratio' if self.min_score is None else 'min_score',
+            self.ratio if self.min_score is None else self.min_score,
+            self.multiplier)
