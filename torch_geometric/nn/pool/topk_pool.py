@@ -107,11 +107,11 @@ class TopKPooling(torch.nn.Module):
         min_score (float, optional): Minimal node score :math:`\tilde{\alpha}`
             which is used to compute indices of pooled nodes
             :math:`\mathbf{i} = \mathbf{y}_i > \tilde{\alpha}`.
-            When this value is not :obj:`None`, the :arg:`ratio` argument is
+            When this value is not :obj:`None`, the :obj:`ratio` argument is
             ignored. (default: :obj:`None`)
         multiplier (float, optional): Coefficient by which features gets
             multiplied after pooling. This can be useful for large graphs and
-            when :arg:`min_score` is used. (default: :obj:`1`)
+            when :obj:`min_score` is used. (default: :obj:`1`)
     """
 
     def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1):
@@ -137,10 +137,9 @@ class TopKPooling(torch.nn.Module):
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 
-        if attn_input is None:
-            attn_input = x
-        attn_input = attn_input.unsqueeze(-1) if attn_input.dim() == 1 \
-            else attn_input
+        attn_input = x if attn_input is None else attn_input
+        if attn_input.dim() == 1:
+            attn_input = attn_input.unsqueeze(-1)
 
         score = (attn_input * self.weight).sum(dim=-1)
 
@@ -149,11 +148,9 @@ class TopKPooling(torch.nn.Module):
         else:
             score = softmax(score, batch)
 
-        perm = topk(score, self.ratio, batch, min_score=self.min_score)
-
+        perm = topk(score, self.ratio, batch, self.min_score)
         x = x[perm] * score[perm].view(-1, 1)
-        if self.multiplier != 1:
-            x = x * self.multiplier
+        x = self.multiplier * x if self.multiplier != 1 else x
 
         batch = batch[perm]
         edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
