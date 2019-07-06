@@ -45,7 +45,7 @@ class Net(torch.nn.Module):
         out = F.relu(self.conv1(x, edge_index))
 
         out, edge_index, _, batch, perm, score = self.pool1(
-            out, edge_index, None, batch, attn_input=x)
+            out, edge_index, None, batch, attn=x)
         ratio = out.size(0) / x.size(0)
 
         out = F.relu(self.conv2(out, edge_index))

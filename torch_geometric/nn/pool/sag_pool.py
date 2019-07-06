@@ -83,17 +83,14 @@ class SAGPooling(torch.nn.Module):
     def reset_parameters(self):
         self.gnn.reset_parameters()
 
-    def forward(self, x, edge_index, edge_attr=None, batch=None,
-                attn_input=None):  # `attn_input` can differ from x in general.
+    def forward(self, x, edge_index, edge_attr=None, batch=None, attn=None):
         """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 
-        attn_input = x if attn_input is None else attn_input
-        if attn_input.dim() == 1:
-            attn_input = attn_input.unsqueeze(-1)
-
-        score = self.gnn(attn_input, edge_index).view(-1)
+        attn = x if attn is None else attn
+        attn = attn.unsqueeze(-1) if attn.dim() == 1 else attn
+        score = self.gnn(attn, edge_index).view(-1)
 
         if self.min_score is None:
             score = torch.tanh(score)

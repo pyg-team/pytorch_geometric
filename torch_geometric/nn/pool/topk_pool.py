@@ -129,18 +129,15 @@ class TopKPooling(torch.nn.Module):
         size = self.in_channels
         uniform(size, self.weight)
 
-    def forward(self, x, edge_index, edge_attr=None, batch=None,
-                attn_input=None):  # `attn_input` can differ from x in general.
+    def forward(self, x, edge_index, edge_attr=None, batch=None, attn=None):
         """"""
 
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 
-        attn_input = x if attn_input is None else attn_input
-        if attn_input.dim() == 1:
-            attn_input = attn_input.unsqueeze(-1)
-
-        score = (attn_input * self.weight).sum(dim=-1)
+        attn = x if attn is None else attn
+        attn = attn.unsqueeze(-1) if attn.dim() == 1 else attn
+        score = (attn * self.weight).sum(dim=-1)
 
         if self.min_score is None:
             score = torch.tanh(score / self.weight.norm(p=2, dim=-1))
