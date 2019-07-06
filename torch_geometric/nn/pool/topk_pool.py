@@ -9,12 +9,11 @@ from ...utils.num_nodes import maybe_num_nodes
 
 def topk(x, ratio, batch, min_score=None, tol=1e-7):
     if min_score is not None:
-        # make sure that we do not drop all nodes in a graph
+        # Make sure that we do not drop all nodes in a graph.
         scores_max = scatter_max(x, batch)[0][batch] - tol
-        scores_min = torch.min(scores_max, x.new_full((1, ), min_score))
+        scores_min = scores_max.clamp(max=min_score)
 
         perm = torch.nonzero(x > scores_min).view(-1)
-
     else:
         num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
         batch_size, max_num_nodes = num_nodes.size(0), num_nodes.max().item()
