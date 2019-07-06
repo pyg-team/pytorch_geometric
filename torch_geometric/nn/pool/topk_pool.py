@@ -11,7 +11,7 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
     if min_score is not None:
         # make sure that we do not drop all nodes in a graph
         scores_max = scatter_max(x, batch)[0][batch] - tol
-        scores_min = torch.min(scores_max, x.new_full((1,), min_score))
+        scores_min = torch.min(scores_max, x.new_full((1, ), min_score))
 
         perm = torch.nonzero(x > scores_min).view(-1)
 
@@ -26,7 +26,7 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
         index = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
         index = (index - cum_num_nodes[batch]) + (batch * max_num_nodes)
 
-        dense_x = x.new_full((batch_size * max_num_nodes,), -2)
+        dense_x = x.new_full((batch_size * max_num_nodes, ), -2)
         dense_x[index] = x
         dense_x = dense_x.view(batch_size, max_num_nodes)
 
@@ -87,11 +87,11 @@ class TopKPooling(torch.nn.Module):
     if min_score :math:`\tilde{\alpha}` is a value in [0, 1]:
 
         .. math::
-            \mathbf{y} &= softmax(\mathbf{X}\mathbf{p})
+            \mathbf{y} &= \mathrm{softmax}(\mathbf{X}\mathbf{p})
 
-            \mathbf{i} &: \mathbf{y}_i > \tilde{\alpha}
+            \mathbf{i} &= \mathbf{y}_i > \tilde{\alpha}
 
-            \mathbf{X}^{\prime} &= (\mathbf{X} \odot (\mathbf{y}))_{\mathbf{i}}
+            \mathbf{X}^{\prime} &= (\mathbf{X} \odot \mathbf{y})_{\mathbf{i}}
 
             \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}},
 
@@ -157,8 +157,8 @@ class TopKPooling(torch.nn.Module):
             x = x * self.multiplier
 
         batch = batch[perm]
-        edge_index, edge_attr = filter_adj(
-            edge_index, edge_attr, perm, num_nodes=score.size(0))
+        edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
+                                           num_nodes=score.size(0))
 
         return x, edge_index, edge_attr, batch, perm, score[perm]
 

@@ -25,11 +25,11 @@ class SAGPooling(torch.nn.Module):
     if min_score :math:`\tilde{\alpha}` is a value in [0, 1]:
 
         .. math::
-            \mathbf{y} &= softmax(\textrm{GNN}(\mathbf{X}, \mathbf{A}))
+            \mathbf{y} &= \mathrm{softmax}(\textrm{GNN}(\mathbf{X},\mathbf{A}))
 
-            \mathbf{i} &: \mathbf{y}_i > \tilde{\alpha}
+            \mathbf{i} &= \mathbf{y}_i > \tilde{\alpha}
 
-            \mathbf{X}^{\prime} &= (\mathbf{X} \odot (\mathbf{y}))_{\mathbf{i}}
+            \mathbf{X}^{\prime} &= (\mathbf{X} \odot \mathbf{y})_{\mathbf{i}}
 
             \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}},
 
@@ -58,8 +58,8 @@ class SAGPooling(torch.nn.Module):
             neural network layer.
     """
 
-    def __init__(self, in_channels, ratio=0.5, min_score=None,
-                 multiplier=None, gnn='GraphConv', **kwargs):
+    def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=None,
+                 gnn='GraphConv', **kwargs):
         super(SAGPooling, self).__init__()
 
         self.in_channels = in_channels
