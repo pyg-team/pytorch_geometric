@@ -45,15 +45,8 @@ class GMMConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 dim,
-                 kernel_size,
-                 aggr='mean',
-                 root_weight=True,
-                 bias=True,
-                 **kwargs):
+    def __init__(self, in_channels, out_channels, dim, kernel_size,
+                 aggr='mean', root_weight=True, bias=True, **kwargs):
         super(GMMConv, self).__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
@@ -62,14 +55,16 @@ class GMMConv(MessagePassing):
         self.kernel_size = kernel_size
         self.root_weight = root_weight
 
-        self.lin = torch.nn.Linear(
-            in_channels, out_channels * kernel_size, bias=False)
+        self.g = torch.nn.Linear(in_channels, out_channels * kernel_size,
+                                 bias=False)
         self.mu = Parameter(torch.Tensor(kernel_size, dim))
         self.sigma = Parameter(torch.Tensor(kernel_size, dim))
+
         if root_weight:
             self.root = Parameter(torch.Tensor(in_channels, out_channels))
         else:
             self.register_parameter('root', None)
+
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
@@ -78,7 +73,7 @@ class GMMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        reset(self.lin)
+        reset(self.g)
         glorot(self.mu)
         glorot(self.sigma)
         glorot(self.root)
@@ -89,7 +84,7 @@ class GMMConv(MessagePassing):
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
 
-        out = self.lin(x).view(-1, self.kernel_size, self.out_channels)
+        out = self.g(x).view(-1, self.kernel_size, self.out_channels)
         out = self.propagate(edge_index, x=out, pseudo=pseudo)
 
         if self.root is not None:
