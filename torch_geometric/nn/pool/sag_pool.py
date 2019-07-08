@@ -43,9 +43,13 @@ class SAGPooling(torch.nn.Module):
             :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
             This value is ignored if min_score is not None.
             (default: :obj:`0.5`)
-        gnn (string, optional): Specifies which graph neural network layer to
-            use for calculating projection scores (one of
-            :obj:`"GCN"`, :obj:`"GAT"` or :obj:`"SAGE"`). (default: :obj:`GCN`)
+        GNN (torch.nn.Module, optional): A graph neural network layer for
+            calculating projection scores (one of
+            :class:`torch_geometric.nn.conv.GraphConv`,
+            :class:`torch_geometric.nn.conv.GCNConv`,
+            :class:`torch_geometric.nn.conv.GATConv` or
+            :class:`torch_geometric.nn.conv.SAGEConv`). (default:
+            :class:`torch_geometric.nn.conv.GraphConv`)
         min_score (float, optional): Minimal node score :math:`\tilde{\alpha}`
             which is used to compute indices of pooled nodes
             :math:`\mathbf{i} = \mathbf{y}_i > \tilde{\alpha}`.
@@ -54,29 +58,22 @@ class SAGPooling(torch.nn.Module):
         multiplier (float, optional): Coefficient by which features gets
             multiplied after pooling. This can be useful for large graphs and
             when :obj:`min_score` is used. (default: :obj:`1`)
+        nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
+            (default: :obj:`torch.tanh`)
         **kwargs (optional): Additional parameters for initializing the graph
             neural network layer.
     """
 
-    def __init__(self, in_channels, ratio=0.5, gnn='GraphConv', min_score=None,
-                 multiplier=1, **kwargs):
+    def __init__(self, in_channels, ratio=0.5, GNN=GraphConv, min_score=None,
+                 multiplier=1, nonlinearity=torch.tanh, **kwargs):
         super(SAGPooling, self).__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio
+        self.gnn = GNN(in_channels, 1, **kwargs)
         self.min_score = min_score
         self.multiplier = multiplier
-        self.gnn_name = gnn
-
-        assert gnn in ['GraphConv', 'GCN', 'GAT', 'SAGE']
-        if gnn == 'GCN':
-            self.gnn = GCNConv(self.in_channels, 1, **kwargs)
-        elif gnn == 'GAT':
-            self.gnn = GATConv(self.in_channels, 1, **kwargs)
-        elif gnn == 'SAGE':
-            self.gnn = SAGEConv(self.in_channels, 1, **kwargs)
-        else:
-            self.gnn = GraphConv(self.in_channels, 1, **kwargs)
+        self.nonlinearity = nonlinearity
 
         self.reset_parameters()
 
@@ -93,7 +90,7 @@ class SAGPooling(torch.nn.Module):
         score = self.gnn(attn, edge_index).view(-1)
 
         if self.min_score is None:
-            score = torch.tanh(score)
+            score = self.nonlinearity(score)
         else:
             score = softmax(score, batch)
 
@@ -109,7 +106,8 @@ class SAGPooling(torch.nn.Module):
 
     def __repr__(self):
         return '{}({}, {}, {}={}, multiplier={})'.format(
-            self.__class__.__name__, self.gnn_name, self.in_channels,
+            self.__class__.__name__, self.gnn.__class__.__name__,
+            self.in_channels,
             'ratio' if self.min_score is None else 'min_score',
             self.ratio if self.min_score is None else self.min_score,
             self.multiplier)

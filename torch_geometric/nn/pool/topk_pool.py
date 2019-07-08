@@ -111,15 +111,19 @@ class TopKPooling(torch.nn.Module):
         multiplier (float, optional): Coefficient by which features gets
             multiplied after pooling. This can be useful for large graphs and
             when :obj:`min_score` is used. (default: :obj:`1`)
+        nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
+            (default: :obj:`torch.tanh`)
     """
 
-    def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1):
+    def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1,
+                 nonlinearity=torch.tanh):
         super(TopKPooling, self).__init__()
 
         self.in_channels = in_channels
         self.ratio = ratio
         self.min_score = min_score
         self.multiplier = multiplier
+        self.nonlinearity = nonlinearity
 
         self.weight = Parameter(torch.Tensor(1, in_channels))
 
@@ -140,7 +144,7 @@ class TopKPooling(torch.nn.Module):
         score = (attn * self.weight).sum(dim=-1)
 
         if self.min_score is None:
-            score = torch.tanh(score / self.weight.norm(p=2, dim=-1))
+            score = self.nonlinearity(score / self.weight.norm(p=2, dim=-1))
         else:
             score = softmax(score, batch)
 
