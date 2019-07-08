@@ -10,9 +10,6 @@ from torch_geometric.nn import GINConv, SAGPooling
 from torch_geometric.nn import global_max_pool
 from torch_scatter import scatter_mean
 
-TUDataset.url = ('https://github.com/bknyaz/graph_attention_pool/raw/master/'
-                 'data')
-
 
 class HandleNodeAttention(object):
     def __call__(self, data):
@@ -58,8 +55,8 @@ class Net(torch.nn.Module):
         x = global_max_pool(x, batch)
         x = self.lin(x).view(-1)
 
-        attn_loss = F.kl_div(
-            torch.log(score + 1e-14), data.attn[perm], reduction='none')
+        attn_loss = F.kl_div(torch.log(score + 1e-14), data.attn[perm],
+                             reduction='none')
         attn_loss = scatter_mean(attn_loss, batch)
 
         return x, attn_loss, ratio
