@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn import GCNConv, GATConv, SAGEConv, GraphConv
+from torch_geometric.nn import GraphConv
 from torch_geometric.nn.pool.topk_pool import topk, filter_adj
 from torch_geometric.utils import softmax
 
