@@ -193,9 +193,9 @@ class NeighborSampler(object):
         for l in range(self.num_hops):
             e_id = neighbor_sampler(n_ids[-1], self.cumdeg, self.size[l])
             n_ids.append(self.edge_index_j.index_select(0, e_id))
-
-            e_ids.append(self.e_assoc[e_id])
-            edge_indices.append(self.data.edge_index[:, e_ids[-1]])
+            e_ids.append(self.e_assoc.index_select(0, e_id))
+            edge_index = self.data.edge_index[:, e_ids[-1]]
+            edge_indices.append(edge_index)
 
         n_id = torch.unique(torch.cat(n_ids, dim=0), sorted=False)
         size = (n_id.size(0), n_id.size(0))
