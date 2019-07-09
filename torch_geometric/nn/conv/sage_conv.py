@@ -21,15 +21,15 @@ class SAGEConv(MessagePassing):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        normalize (bool, optional): If set to :obj:`False`, output features
-            will not be :math:`\ell_2`-normalized. (default: :obj:`True`)
+        normalize (bool, optional): If set to :obj:`True`, output features
+            will be :math:`\ell_2`-normalized. (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self, in_channels, out_channels, normalize=True, bias=True,
+    def __init__(self, in_channels, out_channels, normalize=False, bias=True,
                  **kwargs):
         super(SAGEConv, self).__init__(aggr='mean', **kwargs)
 

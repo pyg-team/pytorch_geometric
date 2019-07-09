@@ -1,7 +1,7 @@
-# import sys
-# import random
-# import os.path as osp
-# import shutil
+import sys
+import random
+import os.path as osp
+import shutil
 
 import torch
 import torch.nn.functional as F
@@ -48,50 +48,31 @@ def test_sampler():
 
 
 def test_cora():
-    # root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = Planetoid('/tmp/Cora', 'Cora')
-    # dataset = Planetoid(root, 'Cora')
+    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    dataset = Planetoid(root, 'Cora')
     data = dataset[0]
 
-    loader = NeighborSampler(data, size=1.0, num_hops=2, batch_size=64,
+    loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
                              shuffle=True, drop_last=False, bipartite=False)
 
     class Net(torch.nn.Module):
         def __init__(self):
             super(Net, self).__init__()
-            self.conv1 = SAGEConv(dataset.num_features, 16, normalize=False)
-            self.conv2 = SAGEConv(16, dataset.num_classes, normalize=False)
+            self.conv1 = SAGEConv(dataset.num_features, 16)
+            self.conv2 = SAGEConv(16, 16)
+            self.conv2 = SAGEConv(16, dataset.num_classes)
 
-        def forward_all(self, x, edge_index):
+        def forward(self, x, edge_index):
             x = F.relu(self.conv1(x, edge_index))
-            return x
             return self.conv2(x, edge_index)
-
-        def forward_batch(self, x, data_flow):
-            print(data_flow.batched_n_id)
-            # print(x.size())
-            assert x.size(0) > data_flow[0].edge_index.max().item()
-            print(data_flow[0].edge_index.max())
-            edge_index = data_flow[0].edge_index
-            print('1', edge_index)
-            mask = edge_index[1] == data_flow.batched_n_id
-            edge_index = edge_index[:, mask]
-            print('2', edge_index)
-
-            x = F.relu(self.conv1(x, edge_index))
-            return x
-            return self.conv2(x, data_flow[1].edge_index)
 
     model = Net()
 
-    out_all = model.forward_all(data.x, data.edge_index)
-    print(out_all[0])
+    out_all = model(data.x, data.edge_index)
 
-    for data_flow in loader(torch.tensor([0])):
-        x = data.x[data_flow[0].n_id]
-        out = model.forward_batch(x, data_flow)[data_flow.batched_n_id]
-        print(out[0])
-        # assert out_all[0].tolist() == out[0].tolist()
-        break
+    for subdata in loader(data.train_mask):
+        x = data.x[subdata.n_id]
+        out = model(x, subdata.edge_index)[subdata.sub_b_id]
+        assert torch.allclose(out_all[subdata.b_id], out)
 
-    # shutil.rmtree(root)
+    shutil.rmtree(root)

@@ -4,6 +4,7 @@ import torch
 from torch_cluster import neighbor_sampler
 from torch_geometric.utils import degree
 from torch_geometric.utils.repeat import repeat
+from torch_geometric.data import Data
 
 from .data import size_repr
 
@@ -88,7 +89,12 @@ class NeighborSampler(object):
             batch size. If set to :obj:`False` and the size of graph is not
             divisible by the batch size, the last batch will be smaller.
             (default: :obj:`False`)
-        bipartite (bool, optional): (default: :obj:`True`)
+        bipartite (bool, optional): If set to :obj:`False`, will not return a
+            generator of :obj:`DataFlow` to mark the computation flow, but
+            instead will return a :obj:`torch_geometric.data.Data` object
+            holding the subgraph information around each mini-batch.
+            If set to :obj:`False`, the :obj:`add_self_loops` option is
+            ignored. (default: :obj:`True`)
         add_self_loops (bool, optional): If set to :obj:`True`, will add
             self-loops to each sampled neigborhood. (default: :obj:`False`)
         flow (string, optional): The flow direction of message passing
@@ -181,35 +187,36 @@ class NeighborSampler(object):
 
         return data_flow
 
-    def __produce_symmetric_data_flow__(self, n_id):
-        r"""Produces a :obj:`DataFlow` object with a symmetric adjacency matrix
-        for a given mini-batch :obj:`n_id`."""
-        data_flow = DataFlow(n_id, self.flow)
+    def __produce_subgraph__(self, b_id):
+        r"""Produces a :obj:`Data` object holding the subgraph data for a given
+        mini-batch :obj:`b_id`."""
 
-        n_ids = [n_id]
+        n_ids = [b_id]
         e_ids = []
         edge_indices = []
 
         for l in range(self.num_hops):
             e_id = neighbor_sampler(n_ids[-1], self.cumdeg, self.size[l])
-            n_ids.append(self.edge_index_j.index_select(0, e_id))
+            n_id = self.edge_index_j.index_select(0, e_id)
+            n_id = n_id.unique(sorted=False)
+            n_ids.append(n_id)
             e_ids.append(self.e_assoc.index_select(0, e_id))
-            edge_index = self.data.edge_index[:, e_ids[-1]]
+            edge_index = self.data.edge_index.index_select(1, e_ids[-1])
             edge_indices.append(edge_index)
 
         n_id = torch.unique(torch.cat(n_ids, dim=0), sorted=False)
-        size = (n_id.size(0), n_id.size(0))
         self.tmp[n_id] = torch.arange(n_id.size(0))
-        edge_indices = [self.tmp[edge_index] for edge_index in edge_indices]
+        e_id = torch.cat(e_ids, dim=0)
+        edge_index = self.tmp[torch.cat(edge_indices, dim=1)]
 
-        data_flow.blocks = [
-            Block(n_id, e_id, edge_index, size)
-            for e_id, edge_index in zip(e_ids, edge_indices)
-        ]
+        num_nodes = n_id.size(0)
+        idx = edge_index[0] * num_nodes + edge_index[1]
+        idx, inv = idx.unique(sorted=False, return_inverse=True)
+        edge_index = torch.stack([idx / num_nodes, idx % num_nodes], dim=0)
+        e_id = e_id.new_zeros(edge_index.size(1)).scatter_(0, inv, e_id)
 
-        data_flow.batched_n_id = self.tmp[data_flow.n_id]
-
-        return data_flow
+        return Data(edge_index=edge_index, e_id=e_id, n_id=n_id, b_id=b_id,
+                    sub_b_id=self.tmp[b_id], num_nodes=num_nodes)
 
     def __call__(self, subset=None):
         r"""Returns a generator of :obj:`DataFlow` that iterates over the nodes
@@ -223,7 +230,7 @@ class NeighborSampler(object):
         if self.bipartite:
             produce = self.__produce_bipartite_data_flow__
         else:
-            produce = self.__produce_symmetric_data_flow__
+            produce = self.__produce_subgraph__
 
         for n_id in self.__get_batches__(subset):
             yield produce(n_id)
