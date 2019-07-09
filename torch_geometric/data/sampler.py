@@ -10,8 +10,9 @@ from .data import size_repr
 
 
 class Block(object):
-    def __init__(self, n_id, e_id, edge_index, size):
+    def __init__(self, n_id, res_n_id, e_id, edge_index, size):
         self.n_id = n_id
+        self.res_n_id = res_n_id
         self.e_id = e_id
         self.edge_index = edge_index
         self.size = size
@@ -33,12 +34,12 @@ class DataFlow(object):
     def batch_size(self):
         return self.n_id.size(0)
 
-    def append(self, n_id, e_id, edge_index):
+    def append(self, n_id, sub_n_id, e_id, edge_index):
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
         size = [None, None]
         size[i] = self.__last_n_id__.size(0)
         size[j] = n_id.size(0)
-        block = Block(n_id, e_id, edge_index, tuple(size))
+        block = Block(n_id, sub_n_id, e_id, edge_index, tuple(size))
         self.blocks.append(block)
         self.__last_n_id__ = n_id
 
@@ -155,13 +156,18 @@ class NeighborSampler(object):
             e_id = neighbor_sampler(n_id, self.cumdeg, self.size[l])
 
             new_n_id = self.edge_index_j.index_select(0, e_id)
-            if self.add_self_loops:
-                new_n_id = torch.cat([new_n_id, n_id], dim=0)
-            new_n_id = new_n_id.unique(sorted=False)
             e_id = self.e_assoc[e_id]
 
-            edges = [None, None]
+            if self.add_self_loops:
+                new_n_id = torch.cat([new_n_id, n_id], dim=0)
+                new_n_id, inv = new_n_id.unique(sorted=False,
+                                                return_inverse=True)
+                res_n_id = inv[-n_id.size(0):]
+            else:
+                new_n_id = new_n_id.unique(sorted=False)
+                res_n_id = None
 
+            edges = [None, None]
             edge_index_i = self.data.edge_index[self.i, e_id]
             if self.add_self_loops:
                 edge_index_i = torch.cat([edge_index_i, n_id], dim=0)
@@ -183,7 +189,7 @@ class NeighborSampler(object):
             e_id = None if self.add_self_loops else e_id
             n_id = new_n_id
 
-            data_flow.append(n_id, e_id, edge_index)
+            data_flow.append(n_id, res_n_id, e_id, edge_index)
 
         return data_flow
 

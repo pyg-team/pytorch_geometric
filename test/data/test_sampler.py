@@ -52,27 +52,44 @@ def test_cora():
     dataset = Planetoid(root, 'Cora')
     data = dataset[0]
 
-    loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
-                             shuffle=True, drop_last=False, bipartite=False)
-
     class Net(torch.nn.Module):
         def __init__(self):
             super(Net, self).__init__()
             self.conv1 = SAGEConv(dataset.num_features, 16)
             self.conv2 = SAGEConv(16, 16)
-            self.conv2 = SAGEConv(16, dataset.num_classes)
+            self.conv3 = SAGEConv(16, dataset.num_classes)
+
+        def forward_data_flow(self, x, data_flow):
+            block = data_flow[0]
+            x = F.relu(self.conv1(x, block.edge_index, size=block.size))
+            block = data_flow[1]
+            x = F.relu(self.conv2(x, block.edge_index, size=block.size))
+            block = data_flow[2]
+            x = self.conv3(x, block.edge_index, size=block.size)
+            return x
 
         def forward(self, x, edge_index):
             x = F.relu(self.conv1(x, edge_index))
-            return self.conv2(x, edge_index)
+            x = F.relu(self.conv2(x, edge_index))
+            return self.conv3(x, edge_index)
 
     model = Net()
 
     out_all = model(data.x, data.edge_index)
 
+    loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
+                             shuffle=False, drop_last=False, bipartite=True,
+                             add_self_loops=True)
+
+    for data_flow in loader(data.train_mask):
+        out = model.forward_data_flow(data.x[data_flow[0].n_id], data_flow)
+        assert torch.allclose(out_all[data_flow.n_id], out)
+
+    loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
+                             shuffle=False, drop_last=False, bipartite=False)
+
     for subdata in loader(data.train_mask):
-        x = data.x[subdata.n_id]
-        out = model(x, subdata.edge_index)[subdata.sub_b_id]
+        out = model(data.x[subdata.n_id], subdata.edge_index)[subdata.sub_b_id]
         assert torch.allclose(out_all[subdata.b_id], out)
 
     shutil.rmtree(root)
