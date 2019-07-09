@@ -88,6 +88,7 @@ class NeighborSampler(object):
             batch size. If set to :obj:`False` and the size of graph is not
             divisible by the batch size, the last batch will be smaller.
             (default: :obj:`False`)
+        bipartite (bool, optional): (default: :obj:`True`)
         add_self_loops (bool, optional): If set to :obj:`True`, will add
             self-loops to each sampled neigborhood. (default: :obj:`False`)
         flow (string, optional): The flow direction of message passing
@@ -95,14 +96,8 @@ class NeighborSampler(object):
             (default: :obj:`"source_to_target"`)
     """
 
-    def __init__(self,
-                 data,
-                 size,
-                 num_hops,
-                 batch_size=1,
-                 shuffle=False,
-                 drop_last=False,
-                 add_self_loops=False,
+    def __init__(self, data, size, num_hops, batch_size=1, shuffle=False,
+                 drop_last=False, bipartite=True, add_self_loops=False,
                  flow='source_to_target'):
 
         self.data = data
@@ -111,6 +106,7 @@ class NeighborSampler(object):
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.drop_last = drop_last
+        self.bipartite = bipartite
         self.add_self_loops = add_self_loops
         self.flow = flow
 
@@ -144,10 +140,9 @@ class NeighborSampler(object):
         assert len(subsets) > 0
         return subsets
 
-    def __produce__(self, n_id):
-        r"""Produces a :obj:`DataFlow` object for a given mini-batch
-        :obj:`n_id`."""
-
+    def __produce_bipartite_data_flow__(self, n_id):
+        r"""Produces a :obj:`DataFlow` object with a bipartite assignment
+        matrix for a given mini-batch :obj:`n_id`."""
         data_flow = DataFlow(n_id, self.flow)
 
         for l in range(self.num_hops):
@@ -186,6 +181,36 @@ class NeighborSampler(object):
 
         return data_flow
 
+    def __produce_symmetric_data_flow__(self, n_id):
+        r"""Produces a :obj:`DataFlow` object with a symmetric adjacency matrix
+        for a given mini-batch :obj:`n_id`."""
+        data_flow = DataFlow(n_id, self.flow)
+
+        n_ids = [n_id]
+        e_ids = []
+        edge_indices = []
+
+        for l in range(self.num_hops):
+            e_id = neighbor_sampler(n_ids[-1], self.cumdeg, self.size[l])
+            n_ids.append(self.edge_index_j.index_select(0, e_id))
+
+            e_ids.append(self.e_assoc[e_id])
+            edge_indices.append(self.data.edge_index[:, e_ids[-1]])
+
+        n_id = torch.unique(torch.cat(n_ids, dim=0), sorted=False)
+        size = (n_id.size(0), n_id.size(0))
+        self.tmp[n_id] = torch.arange(n_id.size(0))
+        edge_indices = [self.tmp[edge_index] for edge_index in edge_indices]
+
+        data_flow.blocks = [
+            Block(n_id, e_id, edge_index, size)
+            for e_id, edge_index in zip(e_ids, edge_indices)
+        ]
+
+        data_flow.batched_n_id = self.tmp[data_flow.n_id]
+
+        return data_flow
+
     def __call__(self, subset=None):
         r"""Returns a generator of :obj:`DataFlow` that iterates over the nodes
         in :obj:`subset` in a mini-batch fashion.
@@ -195,6 +220,10 @@ class NeighborSampler(object):
                 propagete messages to. If set to :obj:`None`, will iterate over
                 all nodes in the graph. (default: :obj:`None`)
         """
+        if self.bipartite:
+            produce = self.__produce_bipartite_data_flow__
+        else:
+            produce = self.__produce_symmetric_data_flow__
+
         for n_id in self.__get_batches__(subset):
-            data_flow = self.__produce__(n_id)
-            yield data_flow
+            yield produce(n_id)
