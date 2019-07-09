@@ -28,10 +28,10 @@ class SAGENet(torch.nn.Module):
     def forward(self, x, data_flow):
         data = data_flow[0]
         x = x[data.n_id]
-        x = F.relu(self.conv1((x, None), data.edge_index, data.size))
+        x = F.relu(self.conv1((x, None), data.edge_index, size=data.size))
         x = F.dropout(x, p=0.5, training=self.training)
         data = data_flow[1]
-        x = self.conv2((x, None), data.edge_index, data.size)
+        x = self.conv2((x, None), data.edge_index, size=data.size)
         return F.log_softmax(x, dim=1)
 
 
@@ -45,10 +45,10 @@ class GATNet(torch.nn.Module):
     def forward(self, x, data_flow):
         data = data_flow[0]
         x = x[data.n_id]
-        x = F.elu(self.conv1((x, None), data.edge_index, data.size))
+        x = F.elu(self.conv1((x, None), data.edge_index, size=data.size))
         x = F.dropout(x, p=0.6, training=self.training)
         data = data_flow[1]
-        x = self.conv2((x, None), data.edge_index, data.size)
+        x = self.conv2((x, None), data.edge_index, size=data.size)
         return F.log_softmax(x, dim=1)
 
 
