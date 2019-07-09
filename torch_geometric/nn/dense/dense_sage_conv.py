@@ -11,7 +11,7 @@ class DenseSAGEConv(torch.nn.Module):
     :rtype: :class:`Tensor`
     """
 
-    def __init__(self, in_channels, out_channels, normalize=True, bias=True):
+    def __init__(self, in_channels, out_channels, normalize=False, bias=True):
         super(DenseSAGEConv, self).__init__()
 
         self.in_channels = in_channels
