@@ -34,12 +34,12 @@ class DataFlow(object):
     def batch_size(self):
         return self.n_id.size(0)
 
-    def append(self, n_id, sub_n_id, e_id, edge_index):
+    def append(self, n_id, res_n_id, e_id, edge_index):
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
         size = [None, None]
         size[i] = self.__last_n_id__.size(0)
         size[j] = n_id.size(0)
-        block = Block(n_id, sub_n_id, e_id, edge_index, tuple(size))
+        block = Block(n_id, res_n_id, e_id, edge_index, tuple(size))
         self.blocks.append(block)
         self.__last_n_id__ = n_id
 
