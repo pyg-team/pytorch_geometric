@@ -15,6 +15,7 @@ from .signed_conv import SignedConv
 from .dna_conv import DNAConv
 from .point_conv import PointConv
 from .gmm_conv import GMMConv
+from .gmm_conv2 import GMMConv2
 from .spline_conv import SplineConv
 from .nn_conv import NNConv, ECConv
 from .edge_conv import EdgeConv, DynamicEdgeConv
@@ -41,6 +42,7 @@ __all__ = [
     'DNAConv',
     'PointConv',
     'GMMConv',
+    'GMMConv2',
     'SplineConv',
     'NNConv',
     'ECConv',
