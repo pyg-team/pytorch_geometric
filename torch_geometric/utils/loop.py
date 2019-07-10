@@ -117,14 +117,15 @@ def add_remaining_self_loops(edge_index, edge_weight=None, fill_value=1,
     row, col = edge_index
 
     mask = row != col
-    loop_weight = torch.full(
-        (num_nodes, ), fill_value,
-        dtype=None if edge_weight is None else edge_weight.dtype,
-        device=edge_index.device)
 
     if edge_weight is not None:
         assert edge_weight.numel() == edge_index.size(1)
         inv_mask = ~mask
+
+        loop_weight = torch.full(
+            (num_nodes, ), fill_value,
+            dtype=None if edge_weight is None else edge_weight.dtype,
+            device=edge_index.device)
         remaining_edge_weight = edge_weight[inv_mask]
         if remaining_edge_weight.numel() > 0:
             loop_weight[row[inv_mask]] = remaining_edge_weight

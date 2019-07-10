@@ -2,9 +2,9 @@ from __future__ import division
 
 import torch
 from torch_cluster import neighbor_sampler
-from torch_geometric.utils import degree
-from torch_geometric.utils.repeat import repeat
 from torch_geometric.data import Data
+from torch_geometric.utils import degree, segregate_self_loops
+from torch_geometric.utils.repeat import repeat
 
 from .data import size_repr
 
@@ -117,12 +117,20 @@ class NeighborSampler(object):
         self.add_self_loops = add_self_loops
         self.flow = flow
 
+        self.edge_index = data.edge_index
+        self.e_id = torch.arange(self.edge_index.size(1))
+        if bipartite and add_self_loops:
+            tmp = segregate_self_loops(self.edge_index, self.e_id)
+            self.edge_index, self.e_id = tmp[0], tmp[1]
+            self.e_id_loop = self.e_id.new_full((data.num_nodes, ), -1)
+            self.e_id_loop[tmp[2][0]] = tmp[3]
+
         assert flow in ['source_to_target', 'target_to_source']
         self.i, self.j = (0, 1) if flow == 'target_to_source' else (1, 0)
 
-        self.edge_index_i, self.e_assoc = data.edge_index[self.i].sort()
-        self.edge_index_j = data.edge_index[self.j, self.e_assoc]
-        deg = degree(self.edge_index_i, data.num_nodes, dtype=torch.long)
+        edge_index_i, self.e_assoc = self.edge_index[self.i].sort()
+        self.edge_index_j = self.edge_index[self.j, self.e_assoc]
+        deg = degree(edge_index_i, data.num_nodes, dtype=torch.long)
         self.cumdeg = torch.cat([deg.new_zeros(1), deg.cumsum(0)])
 
         self.tmp = torch.empty(data.num_nodes, dtype=torch.long)
@@ -168,14 +176,14 @@ class NeighborSampler(object):
                 res_n_id = None
 
             edges = [None, None]
-            edge_index_i = self.data.edge_index[self.i, e_id]
+            edge_index_i = self.edge_index[self.i, e_id]
             if self.add_self_loops:
                 edge_index_i = torch.cat([edge_index_i, n_id], dim=0)
 
             self.tmp[n_id] = torch.arange(n_id.size(0))
             edges[self.i] = self.tmp[edge_index_i]
 
-            edge_index_j = self.data.edge_index[self.j, e_id]
+            edge_index_j = self.edge_index[self.j, e_id]
             if self.add_self_loops:
                 edge_index_j = torch.cat([edge_index_j, n_id], dim=0)
 
@@ -184,9 +192,9 @@ class NeighborSampler(object):
 
             edge_index = torch.stack(edges, dim=0)
 
-            # Remove the edge identifier when adding self-loops to prevent
-            # misused behavior.
-            e_id = None if self.add_self_loops else e_id
+            e_id = self.e_id[e_id]
+            if self.add_self_loops:
+                e_id = torch.cat([e_id, self.e_id_loop[n_id]])
             n_id = new_n_id
 
             data_flow.append(n_id, res_n_id, e_id, edge_index)

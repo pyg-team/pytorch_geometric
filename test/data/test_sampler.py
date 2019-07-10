@@ -4,12 +4,13 @@ import os.path as osp
 import shutil
 
 import torch
-import torch.nn.functional as F
+from torch.nn.functional import relu
 
 from torch_geometric.utils import erdos_renyi_graph
 from torch_geometric.data import Data, NeighborSampler
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn.conv import SAGEConv
+import torch_geometric.transforms as T
 
 
 def test_sampler():
@@ -48,48 +49,68 @@ def test_sampler():
 
 
 def test_cora():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = Planetoid(root, 'Cora')
-    data = dataset[0]
-
     class Net(torch.nn.Module):
-        def __init__(self):
+        def __init__(self, in_channels, out_channels):
             super(Net, self).__init__()
-            self.conv1 = SAGEConv(dataset.num_features, 16)
+            self.conv1 = SAGEConv(in_channels, 16)
             self.conv2 = SAGEConv(16, 16)
-            self.conv3 = SAGEConv(16, dataset.num_classes)
+            self.conv3 = SAGEConv(16, out_channels)
 
-        def forward_data_flow(self, x, data_flow):
+        def forward_data_flow(self, x, edge_weight, data_flow):
             block = data_flow[0]
-            x = F.relu(self.conv1(x, block.edge_index, size=block.size))
+            weight = edge_weight[block.e_id]
+            weight[block.e_id == -1] = 1
+            x = relu(self.conv1(x, block.edge_index, weight, block.size))
             block = data_flow[1]
-            x = F.relu(self.conv2(x, block.edge_index, size=block.size))
+            weight = edge_weight[block.e_id]
+            weight[block.e_id == -1] = 1
+            x = relu(self.conv2(x, block.edge_index, weight, block.size))
             block = data_flow[2]
-            x = self.conv3(x, block.edge_index, size=block.size)
+            weight = edge_weight[block.e_id]
+            weight[block.e_id == -1] = 1
+            x = self.conv3(x, block.edge_index, weight, block.size)
             return x
 
-        def forward(self, x, edge_index):
-            x = F.relu(self.conv1(x, edge_index))
-            x = F.relu(self.conv2(x, edge_index))
-            return self.conv3(x, edge_index)
+        def forward(self, x, edge_index, edge_weight):
+            x = relu(self.conv1(x, edge_index, edge_weight))
+            x = relu(self.conv2(x, edge_index, edge_weight))
+            return self.conv3(x, edge_index, edge_weight)
 
-    model = Net()
+    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    dataset = Planetoid(root, 'Cora')
+    model = Net(dataset.num_features, dataset.num_classes)
 
-    out_all = model(data.x, data.edge_index)
+    data1 = dataset[0]
+    data1.edge_weight = torch.rand(data1.num_edges)
 
-    loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
-                             shuffle=False, drop_last=False, bipartite=True,
-                             add_self_loops=True)
+    data2 = T.AddSelfLoops()(dataset[0])
+    data2.edge_weight = torch.rand(data2.num_edges)
 
-    for data_flow in loader(data.train_mask):
-        out = model.forward_data_flow(data.x[data_flow[0].n_id], data_flow)
-        assert torch.allclose(out_all[data_flow.n_id], out)
+    data3 = dataset[0]
+    loop = torch.stack([torch.arange(100, 200), torch.arange(100, 200)], dim=0)
+    data3.edge_index = torch.cat([data3.edge_index, loop], dim=1)
+    data3.edge_weight = torch.rand(data3.num_edges)
 
-    loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
-                             shuffle=False, drop_last=False, bipartite=False)
+    for data in [data1, data2, data3]:
+        out_all = model(data.x, data.edge_index, data.edge_weight)
 
-    for subdata in loader(data.train_mask):
-        out = model(data.x[subdata.n_id], subdata.edge_index)[subdata.sub_b_id]
-        assert torch.allclose(out_all[subdata.b_id], out)
+        loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
+                                 shuffle=False, drop_last=False,
+                                 bipartite=True, add_self_loops=True)
+
+        for data_flow in loader(data.train_mask):
+            out = model.forward_data_flow(data.x[data_flow[0].n_id],
+                                          data.edge_weight, data_flow)
+            assert torch.allclose(out_all[data_flow.n_id], out)
+
+        loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
+                                 shuffle=False, drop_last=False,
+                                 bipartite=False)
+
+        for subdata in loader(data.train_mask):
+            out = model(data.x[subdata.n_id], subdata.edge_index,
+                        data.edge_weight[subdata.e_id])
+            out = out[subdata.sub_b_id]
+            assert torch.allclose(out_all[subdata.b_id], out)
 
     shutil.rmtree(root)
