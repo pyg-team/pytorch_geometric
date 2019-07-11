@@ -9,6 +9,7 @@ from torch_geometric.utils import to_undirected
 from ..inits import reset
 
 EPS = 1e-15
+MAX_LOGVAR = 10
 
 
 def negative_sampling(pos_edge_index, num_nodes):
@@ -229,6 +230,7 @@ class VGAE(GAE):
     def encode(self, *args, **kwargs):
         """"""
         self.__mu__, self.__logvar__ = self.encoder(*args, **kwargs)
+        self.__logvar__ = self.__logvar__.clamp(max=MAX_LOGVAR)
         z = self.reparametrize(self.__mu__, self.__logvar__)
         return z
 
@@ -245,7 +247,8 @@ class VGAE(GAE):
                 computation of :math:`\log\sigma^2`.(default: :obj:`None`)
         """
         mu = self.__mu__ if mu is None else mu
-        logvar = self.__logvar__ if logvar is None else logvar
+        logvar = self.__logvar__ if logvar is None else logvar.clamp(
+            max=MAX_LOGVAR)
         return -0.5 * torch.mean(
             torch.sum(1 + logvar - mu**2 - logvar.exp(), dim=1))
 
