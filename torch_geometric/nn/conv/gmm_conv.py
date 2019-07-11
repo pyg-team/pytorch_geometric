@@ -2,7 +2,7 @@ import torch
 from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 
-from ..inits import zeros, glorot, reset
+from ..inits import zeros, glorot
 
 EPS = 1e-15
 
@@ -33,6 +33,9 @@ class GMMConv(MessagePassing):
         out_channels (int): Size of each output sample.
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int): Number of kernels :math:`K`.
+        separate_gaussians (bool, optional): If set to :obj:`True`, will
+            learn separate GMMs for every pair of input and output channel,
+            inspired by traditional CNNs. (default: :obj:`False`)
         aggr (string, optional): The aggregation operator to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
@@ -46,19 +49,27 @@ class GMMConv(MessagePassing):
     """
 
     def __init__(self, in_channels, out_channels, dim, kernel_size,
-                 aggr='mean', root_weight=True, bias=True, **kwargs):
+                 separate_gaussians=False, aggr='mean', root_weight=True,
+                 bias=True, **kwargs):
         super(GMMConv, self).__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.dim = dim
         self.kernel_size = kernel_size
-        self.root_weight = root_weight
+        self.separate_gaussians = separate_gaussians
 
-        self.g = torch.nn.Linear(in_channels, out_channels * kernel_size,
-                                 bias=False)
-        self.mu = Parameter(torch.Tensor(kernel_size, dim))
-        self.sigma = Parameter(torch.Tensor(kernel_size, dim))
+        self.g = Parameter(
+            torch.Tensor(in_channels, out_channels * kernel_size))
+
+        if not self.separate_gaussians:
+            self.mu = Parameter(torch.Tensor(kernel_size, dim))
+            self.sigma = Parameter(torch.Tensor(kernel_size, dim))
+        else:
+            self.mu = Parameter(
+                torch.Tensor(in_channels, out_channels, kernel_size, dim))
+            self.sigma = Parameter(
+                torch.Tensor(in_channels, out_channels, kernel_size, dim))
 
         if root_weight:
             self.root = Parameter(torch.Tensor(in_channels, out_channels))
@@ -73,7 +84,7 @@ class GMMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        reset(self.g)
+        glorot(self.g)
         glorot(self.mu)
         glorot(self.sigma)
         glorot(self.root)
@@ -84,8 +95,13 @@ class GMMConv(MessagePassing):
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
 
-        out = self.g(x).view(-1, self.kernel_size, self.out_channels)
-        out = self.propagate(edge_index, x=out, pseudo=pseudo)
+        N, K, M = x.size(0), self.kernel_size, self.out_channels
+
+        if not self.separate_gaussians:
+            out = torch.matmul(x, self.g).view(N, K, M)
+            out = self.propagate(edge_index, x=out, pseudo=pseudo)
+        else:
+            out = self.propagate(edge_index, x=x, pseudo=pseudo)
 
         if self.root is not None:
             out = out + torch.matmul(x, self.root)
@@ -96,13 +112,27 @@ class GMMConv(MessagePassing):
         return out
 
     def message(self, x_j, pseudo):
-        (E, D), K = pseudo.size(), self.mu.size(0)
+        F, M = self.in_channels, self.out_channels
+        (E, D), K = pseudo.size(), self.kernel_size
 
-        gaussian = -0.5 * (pseudo.view(E, 1, D) - self.mu.view(1, K, D))**2
-        gaussian = gaussian / (EPS + self.sigma.view(1, K, D)**2)
-        gaussian = torch.exp(gaussian.sum(dim=-1, keepdim=True))  # [E, K, 1]
+        if not self.separate_gaussians:
+            gaussian = -0.5 * (
+                pseudo.view(E, 1, D) - self.mu.view(1, K, D)).pow(2)
+            gaussian = gaussian / (EPS + self.sigma.view(1, K, D).pow(2))
+            gaussian = torch.exp(gaussian.sum(dim=-1))  # [E, K]
 
-        return (x_j * gaussian).sum(dim=1)
+            return (x_j.view(E, K, M) * gaussian.view(E, K, 1)).sum(dim=-2)
+
+        else:
+            gaussian = -0.5 * (pseudo.view(E, 1, 1, 1, D) - self.mu.view(
+                1, F, M, K, D)).pow(2)
+            gaussian = gaussian / (EPS + self.sigma.view(1, F, M, K, D).pow(2))
+            gaussian = torch.exp(gaussian.sum(dim=-1))  # [E, F, M, K]
+
+            gaussian = gaussian * self.g.view(1, F, M, K)
+            gaussian = gaussian.sum(dim=-1)  # [E, F, M]
+
+            return (x_j.view(E, F, 1) * gaussian).sum(dim=-2)  # [E, M]
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,

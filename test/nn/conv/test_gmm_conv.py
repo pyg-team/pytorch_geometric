@@ -12,3 +12,7 @@ def test_gmm_conv():
     conv = GMMConv(in_channels, out_channels, dim=3, kernel_size=25)
     assert conv.__repr__() == 'GMMConv(16, 32)'
     assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
+
+    conv = GMMConv(in_channels, out_channels, dim=3, kernel_size=25,
+                   separate_gaussians=True)
+    assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
