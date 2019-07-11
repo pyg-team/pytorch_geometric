@@ -11,3 +11,4 @@ exclude_lines =
     raise
     except
     register_parameter
+    warn
