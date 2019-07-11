@@ -1,11 +1,10 @@
 from torch import nn
 import torch
 import torch.nn.functional as F
-from torch_scatter import scatter_add, scatter_max, scatter_mean
+from torch_scatter import scatter_add, scatter_max
 import numpy as np
 from torch_sparse import coalesce
-
-DEBUG = False
+from collections import namedtuple
 
 
 def _compute_new_edges(old_to_new_node_idx, edge_index, n_nodes):
@@ -19,13 +18,20 @@ def _compute_new_edges(old_to_new_node_idx, edge_index, n_nodes):
 
 class EdgePoolLayer(nn.Module):
 
-    EDGE_SCORE_SOFTMAX = "softmax"
-    EDGE_SCORE_TANH = "tanh"
-    EDGE_SCORE_SIGMOID = "sigmoid"
+    unpool_description = namedtuple("UnpoolDescription",
+                                    ["edge_index",
+                                     "old_to_new_node_idx",
+                                     "batch",
+                                     "new_nodes_edge_scores"
+                                     ])
 
     @staticmethod
     def compute_edge_score_softmax(raw_edge_score, edge_index):
-        max_per_node = scatter_max(raw_edge_score, edge_index[1], fill_value=-np.inf)[0]
+        max_per_node = scatter_max(
+            raw_edge_score,
+            edge_index[1],
+            fill_value=-np.inf
+        )[0]
         edge_logits = raw_edge_score - max_per_node[edge_index[1]]
         edge_exps = torch.exp(edge_logits)
         edge_exps_by_node = scatter_add(edge_exps, edge_index[1])
@@ -58,7 +64,10 @@ class EdgePoolLayer(nn.Module):
         self.fc1 = nn.Linear(2 * in_channels, 1)
 
     def _compute_raw_edge_score(self, x, edge_index):
-        edge_node_features = torch.cat([x[edge_index[0]], x[edge_index[1]]], dim=1)
+        edge_node_features = torch.cat(
+            [x[edge_index[0]], x[edge_index[1]]],
+            dim=1
+        )
         edge_raw = self.fc1(edge_node_features)[:, 0]
         if self.dropout_prob and self.training:
             edge_raw = F.dropout(edge_raw, p=self.dropout_prob)
@@ -92,7 +101,6 @@ class EdgePoolLayer(nn.Module):
                 continue
             to_node = np_edge_index[1, edge_idx]
             if to_node not in nodes_remaining:
-                # we cannot merge this, because one of the nodes has already been merged
                 continue
             edges_chosen.append(edge_idx)
             old_to_new_node_idx[from_node] = node_counter
@@ -114,26 +122,34 @@ class EdgePoolLayer(nn.Module):
         )
 
         if nodes_remaining:
-            remaining_node_scores = torch.ones((new_x.shape[0] - len(edges_chosen),), device = x.device)
+            remaining_node_scores = torch.ones(
+                (new_x.shape[0] - len(edges_chosen),),
+                device=x.device
+            )
             new_nodes_edge_scores = torch.cat(
                 [edge_score[edges_chosen], remaining_node_scores]
             )
         else:
             new_nodes_edge_scores = edge_score[edges_chosen]
 
-        if nodes_remaining and self.add_self_loops:
-            raise NotImplementedError("With self-loops, none should be remaining")
-
         new_x = new_x * new_nodes_edge_scores[:, None]
 
-        new_edge_index = _compute_new_edges(old_to_new_node_idx, edge_index, n_nodes=new_x.shape[0])
+        new_edge_index = _compute_new_edges(
+            old_to_new_node_idx,
+            edge_index,
+            n_nodes=new_x.shape[0]
+        )
         new_batch, _ = scatter_max(src=batch, index=old_to_new_node_idx)
 
-        unpool_info = [edge_index, old_to_new_node_idx, batch, new_nodes_edge_scores]
+        unpool_info = self.unpool_description(
+            edge_index=edge_index,
+            old_to_new_node_idx=old_to_new_node_idx,
+            batch=batch,
+            new_nodes_edge_scores=new_nodes_edge_scores
+        )
         return new_x, new_edge_index, new_batch, unpool_info, edges_chosen
 
     def unpool(self, x, unpool_info):
-        old_edge_index, old_to_new_node_idx, batch, new_nodes_edge_scores = unpool_info
-        x = x / new_nodes_edge_scores[:, None]
-        new_x = x[old_to_new_node_idx]
-        return new_x, old_edge_index, batch
+        x = x / unpool_info.new_nodes_edge_scores[:, None]
+        new_x = x[unpool_info.old_to_new_node_idx]
+        return new_x, unpool_info.old_edge_index, unpool_info.batch
