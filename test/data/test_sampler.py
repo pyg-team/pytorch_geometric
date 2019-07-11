@@ -105,8 +105,9 @@ def test_cora():
                                  bipartite=False)
 
         for subdata in loader(data.train_mask):
-            out = model(data.x[subdata.n_id], subdata.edge_index,
-                        data.edge_weight[subdata.e_id])
+            weight = data.edge_weight
+            weight = None if weight is None else weight[subdata.e_id]
+            out = model(data.x[subdata.n_id], subdata.edge_index, weight)
             out = out[subdata.sub_b_id]
             assert torch.allclose(out_all[subdata.b_id], out)
 
