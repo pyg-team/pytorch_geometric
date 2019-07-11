@@ -8,6 +8,24 @@ from collections import namedtuple
 
 
 def _compute_new_edges(old_to_new_node_idx, edge_index, n_nodes):
+    """
+    Computes the new edge index given a mapping from old to new node idx.
+
+    Args:
+        old_to_new_node_idx (int tensor): The mapping from old nodes to new
+            ones. Each entry is an old node, and the value is the index of
+            the new node it is mapped to.
+        edge_index (int tensor): The old edge index.
+        n_nodes (int): The total number of nodes in the graph (this might
+            not be computable from edge_index if there are nodes that are
+            isolated).
+
+    Returns:
+        new_edge_index (int tensor): The new edge_index. These contain
+        self-loops iff multiple old nodes have been mapped to the same
+        new node and have an edge between them. Depending on your
+        usecase, either strip self-loops or add the missing ones.
+    """
     new_edge_index = torch.stack([
         old_to_new_node_idx[edge_index[0]],
         old_to_new_node_idx[edge_index[1]]
