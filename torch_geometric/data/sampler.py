@@ -1,7 +1,9 @@
 from __future__ import division
+import warnings
 
 import torch
 from torch_cluster import neighbor_sampler
+import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.utils import degree, segregate_self_loops
 from torch_geometric.utils.repeat import repeat
@@ -121,7 +123,7 @@ class NeighborSampler(object):
         self.e_id = torch.arange(self.edge_index.size(1))
         if bipartite and add_self_loops:
             tmp = segregate_self_loops(self.edge_index, self.e_id)
-            self.edge_index, self.e_id = tmp[0], tmp[1]
+            self.edge_index, self.e_id, self.edge_index_loop = tmp[:3]
             self.e_id_loop = self.e_id.new_full((data.num_nodes, ), -1)
             self.e_id_loop[tmp[2][0]] = tmp[3]
 
@@ -194,7 +196,20 @@ class NeighborSampler(object):
 
             e_id = self.e_id[e_id]
             if self.add_self_loops:
-                e_id = torch.cat([e_id, self.e_id_loop[n_id]])
+                if self.edge_index_loop.size(1) == self.data.num_nodes:
+                    # Only set `e_id` if all self-loops were initially passed
+                    # to the graph.
+                    e_id = torch.cat([e_id, self.e_id_loop[n_id]])
+                else:
+                    e_id = None
+                    if torch_geometric.is_debug_enabled():
+                        warnings.warn(
+                            ('Could not add edge identifiers to the DataFlow'
+                             'object due to missing initial self-loops. '
+                             'Please make sure that your graph already '
+                             'contains self-loops in case you want to use '
+                             'edge-conditioned operators.'))
+
             n_id = new_n_id
 
             data_flow.append(n_id, res_n_id, e_id, edge_index)

@@ -58,16 +58,13 @@ def test_cora():
 
         def forward_data_flow(self, x, edge_weight, data_flow):
             block = data_flow[0]
-            weight = edge_weight[block.e_id]
-            weight[block.e_id == -1] = 1
+            weight = None if block.e_id is None else edge_weight[block.e_id]
             x = relu(self.conv1(x, block.edge_index, weight, block.size))
             block = data_flow[1]
-            weight = edge_weight[block.e_id]
-            weight[block.e_id == -1] = 1
+            weight = None if block.e_id is None else edge_weight[block.e_id]
             x = relu(self.conv2(x, block.edge_index, weight, block.size))
             block = data_flow[2]
-            weight = edge_weight[block.e_id]
-            weight[block.e_id == -1] = 1
+            weight = None if block.e_id is None else edge_weight[block.e_id]
             x = self.conv3(x, block.edge_index, weight, block.size)
             return x
 
@@ -81,7 +78,7 @@ def test_cora():
     model = Net(dataset.num_features, dataset.num_classes)
 
     data1 = dataset[0]
-    data1.edge_weight = torch.rand(data1.num_edges)
+    data1.edge_weight = None
 
     data2 = T.AddSelfLoops()(dataset[0])
     data2.edge_weight = torch.rand(data2.num_edges)
@@ -89,7 +86,7 @@ def test_cora():
     data3 = dataset[0]
     loop = torch.stack([torch.arange(100, 200), torch.arange(100, 200)], dim=0)
     data3.edge_index = torch.cat([data3.edge_index, loop], dim=1)
-    data3.edge_weight = torch.rand(data3.num_edges)
+    data3.edge_weight = None
 
     for data in [data1, data2, data3]:
         out_all = model(data.x, data.edge_index, data.edge_weight)
