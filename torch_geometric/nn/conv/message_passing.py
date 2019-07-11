@@ -65,7 +65,7 @@ class MessagePassing(torch.nn.Module):
                 undirected).
             size (list or tuple, optional): The size :obj:`[N, M]` of the
                 assignment matrix. If set to :obj:`None`, the size is tried to
-                get automatically inferrred. (default: :obj:`None`)
+                get automatically inferred. (default: :obj:`None`)
             **kwargs: Any additional data which is needed to construct messages
                 and to update node embeddings.
         """
