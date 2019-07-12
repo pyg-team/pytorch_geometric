@@ -105,3 +105,18 @@ def test_edgepooling():
     assert torch.allclose(unpooled_x, torch.tensor([
         [1], [1], [5], [5], [9], [9], [-1]
     ], dtype=torch.float))
+
+    # test edge cases: First, no leftover nodes
+    x = torch.tensor([[0], [1], [2], [3], [4], [5]], dtype=torch.float)
+    edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5],
+                               [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2, 5, 4]])
+    batch = torch.tensor([0, 0, 0, 0, 1, 1])
+    new_x, new_edge_index, new_batch, unpool_info = ep(
+        x, edge_index, batch, return_unpool_info=True
+    )
+    assert new_x.shape[0] == new_batch.shape[0] == 3
+    assert torch.all(new_batch == torch.tensor([1, 0, 0]))
+    assert torch.all(new_edge_index == torch.tensor([
+        [0, 1, 1, 2, 2],
+        [0, 1, 2, 1, 2]
+    ]))

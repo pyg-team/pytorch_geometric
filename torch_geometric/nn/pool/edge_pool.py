@@ -184,7 +184,7 @@ class EdgePooling(nn.Module):
             dim=1
         )
         edge_raw = self.net(edge_node_features)[:, 0]
-        if self.dropout_prob and self.training:
+        if self.training:
             edge_raw = F.dropout(edge_raw, p=self.dropout_prob)
         return edge_raw
 
