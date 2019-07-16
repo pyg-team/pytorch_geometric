@@ -61,6 +61,8 @@ class EdgePooling(torch.nn.Module):
 
         self.lin = torch.nn.Linear(2 * in_channels, 1)
 
+        self.reset_parameters()
+
     def reset_parameters(self):
         self.lin.reset_parameters()
 
