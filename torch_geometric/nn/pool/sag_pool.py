@@ -10,7 +10,7 @@ class SAGPooling(torch.nn.Module):
     Attention and Generalization in Graph Neural Networks"
     <https://arxiv.org/abs/1905.02850>`_ papers
 
-    if min_score :math:`\tilde{\alpha}` is None:
+    if :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`:
 
         .. math::
             \mathbf{y} &= \textrm{GNN}(\mathbf{X}, \mathbf{A})
@@ -22,7 +22,7 @@ class SAGPooling(torch.nn.Module):
 
             \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}}
 
-    if min_score :math:`\tilde{\alpha}` is a value in [0, 1]:
+    if :obj:`min_score` :math:`\tilde{\alpha}` is a value in [0, 1]:
 
         .. math::
             \mathbf{y} &= \mathrm{softmax}(\textrm{GNN}(\mathbf{X},\mathbf{A}))
