@@ -10,8 +10,7 @@ class EdgePooling(torch.nn.Module):
     r"""The edge pooling operator from the `"Towards Graph Pooling by Edge
     Contraction" <https://graphreason.github.io/papers/17.pdf>`_ and
     `"Edge Contraction Pooling for Graph Neural Networks"
-    <https://arxiv.org/abs/1905.10990>`_
-    papers.
+    <https://arxiv.org/abs/1905.10990>`_ papers.
 
     In short, a score is computed for each edge.
     Edges are contracted iteratively according to that score unless one of
@@ -24,7 +23,7 @@ class EdgePooling(torch.nn.Module):
     :obj:`add_to_edge_score` to :obj:`0`.
 
     To duplicate the configuration from the "Edge Contraction Pooling for
-    Graph Neural Networks" paper, set :obj:`dropout` to `0.2`.
+    Graph Neural Networks" paper, set :obj:`dropout` to :obj:`0.2`.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -88,12 +87,12 @@ class EdgePooling(torch.nn.Module):
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each node to a specific example.
 
-        Returns:
-            x (Tensor): The pooled node features.
-            edge_index (LongTensor): The coarsened edge indices.
-            batch (LongTensor): The coarsened batch vector.
-            unpool_info (unpool_description): Information that is
-                consumed by :func:`EdgePooling.unpool` for unpooling.
+        Return types:
+            * **x** *(Tensor)* - The pooled node features.
+            * **edge_index** *(LongTensor)* - The coarsened edge indices.
+            * **batch** *(LongTensor)* - The coarsened batch vector.
+            * **unpool_info** *(unpool_description)* - Information that is
+              consumed by :func:`EdgePooling.unpool` for unpooling.
         """
         e = torch.cat([x[edge_index[0]], x[edge_index[1]]], dim=-1)
         e = self.lin(e).view(-1)
@@ -175,10 +174,10 @@ class EdgePooling(torch.nn.Module):
             unpool_info (unpool_description): Information that has
                 been produced by :func:`EdgePooling.forward`.
 
-        Returns:
-            x (Tensor): The unpooled node features.
-            edge_index (LongTensor): The new edge indices.
-            batch (LongTensor): The new batch vector.
+        Return types:
+            * **x** *(Tensor)* - The unpooled node features.
+            * **edge_index** *(LongTensor)* - The new edge indices.
+            * **batch** *(LongTensor)* - The new batch vector.
         """
 
         new_x = x / unpool_info.new_edge_score.view(-1, 1)
