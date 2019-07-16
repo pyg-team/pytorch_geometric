@@ -10,7 +10,7 @@ def test_compute_edge_score_softmax():
     e = EdgePooling.compute_edge_score_softmax(raw, edge_index)
     assert torch.all(e >= 0) and torch.all(e <= 1)
 
-    # test whether all incoming edge scores sum up to 1
+    # Test whether all incoming edge scores sum up to one.
     assert torch.allclose(scatter_add(e, edge_index[1]),
                           torch.Tensor([1, 1, 1, 1, 1, 1]))
 
