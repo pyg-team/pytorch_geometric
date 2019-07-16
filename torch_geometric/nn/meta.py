@@ -64,7 +64,7 @@ class MetaLayer(torch.nn.Module):
                     out = torch.cat([x[col], edge_attr], dim=1)
                     out = self.node_mlp(out)
                     out = scatter_mean(out, row, dim=0, dim_size=x.size(0))
-                    out = torch.cat([out, u[batch]], dim=1)
+                    out = torch.cat([x, out, u[batch]], dim=1)
                     return self.node_mlp_2(out)
 
                 def global_model(x, edge_index, edge_attr, u, batch):
