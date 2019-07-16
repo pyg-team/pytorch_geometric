@@ -98,7 +98,7 @@ def test_cora():
         for data_flow in loader(data.train_mask):
             out = model.forward_data_flow(data.x[data_flow[0].n_id],
                                           data.edge_weight, data_flow)
-            assert torch.allclose(out_all[data_flow.n_id], out)
+            assert torch.allclose(out_all[data_flow.n_id], out, atol=1e-06)
 
         loader = NeighborSampler(data, size=1.0, num_hops=3, batch_size=64,
                                  shuffle=False, drop_last=False,
@@ -109,6 +109,6 @@ def test_cora():
             weight = None if weight is None else weight[subdata.e_id]
             out = model(data.x[subdata.n_id], subdata.edge_index, weight)
             out = out[subdata.sub_b_id]
-            assert torch.allclose(out_all[subdata.b_id], out)
+            assert torch.allclose(out_all[subdata.b_id], out, atol=1e-06)
 
     shutil.rmtree(root)
