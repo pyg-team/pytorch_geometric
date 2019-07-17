@@ -13,7 +13,7 @@ class MetaLayer(torch.nn.Module):
     The output graph has the same structure, but updated features.
 
     Edge features, node features as well as global features are updated by
-    calling the functions/modules :obj:`edge_model`, :obj:`node_model` and
+    calling the modules :obj:`edge_model`, :obj:`node_model` and
     :obj:`global_model`, respectively.
 
     To allow for batch-wise graph processing, all callable functions take an
@@ -21,14 +21,14 @@ class MetaLayer(torch.nn.Module):
     edges or nodes to their specific graphs.
 
     Args:
-        edge_model (func, optional): A callable which updates a graph's edge
+        edge_model (Module, optional): A callable which updates a graph's edge
             features based on its source and target node features, its current
             edge features and its global features. (default: :obj:`None`)
-        node_model (func, optional): A callable which updates a graph's node
+        node_model (Module, optional): A callable which updates a graph's node
             features based on its current node features, its graph
             connectivity, its edge features and its global features.
             (default: :obj:`None`)
-        global_model (func, optional): A callable which updates a graph's
+        global_model (Module, optional): A callable which updates a graph's
             global features based on its node features, its graph connectivity,
             its edge features and its current global features.
 
