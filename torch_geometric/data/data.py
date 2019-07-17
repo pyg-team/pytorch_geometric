@@ -215,6 +215,11 @@ class Data(object):
         return self.num_node_features
 
     @property
+    def num_classes(self):
+        r"""The number of classes in the data."""
+        return data.y.max().item() + 1 if data.y.dim() == 1 else data.y.size(1)
+
+    @property
     def num_edge_features(self):
         r"""Returns the number of features per edge in the graph."""
         if self.edge_attr is None:
@@ -231,8 +236,10 @@ class Data(object):
 
     def coalesce(self):
         r""""Orders and removes duplicated entries from edge indices."""
-        self.edge_index, self.edge_attr = coalesce(
-            self.edge_index, self.edge_attr, self.num_nodes, self.num_nodes)
+        self.edge_index, self.edge_attr = coalesce(self.edge_index,
+                                                   self.edge_attr,
+                                                   self.num_nodes,
+                                                   self.num_nodes)
         return self
 
     def contains_isolated_nodes(self):
