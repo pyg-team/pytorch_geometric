@@ -31,6 +31,7 @@ class MetaLayer(torch.nn.Module):
         global_model (func, optional): A callable which updates a graph's
             global features based on its node features, its graph connectivity,
             its edge features and its current global features.
+
     .. code-block:: python
 
         from torch.nn import Sequential as Seq, Linear as Lin, ReLU
