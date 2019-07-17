@@ -13,7 +13,7 @@ class MetaLayer(torch.nn.Module):
     The output graph has the same structure, but updated features.
 
     Edge features, node features as well as global features are updated by
-    calling the functions :obj:`edge_model`, :obj:`node_model` and
+    calling the functions/modules :obj:`edge_model`, :obj:`node_model` and
     :obj:`global_model`, respectively.
 
     To allow for batch-wise graph processing, all callable functions take an
@@ -37,49 +37,53 @@ class MetaLayer(torch.nn.Module):
         from torch_scatter import scatter_mean
         from torch_geometric.nn import MetaLayer
 
-        class MyLayer(torch.nn.Module):
+        class EdgeModel(torch.nn.Module):
             def __init__(self):
-                super(MyLayer, self).__init__()
-
+                super(EdgeModel, self).__init__()
                 self.edge_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
+
+            def forward(self, src, dest, edge_attr, u, batch):
+                # source, target: [E, F_x], where E is the number of edges.
+                # edge_attr: [E, F_e]
+                # u: [B, F_u], where B is the number of graphs.
+                # batch: [E] with max entry B - 1.
+                out = torch.cat([src, dest, edge_attr, u[batch]], 1)
+                return self.edge_mlp(out)
+
+        class NodeModel(torch.nn.Module):
+            def __init__(self):
+                super(NodeModel, self).__init__()
                 self.node_mlp_1 = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
                 self.node_mlp_2 = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
-                self.global_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
-
-                def edge_model(src, dest, edge_attr, u, batch):
-                    # source, target: [E, F_x], where E is the number of edges.
-                    # edge_attr: [E, F_e]
-                    # u: [B, F_u], where B is the number of graphs.
-                    # batch: [E] with max entry B - 1.
-                    out = torch.cat([src, dest, edge_attr, u[batch]], 1)
-                    return self.edge_mlp(out)
-
-                def node_model(x, edge_index, edge_attr, u, batch):
-                    # x: [N, F_x], where N is the number of nodes.
-                    # edge_index: [2, E] with max entry N - 1.
-                    # edge_attr: [E, F_e]
-                    # u: [B, F_u]
-                    # batch: [N] with max entry B - 1.
-                    row, col = edge_index
-                    out = torch.cat([x[col], edge_attr], dim=1)
-                    out = self.node_mlp(out)
-                    out = scatter_mean(out, row, dim=0, dim_size=x.size(0))
-                    out = torch.cat([x, out, u[batch]], dim=1)
-                    return self.node_mlp_2(out)
-
-                def global_model(x, edge_index, edge_attr, u, batch):
-                    # x: [N, F_x], where N is the number of nodes.
-                    # edge_index: [2, E] with max entry N - 1.
-                    # edge_attr: [E, F_e]
-                    # u: [B, F_u]
-                    # batch: [N] with max entry B - 1.
-                    out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)
-                    return self.global_mlp(out)
-
-                self.op = MetaLayer(edge_model, node_model, global_model)
 
             def forward(self, x, edge_index, edge_attr, u, batch):
-                return self.op(x, edge_index, edge_attr, u, batch)
+                # x: [N, F_x], where N is the number of nodes.
+                # edge_index: [2, E] with max entry N - 1.
+                # edge_attr: [E, F_e]
+                # u: [B, F_u]
+                # batch: [N] with max entry B - 1.
+                row, col = edge_index
+                out = torch.cat([x[col], edge_attr], dim=1)
+                out = self.node_mlp_1(out)
+                out = scatter_mean(out, row, dim=0, dim_size=x.size(0))
+                out = torch.cat([x, out, u[batch]], dim=1)
+                return self.node_mlp_2(out)
+
+        class GlobalModel(torch.nn.Module):
+            def __init__(self):
+                super(GlobalModel, self).__init__()
+                self.global_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
+
+            def forward(self, x, edge_index, edge_attr, u, batch):
+                # x: [N, F_x], where N is the number of nodes.
+                # edge_index: [2, E] with max entry N - 1.
+                # edge_attr: [E, F_e]
+                # u: [B, F_u]
+                # batch: [N] with max entry B - 1.
+                out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)
+                return self.global_mlp(out)
+
+        MyLayer = MetaLayer(EdgeModel(), NodeModel(), GlobalModel())
     """
 
     def __init__(self, edge_model=None, node_model=None, global_model=None):
@@ -101,7 +105,7 @@ class MetaLayer(torch.nn.Module):
 
         if self.edge_model is not None:
             edge_attr = self.edge_model(x[row], x[col], edge_attr, u,
-                                        batch[row])
+                                        batch if batch is None else batch[row])
 
         if self.node_model is not None:
             x = self.node_model(x, edge_index, edge_attr, u, batch)
