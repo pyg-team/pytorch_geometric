@@ -13,9 +13,9 @@ class FeaStConv(MessagePassing):
     <https://arxiv.org/abs/1706.05206>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \sum_{h=1}^H \frac{1}{|\mathcal{N}(i)|}
-        \sum_{j \in \mathcal{N}(i)} q_h(\mathbf{x}_i, \mathbf{x}_j)
-        \mathbf{W}_h \mathbf{x}_j
+        \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|}
+        \sum_{j \in \mathcal{N}(i)} \sum_{h=1}^H
+        q_h(\mathbf{x}_i, \mathbf{x}_j) \mathbf{W}_h \mathbf{x}_j
 
     with :math:`q_h(\mathbf{x}_i, \mathbf{x}_j) = \mathrm{softmax}_j
     (\mathbf{u}_h^{\top} (\mathbf{x}_j - \mathbf{x}_i) + c_h)`, where :math:`H`
@@ -72,14 +72,11 @@ class FeaStConv(MessagePassing):
 
         x_j = torch.mm(x_j, self.weight).view(x_j.size(0), self.heads, -1)
 
-        return x_j * q.view(-1, self.heads, 1)
+        return (x_j * q.view(-1, self.heads, 1)).sum(dim=1)
 
     def update(self, aggr_out):
-        aggr_out = aggr_out.sum(dim=1)
-
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
-
         return aggr_out
 
     def __repr__(self):
