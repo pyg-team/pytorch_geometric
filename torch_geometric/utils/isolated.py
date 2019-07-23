@@ -23,7 +23,7 @@ def contains_isolated_nodes(edge_index, num_nodes=None):
 
 def remove_isolated_nodes(edge_index, edge_attr=None, num_nodes=None):
     r"""Removes the isolated nodes from the graph given by :attr:`edge_index`
-    and optional edge attributes :attr:`edge_attr`.
+    with optional edge attributes :attr:`edge_attr`.
     In addition, returns a mask of shape :obj:`[num_nodes]` to manually filter
     out isolated node features later on.
     Self-loops are preserved for non-isolated nodes.
