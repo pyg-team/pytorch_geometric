@@ -1,3 +1,5 @@
+import re
+
 import torch
 import numpy as np
 
@@ -18,6 +20,8 @@ class FixedPoints(object):
         choice = np.random.choice(data.num_nodes, self.num, replace=True)
 
         for key, item in data:
+            if bool(re.search('edge', key)):
+                continue
             if torch.is_tensor(item) and item.size(0) == num_nodes:
                 data[key] = item[choice]
 

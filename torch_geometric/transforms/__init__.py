@@ -20,6 +20,7 @@ from .random_rotate import RandomRotate
 from .random_shear import RandomShear
 from .normalize_features import NormalizeFeatures
 from .add_self_loops import AddSelfLoops
+from .remove_isolated_nodes import RemoveIsolatedNodes
 from .knn_graph import KNNGraph
 from .radius_graph import RadiusGraph
 from .face_to_edge import FaceToEdge
@@ -53,6 +54,7 @@ __all__ = [
     'RandomShear',
     'NormalizeFeatures',
     'AddSelfLoops',
+    'RemoveIsolatedNodes',
     'KNNGraph',
     'RadiusGraph',
     'FaceToEdge',
