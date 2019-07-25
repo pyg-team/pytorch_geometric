@@ -1,10 +1,10 @@
 import torch
 from torch.nn import Parameter
-from torch_scatter import scatter_add
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops
+from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_geometric.utils import get_laplacian
 
-from ..inits import uniform
+from ..inits import glorot, zeros
 
 
 class ChebConv(MessagePassing):
@@ -54,30 +54,45 @@ class ChebConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.in_channels * self.weight.size(0)
-        uniform(size, self.weight)
-        uniform(size, self.bias)
+        glorot(self.weight)
+        zeros(self.bias)
 
     @staticmethod
-    def norm(edge_index, num_nodes, edge_weight, dtype=None):
+    def norm(edge_index, num_nodes, edge_weight,
+             dtype=None, batch=None, lambda_max=2.0):
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
-        if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1), ),
-                                     dtype=dtype,
-                                     device=edge_index.device)
+        edge_index, edge_weight = get_laplacian(edge_index,
+                                                edge_weight=edge_weight,
+                                                dtype=dtype,
+                                                num_nodes=num_nodes,
+                                                normalization='sym')
 
-        row, col = edge_index
-        deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
-        deg_inv_sqrt = deg.pow(-0.5)
-        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+        # Compute L_norm -> 2 / lambda_max * L_norm
+        if batch is not None and \
+                isinstance(lambda_max, torch.Tensor) and \
+                len(lambda_max.size()) > 0 and \
+                lambda_max.size(0) > 1:
+            lambda_max = lambda_max[batch[edge_index[0]]]
+        edge_weight = 2.0 / lambda_max * edge_weight
+        edge_weight[edge_weight == float('inf')] = 0
 
-        return edge_index, -deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+        # Compute (tilde L)_norm = 2 / lambda_max * L_norm - 1
+        edge_index, edge_weight = add_self_loops(edge_index=edge_index,
+                                                 edge_weight=edge_weight,
+                                                 fill_value=-1,
+                                                 num_nodes=num_nodes)
 
-    def forward(self, x, edge_index, edge_weight=None):
-        """"""
-        edge_index, norm = self.norm(edge_index, x.size(0), edge_weight,
-                                     x.dtype)
+        return edge_index, edge_weight
+
+    def forward(self, x, edge_index, edge_weight=None,
+                batch=None, lambda_max=2.0):
+        edge_index, norm = self.norm(edge_index,
+                                     x.size(0),
+                                     edge_weight,
+                                     dtype=x.dtype,
+                                     batch=batch,
+                                     lambda_max=lambda_max)
 
         Tx_0 = x
         out = torch.matmul(Tx_0, self.weight[0])
