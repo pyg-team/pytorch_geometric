@@ -22,6 +22,8 @@ from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score,
                      intersection_and_union, mean_iou)
 
+from .get_laplacian import get_laplacian
+
 __all__ = [
     'degree',
     'scatter_',
@@ -60,4 +62,5 @@ __all__ = [
     'f1_score',
     'intersection_and_union',
     'mean_iou',
+    'get_laplacian'
 ]
