@@ -11,8 +11,8 @@ class RGCNConv(MessagePassing):
     <https://arxiv.org/abs/1703.06103>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta}_0 \cdot \mathbf{x}_i +
-        \sum_{r \in \mathcal{R}} \sum_{j \in \mathcal{N}_r(i)}
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta}_{\textrm{root}} \cdot
+        \mathbf{x}_i + \sum_{r \in \mathcal{R}} \sum_{j \in \mathcal{N}_r(i)}
         \frac{1}{|\mathcal{N}_r(i)|} \mathbf{\Theta}_r \cdot \mathbf{x}_j,
 
     where :math:`\mathcal{R}` denotes the set of relations, *i.e.* edge types.
