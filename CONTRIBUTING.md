@@ -70,8 +70,8 @@ Everytime you send a Pull Request, your commit will be built and checked against
 1. Ensure that your code is formatted correctly by testing against the styleguides of [`flake8`](https://github.com/PyCQA/flake8) and [`pycodestyle`](https://github.com/PyCQA/pycodestyle):
 
 ```
-pycodestyle torch-geometric test examples
-flake8 torch-geometric test examples
+pycodestyle torch_geometric test examples
+flake8 torch_geometric test examples
 ```
 
 If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).

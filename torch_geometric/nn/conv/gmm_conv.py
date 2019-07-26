@@ -14,7 +14,7 @@ class GMMConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{1}{|\mathcal{N}(i)|}
-        \sum_{j \in \mathcal{N}(i) \frac{1}{K} \sum_{k=1}^K
+        \sum_{j \in \mathcal{N}(i)} \frac{1}{K} \sum_{k=1}^K
         \mathbf{w}_k(\mathbf{e}_{i,j}) \odot \mathbf{\Theta}_k \mathbf{x}_j,
 
     where
@@ -116,16 +116,16 @@ class GMMConv(MessagePassing):
         (E, D), K = pseudo.size(), self.kernel_size
 
         if not self.separate_gaussians:
-            gaussian = -0.5 * (
-                pseudo.view(E, 1, D) - self.mu.view(1, K, D)).pow(2)
+            gaussian = -0.5 * (pseudo.view(E, 1, D) -
+                               self.mu.view(1, K, D)).pow(2)
             gaussian = gaussian / (EPS + self.sigma.view(1, K, D).pow(2))
             gaussian = torch.exp(gaussian.sum(dim=-1))  # [E, K]
 
             return (x_j.view(E, K, M) * gaussian.view(E, K, 1)).sum(dim=-2)
 
         else:
-            gaussian = -0.5 * (pseudo.view(E, 1, 1, 1, D) - self.mu.view(
-                1, F, M, K, D)).pow(2)
+            gaussian = -0.5 * (pseudo.view(E, 1, 1, 1, D) -
+                               self.mu.view(1, F, M, K, D)).pow(2)
             gaussian = gaussian / (EPS + self.sigma.view(1, F, M, K, D).pow(2))
             gaussian = torch.exp(gaussian.sum(dim=-1))  # [E, F, M, K]
 

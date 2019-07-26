@@ -28,9 +28,8 @@ def corruption(x, edge_index):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = DeepGraphInfomax(
-    hidden_channels=512,
-    encoder=Encoder(dataset.num_features, 512),
-    summary=lambda z, *args, **kwargs: z.mean(dim=0),
+    hidden_channels=512, encoder=Encoder(dataset.num_features, 512),
+    summary=lambda z, *args, **kwargs: torch.sigmoid(z.mean(dim=0)),
     corruption=corruption).to(device)
 data = dataset[0].to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
@@ -49,12 +48,8 @@ def train():
 def test():
     model.eval()
     z, _, _ = model(data.x, data.edge_index)
-    acc = model.test(
-        z[data.train_mask],
-        data.y[data.train_mask],
-        z[data.test_mask],
-        data.y[data.test_mask],
-        max_iter=150)
+    acc = model.test(z[data.train_mask], data.y[data.train_mask],
+                     z[data.test_mask], data.y[data.test_mask], max_iter=150)
     return acc
 
 
