@@ -1,5 +1,6 @@
 import torch
 from torch_cluster import random_walk
+from sklearn.linear_model import LogisticRegression
 
 EPS = 1e-15
 
@@ -37,13 +38,14 @@ class Node2Vec(torch.nn.Module):
                          self.walk_length, self.p, self.q, self.num_nodes)
 
         walks = []
-        num_walks_per_rw = self.walk_length + 1 - self.context_size
+        num_walks_per_rw = 1 + self.walk_length + 1 - self.context_size
         for j in range(num_walks_per_rw):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
     def loss(self, edge_index, subset=None):
         walk = self.random_walk(edge_index, subset)
+        assert walk.min() >= 0 and walk.max() < self.num_nodes
         start, rest = walk[:, 0], walk[:, 1:].contiguous()
 
         h_start = self.embedding(start).view(
@@ -52,7 +54,7 @@ class Node2Vec(torch.nn.Module):
             walk.size(0), rest.size(1), self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
-        pos_loss = -torch.log(torch.sigmoid(out) + EPS)
+        pos_loss = -torch.log(torch.sigmoid(out) + EPS).mean()
 
         # Negative sampling loss.
         num_negative_samples = self.num_negative_samples
@@ -65,9 +67,19 @@ class Node2Vec(torch.nn.Module):
         h_neg_rest = self.embedding(neg_sample)
 
         out = (h_start * h_neg_rest).sum(dim=-1).view(-1)
-        neg_loss = -torch.log(1 - torch.sigmoid(out) + EPS)
+        neg_loss = -torch.log(1 - torch.sigmoid(out) + EPS).mean()
 
-        return pos_loss.mean() + neg_loss.mean()
+        return pos_loss + neg_loss
+
+    def test(self, train_z, train_y, test_z, test_y, solver='lbfgs',
+             multi_class='auto', *args, **kwargs):
+        r"""Evaluates latent space quality via a logistic regression downstream
+        task."""
+        clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
+                                 **kwargs).fit(train_z.detach().cpu().numpy(),
+                                               train_y.detach().cpu().numpy())
+        return clf.score(test_z.detach().cpu().numpy(),
+                         test_y.detach().cpu().numpy())
 
     def __repr__(self):
         return '{}({}, {}, p={}, q={})'.format(
