@@ -6,6 +6,30 @@ EPS = 1e-15
 
 
 class Node2Vec(torch.nn.Module):
+    r"""The Node2Vec model from the
+    `"node2vec: Scalable Feature Learning for Networks"
+    <https://arxiv.org/abs/1607.00653>`_ paper where random walks of
+    length :obj:`walk_length` are sampled in a given graph, and node embeddings
+    are learned via negative sampling optimization.
+
+    Args:
+        num_nodes (int): The number of nodes.
+        embedding_dim (int): The size of each embedding vector.
+        walk_length (int): The walk length.
+        context_size (int): The actual context size which is considered for
+            positive samples. This parameter increases the effective sampling
+            rate by reusing samples across different source nodes.
+        walks_per_node (int, optional): The number of walks to sample for each
+            node. (default: :obj:`1`)
+        p (float, optional): Likelihood of immediately revisiting a node in the
+            walk. (default: :obj:`1`)
+        q (float, optional): Control parameter to interpolate between
+            breadth-first strategy and depth-first strategy (default: :obj:`1`)
+        num_negative_samples (int, optional): The number of negative samples to
+        use for each node. If set to :obj:`None`, this parameter gets set to
+        :obj:`context_size - 1`. (default: :obj:`None`)
+    """
+
     def __init__(self, num_nodes, embedding_dim, walk_length, context_size,
                  walks_per_node=1, p=1, q=1, num_negative_samples=None):
         super(Node2Vec, self).__init__()
@@ -27,9 +51,10 @@ class Node2Vec(torch.nn.Module):
         self.embedding.reset_parameters()
 
     def forward(self, subset):
+        """Returns the embeddings for the nodes in :obj:`subset`."""
         return self.embedding(subset)
 
-    def random_walk(self, edge_index, subset=None):
+    def __random_walk__(self, edge_index, subset=None):
         if subset is None:
             subset = torch.arange(self.num_nodes, device=edge_index.device)
         subset = subset.repeat(self.walks_per_node)
@@ -44,7 +69,9 @@ class Node2Vec(torch.nn.Module):
         return torch.cat(walks, dim=0)
 
     def loss(self, edge_index, subset=None):
-        walk = self.random_walk(edge_index, subset)
+        r"""Computes the loss for the nodes in :obj:`subset` with negative
+        sampling."""
+        walk = self.__random_walk__(edge_index, subset)
         assert walk.min() >= 0 and walk.max() < self.num_nodes
         start, rest = walk[:, 0], walk[:, 1:].contiguous()
 
