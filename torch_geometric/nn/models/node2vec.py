@@ -1,63 +1,75 @@
-import math
 import torch
-import torch.nn as nn
 from torch_cluster import random_walk
 
-from ..inits import reset
-
-dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+EPS = 1e-15
 
 
 class Node2Vec(torch.nn.Module):
-
-    def __init__(self, data, d, p, q, r, l, k, ns):
+    def __init__(self, num_nodes, embedding_dim, walk_length, context_size,
+                 walks_per_node=1, p=1, q=1, num_negative_samples=None):
         super(Node2Vec, self).__init__()
-        self.data, self.d, self.p, self.q, self.r, self.l, self.k, self.ns = data, d, p, q, r, l, k, ns
-        self.embedding = torch.nn.Embedding(data.num_nodes, d).to(dev)
+        assert walk_length >= context_size
+        self.num_nodes = num_nodes
+        self.embedding_dim = embedding_dim
+        self.walk_length = walk_length - 1
+        self.context_size = context_size
+        self.walks_per_node = walks_per_node
+        self.p = p
+        self.q = q
+        self.num_negative_samples = num_negative_samples
+
+        self.embedding = torch.nn.Embedding(num_nodes, embedding_dim)
+
         self.reset_parameters()
 
     def reset_parameters(self):
-        reset(self.embedding)
+        self.embedding.reset_parameters()
 
-    # random walks on training nodes
-    # returns walks in shape [walks, k]
-    # tensor [1,2,3,4] means N(1)={2,3,4}
-    # TODO add Parameter p,q to random_walk
-    def random_walks(self, train_indices=None):
-        if train_indices is None:
-            train_indices = torch.randperm(self.data.num_nodes).to(dev)
-        row, col = self.data.edge_index.to(dev)
-        rw = random_walk(row, col, train_indices.repeat(self.r), self.l)
-        walk_length = rw.size(1)
-        walks_per_rw = 1 + walk_length - self.k
+    def forward(self, subset):
+        return self.embedding(subset)
 
-        walks = rw.new_zeros(walks_per_rw * rw.size(0), self.k)
-        iter = 0
-        for i in range(rw.size(0)):
-            for j in range(walks_per_rw):
-                walks[iter] = rw[i][j:self.k + j]
-                iter += 1
-        return walks
+    def random_walk(self, edge_index, subset=None):
+        if subset is None:
+            subset = torch.arange(self.num_nodes, device=edge_index.device)
+        subset = subset.repeat(self.walks_per_node)
 
-    def neg_loss(self, walks):
-        batch_size = walks.size(0)
-        start = walks[:, 0]
-        rest = walks[:, 1:].contiguous()
+        rw = random_walk(edge_index[0], edge_index[1], subset,
+                         self.walk_length, self.p, self.q, self.num_nodes)
 
-        x_start = self.embedding(start).view(batch_size, 1, self.d)
-        x_rest = self.embedding(rest.view(-1)).view(batch_size, -1, self.d)
-        x_start_pos = x_start.expand(batch_size, x_rest.size(1), self.d)
+        walks = []
+        num_walks_per_rw = self.walk_length + 1 - self.context_size
+        for j in range(num_walks_per_rw):
+            walks.append(rw[:, j:j + self.context_size])
+        return torch.cat(walks, dim=0)
 
-        x = torch.sum(x_start_pos * x_rest, dim=-1).view(-1)
-        pos_loss = -torch.log(torch.sigmoid(x) + 1e-8)
+    def loss(self, edge_index, subset=None):
+        walk = self.random_walk(edge_index, subset)
+        start, rest = walk[:, 0], walk[:, 1:].contiguous()
 
-        # negative samples
-        neg_samples = torch.randint(self.data.num_nodes, (batch_size, self.ns), dtype=torch.long, device=dev)
-        x_start_neg = x_start.expand(batch_size, self.ns, self.d)
+        h_start = self.embedding(start).view(
+            walk.size(0), 1, self.embedding_dim)
+        h_rest = self.embedding(rest.view(-1)).view(
+            walk.size(0), rest.size(1), self.embedding_dim)
 
-        x_neg_rest = self.embedding(neg_samples)
-        x = torch.sum(x_start_neg * x_neg_rest, dim=-1).view(-1)
-        neg_loss = -torch.log(1 - torch.sigmoid(x) + 1e-8)
+        out = (h_start * h_rest).sum(dim=-1).view(-1)
+        pos_loss = -torch.log(torch.sigmoid(out) + EPS)
+
+        # Negative sampling loss.
+        num_negative_samples = self.num_negative_samples
+        if num_negative_samples is None:
+            num_negative_samples = rest.size(1)
+
+        neg_sample = torch.randint(self.num_nodes,
+                                   (walk.size(0), num_negative_samples),
+                                   dtype=torch.long, device=edge_index.device)
+        h_neg_rest = self.embedding(neg_sample)
+
+        out = (h_start * h_neg_rest).sum(dim=-1).view(-1)
+        neg_loss = -torch.log(1 - torch.sigmoid(out) + EPS)
 
         return pos_loss.mean() + neg_loss.mean()
 
+    def __repr__(self):
+        return '{}({}, {}, p={}, q={})'.format(
+            self.__class__.__name__, self.num_nodes, self.embedding_dim,
+            self.p, self.q)
