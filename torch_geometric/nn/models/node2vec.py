@@ -72,7 +72,6 @@ class Node2Vec(torch.nn.Module):
         r"""Computes the loss for the nodes in :obj:`subset` with negative
         sampling."""
         walk = self.__random_walk__(edge_index, subset)
-        assert walk.min() >= 0 and walk.max() < self.num_nodes
         start, rest = walk[:, 0], walk[:, 1:].contiguous()
 
         h_start = self.embedding(start).view(
