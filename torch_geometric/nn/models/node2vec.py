@@ -26,8 +26,8 @@ class Node2Vec(torch.nn.Module):
         q (float, optional): Control parameter to interpolate between
             breadth-first strategy and depth-first strategy (default: :obj:`1`)
         num_negative_samples (int, optional): The number of negative samples to
-        use for each node. If set to :obj:`None`, this parameter gets set to
-        :obj:`context_size - 1`. (default: :obj:`None`)
+            use for each node. If set to :obj:`None`, this parameter gets set
+            to :obj:`context_size - 1`. (default: :obj:`None`)
     """
 
     def __init__(self, num_nodes, embedding_dim, walk_length, context_size,
