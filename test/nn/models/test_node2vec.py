@@ -2,7 +2,7 @@ import torch
 from torch_geometric.nn import Node2Vec
 
 
-def test_deep_graph_infomax():
+def test_node2vec():
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
     model = Node2Vec(num_nodes=3, embedding_dim=16, walk_length=2,
