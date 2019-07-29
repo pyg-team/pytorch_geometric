@@ -1,5 +1,4 @@
 import os.path as osp
-from functools import partial
 
 import torch
 import torch.nn.functional as F
@@ -17,8 +16,7 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.initial_conv = GCNConv(dataset.num_features, 32, improved=True)
-        self.unet = GraphUNet(32, Conv=partial(GCNConv, improved=True),
-                              n_layers=3, is_sum_res=True)
+        self.unet = GraphUNet(32, depth=3)
         self.final_conv = GCNConv(32, dataset.num_classes, improved=True)
 
     def forward(self):
@@ -28,7 +26,7 @@ class Net(torch.nn.Module):
         x = F.dropout(data.x, p=0.92, training=self.training)
 
         x = F.relu(self.initial_conv(x, edge_index))
-        x = F.relu(self.unet(x, edge_index))
+        x = self.unet(x, edge_index)
         x = self.final_conv(x, edge_index)
         return F.log_softmax(x, dim=1)
 

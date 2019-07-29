@@ -17,6 +17,5 @@ def sort_edge_index(edge_index, edge_attr=None, num_nodes=None):
 
     idx = edge_index[0] * num_nodes + edge_index[1]
     perm = idx.argsort()
-    print(perm)
 
-    return edge_index[perm], None if edge_attr is None else edge_attr[perm]
+    return edge_index[:, perm], None if edge_attr is None else edge_attr[perm]
