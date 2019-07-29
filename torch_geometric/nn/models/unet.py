@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+import torch_geometric
 from torch_geometric.nn import TopKPooling, GCNConv
 import torch_sparse
 
