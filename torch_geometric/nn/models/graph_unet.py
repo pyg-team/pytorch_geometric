@@ -8,6 +8,23 @@ from torch_geometric.utils.repeat import repeat
 
 
 class GraphUNet(torch.nn.Module):
+    r"""The Graph U-Net mdeo from the `"Graph U-Nets"
+    <https://arxiv.org/abs/1905.05178>`_ paper which implements a U-Net graph
+    architecture with graph pooling and unpooling operations.
+
+    Args:
+        channels (int): Size of each sample.
+        depth (int): The depth of the U-Net architecture.
+        kernel_size (int or [int]): Size of the convolving kernel.
+        pool_ratios (float or [float], optional): Graph pooling ratio for each
+            depth. (default: :obj:`0.5`)
+        sum_res (bool, optional): If set to :obj:`False`, will use
+            concatenation for integration of skip connections instead
+            summation. (default: :obj:`True`)
+        act (torch.nn.functional, optional): The nonlinearity to use.
+            (default: :obj:`torch.nn.functional.relu`)
+    """
+
     def __init__(self, channels, depth, pool_ratios=0.5, sum_res=True,
                  act=F.relu):
         super(GraphUNet, self).__init__()
