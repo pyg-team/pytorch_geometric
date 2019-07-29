@@ -65,8 +65,8 @@ def filter_adj(edge_index, edge_attr, perm, num_nodes=None):
 
 
 class TopKPooling(torch.nn.Module):
-    r""":math:`\mathrm{top}_k` pooling operator from the `"Graph U-Net"
-    <https://openreview.net/forum?id=HJePRoAct7>`_, `"Towards Sparse
+    r""":math:`\mathrm{top}_k` pooling operator from the `"Graph U-Nets"
+    <https://arxiv.org/abs/1905.05178>`_, `"Towards Sparse
     Hierarchical Graph Classifiers" <https://arxiv.org/abs/1811.01287>`_
     and `"Understanding Attention and Generalization in Graph Neural
     Networks" <https://arxiv.org/abs/1905.02850>`_ papers
