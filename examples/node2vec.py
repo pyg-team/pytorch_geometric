@@ -2,13 +2,12 @@ import os.path as osp
 
 import torch
 from torch.utils.data import DataLoader
-import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import Node2Vec
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-dataset = Planetoid(path, dataset, T.NormalizeFeatures())
+dataset = Planetoid(path, dataset)
 data = dataset[0]
 loader = DataLoader(torch.arange(data.num_nodes), batch_size=128, shuffle=True)
 
