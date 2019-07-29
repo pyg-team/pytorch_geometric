@@ -94,8 +94,6 @@ class GraphUNet(nn.Module):
             edge_index, edge_weight=edge_weight)
         edge_index, edge_weight = torch_geometric.utils.sort_edge_index(
             edge_index, edge_weight, n_nodes)
-        print(edge_index[:, :20])
-        raise NotImplementedError
         edge_index, edge_weight = torch_sparse.spspmm(
             edge_index, edge_weight, edge_index, edge_weight, n_nodes, n_nodes,
             n_nodes)
