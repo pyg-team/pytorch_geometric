@@ -8,23 +8,27 @@ from .makedirs import makedirs
 
 def download_url(url, folder, log=True):
     r"""Downloads the content of an URL to a specific folder.
-
     Args:
         url (string): The url.
         folder (string): The folder.
         log (bool, optional): If :obj:`False`, will not print anything to the
             console. (default: :obj:`True`)
     """
-    if log:
-        print('Downloading', url)
 
-    makedirs(folder)
-
-    data = urllib.request.urlopen(url)
     filename = url.rpartition('/')[2]
     path = osp.join(folder, filename)
+    
+    if osp.exists(path):
+        if log:
+            print('Using exist file', filename)
+    else:
+        if log:
+            print('Downloading', url)
 
-    with open(path, 'wb') as f:
-        f.write(data.read())
+        makedirs(folder)
+        data = urllib.request.urlopen(url)
+
+        with open(path, 'wb') as f:
+            f.write(data.read())
 
     return path
