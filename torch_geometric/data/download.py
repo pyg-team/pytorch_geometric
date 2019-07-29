@@ -19,7 +19,7 @@ def download_url(url, folder, log=True):
     filename = url.rpartition('/')[2]
     path = osp.join(folder, filename)
 
-    if osp.exists(path):
+    if osp.exists(path):  # pragma: no cover
         if log:
             print('Using exist file', filename)
         return path

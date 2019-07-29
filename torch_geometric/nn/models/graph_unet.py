@@ -8,7 +8,7 @@ from torch_geometric.utils.repeat import repeat
 
 
 class GraphUNet(torch.nn.Module):
-    r"""The Graph U-Net mdeo from the `"Graph U-Nets"
+    r"""The Graph U-Net model from the `"Graph U-Nets"
     <https://arxiv.org/abs/1905.05178>`_ paper which implements a U-Net graph
     architecture with graph pooling and unpooling operations.
 
@@ -108,6 +108,6 @@ class GraphUNet(torch.nn.Module):
         return edge_index, edge_weight
 
     def __repr__(self):
-        return '{}({}, depth={}, pool_ratio={})'.format(
+        return '{}({}, depth={}, pool_ratios={})'.format(
             self.__class__.__name__, self.channels, self.depth,
-            self.pool_ratio)
+            self.pool_ratios)
