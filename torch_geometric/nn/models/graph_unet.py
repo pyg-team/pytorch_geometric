@@ -4,23 +4,25 @@ from torch_sparse import spspmm
 from torch_geometric.nn import TopKPooling, GCNConv
 from torch_geometric.utils import (add_self_loops, sort_edge_index,
                                    remove_self_loops)
+from torch_geometric.utils.repeat import repeat
 
 
 class GraphUNet(torch.nn.Module):
-    def __init__(self, channels, depth, pool_ratio=0.8, sum_res=True,
+    def __init__(self, channels, depth, pool_ratios=0.5, sum_res=True,
                  act=F.relu):
         super(GraphUNet, self).__init__()
 
         self.channels = channels
         self.depth = depth
-        self.pool_ratio = pool_ratio
+        self.pool_ratios = repeat(pool_ratios, depth)
+
         self.act = act
         self.sum_res = sum_res
 
         self.pools = torch.nn.ModuleList()
         self.down_convs = torch.nn.ModuleList()
         for i in range(depth):
-            self.pools.append(TopKPooling(channels, pool_ratio))
+            self.pools.append(TopKPooling(channels, self.pool_ratios[i]))
             self.down_convs.append(GCNConv(channels, channels, improved=True))
         self.up_convs = torch.nn.ModuleList()
         for i in range(depth - 1):

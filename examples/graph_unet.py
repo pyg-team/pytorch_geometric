@@ -16,7 +16,8 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.initial_conv = GCNConv(dataset.num_features, 32, improved=True)
-        self.unet = GraphUNet(32, depth=3)
+        pool_ratios = [2000 / data.num_nodes, 0.5]
+        self.unet = GraphUNet(32, depth=3, pool_ratios=pool_ratios)
         self.final_conv = GCNConv(32, dataset.num_classes, improved=True)
 
     def forward(self):
