@@ -17,14 +17,17 @@ def download_url(url, folder, log=True):
     """
     if log:
         print('Downloading', url)
-
-    makedirs(folder)
-
-    data = urllib.request.urlopen(url)
+    
     filename = url.rpartition('/')[2]
     path = osp.join(folder, filename)
-
-    with open(path, 'wb') as f:
-        f.write(data.read())
+    
+    # check if file exists
+    if osp.exists(path):
+        pass
+    else:
+        makedirs(folder)
+        data = urllib.request.urlopen(url)
+        with open(path, 'wb') as f:
+            f.write(data.read())
 
     return path
