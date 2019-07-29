@@ -15,7 +15,6 @@ class GraphUNet(torch.nn.Module):
     Args:
         channels (int): Size of each sample.
         depth (int): The depth of the U-Net architecture.
-        kernel_size (int or [int]): Size of the convolving kernel.
         pool_ratios (float or [float], optional): Graph pooling ratio for each
             depth. (default: :obj:`0.5`)
         sum_res (bool, optional): If set to :obj:`False`, will use
