@@ -4,7 +4,7 @@ from .deep_graph_infomax import DeepGraphInfomax
 from .autoencoder import InnerProductDecoder, GAE, VGAE, ARGA, ARGVA
 from .signed_gcn import SignedGCN
 from .re_net import RENet
-from .unet import GraphUnet
+from .graph_unet import GraphUNet
 
 __all__ = [
     'JumpingKnowledge',
@@ -17,5 +17,5 @@ __all__ = [
     'ARGVA',
     'SignedGCN',
     'RENet',
-    'GraphUnet',
+    'GraphUNet',
 ]

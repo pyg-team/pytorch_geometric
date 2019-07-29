@@ -2,6 +2,7 @@ from .degree import degree
 from .scatter import scatter_
 from .softmax import softmax
 from .dropout import dropout_adj
+from .sort import sort_edge_index
 from .undirected import is_undirected, to_undirected
 from .loop import (contains_self_loops, remove_self_loops,
                    segregate_self_loops, add_self_loops,
@@ -27,6 +28,7 @@ __all__ = [
     'scatter_',
     'softmax',
     'dropout_adj',
+    'sort_edge_index',
     'is_undirected',
     'to_undirected',
     'contains_self_loops',
