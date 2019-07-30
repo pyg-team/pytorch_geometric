@@ -9,7 +9,7 @@ from torch_geometric.utils.repeat import repeat
 
 class GraphUNet(torch.nn.Module):
     r"""The Graph U-Net model from the `"Graph U-Nets"
-    <https://arxiv.org/abs/1905.05178>`_ paper which implements a U-Net graph
+    <https://arxiv.org/abs/1905.05178>`_ paper which implements a U-Net like
     architecture with graph pooling and unpooling operations.
 
     Args:
