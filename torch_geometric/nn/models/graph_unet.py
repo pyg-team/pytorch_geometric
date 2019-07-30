@@ -65,6 +65,7 @@ class GraphUNet(torch.nn.Module):
             conv.reset_parameters()
 
     def forward(self, x, edge_index, batch=None):
+        """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
         edge_weight = x.new_ones(edge_index.size(1))
