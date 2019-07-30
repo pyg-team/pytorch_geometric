@@ -59,12 +59,11 @@ class ChebConv(MessagePassing):
         uniform(size, self.bias)
 
     @staticmethod
-    def norm(edge_index, num_nodes, edge_weight, dtype=None):
+    def norm(edge_index, num_nodes, edge_weight=None, dtype=None):
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
         if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1), ),
-                                     dtype=dtype,
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
         row, col = edge_index
