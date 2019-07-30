@@ -1,4 +1,5 @@
 from torch.nn import Linear
+from torch_scatter import scatter_add
 from torch_geometric.nn.conv import MessagePassing
 import torch
 
@@ -8,10 +9,13 @@ class TAGConv(MessagePassing):
      `"Topology Adaptive Graph Convolutional Networks"
      <https://arxiv.org/abs/1710.10370>`_ paper
     .. math::
-        \mathbf{X}^{\prime} = {\left(\sum_{k=0}^K \theta_{k} \mathbf{\hat{A}^k}
-        \right)} \mathbf{X} ,
+        \mathbf{X}^{\prime} = {\left(\sum_{k=0}^K \theta_{k}
+        \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2}
+        \right)} \mathbf{X},
 
     where :math:`\mathbf{\hat{A}} = \mathbf{A}` denotes the adjacency matrix
+    without self-loops and
+    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -26,8 +30,7 @@ class TAGConv(MessagePassing):
     def __init__(self,
                  in_channels,
                  out_channels,
-                 K=1,
-                 cached=False,
+                 K=3,
                  bias=True,
                  **kwargs):
         super(TAGConv, self).__init__(aggr='add', **kwargs)
@@ -35,21 +38,36 @@ class TAGConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.K = K
-        self.cached = cached
-        self.cached_result = None
         self.lin = Linear(in_channels*(self.K+1), out_channels, bias=bias)
         self.reset_parameters()
 
     def reset_parameters(self):
         self.lin.reset_parameters()
-        self.cached_result = None
+
+    @staticmethod
+    def norm(edge_index, num_nodes, edge_weight, dtype=None):
+        if edge_weight is None:
+            edge_weight = torch.ones((edge_index.size(1), ),
+                                     dtype=dtype,
+                                     device=edge_index.device)
+
+        row, col = edge_index
+        deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+        deg_inv_sqrt = deg.pow(-0.5)
+        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+
+        return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
+        edge_index, norm = self.norm(edge_index,
+                                     x.size(0),
+                                     edge_weight,
+                                     dtype=x.dtype)
+
         y = x
         for k in range(self.K):
-            x = self.propagate(edge_index, x=x, norm=torch.ones(
-                edge_index.shape[1], device=edge_index.device))
+            x = self.propagate(edge_index, x=x, norm=norm)
             y = torch.cat((y, x), 1)
         out = self.lin(y)
 

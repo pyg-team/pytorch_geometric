@@ -8,12 +8,12 @@ def test_tag_conv():
     num_nodes = edge_index.max().item() + 1
     x = torch.randn((num_nodes, in_channels))
 
-    conv = TAGConv(in_channels, out_channels, K=10, cached=True)
+    conv = TAGConv(in_channels, out_channels, K=10)
     assert conv.__repr__() == 'TAGConv(16, 32, K=10)'
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
 
-    conv = TAGConv(in_channels, out_channels, K=10, cached=False)
+    conv = TAGConv(in_channels, out_channels, K=10)
     assert conv.__repr__() == 'TAGConv(16, 32, K=10)'
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
