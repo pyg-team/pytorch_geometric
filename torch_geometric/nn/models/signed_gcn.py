@@ -35,7 +35,7 @@ class SignedGCN(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        out_channels (int): Size of each output sample.
+        hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of layers.
         lamb (float, optional): Balances the contributions of the overall
             objective. (default: :obj:`5`)

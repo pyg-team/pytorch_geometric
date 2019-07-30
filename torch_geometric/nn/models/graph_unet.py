@@ -13,7 +13,9 @@ class GraphUNet(torch.nn.Module):
     architecture with graph pooling and unpooling operations.
 
     Args:
-        channels (int): Size of each sample.
+        in_channels (int): Size of each input sample.
+        hidden_channels (int): Size of each hidden sample.
+        out_channels (int): Size of each output sample.
         depth (int): The depth of the U-Net architecture.
         pool_ratios (float or [float], optional): Graph pooling ratio for each
             depth. (default: :obj:`0.5`)
@@ -24,34 +26,41 @@ class GraphUNet(torch.nn.Module):
             (default: :obj:`torch.nn.functional.relu`)
     """
 
-    def __init__(self, channels, depth, pool_ratios=0.5, sum_res=True,
-                 act=F.relu):
+    def __init__(self, in_channels, hidden_channels, out_channels, depth,
+                 pool_ratios=0.5, sum_res=True, act=F.relu):
         super(GraphUNet, self).__init__()
-
-        self.channels = channels
+        assert depth >= 1
+        self.in_channels = in_channels
+        self.hidden_channels = hidden_channels
+        self.out_channels = out_channels
         self.depth = depth
         self.pool_ratios = repeat(pool_ratios, depth)
-
         self.act = act
         self.sum_res = sum_res
 
-        self.pools = torch.nn.ModuleList()
+        channels = hidden_channels
+
         self.down_convs = torch.nn.ModuleList()
+        self.pools = torch.nn.ModuleList()
+        self.down_convs.append(GCNConv(in_channels, channels, improved=True))
         for i in range(depth):
             self.pools.append(TopKPooling(channels, self.pool_ratios[i]))
             self.down_convs.append(GCNConv(channels, channels, improved=True))
+
+        in_channels = channels if sum_res else 2 * channels
+
         self.up_convs = torch.nn.ModuleList()
         for i in range(depth - 1):
-            in_channels = channels if sum_res else 2 * channels
             self.up_convs.append(GCNConv(in_channels, channels, improved=True))
+        self.up_convs.append(GCNConv(in_channels, out_channels, improved=True))
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        for pool in self.pools:
-            pool.reset_parameters()
         for conv in self.down_convs:
             conv.reset_parameters()
+        for pool in self.pools:
+            pool.reset_parameters()
         for conv in self.up_convs:
             conv.reset_parameters()
 
@@ -60,19 +69,24 @@ class GraphUNet(torch.nn.Module):
             batch = edge_index.new_zeros(x.size(0))
         edge_weight = x.new_ones(edge_index.size(1))
 
+        x = self.down_convs[0](x, edge_index, edge_weight)
+        x = self.act(x)
+
         xs = [x]
         edge_indices = [edge_index]
         edge_weights = [edge_weight]
         perms = []
 
-        for i in range(self.depth):
+        for i in range(1, self.depth + 1):
             edge_index, edge_weight = self.augment_adj(edge_index, edge_weight,
                                                        x.size(0))
-            x, edge_index, edge_weight, batch, perm, _ = self.pools[i](
+            x, edge_index, edge_weight, batch, perm, _ = self.pools[i - 1](
                 x, edge_index, edge_weight, batch)
-            x = self.act(self.down_convs[i](x, edge_index, edge_weight))
 
-            if i < self.depth - 1:
+            x = self.down_convs[i](x, edge_index, edge_weight)
+            x = self.act(x)
+
+            if i < self.depth:
                 xs += [x]
                 edge_indices += [edge_index]
                 edge_weights += [edge_weight]
@@ -90,8 +104,8 @@ class GraphUNet(torch.nn.Module):
             up[perm] = x
             x = res + up if self.sum_res else torch.cat((res, up), dim=-1)
 
-            if i < self.depth - 1:
-                x = self.act(self.up_convs[i](x, edge_index, edge_weight))
+            x = self.up_convs[i](x, edge_index, edge_weight)
+            x = self.act(x) if i < self.depth - 1 else x
 
         return x
 
@@ -107,6 +121,6 @@ class GraphUNet(torch.nn.Module):
         return edge_index, edge_weight
 
     def __repr__(self):
-        return '{}({}, depth={}, pool_ratios={})'.format(
-            self.__class__.__name__, self.channels, self.depth,
-            self.pool_ratios)
+        return '{}({}, {}, {}, depth={}, pool_ratios={})'.format(
+            self.__class__.__name__, self.in_channels, self.hidden_channels,
+            self.out_channels, self.depth, self.pool_ratios)
