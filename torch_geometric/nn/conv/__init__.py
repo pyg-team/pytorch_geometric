@@ -6,6 +6,7 @@ from .graph_conv import GraphConv
 from .gated_graph_conv import GatedGraphConv
 from .gat_conv import GATConv
 from .agnn_conv import AGNNConv
+from .tag_conv import TAGConv
 from .gin_conv import GINConv
 from .arma_conv import ARMAConv
 from .sg_conv import SGConv
@@ -22,7 +23,6 @@ from .x_conv import XConv
 from .ppf_conv import PPFConv
 from .feast_conv import FeaStConv
 from .hypergraph_conv import HypergraphConv
-from .tag_conv import TAGConv
 
 __all__ = [
     'MessagePassing',
@@ -33,6 +33,7 @@ __all__ = [
     'GatedGraphConv',
     'GATConv',
     'AGNNConv',
+    'TAGConv',
     'GINConv',
     'ARMAConv',
     'SGConv',
@@ -51,5 +52,4 @@ __all__ = [
     'PPFConv',
     'FeaStConv',
     'HypergraphConv',
-    'TAGConv',
 ]
