@@ -16,8 +16,9 @@ from torch_geometric.data import (Data, InMemoryDataset, download_url,
 class WILLOWObjectClass(InMemoryDataset):
     r"""The WILLOW-ObjectClass dataset from the `"Learning Graphs to Match"
     <https://www.di.ens.fr/willow/pdfscurrent/cho2013.pdf>`_ paper,
-    containing 10 keypoints with pre-trained VGG16 features (:obj:`relu4_2`
-    and :obj:`relu5_1`) of at least 40 images in each category.
+    containing 10 equal keypoints of at least 40 images in each category.
+    The keypoints contain interpolated features from a pre-trained VGG16 model
+    on ImageNet (:obj:`relu4_2` and :obj:`relu5_1`).
 
     Args:
         root (string): Root directory where the dataset should be saved.
