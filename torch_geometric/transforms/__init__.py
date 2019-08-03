@@ -30,6 +30,7 @@ from .to_dense import ToDense
 from .two_hop import TwoHop
 from .line_graph import LineGraph
 from .generate_mesh_normals import GenerateMeshNormals
+from .delaunay import Delaunay
 
 __all__ = [
     'Compose',
@@ -64,4 +65,5 @@ __all__ = [
     'TwoHop',
     'LineGraph',
     'GenerateMeshNormals',
+    'Delaunay',
 ]
