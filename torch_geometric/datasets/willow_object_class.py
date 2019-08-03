@@ -41,8 +41,8 @@ class WILLOWObjectClass(InMemoryDataset):
     url = ('http://www.di.ens.fr/willow/research/graphlearning/'
            'WILLOW-ObjectClass_dataset.zip')
 
-    def __init__(self, root, category='Car', transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(self, root, category, transform=None, pre_transform=None,
+                 pre_filter=None):
         assert category in ['Car', 'Duck', 'Face', 'Motorbike', 'Winebottle']
         self.category = category
         super(WILLOWObjectClass, self).__init__(root, transform, pre_transform,
