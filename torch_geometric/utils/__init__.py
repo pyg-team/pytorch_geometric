@@ -9,6 +9,7 @@ from .loop import (contains_self_loops, remove_self_loops,
                    add_remaining_self_loops)
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import subgraph
+from .get_laplacian import get_laplacian
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .sparse import dense_to_sparse
@@ -39,6 +40,7 @@ __all__ = [
     'contains_isolated_nodes',
     'remove_isolated_nodes',
     'subgraph',
+    'get_laplacian',
     'to_dense_batch',
     'to_dense_adj',
     'dense_to_sparse',

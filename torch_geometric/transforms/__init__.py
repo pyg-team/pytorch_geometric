@@ -29,6 +29,7 @@ from .fixed_points import FixedPoints
 from .to_dense import ToDense
 from .two_hop import TwoHop
 from .line_graph import LineGraph
+from .laplacian_lambda_max import LaplacianLambdaMax
 from .generate_mesh_normals import GenerateMeshNormals
 from .delaunay import Delaunay
 
@@ -64,6 +65,7 @@ __all__ = [
     'ToDense',
     'TwoHop',
     'LineGraph',
+    'LaplacianLambdaMax',
     'GenerateMeshNormals',
     'Delaunay',
 ]
