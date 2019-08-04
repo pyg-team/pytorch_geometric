@@ -16,7 +16,6 @@ def test_laplacian_lambda_max():
     assert len(out) == 3
     assert torch.allclose(torch.tensor(out.lambda_max), torch.tensor(7.0))
 
-    print(edge_index, edge_attr)
     data = Data(edge_index=edge_index, edge_attr=edge_attr)
     out = LaplacianLambdaMax(normalization='sym')(data)
     assert len(out) == 3
@@ -26,3 +25,8 @@ def test_laplacian_lambda_max():
     out = LaplacianLambdaMax(normalization='rw')(data)
     assert len(out) == 3
     assert torch.allclose(torch.tensor(out.lambda_max), torch.tensor(2.0))
+
+    data = Data(edge_index=edge_index, edge_attr=torch.randn(4, 2))
+    out = LaplacianLambdaMax(normalization=None)(data)
+    assert len(out) == 3
+    assert torch.allclose(torch.tensor(out.lambda_max), torch.tensor(3.0))
