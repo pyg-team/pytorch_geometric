@@ -19,18 +19,14 @@ transform = T.Compose([
     T.RandomRotate(15, axis=2)
 ])
 pre_transform = T.NormalizeScale()
-train_dataset = ShapeNet(
-    path,
-    category,
-    train=True,
-    transform=transform,
-    pre_transform=pre_transform)
-test_dataset = ShapeNet(
-    path, category, train=False, pre_transform=pre_transform)
-train_loader = DataLoader(
-    train_dataset, batch_size=12, shuffle=True, num_workers=6)
-test_loader = DataLoader(
-    test_dataset, batch_size=12, shuffle=False, num_workers=6)
+train_dataset = ShapeNet(path, category, train=True, transform=transform,
+                         pre_transform=pre_transform)
+test_dataset = ShapeNet(path, category, train=False,
+                        pre_transform=pre_transform)
+train_loader = DataLoader(train_dataset, batch_size=12, shuffle=True,
+                          num_workers=6)
+test_loader = DataLoader(test_dataset, batch_size=12, shuffle=False,
+                         num_workers=6)
 
 
 class FPModule(torch.nn.Module):
@@ -128,7 +124,7 @@ def test(loader):
     intersection = torch.cat(intersections, dim=0)
     union = torch.cat(unions, dim=0)
 
-    ious = [[]] * len(loader.dataset.categories)
+    ious = [[] for _ in range(loader.dataset.categories)]
     for j in range(len(loader.dataset)):
         i = intersection[j, loader.dataset.y_mask[category[j]]]
         u = union[j, loader.dataset.y_mask[category[j]]]
