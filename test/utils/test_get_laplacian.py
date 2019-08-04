@@ -1,40 +1,19 @@
-from torch_geometric.utils import get_laplacian
-from torch_geometric.utils import to_scipy_sparse_matrix
-
 import torch
-import numpy as np
+from torch_geometric.utils import get_laplacian
 
 
 def test_get_laplacian():
-    # Create fake data
-    edge_index = torch.tensor([[0, 1, 1, 2],
-                               [1, 0, 2, 1]], dtype=torch.long)
-    edge_weight = torch.tensor([1, 1, 2, 3], dtype=torch.float)
-    num_nodes = 3
-    params = {
-        'edge_index': edge_index,
-        'edge_weight': edge_weight,
-        'num_nodes': num_nodes,
-    }
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], dtype=torch.long)
+    edge_weight = torch.tensor([1, 2, 2, 4], dtype=torch.float)
 
-    # Compute results with PyG
-    lap = get_laplacian(**params)
-    lap_sym = get_laplacian(**params, normalization='sym')
-    lap_rw = get_laplacian(**params, normalization='rw')
+    lap = get_laplacian(edge_index, edge_weight)
+    assert lap[0].tolist() == [[0, 1, 1, 2, 0, 1, 2], [1, 0, 2, 1, 0, 1, 2]]
+    assert lap[1].tolist() == [-1, -2, -2, -4, 1, 4, 4]
 
-    lap = to_scipy_sparse_matrix(*lap).toarray()
-    lap_sym = to_scipy_sparse_matrix(*lap_sym).toarray()
-    lap_rw = to_scipy_sparse_matrix(*lap_rw).toarray()
+    lap_sym = get_laplacian(edge_index, edge_weight, normalization='sym')
+    assert lap_sym[0].tolist() == lap[0].tolist()
+    assert lap_sym[1].tolist() == [-0.5, -1, -0.5, -1, 1, 1, 1]
 
-    # Compute results with numpy
-    adj = to_scipy_sparse_matrix(edge_index, edge_weight, num_nodes).toarray()
-    d = adj.sum(axis=1)
-    deg = np.diag(d)
-    deg_sym = np.diag(np.power(d, -0.5))
-    deg_rw = np.diag(np.power(d, -1.0))
-
-    # Test
-    eye = np.eye(adj.shape[0])
-    assert np.array_equal(lap, deg - adj)
-    assert np.array_equal(lap_sym, eye - deg_sym @ adj @ deg_sym)
-    assert np.array_equal(lap_rw, eye - deg_rw @ adj)
+    lap_rw = get_laplacian(edge_index, edge_weight, normalization='rw')
+    assert lap_rw[0].tolist() == lap[0].tolist()
+    assert lap_rw[1].tolist() == [-1, -0.5, -0.5, -1, 1, 1, 1]
