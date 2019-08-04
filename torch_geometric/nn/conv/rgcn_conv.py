@@ -11,8 +11,8 @@ class RGCNConv(MessagePassing):
     <https://arxiv.org/abs/1703.06103>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta}_0 \cdot \mathbf{x}_i +
-        \sum_{r \in \mathcal{R}} \sum_{j \in \mathcal{N}_r(i)}
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta}_{\textrm{root}} \cdot
+        \mathbf{x}_i + \sum_{r \in \mathcal{R}} \sum_{j \in \mathcal{N}_r(i)}
         \frac{1}{|\mathcal{N}_r(i)|} \mathbf{\Theta}_r \cdot \mathbf{x}_j,
 
     where :math:`\mathcal{R}` denotes the set of relations, *i.e.* edge types.
@@ -25,6 +25,9 @@ class RGCNConv(MessagePassing):
         out_channels (int): Size of each output sample.
         num_relations (int): Number of relations.
         num_bases (int): Number of bases used for basis-decomposition.
+        root_weight (bool, optional): If set to :obj:`False`, the layer will
+            not add transformed root node features to the output.
+            (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -32,7 +35,7 @@ class RGCNConv(MessagePassing):
     """
 
     def __init__(self, in_channels, out_channels, num_relations, num_bases,
-                 bias=True, **kwargs):
+                 root_weight=True, bias=True, **kwargs):
         super(RGCNConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
@@ -42,7 +45,11 @@ class RGCNConv(MessagePassing):
 
         self.basis = Param(torch.Tensor(num_bases, in_channels, out_channels))
         self.att = Param(torch.Tensor(num_relations, num_bases))
-        self.root = Param(torch.Tensor(in_channels, out_channels))
+
+        if root_weight:
+            self.root = Param(torch.Tensor(in_channels, out_channels))
+        else:
+            self.register_parameter('root', None)
 
         if bias:
             self.bias = Param(torch.Tensor(out_channels))
@@ -80,10 +87,11 @@ class RGCNConv(MessagePassing):
         return out if edge_norm is None else out * edge_norm.view(-1, 1)
 
     def update(self, aggr_out, x):
-        if x is None:
-            out = aggr_out + self.root
-        else:
-            out = aggr_out + torch.matmul(x, self.root)
+        if self.root is not None:
+            if x is None:
+                out = aggr_out + self.root
+            else:
+                out = aggr_out + torch.matmul(x, self.root)
 
         if self.bias is not None:
             out = out + self.bias

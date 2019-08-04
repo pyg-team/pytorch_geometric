@@ -35,7 +35,7 @@ class SignedGCN(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        out_channels (int): Size of each output sample.
+        hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of layers.
         lamb (float, optional): Balances the contributions of the overall
             objective. (default: :obj:`5`)
@@ -43,26 +43,22 @@ class SignedGCN(torch.nn.Module):
             learn an additive bias. (default: :obj:`True`)
     """
 
-    def __init__(self,
-                 in_channels,
-                 hidden_channels,
-                 num_layers,
-                 lamb=5,
+    def __init__(self, in_channels, hidden_channels, num_layers, lamb=5,
                  bias=True):
         super(SignedGCN, self).__init__()
 
         self.in_channels = in_channels
+        self.hidden_channels = hidden_channels
+        self.num_layers = num_layers
         self.lamb = lamb
 
-        self.conv1 = SignedConv(
-            in_channels, hidden_channels // 2, first_aggr=True)
+        self.conv1 = SignedConv(in_channels, hidden_channels // 2,
+                                first_aggr=True)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(
-                SignedConv(
-                    hidden_channels // 2,
-                    hidden_channels // 2,
-                    first_aggr=False))
+                SignedConv(hidden_channels // 2, hidden_channels // 2,
+                           first_aggr=False))
 
         self.lin = torch.nn.Linear(2 * hidden_channels, 3)
 
@@ -90,9 +86,7 @@ class SignedGCN(torch.nn.Module):
 
         return train_edge_index, test_edge_index
 
-    def create_spectral_features(self,
-                                 pos_edge_index,
-                                 neg_edge_index,
+    def create_spectral_features(self, pos_edge_index, neg_edge_index,
                                  num_nodes=None):
         r"""Creates :obj:`in_channels` spectral node features based on
         positive and negative edges.
@@ -244,3 +238,8 @@ class SignedGCN(torch.nn.Module):
         f1 = f1_score(y, pred, average='binary') if pred.sum() > 0 else 0
 
         return auc, f1
+
+    def __repr__(self):
+        return '{}({}, {}, num_layers={})'.format(
+            self.__class__.__name__, self.in_channels, self.hidden_channels,
+            self.num_layers)

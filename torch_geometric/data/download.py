@@ -15,14 +15,20 @@ def download_url(url, folder, log=True):
         log (bool, optional): If :obj:`False`, will not print anything to the
             console. (default: :obj:`True`)
     """
+
+    filename = url.rpartition('/')[2]
+    path = osp.join(folder, filename)
+
+    if osp.exists(path):  # pragma: no cover
+        if log:
+            print('Using exist file', filename)
+        return path
+
     if log:
         print('Downloading', url)
 
     makedirs(folder)
-
     data = urllib.request.urlopen(url)
-    filename = url.rpartition('/')[2]
-    path = osp.join(folder, filename)
 
     with open(path, 'wb') as f:
         f.write(data.read())

@@ -17,18 +17,20 @@ before_install:
   - export CXX="g++-4.9"
 install:
   - pip install numpy
-  - pip install torch_nightly -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
-  - pip install torch-scatter torch-sparse torch-cluster==1.4.3-alpha1 torch-spline-conv
+  - pip install -q torch
+  - pip install torch-scatter torch-sparse torch-cluster torch-spline-conv
   - pip install cython && pip install gdist
   - pip install pycodestyle
   - pip install flake8
   - pip install codecov
+  - pip install sphinx
+  - pip install sphinx_rtd_theme
 script:
   - pycodestyle .
   - flake8 .
   - python setup.py install
   - python setup.py test
-  - cd docs && pip install -r requirements_1.txt && make clean && make html && cd ..
+  - cd docs && make clean && make html && cd ..
 after_success:
   - codecov
 notifications:

@@ -31,6 +31,7 @@ from .two_hop import TwoHop
 from .line_graph import LineGraph
 from .laplacian_lambda_max import LaplacianLambdaMax
 from .generate_mesh_normals import GenerateMeshNormals
+from .delaunay import Delaunay
 
 __all__ = [
     'Compose',
@@ -66,4 +67,5 @@ __all__ = [
     'LineGraph',
     'LaplacianLambdaMax',
     'GenerateMeshNormals',
+    'Delaunay',
 ]

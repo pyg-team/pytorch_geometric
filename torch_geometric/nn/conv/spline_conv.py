@@ -54,17 +54,9 @@ class SplineConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 dim,
-                 kernel_size,
-                 is_open_spline=True,
-                 degree=1,
-                 aggr='mean',
-                 root_weight=True,
-                 bias=True,
-                 **kwargs):
+    def __init__(self, in_channels, out_channels, dim, kernel_size,
+                 is_open_spline=True, degree=1, aggr='mean', root_weight=True,
+                 bias=True, **kwargs):
         super(SplineConv, self).__init__(aggr=aggr, **kwargs)
 
         if SplineBasis is None:
@@ -111,7 +103,7 @@ class SplineConv(MessagePassing):
         if not x.is_cuda:
             warnings.warn('We do not recommend using the non-optimized CPU '
                           'version of SplineConv. If possible, please convert '
-                          'your data to the GPU first.')
+                          'your data to the GPU.')
 
         if torch_geometric.is_debug_enabled():
             if x.size(1) != self.in_channels:
