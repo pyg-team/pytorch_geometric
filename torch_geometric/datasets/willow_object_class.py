@@ -5,12 +5,18 @@ import glob
 
 import torch
 import torch.nn.functional as F
-import torchvision.models as models
-import torchvision.transforms as T
+
 from PIL import Image
 from scipy.io import loadmat
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
+
+try:
+    import torchvision.models as models
+    import torchvision.transforms as T
+except ImportError:
+    models = None
+    T = None
 
 
 class WILLOWObjectClass(InMemoryDataset):
