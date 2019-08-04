@@ -73,6 +73,9 @@ class WILLOWObjectClass(InMemoryDataset):
         os.rename(osp.join(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
 
     def process(self):
+        if models is None and T is None:
+            raise ImportError('Package `torchvision` could not be found.')
+
         names = glob.glob(osp.join(self.raw_dir, self.category, '*.png'))
         names = sorted([name[:-4] for name in names])
 

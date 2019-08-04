@@ -7,11 +7,7 @@ except ImportError:
     gdist = None
 
 
-def geodesic_distance(pos,
-                      face,
-                      src=None,
-                      dest=None,
-                      norm=True,
+def geodesic_distance(pos, face, src=None, dest=None, norm=True,
                       max_distance=None):
     r"""Computes (normalized) geodesic distances of a mesh given by :obj:`pos`
     and :obj:`face`. If :obj:`src` and :obj:`dest` are given, this method only
@@ -40,7 +36,7 @@ def geodesic_distance(pos,
     """
 
     if gdist is None:
-        raise ImportError('Package "gdist" could not be found.')
+        raise ImportError('Package `gdist` could not be found.')
 
     max_distance = float('inf') if max_distance is None else max_distance
 
