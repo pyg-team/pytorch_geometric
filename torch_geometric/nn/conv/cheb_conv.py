@@ -34,7 +34,7 @@ class ChebConv(MessagePassing):
         out_channels (int): Size of each output sample.
         K (int): Chebyshev filter size, *i.e.* number of hops :math:`K`.
         normalization (str, optional): The normalization scheme for the graph
-            Laplacian (default: :obj:`None`):
+            Laplacian (default: :obj:`"sym"`):
 
             1. :obj:`None`: No normalization
             :math:`\mathbf{L} = \mathbf{D} - \mathbf{A}`
@@ -89,7 +89,7 @@ class ChebConv(MessagePassing):
         if batch is not None and torch.is_tensor(lambda_max):
             lambda_max = lambda_max[batch[edge_index[0]]]
 
-        edge_weight = 2.0 / lambda_max * edge_weight
+        edge_weight = (2.0 * edge_weight) / lambda_max
         edge_weight[edge_weight == float('inf')] = 0
 
         edge_index, edge_weight = add_self_loops(
