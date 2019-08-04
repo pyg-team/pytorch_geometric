@@ -1,5 +1,6 @@
 -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
 numpy
 torch_nightly
+torchvision
 sphinx
 sphinx_rtd_theme
