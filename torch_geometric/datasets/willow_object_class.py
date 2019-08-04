@@ -6,7 +6,6 @@ import glob
 import torch
 import torch.nn.functional as F
 
-from PIL import Image
 from scipy.io import loadmat
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
@@ -14,9 +13,11 @@ from torch_geometric.data import (Data, InMemoryDataset, download_url,
 try:
     import torchvision.models as models
     import torchvision.transforms as T
+    from PIL import Image
 except ImportError:
     models = None
     T = None
+    PIL = None
 
 
 class WILLOWObjectClass(InMemoryDataset):
@@ -73,7 +74,7 @@ class WILLOWObjectClass(InMemoryDataset):
         os.rename(osp.join(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
 
     def process(self):
-        if models is None and T is None:
+        if models is None or T is None or PIL is None:
             raise ImportError('Package `torchvision` could not be found.')
 
         names = glob.glob(osp.join(self.raw_dir, self.category, '*.png'))
