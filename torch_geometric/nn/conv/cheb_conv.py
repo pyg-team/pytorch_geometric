@@ -34,13 +34,18 @@ class ChebConv(MessagePassing):
         out_channels (int): Size of each output sample.
         K (int): Chebyshev filter size, *i.e.* number of hops :math:`K`.
         normalization (str, optional): The normalization scheme for the graph
-            Laplacian (default: :obj:`"sym"`):
-            1. :obj:`None`: No normalization :math:`\mathbf{L} = \mathbf{D} -
-                \mathbf{A}`
-            2. :obj:`"sym"`: Symmetric normalization :math:`\mathbf{L} =
-                \mathbf{I} - \mathbf{D}^{-1/2} \mathbf{A} \mathbf{D}^{-1/2}`
-            3. :obj:`"rw"`: Random-walk normalization :math:`\mathbf{L} =
-                \mathbf{I} - \mathbf{D}^{-1} \mathbf{A}`
+            Laplacian (default: :obj:`None`):
+
+            1. :obj:`None`: No normalization
+            :math:`\mathbf{L} = \mathbf{D} - \mathbf{A}`
+
+            2. :obj:`"sym"`: Symmetric normalization
+            :math:`\mathbf{L} = \mathbf{I} - \mathbf{D}^{-1/2} \mathbf{A}
+            \mathbf{D}^{-1/2}`
+
+            3. :obj:`"rw"`: Random-walk normalization
+            :math:`\mathbf{L} = \mathbf{I} - \mathbf{D}^{-1} \mathbf{A}`
+
             You need to pass :obj:`lambda_max` to :meth:`forward` in case the
             normalization is non-symmetric.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
@@ -94,8 +99,9 @@ class ChebConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_weight=None, batch=None,
                 lambda_max=None):
-        if self.normalization != 'sym':
-            assert lambda_max is not None
+        if self.normalization != 'sym' and lambda_max is None:
+            raise ValueError('You need to pass `lambda_max` to `forward() in`'
+                             'case the normalization is non-symmetric.')
         lambda_max = 2.0 if lambda_max is None else lambda_max
 
         edge_index, norm = self.norm(edge_index, x.size(0), edge_weight,

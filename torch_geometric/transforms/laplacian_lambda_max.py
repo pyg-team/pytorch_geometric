@@ -3,18 +3,22 @@ from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 
 
 class LaplacianLambdaMax(object):
-    """Computes the highest eigenvalue of the graph Laplacian given by
+    r"""Computes the highest eigenvalue of the graph Laplacian given by
     :meth:`torch_geometric.utils.get_laplacian`.
 
     Args:
         normalization (str, optional): The normalization scheme for the graph
             Laplacian (default: :obj:`None`):
-            1. :obj:`None`: No normalization :math:`\mathbf{L} = \mathbf{D} -
-                \mathbf{A}`
-            2. :obj:`"sym"`: Symmetric normalization :math:`\mathbf{L} =
-                \mathbf{I} - \mathbf{D}^{-1/2} \mathbf{A} \mathbf{D}^{-1/2}`
-            3. :obj:`"rw"`: Random-walk normalization :math:`\mathbf{L} =
-                \mathbf{I} - \mathbf{D}^{-1} \mathbf{A}`
+
+            1. :obj:`None`: No normalization
+            :math:`\mathbf{L} = \mathbf{D} - \mathbf{A}`
+
+            2. :obj:`"sym"`: Symmetric normalization
+            :math:`\mathbf{L} = \mathbf{I} - \mathbf{D}^{-1/2} \mathbf{A}
+            \mathbf{D}^{-1/2}`
+
+            3. :obj:`"rw"`: Random-walk normalization
+            :math:`\mathbf{L} = \mathbf{I} - \mathbf{D}^{-1} \mathbf{A}`
     """
 
     def __init__(self, normalization=None):
