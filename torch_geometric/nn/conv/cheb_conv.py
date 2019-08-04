@@ -99,6 +99,7 @@ class ChebConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_weight=None, batch=None,
                 lambda_max=None):
+        """"""
         if self.normalization != 'sym' and lambda_max is None:
             raise ValueError('You need to pass `lambda_max` to `forward() in`'
                              'case the normalization is non-symmetric.')
