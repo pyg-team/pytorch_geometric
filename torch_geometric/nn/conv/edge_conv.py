@@ -29,7 +29,7 @@ class EdgeConv(MessagePassing):
     """
 
     def __init__(self, nn, aggr='max', **kwargs):
-        super(EdgeConv, self).__init__(aggr='max', **kwargs)
+        super(EdgeConv, self).__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
 
