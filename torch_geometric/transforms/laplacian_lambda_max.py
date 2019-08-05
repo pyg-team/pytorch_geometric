@@ -1,4 +1,4 @@
-from scipy.sparse.linalg import eigs
+from scipy.sparse.linalg import eigs, eigsh
 from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 
 
@@ -36,7 +36,8 @@ class LaplacianLambdaMax(object):
 
         L = to_scipy_sparse_matrix(edge_index, edge_weight, data.num_nodes)
 
-        lambda_max = eigs(L, k=1, which='LM', return_eigenvectors=False)
+        eig_fn = eigsh if self.normalization == 'sym' else eigs
+        lambda_max = eig_fn(L, k=1, which='LM', return_eigenvectors=False)
         data.lambda_max = float(lambda_max.real)
 
         return data

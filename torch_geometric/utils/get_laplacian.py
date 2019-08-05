@@ -35,8 +35,8 @@ def get_laplacian(edge_index, edge_weight=None, normalization=None, dtype=None,
     assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
 
     if edge_weight is None:
-        edge_weight = torch.ones(
-            edge_index.size(1), dtype=dtype, device=edge_index.device)
+        edge_weight = torch.ones(edge_index.size(1), dtype=dtype,
+                                 device=edge_index.device)
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
@@ -54,8 +54,9 @@ def get_laplacian(edge_index, edge_weight=None, normalization=None, dtype=None,
         edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
         # L = I - A_norm.
-        edge_index, edge_weight = add_self_loops(
-            edge_index, -edge_weight, fill_value=1, num_nodes=num_nodes)
+        edge_index, edge_weight = add_self_loops(edge_index, -edge_weight,
+                                                 fill_value=1,
+                                                 num_nodes=num_nodes)
     else:
         # Compute A_norm = -D^{-1} A.
         deg_inv = 1.0 / deg
@@ -63,7 +64,8 @@ def get_laplacian(edge_index, edge_weight=None, normalization=None, dtype=None,
         edge_weight = deg_inv[row] * edge_weight
 
         # L = I - A_norm.
-        edge_index, edge_weight = add_self_loops(
-            edge_index, -edge_weight, fill_value=1, num_nodes=num_nodes)
+        edge_index, edge_weight = add_self_loops(edge_index, -edge_weight,
+                                                 fill_value=1,
+                                                 num_nodes=num_nodes)
 
     return edge_index, edge_weight
