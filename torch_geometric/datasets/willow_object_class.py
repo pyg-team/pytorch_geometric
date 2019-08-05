@@ -17,7 +17,7 @@ try:
 except ImportError:
     models = None
     T = None
-    PIL = None
+    Image = None
 
 
 class WILLOWObjectClass(InMemoryDataset):
@@ -74,7 +74,7 @@ class WILLOWObjectClass(InMemoryDataset):
         os.rename(osp.join(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
 
     def process(self):
-        if models is None or T is None or PIL is None:
+        if models is None or T is None or Image is None:
             raise ImportError('Package `torchvision` could not be found.')
 
         names = glob.glob(osp.join(self.raw_dir, self.category, '*.png'))
@@ -100,6 +100,11 @@ class WILLOWObjectClass(InMemoryDataset):
             pos = loadmat('{}.mat'.format(name))['pts_coord']
             x, y = torch.from_numpy(pos).to(torch.float)
             pos = torch.stack([x, y], dim=1)
+
+            # The "Face" category contains a single image with less than 10
+            # keypoints, so we need to skip it.
+            if pos.size(0) != 10:
+                continue
 
             with open('{}.png'.format(name), 'rb') as f:
                 img = Image.open(f).convert('RGB')
