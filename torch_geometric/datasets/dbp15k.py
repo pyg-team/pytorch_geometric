@@ -6,6 +6,7 @@ import torch
 from google_drive_downloader import GoogleDriveDownloader as gdd
 from torch_geometric.data import Data, InMemoryDataset, extract_zip
 from torch_geometric.read import read_txt_array
+from torch_geometric.utils import sort_edge_index
 
 
 class DBP15K(InMemoryDataset):
@@ -105,6 +106,7 @@ class DBP15K(InMemoryDataset):
 
         subj, obj = assoc[subj], assoc[obj]
         edge_index = torch.stack([subj, obj], dim=0)
+        edge_index, rel = sort_edge_index(edge_index, rel)
 
         xs = [None for _ in range(idx.size(0))]
         for i in x_dict.keys():
