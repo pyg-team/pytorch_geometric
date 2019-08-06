@@ -25,6 +25,7 @@ from .bitcoin_otc import BitcoinOTC
 from .icews import ICEWS18
 from .gdelt import GDELT
 from .willow_object_class import WILLOWObjectClass
+from .dbp15k import DBP15K
 
 __all__ = [
     'KarateClub',
@@ -54,4 +55,5 @@ __all__ = [
     'ICEWS18',
     'GDELT',
     'WILLOWObjectClass',
+    'DBP15K',
 ]
