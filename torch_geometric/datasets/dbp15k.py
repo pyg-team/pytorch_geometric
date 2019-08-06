@@ -15,7 +15,7 @@ class DBP15K(InMemoryDataset):
     French versions of DBpedia were linked to its English version.
     Node features are given by pre-trained and aligned monolingual word
     embeddings from the `"Cross-lingual Knowledge Graph Alignment via Graph
-    Matching Neural Network"<https://arxiv.org/abs/1905.11605>`_ paper.
+    Matching Neural Network" <https://arxiv.org/abs/1905.11605>`_ paper.
 
     Args:
         root (string): Root directory where the dataset should be saved.
