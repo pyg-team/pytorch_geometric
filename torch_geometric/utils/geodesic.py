@@ -46,29 +46,36 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
     else:  # pragma: no cover
         norm = 1.0
 
-    if src is None:
-        src = np.arange(pos.size(0), dtype=np.int32)
-    else:
-        src = src.detach().cpu().to(torch.int).numpy()
-
-    dest = None if dest is None else dest.detach().cpu().to(torch.int).numpy()
-
     dtype = pos.dtype
+
     pos = pos.detach().cpu().to(torch.double).numpy()
     face = face.detach().t().cpu().to(torch.int).numpy()
 
-    outs = []
-    for i in range(len(src)):
-        s = src[i:i + 1]
-        d = None if dest is None else dest[i:i + 1]
+    if src is None and dest is None:
+        out = torch.from_numpy(
+            gdist.local_gdist_matrix(pos, face, max_distance * norm).toarray()
+            / norm).to(dtype)
+    else:
+        if src is None:
+            src = np.arange(pos.size(0), dtype=np.int32)
+        else:
+            src = src.detach().cpu().to(torch.int).numpy()
 
-        out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
-        out = torch.from_numpy(out).to(dtype)
-        outs.append(out)
+        dest = None if dest is None else dest.detach().cpu().to(
+            torch.int).numpy()
+        outs = []
+        for i in range(len(src)):
+            s = src[i:i + 1]
+            d = None if dest is None else dest[i:i + 1]
 
-    out = torch.cat(outs, dim=0)
+            out = gdist.compute_gdist(pos, face, s, d,
+                                      max_distance * norm) / norm
+            out = torch.from_numpy(out).to(dtype)
+            outs.append(out)
 
-    if dest is None:
-        out = out.view(-1, pos.shape[0])
+        out = torch.cat(outs, dim=0)
+
+        if dest is None:
+            out = out.view(-1, pos.shape[0])
 
     return out
