@@ -9,7 +9,7 @@ from ..inits import glorot, zeros
 
 class GCNConv(MessagePassing):
     r"""The graph convolutional operator from the `"Semi-supervised
-    Classfication with Graph Convolutional Networks"
+    Classification with Graph Convolutional Networks"
     <https://arxiv.org/abs/1609.02907>`_ paper
 
     .. math::

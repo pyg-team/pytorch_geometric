@@ -15,7 +15,7 @@ class RandomScale(object):
     for three-dimensional positions.
 
     Args:
-        scale (tuple): scaling factor interval, e.g. :obj:`(a, b)`, then scale
+        scales (tuple): scaling factor interval, e.g. :obj:`(a, b)`, then scale
             is randomly sampled from the range
             :math:`a \leq \mathrm{scale} \leq b`.
     """

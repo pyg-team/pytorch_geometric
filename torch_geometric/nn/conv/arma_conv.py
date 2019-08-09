@@ -32,7 +32,7 @@ class ARMAConv(torch.nn.Module):
             (default: :obj:`1`).
         num_layers (int, optional): Number of layers :math:`T`.
             (default: :obj:`1`)
-        act (callable, optional): Activiation function :math:`\sigma`.
+        act (callable, optional): Activation function :math:`\sigma`.
             (default: :meth:`torch.nn.functional.ReLU`)
         shared_weights (int, optional): If set to :obj:`True` the layers in
             each stack will share the same parameters. (default: :obj:`False`)
