@@ -1,4 +1,6 @@
 import os.path as osp
+import os
+os.chdir("/home/cy/PycharmProjects/PointCloud")
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,6 +15,10 @@ category = None # None # 'Airplane'
 path = 'ShapeNet'
 transform = T.Compose([
     T.FixedPoints(2048),
+#     T.RandomTranslate(0.01),
+#     T.RandomRotate(15, axis=0),
+#     T.RandomRotate(15, axis=1),
+#     T.RandomRotate(15, axis=2)
 ])
 pre_transform = T.NormalizeScale()
 train_dataset = ShapeNet(
@@ -28,13 +34,13 @@ test_dataset = ShapeNet(
     transform=transform,
     pre_transform=pre_transform)
 train_loader = DataListLoader(
-    train_dataset, batch_size=32, shuffle=True, num_workers=32, drop_last=True)
+    train_dataset, batch_size=16, shuffle=True, num_workers=16, drop_last=True)
 test_loader = DataListLoader(
-        test_dataset, batch_size=32, shuffle=False, num_workers=32)
+        test_dataset, batch_size=16, shuffle=False, num_workers=16)
 
 def MLP(channels, batch_norm=True):
     return Seq(*[
-        Seq(Lin(channels[i - 1], channels[i]), ReLU(), BN(channels[i]))
+        Seq(Lin(channels[i - 1], channels[i]), ReLU(), nn.GroupNorm(max(1, channels[i] // 16), channels[i]))
         for i in range(1, len(channels))
     ])
 
@@ -79,7 +85,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net(train_dataset.num_classes, k=30)
 model = DataParallel(model).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.8)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
 
 
 def train():
@@ -127,7 +133,7 @@ def test(loader):
     intersection = torch.cat(intersections, dim=0)
     union = torch.cat(unions, dim=0)
 
-    ious = [[]] * len(loader.dataset.categories)
+    ious = [[] for _ in range(len(loader.dataset.categories))]
     for j in range(len(loader.dataset)):
         i = intersection[j, loader.dataset.y_mask[category[j]]]
         u = union[j, loader.dataset.y_mask[category[j]]]
@@ -135,13 +141,18 @@ def test(loader):
         iou[torch.isnan(iou)] = 1
         ious[category[j]].append(iou.mean().item())
 
+    miiou = sum(sum(ious, [])) / len(loader.dataset)
     for cat in range(len(loader.dataset.categories)):
         ious[cat] = torch.tensor(ious[cat]).mean().item()
 
-    return correct_nodes / total_nodes, torch.tensor(ious).mean().item()
+    return correct_nodes / total_nodes, miiou, torch.tensor(ious).mean().item()
 
 
-for epoch in range(1, 31):
+best = 0
+for epoch in range(1, 101):
     train()
-    acc, iou = test(test_loader)
-    print('Epoch: {:02d}, Acc: {:.4f}, IoU: {:.4f}'.format(epoch, acc, iou))
+    acc, miiou, mciou = test(test_loader)
+    best = max(best, miiou)
+    if epoch % 10 == 0:
+        torch.save(model.module.state_dict(), str(epoch) + 'dgcnn.pth')
+    print('Epoch: {:02d}, Best: {:.4f}, Acc: {:.4f}, MIoU: {:.4f}, MCIoU: {:.4f}'.format(epoch, best, acc, miiou, mciou))
