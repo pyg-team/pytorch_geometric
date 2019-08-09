@@ -24,7 +24,7 @@ class ShapeNet(InMemoryDataset):
             :obj:`"Guitar"`, :obj:`"Knife"`, :obj:`"Lamp"`, :obj:`"Laptop"`,
             :obj:`"Motorbike"`, :obj:`"Mug"`, :obj:`"Pistol"`, :obj:`"Rocket"`,
             :obj:`"Skateboard"`, :obj:`"Table"`).
-            Can be explicitely set to :obj:`None` to load all categories.
+            Can be explicitly set to :obj:`None` to load all categories.
             (default: :obj:`None`)
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)

@@ -30,13 +30,13 @@ class RENet(torch.nn.Module):
 
     Args:
         num_nodes (int): The number of nodes in the knowledge graph.
-        num_rel (int): The number of relations in the knowledge graph.
+        num_rels (int): The number of relations in the knowledge graph.
         hidden_channels (int): Hidden size of node and relation embeddings.
         seq_len (int): The sequence length of past events.
         num_layers (int, optional): The number of recurrent layers.
             (default: :obj:`1`)
-        dropout (int): If non-zero, introduces a dropout layer before the final
-            prediction. (default: :obj:`0`)
+        dropout (float): If non-zero, introduces a dropout layer before the final
+            prediction. (default: :obj:`0.`)
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
@@ -47,7 +47,7 @@ class RENet(torch.nn.Module):
                  hidden_channels,
                  seq_len,
                  num_layers=1,
-                 dropout=0,
+                 dropout=0.,
                  bias=True):
         super(RENet, self).__init__()
 
