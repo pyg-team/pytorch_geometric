@@ -1,6 +1,4 @@
 import os.path as osp
-import os
-os.chdir("/home/cy/PycharmProjects/PointCloud")
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
