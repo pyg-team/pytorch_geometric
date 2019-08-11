@@ -12,12 +12,13 @@ class FixedPoints(object):
         num (int): The number of points to sample.
     """
 
-    def __init__(self, num):
+    def __init__(self, num, replace=True):
         self.num = num
+        self.replace = replace
 
     def __call__(self, data):
         num_nodes = data.num_nodes
-        choice = np.random.choice(data.num_nodes, self.num, replace=True)
+        choice = np.random.choice(data.num_nodes, self.num, replace=self.replace)
 
         for key, item in data:
             if bool(re.search('edge', key)):
