@@ -17,7 +17,7 @@ before_install:
   - export CXX="g++-4.9"
 install:
   - pip install numpy
-  - pip install -q torch
+  - pip install -q torch -f https://download.pytorch.org/whl/nightly/cpu/torch.html
   - pip install torch-scatter torch-sparse torch-cluster torch-spline-conv
   - pip install cython && pip install gdist
   - pip install pycodestyle
@@ -26,6 +26,7 @@ install:
   - pip install sphinx
   - pip install sphinx_rtd_theme
 script:
+  - python -c "import torch; print(torch.__version__)"
   - pycodestyle .
   - flake8 .
   - python setup.py install

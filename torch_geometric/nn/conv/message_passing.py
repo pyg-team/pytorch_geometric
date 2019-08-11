@@ -56,7 +56,7 @@ class MessagePassing(torch.nn.Module):
         ]
         self.__update_args__ = getargspec(self.update)[0][2:]
 
-    def propagate(self, edge_index, size=None, **kwargs):
+    def propagate(self, edge_index, size=None, dim=0, **kwargs):
         r"""The initial call to start propagating messages.
 
         Args:
@@ -66,6 +66,7 @@ class MessagePassing(torch.nn.Module):
             size (list or tuple, optional): The size :obj:`[N, M]` of the
                 assignment matrix. If set to :obj:`None`, the size is tried to
                 get automatically inferred. (default: :obj:`None`)
+            dim ()
             **kwargs: Any additional data which is needed to construct messages
                 and to update node embeddings.
         """
@@ -88,8 +89,8 @@ class MessagePassing(torch.nn.Module):
                         assert len(tmp) == 2
                         if tmp[1 - idx] is not None:
                             if size[1 - idx] is None:
-                                size[1 - idx] = tmp[1 - idx].size(0)
-                            if size[1 - idx] != tmp[1 - idx].size(0):
+                                size[1 - idx] = tmp[1 - idx].size(dim)
+                            if size[1 - idx] != tmp[1 - idx].size(dim):
                                 raise ValueError(__size_error_msg__)
                         tmp = tmp[idx]
 
@@ -97,11 +98,11 @@ class MessagePassing(torch.nn.Module):
                         message_args.append(tmp)
                     else:
                         if size[idx] is None:
-                            size[idx] = tmp.size(0)
-                        if size[idx] != tmp.size(0):
+                            size[idx] = tmp.size(dim)
+                        if size[idx] != tmp.size(dim):
                             raise ValueError(__size_error_msg__)
 
-                        tmp = torch.index_select(tmp, 0, edge_index[idx])
+                        tmp = torch.index_select(tmp, dim, edge_index[idx])
                         message_args.append(tmp)
             else:
                 message_args.append(kwargs.get(arg, None))
