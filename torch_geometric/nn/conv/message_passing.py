@@ -56,7 +56,7 @@ class MessagePassing(torch.nn.Module):
         ]
         self.__update_args__ = getargspec(self.update)[0][2:]
 
-    def propagate(self, edge_index, size=None, dim=0, **kwargs):
+    def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
 
         Args:
@@ -66,11 +66,11 @@ class MessagePassing(torch.nn.Module):
             size (list or tuple, optional): The size :obj:`[N, M]` of the
                 assignment matrix. If set to :obj:`None`, the size is tried to
                 get automatically inferred. (default: :obj:`None`)
-            dim ()
             **kwargs: Any additional data which is needed to construct messages
                 and to update node embeddings.
         """
 
+        dim = 0
         size = [None, None] if size is None else list(size)
         assert len(size) == 2
 
