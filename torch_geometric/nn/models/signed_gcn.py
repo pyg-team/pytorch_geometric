@@ -78,7 +78,7 @@ class SignedGCN(torch.nn.Module):
             test_ratio (float, optional): The ratio of test edges.
                 (default: :obj:`0.2`)
         """
-        mask = torch.ones(edge_index.size(1), dtype=torch.uint8)
+        mask = torch.ones(edge_index.size(1), dtype=torch.bool)
         mask[torch.randperm(mask.size(0))[:int(test_ratio * mask.size(0))]] = 0
 
         train_edge_index = edge_index[:, mask]
