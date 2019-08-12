@@ -82,7 +82,7 @@ class SignedGCN(torch.nn.Module):
         mask[torch.randperm(mask.size(0))[:int(test_ratio * mask.size(0))]] = 0
 
         train_edge_index = edge_index[:, mask]
-        test_edge_index = edge_index[:, 1 - mask]
+        test_edge_index = edge_index[:, ~mask]
 
         return train_edge_index, test_edge_index
 
