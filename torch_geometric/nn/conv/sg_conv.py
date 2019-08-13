@@ -20,7 +20,7 @@ class SGConv(MessagePassing):
         K (int, optional): Number of hops :math:`K`. (default: :obj:`1`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of :math:`{\left(\mathbf{\hat{D}}^{-1/2}
-            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}` on first
+            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}^K` on first
             execution, and will use the cached version for further executions.
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
