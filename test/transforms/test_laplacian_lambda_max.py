@@ -12,17 +12,17 @@ def test_laplacian_lambda_max():
     edge_attr = torch.tensor([1, 1, 2, 2], dtype=torch.float)
 
     data = Data(edge_index=edge_index, edge_attr=edge_attr)
-    out = LaplacianLambdaMax(normalization=None)(data)
+    out = LaplacianLambdaMax(normalization=None, is_undirected=True)(data)
     assert len(out) == 3
     assert torch.allclose(torch.tensor(out.lambda_max), torch.tensor(4.732049))
 
     data = Data(edge_index=edge_index, edge_attr=edge_attr)
-    out = LaplacianLambdaMax(normalization='sym')(data)
+    out = LaplacianLambdaMax(normalization='sym', is_undirected=True)(data)
     assert len(out) == 3
     assert torch.allclose(torch.tensor(out.lambda_max), torch.tensor(2.0))
 
     data = Data(edge_index=edge_index, edge_attr=edge_attr)
-    out = LaplacianLambdaMax(normalization='rw')(data)
+    out = LaplacianLambdaMax(normalization='rw', is_undirected=True)(data)
     assert len(out) == 3
     assert torch.allclose(torch.tensor(out.lambda_max), torch.tensor(2.0))
 
