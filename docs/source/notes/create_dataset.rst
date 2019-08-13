@@ -69,7 +69,7 @@ Let's see this process in a simplified example:
             data_list = [...]
 
             if self.pre_filter is not None:
-                data_list [data for data in data_list if self.pre_filter(data)]
+                data_list = [data for data in data_list if self.pre_filter(data)]
 
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(data) for data in data_list]
@@ -154,11 +154,11 @@ Frequently Asked Questions
             def __init__(self, root, transform=None, pre_transform=None):
                 super(MyOwnDataset, self).__init__(root, transform, pre_transform)
 
-        def _download(self):
-            pass
+            def _download(self):
+                pass
 
-        def _process(self):
-            pass
+            def _process(self):
+                pass
 
 #. **Do I really need to use these dataset interfaces?**
 
