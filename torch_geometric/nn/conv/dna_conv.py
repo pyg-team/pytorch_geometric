@@ -249,9 +249,11 @@ class DNAConv(MessagePassing):
                         self.cached_num_edges, edge_index.size(1)))
 
         if not self.cached or self.cached_result is None:
+            self.cached_num_edges = edge_index.size(1)
             edge_index, norm = GCNConv.norm(edge_index, x.size(0), edge_weight,
                                             dtype=x.dtype)
             self.cached_result = edge_index, norm
+
         edge_index, norm = self.cached_result
 
         return self.propagate(edge_index, x=x, norm=norm)
