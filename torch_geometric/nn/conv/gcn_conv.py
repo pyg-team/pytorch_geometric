@@ -28,8 +28,11 @@ class GCNConv(MessagePassing):
             (default: :obj:`False`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of :math:`{\left(\mathbf{\hat{D}}^{-1/2}
-            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}`.
-            (default: :obj:`False`)
+            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}` on first
+            execution, and will use it the cached normalization for further
+            executions.
+            This parameter should only be set to :obj:`True` in transductive
+            learning scenarios. (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -44,7 +47,6 @@ class GCNConv(MessagePassing):
         self.out_channels = out_channels
         self.improved = improved
         self.cached = cached
-        self.cached_result = None
 
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
 
@@ -86,7 +88,9 @@ class GCNConv(MessagePassing):
         if self.cached and self.cached_result is not None:
             if edge_index.size(1) != self.cached_num_edges:
                 raise RuntimeError(
-                    'Cached {} number of edges, but found {}'.format(
+                    'Cached {} number of edges, but found {}. Please '
+                    'disable the caching behavior of this layer by removing '
+                    'the `cached=True` argument in its constructor.'.format(
                         self.cached_num_edges, edge_index.size(1)))
 
         if not self.cached or self.cached_result is None:

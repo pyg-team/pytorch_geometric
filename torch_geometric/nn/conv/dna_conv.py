@@ -54,9 +54,11 @@ class Linear(torch.nn.Module):
         return out
 
     def __repr__(self):  # pragma: no cover
-        return '{}({}, {}, groups={}, bias={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.groups, self.bias is not None)
+        return '{}({}, {}, groups={}, bias={})'.format(self.__class__.__name__,
+                                                       self.in_channels,
+                                                       self.out_channels,
+                                                       self.groups,
+                                                       self.bias is not None)
 
 
 def restricted_softmax(src, dim=-1, margin=0):
@@ -94,12 +96,7 @@ class Attention(torch.nn.Module):
 
 
 class MultiHead(Attention):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 heads=1,
-                 groups=1,
-                 dropout=0,
+    def __init__(self, in_channels, out_channels, heads=1, groups=1, dropout=0,
                  bias=True):
         super(MultiHead, self).__init__(dropout)
 
@@ -215,18 +212,12 @@ class DNAConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self,
-                 channels,
-                 heads=1,
-                 groups=1,
-                 dropout=0,
-                 cached=False,
-                 bias=True,
-                 **kwargs):
+    def __init__(self, channels, heads=1, groups=1, dropout=0, cached=False,
+                 bias=True, **kwargs):
         super(DNAConv, self).__init__(aggr='add', **kwargs)
         self.bias = bias
         self.cached = cached
-        self.cached_result = None
+
         self.multi_head = MultiHead(channels, channels, heads, groups, dropout,
                                     bias)
         self.reset_parameters()
@@ -234,6 +225,7 @@ class DNAConv(MessagePassing):
     def reset_parameters(self):
         self.multi_head.reset_parameters()
         self.cached_result = None
+        self.cached_num_edges = None
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
@@ -246,9 +238,17 @@ class DNAConv(MessagePassing):
                              'channels].')
         num_nodes, num_layers, channels = x.size()
 
+        if self.cached and self.cached_result is not None:
+            if edge_index.size(1) != self.cached_num_edges:
+                raise RuntimeError(
+                    'Cached {} number of edges, but found {}. Please '
+                    'disable the caching behavior of this layer by removing '
+                    'the `cached=True` argument in its constructor.'.format(
+                        self.cached_num_edges, edge_index.size(1)))
+
         if not self.cached or self.cached_result is None:
-            edge_index, norm = GCNConv.norm(
-                edge_index, x.size(0), edge_weight, dtype=x.dtype)
+            edge_index, norm = GCNConv.norm(edge_index, x.size(0), edge_weight,
+                                            dtype=x.dtype)
             self.cached_result = edge_index, norm
         edge_index, norm = self.cached_result
 

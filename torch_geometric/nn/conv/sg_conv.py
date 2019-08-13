@@ -20,20 +20,18 @@ class SGConv(MessagePassing):
         K (int, optional): Number of hops :math:`K`. (default: :obj:`1`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of :math:`{\left(\mathbf{\hat{D}}^{-1/2}
-            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}^K \mathbf{X}`.
-            (default: :obj:`False`)
+            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}` on first
+            execution, and will use it the cached normalization for further
+            executions.
+            This parameter should only be set to :obj:`True` in transductive
+            learning scenarios. (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 K=1,
-                 cached=False,
-                 bias=True,
+    def __init__(self, in_channels, out_channels, K=1, cached=False, bias=True,
                  **kwargs):
         super(SGConv, self).__init__(aggr='add', **kwargs)
 
@@ -41,7 +39,6 @@ class SGConv(MessagePassing):
         self.out_channels = out_channels
         self.K = K
         self.cached = cached
-        self.cached_result = None
 
         self.lin = Linear(in_channels, out_channels, bias=bias)
 
@@ -57,7 +54,9 @@ class SGConv(MessagePassing):
         if self.cached and self.cached_result is not None:
             if edge_index.size(1) != self.cached_num_edges:
                 raise RuntimeError(
-                    'Cached {} number of edges, but found {}'.format(
+                    'Cached {} number of edges, but found {}. Please '
+                    'disable the caching behavior of this layer by removing '
+                    'the `cached=True` argument in its constructor.'.format(
                         self.cached_num_edges, edge_index.size(1)))
 
         if not self.cached:
@@ -65,9 +64,7 @@ class SGConv(MessagePassing):
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
-            edge_index, norm = GCNConv.norm(edge_index,
-                                            x.size(0),
-                                            edge_weight,
+            edge_index, norm = GCNConv.norm(edge_index, x.size(0), edge_weight,
                                             dtype=x.dtype)
 
             for k in range(self.K):
