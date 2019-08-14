@@ -11,6 +11,16 @@ from .autoencoder import negative_sampling
 
 
 def negative_triangle_sampling(edge_index, num_nodes):
+    r"""Sample negative edges of a graph ({0, ..., num_nodes - 1}, edge_index),
+    with the form of triangle. For return tuple (i, j, k), [i, j] is existing adjacency
+    list of the given graph, [k, i] is the  adjacency list of sampled negative edges.
+
+    Args:
+        edge_index (LongTensor): Existing adjacency list of the given graph.
+        num_nodes (int): Number of nodes in the given graph.
+
+    :rtype: Tuple[LongTensor]
+    """
     device = edge_index.device
     i, j = edge_index.to(torch.device('cpu'))
     idx_1 = i * num_nodes + j

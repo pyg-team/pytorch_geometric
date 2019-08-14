@@ -20,6 +20,8 @@ def negative_sampling(pos_edge_index, num_nodes, max_num_samples=None):
         num_nodes (int): Number of nodes in the given graph.
         max_num_samples (int, optional): Maximum number of negative samples. The
             number of negative samples that this method returns cannot exceed max_num_samples.
+
+    :rtype: LongTensor
     """
 
     max_num_samples = max_num_samples or pos_edge_index.size(1)
