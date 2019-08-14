@@ -41,7 +41,7 @@ class InnerProductDecoder(torch.nn.Module):
     space produced by the encoder."""
 
     def forward(self, z, edge_index, sigmoid=True):
-        r"""Decodes the latent variables :obj:`z` into edge probabilties for
+        r"""Decodes the latent variables :obj:`z` into edge probabilities for
         the given node-pairs :obj:`edge_index`.
 
         Args:
