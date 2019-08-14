@@ -4,46 +4,12 @@ import random
 import torch
 import numpy as np
 from sklearn.metrics import roc_auc_score, average_precision_score
-from torch_geometric.utils import to_undirected
+from torch_geometric.utils import to_undirected, negative_sampling
 
 from ..inits import reset
 
 EPS = 1e-15
 MAX_LOGVAR = 10
-
-
-def negative_sampling(pos_edge_index, num_nodes, max_num_samples=None):
-    r"""Sample negative edges of a graph ({0, ..., num_nodes - 1}, pos_edge_index).
-
-    Args:
-        pos_edge_index (LongTensor): Existing adjacency list of the given graph.
-        num_nodes (int): Number of nodes in the given graph.
-        max_num_samples (int, optional): Maximum number of negative samples. The
-            number of negative samples that this method returns cannot exceed max_num_samples.
-
-    :rtype: LongTensor
-    """
-
-    max_num_samples = max_num_samples or pos_edge_index.size(1)
-
-    # Handle '2*|pos_edges| > num_nodes^2' case.
-    num_samples = min(max_num_samples, num_nodes * num_nodes - pos_edge_index.size(1))
-
-    idx = (pos_edge_index[0] * num_nodes + pos_edge_index[1])
-    idx = idx.to(torch.device('cpu'))
-
-    rng = range(num_nodes ** 2)
-    perm = torch.tensor(random.sample(rng, num_samples))
-    mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
-    rest = mask.nonzero().view(-1)
-    while rest.numel() > 0:  # pragma: no cover
-        tmp = torch.tensor(random.sample(rng, rest.size(0)))
-        mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
-        perm[rest] = tmp
-        rest = rest[mask.nonzero().view(-1)]
-
-    row, col = perm / num_nodes, perm % num_nodes
-    return torch.stack([row, col], dim=0).long().to(pos_edge_index.device)
 
 
 class InnerProductDecoder(torch.nn.Module):

@@ -23,6 +23,7 @@ from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
 from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score,
                      intersection_and_union, mean_iou)
+from .negative_sampling import negative_sampling, negative_triangle_sampling
 
 __all__ = [
     'degree',
@@ -64,4 +65,6 @@ __all__ = [
     'f1_score',
     'intersection_and_union',
     'mean_iou',
+    'negative_sampling',
+    'negative_triangle_sampling',
 ]

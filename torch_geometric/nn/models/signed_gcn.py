@@ -7,34 +7,7 @@ import torch.nn.functional as F
 from torch_sparse import coalesce
 from torch_geometric.nn import SignedConv
 
-from .autoencoder import negative_sampling
-
-
-def negative_triangle_sampling(edge_index, num_nodes):
-    r"""Sample negative edges of a graph ({0, ..., num_nodes - 1}, edge_index),
-    with the form of triangle. For return tuple (i, j, k), [i, j] is existing adjacency
-    list of the given graph, [k, i] is the  adjacency list of sampled negative edges.
-
-    Args:
-        edge_index (LongTensor): Existing adjacency list of the given graph.
-        num_nodes (int): Number of nodes in the given graph.
-
-    :rtype: Tuple[LongTensor]
-    """
-    device = edge_index.device
-    i, j = edge_index.to(torch.device('cpu'))
-    idx_1 = i * num_nodes + j
-    k = torch.randint(num_nodes, (i.size(0), ), dtype=torch.long)
-    idx_2 = k * num_nodes + i
-    mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
-    rest = mask.nonzero().view(-1)
-    while rest.numel() > 0:  # pragma: no cover
-        tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
-        idx_2 = tmp * num_nodes + i[rest]
-        mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
-        k[rest] = tmp
-        rest = rest[mask.nonzero().view(-1)]
-    return i.to(device), j.to(device), k.to(device)
+from torch_geometric.utils import negative_sampling, negative_triangle_sampling
 
 
 class SignedGCN(torch.nn.Module):
