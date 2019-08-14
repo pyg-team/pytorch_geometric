@@ -38,7 +38,7 @@ def negative_sampling(pos_edge_index, num_nodes, max_num_samples=None):
         tmp = torch.tensor(random.sample(rng, rest.size(0)))
         mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
         perm[rest] = tmp
-        rest = mask.nonzero().view(-1)
+        rest = rest[mask.nonzero().view(-1)]
 
     row, col = perm / num_nodes, perm % num_nodes
     return torch.stack([row, col], dim=0).long().to(pos_edge_index.device)
