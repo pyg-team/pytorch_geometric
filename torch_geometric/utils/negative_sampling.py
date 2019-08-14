@@ -2,6 +2,8 @@ import torch
 import random
 import numpy as np
 
+from torch_geometric.utils import subgraph
+
 
 def negative_sampling(pos_edge_index, num_nodes, max_num_samples=None):
     r"""Sample negative edges of a graph ({0, ..., num_nodes - 1}, pos_edge_index).
@@ -62,3 +64,37 @@ def negative_triangle_sampling(edge_index, num_nodes):
         k[rest] = tmp
         rest = rest[mask.nonzero().view(-1)]
     return i.to(device), j.to(device), k.to(device)
+
+
+def batch_negative_sampling(pos_edge_index, num_nodes=None, batch=None, max_num_samples=None):
+    r"""Apply negative sampling to batches of multiple graphs.
+
+    Args:
+        pos_edge_index (LongTensor): Existing adjacency list of the given graph.
+        num_nodes (int): Number of nodes in the given graph.
+        max_num_samples (int, optional): Maximum number of negative samples. The
+            number of negative samples that this method returns cannot exceed max_num_samples.
+        batch (LongTensor, optional): The Batch object.
+    """
+    assert (num_nodes is not None) or (batch is not None), "Either num_nodes or batch must not be None"
+
+    if batch is not None:
+        nodes_list = [torch.nonzero(batch == b).squeeze() for b in range(batch.max() + 1)]
+        num_nodes_list = [len(nodes) for nodes in nodes_list]
+        pos_edge_index_list = [subgraph(torch.as_tensor(nodes), pos_edge_index, relabel_nodes=True)[0]
+                               for nodes in nodes_list]
+    else:
+        num_nodes_list = [num_nodes]
+        pos_edge_index_list = [pos_edge_index]
+
+    neg_edges_index_list = []
+    prev_node_idx = 0
+    for num_nodes, pos_edge_index_of_one_graph in zip(num_nodes_list, pos_edge_index_list):
+        neg_edges_index = negative_sampling(pos_edge_index_of_one_graph,
+                                            num_nodes=num_nodes,
+                                            max_num_samples=max_num_samples)
+        neg_edges_index += prev_node_idx
+        neg_edges_index_list.append(neg_edges_index)
+        prev_node_idx += num_nodes
+    neg_edges_index = torch.cat(neg_edges_index_list, dim=1)
+    return neg_edges_index

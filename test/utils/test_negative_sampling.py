@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from torch_geometric.utils import negative_sampling, negative_triangle_sampling
+from torch_geometric.utils import negative_sampling, negative_triangle_sampling, batch_negative_sampling, subgraph
 
 
 def test_negative_sampling():
@@ -39,3 +39,24 @@ def test_negative_triangle_sampling():
     ki_idx = k * num_nodes + i
     mask = torch.from_numpy(np.isin(ij_idx, ki_idx).astype(np.uint8))
     assert mask.sum() == 0
+
+
+def test_batch_negative_sampling():
+    one_edge_index = torch.as_tensor([[0, 0, 0, 0],
+                                      [0, 1, 2, 3]])
+
+    edge_index = torch.cat([one_edge_index, one_edge_index + 4], dim=1)
+    num_nodes = 8
+    batch = torch.as_tensor([0 for _ in range(num_nodes // 2)] + [1 for _ in range(num_nodes // 2)]).long()
+
+    neg_edge_index = batch_negative_sampling(edge_index, num_nodes, batch=batch)
+    assert neg_edge_index.size(1) <= edge_index.size(1)
+
+    neg_edge_index_list = [subgraph(torch.as_tensor(nodes), neg_edge_index, relabel_nodes=True)[0]
+                           for nodes in [[0, 1, 2, 3], [4, 5, 6, 7]]]
+
+    for nei in neg_edge_index_list:
+        pos_idx = one_edge_index[0] * 4 + one_edge_index[1]
+        sampled_idx = nei[0] * 4 + nei[1]
+        mask = torch.from_numpy(np.isin(pos_idx, sampled_idx).astype(np.uint8))
+        assert mask.sum() == 0
