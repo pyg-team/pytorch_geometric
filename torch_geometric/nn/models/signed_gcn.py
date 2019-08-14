@@ -11,7 +11,7 @@ from .autoencoder import negative_sampling
 
 
 def negative_triangle_sampling(edge_index, num_nodes):
-    device = edge_index
+    device = edge_index.device
     i, j = edge_index.to(torch.device('cpu'))
     idx_1 = i * num_nodes + j
     k = torch.randint(num_nodes, (i.size(0), ), dtype=torch.long)
@@ -23,7 +23,7 @@ def negative_triangle_sampling(edge_index, num_nodes):
         idx_2 = tmp * num_nodes + i[rest]
         mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
         k[rest] = tmp
-        rest = mask.nonzero().view(-1)
+        rest = rest[mask.nonzero().view(-1)]
     return i.to(device), j.to(device), k.to(device)
 
 
