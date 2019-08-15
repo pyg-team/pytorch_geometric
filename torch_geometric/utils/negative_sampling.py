@@ -20,12 +20,13 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None):
 
     :rtype: LongTensor
     """
+
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     num_neg_samples = num_neg_samples or edge_index.size(1)
 
     # Handle '2*|edges| > num_nodes^2' case.
     num_neg_samples = min(num_neg_samples,
-                          num_nodes * num_nodes - edge_index.size(1))
+                          num_nodes * num_nodes - edge_index.size(0))
 
     idx = (edge_index[0] * num_nodes + edge_index[1]).to('cpu')
 
@@ -98,7 +99,8 @@ def batched_negative_sampling(edge_index, batch, num_neg_samples=None):
     neg_edge_indices = []
     for edge_index, N, C in zip(edge_indices, num_nodes.tolist(),
                                 cum_nodes.tolist()):
-        neg_edge_index = negative_sampling(edge_index - C, N, num_neg_samples)
+        neg_edge_index = negative_sampling(edge_index - C, N,
+                                           num_neg_samples) + C
         neg_edge_indices.append(neg_edge_index)
 
     return torch.cat(neg_edge_indices, dim=1)
