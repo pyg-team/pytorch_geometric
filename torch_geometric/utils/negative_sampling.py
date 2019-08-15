@@ -90,14 +90,15 @@ def batched_negative_sampling(edge_index, batch, num_neg_samples=None):
 
     :rtype: LongTensor
     """
-    edge_indices = torch.split(edge_index, batch[edge_index[0]])
+    _, batch_counts = torch.unique(batch[edge_index[0]], return_counts=True)
+    edge_indices = torch.split(edge_index, batch_counts.tolist(), dim=1)
     num_nodes = degree(batch, dtype=torch.long)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)[:-1]])
 
     neg_edge_indices = []
     for edge_index, N, C in zip(edge_indices, num_nodes.tolist(),
                                 cum_nodes.tolist()):
-        neg_edge_index = negative_sampling(edge_index - C, N, num_neg_samples)
+        neg_edge_index = negative_sampling(edge_index - C, N, num_neg_samples) + C
         neg_edge_indices.append(neg_edge_index)
 
     return torch.cat(neg_edge_indices, dim=1)
