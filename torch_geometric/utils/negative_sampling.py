@@ -26,7 +26,7 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None):
 
     # Handle '2*|edges| > num_nodes^2' case.
     num_neg_samples = min(num_neg_samples,
-                          num_nodes * num_nodes - edge_index.size(0))
+                          num_nodes * num_nodes - edge_index.size(1))
 
     idx = (edge_index[0] * num_nodes + edge_index[1]).to('cpu')
 
