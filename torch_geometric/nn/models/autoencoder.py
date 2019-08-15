@@ -2,32 +2,13 @@ import math
 import random
 
 import torch
-import numpy as np
 from sklearn.metrics import roc_auc_score, average_precision_score
-from torch_geometric.utils import to_undirected
+from torch_geometric.utils import to_undirected, negative_sampling
 
 from ..inits import reset
 
 EPS = 1e-15
 MAX_LOGVAR = 10
-
-
-def negative_sampling(pos_edge_index, num_nodes):
-    idx = (pos_edge_index[0] * num_nodes + pos_edge_index[1])
-    idx = idx.to(torch.device('cpu'))
-
-    rng = range(num_nodes**2)
-    perm = torch.tensor(random.sample(rng, idx.size(0)))
-    mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
-    rest = mask.nonzero().view(-1)
-    while rest.numel() > 0:  # pragma: no cover
-        tmp = torch.tensor(random.sample(rng, rest.size(0)))
-        mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
-        perm[rest] = tmp
-        rest = mask.nonzero().view(-1)
-
-    row, col = perm / num_nodes, perm % num_nodes
-    return torch.stack([row, col], dim=0).to(pos_edge_index.device)
 
 
 class InnerProductDecoder(torch.nn.Module):
@@ -41,7 +22,7 @@ class InnerProductDecoder(torch.nn.Module):
     space produced by the encoder."""
 
     def forward(self, z, edge_index, sigmoid=True):
-        r"""Decodes the latent variables :obj:`z` into edge probabilties for
+        r"""Decodes the latent variables :obj:`z` into edge probabilities for
         the given node-pairs :obj:`edge_index`.
 
         Args:
@@ -142,8 +123,8 @@ class GAE(torch.nn.Module):
         neg_adj_mask[row, col] = 0
 
         neg_row, neg_col = neg_adj_mask.nonzero().t()
-        perm = random.sample(
-            range(neg_row.size(0)), min(n_v + n_t, neg_row.size(0)))
+        perm = random.sample(range(neg_row.size(0)),
+                             min(n_v + n_t, neg_row.size(0)))
         perm = torch.tensor(perm)
         perm = perm.to(torch.long)
         neg_row, neg_col = neg_row[perm], neg_col[perm]
@@ -173,8 +154,9 @@ class GAE(torch.nn.Module):
             self.decoder(z, pos_edge_index, sigmoid=True) + EPS).mean()
 
         neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
-        neg_loss = -torch.log(
-            1 - self.decoder(z, neg_edge_index, sigmoid=True) + EPS).mean()
+        neg_loss = -torch.log(1 -
+                              self.decoder(z, neg_edge_index, sigmoid=True) +
+                              EPS).mean()
 
         return pos_loss + neg_loss
 
