@@ -14,7 +14,7 @@ class TAGConv(MessagePassing):
         \mathbf{D}^{-1/2}\mathbf{X} \mathbf{\Theta}_{k},
 
     where :math:`\mathbf{A}` denotes the adjacency matrix and
-    :math:`\D_{ii} = \sum_{j=0} A_{ij}` its diagonal degree matrix.
+    :math:`\mathbf{D}_{ii} = \sum_{j=0} A_{ij}` its diagonal degree matrix.
 
     Args:
         in_channels (int): Size of each input sample.
