@@ -7,7 +7,7 @@ from torch_geometric.utils import degree
 from .num_nodes import maybe_num_nodes
 
 
-def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None):
+def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None, is_directed=True):
     r"""Samples random negative edges of a graph given by :attr:`edge_index`.
 
     Args:
@@ -17,17 +17,23 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None):
         num_neg_samples (int, optional): The number of negative samples to
             return. If set to :obj:`None`, will try to return a negative edge
             for every positive edge. (default: :obj:`None`)
+        is_directed (bool, optional): Whether graph edges are directed.
 
     :rtype: LongTensor
     """
+
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     num_neg_samples = num_neg_samples or edge_index.size(1)
 
+    if is_directed:
+        idx = (edge_index[0] * num_nodes + edge_index[1]).to('cpu')
+    else:
+        idx = torch.cat([edge_index[0] * num_nodes + edge_index[1],
+                         edge_index[1] * num_nodes + edge_index[0]]).unique().to('cpu')
+
     # Handle '2*|edges| > num_nodes^2' case.
     num_neg_samples = min(num_neg_samples,
-                          num_nodes * num_nodes - edge_index.size(1))
-
-    idx = (edge_index[0] * num_nodes + edge_index[1]).to('cpu')
+                          num_nodes * num_nodes - idx.size(0))
 
     rng = range(num_nodes**2)
     perm = torch.tensor(random.sample(rng, num_neg_samples))
@@ -75,7 +81,7 @@ def structured_negative_sampling(edge_index, num_nodes=None):
     return edge_index[0], edge_index[1], k.to(edge_index.device)
 
 
-def batched_negative_sampling(edge_index, batch, num_neg_samples=None):
+def batched_negative_sampling(edge_index, batch, num_neg_samples=None, is_directed=True):
     r"""Samples random negative edges of multiple graphs given by
     :attr:`edge_index` and :attr:`batch`.
 
@@ -87,6 +93,7 @@ def batched_negative_sampling(edge_index, batch, num_neg_samples=None):
         num_neg_samples (int, optional): The number of negative samples to
             return. If set to :obj:`None`, will try to return a negative edge
             for every positive edge. (default: :obj:`None`)
+        is_directed (bool, optional): Whether graph edges are directed.
 
     :rtype: LongTensor
     """
@@ -98,7 +105,7 @@ def batched_negative_sampling(edge_index, batch, num_neg_samples=None):
     neg_edge_indices = []
     for edge_index, N, C in zip(edge_indices, num_nodes.tolist(),
                                 cum_nodes.tolist()):
-        neg_edge_index = negative_sampling(edge_index - C, N, num_neg_samples) + C
+        neg_edge_index = negative_sampling(edge_index - C, N, num_neg_samples, is_directed) + C
         neg_edge_indices.append(neg_edge_index)
 
     return torch.cat(neg_edge_indices, dim=1)
