@@ -1,4 +1,3 @@
-import numpy as np
 import scipy.sparse
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics import roc_auc_score, f1_score
@@ -7,7 +6,8 @@ import torch.nn.functional as F
 from torch_sparse import coalesce
 from torch_geometric.nn import SignedConv
 
-from torch_geometric.utils import negative_sampling, negative_triangle_sampling
+from torch_geometric.utils import (negative_sampling,
+                                   structured_negative_sampling)
 
 
 class SignedGCN(torch.nn.Module):
@@ -168,7 +168,7 @@ class SignedGCN(torch.nn.Module):
             z (Tensor): The node embeddings.
             pos_edge_index (LongTensor): The positive edge indices.
         """
-        i, j, k = negative_triangle_sampling(pos_edge_index, z.size(0))
+        i, j, k = structured_negative_sampling(pos_edge_index, z.size(0))
 
         out = (z[i] - z[j]).pow(2).sum(dim=1) - (z[i] - z[k]).pow(2).sum(dim=1)
         return torch.clamp(out, min=0).mean()
@@ -181,7 +181,7 @@ class SignedGCN(torch.nn.Module):
             z (Tensor): The node embeddings.
             neg_edge_index (LongTensor): The negative edge indices.
         """
-        i, j, k = negative_triangle_sampling(neg_edge_index, z.size(0))
+        i, j, k = structured_negative_sampling(neg_edge_index, z.size(0))
 
         out = (z[i] - z[k]).pow(2).sum(dim=1) - (z[i] - z[j]).pow(2).sum(dim=1)
         return torch.clamp(out, min=0).mean()
@@ -223,6 +223,7 @@ class SignedGCN(torch.nn.Module):
         return auc, f1
 
     def __repr__(self):
-        return '{}({}, {}, num_layers={})'.format(
-            self.__class__.__name__, self.in_channels, self.hidden_channels,
-            self.num_layers)
+        return '{}({}, {}, num_layers={})'.format(self.__class__.__name__,
+                                                  self.in_channels,
+                                                  self.hidden_channels,
+                                                  self.num_layers)

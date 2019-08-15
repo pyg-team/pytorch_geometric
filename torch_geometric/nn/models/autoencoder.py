@@ -2,7 +2,6 @@ import math
 import random
 
 import torch
-import numpy as np
 from sklearn.metrics import roc_auc_score, average_precision_score
 from torch_geometric.utils import to_undirected, negative_sampling
 
@@ -124,8 +123,8 @@ class GAE(torch.nn.Module):
         neg_adj_mask[row, col] = 0
 
         neg_row, neg_col = neg_adj_mask.nonzero().t()
-        perm = random.sample(
-            range(neg_row.size(0)), min(n_v + n_t, neg_row.size(0)))
+        perm = random.sample(range(neg_row.size(0)),
+                             min(n_v + n_t, neg_row.size(0)))
         perm = torch.tensor(perm)
         perm = perm.to(torch.long)
         neg_row, neg_col = neg_row[perm], neg_col[perm]
@@ -155,8 +154,9 @@ class GAE(torch.nn.Module):
             self.decoder(z, pos_edge_index, sigmoid=True) + EPS).mean()
 
         neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
-        neg_loss = -torch.log(
-            1 - self.decoder(z, neg_edge_index, sigmoid=True) + EPS).mean()
+        neg_loss = -torch.log(1 -
+                              self.decoder(z, neg_edge_index, sigmoid=True) +
+                              EPS).mean()
 
         return pos_loss + neg_loss
 
