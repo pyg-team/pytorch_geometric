@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from torch_geometric.utils import negative_sampling, negative_triangle_sampling, batch_negative_sampling, subgraph
+from torch_geometric.utils import negative_sampling, structured_negative_sampling, batched_negative_sampling, subgraph
 
 
 def test_negative_sampling():
@@ -16,9 +16,9 @@ def test_negative_sampling():
     mask = torch.from_numpy(np.isin(pos_idx, sampled_idx).astype(np.uint8))
     assert mask.sum() == 0
 
-    max_num_samples = 3
-    neg_edge_index = negative_sampling(pos_edge_index, num_nodes, max_num_samples=max_num_samples)
-    assert neg_edge_index.size(1) <= max_num_samples
+    num_neg_samples = 3
+    neg_edge_index = negative_sampling(pos_edge_index, num_nodes, num_neg_samples=num_neg_samples)
+    assert neg_edge_index.size(1) <= num_neg_samples
 
     pos_edge_index = torch.as_tensor([[0, 0, 1],
                                       [0, 1, 0]])
@@ -27,12 +27,12 @@ def test_negative_sampling():
     assert neg_edge_index.size(1) == 1
 
 
-def test_negative_triangle_sampling():
+def test_structured_negative_sampling():
     edge_index = torch.as_tensor([[0, 0, 0, 0, 1, 2],
                                   [0, 1, 2, 3, 2, 3]])
     num_nodes = 4
 
-    i, j, k = negative_triangle_sampling(edge_index, num_nodes)
+    i, j, k = structured_negative_sampling(edge_index, num_nodes)
     assert i.size(0) == edge_index.size(1)
 
     ij_idx = i * num_nodes + j
@@ -41,7 +41,7 @@ def test_negative_triangle_sampling():
     assert mask.sum() == 0
 
 
-def test_batch_negative_sampling():
+def test_batched_negative_sampling():
     one_edge_index = torch.as_tensor([[0, 0, 0, 0],
                                       [0, 1, 2, 3]])
 
@@ -49,7 +49,7 @@ def test_batch_negative_sampling():
     num_nodes = 8
     batch = torch.as_tensor([0 for _ in range(num_nodes // 2)] + [1 for _ in range(num_nodes // 2)]).long()
 
-    neg_edge_index = batch_negative_sampling(edge_index, num_nodes, batch=batch)
+    neg_edge_index = batched_negative_sampling(edge_index, batch=batch)
     assert neg_edge_index.size(1) <= edge_index.size(1)
 
     neg_edge_index_list = [subgraph(torch.as_tensor(nodes), neg_edge_index, relabel_nodes=True)[0]
