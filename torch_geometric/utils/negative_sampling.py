@@ -61,13 +61,13 @@ def structured_negative_sampling(edge_index, num_nodes=None):
     idx_1 = i * num_nodes + j
 
     k = torch.randint(num_nodes, (i.size(0), ), dtype=torch.long)
-    idx_2 = k * num_nodes + i
+    idx_2 = i * num_nodes + k
 
     mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
     rest = mask.nonzero().view(-1)
     while rest.numel() > 0:  # pragma: no cover
         tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
-        idx_2 = tmp * num_nodes + i[rest]
+        idx_2 = i[rest] * num_nodes + tmp
         mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
         k[rest] = tmp
         rest = rest[mask.nonzero().view(-1)]
@@ -90,7 +90,8 @@ def batched_negative_sampling(edge_index, batch, num_neg_samples=None):
 
     :rtype: LongTensor
     """
-    edge_indices = torch.split(edge_index, batch[edge_index[0]])
+    split = degree(batch[edge_index[0]], dtype=torch.long).tolist()
+    edge_indices = torch.split(edge_index, split, dim=1)
     num_nodes = degree(batch, dtype=torch.long)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)[:-1]])
 
