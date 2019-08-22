@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 import networkx as nx
 from torch_geometric.data import InMemoryDataset, Data
 
