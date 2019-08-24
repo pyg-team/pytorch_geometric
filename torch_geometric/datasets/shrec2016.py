@@ -58,16 +58,10 @@ class SHREC2016(InMemoryDataset):
     ]
     partialities = ['holes', 'cuts']
 
-    def __init__(self,
-                 root,
-                 partiality,
-                 category,
-                 train=True,
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root, partiality, category, train=True, transform=None,
+                 pre_transform=None, pre_filter=None):
         assert partiality.lower() in self.partialities
-        self.part = partiality
+        self.part = partiality.lower()
         assert category.lower() in self.categories
         self.cat = category.lower()
         super(SHREC2016, self).__init__(root, transform, pre_transform,
