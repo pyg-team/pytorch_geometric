@@ -26,6 +26,7 @@ from .icews import ICEWS18
 from .gdelt import GDELT
 from .willow_object_class import WILLOWObjectClass
 from .dbp15k import DBP15K
+from .pascal import PascalVOCKeypoints
 
 __all__ = [
     'KarateClub',
@@ -55,5 +56,6 @@ __all__ = [
     'ICEWS18',
     'GDELT',
     'WILLOWObjectClass',
+    'PascalVOCKeypoints',
     'DBP15K',
 ]

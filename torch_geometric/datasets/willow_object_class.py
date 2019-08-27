@@ -5,7 +5,6 @@ import glob
 
 import torch
 import torch.nn.functional as F
-
 from scipy.io import loadmat
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
@@ -111,7 +110,8 @@ class WILLOWObjectClass(InMemoryDataset):
             img = transform(img)
             size = img.size()[-2:]
             vgg16_outputs.clear()
-            vgg16(img.unsqueeze(0))
+            with torch.no_grad():
+                vgg16(img.unsqueeze(0))
 
             xs = []
             for out in vgg16_outputs:
