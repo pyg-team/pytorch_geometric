@@ -104,7 +104,8 @@ class PascalVOCKeypoints(InMemoryDataset):
         if models is None or T is None or Image is None:
             raise ImportError('Package `torchvision` could not be found.')
 
-        splits = np.load(osp.join(self.raw_dir, 'splits.npz'))
+        splits = np.load(osp.join(self.raw_dir, 'splits.npz'),
+                         allow_pickle=True)
         category_idx = self.categories.index(self.category)
         train_split = list(splits['train'])[category_idx]
         test_split = list(splits['test'])[category_idx]
