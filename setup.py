@@ -8,6 +8,7 @@ install_requires = [
     'scipy',
     'networkx',
     'scikit-learn',
+    'requests',
     'plyfile',
     'pandas',
     'rdflib',
