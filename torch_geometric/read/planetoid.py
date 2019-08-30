@@ -89,6 +89,6 @@ def edge_index_from_dict(graph_dict, num_nodes=None):
 
 
 def sample_mask(index, num_nodes):
-    mask = torch.zeros((num_nodes, ), dtype=torch.bool)
+    mask = torch.zeros((num_nodes, ), dtype=torch.uint8)
     mask[index] = 1
     return mask
