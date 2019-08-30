@@ -38,8 +38,9 @@ def to_dense_batch(x, batch=None, fill_value=0):
     out[idx] = x
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 
-    mask = torch.zeros(
-        batch_size * max_num_nodes, dtype=torch.uint8, device=x.device)
+    mask = torch.zeros(batch_size * max_num_nodes, dtype=torch.uint8,
+                       device=x.device)
     mask[idx] = 1
+    mask = mask.view(batch_size, max_num_nodes)
 
     return out, mask
