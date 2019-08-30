@@ -155,7 +155,7 @@ class PascalVOCKeypoints(InMemoryDataset):
 
             dom = minidom.parse(osp.join(annotation_path, name))
             keypoints = dom.getElementsByTagName('keypoint')
-            if len(keypoints) < 3:
+            if len(keypoints) == 0:
                 continue
             poss, ys = [], []
             for keypoint in keypoints:
