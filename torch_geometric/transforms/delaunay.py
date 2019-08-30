@@ -6,7 +6,6 @@ class Delaunay(object):
     r"""Computes the delaunay triangulation of a set of points."""
 
     def __call__(self, data):
-        print(data.pos.size())
         if data.pos.size(0) > 3:
             pos = data.pos.cpu().numpy()
             tri = scipy.spatial.Delaunay(pos, qhull_options='QJ')
