@@ -43,4 +43,5 @@ class FixedPoints(object):
         return data
 
     def __repr__(self):
-        return '{}({})'.format(self.__class__.__name__, self.num)
+        return '{}({}, replace={})'.format(self.__class__.__name__, self.num,
+                                           self.replace)
