@@ -1,4 +1,7 @@
+from __future__ import division
+
 import re
+import math
 
 import torch
 import numpy as np
@@ -10,14 +13,26 @@ class FixedPoints(object):
 
     Args:
         num (int): The number of points to sample.
+        replace (bool, optional): If set to :obj:`False`, samples fixed
+            points without replacement. In case :obj:`num` is greater than
+            the number of points, duplicated points are kept to a
+            minimum. (default: :obj:`True`)
     """
 
-    def __init__(self, num):
+    def __init__(self, num, replace=True):
         self.num = num
+        self.replace = replace
 
     def __call__(self, data):
         num_nodes = data.num_nodes
-        choice = np.random.choice(data.num_nodes, self.num, replace=True)
+
+        if self.replace:
+            choice = np.random.choice(data.num_nodes, self.num, replace=True)
+        else:
+            choice = torch.cat([
+                torch.randperm(num_nodes)
+                for _ in range(math.ceil(num_nodes / self.num))
+            ], dim=0)[:num_nodes]
 
         for key, item in data:
             if bool(re.search('edge', key)):
