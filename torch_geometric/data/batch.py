@@ -44,9 +44,11 @@ class Batch(Data):
         batch.batch = []
         for i, data in enumerate(data_list):
             for key in data.keys:
-                item = data[key] + cumsum[key]
-                if torch.is_tensor(data[key]):
-                    size = data[key].size(data.__cat_dim__(key, data[key]))
+                item = data[key]
+                if torch.is_tensor(item) and item.dtype != torch.bool:
+                    item = item + cumsum[key]
+                if torch.is_tensor(item):
+                    size = item.size(data.__cat_dim__(key, data[key]))
                 else:
                     size = 1
                 batch.__slices__[key].append(size + batch.__slices__[key][-1])
