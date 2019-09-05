@@ -39,9 +39,8 @@ class Net(torch.nn.Module):
         self.conv3 = DynamicEdgeConv(MLP([2 * 64, 64, 64]), k, aggr)
         self.lin1 = MLP([3 * 64, 1024])
 
-        self.mlp = Seq(
-            MLP([1024, 256]), Dropout(0.5), MLP([256, 128]), Dropout(0.5),
-            Lin(128, out_channels))
+        self.mlp = Seq(MLP([1024, 256]), Dropout(0.5), MLP([256, 128]),
+                       Dropout(0.5), Lin(128, out_channels))
 
     def forward(self, data):
         pos, batch = data.pos, data.batch
@@ -102,7 +101,7 @@ def test(loader):
     intersection = torch.cat(intersections, dim=0)
     union = torch.cat(unions, dim=0)
 
-    ious = [[] for _ in range(loader.dataset.categories)]
+    ious = [[] for _ in range(len(loader.dataset.categories))]
     for j in range(len(loader.dataset)):
         i = intersection[j, loader.dataset.y_mask[category[j]]]
         u = union[j, loader.dataset.y_mask[category[j]]]

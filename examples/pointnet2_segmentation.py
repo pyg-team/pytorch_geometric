@@ -124,7 +124,7 @@ def test(loader):
     intersection = torch.cat(intersections, dim=0)
     union = torch.cat(unions, dim=0)
 
-    ious = [[] for _ in range(loader.dataset.categories)]
+    ious = [[] for _ in range(len(loader.dataset.categories))]
     for j in range(len(loader.dataset)):
         i = intersection[j, loader.dataset.y_mask[category[j]]]
         u = union[j, loader.dataset.y_mask[category[j]]]
