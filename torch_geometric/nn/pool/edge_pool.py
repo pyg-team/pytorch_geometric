@@ -67,15 +67,15 @@ class EdgePooling(torch.nn.Module):
         self.lin.reset_parameters()
 
     @staticmethod
-    def compute_edge_score_softmax(raw_edge_score, edge_index):
-        return softmax(raw_edge_score, edge_index[1], raw_edge_score.size(0))
+    def compute_edge_score_softmax(raw_edge_score, edge_index, num_nodes=None):
+        return softmax(raw_edge_score, edge_index[1], num_nodes)
 
     @staticmethod
-    def compute_edge_score_tanh(raw_edge_score, edge_index):
+    def compute_edge_score_tanh(raw_edge_score, edge_index, num_nodes=None):
         return torch.tanh(raw_edge_score)
 
     @staticmethod
-    def compute_edge_score_sigmoid(raw_edge_score, edge_index):
+    def compute_edge_score_sigmoid(raw_edge_score, edge_index, num_nodes=None):
         return torch.sigmoid(raw_edge_score)
 
     def forward(self, x, edge_index, batch):
@@ -99,7 +99,7 @@ class EdgePooling(torch.nn.Module):
         e = torch.cat([x[edge_index[0]], x[edge_index[1]]], dim=-1)
         e = self.lin(e).view(-1)
         e = F.dropout(e, p=self.dropout, training=self.training)
-        e = self.compute_edge_score(e, edge_index) + self.add_to_edge_score
+        e = self.compute_edge_score(e, edge_index, x.size(0)) + self.add_to_edge_score
 
         x, edge_index, batch, unpool_info = self.__merge_edges__(
             x, edge_index, batch, e)
