@@ -32,7 +32,7 @@ class FixedPoints(object):
             choice = torch.cat([
                 torch.randperm(num_nodes)
                 for _ in range(math.ceil(num_nodes / self.num))
-            ], dim=0)[:num_nodes]
+            ], dim=0)[:self.num]
 
         for key, item in data:
             if bool(re.search('edge', key)):
