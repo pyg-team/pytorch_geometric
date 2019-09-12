@@ -27,11 +27,11 @@ class FixedPoints(object):
         num_nodes = data.num_nodes
 
         if self.replace:
-            choice = np.random.choice(data.num_nodes, self.num, replace=True)
+            choice = np.random.choice(num_nodes, self.num, replace=True)
         else:
             choice = torch.cat([
                 torch.randperm(num_nodes)
-                for _ in range(math.ceil(num_nodes / self.num))
+                for _ in range(math.ceil(self.num / num_nodes))
             ], dim=0)[:self.num]
 
         for key, item in data:
