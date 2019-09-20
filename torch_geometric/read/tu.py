@@ -10,7 +10,6 @@ from torch_geometric.read import read_txt_array
 from torch_geometric.utils import remove_self_loops
 from torch_geometric.data import Data
 
-
 names = [
     'A', 'graph_indicator', 'node_labels', 'node_attributes'
     'edge_labels', 'edge_attributes', 'graph_labels', 'graph_attributes'
@@ -76,7 +75,7 @@ def read_file(folder, prefix, name, dtype=None):
 def cat(seq):
     seq = [item for item in seq if item is not None]
     seq = [item.unsqueeze(-1) if item.dim() == 1 else item for item in seq]
-    return torch.cat(seq, dim=-1).squeeze() if len(seq) > 0 else None
+    return torch.cat(seq, dim=-1) if len(seq) > 0 else None
 
 
 def split(data, batch):
