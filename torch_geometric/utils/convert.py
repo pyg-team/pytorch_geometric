@@ -64,7 +64,7 @@ def to_networkx(data, node_attrs=None, edge_attrs=None):
     for i, (u, v) in enumerate(data.edge_index.t().tolist()):
         G.add_edge(u, v)
         for key in edge_attrs if edge_attrs is not None else []:
-            G[u][v][key] = data[key][i]
+            G[u][v][key] = values[key][i]
 
     for key in node_attrs if node_attrs is not None else []:
         for i, feat_dict in G.nodes(data=True):
