@@ -166,7 +166,7 @@ Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePas
 
             return aggr_out
 
-Inside the :meth:`message` function, we use :obj:`self.mlp` to transform both the source node features :obj:`x_i` and the relative target node features :obj:`x_j - x_i` for each edge.
+Inside the :meth:`message` function, we use :obj:`self.mlp` to transform both the target node features :obj:`x_i` and the relative source node features :obj:`x_j - x_i` for each edge :math:`(j,i) \in \mathcal{E}`.
 
 The edge convolution is actual a dynamic convolution, which recomputes the graph for each layer using nearest neighbors in the feature space.
 Luckily, PyTorch Geometric comes with a GPU accelerated batch-wise k-NN graph generation method named :meth:`torch_geometric.nn.knn_graph`:
