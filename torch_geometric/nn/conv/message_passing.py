@@ -128,12 +128,15 @@ class MessagePassing(torch.nn.Module):
         return out
 
     def message(self, x_j):  # pragma: no cover
-        r"""Constructs messages in analogy to :math:`\phi_{\mathbf{\Theta}}`
-        for each edge in :math:`(i,j) \in \mathcal{E}`.
+        r"""Constructs messages to node :math:`i` in analogy to
+        :math:`\phi_{\mathbf{\Theta}}` for each edge in
+        :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and
+        :math:`(i,j) \in \mathcal{E}` if :obj:`flow="target_to_source"`.
         Can take any argument which was initially passed to :meth:`propagate`.
-        In addition, features can be lifted to the source node :math:`i` and
-        target node :math:`j` by appending :obj:`_i` or :obj:`_j` to the
-        variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`."""
+        In addition, tensors passed to :meth:`propagate` can be mapped to the
+        respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
+        :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+        """
 
         return x_j
 
