@@ -1,4 +1,5 @@
 import torch
+
 from torch import Tensor as T
 from torch_geometric.nn import GAE, VGAE, ARGA, ARGVA
 from torch_geometric.data import Data
@@ -71,3 +72,14 @@ def test_argva():
     model.encode(x)
     model.reparametrize(model.__mu__, model.__logvar__)
     assert model.kl_loss().item() > 0
+
+
+def test_init():
+    encoder = torch.nn.Linear(16, 32)
+    decoder = torch.nn.Linear(32, 16)
+    discriminator = torch.nn.Linear(32, 1)
+
+    GAE(encoder, decoder)
+    VGAE(encoder, decoder)
+    ARGA(encoder, discriminator, decoder)
+    ARGVA(encoder, discriminator, decoder)

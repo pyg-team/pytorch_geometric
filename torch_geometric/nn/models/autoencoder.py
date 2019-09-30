@@ -251,8 +251,8 @@ class ARGA(GAE):
     """
 
     def __init__(self, encoder, discriminator, decoder=None):
-        self.discriminator = discriminator
         super(ARGA, self).__init__(encoder, decoder)
+        self.discriminator = discriminator
         reset(self.discriminator)
 
     def reset_parameters(self):
