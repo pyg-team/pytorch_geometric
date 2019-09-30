@@ -1,5 +1,7 @@
 import collections
 import os.path as osp
+import warnings
+import re
 
 import torch.utils.data
 
@@ -14,6 +16,12 @@ def to_list(x):
 
 def files_exist(files):
     return all([osp.exists(f) for f in files])
+
+
+def __repr__(obj):
+    if obj is None:
+        return 'None'
+    return re.sub('(<.*?)\\s.*(>)', r'\1\2', obj.__repr__())
 
 
 class Dataset(torch.utils.data.Dataset):
@@ -65,10 +73,7 @@ class Dataset(torch.utils.data.Dataset):
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
-    def __init__(self,
-                 root,
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
         super(Dataset, self).__init__()
 
@@ -78,6 +83,22 @@ class Dataset(torch.utils.data.Dataset):
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
+
+        path = osp.join(self.processed_dir, 'pre_transform.pt')
+        if osp.exists(path) and torch.load(path) != __repr__(pre_transform):
+            warnings.warn(
+                'The `pre_transform` argument differs from the one used in '
+                'the pre-processed version of this dataset. If you really '
+                'want to make use of another pre-processing technique, make '
+                'sure to delete `{}/processed` first.'.format(
+                    self.processed_dir))
+        path = osp.join(self.processed_dir, 'pre_filter.pt')
+        if osp.exists(path) and torch.load(path) != __repr__(pre_filter):
+            warnings.warn(
+                'The `pre_filter` argument differs from the one used in the '
+                'pre-processed version of this dataset. If you really want to '
+                'make use of another pre-fitering technique, make sure to '
+                'delete `{}/processed` first.'.format(self.processed_dir))
 
         self._download()
         self._process()
@@ -125,6 +146,11 @@ class Dataset(torch.utils.data.Dataset):
 
         makedirs(self.processed_dir)
         self.process()
+
+        path = osp.join(self.processed_dir, 'pre_transform.pt')
+        torch.save(__repr__(self.pre_transform), path)
+        path = osp.join(self.processed_dir, 'pre_filter.pt')
+        torch.save(__repr__(self.pre_filter), path)
 
         print('Done!')
 
