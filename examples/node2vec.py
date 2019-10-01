@@ -2,6 +2,8 @@ import os.path as osp
 
 import torch
 from torch.utils.data import DataLoader
+import matplotlib.pyplot as plt
+from sklearn.manifold import TSNE
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import Node2Vec
 
@@ -32,7 +34,8 @@ def train():
 
 def test():
     model.eval()
-    z = model(torch.arange(data.num_nodes, device=device))
+    with torch.no_grad():
+        z = model(torch.arange(data.num_nodes, device=device))
     acc = model.test(z[data.train_mask], data.y[data.train_mask],
                      z[data.test_mask], data.y[data.test_mask], max_iter=150)
     return acc
@@ -43,3 +46,23 @@ for epoch in range(1, 101):
     print('Epoch: {:02d}, Loss: {:.4f}'.format(epoch, loss))
 acc = test()
 print('Accuracy: {:.4f}'.format(acc))
+
+
+def plot_points(colors):
+    model.eval()
+    with torch.no_grad():
+        z = model(torch.arange(data.num_nodes, device=device))
+        z = TSNE(n_components=2).fit_transform(z.cpu().numpy())
+        y = data.y.cpu().numpy()
+
+    plt.figure(figsize=(8, 8))
+    for i in range(dataset.num_classes):
+        plt.scatter(z[y == i, 0], z[y == i, 1], s=20, color=colors[i])
+    plt.axis('off')
+    plt.show()
+
+
+colors = [
+    '#ffc0cb', '#bada55', '#008080', '#420420', '#7fe5f0', '#065535', '#ffd700'
+]
+plot_points(colors)
