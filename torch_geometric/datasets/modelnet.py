@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import shutil
 import glob
 
 import torch
@@ -49,13 +50,8 @@ class ModelNet(InMemoryDataset):
         '40': 'http://modelnet.cs.princeton.edu/ModelNet40.zip'
     }
 
-    def __init__(self,
-                 root,
-                 name='10',
-                 train=True,
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root, name='10', train=True, transform=None,
+                 pre_transform=None, pre_filter=None):
         assert name in ['10', '40']
         self.name = name
         super(ModelNet, self).__init__(root, transform, pre_transform,
@@ -79,6 +75,7 @@ class ModelNet(InMemoryDataset):
         extract_zip(path, self.root)
         os.unlink(path)
         folder = osp.join(self.root, 'ModelNet{}'.format(self.name))
+        shutil.rmtree(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
     def process(self):
