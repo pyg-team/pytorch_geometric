@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.read import parse_txt_array
+from torch_geometric.io import parse_txt_array
 from torch_geometric.data import Data
 
 

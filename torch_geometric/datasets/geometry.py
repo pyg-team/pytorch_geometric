@@ -4,7 +4,7 @@ import glob
 
 import torch
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
-from torch_geometric.read import read_off
+from torch_geometric.io import read_off
 
 
 class GeometricShapes(InMemoryDataset):
@@ -41,11 +41,7 @@ class GeometricShapes(InMemoryDataset):
 
     url = 'https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip'
 
-    def __init__(self,
-                 root,
-                 train=True,
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, train=True, transform=None, pre_transform=None,
                  pre_filter=None):
         super(GeometricShapes, self).__init__(root, transform, pre_transform,
                                               pre_filter)

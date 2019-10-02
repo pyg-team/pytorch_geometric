@@ -5,7 +5,7 @@ from itertools import repeat
 import torch
 from torch_sparse import coalesce
 from torch_geometric.data import Data
-from torch_geometric.read import read_txt_array
+from torch_geometric.io import read_txt_array
 from torch_geometric.utils import remove_self_loops
 
 try:

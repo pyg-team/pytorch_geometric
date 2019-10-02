@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.data import download_url
-from torch_geometric.read import read_txt_array
+from torch_geometric.io import read_txt_array
 
 from .icews import EventDataset
 
@@ -33,11 +33,7 @@ class GDELT(EventDataset):
     url = 'https://github.com/INK-USC/RENet/raw/master/data/GDELT'
     splits = [0, 1734399, 1973164, 2278405]  # Train/Val/Test splits.
 
-    def __init__(self,
-                 root,
-                 split='train',
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, split='train', transform=None, pre_transform=None,
                  pre_filter=None):
         assert split in ['train', 'val', 'test']
         super(GDELT, self).__init__(root, transform, pre_transform, pre_filter)

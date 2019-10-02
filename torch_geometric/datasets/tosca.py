@@ -5,7 +5,7 @@ import glob
 import torch
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
-from torch_geometric.read import read_txt_array
+from torch_geometric.io import read_txt_array
 
 
 class TOSCA(InMemoryDataset):
@@ -54,12 +54,8 @@ class TOSCA(InMemoryDataset):
         'victoria', 'wolf'
     ]
 
-    def __init__(self,
-                 root,
-                 categories=None,
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root, categories=None, transform=None,
+                 pre_transform=None, pre_filter=None):
         categories = self.categories if categories is None else categories
         categories = [cat.lower() for cat in categories]
         for cat in categories:

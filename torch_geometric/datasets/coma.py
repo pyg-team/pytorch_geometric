@@ -3,7 +3,7 @@ from glob import glob
 
 import torch
 from torch_geometric.data import InMemoryDataset, extract_zip
-from torch_geometric.read import read_ply
+from torch_geometric.io import read_ply
 
 
 class CoMA(InMemoryDataset):
@@ -57,11 +57,7 @@ class CoMA(InMemoryDataset):
         'mouth_up',
     ]
 
-    def __init__(self,
-                 root,
-                 train=True,
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, train=True, transform=None, pre_transform=None,
                  pre_filter=None):
         super(CoMA, self).__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]

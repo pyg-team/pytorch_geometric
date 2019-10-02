@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.data import InMemoryDataset, download_url
-from torch_geometric.read import read_planetoid_data
+from torch_geometric.io import read_planetoid_data
 
 
 class Planetoid(InMemoryDataset):

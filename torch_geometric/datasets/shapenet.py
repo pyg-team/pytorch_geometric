@@ -5,7 +5,7 @@ import glob
 import torch
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
-from torch_geometric.read import read_txt_array
+from torch_geometric.io import read_txt_array
 
 
 class ShapeNet(InMemoryDataset):

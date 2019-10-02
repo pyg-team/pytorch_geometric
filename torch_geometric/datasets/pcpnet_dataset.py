@@ -4,7 +4,7 @@ import os.path as osp
 import torch
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
-from torch_geometric.read import read_txt_array
+from torch_geometric.io import read_txt_array
 
 
 class PCPNetDataset(InMemoryDataset):
@@ -66,13 +66,8 @@ class PCPNetDataset(InMemoryDataset):
         'VarDensityGradient': 'testset_vardensity_gradient.txt'
     }
 
-    def __init__(self,
-                 root,
-                 category,
-                 split='train',
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root, category, split='train', transform=None,
+                 pre_transform=None, pre_filter=None):
 
         assert split in ['train', 'val', 'test']
 
