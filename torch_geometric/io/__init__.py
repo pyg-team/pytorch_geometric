@@ -4,7 +4,7 @@ from .planetoid import read_planetoid_data
 from .ply import read_ply
 from .obj import read_obj
 from .sdf import read_sdf, parse_sdf
-from .off import read_off, parse_off
+from .off import read_off, parse_off, write_off
 from .npz import read_npz, parse_npz
 
 __all__ = [
@@ -17,6 +17,7 @@ __all__ = [
     'read_sdf',
     'parse_sdf',
     'read_off',
+    'write_off',
     'parse_off',
     'read_npz',
     'parse_npz',
