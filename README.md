@@ -150,8 +150,8 @@ See the [Frequently Asked Questions](https://pytorch-geometric.readthedocs.io/en
 ## Running examples
 
 ```
-cd examples
-python gcn.py
+$ cd examples
+$ python gcn.py
 ```
 
 ## Cite
@@ -172,5 +172,5 @@ Feel free to [email us](mailto:matthias.fey@tu-dortmund.de) if you wish your wor
 ## Running tests
 
 ```
-python setup.py test
+$ python setup.py test
 ```
