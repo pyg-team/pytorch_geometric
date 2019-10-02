@@ -96,9 +96,11 @@ def test_debug_data():
     torch_geometric.set_debug(True)
 
     Data()
+    Data(edge_index=torch.tensor([[0, 1], [1, 0]])).num_nodes
     Data(edge_index=torch.zeros((2, 0), dtype=torch.long), num_nodes=10)
     Data(face=torch.zeros((3, 0), dtype=torch.long), num_nodes=10)
     Data(edge_index=torch.tensor([[0, 1], [1, 0]]), edge_attr=torch.randn(2))
+    Data(face=torch.tensor([[0], [1], [2]])).num_nodes
     Data(x=torch.torch.randn(5, 3), num_nodes=5)
     Data(pos=torch.torch.randn(5, 3), num_nodes=5)
     Data(norm=torch.torch.randn(5, 3), num_nodes=5)
