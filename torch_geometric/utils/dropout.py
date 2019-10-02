@@ -42,7 +42,7 @@ def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
         row, col, edge_attr = filter_adj(row, col, edge_attr, row < col)
 
     mask = edge_index.new_full((row.size(0), ), 1 - p, dtype=torch.float)
-    mask = torch.bernoulli(mask).to(torch.uint8)
+    mask = torch.bernoulli(mask).to(torch.bool)
 
     row, col, edge_attr = filter_adj(row, col, edge_attr, mask)
 

@@ -63,13 +63,8 @@ class ShapeNet(InMemoryDataset):
         'Table': '04379243',
     }
 
-    def __init__(self,
-                 root,
-                 categories=None,
-                 train=True,
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root, categories=None, train=True, transform=None,
+                 pre_transform=None, pre_filter=None):
         if categories is None:
             categories = list(self.category_ids.keys())
         if isinstance(categories, str):
@@ -130,7 +125,7 @@ class ShapeNet(InMemoryDataset):
                 data_list.append(data)
 
         y_mask = torch.zeros((len(self.categories), y_offset),
-                             dtype=torch.uint8)
+                             dtype=torch.bool)
         for i in range(len(cat_ys)):
             y_mask[i, cat_ys[i]] = 1
 

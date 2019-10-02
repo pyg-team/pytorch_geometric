@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import scatter_
+from torch_scatter import scatter_add
 
 
 def to_dense_batch(x, batch=None, fill_value=0):
@@ -21,12 +21,13 @@ def to_dense_batch(x, batch=None, fill_value=0):
         fill_value (float, optional): The value for invalid entries in the
             resulting dense output tensor. (default: :obj:`0`)
 
-    :rtype: (:class:`Tensor`, :class:`ByteTensor`)
+    :rtype: (:class:`Tensor`, :class:`BoolTensor`)
     """
     if batch is None:
         batch = x.new_zeros(x.size(0), dtype=torch.long)
     batch_size = batch[-1].item() + 1
-    num_nodes = scatter_('add', batch.new_ones(x.size(0)), batch, batch_size)
+    num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
+                            dim_size=batch_size)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
     max_num_nodes = num_nodes.max().item()
 

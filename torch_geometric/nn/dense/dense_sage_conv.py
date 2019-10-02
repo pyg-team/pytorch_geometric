@@ -10,7 +10,6 @@ class DenseSAGEConv(torch.nn.Module):
 
     :rtype: :class:`Tensor`
     """
-
     def __init__(self, in_channels, out_channels, normalize=False, bias=True):
         super(DenseSAGEConv, self).__init__()
 
@@ -40,7 +39,7 @@ class DenseSAGEConv(torch.nn.Module):
                 \times N \times N}`. The adjacency tensor is broadcastable in
                 the batch dimension, resulting in a shared adjacency matrix for
                 the complete batch.
-            mask (ByteTensor, optional): Mask matrix
+            mask (BoolTensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
                 the valid nodes for each graph. (default: :obj:`None`)
             add_loop (bool, optional): If set to :obj:`False`, the layer will

@@ -2,8 +2,9 @@ from collections import namedtuple
 
 import torch
 import torch.nn.functional as F
+from torch_scatter import scatter_add
 from torch_sparse import coalesce
-from torch_geometric.utils import softmax, scatter_
+from torch_geometric.utils import softmax
 
 
 class EdgePooling(torch.nn.Module):
@@ -146,7 +147,7 @@ class EdgePooling(torch.nn.Module):
         cluster = cluster.to(x.device)
 
         # We compute the new features as an addition of the old ones.
-        new_x = scatter_('add', x, cluster, dim_size=i)
+        new_x = scatter_add(x, cluster, dim=0, dim_size=i)
         new_edge_score = edge_score[new_edge_indices]
         if len(nodes_remaining) > 0:
             remaining_score = x.new_ones(

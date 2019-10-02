@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.utils import scatter_
+from torch_scatter import scatter_add
 
 
 def to_dense_adj(edge_index, batch=None, edge_attr=None):
@@ -20,7 +20,7 @@ def to_dense_adj(edge_index, batch=None, edge_attr=None):
         batch = edge_index.new_zeros(edge_index.max().item() + 1)
     batch_size = batch[-1].item() + 1
     one = batch.new_ones(batch.size(0))
-    num_nodes = scatter_('add', one, batch, batch_size)
+    num_nodes = scatter_add(one, batch, dim=0, dim_size=batch_size)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
     max_num_nodes = num_nodes.max().item()
 

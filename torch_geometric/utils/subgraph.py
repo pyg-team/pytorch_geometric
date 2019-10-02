@@ -3,16 +3,13 @@ import torch
 from .num_nodes import maybe_num_nodes
 
 
-def subgraph(subset,
-             edge_index,
-             edge_attr=None,
-             relabel_nodes=False,
+def subgraph(subset, edge_index, edge_attr=None, relabel_nodes=False,
              num_nodes=None):
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`.
 
     Args:
-        subset (LongTensor, ByteTensor or [int]): The nodes to keep.
+        subset (LongTensor, BoolTensor or [int]): The nodes to keep.
         edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional
             edge features. (default: :obj:`None`)
@@ -28,7 +25,7 @@ def subgraph(subset,
     if isinstance(subset, list) or isinstance(subset, tuple):
         subset = torch.tensor(subset, dtype=torch.long)
 
-    if subset.dtype == torch.uint8:
+    if subset.dtype == torch.bool or subset.dtype == torch.uint8:
         n_mask = subset
 
         if relabel_nodes:
@@ -36,7 +33,7 @@ def subgraph(subset,
             n_idx[subset] = torch.arange(subset.sum().item())
     else:
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
-        n_mask = torch.zeros(num_nodes, dtype=torch.uint8)
+        n_mask = torch.zeros(num_nodes, dtype=torch.bool)
         n_mask[subset] = 1
 
         if relabel_nodes:

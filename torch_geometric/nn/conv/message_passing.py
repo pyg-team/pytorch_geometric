@@ -37,7 +37,6 @@ class MessagePassing(torch.nn.Module):
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
     """
-
     def __init__(self, aggr='add', flow='source_to_target'):
         super(MessagePassing, self).__init__()
 
@@ -56,7 +55,7 @@ class MessagePassing(torch.nn.Module):
         ]
         self.__update_args__ = getargspec(self.update)[0][2:]
 
-    def propagate(self, edge_index, size=None, **kwargs):
+    def propagate(self, edge_index, size=None, dim=0, **kwargs):
         r"""The initial call to start propagating messages.
 
         Args:
@@ -65,7 +64,10 @@ class MessagePassing(torch.nn.Module):
                 undirected).
             size (list or tuple, optional): The size :obj:`[N, M]` of the
                 assignment matrix. If set to :obj:`None`, the size is tried to
-                get automatically inferred. (default: :obj:`None`)
+                get automatically inferred and assumed to be symmetric.
+                (default: :obj:`None`)
+            dim (int, optional): The axis along which to aggregate.
+                (default: :obj:`0`)
             **kwargs: Any additional data which is needed to construct messages
                 and to update node embeddings.
         """
@@ -122,7 +124,7 @@ class MessagePassing(torch.nn.Module):
         update_args = [kwargs[arg] for arg in self.__update_args__]
 
         out = self.message(*message_args)
-        out = scatter_(self.aggr, out, edge_index[i], dim_size=size[i])
+        out = scatter_(self.aggr, out, edge_index[i], dim, dim_size=size[i])
         out = self.update(out, *update_args)
 
         return out

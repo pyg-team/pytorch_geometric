@@ -26,7 +26,6 @@ class InMemoryDataset(Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-
     @property
     def raw_file_names(self):
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
@@ -67,20 +66,21 @@ class InMemoryDataset(Dataset):
         a :obj:`self.transform` is given).
         Returns a data object, if :obj:`idx` is a scalar, and a new dataset in
         case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a LongTensor
-        or a ByteTensor."""
+        or a BoolTensor."""
         if isinstance(idx, int):
             data = self.get(idx)
             data = data if self.transform is None else self.transform(data)
             return data
         elif isinstance(idx, slice):
             return self.__indexing__(range(*idx.indices(len(self))))
-        elif torch.is_tensor(idx) and idx.dtype == torch.long:
-            return self.__indexing__(idx)
-        elif torch.is_tensor(idx) and idx.dtype == torch.uint8:
-            return self.__indexing__(idx.nonzero())
+        elif torch.is_tensor(idx):
+            if idx.dtype == torch.long:
+                return self.__indexing__(idx)
+            elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
+                return self.__indexing__(idx.nonzero())
 
         raise IndexError(
-            'Only integers, slices (`:`) and long or byte tensors are valid '
+            'Only integers, slices (`:`) and long or bool tensors are valid '
             'indices (got {}).'.format(type(idx).__name__))
 
     def shuffle(self, return_perm=False):
@@ -104,8 +104,9 @@ class InMemoryDataset(Dataset):
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
             s = list(repeat(slice(None), item.dim()))
-            s[self.data.__cat_dim__(key, item)] = slice(
-                slices[idx], slices[idx + 1])
+            s[self.data.__cat_dim__(key,
+                                    item)] = slice(slices[idx],
+                                                   slices[idx + 1])
             data[key] = item[s]
         return data
 

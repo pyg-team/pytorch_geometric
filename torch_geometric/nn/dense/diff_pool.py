@@ -33,7 +33,7 @@ def dense_diff_pool(x, adj, s, mask=None):
             \times N \times C}` with number of clusters :math:`C`. The softmax
             does not have to be applied beforehand, since it is executed
             within this method.
-        mask (ByteTensor, optional): Mask matrix
+        mask (BoolTensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
 

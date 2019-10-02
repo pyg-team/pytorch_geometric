@@ -41,9 +41,9 @@ def read_planetoid_data(folder, prefix):
     x[test_index] = x[sorted_test_index]
     y[test_index] = y[sorted_test_index]
 
-    train_mask = sample_mask(train_index, num_nodes=y.size(0))
-    val_mask = sample_mask(val_index, num_nodes=y.size(0))
-    test_mask = sample_mask(test_index, num_nodes=y.size(0))
+    train_mask = index_to_mask(train_index, size=y.size(0))
+    val_mask = index_to_mask(val_index, size=y.size(0))
+    test_mask = index_to_mask(test_index, size=y.size(0))
 
     edge_index = edge_index_from_dict(graph, num_nodes=y.size(0))
 
@@ -88,7 +88,7 @@ def edge_index_from_dict(graph_dict, num_nodes=None):
     return edge_index
 
 
-def sample_mask(index, num_nodes):
-    mask = torch.zeros((num_nodes, ), dtype=torch.uint8)
+def index_to_mask(index, size):
+    mask = torch.zeros((size, ), dtype=torch.bool)
     mask[index] = 1
     return mask

@@ -32,11 +32,11 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None):
 
     rng = range(num_nodes**2)
     perm = torch.tensor(random.sample(rng, num_neg_samples))
-    mask = torch.from_numpy(np.isin(perm, idx).astype(np.uint8))
+    mask = torch.from_numpy(np.isin(perm, idx)).to(torch.bool)
     rest = mask.nonzero().view(-1)
     while rest.numel() > 0:  # pragma: no cover
         tmp = torch.tensor(random.sample(rng, rest.size(0)))
-        mask = torch.from_numpy(np.isin(tmp, idx).astype(np.uint8))
+        mask = torch.from_numpy(np.isin(tmp, idx)).to(torch.bool)
         perm[rest] = tmp
         rest = rest[mask.nonzero().view(-1)]
 
@@ -64,12 +64,12 @@ def structured_negative_sampling(edge_index, num_nodes=None):
     k = torch.randint(num_nodes, (i.size(0), ), dtype=torch.long)
     idx_2 = i * num_nodes + k
 
-    mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
+    mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
     rest = mask.nonzero().view(-1)
     while rest.numel() > 0:  # pragma: no cover
         tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
         idx_2 = i[rest] * num_nodes + tmp
-        mask = torch.from_numpy(np.isin(idx_2, idx_1).astype(np.uint8))
+        mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
         k[rest] = tmp
         rest = rest[mask.nonzero().view(-1)]
 

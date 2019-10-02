@@ -6,7 +6,7 @@ from .pool import pool_edge, pool_batch, pool_pos
 
 
 def _max_pool_x(cluster, x, size=None):
-    return scatter_('max', x, cluster, dim_size=size)
+    return scatter_('max', x, cluster, dim=0, dim_size=size)
 
 
 def max_pool_x(cluster, x, batch, size=None):

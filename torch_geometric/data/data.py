@@ -54,9 +54,8 @@ class Data(object):
 
         data = Data(x=x, edge_index=edge_index)
         data.train_idx = torch.tensor([...], dtype=torch.long)
-        data.test_mask = torch.tensor([...], dtype=torch.uint8)
+        data.test_mask = torch.tensor([...], dtype=torch.bool)
     """
-
     def __init__(self, x=None, edge_index=None, edge_attr=None, y=None,
                  pos=None, norm=None, face=None, **kwargs):
         self.x = x
@@ -231,8 +230,10 @@ class Data(object):
 
     def coalesce(self):
         r""""Orders and removes duplicated entries from edge indices."""
-        self.edge_index, self.edge_attr = coalesce(
-            self.edge_index, self.edge_attr, self.num_nodes, self.num_nodes)
+        self.edge_index, self.edge_attr = coalesce(self.edge_index,
+                                                   self.edge_attr,
+                                                   self.num_nodes,
+                                                   self.num_nodes)
         return self
 
     def contains_isolated_nodes(self):

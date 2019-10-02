@@ -43,7 +43,7 @@ def test_sampler():
         pass
     for data_flow in loader(torch.tensor([0, 1, 2, 3, 4])):
         pass
-    mask = torch.tensor([0, 1, 0, 1, 0, 1, 0, 1, 0, 1], dtype=torch.uint8)
+    mask = torch.tensor([0, 1, 0, 1, 0, 1, 0, 1, 0, 1], dtype=torch.bool)
     for data_flow in loader(mask):
         pass
 

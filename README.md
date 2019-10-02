@@ -112,11 +112,11 @@ We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation
 
-Ensure that at least PyTorch 1.1.0 is installed and verify that `cuda/bin`, `cuda/include` and `cuda/lib64` are in your `$PATH`, `$CPATH` and `$LD_LIBRARY_PATH` respectively, *e.g.*:
+Ensure that at least PyTorch 1.2.0 is installed and verify that `cuda/bin`, `cuda/include` and `cuda/lib64` are in your `$PATH`, `$CPATH` and `$LD_LIBRARY_PATH` respectively, *e.g.*:
 
 ```
 $ python -c "import torch; print(torch.__version__)"
->>> 1.1.0
+>>> 1.2.0
 
 $ echo $PATH
 >>> /usr/local/cuda/bin:...

@@ -104,7 +104,6 @@ class NeighborSampler(object):
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
     """
-
     def __init__(self, data, size, num_hops, batch_size=1, shuffle=False,
                  drop_last=False, bipartite=True, add_self_loops=False,
                  flow='source_to_target'):
@@ -146,7 +145,7 @@ class NeighborSampler(object):
         elif subset is None and self.shuffle:
             subset = torch.randperm(self.data.num_nodes)
         else:
-            if subset.dtype == torch.uint8:
+            if subset.dtype == torch.bool or subset.dtype == torch.uint8:
                 subset = subset.nonzero().view(-1)
             if self.shuffle:
                 subset = subset[torch.randperm(subset.size(0))]
@@ -252,7 +251,7 @@ class NeighborSampler(object):
         in :obj:`subset` in a mini-batch fashion.
 
         Args:
-            subset (LongTensor or ByteTensor, optional): The initial nodes to
+            subset (LongTensor or BoolTensor, optional): The initial nodes to
                 propagete messages to. If set to :obj:`None`, will iterate over
                 all nodes in the graph. (default: :obj:`None`)
         """

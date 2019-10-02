@@ -11,7 +11,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def index_to_mask(index, size):
-    mask = torch.zeros(size, dtype=torch.uint8, device=index.device)
+    mask = torch.zeros(size, dtype=torch.bool, device=index.device)
     mask[index] = 1
     return mask
 
@@ -40,15 +40,8 @@ def random_planetoid_splits(data, num_classes):
     return data
 
 
-def run(dataset,
-        model,
-        runs,
-        epochs,
-        lr,
-        weight_decay,
-        early_stopping,
-        permute_masks=None,
-        logger=None):
+def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
+        permute_masks=None, logger=None):
 
     val_losses, accs, durations = [], [], []
     for _ in range(runs):

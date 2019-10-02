@@ -8,8 +8,7 @@ def test_face_to_edge():
 
     face = torch.tensor([[0, 0], [1, 1], [2, 3]])
 
-    data = Data()
-    data.face = face
+    data = Data(face=face, num_nodes=4)
     data = FaceToEdge()(data)
     assert len(data) == 1
     assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 3, 3],

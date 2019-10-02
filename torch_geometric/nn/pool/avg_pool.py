@@ -6,7 +6,7 @@ from .pool import pool_edge, pool_batch, pool_pos
 
 
 def _avg_pool_x(cluster, x, size=None):
-    return scatter_('mean', x, cluster, dim_size=size)
+    return scatter_('mean', x, cluster, dim=0, dim_size=size)
 
 
 def avg_pool_x(cluster, x, batch, size=None):

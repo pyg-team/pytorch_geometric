@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.utils import softmax, scatter_
+from torch_scatter import scatter_add
+from torch_geometric.utils import softmax
 
 from ..inits import reset
 
@@ -28,7 +29,6 @@ class GlobalAttention(torch.nn.Module):
             before combining them with the attention scores, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
     """
-
     def __init__(self, gate_nn, nn=None):
         super(GlobalAttention, self).__init__()
         self.gate_nn = gate_nn
@@ -50,7 +50,7 @@ class GlobalAttention(torch.nn.Module):
         assert gate.dim() == x.dim() and gate.size(0) == x.size(0)
 
         gate = softmax(gate, batch, size)
-        out = scatter_('add', gate * x, batch, size)
+        out = scatter_add(gate * x, batch, dim=0, dim_size=size)
 
         return out
 

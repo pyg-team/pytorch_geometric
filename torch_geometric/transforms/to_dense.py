@@ -9,7 +9,6 @@ class ToDense(object):
         num_nodes (int): The number of nodes. If set to :obj:`None`, the number
             of nodes will get automatically inferred. (default: :obj:`None`)
     """
-
     def __init__(self, num_nodes=None):
         self.num_nodes = num_nodes
 
@@ -34,7 +33,7 @@ class ToDense(object):
         data.edge_index = None
         data.edge_attr = None
 
-        data.mask = torch.zeros(num_nodes, dtype=torch.uint8)
+        data.mask = torch.zeros(num_nodes, dtype=torch.bool)
         data.mask[:orig_num_nodes] = 1
 
         if data.x is not None:

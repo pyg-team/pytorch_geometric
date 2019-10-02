@@ -117,7 +117,7 @@ class DBP15K(InMemoryDataset):
 
     def process_y(self, path, assoc1, assoc2):
         row, col, mask = read_txt_array(path, sep='\t', dtype=torch.long).t()
-        mask = mask.to(torch.uint8)
+        mask = mask.to(torch.bool)
         return torch.stack([assoc1[row[mask]], assoc2[col[mask]]], dim=0)
 
     def __repr__(self):

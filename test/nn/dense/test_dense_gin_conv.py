@@ -36,7 +36,7 @@ def test_dense_sage_conv():
             [0, 0, 0],
         ],
     ])
-    mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.uint8)
+    mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.bool)
 
     dense_out = dense_conv(x, adj, mask)
     assert dense_out.size() == (2, 3, channels)
@@ -59,5 +59,5 @@ def test_dense_gin_conv_with_broadcasting():
     ])
 
     assert conv(x, adj).size() == (batch_size, num_nodes, channels)
-    mask = torch.tensor([1, 1, 1], dtype=torch.uint8)
+    mask = torch.tensor([1, 1, 1], dtype=torch.bool)
     assert conv(x, adj, mask).size() == (batch_size, num_nodes, channels)

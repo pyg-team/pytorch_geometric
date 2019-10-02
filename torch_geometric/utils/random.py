@@ -71,7 +71,7 @@ def stochastic_blockmodel_graph(block_sizes, edge_probs, directed=False):
     else:
         row, col = torch.combinations(torch.arange(num_nodes)).t()
 
-    mask = torch.bernoulli(prob[node_idx[row], node_idx[col]]).to(torch.uint8)
+    mask = torch.bernoulli(prob[node_idx[row], node_idx[col]]).to(torch.bool)
     edge_index = torch.stack([row[mask], col[mask]], dim=0)
 
     if not directed:
