@@ -5,7 +5,7 @@ import torch_geometric.datasets
 import torch_geometric.transforms
 import torch_geometric.utils
 
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 
 __all__ = [
     'is_debug_enabled',
