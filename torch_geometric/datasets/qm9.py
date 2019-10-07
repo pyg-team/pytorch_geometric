@@ -92,7 +92,7 @@ class QM9(InMemoryDataset):
 
         with open(self.raw_paths[1], 'r') as f:
             target = f.read().split('\n')[1:-1]
-            target = [[float(x) for x in line.split(',')[4:16]]
+            target = [[float(x) for x in line.split(',')[4:20]]
                       for line in target]
             target = torch.tensor(target, dtype=torch.float)
 
@@ -102,7 +102,6 @@ class QM9(InMemoryDataset):
 
         data_list = []
         for i, mol in enumerate(suppl):
-            print(i)
             if mol is None:
                 continue
 
