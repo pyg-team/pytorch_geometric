@@ -16,6 +16,7 @@ def test_to_dense_batch():
     assert out.tolist() == expected
     assert mask.tolist() == [[1, 1, 0], [1, 0, 0], [1, 1, 1]]
 
-    out = to_dense_batch(x)[0]
+    out, mask = to_dense_batch(x)
     assert out.size() == (1, 6, 2)
     assert out[0].tolist() == x.tolist()
+    assert mask.tolist() == [[1, 1, 1, 1, 1, 1]]
