@@ -95,7 +95,7 @@ class PascalVOCKeypoints(InMemoryDataset):
         shutil.rmtree(osp.join(self.raw_dir, 'TrainVal'))
 
         path = download_url(self.annotation_url, self.raw_dir)
-        extract_tar(path, self.raw_dir)
+        extract_tar(path, self.raw_dir, mode='r')
         os.unlink(path)
 
         path = download_url(self.split_url, self.raw_dir)
