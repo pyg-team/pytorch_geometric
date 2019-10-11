@@ -29,8 +29,6 @@ class QM9(InMemoryDataset):
     In addition, we provide the atom features from the `"Neural Message
     Passing for Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
 
-    # noqa: E501
-
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
     | Target | Property                         | Description                                                                       | Unit                                        |
     +========+==================================+===================================================================================+=============================================+
@@ -81,7 +79,7 @@ class QM9(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
-    """
+    """  # noqa: E501
 
     raw_url = ('https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/'
                'molnet_publish/qm9.zip')
