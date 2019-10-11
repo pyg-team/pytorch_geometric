@@ -47,6 +47,8 @@ class WILLOWObjectClass(InMemoryDataset):
     url = ('http://www.di.ens.fr/willow/research/graphlearning/'
            'WILLOW-ObjectClass_dataset.zip')
 
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
     def __init__(self, root, category, transform=None, pre_transform=None,
                  pre_filter=None):
         assert category in ['Car', 'Duck', 'Face', 'Motorbike', 'Winebottle']
@@ -82,9 +84,9 @@ class WILLOWObjectClass(InMemoryDataset):
         vgg16_outputs = []
 
         def hook(module, x, y):
-            vgg16_outputs.append(y)
+            vgg16_outputs.append(y.to('cpu'))
 
-        vgg16 = models.vgg16(pretrained=True)
+        vgg16 = models.vgg16(pretrained=True).to(self.device)
         vgg16.eval()
         vgg16.features[20].register_forward_hook(hook)  # relu4_2
         vgg16.features[25].register_forward_hook(hook)  # relu5_1
@@ -111,7 +113,7 @@ class WILLOWObjectClass(InMemoryDataset):
             size = img.size()[-2:]
             vgg16_outputs.clear()
             with torch.no_grad():
-                vgg16(img.unsqueeze(0))
+                vgg16(img.unsqueeze(0).to(self.device))
 
             xs = []
             for out in vgg16_outputs:
