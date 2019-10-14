@@ -28,10 +28,12 @@ class Net(torch.nn.Module):
     def forward(self, data):
         data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
         cluster = voxel_grid(data.pos, data.batch, size=5, start=0, end=28)
+        data.edge_attr = None
         data = max_pool(cluster, data, transform=transform)
 
         data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
         cluster = voxel_grid(data.pos, data.batch, size=7, start=0, end=28)
+        data.edge_attr = None
         data = max_pool(cluster, data, transform=transform)
 
         data.x = F.elu(self.conv3(data.x, data.edge_index, data.edge_attr))

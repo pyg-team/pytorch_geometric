@@ -11,8 +11,9 @@ from torch_geometric.nn import (NNConv, graclus, max_pool, max_pool_x,
                                 global_mean_pool)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
-train_dataset = MNISTSuperpixels(path, True, transform=T.Cartesian())
-test_dataset = MNISTSuperpixels(path, False, transform=T.Cartesian())
+transform = T.Cartesian(cat=False)
+train_dataset = MNISTSuperpixels(path, True, transform=transform)
+test_dataset = MNISTSuperpixels(path, False, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 d = train_dataset
@@ -40,7 +41,8 @@ class Net(nn.Module):
         data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
         weight = normalized_cut_2d(data.edge_index, data.pos)
         cluster = graclus(data.edge_index, weight, data.x.size(0))
-        data = max_pool(cluster, data, transform=T.Cartesian(cat=False))
+        data.edge_attr = None
+        data = max_pool(cluster, data, transform=transform)
 
         data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
         weight = normalized_cut_2d(data.edge_index, data.pos)
