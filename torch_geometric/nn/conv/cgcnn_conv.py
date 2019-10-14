@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch_geometric.nn import MessagePassing
+from torch_geometric.nn.conv import MessagePassing
 
 
 class CGCNNConv(MessagePassing):
