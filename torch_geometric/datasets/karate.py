@@ -17,7 +17,6 @@ class KarateClub(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
-
     def __init__(self, transform=None):
         super(KarateClub, self).__init__('.', transform, None, None)
 
@@ -30,7 +29,7 @@ class KarateClub(InMemoryDataset):
         data = Data(edge_index=edge_index)
         data.num_nodes = edge_index.max().item() + 1
         data.x = torch.eye(data.num_nodes, dtype=torch.float)
-        y = [0 if G.node[i]['club'] == 'Mr. Hi' else 1 for i in G.nodes]
+        y = [0 if G.nodes[i]['club'] == 'Mr. Hi' else 1 for i in G.nodes]
         data.y = torch.tensor(y)
         self.data, self.slices = self.collate([data])
 
