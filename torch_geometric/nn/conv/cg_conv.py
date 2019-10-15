@@ -12,13 +12,12 @@ class CGConv(MessagePassing):
     paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{x}_i +
-        \sum_{j \in \mathcal{N}(i)} \sigma \left(
-        \sigma \mathbf{z}_{i,j} \mathbf{W}_f + \mathbf{b}_f \right) \odot
-        g \left( \mathbf{z}_{i,j} \mathbf{W}_s + \mathbf{b}_s  \right)
+        \mathbf{x}^{\prime}_i = \mathbf{x}_i + \sum_{j \in \mathcal{N}(i)}
+        \sigma \left( \mathbf{z}_{i,j} \mathbf{W}_f + \mathbf{b}_f \right)
+        \odot g \left( \mathbf{z}_{i,j} \mathbf{W}_s + \mathbf{b}_s  \right)
 
-    where :math:`\mathbf{z}_{i,j} = \[ \mathbf{x}_i, \mathbf{x}_j,
-    \mathbf{e}_{i,j} \]` denotes the concatenation of central node features,
+    where :math:`\mathbf{z}_{i,j} = [ \mathbf{x}_i, \mathbf{x}_j,
+    \mathbf{e}_{i,j} ]` denotes the concatenation of central node features,
     neighboring node features and edge features.
     In addition, :math:`\sigma` and :math:`g` denote the sigmoid and softplus
     functions, respectively.
@@ -28,7 +27,7 @@ class CGConv(MessagePassing):
         dim (int): Edge feature dimensionality.
         aggr (string, optional): The aggregation operator to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
-            (default: :obj:`"mean"`)
+            (default: :obj:`"add"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
