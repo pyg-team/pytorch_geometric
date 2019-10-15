@@ -11,6 +11,6 @@ def test_spline_conv():
     pseudo = torch.rand((edge_index.size(1), 3))
 
     conv = SplineConv(in_channels, out_channels, dim=3, kernel_size=5)
-    assert conv.__repr__() == 'SplineConv(16, 32)'
+    assert conv.__repr__() == 'SplineConv(16, 32, dim=3)'
     with torch_geometric.debug():
         assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)

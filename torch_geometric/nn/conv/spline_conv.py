@@ -53,7 +53,6 @@ class SplineConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, dim, kernel_size,
                  is_open_spline=True, degree=1, aggr='mean', root_weight=True,
                  bias=True, **kwargs):
@@ -145,5 +144,6 @@ class SplineConv(MessagePassing):
         return aggr_out
 
     def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+        return '{}({}, {}, dim={})'.format(self.__class__.__name__,
+                                           self.in_channels, self.out_channels,
+                                           self.dim)
