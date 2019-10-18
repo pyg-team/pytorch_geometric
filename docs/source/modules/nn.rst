@@ -34,6 +34,13 @@ Dense Convolutional Layers
     :members:
     :undoc-members:
 
+Normalization Layers
+--------------------
+
+.. automodule:: torch_geometric.nn.norm
+    :members:
+    :undoc-members:
+
 Global Pooling Layers
 ---------------------
 
