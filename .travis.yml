@@ -10,11 +10,11 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - gcc-5.4
-      - g++-5.4
+      - gcc-5
+      - g++-5
 before_install:
-  - export CC="gcc-5.4"
-  - export CXX="g++-5.4"
+  - export CC="gcc-5"
+  - export CXX="g++-5"
 install:
   - pip install numpy
   - pip install --pre torch torchvision -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
