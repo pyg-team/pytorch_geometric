@@ -23,6 +23,8 @@ def size_repr(value):
         return list(value.size())
     elif isinstance(value, int) or isinstance(value, float):
         return [1]
+    elif isinstance(value, list) or isinstance(value, tuple):
+        return [len(value)]
     else:
         return value
 

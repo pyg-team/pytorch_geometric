@@ -103,10 +103,13 @@ class InMemoryDataset(Dataset):
 
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
-            s = list(repeat(slice(None), item.dim()))
-            s[self.data.__cat_dim__(key,
-                                    item)] = slice(slices[idx],
-                                                   slices[idx + 1])
+            if torch.is_tensor(item):
+                s = list(repeat(slice(None), item.dim()))
+                s[self.data.__cat_dim__(key,
+                                        item)] = slice(slices[idx],
+                                                       slices[idx + 1])
+            else:
+                s = slice(slices[idx], slices[idx + 1])
             data[key] = item[s]
         return data
 
@@ -131,10 +134,8 @@ class InMemoryDataset(Dataset):
             if torch.is_tensor(item[key]):
                 s = slices[key][-1] + item[key].size(
                     item.__cat_dim__(key, item[key]))
-            elif isinstance(item[key], int) or isinstance(item[key], float):
-                s = slices[key][-1] + 1
             else:
-                raise ValueError('Unsupported attribute type')
+                s = slices[key][-1] + 1
             slices[key].append(s)
 
         if hasattr(data_list[0], '__num_nodes__'):
@@ -143,11 +144,13 @@ class InMemoryDataset(Dataset):
                 data.__num_nodes__.append(item.num_nodes)
 
         for key in keys:
-            if torch.is_tensor(data_list[0][key]):
+            item = data_list[0][key]
+            if torch.is_tensor(item):
                 data[key] = torch.cat(
                     data[key], dim=data.__cat_dim__(key, data_list[0][key]))
-            else:
+            elif isinstance(item, int) or isinstance(item, float):
                 data[key] = torch.tensor(data[key])
+
             slices[key] = torch.tensor(slices[key], dtype=torch.long)
 
         return data, slices

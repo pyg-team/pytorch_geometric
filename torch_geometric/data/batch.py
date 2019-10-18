@@ -10,7 +10,6 @@ class Batch(Data):
     In addition, single graphs can be reconstructed via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
-
     def __init__(self, batch=None, **kwargs):
         super(Batch, self).__init__(**kwargs)
 
@@ -52,7 +51,7 @@ class Batch(Data):
                 else:
                     size = 1
                 batch.__slices__[key].append(size + batch.__slices__[key][-1])
-                cumsum[key] += data.__inc__(key, item)
+                cumsum[key] = cumsum[key] + data.__inc__(key, item)
                 batch[key].append(item)
 
                 if key in follow_batch:
@@ -74,8 +73,6 @@ class Batch(Data):
                                        dim=data_list[0].__cat_dim__(key, item))
             elif isinstance(item, int) or isinstance(item, float):
                 batch[key] = torch.tensor(batch[key])
-            else:
-                raise ValueError('Unsupported attribute type')
 
         # Copy custom data functions to batch (does not work yet):
         # if data_list.__class__ != Data:
@@ -107,11 +104,17 @@ class Batch(Data):
         for i in range(len(self.__slices__[keys[0]]) - 1):
             data = self.__data_class__()
             for key in keys:
-                data[key] = self[key].narrow(
-                    data.__cat_dim__(key, self[key]), self.__slices__[key][i],
-                    self.__slices__[key][i + 1] - self.__slices__[key][i])
-                data[key] = data[key] - cumsum[key]
-                cumsum[key] += data.__inc__(key, data[key])
+                if torch.is_tensor(self[key]):
+                    data[key] = self[key].narrow(
+                        data.__cat_dim__(key,
+                                         self[key]), self.__slices__[key][i],
+                        self.__slices__[key][i + 1] - self.__slices__[key][i])
+                    if self[key].dtype != torch.bool:
+                        data[key] = data[key] - cumsum[key]
+                else:
+                    data[key] = self[key][self.__slices__[key][i]:self.
+                                          __slices__[key][i + 1]]
+                cumsum[key] = cumsum[key] + data.__inc__(key, data[key])
             data_list.append(data)
 
         return data_list
