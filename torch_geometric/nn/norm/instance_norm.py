@@ -10,7 +10,10 @@ class InstanceNorm(_InstanceNorm):
         super(InstanceNorm, self).__init__(channels, eps, momentum, affine,
                                            track_running_stats)
 
-    def forward(self, x, batch):
+    def forward(self, x, batch=None):
+        if batch is None:
+            batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
+
         batch_size = batch.max().item() + 1
 
         if self.training or not self.track_running_stats:
@@ -20,16 +23,18 @@ class InstanceNorm(_InstanceNorm):
 
             tmp = (x - mean[batch])
             tmp = scatter_add(tmp * tmp, batch, dim=0, dim_size=batch_size)
-            var = tmp / (count - 1).clamp(min=1)
+            var = tmp / count.clamp(min=1)
+            unbiased_var = tmp / (count - 1).clamp(min=1)
 
         if self.training and self.track_running_stats:
             momentum = self.momentum
             self.running_mean = (
                 1 - momentum) * self.running_mean + momentum * mean.mean(dim=0)
             self.running_var = (
-                1 - momentum) * self.running_var + momentum * var.mean(dim=0)
+                1 - momentum
+            ) * self.running_var + momentum * unbiased_var.mean(dim=0)
 
-        if self.track_running_stats:
+        if not self.training and self.track_running_stats:
             mean = self.running_mean.view(1, -1).expand(batch_size, -1)
             var = self.running_var.view(1, -1).expand(batch_size, -1)
 
