@@ -44,7 +44,6 @@ class Dataset(torch.utils.data.Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-
     @property
     def raw_file_names(self):
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
