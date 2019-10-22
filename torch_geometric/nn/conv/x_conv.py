@@ -47,16 +47,11 @@ class XConv(torch.nn.Module):
             classical convolutional operators. (default: :obj:`1`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_cluster.knn_graph`.
     """
-
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 dim,
-                 kernel_size,
-                 hidden_channels=None,
-                 dilation=1,
-                 bias=True):
+    def __init__(self, in_channels, out_channels, dim, kernel_size,
+                 hidden_channels=None, dilation=1, bias=True, **kwargs):
         super(XConv, self).__init__()
 
         self.in_channels = in_channels
@@ -68,6 +63,7 @@ class XConv(torch.nn.Module):
         self.dim = dim
         self.kernel_size = kernel_size
         self.dilation = dilation
+        self.kwargs = kwargs
 
         C_in, C_delta, C_out = in_channels, hidden_channels, out_channels
         D, K = dim, kernel_size
@@ -116,13 +112,13 @@ class XConv(torch.nn.Module):
         pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
         (N, D), K = pos.size(), self.kernel_size
 
-        row, col = knn_graph(
-            pos, K * self.dilation, batch, loop=True, flow='target_to_source')
+        row, col = knn_graph(pos, K * self.dilation, batch, loop=True,
+                             flow='target_to_source', **self.kwargs)
 
         if self.dilation > 1:
             dil = self.dilation
-            index = torch.randint(
-                K * dil, (N, K), dtype=torch.long, device=row.device)
+            index = torch.randint(K * dil, (N, K), dtype=torch.long,
+                                  device=row.device)
             arange = torch.arange(N, dtype=torch.long, device=row.device)
             arange = arange * (K * dil)
             index = (index + arange.view(-1, 1)).view(-1)

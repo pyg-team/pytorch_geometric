@@ -86,7 +86,7 @@ You should additionally verify that your CUDA is set up correctly by following t
 C++/CUDA Extensions on macOS
 ----------------------------
 
-In order to compile CUDA extensions on macOS, you need to replace the call
+In order to compile CUDA extensions on macOS with Python <3.7, you need to replace the call
 
 .. code-block:: python
 
