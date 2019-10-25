@@ -3,13 +3,13 @@ import random
 import os.path as osp
 import shutil
 
-from torch_geometric.datasets import NonisoDataset
+from torch_geometric.datasets import TUDataset
 import pytest
 
 
 def test_noniso_mutag():
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = NonisoDataset(root, 'MUTAG')
+    dataset = TUDataset(root, 'MUTAG', cleaned=True)
 
     assert len(dataset) == 135
     assert dataset.num_features == 7
@@ -19,7 +19,7 @@ def test_noniso_mutag():
     assert len(dataset[0]) == 4
     assert dataset[0].edge_attr.size(1) == 4
 
-    dataset = NonisoDataset(root, 'MUTAG', use_node_attr=True)
+    dataset = TUDataset(root, 'MUTAG', use_node_attr=True, cleaned=True)
     assert dataset.num_features == 7
 
     shutil.rmtree(root)

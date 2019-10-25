@@ -18,12 +18,9 @@ class NormalizedDegree(object):
         return data
 
 
-def get_dataset(name, sparse=True, noniso=False):
+def get_dataset(name, sparse=True, cleaned=False):
     path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', name)
-    if noniso:
-        dataset = NonisoDataset(path, name)
-    else:
-        dataset = TUDataset(path, name)
+    dataset = TUDataset(path, name, cleaned=cleaned)
     dataset.data.edge_attr = None
 
     if dataset.data.x is None:

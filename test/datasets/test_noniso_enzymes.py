@@ -7,14 +7,14 @@ import shutil
 
 import pytest
 import torch
-from torch_geometric.datasets import NonisoDataset
+from torch_geometric.datasets import TUDataset
 from torch_geometric.data import DataLoader, DenseDataLoader, DataListLoader
 from torch_geometric.transforms import ToDense
 
 
 def test_noniso_enzymes():
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = NonisoDataset(root, 'ENZYMES')
+    dataset = TUDataset(root, 'ENZYMES', cleaned=True)
 
     assert len(dataset) == 595
     assert dataset.num_features == 3
@@ -63,15 +63,9 @@ def test_noniso_enzymes():
         assert list(data.mask.size()) == [595, 126]
         assert list(data.y.size()) == [595, 1]
 
-    dataset = NonisoDataset(root, 'ENZYMES', use_node_attr=True)
+    dataset = TUDataset(root, 'ENZYMES', use_node_attr=True, cleaned=True)
     assert dataset.num_node_features == 21
     assert dataset.num_features == 21
     assert dataset.num_edge_features == 0
 
     shutil.rmtree(root)
-
-if __name__ == '__main__':
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = NonisoDataset(root, 'ENZYMES')
-
-    console = []

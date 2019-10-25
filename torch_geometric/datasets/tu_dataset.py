@@ -10,7 +10,11 @@ from torch_geometric.io import read_tu_data
 class TUDataset(InMemoryDataset):
     r"""A variety of graph kernel benchmark datasets, *.e.g.* "IMDB-BINARY",
     "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
-    <http://graphkernels.cs.tu-dortmund.de>`_.
+    <http://graphkernels.cs.tu-dortmund.de>`_ and non-isomorphic clean versions
+     of them from the <https://github.com/nd7141/graph_datasets> according to
+     the paper:
+
+    "Understanding Isomorphism Bias in Graph Data Sets" Ivanov et al.
 
     .. note::
         Some datasets may not come with any node labels.
@@ -42,14 +46,22 @@ class TUDataset(InMemoryDataset):
         use_edge_attr (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous edge attributes (if present).
             (default: :obj:`False`)
+        cleaned: (bool, optional): If :obj:`True`, the dataset will
+            contain only non-isomorphic graphs according to
+            <https://github.com/nd7141/graph_datasets>.
+            (default: :obj:`False`)
     """
 
     url = 'https://ls11-www.cs.tu-dortmund.de/people/morris/' \
           'graphkerneldatasets'
 
+    url_to_clean_datasets = 'https://raw.githubusercontent.com/nd7141/' \
+                            'graph_datasets/master/datasets/'
+
     def __init__(self, root, name, transform=None, pre_transform=None,
-                 pre_filter=None, use_node_attr=False, use_edge_attr=False):
+                 pre_filter=None, use_node_attr=False, use_edge_attr=False, cleaned=False):
         self.name = name
+        self.cleaned = cleaned
         super(TUDataset, self).__init__(root, transform, pre_transform,
                                         pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -100,7 +112,10 @@ class TUDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        path = download_url('{}/{}.zip'.format(self.url, self.name), self.root)
+        if self.cleaned:
+            path = download_url('{}/{}.zip'.format(self.url_to_clean_datasets, self.name), self.root, log=True)
+        else:
+            path = download_url('{}/{}.zip'.format(self.url, self.name), self.root, log=True)
         extract_zip(path, self.root)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
