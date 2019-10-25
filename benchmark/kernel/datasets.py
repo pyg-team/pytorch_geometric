@@ -1,7 +1,7 @@
 import os.path as osp
 
 import torch
-from torch_geometric.datasets import TUDataset
+from torch_geometric.datasets import TUDataset, NonisoDataset
 from torch_geometric.utils import degree
 import torch_geometric.transforms as T
 
@@ -18,9 +18,12 @@ class NormalizedDegree(object):
         return data
 
 
-def get_dataset(name, sparse=True):
+def get_dataset(name, sparse=True, noniso=False):
     path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', name)
-    dataset = TUDataset(path, name)
+    if noniso:
+        dataset = NonisoDataset(path, name)
+    else:
+        dataset = TUDataset(path, name)
     dataset.data.edge_attr = None
 
     if dataset.data.x is None:

@@ -1,5 +1,6 @@
 from .karate import KarateClub
 from .tu_dataset import TUDataset
+from .noniso_dataset import NonisoDataset
 from .planetoid import Planetoid
 from .cora_full import CoraFull
 from .coauthor import Coauthor
@@ -31,6 +32,7 @@ from .pascal import PascalVOCKeypoints
 __all__ = [
     'KarateClub',
     'TUDataset',
+    'NonisoDataset',
     'Planetoid',
     'CoraFull',
     'Coauthor',
