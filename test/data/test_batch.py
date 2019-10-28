@@ -14,7 +14,6 @@ def test_batch():
     s2 = '2'
 
     data = Batch.from_data_list([Data(x1, e1, s=s1), Data(x2, e2, s=s2)])
-    print(data)
 
     assert data.__repr__() == (
         'Batch(batch=[5], edge_index=[2, 6], s=[2], x=[5])')
