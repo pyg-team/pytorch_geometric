@@ -69,3 +69,12 @@ def test_enzymes():
     assert dataset.num_edge_features == 0
 
     shutil.rmtree(root)
+
+
+def test_cleaned_enzymes():
+    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    dataset = TUDataset(root, 'ENZYMES', cleaned=True)
+
+    assert len(dataset) == 595
+
+    shutil.rmtree(root)

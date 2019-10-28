@@ -44,6 +44,7 @@ class Dataset(torch.utils.data.Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
+
     @property
     def raw_file_names(self):
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
@@ -77,8 +78,6 @@ class Dataset(torch.utils.data.Dataset):
         super(Dataset, self).__init__()
 
         self.root = osp.expanduser(osp.normpath(root))
-        self.raw_dir = osp.join(self.root, 'raw')
-        self.processed_dir = osp.join(self.root, 'processed')
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
@@ -101,6 +100,14 @@ class Dataset(torch.utils.data.Dataset):
 
         self._download()
         self._process()
+
+    @property
+    def raw_dir(self):
+        return osp.join(self.root, 'raw')
+
+    @property
+    def processed_dir(self):
+        return osp.join(self.root, 'processed')
 
     @property
     def num_node_features(self):

@@ -11,6 +11,10 @@ class TUDataset(InMemoryDataset):
     r"""A variety of graph kernel benchmark datasets, *.e.g.* "IMDB-BINARY",
     "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
     <http://graphkernels.cs.tu-dortmund.de>`_.
+    In addition, this dataset wrapper provides `cleaned dataset versions
+    <https://github.com/nd7141/graph_datasets>`_ as motivated by the
+    "Understanding Isomorphism Bias in Graph Data Sets" paper, containing only
+    non-isomorphic graphs.
 
     .. note::
         Some datasets may not come with any node labels.
@@ -42,14 +46,20 @@ class TUDataset(InMemoryDataset):
         use_edge_attr (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous edge attributes (if present).
             (default: :obj:`False`)
+        cleaned: (bool, optional): If :obj:`True`, the dataset will
+            contain only non-isomorphic graphs. (default: :obj:`False`)
     """
 
-    url = 'https://ls11-www.cs.tu-dortmund.de/people/morris/' \
-          'graphkerneldatasets'
+    url = ('https://ls11-www.cs.tu-dortmund.de/people/morris/'
+           'graphkerneldatasets')
+    cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
+                   'graph_datasets/master/datasets')
 
     def __init__(self, root, name, transform=None, pre_transform=None,
-                 pre_filter=None, use_node_attr=False, use_edge_attr=False):
+                 pre_filter=None, use_node_attr=False, use_edge_attr=False,
+                 cleaned=False):
         self.name = name
+        self.cleaned = cleaned
         super(TUDataset, self).__init__(root, transform, pre_transform,
                                         pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -59,6 +69,16 @@ class TUDataset(InMemoryDataset):
         if self.data.edge_attr is not None and not use_edge_attr:
             num_edge_attributes = self.num_edge_attributes
             self.data.edge_attr = self.data.edge_attr[:, num_edge_attributes:]
+
+    @property
+    def raw_dir(self):
+        name = 'raw{}'.format('_cleaned' if self.cleaned else '')
+        return osp.join(self.root, name)
+
+    @property
+    def processed_dir(self):
+        name = 'processed{}'.format('_cleaned' if self.cleaned else '')
+        return osp.join(self.root, name)
 
     @property
     def num_node_labels(self):
@@ -100,7 +120,8 @@ class TUDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        path = download_url('{}/{}.zip'.format(self.url, self.name), self.root)
+        url = self.cleaned_url if self.cleaned else self.url
+        path = download_url('{}/{}.zip'.format(url, self.name), self.root)
         extract_zip(path, self.root)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
