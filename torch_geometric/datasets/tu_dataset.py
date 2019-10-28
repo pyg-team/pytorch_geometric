@@ -113,9 +113,9 @@ class TUDataset(InMemoryDataset):
 
     def download(self):
         if self.cleaned:
-            path = download_url('{}/{}.zip'.format(self.url_to_clean_datasets, self.name), self.root)
+            path = download_url('{}/{}.zip'.format(self.url_to_clean_datasets, self.name), self.root, log=True)
         else:
-            path = download_url('{}/{}.zip'.format(self.url, self.name), self.root)
+            path = download_url('{}/{}.zip'.format(self.url, self.name), self.root, log=True)
         extract_zip(path, self.root)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
