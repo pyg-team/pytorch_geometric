@@ -46,7 +46,7 @@ class GINConv(MessagePassing):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         edge_index, _ = remove_self_loops(edge_index)
-        out = self.nn((1 + self.eps) * x + self.propagate(edge_index, x=x))
+        out = self.nn((1 + self.eps) * x + self.propagate(edge_index, x=x), edge_index)
         return out
 
     def message(self, x_j):
