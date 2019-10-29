@@ -73,12 +73,12 @@ class TUDataset(InMemoryDataset):
     @property
     def raw_dir(self):
         name = 'raw{}'.format('_cleaned' if self.cleaned else '')
-        return osp.join(self.root, name)
+        return osp.join(self.root, self.name, name)
 
     @property
     def processed_dir(self):
         name = 'processed{}'.format('_cleaned' if self.cleaned else '')
-        return osp.join(self.root, name)
+        return osp.join(self.root, self.name, name)
 
     @property
     def num_node_labels(self):
@@ -121,11 +121,12 @@ class TUDataset(InMemoryDataset):
 
     def download(self):
         url = self.cleaned_url if self.cleaned else self.url
-        path = download_url('{}/{}.zip'.format(url, self.name), self.root)
-        extract_zip(path, self.root)
+        folder = osp.join(self.root, self.name)
+        path = download_url('{}/{}.zip'.format(url, self.name), folder)
+        extract_zip(path, folder)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(self.root, self.name), self.raw_dir)
+        os.rename(osp.join(folder, self.name), self.raw_dir)
 
     def process(self):
         self.data, self.slices = read_tu_data(self.raw_dir, self.name)
