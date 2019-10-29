@@ -72,13 +72,13 @@ class TUDataset(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        version = 'raw{}'.format('_cleaned' if self.cleaned else '')
-        return osp.join(self.root, self.name, version)
+        name = 'raw{}'.format('_cleaned' if self.cleaned else '')
+        return osp.join(self.root, name)
 
     @property
     def processed_dir(self):
-        version = 'processed{}'.format('_cleaned' if self.cleaned else '')
-        return osp.join(self.root, self.name, version)
+        name = 'processed{}'.format('_cleaned' if self.cleaned else '')
+        return osp.join(self.root, name)
 
     @property
     def num_node_labels(self):
