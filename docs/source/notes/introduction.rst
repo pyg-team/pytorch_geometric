@@ -117,7 +117,7 @@ You can find a complete list of all methods at :class:`torch_geometric.data.Data
 Common Benchmark Datasets
 -------------------------
 
-PyTorch Geometric contains a large number of common benchmark datasets, *e.g.* all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
+PyTorch Geometric contains a large number of common benchmark datasets, *e.g.* all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_ and their clean versions that contain only non-isomorphic graphs from `https://raw.githubusercontent.com/nd7141/graph_datasets/master/datasets`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
 
 Initializing a dataset is straightforward.
 An initialization of a dataset will automatically download its raw files and process them to the previously described ``Data`` format.
