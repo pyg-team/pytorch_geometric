@@ -89,7 +89,7 @@ class Net(torch.nn.Module):
         self.gnn1_pool = GNN(3, 64, num_nodes, add_loop=True)
         self.gnn1_embed = GNN(3, 64, 64, add_loop=True, lin=False)
 
-        num_nodes = ceil(0.25 * max_nodes)
+        num_nodes = ceil(0.25 * num_nodes)
         self.gnn2_pool = GNN(3 * 64, 64, num_nodes)
         self.gnn2_embed = GNN(3 * 64, 64, 64, lin=False)
 
