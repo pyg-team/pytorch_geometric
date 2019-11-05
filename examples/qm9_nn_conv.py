@@ -49,20 +49,21 @@ class Complete(object):
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
 transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
-dataset = QM9(path, transform=transform).shuffle()
+dataset = QM9(path, transform=transform)
 
 # Normalize targets to mean = 0 and std = 1.
-mean = dataset.data.y[:, target].mean().item()
-std = dataset.data.y[:, target].std().item()
-dataset.data.y[:, target] = (dataset.data.y[:, target] - mean) / std
+mean = dataset.data.y.mean(dim=0, keepdim=True)
+std = dataset.data.y.std(dim=0, keepdim=True)
+dataset.data.y = (dataset.data.y - mean) / std
+mean, std = mean[:, target].item(), std[:, target].item()
 
 # Split datasets.
 test_dataset = dataset[:10000]
 val_dataset = dataset[10000:20000]
 train_dataset = dataset[20000:]
-test_loader = DataLoader(test_dataset, batch_size=64)
-val_loader = DataLoader(val_dataset, batch_size=64)
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
+val_loader = DataLoader(val_dataset, batch_size=128, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 
 
 class Net(torch.nn.Module):
@@ -71,7 +72,7 @@ class Net(torch.nn.Module):
         self.lin0 = torch.nn.Linear(dataset.num_features, dim)
 
         nn = Sequential(Linear(5, 128), ReLU(), Linear(128, dim * dim))
-        self.conv = NNConv(dim, dim, nn, aggr='mean', root_weight=False)
+        self.conv = NNConv(dim, dim, nn, aggr='mean')
         self.gru = GRU(dim, dim)
 
         self.set2set = Set2Set(dim, processing_steps=3)
@@ -96,8 +97,9 @@ class Net(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer, mode='min', factor=0.7, patience=5, min_lr=0.00001)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
+                                                       factor=0.7, patience=5,
+                                                       min_lr=0.00001)
 
 
 def train(epoch):
