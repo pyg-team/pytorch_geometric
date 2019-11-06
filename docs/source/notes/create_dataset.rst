@@ -123,20 +123,20 @@ Let's see this process in a simplified example:
         def process(self):
             i = 0
             for raw_path in self.raw_paths:
-                 # Read data from `raw_path`.
-                 data = Data(...)
+                # Read data from `raw_path`.
+                data = Data(...)
 
-                 if self.pre_filter is not None and not self.pre_filter(data):
-                     continue
+                if self.pre_filter is not None and not self.pre_filter(data):
+                    continue
 
                 if self.pre_transform is not None:
-                     data = self.pre_transform(data)
+                    data = self.pre_transform(data)
 
-                torch.save(data, ops.join(self.processed_dir, 'data_{}.pt'.format(i)))
+                torch.save(data, osp.join(self.processed_dir, 'data_{}.pt'.format(i)))
                 i += 1
 
         def get(self, idx):
-            data = torch.load(osp.join(self.processed_dir, 'data_{}.pt'.format(idx))
+            data = torch.load(osp.join(self.processed_dir, 'data_{}.pt'.format(idx)))
             return data
 
 Here, each graph data object gets saved individually in :meth:`torch_geometric.data.Dataset.process`, and is manually loaded in :meth:`torch_geometric.data.Dataset.get`.
