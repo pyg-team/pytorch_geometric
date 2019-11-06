@@ -27,6 +27,7 @@ from .gdelt import GDELT
 from .willow_object_class import WILLOWObjectClass
 from .dbp15k import DBP15K
 from .pascal import PascalVOCKeypoints
+from .pascal_pf import PascalPF
 
 __all__ = [
     'KarateClub',
@@ -55,7 +56,8 @@ __all__ = [
     'BitcoinOTC',
     'ICEWS18',
     'GDELT',
+    'DBP15K',
     'WILLOWObjectClass',
     'PascalVOCKeypoints',
-    'DBP15K',
+    'PascalPF',
 ]
