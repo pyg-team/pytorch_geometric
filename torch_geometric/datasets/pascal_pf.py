@@ -4,7 +4,6 @@ import shutil
 import glob
 
 import torch
-import torch.nn.functional as F
 from scipy.io import loadmat
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
