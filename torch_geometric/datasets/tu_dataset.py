@@ -13,8 +13,8 @@ class TUDataset(InMemoryDataset):
     <http://graphkernels.cs.tu-dortmund.de>`_.
     In addition, this dataset wrapper provides `cleaned dataset versions
     <https://github.com/nd7141/graph_datasets>`_ as motivated by the
-    "`Understanding Isomorphism Bias in Graph Data Sets
-    <https://arxiv.org/abs/1910.12091>`_" paper, containing only non-isomorphic
+    `"Understanding Isomorphism Bias in Graph Data Sets"
+    <https://arxiv.org/abs/1910.12091>`_ paper, containing only non-isomorphic
      graphs.
 
     .. note::
