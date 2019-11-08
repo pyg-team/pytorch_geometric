@@ -1,3 +1,4 @@
 include LICENSE
 
+recursive-include test *
 recursive-include examples *
