@@ -15,7 +15,7 @@ class TUDataset(InMemoryDataset):
     <https://github.com/nd7141/graph_datasets>`_ as motivated by the
     `"Understanding Isomorphism Bias in Graph Data Sets"
     <https://arxiv.org/abs/1910.12091>`_ paper, containing only non-isomorphic
-     graphs.
+    graphs.
 
     .. note::
         Some datasets may not come with any node labels.
