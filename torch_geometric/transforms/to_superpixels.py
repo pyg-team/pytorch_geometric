@@ -15,6 +15,7 @@ class ToSLIC(object):
     Example::
 
         from torchvision.datasets import MNIST
+        import torchvision.transforms as T
         from torch_geometric.transforms import ToSLIC
 
         transform = T.Compose([T.ToTensor(), ToSLIC(n_segments=75)])
