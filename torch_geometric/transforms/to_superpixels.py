@@ -10,7 +10,7 @@ class ToSLIC(object):
     :obj:`torch_geometric.data.Data` object holding the centroids of
     superpixels in :obj:`pos` and their mean color in :obj:`x`.
 
-    This transform can be used with any :obj:`torchvision` dataset:
+    This transform can be used with any :obj:`torchvision` dataset.
 
     Example::
 
