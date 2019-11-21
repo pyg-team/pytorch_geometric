@@ -111,9 +111,9 @@ class ChebConv(MessagePassing):
                              'case the normalization is non-symmetric.')
         lambda_max = 2.0 if lambda_max is None else lambda_max
 
-        edge_index, norm = self.norm(edge_index, x.size(self.dim), edge_weight,
-                                     self.normalization, lambda_max,
-                                     dtype=x.dtype, batch=batch)
+        edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
+                                     edge_weight, self.normalization,
+                                     lambda_max, dtype=x.dtype, batch=batch)
 
         Tx_0 = x
         out = torch.matmul(Tx_0, self.weight[0])

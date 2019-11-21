@@ -93,7 +93,7 @@ class GCNConv(MessagePassing):
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
-            edge_index, norm = self.norm(edge_index, x.size(self.dim),
+            edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
                                          edge_weight, self.improved, x.dtype)
             self.cached_result = edge_index, norm
 
