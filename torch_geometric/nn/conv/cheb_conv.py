@@ -58,7 +58,6 @@ class ChebConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, K, normalization='sym',
                  bias=True, **kwargs):
         super(ChebConv, self).__init__(aggr='add', **kwargs)
@@ -88,8 +87,9 @@ class ChebConv(MessagePassing):
 
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
-        edge_index, edge_weight = get_laplacian(
-            edge_index, edge_weight, normalization, dtype, num_nodes)
+        edge_index, edge_weight = get_laplacian(edge_index, edge_weight,
+                                                normalization, dtype,
+                                                num_nodes)
 
         if batch is not None and torch.is_tensor(lambda_max):
             lambda_max = lambda_max[batch[edge_index[0]]]
@@ -97,8 +97,9 @@ class ChebConv(MessagePassing):
         edge_weight = (2.0 * edge_weight) / lambda_max
         edge_weight[edge_weight == float('inf')] = 0
 
-        edge_index, edge_weight = add_self_loops(
-            edge_index, edge_weight, fill_value=-1, num_nodes=num_nodes)
+        edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
+                                                 fill_value=-1,
+                                                 num_nodes=num_nodes)
 
         return edge_index, edge_weight
 
@@ -110,7 +111,7 @@ class ChebConv(MessagePassing):
                              'case the normalization is non-symmetric.')
         lambda_max = 2.0 if lambda_max is None else lambda_max
 
-        edge_index, norm = self.norm(edge_index, x.size(0), edge_weight,
+        edge_index, norm = self.norm(edge_index, x.size(self.dim), edge_weight,
                                      self.normalization, lambda_max,
                                      dtype=x.dtype, batch=batch)
 

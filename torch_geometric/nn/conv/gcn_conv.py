@@ -37,7 +37,6 @@ class GCNConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, improved=False, cached=False,
                  bias=True, **kwargs):
         super(GCNConv, self).__init__(aggr='add', **kwargs)
@@ -94,8 +93,8 @@ class GCNConv(MessagePassing):
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
-            edge_index, norm = self.norm(edge_index, x.size(0), edge_weight,
-                                         self.improved, x.dtype)
+            edge_index, norm = self.norm(edge_index, x.size(self.dim),
+                                         edge_weight, self.improved, x.dtype)
             self.cached_result = edge_index, norm
 
         edge_index, norm = self.cached_result
