@@ -10,6 +10,7 @@ install_requires = [
     'networkx',
     'scikit-learn',
     'scikit-image',
+    'numba',
     'requests',
     'plyfile',
     'pandas',

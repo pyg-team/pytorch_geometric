@@ -33,6 +33,7 @@ from .laplacian_lambda_max import LaplacianLambdaMax
 from .generate_mesh_normals import GenerateMeshNormals
 from .delaunay import Delaunay
 from .to_superpixels import ToSLIC
+from .gdc import GDC
 
 __all__ = [
     'Compose',
@@ -70,4 +71,5 @@ __all__ = [
     'GenerateMeshNormals',
     'Delaunay',
     'ToSLIC',
+    'GDC'
 ]
