@@ -36,10 +36,10 @@ class MessagePassing(torch.nn.Module):
         flow (string, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
-        dim (int, optional): The axis along which to propagate.
+        node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`0`)
     """
-    def __init__(self, aggr='add', flow='source_to_target', dim=0):
+    def __init__(self, aggr='add', flow='source_to_target', node_dim=0):
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
@@ -48,8 +48,8 @@ class MessagePassing(torch.nn.Module):
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
 
-        self.dim = dim
-        assert self.dim >= 0
+        self.node_dim = node_dim
+        assert self.node_dim >= 0
 
         self.__message_args__ = getargspec(self.message)[0][1:]
         self.__special_args__ = [(i, arg)
@@ -75,7 +75,7 @@ class MessagePassing(torch.nn.Module):
                 and to update node embeddings.
         """
 
-        dim = self.dim
+        dim = self.node_dim
         size = [None, None] if size is None else list(size)
         assert len(size) == 2
 
