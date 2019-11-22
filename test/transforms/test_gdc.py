@@ -34,14 +34,28 @@ def test_gdc():
     data = Data(edge_index=edge_index, num_nodes=5)
     gdc = GDC(self_loop_weight=1,
               normalization_in='col', normalization_out='col',
-              diffusion_kwargs=dict(method='heat', t=5),
-              sparsification_kwargs=dict(method='topk', k=2),
+              diffusion_kwargs=dict(method='heat', t=10),
+              sparsification_kwargs=dict(method='topk', k=2, dim=0),
               exact=True)
     data = gdc(data)
     mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().cpu().numpy()
     col_sum = mat.sum(0)
     assert np.all(mat >= -1e-8)
     assert np.all(np.isclose(col_sum, 1) | np.isclose(col_sum, 0))
+    assert np.all((~np.isclose(mat, 0)).sum(0) == 2)
+
+    data = Data(edge_index=edge_index, num_nodes=5)
+    gdc = GDC(self_loop_weight=1,
+              normalization_in='row', normalization_out='row',
+              diffusion_kwargs=dict(method='heat', t=5),
+            sparsification_kwargs=dict(method='topk', k=2, dim=1),
+              exact=True)
+    data = gdc(data)
+    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().cpu().numpy()
+    row_sum = mat.sum(1)
+    assert np.all(mat >= -1e-8)
+    assert np.all(np.isclose(row_sum, 1) | np.isclose(row_sum, 0))
+    assert np.all((~np.isclose(mat, 0)).sum(1) == 2)
 
     data = Data(edge_index=edge_index, num_nodes=5)
     gdc = GDC(self_loop_weight=1,

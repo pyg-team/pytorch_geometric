@@ -298,8 +298,9 @@ class GDC(object):
                 the `eps` required to achieve a given `avg_degree`.
 
                 2. `"topk"`: Keep edges with top `k` edge weights per node (column).
-                Additionally expects the following parameter:
+                Additionally expects the following parameters:
                 - k (int): Specifies the number of edges to keep.
+                - dim (int): The axis along which to take the top k.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -313,13 +314,20 @@ class GDC(object):
             edge_index_flat = edge_index[0] * N + edge_index[1]
             edge_weight = matrix.flatten()[edge_index_flat]
         elif method == 'topk':
-            sort_idx = torch.argsort(matrix, dim=0, descending=True)
-            top_idx = sort_idx[:kwargs['k']]
+            assert kwargs['dim'] in [0, 1]
+            sort_idx = torch.argsort(matrix, dim=kwargs['dim'], descending=True)
+            if kwargs['dim'] == 0:
+                top_idx = sort_idx[:kwargs['k']]
+                edge_weight = torch.gather(matrix, dim=kwargs['dim'], index=top_idx).flatten()
 
-            edge_weight = torch.gather(matrix, dim=0, index=top_idx).flatten()
+                row_idx = torch.arange(0, N, device=matrix.device).repeat(kwargs['k'])
+                edge_index = torch.stack([top_idx.flatten(), row_idx], dim=0)
+            else:
+                top_idx = sort_idx[:, :kwargs['k']]
+                edge_weight = torch.gather(matrix, dim=kwargs['dim'], index=top_idx).flatten()
 
-            source_idx = torch.arange(0, N, device=matrix.device).repeat(kwargs['k'])
-            edge_index = torch.stack([source_idx, top_idx.flatten()], dim=0)
+                col_idx = torch.arange(0, N, device=matrix.device).repeat_interleave(kwargs['k'])
+                edge_index = torch.stack([col_idx, top_idx.flatten()], dim=0)
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown.")
         return edge_index, edge_weight
