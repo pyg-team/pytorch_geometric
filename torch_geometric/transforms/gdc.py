@@ -4,6 +4,7 @@ from scipy.linalg import expm
 import torch
 from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 from torch_sparse import coalesce, spspmm
+from torch_scatter import scatter_add
 
 
 class GDC(object):
@@ -114,15 +115,13 @@ class GDC(object):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        sp_adj_matrix = torch.sparse.FloatTensor(indices=edge_index,
-                                                 values=edge_weight,
-                                                 size=(num_nodes, num_nodes))
         diag_idx = torch.arange(0, num_nodes, dtype=torch.long,
                                 device=edge_index.device)
         diag_idx = diag_idx.unsqueeze(0).repeat(2, 1)
 
         if normalization == 'sym':
-            D_vec = torch.sparse.sum(sp_adj_matrix, dim=0).to_dense()
+            _, col = edge_index
+            D_vec = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
             D_vec_invsqrt = 1 / torch.sqrt(D_vec)
             edge_index, edge_weight = spspmm(diag_idx, D_vec_invsqrt,
                                              edge_index, edge_weight,
@@ -131,13 +130,15 @@ class GDC(object):
                                              diag_idx, D_vec_invsqrt,
                                              num_nodes, num_nodes, num_nodes)
         elif normalization == 'col':
-            D_vec = torch.sparse.sum(sp_adj_matrix, dim=0).to_dense()
+            _, col = edge_index
+            D_vec = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
             D_vec_inv = 1 / D_vec
             edge_index, edge_weight = spspmm(edge_index, edge_weight,
                                              diag_idx, D_vec_inv,
                                              num_nodes, num_nodes, num_nodes)
         elif normalization == 'row':
-            D_vec = torch.sparse.sum(sp_adj_matrix, dim=1).to_dense()
+            row, _ = edge_index
+            D_vec = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
             D_vec_inv = 1 / D_vec
             edge_index, edge_weight = spspmm(diag_idx, D_vec_inv,
                                              edge_index, edge_weight,
@@ -232,9 +233,8 @@ class GDC(object):
         if method == 'ppr':
             if normalization == 'sym':
                 # Calculate original degrees
-                sp_adj_matrix = torch.sparse.FloatTensor(
-                    indices=edge_index, values=edge_weight, size=(num_nodes, num_nodes))
-                D_vec_orig = torch.sparse.sum(sp_adj_matrix, dim=0).to_dense()
+                _, col = edge_index
+                D_vec_orig = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
 
             edge_index_np = edge_index.cpu().numpy()
             # Assumes coalesced edge_index
