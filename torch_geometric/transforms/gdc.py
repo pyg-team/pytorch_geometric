@@ -11,9 +11,9 @@ class GDC(object):
     r"""Preprocesses the graph via Graph Diffusion Convolution (GDC).
 
     As proposed in `"Diffusion Improves Graph Learning"
-    <https://arxiv.org/abs/1911.05485>`_.
+    <https://www.kdd.in.tum.de/gdc>`_.
     Johannes Klicpera, Stefan Weißenberger, Stephan Günnemann
-    NeurIPS 2019, see www.kdd.in.tum.de/gdc
+    NeurIPS 2019
 
     The paper offers additional advice on how to choose the hyperparameters.
     For an example of using GCN with GDC, see :source:`examples/gcn.py`.
