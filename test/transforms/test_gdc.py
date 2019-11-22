@@ -22,6 +22,17 @@ def test_gdc():
 
     data = Data(edge_index=edge_index, num_nodes=5)
     gdc = GDC(self_loop_weight=1,
+              normalization_in='sym', normalization_out='sym',
+              diffusion_kwargs=dict(method='heat', t=10),
+              sparsification_kwargs=dict(method='threshold', avg_degree=2),
+              exact=True)
+    data = gdc(data)
+    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().cpu().numpy()
+    assert np.all(mat >= -1e-8)
+    assert np.allclose(mat, mat.T)
+
+    data = Data(edge_index=edge_index, num_nodes=5)
+    gdc = GDC(self_loop_weight=1,
               normalization_in='col', normalization_out='col',
               diffusion_kwargs=dict(method='heat', t=5),
               sparsification_kwargs=dict(method='topk', k=2),

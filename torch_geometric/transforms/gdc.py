@@ -1,5 +1,6 @@
 import numba
 import numpy as np
+from scipy.linalg import expm
 import torch
 from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 from torch_sparse import coalesce, spspmm
@@ -362,8 +363,8 @@ class GDC(object):
             e, V = torch.symeig(matrix, eigenvectors=True)
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
-            e, V = torch.eig(matrix, eigenvectors=True)
-            diff_mat = V @ torch.diag(e[:, 0].exp()) @ torch.inverse(V)
+            diff_mat_np = expm(matrix.cpu().numpy())
+            diff_mat = torch.Tensor(diff_mat_np).to(matrix.device)
         return diff_mat
 
     def _calculate_eps(self, matrix, num_nodes, avg_degree):
