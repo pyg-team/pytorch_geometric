@@ -20,6 +20,9 @@ class Net(torch.nn.Module):
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
         # self.conv2 = ChebConv(16, data.num_features, K=2)
 
+        self.reg_params = self.conv1.parameters()
+        self.non_reg_params = self.conv2.parameters()
+
     def forward(self):
         x, edge_index = data.x, data.edge_index
         x = F.relu(self.conv1(x, edge_index))
@@ -30,7 +33,9 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model, data = Net().to(device), data.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+optimizer = torch.optim.Adam([dict(params=model.reg_params, weight_decay=5e-4),
+                              dict(params=model.non_reg_params, weight_decay=0)],
+                             lr=0.01)
 
 
 def train():
