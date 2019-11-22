@@ -26,7 +26,7 @@ class GDC(object):
             `method` specifies the diffusion method (values: `"ppr"`, `"heat"`, `"coeff"`).
             Each diffusion method requires different additional parameters.
             See :func:`GDC._diffusion_matrix_exact` or :func:`GDC._diffusion_matrix_approx` for details.
-            (default: :obj:`dict(method='ppr', alpha=0.15, eps=1e-4)`)
+            (default: :obj:`dict(method='ppr', alpha=0.15)`)
         sparsification_kwargs (dict, optional): Dictionary containing the parameters for sparsification.
             `method` specifies the sparsification method (values: `threshold`, `topk`).
             Each sparsification method requires different additional parameters.
@@ -37,16 +37,16 @@ class GDC(object):
             and calculate either its inverse or its matrix exponential.
             However, the approximate variants do not support edge weights
             and currently only personalized PageRank and sparsification by threshold
-            are implemented as fast, approximate versions. (default: :obj:`False`)
+            are implemented as fast, approximate versions. (default: :obj:`True`)
 
     :rtype: :class:`torch_geometric.data.Data`
     """
 
     def __init__(self, self_loop_weight=1,
                  normalization_in='sym', normalization_out='col',
-                 diffusion_kwargs=dict(method='ppr', alpha=0.15, eps=1e-4),
+                 diffusion_kwargs=dict(method='ppr', alpha=0.15),
                  sparsification_kwargs=dict(method='threshold', avg_degree=64),
-                 exact=False):
+                 exact=True):
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -225,7 +225,7 @@ class GDC(object):
                 Additionally expects the parameters:
                 - alpha (float): Return probability in PPR. Commonly lies in [0.05, 0.2].
                 - eps (float): Threshold for PPR calculation stopping criterion
-                (`edge_weight` >= `eps` * `out_degree`).
+                (`edge_weight` >= `eps` * `out_degree`). Recommended default: `1e-4`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
