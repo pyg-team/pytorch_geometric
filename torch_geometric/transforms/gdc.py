@@ -16,13 +16,13 @@ class GDC(object):
         self_loop_weight (float, optional): Weight of the added self-loop.
             Set to :obj:`None` to add no self-loops. (default: :obj:`1`)
         normalization_in (str, optional): Normalization of the transition matrix
-            on the original (input) graph. Possible values: `sym`, `col`, and `row`.
+            on the original (input) graph. Possible values: `"sym"`, `"col"`, and `"row"`.
             See :func:`GDC._transition_matrix` for details. (default: :obj:`"sym"`)
         normalization_out (str, optional): Normalization of the transition matrix
-            on the transformed GDC (output) graph. Possible values: `sym`, `col`, and `row`.
+            on the transformed GDC (output) graph. Possible values: `"sym"`, `"col"`, `"row"`, and `None`.
             See :func:`GDC._transition_matrix` for details. (default: :obj:`"col"`)
         diffusion_kwargs (dict, optional): Dictionary containing the parameters for diffusion.
-            `method` specifies the diffusion method (values: `ppr`, `heat`, `coeff`).
+            `method` specifies the diffusion method (values: `"ppr"`, `"heat"`, `"coeff"`).
             Each diffusion method requires different additional parameters.
             See :func:`GDC._diffusion_matrix_exact` or :func:`GDC._diffusion_matrix_approx` for details.
             (default: :obj:`dict(method='ppr', alpha=0.15, eps=1e-4)`)
@@ -109,6 +109,8 @@ class GDC(object):
                 3. `"row"`: Row-wise normalization:
                 :math:`\mathbf{T} = \mathbf{D}^{-1} \mathbf{A}`
 
+                4. `None`: No normalization.
+
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
         sp_adj_matrix = torch.sparse.FloatTensor(indices=edge_index,
@@ -139,6 +141,8 @@ class GDC(object):
             edge_index, edge_weight = spspmm(diag_idx, D_vec_inv,
                                              edge_index, edge_weight,
                                              num_nodes, num_nodes, num_nodes)
+        elif normalization is None:
+            pass
         else:
             raise ValueError(f"Transition matrix normalization '{normalization}' unknown.")
         return edge_index, edge_weight
@@ -213,7 +217,7 @@ class GDC(object):
             edge_index (LongTensor): The edge indices.
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
-            normalization (str): Transition matrix normalization scheme (`sym`, `row`, or `col`).
+            normalization (str): Transition matrix normalization scheme (`"sym"`, `"row"`, or `"col"`).
                 See :func:`GDC._transition_matrix` for details.
             method (str): Diffusion method. Options:
                 1. `"ppr"`: Use personalized PageRank as diffusion.
@@ -259,8 +263,11 @@ class GDC(object):
                 edge_index, edge_weight = spspmm(edge_index, edge_weight,
                                                  diag_idx, D_vec_invsqrt,
                                                  num_nodes, num_nodes, num_nodes)
+            elif normalization in ['col', 'row']:
+                pass
             else:
-                raise ValueError(f"Transition matrix normalization '{normalization}' unknown.")
+                raise ValueError(f"Transition matrix normalization '{normalization}'"
+                                 f" not implemented for non-exact GDC computation.")
         elif method == 'heat':
             raise NotImplementedError(
                 "Currently no fast heat kernel is implemented. "
