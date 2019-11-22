@@ -16,9 +16,9 @@ def test_gdc():
               sparsification_kwargs=dict(method='threshold', avg_degree=2),
               exact=True)
     data = gdc(data)
-    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().numpy()
-    assert np.all(mat >= 0)
-    assert np.all(mat == mat.T)
+    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().cpu().numpy()
+    assert np.all(mat >= -1e-8)
+    assert np.allclose(mat, mat.T)
 
     data = Data(edge_index=edge_index, num_nodes=5)
     gdc = GDC(self_loop_weight=1,
@@ -27,9 +27,9 @@ def test_gdc():
               sparsification_kwargs=dict(method='topk', k=2),
               exact=True)
     data = gdc(data)
-    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().numpy()
+    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().cpu().numpy()
     col_sum = mat.sum(0)
-    assert np.all(mat >= 0)
+    assert np.all(mat >= -1e-8)
     assert np.all(np.isclose(col_sum, 1) | np.isclose(col_sum, 0))
 
     data = Data(edge_index=edge_index, num_nodes=5)
@@ -39,9 +39,9 @@ def test_gdc():
               sparsification_kwargs=dict(method='threshold', eps=0.1),
               exact=True)
     data = gdc(data)
-    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().numpy()
+    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().cpu().numpy()
     row_sum = mat.sum(1)
-    assert np.all(mat >= 0)
+    assert np.all(mat >= -1e-8)
     assert np.all(np.isclose(row_sum, 1) | np.isclose(row_sum, 0))
 
     data = Data(edge_index=edge_index, num_nodes=5)
@@ -51,8 +51,8 @@ def test_gdc():
               sparsification_kwargs=dict(method='threshold', avg_degree=2),
               exact=False)
     data = gdc(data)
-    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().numpy()
-    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().numpy()
+    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().cpu().numpy()
+    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze().cpu().numpy()
     col_sum = mat.sum(0)
-    assert np.all(mat >= 0)
+    assert np.all(mat >= -1e-8)
     assert np.all(np.isclose(col_sum, 1) | np.isclose(col_sum, 0))

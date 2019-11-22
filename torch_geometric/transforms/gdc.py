@@ -200,7 +200,7 @@ class GDC(object):
         elif method == 'coeff':
             # Densify matrix
             adj_matrix = to_dense_adj(edge_index, edge_attr=edge_weight).squeeze()
-            mat = torch.eye(num_nodes)
+            mat = torch.eye(num_nodes, device=edge_index.device)
 
             diff_matrix = kwargs['coeffs'][0] * mat
             for coeff in kwargs['coeffs'][1:]:
@@ -235,14 +235,15 @@ class GDC(object):
                     indices=edge_index, values=edge_weight, size=(num_nodes, num_nodes))
                 D_vec_orig = torch.sparse.sum(sp_adj_matrix, dim=0).to_dense()
 
-            edge_index_np = edge_index.numpy()
+            edge_index_np = edge_index.cpu().numpy()
             # Assumes coalesced edge_index
             _, indptr, out_degree = np.unique(edge_index_np[0], return_index=True, return_counts=True)
 
             neighbors, neighbor_weights = GDC._calc_ppr(indptr, edge_index_np[1], out_degree,
                                                         kwargs['alpha'], kwargs['eps'])
             ppr_normalization = 'col' if normalization == 'col' else 'row'
-            edge_index, edge_weight = self._neighbors_to_graph(neighbors, neighbor_weights, ppr_normalization)
+            edge_index, edge_weight = self._neighbors_to_graph(neighbors, neighbor_weights,
+                                                               ppr_normalization, device=edge_index.device)
 
             if normalization == 'sym':
                 # We can change the normalization from row-normalized to symmetric
@@ -312,7 +313,7 @@ class GDC(object):
 
             edge_weight = torch.gather(matrix, dim=0, index=top_idx).flatten()
 
-            source_idx = torch.arange(0, N).repeat(kwargs['k'])
+            source_idx = torch.arange(0, N, device=matrix.device).repeat(kwargs['k'])
             edge_index = torch.stack([source_idx, top_idx.flatten()], dim=0)
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown.")
@@ -380,25 +381,26 @@ class GDC(object):
             return -np.inf
         return sorted_edges[avg_degree * num_nodes - 1]
 
-    def _neighbors_to_graph(self, neighbors, neighbor_weights, normalization='row'):
+    def _neighbors_to_graph(self, neighbors, neighbor_weights, normalization='row', device='cpu'):
         """Combine a list of neighbors and neighbor weights to create a sparse graph.
 
         Args:
             neighbors (List[List[int]]): List of neighbors for each node.
             neighbor_weights (List[List[float]]): List of weights for the neighbors of each node.
             normalization (str): Normalization of resulting matrix (options: `row`, `col`).
+            device (torch.device): Device to create output tensors on.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        edge_weight = torch.Tensor(np.concatenate(neighbor_weights))
+        edge_weight = torch.Tensor(np.concatenate(neighbor_weights)).to(device)
         i = np.repeat(np.arange(len(neighbors)), np.fromiter(map(len, neighbors), dtype=np.int))
         j = np.concatenate(neighbors)
         if normalization == 'col':
-            edge_index = torch.Tensor(np.vstack([j, i]))
+            edge_index = torch.Tensor(np.vstack([j, i])).to(device)
             N = len(neighbors)
             edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
         elif normalization == 'row':
-            edge_index = torch.Tensor(np.vstack([i, j]))
+            edge_index = torch.Tensor(np.vstack([i, j])).to(device)
         else:
             raise ValueError(f"PPR matrix normalization {normalization} unknown.")
         return edge_index, edge_weight
