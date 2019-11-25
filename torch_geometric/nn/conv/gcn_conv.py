@@ -98,7 +98,8 @@ class GCNConv(MessagePassing):
             self.cached_num_edges = edge_index.size(1)
             if self.normalize:
                 edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
-                                             edge_weight, self.improved, x.dtype)
+                                             edge_weight, self.improved,
+                                             x.dtype)
             else:
                 norm = edge_weight
             self.cached_result = edge_index, norm
@@ -108,7 +109,7 @@ class GCNConv(MessagePassing):
         return self.propagate(edge_index, x=x, norm=norm)
 
     def message(self, x_j, norm):
-        return norm.view(-1, 1) * x_j
+        return norm.view(-1, 1) * x_j if norm is not None else x_j
 
     def update(self, aggr_out):
         if self.bias is not None:

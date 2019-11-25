@@ -8,7 +8,8 @@ import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, ChebConv  # noqa
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--use_gdc', action='store_true', help='Use GDC preprocessing.')
+parser.add_argument('--use_gdc', action='store_true',
+                    help='Use GDC preprocessing.')
 args = parser.parse_args()
 
 dataset = 'Cora'
@@ -17,19 +18,21 @@ dataset = Planetoid(path, dataset, T.NormalizeFeatures())
 data = dataset[0]
 
 if args.use_gdc:
-    gdc = T.GDC(self_loop_weight=1,
-                normalization_in='sym', normalization_out='col',
+    gdc = T.GDC(self_loop_weight=1, normalization_in='sym',
+                normalization_out='col',
                 diffusion_kwargs=dict(method='ppr', alpha=0.05),
-                sparsification_kwargs=dict(method='topk', k=128, dim=0),
-                exact=True)
+                sparsification_kwargs=dict(method='topk', k=128,
+                                           dim=0), exact=True)
     data = gdc(data)
 
 
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GCNConv(dataset.num_features, 16, cached=True, normalize=not args.use_gdc)
-        self.conv2 = GCNConv(16, dataset.num_classes, cached=True, normalize=not args.use_gdc)
+        self.conv1 = GCNConv(dataset.num_features, 16, cached=True,
+                             normalize=not args.use_gdc)
+        self.conv2 = GCNConv(16, dataset.num_classes, cached=True,
+                             normalize=not args.use_gdc)
         # self.conv1 = ChebConv(data.num_features, 16, K=2)
         # self.conv2 = ChebConv(16, data.num_features, K=2)
 
@@ -46,9 +49,10 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model, data = Net().to(device), data.to(device)
-optimizer = torch.optim.Adam([dict(params=model.reg_params, weight_decay=5e-4),
-                              dict(params=model.non_reg_params, weight_decay=0)],
-                             lr=0.01)
+optimizer = torch.optim.Adam([
+    dict(params=model.reg_params, weight_decay=5e-4),
+    dict(params=model.non_reg_params, weight_decay=0)
+], lr=0.01)
 
 
 def train():
