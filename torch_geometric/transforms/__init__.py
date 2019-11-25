@@ -71,5 +71,5 @@ __all__ = [
     'GenerateMeshNormals',
     'Delaunay',
     'ToSLIC',
-    'GDC'
+    'GDC',
 ]

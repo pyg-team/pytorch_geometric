@@ -1,7 +1,7 @@
+import torch
 import numba
 import numpy as np
 from scipy.linalg import expm
-import torch
 from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 from torch_sparse import coalesce, spspmm
 from torch_scatter import scatter_add
@@ -181,7 +181,7 @@ class GDC(object):
 
     def diffusion_matrix_exact(self, edge_index, edge_weight, num_nodes,
                                method, **kwargs):
-        """Calculate the (dense) diffusion on a given sparse graph.
+        r"""Calculate the (dense) diffusion on a given sparse graph.
         Note that these exact variants are not scalable. They densify the
         adjacency matrix and calculate either its inverse or its matrix
         exponential.
@@ -243,7 +243,7 @@ class GDC(object):
 
     def diffusion_matrix_approx(self, edge_index, edge_weight, num_nodes,
                                 normalization, method, **kwargs):
-        """Calculate the approximate, sparse diffusion on a given sparse graph.
+        r"""Calculate the approximate, sparse diffusion on a given sparse graph.
 
         Args:
             edge_index (LongTensor): The edge indices.
@@ -325,7 +325,7 @@ class GDC(object):
         return edge_index, edge_weight
 
     def sparsify_dense(self, matrix, method, **kwargs):
-        """Sparsifies the given dense matrix.
+        r"""Sparsifies the given dense matrix.
 
         Args:
             matrix (Tensor): Matrix to sparsify.
@@ -386,7 +386,7 @@ class GDC(object):
 
     def sparsify_sparse(self, edge_index, edge_weight, num_nodes, method,
                         **kwargs):
-        """Sparsifies a given sparse graph further.
+        r"""Sparsifies a given sparse graph further.
 
         Args:
             edge_index (LongTensor): The edge indices.
@@ -421,7 +421,7 @@ class GDC(object):
         return edge_index, edge_weight
 
     def __expm__(self, matrix, symmetric):
-        """Calculates matrix exponential.
+        r"""Calculates matrix exponential.
 
         Args:
             matrix (Tensor): Matrix to take exponential of.
@@ -438,7 +438,7 @@ class GDC(object):
         return diff_mat
 
     def __calculate_eps__(self, matrix, num_nodes, avg_degree):
-        """Calculates threshold necessary to achieve a given average degree.
+        r"""Calculates threshold necessary to achieve a given average degree.
 
         Args:
             matrix (Tensor): Adjacency matrix or edge weights.
@@ -454,7 +454,7 @@ class GDC(object):
 
     def __neighbors_to_graph__(self, neighbors, neighbor_weights,
                                normalization='row', device='cpu'):
-        """Combine a list of neighbors and neighbor weights to create a sparse
+        r"""Combine a list of neighbors and neighbor weights to create a sparse
         graph.
 
         Args:
@@ -486,7 +486,7 @@ class GDC(object):
     @staticmethod
     @numba.njit(cache=True)
     def __calc_ppr__(indptr, indices, out_degree, alpha, eps):
-        """Calculate the personalized PageRank vector for all nodes
+        r"""Calculate the personalized PageRank vector for all nodes
         using a variant of the Andersen algorithm
         (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
 
