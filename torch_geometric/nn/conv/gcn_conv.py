@@ -34,17 +34,20 @@ class GCNConv(MessagePassing):
             learning scenarios. (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        normalize (bool, optional): Whether to add self-loops and apply
+            symmetric normalization. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     def __init__(self, in_channels, out_channels, improved=False, cached=False,
-                 bias=True, **kwargs):
+                 bias=True, normalize=True, **kwargs):
         super(GCNConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.improved = improved
         self.cached = cached
+        self.normalize = normalize
 
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
 
@@ -93,8 +96,12 @@ class GCNConv(MessagePassing):
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
-            edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
-                                         edge_weight, self.improved, x.dtype)
+            if self.normalize:
+                edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
+                                             edge_weight, self.improved,
+                                             x.dtype)
+            else:
+                norm = edge_weight
             self.cached_result = edge_index, norm
 
         edge_index, norm = self.cached_result
@@ -102,7 +109,7 @@ class GCNConv(MessagePassing):
         return self.propagate(edge_index, x=x, norm=norm)
 
     def message(self, x_j, norm):
-        return norm.view(-1, 1) * x_j
+        return norm.view(-1, 1) * x_j if norm is not None else x_j
 
     def update(self, aggr_out):
         if self.bias is not None:

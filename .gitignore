@@ -8,6 +8,7 @@ alpha/
 *.egg-info/
 .coverage
 .coverage.*
+.vscode
 
 !torch_geometric/data/
 !test/data/

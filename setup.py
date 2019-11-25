@@ -4,11 +4,13 @@ __version__ = '1.3.2'
 url = 'https://github.com/rusty1s/pytorch_geometric'
 
 install_requires = [
+    'torch',
     'numpy',
     'scipy',
     'networkx',
     'scikit-learn',
     'scikit-image',
+    'numba',
     'requests',
     'plyfile',
     'pandas',

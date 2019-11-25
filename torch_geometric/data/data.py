@@ -248,7 +248,7 @@ class Data(object):
 
     def is_undirected(self):
         r"""Returns :obj:`True`, if graph edges are undirected."""
-        return is_undirected(self.edge_index, self.num_nodes)
+        return is_undirected(self.edge_index, self.edge_attr, self.num_nodes)
 
     def is_directed(self):
         r"""Returns :obj:`True`, if graph edges are directed."""
