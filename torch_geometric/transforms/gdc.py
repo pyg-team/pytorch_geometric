@@ -243,7 +243,8 @@ class GDC(object):
 
     def diffusion_matrix_approx(self, edge_index, edge_weight, num_nodes,
                                 normalization, method, **kwargs):
-        r"""Calculate the approximate, sparse diffusion on a given sparse graph.
+        r"""Calculate the approximate, sparse diffusion on a given sparse
+        graph.
 
         Args:
             edge_index (LongTensor): The edge indices.
