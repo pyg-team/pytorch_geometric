@@ -62,21 +62,49 @@ class DataParallel(torch.nn.DataParallel):
         return self.gather(outputs, self.output_device)
 
     def scatter(self, data_list, device_ids):
+        """
+        This function distributes the data in the data_list into batches 
+        to be sent to the gpus in device_ids
+         - This first spreads the largest graphs to the gpus in order 
+         - Then it add the next largest graph to the gpu with the lowest number of nodes
+         - Finally it add the smallest graphs to gpus to ensure each gpu has at least 2 graphs
+        """
         num_devices = min(len(device_ids), len(data_list))
 
         count = torch.tensor([data.num_nodes for data in data_list])
-        cumsum = count.cumsum(0)
-        cumsum = torch.cat([cumsum.new_zeros(1), cumsum], dim=0)
-        device_id = num_devices * cumsum.to(torch.float) / cumsum[-1].item()
-        device_id = (device_id[:-1] + device_id[1:]) / 2.0
-        device_id = device_id.to(torch.long)  # round.
-        split = device_id.bincount().cumsum(0)
-        split = torch.cat([split.new_zeros(1), split], dim=0)
-        split = torch.unique(split, sorted=True)
-        split = split.tolist()
 
-        return [
-            Batch.from_data_list(data_list[split[i]:split[i + 1]]).to(
-                torch.device('cuda:{}'.format(device_ids[i])))
-            for i in range(len(split) - 1)
-        ]
+        sorted_indices = torch.argsort(count, dim=0, descending=True)
+
+        new_device_id = list(range(num_devices))
+
+        totals = torch.tensor([0] * num_devices)
+        n_graphs = torch.tensor([0] * num_devices)
+        for ii, c in enumerate(count):
+            if ii < len(new_device_id):
+                totals[new_device_id[ii]] += count[sorted_indices[ii]]
+                n_graphs[new_device_id[ii]] += 1
+
+            elif ii >= len(count) - num_devices:
+                if n_graphs[torch.argmin(n_graphs).item()] == 1:
+                    new_device_id.append(torch.argmin(n_graphs).item())
+                    n_graphs[new_device_id[ii]] += 1
+                    totals[new_device_id[ii]] += count[sorted_indices[ii]]
+                else:
+                    new_device_id.append(torch.argmin(totals).item())
+                    n_graphs[new_device_id[ii]] += 1
+                    totals[new_device_id[ii]] += count[sorted_indices[ii]]
+            else:
+                new_device_id.append(torch.argmin(totals).item())
+                n_graphs[new_device_id[ii]] += 1
+                totals[new_device_id[ii]] += count[sorted_indices[ii]]
+
+        list_of_batches = []
+        for ii in range(num_devices):
+            tmp_data_list = []
+            for gpu_id in new_device_id:
+                if gpu_id == ii:
+                    tmp_data_list.append(data_list[gpu_id])
+
+            list_of_batches.append(Batch.from_data_list(tmp_data_list).to(torch.device('cuda:{}'.format(ii))))
+
+        return list_of_batches
