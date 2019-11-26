@@ -101,9 +101,9 @@ class DataParallel(torch.nn.DataParallel):
         list_of_batches = []
         for ii in range(num_devices):
             tmp_data_list = []
-            for gpu_id in new_device_id:
+            for jj, gpu_id in enumerate(new_device_id):
                 if gpu_id == ii:
-                    tmp_data_list.append(data_list[gpu_id])
+                    tmp_data_list.append(data_list[jj])
 
             list_of_batches.append(Batch.from_data_list(tmp_data_list).to(torch.device('cuda:{}'.format(ii))))
 
