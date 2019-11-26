@@ -28,6 +28,7 @@ jobs:
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
         - source "$HOME/venv/bin/activate"
+        - export NUMBA_CACHE_DIR='/tmp'
       env:
         - CC=clang
         - CXX=clang++
