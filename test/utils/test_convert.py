@@ -5,6 +5,7 @@ from torch_sparse import coalesce
 from torch_geometric.data import Data
 from torch_geometric.utils import to_scipy_sparse_matrix, to_networkx
 from torch_geometric.utils import from_scipy_sparse_matrix, from_networkx
+from torch_geometric.utils import to_trimesh, from_trimesh
 from torch_geometric.utils import subgraph
 
 
@@ -88,3 +89,17 @@ def test_vice_versa_convert():
     assert G.is_directed() is True
     G = nx.to_undirected(G)
     assert G.is_directed() is False
+
+
+def test_trimesh():
+    pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+                       dtype=torch.float)
+    face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
+
+    data = Data(pos=pos, face=face)
+    mesh = to_trimesh(data)
+    data = from_trimesh(mesh)
+
+    perm = (data.pos * torch.tensor([[1.0, 2.0, 3.0]])).sum(dim=-1).argsort()
+    assert pos.tolist() == data.pos[perm].tolist()
+    assert face.tolist() == perm[data.face].tolist()
