@@ -17,7 +17,7 @@ def test_gdc():
     data = gdc(data)
     mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze()
     assert torch.all(mat >= -1e-8)
-    assert torch.allclose(mat, mat.t())
+    assert torch.allclose(mat, mat.t(), atol=1e-6)
 
     data = Data(edge_index=edge_index, num_nodes=5)
     gdc = GDC(self_loop_weight=1, normalization_in='sym',
@@ -28,7 +28,7 @@ def test_gdc():
     data = gdc(data)
     mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze()
     assert torch.all(mat >= -1e-8)
-    assert torch.allclose(mat, mat.t())
+    assert torch.allclose(mat, mat.t(), atol=1e-6)
 
     data = Data(edge_index=edge_index, num_nodes=5)
     gdc = GDC(self_loop_weight=1, normalization_in='col',
