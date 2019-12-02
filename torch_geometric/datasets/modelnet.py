@@ -78,6 +78,11 @@ class ModelNet(InMemoryDataset):
         shutil.rmtree(self.raw_dir)
         os.rename(folder, self.raw_dir)
 
+        # Delete osx metadata generated during compression of ModelNet10
+        metadata_folder = osp.join(self.root, '__MACOSX')
+        if osp.exists(metadata_folder):
+            shutil.rmtree(metadata_folder)
+
     def process(self):
         torch.save(self.process_set('train'), self.processed_paths[0])
         torch.save(self.process_set('test'), self.processed_paths[1])
