@@ -35,7 +35,8 @@ class DataParallel(torch.nn.DataParallel):
             (default: :obj:`device_ids[0]`)
     """
 
-    def __init__(self, module, device_ids=None, output_device=None, use_original=True):
+    def __init__(self, module, device_ids=None, output_device=None,
+                 use_original=True):
         super(DataParallel, self).__init__(module, device_ids, output_device)
         self.src_device = torch.device("cuda:{}".format(self.device_ids[0]))
 
@@ -73,8 +74,10 @@ class DataParallel(torch.nn.DataParallel):
         This function distributes the data in the data_list into batches
         to be sent to the gpus in device_ids
          - This first spreads the largest graphs to the gpus in order
-         - Then it add the next largest graph to the gpu with the lowest number of nodes
-         - Finally it add the smallest graphs to gpus to ensure each gpu has at least 2 graphs
+         - Then it add the next largest graph to the gpu with the lowest number
+          of nodes
+         - Finally it add the smallest graphs to gpus to ensure each gpu has at
+          least 2 graphs
         """
         # Gets the number of GPUs being used
         num_devices = min(len(device_ids), len(data_list))
@@ -86,7 +89,8 @@ class DataParallel(torch.nn.DataParallel):
             # The original implementation
             cumsum = num_nodes.cumsum(0)
             cumsum = torch.cat([cumsum.new_zeros(1), cumsum], dim=0)
-            device_id = num_devices * cumsum.to(torch.float) / cumsum[-1].item()
+            device_id = num_devices * cumsum.to(torch.float) / cumsum[
+                -1].item()
             device_id = (device_id[:-1] + device_id[1:]) / 2.0
             device_id = device_id.to(torch.long)  # round.
             split = device_id.bincount().cumsum(0)
@@ -101,109 +105,71 @@ class DataParallel(torch.nn.DataParallel):
             ]
 
         else:
-            # print('Node counts: {0}'.format(count.tolist()))
-
-            ########################################################################
-            # Original Version
-            # cumsum = num_nodes.cumsum(0)
-            # cumsum = torch.cat([cumsum.new_zeros(1), cumsum], dim=0)
-            # device_id = num_devices * cumsum.to(torch.float) / cumsum[-1].item()
-            # device_id = (device_id[:-1] + device_id[1:]) / 2.0
-            # device_id = device_id.to(torch.long)  # round.
-            #
-            # old_graphs = device_id.bincount()
-            # old_totals = torch.tensor([0] * num_devices)
-            # for ii, c in enumerate(num_nodes):
-            #     old_totals[device_id[ii]] += num_nodes[ii]
-            ########################################################################
-
             # The proposed implementation
             sorted_indices = torch.argsort(num_nodes, dim=0, descending=True)
-
-            ########################################################################
-            # Version 1
-            # new_device_id_v1 = list(range(num_devices))
-            # totals = torch.tensor([0] * num_devices)
-            # n_graphs = torch.tensor([0] * num_devices)
-            # for ii, c in enumerate(num_nodes):
-            #     if ii < len(new_device_id_v1):
-            #         totals[new_device_id_v1[ii]] += num_nodes[sorted_indices[ii]]
-            #         n_graphs[new_device_id_v1[ii]] += 1
-            #
-            #     elif ii >= num_nodes.size()[0] - num_devices:
-            #         if n_graphs[torch.argmin(n_graphs).item()] == 1:
-            #             new_device_id_v1.append(torch.argmin(n_graphs).item())
-            #             n_graphs[new_device_id_v1[ii]] += 1
-            #             totals[new_device_id_v1[ii]] += num_nodes[sorted_indices[ii]]
-            #         else:
-            #             new_device_id_v1.append(torch.argmin(totals).item())
-            #             n_graphs[new_device_id_v1[ii]] += 1
-            #             totals[new_device_id_v1[ii]] += num_nodes[sorted_indices[ii]]
-            #     else:
-            #         new_device_id_v1.append(torch.argmin(totals).item())
-            #         n_graphs[new_device_id_v1[ii]] += 1
-            #         totals[new_device_id_v1[ii]] += num_nodes[sorted_indices[ii]]
-            ########################################################################
 
             # This will contain the GPU the data object has been assigned.
             # It is initialised with the num_device largest node counts
             # This in reverse order so GPU: 0 hopefully ends up with less nodes
             new_device_id = torch.zeros(len(data_list), dtype=torch.long)
 
-            # These tensors track how many nodes and how many graphs are on each GPU respectively
+            # These tensors track how many nodes and how many graphs are on 
+            # each GPU respectively
             num_nodes_per_device = torch.tensor([0] * num_devices)
             num_graphs_per_device = torch.tensor([0] * num_devices)
 
-            # This is the main loop that does the assignment of the data objects to the devices
+            # This is the main loop that does the assignment of the data 
+            # objects to the devices
             for ii in range(num_nodes.size()[0] - num_devices):
                 if ii < num_devices:
-                    # Fill the tracker with the new_device_id initialised values
+                    # Fill the tracker with the new_device_id initialised 
+                    # values
                     gpu_id = num_devices - ii - 1
                     new_device_id[ii] = gpu_id
-                    num_nodes_per_device[new_device_id[ii]] += num_nodes[sorted_indices[ii]]
+                    num_nodes_per_device[new_device_id[ii]] += num_nodes[
+                        sorted_indices[ii]]
                     num_graphs_per_device[new_device_id[ii]] += 1
                 else:
-                    # This assigns the data object to the device with the least nodes
-                    new_device_id[ii] = torch.argmin(num_nodes_per_device).item()
+                    # This assigns the data object to the device with the 
+                    # least nodes
+                    new_device_id[ii] = torch.argmin(
+                        num_nodes_per_device).item()
                     num_graphs_per_device[new_device_id[ii]] += 1
-                    num_nodes_per_device[new_device_id[ii]] += num_nodes[sorted_indices[ii]]
+                    num_nodes_per_device[new_device_id[ii]] += num_nodes[
+                        sorted_indices[ii]]
 
-            # This checks the last num_device data objects in the list (smallest ones)
+            # This checks the last num_device data objects in the list 
+            # (smallest ones)
             # and part ensures that there are at least 2 graphs per device
-            # This is in reverse order to put the smallest remaining graph on the GPU with the most nodes
-            for ii in range(num_nodes.size()[0] - 1, num_nodes.size()[0] - num_devices - 1, -1):
-                if num_graphs_per_device[torch.argmin(num_graphs_per_device).item()] == 1:
+            # This is in reverse order to put the smallest remaining graph 
+            # on the GPU with the most nodes
+            for ii in range(num_nodes.size()[0] - 1,
+                            num_nodes.size()[0] - num_devices - 1, -1):
+                if num_graphs_per_device[
+                    torch.argmin(num_graphs_per_device).item()] == 1:
                     mask = num_graphs_per_device == 1
-                    gpu_id = torch.masked_select(torch.arange(num_devices), mask)[
-                        torch.argmax(torch.masked_select(num_nodes_per_device, mask))]
+                    gpu_id = \
+                        torch.masked_select(torch.arange(num_devices), mask)[
+                            torch.argmax(
+                                torch.masked_select(num_nodes_per_device,
+                                                    mask))]
                     new_device_id[ii] = gpu_id.item()
                     num_graphs_per_device[new_device_id[ii]] += 1
-                    num_nodes_per_device[new_device_id[ii]] += num_nodes[sorted_indices[ii]]
+                    num_nodes_per_device[new_device_id[ii]] += num_nodes[
+                        sorted_indices[ii]]
                 else:
-                    # If they all have 2 or more graphs it assigns the it to the device with the least nodes
-                    new_device_id[ii] = torch.argmin(num_nodes_per_device).item()
+                    # If they all have 2 or more graphs it assigns the it to 
+                    # the device with the least nodes
+                    new_device_id[ii] = torch.argmin(
+                        num_nodes_per_device).item()
                     num_graphs_per_device[new_device_id[ii]] += 1
-                    num_nodes_per_device[new_device_id[ii]] += num_nodes[sorted_indices[ii]]
+                    num_nodes_per_device[new_device_id[ii]] += num_nodes[
+                        sorted_indices[ii]]
 
-            # print('Original device id: {0}'.format(device_id.tolist()))
-            # print('Proposed v1 device id: {0}'.format(new_device_id_v1))
-            # print('Proposed v2 device id: {0}'.format(new_device_id.tolist()))
-            #
-            # print('Original number of graphs per device {0}'.format(old_graphs.tolist()))
-            # print('Proposed v1 number of graphs per device {0}'.format(n_graphs.tolist()))
-            # print('Proposed v2 number of graphs per device {0}'.format(num_graphs_per_device.tolist()))
-            #
-            # print('Original number of nodes per device {0}'.format(old_totals.tolist()))
-            # print('Proposed v1 number of nodes per device {0}'.format(totals.tolist()))
-            # print('Proposed v2 number of nodes per device {0}'.format(num_nodes_per_device.tolist()))
-            #
-            # print('Original standard deviation of nodes: {0:.1f}'.format(old_totals.to(torch.float).std().item()))
-            # print('Proposed v1 standard deviation of nodes: {0:.1f}'.format(totals.to(torch.float).std().item()))
-            # print('Proposed v2 standard deviation of nodes: {0:.1f}'.format(
-            #     num_nodes_per_device.to(torch.float).std().item()))
-
-            # Now the assigned data objects are converted in to batches for each device
-            # The id_map is filled in at this point. It must be emptied at each call of scatter
+            # Now the assigned data objects are converted in to batches for 
+            # each device
+            # The id_map is filled in at this point. It must be emptied at 
+            # each call of scatter
             list_of_batches = []
             self.id_map = []
             for gpu in range(num_devices):
@@ -213,17 +179,21 @@ class DataParallel(torch.nn.DataParallel):
                         tmp_data_list.append(data_list[sorted_indices[jj]])
                         self.id_map.append(sorted_indices[jj].item())
 
-                list_of_batches.append(Batch.from_data_list(tmp_data_list).to(torch.device('cuda:{}'.format(gpu))))
+                list_of_batches.append(Batch.from_data_list(tmp_data_list).to(
+                    torch.device('cuda:{}'.format(gpu))))
 
             return list_of_batches
 
     def gather(self, outputs, output_device):
         """
-        Gathers the results from the GPUs and returns the answer in the correct order
+        Gathers the results from the GPUs and returns the answer in the correct 
+        order
         """
         if self.use_original:
             return super().gather(outputs, output_device)
         else:
             return torch.index_select(super().gather(outputs, output_device),
                                       0,
-                                      torch.argsort(torch.LongTensor(self.id_map).to(output_device), dim=0))
+                                      torch.argsort(
+                                          torch.LongTensor(self.id_map).to(
+                                              output_device), dim=0))
