@@ -26,7 +26,7 @@ class GDC(object):
 
         The paper offers additional advice on how to choose the
         hyperparameters.
-        For an example of using GCN with GDC, see `:source:`examples/gcn.py`
+        For an example of using GCN with GDC, see `examples/gcn.py
         <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
         gcn.py>`_.
 
@@ -35,26 +35,26 @@ class GDC(object):
             Set to :obj:`None` to add no self-loops. (default: :obj:`1`)
         normalization_in (str, optional): Normalization of the transition
             matrix on the original (input) graph. Possible values:
-            `"sym"`, `"col"`, and `"row"`.
+            :obj:`"sym"`, :obj:`"col"`, and :obj:`"row"`.
             See :func:`GDC.transition_matrix` for details.
             (default: :obj:`"sym"`)
         normalization_out (str, optional): Normalization of the transition
             matrix on the transformed GDC (output) graph. Possible values:
-            `"sym"`, `"col"`, `"row"`, and `None`.
+            :obj:`"sym"`, :obj:`"col"`, :obj:`"row"`, and :obj:`None`.
             See :func:`GDC.transition_matrix` for details.
             (default: :obj:`"col"`)
         diffusion_kwargs (dict, optional): Dictionary containing the parameters
             for diffusion.
-            `method` specifies the diffusion method (`"ppr"`, `"heat"` or
-            `"coeff"`).
+            `method` specifies the diffusion method (:obj:`"ppr"`,
+            :obj:`"heat"` or :obj:`"coeff"`).
             Each diffusion method requires different additional parameters.
             See :func:`GDC.diffusion_matrix_exact` or
             :func:`GDC.diffusion_matrix_approx` for details.
             (default: :obj:`dict(method='ppr', alpha=0.15)`)
         sparsification_kwargs (dict, optional): Dictionary containing the
             parameters for sparsification.
-            `method` specifies the sparsification method (`threshold` or
-            `topk`).
+            `method` specifies the sparsification method (:obj:`"threshold"` or
+            :obj:`"topk"`).
             Each sparsification method requires different additional
             parameters.
             See :func:`GDC.sparsify_dense` for details.
@@ -138,17 +138,18 @@ class GDC(object):
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
             normalization (str): Normalization scheme. Options:
-                1. `"sym"`: Symmetric normalization:
-                :math:`\mathbf{T} = \mathbf{D}^{-1/2} \mathbf{A}
-                \mathbf{D}^{-1/2}`
 
-                2. `"col"`: Column-wise normalization:
-                :math:`\mathbf{T} = \mathbf{A} \mathbf{D}^{-1}`
+                1. :obj:`"sym"`: Symmetric normalization:
+                    :math:`\mathbf{T} = \mathbf{D}^{-1/2} \mathbf{A}
+                    \mathbf{D}^{-1/2}`
 
-                3. `"row"`: Row-wise normalization:
-                :math:`\mathbf{T} = \mathbf{D}^{-1} \mathbf{A}`
+                2. :obj:`"col"`: Column-wise normalization:
+                    :math:`\mathbf{T} = \mathbf{A} \mathbf{D}^{-1}`
 
-                4. `None`: No normalization.
+                3. :obj:`"row"`: Row-wise normalization:
+                    :math:`\mathbf{T} = \mathbf{D}^{-1} \mathbf{A}`
+
+                4. :obj:`None`: No normalization.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -261,16 +262,19 @@ class GDC(object):
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
             normalization (str): Transition matrix normalization scheme
-                (`"sym"`, `"row"`, or `"col"`).
+                (:obj:`"sym"`, :obj:`"row"`, or :obj:`"col"`).
                 See :func:`GDC.transition_matrix` for details.
             method (str): Diffusion method. Options:
-                1. `"ppr"`: Use personalized PageRank as diffusion.
+
+                1. :obj:`"ppr"`: Use personalized PageRank as diffusion.
                 Additionally expects the parameters:
-                - alpha (float): Return probability in PPR. Commonly lies in
-                    :obj:`[0.05, 0.2]`.
-                - eps (float): Threshold for PPR calculation stopping criterion
-                    (:obj:`edge_weight >= eps * out_degree`).
-                    Recommended default: :obj:`1e-4`.
+
+                    - **alpha** (*float*): Return probability in PPR.
+                        Commonly lies in :obj:`[0.05, 0.2]`.
+
+                    - **eps** (*float*): Threshold for PPR calculation stopping
+                        criterion (:obj:`edge_weight >= eps * out_degree`).
+                        Recommended default: :obj:`1e-4`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -342,19 +346,26 @@ class GDC(object):
             matrix (Tensor): Matrix to sparsify.
             num_nodes (int): Number of nodes.
             method (str): Method of sparsification. Options:
+
                 1. :obj:`"threshold"`: Remove all edges with weights smaller
                     than :obj:`eps`.
                     Additionally expects one of these parameters:
-                - eps (float): Threshold to bound edges at.
-                - avg_degree (int): If `eps` is not given,
-                it can optionally be calculated by calculating
-                the `eps` required to achieve a given `avg_degree`.
 
-                2. `"topk"`: Keep edges with top `k` edge weights per node
-                    (column).
+                    - **eps** (*float*): Threshold to bound edges at.
+
+                    - **avg_degree** (*int*): If :obj:`eps` is not given,
+                        it can optionally be calculated by calculating the
+                        :obj:`eps` required to achieve a given
+                        :obj:`avg_degree`.
+
+                2. :obj:`"topk"`: Keep edges with top :obj:`k` edge weights per
+                    node (column).
                     Additionally expects the following parameters:
-                    - k (int): Specifies the number of edges to keep.
-                    - dim (int): The axis along which to take the top k.
+
+                    - **k** (*int*): Specifies the number of edges to keep.
+
+                    - **dim** (*int*): The axis along which to take the top
+                        :obj:`k`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -404,13 +415,17 @@ class GDC(object):
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
             method (str): Method of sparsification. Options:
-                1. `"threshold"`: Remove all edges with weights smaller than
-                :obj:`eps`.
-                Additionally expects one of these parameters:
-                - eps (float): Threshold to bound edges at.
-                - avg_degree (int): If `eps` is not given,
-                it can optionally be calculated by calculating
-                the `eps` required to achieve a given `avg_degree`.
+
+                1. :obj:`"threshold"`: Remove all edges with weights smaller
+                    than :obj:`eps`.
+                    Additionally expects one of these parameters:
+
+                    - **eps** (*float*): Threshold to bound edges at.
+
+                    - **avg_degree** (*int*): If :obj:`eps` is not given,
+                        it can optionally be calculated by calculating the
+                        :obj:`eps` required to achieve a given
+                        :obj:`avg_degree`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -473,7 +488,7 @@ class GDC(object):
             neighbor_weights (List[List[float]]): List of weights for the
                 neighbors of each node.
             normalization (str): Normalization of resulting matrix
-                (options: `row`, `col`). (default: :obj:`"row"`)
+                (options: :obj:`"row"`, :obj:`"col"`). (default: :obj:`"row"`)
             device (torch.device): Device to create output tensors on.
                 (default: :obj:`"cpu"`)
 
