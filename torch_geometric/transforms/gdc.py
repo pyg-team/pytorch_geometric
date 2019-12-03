@@ -7,6 +7,16 @@ from torch_sparse import coalesce, spspmm
 from torch_scatter import scatter_add
 
 
+def jit():
+    def decorator(func):
+        try:
+            return numba.jit(cache=True)(func)
+        except RuntimeError:
+            return numba.jit(cache=False)(func)
+
+    return decorator
+
+
 class GDC(object):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
     `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
@@ -485,7 +495,7 @@ class GDC(object):
         return edge_index, edge_weight
 
     @staticmethod
-    @numba.njit(cache=True)
+    @jit()
     def __calc_ppr__(indptr, indices, out_degree, alpha, eps):
         r"""Calculate the personalized PageRank vector for all nodes
         using a variant of the Andersen algorithm

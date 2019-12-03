@@ -28,10 +28,6 @@ jobs:
         - python3 -m pip install --upgrade virtualenv
         - virtualenv -p python3 --system-site-packages "$HOME/venv"
         - source "$HOME/venv/bin/activate"
-        - export NUMBA_CACHE_DIR="$HOME/numba_cache"
-        - mkdir $NUMBA_CACHE_DIR
-        - chmod 777 $NUMBA_CACHE_DIR
-        - echo $NUMBA_CACHE_DIR
       env:
         - CC=clang
         - CXX=clang++
