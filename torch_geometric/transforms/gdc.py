@@ -137,18 +137,15 @@ class GDC(object):
             edge_index (LongTensor): The edge indices.
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
-            normalization (str): Normalization scheme. Options:
+            normalization (str): Normalization scheme:
 
-                1. :obj:`"sym"`: Symmetric normalization:
-                    :math:`\mathbf{T} = \mathbf{D}^{-1/2} \mathbf{A}
-                    \mathbf{D}^{-1/2}`
-
-                2. :obj:`"col"`: Column-wise normalization:
-                    :math:`\mathbf{T} = \mathbf{A} \mathbf{D}^{-1}`
-
-                3. :obj:`"row"`: Row-wise normalization:
-                    :math:`\mathbf{T} = \mathbf{D}^{-1} \mathbf{A}`
-
+                1. :obj:`"sym"`: Symmetric normalization
+                   :math:`\mathbf{T} = \mathbf{D}^{-1/2} \mathbf{A}
+                   \mathbf{D}^{-1/2}`.
+                2. :obj:`"col"`: Column-wise normalization
+                   :math:`\mathbf{T} = \mathbf{A} \mathbf{D}^{-1}`.
+                3. :obj:`"row"`: Row-wise normalization
+                   :math:`\mathbf{T} = \mathbf{D}^{-1} \mathbf{A}`.
                 4. :obj:`None`: No normalization.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
@@ -201,21 +198,26 @@ class GDC(object):
             edge_index (LongTensor): The edge indices.
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
-            method (str): Diffusion method. Options:
-                1. :obj:`"ppr"`: Use personalized PageRank as diffusion.
-                Additionally expects the parameter:
-                - alpha (float): Return probability in PPR. Commonly lies in
-                    :obj:`[0.05, 0.2]`.
+            method (str): Diffusion method:
 
-                2. `"heat"`: Use heat kernel diffusion.
-                Additionally expects the parameter:
-                - :obj:`t` (float): Time of diffusion. Commonly lies in
-                    :obj:`[2, 10]`.
+                1. :obj:`"ppr"`: Use personalized PageRank as diffusion.
+                   Additionally expects the parameter:
+
+                   - **alpha** (*float*) - Return probability in PPR.
+                     Commonly lies in :obj:`[0.05, 0.2]`.
+
+                2. :obj:`"heat"`: Use heat kernel diffusion.
+                   Additionally expects the parameter:
+
+                   - **t** (*float*) - Time of diffusion. Commonly lies in
+                     :obj:`[2, 10]`.
 
                 3. :obj:`"coeff"`: Freely choose diffusion coefficients.
-                Additionally expects the parameter:
-                - coeffs (List[float]): List of coefficients :obj:`theta_k`
-                for each power of the transition matrix (starting at :obj:`0`).
+                   Additionally expects the parameter:
+
+                   - **coeffs** (*List[float]*) - List of coefficients
+                     :obj:`theta_k` for each power of the transition matrix
+                     (starting at :obj:`0`).
 
         :rtype: (:class:`Tensor`)
         """
@@ -264,17 +266,17 @@ class GDC(object):
             normalization (str): Transition matrix normalization scheme
                 (:obj:`"sym"`, :obj:`"row"`, or :obj:`"col"`).
                 See :func:`GDC.transition_matrix` for details.
-            method (str): Diffusion method. Options:
+            method (str): Diffusion method:
 
                 1. :obj:`"ppr"`: Use personalized PageRank as diffusion.
-                Additionally expects the parameters:
+                   Additionally expects the parameters:
 
-                    - **alpha** (*float*): Return probability in PPR.
-                        Commonly lies in :obj:`[0.05, 0.2]`.
+                   - **alpha** (*float*) - Return probability in PPR.
+                     Commonly lies in :obj:`[0.05, 0.2]`.
 
-                    - **eps** (*float*): Threshold for PPR calculation stopping
-                        criterion (:obj:`edge_weight >= eps * out_degree`).
-                        Recommended default: :obj:`1e-4`.
+                   - **eps** (*float*) - Threshold for PPR calculation stopping
+                     criterion (:obj:`edge_weight >= eps * out_degree`).
+                     Recommended default: :obj:`1e-4`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -348,24 +350,23 @@ class GDC(object):
             method (str): Method of sparsification. Options:
 
                 1. :obj:`"threshold"`: Remove all edges with weights smaller
-                    than :obj:`eps`.
-                    Additionally expects one of these parameters:
+                   than :obj:`eps`.
+                   Additionally expects one of these parameters:
 
-                    - **eps** (*float*): Threshold to bound edges at.
+                   - **eps** (*float*) - Threshold to bound edges at.
 
-                    - **avg_degree** (*int*): If :obj:`eps` is not given,
-                        it can optionally be calculated by calculating the
-                        :obj:`eps` required to achieve a given
-                        :obj:`avg_degree`.
+                   - **avg_degree** (*int*) - If :obj:`eps` is not given,
+                     it can optionally be calculated by calculating the
+                     :obj:`eps` required to achieve a given :obj:`avg_degree`.
 
                 2. :obj:`"topk"`: Keep edges with top :obj:`k` edge weights per
-                    node (column).
-                    Additionally expects the following parameters:
+                   node (column).
+                   Additionally expects the following parameters:
 
-                    - **k** (*int*): Specifies the number of edges to keep.
+                   - **k** (*int*) - Specifies the number of edges to keep.
 
-                    - **dim** (*int*): The axis along which to take the top
-                        :obj:`k`.
+                   - **dim** (*int*) - The axis along which to take the top
+                     :obj:`k`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -414,18 +415,17 @@ class GDC(object):
             edge_index (LongTensor): The edge indices.
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
-            method (str): Method of sparsification. Options:
+            method (str): Method of sparsification:
 
                 1. :obj:`"threshold"`: Remove all edges with weights smaller
-                    than :obj:`eps`.
-                    Additionally expects one of these parameters:
+                   than :obj:`eps`.
+                   Additionally expects one of these parameters:
 
-                    - **eps** (*float*): Threshold to bound edges at.
+                   - **eps** (*float*) - Threshold to bound edges at.
 
-                    - **avg_degree** (*int*): If :obj:`eps` is not given,
-                        it can optionally be calculated by calculating the
-                        :obj:`eps` required to achieve a given
-                        :obj:`avg_degree`.
+                   - **avg_degree** (*int*) - If :obj:`eps` is not given,
+                     it can optionally be calculated by calculating the
+                     :obj:`eps` required to achieve a given :obj:`avg_degree`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
