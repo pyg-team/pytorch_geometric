@@ -21,7 +21,7 @@ def subgraph(subset, edge_index, edge_attr=None, relabel_nodes=False,
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
     """
-    
+
     device = edge_index.device
 
     if isinstance(subset, list) or isinstance(subset, tuple):
@@ -31,7 +31,8 @@ def subgraph(subset, edge_index, edge_attr=None, relabel_nodes=False,
         n_mask = subset
 
         if relabel_nodes:
-            n_idx = torch.zeros(n_mask.size(0), dtype=torch.long, device=device)
+            n_idx = torch.zeros(n_mask.size(0), dtype=torch.long,
+                                device=device)
             n_idx[subset] = torch.arange(subset.sum().item(), device=device)
     else:
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
