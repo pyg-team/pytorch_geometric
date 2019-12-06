@@ -3,7 +3,7 @@ import numba
 import numpy as np
 from scipy.linalg import expm
 from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
-from torch_sparse import coalesce, spspmm
+from torch_sparse import coalesce
 from torch_scatter import scatter_add
 
 
@@ -150,34 +150,24 @@ class GDC(object):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        diag_idx = torch.arange(0, num_nodes, dtype=torch.long,
-                                device=edge_index.device)
-        diag_idx = diag_idx.unsqueeze(0).repeat(2, 1)
-
         if normalization == 'sym':
-            _, col = edge_index
-            D_vec = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
-            D_vec_invsqrt = 1 / torch.sqrt(D_vec)
-            edge_index, edge_weight = spspmm(diag_idx, D_vec_invsqrt,
-                                             edge_index, edge_weight,
-                                             num_nodes, num_nodes, num_nodes)
-            edge_index, edge_weight = spspmm(edge_index, edge_weight, diag_idx,
-                                             D_vec_invsqrt, num_nodes,
-                                             num_nodes, num_nodes)
+            row, col = edge_index
+            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg_inv_sqrt = deg.pow(-0.5)
+            deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+            edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
         elif normalization == 'col':
             _, col = edge_index
-            D_vec = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
-            D_vec_inv = 1 / D_vec
-            edge_index, edge_weight = spspmm(edge_index, edge_weight, diag_idx,
-                                             D_vec_inv, num_nodes, num_nodes,
-                                             num_nodes)
+            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg_inv = 1. / deg
+            deg_inv[deg_inv == float('inf')] = 0
+            edge_weight = edge_weight * deg_inv[col]
         elif normalization == 'row':
             row, _ = edge_index
-            D_vec = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
-            D_vec_inv = 1 / D_vec
-            edge_index, edge_weight = spspmm(diag_idx, D_vec_inv, edge_index,
-                                             edge_weight, num_nodes, num_nodes,
-                                             num_nodes)
+            deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+            deg_inv = 1. / deg
+            deg_inv[deg_inv == float('inf')] = 0
+            edge_weight = edge_weight * deg_inv[row]
         elif normalization is None:
             pass
         else:
@@ -284,8 +274,7 @@ class GDC(object):
             if normalization == 'sym':
                 # Calculate original degrees.
                 _, col = edge_index
-                D_vec_orig = scatter_add(edge_weight, col, dim=0,
-                                         dim_size=num_nodes)
+                deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
 
             edge_index_np = edge_index.cpu().numpy()
             # Assumes coalesced edge_index.
@@ -300,6 +289,7 @@ class GDC(object):
             edge_index, edge_weight = self.__neighbors_to_graph__(
                 neighbors, neighbor_weights, ppr_normalization,
                 device=edge_index.device)
+            edge_index = edge_index.to(torch.long)
 
             if normalization == 'sym':
                 # We can change the normalization from row-normalized to
@@ -308,20 +298,11 @@ class GDC(object):
                 # Since we use the original degrees for this it will be like
                 # we had used symmetric normalization from the beginning
                 # (except for errors due to approximation).
-                diag_idx = torch.arange(0, num_nodes, dtype=torch.long,
-                                        device=edge_index.device)
-                diag_idx = diag_idx.unsqueeze(0).repeat(2, 1)
-
-                D_vec_sqrt = torch.sqrt(D_vec_orig)
-                edge_index, edge_weight = spspmm(diag_idx, D_vec_sqrt,
-                                                 edge_index, edge_weight,
-                                                 num_nodes, num_nodes,
-                                                 num_nodes)
-                D_vec_invsqrt = 1 / D_vec_sqrt
-                edge_index, edge_weight = spspmm(edge_index, edge_weight,
-                                                 diag_idx, D_vec_invsqrt,
-                                                 num_nodes, num_nodes,
-                                                 num_nodes)
+                row, col = edge_index
+                deg_inv = deg.sqrt()
+                deg_inv_sqrt = deg.pow(-0.5)
+                deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+                edge_weight = deg_inv[row] * edge_weight * deg_inv_sqrt[col]
             elif normalization in ['col', 'row']:
                 pass
             else:
