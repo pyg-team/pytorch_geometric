@@ -13,24 +13,6 @@ jobs:
       env:
         - CC=gcc-5
         - CXX=g++-5
-    - os: osx
-      language: sh
-      before_cache:
-        - brew cleanup
-      cache:
-        directories:
-          - $HOME/Library/Caches/Homebrew
-          - /usr/local/Homebrew
-      addons:
-        homebrew:
-          packages: python3
-      before_install:
-        - python3 -m pip install --upgrade virtualenv
-        - virtualenv -p python3 --system-site-packages "$HOME/venv"
-        - source "$HOME/venv/bin/activate"
-      env:
-        - CC=clang
-        - CXX=clang++
 install:
   - pip install numpy
   - pip install --pre torch torchvision -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
