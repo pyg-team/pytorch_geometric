@@ -39,11 +39,13 @@ class MessagePassing(torch.nn.Module):
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`0`)
     """
+    __aggr__ = ("add", "mean", "max")
+
     def __init__(self, aggr='add', flow='source_to_target', node_dim=0):
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
-        assert self.aggr in ['add', 'mean', 'max']
+        assert self.aggr in self.__aggr__
 
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
@@ -127,9 +129,20 @@ class MessagePassing(torch.nn.Module):
         update_args = [kwargs[arg] for arg in self.__update_args__]
 
         out = self.message(*message_args)
-        out = scatter_(self.aggr, out, edge_index[i], dim, dim_size=size[i])
+        out = self.aggregate(out, edge_index[i], dim, dim_size=size[i])
         out = self.update(out, *update_args)
 
+        return out
+
+    def aggregate(self, out, index, dim=0, dim_size=None):  # pragma: no cover
+        r"""Aggregates messages from neighbours as
+        :math:`\square_{j \in \mathcal{N}(i)}`.
+
+        By default, delegates call to scatter function that supports
+        "mean", "sum", "max" operations. The choice of aggr is
+        specified in :meth:`__init__` as :obj:`aggr` argument.
+        """
+        out = scatter_(self.aggr, out, index, dim, dim_size=dim_size)
         return out
 
     def message(self, x_j):  # pragma: no cover
