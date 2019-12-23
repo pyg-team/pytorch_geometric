@@ -60,7 +60,10 @@ class MessagePassing(torch.nn.Module):
         self.__message_args__ = [
             arg for arg in self.__message_args__ if arg not in special_args
         ]
+        # skip self, out
         self.__update_args__ = getargspec(self.update)[0][2:]
+        # skip self, out, index, dim, dim_size
+        self.__aggregate_args__ = getargspec(self.aggregate)[0][5:]
 
     def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
@@ -127,9 +130,9 @@ class MessagePassing(torch.nn.Module):
                 message_args.insert(idx, kwargs[arg])
 
         update_args = [kwargs[arg] for arg in self.__update_args__]
-
+        aggregate_args = [kwargs[arg] for arg in self.__aggregate_args__]
         out = self.message(*message_args)
-        out = self.aggregate(out, edge_index[i], dim, dim_size=size[i])
+        out = self.aggregate(out, edge_index[i], dim, size[i], *aggregate_args)
         out = self.update(out, *update_args)
 
         return out
@@ -141,6 +144,11 @@ class MessagePassing(torch.nn.Module):
         By default, delegates call to scatter function that supports
         "mean", "sum", "max" operations. The choice of aggr is
         specified in :meth:`__init__` as :obj:`aggr` argument.
+
+        Notes:
+            :obj:`self`, :obj:`out`, :obj:`index`, :obj:`dim`,
+            :obj:`dim_size` are required first args. However,
+            you can request additional args to be passed.
         """
         out = scatter_(self.aggr, out, index, dim, dim_size=dim_size)
         return out
