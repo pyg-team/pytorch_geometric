@@ -137,7 +137,7 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def aggregate(self, out, index, dim=0, dim_size=None):  # pragma: no cover
+    def aggregate(self, out, index, dim, dim_size):  # pragma: no cover
         r"""Aggregates messages from neighbours as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -150,7 +150,7 @@ class MessagePassing(torch.nn.Module):
             :obj:`dim_size` are required first args. However,
             you can request additional args to be passed.
         """
-        out = scatter_(self.aggr, out, index, dim, dim_size=dim_size)
+        out = scatter_(self.aggr, out, index, dim, dim_size)
         return out
 
     def message(self, x_j):  # pragma: no cover
