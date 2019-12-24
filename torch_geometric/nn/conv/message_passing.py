@@ -129,8 +129,8 @@ class MessagePassing(torch.nn.Module):
             else:
                 message_args.insert(idx, kwargs[arg])
 
-        update_args = [kwargs[arg] for arg in self.__update_args__]
-        aggregate_args = [kwargs[arg] for arg in self.__aggregate_args__]
+        update_args = [kwargs.get(arg) for arg in self.__update_args__]
+        aggregate_args = [kwargs.get(arg) for arg in self.__aggregate_args__]
         out = self.message(*message_args)
         out = self.aggregate(out, edge_index[i], dim, size[i], *aggregate_args)
         out = self.update(out, *update_args)
