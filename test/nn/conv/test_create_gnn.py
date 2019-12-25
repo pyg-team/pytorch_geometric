@@ -15,7 +15,7 @@ class GCNConv(MessagePassing):
         x = self.lin(x)
         return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x, **kwargs)
 
-    def message(self, x_j, edge_index, size, zeros=False):
+    def message(self, x_j, edge_index, size, zeros=True):
         row, col = edge_index
         deg = degree(row, size[0], dtype=x_j.dtype)
         deg_inv_sqrt = deg.pow(-0.5)
@@ -40,7 +40,7 @@ class BadGCNConv(MessagePassing):
         x = self.lin(x)
         return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x, **kwargs)
 
-    def message(self, x_j, edge_index, size, zeros=False):
+    def message(self, x_j, edge_index, size, zeros=True):
         row, col = edge_index
         deg = degree(row, size[0], dtype=x_j.dtype)
         deg_inv_sqrt = deg.pow(-0.5)
@@ -61,9 +61,9 @@ def test_create_gnn():
     edge_index = torch.randint(5, (2, 64), dtype=torch.long)
     out = conv(x, edge_index)
     assert out.size() == (5, 32)
-    assert not np.allclose(out.cpu().detach().numpy(), np.zeros((5, 32)))
-    out = conv(x, edge_index, zeros=True)
     assert np.allclose(out.cpu().detach().numpy(), np.zeros((5, 32)))
+    out = conv(x, edge_index, zeros=False)
+    assert not np.allclose(out.cpu().detach().numpy(), np.zeros((5, 32)))
 
 
 def test_fail_init():
