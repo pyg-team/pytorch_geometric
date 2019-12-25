@@ -4,11 +4,20 @@ import inspect
 import torch
 from torch_geometric.utils import scatter_
 
-special_args = [
-    'edge_index', 'edge_index_i', 'edge_index_j', 'size', 'size_i', 'size_j'
+message_special_args = [
+    "edge_index",
+    "edge_index_i",
+    "edge_index_j",
+    "size",
+    "size_i",
+    "size_j",
 ]
-__size_error_msg__ = ('All tensors which should get mapped to the same source '
-                      'or target nodes must be of same size in dimension 0.')
+aggregate_special_args = ["out", "index", "dim", "dim_size"]
+update_special_args = ["aggr_out"]
+__size_error_msg__ = (
+    "All tensors which should get mapped to the same source "
+    "or target nodes must be of same size in dimension 0."
+)
 
 is_python2 = sys.version_info[0] < 3
 getargspec = inspect.getargspec if is_python2 else inspect.getfullargspec
@@ -41,29 +50,30 @@ class MessagePassing(torch.nn.Module):
     """
     __aggr__ = ("add", "mean", "max")
 
-    def __init__(self, aggr='add', flow='source_to_target', node_dim=0):
+    def __init__(self, aggr="add", flow="source_to_target", node_dim=0):
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
         assert self.aggr in self.__aggr__
 
         self.flow = flow
-        assert self.flow in ['source_to_target', 'target_to_source']
+        assert self.flow in ["source_to_target", "target_to_source"]
 
         self.node_dim = node_dim
         assert self.node_dim >= 0
 
-        self.__message_args__ = getargspec(self.message)[0][1:]
-        self.__special_args__ = [(i, arg)
-                                 for i, arg in enumerate(self.__message_args__)
-                                 if arg in special_args]
-        self.__message_args__ = [
-            arg for arg in self.__message_args__ if arg not in special_args
-        ]
+        self.__message_signature__ = inspect.signature(self.message)
         # skip self, out
-        self.__update_args__ = getargspec(self.update)[0][2:]
-        # skip self, out, index, dim, dim_size
-        self.__aggregate_args__ = getargspec(self.aggregate)[0][5:]
+        self.__update_signature__ = inspect.signature(self.update)
+        if set(update_special_args) - set(self.__update_signature__.parameters):
+            raise TypeError("Incomplete signature of update: {} are missing required arguments".format(
+                set(update_special_args) - set(self.__update_signature__.parameters)
+            ))
+        self.__aggregate_signature__ = inspect.signature(self.aggregate)
+        if set(aggregate_special_args) - set(self.__aggregate_signature__.parameters):
+            raise TypeError("Incomplete signature of aggregate: {} are missing required arguments".format(
+                set(aggregate_special_args) - set(self.__aggregate_signature__.parameters)
+            ))
 
     def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
@@ -84,15 +94,23 @@ class MessagePassing(torch.nn.Module):
         size = [None, None] if size is None else list(size)
         assert len(size) == 2
 
-        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
+        i, j = (0, 1) if self.flow == "target_to_source" else (1, 0)
         ij = {"_i": i, "_j": j}
 
-        message_args = []
-        for arg in self.__message_args__:
-            if arg[-2:] in ij.keys():
-                tmp = kwargs.get(arg[:-2], None)
-                if tmp is None:  # pragma: no cover
-                    message_args.append(tmp)
+        message_parameters = dict()
+        special_message_parameters = dict()
+        for arg, param in self.__message_signature__.parameters.items():
+            if arg in message_special_args:
+                # require this loop to be finished
+                special_message_parameters[arg] = param
+            elif arg[-2:] in ij.keys():
+                tmp = kwargs.get(arg[:-2], param.default)
+                if tmp is inspect._empty:
+                    raise TypeError(
+                        "Required parameter '{}' for message is empty".format(arg[:-2])
+                    )
+                elif tmp is None:  # pragma: no cover
+                    message_parameters[arg] = tmp
                 else:
                     idx = ij[arg[-2:]]
                     if isinstance(tmp, tuple) or isinstance(tmp, list):
@@ -105,7 +123,7 @@ class MessagePassing(torch.nn.Module):
                         tmp = tmp[idx]
 
                     if tmp is None:
-                        message_args.append(tmp)
+                        message_parameters[arg] = tmp
                     else:
                         if size[idx] is None:
                             size[idx] = tmp.size(dim)
@@ -113,27 +131,50 @@ class MessagePassing(torch.nn.Module):
                             raise ValueError(__size_error_msg__)
 
                         tmp = torch.index_select(tmp, dim, edge_index[idx])
-                        message_args.append(tmp)
+                        message_parameters[arg] = tmp
             else:
-                message_args.append(kwargs.get(arg, None))
+                tmp = kwargs.get(arg, param.default)
+                if tmp is inspect._empty:
+                    raise TypeError(
+                        "Required parameter '{}' for message is empty".format(arg)
+                    )
+                message_parameters[arg] = tmp
 
         size[0] = size[1] if size[0] is None else size[0]
         size[1] = size[0] if size[1] is None else size[1]
 
-        kwargs['edge_index'] = edge_index
-        kwargs['size'] = size
+        kwargs["edge_index"] = edge_index
+        kwargs["size"] = size
 
-        for (idx, arg) in self.__special_args__:
+        for (arg, param) in special_message_parameters.items():
             if arg[-2:] in ij.keys():
-                message_args.insert(idx, kwargs[arg[:-2]][ij[arg[-2:]]])
+                message_parameters[arg] = kwargs[arg[:-2]][ij[arg[-2:]]]
             else:
-                message_args.insert(idx, kwargs[arg])
+                message_parameters[arg] = kwargs[arg]
+        update_parameters = dict()
+        for arg, param in self.__update_signature__.parameters.items():
+            if arg in update_special_args:
+                continue
+            tmp = kwargs.get(arg, param.default)
+            if tmp is inspect._empty:
+                raise TypeError(
+                    "Required parameter '{}' for update is empty".format(arg)
+                )
+            update_parameters[arg] = tmp
+        aggregate_parameters = dict()
+        for arg, param in self.__aggregate_signature__.parameters.items():
+            tmp = kwargs.get(arg, param.default)
+            if arg in aggregate_special_args:
+                continue
+            if tmp is inspect._empty:
+                raise TypeError(
+                    "Required parameter '{}' for update is empty".format(arg)
+                )
+            aggregate_parameters[arg] = tmp
 
-        update_args = [kwargs.get(arg) for arg in self.__update_args__]
-        aggregate_args = [kwargs.get(arg) for arg in self.__aggregate_args__]
-        out = self.message(*message_args)
-        out = self.aggregate(out, edge_index[i], dim, size[i], *aggregate_args)
-        out = self.update(out, *update_args)
+        out = self.message(**message_parameters)
+        out = self.aggregate(out, edge_index[i], dim, size[i], **aggregate_parameters)
+        out = self.update(out, **update_parameters)
 
         return out
 
@@ -149,6 +190,7 @@ class MessagePassing(torch.nn.Module):
             :obj:`self`, :obj:`out`, :obj:`index`, :obj:`dim`,
             :obj:`dim_size` are required first args. However,
             you can request additional args to be passed.
+
         """
         out = scatter_(self.aggr, out, index, dim, dim_size)
         return out
