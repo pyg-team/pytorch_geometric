@@ -13,7 +13,9 @@ class GCNConv(MessagePassing):
     def forward(self, x, edge_index, **kwargs):
         edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
         x = self.lin(x)
-        return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x, **kwargs)
+        return self.propagate(
+            edge_index, size=(x.size(0), x.size(0)), x=x, **kwargs
+        )
 
     def message(self, x_j, edge_index, size, zeros=True):
         row, col = edge_index
@@ -38,7 +40,9 @@ class BadGCNConv(MessagePassing):
     def forward(self, x, edge_index, **kwargs):
         edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
         x = self.lin(x)
-        return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x, **kwargs)
+        return self.propagate(
+            edge_index, size=(x.size(0), x.size(0)), x=x, **kwargs
+        )
 
     def message(self, x_j, edge_index, size, zeros=True):
         row, col = edge_index
@@ -70,5 +74,6 @@ def test_fail_init():
     with pytest.raises(TypeError) as e:
         BadGCNConv(16, 32)
     assert e.match(
-        "Incomplete signature of update: {'aggr_out'} are missing required arguments"
+        "Incomplete signature of update: "
+        "{'aggr_out'} are missing required arguments"
     )

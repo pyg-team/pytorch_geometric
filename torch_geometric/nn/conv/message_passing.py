@@ -65,16 +65,25 @@ class MessagePassing(torch.nn.Module):
         self.__message_signature__ = inspect.signature(self.message)
         # skip self, out
         self.__update_signature__ = inspect.signature(self.update)
-        if set(update_special_args) - set(self.__update_signature__.parameters):
+        if set(update_special_args) - set(
+            self.__update_signature__.parameters
+        ):
             raise TypeError(
-                "Incomplete signature of update: {} are missing required arguments".format(
-                    set(update_special_args) - set(self.__update_signature__.parameters)
+                "Incomplete signature of update: {} are "
+                "missing required arguments".format(
+                    (
+                        set(update_special_args)
+                        - set(self.__update_signature__.parameters)
+                    )
                 )
             )
         self.__aggregate_signature__ = inspect.signature(self.aggregate)
-        if set(aggregate_special_args) - set(self.__aggregate_signature__.parameters):
+        if set(aggregate_special_args) - set(
+            self.__aggregate_signature__.parameters
+        ):
             raise TypeError(
-                "Incomplete signature of aggregate: {} are missing required arguments".format(
+                "Incomplete signature of aggregate: {} are "
+                "missing required arguments".format(
                     set(aggregate_special_args)
                     - set(self.__aggregate_signature__.parameters)
                 )
@@ -112,7 +121,9 @@ class MessagePassing(torch.nn.Module):
                 tmp = kwargs.get(arg[:-2], param.default)
                 if tmp is inspect._empty:
                     raise TypeError(
-                        "Required parameter '{}' for message is empty".format(arg[:-2])
+                        "Required parameter '{}' for message is empty".format(
+                            arg[:-2]
+                        )
                     )
                 elif tmp is None:  # pragma: no cover
                     message_parameters[arg] = tmp
@@ -141,7 +152,9 @@ class MessagePassing(torch.nn.Module):
                 tmp = kwargs.get(arg, param.default)
                 if tmp is inspect._empty:
                     raise TypeError(
-                        "Required parameter '{}' for message is empty".format(arg)
+                        "Required parameter '{}' for message is empty".format(
+                            arg
+                        )
                     )
                 message_parameters[arg] = tmp
 
@@ -178,7 +191,9 @@ class MessagePassing(torch.nn.Module):
             aggregate_parameters[arg] = tmp
 
         out = self.message(**message_parameters)
-        out = self.aggregate(out, edge_index[i], dim, size[i], **aggregate_parameters)
+        out = self.aggregate(
+            out, edge_index[i], dim, size[i], **aggregate_parameters
+        )
         out = self.update(out, **update_parameters)
 
         return out
