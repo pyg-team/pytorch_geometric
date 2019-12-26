@@ -66,14 +66,19 @@ class MessagePassing(torch.nn.Module):
         # skip self, out
         self.__update_signature__ = inspect.signature(self.update)
         if set(update_special_args) - set(self.__update_signature__.parameters):
-            raise TypeError("Incomplete signature of update: {} are missing required arguments".format(
-                set(update_special_args) - set(self.__update_signature__.parameters)
-            ))
+            raise TypeError(
+                "Incomplete signature of update: {} are missing required arguments".format(
+                    set(update_special_args) - set(self.__update_signature__.parameters)
+                )
+            )
         self.__aggregate_signature__ = inspect.signature(self.aggregate)
         if set(aggregate_special_args) - set(self.__aggregate_signature__.parameters):
-            raise TypeError("Incomplete signature of aggregate: {} are missing required arguments".format(
-                set(aggregate_special_args) - set(self.__aggregate_signature__.parameters)
-            ))
+            raise TypeError(
+                "Incomplete signature of aggregate: {} are missing required arguments".format(
+                    set(aggregate_special_args)
+                    - set(self.__aggregate_signature__.parameters)
+                )
+            )
 
     def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
