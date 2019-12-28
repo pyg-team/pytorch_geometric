@@ -86,7 +86,7 @@ class TUDataset(InMemoryDataset):
         if self.data.x is None:
             return 0
         for i in range(self.data.x.size(1)):
-            if self.data.x[:, i:].sum() == self.data.x.size(0):
+            if torch.unique(self.data.x[:, i]).size(0) == 2:
                 return self.data.x.size(1) - i
         return 0
 
