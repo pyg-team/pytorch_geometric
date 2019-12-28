@@ -119,7 +119,7 @@ class MessagePassing(torch.nn.Module):
                 special_message_parameters[arg] = param
             elif arg[-2:] in ij.keys():
                 tmp = kwargs.get(arg[:-2], param.default)
-                if tmp is inspect._empty:
+                if tmp is inspect.Parameter.empty:
                     raise TypeError(
                         "Required parameter '{}' for message is empty".format(
                             arg[:-2]
@@ -150,7 +150,7 @@ class MessagePassing(torch.nn.Module):
                         message_parameters[arg] = tmp
             else:
                 tmp = kwargs.get(arg, param.default)
-                if tmp is inspect._empty:
+                if tmp is inspect.Parameter.empty:
                     raise TypeError(
                         "Required parameter '{}' for message is empty".format(
                             arg
@@ -174,7 +174,7 @@ class MessagePassing(torch.nn.Module):
             if arg in update_special_args:
                 continue
             tmp = kwargs.get(arg, param.default)
-            if tmp is inspect._empty:
+            if tmp is inspect.Parameter.empty:
                 raise TypeError(
                     "Required parameter '{}' for update is empty".format(arg)
                 )
@@ -184,7 +184,7 @@ class MessagePassing(torch.nn.Module):
             tmp = kwargs.get(arg, param.default)
             if arg in aggregate_special_args:
                 continue
-            if tmp is inspect._empty:
+            if tmp is inspect.Parameter.empty:
                 raise TypeError(
                     "Required parameter '{}' for update is empty".format(arg)
                 )
