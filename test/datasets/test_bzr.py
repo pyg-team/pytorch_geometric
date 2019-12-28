@@ -6,7 +6,7 @@ import shutil
 from torch_geometric.datasets import TUDataset
 
 
-def test_protein():
+def test_bzr():
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dataset = TUDataset(root, 'BZR')
 
