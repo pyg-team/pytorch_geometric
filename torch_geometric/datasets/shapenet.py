@@ -9,7 +9,6 @@ from torch_geometric.data import (Data, InMemoryDataset, download_url,
 from torch_geometric.io import read_txt_array
 
 
-
 class ShapeNet(InMemoryDataset):
     r""" The ShapeNet part level segmentation dataset from the `"A Scalable
     Active Framework for Region Annotation in 3D Shape Collections"
@@ -31,7 +30,8 @@ class ShapeNet(InMemoryDataset):
         split (string): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"trainval"`, loads the training and validation dataset
-            If :obj:`"test"`, loads the test dataset. (default: :obj:`"trainval"`)
+            If :obj:`"test"`, loads the test dataset.
+            (default: :obj:`"trainval"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -46,7 +46,8 @@ class ShapeNet(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url_with_normal = "https://shapenet.cs.stanford.edu/media/shapenetcore_partanno_segmentation_benchmark_v0_normal.zip"
+    url_with_normal = "https://shapenet.cs.stanford.edu/\
+        media/shapenetcore_partanno_segmentation_benchmark_v0_normal.zip"
 
     category_ids = {
         'Airplane': '02691156',
@@ -85,8 +86,8 @@ class ShapeNet(InMemoryDataset):
         'Knife': [22, 23]
     }
 
-    def __init__(self, root, categories=None, normal=True, split='trainval', transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(self, root, categories=None, normal=True, split='trainval',
+                 transform=None, pre_transform=None, pre_filter=None):
         if categories is None:
             categories = list(self.category_ids.keys())
         if isinstance(categories, str):
@@ -111,7 +112,8 @@ class ShapeNet(InMemoryDataset):
         elif split == 'trainval':
             path = self.processed_paths[3]
         else:
-            raise ValueError("Not supported split: %s, should be train, val, trainval or test" % split)
+            raise ValueError("Not supported split: %s, \
+                    should be train, val, trainval or test" % split)
 
         self.data, self.slices = torch.load(path)
         self.y_mask = torch.load(self.processed_paths[4])
@@ -124,7 +126,8 @@ class ShapeNet(InMemoryDataset):
     def processed_file_names(self):
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
-            os.path.join('{}_{}.pt'.format(cats, s)) for s in ['train',  'val', 'test', 'trainval', 'y_mask']
+            os.path.join('{}_{}.pt'.format(cats, s))
+            for s in ['train', 'val', 'test', 'trainval', 'y_mask']
         ]
 
     def download(self):
@@ -134,9 +137,14 @@ class ShapeNet(InMemoryDataset):
 
     def process_raw_files(self, raw_file_paths):
         data_list = []
-        categories_ids_to_process = [self.category_ids[cat] for cat in self.categories]
-        cat_idx = {self.category_ids[cat]: i for i, cat in enumerate(self.categories)}
-        cat_ys = {}
+        categories_ids_to_process = [
+            self.category_ids[cat] for cat in self.categories
+        ]
+        cat_idx = {
+            self.category_ids[cat]: i
+            for i, cat in enumerate(self.categories)
+        }
+
         for raw_file in raw_file_paths:
             cat = raw_file.split(os.path.sep)[0]
             if cat not in categories_ids_to_process:
@@ -161,10 +169,15 @@ class ShapeNet(InMemoryDataset):
     def process(self):
         trainval = []
         for i, split in enumerate(['train', 'val', 'test']):
-            with open(os.path.join(self.raw_dir, 'train_test_split', 'shuffled_%s_file_list.json' % split), 'r') as fp:
+            with open(
+                    os.path.join(self.raw_dir, 'train_test_split',
+                                 'shuffled_%s_file_list.json' % split),
+                    'r') as fp:
                 raw_files = json.load(fp)
-                raw_files = [os.path.sep.join(f.split(os.path.sep)[1:]) + '.txt'
-                             for f in raw_files]  # removing first directory, useless here
+                raw_files = [
+                    os.path.sep.join(f.split(os.path.sep)[1:]) + '.txt'
+                    for f in raw_files
+                ]  # removing first directory, useless here
                 file_split = raw_files
             data_list = self.process_raw_files(file_split)
             if split == 'train' or split == 'val':
@@ -175,14 +188,15 @@ class ShapeNet(InMemoryDataset):
         max_y = 0
         for labels in self.seg_classes.values():
             max_y = max(max_y, max(labels))
-        y_mask = torch.zeros((len(self.seg_classes.keys()), max_y+1), dtype=torch.bool)
+        y_mask = torch.zeros((len(self.seg_classes.keys()), max_y + 1),
+                             dtype=torch.bool)
         for i, labels in enumerate(self.seg_classes.values()):
             y_mask[i, labels] = 1
         torch.save(y_mask, self.processed_paths[4])
 
     def __repr__(self):
-        return '{}({}, categories={}, normal: {})'.format(self.__class__.__name__,
-                                                          len(self), self.categories, self.normal)
+        return '{}({}, categories={}, normal: {})'.format(
+            self.__class__.__name__, len(self), self.categories, self.normal)
 
 
 class NoNormalTransform:
