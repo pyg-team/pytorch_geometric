@@ -199,9 +199,10 @@ class QM9(InMemoryDataset):
             edge_index, edge_attr = coalesce(edge_index, edge_attr, N, N)
 
             y = target[i].unsqueeze(0)
+            name = mol.GetProp('_Name')
 
             data = Data(x=x, pos=pos, edge_index=edge_index,
-                        edge_attr=edge_attr, y=y)
+                        edge_attr=edge_attr, y=y, name=name)
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
