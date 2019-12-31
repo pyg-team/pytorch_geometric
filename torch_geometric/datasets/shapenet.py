@@ -30,7 +30,7 @@ class ShapeNet(InMemoryDataset):
             (default: :obj:`None`)
         split (string): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
-            If :obj:`"val"`, loads the training and validation dataset
+            If :obj:`"trainval"`, loads the training and validation dataset
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"trainval"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
