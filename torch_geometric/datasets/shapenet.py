@@ -131,8 +131,13 @@ class ShapeNet(InMemoryDataset):
         ]
 
     def download(self):
-        path = download_url(self.url_with_normal, self.raw_dir)
-        extract_zip(path, self.raw_dir)
+        path = download_url(self.url_with_normal, self.root)
+        extract_zip(path, self.root)
+        os.rename(
+            os.path.join(
+                self.root,
+                'shapenetcore_partanno_segmentation_benchmark_v0_normal'),
+            self.raw_dir)
         os.unlink(path)
 
     def process_raw_files(self, raw_file_paths):
