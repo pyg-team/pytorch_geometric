@@ -1,15 +1,17 @@
 import os
 import os.path as osp
-import glob
+import shutil
+import json
 
 import torch
+
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 from torch_geometric.io import read_txt_array
 
 
 class ShapeNet(InMemoryDataset):
-    r""" The ShapeNet part level segmentation dataset from the `"A Scalable
+    r"""The ShapeNet part level segmentation dataset from the `"A Scalable
     Active Framework for Region Annotation in 3D Shape Collections"
     <http://web.stanford.edu/~ericyi/papers/part_annotation_16_small.pdf>`_
     paper, containing about 17,000 3D shape point clouds from 16 shape
@@ -26,8 +28,14 @@ class ShapeNet(InMemoryDataset):
             :obj:`"Skateboard"`, :obj:`"Table"`).
             Can be explicitly set to :obj:`None` to load all categories.
             (default: :obj:`None`)
-        train (bool, optional): If :obj:`True`, loads the training dataset,
-            otherwise the test dataset. (default: :obj:`True`)
+        include_normals (bool, optional): If set to :obj:`False`, will not
+            include normal vectors as input features. (default: :obj:`True`)
+        split (string, optional): If :obj:`"train"`, loads the training
+            dataset.
+            If :obj:`"val"`, loads the validation dataset.
+            If :obj:`"trainval"`, loads the training and validation dataset.
+            If :obj:`"test"`, loads the test dataset.
+            (default: :obj:`"trainval"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -42,7 +50,8 @@ class ShapeNet(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://shapenet.cs.stanford.edu/iccv17/partseg'
+    url = ('https://shapenet.cs.stanford.edu/media/'
+           'shapenetcore_partanno_segmentation_benchmark_v0_normal.zip')
 
     category_ids = {
         'Airplane': '02691156',
@@ -63,8 +72,28 @@ class ShapeNet(InMemoryDataset):
         'Table': '04379243',
     }
 
-    def __init__(self, root, categories=None, train=True, transform=None,
-                 pre_transform=None, pre_filter=None):
+    seg_classes = {
+        'Airplane': [0, 1, 2, 3],
+        'Bag': [4, 5],
+        'Cap': [6, 7],
+        'Car': [8, 9, 10, 11],
+        'Chair': [12, 13, 14, 15],
+        'Earphone': [16, 17, 18],
+        'Guitar': [19, 20, 21],
+        'Knife': [22, 23],
+        'Lamp': [24, 25, 26, 27],
+        'Laptop': [28, 29],
+        'Motorbike': [30, 31, 32, 33, 34, 35],
+        'Mug': [36, 37],
+        'Pistol': [38, 39, 40],
+        'Rocket': [41, 42, 43],
+        'Skateboard': [44, 45, 46],
+        'Table': [47, 48, 49],
+    }
+
+    def __init__(self, root, categories=None, include_normals=True,
+                 split='trainval', transform=None, pre_transform=None,
+                 pre_filter=None):
         if categories is None:
             categories = list(self.category_ids.keys())
         if isinstance(categories, str):
@@ -73,73 +102,85 @@ class ShapeNet(InMemoryDataset):
         self.categories = categories
         super(ShapeNet, self).__init__(root, transform, pre_transform,
                                        pre_filter)
-        path = self.processed_paths[0] if train else self.processed_paths[1]
+
+        if split == 'train':
+            path = self.processed_paths[0]
+        elif split == 'val':
+            path = self.processed_paths[1]
+        elif split == 'test':
+            path = self.processed_paths[2]
+        elif split == 'trainval':
+            path = self.processed_paths[3]
+        else:
+            raise ValueError((f'Split {split} found, but expected either '
+                              'train, val, trainval or test'))
+
         self.data, self.slices = torch.load(path)
-        self.y_mask = torch.load(self.processed_paths[2])
+        self.data.x = self.data.x if include_normals else None
+
+        self.y_mask = torch.zeros((len(self.seg_classes.keys()), 50),
+                                  dtype=torch.bool)
+        for i, labels in enumerate(self.seg_classes.values()):
+            self.y_mask[i, labels] = 1
 
     @property
     def raw_file_names(self):
-        return [
-            'train_data', 'train_label', 'val_data', 'val_label', 'test_data',
-            'test_label'
-        ]
+        return list(self.category_ids.values()) + ['train_test_split']
 
     @property
     def processed_file_names(self):
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
-            '{}_{}.pt'.format(cats, s) for s in ['training', 'test', 'y_mask']
+            os.path.join('{}_{}.pt'.format(cats, split))
+            for split in ['train', 'val', 'test', 'trainval']
         ]
 
     def download(self):
-        for name in self.raw_file_names:
-            url = '{}/{}.zip'.format(self.url, name)
-            path = download_url(url, self.raw_dir)
-            extract_zip(path, self.raw_dir)
-            os.unlink(path)
+        path = download_url(self.url, self.root)
+        extract_zip(path, self.root)
+        os.unlink(path)
+        shutil.rmtree(self.raw_dir)
+        name = self.url.split('/')[-1].split('.')[0]
+        os.rename(osp.join(self.root, name), self.raw_dir)
 
-    def process_raw_path(self, data_path, label_path):
-        y_offset = 0
+    def process_filenames(self, filenames):
         data_list = []
-        cat_ys = []
-        for cat_idx, cat in enumerate(self.categories):
-            idx = self.category_ids[cat]
-            point_paths = sorted(glob.glob(osp.join(data_path, idx, '*.pts')))
-            y_paths = sorted(glob.glob(osp.join(label_path, idx, '*.seg')))
+        categories_ids = [self.category_ids[cat] for cat in self.categories]
+        cat_idx = {categories_ids[i]: i for i in range(len(categories_ids))}
 
-            points = [read_txt_array(path) for path in point_paths]
-            ys = [read_txt_array(path, dtype=torch.long) for path in y_paths]
-            lens = [y.size(0) for y in ys]
+        for name in filenames:
+            cat = name.split(osp.sep)[0]
+            if cat not in categories_ids:
+                continue
 
-            y = torch.cat(ys).unique(return_inverse=True)[1] + y_offset
-            cat_ys.append(y.unique())
-            y_offset = y.max().item() + 1
-            ys = y.split(lens)
+            data = read_txt_array(osp.join(self.raw_dir, name))
+            pos = data[:, :3]
+            x = data[:, 3:6]
+            y = data[:, -1].type(torch.long)
+            data = Data(pos=pos, x=x, y=y, category=cat_idx[cat])
+            if self.pre_filter is not None and not self.pre_filter(data):
+                continue
+            if self.pre_transform is not None:
+                data = self.pre_transform(data)
+            data_list.append(data)
 
-            for (pos, y) in zip(points, ys):
-                data = Data(y=y, pos=pos, category=cat_idx)
-                if self.pre_filter is not None and not self.pre_filter(data):
-                    continue
-                if self.pre_transform is not None:
-                    data = self.pre_transform(data)
-                data_list.append(data)
-
-        y_mask = torch.zeros((len(self.categories), y_offset),
-                             dtype=torch.bool)
-        for i in range(len(cat_ys)):
-            y_mask[i, cat_ys[i]] = 1
-
-        return data_list, y_mask
+        return data_list
 
     def process(self):
-        train_data_list, y_mask = self.process_raw_path(*self.raw_paths[0:2])
-        val_data_list, _ = self.process_raw_path(*self.raw_paths[2:4])
-        test_data_list, _ = self.process_raw_path(*self.raw_paths[4:6])
-
-        data = self.collate(train_data_list + val_data_list)
-        torch.save(data, self.processed_paths[0])
-        torch.save(self.collate(test_data_list), self.processed_paths[1])
-        torch.save(y_mask, self.processed_paths[2])
+        trainval = []
+        for i, split in enumerate(['train', 'val', 'test']):
+            path = osp.join(self.raw_dir, 'train_test_split',
+                            f'shuffled_{split}_file_list.json')
+            with open(path, 'r') as f:
+                filenames = [
+                    osp.sep.join(name.split(osp.sep)[1:]) + '.txt'
+                    for name in json.load(f)
+                ]  # Removing first directory.
+            data_list = self.process_filenames(filenames)
+            if split == 'train' or split == 'val':
+                trainval += data_list
+            torch.save(self.collate(data_list), self.processed_paths[i])
+        torch.save(self.collate(trainval), self.processed_paths[3])
 
     def __repr__(self):
         return '{}({}, categories={})'.format(self.__class__.__name__,
