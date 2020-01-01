@@ -19,9 +19,9 @@ transform = T.Compose([
     T.RandomRotate(15, axis=2)
 ])
 pre_transform = T.NormalizeScale()
-train_dataset = ShapeNet(path, category, train=True, transform=transform,
+train_dataset = ShapeNet(path, category, split='trainval', transform=transform,
                          pre_transform=pre_transform)
-test_dataset = ShapeNet(path, category, train=False,
+test_dataset = ShapeNet(path, category, split='test',
                         pre_transform=pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=12, shuffle=True,
                           num_workers=6)
