@@ -29,7 +29,7 @@ class RandomRotate(object):
         degree = math.pi * random.uniform(*self.degrees) / 180.0
         sin, cos = math.sin(degree), math.cos(degree)
 
-        if data.pos.size(1) == 2:
+        if data.pos.size(-1) == 2:
             matrix = [[cos, sin], [-sin, cos]]
         else:
             if self.axis == 0:
