@@ -1,17 +1,25 @@
-import sys
 import inspect
+from collections import OrderedDict
+from types import MappingProxyType
 
 import torch
 from torch_geometric.utils import scatter_
 
-special_args = [
-    'edge_index', 'edge_index_i', 'edge_index_j', 'size', 'size_i', 'size_j'
-]
-__size_error_msg__ = ('All tensors which should get mapped to the same source '
-                      'or target nodes must be of same size in dimension 0.')
+msg_special_args = set([
+    'edge_index',
+    'edge_index_i',
+    'edge_index_j',
+    'size',
+    'size_i',
+    'size_j',
+])
 
-is_python2 = sys.version_info[0] < 3
-getargspec = inspect.getargspec if is_python2 else inspect.getfullargspec
+aggr_special_args = set([
+    'index',
+    'dim_size',
+])
+
+update_special_args = set([])
 
 
 class MessagePassing(torch.nn.Module):
@@ -39,13 +47,12 @@ class MessagePassing(torch.nn.Module):
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`0`)
     """
-    __aggr__ = ("add", "mean", "max")
 
     def __init__(self, aggr='add', flow='source_to_target', node_dim=0):
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
-        assert self.aggr in self.__aggr__
+        assert self.aggr in ['add', 'mean', 'max']
 
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
@@ -53,14 +60,90 @@ class MessagePassing(torch.nn.Module):
         self.node_dim = node_dim
         assert self.node_dim >= 0
 
-        self.__message_args__ = getargspec(self.message)[0][1:]
-        self.__special_args__ = [(i, arg)
-                                 for i, arg in enumerate(self.__message_args__)
-                                 if arg in special_args]
-        self.__message_args__ = [
-            arg for arg in self.__message_args__ if arg not in special_args
-        ]
-        self.__update_args__ = getargspec(self.update)[0][2:]
+        self.__msg_params__ = inspect.signature(self.message).parameters
+
+        self.__aggr_params__ = inspect.signature(self.aggregate).parameters
+        self.__aggr_params__ = OrderedDict(self.__aggr_params__)
+        self.__aggr_params__.popitem(last=False)
+        self.__aggr_params__ = MappingProxyType(self.__aggr_params__)
+
+        self.__update_params__ = inspect.signature(self.update).parameters
+        self.__update_params__ = OrderedDict(self.__update_params__)
+        self.__update_params__.popitem(last=False)
+        self.__update_params__ = MappingProxyType(self.__update_params__)
+
+        msg_args = set(self.__msg_params__.keys()) - msg_special_args
+        aggr_args = set(self.__aggr_params__.keys()) - aggr_special_args
+        update_args = set(self.__update_params__.keys()) - update_special_args
+
+        self.__args__ = set().union(msg_args, aggr_args, update_args)
+
+    def __set_size__(self, size, index, tensor):
+        if not torch.is_tensor(tensor):
+            pass
+        elif size[index] is None:
+            size[index] = tensor.size(self.node_dim)
+        elif size[index] != tensor.size(self.node_dim):
+            raise ValueError(
+                (f'Encountered node tensor with size '
+                 f'{tensor.size(self.node_dim)} in dimension {self.node_dim}, '
+                 f'but expected size {size[index]}.'))
+
+    def __collect__(self, edge_index, size, kwargs):
+        i, j = (0, 1) if self.flow == "target_to_source" else (1, 0)
+        ij = {"_i": i, "_j": j}
+
+        out = {}
+        for arg in self.__args__:
+            if arg[-2:] not in ij.keys():
+                out[arg] = kwargs.get(arg, inspect.Parameter.empty)
+            else:
+                idx = ij[arg[-2:]]
+                data = kwargs.get(arg[:-2], inspect.Parameter.empty)
+
+                if data is inspect.Parameter.empty:
+                    out[arg] = data
+                    continue
+
+                if isinstance(data, tuple) or isinstance(data, list):
+                    assert len(data) == 2
+                    self.__set_size__(size, 1 - idx, data[1 - idx])
+                    data = data[idx]
+
+                if not torch.is_tensor(data):
+                    out[arg] = data
+                    continue
+
+                self.__set_size__(size, idx, data)
+                out[arg] = data.index_select(self.node_dim, edge_index[idx])
+
+        size[0] = size[1] if size[0] is None else size[0]
+        size[1] = size[0] if size[1] is None else size[1]
+
+        # Add special message arguments.
+        out['edge_index'] = edge_index
+        out['edge_index_i'] = edge_index[i]
+        out['edge_index_j'] = edge_index[j]
+        out['size'] = size
+        out['size_i'] = size[i]
+        out['size_j'] = size[j]
+
+        # Add special aggregate arguments.
+        out['index'] = out['edge_index_i']
+        out['dim_size'] = out['size_i']
+
+        return out
+
+    def __distribute__(self, params, kwargs):
+        out = {}
+        for key, param in params.items():
+            data = kwargs[key]
+            if data is inspect.Parameter.empty:
+                if param.default is inspect.Parameter.empty:
+                    raise TypeError(f'Required parameter {key} is empty.')
+                data = param.default
+            out[key] = data
+        return out
 
     def propagate(self, edge_index, size=None, **kwargs):
         r"""The initial call to start propagating messages.
@@ -70,79 +153,31 @@ class MessagePassing(torch.nn.Module):
                 matrix with shape :obj:`[N, M]` (can be directed or
                 undirected).
             size (list or tuple, optional): The size :obj:`[N, M]` of the
-                assignment matrix. If set to :obj:`None`, the size is tried to
-                get automatically inferred and assumed to be symmetric.
+                assignment matrix. If set to :obj:`None`, the size will be
+                automatically inferred and assumed to be quadratic.
                 (default: :obj:`None`)
-            **kwargs: Any additional data which is needed to construct messages
-                and to update node embeddings.
+            **kwargs: Any additional data which is needed to construct and
+                aggregate messages, and to update node embeddings.
         """
 
-        dim = self.node_dim
-        size = [None, None] if size is None else list(size)
+        size = [None, None] if size is None else size
+        size = [size, size] if isinstance(size, int) else size
+        size = size.tolist() if torch.is_tensor(size) else size
+        size = list(size) if isinstance(size, tuple) else size
+        assert isinstance(size, list)
         assert len(size) == 2
 
-        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
-        ij = {"_i": i, "_j": j}
+        kwargs = self.__collect__(edge_index, size, kwargs)
 
-        message_args = []
-        for arg in self.__message_args__:
-            if arg[-2:] in ij.keys():
-                tmp = kwargs.get(arg[:-2], None)
-                if tmp is None:  # pragma: no cover
-                    message_args.append(tmp)
-                else:
-                    idx = ij[arg[-2:]]
-                    if isinstance(tmp, tuple) or isinstance(tmp, list):
-                        assert len(tmp) == 2
-                        if tmp[1 - idx] is not None:
-                            if size[1 - idx] is None:
-                                size[1 - idx] = tmp[1 - idx].size(dim)
-                            if size[1 - idx] != tmp[1 - idx].size(dim):
-                                raise ValueError(__size_error_msg__)
-                        tmp = tmp[idx]
+        msg_kwargs = self.__distribute__(self.__msg_params__, kwargs)
+        out = self.message(**msg_kwargs)
 
-                    if tmp is None:
-                        message_args.append(tmp)
-                    else:
-                        if size[idx] is None:
-                            size[idx] = tmp.size(dim)
-                        if size[idx] != tmp.size(dim):
-                            raise ValueError(__size_error_msg__)
+        aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
+        out = self.aggregate(out, **aggr_kwargs)
 
-                        tmp = torch.index_select(tmp, dim, edge_index[idx])
-                        message_args.append(tmp)
-            else:
-                message_args.append(kwargs.get(arg, None))
+        update_kwargs = self.__distribute__(self.__update_params__, kwargs)
+        out = self.update(out, **update_kwargs)
 
-        size[0] = size[1] if size[0] is None else size[0]
-        size[1] = size[0] if size[1] is None else size[1]
-
-        kwargs['edge_index'] = edge_index
-        kwargs['size'] = size
-
-        for (idx, arg) in self.__special_args__:
-            if arg[-2:] in ij.keys():
-                message_args.insert(idx, kwargs[arg[:-2]][ij[arg[-2:]]])
-            else:
-                message_args.insert(idx, kwargs[arg])
-
-        update_args = [kwargs[arg] for arg in self.__update_args__]
-
-        out = self.message(*message_args)
-        out = self.aggregate(out, edge_index[i], dim, dim_size=size[i])
-        out = self.update(out, *update_args)
-
-        return out
-
-    def aggregate(self, out, index, dim=0, dim_size=None):  # pragma: no cover
-        r"""Aggregates messages from neighbours as
-        :math:`\square_{j \in \mathcal{N}(i)}`.
-
-        By default, delegates call to scatter function that supports
-        "mean", "sum", "max" operations. The choice of aggr is
-        specified in :meth:`__init__` as :obj:`aggr` argument.
-        """
-        out = scatter_(self.aggr, out, index, dim, dim_size=dim_size)
         return out
 
     def message(self, x_j):  # pragma: no cover
@@ -158,11 +193,23 @@ class MessagePassing(torch.nn.Module):
 
         return x_j
 
-    def update(self, aggr_out):  # pragma: no cover
+    def aggregate(self, inputs, index, dim_size):  # pragma: no cover
+        r"""Aggregates messages from neighbors as
+        :math:`\square_{j \in \mathcal{N}(i)}`.
+
+        By default, delegates call to scatter functions that support
+        "add", "mean" and "max" operations specified in :meth:`__init__` by
+        the :obj:`aggr` argument.
+        """
+
+        return scatter_(self.aggr, inputs, index, self.node_dim, dim_size)
+
+    def update(self, inputs):  # pragma: no cover
         r"""Updates node embeddings in analogy to
         :math:`\gamma_{\mathbf{\Theta}}` for each node
         :math:`i \in \mathcal{V}`.
         Takes in the output of aggregation as first argument and any argument
-        which was initially passed to :meth:`propagate`."""
+        which was initially passed to :meth:`propagate`.
+        """
 
-        return aggr_out
+        return inputs

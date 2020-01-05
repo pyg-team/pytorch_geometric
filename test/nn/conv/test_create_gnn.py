@@ -18,7 +18,6 @@ class GCNConv(MessagePassing):
         deg = degree(row, size[0], dtype=x_j.dtype)
         deg_inv_sqrt = deg.pow(-0.5)
         norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
-
         return norm.view(-1, 1) * x_j
 
     def update(self, aggr_out):
