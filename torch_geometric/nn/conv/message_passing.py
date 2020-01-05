@@ -60,26 +60,28 @@ class MessagePassing(torch.nn.Module):
         self.node_dim = node_dim
         assert self.node_dim >= 0
 
-        self.__msg_sign__ = inspect.signature(self.message).parameters
+        self.__msg_params__ = inspect.signature(self.message).parameters
 
-        self.__aggr_sign__ = inspect.signature(self.aggregate).parameters
-        self.__aggr_sign__ = OrderedDict(self.__aggr_sign__)
-        self.__aggr_sign__.popitem(last=False)
-        self.__aggr_sign__ = MappingProxyType(self.__aggr_sign__)
+        self.__aggr_params__ = inspect.signature(self.aggregate).parameters
+        self.__aggr_params__ = OrderedDict(self.__aggr_params__)
+        self.__aggr_params__.popitem(last=False)
+        self.__aggr_params__ = MappingProxyType(self.__aggr_params__)
 
-        self.__update_sign__ = inspect.signature(self.update).parameters
-        self.__update_sign__ = OrderedDict(self.__update_sign__)
-        self.__update_sign__.popitem(last=False)
-        self.__update_sign__ = MappingProxyType(self.__update_sign__)
+        self.__update_params__ = inspect.signature(self.update).parameters
+        self.__update_params__ = OrderedDict(self.__update_params__)
+        self.__update_params__.popitem(last=False)
+        self.__update_params__ = MappingProxyType(self.__update_params__)
 
-        msg_args = set(self.__msg_sign__.keys()) - msg_special_args
-        aggr_args = set(self.__aggr_sign__.keys()) - aggr_special_args
-        update_args = set(self.__update_sign__.keys()) - update_special_args
+        msg_args = set(self.__msg_params__.keys()) - msg_special_args
+        aggr_args = set(self.__aggr_params__.keys()) - aggr_special_args
+        update_args = set(self.__update_params__.keys()) - update_special_args
 
         self.__args__ = set().union(msg_args, aggr_args, update_args)
 
     def __set_size__(self, size, index, tensor):
-        if size[index] is None:
+        if not torch.is_tensor(tensor):
+            pass
+        elif size[index] is None:
             size[index] = tensor.size(self.node_dim)
         elif size[index] != tensor.size(self.node_dim):
             raise ValueError(
@@ -108,6 +110,10 @@ class MessagePassing(torch.nn.Module):
                     self.__set_size__(size, 1 - idx, data[1 - idx])
                     data = data[idx]
 
+                if not torch.is_tensor(data):
+                    out[arg] = data
+                    continue
+
                 self.__set_size__(size, idx, data)
                 out[arg] = data.index_select(self.node_dim, edge_index[idx])
 
@@ -128,9 +134,9 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def __distribute__(self, sign, kwargs):
+    def __distribute__(self, params, kwargs):
         out = {}
-        for key, param in sign.items():
+        for key, param in params.items():
             data = kwargs[key]
             if data is inspect.Parameter.empty:
                 if param.default is inspect.Parameter.empty:
@@ -163,13 +169,13 @@ class MessagePassing(torch.nn.Module):
 
         kwargs = self.__collect__(edge_index, size, kwargs)
 
-        msg_kwargs = self.__distribute__(self.__msg_sign__, kwargs)
+        msg_kwargs = self.__distribute__(self.__msg_params__, kwargs)
         out = self.message(**msg_kwargs)
 
-        aggr_kwargs = self.__distribute__(self.__aggr_sign__, kwargs)
+        aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
         out = self.aggregate(out, **aggr_kwargs)
 
-        update_kwargs = self.__distribute__(self.__update_sign__, kwargs)
+        update_kwargs = self.__distribute__(self.__update_params__, kwargs)
         out = self.update(out, **update_kwargs)
 
         return out
