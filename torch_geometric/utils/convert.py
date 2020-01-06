@@ -86,26 +86,27 @@ def from_networkx(G):
         G (networkx.Graph or networkx.DiGraph): A networkx graph.
     """
 
+    G = nx.convert_node_labels_to_integers(G)
     G = G.to_directed() if not nx.is_directed(G) else G
     edge_index = torch.tensor(list(G.edges)).t().contiguous()
 
-    keys = []
-    keys += list(list(G.nodes(data=True))[0][1].keys())
-    keys += list(list(G.edges(data=True))[0][2].keys())
-    data = {key: [] for key in keys}
+    data = {}
 
-    for _, feat_dict in G.nodes(data=True):
+    for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
         for key, value in feat_dict.items():
-            data[key].append(value)
+            data[key] = [value] if i == 0 else data[key] + [value]
 
-    for _, _, feat_dict in G.edges(data=True):
+    for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
         for key, value in feat_dict.items():
-            data[key].append(value)
+            data[key] = [value] if i == 0 else data[key] + [value]
 
     for key, item in data.items():
-        data[key] = torch.tensor(item)
+        try:
+            data[key] = torch.tensor(item)
+        except ValueError:
+            pass
 
-    data['edge_index'] = edge_index
+    data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)
     data.num_nodes = G.number_of_nodes()
 
