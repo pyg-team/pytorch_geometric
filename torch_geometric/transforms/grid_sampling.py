@@ -26,8 +26,7 @@ class GridSampling(object):
         batch = data.batch
 
         pool = voxel_grid(pos, batch, self._subsampling_param)
-        pool, perm = consecutive_cluster(pool)
-        data.batch = batch[perm]
+        pool, _ = consecutive_cluster(pool)
 
         for key, item in data:
             if bool(re.search('edge', key)):
