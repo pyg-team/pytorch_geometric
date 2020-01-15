@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.testing as npt
 import torch
 from torch_geometric.transforms import GridSampling
 from torch_geometric.data import Data
@@ -15,9 +16,13 @@ def test_grid_sampling():
     batch = torch.from_numpy(np.zeros(num_points)).long()
     
     y = np.asarray(np.random.randint(0, num_classes, 5))
-    uniq = np.unique(y)
+    uniq, counts = np.unique(y, return_counts=True)
+    answer = uniq[np.argmax(counts)]
+    
     y = torch.from_numpy(y)
 
     out_data = GridSampling(0.04, 2)()(Data(pos=pos, batch=batch, y=y))
 
-    assert out_data.y == uniq[0]
+    out_y = out_data.y.detach().cpu().numpy()
+
+    npt.assert_array_almost_equal(answer, out_y)
