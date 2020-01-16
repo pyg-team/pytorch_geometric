@@ -49,9 +49,11 @@ class WILLOWObjectClass(InMemoryDataset):
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+    categories = ['face', 'motorbike', 'car', 'duck', 'winebottle']
+
     def __init__(self, root, category, transform=None, pre_transform=None,
                  pre_filter=None):
-        assert category in ['Car', 'Duck', 'Face', 'Motorbike', 'Winebottle']
+        assert category.lower() in self.categories
         self.category = category
         super(WILLOWObjectClass, self).__init__(root, transform, pre_transform,
                                                 pre_filter)
@@ -59,7 +61,7 @@ class WILLOWObjectClass(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return ['Car', 'Duck', 'Face', 'Motorbike', 'Winebottle']
+        return [category.capitalize() for category in self.categories]
 
     @property
     def processed_file_names(self):
@@ -78,7 +80,8 @@ class WILLOWObjectClass(InMemoryDataset):
         if models is None or T is None or Image is None:
             raise ImportError('Package `torchvision` could not be found.')
 
-        names = glob.glob(osp.join(self.raw_dir, self.category, '*.png'))
+        category = self.category.capitalize()
+        names = glob.glob(osp.join(self.raw_dir, category, '*.png'))
         names = sorted([name[:-4] for name in names])
 
         vgg16_outputs = []
@@ -102,13 +105,20 @@ class WILLOWObjectClass(InMemoryDataset):
             x, y = torch.from_numpy(pos).to(torch.float)
             pos = torch.stack([x, y], dim=1)
 
-            # The "Face" category contains a single image with less than 10
+            # The "face" category contains a single image with less than 10
             # keypoints, so we need to skip it.
             if pos.size(0) != 10:
                 continue
 
             with open('{}.png'.format(name), 'rb') as f:
                 img = Image.open(f).convert('RGB')
+
+            # Rescale keypoints.
+            pos[:, 0] = pos[:, 0] * 256.0 / (img.size[0])
+            pos[:, 1] = pos[:, 1] * 256.0 / (img.size[1])
+
+            img = img.resize((256, 256), resample=Image.BICUBIC)
+
             img = transform(img)
             size = img.size()[-2:]
             vgg16_outputs.clear()
@@ -120,10 +130,12 @@ class WILLOWObjectClass(InMemoryDataset):
                 out = F.interpolate(out, size, mode='bilinear',
                                     align_corners=False)
                 out = out.squeeze(0).permute(1, 2, 0)
-                out = out[y.round().long(), x.round().long()]
+                pos_index = pos.round().long().clamp(0, 255)
+                out = out[pos_index[:, 1], pos_index[:, 0]]
                 xs.append(out)
+            x = torch.cat(xs, dim=-1)
 
-            data = Data(x=torch.cat(xs, dim=-1), pos=pos)
+            data = Data(x=x, pos=pos)
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue

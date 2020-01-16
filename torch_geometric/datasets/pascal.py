@@ -57,10 +57,12 @@ class PascalVOCKeypoints(InMemoryDataset):
     """
     image_url = ('http://host.robots.ox.ac.uk/pascal/VOC/voc2011/'
                  'VOCtrainval_25-May-2011.tar')
-    # annotation_url = ('https://www2.eecs.berkeley.edu/Research/Projects/CS/'
-    #                   'vision/shape/poselets/voc2011_keypoints_Feb2012.tgz')
-    annotation_url = 'http://www.roemisch-drei.de/pascal_annotations.tar'
-    split_url = 'http://cvgl.stanford.edu/projects/ucn/voc2011_pairs.npz'
+    annotation_url = ('https://www2.eecs.berkeley.edu/Research/Projects/CS/'
+                      'vision/shape/poselets/voc2011_keypoints_Feb2012.tgz')
+    # annotation_url = 'http://www.roemisch-drei.de/pascal_annotations.tar'
+    # split_url = 'http://cvgl.stanford.edu/projects/ucn/voc2011_pairs.npz'
+    split_url = ('https://github.com/Thinklab-SJTU/PCA-GM/raw/master/data/'
+                 'PascalVOC/voc2011_pairs.npz')
 
     categories = [
         'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat',
@@ -150,6 +152,9 @@ class PascalVOCKeypoints(InMemoryDataset):
             if bool(int(trunc)) or bool(int(occ)) or bool(int(diff)):
                 continue
 
+            if self.category == 'person' and int(filename[:4]) > 2008:
+                continue
+
             xmin = float(obj.getElementsByTagName('xmin')[0].firstChild.data)
             xmax = float(obj.getElementsByTagName('xmax')[0].firstChild.data)
             ymin = float(obj.getElementsByTagName('ymin')[0].firstChild.data)
@@ -158,52 +163,54 @@ class PascalVOCKeypoints(InMemoryDataset):
 
             dom = minidom.parse(osp.join(annotation_path, name))
             keypoints = dom.getElementsByTagName('keypoint')
-            if len(keypoints) == 0:
-                continue
             poss, ys = [], []
             for keypoint in keypoints:
                 label = keypoint.attributes['name'].value
                 if label not in labels:
                     labels[label] = len(labels)
                 ys.append(labels[label])
-                poss.append(float(keypoint.attributes['x'].value))
-                poss.append(float(keypoint.attributes['y'].value))
+                x = float(keypoint.attributes['x'].value)
+                y = float(keypoint.attributes['y'].value)
+                poss += [x, y]
             y = torch.tensor(ys, dtype=torch.long)
             pos = torch.tensor(poss, dtype=torch.float).view(-1, 2)
 
-            # Adjust bounding box (and positions) + add a small offset because
-            # some keypoints lay outside the bounding boxes.
-            box = (min(pos[:, 0].min().item(), box[0]) - 20,
-                   min(pos[:, 1].min().item(), box[1]) - 20,
-                   max(pos[:, 0].max().item(), box[2]) + 20,
-                   max(pos[:, 1].max().item(), box[3]) + 20)
+            if pos.numel() > 0:
+                # Add a small offset to the bounding because some keypoints lay
+                # outside the bounding box intervals.
+                box = (min(pos[:, 0].min().floor().item(), box[0]) - 16,
+                       min(pos[:, 1].min().floor().item(), box[1]) - 16,
+                       max(pos[:, 0].max().ceil().item(), box[2]) + 16,
+                       max(pos[:, 1].max().ceil().item(), box[3]) + 16)
 
-            pos[:, 0] = pos[:, 0] - box[0]
-            pos[:, 1] = pos[:, 1] - box[1]
+                # Rescale keypoints.
+                pos[:, 0] = (pos[:, 0] - box[0]) * 256.0 / (box[2] - box[0])
+                pos[:, 1] = (pos[:, 1] - box[1]) * 256.0 / (box[3] - box[1])
 
-            path = osp.join(image_path, '{}.jpg'.format(filename))
-            with open(path, 'rb') as f:
-                img = Image.open(f).convert('RGB').crop(box)
+                path = osp.join(image_path, '{}.jpg'.format(filename))
+                with open(path, 'rb') as f:
+                    img = Image.open(f).convert('RGB').crop(box)
+                    img = img.resize((256, 256), resample=Image.BICUBIC)
 
-            img = transform(img)
-            size = img.size()[-2:]
-            vgg16_outputs.clear()
-            with torch.no_grad():
-                vgg16(img.unsqueeze(0).to(self.device))
+                img = transform(img)
+                vgg16_outputs.clear()
+                with torch.no_grad():
+                    vgg16(img.unsqueeze(0).to(self.device))
 
-            xs = []
-            for out in vgg16_outputs:
-                out = F.interpolate(out, size, mode='bilinear',
-                                    align_corners=False)
-                out = out.squeeze(0).permute(1, 2, 0)
-                out = out[pos[:, 1].round().long(), pos[:, 0].round().long()]
-                xs.append(out)
+                xs = []
+                for out in vgg16_outputs:
+                    out = F.interpolate(out, (256, 256), mode='bilinear',
+                                        align_corners=False)
+                    out = out.squeeze(0).permute(1, 2, 0)  # [H, W, C]
+                    pos_index = pos.round().long().clamp(0, 255)
+                    out = out[pos_index[:, 1], pos_index[:, 0]]
+                    xs.append(out)
 
-            # Reset position.
-            pos[:, 0] = pos[:, 0] + box[0] - xmin
-            pos[:, 1] = pos[:, 1] + box[1] - ymin
+                x = torch.cat(xs, dim=-1)
+            else:
+                x = torch.tensor([], dtype=torch.float).view(0, 1024)
 
-            data = Data(x=torch.cat(xs, dim=-1), pos=pos, y=y)
+            data = Data(x=x, pos=pos, y=y, name=filename)
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue

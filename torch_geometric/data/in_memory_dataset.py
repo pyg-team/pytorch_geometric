@@ -146,8 +146,8 @@ class InMemoryDataset(Dataset):
         for key in keys:
             item = data_list[0][key]
             if torch.is_tensor(item):
-                data[key] = torch.cat(
-                    data[key], dim=data.__cat_dim__(key, data_list[0][key]))
+                data[key] = torch.cat(data[key],
+                                      dim=data.__cat_dim__(key, item))
             elif isinstance(item, int) or isinstance(item, float):
                 data[key] = torch.tensor(data[key])
 

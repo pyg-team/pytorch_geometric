@@ -59,7 +59,7 @@ class PascalPF(InMemoryDataset):
             mask = ~torch.isnan(pos[:, 0])
             pos = pos[mask]
 
-            # Normalize points.
+            # Normalize points to unit sphere.
             pos = pos - pos.mean(dim=0, keepdim=True)
             pos = pos / pos.norm(dim=1).max()
 
