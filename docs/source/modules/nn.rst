@@ -62,6 +62,10 @@ Dense Pooling Layers
     :members:
     :undoc-members:
 
+.. automodule:: torch_geometric.nn.dense.mincut_pool
+    :members:
+    :undoc-members:
+
 Unpooling Layers
 ----------------
 
