@@ -24,7 +24,7 @@ class PascalVOCKeypoints(InMemoryDataset):
     r"""The Pascal VOC 2011 dataset with Berkely annotations of keypoints from
     the `"Poselets: Body Part Detectors Trained Using 3D Human Pose
     Annotations" <https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/
-    human/ poselets_iccv09.pdf>`_ paper, containing 3 to 23 keypoints per
+    human/ poselets_iccv09.pdf>`_ paper, containing 0 to 23 keypoints per
     example over 20 categories.
     The dataset is pre-filtered to exclude difficult, occluded and truncated
     objects.
