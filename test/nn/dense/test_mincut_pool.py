@@ -14,5 +14,3 @@ def test_dense_mincut_pool():
     assert adj.size() == (2, 10, 10)
     assert -1 <= mincut_loss <= 0
     assert 0 <= ortho_loss <= 2
-
-test_dense_mincut_pool()

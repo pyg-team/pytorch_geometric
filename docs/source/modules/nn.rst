@@ -30,6 +30,10 @@ Dense Convolutional Layers
     :members:
     :undoc-members:
 
+.. automodule:: torch_geometric.nn.dense.dense_graph_conv
+    :members:
+    :undoc-members:
+
 .. automodule:: torch_geometric.nn.dense.dense_gin_conv
     :members:
     :undoc-members:

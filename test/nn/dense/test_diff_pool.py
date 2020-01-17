@@ -7,7 +7,7 @@ def test_dense_diff_pool():
     x = torch.randn((batch_size, num_nodes, channels))
     adj = torch.rand((batch_size, num_nodes, num_nodes))
     s = torch.randn((batch_size, num_nodes, num_clusters))
-    mask = torch.randint(0, 1, (batch_size, num_nodes), dtype=torch.bool)
+    mask = torch.randint(0, 2, (batch_size, num_nodes), dtype=torch.bool)
 
     x, adj, link_loss, ent_loss = dense_diff_pool(x, adj, s, mask)
     assert x.size() == (2, 10, 16)
