@@ -1,47 +1,58 @@
 import re
 
 import torch
+import torch.nn.functional as F
+from torch_scatter import scatter_add, scatter_mean
 from torch_geometric.nn import voxel_grid
 from torch_geometric.nn.pool.consecutive import consecutive_cluster
-from torch_geometric.nn.pool.pool import pool_pos, pool_batch
-from torch_scatter import scatter_add
 
 
 class GridSampling(object):
-    r"""Samples points depending on :obj:`subsampling_param`.
+    r"""Clusters points into voxels with size :attr:`size`.
 
     Args:
-        subsampling_param (int): The subsampling parameters used to map the pointcloud on a grid.
-        num_classes (int): If the data contains labels, within key `y`, then it will be used to create label grid pooling. 
+        size (float or [float] or Tensor): Size of a voxel (in each dimension).
+        start (float or [float] or Tensor, optional): Start coordinates of the
+            grid (in each dimension). If set to :obj:`None`, will be set to the
+            minimum coordinates found in :obj:`data.pos`.
+            (default: :obj:`None`)
+        end (float or [float] or Tensor, optional): End coordinates of the grid
+            (in each dimension). If set to :obj:`None`, will be set to the
+            maximum coordinates found in :obj:`data.pos`.
+            (default: :obj:`None`)
     """
-
-    def __init__(self, subsampling_param, num_classes):
-        self._subsampling_param = subsampling_param
-        self._num_classes = num_classes
+    def __init__(self, size, start=None, end=None):
+        self.size = size
+        self.start = start
+        self.end = end
 
     def __call__(self, data):
         num_nodes = data.num_nodes
 
-        pos = data.pos
-        batch = data.batch
+        if 'batch' not in data:
+            batch = data.pos.new_zeros(num_nodes, dtype=torch.long)
+        else:
+            batch = data.batch
 
-        pool = voxel_grid(pos, batch, self._subsampling_param)
-        pool, _ = consecutive_cluster(pool)
+        cluster = voxel_grid(data.pos, batch, self.size, self.start, self.end)
+        cluster, perm = consecutive_cluster(cluster)
 
         for key, item in data:
             if bool(re.search('edge', key)):
-                continue
+                raise ValueError(
+                    'GridSampling does not support coarsening of edges')
 
             if torch.is_tensor(item) and item.size(0) == num_nodes:
                 if key == 'y':
-                    one_hot = torch.zeros((item.shape[0], self._num_classes))\
-                        .scatter(1, item.unsqueeze(-1), 1)
-
-                    aggr_labels = scatter_add(one_hot, pool, dim=0)
-                    data[key] = torch.argmax(aggr_labels, -1)
+                    item = F.one_hot(item)
+                    item = scatter_add(item, cluster, dim=0)
+                    data[key] = item.argmax(dim=-1)
+                elif key == 'batch':
+                    data[key] = item[perm]
                 else:
-                    data[key] = pool_pos(pool, item).to(item.dtype)
+                    data[key] = scatter_mean(item, cluster, dim=0)
+
         return data
 
     def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self._subsampling_param, self._num_classes)
+        return '{}(size={})'.format(self.__class__.__name__, self.size)
