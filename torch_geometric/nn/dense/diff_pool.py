@@ -17,8 +17,6 @@ def dense_diff_pool(x, adj, s, mask=None):
 
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
-    Returns pooled node feature matrix, coarsened adjacency matrix and the
-    auxiliary link prediction objective
     Returns pooled node feature matrix, coarsened adjacency matrix and two
     auxiliary objectives: (1) The link prediction loss
 
