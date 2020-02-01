@@ -65,7 +65,7 @@ def train():
     model.train()
 
     total_loss = 0
-    for data_flow in loader(data.train_mask):
+    for data_flow in loader(data.train_mask.nonzero().squeeze()):
         optimizer.zero_grad()
         out = model(data.x.to(device), data_flow.to(device))
         loss = F.nll_loss(out, data.y[data_flow.n_id].to(device))
@@ -79,7 +79,7 @@ def test(mask):
     model.eval()
 
     correct = 0
-    for data_flow in loader(mask):
+    for data_flow in loader(mask.nonzero().squeeze()):
         pred = model(data.x.to(device), data_flow.to(device)).max(1)[1]
         correct += pred.eq(data.y[data_flow.n_id].to(device)).sum().item()
     return correct / mask.sum().item()
