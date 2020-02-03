@@ -15,7 +15,6 @@ class LocalDegreeProfile(object):
     to the node features, where :math:`DN(i) = \{ \deg(j) \mid j \in
     \mathcal{N}(i) \}`.
     """
-
     def __call__(self, data):
         row, col = data.edge_index
         N = data.num_nodes
@@ -23,11 +22,8 @@ class LocalDegreeProfile(object):
         deg = degree(row, N, dtype=torch.float)
         deg_col = deg[col]
 
-        value = 1e9
-        min_deg, _ = scatter_min(deg_col, row, dim_size=N, fill_value=value)
-        min_deg[min_deg == value] = 0
-        max_deg, _ = scatter_max(deg_col, row, dim_size=N, fill_value=-value)
-        max_deg[max_deg == -value] = 0
+        min_deg, _ = scatter_min(deg_col, row, dim_size=N)
+        max_deg, _ = scatter_max(deg_col, row, dim_size=N)
         mean_deg = scatter_mean(deg_col, row, dim_size=N)
         std_deg = scatter_std(deg_col, row, dim_size=N)
 
