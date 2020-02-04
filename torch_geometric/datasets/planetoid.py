@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+from torch_sparse import SparseTensor
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_planetoid_data
 
@@ -28,10 +29,14 @@ class Planetoid(InMemoryDataset):
 
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
 
-    def __init__(self, root, name, transform=None, pre_transform=None):
+    def __init__(self, root, name, sparse=False, transform=None,
+                 pre_transform=None):
         self.name = name
         super(Planetoid, self).__init__(root, transform, pre_transform)
         self.__data__ = torch.load(self.processed_paths[0])
+        if sparse:
+            x = SparseTensor.from_dense(self.__data__.x, has_value=False)
+            self.__data__.x = x.fill_cache_()
 
     @property
     def raw_dir(self):
