@@ -3,10 +3,9 @@ import os.path as osp
 from itertools import repeat
 
 import torch
-from torch_sparse import coalesce
+from torch_sparse import SparseTensor
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
-from torch_geometric.utils import remove_self_loops
 
 try:
     import cPickle as pickle
@@ -45,9 +44,9 @@ def read_planetoid_data(folder, prefix):
     val_mask = index_to_mask(val_index, size=y.size(0))
     test_mask = index_to_mask(test_index, size=y.size(0))
 
-    edge_index = edge_index_from_dict(graph, num_nodes=y.size(0))
+    adj = adj_from_dict(graph, num_nodes=y.size(0))
 
-    data = Data(x=x, edge_index=edge_index, y=y)
+    data = Data(adj=adj, x=x, y=y)
     data.train_mask = train_mask
     data.val_mask = val_mask
     data.test_mask = test_mask
@@ -75,17 +74,19 @@ def read_file(folder, prefix, name):
     return out
 
 
-def edge_index_from_dict(graph_dict, num_nodes=None):
+def adj_from_dict(graph_dict, num_nodes):
     row, col = [], []
     for key, value in graph_dict.items():
         row += repeat(key, len(value))
         col += value
-    edge_index = torch.stack([torch.tensor(row), torch.tensor(col)], dim=0)
+    row, col = torch.tensor(row), torch.tensor(col)
+    size = torch.Size([num_nodes, num_nodes])
+    adj = SparseTensor(row=row, col=col, sparse_sizes=size)
+    adj = adj.remove_diag()
     # NOTE: There are duplicated edges and self loops in the datasets. Other
     # implementations do not remove them!
-    edge_index, _ = remove_self_loops(edge_index)
-    edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
-    return edge_index
+    adj = adj.coalesce()
+    return adj
 
 
 def index_to_mask(index, size):
