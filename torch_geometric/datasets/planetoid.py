@@ -31,7 +31,7 @@ class Planetoid(InMemoryDataset):
     def __init__(self, root, name, transform=None, pre_transform=None):
         self.name = name
         super(Planetoid, self).__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.__data__ = torch.load(self.processed_paths[0])
 
     @property
     def raw_dir(self):
@@ -50,14 +50,25 @@ class Planetoid(InMemoryDataset):
     def processed_file_names(self):
         return 'data.pt'
 
+    def __len__(self):
+        return 1
+
+    def __getitem__(self, idx):
+        assert idx == 0 or idx == -1
+        data = self.__data__
+        if self.transform is not None:
+            data = self.transform(data)
+        return data
+
     def download(self):
         for name in self.raw_file_names:
             download_url('{}/{}'.format(self.url, name), self.raw_dir)
 
     def process(self):
         data = read_planetoid_data(self.raw_dir, self.name)
-        data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
+        torch.save(data, self.processed_paths[0])
 
     def __repr__(self):
         return '{}()'.format(self.name)

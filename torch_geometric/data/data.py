@@ -4,7 +4,7 @@ import warnings
 
 import torch
 import torch_geometric
-from torch_sparse import coalesce
+from torch_sparse import coalesce, SparseTensor
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
@@ -21,6 +21,8 @@ __num_nodes_warn_msg__ = (
 def size_repr(value):
     if torch.is_tensor(value):
         return list(value.size())
+    if isinstance(value, SparseTensor):
+        return f'({value.sizes()}, nnz={value.nnz()})'
     elif isinstance(value, int) or isinstance(value, float):
         return [1]
     elif isinstance(value, list) or isinstance(value, tuple):

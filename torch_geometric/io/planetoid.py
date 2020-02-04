@@ -82,10 +82,10 @@ def adj_from_dict(graph_dict, num_nodes):
     row, col = torch.tensor(row), torch.tensor(col)
     size = torch.Size([num_nodes, num_nodes])
     adj = SparseTensor(row=row, col=col, sparse_sizes=size)
-    adj = adj.remove_diag()
     # NOTE: There are duplicated edges and self loops in the datasets. Other
     # implementations do not remove them!
-    adj = adj.coalesce()
+    adj = adj.remove_diag().coalesce()
+    adj = adj.fill_cache_()
     return adj
 
 
