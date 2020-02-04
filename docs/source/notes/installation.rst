@@ -10,12 +10,12 @@ These packages come with their own CPU and GPU kernel implementations based on t
 
 Please follow the steps below for a successful installation:
 
-#. Ensure that at least PyTorch 1.2.0 is installed:
+#. Ensure that at least PyTorch 1.4.0 is installed:
 
     .. code-block:: none
 
         $ python -c "import torch; print(torch.__version__)"
-        >>> 1.2.0
+        >>> 1.4.0
 
 #. Ensure CUDA is setup correctly (optional):
 
