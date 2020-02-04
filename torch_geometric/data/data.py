@@ -22,7 +22,7 @@ def size_repr(value):
     if torch.is_tensor(value):
         return list(value.size())
     if isinstance(value, SparseTensor):
-        return f'({value.sizes()}, nnz={value.nnz()})'
+        return f'({list(value.sizes())}, nnz={value.nnz()})'
     elif isinstance(value, int) or isinstance(value, float):
         return [1]
     elif isinstance(value, list) or isinstance(value, tuple):
@@ -38,6 +38,8 @@ class Data(object):
     Args:
         x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
             num_node_features]`. (default: :obj:`None`)
+        adj (SparseTensor, optional): Sparse adjacency matrix.
+            (default: :obj:`None`)
         edge_index (LongTensor, optional): Graph connectivity in COO format
             with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
         edge_attr (Tensor, optional): Edge feature matrix with shape
@@ -60,9 +62,10 @@ class Data(object):
         data.train_idx = torch.tensor([...], dtype=torch.long)
         data.test_mask = torch.tensor([...], dtype=torch.bool)
     """
-    def __init__(self, x=None, edge_index=None, edge_attr=None, y=None,
-                 pos=None, norm=None, face=None, **kwargs):
+    def __init__(self, x=None, adj=None, edge_index=None, edge_attr=None,
+                 y=None, pos=None, norm=None, face=None, **kwargs):
         self.x = x
+        self.adj = adj
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.y = y
@@ -179,6 +182,8 @@ class Data(object):
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
+        if self.adj is not None:
+            return self.adj.size(1)
         if self.face is not None:
             warnings.warn(__num_nodes_warn_msg__.format('face'))
             return maybe_num_nodes(self.face)
@@ -194,6 +199,8 @@ class Data(object):
     @property
     def num_edges(self):
         r"""Returns the number of edges in the graph."""
+        if self.adj is not None:
+            return self.adj.nnz()
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
         return None
@@ -220,13 +227,20 @@ class Data(object):
     @property
     def num_edge_features(self):
         r"""Returns the number of features per edge in the graph."""
-        if self.edge_attr is None:
-            return 0
-        return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(1)
+        if self.adj is not None:
+            if self.adj.has_value():
+                return self.adj.storage.value().size(1)
+            else:
+                return 0
+        if self.edge_attr is not None:
+            return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(1)
+        return 0
 
     def is_coalesced(self):
         r"""Returns :obj:`True`, if edge indices are ordered and do not contain
         duplicate entries."""
+        if self.adj is not None:
+            return self.adj.is_coalesced()
         edge_index, _ = coalesce(self.edge_index, None, self.num_nodes,
                                  self.num_nodes)
         return self.edge_index.numel() == edge_index.numel() and (
@@ -234,10 +248,13 @@ class Data(object):
 
     def coalesce(self):
         r""""Orders and removes duplicated entries from edge indices."""
-        self.edge_index, self.edge_attr = coalesce(self.edge_index,
-                                                   self.edge_attr,
-                                                   self.num_nodes,
-                                                   self.num_nodes)
+        if self.adj is not None:
+            self.adj = self.adj.coalesce()
+        else:
+            self.edge_index, self.edge_attr = coalesce(self.edge_index,
+                                                       self.edge_attr,
+                                                       self.num_nodes,
+                                                       self.num_nodes)
         return self
 
     def contains_isolated_nodes(self):
@@ -250,6 +267,8 @@ class Data(object):
 
     def is_undirected(self):
         r"""Returns :obj:`True`, if graph edges are undirected."""
+        if self.adj is not None:
+            return self.adj.is_symmetric()
         return is_undirected(self.edge_index, self.edge_attr, self.num_nodes)
 
     def is_directed(self):
@@ -262,7 +281,7 @@ class Data(object):
         all present attributes.
         """
         for key, item in self(*keys):
-            if torch.is_tensor(item):
+            if torch.is_tensor(item) or isinstance(item, SparseTensor):
                 self[key] = func(item)
         return self
 
@@ -281,7 +300,8 @@ class Data(object):
 
     def clone(self):
         return self.__class__.from_dict({
-            k: v.clone() if torch.is_tensor(v) else copy.deepcopy(v)
+            k: v.clone() if torch.is_tensor(v) or isinstance(v, SparseTensor)
+            else copy.deepcopy(v)
             for k, v in self.__dict__.items()
         })
 
