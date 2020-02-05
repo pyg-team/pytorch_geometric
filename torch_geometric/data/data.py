@@ -15,7 +15,7 @@ __num_nodes_warn_msg__ = (
     'indices, and hence may result in unexpected batch-wise behavior, e.g., '
     'in case there exists isolated nodes. Please consider explicitly setting '
     'the number of nodes for this data object by assigning it to '
-    'data.num_nodes.')
+    '`data.num_nodes`.')
 
 
 def size_repr(value):
@@ -36,14 +36,16 @@ class Data(object):
     (optional) attributes:
 
     Args:
-        x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
-            num_node_features]`. (default: :obj:`None`)
         adj (SparseTensor, optional): Sparse adjacency matrix.
             (default: :obj:`None`)
         edge_index (LongTensor, optional): Graph connectivity in COO format
             with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
         edge_attr (Tensor, optional): Edge feature matrix with shape
             :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes according to
+            :attr:`edge_index`. (default: :obj:`None`)
+        x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
+            num_node_features]`. (default: :obj:`None`)
         y (Tensor, optional): Graph or node targets with arbitrary shape.
             (default: :obj:`None`)
         pos (Tensor, optional): Node position matrix with shape
@@ -53,8 +55,8 @@ class Data(object):
         face (LongTensor, optional): Face adjacency matrix with shape
             :obj:`[3, num_faces]`. (default: :obj:`None`)
 
-    The data object is not restricted to these attributes and can be extented
-    by any other additional data.
+    Note that the data object is not restricted to these attributes and can be
+    extented by any other additional data.
 
     Example::
 
@@ -62,21 +64,20 @@ class Data(object):
         data.train_idx = torch.tensor([...], dtype=torch.long)
         data.test_mask = torch.tensor([...], dtype=torch.bool)
     """
-    def __init__(self, x=None, adj=None, edge_index=None, edge_attr=None,
-                 y=None, pos=None, norm=None, face=None, **kwargs):
+    def __init__(self, adj=None, edge_index=None, edge_attr=None,
+                 num_nodes=None, x=None, y=None, pos=None, norm=None,
+                 face=None, **kwargs):
+        self.__adj__ = adj
+        self.__edge_index__ = edge_index
+        self.__edge_attr__ = edge_attr
+        self.__num_nodes__ = num_nodes
         self.x = x
-        self.adj = adj
-        self.edge_index = edge_index
-        self.edge_attr = edge_attr
         self.y = y
         self.pos = pos
         self.norm = norm
         self.face = face
         for key, item in kwargs.items():
-            if key == 'num_nodes':
-                self.__num_nodes__ = item
-            else:
-                self[key] = item
+            self[key] = item
 
         if torch_geometric.is_debug_enabled():
             self.debug()
@@ -106,7 +107,7 @@ class Data(object):
     def keys(self):
         r"""Returns all names of graph attributes."""
         keys = [key for key in self.__dict__.keys() if self[key] is not None]
-        keys = [key for key in keys if key[:2] != '__' and key[-2:] != '__']
+        keys = [key[2:-2] if key[:2] == '__' else key for key in keys]
         return keys
 
     def __len__(self):
@@ -143,9 +144,12 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # `*index*` and `*face*` should be concatenated in the last dimension,
-        # everything else in the first dimension.
-        return -1 if bool(re.search('(index|face)', key)) else 0
+        if bool(re.search('(index|face)', key)):
+            return 1
+        elif bool(re.search('adj', key)):
+            return (0, 1)
+        else:
+            return 0
 
     def __inc__(self, key, value):
         r""""Returns the incremental count to cumulatively increase the value
@@ -157,9 +161,45 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # Only `*index*` and `*face*` should be cumulatively summed up when
-        # creating batches.
-        return self.num_nodes if bool(re.search('(index|face)', key)) else 0
+        if bool(re.search('(index|face)', key)):
+            return self.num_nodes
+        else:
+            return 0
+
+    @property
+    def adj(self):
+        if self.__adj__ is None and self.__edge_index__ is not None:
+            col, row = self.__edge_index__
+            self.__adj__ = SparseTensor(
+                row=row, col=col,
+                sparse_sizes=torch.Size([self.num_nodes, self.num_nodes]))
+        return self.__adj__
+
+    @adj.setter
+    def adj(self, adj):
+        self.__adj__ = adj
+
+    @property
+    def edge_index(self):
+        if self.__edge_index__ is None and self.__adj__ is not None:
+            col, row, _ = self.__adj__.coo()
+            self.__edge_index__ = torch.stack([row, col], dim=0)
+        return self.__edge_index__
+
+    @edge_index.setter
+    def edge_index(self, edge_index):
+        self.__edge_index__ = edge_index
+
+    @property
+    def edge_attr(self):
+        if self.__edge_attr__ is None and self.__adj__ is not None:
+            if self.__adj__.has_value():
+                _, _, self.__edge_attr__ = self.__adj__.csr()
+        return self.__edge_attr__
+
+    @edge_attr.setter
+    def edge_attr(self, edge_attr):
+        self.__edge_attr__ = edge_attr
 
     @property
     def num_nodes(self):
@@ -178,18 +218,18 @@ class Data(object):
             explicitly via :obj:`data.num_nodes = ...`.
             You will be given a warning that requests you to do so.
         """
-        if hasattr(self, '__num_nodes__'):
+        if self.__num_nodes__ is not None:
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
-        if self.adj is not None:
+        if self.__adj__ is not None:
             return self.adj.size(1)
+        if self.__edge_index__ is not None:
+            warnings.warn(__num_nodes_warn_msg__.format('edge'))
+            return maybe_num_nodes(self.edge_index)
         if self.face is not None:
             warnings.warn(__num_nodes_warn_msg__.format('face'))
             return maybe_num_nodes(self.face)
-        if self.edge_index is not None:
-            warnings.warn(__num_nodes_warn_msg__.format('edge'))
-            return maybe_num_nodes(self.edge_index)
         return None
 
     @num_nodes.setter
@@ -199,7 +239,7 @@ class Data(object):
     @property
     def num_edges(self):
         r"""Returns the number of edges in the graph."""
-        if self.adj is not None:
+        if self.__adj__ is not None:
             return self.adj.nnz()
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
@@ -227,34 +267,40 @@ class Data(object):
     @property
     def num_edge_features(self):
         r"""Returns the number of features per edge in the graph."""
-        if self.adj is not None:
-            if self.adj.has_value():
-                return self.adj.storage.value().size(1)
-            else:
-                return 0
-        if self.edge_attr is not None:
-            return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(1)
+        if self.__adj__ is not None and self.__adj__.has_value():
+            _, _, edge_attr = self.__adj__.coo()
+            return 1 if edge_attr.dim() == 1 else edge_attr.size(1)
+        if self.__edge_attr__ is not None:
+            edge_attr = self.__edge_attr__
+            return 1 if edge_attr.dim() == 1 else edge_attr.size(1)
         return 0
+
+    def is_adj_coalesced(self):
+        if self.__adj__ is not None:
+            return self.adj.is_coalesced()
+        return True
+
+    def is_edge_index_coalesced(self):
+        if self.__edge_index__ is not None:
+            edge_index, _ = coalesce(self.__edge_index__, None, self.num_nodes,
+                                     self.num_nodes)
+            return self.__edge_index__.numel() == edge_index.numel() and (bool(
+                (self.__edge_index__ == edge_index).all()))
+        return True
 
     def is_coalesced(self):
         r"""Returns :obj:`True`, if edge indices are ordered and do not contain
         duplicate entries."""
-        if self.adj is not None:
-            return self.adj.is_coalesced()
-        edge_index, _ = coalesce(self.edge_index, None, self.num_nodes,
-                                 self.num_nodes)
-        return self.edge_index.numel() == edge_index.numel() and (
-            self.edge_index != edge_index).sum().item() == 0
+        return self.is_adj_coalesced() and self.is_edge_index_coalesced()
 
     def coalesce(self):
         r""""Orders and removes duplicated entries from edge indices."""
-        if self.adj is not None:
-            self.adj = self.adj.coalesce()
-        else:
-            self.edge_index, self.edge_attr = coalesce(self.edge_index,
-                                                       self.edge_attr,
-                                                       self.num_nodes,
-                                                       self.num_nodes)
+        if self.__adj__ is not None:
+            self.__adj__ = self.__adj__.coalesce()
+        if self.__edge_index__ is not None:
+            self.__edge_index__, self.__edge_attr__ = coalesce(
+                self.__edge_index__, self.__edge_attr__, self.num_nodes,
+                self.num_nodes)
         return self
 
     def contains_isolated_nodes(self):
@@ -267,8 +313,6 @@ class Data(object):
 
     def is_undirected(self):
         r"""Returns :obj:`True`, if graph edges are undirected."""
-        if self.adj is not None:
-            return self.adj.is_symmetric()
         return is_undirected(self.edge_index, self.edge_attr, self.num_nodes)
 
     def is_directed(self):
@@ -289,11 +333,11 @@ class Data(object):
         r"""Ensures a contiguous memory layout for all attributes :obj:`*keys`.
         If :obj:`*keys` is not given, all present attributes are ensured to
         have a contiguous memory layout."""
-        return self.apply(lambda x: x.contiguous(), *keys)
+        return self.apply(
+            lambda x: x.contiguous() if torch.is_tensor(x) else x, *keys)
 
     def to(self, device, *keys):
-        r"""Performs tensor dtype and/or device conversion to all attributes
-        :obj:`*keys`.
+        r"""Performs tensor device conversion to all attributes :obj:`*keys`.
         If :obj:`*keys` is not given, the conversion is applied to all present
         attributes."""
         return self.apply(lambda x: x.to(device), *keys)
@@ -306,7 +350,7 @@ class Data(object):
         })
 
     def debug(self):
-        if self.edge_index is not None:
+        if self.__edge_index__ is not None:
             if self.edge_index.dtype != torch.long:
                 raise RuntimeError(
                     ('Expected edge indices of dtype {}, but found dtype '
@@ -318,13 +362,13 @@ class Data(object):
                     ('Expected face indices of dtype {}, but found dtype '
                      ' {}').format(torch.long, self.face.dtype))
 
-        if self.edge_index is not None:
+        if self.__edge_index__ is not None:
             if self.edge_index.dim() != 2 or self.edge_index.size(0) != 2:
                 raise RuntimeError(
                     ('Edge indices should have shape [2, num_edges] but found'
                      ' shape {}').format(self.edge_index.size()))
 
-        if self.edge_index is not None and self.num_nodes is not None:
+        if self.__edge_index__ is not None:
             if self.edge_index.numel() > 0:
                 min_index = self.edge_index.min()
                 max_index = self.edge_index.max()
@@ -342,7 +386,7 @@ class Data(object):
                     ('Face indices should have shape [3, num_faces] but found'
                      ' shape {}').format(self.face.size()))
 
-        if self.face is not None and self.num_nodes is not None:
+        if self.face is not None:
             if self.face.numel() > 0:
                 min_index = self.face.min()
                 max_index = self.face.max()
@@ -354,28 +398,28 @@ class Data(object):
                      ' but found them in the interval [{}, {}]').format(
                          self.num_nodes - 1, min_index, max_index))
 
-        if self.edge_index is not None and self.edge_attr is not None:
+        if self.__edge_index__ is not None and self.__edge_attr__ is not None:
             if self.edge_index.size(1) != self.edge_attr.size(0):
                 raise RuntimeError(
                     ('Edge indices and edge attributes hold a differing '
                      'number of edges, found {} and {}').format(
                          self.edge_index.size(), self.edge_attr.size()))
 
-        if self.x is not None and self.num_nodes is not None:
+        if self.x is not None:
             if self.x.size(0) != self.num_nodes:
                 raise RuntimeError(
                     ('Node features should hold {} elements in the first '
                      'dimension but found {}').format(self.num_nodes,
                                                       self.x.size(0)))
 
-        if self.pos is not None and self.num_nodes is not None:
+        if self.pos is not None:
             if self.pos.size(0) != self.num_nodes:
                 raise RuntimeError(
                     ('Node positions should hold {} elements in the first '
                      'dimension but found {}').format(self.num_nodes,
                                                       self.pos.size(0)))
 
-        if self.norm is not None and self.num_nodes is not None:
+        if self.norm is not None:
             if self.norm.size(0) != self.num_nodes:
                 raise RuntimeError(
                     ('Node normals should hold {} elements in the first '
