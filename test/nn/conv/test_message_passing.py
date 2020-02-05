@@ -1,3 +1,5 @@
+import copy
+
 import torch
 from torch_geometric.nn import MessagePassing
 
@@ -38,6 +40,7 @@ def test_message_passing():
 class MyConv(MessagePassing):
     def __init__(self):
         super(MyConv, self).__init__(aggr='add')
+        self.weight = torch.nn.Parameter(torch.randn(16, 16))
 
     def forward(self, x, edge_index, **kwargs):
         return self.propagate(edge_index, x=x, **kwargs)
@@ -60,3 +63,15 @@ def test_default_arguments():
     assert (out == 0).all()
     out = conv(x, edge_index, zeros=False)
     assert (out != 0).all()
+
+
+def test_copy():
+    conv = MyConv()
+    conv2 = copy.copy(conv)
+
+    assert conv != conv2
+    assert conv.weight.data_ptr == conv2.weight.data_ptr
+
+    conv = copy.deepcopy(conv)
+    assert conv != conv2
+    assert conv.weight.data_ptr != conv2.weight.data_ptr

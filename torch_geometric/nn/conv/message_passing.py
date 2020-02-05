@@ -47,7 +47,6 @@ class MessagePassing(torch.nn.Module):
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`0`)
     """
-
     def __init__(self, aggr='add', flow='source_to_target', node_dim=0):
         super(MessagePassing, self).__init__()
 
@@ -61,16 +60,15 @@ class MessagePassing(torch.nn.Module):
         assert self.node_dim >= 0
 
         self.__msg_params__ = inspect.signature(self.message).parameters
+        self.__msg_params__ = OrderedDict(self.__msg_params__)
 
         self.__aggr_params__ = inspect.signature(self.aggregate).parameters
         self.__aggr_params__ = OrderedDict(self.__aggr_params__)
         self.__aggr_params__.popitem(last=False)
-        self.__aggr_params__ = MappingProxyType(self.__aggr_params__)
 
         self.__update_params__ = inspect.signature(self.update).parameters
         self.__update_params__ = OrderedDict(self.__update_params__)
         self.__update_params__.popitem(last=False)
-        self.__update_params__ = MappingProxyType(self.__update_params__)
 
         msg_args = set(self.__msg_params__.keys()) - msg_special_args
         aggr_args = set(self.__aggr_params__.keys()) - aggr_special_args
