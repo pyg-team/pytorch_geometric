@@ -56,45 +56,13 @@ class InMemoryDataset(Dataset):
     @property
     def num_classes(self):
         r"""The number of classes in the dataset."""
-        data = self.data
-        return data.y.max().item() + 1 if data.y.dim() == 1 else data.y.size(1)
+        y = self.data.y
+        return y.max().item() + 1 if y.dim() == 1 else y.size(1)
 
-    def __len__(self):
-        return self.slices[list(self.slices.keys())[0]].size(0) - 1
-
-    def __getitem__(self, idx):
-        r"""Gets the data object at index :obj:`idx` and transforms it (in case
-        a :obj:`self.transform` is given).
-        Returns a data object, if :obj:`idx` is a scalar, and a new dataset in
-        case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a LongTensor
-        or a BoolTensor."""
-        if isinstance(idx, int):
-            data = self.get(idx)
-            data = data if self.transform is None else self.transform(data)
-            return data
-        elif isinstance(idx, slice):
-            return self.__indexing__(range(*idx.indices(len(self))))
-        elif torch.is_tensor(idx):
-            if idx.dtype == torch.long:
-                return self.__indexing__(idx)
-            elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
-                return self.__indexing__(idx.nonzero())
-
-        raise IndexError(
-            'Only integers, slices (`:`) and long or bool tensors are valid '
-            'indices (got {}).'.format(type(idx).__name__))
-
-    def shuffle(self, return_perm=False):
-        r"""Randomly shuffles the examples in the dataset.
-
-        Args:
-            return_perm (bool, optional): If set to :obj:`True`, will
-                additionally return the random permutation used to shuffle the
-                dataset. (default: :obj:`False`)
-        """
-        perm = torch.randperm(len(self))
-        dataset = self.__indexing__(perm)
-        return (dataset, perm) if return_perm is True else dataset
+    def len(self):
+        for item in self.slices.values():
+            return len(item) - 1
+        return 0
 
     def get(self, idx):
         data = self.data.__class__()
@@ -113,12 +81,6 @@ class InMemoryDataset(Dataset):
                 s = slice(slices[idx], slices[idx + 1])
             data[key] = item[s]
         return data
-
-    def __indexing__(self, index):
-        copy = self.__class__.__new__(self.__class__)
-        copy.__dict__ = self.__dict__.copy()
-        copy.data, copy.slices = self.collate([self.get(i) for i in index])
-        return copy
 
     def collate(self, data_list):
         r"""Collates a python list of data objects to the internal storage
@@ -155,6 +117,3 @@ class InMemoryDataset(Dataset):
             slices[key] = torch.tensor(slices[key], dtype=torch.long)
 
         return data, slices
-
-    def __repr__(self):  # pragma: no cover
-        return '{}({})'.format(self.__class__.__name__, len(self))
