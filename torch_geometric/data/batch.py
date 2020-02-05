@@ -10,10 +10,11 @@ class Batch(Data):
     In addition, single graphs can be reconstructed via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
-    def __init__(self, batch=None, **kwargs):
+    def __init__(self, batch=None, num_graphs=None, **kwargs):
         super(Batch, self).__init__(**kwargs)
 
         self.batch = batch
+        self.__num_graphs__ = num_graphs
         self.__data_class__ = Data
         self.__slices__ = None
 
@@ -74,14 +75,6 @@ class Batch(Data):
             elif isinstance(item, int) or isinstance(item, float):
                 batch[key] = torch.tensor(batch[key])
 
-        # Copy custom data functions to batch (does not work yet):
-        # if data_list.__class__ != Data:
-        #     org_funcs = set(Data.__dict__.keys())
-        #     funcs = set(data_list[0].__class__.__dict__.keys())
-        #     batch.__custom_funcs__ = funcs.difference(org_funcs)
-        #     for func in funcs.difference(org_funcs):
-        #         setattr(batch, func, getattr(data_list[0], func))
-
         if torch_geometric.is_debug_enabled():
             batch.debug()
 
@@ -120,6 +113,17 @@ class Batch(Data):
         return data_list
 
     @property
+    def batchptr(self):
+        r"""Returns the :obj:`batch` assignment vector in a compressed storage
+        format."""
+        if self.batch is not None:
+            return torch.ops.torch_sparse.ind2ptr(self.batch, self.num_graphs)
+        return None
+
+    @property
     def num_graphs(self):
-        """Returns the number of graphs in the batch."""
-        return self.batch[-1].item() + 1
+        r"""Returns the number of graphs in the batch."""
+        if self.__num_graphs__ is not None:
+            return self.__num_graphs__
+        else:
+            return self.batch().max().item() + 1

@@ -170,8 +170,8 @@ class Data(object):
     def adj(self):
         if self.__adj__ is None and self.__edge_index__ is not None:
             col, row = self.__edge_index__
-            self.__adj__ = SparseTensor(
-                row=row, col=col,
+            return SparseTensor(
+                row=row, col=col, value=self.__edge_attr__,
                 sparse_sizes=torch.Size([self.num_nodes, self.num_nodes]))
         return self.__adj__
 
@@ -183,7 +183,7 @@ class Data(object):
     def edge_index(self):
         if self.__edge_index__ is None and self.__adj__ is not None:
             col, row, _ = self.__adj__.coo()
-            self.__edge_index__ = torch.stack([row, col], dim=0)
+            return torch.stack([row, col], dim=0)
         return self.__edge_index__
 
     @edge_index.setter
@@ -194,7 +194,7 @@ class Data(object):
     def edge_attr(self):
         if self.__edge_attr__ is None and self.__adj__ is not None:
             if self.__adj__.has_value():
-                _, _, self.__edge_attr__ = self.__adj__.csr()
+                return self.__adj__.csr()[2]
         return self.__edge_attr__
 
     @edge_attr.setter
@@ -275,12 +275,12 @@ class Data(object):
             return 1 if edge_attr.dim() == 1 else edge_attr.size(1)
         return 0
 
-    def is_adj_coalesced(self):
+    def __is_adj_coalesced__(self):
         if self.__adj__ is not None:
             return self.adj.is_coalesced()
         return True
 
-    def is_edge_index_coalesced(self):
+    def __is_edge_index_coalesced__(self):
         if self.__edge_index__ is not None:
             edge_index, _ = coalesce(self.__edge_index__, None, self.num_nodes,
                                      self.num_nodes)
@@ -291,7 +291,8 @@ class Data(object):
     def is_coalesced(self):
         r"""Returns :obj:`True`, if edge indices are ordered and do not contain
         duplicate entries."""
-        return self.is_adj_coalesced() and self.is_edge_index_coalesced()
+        return (self.__is_adj_coalesced__()
+                and self.__is_edge_index_coalesced__())
 
     def coalesce(self):
         r""""Orders and removes duplicated entries from edge indices."""
