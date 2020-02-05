@@ -55,16 +55,6 @@ class Planetoid(InMemoryDataset):
     def processed_file_names(self):
         return 'data.pt'
 
-    def __len__(self):
-        return 1
-
-    def __getitem__(self, idx):
-        assert idx == 0 or idx == -1
-        data = self.__data__
-        if self.transform is not None:
-            data = self.transform(data)
-        return data
-
     def download(self):
         for name in self.raw_file_names:
             download_url('{}/{}'.format(self.url, name), self.raw_dir)
