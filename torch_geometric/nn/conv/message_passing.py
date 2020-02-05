@@ -1,6 +1,5 @@
 import inspect
 from collections import OrderedDict
-from types import MappingProxyType
 
 import torch
 from torch_geometric.utils import scatter_
