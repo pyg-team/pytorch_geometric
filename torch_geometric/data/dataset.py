@@ -30,7 +30,8 @@ class Dataset(torch.utils.data.Dataset):
     create_dataset.html>`__ for the accompanying tutorial.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (string, optional): Root directory where the dataset should be
+            saved. (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -44,7 +45,6 @@ class Dataset(torch.utils.data.Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-
     @property
     def raw_file_names(self):
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
@@ -73,33 +73,23 @@ class Dataset(torch.utils.data.Dataset):
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
-    def __init__(self, root, transform=None, pre_transform=None,
+    def __init__(self, root=None, transform=None, pre_transform=None,
                  pre_filter=None):
         super(Dataset, self).__init__()
 
-        self.root = osp.expanduser(osp.normpath(root))
+        if isinstance(root, str):
+            root = osp.expanduser(osp.normpath(root))
+
+        self.root = root
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
 
-        path = osp.join(self.processed_dir, 'pre_transform.pt')
-        if osp.exists(path) and torch.load(path) != __repr__(pre_transform):
-            warnings.warn(
-                'The `pre_transform` argument differs from the one used in '
-                'the pre-processed version of this dataset. If you really '
-                'want to make use of another pre-processing technique, make '
-                'sure to delete `{}/processed` first.'.format(
-                    self.processed_dir))
-        path = osp.join(self.processed_dir, 'pre_filter.pt')
-        if osp.exists(path) and torch.load(path) != __repr__(pre_filter):
-            warnings.warn(
-                'The `pre_filter` argument differs from the one used in the '
-                'pre-processed version of this dataset. If you really want to '
-                'make use of another pre-fitering technique, make sure to '
-                'delete `{}/processed` first.'.format(self.processed_dir))
+        if 'download' in self.__class__.__dict__.keys():
+            self._download()
 
-        self._download()
-        self._process()
+        if 'process' in self.__class__.__dict__.keys():
+            self._process()
 
     @property
     def raw_dir(self):
@@ -145,6 +135,21 @@ class Dataset(torch.utils.data.Dataset):
         self.download()
 
     def _process(self):
+        f = osp.join(self.processed_dir, 'pre_transform.pt')
+        if osp.exists(f) and torch.load(f) != __repr__(self.pre_transform):
+            warnings.warn(
+                'The `pre_transform` argument differs from the one used in '
+                'the pre-processed version of this dataset. If you really '
+                'want to make use of another pre-processing technique, make '
+                'sure to delete `{}` first.'.format(self.processed_dir))
+        f = osp.join(self.processed_dir, 'pre_filter.pt')
+        if osp.exists(f) and torch.load(f) != __repr__(self.pre_filter):
+            warnings.warn(
+                'The `pre_filter` argument differs from the one used in the '
+                'pre-processed version of this dataset. If you really want to '
+                'make use of another pre-fitering technique, make sure to '
+                'delete `{}` first.'.format(self.processed_dir))
+
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 

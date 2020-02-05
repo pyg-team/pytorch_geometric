@@ -12,7 +12,8 @@ class InMemoryDataset(Dataset):
     tutorial.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (string, optional): Root directory where the dataset should be
+            saved. (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -46,7 +47,7 @@ class InMemoryDataset(Dataset):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
-    def __init__(self, root, transform=None, pre_transform=None,
+    def __init__(self, root=None, transform=None, pre_transform=None,
                  pre_filter=None):
         super(InMemoryDataset, self).__init__(root, transform, pre_transform,
                                               pre_filter)
@@ -154,3 +155,6 @@ class InMemoryDataset(Dataset):
             slices[key] = torch.tensor(slices[key], dtype=torch.long)
 
         return data, slices
+
+    def __repr__(self):  # pragma: no cover
+        return '{}({})'.format(self.__class__.__name__, len(self))
