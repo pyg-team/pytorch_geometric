@@ -122,8 +122,8 @@ def train(epoch):
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        output, link_loss, ent_loss = model(data.x, data.adj, data.mask)
-        loss = F.nll_loss(output, data.y.view(-1)) + link_loss + ent_loss
+        output, _, _ = model(data.x, data.adj, data.mask)
+        loss = F.nll_loss(output, data.y.view(-1))
         loss.backward()
         loss_all += data.y.size(0) * loss.item()
         optimizer.step()
