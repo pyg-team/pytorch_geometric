@@ -26,12 +26,10 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
 
         self.conv1 = GCNConv(in_channels, hidden_channels)
-
         num_nodes = ceil(0.5 * average_nodes)
         self.pool1 = Linear(hidden_channels, num_nodes)
 
         self.conv2 = DenseGraphConv(hidden_channels, hidden_channels)
-
         num_nodes = ceil(0.5 * num_nodes)
         self.pool2 = Linear(hidden_channels, num_nodes)
 
@@ -74,14 +72,15 @@ def train(epoch):
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        output, mc_loss, o_loss = model(data.x, data.edge_index, data.batch)
-        loss = F.nll_loss(output, data.y.view(-1)) + mc_loss + o_loss
+        out, mc_loss, o_loss = model(data.x, data.edge_index, data.batch)
+        loss = F.nll_loss(out, data.y.view(-1)) + mc_loss + o_loss
         loss.backward()
         loss_all += data.y.size(0) * loss.item()
         optimizer.step()
     return loss_all / len(train_dataset)
 
 
+@torch.no_grad()
 def test(loader):
     model.eval()
     correct = 0
