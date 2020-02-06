@@ -31,13 +31,13 @@ class InMemoryDataset(Dataset):
     def raw_file_names(self):
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
         order to skip the download."""
-        raise NotImplementedError
+        return []
 
     @property
     def processed_file_names(self):
         r"""The name of the files to find in the :obj:`self.processed_dir`
         folder in order to skip the processing."""
-        raise NotImplementedError
+        return []
 
     def download(self):
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""

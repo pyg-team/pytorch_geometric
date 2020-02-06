@@ -16,7 +16,7 @@ def to_list(x):
 
 
 def files_exist(files):
-    return all([osp.exists(f) for f in files])
+    return all([osp.exists(f) for f in files]) if len(files) > 0 else False
 
 
 def __repr__(obj):
@@ -50,13 +50,13 @@ class Dataset(torch.utils.data.Dataset):
     def raw_file_names(self):
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
         order to skip the download."""
-        raise NotImplementedError
+        return []
 
     @property
     def processed_file_names(self):
         r"""The name of the files to find in the :obj:`self.processed_dir`
         folder in order to skip the processing."""
-        raise NotImplementedError
+        return []
 
     def download(self):
         r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
@@ -100,11 +100,15 @@ class Dataset(torch.utils.data.Dataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, 'raw')
+        if self.root is not None:
+            return osp.join(self.root, 'raw') if self.root else None
+        return None
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, 'processed')
+        if self.root is not None:
+            return osp.join(self.root, 'processed')
+        return None
 
     @property
     def num_node_features(self):
@@ -138,37 +142,44 @@ class Dataset(torch.utils.data.Dataset):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
-        makedirs(self.raw_dir)
+        if self.raw_dir is not None:
+            makedirs(self.raw_dir)
+
         self.download()
 
     def _process(self):
-        f = osp.join(self.processed_dir, 'pre_transform.pt')
-        if osp.exists(f) and torch.load(f) != __repr__(self.pre_transform):
-            warnings.warn(
-                'The `pre_transform` argument differs from the one used in '
-                'the pre-processed version of this dataset. If you really '
-                'want to make use of another pre-processing technique, make '
-                'sure to delete `{}` first.'.format(self.processed_dir))
-        f = osp.join(self.processed_dir, 'pre_filter.pt')
-        if osp.exists(f) and torch.load(f) != __repr__(self.pre_filter):
-            warnings.warn(
-                'The `pre_filter` argument differs from the one used in the '
-                'pre-processed version of this dataset. If you really want to '
-                'make use of another pre-fitering technique, make sure to '
-                'delete `{}` first.'.format(self.processed_dir))
+        if self.processed_dir is not None:
+            f = osp.join(self.processed_dir, 'pre_transform.pt')
+            if osp.exists(f) and torch.load(f) != __repr__(self.pre_transform):
+                warnings.warn(
+                    'The `pre_transform` argument differs from the one used '
+                    'in the pre-processed version of this dataset. If you '
+                    'really want to make use of another pre-processing '
+                    'technique, make sure to delete `{}` first.'.format(
+                        self.processed_dir))
+            f = osp.join(self.processed_dir, 'pre_filter.pt')
+            if osp.exists(f) and torch.load(f) != __repr__(self.pre_filter):
+                warnings.warn(
+                    'The `pre_filter` argument differs from the one used in '
+                    'the pre-processed version of this dataset. If you really '
+                    'want to make use of another pre-fitering technique, make '
+                    'sure to delete `{}` first.'.format(self.processed_dir))
 
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
         print('Processing...')
 
-        makedirs(self.processed_dir)
+        if self.processed_dir is not None:
+            makedirs(self.processed_dir)
+
         self.process()
 
-        path = osp.join(self.processed_dir, 'pre_transform.pt')
-        torch.save(__repr__(self.pre_transform), path)
-        path = osp.join(self.processed_dir, 'pre_filter.pt')
-        torch.save(__repr__(self.pre_filter), path)
+        if self.processed_dir is not None:
+            path = osp.join(self.processed_dir, 'pre_transform.pt')
+            torch.save(__repr__(self.pre_transform), path)
+            path = osp.join(self.processed_dir, 'pre_filter.pt')
+            torch.save(__repr__(self.pre_filter), path)
 
         print('Done!')
 
