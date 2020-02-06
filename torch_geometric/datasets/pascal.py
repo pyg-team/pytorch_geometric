@@ -6,6 +6,7 @@ from xml.dom import minidom
 
 import torch
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
 import numpy as np
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_tar)
@@ -71,6 +72,7 @@ class PascalVOCKeypoints(InMemoryDataset):
     ]
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    batch_size = 32
 
     def __init__(self, root, category, train=True, transform=None,
                  pre_transform=None, pre_filter=None):
@@ -82,13 +84,20 @@ class PascalVOCKeypoints(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
+    def raw_dir(self):
+        return osp.join(self.root, 'raw')
+
+    @property
+    def processed_dir(self):
+        return osp.join(self.root, self.category.capitalize(), 'processed')
+
+    @property
     def raw_file_names(self):
         return ['images', 'annotations', 'splits.npz']
 
     @property
     def processed_file_names(self):
-        category = self.category
-        return [x.format(category) for x in ['training_{}.pt', 'test_{}.pt']]
+        return ['training.pt', 'test.pt']
 
     def download(self):
         path = download_url(self.image_url, self.raw_dir)
@@ -124,7 +133,7 @@ class PascalVOCKeypoints(InMemoryDataset):
         vgg16_outputs = []
 
         def hook(module, x, y):
-            vgg16_outputs.append(y.to('cpu'))
+            vgg16_outputs.append(y)
 
         vgg16 = models.vgg16(pretrained=True).to(self.device)
         vgg16.eval()
@@ -136,7 +145,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
-        train_data_list, test_data_list = [], []
+        train_set, test_set = [], []
         for i, name in enumerate(chain(train_split, test_split)):
             filename = '_'.join(name.split('/')[1].split('_')[:-1])
             idx = int(name.split('_')[-1].split('.')[0]) - 1
@@ -175,55 +184,68 @@ class PascalVOCKeypoints(InMemoryDataset):
             y = torch.tensor(ys, dtype=torch.long)
             pos = torch.tensor(poss, dtype=torch.float).view(-1, 2)
 
-            if pos.numel() > 0:
-                # Add a small offset to the bounding because some keypoints lay
-                # outside the bounding box intervals.
-                box = (min(pos[:, 0].min().floor().item(), box[0]) - 16,
-                       min(pos[:, 1].min().floor().item(), box[1]) - 16,
-                       max(pos[:, 0].max().ceil().item(), box[2]) + 16,
-                       max(pos[:, 1].max().ceil().item(), box[3]) + 16)
+            if pos.numel() == 0:
+                continue  # These examples do not make any sense anyway...
 
-                # Rescale keypoints.
-                pos[:, 0] = (pos[:, 0] - box[0]) * 256.0 / (box[2] - box[0])
-                pos[:, 1] = (pos[:, 1] - box[1]) * 256.0 / (box[3] - box[1])
+            # Add a small offset to the bounding because some keypoints lay
+            # outside the bounding box intervals.
+            box = (min(pos[:, 0].min().floor().item(), box[0]) - 16,
+                   min(pos[:, 1].min().floor().item(), box[1]) - 16,
+                   max(pos[:, 0].max().ceil().item(), box[2]) + 16,
+                   max(pos[:, 1].max().ceil().item(), box[3]) + 16)
 
-                path = osp.join(image_path, '{}.jpg'.format(filename))
-                with open(path, 'rb') as f:
-                    img = Image.open(f).convert('RGB').crop(box)
-                    img = img.resize((256, 256), resample=Image.BICUBIC)
+            # Rescale keypoints.
+            pos[:, 0] = (pos[:, 0] - box[0]) * 256.0 / (box[2] - box[0])
+            pos[:, 1] = (pos[:, 1] - box[1]) * 256.0 / (box[3] - box[1])
 
-                img = transform(img)
-                vgg16_outputs.clear()
-                with torch.no_grad():
-                    vgg16(img.unsqueeze(0).to(self.device))
+            path = osp.join(image_path, '{}.jpg'.format(filename))
+            with open(path, 'rb') as f:
+                img = Image.open(f).convert('RGB').crop(box)
+                img = img.resize((256, 256), resample=Image.BICUBIC)
 
-                xs = []
-                for out in vgg16_outputs:
-                    out = F.interpolate(out, (256, 256), mode='bilinear',
-                                        align_corners=False)
-                    out = out.squeeze(0).permute(1, 2, 0)  # [H, W, C]
-                    pos_index = pos.round().long().clamp(0, 255)
-                    out = out[pos_index[:, 1], pos_index[:, 0]]
-                    xs.append(out)
+            img = transform(img)
 
-                x = torch.cat(xs, dim=-1)
-            else:
-                x = torch.tensor([], dtype=torch.float).view(0, 1024)
-
-            data = Data(x=x, pos=pos, y=y, name=filename)
-
-            if self.pre_filter is not None and not self.pre_filter(data):
-                continue
-            if self.pre_transform is not None:
-                data = self.pre_transform(data)
+            data = Data(img=img, pos=pos, y=y, name=filename)
 
             if i < len(train_split):
-                train_data_list.append(data)
+                train_set.append(data)
             else:
-                test_data_list.append(data)
+                test_set.append(data)
 
-        torch.save(self.collate(train_data_list), self.processed_paths[0])
-        torch.save(self.collate(test_data_list), self.processed_paths[1])
+        data_list = list(chain(train_set, test_set))
+        imgs = [data.img for data in data_list]
+        loader = DataLoader(imgs, self.batch_size, shuffle=False)
+        for i, batch_img in enumerate(loader):
+            vgg16_outputs.clear()
+
+            with torch.no_grad():
+                vgg16(batch_img.to(self.device))
+
+            out1 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+                                 align_corners=False)
+            out2 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+                                 align_corners=False)
+
+            for j in range(out1.size(0)):
+                data = data_list[i * self.batch_size + j]
+                idx = data.pos.round().long().clamp(0, 255)
+                x_1 = out1[j, :, idx[:, 1], idx[:, 0]].to('cpu')
+                x_2 = out2[j, :, idx[:, 1], idx[:, 0]].to('cpu')
+                data.img = None
+                data.x = torch.cat([x_1.t(), x_2.t()], dim=-1)
+            del out1
+            del out2
+
+        if self.pre_filter is not None:
+            train_set = [data for data in train_set if self.pre_filter(data)]
+            test_set = [data for data in test_set if self.pre_filter(data)]
+
+        if self.pre_transform is not None:
+            train_set = [self.pre_transform(data) for data in train_set]
+            test_set = [self.pre_transform(data) for data in test_set]
+
+        torch.save(self.collate(train_set), self.processed_paths[0])
+        torch.save(self.collate(test_set), self.processed_paths[1])
 
     def __repr__(self):
         return '{}({}, category={})'.format(self.__class__.__name__, len(self),
