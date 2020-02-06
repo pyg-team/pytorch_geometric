@@ -8,7 +8,7 @@ import torch_geometric.transforms as T
 from torch_geometric.data import DenseDataLoader
 from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
 
-max_nodes = 126
+max_nodes = 150
 
 
 class MyFilter(object):
@@ -16,8 +16,9 @@ class MyFilter(object):
         return data.num_nodes <= max_nodes
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES_d')
-dataset = TUDataset(path, name='ENZYMES', transform=T.ToDense(max_nodes),
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                'PROTEINS_dense')
+dataset = TUDataset(path, name='PROTEINS', transform=T.ToDense(max_nodes),
                     pre_filter=MyFilter())
 dataset = dataset.shuffle()
 n = (len(dataset) + 9) // 10
@@ -129,6 +130,7 @@ def train(epoch):
     return loss_all / len(train_dataset)
 
 
+@torch.no_grad()
 def test(loader):
     model.eval()
     correct = 0
