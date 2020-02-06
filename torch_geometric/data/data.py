@@ -23,10 +23,10 @@ def size_repr(value):
         return list(value.size())
     if isinstance(value, SparseTensor):
         return f'({list(value.sizes())}, nnz={value.nnz()})'
-    elif isinstance(value, int) or isinstance(value, float):
-        return [1]
     elif isinstance(value, list) or isinstance(value, tuple):
         return [len(value)]
+    elif isinstance(value, dict):
+        return '{...}'
     else:
         return value
 
@@ -64,6 +64,11 @@ class Data(object):
         data.train_idx = torch.tensor([...], dtype=torch.long)
         data.test_mask = torch.tensor([...], dtype=torch.bool)
     """
+
+    __private_attrs__ = [
+        '__adj__', '__edge_index__', '__edge_attr__', '__num_nodes__'
+    ]
+
     def __init__(self, adj=None, edge_index=None, edge_attr=None,
                  num_nodes=None, x=None, y=None, pos=None, norm=None,
                  face=None, **kwargs):
@@ -105,9 +110,9 @@ class Data(object):
 
     @property
     def keys(self):
-        r"""Returns all names of graph attributes."""
-        keys = [key for key in self.__dict__.keys() if self[key] is not None]
-        keys = [key[2:-2] if key[:2] == '__' else key for key in keys]
+        r"""Returns all names of data attributes."""
+        keys = [i for i in self.__dict__.keys() if self[i] is not None]
+        keys = [i[2:-2] if i in self.__private_attrs__ else i for i in keys]
         return keys
 
     def __len__(self):
@@ -131,8 +136,7 @@ class Data(object):
         If :obj:`*keys` is not given this method will iterative over all
         present attributes."""
         for key in sorted(self.keys) if not keys else keys:
-            if key in self:
-                yield key, self[key]
+            yield key, self[key]
 
     def __cat_dim__(self, key, value):
         r"""Returns the dimension for which :obj:`value` of attribute
@@ -146,8 +150,6 @@ class Data(object):
         """
         if bool(re.search('(index|face)', key)):
             return 1
-        elif bool(re.search('adj', key)):
-            return (0, 1)
         else:
             return 0
 
@@ -337,6 +339,13 @@ class Data(object):
         return self.apply(
             lambda x: x.contiguous() if torch.is_tensor(x) else x, *keys)
 
+    @property
+    def device(self):
+        for _, item in self:
+            if hasattr(item, 'device'):
+                return item.device
+        return torch.device('cpu')
+
     def to(self, device, *keys):
         r"""Performs tensor device conversion to all attributes :obj:`*keys`.
         If :obj:`*keys` is not given, the conversion is applied to all present
@@ -428,5 +437,6 @@ class Data(object):
                                                       self.norm.size(0)))
 
     def __repr__(self):
-        info = ['{}={}'.format(key, size_repr(item)) for key, item in self]
+        keys = [key for key in self.keys if key[:2] != '__']
+        info = ['{}={}'.format(key, size_repr(self[key])) for key in keys]
         return '{}({})'.format(self.__class__.__name__, ', '.join(info))
