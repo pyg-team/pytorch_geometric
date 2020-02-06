@@ -14,7 +14,7 @@ class Batch(Data):
     """
 
     __data_class__ = Data
-    __private_attrs__ = Data.__private_attrs__ + ['__ptrs__']
+    __private_attrs__ = Data.__private_attrs__
 
     def __init__(self, batch=None, ptrs=None, **kwargs):
         super(Batch, self).__init__(**kwargs)
@@ -125,7 +125,7 @@ class Batch(Data):
 
         keys = [key for key in self.keys if key[-5:] != 'batch']
         keys.remove('__data_class__')
-        keys.remove('ptrs')
+        keys.remove('__ptrs__')
 
         data_list = []
         cumsum = {key: 0 for key in keys}
