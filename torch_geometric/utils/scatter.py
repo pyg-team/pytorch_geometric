@@ -1,4 +1,3 @@
-import torch
 import torch_scatter
 
 
@@ -11,7 +10,7 @@ def scatter_(name, src, index, dim=0, dim_size=None):
 
     Args:
         name (string): The aggregation to use (:obj:`"add"`, :obj:`"mean"`,
-            :obj:`"max"`).
+            :obj:`"min"`, :obj:`"max"`).
         src (Tensor): The source tensor.
         index (LongTensor): The indices of elements to scatter.
         dim (int, optional): The axis along which to index. (default: :obj:`0`)
@@ -22,20 +21,15 @@ def scatter_(name, src, index, dim=0, dim_size=None):
     :rtype: :class:`Tensor`
     """
 
-    assert name in ['add', 'mean', 'max']
-
-    if name == 'max':
-        op = torch.finfo if torch.is_floating_point(src) else torch.iinfo
-        fill_value = op(src.dtype).min
-    else:
-        fill_value = 0
+    assert name in ['add', 'mean', 'min', 'max']
 
     op = getattr(torch_scatter, 'scatter_{}'.format(name))
-    out = op(src, index, dim, None, dim_size, fill_value)
-    if isinstance(out, tuple):
-        out = out[0]
+    out = op(src, index, dim, None, dim_size)
+    out = out[0] if isinstance(out, tuple) else out
 
     if name == 'max':
-        out[out == fill_value] = 0
+        out[out < -10000] = 0
+    elif name == 'min':
+        out[out > 10000] = 0
 
     return out

@@ -5,6 +5,7 @@ import glob
 
 import torch
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
 from scipy.io import loadmat
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
@@ -47,9 +48,10 @@ class WILLOWObjectClass(InMemoryDataset):
     url = ('http://www.di.ens.fr/willow/research/graphlearning/'
            'WILLOW-ObjectClass_dataset.zip')
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
     categories = ['face', 'motorbike', 'car', 'duck', 'winebottle']
+
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    batch_size = 32
 
     def __init__(self, root, category, transform=None, pre_transform=None,
                  pre_filter=None):
@@ -60,12 +62,20 @@ class WILLOWObjectClass(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
+    def raw_dir(self):
+        return osp.join(self.root, 'raw')
+
+    @property
+    def processed_dir(self):
+        return osp.join(self.root, self.category.capitalize(), 'processed')
+
+    @property
     def raw_file_names(self):
         return [category.capitalize() for category in self.categories]
 
     @property
     def processed_file_names(self):
-        return '{}.pt'.format(self.category.lower())
+        return 'data.pt'
 
     def download(self):
         path = download_url(self.url, self.root)
@@ -118,30 +128,39 @@ class WILLOWObjectClass(InMemoryDataset):
             pos[:, 1] = pos[:, 1] * 256.0 / (img.size[1])
 
             img = img.resize((256, 256), resample=Image.BICUBIC)
-
             img = transform(img)
-            size = img.size()[-2:]
-            vgg16_outputs.clear()
-            with torch.no_grad():
-                vgg16(img.unsqueeze(0).to(self.device))
 
-            xs = []
-            for out in vgg16_outputs:
-                out = F.interpolate(out, size, mode='bilinear',
-                                    align_corners=False)
-                out = out.squeeze(0).permute(1, 2, 0)
-                pos_index = pos.round().long().clamp(0, 255)
-                out = out[pos_index[:, 1], pos_index[:, 0]]
-                xs.append(out)
-            x = torch.cat(xs, dim=-1)
-
-            data = Data(x=x, pos=pos)
-
-            if self.pre_filter is not None and not self.pre_filter(data):
-                continue
-            if self.pre_transform is not None:
-                data = self.pre_transform(data)
+            data = Data(img=img, pos=pos, name=name)
             data_list.append(data)
+
+        imgs = [data.img for data in data_list]
+        loader = DataLoader(imgs, self.batch_size, shuffle=False)
+        for i, batch_img in enumerate(loader):
+            vgg16_outputs.clear()
+
+            with torch.no_grad():
+                vgg16(batch_img.to(self.device))
+
+            out1 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+                                 align_corners=False)
+            out2 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+                                 align_corners=False)
+
+            for j in range(out1.size(0)):
+                data = data_list[i * self.batch_size + j]
+                idx = data.pos.round().long().clamp(0, 255)
+                x_1 = out1[j, :, idx[:, 1], idx[:, 0]].to('cpu')
+                x_2 = out2[j, :, idx[:, 1], idx[:, 0]].to('cpu')
+                data.img = None
+                data.x = torch.cat([x_1.t(), x_2.t()], dim=-1)
+            del out1
+            del out2
+
+        if self.pre_filter is not None:
+            data_list = [data for data in data_list if self.pre_filter(data)]
+
+        if self.pre_transform is not None:
+            data_list = [self.pre_transform(data) for data in data_list]
 
         torch.save(self.collate(data_list), self.processed_paths[0])
 

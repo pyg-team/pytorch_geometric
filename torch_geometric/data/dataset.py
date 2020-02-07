@@ -1,3 +1,4 @@
+import copy
 import collections
 import os.path as osp
 import warnings
@@ -30,7 +31,8 @@ class Dataset(torch.utils.data.Dataset):
     create_dataset.html>`__ for the accompanying tutorial.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (string, optional): Root directory where the dataset should be
+            saved. (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -44,7 +46,6 @@ class Dataset(torch.utils.data.Dataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
-
     @property
     def raw_file_names(self):
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
@@ -65,41 +66,37 @@ class Dataset(torch.utils.data.Dataset):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
-    def __len__(self):
-        r"""The number of examples in the dataset."""
+    def len(self):
         raise NotImplementedError
 
     def get(self, idx):
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
-    def __init__(self, root, transform=None, pre_transform=None,
+    def __init__(self, root=None, transform=None, pre_transform=None,
                  pre_filter=None):
         super(Dataset, self).__init__()
 
-        self.root = osp.expanduser(osp.normpath(root))
+        if isinstance(root, str):
+            root = osp.expanduser(osp.normpath(root))
+
+        self.root = root
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
+        self.__indices__ = None
 
-        path = osp.join(self.processed_dir, 'pre_transform.pt')
-        if osp.exists(path) and torch.load(path) != __repr__(pre_transform):
-            warnings.warn(
-                'The `pre_transform` argument differs from the one used in '
-                'the pre-processed version of this dataset. If you really '
-                'want to make use of another pre-processing technique, make '
-                'sure to delete `{}/processed` first.'.format(
-                    self.processed_dir))
-        path = osp.join(self.processed_dir, 'pre_filter.pt')
-        if osp.exists(path) and torch.load(path) != __repr__(pre_filter):
-            warnings.warn(
-                'The `pre_filter` argument differs from the one used in the '
-                'pre-processed version of this dataset. If you really want to '
-                'make use of another pre-fitering technique, make sure to '
-                'delete `{}/processed` first.'.format(self.processed_dir))
+        if 'download' in self.__class__.__dict__.keys():
+            self._download()
 
-        self._download()
-        self._process()
+        if 'process' in self.__class__.__dict__.keys():
+            self._process()
+
+    def indices(self):
+        if self.__indices__ is not None:
+            return self.__indices__
+        else:
+            return range(len(self))
 
     @property
     def raw_dir(self):
@@ -145,6 +142,21 @@ class Dataset(torch.utils.data.Dataset):
         self.download()
 
     def _process(self):
+        f = osp.join(self.processed_dir, 'pre_transform.pt')
+        if osp.exists(f) and torch.load(f) != __repr__(self.pre_transform):
+            warnings.warn(
+                'The `pre_transform` argument differs from the one used in '
+                'the pre-processed version of this dataset. If you really '
+                'want to make use of another pre-processing technique, make '
+                'sure to delete `{}` first.'.format(self.processed_dir))
+        f = osp.join(self.processed_dir, 'pre_filter.pt')
+        if osp.exists(f) and torch.load(f) != __repr__(self.pre_filter):
+            warnings.warn(
+                'The `pre_filter` argument differs from the one used in the '
+                'pre-processed version of this dataset. If you really want to '
+                'make use of another pre-fitering technique, make sure to '
+                'delete `{}` first.'.format(self.processed_dir))
+
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
@@ -160,12 +172,58 @@ class Dataset(torch.utils.data.Dataset):
 
         print('Done!')
 
-    def __getitem__(self, idx):  # pragma: no cover
+    def __len__(self):
+        r"""The number of examples in the dataset."""
+        if self.__indices__ is not None:
+            return len(self.__indices__)
+        return self.len()
+
+    def __getitem__(self, idx):
         r"""Gets the data object at index :obj:`idx` and transforms it (in case
-        a :obj:`self.transform` is given)."""
-        data = self.get(idx)
-        data = data if self.transform is None else self.transform(data)
-        return data
+        a :obj:`self.transform` is given).
+        In case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a list, a
+        tuple, a  LongTensor or a BoolTensor, will return a subset of the
+        dataset at the specified indices."""
+        if isinstance(idx, int):
+            data = self.get(self.indices()[idx])
+            data = data if self.transform is None else self.transform(data)
+            return data
+        else:
+            return self.index_select(idx)
+
+    def index_select(self, idx):
+        indices = self.indices()
+
+        if isinstance(idx, slice):
+            indices = indices[idx]
+        elif torch.is_tensor(idx):
+            if idx.dtype == torch.long:
+                return self.index_select(idx.tolist())
+            elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
+                return self.index_select(idx.nonzero().flatten().tolist())
+        elif isinstance(idx, list) or isinstance(idx, tuple):
+            indices = [indices[i] for i in idx]
+        else:
+            raise IndexError(
+                'Only integers, slices (`:`), list, tuples, and long or bool '
+                'tensors are valid indices (got {}).'.format(
+                    type(idx).__name__))
+
+        dataset = copy.copy(self)
+        dataset.__indices__ = indices
+        return dataset
+
+    def shuffle(self, return_perm=False):
+        r"""Randomly shuffles the examples in the dataset.
+
+        Args:
+            return_perm (bool, optional): If set to :obj:`True`, will
+                additionally return the random permutation used to shuffle the
+                dataset. (default: :obj:`False`)
+        """
+        perm = torch.randperm(len(self))
+        dataset = self.index_select(perm)
+        return (dataset, perm) if return_perm is True else dataset
 
     def __repr__(self):  # pragma: no cover
-        return '{}({})'.format(self.__class__.__name__, len(self))
+        return f'{self.__class__.__name__}({len(self)})'
