@@ -1,7 +1,4 @@
-from itertools import repeat, product
-
-import torch
-from torch_geometric.data import Dataset
+from torch_geometric.data import Dataset, Batch
 
 
 class InMemoryDataset(Dataset):
@@ -51,69 +48,23 @@ class InMemoryDataset(Dataset):
                  pre_filter=None):
         super(InMemoryDataset, self).__init__(root, transform, pre_transform,
                                               pre_filter)
-        self.data, self.slices = None, None
+        self.__data__ = None
 
     @property
     def num_classes(self):
         r"""The number of classes in the dataset."""
-        y = self.data.y
+        y = self.__data__.y
         return y.max().item() + 1 if y.dim() == 1 else y.size(1)
 
     def len(self):
-        for item in self.slices.values():
-            return len(item) - 1
-        return 0
+        return self.__data__.num_graphs
 
     def get(self, idx):
-        data = self.data.__class__()
-
-        if hasattr(self.data, '__num_nodes__'):
-            data.num_nodes = self.data.__num_nodes__[idx]
-
-        for key in self.data.keys:
-            item, slices = self.data[key], self.slices[key]
-            if torch.is_tensor(item):
-                s = list(repeat(slice(None), item.dim()))
-                s[self.data.__cat_dim__(key,
-                                        item)] = slice(slices[idx],
-                                                       slices[idx + 1])
-            else:
-                s = slice(slices[idx], slices[idx + 1])
-            data[key] = item[s]
-        return data
+        return self.__data__[idx]
 
     def collate(self, data_list):
-        r"""Collates a python list of data objects to the internal storage
-        format of :class:`torch_geometric.data.InMemoryDataset`."""
-        keys = data_list[0].keys
-        data = data_list[0].__class__()
-
-        for key in keys:
-            data[key] = []
-        slices = {key: [0] for key in keys}
-
-        for item, key in product(data_list, keys):
-            data[key].append(item[key])
-            if torch.is_tensor(item[key]):
-                s = slices[key][-1] + item[key].size(
-                    item.__cat_dim__(key, item[key]))
-            else:
-                s = slices[key][-1] + 1
-            slices[key].append(s)
-
-        if hasattr(data_list[0], '__num_nodes__'):
-            data.__num_nodes__ = []
-            for item in data_list:
-                data.__num_nodes__.append(item.num_nodes)
-
-        for key in keys:
-            item = data_list[0][key]
-            if torch.is_tensor(item):
-                data[key] = torch.cat(data[key],
-                                      dim=data.__cat_dim__(key, item))
-            elif isinstance(item, int) or isinstance(item, float):
-                data[key] = torch.tensor(data[key])
-
-            slices[key] = torch.tensor(slices[key], dtype=torch.long)
-
-        return data, slices
+        r"""Collates a list of data objects to an internal storage format
+        of :class:`torch_geometric.data.InMemoryDataset` for faster disk i/o.
+        """
+        self.__data__ = Batch.from_data_list(data_list)
+        return self.__data__

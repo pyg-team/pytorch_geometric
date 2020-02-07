@@ -64,11 +64,6 @@ class Data(object):
         data.train_idx = torch.tensor([...], dtype=torch.long)
         data.test_mask = torch.tensor([...], dtype=torch.bool)
     """
-
-    __private_attrs__ = [
-        '__adj__', '__edge_index__', '__edge_attr__', '__num_nodes__'
-    ]
-
     def __init__(self, adj=None, edge_index=None, edge_attr=None,
                  num_nodes=None, x=None, y=None, pos=None, norm=None,
                  face=None, **kwargs):
@@ -109,10 +104,21 @@ class Data(object):
         setattr(self, key, value)
 
     @property
+    def __private_keys__(self):
+        return ['__adj__', '__edge_index__', '__edge_attr__']
+
+    @property
+    def __hidden_keys__(self):
+        return ['__num_nodes__']
+
+    @property
     def keys(self):
         r"""Returns all names of data attributes."""
-        keys = [i for i in self.__dict__.keys() if self[i] is not None]
-        keys = [i[2:-2] if i in self.__private_attrs__ else i for i in keys]
+        keys = [
+            key for key in self.__dict__.keys()
+            if key not in self.__hidden_keys__ and self[key] is not None
+        ]
+        keys = [i[2:-2] if i in self.__private_keys__ else i for i in keys]
         return keys
 
     def __len__(self):

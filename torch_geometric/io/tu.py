@@ -2,12 +2,10 @@ import os
 import os.path as osp
 import glob
 
+import pandas
 import torch
 import torch.nn.functional as F
-import numpy as np
-from torch_sparse import coalesce
-from torch_geometric.io import read_txt_array
-from torch_geometric.utils import remove_self_loops
+from torch_sparse import SparseTensor
 from torch_geometric.data import Data
 
 names = [
@@ -20,85 +18,82 @@ def read_tu_data(folder, prefix):
     files = glob.glob(osp.join(folder, '{}_*.txt'.format(prefix)))
     names = [f.split(os.sep)[-1][len(prefix) + 1:-4] for f in files]
 
-    edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1
-    batch = read_file(folder, prefix, 'graph_indicator', torch.long) - 1
+    edge_index = read_file(folder, prefix, 'A', torch.long).sub_(1)
+    edge_index = edge_index.t().contiguous()
 
-    node_attributes = node_labels = None
+    batch = read_file(folder, prefix, 'graph_indicator', torch.long).sub_(1)
+
+    node_attrs = node_labels = None
     if 'node_attributes' in names:
-        node_attributes = read_file(folder, prefix, 'node_attributes')
+        node_attrs = read_file(folder, prefix, 'node_attributes', torch.float)
+        if node_attrs.dim() == 1:
+            node_attrs.unsqueeze(-1)
     if 'node_labels' in names:
         node_labels = read_file(folder, prefix, 'node_labels', torch.long)
         if node_labels.dim() == 1:
             node_labels = node_labels.unsqueeze(-1)
-        node_labels = node_labels - node_labels.min(dim=0)[0]
+        node_labels = node_labels.sub_(node_labels.min(dim=0)[0])
         node_labels = node_labels.unbind(dim=-1)
         node_labels = [F.one_hot(x, num_classes=-1) for x in node_labels]
         node_labels = torch.cat(node_labels, dim=-1).to(torch.float)
-    x = cat([node_attributes, node_labels])
+    x = cat([node_attrs, node_labels])
 
-    edge_attributes, edge_labels = None, None
+    edge_attrs = edge_labels = None
     if 'edge_attributes' in names:
-        edge_attributes = read_file(folder, prefix, 'edge_attributes')
+        edge_attrs = read_file(folder, prefix, 'edge_attributes', torch.float)
+        if edge_attrs.dim() == 1:
+            edge_attrs.unsqueeze(-1)
     if 'edge_labels' in names:
         edge_labels = read_file(folder, prefix, 'edge_labels', torch.long)
         if edge_labels.dim() == 1:
             edge_labels = edge_labels.unsqueeze(-1)
-        edge_labels = edge_labels - edge_labels.min(dim=0)[0]
+        edge_labels = edge_labels.sub_(edge_labels.min(dim=0)[0])
         edge_labels = edge_labels.unbind(dim=-1)
         edge_labels = [F.one_hot(e, num_classes=-1) for e in edge_labels]
         edge_labels = torch.cat(edge_labels, dim=-1).to(torch.float)
-    edge_attr = cat([edge_attributes, edge_labels])
+    edge_attr = cat([edge_attrs, edge_labels])
+
+    num_nodes = edge_index.max().item() + 1 if x is None else x.size(0)
+
+    adj = SparseTensor(row=edge_index[1], col=edge_index[0], value=edge_attr,
+                       sparse_sizes=torch.Size([num_nodes, num_nodes]))
+    adj = adj.coalesce().remove_diag().fill_cache_()
 
     y = None
     if 'graph_attributes' in names:  # Regression problem.
-        y = read_file(folder, prefix, 'graph_attributes')
+        y = read_file(folder, prefix, 'graph_attributes', torch.float)
     elif 'graph_labels' in names:  # Classification problem.
         y = read_file(folder, prefix, 'graph_labels', torch.long)
+        # Transform graph labels to consecutive indices.
         _, y = y.unique(sorted=True, return_inverse=True)
 
-    num_nodes = edge_index.max().item() + 1 if x is None else x.size(0)
-    edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
-    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes,
-                                     num_nodes)
+    batch_ptr = torch.ops.torch_sparse.ind2ptr(batch, y.size(0))
 
-    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
-    data, slices = split(data, batch)
+    data_list = []
+    for i in range(y.size(0)):
+        start = batch_ptr[i]
+        length = batch_ptr[i + 1] - start
 
-    return data, slices
+        data = Data()
+        data.adj = adj.__narrow_diag__((start, start), (length, length))
+        if x is not None:
+            data.x = x.narrow(0, start, length)
+        data.y = y[i].item() if y[i].numel() == 1 else y[i]
+
+        data_list.append(data)
+
+    num_node_attributes = node_attrs.size(-1) if node_attrs is not None else 0
+    num_edge_attributes = edge_attrs.size(-1) if edge_attrs is not None else 0
+
+    return data_list, num_node_attributes, num_edge_attributes
 
 
 def read_file(folder, prefix, name, dtype=None):
     path = osp.join(folder, '{}_{}.txt'.format(prefix, name))
-    return read_txt_array(path, sep=',', dtype=dtype)
+    data_frame = pandas.read_csv(path, sep=',', header=None)
+    return torch.from_numpy(data_frame.to_numpy()).to(dtype).squeeze(-1)
 
 
 def cat(seq):
     seq = [item for item in seq if item is not None]
-    seq = [item.unsqueeze(-1) if item.dim() == 1 else item for item in seq]
     return torch.cat(seq, dim=-1) if len(seq) > 0 else None
-
-
-def split(data, batch):
-    node_slice = torch.cumsum(torch.from_numpy(np.bincount(batch)), 0)
-    node_slice = torch.cat([torch.tensor([0]), node_slice])
-
-    row, _ = data.edge_index
-    edge_slice = torch.cumsum(torch.from_numpy(np.bincount(batch[row])), 0)
-    edge_slice = torch.cat([torch.tensor([0]), edge_slice])
-
-    # Edge indices should start at zero for every graph.
-    data.edge_index -= node_slice[batch[row]].unsqueeze(0)
-    data.__num_nodes__ = torch.bincount(batch).tolist()
-
-    slices = {'edge_index': edge_slice}
-    if data.x is not None:
-        slices['x'] = node_slice
-    if data.edge_attr is not None:
-        slices['edge_attr'] = edge_slice
-    if data.y is not None:
-        if data.y.size(0) == batch.size(0):
-            slices['y'] = node_slice
-        else:
-            slices['y'] = torch.arange(0, batch[-1] + 2, dtype=torch.long)
-
-    return data, slices
