@@ -31,7 +31,7 @@ class Planetoid(InMemoryDataset):
     def __init__(self, root, name, transform=None, pre_transform=None):
         self.name = name
         super(Planetoid, self).__init__(root, transform, pre_transform)
-        self.__data__ = torch.load(self.processed_paths[0])
+        self.data_list = torch.load(self.processed_paths[0])
 
     @property
     def raw_dir(self):
@@ -57,7 +57,7 @@ class Planetoid(InMemoryDataset):
     def process(self):
         data = read_planetoid_data(self.raw_dir, self.name)
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save(self.collate([data]), self.processed_paths[0])
+        torch.save([data], self.processed_paths[0])
 
     def __repr__(self):
         return '{}()'.format(self.name)

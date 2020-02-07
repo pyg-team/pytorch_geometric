@@ -41,10 +41,10 @@ class TUDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
-        use_node_attrs (bool, optional): If :obj:`True`, the dataset will
+        use_node_attributes (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous node attributes (if present).
             (default: :obj:`False`)
-        use_edge_attrs (bool, optional): If :obj:`True`, the dataset will
+        use_edge_attributes (bool, optional): If :obj:`True`, the dataset will
             contain additional continuous edge attributes (if present).
             (default: :obj:`False`)
         cleaned: (bool, optional): If :obj:`True`, the dataset will
@@ -57,25 +57,25 @@ class TUDataset(InMemoryDataset):
                    'graph_datasets/master/datasets')
 
     def __init__(self, root, name, transform=None, pre_transform=None,
-                 pre_filter=None, use_node_attrs=False, use_edge_attrs=False,
-                 cleaned=False):
+                 pre_filter=None, use_node_attributes=False,
+                 use_edge_attributes=False, cleaned=False):
         self.name = name
         self.cleaned = cleaned
         super(TUDataset, self).__init__(root, transform, pre_transform,
                                         pre_filter)
-        self.__data__ = torch.load(self.processed_paths[0])
+        self.data_list = torch.load(self.processed_paths[0])
         self.num_node_attributes = torch.load(self.processed_paths[1])
         self.num_edge_attributes = torch.load(self.processed_paths[2])
 
-        if self.__data__.x is not None and not use_node_attrs:
-            F = self.num_node_attributes
-            self.__data__.x = self.__data__.x[:, F:].contiguous()
+        if self.num_node_attributes > 0 and not use_node_attributes:
+            for data in self.data_list:
+                data.x = data.x[:, self.num_node_attributes:].contiguous()
 
-        edge_attr = self.__data__.adj.storage.value()
-        if edge_attr is not None and not use_edge_attrs:
-            D = self.num_edge_attributes
-            edge_attr = edge_attr[:, D:].contiguous()
-            self.__data__.adj.set_value_(edge_attr, layout='coo')
+        if self.num_edge_attributes > 0 and not use_edge_attributes:
+            for data in self.data_list:
+                value = data.adj.storage.value()
+                value = value[:, self.num_edge_attributes:].contiguous()
+                data.adj.set_value_(value, layout='coo')
 
     @property
     def raw_dir(self):
@@ -89,16 +89,11 @@ class TUDataset(InMemoryDataset):
 
     @property
     def num_node_labels(self):
-        if self.__data__.x is None:
-            return 0
-        return self.__data__.x.size(1) - self.num_node_attributes
+        return self.num_node_features - self.num_node_attributes
 
     @property
     def num_edge_labels(self):
-        value = self.__data__.adj.storage.value()
-        if value is None:
-            return 0
-        return value.size(1) - self.num_edge_attributes
+        return self.num_edge_features - self.num_edge_attributes
 
     @property
     def raw_file_names(self):
@@ -128,7 +123,7 @@ class TUDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(self.collate(data_list), self.processed_paths[0])
+        torch.save(data_list, self.processed_paths[0])
         torch.save(self.num_node_attributes, self.processed_paths[1])
         torch.save(self.num_edge_attributes, self.processed_paths[2])
 

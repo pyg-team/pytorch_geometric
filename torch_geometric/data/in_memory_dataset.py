@@ -48,23 +48,21 @@ class InMemoryDataset(Dataset):
                  pre_filter=None):
         super(InMemoryDataset, self).__init__(root, transform, pre_transform,
                                               pre_filter)
-        self.__data__ = None
+        self.data_list = None
 
     @property
     def num_classes(self):
         r"""The number of classes in the dataset."""
-        y = self.__data__.y
-        return y.max().item() + 1 if y.dim() == 1 else y.size(1)
+        if self.data_list[0].y.dim() > 1:
+            return self.data_list[0].y.size(1)
+
+        max_num_classes = 0
+        for data in self.data_list:
+            max_num_classes = max(int(data.y.max()) + 1, max_num_classes)
+        return max_num_classes
 
     def len(self):
-        return self.__data__.num_graphs
+        return len(self.data_list)
 
     def get(self, idx):
-        return self.__data__[idx]
-
-    def collate(self, data_list):
-        r"""Collates a list of data objects to an internal storage format
-        of :class:`torch_geometric.data.InMemoryDataset` for faster disk i/o.
-        """
-        self.__data__ = Batch.from_data_list(data_list)
-        return self.__data__
+        return self.data_list[idx]

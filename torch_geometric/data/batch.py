@@ -1,4 +1,3 @@
-import numpy as np
 import torch
 import torch_geometric
 from torch_sparse import SparseTensor, cat_diag
@@ -61,7 +60,7 @@ class Batch(Data):
 
         batch = Batch()
         ptrs, incs = batch.__ptrs__, batch.__incs__
-        batch.__data_class__ = data_list[0].__class__
+        batch.__data_class__ = ref.__class__
         batch.__keys__, batch.__public_keys__ = keys, public_keys
 
         for key, public_key in zip(keys, public_keys):
@@ -145,11 +144,11 @@ class Batch(Data):
 
                 if torch.is_tensor(item):
                     dim = data.__cat_dim__(key, item)
-                    item = item.narrow(dim, start, length)
+                    item = item.narrow(dim, int(start), int(length))
                     if item.numel() == 1 and not torch.is_floating_point(item):
                         item = item.item()
                 elif isinstance(item, SparseTensor):
-                    item = item.__narrow_diag__(start, length)
+                    item = item.__narrow_diag__(tuple(start), tuple(length))
                 else:
                     item = item[int(start):int(start + length)]
 

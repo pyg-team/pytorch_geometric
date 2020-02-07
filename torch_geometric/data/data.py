@@ -281,8 +281,8 @@ class Data(object):
     def num_edge_features(self):
         r"""Returns the number of features per edge in the graph."""
         if self.__adj__ is not None and self.__adj__.has_value():
-            _, _, edge_attr = self.__adj__.coo()
-            return 1 if edge_attr.dim() == 1 else edge_attr.size(1)
+            value = self.__adj__.storage.value()
+            return 1 if value.dim() == 1 else value.size(1)
         if self.__edge_attr__ is not None:
             edge_attr = self.__edge_attr__
             return 1 if edge_attr.dim() == 1 else edge_attr.size(1)
