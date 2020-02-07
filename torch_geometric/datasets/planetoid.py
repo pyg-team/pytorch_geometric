@@ -30,6 +30,7 @@ class Planetoid(InMemoryDataset):
 
     def __init__(self, root, name, transform=None, pre_transform=None):
         self.name = name
+        assert self.name in ['Cora', 'CiteSeer', 'PubMed']
         super(Planetoid, self).__init__(root, transform, pre_transform)
         self.data_list = torch.load(self.processed_paths[0])
 
