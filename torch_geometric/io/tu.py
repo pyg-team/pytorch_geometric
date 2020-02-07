@@ -53,9 +53,8 @@ def read_tu_data(folder, prefix):
         edge_labels = torch.cat(edge_labels, dim=-1).to(torch.float)
     edge_attr = cat([edge_attrs, edge_labels])
 
-    num_nodes = edge_index.max().item() + 1 if x is None else x.size(0)
-
-    adj = SparseTensor(row=edge_index[1], col=edge_index[0], value=edge_attr,
+    num_nodes = batch.size(0)
+    adj = SparseTensor(row=edge_index[0], col=edge_index[1], value=edge_attr,
                        sparse_sizes=torch.Size([num_nodes, num_nodes]))
     adj = adj.coalesce().remove_diag().fill_cache_()
 

@@ -127,6 +127,13 @@ class Batch(Data):
             batch[f'{key}_batch'] = torch.repeat_interleave(
                 torch.arange(length), ptr[1:] - ptr[:-1])
 
+        # Copy custom data functions to the batch class.
+        if ref.__class__ != Data:
+            org_funcs = set(Data.__dict__.keys())
+            funcs = set(ref.__class__.__dict__.keys())
+            for func in funcs.difference(org_funcs):
+                setattr(batch.__class__, func, getattr(ref.__class__, func))
+
         if torch_geometric.is_debug_enabled():
             batch.debug()
 

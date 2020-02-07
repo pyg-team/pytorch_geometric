@@ -84,8 +84,7 @@ def adj_from_dict(graph_dict, num_nodes):
     adj = SparseTensor(row=row, col=col, sparse_sizes=size)
     # NOTE: There are duplicated edges and self loops in the datasets. Other
     # implementations do not remove them!
-    adj = adj.remove_diag().coalesce()
-    adj = adj.fill_cache_()
+    adj = adj.remove_diag().coalesce().fill_cache_()
     return adj
 
 
