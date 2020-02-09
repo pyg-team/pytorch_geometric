@@ -195,7 +195,7 @@ class Data(object):
     @property
     def edge_index(self):
         if self.__edge_index__ is None and self.__adj__ is not None:
-            col, row, _ = self.__adj__.coo()
+            row, col, _ = self.__adj__.coo()
             return torch.stack([row, col], dim=0)
         return self.__edge_index__
 

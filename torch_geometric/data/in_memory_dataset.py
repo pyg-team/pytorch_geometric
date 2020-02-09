@@ -1,3 +1,5 @@
+import torch
+from torch_sparse import SparseTensor, SparseStorage
 from torch_geometric.data import Dataset
 
 
@@ -62,7 +64,92 @@ class InMemoryDataset(Dataset):
         return max_num_classes
 
     def len(self):
-        return len(self.data_list)
+        return self.data['__length__']
 
     def get(self, idx):
-        return self.data_list[idx]
+        data = self.data['__data_class__']()
+
+        for key in self.slices.keys():
+            item, slices = self.data[key], self.slices[key]
+            if torch.is_tensor(item):
+                dim = data.__cat_dim__(key, item)
+                start, end = slices[idx], slices[idx + 1]
+                data[key] = item.narrow(dim, start, end - start)
+            elif (isinstance(item, dict)
+                  and item.get('__data_class__') == SparseTensor):
+                storage = SparseStorage.empty()
+                for k in slices.keys():
+                    setattr(storage, k,
+                            item[k][slices[k][idx]:slices[k][idx + 1]])
+                storage._sparse_sizes = item['_sparse_sizes'][idx]
+                data[key] = item.get('__data_class__').from_storage(storage)
+            else:
+                start, end = slices[idx], slices[idx + 1]
+                if end - start == 1:
+                    data[key] = item[idx]
+                else:
+                    data[key] = item[start:end]
+
+        return data
+
+    def collate(self, data_list):
+        ref = data_list[0]
+        keys = [key for key in ref.__dict__.keys() if ref[key] is not None]
+        keys = [
+            key[2:-2] if key in ref.__private_keys__ else key for key in keys
+        ]
+
+        store, ptrs = {}, {}
+        for key in keys:
+            item = ref[key]
+            if isinstance(item, SparseTensor):
+                storage = item.storage
+                storage_keys = [
+                    k for k in storage.__dict__.keys()
+                    if getattr(storage, k, None) is not None
+                ]
+                store[key] = {k: [] for k in storage_keys}
+                storage_keys.remove('_sparse_sizes')
+                ptrs[key] = {k: [0] for k in storage_keys}
+            else:
+                store[key] = []
+                ptrs[key] = [0]
+
+        for data in data_list:
+            for key in keys:
+                item = data[key]
+                if torch.is_tensor(item):
+                    store[key].append(item)
+                    ptrs[key].append(ptrs[key][-1] +
+                                     item.size(data.__cat_dim__(key, item)))
+                elif isinstance(item, SparseTensor):
+                    for k in ptrs[key].keys():
+                        value = getattr(item.storage, k)
+                        store[key][k].append(value)
+                        ptrs[key][k].append(ptrs[key][k][-1] + value.size(0))
+
+                    store[key]['__data_class__'] = item.__class__
+                    store[key]['_sparse_sizes'].append(
+                        item.storage._sparse_sizes)
+                elif isinstance(item, list) or isinstance(item, tuple):
+                    store[key].append(item)
+                    ptrs[key].append(ptrs[key][-1] + len(item))
+                else:
+                    store[key].append(item)
+                    ptrs[key].append(ptrs[key][-1] + 1)
+
+        for key in keys:
+            item = ref[key]
+            if torch.is_tensor(item):
+                store[key] = torch.cat(store[key],
+                                       dim=ref.__cat_dim__(key, item))
+            elif isinstance(item, SparseTensor):
+                for k in ptrs[key].keys():
+                    store[key][k] = torch.cat(store[key][k])
+
+        assert '__data_class__' not in store
+        store['__data_class__'] = ref.__class__
+        assert '__length__' not in store
+        store['__length__'] = len(data_list)
+
+        return store, ptrs

@@ -14,7 +14,7 @@ def parse_npz(f):
     adj = sp.csr_matrix((f['adj_data'], f['adj_indices'], f['adj_indptr']),
                         f['adj_shape'])
     adj = SparseTensor.from_scipy(adj, has_value=False)
-    adj = adj.remove_diag().to_symmetric().fil_cache_()
+    adj = adj.remove_diag().to_symmetric().fill_cache_()
 
     x = sp.csr_matrix((f['attr_data'], f['attr_indices'], f['attr_indptr']),
                       f['attr_shape']).todense()

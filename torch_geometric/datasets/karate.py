@@ -28,7 +28,7 @@ class KarateClub(InMemoryDataset):
         y = torch.tensor(y)
 
         data = Data(adj=adj, x=x, y=y)
-        self.data_list = [data]
+        self.data, self.slices = self.collate([data])
 
     def __repr__(self):
         return '{}()'.format(self.__class__.__name__)

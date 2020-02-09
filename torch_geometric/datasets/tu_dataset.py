@@ -63,19 +63,18 @@ class TUDataset(InMemoryDataset):
         self.cleaned = cleaned
         super(TUDataset, self).__init__(root, transform, pre_transform,
                                         pre_filter)
-        self.data_list = torch.load(self.processed_paths[0])
+        self.data, self.slices = torch.load(self.processed_paths[0])
         self.num_node_attributes = torch.load(self.processed_paths[1])
         self.num_edge_attributes = torch.load(self.processed_paths[2])
 
-        if self.num_node_attributes > 0 and not use_node_attributes:
-            for data in self.data_list:
-                data.x = data.x[:, self.num_node_attributes:].contiguous()
+        F = self.num_node_attributes
+        if F > 0 and not use_node_attributes:
+            self.data['x'] = self.data['x'][:, F:].contiguous()
 
-        if self.num_edge_attributes > 0 and not use_edge_attributes:
-            for data in self.data_list:
-                value = data.adj.storage.value()
-                value = value[:, self.num_edge_attributes:].contiguous()
-                data.adj.set_value_(value, layout='coo')
+        D = self.num_edge_attributes
+        if D > 0 and not use_edge_attributes:
+            value = self.data['adj']['_value'][:, D:].contiguous()
+            self.data['adj']['_value'] = value
 
     @property
     def raw_dir(self):
@@ -123,7 +122,7 @@ class TUDataset(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(data_list, self.processed_paths[0])
+        torch.save(self.collate(data_list), self.processed_paths[0])
         torch.save(self.num_node_attributes, self.processed_paths[1])
         torch.save(self.num_edge_attributes, self.processed_paths[2])
 

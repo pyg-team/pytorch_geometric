@@ -34,7 +34,7 @@ class Amazon(InMemoryDataset):
         self.name = name
         assert self.name in ['Computers', 'Photo']
         super(Amazon, self).__init__(root, transform, pre_transform)
-        self.data_list = torch.load(self.processed_paths[0])
+        self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_dir(self):
@@ -58,7 +58,7 @@ class Amazon(InMemoryDataset):
     def process(self):
         data = read_npz(self.raw_paths[0])
         data = data if self.pre_transform is None else self.pre_transform(data)
-        torch.save([data], self.processed_paths[0])
+        torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self):
         return '{}{}()'.format(self.__class__.__name__, self.name)
