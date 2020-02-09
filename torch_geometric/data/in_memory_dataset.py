@@ -1,3 +1,5 @@
+import copy
+
 import torch
 from torch_sparse import SparseTensor, SparseStorage
 from torch_geometric.data import Dataset
@@ -69,7 +71,7 @@ class InMemoryDataset(Dataset):
     def get(self, idx):
         cached_data = self.__cached_data__.get(idx)
         if cached_data is not None:
-            return cached_data
+            return copy.copy(cached_data)
 
         data = self.data['__data_class__']()
 
@@ -94,7 +96,7 @@ class InMemoryDataset(Dataset):
                 else:
                     data[key] = item[start:end]
 
-        self.__cached_data__[idx] = data
+        self.__cached_data__[idx] = copy.copy(data)
 
         return data
 
