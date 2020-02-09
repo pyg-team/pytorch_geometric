@@ -48,9 +48,9 @@ class InMemoryDataset(Dataset):
 
     def __init__(self, root=None, transform=None, pre_transform=None,
                  pre_filter=None):
+        self.__cached_data__ = {}
         super(InMemoryDataset, self).__init__(root, transform, pre_transform,
                                               pre_filter)
-        self.data_list = None
 
     @property
     def num_classes(self):
@@ -67,6 +67,10 @@ class InMemoryDataset(Dataset):
         return self.data['__length__']
 
     def get(self, idx):
+        cached_data = self.__cached_data__.get(idx)
+        if cached_data is not None:
+            return cached_data
+
         data = self.data['__data_class__']()
 
         for key in self.slices.keys():
@@ -90,9 +94,13 @@ class InMemoryDataset(Dataset):
                 else:
                     data[key] = item[start:end]
 
+        self.__cached_data__[idx] = data
+
         return data
 
     def collate(self, data_list):
+        r"""Collates a python list of data objects to the internal storage
+        format of :class:`torch_geometric.data.InMemoryDataset`."""
         ref = data_list[0]
         keys = [key for key in ref.__dict__.keys() if ref[key] is not None]
         keys = [
