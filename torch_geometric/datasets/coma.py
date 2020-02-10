@@ -108,7 +108,7 @@ class CoMA(InMemoryDataset):
             'move it to {}'.format(self.url, self.raw_dir))
 
     def process(self):
-        paths = sorted(glob.glob(self.raw_dir + '/*/*/*.ply'))
+        paths = sorted(glob.glob(osp.join(self.raw_dir, '*/*/*.ply')))
         if len(paths) == 0:
             extract_zip(self.raw_paths[0], self.raw_dir, log=False)
             paths = sorted(glob.glob(osp.join(self.raw_dir, '*/*/*.ply')))
