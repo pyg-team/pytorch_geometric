@@ -51,5 +51,5 @@ def extract_bz2(path, folder, log=True):
 def extract_gz(path, folder, log=True):
     maybe_log(path, log)
     with gzip.open(path, 'r') as r:
-        with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
+        with open(osp.join(folder, path.split(osp.sep)[-1][:-3]), 'wb') as w:
             w.write(r.read())

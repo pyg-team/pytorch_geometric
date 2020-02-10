@@ -1,8 +1,9 @@
 import os
 import datetime
 
+import pandas
 import torch
-
+from torch_sparse import SparseTensor
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_gz)
 
@@ -30,10 +31,7 @@ class BitcoinOTC(InMemoryDataset):
 
     url = 'https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz'
 
-    def __init__(self,
-                 root,
-                 edge_window_size=10,
-                 transform=None,
+    def __init__(self, root, edge_window_size=10, transform=None,
                  pre_transform=None):
         self.edge_window_size = edge_window_size
         super(BitcoinOTC, self).__init__(root, transform, pre_transform)
@@ -57,43 +55,37 @@ class BitcoinOTC(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        with open(self.raw_paths[0], 'r') as f:
-            data = f.read().split('\n')[:-1]
-            data = [[x for x in line.split(',')] for line in data]
+        data = pandas.read_csv(self.raw_paths[0], sep=',', header=None)
+        data = torch.from_numpy(data.to_numpy()).to(torch.long)
 
-            edge_index = [[int(line[0]), int(line[1])] for line in data]
-            edge_index = torch.tensor(edge_index, dtype=torch.long)
-            edge_index = edge_index - edge_index.min()
-            edge_index = edge_index.t().contiguous()
-            num_nodes = edge_index.max().item() + 1
+        edge_index = data[:, :2].t()
+        edge_attr = data[:, 2]
+        stamps = data[:, 3]
+        stamps = [datetime.datetime.fromtimestamp(x) for x in stamps.tolist()]
 
-            edge_attr = [float(line[2]) for line in data]
-            edge_attr = torch.tensor(edge_attr, dtype=torch.long)
-
-            stamps = [int(float(line[3])) for line in data]
-            stamps = [datetime.datetime.fromtimestamp(x) for x in stamps]
-
+        factor = 1
+        graph_idx = []
         offset = datetime.timedelta(days=13.8)  # Results in 138 time steps.
-        graph_idx, factor = [], 1
         for t in stamps:
             factor = factor if t < stamps[0] + factor * offset else factor + 1
             graph_idx.append(factor - 1)
         graph_idx = torch.tensor(graph_idx, dtype=torch.long)
 
+        num_nodes = edge_index.max().item() + 1
+        size = torch.Size([num_nodes, num_nodes])
+
         data_list = []
         for i in range(graph_idx.max().item() + 1):
             mask = (graph_idx > (i - self.edge_window_size)) & (graph_idx <= i)
-            data = Data()
-            data.edge_index = edge_index[:, mask]
-            data.edge_attr = edge_attr[mask]
-            data.num_nodes = num_nodes
-            data_list.append(data)
 
-        if self.pre_filter is not None:
-            data_list = [d for d in data_list if self.pre_filter(d)]
+            col, row = edge_index[:, mask]  # Pre-transpose.
+            adj = SparseTensor(row=row, col=col, value=edge_attr[mask],
+                               sparse_sizes=size)
+
+            data = Data(adj=adj)
+            data_list.append(data)
 
         if self.pre_transform is not None:
             data_list = [self.pre_transform(d) for d in data_list]
 
-        data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+        torch.save(self.collate(data_list), self.processed_paths[0])
