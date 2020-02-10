@@ -9,11 +9,22 @@ REGEX = r'[\[\]\(\),]|tensor|(\s)\1{2,}'
 
 
 def face_to_tri(face):
-    if face.size(0) == 4:
-        first, second = face[:3, :], face[1:, :]
-        return torch.cat([first, second], dim=1)
+    mask = face[:, 0] == 3
+    triangle = face[mask, 1:4]
+    rect = face[~mask, 1:]
+
+    if rect.numel() > 0:
+        first, second = rect[:, :3], rect[:, 1:]
+        rect = torch.cat([first, second], dim=0)
+
+    if triangle.numel() > 0 and rect.numel() > 0:
+        return torch.cat([triangle, first, second], dim=0).t().contiguous()
+    elif triangle.numel() > 0:
+        face = triangle.t().contiguous()
+    elif rect.numel() > 0:
+        face = rect.t().contiguous
     else:
-        return face
+        face = None
 
 
 def read_off(path):
@@ -40,9 +51,9 @@ def read_off(path):
                           nrows=num_nodes)
     pos = torch.from_numpy(pos.to_numpy()).to(torch.float)
 
-    face = pandas.read_csv(path, sep=' ', header=None,
+    face = pandas.read_csv(path, sep=' ', header=None, names=list(range(5)),
                            skiprows=skiprows + num_nodes, nrows=num_faces)
-    face = torch.from_numpy(face.to_numpy())[:, 1:].to(torch.long).t()
+    face = torch.from_numpy(face.to_numpy()).to(torch.long)
     face = face_to_tri(face)
 
     return Data(pos=pos, face=face)
