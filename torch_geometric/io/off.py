@@ -1,47 +1,19 @@
 import re
 
+import pandas
 import torch
 from torch._tensor_str import PRINT_OPTS
-from torch_geometric.io import parse_txt_array
 from torch_geometric.data import Data
 
 REGEX = r'[\[\]\(\),]|tensor|(\s)\1{2,}'
 
 
-def parse_off(src):
-    # Some files may contain a bug and do not have a carriage return after OFF.
-    if src[0] == 'OFF':
-        src = src[1:]
-    else:
-        src[0] = src[0][3:]
-
-    num_nodes, num_faces = [int(item) for item in src[0].split()[:2]]
-
-    pos = parse_txt_array(src[1:1 + num_nodes])
-
-    face = src[1 + num_nodes:1 + num_nodes + num_faces]
-    face = face_to_tri(face)
-
-    data = Data(pos=pos)
-    data.face = face
-
-    return data
-
-
 def face_to_tri(face):
-    face = [[int(x) for x in line.strip().split(' ')] for line in face]
-
-    triangle = torch.tensor([line[1:] for line in face if line[0] == 3])
-    triangle = triangle.to(torch.int64)
-
-    rect = torch.tensor([line[1:] for line in face if line[0] == 4])
-    rect = rect.to(torch.int64)
-
-    if rect.numel() > 0:
-        first, second = rect[:, [0, 1, 2]], rect[:, [1, 2, 3]]
-        return torch.cat([triangle, first, second], dim=0).t().contiguous()
+    if face.size(0) == 4:
+        first, second = face[:3, :], face[1:, :]
+        return torch.cat([first, second], dim=1)
     else:
-        return triangle.t().contiguous()
+        return face
 
 
 def read_off(path):
@@ -52,9 +24,28 @@ def read_off(path):
     Args:
         path (str): The path to the file.
     """
+    skiprows = 1
     with open(path, 'r') as f:
-        src = f.read().split('\n')[:-1]
-    return parse_off(src)
+        content = f.readline()[:-1]
+        # Some files contain a bug and do not have a carriage return after OFF.
+        if content == 'OFF':
+            skiprows += 1
+            content = f.readline()[:-1]
+        else:
+            content = content[3:-1]
+
+    num_nodes, num_faces = [int(item) for item in content.split()[:2]]
+
+    pos = pandas.read_csv(path, sep=' ', header=None, skiprows=skiprows,
+                          nrows=num_nodes)
+    pos = torch.from_numpy(pos.to_numpy()).to(torch.float)
+
+    face = pandas.read_csv(path, sep=' ', header=None,
+                           skiprows=skiprows + num_nodes, nrows=num_faces)
+    face = torch.from_numpy(face.to_numpy())[:, 1:].to(torch.long).t()
+    face = face_to_tri(face)
+
+    return Data(pos=pos, face=face)
 
 
 def write_off(data, path):

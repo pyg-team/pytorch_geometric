@@ -54,7 +54,7 @@ class MNISTSuperpixels(InMemoryDataset):
         extract_tar(path, self.raw_dir, mode='r')
         os.unlink(path)
 
-    def process_raw_file(self, raw_file):
+    def process_set(self, raw_file):
         xs, edge_indices, edge_slices, positions, ys = torch.load(raw_file)
 
         xs = xs.view(-1, 75, 1).unbind(dim=0)
@@ -79,8 +79,8 @@ class MNISTSuperpixels(InMemoryDataset):
         return data_list
 
     def process(self):
-        train_data_list = self.process_raw_file(self.raw_paths[0])
+        train_data_list = self.process_set(self.raw_paths[0])
         torch.save(self.collate(train_data_list), self.processed_paths[0])
 
-        test_data_list = self.process_raw_file(self.raw_paths[1])
+        test_data_list = self.process_set(self.raw_paths[1])
         torch.save(self.collate(test_data_list), self.processed_paths[1])

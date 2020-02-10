@@ -139,7 +139,7 @@ class Dataset(torch.utils.data.Dataset):
         return [osp.join(self.processed_dir, f) for f in files]
 
     def _download(self):
-        if files_exist(self.raw_paths):  # pragma: no cover
+        if files_exist(self.processed_paths) or files_exist(self.raw_paths):
             return
 
         if self.raw_dir is not None:

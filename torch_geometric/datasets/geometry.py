@@ -61,10 +61,6 @@ class GeometricShapes(InMemoryDataset):
         extract_zip(path, self.root)
         os.unlink(path)
 
-    def process(self):
-        torch.save(self.process_set('train'), self.processed_paths[0])
-        torch.save(self.process_set('test'), self.processed_paths[1])
-
     def process_set(self, dataset):
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
@@ -75,14 +71,21 @@ class GeometricShapes(InMemoryDataset):
             paths = glob.glob('{}/*.off'.format(folder))
             for path in paths:
                 data = read_off(path)
-                data.pos = data.pos - data.pos.mean(dim=0, keepdim=True)
-                data.y = torch.tensor([target])
+                data.pos -= data.pos.mean(dim=0, keepdim=True)
+                data.y = target
                 data_list.append(data)
 
         if self.pre_filter is not None:
-            data_list = [d for d in data_list if self.pre_filter(d)]
+            data_list = [data for data in data_list if self.pre_filter(data)]
 
         if self.pre_transform is not None:
-            data_list = [self.pre_transform(d) for d in data_list]
+            data_list = [self.pre_transform(data) for data in data_list]
 
-        return self.collate(data_list)
+        return data_list
+
+    def process(self):
+        train_data_list = self.process_set('train')
+        torch.save(self.collate(train_data_list), self.processed_paths[0])
+
+        test_data_list = self.process_set('test')
+        torch.save(self.collate(test_data_list), self.processed_paths[0])
