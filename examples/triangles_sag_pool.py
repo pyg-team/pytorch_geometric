@@ -20,7 +20,7 @@ class HandleNodeAttention(object):
 
 transform = T.Compose([HandleNodeAttention(), T.OneHotDegree(max_degree=14)])
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TRIANGLES')
-dataset = TUDataset(path, name='TRIANGLES', use_node_attr=True,
+dataset = TUDataset(path, name='TRIANGLES', use_node_attributes=True,
                     transform=transform)
 
 train_loader = DataLoader(dataset[:30000], batch_size=60, shuffle=True)
@@ -55,8 +55,8 @@ class Net(torch.nn.Module):
         x = global_max_pool(x, batch)
         x = self.lin(x).view(-1)
 
-        attn_loss = F.kl_div(
-            torch.log(score + 1e-14), data.attn[perm], reduction='none')
+        attn_loss = F.kl_div(torch.log(score + 1e-14), data.attn[perm],
+                             reduction='none')
         attn_loss = scatter_mean(attn_loss, batch)
 
         return x, attn_loss, ratio

@@ -18,7 +18,7 @@ class HandleNodeAttention(object):
 
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'COLORS-3')
-dataset = TUDataset(path, 'COLORS-3', use_node_attr=True,
+dataset = TUDataset(path, 'COLORS-3', use_node_attributes=True,
                     transform=HandleNodeAttention())
 
 train_loader = DataLoader(dataset[:500], batch_size=60, shuffle=True)

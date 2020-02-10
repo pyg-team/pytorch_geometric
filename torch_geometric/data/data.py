@@ -142,6 +142,8 @@ class Data(object):
         present attributes."""
         if len(keys) == 0:
             keys = sorted(self.keys)
+        else:
+            keys = [key for key in keys if self[key] is not None]
 
         for key in keys:
             yield key, self[key]
