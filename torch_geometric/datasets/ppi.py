@@ -7,9 +7,9 @@ import torch
 import numpy as np
 import networkx as nx
 from networkx.readwrite import json_graph
+from torch_sparse import SparseTensor
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
-from torch_geometric.utils import remove_self_loops
 
 
 class PPI(InMemoryDataset):
@@ -40,11 +40,7 @@ class PPI(InMemoryDataset):
 
     url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/ppi.zip'
 
-    def __init__(self,
-                 root,
-                 split='train',
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, split='train', transform=None, pre_transform=None,
                  pre_filter=None):
 
         assert split in ['train', 'val', 'test']
@@ -74,7 +70,7 @@ class PPI(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        for s, split in enumerate(['train', 'valid', 'test']):
+        for i, split in enumerate(['train', 'valid', 'test']):
             path = osp.join(self.raw_dir, '{}_graph.json').format(split)
             with open(path, 'r') as f:
                 G = nx.DiGraph(json_graph.node_link_graph(json.load(f)))
@@ -85,26 +81,27 @@ class PPI(InMemoryDataset):
             y = np.load(osp.join(self.raw_dir, '{}_labels.npy').format(split))
             y = torch.from_numpy(y).to(torch.float)
 
-            data_list = []
             path = osp.join(self.raw_dir, '{}_graph_id.npy').format(split)
             idx = torch.from_numpy(np.load(path)).to(torch.long)
             idx = idx - idx.min()
 
-            for i in range(idx.max().item() + 1):
-                mask = idx == i
+            data_list = []
+            for j in range(idx.max().item() + 1):
+                mask = idx == j
 
-                G_s = G.subgraph(mask.nonzero().view(-1).tolist())
-                edge_index = torch.tensor(list(G_s.edges)).t().contiguous()
-                edge_index = edge_index - edge_index.min()
-                edge_index, _ = remove_self_loops(edge_index)
+                G_j = G.subgraph(mask.nonzero().view(-1).tolist())
+                adj = nx.to_scipy_sparse_matrix(G_j)
 
-                data = Data(edge_index=edge_index, x=x[mask], y=y[mask])
+                adj = SparseTensor.from_scipy(adj, has_value=False)
+                adj = adj.remove_diag().fill_cache_()
 
-                if self.pre_filter is not None and not self.pre_filter(data):
-                    continue
-
-                if self.pre_transform is not None:
-                    data = self.pre_transform(data)
-
+                data = Data(adj=adj, x=x[mask], y=y[mask])
                 data_list.append(data)
-            torch.save(self.collate(data_list), self.processed_paths[s])
+
+            if self.pre_filter is not None and not self.pre_filter(data):
+                data_list = [d for d in data_list if self.pre_filter(d)]
+
+            if self.pre_transform is not None:
+                data_list = [self.pre_transform(d) for d in data_list]
+
+            torch.save(self.collate(data_list), self.processed_paths[i])
