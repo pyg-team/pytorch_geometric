@@ -20,9 +20,10 @@ class Net(torch.nn.Module):
                               depth=3, pool_ratios=pool_ratios)
 
     def forward(self):
-        edge_index, _ = dropout_adj(
-            data.edge_index, p=0.2, force_undirected=True,
-            num_nodes=data.num_nodes, training=self.training)
+        edge_index, _ = dropout_adj(data.edge_index, p=0.2,
+                                    force_undirected=True,
+                                    num_nodes=data.num_nodes,
+                                    training=self.training)
         x = F.dropout(data.x, p=0.92, training=self.training)
 
         x = self.unet(x, edge_index)
@@ -31,7 +32,6 @@ class Net(torch.nn.Module):
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model, data = Net().to(device), data.to(device)
-data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.001)
 
 
