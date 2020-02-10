@@ -338,7 +338,6 @@ class Data(object):
         all present attributes.
         """
         for key, item in self(*keys):
-            print(key)
             if torch.is_tensor(item) or isinstance(item, SparseTensor):
                 self[key] = func(item)
         return self
