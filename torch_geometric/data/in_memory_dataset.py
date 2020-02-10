@@ -57,13 +57,8 @@ class InMemoryDataset(Dataset):
     @property
     def num_classes(self):
         r"""The number of classes in the dataset."""
-        if self.data_list[0].y.dim() > 1:
-            return self.data_list[0].y.size(1)
-
-        max_num_classes = 0
-        for data in self.data_list:
-            max_num_classes = max(int(data.y.max()) + 1, max_num_classes)
-        return max_num_classes
+        y = self.data['y']
+        return y.size(1) if y.dim() > 1 else y.max().item() + 1
 
     def len(self):
         return self.data['__length__']

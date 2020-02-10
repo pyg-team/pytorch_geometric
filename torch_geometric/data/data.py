@@ -1,7 +1,6 @@
 import re
 import copy
 import warnings
-
 import torch
 import torch_geometric
 from torch_sparse import coalesce, SparseTensor
@@ -141,7 +140,7 @@ class Data(object):
         their attribute names and content.
         If :obj:`*keys` is not given this method will iterative over all
         present attributes."""
-        if keys is not None:
+        if len(keys) > 0:
             keys = list(set(keys).intersection(set(self.keys)))
         else:
             keys = self.keys
@@ -195,7 +194,7 @@ class Data(object):
     @property
     def edge_index(self):
         if self.__edge_index__ is None and self.__adj__ is not None:
-            row, col, _ = self.__adj__.coo()
+            col, row, _ = self.__adj__.coo()
             return torch.stack([row, col], dim=0)
         return self.__edge_index__
 
@@ -339,6 +338,7 @@ class Data(object):
         all present attributes.
         """
         for key, item in self(*keys):
+            print(key)
             if torch.is_tensor(item) or isinstance(item, SparseTensor):
                 self[key] = func(item)
         return self
