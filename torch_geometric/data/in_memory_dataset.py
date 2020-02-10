@@ -151,6 +151,8 @@ class InMemoryDataset(Dataset):
             elif isinstance(item, SparseTensor):
                 for k in ptrs[key].keys():
                     store[key][k] = torch.cat(store[key][k])
+            elif isinstance(item, int) or isinstance(item, float):
+                store[key] = torch.tensor(store[key])
 
         assert '__data_class__' not in store
         store['__data_class__'] = ref.__class__

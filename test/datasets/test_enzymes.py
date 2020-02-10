@@ -63,7 +63,7 @@ def test_enzymes():
         assert list(data.mask.size()) == [600, 126]
         assert list(data.y.size()) == [600, 1]
 
-    dataset = TUDataset(root, 'ENZYMES', use_node_attr=True)
+    dataset = TUDataset(root, 'ENZYMES', use_node_attributes=True)
     assert dataset.num_node_features == 21
     assert dataset.num_features == 21
     assert dataset.num_edge_features == 0

@@ -70,11 +70,13 @@ class TUDataset(InMemoryDataset):
         F = self.num_node_attributes
         if F > 0 and not use_node_attributes:
             self.data['x'] = self.data['x'][:, F:].contiguous()
+            self.num_node_attributes = 0
 
         D = self.num_edge_attributes
         if D > 0 and not use_edge_attributes:
             value = self.data['adj']['_value'][:, D:].contiguous()
             self.data['adj']['_value'] = value
+            self.num_edge_attributes = 0
 
     @property
     def raw_dir(self):

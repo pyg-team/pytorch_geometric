@@ -8,7 +8,7 @@ def test_dataloader():
     face = torch.tensor([[0], [1], [2]])
 
     data = Data(x=x, edge_index=edge_index, y=2)
-    assert data.__repr__() == 'Data(edge_index=[2, 4], x=[3, 1], y=[1])'
+    assert data.__repr__() == 'Data(edge_index=[2, 4], x=[3, 1], y=2)'
     data.face = face
 
     loader = DataLoader([data, data], batch_size=2, shuffle=False)
@@ -22,9 +22,7 @@ def test_dataloader():
         assert batch.y.tolist() == [2, 2]
         assert batch.face.tolist() == [[0, 3], [1, 4], [2, 5]]
 
-    loader = DataLoader([data, data],
-                        batch_size=2,
-                        shuffle=False,
+    loader = DataLoader([data, data], batch_size=2, shuffle=False,
                         follow_batch=['edge_index'])
 
     for batch in loader:

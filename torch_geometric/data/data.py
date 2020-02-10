@@ -205,8 +205,9 @@ class Data(object):
     @property
     def edge_attr(self):
         if self.__edge_attr__ is None and self.__adj__ is not None:
-            if self.__adj__.has_value():
-                return self.__adj__.csr()[2]
+            value = self.__adj__.storage.value()
+            if value is not None:
+                return value
         return self.__edge_attr__
 
     @edge_attr.setter
@@ -235,10 +236,10 @@ class Data(object):
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
         if self.__adj__ is not None:
-            return self.adj.size(1)
+            return self.__adj__.size(1)
         if self.__edge_index__ is not None:
             warnings.warn(__num_nodes_warn_msg__.format('edge'))
-            return maybe_num_nodes(self.edge_index)
+            return maybe_num_nodes(self.__edge_index__)
         if self.face is not None:
             warnings.warn(__num_nodes_warn_msg__.format('face'))
             return maybe_num_nodes(self.face)
@@ -251,10 +252,10 @@ class Data(object):
     @property
     def num_edges(self):
         r"""Returns the number of edges in the graph."""
-        if self.__adj__ is not None:
-            return self.adj.nnz()
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
+        if self.__adj__ is not None:
+            return self.adj.nnz()
         return None
 
     @property
@@ -279,12 +280,12 @@ class Data(object):
     @property
     def num_edge_features(self):
         r"""Returns the number of features per edge in the graph."""
-        if self.__adj__ is not None and self.__adj__.has_value():
-            value = self.__adj__.storage.value()
-            return 1 if value.dim() == 1 else value.size(1)
         if self.__edge_attr__ is not None:
             edge_attr = self.__edge_attr__
             return 1 if edge_attr.dim() == 1 else edge_attr.size(1)
+        if self.__adj__ is not None and self.__adj__.has_value():
+            value = self.__adj__.storage.value()
+            return 1 if value.dim() == 1 else value.size(1)
         return 0
 
     def __is_adj_coalesced__(self):

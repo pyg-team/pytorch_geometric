@@ -13,10 +13,13 @@ def test_batch():
     e2 = torch.tensor([[0, 1], [1, 0]])
     s2 = '2'
 
-    data = Batch.from_data_list([Data(x1, e1, s=s1), Data(x2, e2, s=s2)])
+    data = Batch.from_data_list([
+        Data(x=x1, edge_index=e1, s=s1),
+        Data(x=x2, edge_index=e2, s=s2),
+    ])
 
     assert data.__repr__() == (
-        'Batch(batch=[5], edge_index=[2, 6], s=[2], x=[5])')
+        'Batch(edge_index=[2, 6], x=[5], batch=[5], s=[2])')
     assert len(data) == 4
     assert data.x.tolist() == [1, 2, 3, 1, 2]
     assert data.edge_index.tolist() == [[0, 1, 1, 2, 3, 4], [1, 0, 2, 1, 4, 3]]
@@ -35,4 +38,4 @@ def test_batch():
     assert data_list[1].edge_index.tolist() == [[0, 1], [1, 0]]
     assert data_list[1].s == ['2']
 
-    torch_geometric.set_debug(True)
+    torch_geometric.set_debug(False)

@@ -20,11 +20,11 @@ def face_to_tri(face):
     if triangle.numel() > 0 and rect.numel() > 0:
         return torch.cat([triangle, first, second], dim=0).t().contiguous()
     elif triangle.numel() > 0:
-        face = triangle.t().contiguous()
+        return triangle.t().contiguous()
     elif rect.numel() > 0:
-        face = rect.t().contiguous
+        return rect.t().contiguous()
     else:
-        face = None
+        return None
 
 
 def read_off(path):

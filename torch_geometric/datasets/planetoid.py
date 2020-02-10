@@ -29,8 +29,8 @@ class Planetoid(InMemoryDataset):
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
 
     def __init__(self, root, name, transform=None, pre_transform=None):
-        self.name = name
-        assert self.name in ['Cora', 'CiteSeer', 'PubMed']
+        self.name = name.lower()
+        assert self.name in ['cora', 'citeseer', 'pubmed']
         super(Planetoid, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
@@ -61,4 +61,4 @@ class Planetoid(InMemoryDataset):
         torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self):
-        return '{}()'.format(self.name)
+        return '{}()'.format(self.name.capitalize())
