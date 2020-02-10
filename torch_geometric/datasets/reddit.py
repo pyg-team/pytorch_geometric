@@ -4,7 +4,7 @@ import os.path as osp
 import torch
 import numpy as np
 import scipy.sparse as sp
-from torch_sparse import coalesce
+from torch_sparse import SparseTensor
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
 
@@ -24,21 +24,12 @@ class Reddit(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
     """
 
     url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/reddit.zip'
 
-    def __init__(self,
-                 root,
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
-        super(Reddit, self).__init__(root, transform, pre_transform,
-                                     pre_filter)
+    def __init__(self, root, transform=None, pre_transform=None):
+        super(Reddit, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -55,21 +46,21 @@ class Reddit(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
+        adj = sp.load_npz(osp.join(self.raw_dir, 'reddit_graph.npz'))
+        adj = SparseTensor.from_scipy(adj, has_value=False).fill_cache_()
+
         data = np.load(osp.join(self.raw_dir, 'reddit_data.npz'))
         x = torch.from_numpy(data['feature']).to(torch.float)
         y = torch.from_numpy(data['label']).to(torch.long)
         split = torch.from_numpy(data['node_types'])
 
-        adj = sp.load_npz(osp.join(self.raw_dir, 'reddit_graph.npz'))
-        row = torch.from_numpy(adj.row).to(torch.long)
-        col = torch.from_numpy(adj.col).to(torch.long)
-        edge_index = torch.stack([row, col], dim=0)
-        edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+        data = Data(adj=adj, x=x, y=y)
+        data.train_mask = (split == 1)
+        data.val_mask = (split == 2)
+        data.test_mask = (split == 3)
 
-        data = Data(x=x, edge_index=edge_index, y=y)
-        data.train_mask = split == 1
-        data.val_mask = split == 2
-        data.test_mask = split == 3
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
 
