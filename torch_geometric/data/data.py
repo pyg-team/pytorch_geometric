@@ -140,12 +140,10 @@ class Data(object):
         their attribute names and content.
         If :obj:`*keys` is not given this method will iterative over all
         present attributes."""
-        if len(keys) > 0:
-            keys = list(set(keys).intersection(set(self.keys)))
-        else:
-            keys = self.keys
+        if len(keys) == 0:
+            keys = sorted(self.keys)
 
-        for key in sorted(keys):
+        for key in keys:
             yield key, self[key]
 
     def __cat_dim__(self, key, value):
