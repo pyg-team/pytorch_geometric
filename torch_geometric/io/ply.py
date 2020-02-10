@@ -1,21 +1,12 @@
 import torch
-from plyfile import PlyData
+import openmesh
 from torch_geometric.data import Data
 
 
 def read_ply(path):
-    with open(path, 'rb') as f:
-        data = PlyData.read(f)
-
-    pos = ([torch.tensor(data['vertex'][axis]) for axis in ['x', 'y', 'z']])
-    pos = torch.stack(pos, dim=-1)
-
-    face = None
-    if 'face' in data:
-        faces = data['face']['vertex_indices']
-        faces = [torch.tensor(fa, dtype=torch.long) for fa in faces]
-        face = torch.stack(faces, dim=-1)
-
+    mesh = openmesh.read_trimesh(path)
+    pos = torch.from_numpy(mesh.points()).to(torch.float)
+    face = torch.from_numpy(mesh.face_vertex_indices())
+    face = face.t().to(torch.long).contiguous()
     data = Data(pos=pos, face=face)
-
     return data

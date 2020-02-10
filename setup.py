@@ -12,7 +12,7 @@ install_requires = [
     'scikit-image',
     'numba',
     'requests',
-    'plyfile',
+    'openmesh',
     'pandas',
     'rdflib',
     'h5py',

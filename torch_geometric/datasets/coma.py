@@ -1,5 +1,5 @@
 import os.path as osp
-from glob import glob
+import glob
 
 import torch
 from torch_geometric.data import InMemoryDataset, extract_zip
@@ -26,6 +26,11 @@ class CoMA(InMemoryDataset):
         root (string): Root directory where the dataset should be saved.
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)
+        split_type (string, optional): The split type to use (:obj:`"sliced"`,
+        :obj:`"expression"` or :obj:`"identity"`). (default: :obj:`"sliced"`)
+        split_term (string, optional): If :attr:`split_type` is set to
+            :obj:`"expression"` or :obj:`"identity"`, will use the
+            :attr:`split_term` as the test set. (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -34,10 +39,6 @@ class CoMA(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
     """
 
     url = 'https://coma.is.tue.mpg.de/'
@@ -57,11 +58,41 @@ class CoMA(InMemoryDataset):
         'mouth_up',
     ]
 
-    def __init__(self, root, train=True, transform=None, pre_transform=None,
-                 pre_filter=None):
-        super(CoMA, self).__init__(root, transform, pre_transform, pre_filter)
-        path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+    def __init__(self, root, train=True, split_type='sliced', split_term=None,
+                 transform=None, pre_transform=None):
+        super(CoMA, self).__init__(root, transform, pre_transform)
+
+        # TODO: We load the complete data here, despite only making use of
+        # either the training or test set.
+        self.data, self.slices = torch.load(self.processed_paths[0])
+        indices = torch.load(self.processed_paths[1])
+
+        assert split_type in ['sliced', 'expression', 'identity']
+
+        if split_type == 'sliced':
+            ind = torch.arange(len(self))
+            mask = (ind % 100) >= 10 if train else (ind % 100) < 10
+            self.__indices__ = ind[mask].tolist()
+
+        elif split_type == 'expression':
+            assert split_term in indices['expression']
+            if train:
+                ind = []
+                for key, item in indices['expression'].items():
+                    ind += item if key != split_term else []
+                self.__indices__ = ind
+            else:
+                self.__indices__ = indices['expression'][split_term]
+
+        elif split_type == 'identity':
+            assert split_term in indices['identity']
+            if train:
+                ind = []
+                for key, item in indices['identity'].items():
+                    ind += item if key != split_term else []
+                self.__indices__ = ind
+            else:
+                self.__indices__ = indices['identity'][split_term]
 
     @property
     def raw_file_names(self):
@@ -69,7 +100,7 @@ class CoMA(InMemoryDataset):
 
     @property
     def processed_file_names(self):
-        return ['training.pt', 'test.pt']
+        return 'data.pt', 'indices.pt'
 
     def download(self):
         raise RuntimeError(
@@ -77,28 +108,27 @@ class CoMA(InMemoryDataset):
             'move it to {}'.format(self.url, self.raw_dir))
 
     def process(self):
-        folders = sorted(glob(osp.join(self.raw_dir, 'FaceTalk_*')))
-        if len(folders) == 0:
+        paths = sorted(glob.glob(self.raw_dir + '/*/*/*.ply'))
+        if len(paths) == 0:
             extract_zip(self.raw_paths[0], self.raw_dir, log=False)
-            folders = sorted(glob(osp.join(self.raw_dir, 'FaceTalk_*')))
+            paths = sorted(glob.glob(osp.join(self.raw_dir, '*/*/*.ply')))
 
-        train_data_list, test_data_list = [], []
-        for folder in folders:
-            for i, category in enumerate(self.categories):
-                files = sorted(glob(osp.join(folder, category, '*.ply')))
-                for j, f in enumerate(files):
-                    data = read_ply(f)
-                    data.y = torch.tensor([i], dtype=torch.long)
-                    if self.pre_filter is not None and\
-                       not self.pre_filter(data):
-                        continue
-                    if self.pre_transform is not None:
-                        data = self.pre_transform(data)
+        indices = {'expression': {}, 'identity': {}}
+        for expression in self.categories:
+            indices['expression'][expression] = []
+        for identity in glob.glob(osp.join(self.raw_dir, '*')):
+            indices['identity'][identity.split(osp.sep)[-1]] = []
 
-                    if (j % 100) < 90:
-                        train_data_list.append(data)
-                    else:
-                        test_data_list.append(data)
+        data_list = []
+        for idx, path in enumerate(paths):
+            data = read_ply(path)
+            data_list.append(data)
 
-        torch.save(self.collate(train_data_list), self.processed_paths[0])
-        torch.save(self.collate(test_data_list), self.processed_paths[1])
+            indices['expression'][path.split(osp.sep)[-2]].append(idx)
+            indices['identity'][path.split(osp.sep)[-3]].append(idx)
+
+        if self.pre_transform is not None:
+            data_list = [self.pre_transform(data) for data in data_list]
+
+        torch.save(self.collate(data_list), self.processed_paths[0])
+        torch.save(indices, self.processed_paths[1])
