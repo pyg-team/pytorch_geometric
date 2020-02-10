@@ -61,6 +61,13 @@ class GeometricShapes(InMemoryDataset):
         extract_zip(path, self.root)
         os.unlink(path)
 
+    def process(self):
+        train_data_list = self.process_set('train')
+        torch.save(self.collate(train_data_list), self.processed_paths[0])
+
+        test_data_list = self.process_set('test')
+        torch.save(self.collate(test_data_list), self.processed_paths[1])
+
     def process_set(self, dataset):
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
@@ -82,10 +89,3 @@ class GeometricShapes(InMemoryDataset):
             data_list = [self.pre_transform(data) for data in data_list]
 
         return data_list
-
-    def process(self):
-        train_data_list = self.process_set('train')
-        torch.save(self.collate(train_data_list), self.processed_paths[0])
-
-        test_data_list = self.process_set('test')
-        torch.save(self.collate(test_data_list), self.processed_paths[0])
