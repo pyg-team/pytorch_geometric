@@ -34,6 +34,7 @@ setup(
         'geometric-deep-learning',
         'graph-neural-networks',
     ],
+    python_requires='>=3.6',
     install_requires=install_requires,
     setup_requires=setup_requires,
     tests_require=tests_require,
