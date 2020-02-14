@@ -16,8 +16,8 @@ jobs:
 install:
   - pip install numpy
   - pip install --pre torch torchvision -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
-  - pip install torch-scatter
-  - pip install torch-sparse
+    pip install torch-scatter==latest+cpu -f http://pytorch-scatter.s3-website.eu-central-1.amazonaws.com/whl/torch-1.4.0.html --trusted-host pytorch-scatter.s3-website.eu-central-1.amazonaws.com
+  - pip install torch-sparse==latest+cpu -f http://pytorch-sparse.s3-website.eu-central-1.amazonaws.com/whl/torch-1.4.0.html --trusted-host pytorch-sparse.s3-website.eu-central-1.amazonaws.com
   - pip install torch-cluster
   - pip install torch-spline-conv
   - pip install cython && pip install gdist
