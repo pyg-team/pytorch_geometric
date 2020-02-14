@@ -1,4 +1,7 @@
-from torch_cluster import graclus_cluster
+try:
+    from torch_cluster import graclus_cluster
+except ImportError:
+    graclus_cluster = None
 
 
 def graclus(edge_index, weight=None, num_nodes=None):
@@ -20,5 +23,9 @@ def graclus(edge_index, weight=None, num_nodes=None):
 
     :rtype: :class:`LongTensor`
     """
+
+    if graclus_cluster is None:
+        raise ImportError('`graclus` requires `torch-cluster`.')
+
     row, col = edge_index
     return graclus_cluster(row, col, weight, num_nodes)

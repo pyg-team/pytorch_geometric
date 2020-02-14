@@ -5,10 +5,14 @@ from math import ceil
 import torch
 from torch.nn import Sequential as S, Linear as L, BatchNorm1d as BN
 from torch.nn import ELU, Conv1d
-from torch_cluster import knn_graph
 from torch_geometric.nn import Reshape
 
 from ..inits import reset
+
+try:
+    from torch_cluster import knn_graph
+except ImportError:
+    knn_graph = None
 
 
 class XConv(torch.nn.Module):
@@ -53,6 +57,9 @@ class XConv(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim, kernel_size,
                  hidden_channels=None, dilation=1, bias=True, **kwargs):
         super(XConv, self).__init__()
+
+        if knn_graph is None:
+            raise ImportError('`XConv` requires `torch-cluster`.')
 
         self.in_channels = in_channels
         if hidden_channels is None:

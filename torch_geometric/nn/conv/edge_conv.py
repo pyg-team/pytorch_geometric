@@ -1,8 +1,12 @@
 import torch
 from torch_geometric.nn.conv import MessagePassing
-from torch_cluster import knn_graph
 
 from ..inits import reset
+
+try:
+    from torch_cluster import knn_graph
+except ImportError:
+    knn_graph = None
 
 
 class EdgeConv(MessagePassing):
@@ -27,7 +31,6 @@ class EdgeConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, nn, aggr='max', **kwargs):
         super(EdgeConv, self).__init__(aggr=aggr, **kwargs)
         self.nn = nn
@@ -66,9 +69,12 @@ class DynamicEdgeConv(EdgeConv):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, nn, k, aggr='max', **kwargs):
         super(DynamicEdgeConv, self).__init__(nn=nn, aggr=aggr, **kwargs)
+
+        if knn_graph is None:
+            raise ImportError('`DynamicEdgeConv` requires `torch-cluster`.')
+
         self.k = k
 
     def forward(self, x, batch=None):
