@@ -115,20 +115,20 @@ We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation
 
-Ensure that at least PyTorch 1.4.0 is installed, *e.g.*:
+Ensure that PyTorch 1.4.0 is installed, *e.g.*:
 
 ```
 $ python -c "import torch; print(torch.__version__)"
 >>> 1.4.0
 ```
 
-Then run:
+Then run
 
 ```sh
 $ pip install torch-scatter==latest+${CUDA} torch-sparse==latest+${CUDA} -f https://s3.eu-central-1.amazonaws.com/pytorch-geometric.com/whl/torch-1.4.0.html
 $ pip install torch-cluster (optional)
 $ pip install torch-spline-conv (optional)
-$ pip install torch-geometric
+$ python setup.py install or pip install torch-geometric
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu100` or `cu101` depending on your PyTorch installation.

@@ -2,7 +2,7 @@ Installation
 ============
 
 We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be installed in advance.
-These packages come with their own CPU and GPU kernel implementations based on the newly introduced `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ in PyTorch 0.4.0.
+These packages come with their own CPU and GPU kernel implementations based on `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ introduced in PyTorch 0.4.0.
 
 .. note::
     We do not recommend installation as root user on your system python.
@@ -10,7 +10,7 @@ These packages come with their own CPU and GPU kernel implementations based on t
 
 Please follow the steps below for a successful installation:
 
-#. Ensure that at least PyTorch 1.4.0 is installed:
+#. Ensure that PyTorch 1.4.0 is installed:
 
     .. code-block:: none
 
@@ -67,15 +67,15 @@ Please follow the steps below for a successful installation:
             $ nvcc --version
             >>> 10.0
 
-#. Install all needed packages:
+#. Install all needed packages with ``${CUDA}`` replaced by either ``cpu``, ``cu92``, ``cu100`` or ``cu101`` depending on your PyTorch installation:
 
     .. code-block:: none
 
-        $ pip install --verbose --no-cache-dir torch-scatter
-        $ pip install --verbose --no-cache-dir torch-sparse
-        $ pip install --verbose --no-cache-dir torch-cluster
-        $ pip install --verbose --no-cache-dir torch-spline-conv (optional)
-        $ pip install torch-geometric
+      $ pip install torch-scatter==latest+${CUDA} torch-sparse==latest+${CUDA} -f https://s3.eu-central-1.amazonaws.com/pytorch-geometric.com/whl/torch-1.4.0.html
+      $ pip install torch-cluster (optional)
+      $ pip install torch-spline-conv (optional)
+      $ python setup.py install or pip install torch-geometric
+
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
 ``pip`` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, ``No module named 'torch_*.*_cuda'``, or execution simply crashes with ``Segmentation fault (core dumped)``.

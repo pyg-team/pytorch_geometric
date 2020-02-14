@@ -68,6 +68,7 @@ def knn(x, y, k, batch_x=None, batch_y=None, cosine=False):
     :rtype: :class:`LongTensor`
 
     .. code-block:: python
+
         import torch
         from torch_geometric.nn import knn
 
