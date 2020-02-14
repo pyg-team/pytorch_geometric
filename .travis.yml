@@ -15,7 +15,7 @@ jobs:
         - CXX=g++-5
 install:
   - pip install numpy
-  - pip install --pre torch torchvision -f https://download.pytorch.org/whl/nightly/cpu/torch_nightly.html
+  - pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
   - pip install torch-scatter==latest+cpu -f http://pytorch-scatter.s3-website.eu-central-1.amazonaws.com/whl/torch-1.4.0.html --trusted-host pytorch-scatter.s3-website.eu-central-1.amazonaws.com
   - pip install torch-sparse==latest+cpu -f http://pytorch-sparse.s3-website.eu-central-1.amazonaws.com/whl/torch-1.4.0.html --trusted-host pytorch-sparse.s3-website.eu-central-1.amazonaws.com
   - pip install torch-cluster
