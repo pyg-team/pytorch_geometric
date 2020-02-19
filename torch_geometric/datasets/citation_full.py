@@ -28,7 +28,8 @@ class CitationFull(InMemoryDataset):
             print("Cannot find the dataset {}".format(name))
             raise IOError
         self.name = name
-        self.url = 'https://github.com/abojchevski/graph2gauss/raw/master/data/{}.npz'.format(self.name)
+        _url = "'https://github.com/abojchevski/graph2gauss/raw/master/data/"
+        self.url = _url + '{}.npz'.format(self.name)
         super(CitationFull, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
