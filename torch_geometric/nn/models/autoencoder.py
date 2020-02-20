@@ -74,12 +74,12 @@ class GAE(torch.nn.Module):
         return self.encoder(*args, **kwargs)
 
     def decode(self, *args, **kwargs):
-        r"""Runs the decoder and computes edge probabilties."""
+        r"""Runs the decoder and computes edge probabilities."""
         return self.decoder(*args, **kwargs)
 
     def split_edges(self, data, val_ratio=0.05, test_ratio=0.1):
         r"""Splits the edges of a :obj:`torch_geometric.data.Data` object
-        into positve and negative train/val/test edges.
+        into positive and negative train/val/test edges.
 
         Args:
             data (Data): The data object.
