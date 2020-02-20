@@ -22,7 +22,6 @@ class CitationFull(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-
     def __init__(self, root, name, transform=None, pre_transform=None):
         if name not in ['citeseer', 'cora', 'cora_ml', 'dblp', 'pubmed']:
             print("Cannot find the dataset {}".format(name))
