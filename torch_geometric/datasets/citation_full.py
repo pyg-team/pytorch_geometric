@@ -1,3 +1,5 @@
+import os.path as osp
+
 import torch
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
@@ -12,6 +14,8 @@ class CitationFull(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
+        name (string): The name of the dataset (:obj:`"Cora"`, :obj:`"Cora_ML"`
+            :obj:`"CiteSeer"`, :obj:`"DBLP"`, :obj:`"PubMed"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -22,15 +26,21 @@ class CitationFull(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
+    url = 'https://github.com/abojchevski/graph2gauss/raw/master/data/{}.npz'
+
     def __init__(self, root, name, transform=None, pre_transform=None):
-        if name not in ['citeseer', 'cora', 'cora_ml', 'dblp', 'pubmed']:
-            print('Cannot find the dataset {}'.format(name))
-            raise IOError
-        self.name = name
-        _url = 'https://github.com/abojchevski/graph2gauss/raw/master/data/'
-        self.url = _url + '{}.npz'.format(self.name)
+        self.name = name.lower()
+        assert name in ['cora', 'cora_ml', 'citeseer', 'dblp', 'pubmed']
         super(CitationFull, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
+
+    @property
+    def raw_dir(self):
+        return osp.join(self.root, self.name, 'raw')
+
+    @property
+    def processed_dir(self):
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self):
@@ -41,7 +51,7 @@ class CitationFull(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        download_url(self.url, self.raw_dir)
+        download_url(self.url.format(self.name), self.raw_dir)
 
     def process(self):
         data = read_npz(self.raw_paths[0])
@@ -50,4 +60,17 @@ class CitationFull(InMemoryDataset):
         torch.save((data, slices), self.processed_paths[0])
 
     def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)
+        return '{}Full()'.format(self.name.capitalize())
+
+
+class CoraFull(CitationFull):
+    r"""Alias for :class:`torch_geometric.dataset.CitationFull`:obj:``("cora)`.
+    """
+    def __init__(self, root, transform=None, pre_transform=None):
+        super(CoraFull, self).__init__(root, 'cora', transform, pre_transform)
+
+    def download(self):
+        super(CoraFull, self).download()
+
+    def process(self):
+        super(CoraFull, self).process()
