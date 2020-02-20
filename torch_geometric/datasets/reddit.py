@@ -32,10 +32,7 @@ class Reddit(InMemoryDataset):
 
     url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/reddit.zip'
 
-    def __init__(self,
-                 root,
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
         super(Reddit, self).__init__(root, transform, pre_transform,
                                      pre_filter)

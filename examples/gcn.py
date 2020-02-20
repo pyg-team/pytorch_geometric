@@ -62,6 +62,7 @@ def train():
     optimizer.step()
 
 
+@torch.no_grad()
 def test():
     model.eval()
     logits, accs = model(), []
