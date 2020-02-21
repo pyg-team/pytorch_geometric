@@ -59,8 +59,7 @@ for dataset_name, Net in product(datasets, nets):
     best_result = (float('inf'), 0, 0)  # (loss, acc, std)
     print('-----\n{} - {}'.format(dataset_name, Net.__name__))
     for num_layers, hidden in product(layers, hiddens):
-        dataset = get_dataset(dataset_name, sparse=Net != DiffPool,
-                              cleaned=True)
+        dataset = get_dataset(dataset_name, sparse=Net != DiffPool)
         model = Net(dataset, num_layers, hidden)
         loss, acc, std = cross_validation_with_val_set(
             dataset,

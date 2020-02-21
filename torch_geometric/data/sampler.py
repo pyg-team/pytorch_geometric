@@ -2,13 +2,17 @@ from __future__ import division
 import warnings
 
 import torch
-from torch_cluster import neighbor_sampler
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.utils import degree, segregate_self_loops
 from torch_geometric.utils.repeat import repeat
 
 from .data import size_repr
+
+try:
+    from torch_cluster import neighbor_sampler
+except ImportError:
+    neighbor_sampler = None
 
 
 class Block(object):
@@ -107,6 +111,9 @@ class NeighborSampler(object):
     def __init__(self, data, size, num_hops, batch_size=1, shuffle=False,
                  drop_last=False, bipartite=True, add_self_loops=False,
                  flow='source_to_target'):
+
+        if neighbor_sampler is None:
+            raise ImportError('`NeighborSampler` requires `torch-cluster`.')
 
         self.data = data
         self.size = repeat(size, num_hops)

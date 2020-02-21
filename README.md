@@ -102,6 +102,7 @@ In detail, the following methods are currently implemented:
 * **[RENet](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.RENet)** from Jin *et al.*: [Recurrent Event Network for Reasoning over Temporal Knowledge Graphs](https://arxiv.org/abs/1904.05530) (ICLR-W 2019)
 * **[GraphUNet](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GraphUNet)** from Gao and Ji: [Graph U-Nets](https://arxiv.org/abs/1905.05178) (ICML 2019)
 * **[NeighborSampler](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.data.NeighborSampler)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017)
+* **[ClusterGCN](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.data.ClusterLoader)** from Chiang *et al.*: [Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph Convolutional Networks](https://arxiv.org/abs/1905.07953) (KDD 2019)
 * **[GDC](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.transforms.GDC)** from Klicpera *et al.*: [Diffusion Improves Graph Learning](https://arxiv.org/abs/1911.05485) (NeurIPS 2019)
 
 --------------------------------------------------------------------------------
@@ -115,40 +116,31 @@ We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation
 
-Ensure that at least PyTorch 1.4.0 is installed and verify that `cuda/bin`, `cuda/include` and `cuda/lib64` are in your `$PATH`, `$CPATH` and `$LD_LIBRARY_PATH` respectively, *e.g.*:
+We provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
+
+|             | `cpu` | `cu92` | `cu100` | `cu101` |
+|-------------|-------|--------|---------|---------|
+| **Linux**   | ✅    | ✅     | ✅      | ✅      |
+| **Windows** | ✅    | ❌     | ❌      | ✅      |
+| **macOS**   | ✅    |        |         |         |
+
+To install the binaries, first ensure that PyTorch 1.4.0 is installed, *e.g.*:
 
 ```
 $ python -c "import torch; print(torch.__version__)"
 >>> 1.4.0
+```
 
-$ echo $PATH
->>> /usr/local/cuda/bin:...
-
-$ echo $CPATH
->>> /usr/local/cuda/include:...
-```
-and
-```
-$ echo $LD_LIBRARY_PATH
->>> /usr/local/cuda/lib64
-```
-on Linux or
-```
-$ echo $DYLD_LIBRARY_PATH
->>> /usr/local/cuda/lib
-```
-on macOS.
-Then run:
+Then run
 
 ```sh
-$ pip install --verbose --no-cache-dir torch-scatter
-$ pip install --verbose --no-cache-dir torch-sparse
-$ pip install --verbose --no-cache-dir torch-cluster
-$ pip install --verbose --no-cache-dir torch-spline-conv (optional)
+$ pip install torch-scatter==latest+${CUDA} torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+$ pip install torch-cluster (optional)
+$ pip install torch-spline-conv (optional)
 $ pip install torch-geometric
 ```
 
-See the [Frequently Asked Questions](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#frequently-asked-questions) and verify that your [CUDA is set up correctly](https://docs.nvidia.com/cuda/index.html) if you encounter any installation errors.
+where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu100` or `cu101` depending on your PyTorch installation.
 
 ## Running examples
 

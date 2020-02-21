@@ -1,0 +1,6 @@
+numpy
+https://download.pytorch.org/whl/cpu/torch-1.4.0%2Bcpu-cp37-cp37m-linux_x86_64.whl
+https://s3.eu-central-1.amazonaws.com/pytorch-geometric.com/whl/torch-1.4.0/torch_scatter-latest%2Bcpu-cp37-cp37m-linux_x86_64.whl
+https://s3.eu-central-1.amazonaws.com/pytorch-geometric.com/whl/torch-1.4.0/torch_sparse-latest%2Bcpu-cp37-cp37m-linux_x86_64.whl
+sphinx
+sphinx_rtd_theme

@@ -33,7 +33,6 @@ class RGCNConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, num_relations, num_bases,
                  root_weight=True, bias=True, **kwargs):
         super(RGCNConv, self).__init__(aggr='add', **kwargs)
@@ -89,15 +88,17 @@ class RGCNConv(MessagePassing):
     def update(self, aggr_out, x):
         if self.root is not None:
             if x is None:
-                out = aggr_out + self.root
+                aggr_out = aggr_out + self.root
             else:
-                out = aggr_out + torch.matmul(x, self.root)
+                aggr_out = aggr_out + torch.matmul(x, self.root)
 
         if self.bias is not None:
-            out = out + self.bias
-        return out
+            aggr_out = aggr_out + self.bias
+
+        return aggr_out
 
     def __repr__(self):
-        return '{}({}, {}, num_relations={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.num_relations)
+        return '{}({}, {}, num_relations={})'.format(self.__class__.__name__,
+                                                     self.in_channels,
+                                                     self.out_channels,
+                                                     self.num_relations)
