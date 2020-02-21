@@ -4,8 +4,24 @@ import shutil
 import numpy as np
 
 import torch
-from torch_geometric.data import InMemoryDataset, download_url, extract_gz, extract_tar, extract_zip
+from torch_geometric.data import Data, InMemoryDataset, download_url, extract_gz, extract_tar, extract_zip
 from torch_geometric.data.makedirs import makedirs
+
+
+def to_assoc(indices):
+    assoc = {}
+    count = 0
+    for i in indices:
+        assoc[i.item()] = count
+        count += 1
+    return assoc
+
+
+def from_assoc(assoc, idx):
+    try:
+        return assoc[idx]
+    except KeyError:
+        return -1
 
 
 def read_stanford_data(folder, name, file):
@@ -14,34 +30,67 @@ def read_stanford_data(folder, name, file):
         files = [file for file in os.listdir(folder) if osp.isfile(osp.join(folder, file))]
         files.sort()
 
-        #edge_index, x = torch.Tensor().long(), torch.Tensor().long()
-        edge_index, x = [], []
-        for file in files:
-            if file.endswith('circles'):
-                pass
+        data_list = []
+        for i in range(5, len(files), 5):
+            circles_file = files[i]
+            edges_file = files[i+1]
+            egofeat_file = files[i+2]
+            feat_file = files[i+3]
+            featnames_file = files[i+4]
 
-            elif file.endswith('edges'):
-                _edge_index = torch.from_numpy(np.loadtxt(osp.join(folder, file)))\
+            x = torch.from_numpy(np.loadtxt(osp.join(folder, feat_file))).long()
+            indices = x[:,0]
+            indices_assoc = to_assoc(indices)
+            x = x[:,1:]
+
+            circles = []
+            f = open(osp.join(folder,circles_file), "r")
+            c_line = f.readline()
+            while not c_line == '':
+                circles.append([from_assoc(indices_assoc, int(i)) for i in c_line.split()[1:]])
+                c_line = f.readline()
+            f.close()
+
+            edge_index = torch.from_numpy(np.loadtxt(osp.join(folder, edges_file)))\
                               .transpose(0,1).long()
-                # edge_index = torch.cat((edge_index, _edge_index), dim=1)
-                edge_index.append(_edge_index)
 
-            elif file.endswith('egofeat'):
-                _x_ego = torch.from_numpy(np.loadtxt(osp.join(folder, file))).long()
-                _x_ego = torch.cat((torch.zeros(1).long(), _x_ego)).unsqueeze(0)  # id: 0 for egoNode
-
-            elif file.endswith('feat'):
-                _x = torch.from_numpy(np.loadtxt(osp.join(folder, file))).long()
-                _x = torch.cat((_x, _x_ego)) 
-                # x = torch.cat((x, _x))
-                x.append(_x)
-
-            elif file.endswith('featnames'):
-                print(file)
+            # TODO find more efficient way to do this
+            for i in range(edge_index.shape[0]):
+                for j in range(edge_index.shape[1]):
+                    edge_index[i][j] = from_assoc(indices_assoc, edge_index[i][j].item())
 
 
-        print([(i.shape,j.shape) for i,j in zip(x, edge_index)])
-        raise NotImplementedError
+            x_ego = torch.from_numpy(np.loadtxt(osp.join(folder, egofeat_file))).long()
+            x = torch.cat((x, x_ego.unsqueeze(0)))
+
+            # ego Node is connected so every other node
+            edge_index_ego = torch.fill_(torch.zeros((2,x.shape[0]-1)), x.shape[0]-1)
+            edge_index_ego[0] = torch.arange(x.shape[0]-1)
+
+            # nodes undirected in ego-Facebook
+            if name == 'ego-Facebook':
+                edge_index_ego2 = torch.fill_(torch.zeros((2,x.shape[0]-1)), x.shape[0]-1)
+                edge_index_ego2[1] = torch.arange(x.shape[0]-1)
+                edge_index = torch.cat((edge_index,
+                                        edge_index_ego.long(),
+                                        edge_index_ego2.long()), dim=1)
+
+            edge_index = torch.cat((edge_index,
+                                    edge_index_ego.long()), dim=1)
+
+            '''
+            featnames = []
+            f = open(osp.join(folder,featnames_file), "r")
+            n_line = f.readline()
+            while not n_line == '':
+                featnames.append(n_line)
+                n_line = f.readline()
+            f.close()
+            '''
+
+            data = Data(x=x, edge_index=edge_index, circles=circles)
+            data_list.append(data)
+        return data_list
 
 
 class StanfordDataset(InMemoryDataset):
@@ -61,16 +110,18 @@ class StanfordDataset(InMemoryDataset):
         self.name = name
         super(StanfordDataset, self).__init__(root, transform, pre_transform, pre_filter)
 
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.data_list = torch.load(self.processed_paths[0])
+        '''
         if self.data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
             self.data.x = self.data.x[:, num_node_attributes:]
         if self.data.edge_attr is not None and not use_edge_attr:
             num_edge_attributes = self.num_edge_attributes
             self.data.edge_attr = self.data.edge_attr[:, num_edge_attributes:]
-
+        '''
 
     def _download(self):
+        print(self.raw_dir)
         if not osp.isdir(self.raw_dir):
             makedirs(self.raw_dir)
             self.download()
@@ -96,8 +147,11 @@ class StanfordDataset(InMemoryDataset):
 
 
     def process(self):
-        self.data, self.slices = read_stanford_data(self.raw_dir, self.name, self.available_datasets_file[self.name])
-
+        print(self.processed_paths[0])
+        self.data_list = read_stanford_data(self.raw_dir,
+                                                    self.name,
+                                                    self.available_datasets_file[self.name])
+        '''
         if self.pre_filter is not None:
             data_list = [self.get(idx) for idx in range(len(self))]
             data_list = [data for data in data_list if self.pre_filter(data)]
@@ -107,9 +161,15 @@ class StanfordDataset(InMemoryDataset):
             data_list = [self.get(idx) for idx in range(len(self))]
             data_list = [self.pre_transform(data) for data in data_list]
             self.data, self.slices = self.collate(data_list)
+        '''
 
-        torch.save((self.data, self.slices), self.processed_paths[0])
+        torch.save(self.data_list, self.processed_paths[0])
 
+    def get(self, idx):
+        try:
+            return self.data_list[idx]
+        except IndexError:
+            raise IndexError("Index out of bounds. Try an index <= {}".format(len(self.data_list)-1))
 
     def __repr__(self):
         return '{}({})'.format(self.name, len(self))
@@ -119,5 +179,5 @@ if __name__ == '__main__':
     dataset_name = 'ego-Facebook'
     path = path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data', dataset_name)
     dataset = StanfordDataset(path, dataset_name)
-
-
+    data = dataset[8]
+    print(data)
