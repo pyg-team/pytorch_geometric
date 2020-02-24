@@ -18,7 +18,9 @@ install:
   - pip install torch-sparse==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
   - pip install torch-cluster
   - pip install torch-spline-conv
-  - pip install cython && pip install gdist
+  - pip install cython
+  - git clone https://github.com/the-virtual-brain/tvb-geodesic
+  - cd tvb-geodesic && python setup.py install && cd ..
   - pip install trimesh
   - pip install flake8 codecov
   - pip install sphinx sphinx_rtd_theme
