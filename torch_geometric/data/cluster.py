@@ -7,18 +7,20 @@ from torch_sparse import SparseTensor, cat
 
 
 class ClusterDataset(torch.utils.data.Dataset):
-    def __init__(self, dataset, num_parts, save=True):
+    def __init__(self, dataset, num_parts, recursive=False, save=True):
         assert len(dataset) == 1
         assert (dataset[0].edge_index is not None)
 
         self.dataset = dataset
         self.num_parts = num_parts
+        self.recursive = recursive
         self.save = osp.exists(self.dataset.processed_dir) and save
 
         self.process()
 
     def process(self):
-        filename = f'part_data_{self.num_parts}.pt'
+        recursive = '_recursive' if self.recursive else ''
+        filename = f'part_data_{self.num_parts}{recursive}.pt'
 
         path = osp.join(self.dataset.processed_dir, filename)
         if self.save and osp.exists(path):
@@ -29,7 +31,7 @@ class ClusterDataset(torch.utils.data.Dataset):
             (row, col), edge_attr = data.edge_index, data.edge_attr
             adj = SparseTensor(row=row, col=col, value=edge_attr,
                                is_sorted=True)
-            adj, partptr, perm = adj.partition_kway(self.num_parts)
+            adj, partptr, perm = adj.partition(self.num_parts, self.recursive)
 
             for key, item in data:
                 if item.size(0) == data.num_nodes:
