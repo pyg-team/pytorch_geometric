@@ -1,3 +1,5 @@
+from typing import List
+
 import copy
 import os.path as osp
 
@@ -6,57 +8,58 @@ import torch.utils.data
 from torch_sparse import SparseTensor, cat
 
 
-class ClusterDataset(torch.utils.data.Dataset):
-    def __init__(self, dataset, num_parts, recursive=False, save=True):
-        assert len(dataset) == 1
-        assert (dataset[0].edge_index is not None)
+class ClusterData(torch.utils.data.Dataset):
+    def __init__(self, data, num_parts, recursive=False, save_dir=None):
+        assert (data.edge_index is not None)
 
-        self.dataset = dataset
         self.num_parts = num_parts
         self.recursive = recursive
-        self.save = osp.exists(self.dataset.processed_dir) and save
+        self.save_dir = save_dir
 
-        self.process()
+        self.process(data)
 
-    def process(self):
+    def process(self, data):
         recursive = '_recursive' if self.recursive else ''
         filename = f'part_data_{self.num_parts}{recursive}.pt'
 
-        path = osp.join(self.dataset.processed_dir, filename)
-        if self.save and osp.exists(path):
+        path = osp.join(self.save_dir or '', filename)
+        if self.save_dir is not None and osp.exists(path):
             data, partptr, perm = torch.load(path)
         else:
-            data = copy.copy(self.dataset.get(0))
+            data = copy.copy(data)
+            num_nodes = data.num_nodes
 
             (row, col), edge_attr = data.edge_index, data.edge_attr
             adj = SparseTensor(row=row, col=col, value=edge_attr)
             adj, partptr, perm = adj.partition(self.num_parts, self.recursive)
 
             for key, item in data:
-                if item.size(0) == data.num_nodes:
+                if item.size(0) == num_nodes:
                     data[key] = item[perm]
 
             data.edge_index = None
             data.edge_attr = None
             data.adj = adj
 
-            if self.save:
+            if self.save_dir is not None:
                 torch.save((data, partptr, perm), path)
 
-        self.__data__ = data
-        self.__perm__ = perm
-        self.__partptr__ = partptr
+        self.data = data
+        self.perm = perm
+        self.partptr = partptr
 
     def __len__(self):
-        return self.__partptr__.numel() - 1
+        return self.partptr.numel() - 1
 
     def __getitem__(self, idx):
-        start = int(self.__partptr__[idx])
-        length = int(self.__partptr__[idx + 1]) - start
+        start = int(self.partptr[idx])
+        length = int(self.partptr[idx + 1]) - start
 
-        data = copy.copy(self.__data__)
+        data = copy.copy(self.data)
+        num_nodes = data.num_nodes
+
         for key, item in data:
-            if item.size(0) == data.num_nodes:
+            if item.size(0) == num_nodes:
                 data[key] = item.narrow(0, start, length)
 
         data.adj = data.adj.narrow(1, start, length)
@@ -66,27 +69,24 @@ class ClusterDataset(torch.utils.data.Dataset):
         data.edge_index = torch.stack([row, col], dim=0)
         data.edge_attr = value
 
-        if self.dataset.transform is not None:
-            data = self.dataset.transform(data)
-
         return data
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}({self.dataset}, '
+        return (f'{self.__class__.__name__}({self.data}, '
                 f'num_parts={self.num_parts})')
 
 
 class ClusterLoader(torch.utils.data.DataLoader):
-    def __init__(self, cluster_dataset, batch_size=1, shuffle=False, **kwargs):
+    def __init__(self, cluster_data, batch_size=1, shuffle=False, **kwargs):
         class HelperDataset(torch.utils.data.Dataset):
             def __len__(self):
-                return len(cluster_dataset)
+                return len(cluster_data)
 
             def __getitem__(self, idx):
-                start = int(cluster_dataset.__partptr__[idx])
-                length = int(cluster_dataset.__partptr__[idx + 1]) - start
+                start = int(cluster_data.partptr[idx])
+                length = int(cluster_data.partptr[idx + 1]) - start
 
-                data = copy.copy(cluster_dataset.__data__)
+                data = copy.copy(cluster_data.data)
                 num_nodes = data.num_nodes
                 for key, item in data:
                     if item.size(0) == num_nodes:
@@ -94,9 +94,10 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
                 return data, idx
 
-        def collate(data):
-            data_list, parts = [d[0] for d in data], [d[1] for d in data]
-            partptr = cluster_dataset.__partptr__
+        def collate(batch):
+            data_list = [data[0] for data in batch]
+            parts: List[int] = [data[1] for data in batch]
+            partptr = cluster_data.partptr
 
             adj = cat([data.adj for data in data_list], dim=0)
 
@@ -109,7 +110,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
             adj = cat(adjs, dim=0).t()
             row, col, value = adj.coo()
 
-            data = cluster_dataset.__data__.__class__()
+            data = cluster_data.data.__class__()
             data.num_nodes = adj.size(0)
             data.edge_index = torch.stack([row, col], dim=0)
             data.edge_attr = value
@@ -124,9 +125,6 @@ class ClusterLoader(torch.utils.data.DataLoader):
                 else:
                     data[key] = torch.cat([d[key] for d in data_list],
                                           dim=ref.__cat_dim__(key, ref[key]))
-
-            if cluster_dataset.dataset.transform is not None:
-                data = cluster_dataset.dataset.transform(data)
 
             return data
 

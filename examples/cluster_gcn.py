@@ -1,17 +1,17 @@
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Reddit
-from torch_geometric.data import ClusterDataset, ClusterLoader
+from torch_geometric.data import ClusterData, ClusterLoader
 from torch_geometric.nn import SAGEConv
 
 dataset = Reddit('../data/Reddit')
+data = dataset[0]
 
 print('Partioning the graph... (this may take a while)')
-cluster_dataset = ClusterDataset(dataset, num_parts=1500, save=True)
-train_loader = ClusterLoader(cluster_dataset, batch_size=20, shuffle=True,
-                             drop_last=True, num_workers=6)
-test_loader = ClusterLoader(cluster_dataset, batch_size=20, shuffle=False,
-                            num_workers=6)
+cluster_data = ClusterData(data, num_parts=1500, recursive=False,
+                           save_dir=dataset.processed_dir)
+loader = ClusterLoader(cluster_data, batch_size=20, shuffle=True,
+                       num_workers=6)
 print('Done!')
 
 
@@ -37,7 +37,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train():
     model.train()
     total_loss = total_nodes = 0
-    for data in train_loader:
+    for data in loader:
         data = data.to(device)
         optimizer.zero_grad()
         logits = model(data.x, data.edge_index)
@@ -56,7 +56,7 @@ def train():
 def test():
     model.eval()
     total_correct, total_nodes = [0, 0, 0], [0, 0, 0]
-    for data in test_loader:
+    for data in loader:
         data = data.to(device)
         logits = model(data.x, data.edge_index)
         pred = logits.argmax(dim=1)
