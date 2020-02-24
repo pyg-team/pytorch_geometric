@@ -1,37 +1,30 @@
-jobs:
-  include:
-    - os: linux
-      language: python
-      python: 3.7
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - gcc-5
-            - g++-5
-      env:
-        - CC=gcc-5
-        - CXX=g++-5
+language: shell
+
+os:
+  - linux
+  - osx
+  - windows
+
+env:
+  jobs:
+    - TORCH_VERSION=1.4.0 PYTHON_VERSION=3.7 IDX=cpu
+
 install:
-  - pip install numpy
-  - pip install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
-  - pip install torch-scatter==latest+cpu -f https://s3.eu-central-1.amazonaws.com/pytorch-geometric.com/whl/torch-1.4.0.html
-  - pip install torch-sparse==latest+cpu -f https://s3.eu-central-1.amazonaws.com/pytorch-geometric.com/whl/torch-1.4.0.html
+  - source script/conda.sh
+  - conda create --yes -n test python="${PYTHON_VERSION}"
+  - source activate test
+  - conda install pytorch=${TORCH_VERSION} ${TOOLKIT} -c pytorch --yes
+  - pip install torch-scatter==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
+  - pip install torch-sparse==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
   - pip install torch-cluster
   - pip install torch-spline-conv
   - pip install cython && pip install gdist
   - pip install trimesh
-  - pip install pycodestyle
-  - pip install flake8
-  - pip install codecov
-  - pip install sphinx
-  - pip install sphinx_rtd_theme
-script:
-  - python -c "import torch; print(torch.__version__)"
-  - pycodestyle .
-  - flake8 .
+  - pip install flake8 codecov
+  - pip install sphinx sphinx_rtd_theme
   - python setup.py install
+script:
+  - flake8 .
   - python setup.py test
   - cd docs && make clean && make html && cd ..
 after_success:
