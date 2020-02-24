@@ -19,8 +19,8 @@ install:
   - pip install torch-cluster
   - pip install torch-spline-conv
   - pip install cython
-  - git clone https://github.com/the-virtual-brain/tvb-geodesic
-  - cd tvb-geodesic && python setup.py install && cd ..
+  - git clone https://github.com/the-virtual-brain/tvb-geodesic /tmp/gdist
+  - cd /tmp/gdist && python setup.py install && cd -
   - pip install trimesh
   - pip install flake8 codecov
   - pip install sphinx sphinx_rtd_theme
