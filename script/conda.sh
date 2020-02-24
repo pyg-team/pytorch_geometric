@@ -31,6 +31,7 @@ fi
 
 if [ "${TRAVIS_OS_NAME}" = "windows" ]; then
   export TOOLKIT=cpuonly
+  export PYTHONHTTPSVERIFY=0
 fi
 
 if [ "${TRAVIS_OS_NAME}" = "osx" ]; then
