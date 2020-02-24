@@ -29,8 +29,7 @@ class ClusterDataset(torch.utils.data.Dataset):
             data = copy.copy(self.dataset.get(0))
 
             (row, col), edge_attr = data.edge_index, data.edge_attr
-            adj = SparseTensor(row=row, col=col, value=edge_attr,
-                               is_sorted=True)
+            adj = SparseTensor(row=row, col=col, value=edge_attr)
             adj, partptr, perm = adj.partition(self.num_parts, self.recursive)
 
             for key, item in data:
