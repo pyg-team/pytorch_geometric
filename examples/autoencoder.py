@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, GAE, VGAE
+from torch_geometric.utils import train_test_split_edges
 
 torch.manual_seed(12345)
 
@@ -46,7 +47,7 @@ channels = 16
 dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = kwargs[args.model](Encoder(dataset.num_features, channels)).to(dev)
 data.train_mask = data.val_mask = data.test_mask = data.y = None
-data = model.split_edges(data)
+data = train_test_split_edges(data)
 x, train_pos_edge_index = data.x.to(dev), data.train_pos_edge_index.to(dev)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
