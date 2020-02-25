@@ -9,6 +9,20 @@ from torch_sparse import SparseTensor, cat
 
 
 class ClusterData(torch.utils.data.Dataset):
+    r"""Clusters/partitions a graph data object into multiple subgraphs, as
+    motivated by the `"Cluster-GCN: An Efficient Algorithm for Training Deep
+    and Large Graph Convolutional Networks"
+    <https://arxiv.org/abs/1905.07953>`_ paper.
+
+    Args:
+        data (torch_geometric.data.Data): The graph data object.
+        num_parts (int): The number of partitions.
+        recursive (bool, optional): If set to :obj:`True`, will use multilevel
+            recursive bisection instead of multilevel k-way partitioning.
+            (default: :obj:`False`)
+        save_dir (string, optional): If set, will save the partitioned data to
+            the :obj:`save_dir` directory for faster re-use.
+    """
     def __init__(self, data, num_parts, recursive=False, save_dir=None):
         assert (data.edge_index is not None)
 
@@ -77,6 +91,20 @@ class ClusterData(torch.utils.data.Dataset):
 
 
 class ClusterLoader(torch.utils.data.DataLoader):
+    r"""The data loader scheme from the `"Cluster-GCN: An Efficient Algorithm
+    for Training Deep and Large Graph Convolutional Networks"
+    <https://arxiv.org/abs/1905.07953>`_ paper which merges partioned subgraphs
+    and their between-cluster links from a large-scale graph data object to
+    form a mini-batch.
+
+    Args:
+        cluster_data (torch_geometric.data.ClusterData): The already
+            partioned data object.
+        batch_size (int, optional): How many samples per batch to load.
+            (default: :obj:`1`)
+        shuffle (bool, optional): If set to :obj:`True`, the data will be
+            reshuffled at every epoch. (default: :obj:`False`)
+    """
     def __init__(self, cluster_data, batch_size=1, shuffle=False, **kwargs):
         class HelperDataset(torch.utils.data.Dataset):
             def __len__(self):
