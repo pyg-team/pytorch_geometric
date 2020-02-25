@@ -28,7 +28,7 @@ install:
 script:
   - flake8 .
   - python setup.py test
-  - cd docs && make clean && make html && cd ..
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then cd docs && make clean && make html && cd ..; fi
 after_success:
   - codecov
 notifications:
