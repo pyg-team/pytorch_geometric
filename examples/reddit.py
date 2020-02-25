@@ -20,12 +20,10 @@ loader = NeighborSampler(data, size=[25, 10], num_hops=2, batch_size=1000,
 
 
 class SAGENet(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, concatenate=False):
+    def __init__(self, in_channels, out_channels, concat=False):
         super(SAGENet, self).__init__()
-        self.conv1 = SAGEConv(in_channels, 16, normalize=False,
-                              concatenate=concatenate)
-        self.conv2 = SAGEConv(16, out_channels, normalize=False,
-                              concatenate=concatenate)
+        self.conv1 = SAGEConv(in_channels, 16, normalize=False, concat=concat)
+        self.conv2 = SAGEConv(16, out_channels, normalize=False, concat=concat)
 
     def forward(self, x, data_flow):
         data = data_flow[0]
