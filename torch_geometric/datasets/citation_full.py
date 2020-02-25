@@ -64,8 +64,8 @@ class CitationFull(InMemoryDataset):
 
 
 class CoraFull(CitationFull):
-    r"""Alias for :class:`torch_geometric.dataset.CitationFull`:obj:``("cora)`.
-    """
+    r"""Alias for :class:`torch_geometric.dataset.CitationFull` with
+    :obj:`name="cora"`."""
     def __init__(self, root, transform=None, pre_transform=None):
         super(CoraFull, self).__init__(root, 'cora', transform, pre_transform)
 

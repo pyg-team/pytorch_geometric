@@ -457,7 +457,10 @@ class GDC(object):
         sorted_edges = torch.sort(matrix.flatten(), descending=True).values
         if avg_degree * num_nodes > len(sorted_edges):
             return -np.inf
-        return sorted_edges[avg_degree * num_nodes - 1]
+
+        left = sorted_edges[avg_degree * num_nodes - 1]
+        right = sorted_edges[avg_degree * num_nodes]
+        return (left + right) / 2.0
 
     def __neighbors_to_graph__(self, neighbors, neighbor_weights,
                                normalization='row', device='cpu'):

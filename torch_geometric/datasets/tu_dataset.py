@@ -51,7 +51,7 @@ class TUDataset(InMemoryDataset):
             contain only non-isomorphic graphs. (default: :obj:`False`)
     """
 
-    url = ('https://ls11-www.cs.tu-dortmund.de/people/morris/'
+    url = ('http://ls11-www.cs.tu-dortmund.de/people/morris/'
            'graphkerneldatasets')
     cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
                    'graph_datasets/master/datasets')
