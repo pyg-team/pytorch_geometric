@@ -125,7 +125,8 @@ def to_trimesh(data):
         raise ImportError('Package `trimesh` could not be found.')
 
     return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
-                           faces=data.face.detach().t().cpu().numpy())
+                           faces=data.face.detach().t().cpu().numpy(),
+                           process=False)
 
 
 def from_trimesh(mesh):

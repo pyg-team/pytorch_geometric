@@ -153,6 +153,5 @@ def test_trimesh():
     mesh = to_trimesh(data)
     data = from_trimesh(mesh)
 
-    perm = (data.pos * torch.tensor([[1.0, 2.0, 3.0]])).sum(dim=-1).argsort()
-    assert pos.tolist() == data.pos[perm].tolist()
-    assert face.tolist() == perm[data.face].tolist()
+    assert pos.tolist() == data.pos.tolist()
+    assert face.tolist() == data.face.tolist()
