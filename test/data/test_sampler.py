@@ -59,13 +59,15 @@ def test_cora():
         def forward_data_flow(self, x, edge_weight, data_flow):
             block = data_flow[0]
             weight = None if block.e_id is None else edge_weight[block.e_id]
-            x = relu(self.conv1(x, block.edge_index, weight, block.size))
+            x = relu(
+                self.conv1((x, None), block.edge_index, weight, block.size))
             block = data_flow[1]
             weight = None if block.e_id is None else edge_weight[block.e_id]
-            x = relu(self.conv2(x, block.edge_index, weight, block.size))
+            x = relu(
+                self.conv2((x, None), block.edge_index, weight, block.size))
             block = data_flow[2]
             weight = None if block.e_id is None else edge_weight[block.e_id]
-            x = self.conv3(x, block.edge_index, weight, block.size)
+            x = self.conv3((x, None), block.edge_index, weight, block.size)
             return x
 
         def forward(self, x, edge_index, edge_weight):
