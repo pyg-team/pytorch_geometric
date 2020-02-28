@@ -32,8 +32,7 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None, force_un
 
     if force_undirected:
         num_neg_samples = num_neg_samples // 2
-        ut_edge_index = torch.ones(num_nodes, num_nodes).triu(diagonal=0).nonzero().t()  # upper triangle
-        rng = list(ut_edge_index[0] * num_nodes + ut_edge_index[1])
+        rng = [num_nodes * i + j for i in range(num_nodes) for j in range(i, num_nodes)]  # upper triangle
     else:
         rng = range(num_nodes ** 2)
 
