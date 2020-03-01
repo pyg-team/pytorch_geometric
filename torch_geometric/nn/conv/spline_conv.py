@@ -9,10 +9,10 @@ from torch_geometric.utils.repeat import repeat
 from ..inits import uniform, zeros
 
 try:
-    from torch_spline_conv import SplineBasis, SplineWeighting
+    from torch_spline_conv import spline_basis, spline_weighting
 except ImportError:
-    SplineBasis = None
-    SplineWeighting = None
+    spline_basis = None
+    spline_weighting = None
 
 
 class SplineConv(MessagePassing):
@@ -58,7 +58,7 @@ class SplineConv(MessagePassing):
                  bias=True, **kwargs):
         super(SplineConv, self).__init__(aggr=aggr, **kwargs)
 
-        if SplineBasis is None:
+        if spline_basis is None:
             raise ImportError('`SplineConv` requires `torch-spline-conv`.')
 
         self.in_channels = in_channels
@@ -132,9 +132,9 @@ class SplineConv(MessagePassing):
         return self.propagate(edge_index, x=x, pseudo=pseudo)
 
     def message(self, x_j, pseudo):
-        data = SplineBasis.apply(pseudo, self._buffers['kernel_size'],
-                                 self._buffers['is_open_spline'], self.degree)
-        return SplineWeighting.apply(x_j, self.weight, *data)
+        data = spline_basis(pseudo, self._buffers['kernel_size'],
+                            self._buffers['is_open_spline'], self.degree)
+        return spline_weighting(x_j, self.weight, *data)
 
     def update(self, aggr_out, x):
         if self.root is not None:
