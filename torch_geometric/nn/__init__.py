@@ -1,4 +1,5 @@
 from .meta import MetaLayer
+from .hete import HeteConv
 from .data_parallel import DataParallel
 from .reshape import Reshape
 from .conv import *  # noqa
@@ -11,6 +12,7 @@ from .models import *  # noqa
 
 __all__ = [
     'MetaLayer',
+    'HeteConv',
     'DataParallel',
     'Reshape',
 ]
