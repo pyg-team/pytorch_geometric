@@ -33,10 +33,11 @@ class HeteConv(torch.nn.Module):
             head, _, tail = edge_key
             conv = self.convs[edge_key]
 
+            # Gather related edge information into `input_dict`.
             input_dict = copy.copy(edge_info)
 
-            # Differentiate between inter- and inter-message passing and
-            # collect node and edge features into `input_dict`.
+            # Distinguish between inter- and inter-message passing and gather
+            # related node information into `input_dict`.
             if head == tail:
                 input_dict.update(node_dict[head])
             else:
@@ -68,7 +69,7 @@ class HeteConv(torch.nn.Module):
             else:
                 out_edge_dict[edge_key] = conv(**input_dict)
 
-        if self.streams is not None:
+        if self.streams is not None and is_cuda:
             torch.cuda.synchronize()
 
         # Group `out_edge_dict` to output node embeddings based on `tail`.
@@ -77,7 +78,7 @@ class HeteConv(torch.nn.Module):
         for (_, _, tail), item in out_edge_dict.items():
             out_node_dict[tail] += [item]
 
-        # Aggregate multiple embeddings with the same tail.
+        # Aggregate multiple embeddings that share the same tail.
         for key in sorted(out_node_dict.keys()):
             if len(item) == 1:
                 out_node_dict[key] = out_node_dict[key][0]
