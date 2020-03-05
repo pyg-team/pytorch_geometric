@@ -1,6 +1,7 @@
 import torch
 import scipy.sparse
 import networkx as nx
+
 import torch_geometric.data
 
 try:
@@ -49,10 +50,11 @@ def from_scipy_sparse_matrix(A):
     return edge_index, edge_weight
 
 
-def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False, remove_self_loops=False):
+def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
+                remove_self_loops=False):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
-    :obj:`networkx.DiGraph` if :attr:`to_undirected` is set to :obj:`True`, or an undirected
-    :obj:`networkx.Graph` otherwise.
+    :obj:`networkx.DiGraph` if :attr:`to_undirected` is set to :obj:`True`, or
+    an undirected :obj:`networkx.Graph` otherwise.
 
     Args:
         data (torch_geometric.data.Data): The data object.
@@ -60,11 +62,12 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False, rem
             copied. (default: :obj:`None`)
         edge_attrs (iterable of str, optional): The edge attributes to be
             copied. (default: :obj:`None`)
-        to_undirected (bool, optional): If set to :obj:`True`, it will return a :obj:`networkx.Graph`.
-            In practice, the undirected graph will correspond to the upper triangle of the
-            corresponding adjacency matrix. (default: :obj:`False`)
-        remove_self_loops (bool, optional): If set to :obj:`True`, it will not include self loops in
-            the returning graph.  (default: :obj:`False`)
+        to_undirected (bool, optional): If set to :obj:`True`, it will return
+            a :obj:`networkx.Graph`. In practice, the undirected graph will
+            correspond to the upper triangle of the corresponding adjacency
+            matrix. (default: :obj:`False`)
+        remove_self_loops (bool, optional): If set to :obj:`True`, it will not
+            include self loops in the returning graph. (default: :obj:`False`)
     """
 
     if to_undirected:

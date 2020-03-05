@@ -2,6 +2,7 @@ import torch
 import scipy.sparse
 import networkx as nx
 from torch_sparse import coalesce
+
 from torch_geometric.data import Data
 from torch_geometric.utils import (to_scipy_sparse_matrix,
                                    from_scipy_sparse_matrix)
@@ -46,7 +47,8 @@ def test_to_networkx():
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for condition_sl in [True, False]:
-        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'], remove_self_loops=condition_sl)
+        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
+                        remove_self_loops=condition_sl)
         assert G.nodes[0]['x'] == [1, 2]
         assert G.nodes[1]['x'] == [3, 4]
         assert G.nodes[0]['pos'] == [0, 0]
@@ -65,7 +67,8 @@ def test_to_networkx_undirected():
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for condition_sl in [True, False]:
-        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'], remove_self_loops=condition_sl,
+        G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
+                        remove_self_loops=condition_sl,
                         to_undirected=True)
         assert G.nodes[0]['x'] == [1, 2]
         assert G.nodes[1]['x'] == [3, 4]
