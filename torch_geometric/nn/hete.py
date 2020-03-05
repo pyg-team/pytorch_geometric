@@ -60,7 +60,7 @@ class HeteConv(torch.nn.Module):
             for item in input_dict.values():
                 if hasattr(item, 'is_cuda'):
                     is_cuda = item.is_cuda
-                    continue
+                    break
 
             # Perform message passing.
             if self.streams is not None and is_cuda:
