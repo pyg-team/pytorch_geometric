@@ -62,27 +62,30 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
             copied. (default: :obj:`None`)
         edge_attrs (iterable of str, optional): The edge attributes to be
             copied. (default: :obj:`None`)
-        to_undirected (bool, optional): If set to :obj:`True`, it will return
-            a :obj:`networkx.Graph`. In practice, the undirected graph will
-            correspond to the upper triangle of the corresponding adjacency
-            matrix. (default: :obj:`False`)
-        remove_self_loops (bool, optional): If set to :obj:`True`, it will not
-            include self loops in the returning graph. (default: :obj:`False`)
+        to_undirected (bool, optional): If set to :obj:`True`, will return a
+            a :obj:`networkx.Graph` instead of a :obj:`networkx.DiGraph`. The
+            undirected graph will correspond to the upper triangle of the
+            corresponding adjacency matrix. (default: :obj:`False`)
+        remove_self_loops (bool, optional): If set to :obj:`True`, will not
+            include self loops in the resulting graph. (default: :obj:`False`)
     """
 
     if to_undirected:
         G = nx.Graph()
     else:
         G = nx.DiGraph()
-    G.add_nodes_from(range(data.num_nodes))
 
+    G.add_nodes_from(range(data.num_nodes))
     values = {key: data[key].squeeze().tolist() for key in data.keys}
 
     for i, (u, v) in enumerate(data.edge_index.t().tolist()):
+
         if to_undirected and v > u:
             continue
-        if u == v and remove_self_loops:
+
+        if remove_self_loops and u == v:
             continue
+
         G.add_edge(u, v)
         for key in edge_attrs if edge_attrs is not None else []:
             G[u][v][key] = values[key][i]
