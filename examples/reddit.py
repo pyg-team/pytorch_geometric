@@ -20,18 +20,21 @@ loader = NeighborSampler(data, size=[25, 10], num_hops=2, batch_size=1000,
 
 
 class SAGENet(torch.nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, concat=False):
         super(SAGENet, self).__init__()
-        self.conv1 = SAGEConv(in_channels, 16, normalize=False)
-        self.conv2 = SAGEConv(16, out_channels, normalize=False)
+        self.conv1 = SAGEConv(in_channels, 16, normalize=False, concat=concat)
+        self.conv2 = SAGEConv(16, out_channels, normalize=False, concat=concat)
 
     def forward(self, x, data_flow):
         data = data_flow[0]
         x = x[data.n_id]
-        x = F.relu(self.conv1((x, None), data.edge_index, size=data.size))
+        x = F.relu(
+            self.conv1((x, None), data.edge_index, size=data.size,
+                       res_n_id=data.res_n_id))
         x = F.dropout(x, p=0.5, training=self.training)
         data = data_flow[1]
-        x = self.conv2((x, None), data.edge_index, size=data.size)
+        x = self.conv2((x, None), data.edge_index, size=data.size,
+                       res_n_id=data.res_n_id)
         return F.log_softmax(x, dim=1)
 
 

@@ -24,6 +24,8 @@ class DataLoader(torch.utils.data.DataLoader):
             elem = batch[0]
             if isinstance(elem, Data):
                 return Batch.from_data_list(batch, follow_batch)
+            elif isinstance(elem, torch.Tensor):
+                return default_collate(batch)
             elif isinstance(elem, float):
                 return torch.tensor(batch, dtype=torch.float)
             elif isinstance(elem, int_classes):

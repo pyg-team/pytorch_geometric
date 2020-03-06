@@ -1,6 +1,7 @@
 import torch
 import scipy.sparse
 import networkx as nx
+
 import torch_geometric.data
 
 try:
@@ -49,9 +50,11 @@ def from_scipy_sparse_matrix(A):
     return edge_index, edge_weight
 
 
-def to_networkx(data, node_attrs=None, edge_attrs=None):
+def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
+                remove_self_loops=False):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
-    :obj:`networkx.DiGraph`.
+    :obj:`networkx.DiGraph` if :attr:`to_undirected` is set to :obj:`True`, or
+    an undirected :obj:`networkx.Graph` otherwise.
 
     Args:
         data (torch_geometric.data.Data): The data object.
@@ -59,14 +62,30 @@ def to_networkx(data, node_attrs=None, edge_attrs=None):
             copied. (default: :obj:`None`)
         edge_attrs (iterable of str, optional): The edge attributes to be
             copied. (default: :obj:`None`)
+        to_undirected (bool, optional): If set to :obj:`True`, will return a
+            a :obj:`networkx.Graph` instead of a :obj:`networkx.DiGraph`. The
+            undirected graph will correspond to the upper triangle of the
+            corresponding adjacency matrix. (default: :obj:`False`)
+        remove_self_loops (bool, optional): If set to :obj:`True`, will not
+            include self loops in the resulting graph. (default: :obj:`False`)
     """
 
-    G = nx.DiGraph()
-    G.add_nodes_from(range(data.num_nodes))
+    if to_undirected:
+        G = nx.Graph()
+    else:
+        G = nx.DiGraph()
 
+    G.add_nodes_from(range(data.num_nodes))
     values = {key: data[key].squeeze().tolist() for key in data.keys}
 
     for i, (u, v) in enumerate(data.edge_index.t().tolist()):
+
+        if to_undirected and v > u:
+            continue
+
+        if remove_self_loops and u == v:
+            continue
+
         G.add_edge(u, v)
         for key in edge_attrs if edge_attrs is not None else []:
             G[u][v][key] = values[key][i]
@@ -125,7 +144,8 @@ def to_trimesh(data):
         raise ImportError('Package `trimesh` could not be found.')
 
     return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
-                           faces=data.face.detach().t().cpu().numpy())
+                           faces=data.face.detach().t().cpu().numpy(),
+                           process=False)
 
 
 def from_trimesh(mesh):
