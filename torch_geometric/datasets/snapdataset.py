@@ -88,6 +88,7 @@ def read_snap_dataset_as_list(dir, name):
 
             data = Data(x=x, edge_index=edge_index, circles=circles)
             data_list.append(data)
+
         return data_list
 
     elif 'soc-' in name:
@@ -102,14 +103,43 @@ def read_snap_dataset_as_list(dir, name):
             list_dir = os.listdir(dir)
             if len(list_dir) == 1 and osp.isfile(osp.join(dir, list_dir[0])):
                 edge_index = np.loadtxt(osp.join(dir, list_dir[0]))
+                ids = np.unique(edge_index)
+                for i, j in zip(ids, range(len(ids))):
+                    edge_index[edge_index == i] = j
+                assert np.sum(np.not_equal(np.unique(edge_index),
+                                           np.arange(len(ids)))) == 0
                 edge_index = torch.from_numpy(edge_index).transpose(0, 1)\
                                                          .long()
-                '''
-                print(np.sum(np.unique(edge_index.numpy()) \
-                             == np.arange(1, torch.max(edge_index).item()+2)))
-                '''
                 data = Data(edge_index=edge_index)
                 return [data]
+
+    elif 'wiki-' in name:
+        if name == 'wiki-Vote':
+            list_dir = os.listdir(dir)
+            if len(list_dir) == 1 and osp.isfile(osp.join(dir, list_dir[0])):
+                edge_index = np.loadtxt(osp.join(dir, list_dir[0]))
+                ids = np.unique(edge_index)
+                for i, j in zip(ids, range(len(ids))):
+                    edge_index[edge_index == i] = j
+                assert np.sum(np.not_equal(np.unique(edge_index),
+                                           np.arange(len(ids)))) == 0
+                edge_index = torch.from_numpy(edge_index).transpose(0, 1)\
+                                                         .long()
+                data = Data(edge_index=edge_index)
+                return [data]
+
+        elif name == 'wiki-RfA':
+            list_dir = os.listdir(dir)
+            if len(list_dir) == 1 and osp.isfile(osp.join(dir, list_dir[0])):
+                i = 0
+                with open(osp.join(dir, list_dir[0])) as f:
+                    line = f.readline()
+                    while not line == '':
+                        print(i, line)
+                        if i == 10:
+                            raise
+                        i += 1
+                        line = f.readline()
 
 
 class SNAPDataset(InMemoryDataset):
@@ -118,18 +148,21 @@ class SNAPDataset(InMemoryDataset):
                  pre_filter=None, use_node_attr=False, use_edge_attr=False):
 
         self.url = 'https://snap.stanford.edu/data'
-        self.available_sets = {'ego-Facebook': ['facebook.tar.gz'],
-                               'ego-Gplus': ['gplus.tar.gz'],
-                               'ego-Twitter': ['twitter.tar.gz'],
-                               'soc-Epinions1': ['soc-Epinions1.txt.gz'],
-                               'soc-LiveJournal1':
-                               ['soc-LiveJourna l1.txt.gz'],
-                               'soc-Pokec': ['soc-pokec-relationships.txt.gz',
-                                             'soc-pokec-profiles.txt.gz'],
-                               'soc-Slashdot0811': ['Slashdot0811.txt.gz'],
-                               'soc-Slashdot0922': ['Slashdot0902.txt.gz'],
-                               }
-        available_datasets = list(self.available_datasets_file.keys())
+        self.available_sets_df = {'ego-Facebook': ['facebook.tar.gz'],
+                                  'ego-Gplus': ['gplus.tar.gz'],
+                                  'ego-Twitter': ['twitter.tar.gz'],
+                                  'soc-Epinions1': ['soc-Epinions1.txt.gz'],
+                                  'soc-LiveJournal1':
+                                  ['soc-LiveJourna l1.txt.gz'],
+                                  'soc-Pokec':
+                                  ['soc-pokec-relationships.txt.gz',
+                                   'soc-pokec-profiles.txt.gz'],
+                                  'soc-Slashdot0811': ['Slashdot0811.txt.gz'],
+                                  'soc-Slashdot0922': ['Slashdot0902.txt.gz'],
+                                  'wiki-RfA': ['wiki-RfA.txt.gz'],
+                                  'wiki-Vote': ['wiki-Vote.txt.gz'],
+                                  }
+        available_datasets = list(self.available_sets_df.keys())
 
         if name not in available_datasets:
             raise NameError('Name \'{}\' is not an available dataset. Try one'
@@ -154,7 +187,7 @@ class SNAPDataset(InMemoryDataset):
 
     def download(self):
         folder = osp.join(self.root, self.name)
-        for file in self.available_datasets_file[self.name]:
+        for file in self.available_sets_df[self.name]:
             path = download_url('{}/{}'.format(self.url, file), folder)
             if file.endswith('.tar.gz'):
                 extract_tar(path, folder)
@@ -200,9 +233,9 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'ego-Facebook'
+    dataset_name = 'wiki-RfA'
     path = path = osp.join(osp.dirname(osp.realpath(__file__)),
                            '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
-    data = dataset[8]
+    data = dataset[0]
     print(data)
