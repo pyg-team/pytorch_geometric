@@ -26,6 +26,13 @@ def test_negative_sampling():
     assert is_undirected(undirected_neg_edge_index)
     assert undirected_neg_edge_index.size(1) <= undirected_edge_index.size(1)
 
+    undirected_adj = torch.zeros(4, 4, dtype=torch.bool)
+    undirected_adj[undirected_edge_index[0], undirected_edge_index[1]] = 1
+
+    undirected_neg_adj = torch.zeros(4, 4, dtype=torch.bool)
+    undirected_neg_adj[undirected_neg_edge_index[0], undirected_neg_edge_index[1]] = 1
+    assert (undirected_adj & undirected_neg_adj).sum() == 0
+
 
 def test_structured_negative_sampling():
     edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
