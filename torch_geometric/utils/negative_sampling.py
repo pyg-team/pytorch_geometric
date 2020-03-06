@@ -32,11 +32,13 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None, force_un
 
     if force_undirected:
         num_neg_samples = num_neg_samples // 2
-        rng = [num_nodes * i + j for i in range(num_nodes) for j in range(i, num_nodes)]  # upper triangle
+        rng = range((num_nodes * (num_nodes + 1)) // 2)  # Upper triangle indices: N + ... + 1 = N (N + 1) / 2
+        edge_index = edge_index[:, edge_index[0] <= edge_index[1]]  # Remove edges in the lower triangle matrix
+        idx = (edge_index[0] * num_nodes + edge_index[1]
+               - edge_index[0] * (edge_index[0] + 1) // 2).to('cpu')  # Ni + j - i(i+1)/2
     else:
         rng = range(num_nodes ** 2)
-
-    idx = (edge_index[0] * num_nodes + edge_index[1]).to('cpu')
+        idx = (edge_index[0] * num_nodes + edge_index[1]).to('cpu')  # Ni + j
 
     perm = torch.tensor(random.sample(rng, num_neg_samples))
     mask = torch.from_numpy(np.isin(perm, idx)).to(torch.bool)
@@ -47,11 +49,15 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None, force_un
         perm[rest] = tmp
         rest = rest[mask.nonzero().view(-1)]
 
-    row, col = perm / num_nodes, perm % num_nodes
-    neg_edge_index = torch.stack([row, col], dim=0).long()
-
     if force_undirected:
+        row = np.floor((-np.sqrt((2 * num_nodes + 1) ** 2 - 8 * perm) + 2 * num_nodes + 1) / 2)
+        col = perm - row * (2 * num_nodes - row - 1) // 2
+        neg_edge_index = torch.stack([row, col], dim=0).long()
         neg_edge_index = to_undirected(neg_edge_index)
+    else:
+        row, col = perm / num_nodes, perm % num_nodes
+        neg_edge_index = torch.stack([row, col], dim=0).long()
+
     return neg_edge_index.to(edge_index.device)
 
 
