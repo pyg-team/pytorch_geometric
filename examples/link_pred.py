@@ -99,5 +99,5 @@ for epoch in range(1, 501):
     if val_perf > best_val_perf:
         best_val_perf = val_perf
         test_perf = tmp_test_perf
-    log = 'Epoch: {:03d}, Train_loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'
+    log = 'Epoch: {:03d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'
     print(log.format(epoch, train_loss, best_val_perf, test_perf))
