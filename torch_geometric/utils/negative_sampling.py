@@ -33,15 +33,21 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None,
 
     if force_undirected:
         num_neg_samples = num_neg_samples // 2
-        rng = range((num_nodes * (num_nodes + 1)) //
-                    2)  # Upper triangle indices: N + ... + 1 = N (N + 1) / 2
-        edge_index = edge_index[:, edge_index[0] <= edge_index[
-            1]]  # Remove edges in the lower triangle matrix
-        idx = (edge_index[0] * num_nodes + edge_index[1] - edge_index[0] *
-               (edge_index[0] + 1) // 2).to('cpu')  # Ni + j - i(i+1)/2
+
+        # Upper triangle indices: N + ... + 1 = N (N + 1) / 2
+        rng = range((num_nodes * (num_nodes + 1)) // 2)
+
+        # Remove edges in the lower triangle matrix.
+        row, col = edge_index
+        mask = row <= col
+        row, col = row[mask], col[mask]
+
+        # idx = N * i + j - i * (i+1) / 2
+        idx = (row * num_nodes + col - row * (row + 1) // 2).to('cpu')
     else:
         rng = range(num_nodes**2)
-        idx = (edge_index[0] * num_nodes + edge_index[1]).to('cpu')  # Ni + j
+        # idx = N * i + j
+        idx = (edge_index[0] * num_nodes + edge_index[1]).to('cpu')
 
     perm = torch.tensor(random.sample(rng, num_neg_samples))
     mask = torch.from_numpy(np.isin(perm, idx)).to(torch.bool)
@@ -53,14 +59,15 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None,
         rest = rest[mask.nonzero().view(-1)]
 
     if force_undirected:
-        row = np.floor(
-            (-np.sqrt((2 * num_nodes + 1)**2 - 8 * perm) + 2 * num_nodes + 1) /
-            2)
+        # (-sqrt((2 * N + 1)^2 - 8 * perm) + 2 * N + 1) / 2
+        row = torch.floor((-torch.sqrt((2 * num_nodes + 1)**2 - 8 * perm) +
+                           2 * num_nodes + 1) / 2)
         col = perm - row * (2 * num_nodes - row - 1) // 2
         neg_edge_index = torch.stack([row, col], dim=0).long()
         neg_edge_index = to_undirected(neg_edge_index)
     else:
-        row, col = perm / num_nodes, perm % num_nodes
+        row = perm / num_nodes
+        col = perm % num_nodes
         neg_edge_index = torch.stack([row, col], dim=0).long()
 
     return neg_edge_index.to(edge_index.device)
