@@ -2,7 +2,7 @@ import inspect
 from collections import OrderedDict
 
 import torch
-from torch_geometric.utils import scatter_
+from torch_scatter import scatter, segment_csr
 
 msg_special_args = set([
     'edge_index',
@@ -87,8 +87,8 @@ class MessagePassing(torch.nn.Module):
                  f'but expected size {size[index]}.'))
 
     def __collect__(self, edge_index, size, kwargs):
-        i, j = (0, 1) if self.flow == "target_to_source" else (1, 0)
-        ij = {"_i": i, "_j": j}
+        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
+        ij = {'_i': i, '_j': j}
 
         out = {}
         for arg in self.__args__:
@@ -146,9 +146,9 @@ class MessagePassing(torch.nn.Module):
         r"""The initial call to start propagating messages.
 
         Args:
-            edge_index (Tensor): The indices of a general (sparse) assignment
-                matrix with shape :obj:`[N, M]` (can be directed or
-                undirected).
+            edge_index (Tensor or SparseTensor): The indices of a general
+                (sparse) assignment matrix with shape :obj:`[N, M]` (can be
+                directed or undirected).
             size (list or tuple, optional): The size :obj:`[N, M]` of the
                 assignment matrix. If set to :obj:`None`, the size will be
                 automatically inferred and assumed to be quadratic.
@@ -177,7 +177,7 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def message(self, x_j):  # pragma: no cover
+    def message(self, x_j):
         r"""Constructs messages to node :math:`i` in analogy to
         :math:`\phi_{\mathbf{\Theta}}` for each edge in
         :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and
@@ -190,7 +190,7 @@ class MessagePassing(torch.nn.Module):
 
         return x_j
 
-    def aggregate(self, inputs, index, dim_size):  # pragma: no cover
+    def aggregate(self, inputs, index, ptr=None, dim_size=None):
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -199,9 +199,14 @@ class MessagePassing(torch.nn.Module):
         the :obj:`aggr` argument.
         """
 
-        return scatter_(self.aggr, inputs, index, self.node_dim, dim_size)
+        if ptr is None:
+            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
+                           reduce=self.aggr)
+        else:
+            # TODO: Integrate `self.node_dim`.
+            return segment_csr(inputs, ptr, reduce=self.aggr)
 
-    def update(self, inputs):  # pragma: no cover
+    def update(self, inputs):
         r"""Updates node embeddings in analogy to
         :math:`\gamma_{\mathbf{\Theta}}` for each node
         :math:`i \in \mathcal{V}`.

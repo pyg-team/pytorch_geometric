@@ -10,7 +10,7 @@ class GraphSizeNorm(nn.Module):
     paper
 
     .. math::
-        \mathbf{x}^l_i = \frac{\mathbf{x}^l_i}{\sqrt{|\mathcal{V}|}
+        \mathbf{x}^{\prime}_i = \frac{\mathbf{x}_i}{\sqrt{|\mathcal{V}|}
     """
     def __init__(self):
         super(GraphSizeNorm, self).__init__()
