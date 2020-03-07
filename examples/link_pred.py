@@ -4,15 +4,14 @@ import torch
 import torch.nn.functional as F
 from sklearn.metrics import roc_auc_score
 
-from torch_geometric.utils import negative_sampling, remove_self_loops, add_self_loops
+from torch_geometric.utils import (negative_sampling, remove_self_loops,
+                                   add_self_loops)
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, ChebConv  # noqa
 from torch_geometric.utils import train_test_split_edges
 
-
 torch.manual_seed(12345)
-
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -47,7 +46,8 @@ optimizer = torch.optim.Adam(params=model.parameters(), lr=0.01)
 
 
 def get_link_labels(pos_edge_index, neg_edge_index):
-    link_labels = torch.zeros(pos_edge_index.size(1) + neg_edge_index.size(1)).float().to(device)
+    link_labels = torch.zeros(pos_edge_index.size(1) +
+                              neg_edge_index.size(1)).float().to(device)
     link_labels[:pos_edge_index.size(1)] = 1.
     return link_labels
 
@@ -59,11 +59,11 @@ def train():
     x, pos_edge_index = data.x, data.train_pos_edge_index
 
     _edge_index, _ = remove_self_loops(pos_edge_index)
-    pos_edge_index_with_self_loops, _ = add_self_loops(_edge_index, num_nodes=x.size(0))
+    pos_edge_index_with_self_loops, _ = add_self_loops(_edge_index,
+                                                       num_nodes=x.size(0))
 
     neg_edge_index = negative_sampling(
-        edge_index=pos_edge_index_with_self_loops,
-        num_nodes=x.size(0),
+        edge_index=pos_edge_index_with_self_loops, num_nodes=x.size(0),
         num_neg_samples=pos_edge_index.size(1))
 
     link_logits = model(pos_edge_index, neg_edge_index)
@@ -80,11 +80,14 @@ def test():
     model.eval()
     perfs = []
     for prefix in ["val", "test"]:
-        pos_edge_index, neg_edge_index = [index for _, index in data("{}_pos_edge_index".format(prefix),
-                                                                     "{}_neg_edge_index".format(prefix))]
+        pos_edge_index, neg_edge_index = [
+            index for _, index in data("{}_pos_edge_index".format(prefix),
+                                       "{}_neg_edge_index".format(prefix))
+        ]
         link_probs = torch.sigmoid(model(pos_edge_index, neg_edge_index))
         link_labels = get_link_labels(pos_edge_index, neg_edge_index)
-        link_probs, link_labels = link_probs.detach().cpu().numpy(), link_labels.detach().cpu().numpy()
+        link_probs = link_probs.detach().cpu().numpy()
+        link_labels = link_labels.detach().cpu().numpy()
         perfs.append(roc_auc_score(link_labels, link_probs))
     return perfs
 
@@ -96,5 +99,5 @@ for epoch in range(1, 501):
     if val_perf > best_val_perf:
         best_val_perf = val_perf
         test_perf = tmp_test_perf
-    log = 'Epoch: {:03d}, Train_loss: {:.4f}, Val_perf: {:.4f}, Test_perf: {:.4f}'
+    log = 'Epoch: {:03d}, Train_loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'
     print(log.format(epoch, train_loss, best_val_perf, test_perf))

@@ -1,8 +1,8 @@
 import torch
 from torch_geometric.utils import (negative_sampling,
                                    structured_negative_sampling,
-                                   batched_negative_sampling,
-                                   to_undirected, is_undirected)
+                                   batched_negative_sampling, to_undirected,
+                                   is_undirected)
 
 
 def test_negative_sampling():
@@ -22,7 +22,8 @@ def test_negative_sampling():
     assert neg_edge_index.size(1) == 2
 
     undirected_edge_index = to_undirected(edge_index)
-    undirected_neg_edge_index = negative_sampling(undirected_edge_index, force_undirected=True)
+    undirected_neg_edge_index = negative_sampling(undirected_edge_index,
+                                                  force_undirected=True)
     assert is_undirected(undirected_neg_edge_index)
     assert undirected_neg_edge_index.size(1) <= undirected_edge_index.size(1)
 
@@ -30,7 +31,8 @@ def test_negative_sampling():
     undirected_adj[undirected_edge_index[0], undirected_edge_index[1]] = 1
 
     undirected_neg_adj = torch.zeros(4, 4, dtype=torch.bool)
-    undirected_neg_adj[undirected_neg_edge_index[0], undirected_neg_edge_index[1]] = 1
+    undirected_neg_adj[undirected_neg_edge_index[0],
+                       undirected_neg_edge_index[1]] = 1
     assert (undirected_adj & undirected_neg_adj).sum() == 0
 
 
