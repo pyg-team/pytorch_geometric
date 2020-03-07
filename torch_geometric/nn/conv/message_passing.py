@@ -2,7 +2,7 @@ import inspect
 from collections import OrderedDict
 
 import torch
-from torch_scatter import scatter, segment_csr
+from torch_scatter import scatter
 
 msg_special_args = set([
     'edge_index',
@@ -146,9 +146,9 @@ class MessagePassing(torch.nn.Module):
         r"""The initial call to start propagating messages.
 
         Args:
-            edge_index (Tensor or SparseTensor): The indices of a general
-                (sparse) assignment matrix with shape :obj:`[N, M]` (can be
-                directed or undirected).
+            edge_index (Tensor): The indices of a general (sparse) assignment
+                matrix with shape :obj:`[N, M]` (can be directed or
+                undirected).
             size (list or tuple, optional): The size :obj:`[N, M]` of the
                 assignment matrix. If set to :obj:`None`, the size will be
                 automatically inferred and assumed to be quadratic.
@@ -190,7 +190,7 @@ class MessagePassing(torch.nn.Module):
 
         return x_j
 
-    def aggregate(self, inputs, index, ptr=None, dim_size=None):
+    def aggregate(self, inputs, index, dim_size=None):
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -199,12 +199,8 @@ class MessagePassing(torch.nn.Module):
         the :obj:`aggr` argument.
         """
 
-        if ptr is None:
-            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                           reduce=self.aggr)
-        else:
-            # TODO: Integrate `self.node_dim`.
-            return segment_csr(inputs, ptr, reduce=self.aggr)
+        return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
+                       reduce=self.aggr)
 
     def update(self, inputs):
         r"""Updates node embeddings in analogy to
