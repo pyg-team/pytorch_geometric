@@ -24,6 +24,7 @@ from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
 from .negative_sampling import (negative_sampling,
                                 structured_negative_sampling,
                                 batched_negative_sampling)
+from .train_test_split_edges import train_test_split_edges
 from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score,
                      intersection_and_union, mean_iou)
@@ -63,6 +64,7 @@ __all__ = [
     'negative_sampling',
     'structured_negative_sampling',
     'batched_negative_sampling',
+    'train_test_split_edges',
     'accuracy',
     'true_positive',
     'true_negative',
