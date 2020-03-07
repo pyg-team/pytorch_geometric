@@ -4,12 +4,13 @@ from torch_geometric.utils import degree
 
 
 class GraphSizeNorm(nn.Module):
-    r"""Applies graph size normalization over each individual graph in a batch
-    of node features as described in the `"Benchmarking Graph Neural Networks" <https://arxiv.org/abs/2003.00982>`_
+    r"""Applies Graph Size Normalization over each individual graph in a batch
+    of node features as described in the
+    `"Benchmarking Graph Neural Networks" <https://arxiv.org/abs/2003.00982>`_
     paper
 
     .. math::
-        \mathbf{x}^l_i = \frac{\mathbf{x}^l_i}{\sqrt{|G|}
+        \mathbf{x}^l_i = \frac{\mathbf{x}^l_i}{\sqrt{|\mathcal{V}|}
     """
     def __init__(self):
         super(GraphSizeNorm, self).__init__()
