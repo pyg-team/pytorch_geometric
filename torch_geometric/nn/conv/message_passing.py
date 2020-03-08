@@ -224,12 +224,12 @@ class MessagePassing(torch.nn.Module):
         return out
 
     def message(self, x_j):
-        r"""Constructs messages to node :math:`i` in analogy to
-        :math:`\phi_{\mathbf{\Theta}}` for each edge in
-        :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and
-        :math:`(i,j) \in \mathcal{E}` if :obj:`flow="target_to_source"`.
-        Can take any argument which was initially passed to :meth:`propagate`.
-        In addition, tensors passed to :meth:`propagate` can be mapped to the
+        r"""Constructs messages from node :math:`j` to node :math:`i`
+        in analogy to :math:`\phi_{\mathbf{\Theta}}` for each edge in
+        :obj:`edge_index`.
+        This function can take any argument as input which was initially
+        passed to :meth:`propagate`.
+        Furthermore, tensors passed to :meth:`propagate` can be mapped to the
         respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
         :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
         """
@@ -240,13 +240,24 @@ class MessagePassing(torch.nn.Module):
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
-        By default, delegates call to scatter functions that support
-        "add", "mean" and "max" operations specified in :meth:`__init__` by
-        the :obj:`aggr` argument.
+        By default, this function will delegate its call to scatter functions
+        that support "add", "mean" and "max" operations as specified in
+        :meth:`__init__` by the :obj:`aggr` argument.
         """
 
         return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                        reduce=self.aggr)
+
+    def message_and_aggregate(self, adj):
+        r"""Fuses computation of :func:`message` and :func:`aggregate` into a
+        single function.
+        If applicable, this saves both time and memory since messages do not
+        explicitly need to be materialized.
+        This function will only gets called in case it is implemented and
+        propagation takes place based on :obj:`torch_sparse.SparseTensor`.
+        """
+
+        return NotImplemented
 
     def update(self, inputs):
         r"""Updates node embeddings in analogy to
