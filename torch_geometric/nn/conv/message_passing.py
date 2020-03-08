@@ -1,4 +1,3 @@
-import warnings
 import inspect
 from collections import OrderedDict
 
