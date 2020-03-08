@@ -29,6 +29,7 @@ from .dbp15k import DBP15K
 from .pascal import PascalVOCKeypoints
 from .pascal_pf import PascalPF
 from .snap_dataset import SNAPDataset
+from .suite_sparse import SuiteSparseMatrixCollection
 
 __all__ = [
     'KarateClub',
@@ -63,4 +64,5 @@ __all__ = [
     'PascalVOCKeypoints',
     'PascalPF',
     'SNAPDataset',
+    'SuiteSparseMatrixCollection',
 ]

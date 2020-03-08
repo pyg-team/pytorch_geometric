@@ -175,6 +175,10 @@ class SNAPDataset(InMemoryDataset):
     def processed_dir(self):
         return osp.join(self.root, self.name, 'processed')
 
+    @property
+    def processed_file_names(self):
+        return 'data.pt'
+
     def _download(self):
         if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
             return
@@ -191,10 +195,6 @@ class SNAPDataset(InMemoryDataset):
             elif name.endswith('.gz'):
                 extract_gz(path, self.raw_dir)
             os.unlink(path)
-
-    @property
-    def processed_file_names(self):
-        return 'data.pt'
 
     def process(self):
         raw_dir = self.raw_dir
