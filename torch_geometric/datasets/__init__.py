@@ -28,6 +28,7 @@ from .willow_object_class import WILLOWObjectClass
 from .dbp15k import DBP15K
 from .pascal import PascalVOCKeypoints
 from .pascal_pf import PascalPF
+from .snap_dataset import SNAPDataset
 
 __all__ = [
     'KarateClub',
@@ -61,4 +62,5 @@ __all__ = [
     'WILLOWObjectClass',
     'PascalVOCKeypoints',
     'PascalPF',
+    'SNAPDataset',
 ]
