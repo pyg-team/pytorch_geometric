@@ -1,7 +1,9 @@
+import warnings
 import inspect
 from collections import OrderedDict
 
 import torch
+from torch_sparse import SparseTensor
 from torch_scatter import scatter
 
 msg_special_args = set([
@@ -75,16 +77,28 @@ class MessagePassing(torch.nn.Module):
 
         self.__args__ = set().union(msg_args, aggr_args, update_args)
 
-    def __set_size__(self, size, index, tensor):
+    def __mp_type__(self, edge_index):
+        if (torch.is_tensor(edge_index) and edge_index.dtype == torch.long
+                and edge_index.dim() == 2 and edge_index.size(0)):
+            return 'edge_index'
+        elif isinstance(edge_index, SparseTensor):
+            return 'adj_t'
+        else:
+            return ValueError(
+                ('`MessagePassing` propagation only supports LongTensors of '
+                 'shape `[2, num_messages]` or `torch_sparse.SparseTensor` '
+                 'for argument :obj:`edge_index`.'))
+
+    def __set_size__(self, size, idx, tensor):
         if not torch.is_tensor(tensor):
             pass
-        elif size[index] is None:
-            size[index] = tensor.size(self.node_dim)
-        elif size[index] != tensor.size(self.node_dim):
+        elif size[idx] is None:
+            size[idx] = tensor.size(self.node_dim)
+        elif size[idx] != tensor.size(self.node_dim):
             raise ValueError(
                 (f'Encountered node tensor with size '
                  f'{tensor.size(self.node_dim)} in dimension {self.node_dim}, '
-                 f'but expected size {size[index]}.'))
+                 f'but expected size {size[idx]}.'))
 
     def __collect__(self, edge_index, size, kwargs):
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
@@ -146,9 +160,9 @@ class MessagePassing(torch.nn.Module):
         r"""The initial call to start propagating messages.
 
         Args:
-            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
-                :obj:`torch_sparse.SparseTensor` which defines message
-                propagation.
+            adj (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
+                :obj:`torch_sparse.SparseTensor` that defines the underlying
+                message propagation.
                 :obj:`edge_index` holds the indices of a general (sparse)
                 assignment matrix of shape :obj:`[N, M]`.
                 If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its
@@ -171,10 +185,28 @@ class MessagePassing(torch.nn.Module):
                 aggregate messages, and to update node embeddings.
         """
 
-        size = [None, None] if size is None else size
-        size = [size, size] if isinstance(size, int) else size
-        size = size.tolist() if torch.is_tensor(size) else size
-        size = list(size) if isinstance(size, tuple) else size
+        mp_type = self.__get_mp_type(edge_index)
+
+        if mp_type == 'adj_t' and self.flow == 'target_to_source':
+            raise ValueError(
+                ('Flow direction "target_to_source" is invalid for message '
+                 'propagation based on `torch_sparse.SparseTensor`. If you '
+                 'really want to make use of a reverse message passing flow, '
+                 'pass in the transposed sparse tensor to the message passing '
+                 'module, e.g., `adj.t()`.'))
+
+        if mp_type == 'edge_index':
+            if size is None:
+                size = [None, None]
+            elif isinstance(size, int):
+                size = [size, size]
+            elif torch.is_tensor(size):
+                size = size.tolist()
+            elif isinstance(size, tuple):
+                size = list(size)
+        elif mp_type == 'adj_t':
+            size = list(edge_index.sparse_sizes())[::-1]
+
         assert isinstance(size, list)
         assert len(size) == 2
 
