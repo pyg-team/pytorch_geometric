@@ -22,7 +22,7 @@ update_special_args = set([])
 
 
 class MessagePassing(torch.nn.Module):
-    r"""Base class for creating message passing layers
+    r"""Base class for creating message passing layers of the form
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
@@ -46,7 +46,7 @@ class MessagePassing(torch.nn.Module):
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`0`)
     """
-    def __init__(self, aggr='add', flow='source_to_target', node_dim=0):
+    def __init__(self, aggr="add", flow="source_to_target", node_dim=0):
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
@@ -146,13 +146,27 @@ class MessagePassing(torch.nn.Module):
         r"""The initial call to start propagating messages.
 
         Args:
-            edge_index (Tensor): The indices of a general (sparse) assignment
-                matrix with shape :obj:`[N, M]` (can be directed or
-                undirected).
+            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
+                :obj:`torch_sparse.SparseTensor` which defines message
+                propagation.
+                :obj:`edge_index` holds the indices of a general (sparse)
+                assignment matrix of shape :obj:`[N, M]`.
+                If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its
+                shape must be defined as :obj:`[2, num_messages]`, where
+                messages from nodes in :obj:`edge_index[1]` are sent to
+                nodes in :obj:`edge_index[0]`
+                (in case :obj:`flow="source_to_target"`).
+                If :obj:`edge_index` is of type
+                :obj:`torch_sparse.SparseTensor`, its sparse indices
+                :obj:`(row, col)` should relate to :obj:`row = edge_index[1]`
+                and :obj:`col = edge_index[0]`.
             size (list or tuple, optional): The size :obj:`[N, M]` of the
-                assignment matrix. If set to :obj:`None`, the size will be
-                automatically inferred and assumed to be quadratic.
-                (default: :obj:`None`)
+                assignment matrix in case :obj:`edge_index` is a
+                :obj:`LongTensor`.
+                If set to :obj:`None`, the size will be automatically inferred
+                and assumed to be quadratic.
+                This argument is ignored in case :obj:`edge_index` is a
+                :obj:`torch_sparse.SparseTensor`. (default: :obj:`None`)
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
