@@ -10,7 +10,7 @@ class TAGConv(MessagePassing):
      <https://arxiv.org/abs/1710.10370>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} = \sum_{k=0}^K \mathbf{D}^{-1/2} \mathbf{A}
+        \mathbf{X}^{\prime} = \sum_{k=0}^K \mathbf{D}^{-1/2} \mathbf{A}^k
         \mathbf{D}^{-1/2}\mathbf{X} \mathbf{\Theta}_{k},
 
     where :math:`\mathbf{A}` denotes the adjacency matrix and
@@ -25,7 +25,6 @@ class TAGConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, K=3, bias=True, **kwargs):
         super(TAGConv, self).__init__(aggr='add', **kwargs)
 
