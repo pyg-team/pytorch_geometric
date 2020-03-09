@@ -193,13 +193,16 @@ class MessagePassing(torch.nn.Module):
                 assignment matrix of shape :obj:`[N, M]`.
                 If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its
                 shape must be defined as :obj:`[2, num_messages]`, where
-                messages from nodes in :obj:`edge_index[1]` are sent to
-                nodes in :obj:`edge_index[0]`
+                messages from nodes in :obj:`edge_index[0]` are sent to
+                nodes in :obj:`edge_index[1]`
                 (in case :obj:`flow="source_to_target"`).
                 If :obj:`edge_index` is of type
                 :obj:`torch_sparse.SparseTensor`, its sparse indices
                 :obj:`(row, col)` should relate to :obj:`row = edge_index[1]`
                 and :obj:`col = edge_index[0]`.
+                Hence, the only difference between those formats is that we
+                need to input the *transposed* sparse adjacency matrix into
+                :func:`propagate`.
             size (list or tuple, optional): The size :obj:`[N, M]` of the
                 assignment matrix in case :obj:`edge_index` is a
                 :obj:`LongTensor`.
