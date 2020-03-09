@@ -3,18 +3,21 @@ from collections import OrderedDict
 
 import torch
 from torch_sparse import SparseTensor
-from torch_scatter import scatter
+from torch_scatter import gather_csr, scatter, segment_csr
+
+msg_aggr_special_args = set([
+    'adj_t',
+])
 
 msg_special_args = set([
-    'edge_index',
     'edge_index_i',
     'edge_index_j',
-    'size',
     'size_i',
     'size_j',
 ])
 
 aggr_special_args = set([
+    'ptr',
     'index',
     'dim_size',
 ])
@@ -39,7 +42,7 @@ class MessagePassing(torch.nn.Module):
 
     Args:
         aggr (string, optional): The aggregation scheme to use
-            (:obj:`"add"`, :obj:`"mean"` or :obj:`"max"`).
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"` or :obj:`None`).
             (default: :obj:`"add"`)
         flow (string, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
@@ -51,13 +54,17 @@ class MessagePassing(torch.nn.Module):
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
-        assert self.aggr in ['add', 'mean', 'max']
+        assert self.aggr in ['add', 'mean', 'max', None]
 
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
 
         self.node_dim = node_dim
         assert self.node_dim >= 0
+
+        self.__msg_aggr_params__ = inspect.signature(
+            self.message_and_aggregate).parameters
+        self.__msg_aggr_params__ = OrderedDict(self.__msg_aggr_params__)
 
         self.__msg_params__ = inspect.signature(self.message).parameters
         self.__msg_params__ = OrderedDict(self.__msg_params__)
@@ -70,13 +77,18 @@ class MessagePassing(torch.nn.Module):
         self.__update_params__ = OrderedDict(self.__update_params__)
         self.__update_params__.popitem(last=False)
 
+        msg_aggr_args = set(
+            self.__msg_aggr_params__.keys()) - msg_aggr_special_args
         msg_args = set(self.__msg_params__.keys()) - msg_special_args
         aggr_args = set(self.__aggr_params__.keys()) - aggr_special_args
         update_args = set(self.__update_params__.keys()) - update_special_args
 
-        self.__args__ = set().union(msg_args, aggr_args, update_args)
+        self.__user_args__ = set().union(msg_aggr_args, msg_args, aggr_args,
+                                         update_args)
 
-    def __mp_type__(self, edge_index):
+        self.__fuse__ = True
+
+    def __get_mp_type__(self, edge_index):
         if (torch.is_tensor(edge_index) and edge_index.dtype == torch.long
                 and edge_index.dim() == 2 and edge_index.size(0)):
             return 'edge_index'
@@ -84,8 +96,8 @@ class MessagePassing(torch.nn.Module):
             return 'adj_t'
         else:
             return ValueError(
-                ('`MessagePassing` propagation only supports LongTensors of '
-                 'shape `[2, num_messages]` or `torch_sparse.SparseTensor` '
+                ('`MessagePassing.propagate` only supports `torch.LongTensor` '
+                 'of shape `[2, num_messages]` or `torch_sparse.SparseTensor` '
                  'for argument :obj:`edge_index`.'))
 
     def __set_size__(self, size, idx, tensor):
@@ -99,12 +111,12 @@ class MessagePassing(torch.nn.Module):
                  f'{tensor.size(self.node_dim)} in dimension {self.node_dim}, '
                  f'but expected size {size[idx]}.'))
 
-    def __collect__(self, edge_index, size, kwargs):
+    def __collect__(self, edge_index, size, mp_type, kwargs):
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
         ij = {'_i': i, '_j': j}
 
         out = {}
-        for arg in self.__args__:
+        for arg in self.__user_args__:
             if arg[-2:] not in ij.keys():
                 out[arg] = kwargs.get(arg, inspect.Parameter.empty)
             else:
@@ -125,21 +137,36 @@ class MessagePassing(torch.nn.Module):
                     continue
 
                 self.__set_size__(size, idx, data)
-                out[arg] = data.index_select(self.node_dim, edge_index[idx])
+
+                if mp_type == 'edge_index':
+                    out[arg] = data.index_select(self.node_dim,
+                                                 edge_index[idx])
+                elif mp_type == 'adj_t' and idx == 1:
+                    rowptr = edge_index.storage.rowptr()
+                    for _ in range(self.node_dim):
+                        rowptr = rowptr.unsqueeze(0)
+                    out[arg] = gather_csr(data, rowptr)
+                elif mp_type == 'adj_t' and idx == 0:
+                    col = edge_index.storage.col()
+                    out[arg] = data.index_select(self.node_dim, col)
 
         size[0] = size[1] if size[0] is None else size[0]
         size[1] = size[0] if size[1] is None else size[1]
 
-        # Add special message arguments.
-        out['edge_index'] = edge_index
-        out['edge_index_i'] = edge_index[i]
-        out['edge_index_j'] = edge_index[j]
-        out['size'] = size
-        out['size_i'] = size[i]
-        out['size_j'] = size[j]
+        if mp_type == 'edge_index':
+            out['edge_index_j'] = edge_index[j]
+            out['edge_index_i'] = edge_index[i]
+            out['index'] = out['edge_index_i']
+        elif mp_type == 'adj_t':
+            out['adj_t'] = edge_index
+            out['edge_index_i'] = edge_index.storage.row()
+            out['edge_index_j'] = edge_index.storage.col()
+            out['index'] = edge_index.storage.row()
+            out['ptr'] = edge_index.storage.rowptr()
+            out['edge_attr'] = edge_index.storage.value()
 
-        # Add special aggregate arguments.
-        out['index'] = out['edge_index_i']
+        out['size_j'] = size[j]
+        out['size_i'] = size[i]
         out['dim_size'] = out['size_i']
 
         return out
@@ -147,7 +174,7 @@ class MessagePassing(torch.nn.Module):
     def __distribute__(self, params, kwargs):
         out = {}
         for key, param in params.items():
-            data = kwargs[key]
+            data = kwargs.get(key, inspect.Parameter.empty)
             if data is inspect.Parameter.empty:
                 if param.default is inspect.Parameter.empty:
                     raise TypeError(f'Required parameter {key} is empty.')
@@ -184,7 +211,9 @@ class MessagePassing(torch.nn.Module):
                 aggregate messages, and to update node embeddings.
         """
 
-        mp_type = self.__get_mp_type(edge_index)
+        # We need to distinguish between the old `edge_index` format and the
+        # new `torch_sparse.SparseTensor` format.
+        mp_type = self.__get_mp_type__(edge_index)
 
         if mp_type == 'adj_t' and self.flow == 'target_to_source':
             raise ValueError(
@@ -209,13 +238,24 @@ class MessagePassing(torch.nn.Module):
         assert isinstance(size, list)
         assert len(size) == 2
 
-        kwargs = self.__collect__(edge_index, size, kwargs)
+        # We collect all arguments used for message passing in `kwargs`.
+        kwargs = self.__collect__(edge_index, size, mp_type, kwargs)
 
-        msg_kwargs = self.__distribute__(self.__msg_params__, kwargs)
-        out = self.message(**msg_kwargs)
+        # Try to run `message_and_aggregate` first and see if it succeeds:
+        if mp_type == 'adj_t' and self.__fuse__ is True:
+            msg_aggr_kwargs = self.__distribute__(self.__msg_aggr_params__,
+                                                  kwargs)
+            out = self.message_and_aggregate(**msg_aggr_kwargs)
+            if out == NotImplemented:
+                self.__fuse__ = False
 
-        aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
-        out = self.aggregate(out, **aggr_kwargs)
+        # Otherwise, run both functions in separation.
+        if mp_type == 'edge_index' or self.__fuse__ is False:
+            msg_kwargs = self.__distribute__(self.__msg_params__, kwargs)
+            out = self.message(**msg_kwargs)
+
+            aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
+            out = self.aggregate(out, **aggr_kwargs)
 
         update_kwargs = self.__distribute__(self.__update_params__, kwargs)
         out = self.update(out, **update_kwargs)
@@ -235,7 +275,7 @@ class MessagePassing(torch.nn.Module):
 
         return x_j
 
-    def aggregate(self, inputs, index, dim_size=None):
+    def aggregate(self, inputs, index, ptr=None, dim_size=None):
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -244,16 +284,21 @@ class MessagePassing(torch.nn.Module):
         :meth:`__init__` by the :obj:`aggr` argument.
         """
 
-        return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                       reduce=self.aggr)
+        if ptr is not None:
+            for _ in range(self.node_dim):
+                ptr = ptr.unsqueeze(0)
+            return segment_csr(inputs, ptr, reduce=self.aggr)
+        else:
+            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
+                           reduce=self.aggr)
 
-    def message_and_aggregate(self, adj):
-        r"""Fuses computation of :func:`message` and :func:`aggregate` into a
+    def message_and_aggregate(self, adj_t):
+        r"""Fuses computations of :func:`message` and :func:`aggregate` into a
         single function.
         If applicable, this saves both time and memory since messages do not
         explicitly need to be materialized.
         This function will only gets called in case it is implemented and
-        propagation takes place based on :obj:`torch_sparse.SparseTensor`.
+        propagation takes place based on a :obj:`torch_sparse.SparseTensor`.
         """
 
         return NotImplemented

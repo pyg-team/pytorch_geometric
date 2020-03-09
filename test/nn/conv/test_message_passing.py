@@ -10,12 +10,16 @@ def test_message_passing_with_adj():
         [0, 0, 0, 1, 1, 1],
         [0, 1, 2, 0, 1, 2],
     ])
-
+    edge_index = torch.stack([row, col], dim=0)
     adj_t = SparseTensor(row=row, col=col).t()
 
     x = torch.Tensor([[1], [2]])
 
-    out = MessagePassing().propagate(adj_t, x=x)
+    conv = MessagePassing()
+
+    out = conv.propagate(edge_index, x=x, size=(2, 3))
+    print(out)
+    out = conv.propagate(adj_t, x=x)
     print(out)
 
 
