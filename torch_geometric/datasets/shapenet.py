@@ -173,7 +173,7 @@ class ShapeNet(InMemoryDataset):
                             f'shuffled_{split}_file_list.json')
             with open(path, 'r') as f:
                 filenames = [
-                    osp.sep.join(name.split(osp.sep)[1:]) + '.txt'
+                    osp.sep.join(name.split('/')[1:]) + '.txt'
                     for name in json.load(f)
                 ]  # Removing first directory.
             data_list = self.process_filenames(filenames)
