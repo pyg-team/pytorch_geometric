@@ -50,12 +50,13 @@ This formula can be divided into the following steps:
 
 1. Add self-loops to the adjacency matrix.
 2. Linearly transform node feature matrix.
-3. Normalize node features in :math:`\phi`.
-4. Sum up neighboring node features (:obj:`"add"` aggregation).
-5. Return new node embeddings in :math:`\gamma`.
+3. Compute normalization coefficients.
+4. Normalize node features in :math:`\phi`.
+5. Sum up neighboring node features (:obj:`"add"` aggregation).
+6. Return new node embeddings in :math:`\gamma`.
 
-Steps 1-2 are typically computed before message passing takes place.
-Steps 3-5 can be easily processed using the :class:`torch_geometric.nn.MessagePassing` base class.
+Steps 1-3 are typically computed before message passing takes place.
+Steps 4-6 can be easily processed using the :class:`torch_geometric.nn.MessagePassing` base class.
 The full layer implementation is shown below:
 
 .. code-block:: python
@@ -79,24 +80,26 @@ The full layer implementation is shown below:
             # Step 2: Linearly transform node feature matrix.
             x = self.lin(x)
 
-            # Step 3-5: Start propagating messages.
-            return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x)
-
-        def message(self, x_j, edge_index, size):
-            # x_j has shape [E, out_channels]
-
-            # Step 3: Normalize node features.
+            # Step 3: Compute normalization
             row, col = edge_index
             deg = degree(row, size[0], dtype=x_j.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 
+            # Step 4-6: Start propagating messages.
+            return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x,
+                                  norm=norm)
+
+        def message(self, x_j, norm):
+            # x_j has shape [E, out_channels]
+
+            # Step 4: Normalize node features.
             return norm.view(-1, 1) * x_j
 
         def update(self, aggr_out):
             # aggr_out has shape [N, out_channels]
 
-            # Step 5: Return new node embeddings.
+            # Step 6: Return new node embeddings.
             return aggr_out
 
 :class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing` with :obj:`"add"` propagation.
