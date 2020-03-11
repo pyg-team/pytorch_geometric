@@ -88,6 +88,10 @@ class MessagePassing(torch.nn.Module):
 
         self.__fuse__ = True
 
+        # Support for GNNExplainer.
+        self.__explain__ = False
+        self.__edge_mask__ = None
+
     def __get_mp_type__(self, edge_index):
         if (torch.is_tensor(edge_index) and edge_index.dtype == torch.long
                 and edge_index.dim() == 2 and edge_index.size(0)):
@@ -245,7 +249,7 @@ class MessagePassing(torch.nn.Module):
         kwargs = self.__collect__(edge_index, size, mp_type, kwargs)
 
         # Try to run `message_and_aggregate` first and see if it succeeds:
-        if mp_type == 'adj_t' and self.__fuse__ is True:
+        if mp_type == 'adj_t' and self.__fuse__ and not self.__explain__:
             msg_aggr_kwargs = self.__distribute__(self.__msg_aggr_params__,
                                                   kwargs)
             out = self.message_and_aggregate(**msg_aggr_kwargs)
@@ -253,9 +257,12 @@ class MessagePassing(torch.nn.Module):
                 self.__fuse__ = False
 
         # Otherwise, run both functions in separation.
-        if mp_type == 'edge_index' or self.__fuse__ is False:
+        if mp_type == 'edge_index' or not self.__fuse__ or self.__explain__:
             msg_kwargs = self.__distribute__(self.__msg_params__, kwargs)
             out = self.message(**msg_kwargs)
+
+            if self.__explain__:
+                out = out * self.__edge_mask__.view(-1, 1)
 
             aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
             out = self.aggregate(out, **aggr_kwargs)
