@@ -3,9 +3,10 @@ import os.path as osp
 
 import torch
 import pandas
+import numpy as np
 from torch_sparse import coalesce
 from torch_geometric.data import Data, InMemoryDataset, download_url, \
-                                 extract_gz, extract_tar
+                                 extract_gz, extract_tar, extract_zip
 from torch_geometric.data.makedirs import makedirs
 
 
@@ -154,6 +155,27 @@ def read_gemsec(files, name):
     return data_list
 
 
+def read_musae(paths, name):
+    if name == 'twitch':
+        for path in paths:
+            if osp.isdir(path):
+                for file in os.listdir(path):
+                    if 'target' in file:
+                        y = pandas.read_csv(osp.join(path, file),
+                                            header=None, skiprows=1)
+                        y = torch.from_numpy(y.to_numpy(dtype=np.int))
+                    elif 'edges' in file:
+                        edge_index = pandas.read_csv(osp.join(path, file),
+                                                     header=None, skiprows=1)
+                        edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+                        assert torch.eq(torch.unique(edge_index.flatten()),
+                                        torch.arange(0, edge_index.max() + 1)).all()
+                        num_nodes = edge_index.max() + 1
+            raise
+        raise
+    else:
+        raise
+
 
 class SNAPDataset(InMemoryDataset):
     r"""A variety of graph datasets collected from `SNAP at Stanford University
@@ -193,6 +215,9 @@ class SNAPDataset(InMemoryDataset):
         'wiki-vote': ['wiki-Vote.txt.gz'],
         'gemsec-deezer': ['gemsec_deezer_dataset.tar.gz'],
         'gemsec-facebook': ['gemsec_facebook_dataset.tar.gz'],
+        'musae-twitch': ['twitch.zip'],
+        'musae-facebook': ['facebook_large.zip'],
+        'musae-github': ['git_web_ml.zip'],
     }
 
     def __init__(self, root, name, transform=None, pre_transform=None,
@@ -230,6 +255,8 @@ class SNAPDataset(InMemoryDataset):
                 extract_tar(path, self.raw_dir)
             elif name.endswith('.gz'):
                 extract_gz(path, self.raw_dir)
+            elif name.endswith('.zip'):
+                extract_zip(path, self.raw_dir)
             os.unlink(path)
 
     def process(self):
@@ -239,6 +266,7 @@ class SNAPDataset(InMemoryDataset):
             raw_dir = osp.join(raw_dir, filenames[0])
 
         raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
+        print(raw_files, '\n')
 
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])
@@ -248,6 +276,8 @@ class SNAPDataset(InMemoryDataset):
             data_list = read_wiki(raw_files, self.name[5:])
         elif self.name[:7] == 'gemsec-':
             data_list = read_gemsec(raw_files, self.name[7:])
+        elif self.name[:6] == 'musae-':
+            data_list = read_musae(raw_files, self.name[6:])
         else:
             raise NotImplementedError
 
@@ -264,7 +294,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'soc-sign-bitcoin-otc'
+    dataset_name = 'musae-twitch'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                            '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
