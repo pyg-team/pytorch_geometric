@@ -95,17 +95,31 @@ def read_ego(files, name):
 
 
 def read_soc(files, name):
-    skiprows = 4
-    if name == 'pokec':
-        skiprows = 0
+    if 'sign-bitcoin-' in name:
+        d = pandas.read_csv(files[0], header=None, skiprows=0)
+        edge_index = torch.from_numpy(d[[0,1]].to_numpy()).t()
+        edge_attr = torch.from_numpy(d[[2,3]].to_numpy())
 
-    edge_index = pandas.read_csv(files[0], sep='\t', header=None,
+        idx = torch.unique(edge_index.flatten())
+        idx_assoc = torch.full((edge_index.max() + 1, ), -1, dtype=torch.long)
+        idx_assoc[idx] = torch.arange(idx.size(0))
+
+        edge_index = idx_assoc[edge_index]
+        num_nodes = edge_index.max().item() + 1
+
+        return [Data(edge_index=edge_index, edge_attr=edge_attr, num_nodes=num_nodes)]
+    else:
+        skiprows = 4
+        if name == 'pokec':
+            skiprows = 0
+
+        edge_index = pandas.read_csv(files[0], sep='\t', header=None,
                                  skiprows=skiprows)
-    edge_index = torch.from_numpy(edge_index.to_numpy()).t()
-    num_nodes = edge_index.max().item() + 1
-    edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
+        edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+        num_nodes = edge_index.max().item() + 1
+        edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
 
-    return [Data(edge_index=edge_index, num_nodes=num_nodes)]
+        return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
 
 def read_wiki(files, name):
@@ -174,6 +188,8 @@ class SNAPDataset(InMemoryDataset):
         'soc-pokec': ['soc-pokec-relationships.txt.gz'],
         'soc-slashdot0811': ['soc-Slashdot0811.txt.gz'],
         'soc-slashdot0922': ['soc-Slashdot0902.txt.gz'],
+        'soc-sign-bitcoin-otc': ['soc-sign-bitcoinotc.csv.gz'],
+        'soc-sign-bitcoin-alpha': ['soc-sign-bitcoinalpha.csv.gz'],
         'wiki-vote': ['wiki-Vote.txt.gz'],
         'gemsec-deezer': ['gemsec_deezer_dataset.tar.gz'],
         'gemsec-facebook': ['gemsec_facebook_dataset.tar.gz'],
@@ -227,7 +243,7 @@ class SNAPDataset(InMemoryDataset):
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])
         elif self.name[:4] == 'soc-':
-            data_list = read_soc(raw_files, self.name[:4])
+            data_list = read_soc(raw_files, self.name[4:])
         elif self.name[:5] == 'wiki-':
             data_list = read_wiki(raw_files, self.name[5:])
         elif self.name[:7] == 'gemsec-':
@@ -248,7 +264,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'gemsec-deezer'
+    dataset_name = 'soc-sign-bitcoin-otc'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                            '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
