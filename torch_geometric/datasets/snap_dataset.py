@@ -123,6 +123,24 @@ def read_wiki(files, name):
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
 
+def read_gemsec(files, name):
+    data_list = []
+    for file in files:
+        if 'edges' in file:
+            edge_index = pandas.read_csv(file, header=None, skiprows=1)
+            edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+
+            assert torch.eq(torch.unique(edge_index.flatten()),
+                            torch.arange(0, edge_index.max() + 1)).all()
+            num_nodes = edge_index.max().item() + 1
+            edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
+            data = Data(edge_index=edge_index, num_nodes=num_nodes)
+            data_list.append(data)
+
+    return data_list
+
+
+
 class SNAPDataset(InMemoryDataset):
     r"""A variety of graph datasets collected from `SNAP at Stanford University
     <https://snap.stanford.edu/data>`_.
@@ -157,6 +175,8 @@ class SNAPDataset(InMemoryDataset):
         'soc-slashdot0811': ['soc-Slashdot0811.txt.gz'],
         'soc-slashdot0922': ['soc-Slashdot0902.txt.gz'],
         'wiki-vote': ['wiki-Vote.txt.gz'],
+        'gemsec-deezer': ['gemsec_deezer_dataset.tar.gz'],
+        'gemsec-facebook': ['gemsec_facebook_dataset.tar.gz'],
     }
 
     def __init__(self, root, name, transform=None, pre_transform=None,
@@ -210,6 +230,8 @@ class SNAPDataset(InMemoryDataset):
             data_list = read_soc(raw_files, self.name[:4])
         elif self.name[:5] == 'wiki-':
             data_list = read_wiki(raw_files, self.name[5:])
+        elif self.name[:7] == 'gemsec-':
+            data_list = read_gemsec(raw_files, self.name[7:])
         else:
             raise NotImplementedError
 
@@ -223,3 +245,12 @@ class SNAPDataset(InMemoryDataset):
 
     def __repr__(self):
         return 'SNAP-{}({})'.format(self.name, len(self))
+
+
+if __name__ == '__main__':
+    dataset_name = 'gemsec-deezer'
+    path = osp.join(osp.dirname(osp.realpath(__file__)),
+                           '..', '..', 'data', dataset_name)
+    dataset = SNAPDataset(path, dataset_name)
+    data = dataset[0]
+    print(data)
