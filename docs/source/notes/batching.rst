@@ -53,7 +53,7 @@ Both functions are called for each attribute stored in the :class:`torch_geometr
 
 In what follows, we present a few use-cases where the modification of :func:`__inc__` and :func:`__cat_dim__` might be absolutely necessary.
 
-Pair of Graphs
+Pairs of Graphs
 --------------
 
 In case you want to store multiple graphs in a single :class:`torch_geometric.data.Data` object, *e.g.*, for applications such as graph matching, you need to ensure correct batching behaviour across all those graphs.
