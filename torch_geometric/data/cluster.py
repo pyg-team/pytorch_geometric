@@ -24,43 +24,39 @@ class ClusterData(torch.utils.data.Dataset):
             the :obj:`save_dir` directory for faster re-use.
     """
     def __init__(self, data, num_parts, recursive=False, save_dir=None):
-        assert (data.edge_index is not None)
+        assert data.edge_index is not None
 
-        self.num_parts = num_parts
-        self.recursive = recursive
-        self.save_dir = save_dir
+        recursive_str = '_recursive' if recursive else ''
+        filename = f'partition_{num_parts}{recursive_str}.pt'
 
-        self.process(data)
-
-    def process(self, data):
-        recursive = '_recursive' if self.recursive else ''
-        filename = f'part_data_{self.num_parts}{recursive}.pt'
-
-        path = osp.join(self.save_dir or '', filename)
-        if self.save_dir is not None and osp.exists(path):
-            data, partptr, perm = torch.load(path)
+        path = osp.join(save_dir or '', filename)
+        if save_dir is not None and osp.exists(path):
+            adj, partptr, perm = torch.load(path)
         else:
-            data = copy.copy(data)
-            num_nodes = data.num_nodes
-
             (row, col), edge_attr = data.edge_index, data.edge_attr
             adj = SparseTensor(row=row, col=col, value=edge_attr)
-            adj, partptr, perm = adj.partition(self.num_parts, self.recursive)
+            adj, partptr, perm = adj.partition(num_parts, recursive)
 
-            for key, item in data:
-                if item.size(0) == num_nodes:
-                    data[key] = item[perm]
+            if save_dir is not None:
+                torch.save((adj, partptr, perm), path)
 
-            data.edge_index = None
-            data.edge_attr = None
-            data.adj = adj
-
-            if self.save_dir is not None:
-                torch.save((data, partptr, perm), path)
-
-        self.data = data
-        self.perm = perm
+        self.data = self.permute_data(data, perm, adj)
         self.partptr = partptr
+        self.perm = perm
+
+    def permute_data(self, data, perm, adj):
+        data = copy.copy(data)
+        num_nodes = data.num_nodes
+
+        for key, item in data:
+            if item.size(0) == num_nodes:
+                data[key] = item[perm]
+
+        data.edge_index = None
+        data.edge_attr = None
+        data.adj = adj
+
+        return data
 
     def __len__(self):
         return self.partptr.numel() - 1
