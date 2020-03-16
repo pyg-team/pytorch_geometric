@@ -4,7 +4,6 @@ from collections import OrderedDict
 import torch
 from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
-from torch_geometric.utils import add_remaining_self_loops
 
 msg_aggr_special_args = set([
     'adj_t',
