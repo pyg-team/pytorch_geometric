@@ -4,6 +4,7 @@ from collections import OrderedDict
 import torch
 from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
+from torch_geometric.utils import add_remaining_self_loops
 
 msg_aggr_special_args = set([
     'adj_t',
@@ -50,6 +51,7 @@ class MessagePassing(torch.nn.Module):
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`0`)
     """
+
     def __init__(self, aggr="add", flow="source_to_target", node_dim=0):
         super(MessagePassing, self).__init__()
 
@@ -262,7 +264,12 @@ class MessagePassing(torch.nn.Module):
             out = self.message(**msg_kwargs)
 
             if self.__explain__:
-                out = out * self.__edge_mask__.view(-1, 1)
+                edge_mask = self.__edge_mask__.sigmoid()
+                if out.size(0) != edge_mask.size(0):
+                    loop = edge_mask.new_ones(size[0])
+                    edge_mask = torch.cat([edge_mask, loop], dim=0)
+                assert out.size(0) == edge_mask.size(0)
+                out = out * edge_mask.view(-1, 1)
 
             aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
             out = self.aggregate(out, **aggr_kwargs)
