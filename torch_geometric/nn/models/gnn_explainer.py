@@ -2,9 +2,10 @@ from math import sqrt
 from itertools import chain
 
 import torch
+import networkx as nx
 from torch_geometric.nn import MessagePassing
 
-EPS = 1e-8
+EPS = 1e-15
 
 
 class GNNExplainer(torch.nn.Module):
@@ -17,8 +18,8 @@ class GNNExplainer(torch.nn.Module):
     def __set_masks__(self, x, edge_index, init="normal"):
         (N, F), E = x.size(), edge_index.size(1)
 
-        node_mask = torch.nn.Parameter(torch.randn(F) * 0.1)
-        self.node_masks = torch.nn.ParameterList([node_mask])
+        node_feat_mask = torch.nn.Parameter(torch.randn(F) * 0.1)
+        self.node_feat_masks = torch.nn.ParameterList([node_feat_mask])
 
         self.edge_masks = torch.nn.ParameterList()
         std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
@@ -40,7 +41,7 @@ class GNNExplainer(torch.nn.Module):
 
         loss = -log_logits[node_idx, pred_label[node_idx]]
 
-        for m in chain(self.node_masks, self.edge_masks):
+        for m in chain(self.node_feat_masks, self.edge_masks):
             m = m.sigmoid()
             ent = -m * torch.log(m + EPS) - (1 - m) * torch.log(1 - m + EPS)
             loss = loss + ent.mean()
@@ -58,19 +59,48 @@ class GNNExplainer(torch.nn.Module):
         self.to(x.device)
 
         optimizer = torch.optim.Adam(
-            list(self.node_masks) + list(self.edge_masks), lr=self.lr)
+            list(self.node_feat_masks) + list(self.edge_masks), lr=self.lr)
 
         for epoch in range(1, self.epochs):
             optimizer.zero_grad()
-            h = x * self.node_masks[0].view(1, -1).sigmoid()
+            h = x * self.node_feat_masks[0].view(1, -1).sigmoid()
             log_logits = self.model(x=h, edge_index=edge_index, **kwargs)
             loss = self.__loss__(node_idx, log_logits, pred_label)
             loss.backward()
             optimizer.step()
 
+        node_feat_masks = self.node_feat_masks
+        node_feat_masks = [mask.detach().sigmoid() for mask in node_feat_masks]
+        edge_masks = [mask.detach().sigmoid() for mask in self.edge_masks]
+
         self.__clear_masks__()
 
-    def visualize_subgraph(self, node_idx, edge_index, num_hops,
-                           threshold=None):
-        # Generates
-        pass
+        return node_feat_masks[0], edge_masks
+
+    def visualize_subgraph(self, node_idx, edge_index, threshold=None):
+        assert self.edge_masks is not None
+
+        G = nx.DiGraph()
+        for i, (source, target) in enumerate(edge_index.t().tolist()):
+            G.add_edge(source, target, idx=i)
+        G = G.reverse()
+
+        G_sub = nx.DiGraph()
+        cur = [node_idx]
+        for edge_mask in self.edge_masks:
+            edge_mask = edge_mask.sigmoid().tolist()
+            new_cur = []
+            for node_idx in cur:
+                for v, u, data in G.edges(node_idx, data=True):
+                    new_cur.append(u)
+                    if not G_sub.has_edge(u, v):
+                        G_sub.add_edge(u, v, weight=edge_mask[data['idx']])
+                    else:
+                        G_sub[u][v]['weight'] = max(edge_mask[data['idx']],
+                                                    G_sub[u][v]['weight'])
+            cur = list(set(new_cur))
+
+        nx.draw(G_sub, pos=nx.spring_layout(G_sub), with_labels=True,
+                font_size=12, connectionstyle='arc3, rad = 0.1')
+
+        # plt.show()

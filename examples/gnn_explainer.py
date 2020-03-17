@@ -31,18 +31,17 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
 data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
-
-print(data)
+x, edge_index = data.x, data.edge_index
 
 for epoch in range(1, 201):
     model.train()
     optimizer.zero_grad()
-    log_logits = model(data.x, data.edge_index)
+    log_logits = model(x, edge_index)
     loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
     print(loss)
     loss.backward()
     optimizer.step()
 
-print('----------------')
 explainer = GNNExplainer(model, epochs=200)
-explainer.explain_node(10, data.x, data.edge_index)
+node_feat_mask, edge_masks = explainer.explain_node(10, x, edge_index)
+explainer.visualize_subgraph(10, edge_index)
