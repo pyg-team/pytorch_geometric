@@ -30,6 +30,7 @@ from .pascal import PascalVOCKeypoints
 from .pascal_pf import PascalPF
 from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
+from .particle import TrackMLParticleTrackingDataset
 
 __all__ = [
     'KarateClub',
@@ -65,4 +66,5 @@ __all__ = [
     'PascalPF',
     'SNAPDataset',
     'SuiteSparseMatrixCollection',
+    'TrackMLParticleTrackingDataset',
 ]
