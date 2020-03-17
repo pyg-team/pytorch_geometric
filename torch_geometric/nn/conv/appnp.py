@@ -27,7 +27,6 @@ class APPNP(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, K, alpha, bias=True, **kwargs):
         super(APPNP, self).__init__(aggr='add', **kwargs)
         self.K = K
@@ -35,8 +34,8 @@ class APPNP(MessagePassing):
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
-        edge_index, norm = GCNConv.norm(
-            edge_index, x.size(0), edge_weight, dtype=x.dtype)
+        edge_index, norm = GCNConv.norm(edge_index, x.size(self.node_dim),
+                                        edge_weight, dtype=x.dtype)
 
         hidden = x
         for k in range(self.K):

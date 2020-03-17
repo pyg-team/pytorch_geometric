@@ -46,7 +46,6 @@ class GATConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, heads=1, concat=True,
                  negative_slope=0.2, dropout=0, bias=True, **kwargs):
         super(GATConv, self).__init__(aggr='add', **kwargs)
@@ -58,8 +57,8 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(
-            torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
 
         if bias and concat:
@@ -80,7 +79,8 @@ class GATConv(MessagePassing):
         """"""
         if size is None and torch.is_tensor(x):
             edge_index, _ = remove_self_loops(edge_index)
-            edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
+            edge_index, _ = add_self_loops(edge_index,
+                                           num_nodes=x.size(self.node_dim))
 
         if torch.is_tensor(x):
             x = torch.matmul(x, self.weight)

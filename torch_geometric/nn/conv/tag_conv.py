@@ -1,7 +1,7 @@
+import torch
 from torch.nn import Linear
 from torch_scatter import scatter_add
-from torch_geometric.nn.conv import MessagePassing
-import torch
+from torch_geometric.nn.conv import MessagePassing, GCNConv
 
 
 class TAGConv(MessagePassing):
@@ -54,8 +54,8 @@ class TAGConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
-        edge_index, norm = self.norm(edge_index, x.size(0), edge_weight,
-                                     dtype=x.dtype)
+        edge_index, norm = GCNConv.norm(edge_index, x.size(self.node_dim),
+                                        edge_weight, dtype=x.dtype)
 
         xs = [x]
         for k in range(self.K):

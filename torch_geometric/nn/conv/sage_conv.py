@@ -65,7 +65,7 @@ class SAGEConv(MessagePassing):
         """
         if not self.concat and torch.is_tensor(x):
             edge_index, edge_weight = add_remaining_self_loops(
-                edge_index, edge_weight, 1, x.size(0))
+                edge_index, edge_weight, 1, x.size(self.node_dim))
 
         return self.propagate(edge_index, size=size, x=x,
                               edge_weight=edge_weight, res_n_id=res_n_id)
