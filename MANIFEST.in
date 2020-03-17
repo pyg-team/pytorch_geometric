@@ -1,3 +1,7 @@
+include README.md
 include LICENSE
 
-recursive-include examples *
+recursive-exclude test *
+recursive-exclude examples *
+recursive-exclude docs *
+recursive-exclude benchmark *
