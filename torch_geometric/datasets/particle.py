@@ -65,7 +65,7 @@ class TrackMLParticleTrackingDataset(Dataset):
         truth_path = osp.join(self.raw_dir, f'event{idx}-truth.csv')
         y = pandas.read_csv(truth_path, usecols=['particle_id'],
                             dtype=np.int64)
-        y = torch.from_numpy(y.values)
+        y = torch.from_numpy(y.values).squeeze()
         _, y = y.unique(return_inverse=True)
 
         return TrackingData(pos=pos, y=y)
