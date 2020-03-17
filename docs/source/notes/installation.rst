@@ -71,9 +71,10 @@ Please follow the steps below for a successful installation:
 
     .. code-block:: none
 
-      $ pip install torch-scatter==latest+${CUDA} torch-sparse==latest+${CUDA} -f https://s3.eu-central-1.amazonaws.com/pytorch-geometric.com/whl/torch-1.4.0.html
-      $ pip install torch-cluster (optional)
-      $ pip install torch-spline-conv (optional)
+      $ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+      $ pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+      $ pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+      $ pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
       $ python setup.py install or pip install torch-geometric
 
 
