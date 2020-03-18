@@ -45,6 +45,7 @@ __all__ = [
     'PPI',
     'Reddit',
     'Flickr',
+    'Yelp',
     'QM7b',
     'QM9',
     'Entities',
