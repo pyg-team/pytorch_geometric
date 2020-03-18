@@ -6,6 +6,7 @@ from .coauthor import Coauthor
 from .amazon import Amazon
 from .ppi import PPI
 from .reddit import Reddit
+from .flickr import Flickr
 from .qm7 import QM7b
 from .qm9 import QM9
 from .entities import Entities
@@ -42,6 +43,7 @@ __all__ = [
     'Amazon',
     'PPI',
     'Reddit',
+    'Flickr',
     'QM7b',
     'QM9',
     'Entities',
