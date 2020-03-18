@@ -82,7 +82,7 @@ The full layer implementation is shown below:
 
             # Step 3: Compute normalization
             row, col = edge_index
-            deg = degree(row, size[0], dtype=x_j.dtype)
+            deg = degree(row, size[0], dtype=x.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 
