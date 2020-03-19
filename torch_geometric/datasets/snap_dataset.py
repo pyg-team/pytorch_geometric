@@ -11,6 +11,19 @@ from torch_geometric.data import Data, InMemoryDataset, download_url, \
 from torch_geometric.data.makedirs import makedirs
 
 
+def read_com(files, name):
+    print(files)
+
+    for file in files:
+        with open(file, 'r') as f:
+            for i in range(50000):
+                print(f.readline())
+
+        # edge_index = pandas.read_csv(file, header=None)
+        # print(edge_index)
+        raise
+
+
 class EgoData(Data):
     def __inc__(self, key, item):
         if key == 'circle':
@@ -179,7 +192,7 @@ def read_musae(paths, name):
         data_list = []
         for path in paths:
             if osp.isdir(path):
-                _paths = [osp.join(path,file) for file in os.listdir(path)]
+                _paths = [osp.join(path, file) for file in os.listdir(path)]
                 data = read_musae_helper(_paths, name)
                 data_list.append(data)
         return data_list
@@ -230,8 +243,9 @@ def read_musae_helper(paths, name):
                     for f in dict[str(i)]:
                         x[i][f] = 1
             else:
-                features = np.unique(np.asarray([i for _list in list(dict.values())
-                                             for i in _list]))
+                features = np.unique(np.asarray(
+                           [i for _list in list(dict.values())
+                            for i in _list]))
                 f_assoc = {}
                 for i, j in enumerate(features):
                     f_assoc[j] = i
@@ -285,12 +299,21 @@ class SNAPDataset(InMemoryDataset):
         'musae-twitch': ['twitch.zip'],
         'musae-facebook': ['facebook_large.zip'],
         'musae-github': ['git_web_ml.zip'],
+        'com-livejournal': ['com-lj.ungraph.txt.gz',
+                            'com-lj.all.cmty.txt.gz',
+                            'com-lj.top5000.cmty.txt.gz'],
     }
+
+    big_datasets = ['com-livejournal']
 
     def __init__(self, root, name, transform=None, pre_transform=None,
                  pre_filter=None):
         self.name = name.lower()
         assert self.name in self.available_datasets.keys()
+
+        if self.name in self.big_datasets:
+            self.url = 'https://snap.stanford.edu/data/bigdata/communities/'
+
         super(SNAPDataset, self).__init__(root, transform, pre_transform,
                                           pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -345,6 +368,8 @@ class SNAPDataset(InMemoryDataset):
             data_list = read_gemsec(raw_files, self.name[7:])
         elif self.name[:6] == 'musae-':
             data_list = read_musae(raw_files, self.name[6:])
+        elif self.name[:4] == 'com-':
+            data_list = read_com(raw_files, self.name[4:])
         else:
             raise NotImplementedError
 
@@ -361,8 +386,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    #dataset_name = 'musae-twitch'
-    dataset_name = 'gemsec-facebook'
+    dataset_name = 'com-livejournal'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
