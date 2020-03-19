@@ -64,6 +64,15 @@ def read_ego(files, name):
         for i, e in enumerate(edge_index.tolist()):
             edge_index[i] = idx_assoc[e]
         edge_index = edge_index.view(2, -1)
+
+        if name == 'facebook':
+            # undirected edges undirected
+            edge_index_swapped = torch.zeros_like(edge_index)
+            edge_index_swapped[0] = edge_index[1]
+            edge_index_swapped[1] = edge_index[0]
+            edge_index = torch.cat((edge_index,
+                                    edge_index_swapped), dim=1)
+
         row, col = edge_index
 
         x_ego = pandas.read_csv(egofeat_file, sep=' ', header=None)
@@ -148,6 +157,13 @@ def read_gemsec(files, name):
             edge_index = pandas.read_csv(file, header=None, skiprows=1)
             edge_index = torch.from_numpy(edge_index.to_numpy()).t()
 
+            # undirected edges undirected
+            edge_index_swapped = torch.zeros_like(edge_index)
+            edge_index_swapped[0] = edge_index[1]
+            edge_index_swapped[1] = edge_index[0]
+            edge_index = torch.cat((edge_index,
+                                    edge_index_swapped), dim=1)
+
             assert torch.eq(torch.unique(edge_index.flatten()),
                             torch.arange(0, edge_index.max() + 1)).all()
             num_nodes = edge_index.max().item() + 1
@@ -196,6 +212,12 @@ def read_musae_helper(paths, name):
                             torch.arange(0, edge_index.max() + 1)).all()
             num_nodes = edge_index.max() + 1
 
+            # undirected edges undirected
+            edge_index_swapped = torch.zeros_like(edge_index)
+            edge_index_swapped[0] = edge_index[1]
+            edge_index_swapped[1] = edge_index[0]
+            edge_index = torch.cat((edge_index,
+                                    edge_index_swapped), dim=1)
 
         elif file.endswith('.json'):
             with open(osp.join(path, file)) as f:
@@ -339,7 +361,8 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'musae-twitch'
+    #dataset_name = 'musae-twitch'
+    dataset_name = 'gemsec-facebook'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
