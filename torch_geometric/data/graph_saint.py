@@ -20,29 +20,40 @@
 # Ribeiro and Towsley - Estimating and sampling graphs with multidimensional
 # random walks
 
+import time
 import copy
 
 import torch
-from torch_scatter import scatter_add
+from torch.multiprocessing import Pool
 from torch_sparse import SparseTensor
+from torch_sparse.saint import subgraph
 
 
 class GraphSAINTSampler(object):
-    def __init__(self, data, batch_size, num_steps=1):
+    def __init__(self, data, batch_size, num_steps=1, sample_coverage=25,
+                 num_workers=0):
         assert data.edge_index is not None
-        (row, col), edge_attr = data.edge_index, data.edge_attr
 
-        size = (data.num_nodes, data.num_nodes)
+        self.adj = SparseTensor(row=data.edge_index[0], col=data.edge_index[1],
+                                sparse_sizes=(data.num_nodes, data.num_nodes))
+
         self.data = copy.copy(data)
-        self.data.adj = SparseTensor(row=row, col=col, value=edge_attr,
-                                     sparse_sizes=size)
         self.data.edge_index = None
-        self.data.edge_attr = None
 
         self.batch_size = batch_size
         self.num_steps = num_steps
+        self.sample_coverage = sample_coverage
 
-    def __get_batch__(self):
+        t = time.perf_counter()
+        with Pool(10) as p:
+            p.map(self.__sample__, [20 for _ in range(10)])
+        print(time.perf_counter() - t)
+
+        t = time.perf_counter()
+        self.__sample__(200)
+        print(time.perf_counter() - t)
+
+    def __sample__(self, batch_size):
         raise NotImplementedError
 
     def __iter__(self):
@@ -51,23 +62,21 @@ class GraphSAINTSampler(object):
 
 
 class GraphSAINTNodeSampler(GraphSAINTSampler):
-    def __init__(self, data, batch_size, num_steps=1):
-        super(GraphSAINTNodeSampler, self).__init__(data, batch_size,
-                                                    num_steps)
+    def __sample__(self, num_examples):
+        edge_sample = torch.randint(0, self.adj.nnz(),
+                                    (num_examples, self.batch_size),
+                                    dtype=torch.long)
+        node_sample = self.adj.storage.row()[edge_sample]
 
-        adj = self.data.adj
-        row, col, _ = adj.coo()
+        node_indices, edge_indices, adjs = [], [], []
+        for sample in node_sample.sort(dim=1)[0].split(1, dim=0):
+            node_idx = sample.unique_consecutive()
+            adj, edge_index = subgraph(self.adj, node_idx)
+            node_indices.append(node_idx)
+            edge_indices.append(edge_indices)
+            adjs.append(adj)
 
-        inv_in_deg = adj.storage.colcount().to(torch.float).pow_(-1)
-        inv_in_deg[inv_in_deg == float('inf')] = 0
-
-        prob = inv_in_deg[col]  # TODO: row is way faster?
-        prob.mul_(prob)
-
-        prob = scatter_add(prob, row, dim=0, dim_size=adj.size(0))
-        prob.div_(prob.sum())
-
-        self.prob = prob
+        return node_indices, edge_indices, adjs
 
     def __get_batch__(self):
         node_idx = self.prob.multinomial(self.batch_size, replacement=True)
