@@ -213,7 +213,6 @@ class DNAConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, channels, heads=1, groups=1, dropout=0, cached=False,
                  bias=True, **kwargs):
         super(DNAConv, self).__init__(aggr='add', **kwargs)
@@ -250,8 +249,8 @@ class DNAConv(MessagePassing):
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
-            edge_index, norm = GCNConv.norm(edge_index, x.size(0), edge_weight,
-                                            dtype=x.dtype)
+            edge_index, norm = GCNConv.norm(edge_index, x.size(self.node_dim),
+                                            edge_weight, dtype=x.dtype)
             self.cached_result = edge_index, norm
 
         edge_index, norm = self.cached_result

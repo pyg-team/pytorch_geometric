@@ -31,7 +31,7 @@ class MessagePassing(torch.nn.Module):
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
         \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
-        \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{i,j}\right) \right),
+        \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
 
     where :math:`\square` denotes a differentiable, permutation invariant
     function, *e.g.*, sum, mean or max, and :math:`\gamma_{\mathbf{\Theta}}`
@@ -50,6 +50,7 @@ class MessagePassing(torch.nn.Module):
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`0`)
     """
+
     def __init__(self, aggr="add", flow="source_to_target", node_dim=0):
         super(MessagePassing, self).__init__()
 

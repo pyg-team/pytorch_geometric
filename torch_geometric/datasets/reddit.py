@@ -24,18 +24,12 @@ class Reddit(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
     """
 
     url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/reddit.zip'
 
-    def __init__(self, root, transform=None, pre_transform=None,
-                 pre_filter=None):
-        super(Reddit, self).__init__(root, transform, pre_transform,
-                                     pre_filter)
+    def __init__(self, root, transform=None, pre_transform=None):
+        super(Reddit, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -67,6 +61,8 @@ class Reddit(InMemoryDataset):
         data.train_mask = split == 1
         data.val_mask = split == 2
         data.test_mask = split == 3
+
+        data = data if self.pre_transform is None else self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
 

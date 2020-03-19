@@ -16,8 +16,8 @@ install:
   - conda install pytorch=${TORCH_VERSION} torchvision ${TOOLKIT} -c pytorch --yes
   - pip install torch-scatter==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
   - pip install torch-sparse==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
+  - pip install torch-cluster==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
   - pip install torch-spline-conv==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
-  - pip install torch-cluster
   - pip install cython
   - git clone https://github.com/the-virtual-brain/tvb-geodesic /tmp/gdist
   - cd /tmp/gdist && python setup.py install && cd -

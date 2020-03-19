@@ -183,8 +183,7 @@ class SNAPDataset(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        name (string): The `name <https://snap.stanford.edu/data>`_ of
-            the dataset.
+        name (string): The name of the dataset.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
