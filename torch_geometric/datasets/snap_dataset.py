@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import json
 
 import torch
 import pandas
@@ -98,8 +99,8 @@ def read_ego(files, name):
 def read_soc(files, name):
     if 'sign-bitcoin-' in name:
         d = pandas.read_csv(files[0], header=None, skiprows=0)
-        edge_index = torch.from_numpy(d[[0,1]].to_numpy()).t()
-        edge_attr = torch.from_numpy(d[[2,3]].to_numpy())
+        edge_index = torch.from_numpy(d[[0, 1]].to_numpy()).t()
+        edge_attr = torch.from_numpy(d[[2, 3]].to_numpy())
 
         idx = torch.unique(edge_index.flatten())
         idx_assoc = torch.full((edge_index.max() + 1, ), -1, dtype=torch.long)
@@ -108,14 +109,16 @@ def read_soc(files, name):
         edge_index = idx_assoc[edge_index]
         num_nodes = edge_index.max().item() + 1
 
-        return [Data(edge_index=edge_index, edge_attr=edge_attr, num_nodes=num_nodes)]
+        return [Data(edge_index=edge_index,
+                     edge_attr=edge_attr,
+                     num_nodes=num_nodes)]
     else:
         skiprows = 4
         if name == 'pokec':
             skiprows = 0
 
         edge_index = pandas.read_csv(files[0], sep='\t', header=None,
-                                 skiprows=skiprows)
+                                     skiprows=skiprows)
         edge_index = torch.from_numpy(edge_index.to_numpy()).t()
         num_nodes = edge_index.max().item() + 1
         edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
@@ -157,24 +160,67 @@ def read_gemsec(files, name):
 
 def read_musae(paths, name):
     if name == 'twitch':
+        data_list = []
         for path in paths:
             if osp.isdir(path):
-                for file in os.listdir(path):
-                    if 'target' in file:
-                        y = pandas.read_csv(osp.join(path, file),
-                                            header=None, skiprows=1)
-                        y = torch.from_numpy(y.to_numpy(dtype=np.int))
-                    elif 'edges' in file:
-                        edge_index = pandas.read_csv(osp.join(path, file),
-                                                     header=None, skiprows=1)
-                        edge_index = torch.from_numpy(edge_index.to_numpy()).t()
-                        assert torch.eq(torch.unique(edge_index.flatten()),
-                                        torch.arange(0, edge_index.max() + 1)).all()
-                        num_nodes = edge_index.max() + 1
-            raise
-        raise
+                _paths = [osp.join(path,file) for file in os.listdir(path)]
+                data = read_musae_helper(_paths, name)
+                data_list.append(data)
+        return data_list
     else:
-        raise
+        data = read_musae_helper(paths, name)
+        return [data]
+
+
+def read_musae_helper(paths, name):
+    x, edge_index, y, num_nodes = None, None, None, None
+
+    for file in paths:
+        if 'target' in file:
+            y = pandas.read_csv(osp.join(path, file),
+                                header=None, skiprows=1)
+
+            # drop columns with string attribute
+            if name == 'github':
+                y = y.drop([1], axis=1)
+            if name == 'facebook':
+                y = y.drop([2, 3], axis=1)
+
+            y = torch.from_numpy(y.to_numpy(dtype=np.int))
+
+        elif 'edges' in file:
+            edge_index = pandas.read_csv(osp.join(path, file),
+                                         header=None, skiprows=1)
+            edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+            assert torch.eq(torch.unique(edge_index.flatten()),
+                            torch.arange(0, edge_index.max() + 1)).all()
+            num_nodes = edge_index.max() + 1
+
+
+        elif file.endswith('.json'):
+            with open(osp.join(path, file)) as f:
+                dict = json.load(f)
+
+            if name == 'twitch':
+                num_features = 3170
+                x = torch.zeros(len(dict), num_features)
+                for i in range(len(dict)):
+                    for f in dict[str(i)]:
+                        x[i][f] = 1
+            else:
+                features = np.unique(np.asarray([i for _list in list(dict.values())
+                                             for i in _list]))
+                f_assoc = {}
+                for i, j in enumerate(features):
+                    f_assoc[j] = i
+                    num_features = i+1
+
+                x = torch.zeros(len(dict), num_features)
+                for i in range(len(dict)):
+                    for f in dict[str(i)]:
+                        x[i][f_assoc[f]] = 1
+
+    return Data(x=x, edge_index=edge_index, y=y, num_nodes=num_nodes)
 
 
 class SNAPDataset(InMemoryDataset):
@@ -295,7 +341,7 @@ class SNAPDataset(InMemoryDataset):
 if __name__ == '__main__':
     dataset_name = 'musae-twitch'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
-                           '..', '..', 'data', dataset_name)
+                    '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
     data = dataset[0]
     print(data)
