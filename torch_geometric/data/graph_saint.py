@@ -18,17 +18,18 @@
 # r root nodes selected uniformly and each walker goes h hops
 
 import copy
+import time
 
 import torch
 from torch.multiprocessing import Queue, Process
 from torch_sparse import SparseTensor
 from torch_sparse.saint import subgraph
-from torch_scatter import gather_csr
+from torch_scatter import gather_csr, scatter_add
 
 
 class GraphSAINTSampler(object):
     def __init__(self, data, batch_size, num_steps=1, sample_coverage=25,
-                 num_workers=0):
+                 save_dir=None, num_workers=0):
         assert data.edge_index is not None
         assert 'aggr_norm' not in data
         assert 'loss_norm' not in data
@@ -47,6 +48,7 @@ class GraphSAINTSampler(object):
         self.num_steps = num_steps
         self.sample_coverage = sample_coverage
         self.num_workers = num_workers
+        self.__count__ = 0
 
         if self.num_workers > 0:
             self.__sample_queue__ = Queue()
@@ -58,7 +60,7 @@ class GraphSAINTSampler(object):
                 worker.start()
                 self.__sample_workers__.append(worker)
 
-        self.aggr_norm, self.loss_norm = self.__compute_norm__()
+        self.node_norm, self.edge_norm = self.__compute_norm__()
 
         if self.num_workers > 0:
             self.__data_queue__ = Queue()
@@ -70,39 +72,49 @@ class GraphSAINTSampler(object):
                 worker.start()
                 self.__data_workers__.append(worker)
 
-        self.__count__ = 0
-
-    def __sample__(self):
+    def __sample_nodes__(self, num_examples):
         raise NotImplementedError
+
+    def __sample__(self, num_examples):
+        node_samples = self.__sample_nodes__(num_examples)
+
+        samples = []
+        for node_idx in node_samples:
+            node_idx = node_idx.unique()
+            adj, edge_idx = subgraph(self.adj, node_idx)
+            samples.append((node_idx, edge_idx, adj))
+        return samples
 
     def __compute_norm__(self):
         node_count = torch.zeros(self.N, dtype=torch.float)
         edge_count = torch.zeros(self.E, dtype=torch.float)
 
-        samples, num_sampled_nodes = [], 0
+        num_samples = num_sampled_nodes = 0
         while num_sampled_nodes < self.N * self.sample_coverage:
             if self.num_workers > 0:
                 for _ in range(200):
-                    sample = self.__sample_queue__.get()
-                    samples.append(sample)
-                    num_sampled_nodes += sample[0].size(0)
+                    node_idx, edge_idx, _ = self.__sample_queue__.get()
+                    node_count[node_idx] += 1
+                    edge_count[edge_idx] += 1
+                    num_samples += 1
+                    num_sampled_nodes += node_idx.size(0)
             else:
-                sample = self.__sample__(200)
-                samples.extend(sample)
-                num_sampled_nodes += sum([s[0].size(0) for s in sample])
+                samples = self.__sample__(200)
+                for node_idx, edge_idx, _ in samples:
+                    node_count[node_idx] += 1
+                    edge_count[edge_idx] += 1
+                    num_samples += 1
+                    num_sampled_nodes += node_idx.size(0)
 
-        for sample in samples:
-            node_idx, edge_idx, _ = sample
-            node_count[node_idx] += 1
-            edge_count[edge_idx] += 1
+        row, col, _ = self.adj.coo()
 
-        rowptr = self.adj.storage.rowptr()
-        aggr_norm = gather_csr(node_count, rowptr).div_(edge_count)
-        aggr_norm.clamp_(0, 1e4)
+        edge_norm = (node_count[row] / edge_count).clamp_(0, 1e4)
+        edge_norm[torch.isnan(edge_norm)] = 0.1
 
-        loss_norm = len(samples) / (node_count.clamp(1) * self.N)
+        node_count[node_count == 0] = 0.1
+        node_norm = num_samples / node_count / self.N
 
-        return aggr_norm, loss_norm
+        return node_norm, edge_norm
 
     def __get_data_from_sample__(self, sample):
         node_idx, edge_idx, adj = sample
@@ -121,8 +133,8 @@ class GraphSAINTSampler(object):
             else:
                 data[key] = item
 
-        data.aggr_norm = self.aggr_norm[edge_idx]
-        data.loss_norm = self.loss_norm[node_idx]
+        data.node_norm = self.node_norm[node_idx]
+        data.edge_norm = self.edge_norm[edge_idx]
 
         return data
 
@@ -158,15 +170,9 @@ class GraphSAINTSampler(object):
 
 
 class GraphSAINTNodeSampler(GraphSAINTSampler):
-    def __sample__(self, num_examples):
+    def __sample_nodes__(self, num_examples):
         edge_sample = torch.randint(0, self.adj.nnz(),
                                     (num_examples, self.batch_size),
                                     dtype=torch.long)
         node_sample = self.adj.storage.row()[edge_sample]
-
-        samples = []
-        for sample in node_sample.sort(dim=1)[0].split(1, dim=0):
-            node_idx = sample.unique_consecutive()
-            adj, edge_idx = subgraph(self.adj, node_idx)
-            samples.append((node_idx, edge_idx, adj))
-        return samples
+        return node_sample.unbind(dim=0)
