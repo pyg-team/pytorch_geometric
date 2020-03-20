@@ -12,16 +12,44 @@ from torch_geometric.data.makedirs import makedirs
 
 
 def read_com(files, name):
-    print(files)
+    for file in files:
+        if '.ungraph' in file:
+            edge_index = pandas.read_csv(file, sep='\t', header=None,
+                                         skiprows=4)
+            edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+            # there are multiple duplicated edges
+
+            idx_assoc = {}
+            for i, j in enumerate(torch.unique(edge_index).tolist()):
+                idx_assoc[j] = i
+
+            edge_index = edge_index.flatten()
+            for i, e in enumerate(edge_index.tolist()):
+                edge_index[i] = idx_assoc[e]
+            edge_index = edge_index.view(2, -1)
+            num_nodes = edge_index.max() + 1
+
+            edge_index_swapped = torch.zeros_like(edge_index)
+            edge_index_swapped[0] = edge_index[1]
+            edge_index_swapped[1] = edge_index[0]
+            edge_index = torch.cat((edge_index,
+                                    edge_index_swapped), dim=1)
 
     for file in files:
-        with open(file, 'r') as f:
-            for i in range(50000):
-                print(f.readline())
+        if '.all' in file:
+            communities = []
+            communities_batch = []
+            with open(file, 'r') as f:
+                for i, com in enumerate(f.read().split('\n')[:-1]):
+                    com = [idx_assoc[int(c)] for c in com.split()]
+                    communities += com
+                    communities_batch += [i] * len(com)
+            communities = torch.tensor(communities)
+            communities_batch = torch.tensor(communities_batch)
 
-        # edge_index = pandas.read_csv(file, header=None)
-        # print(edge_index)
-        raise
+    data = Data(edge_index=edge_index, num_nodes=num_nodes,
+                communities=communities, communities_batch=communities_batch)
+    return [data]
 
 
 class EgoData(Data):
@@ -300,11 +328,25 @@ class SNAPDataset(InMemoryDataset):
         'musae-facebook': ['facebook_large.zip'],
         'musae-github': ['git_web_ml.zip'],
         'com-livejournal': ['com-lj.ungraph.txt.gz',
-                            'com-lj.all.cmty.txt.gz',
-                            'com-lj.top5000.cmty.txt.gz'],
+                            'com-lj.all.cmty.txt.gz'],
+        'com-friendster': ['com-friendster.ungraph.txt.gz',
+                           'com-friendster.all.cmty.txt.gz'],
+        'com-orkut': ['com-orkut.ungraph.txt.gz',
+                      'com-orkut.all.cmty.txt.gz'],
+        'com-youtube': ['com-youtube.ungraph.txt.gz',
+                        'com-youtube.all.cmty.txt.gz'],
+        'com-dblp': ['com-dblp.ungraph.txt.gz',
+                     'com-dblp.all.cmty.txt.gz'],
+        'com-amazon': ['com-amazon.ungraph.txt.gz',
+                       'com-amazon.all.cmty.txt.gz'],
     }
 
-    big_datasets = ['com-livejournal']
+    big_datasets = ['com-livejournal',
+                    'com-friendster',
+                    'com-orkut',
+                    'com-youtube',
+                    'com-dblp',
+                    'com-amazon']
 
     def __init__(self, root, name, transform=None, pre_transform=None,
                  pre_filter=None):
@@ -386,7 +428,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'com-livejournal'
+    dataset_name = 'com-dblp'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
