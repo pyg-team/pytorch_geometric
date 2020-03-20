@@ -177,7 +177,17 @@ def read_soc(files, name):
 
 
 def read_wiki(files, name):
-    edge_index = pandas.read_csv(files[0], sep='\t', header=None, skiprows=4)
+    if name == 'vote':
+        edge_file = files[0]
+        skiprows = 4
+        sep = '\t'
+    elif name == 'topcats':
+        edge_file = files[1]
+        skiprows = 0
+        sep = ' '
+
+    edge_index = pandas.read_csv(edge_file, sep=sep, header=None,
+                                 skiprows=skiprows)
     edge_index = torch.from_numpy(edge_index.to_numpy()).t()
 
     idx = torch.unique(edge_index.flatten())
@@ -188,7 +198,26 @@ def read_wiki(files, name):
     num_nodes = edge_index.max().item() + 1
     edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
 
-    return [Data(edge_index=edge_index, num_nodes=num_nodes)]
+    if name == 'topcats':
+        cat_file = files[0]
+
+        with open(cat_file, 'r') as f:
+            lines = f.readlines()
+        categories = []
+        categories_batch = []
+
+        for i, line in enumerate(lines):
+            category = [int(idx_assoc[int(c)]) for c in line.split()[1:]]
+            categories += category
+            categories_batch += [i] * len(category)
+        categories = torch.tensor(categories)
+        categories_batch = torch.tensor(categories_batch)
+
+        return [Data(edge_index=edge_index, num_nodes=num_nodes,
+                     categories=categories, categories_batch=categories_batch)]
+
+    else:
+        return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
 
 def read_gemsec(files, name):
@@ -322,6 +351,8 @@ class SNAPDataset(InMemoryDataset):
         'soc-sign-bitcoin-otc': ['soc-sign-bitcoinotc.csv.gz'],
         'soc-sign-bitcoin-alpha': ['soc-sign-bitcoinalpha.csv.gz'],
         'wiki-vote': ['wiki-Vote.txt.gz'],
+        'wiki-topcats': ['wiki-topcats.txt.gz',
+                         'wiki-topcats-categories.txt.gz'],
         'gemsec-deezer': ['gemsec_deezer_dataset.tar.gz'],
         'gemsec-facebook': ['gemsec_facebook_dataset.tar.gz'],
         'musae-twitch': ['twitch.zip'],
@@ -428,7 +459,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'com-dblp'
+    dataset_name = 'wiki-topcats'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
