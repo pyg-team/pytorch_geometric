@@ -3,7 +3,6 @@ import copy
 import torch
 from torch.multiprocessing import Queue, Process
 from torch_sparse import SparseTensor
-from torch_sparse.saint import subgraph
 
 
 class GraphSAINTSampler(object):
@@ -28,6 +27,8 @@ class GraphSAINTSampler(object):
         self.sample_coverage = sample_coverage
         self.num_workers = num_workers
         self.__count__ = 0
+
+        # TODO: Add `save_dir` option with `tdqm` support.
 
         if self.num_workers > 0:
             self.__sample_queue__ = Queue()
@@ -60,7 +61,7 @@ class GraphSAINTSampler(object):
         samples = []
         for node_idx in node_samples:
             node_idx = node_idx.unique()
-            adj, edge_idx = subgraph(self.adj, node_idx)
+            adj, edge_idx = self.adj.saint_subgraph(node_idx)
             samples.append((node_idx, edge_idx, adj))
         return samples
 
