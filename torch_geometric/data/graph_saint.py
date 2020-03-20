@@ -1,30 +1,9 @@
-# Implement different sampling techniques
-# Calculate p_{u,v} and p_v and return \alpha_{u,v} = p_{u,v} / p_v
-# Calculate loss normalization \lambda_v = |V| * p_v
-# p_v is the target node!
-
-# For random node or random edge samplers, compute p_{u,v} and p_v analytically
-# For other samplers, pre-generate and cache N sampled results:
-# => Count number of occurrences C_v and C_{u,v} for each node and each edge.
-# => Set \alpha_{u,v} to C_{u,v}/C_{v} and \lambda_v to C_v/N.
-
-# Random node sampler:
-# Sample nodes with node probability according to the in-degree of nodes.
-
-# Random edge sampler:
-# Sample edges with edge probability according to 1/deg(u) + 1/deg(v)
-
-# Random walk sampler (multi-dimensional):
-# r root nodes selected uniformly and each walker goes h hops
-
 import copy
-import time
 
 import torch
 from torch.multiprocessing import Queue, Process
 from torch_sparse import SparseTensor
 from torch_sparse.saint import subgraph
-from torch_scatter import gather_csr, scatter_add
 
 
 class GraphSAINTSampler(object):
@@ -171,8 +150,42 @@ class GraphSAINTSampler(object):
 
 class GraphSAINTNodeSampler(GraphSAINTSampler):
     def __sample_nodes__(self, num_examples):
-        edge_sample = torch.randint(0, self.adj.nnz(),
-                                    (num_examples, self.batch_size),
+        edge_sample = torch.randint(0, self.E, (num_examples, self.batch_size),
                                     dtype=torch.long)
         node_sample = self.adj.storage.row()[edge_sample]
+        return node_sample.unbind(dim=0)
+
+
+class GraphSAINTEdgeSampler(GraphSAINTSampler):
+    def __sample_nodes__(self, num_examples):
+        # This function corresponds to the `Edge2` sampler of the official
+        # implementation that weights all edges as equally important.
+        # This is the default configuration in the GraphSAINT code.
+        edge_sample = torch.randint(0, self.E, (num_examples, self.batch_size),
+                                    dtype=torch.long)
+
+        source_node_sample = self.adj.storage.row()[edge_sample]
+        target_node_sample = self.adj.storage.col()[edge_sample]
+
+        node_sample = torch.cat([source_node_sample, target_node_sample], -1)
+        return node_sample.unbind(dim=0)
+
+
+class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
+    def __init__(self, data, batch_size, walk_length, num_steps=1,
+                 sample_coverage=25, save_dir=None, num_workers=0):
+        self.walk_length = walk_length
+        super(GraphSAINTRandomWalkSampler, self).__init__(
+            data, batch_size, num_steps, sample_coverage, save_dir,
+            num_workers)
+
+    def __sample_nodes__(self, num_examples):
+        start = torch.randint(0, self.N, (num_examples, self.batch_size),
+                              dtype=torch.long)
+
+        rowptr, col, _ = self.adj.csr()
+        node_sample = torch.ops.torch_sparse.random_walk(
+            rowptr, col, start.flatten(), self.walk_length)
+        node_sample = node_sample.view(
+            num_examples, self.batch_size * (self.walk_length + 1))
         return node_sample.unbind(dim=0)
