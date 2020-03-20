@@ -10,8 +10,8 @@ class GraphSAINTSampler(object):
     def __init__(self, data, batch_size, num_steps=1, sample_coverage=25,
                  save_dir=None, num_workers=0):
         assert data.edge_index is not None
-        assert 'aggr_norm' not in data
-        assert 'loss_norm' not in data
+        assert 'node_norm' not in data
+        assert 'edge_norm' not in data
 
         self.N = N = data.num_nodes
         self.E = data.num_edges
