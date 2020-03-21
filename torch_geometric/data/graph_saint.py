@@ -8,6 +8,30 @@ from torch_sparse import SparseTensor
 
 
 class GraphSAINTSampler(object):
+    r"""The GraphSAINT sampler base class from the `"GraphSAINT: Graph
+    Sampling Based Inductive Learning Method"
+    <https://arxiv.org/abs/1907.04931>`_ paper.
+    Given a graph in a :obj:`data` object, this class samples nodes and
+    constructs subgraphs that can be processed in a mini-batch fashion.
+    Normalization coefficients for each mini-batch are given via
+    :obj:`node_norm` and :obj:`edge_norm` data attributes.
+
+    Args:
+        data (torch_geometric.data.Data): The graph data object.
+        batch_size (int): The approximate number of samples per batch to load.
+        num_steps (int, optional): The number of iterations.
+            (default: :obj:`1`)
+        sample_coverage (int): How many samples per node should be used to
+            compute normalization statistics. (default: :obj:`50`)
+        save_dir (string, optional): If set, will save normalization
+            statistics to the :obj:`save_dir` directory for faster re-use.
+            (default: :obj:`None`)
+        num_workers (int, optional): How many subprocesses to use for data
+            sampling.
+            :obj:`0` means that the data will be sampled in the main process.
+            (default: :obj:`0`)
+    """
+
     def __init__(self, data, batch_size, num_steps=1, sample_coverage=50,
                  save_dir=None, num_workers=0):
         assert data.edge_index is not None
@@ -40,7 +64,7 @@ class GraphSAINTSampler(object):
                 worker.start()
                 self.__sample_workers__.append(worker)
 
-        path = osp.join(save_dir or '', self.filename)
+        path = osp.join(save_dir or '', self.__filename__)
         if save_dir is not None and osp.exists(path):
             self.node_norm, self.edge_norm = torch.load(path)
         else:
@@ -59,7 +83,7 @@ class GraphSAINTSampler(object):
                 self.__data_workers__.append(worker)
 
     @property
-    def filename(self):
+    def __filename__(self):
         return f'{self.__class__.__name__.lower()}_{self.sample_coverage}.pt'
 
     def __sample_nodes__(self, num_examples):
@@ -165,6 +189,13 @@ class GraphSAINTSampler(object):
 
 
 class GraphSAINTNodeSampler(GraphSAINTSampler):
+    r"""The GraphSAINT node sampler class (see
+    :class:`torch_geometric.data.GraphSAINTSampler`).
+
+    Args:
+        batch_size (int): The number of nodes to sample per batch.
+    """
+
     def __sample_nodes__(self, num_examples):
         edge_sample = torch.randint(0, self.E, (num_examples, self.batch_size),
                                     dtype=torch.long)
@@ -173,6 +204,13 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
 
 
 class GraphSAINTEdgeSampler(GraphSAINTSampler):
+    r"""The GraphSAINT edge sampler class (see
+    :class:`torch_geometric.data.GraphSAINTSampler`).
+
+    Args:
+        batch_size (int): The number of edges to sample per batch.
+    """
+
     def __sample_nodes__(self, num_examples):
         # This function corresponds to the `Edge2` sampler in the official
         # code repository that weights all edges as equally important.
@@ -188,6 +226,14 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
 
 
 class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
+    r"""The GraphSAINT random walk sampler class (see
+    :class:`torch_geometric.data.GraphSAINTSampler`).
+
+    Args:
+        batch_size (int): The number of walks to sample per batch.
+        walk_length (int): The length of each random walk.
+    """
+
     def __init__(self, data, batch_size, walk_length, num_steps=1,
                  sample_coverage=50, save_dir=None, num_workers=0):
         self.walk_length = walk_length
@@ -196,7 +242,7 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
             num_workers)
 
     @property
-    def filename(self):
+    def __filename__(self):
         return (f'{self.__class__.__name__.lower()}_{self.walk_length}_'
                 f'{self.sample_coverage}.pt')
 

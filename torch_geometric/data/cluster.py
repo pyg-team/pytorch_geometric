@@ -22,7 +22,9 @@ class ClusterData(torch.utils.data.Dataset):
             (default: :obj:`False`)
         save_dir (string, optional): If set, will save the partitioned data to
             the :obj:`save_dir` directory for faster re-use.
+            (default: :obj:`None`)
     """
+
     def __init__(self, data, num_parts, recursive=False, save_dir=None):
         assert data.edge_index is not None
 
@@ -101,6 +103,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch. (default: :obj:`False`)
     """
+
     def __init__(self, cluster_data, batch_size=1, shuffle=False, **kwargs):
         class HelperDataset(torch.utils.data.Dataset):
             def __len__(self):
@@ -152,6 +155,5 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
             return data
 
-        super(ClusterLoader,
-              self).__init__(HelperDataset(), batch_size, shuffle,
-                             collate_fn=collate, **kwargs)
+        super(ClusterLoader, self).__init__(
+            HelperDataset(), batch_size, shuffle, collate_fn=collate, **kwargs)
