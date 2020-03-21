@@ -1,4 +1,5 @@
 import copy
+import os.path as osp
 
 import torch
 from tqdm import tqdm
@@ -29,8 +30,6 @@ class GraphSAINTSampler(object):
         self.num_workers = num_workers
         self.__count__ = 0
 
-        # TODO: Add `save_dir` option with `tdqm` support.
-
         if self.num_workers > 0:
             self.__sample_queue__ = Queue()
             self.__sample_workers__ = []
@@ -41,7 +40,13 @@ class GraphSAINTSampler(object):
                 worker.start()
                 self.__sample_workers__.append(worker)
 
-        self.node_norm, self.edge_norm = self.__compute_norm__()
+        path = osp.join(save_dir or '', self.filename)
+        if save_dir is not None and osp.exists(path):
+            self.node_norm, self.edge_norm = torch.load(path)
+        else:
+            self.node_norm, self.edge_norm = self.__compute_norm__()
+            if save_dir is not None:
+                torch.save((self.node_norm, self.edge_norm), path)
 
         if self.num_workers > 0:
             self.__data_queue__ = Queue()
@@ -52,6 +57,10 @@ class GraphSAINTSampler(object):
                 worker.daemon = True
                 worker.start()
                 self.__data_workers__.append(worker)
+
+    @property
+    def filename(self):
+        return f'{self.__class__.__name__.lower()}_{self.sample_coverage}.pt'
 
     def __sample_nodes__(self, num_examples):
         raise NotImplementedError
@@ -185,6 +194,11 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
         super(GraphSAINTRandomWalkSampler, self).__init__(
             data, batch_size, num_steps, sample_coverage, save_dir,
             num_workers)
+
+    @property
+    def filename(self):
+        return (f'{self.__class__.__name__.lower()}_{self.walk_length}_'
+                f'{self.sample_coverage}.pt')
 
     def __sample_nodes__(self, num_examples):
         start = torch.randint(0, self.N, (num_examples, self.batch_size),
