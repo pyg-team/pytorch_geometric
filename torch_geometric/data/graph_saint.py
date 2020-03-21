@@ -60,7 +60,8 @@ class GraphSAINTSampler(object):
 
     @property
     def filename(self):
-        return f'{self.__class__.__name__.lower()}_{self.sample_coverage}.pt'
+        return (f'{self.__class__.__name__.lower()}_{self.batch_size}_'
+                f'{self.sample_coverage}.pt')
 
     def __sample_nodes__(self, num_examples):
         raise NotImplementedError
@@ -197,8 +198,8 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
 
     @property
     def filename(self):
-        return (f'{self.__class__.__name__.lower()}_{self.walk_length}_'
-                f'{self.sample_coverage}.pt')
+        return (f'{self.__class__.__name__.lower()}_{self.batch_size}_'
+                f'{self.walk_length}_{self.sample_coverage}.pt')
 
     def __sample_nodes__(self, num_examples):
         start = torch.randint(0, self.N, (num_examples, self.batch_size),
