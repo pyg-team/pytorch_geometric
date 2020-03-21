@@ -183,10 +183,7 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
     def __sample_nodes__(self, num_examples):
         start = torch.randint(0, self.N, (num_examples, self.batch_size),
                               dtype=torch.long)
-
-        rowptr, col, _ = self.adj.csr()
-        node_sample = torch.ops.torch_sparse.random_walk(
-            rowptr, col, start.flatten(), self.walk_length)
+        node_sample = self.adj.random_walk(start.flatten(), self.walk_length)
         node_sample = node_sample.view(
             num_examples, self.batch_size * (self.walk_length + 1))
         return node_sample.unbind(dim=0)
