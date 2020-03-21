@@ -114,7 +114,7 @@ class QM9(InMemoryDataset):
                   'install `rdkit` to alternatively process the raw data.')
 
             self.data, self.slices = torch.load(self.raw_paths[0])
-            data_list = [data for data in self]
+            data_list = [self.get(i) for i in range(len(self))]
 
             if self.pre_filter is not None:
                 data_list = [d for d in data_list if self.pre_filter(d)]
@@ -194,8 +194,9 @@ class QM9(InMemoryDataset):
                 bond_idx += 2 * [self.bonds[bond.GetBondType()]]
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
-            edge_attr = F.one_hot(torch.tensor(bond_idx),
-                                  num_classes=len(self.bonds)).to(torch.float)
+            edge_attr = F.one_hot(
+                torch.tensor(bond_idx),
+                num_classes=len(self.bonds)).to(torch.float)
             edge_index, edge_attr = coalesce(edge_index, edge_attr, N, N)
 
             y = target[i].unsqueeze(0)
