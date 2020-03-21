@@ -95,6 +95,15 @@ class ClusterLoader(torch.utils.data.DataLoader):
     and their between-cluster links from a large-scale graph data object to
     form a mini-batch.
 
+    .. note::
+
+        Use :class:`torch_geometric.data.ClusterData` and
+        :class:`torch_geometric.data.ClusterLoader` in conjunction to
+        form mini-batches of clusters.
+        For an example of using Cluster-GCN, see `examples/cluster_gcn.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        cluster_gcn.py>`_.
+
     Args:
         cluster_data (torch_geometric.data.ClusterData): The already
             partioned data object.
