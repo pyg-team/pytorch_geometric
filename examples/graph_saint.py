@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Flickr
-from torch_geometric.data import GraphSAINTEdgeSampler
+from torch_geometric.data import GraphSAINTRandomWalkSampler
 from torch_geometric.nn import SAGEConv
 from torch_geometric.utils import degree
 
@@ -11,11 +11,12 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
 dataset = Flickr(path)
 data = dataset[0]
 row, col = data.edge_index
-data.edge_attr = 1. / degree(row, data.num_nodes)[row]
+data.edge_attr = 1. / degree(col, data.num_nodes)[col]  # Norm by in-degree.
 
-loader = GraphSAINTEdgeSampler(data, batch_size=6000, num_steps=200,
-                               sample_coverage=1000,
-                               save_dir=dataset.processed_dir, num_workers=0)
+loader = GraphSAINTRandomWalkSampler(data, batch_size=6000, walk_length=2,
+                                     num_steps=5, sample_coverage=1000,
+                                     save_dir=dataset.processed_dir,
+                                     num_workers=0)
 
 
 class Net(torch.nn.Module):
@@ -33,17 +34,20 @@ class Net(torch.nn.Module):
         self.conv2.aggr = aggr
         self.conv3.aggr = aggr
 
-    def forward(self, x, edge_index, edge_weight=None):
-        x1 = F.relu(self.conv1(x, edge_index, edge_weight))
+    def forward(self, x0, edge_index, edge_weight=None):
+        x1 = F.relu(self.conv1(x0, edge_index, edge_weight))
+        x1 = F.dropout(x1, p=0.2, training=self.training)
         x2 = F.relu(self.conv2(x1, edge_index, edge_weight))
+        x2 = F.dropout(x2, p=0.2, training=self.training)
         x3 = F.relu(self.conv3(x2, edge_index, edge_weight))
+        x3 = F.dropout(x3, p=0.2, training=self.training)
         x = torch.cat([x1, x2, x3], dim=-1)
         x = self.lin(x)
         return x.log_softmax(dim=-1)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net(hidden_channels=512).to(device)
+model = Net(hidden_channels=256).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
@@ -57,7 +61,7 @@ def train():
         optimizer.zero_grad()
         out = model(data.x, data.edge_index, data.edge_norm * data.edge_attr)
         loss = F.nll_loss(out, data.y, reduction='none')
-        loss = (loss * data.node_norm).sum()
+        loss = (loss * data.node_norm)[data.train_mask].sum()
         loss.backward()
         optimizer.step()
         total_loss += loss.item() * data.num_nodes
@@ -66,7 +70,7 @@ def train():
 
 
 def train_full():
-    model.eval()
+    model.train()
     model.set_aggr('mean')
 
     optimizer.zero_grad()
@@ -92,7 +96,7 @@ def test():
     return accs
 
 
-for epoch in range(1, 31):
+for epoch in range(1, 51):
     loss = train()
     accs = test()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Train: {accs[0]:.4f}, '

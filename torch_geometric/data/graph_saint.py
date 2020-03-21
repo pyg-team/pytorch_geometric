@@ -31,7 +31,6 @@ class GraphSAINTSampler(object):
             :obj:`0` means that the data will be sampled in the main process.
             (default: :obj:`0`)
     """
-
     def __init__(self, data, batch_size, num_steps=1, sample_coverage=50,
                  save_dir=None, num_workers=0):
         assert data.edge_index is not None
@@ -127,7 +126,7 @@ class GraphSAINTSampler(object):
 
         row, col, _ = self.adj.coo()
 
-        edge_norm = (node_count[row] / edge_count).clamp_(0, 1e4)
+        edge_norm = (node_count[col] / edge_count).clamp_(0, 1e4)
         edge_norm[torch.isnan(edge_norm)] = 0.1
 
         node_count[node_count == 0] = 0.1
@@ -195,7 +194,6 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
     Args:
         batch_size (int): The number of nodes to sample per batch.
     """
-
     def __sample_nodes__(self, num_examples):
         edge_sample = torch.randint(0, self.E, (num_examples, self.batch_size),
                                     dtype=torch.long)
@@ -210,7 +208,6 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
     Args:
         batch_size (int): The number of edges to sample per batch.
     """
-
     def __sample_nodes__(self, num_examples):
         # This function corresponds to the `Edge2` sampler in the official
         # code repository that weights all edges as equally important.
@@ -233,13 +230,12 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
         batch_size (int): The number of walks to sample per batch.
         walk_length (int): The length of each random walk.
     """
-
     def __init__(self, data, batch_size, walk_length, num_steps=1,
                  sample_coverage=50, save_dir=None, num_workers=0):
         self.walk_length = walk_length
-        super(GraphSAINTRandomWalkSampler, self).__init__(
-            data, batch_size, num_steps, sample_coverage, save_dir,
-            num_workers)
+        super(GraphSAINTRandomWalkSampler,
+              self).__init__(data, batch_size, num_steps, sample_coverage,
+                             save_dir, num_workers)
 
     @property
     def __filename__(self):
