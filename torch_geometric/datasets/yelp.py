@@ -37,7 +37,6 @@ class Yelp(InMemoryDataset):
     @property
     def raw_file_names(self):
         return ['adj_full.npz', 'feats.npy', 'class_map.json', 'role.json']
-        return 'awdawd'
 
     @property
     def processed_file_names(self):
