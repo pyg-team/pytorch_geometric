@@ -1,12 +1,13 @@
 import copy
 
 import torch
+from tqdm import tqdm
 from torch.multiprocessing import Queue, Process
 from torch_sparse import SparseTensor
 
 
 class GraphSAINTSampler(object):
-    def __init__(self, data, batch_size, num_steps=1, sample_coverage=25,
+    def __init__(self, data, batch_size, num_steps=1, sample_coverage=50,
                  save_dir=None, num_workers=0):
         assert data.edge_index is not None
         assert 'node_norm' not in data
@@ -69,22 +70,27 @@ class GraphSAINTSampler(object):
         node_count = torch.zeros(self.N, dtype=torch.float)
         edge_count = torch.zeros(self.E, dtype=torch.float)
 
-        num_samples = num_sampled_nodes = 0
-        while num_sampled_nodes < self.N * self.sample_coverage:
+        num_samples = total_sampled_nodes = 0
+        pbar = tqdm(total=self.N * self.sample_coverage)
+        pbar.set_description('Compute GraphSAINT normalization')
+        while total_sampled_nodes < self.N * self.sample_coverage:
+            num_sampled_nodes = 0
             if self.num_workers > 0:
                 for _ in range(200):
                     node_idx, edge_idx, _ = self.__sample_queue__.get()
                     node_count[node_idx] += 1
                     edge_count[edge_idx] += 1
-                    num_samples += 1
                     num_sampled_nodes += node_idx.size(0)
             else:
                 samples = self.__sample__(200)
                 for node_idx, edge_idx, _ in samples:
                     node_count[node_idx] += 1
                     edge_count[edge_idx] += 1
-                    num_samples += 1
                     num_sampled_nodes += node_idx.size(0)
+            pbar.update(num_sampled_nodes)
+            total_sampled_nodes += num_sampled_nodes
+            num_samples += 200
+        pbar.close()
 
         row, col, _ = self.adj.coo()
 
@@ -174,7 +180,7 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
 
 class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
     def __init__(self, data, batch_size, walk_length, num_steps=1,
-                 sample_coverage=25, save_dir=None, num_workers=0):
+                 sample_coverage=50, save_dir=None, num_workers=0):
         self.walk_length = walk_length
         super(GraphSAINTRandomWalkSampler, self).__init__(
             data, batch_size, num_steps, sample_coverage, save_dir,
