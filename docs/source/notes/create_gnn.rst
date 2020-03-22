@@ -2,10 +2,10 @@ Creating Message Passing Networks
 =================================
 
 Generalizing the convolution operator to irregular domains is typically expressed as a *neighborhood aggregation* or *message passing* scheme.
-With :math:`\mathbf{x}^{(k-1)}_i \in \mathbb{R}^F` denoting node features of node :math:`i` in layer :math:`(k-1)` and :math:`\mathbf{e}_{i,j} \in \mathbb{R}^D` denoting (optional) edge features from node :math:`i` to node :math:`j`, message passing graph neural networks can be described as
+With :math:`\mathbf{x}^{(k-1)}_i \in \mathbb{R}^F` denoting node features of node :math:`i` in layer :math:`(k-1)` and :math:`\mathbf{e}_{j,i} \in \mathbb{R}^D` denoting (optional) edge features from node :math:`j` to node :math:`i`, message passing graph neural networks can be described as
 
 .. math::
-  \mathbf{x}_i^{(k)} = \gamma^{(k)} \left( \mathbf{x}_i^{(k-1)}, \square_{j \in \mathcal{N}(i)} \, \phi^{(k)}\left(\mathbf{x}_i^{(k-1)}, \mathbf{x}_j^{(k-1)},\mathbf{e}_{i,j}\right) \right),
+  \mathbf{x}_i^{(k)} = \gamma^{(k)} \left( \mathbf{x}_i^{(k-1)}, \square_{j \in \mathcal{N}(i)} \, \phi^{(k)}\left(\mathbf{x}_i^{(k-1)}, \mathbf{x}_j^{(k-1)},\mathbf{e}_{j,i}\right) \right),
 
 where :math:`\square` denotes a differentiable, permutation invariant function, *e.g.*, sum, mean or max, and :math:`\gamma` and :math:`\phi` denote differentiable functions such as MLPs (Multi Layer Perceptrons).
 
@@ -82,7 +82,7 @@ The full layer implementation is shown below:
 
             # Step 3: Compute normalization
             row, col = edge_index
-            deg = degree(row, size[0], dtype=x_j.dtype)
+            deg = degree(row, x.size(0), dtype=x.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 

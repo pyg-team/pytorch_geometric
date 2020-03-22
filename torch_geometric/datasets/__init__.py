@@ -6,6 +6,8 @@ from .coauthor import Coauthor
 from .amazon import Amazon
 from .ppi import PPI
 from .reddit import Reddit
+from .flickr import Flickr
+from .yelp import Yelp
 from .qm7 import QM7b
 from .qm9 import QM9
 from .entities import Entities
@@ -30,6 +32,7 @@ from .pascal import PascalVOCKeypoints
 from .pascal_pf import PascalPF
 from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
+from .particle import TrackMLParticleTrackingDataset
 
 __all__ = [
     'KarateClub',
@@ -41,6 +44,8 @@ __all__ = [
     'Amazon',
     'PPI',
     'Reddit',
+    'Flickr',
+    'Yelp',
     'QM7b',
     'QM9',
     'Entities',
@@ -65,4 +70,5 @@ __all__ = [
     'PascalPF',
     'SNAPDataset',
     'SuiteSparseMatrixCollection',
+    'TrackMLParticleTrackingDataset',
 ]

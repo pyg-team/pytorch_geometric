@@ -22,45 +22,43 @@ class ClusterData(torch.utils.data.Dataset):
             (default: :obj:`False`)
         save_dir (string, optional): If set, will save the partitioned data to
             the :obj:`save_dir` directory for faster re-use.
+            (default: :obj:`None`)
     """
+
     def __init__(self, data, num_parts, recursive=False, save_dir=None):
-        assert (data.edge_index is not None)
+        assert data.edge_index is not None
 
-        self.num_parts = num_parts
-        self.recursive = recursive
-        self.save_dir = save_dir
+        recursive_str = '_recursive' if recursive else ''
+        filename = f'partition_{num_parts}{recursive_str}.pt'
 
-        self.process(data)
-
-    def process(self, data):
-        recursive = '_recursive' if self.recursive else ''
-        filename = f'part_data_{self.num_parts}{recursive}.pt'
-
-        path = osp.join(self.save_dir or '', filename)
-        if self.save_dir is not None and osp.exists(path):
-            data, partptr, perm = torch.load(path)
+        path = osp.join(save_dir or '', filename)
+        if save_dir is not None and osp.exists(path):
+            adj, partptr, perm = torch.load(path)
         else:
-            data = copy.copy(data)
-            num_nodes = data.num_nodes
-
             (row, col), edge_attr = data.edge_index, data.edge_attr
             adj = SparseTensor(row=row, col=col, value=edge_attr)
-            adj, partptr, perm = adj.partition(self.num_parts, self.recursive)
+            adj, partptr, perm = adj.partition(num_parts, recursive)
 
-            for key, item in data:
-                if item.size(0) == num_nodes:
-                    data[key] = item[perm]
+            if save_dir is not None:
+                torch.save((adj, partptr, perm), path)
 
-            data.edge_index = None
-            data.edge_attr = None
-            data.adj = adj
-
-            if self.save_dir is not None:
-                torch.save((data, partptr, perm), path)
-
-        self.data = data
-        self.perm = perm
+        self.data = self.permute_data(data, perm, adj)
         self.partptr = partptr
+        self.perm = perm
+
+    def permute_data(self, data, perm, adj):
+        data = copy.copy(data)
+        num_nodes = data.num_nodes
+
+        for key, item in data:
+            if item.size(0) == num_nodes:
+                data[key] = item[perm]
+
+        data.edge_index = None
+        data.edge_attr = None
+        data.adj = adj
+
+        return data
 
     def __len__(self):
         return self.partptr.numel() - 1
@@ -97,6 +95,15 @@ class ClusterLoader(torch.utils.data.DataLoader):
     and their between-cluster links from a large-scale graph data object to
     form a mini-batch.
 
+    .. note::
+
+        Use :class:`torch_geometric.data.ClusterData` and
+        :class:`torch_geometric.data.ClusterLoader` in conjunction to
+        form mini-batches of clusters.
+        For an example of using Cluster-GCN, see `examples/cluster_gcn.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        cluster_gcn.py>`_.
+
     Args:
         cluster_data (torch_geometric.data.ClusterData): The already
             partioned data object.
@@ -105,6 +112,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch. (default: :obj:`False`)
     """
+
     def __init__(self, cluster_data, batch_size=1, shuffle=False, **kwargs):
         class HelperDataset(torch.utils.data.Dataset):
             def __len__(self):
@@ -156,6 +164,5 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
             return data
 
-        super(ClusterLoader,
-              self).__init__(HelperDataset(), batch_size, shuffle,
-                             collate_fn=collate, **kwargs)
+        super(ClusterLoader, self).__init__(
+            HelperDataset(), batch_size, shuffle, collate_fn=collate, **kwargs)

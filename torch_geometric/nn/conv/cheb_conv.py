@@ -13,15 +13,15 @@ class ChebConv(MessagePassing):
     Filtering" <https://arxiv.org/abs/1606.09375>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} = \sum_{k=0}^{K-1} \mathbf{Z}^{(k)} \cdot
+        \mathbf{X}^{\prime} = \sum_{k=1}^{K} \mathbf{Z}^{(k)} \cdot
         \mathbf{\Theta}^{(k)}
 
     where :math:`\mathbf{Z}^{(k)}` is computed recursively by
 
     .. math::
-        \mathbf{Z}^{(0)} &= \mathbf{X}
+        \mathbf{Z}^{(1)} &= \mathbf{X}
 
-        \mathbf{Z}^{(1)} &= \mathbf{\hat{L}} \cdot \mathbf{X}
+        \mathbf{Z}^{(2)} &= \mathbf{\hat{L}} \cdot \mathbf{X}
 
         \mathbf{Z}^{(k)} &= 2 \cdot \mathbf{\hat{L}} \cdot
         \mathbf{Z}^{(k-1)} - \mathbf{Z}^{(k-2)}
@@ -32,7 +32,7 @@ class ChebConv(MessagePassing):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        K (int): Chebyshev filter size, *i.e.* number of hops :math:`K`.
+        K (int): Chebyshev filter size :math:`K`.
         normalization (str, optional): The normalization scheme for the graph
             Laplacian (default: :obj:`"sym"`):
 

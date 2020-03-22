@@ -32,7 +32,6 @@ class FeaStConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, heads=1, bias=True,
                  **kwargs):
         super(FeaStConv, self).__init__(aggr='mean', **kwargs)
@@ -41,8 +40,8 @@ class FeaStConv(MessagePassing):
         self.out_channels = out_channels
         self.heads = heads
 
-        self.weight = Parameter(
-            torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.u = Parameter(torch.Tensor(in_channels, heads))
         self.c = Parameter(torch.Tensor(heads))
 

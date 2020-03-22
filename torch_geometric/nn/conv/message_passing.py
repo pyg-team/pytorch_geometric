@@ -31,7 +31,7 @@ class MessagePassing(torch.nn.Module):
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
         \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
-        \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{i,j}\right) \right),
+        \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
 
     where :math:`\square` denotes a differentiable, permutation invariant
     function, *e.g.*, sum, mean or max, and :math:`\gamma_{\mathbf{\Theta}}`
