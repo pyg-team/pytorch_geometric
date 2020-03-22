@@ -1,3 +1,4 @@
+import time
 import os.path as osp
 
 import torch
@@ -33,15 +34,20 @@ data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 x, edge_index = data.x, data.edge_index
 
-for epoch in range(1, 201):
-    model.train()
-    optimizer.zero_grad()
-    log_logits = model(x, edge_index)
-    loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
-    print(loss)
-    loss.backward()
-    optimizer.step()
+# for epoch in range(1, 201):
+#     model.train()
+#     optimizer.zero_grad()
+#     log_logits = model(x, edge_index)
+#     loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
+#     loss.backward()
+#     optimizer.step()
+model.load_state_dict(torch.load('/Users/rusty1s/Desktop/model.pt'))
 
 explainer = GNNExplainer(model, epochs=200)
-node_feat_mask, edge_masks = explainer.explain_node(10, x, edge_index)
-explainer.visualize_subgraph(10, edge_index)
+t = time.perf_counter()
+node_feat_mask, edge_mask = explainer.explain_node(10, x, edge_index)
+print(time.perf_counter() - t)
+# for edge_mask in edge_masks:
+#     mask = edge_mask > 0
+#     print(edge_mask[mask])
+# explainer.visualize_subgraph(10, edge_index, edge_masks)

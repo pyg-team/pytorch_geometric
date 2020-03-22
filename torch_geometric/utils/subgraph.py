@@ -53,9 +53,8 @@ def subgraph(subset, edge_index, edge_attr=None, relabel_nodes=False,
     return edge_index, edge_attr
 
 
-def k_hop_subgraph(node_idx, num_hops, edge_index, edge_attr=None,
-                   relabel_nodes=False, num_nodes=None,
-                   flow='source_to_target'):
+def k_hop_subgraph(node_idx, num_hops, edge_index, relabel_nodes=False,
+                   num_nodes=None, flow='source_to_target'):
     r"""Returns the :math:`k`-hop subgraph of :obj:`(edge_index, edge_attr)`
     around node :attr:`node_idx`.
 
@@ -74,7 +73,7 @@ def k_hop_subgraph(node_idx, num_hops, edge_index, edge_attr=None,
             aggregation (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
 
-    :rtype: (:class:`LongTensor`, :class:`LongTensor`, :class:`Tensor`)
+    :rtype: (:class:`LongTensor`, :class:`LongTensor`, :class:`BoolTensor`)
     """
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -102,11 +101,10 @@ def k_hop_subgraph(node_idx, num_hops, edge_index, edge_attr=None,
     edge_mask = node_mask[row] & node_mask[col]
 
     edge_index = edge_index[:, edge_mask]
-    edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
         node_idx = row.new_full((num_nodes, ), -1)
         node_idx[subset] = torch.arange(subset.size(0))
         edge_index = node_idx[edge_index]
 
-    return subset, edge_index, edge_attr
+    return subset, edge_index, edge_mask
