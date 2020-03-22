@@ -88,14 +88,14 @@ def k_hop_subgraph(node_idx, num_hops, edge_index, edge_attr=None,
     node_mask = row.new_empty(num_nodes, dtype=torch.bool)
     edge_mask = row.new_empty(row.size(0), dtype=torch.bool)
 
-    subsets = [torch.tensor(node_idx)]
+    subsets = [torch.tensor([node_idx]).flatten()]
     for _ in range(num_hops):
         node_mask.fill_(False)
         node_mask[subsets[-1]] = True
         torch.index_select(node_mask, 0, row, out=edge_mask)
         subsets.append(col[edge_mask])
-
-    subset = torch.cat(subsets).unique(sorted=False)
+    subset, inv = torch.cat(subsets).unique(sorted=False, return_inverse=True)
+    subset = subset[inv]  # Restore original ordering.
 
     node_mask.fill_(False)
     node_mask[subset] = True
