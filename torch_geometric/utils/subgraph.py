@@ -93,7 +93,7 @@ def k_hop_subgraph(node_idx, num_hops, edge_index, relabel_nodes=False,
         node_mask[subsets[-1]] = True
         torch.index_select(node_mask, 0, row, out=edge_mask)
         subsets.append(col[edge_mask])
-    subset = torch.cat(subsets).unique(sorted=False)
+    subset = torch.cat(subsets).unique()
     # Add `node_idx` to the beginning of `subset`.
     subset = subset[subset != node_idx]
     subset = torch.cat([torch.tensor([node_idx], device=row.device), subset])
