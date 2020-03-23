@@ -8,7 +8,7 @@ from torch_geometric.nn import GCNConv, GNNExplainer
 from torch.nn import Sequential, Linear
 
 dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, dataset, T.NormalizeFeatures())
 data = dataset[0]
 
@@ -45,4 +45,4 @@ explainer = GNNExplainer(model, epochs=200)
 node_idx = 10
 node_feat_mask, edge_mask = explainer.explain_node(node_idx, x, edge_index)
 plt = explainer.visualize_subgraph(node_idx, edge_index, edge_mask, y=data.y)
-plt.show()
+# plt.show()

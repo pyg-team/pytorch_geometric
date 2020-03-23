@@ -31,8 +31,8 @@ def subgraph(subset, edge_index, edge_attr=None, relabel_nodes=False,
         n_mask = subset
 
         if relabel_nodes:
-            n_idx = torch.zeros(
-                n_mask.size(0), dtype=torch.long, device=device)
+            n_idx = torch.zeros(n_mask.size(0), dtype=torch.long,
+                                device=device)
             n_idx[subset] = torch.arange(subset.sum().item(), device=device)
     else:
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -87,7 +87,7 @@ def k_hop_subgraph(node_idx, num_hops, edge_index, relabel_nodes=False,
     node_mask = row.new_empty(num_nodes, dtype=torch.bool)
     edge_mask = row.new_empty(row.size(0), dtype=torch.bool)
 
-    subsets = [torch.tensor([node_idx]).flatten()]
+    subsets = [torch.tensor([node_idx], device=row.device).flatten()]
     for _ in range(num_hops):
         node_mask.fill_(False)
         node_mask[subsets[-1]] = True
@@ -106,7 +106,7 @@ def k_hop_subgraph(node_idx, num_hops, edge_index, relabel_nodes=False,
 
     if relabel_nodes:
         node_idx = row.new_full((num_nodes, ), -1)
-        node_idx[subset] = torch.arange(subset.size(0))
+        node_idx[subset] = torch.arange(subset.size(0), device=row.device)
         edge_index = node_idx[edge_index]
 
     return subset, edge_index, edge_mask

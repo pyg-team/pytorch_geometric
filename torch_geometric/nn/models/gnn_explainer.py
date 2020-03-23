@@ -65,9 +65,12 @@ class GNNExplainer(torch.nn.Module):
     def __subgraph__(self, node_idx, x, edge_index, **kwargs):
         num_nodes, num_edges = x.size(0), edge_index.size(1)
 
-        subset, edge_index, edge_mask = k_hop_subgraph(
-            node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
-            num_nodes=num_nodes, flow=self.__flow__())
+        subset, edge_index, edge_mask = k_hop_subgraph(node_idx,
+                                                       self.__num_hops__(),
+                                                       edge_index,
+                                                       relabel_nodes=True,
+                                                       num_nodes=num_nodes,
+                                                       flow=self.__flow__())
 
         x = x[subset]
         for key, item in kwargs:
@@ -119,7 +122,7 @@ class GNNExplainer(torch.nn.Module):
             pbar = tqdm(total=self.epochs)
             pbar.set_description(f'Explain node {node_idx}')
 
-        for epoch in range(1, self.epochs):
+        for epoch in range(1, self.epochs + 1):
             optimizer.zero_grad()
             h = x * self.node_feat_mask.view(1, -1).sigmoid()
             log_logits = self.model(x=h, edge_index=edge_index, **kwargs)
