@@ -18,6 +18,12 @@ class GNNExplainer(torch.nn.Module):
     structures and small subsets node features that play a crucial role in a
     GNN’s node-predictions.
 
+    .. note::
+
+        For an example of using GNN-Explainer, see `examples/gnn_explainer.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        gnn_explainer.py>`_.
+
     Args:
         model (torch.nn.Module): The GNN module to explain.
         epochs (int, optional): The number of epochs to train.
