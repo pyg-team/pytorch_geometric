@@ -12,6 +12,21 @@ EPS = 1e-15
 
 
 class GNNExplainer(torch.nn.Module):
+    r"""The GNN-Explainer model from the `"GNNExplainer: Generating
+    Explanations for Graph Neural Networks"
+    <https://arxiv.org/abs/1903.03894>`_ paper for identifying compact subgraph
+    structures and small subsets node features that play a crucial role in a
+    GNN’s node-predictions.
+
+    Args:
+        model (torch.nn.Module): The GNN module to explain.
+        epochs (int, optional): The number of epochs to train.
+            (default: :obj:`100`)
+        lr (float, optional): The learning rate to apply.
+            (default: :obj:`0.01`)
+        log (bool, optional): If set to :obj:`False`, will not log any learning
+            progress. (default: :obj:`True`)
+    """
 
     coeffs = {
         'edge_size': 0.005,
@@ -65,12 +80,9 @@ class GNNExplainer(torch.nn.Module):
     def __subgraph__(self, node_idx, x, edge_index, **kwargs):
         num_nodes, num_edges = x.size(0), edge_index.size(1)
 
-        subset, edge_index, edge_mask = k_hop_subgraph(node_idx,
-                                                       self.__num_hops__(),
-                                                       edge_index,
-                                                       relabel_nodes=True,
-                                                       num_nodes=num_nodes,
-                                                       flow=self.__flow__())
+        subset, edge_index, edge_mask = k_hop_subgraph(
+            node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
+            num_nodes=num_nodes, flow=self.__flow__())
 
         x = x[subset]
         for key, item in kwargs:
@@ -98,6 +110,19 @@ class GNNExplainer(torch.nn.Module):
         return loss
 
     def explain_node(self, node_idx, x, edge_index, **kwargs):
+        r"""Learns and returns a node feature mask and an edge mask that play a
+        crucial role to explain the prediction made by the GNN for node
+        :attr:`node_idx`.
+
+        Args:
+            node_idx (int): The node to explain.
+            x (Tensor): The node feature matrix.
+            edge_index (LongTensor): The edge indices.
+            **kwargs (optional): Additional arguments passed to the GNN module.
+
+        :rtype: (:class:`Tensor`, :class:`Tensor`)
+        """
+
         self.model.eval()
         self.__clear_masks__()
 
@@ -146,6 +171,25 @@ class GNNExplainer(torch.nn.Module):
 
     def visualize_subgraph(self, node_idx, edge_index, edge_mask, y=None,
                            threshold=None, **kwargs):
+        r"""Visualizes the subgraph around :attr:`node_idx` given an edge mask
+        :attr:`edge_mask`.
+
+        Args:
+            node_idx (int): The node id to explain.
+            edge_index (LongTensor): The edge indices.
+            edge_mask (Tensor): The edge mask.
+            y (Tensor, optional): The ground-truth node-prediction labels used
+                as node colorings. (default: :obj:`None`)
+            threshold (float, optional): Sets a threshold for visualizing
+                important edges. If set to :obj:`None`, will visualize all
+                edges with transparancy indicating the importance of edges.
+                (default: :obj:`None`)
+            **kwargs (optional): Additional arguments passed to
+                :func:`nx.draw`.
+
+        :rtype: :class:`matplotlib.pyplot`
+        """
+
         assert edge_mask.size(0) == edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.
