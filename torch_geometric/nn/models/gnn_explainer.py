@@ -1,9 +1,12 @@
 from math import sqrt
 
 import torch
-# import networkx as nx
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import networkx as nx
 from torch_geometric.nn import MessagePassing
-from torch_geometric.utils import k_hop_subgraph
+from torch_geometric.data import Data
+from torch_geometric.utils import k_hop_subgraph, to_networkx
 
 EPS = 1e-15
 
@@ -17,11 +20,12 @@ class GNNExplainer(torch.nn.Module):
         'node_feat_ent': 0.1,
     }
 
-    def __init__(self, model, epochs=100, lr=0.01):
+    def __init__(self, model, epochs=100, lr=0.01, log=True):
         super(GNNExplainer, self).__init__()
         self.model = model
         self.epochs = epochs
         self.lr = lr
+        self.log = log
 
     def __set_masks__(self, x, edge_index, init="normal"):
         (N, F), E = x.size(), edge_index.size(1)
@@ -111,6 +115,10 @@ class GNNExplainer(torch.nn.Module):
         optimizer = torch.optim.Adam([self.node_feat_mask, self.edge_mask],
                                      lr=self.lr)
 
+        if self.log:
+            pbar = tqdm(total=self.epochs)
+            pbar.set_description(f'Explain node {node_idx}')
+
         for epoch in range(1, self.epochs):
             optimizer.zero_grad()
             h = x * self.node_feat_mask.view(1, -1).sigmoid()
@@ -118,6 +126,12 @@ class GNNExplainer(torch.nn.Module):
             loss = self.__loss__(0, log_logits, pred_label)
             loss.backward()
             optimizer.step()
+
+            if self.log:
+                pbar.update(1)
+
+        if self.log:
+            pbar.close()
 
         node_feat_mask = self.node_feat_mask.detach().sigmoid()
         edge_mask = self.edge_mask.new_zeros(num_edges)
@@ -127,43 +141,50 @@ class GNNExplainer(torch.nn.Module):
 
         return node_feat_mask, edge_mask
 
-    def visualize_subgraph(self, node_idx, edge_index, edge_mask,
-                           threshold=None):
+    def visualize_subgraph(self, node_idx, edge_index, edge_mask, y=None,
+                           threshold=None, **kwargs):
         assert edge_mask.size(0) == edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.
-
-        subset, edge_index, filtered_edge_mask = k_hop_subgraph(
-            node_idx, self.__num_hops__(), edge_index, relabel_nodes=False,
+        subset, edge_index, hard_edge_mask = k_hop_subgraph(
+            node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
             num_nodes=None, flow=self.__flow__())
-        print(edge_index)
-        print(subset)
 
-        edge_masks = [e[filtered_edge_mask] for e in edge_masks]
-        for e in edge_masks:
-            print(e)
+        edge_mask = edge_mask[hard_edge_mask]
 
-        # G = nx.DiGraph()
-        # for i, (source, target) in enumerate(edge_index.t().tolist()):
-        #     G.add_edge(source, target, idx=i)
-        # G = G.reverse()
+        if threshold is not None:
+            edge_mask = (edge_mask >= threshold).to(torch.float)
 
-        # G_sub = nx.DiGraph()
-        # cur = [node_idx]
-        # for edge_mask in self.edge_masks:
-        #     edge_mask = edge_mask.sigmoid().tolist()
-        #     new_cur = []
-        #     for node_idx in cur:
-        #         for v, u, data in G.edges(node_idx, data=True):
-        #             new_cur.append(u)
-        #             if not G_sub.has_edge(u, v):
-        #                 G_sub.add_edge(u, v, weight=edge_mask[data['idx']])
-        #             else:
-        #                 G_sub[u][v]['weight'] = max(edge_mask[data['idx']],
-        #                                             G_sub[u][v]['weight'])
-        #     cur = list(set(new_cur))
+        if y is None:
+            y = torch.zeros(edge_index.max().item() + 1,
+                            device=edge_index.device)
+        else:
+            y = y[subset].to(torch.float) / y.max().item()
 
-        # nx.draw(G_sub, pos=nx.spring_layout(G_sub), with_labels=True,
-        #         font_size=12, connectionstyle='arc3, rad = 0.1')
+        data = Data(edge_index=edge_index, att=edge_mask, y=y,
+                    num_nodes=y.size(0)).to('cpu')
+        G = to_networkx(data, node_attrs=['y'], edge_attrs=['att'])
+        mapping = {k: i for k, i in enumerate(subset.tolist())}
+        G = nx.relabel_nodes(G, mapping)
 
-        # plt.show()
+        kwargs['with_labels'] = kwargs.get('with_labels') or True
+        kwargs['font_size'] = kwargs.get('font_size') or 10
+        kwargs['node_size'] = kwargs.get('node_size') or 800
+        kwargs['cmap'] = kwargs.get('cmap') or 'cool'
+
+        pos = nx.spring_layout(G)
+        ax = plt.gca()
+        for source, target, data in G.edges(data=True):
+            ax.annotate(
+                '', xy=pos[target], xycoords='data', xytext=pos[source],
+                textcoords='data', arrowprops=dict(
+                    arrowstyle="->",
+                    alpha=max(data['att'], 0.1),
+                    shrinkA=sqrt(kwargs['node_size']) / 2.0,
+                    shrinkB=sqrt(kwargs['node_size']) / 2.0,
+                    connectionstyle="arc3,rad=0.1",
+                ))
+        nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **kwargs)
+        nx.draw_networkx_labels(G, pos, **kwargs)
+        plt.axis('off')
+        return plt
