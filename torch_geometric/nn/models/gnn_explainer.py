@@ -92,6 +92,8 @@ class GNNExplainer(torch.nn.Module):
 
     def explain_node(self, node_idx, x, edge_index, **kwargs):
         self.model.eval()
+        self.__clear_masks__()
+
         num_edges = edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.

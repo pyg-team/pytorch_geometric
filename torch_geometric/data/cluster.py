@@ -42,11 +42,11 @@ class ClusterData(torch.utils.data.Dataset):
             if save_dir is not None:
                 torch.save((adj, partptr, perm), path)
 
-        self.data = self.permute_data(data, perm, adj)
+        self.data = self.__permute_data__(data, perm, adj)
         self.partptr = partptr
         self.perm = perm
 
-    def permute_data(self, data, perm, adj):
+    def __permute_data__(self, data, perm, adj):
         data = copy.copy(data)
         num_nodes = data.num_nodes
 
