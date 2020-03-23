@@ -12,10 +12,9 @@ def yield_file(in_file):
         elif b.startswith('f '):
             triangles = b.split(' ')[1:]
             # -1 as .obj is base 1 but the Data class expects base 0 indices
-            yield ['f', [int(t.split("/")[0]) - 1 for t in triangles]]
+            yield ['f', [[int(i)-1 for i in t.split("/")] for t in triangles]]
         else:
             yield ['', ""]
-
 
 def read_obj(in_file):
     vertices = []
@@ -25,11 +24,12 @@ def read_obj(in_file):
         if k == 'v':
             vertices.append(v)
         elif k == 'f':
-            faces.append(v)
+            for i in v:
+                faces.append(i)
 
     if not len(faces) or not len(vertices):
         return None
-
+    
     pos = torch.tensor(vertices, dtype=torch.float)
     face = torch.tensor(faces, dtype=torch.long).t().contiguous()
 
