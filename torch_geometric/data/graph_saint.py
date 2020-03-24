@@ -40,10 +40,12 @@ class GraphSAINTSampler(object):
             sampling.
             :obj:`0` means that the data will be sampled in the main process.
             (default: :obj:`0`)
+        log (bool, optional): If set to :obj:`False`, will not log any learning
+            progress. (default: :obj:`True`)
     """
 
     def __init__(self, data, batch_size, num_steps=1, sample_coverage=50,
-                 save_dir=None, num_workers=0):
+                 save_dir=None, num_workers=0, log=True):
         assert data.edge_index is not None
         assert 'node_norm' not in data
         assert 'edge_norm' not in data
@@ -62,6 +64,7 @@ class GraphSAINTSampler(object):
         self.num_steps = num_steps
         self.sample_coverage = sample_coverage
         self.num_workers = num_workers
+        self.log = log
         self.__count__ = 0
 
         if self.num_workers > 0:
@@ -75,11 +78,11 @@ class GraphSAINTSampler(object):
                 self.__sample_workers__.append(worker)
 
         path = osp.join(save_dir or '', self.__filename__)
-        if save_dir is not None and osp.exists(path):
+        if save_dir is not None and osp.exists(path):  # pragma: no cover
             self.node_norm, self.edge_norm = torch.load(path)
         else:
             self.node_norm, self.edge_norm = self.__compute_norm__()
-            if save_dir is not None:
+            if save_dir is not None:  # pragma: no cover
                 torch.save((self.node_norm, self.edge_norm), path)
 
         if self.num_workers > 0:
@@ -113,9 +116,11 @@ class GraphSAINTSampler(object):
         node_count = torch.zeros(self.N, dtype=torch.float)
         edge_count = torch.zeros(self.E, dtype=torch.float)
 
+        if self.log:  # pragma: no cover
+            pbar = tqdm(total=self.N * self.sample_coverage)
+            pbar.set_description('Compute GraphSAINT normalization')
+
         num_samples = total_sampled_nodes = 0
-        pbar = tqdm(total=self.N * self.sample_coverage)
-        pbar.set_description('Compute GraphSAINT normalization')
         while total_sampled_nodes < self.N * self.sample_coverage:
             num_sampled_nodes = 0
             if self.num_workers > 0:
@@ -130,10 +135,14 @@ class GraphSAINTSampler(object):
                     node_count[node_idx] += 1
                     edge_count[edge_idx] += 1
                     num_sampled_nodes += node_idx.size(0)
-            pbar.update(num_sampled_nodes)
             total_sampled_nodes += num_sampled_nodes
             num_samples += 200
-        pbar.close()
+
+            if self.log:  # pragma: no cover
+                pbar.update(num_sampled_nodes)
+
+        if self.log:  # pragma: no cover
+            pbar.close()
 
         row, col, _ = self.adj.coo()
 
@@ -245,11 +254,11 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
     """
 
     def __init__(self, data, batch_size, walk_length, num_steps=1,
-                 sample_coverage=50, save_dir=None, num_workers=0):
+                 sample_coverage=50, save_dir=None, num_workers=0, log=False):
         self.walk_length = walk_length
         super(GraphSAINTRandomWalkSampler, self).__init__(
             data, batch_size, num_steps, sample_coverage, save_dir,
-            num_workers)
+            num_workers, log)
 
     @property
     def __filename__(self):
