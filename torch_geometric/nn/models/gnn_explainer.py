@@ -149,7 +149,7 @@ class GNNExplainer(torch.nn.Module):
         optimizer = torch.optim.Adam([self.node_feat_mask, self.edge_mask],
                                      lr=self.lr)
 
-        if self.log:
+        if self.log:  # pragma: no cover
             pbar = tqdm(total=self.epochs)
             pbar.set_description(f'Explain node {node_idx}')
 
@@ -161,10 +161,10 @@ class GNNExplainer(torch.nn.Module):
             loss.backward()
             optimizer.step()
 
-            if self.log:
+            if self.log:  # pragma: no cover
                 pbar.update(1)
 
-        if self.log:
+        if self.log:  # pragma: no cover
             pbar.close()
 
         node_feat_mask = self.node_feat_mask.detach().sigmoid()
@@ -241,3 +241,6 @@ class GNNExplainer(torch.nn.Module):
         nx.draw_networkx_labels(G, pos, **kwargs)
         plt.axis('off')
         return plt
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}()'
