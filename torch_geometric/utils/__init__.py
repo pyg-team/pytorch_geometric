@@ -1,5 +1,4 @@
 from .degree import degree
-from .scatter import scatter_
 from .softmax import softmax
 from .dropout import dropout_adj
 from .sort_edge_index import sort_edge_index
@@ -30,7 +29,6 @@ from .metric import (accuracy, true_positive, true_negative, false_positive,
 
 __all__ = [
     'degree',
-    'scatter_',
     'softmax',
     'dropout_adj',
     'sort_edge_index',
