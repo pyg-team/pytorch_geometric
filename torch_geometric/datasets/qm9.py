@@ -19,6 +19,14 @@ try:
 except ImportError:
     rdkit = None
 
+HAR2EV = 27.2113825435
+KCALMOL2EV = 0.04336414
+
+conversion = torch.tensor([
+    1., 1., HAR2EV, HAR2EV, HAR2EV, 1., HAR2EV, HAR2EV, HAR2EV, HAR2EV, HAR2EV,
+    1., KCALMOL2EV, KCALMOL2EV, KCALMOL2EV, KCALMOL2EV, 1., 1., 1.
+])
+
 
 class QM9(InMemoryDataset):
     r"""The QM9 dataset from the `"MoleculeNet: A Benchmark for Molecular
@@ -36,33 +44,39 @@ class QM9(InMemoryDataset):
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
     | 1      | :math:`\alpha`                   | Isotropic polarizability                                                          | :math:`{a_0}^3`                             |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 2      | :math:`\epsilon_{\textrm{HOMO}}` | Highest occupied molecular orbital energy                                         | :math:`E_{\textrm{h}}`                      |
+    | 2      | :math:`\epsilon_{\textrm{HOMO}}` | Highest occupied molecular orbital energy                                         | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 3      | :math:`\epsilon_{\textrm{LUMO}}` | Lowest unoccupied molecular orbital energy                                        | :math:`E_{\textrm{h}}`                      |
+    | 3      | :math:`\epsilon_{\textrm{LUMO}}` | Lowest unoccupied molecular orbital energy                                        | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 4      | :math:`\Delta \epsilon`          | Gap between :math:`\epsilon_{\textrm{HOMO}}` and :math:`\epsilon_{\textrm{LUMO}}` | :math:`E_{\textrm{h}}`                      |
+    | 4      | :math:`\Delta \epsilon`          | Gap between :math:`\epsilon_{\textrm{HOMO}}` and :math:`\epsilon_{\textrm{LUMO}}` | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
     | 5      | :math:`\langle R^2 \rangle`      | Electronic spatial extent                                                         | :math:`{a_0}^2`                             |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 6      | :math:`\textrm{ZPVE}`            | Zero point vibrational energy                                                     | :math:`E_{\textrm{h}}`                      |
+    | 6      | :math:`\textrm{ZPVE}`            | Zero point vibrational energy                                                     | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 7      | :math:`U_0`                      | Internal energy at 0K                                                             | :math:`E_{\textrm{h}}`                      |
+    | 7      | :math:`U_0`                      | Internal energy at 0K                                                             | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 8      | :math:`U`                        | Internal energy at 298.15K                                                        | :math:`E_{\textrm{h}}`                      |
+    | 8      | :math:`U`                        | Internal energy at 298.15K                                                        | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 9      | :math:`H`                        | Enthalpy at 298.15K                                                               | :math:`E_{\textrm{h}}`                      |
+    | 9      | :math:`H`                        | Enthalpy at 298.15K                                                               | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 10     | :math:`G`                        | Free energy at 298.15K                                                            | :math:`E_{\textrm{h}}`                      |
+    | 10     | :math:`G`                        | Free energy at 298.15K                                                            | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
     | 11     | :math:`c_{\textrm{v}}`           | Heat capavity at 298.15K                                                          | :math:`\frac{\textrm{cal}}{\textrm{mol K}}` |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 12     | :math:`U_0^{\textrm{ATOM}}`      | Atomization energy at 0K                                                          | :math:`\frac{\textrm{kcal}}{\textrm{mol}}`  |
+    | 12     | :math:`U_0^{\textrm{ATOM}}`      | Atomization energy at 0K                                                          | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 13     | :math:`U^{\textrm{ATOM}}`        | Atomization energy at 298.15K                                                     | :math:`\frac{\textrm{kcal}}{\textrm{mol}}`  |
+    | 13     | :math:`U^{\textrm{ATOM}}`        | Atomization energy at 298.15K                                                     | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 14     | :math:`H^{\textrm{ATOM}}`        | Atomization enthalpy at 298.15K                                                   | :math:`\frac{\textrm{kcal}}{\textrm{mol}}`  |
+    | 14     | :math:`H^{\textrm{ATOM}}`        | Atomization enthalpy at 298.15K                                                   | :math:`\textrm{eV}`                         |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
-    | 15     | :math:`G^{\textrm{ATOM}}`        | Atomization free energy at 298.15K                                                | :math:`\frac{\textrm{kcal}}{\textrm{mol}}`  |
+    | 15     | :math:`G^{\textrm{ATOM}}`        | Atomization free energy at 298.15K                                                | :math:`\textrm{eV}`                         |
+    +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
+    | 16     | :math:`A`                        | Rotational constant                                                               | :math:`\textrm{GHz}`                        |
+    +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
+    | 17     | :math:`B`                        | Rotational constant                                                               | :math:`\textrm{GHz}`                        |
+    +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
+    | 18     | :math:`C`                        | Rotational constant                                                               | :math:`\textrm{GHz}`                        |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
 
     Args:
@@ -83,6 +97,7 @@ class QM9(InMemoryDataset):
 
     raw_url = ('https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/'
                'molnet_publish/qm9.zip')
+    raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
     processed_url = 'http://www.roemisch-drei.de/qm9.zip'
 
     if rdkit is not None:
@@ -96,17 +111,29 @@ class QM9(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return 'qm9.pt' if rdkit is None else ['gdb9.sdf', 'gdb9.sdf.csv']
+        if rdkit is None:
+            return 'qm9.pt'
+        else:
+            return ['gdb9.sdf', 'gdb9.sdf.csv', 'uncharacterized.txt']
 
     @property
     def processed_file_names(self):
         return 'data.pt'
 
     def download(self):
-        url = self.processed_url if rdkit is None else self.raw_url
-        file_path = download_url(url, self.raw_dir)
-        extract_zip(file_path, self.raw_dir)
-        os.unlink(file_path)
+        if rdkit is None:
+            file_path = download_url(self.processed_url, self.raw_dir)
+            extract_zip(file_path, self.raw_dir)
+            os.unlink(file_path)
+        else:
+            file_path = download_url(self.raw_url, self.raw_dir)
+            extract_zip(file_path, self.raw_dir)
+            os.unlink(file_path)
+
+            file_path = download_url(self.raw_url2, self.raw_dir)
+            os.rename(
+                osp.join(self.raw_dir, '3195404'),
+                osp.join(self.raw_dir, 'uncharacterized.txt'))
 
     def process(self):
         if rdkit is None:
@@ -128,9 +155,15 @@ class QM9(InMemoryDataset):
 
         with open(self.raw_paths[1], 'r') as f:
             target = f.read().split('\n')[1:-1]
-            target = [[float(x) for x in line.split(',')[4:20]]
+            target = [[float(x) for x in line.split(',')[1:20]]
                       for line in target]
             target = torch.tensor(target, dtype=torch.float)
+            target = torch.cat([target[:, 3:], target[:, :3]], dim=-1)
+            target = target * conversion.view(1, -1)
+
+        with open(self.raw_paths[2], 'r') as f:
+            skip = [int(x.split()[0]) for x in f.read().split('\n')[9:-2]]
+        assert len(skip) == 3054
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False)
         fdef_name = osp.join(RDConfig.RDDataDir, 'BaseFeatures.fdef')
@@ -139,6 +172,8 @@ class QM9(InMemoryDataset):
         data_list = []
         for i, mol in enumerate(suppl):
             if mol is None:
+                continue
+            if i in skip:
                 continue
 
             text = suppl.GetItemText(i)
