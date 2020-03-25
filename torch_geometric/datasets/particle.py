@@ -4,6 +4,7 @@ import glob
 import torch
 import pandas
 import numpy as np
+from torch_scatter import scatter_add
 from torch_geometric.data import Data, Dataset
 
 
@@ -60,12 +61,23 @@ class TrackMLParticleTrackingDataset(Dataset):
         hits_path = osp.join(self.raw_dir, f'event{idx}-hits.csv')
         pos = pandas.read_csv(hits_path, usecols=['x', 'y', 'z'],
                               dtype=np.float32)
-        pos = torch.from_numpy(pos.values)
+        pos = torch.from_numpy(pos.values).div_(1000.)
+
+        cells_path = osp.join(self.raw_dir, f'event{idx}-cells.csv')
+        cells = pandas.read_csv(cells_path, usecols=['hit_id', 'value'])
+        hit_id = torch.from_numpy(cells['hit_id'].values).to(torch.long) - 1
+        value = torch.from_numpy(cells['value'].values).to(torch.float)
+
+        ones = torch.ones(hit_id.size(0))
+        num_cells = scatter_add(ones, hit_id, dim_size=pos.size(0)).div_(10.)
+        value = scatter_add(value, hit_id, dim_size=pos.size(0))
+        x = torch.stack([num_cells, value], dim=-1)
 
         truth_path = osp.join(self.raw_dir, f'event{idx}-truth.csv')
         y = pandas.read_csv(truth_path, usecols=['particle_id'],
                             dtype=np.int64)
         y = torch.from_numpy(y.values).squeeze()
         _, y = y.unique(return_inverse=True)
+        y = y - 1  # Zero entries are marked as invalid via `-1`.
 
-        return TrackingData(pos=pos, y=y)
+        return TrackingData(x=x, pos=pos, y=y)
