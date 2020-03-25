@@ -10,8 +10,8 @@ from torch_geometric.data import Data, Dataset
 
 class TrackingData(Data):
     def __inc__(self, key, item):
-        if key == 'y':
-            return item.max().item() + 1
+        if key == 'y_index':
+            return torch.tensor([item[0].max().item() + 1, self.num_nodes])
         else:
             return super(TrackingData, self).__inc__(key, item)
 
@@ -58,26 +58,33 @@ class TrackMLParticleTrackingDataset(Dataset):
     def get(self, idx):
         idx = self.events[idx]
 
+        # Get hit positions.
         hits_path = osp.join(self.raw_dir, f'event{idx}-hits.csv')
         pos = pandas.read_csv(hits_path, usecols=['x', 'y', 'z'],
                               dtype=np.float32)
         pos = torch.from_numpy(pos.values).div_(1000.)
 
+        # Get hit features.
         cells_path = osp.join(self.raw_dir, f'event{idx}-cells.csv')
         cells = pandas.read_csv(cells_path, usecols=['hit_id', 'value'])
-        hit_id = torch.from_numpy(cells['hit_id'].values).to(torch.long) - 1
+        hit_id = torch.from_numpy(cells['hit_id'].values).to(torch.long)
+        hit_id.sub_(1)
         value = torch.from_numpy(cells['value'].values).to(torch.float)
-
         ones = torch.ones(hit_id.size(0))
         num_cells = scatter_add(ones, hit_id, dim_size=pos.size(0)).div_(10.)
         value = scatter_add(value, hit_id, dim_size=pos.size(0))
         x = torch.stack([num_cells, value], dim=-1)
 
+        # Get ground-truth hit assignments.
         truth_path = osp.join(self.raw_dir, f'event{idx}-truth.csv')
         y = pandas.read_csv(truth_path, usecols=['particle_id'],
                             dtype=np.int64)
         y = torch.from_numpy(y.values).squeeze()
-        _, y = y.unique(return_inverse=True)
-        y = y - 1  # Zero entries are marked as invalid via `-1`.
+        y_row = y.unique(return_inverse=True)[1].sub_(1)
+        mask = y_row != -1
+        y_row = y_row[mask]
+        y_col = torch.arange(y.size(0))[mask]
+        perm = (y_row * y.size(0) + y_col).argsort()
+        y_index = torch.stack([y_row[perm], y_col[perm]], dim=0)
 
-        return TrackingData(x=x, pos=pos, y=y)
+        return TrackingData(x=x, pos=pos, y_index=y_index)
