@@ -1,15 +1,65 @@
 import os
 import os.path as osp
 import json
-
 import torch
 import pandas
 import numpy as np
+from dateutil.parser import parse, parserinfo
 from torch_sparse import coalesce
 from torch_geometric.data import Data, InMemoryDataset, download_url, \
                                  extract_gz, extract_tar, extract_zip
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import to_undirected
+
+
+def read_cit(files, name):
+    if name == 'patents':
+        edge_file = files[0]
+        x = None
+    elif name == 'hepph' or name == 'hepth':
+        edge_file = files[1]
+        d = pandas.read_csv(files[0], sep='\t', header=None, skiprows=1)
+        idx, x = d[[0]], d[[1]]
+
+        # parse date and calculate difference in days to oldest date
+        x = x.to_numpy().flatten().tolist()
+        for i in range(len(x)):
+            x[i] = parse(x[i], parserinfo(yearfirst=True))
+        oldest_date = min(x)
+        for i in range(len(x)):
+            x[i] = (x[i] - oldest_date).days
+        x = torch.tensor(x)
+
+        idx = torch.from_numpy(idx.to_numpy()).flatten()
+        idx_assoc = {}
+        for i, j in enumerate(idx.tolist()):
+            idx_assoc[j] = i
+
+    edge_index = pandas.read_csv(edge_file, sep='\t', header=None,
+                                 skiprows=4)
+    edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+
+    if name == 'patents':
+        idx_assoc = {}
+        for i, j in enumerate(torch.unique(edge_index).tolist()):
+            idx_assoc[j] = i
+
+    edge_index = edge_index.flatten()
+    for i, e in enumerate(edge_index.tolist()):
+        try:
+            edge_index[i] = idx_assoc[e]
+
+        # handle nodes, which don't have features
+        except KeyError:
+            max_assoc = max(list(idx_assoc.values()))
+            idx_assoc[e] = max_assoc + 1
+            edge_index[i] = idx_assoc[e]
+            x = torch.cat((x, torch.tensor([-1])))
+
+    edge_index = edge_index.view(2, -1)
+    num_nodes = edge_index.max() + 1
+
+    return [Data(x=x, edge_index=edge_index, num_nodes=num_nodes)]
 
 
 def read_email(files, name):
@@ -390,6 +440,11 @@ class SNAPDataset(InMemoryDataset):
                           'email-Eu-core-department-labels.txt.gz'],
         'email-euall': ['email-EuAll.txt.gz'],
         'email-enron': ['email-Enron.txt.gz'],
+        'cit-hepph': ['cit-HepPh.txt.gz',
+                      'cit-HepPh-dates.txt.gz'],
+        'cit-hepth': ['cit-HepTh.txt.gz',
+                      'cit-HepTh-dates.txt.gz'],
+        'cit-patents': ['cit-Patents.txt.gz'],
     }
 
     big_datasets = ['com-livejournal',
@@ -449,7 +504,7 @@ class SNAPDataset(InMemoryDataset):
             raw_dir = osp.join(raw_dir, filenames[0])
 
         raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
-        print(raw_files, '\n')
+        print('Raw Files:', raw_files, '\n')
 
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])
@@ -465,6 +520,8 @@ class SNAPDataset(InMemoryDataset):
             data_list = read_com(raw_files, self.name[4:])
         elif self.name[:6] == 'email-':
             data_list = read_email(raw_files, self.name[6:])
+        elif self.name[:4] == 'cit-':
+            data_list = read_cit(raw_files, self.name[4:])
         else:
             raise NotImplementedError
 
@@ -481,7 +538,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'wiki-talk'
+    dataset_name = 'cit-hepph'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
