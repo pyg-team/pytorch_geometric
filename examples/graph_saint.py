@@ -16,7 +16,7 @@ data.edge_attr = 1. / degree(col, data.num_nodes)[col]  # Norm by in-degree.
 loader = GraphSAINTRandomWalkSampler(data, batch_size=6000, walk_length=2,
                                      num_steps=5, sample_coverage=1000,
                                      save_dir=dataset.processed_dir,
-                                     num_workers=0)
+                                     num_workers=4)
 
 
 class Net(torch.nn.Module):
