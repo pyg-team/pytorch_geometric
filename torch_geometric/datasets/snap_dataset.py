@@ -9,7 +9,24 @@ from torch_sparse import coalesce
 from torch_geometric.data import Data, InMemoryDataset, download_url, \
                                  extract_gz, extract_tar, extract_zip
 from torch_geometric.data.makedirs import makedirs
+from torch_geometric.utils import to_undirected
 
+
+def read_email(files, name):
+    if name == 'eu-core':
+        y = pandas.read_csv(files[0], sep=' ', header=None)
+        y = torch.from_numpy(y.to_numpy())
+        y = y[:, 1].to(torch.long)
+
+        edge_index = pandas.read_csv(files[1], sep=' ', header=None)
+        edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+
+        assert torch.eq(torch.unique(edge_index.flatten()),
+                        torch.arange(0, edge_index.max() + 1)).all()
+        num_nodes = edge_index.max() + 1
+
+        data = Data(edge_index=edge_index, num_nodes=num_nodes, y=y)
+        return [data]
 
 def read_com(files, name):
     for file in files:
@@ -28,12 +45,7 @@ def read_com(files, name):
                 edge_index[i] = idx_assoc[e]
             edge_index = edge_index.view(2, -1)
             num_nodes = edge_index.max() + 1
-
-            edge_index_swapped = torch.zeros_like(edge_index)
-            edge_index_swapped[0] = edge_index[1]
-            edge_index_swapped[1] = edge_index[0]
-            edge_index = torch.cat((edge_index,
-                                    edge_index_swapped), dim=1)
+            edge_index = to_undirected(edge_index, num_nodes)
 
     for file in files:
         if '.all' in file:
@@ -107,12 +119,8 @@ def read_ego(files, name):
         edge_index = edge_index.view(2, -1)
 
         if name == 'facebook':
-            # undirected edges undirected
-            edge_index_swapped = torch.zeros_like(edge_index)
-            edge_index_swapped[0] = edge_index[1]
-            edge_index_swapped[1] = edge_index[0]
-            edge_index = torch.cat((edge_index,
-                                    edge_index_swapped), dim=1)
+            # undirected edges
+            edge_index = to_undirected(edge_index, x.size(0))
 
         row, col = edge_index
 
@@ -227,16 +235,13 @@ def read_gemsec(files, name):
             edge_index = pandas.read_csv(file, header=None, skiprows=1)
             edge_index = torch.from_numpy(edge_index.to_numpy()).t()
 
-            # undirected edges undirected
-            edge_index_swapped = torch.zeros_like(edge_index)
-            edge_index_swapped[0] = edge_index[1]
-            edge_index_swapped[1] = edge_index[0]
-            edge_index = torch.cat((edge_index,
-                                    edge_index_swapped), dim=1)
-
             assert torch.eq(torch.unique(edge_index.flatten()),
                             torch.arange(0, edge_index.max() + 1)).all()
             num_nodes = edge_index.max().item() + 1
+
+            # undirected edges
+            edge_index = to_undirected(edge_index, num_nodes)
+
             edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
             data = Data(edge_index=edge_index, num_nodes=num_nodes)
             data_list.append(data)
@@ -282,12 +287,8 @@ def read_musae_helper(paths, name):
                             torch.arange(0, edge_index.max() + 1)).all()
             num_nodes = edge_index.max() + 1
 
-            # undirected edges undirected
-            edge_index_swapped = torch.zeros_like(edge_index)
-            edge_index_swapped[0] = edge_index[1]
-            edge_index_swapped[1] = edge_index[0]
-            edge_index = torch.cat((edge_index,
-                                    edge_index_swapped), dim=1)
+            # undirected edges
+            edge_index = to_undirected(edge_index, num_nodes)
 
         elif file.endswith('.json'):
             with open(osp.join(path, file)) as f:
@@ -370,6 +371,8 @@ class SNAPDataset(InMemoryDataset):
                      'com-dblp.all.cmty.txt.gz'],
         'com-amazon': ['com-amazon.ungraph.txt.gz',
                        'com-amazon.all.cmty.txt.gz'],
+        'email-eu-core': ['email-Eu-core.txt.gz',
+                  'email-Eu-core-department-labels.txt.gz']
     }
 
     big_datasets = ['com-livejournal',
@@ -443,6 +446,8 @@ class SNAPDataset(InMemoryDataset):
             data_list = read_musae(raw_files, self.name[6:])
         elif self.name[:4] == 'com-':
             data_list = read_com(raw_files, self.name[4:])
+        elif self.name[:6] == 'email-':
+            data_list = read_email(raw_files, self.name[6:])
         else:
             raise NotImplementedError
 
@@ -459,7 +464,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'wiki-topcats'
+    dataset_name = 'email-eu-core'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
