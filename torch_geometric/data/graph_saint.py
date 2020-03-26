@@ -254,7 +254,7 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
     """
 
     def __init__(self, data, batch_size, walk_length, num_steps=1,
-                 sample_coverage=50, save_dir=None, num_workers=0, log=False):
+                 sample_coverage=50, save_dir=None, num_workers=0, log=True):
         self.walk_length = walk_length
         super(GraphSAINTRandomWalkSampler, self).__init__(
             data, batch_size, num_steps, sample_coverage, save_dir,
