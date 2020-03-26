@@ -199,7 +199,7 @@ def read_soc(files, name):
 
 
 def read_wiki(files, name):
-    if name == 'vote':
+    if name == 'vote' or name == 'talk':
         edge_file = files[0]
         skiprows = 4
         sep = '\t'
@@ -368,6 +368,7 @@ class SNAPDataset(InMemoryDataset):
         'wiki-vote': ['wiki-Vote.txt.gz'],
         'wiki-topcats': ['wiki-topcats.txt.gz',
                          'wiki-topcats-categories.txt.gz'],
+        'wiki-talk': ['wiki-Talk.txt.gz'],
         'gemsec-deezer': ['gemsec_deezer_dataset.tar.gz'],
         'gemsec-facebook': ['gemsec_facebook_dataset.tar.gz'],
         'musae-twitch': ['twitch.zip'],
@@ -480,7 +481,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'email-enron'
+    dataset_name = 'wiki-talk'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
