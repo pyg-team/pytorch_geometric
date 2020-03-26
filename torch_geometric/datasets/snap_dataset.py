@@ -25,8 +25,22 @@ def read_email(files, name):
                         torch.arange(0, edge_index.max() + 1)).all()
         num_nodes = edge_index.max() + 1
 
-        data = Data(edge_index=edge_index, num_nodes=num_nodes, y=y)
-        return [data]
+        return [Data(edge_index=edge_index, num_nodes=num_nodes, y=y)]
+
+    elif name == 'enron' or name == 'euall':
+        edge_index = pandas.read_csv(files[0], sep='\t', header=None,
+                                     skiprows=4)
+        edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+
+        assert torch.eq(torch.unique(edge_index.flatten()),
+                        torch.arange(0, edge_index.max() + 1)).all()
+        num_nodes = edge_index.max() + 1
+
+        if name == 'enron':
+            edge_index = to_undirected(edge_index, num_nodes)
+
+        return [Data(edge_index=edge_index, num_nodes=num_nodes)]
+
 
 def read_com(files, name):
     for file in files:
@@ -372,7 +386,9 @@ class SNAPDataset(InMemoryDataset):
         'com-amazon': ['com-amazon.ungraph.txt.gz',
                        'com-amazon.all.cmty.txt.gz'],
         'email-eu-core': ['email-Eu-core.txt.gz',
-                  'email-Eu-core-department-labels.txt.gz']
+                          'email-Eu-core-department-labels.txt.gz'],
+        'email-euall': ['email-EuAll.txt.gz'],
+        'email-enron': ['email-Enron.txt.gz'],
     }
 
     big_datasets = ['com-livejournal',
@@ -464,7 +480,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'email-eu-core'
+    dataset_name = 'email-enron'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
