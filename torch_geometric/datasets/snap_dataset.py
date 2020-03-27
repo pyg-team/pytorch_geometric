@@ -12,7 +12,7 @@ from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import to_undirected
 
 
-def read_ca_web_amazon(files, name):
+def read_ca_web_amazon_p2p(files, name):
     edge_index = pandas.read_csv(files[0], sep='\t', header=None,
                                  skiprows=4)
     edge_index = torch.from_numpy(edge_index.to_numpy()).t()
@@ -479,6 +479,15 @@ class SNAPDataset(InMemoryDataset):
         'amazon-0312': ['amazon0312.txt.gz'],
         'amazon-0505': ['amazon0505.txt.gz'],
         'amazon-0601': ['amazon0601.txt.gz'],
+        'p2p-gnutella04': ['p2p-Gnutella04.txt.gz'],
+        'p2p-gnutella05': ['p2p-Gnutella05.txt.gz'],
+        'p2p-gnutella06': ['p2p-Gnutella06.txt.gz'],
+        'p2p-gnutella08': ['p2p-Gnutella08.txt.gz'],
+        'p2p-gnutella09': ['p2p-Gnutella09.txt.gz'],
+        'p2p-gnutella24': ['p2p-Gnutella24.txt.gz'],
+        'p2p-gnutella25': ['p2p-Gnutella25.txt.gz'],
+        'p2p-gnutella30': ['p2p-Gnutella30.txt.gz'],
+        'p2p-gnutella31': ['p2p-Gnutella31.txt.gz'],
     }
 
     big_datasets = ['com-livejournal',
@@ -558,11 +567,13 @@ class SNAPDataset(InMemoryDataset):
             data_list = read_cit(raw_files, self.name[4:])
         elif self.name[:3] == 'ca-':
             # handing over full name to undirect only ca- datasets
-            data_list = read_ca_web_amazon(raw_files, self.name)
+            data_list = read_ca_web_amazon_p2p(raw_files, self.name)
         elif self.name[:4] == 'web-':
-            data_list = read_ca_web_amazon(raw_files, self.name[4:])
+            data_list = read_ca_web_amazon_p2p(raw_files, self.name[4:])
         elif self.name[:7] == 'amazon-':
-            data_list = read_ca_web_amazon(raw_files, self.name[7:])
+            data_list = read_ca_web_amazon_p2p(raw_files, self.name[7:])
+        elif self.name[:4] == 'p2p-':
+            data_list = read_ca_web_amazon_p2p(raw_files, self.name[4:])
         else:
             raise NotImplementedError
 
@@ -579,7 +590,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'amazon-0312'
+    dataset_name = 'p2p-gnutella31'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
