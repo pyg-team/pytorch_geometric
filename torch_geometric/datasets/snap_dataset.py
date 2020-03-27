@@ -12,6 +12,25 @@ from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import to_undirected
 
 
+def read_ca(files, name):
+    edge_index = pandas.read_csv(files[0], sep='\t', header=None,
+                                 skiprows=4)
+    edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+
+    idx_assoc = {}
+    for i, j in enumerate(torch.unique(edge_index).tolist()):
+        idx_assoc[j] = i
+
+    edge_index = edge_index.flatten()
+    for i, e in enumerate(edge_index.tolist()):
+        edge_index[i] = idx_assoc[e]
+    edge_index = edge_index.view(2, -1)
+
+    num_nodes = edge_index.max() + 1
+
+    return [Data(edge_index=edge_index, num_nodes=num_nodes)]
+
+
 def read_cit(files, name):
     if name == 'patents':
         edge_file = files[0]
@@ -445,6 +464,11 @@ class SNAPDataset(InMemoryDataset):
         'cit-hepth': ['cit-HepTh.txt.gz',
                       'cit-HepTh-dates.txt.gz'],
         'cit-patents': ['cit-Patents.txt.gz'],
+        'ca-astroph': ['ca-AstroPh.txt.gz'],
+        'ca-condmat': ['ca-CondMat.txt.gz'],
+        'ca-grqc': ['ca-GrQc.txt.gz'],
+        'ca-hepph': ['ca-HepPh.txt.gz'],
+        'ca-hepth': ['ca-HepTh.txt.gz'],
     }
 
     big_datasets = ['com-livejournal',
@@ -522,6 +546,8 @@ class SNAPDataset(InMemoryDataset):
             data_list = read_email(raw_files, self.name[6:])
         elif self.name[:4] == 'cit-':
             data_list = read_cit(raw_files, self.name[4:])
+        elif self.name[:3] == 'ca-':
+            data_list = read_ca(raw_files, self.name[3:])
         else:
             raise NotImplementedError
 
@@ -538,7 +564,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'cit-hepph'
+    dataset_name = 'ca-hepth'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
