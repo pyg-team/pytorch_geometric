@@ -12,7 +12,7 @@ from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import to_undirected
 
 
-def read_ca_web_amazon_p2p(files, name):
+def read_ca_web_amazon_p2p_roadnet(files, name):
     edge_index = pandas.read_csv(files[0], sep='\t', header=None,
                                  skiprows=4)
     edge_index = torch.from_numpy(edge_index.to_numpy()).t()
@@ -488,6 +488,9 @@ class SNAPDataset(InMemoryDataset):
         'p2p-gnutella25': ['p2p-Gnutella25.txt.gz'],
         'p2p-gnutella30': ['p2p-Gnutella30.txt.gz'],
         'p2p-gnutella31': ['p2p-Gnutella31.txt.gz'],
+        'roadnet-ca': ['roadNet-CA.txt.gz'],
+        'roadnet-pa': ['roadNet-PA.txt.gz'],
+        'roadnet-tx': ['roadNet-TX.txt.gz'],
     }
 
     big_datasets = ['com-livejournal',
@@ -566,14 +569,15 @@ class SNAPDataset(InMemoryDataset):
         elif self.name[:4] == 'cit-':
             data_list = read_cit(raw_files, self.name[4:])
         elif self.name[:3] == 'ca-':
-            # handing over full name to undirect only ca- datasets
-            data_list = read_ca_web_amazon_p2p(raw_files, self.name)
+            data_list = read_ca_web_amazon_p2p_roadnet(raw_files, self.name)
         elif self.name[:4] == 'web-':
-            data_list = read_ca_web_amazon_p2p(raw_files, self.name[4:])
+            data_list = read_ca_web_amazon_p2p_roadnet(raw_files, self.name)
         elif self.name[:7] == 'amazon-':
-            data_list = read_ca_web_amazon_p2p(raw_files, self.name[7:])
+            data_list = read_ca_web_amazon_p2p_roadnet(raw_files, self.name)
         elif self.name[:4] == 'p2p-':
-            data_list = read_ca_web_amazon_p2p(raw_files, self.name[4:])
+            data_list = read_ca_web_amazon_p2p_roadnet(raw_files, self.name)
+        elif self.name[:8] == 'roadnet-':
+            data_list = read_ca_web_amazon_p2p_roadnet(raw_files, self.name)
         else:
             raise NotImplementedError
 
@@ -590,7 +594,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'p2p-gnutella31'
+    dataset_name = 'roadNet-TX'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
