@@ -198,6 +198,8 @@ class Dataset(torch.utils.data.Dataset):
             indices = indices[idx]
         elif torch.is_tensor(idx):
             if idx.dtype == torch.long:
+                if len(idx.shape) == 0:
+                    idx = idx.unsqueeze(0)
                 return self.index_select(idx.tolist())
             elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
                 return self.index_select(idx.nonzero().flatten().tolist())
