@@ -25,8 +25,10 @@ def read_ca_web_amazon(files, name):
     for i, e in enumerate(edge_index.tolist()):
         edge_index[i] = idx_assoc[e]
     edge_index = edge_index.view(2, -1)
-
     num_nodes = edge_index.max() + 1
+
+    if 'ca-' in name:
+        edge_index = to_undirected(edge_index, num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
@@ -555,7 +557,8 @@ class SNAPDataset(InMemoryDataset):
         elif self.name[:4] == 'cit-':
             data_list = read_cit(raw_files, self.name[4:])
         elif self.name[:3] == 'ca-':
-            data_list = read_ca_web_amazon(raw_files, self.name[3:])
+            # handing over full name to undirect only ca- datasets
+            data_list = read_ca_web_amazon(raw_files, self.name)
         elif self.name[:4] == 'web-':
             data_list = read_ca_web_amazon(raw_files, self.name[4:])
         elif self.name[:7] == 'amazon-':
