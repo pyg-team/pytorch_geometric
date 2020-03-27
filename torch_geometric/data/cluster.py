@@ -22,7 +22,9 @@ class ClusterData(torch.utils.data.Dataset):
             (default: :obj:`False`)
         save_dir (string, optional): If set, will save the partitioned data to
             the :obj:`save_dir` directory for faster re-use.
+            (default: :obj:`None`)
     """
+
     def __init__(self, data, num_parts, recursive=False, save_dir=None):
         assert data.edge_index is not None
 
@@ -40,11 +42,11 @@ class ClusterData(torch.utils.data.Dataset):
             if save_dir is not None:
                 torch.save((adj, partptr, perm), path)
 
-        self.data = self.permute_data(data, perm, adj)
+        self.data = self.__permute_data__(data, perm, adj)
         self.partptr = partptr
         self.perm = perm
 
-    def permute_data(self, data, perm, adj):
+    def __permute_data__(self, data, perm, adj):
         data = copy.copy(data)
         num_nodes = data.num_nodes
 
@@ -93,6 +95,15 @@ class ClusterLoader(torch.utils.data.DataLoader):
     and their between-cluster links from a large-scale graph data object to
     form a mini-batch.
 
+    .. note::
+
+        Use :class:`torch_geometric.data.ClusterData` and
+        :class:`torch_geometric.data.ClusterLoader` in conjunction to
+        form mini-batches of clusters.
+        For an example of using Cluster-GCN, see `examples/cluster_gcn.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        cluster_gcn.py>`_.
+
     Args:
         cluster_data (torch_geometric.data.ClusterData): The already
             partioned data object.
@@ -101,6 +112,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch. (default: :obj:`False`)
     """
+
     def __init__(self, cluster_data, batch_size=1, shuffle=False, **kwargs):
         class HelperDataset(torch.utils.data.Dataset):
             def __len__(self):
@@ -152,6 +164,5 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
             return data
 
-        super(ClusterLoader,
-              self).__init__(HelperDataset(), batch_size, shuffle,
-                             collate_fn=collate, **kwargs)
+        super(ClusterLoader, self).__init__(
+            HelperDataset(), batch_size, shuffle, collate_fn=collate, **kwargs)

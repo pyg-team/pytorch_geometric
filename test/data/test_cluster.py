@@ -3,7 +3,7 @@ from torch_geometric.data import Data, ClusterData, ClusterLoader
 from torch_geometric.utils import to_dense_adj
 
 
-def test_cluster_data():
+def test_cluster_gcn():
     adj = torch.tensor([
         [1, 1, 1, 0, 1, 0],
         [1, 1, 0, 1, 0, 1],
@@ -37,6 +37,16 @@ def test_cluster_data():
         [0, 0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1, 1],
     ]
+
+    data = cluster_data[0]
+    assert data.x.tolist() == [[0, 0], [2, 2], [4, 4]]
+    assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
+                                        [0, 1, 2, 0, 1, 2, 0, 1, 2]]
+
+    data = cluster_data[1]
+    assert data.x.tolist() == [[1, 1], [3, 3], [5, 5]]
+    assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
+                                        [0, 1, 2, 0, 1, 2, 0, 1, 2]]
 
     loader = ClusterLoader(cluster_data, batch_size=1)
     it = iter(loader)

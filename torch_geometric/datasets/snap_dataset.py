@@ -3,7 +3,7 @@ import os.path as osp
 import json
 import torch
 import pandas
-import numpy as np
+import numpy as npD
 from dateutil.parser import parse, parserinfo
 from torch_sparse import coalesce
 from torch_geometric.data import Data, InMemoryDataset, download_url, \
@@ -178,8 +178,8 @@ def read_ego(files, name):
         feat_file = files[i + 3]
         featnames_file = files[i + 4]
 
-        x = pandas.read_csv(feat_file, sep=' ', header=None)
-        x = torch.from_numpy(x.to_numpy())
+        x = pandas.read_csv(feat_file, sep=' ', header=None, dtype=np.float32)
+        x = torch.from_numpy(x.values)
 
         idx, x = x[:, 0].to(torch.long), x[:, 1:].to(torch.float)
         idx_assoc = {}
@@ -196,8 +196,9 @@ def read_ego(files, name):
         circle = torch.tensor(circles)
         circle_batch = torch.tensor(circles_batch)
 
-        edge_index = pandas.read_csv(edges_file, sep=' ', header=None)
-        edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+        edge_index = pandas.read_csv(edges_file, sep=' ', header=None,
+                                     dtype=np.int64)
+        edge_index = torch.from_numpy(edge_index.values).t()
         edge_index = edge_index.flatten()
         for i, e in enumerate(edge_index.tolist()):
             edge_index[i] = idx_assoc[e]
@@ -209,8 +210,9 @@ def read_ego(files, name):
 
         row, col = edge_index
 
-        x_ego = pandas.read_csv(egofeat_file, sep=' ', header=None)
-        x_ego = torch.from_numpy(x_ego.to_numpy()).to(torch.float)
+        x_ego = pandas.read_csv(egofeat_file, sep=' ', header=None,
+                                dtype=np.float32)
+        x_ego = torch.from_numpy(x_ego.values)
 
         row_ego = torch.full((x.size(0), ), x.size(0), dtype=torch.long)
         col_ego = torch.arange(x.size(0))
@@ -261,8 +263,8 @@ def read_soc(files, name):
             skiprows = 0
 
         edge_index = pandas.read_csv(files[0], sep='\t', header=None,
-                                     skiprows=skiprows)
-        edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+                                     skiprows=skiprows, dtype=np.int64)
+        edge_index = torch.from_numpy(edge_index.values).t()
         num_nodes = edge_index.max().item() + 1
         edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
 
@@ -280,8 +282,8 @@ def read_wiki(files, name):
         sep = ' '
 
     edge_index = pandas.read_csv(edge_file, sep=sep, header=None,
-                                 skiprows=skiprows)
-    edge_index = torch.from_numpy(edge_index.to_numpy()).t()
+                                 skiprows=skiprows, dtype=np.int64)
+    edge_index = torch.from_numpy(edge_index.values).t()
 
     idx = torch.unique(edge_index.flatten())
     idx_assoc = torch.full((edge_index.max() + 1, ), -1, dtype=torch.long)
