@@ -12,7 +12,7 @@ from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import to_undirected
 
 
-def read_ca(files, name):
+def read_ca_and_web(files, name):
     edge_index = pandas.read_csv(files[0], sep='\t', header=None,
                                  skiprows=4)
     edge_index = torch.from_numpy(edge_index.to_numpy()).t()
@@ -469,6 +469,10 @@ class SNAPDataset(InMemoryDataset):
         'ca-grqc': ['ca-GrQc.txt.gz'],
         'ca-hepph': ['ca-HepPh.txt.gz'],
         'ca-hepth': ['ca-HepTh.txt.gz'],
+        'web-berkstan': ['web-BerkStan.txt.gz'],
+        'web-google': ['web-Google.txt.gz'],
+        'web-notredame': ['web-NotreDame.txt.gz'],
+        'web-stanford': ['web-Stanford.txt.gz'],
     }
 
     big_datasets = ['com-livejournal',
@@ -547,7 +551,9 @@ class SNAPDataset(InMemoryDataset):
         elif self.name[:4] == 'cit-':
             data_list = read_cit(raw_files, self.name[4:])
         elif self.name[:3] == 'ca-':
-            data_list = read_ca(raw_files, self.name[3:])
+            data_list = read_ca_and_web(raw_files, self.name[3:])
+        elif self.name[:4] == 'web-':
+            data_list = read_ca_and_web(raw_files, self.name[4:])
         else:
             raise NotImplementedError
 
@@ -564,7 +570,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'ca-hepth'
+    dataset_name = 'web-berkstan'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
