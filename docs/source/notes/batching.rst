@@ -159,7 +159,7 @@ For a correct mini-batching procedure in bipartite graphs, we need to tell PyTor
 
     def __inc__(self, key, value):
         if key == 'edge_index':
-            return torch.tensor([self.x_s.size(0), self.x_t.size(0)])
+            return torch.tensor([[self.x_s.size(0)], [self.x_t.size(0)]])
         else:
             return super(BipartiteData, self).__inc__(key, value)
 
