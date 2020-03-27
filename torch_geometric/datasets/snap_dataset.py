@@ -12,7 +12,7 @@ from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import to_undirected
 
 
-def read_ca_and_web(files, name):
+def read_ca_web_amazon(files, name):
     edge_index = pandas.read_csv(files[0], sep='\t', header=None,
                                  skiprows=4)
     edge_index = torch.from_numpy(edge_index.to_numpy()).t()
@@ -473,6 +473,10 @@ class SNAPDataset(InMemoryDataset):
         'web-google': ['web-Google.txt.gz'],
         'web-notredame': ['web-NotreDame.txt.gz'],
         'web-stanford': ['web-Stanford.txt.gz'],
+        'amazon-0302': ['amazon0302.txt.gz'],
+        'amazon-0312': ['amazon0312.txt.gz'],
+        'amazon-0505': ['amazon0505.txt.gz'],
+        'amazon-0601': ['amazon0601.txt.gz'],
     }
 
     big_datasets = ['com-livejournal',
@@ -551,9 +555,11 @@ class SNAPDataset(InMemoryDataset):
         elif self.name[:4] == 'cit-':
             data_list = read_cit(raw_files, self.name[4:])
         elif self.name[:3] == 'ca-':
-            data_list = read_ca_and_web(raw_files, self.name[3:])
+            data_list = read_ca_web_amazon(raw_files, self.name[3:])
         elif self.name[:4] == 'web-':
-            data_list = read_ca_and_web(raw_files, self.name[4:])
+            data_list = read_ca_web_amazon(raw_files, self.name[4:])
+        elif self.name[:7] == 'amazon-':
+            data_list = read_ca_web_amazon(raw_files, self.name[7:])
         else:
             raise NotImplementedError
 
@@ -570,7 +576,7 @@ class SNAPDataset(InMemoryDataset):
 
 
 if __name__ == '__main__':
-    dataset_name = 'web-berkstan'
+    dataset_name = 'amazon-0312'
     path = osp.join(osp.dirname(osp.realpath(__file__)),
                     '..', '..', 'data', dataset_name)
     dataset = SNAPDataset(path, dataset_name)
