@@ -43,7 +43,6 @@ class GraphSAINTSampler(object):
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
-
     def __init__(self, data, batch_size, num_steps=1, sample_coverage=50,
                  save_dir=None, num_workers=0, log=True):
         assert data.edge_index is not None
@@ -214,7 +213,6 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
     Args:
         batch_size (int): The number of nodes to sample per batch.
     """
-
     def __sample_nodes__(self, num_examples):
         edge_sample = torch.randint(0, self.E, (num_examples, self.batch_size),
                                     dtype=torch.long)
@@ -229,7 +227,6 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
     Args:
         batch_size (int): The number of edges to sample per batch.
     """
-
     def __sample_nodes__(self, num_examples):
         # This function corresponds to the `Edge2` sampler in the official
         # code repository that weights all edges as equally important.
@@ -252,13 +249,12 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
         batch_size (int): The number of walks to sample per batch.
         walk_length (int): The length of each random walk.
     """
-
     def __init__(self, data, batch_size, walk_length, num_steps=1,
                  sample_coverage=50, save_dir=None, num_workers=0, log=True):
         self.walk_length = walk_length
-        super(GraphSAINTRandomWalkSampler, self).__init__(
-            data, batch_size, num_steps, sample_coverage, save_dir,
-            num_workers, log)
+        super(GraphSAINTRandomWalkSampler,
+              self).__init__(data, batch_size, num_steps, sample_coverage,
+                             save_dir, num_workers, log)
 
     @property
     def __filename__(self):

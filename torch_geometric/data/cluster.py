@@ -24,8 +24,8 @@ class ClusterData(torch.utils.data.Dataset):
             the :obj:`save_dir` directory for faster re-use.
             (default: :obj:`None`)
     """
-
-    def __init__(self, data, num_parts, recursive=False, save_dir=None):
+    def __init__(self, data, num_parts, recursive=False, save_dir=None,
+                 log=True):
         assert data.edge_index is not None
 
         recursive_str = '_recursive' if recursive else ''
@@ -35,12 +35,18 @@ class ClusterData(torch.utils.data.Dataset):
         if save_dir is not None and osp.exists(path):
             adj, partptr, perm = torch.load(path)
         else:
+            if log:  # pragma: no cover
+                print('Compute METIS partitioning...')
+
             (row, col), edge_attr = data.edge_index, data.edge_attr
             adj = SparseTensor(row=row, col=col, value=edge_attr)
             adj, partptr, perm = adj.partition(num_parts, recursive)
 
             if save_dir is not None:
                 torch.save((adj, partptr, perm), path)
+
+            if log:  # pragma: no cover
+                print('Done!')
 
         self.data = self.__permute_data__(data, perm, adj)
         self.partptr = partptr
@@ -112,7 +118,6 @@ class ClusterLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch. (default: :obj:`False`)
     """
-
     def __init__(self, cluster_data, batch_size=1, shuffle=False, **kwargs):
         class HelperDataset(torch.utils.data.Dataset):
             def __len__(self):
@@ -164,5 +169,6 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
             return data
 
-        super(ClusterLoader, self).__init__(
-            HelperDataset(), batch_size, shuffle, collate_fn=collate, **kwargs)
+        super(ClusterLoader,
+              self).__init__(HelperDataset(), batch_size, shuffle,
+                             collate_fn=collate, **kwargs)
