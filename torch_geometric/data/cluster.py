@@ -23,6 +23,8 @@ class ClusterData(torch.utils.data.Dataset):
         save_dir (string, optional): If set, will save the partitioned data to
             the :obj:`save_dir` directory for faster re-use.
             (default: :obj:`None`)
+        log (bool, optional): If set to :obj:`False`, will not log any
+            progress. (default: :obj:`True`)
     """
     def __init__(self, data, num_parts, recursive=False, save_dir=None,
                  log=True):

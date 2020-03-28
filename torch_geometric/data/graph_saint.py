@@ -40,7 +40,7 @@ class GraphSAINTSampler(object):
             sampling.
             :obj:`0` means that the data will be sampled in the main process.
             (default: :obj:`0`)
-        log (bool, optional): If set to :obj:`False`, will not log any learning
+        log (bool, optional): If set to :obj:`False`, will not log any
             progress. (default: :obj:`True`)
     """
     def __init__(self, data, batch_size, num_steps=1, sample_coverage=50,
