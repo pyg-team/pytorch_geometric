@@ -67,7 +67,8 @@ class Node2Vec(torch.nn.Module):
         subset = subset.repeat(self.walks_per_node)
 
         rw = random_walk(edge_index[0], edge_index[1], subset,
-                         self.walk_length, self.p, self.q, self.num_nodes)
+                         self.walk_length, self.p, self.q, False,
+                         self.num_nodes)
 
         walks = []
         num_walks_per_rw = 1 + self.walk_length + 1 - self.context_size
