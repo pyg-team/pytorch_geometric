@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+import multiprocessing as mp
 
 try:
     import gdist
@@ -63,14 +64,12 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
 
     dest = None if dest is None else dest.detach().cpu().to(torch.int).numpy()
 
-    outs = []
-    for i in range(len(src)):
-        s = src[i:i + 1]
-        d = None if dest is None else dest[i:i + 1]
-
-        out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
-        out = torch.from_numpy(out).to(dtype)
-        outs.append(out)
+    pool = mp.Pool(mp.cpu_count())
+    outs = pool.starmap(
+        _parallel_loop,
+        [(pos, face, src, dest, max_distance, norm, i, dtype) for i in range(len(src))]
+    )
+    pool.close()
 
     out = torch.cat(outs, dim=0)
 
@@ -78,3 +77,10 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
         out = out.view(-1, pos.shape[0])
 
     return out
+
+def _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype):
+    s = src[i:i + 1]
+    d = None if dest is None else dest[i:i + 1]
+
+    out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
+    return torch.from_numpy(out).to(dtype)
