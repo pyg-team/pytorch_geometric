@@ -9,7 +9,7 @@ except ImportError:
 
 
 def geodesic_distance(pos, face, src=None, dest=None, norm=True,
-                      max_distance=None):
+                      max_distance=None, num_workers=0):
     r"""Computes (normalized) geodesic distances of a mesh given by :obj:`pos`
     and :obj:`face`. If :obj:`src` and :obj:`dest` are given, this method only
     computes the geodesic distances for the respective source and target
@@ -32,6 +32,11 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
         max_distance (float, optional): If given, only yields results for
             geodesic distances less than :obj:`max_distance`. This will speed
             up runtime dramatically. (default: :obj:`None`)
+        num_workers (int, optional): How many subprocesses to use for
+            calculating geodesic distances.
+            :obj:`0` means that the data will be sampled in the main process.
+            :obj:`-1` means that the available amount of CPU cores is used.
+            (default: :obj:`0`)
 
     :rtype: Tensor
     """
@@ -64,12 +69,18 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
 
     dest = None if dest is None else dest.detach().cpu().to(torch.int).numpy()
 
-    pool = mp.Pool(mp.cpu_count())
-    outs = pool.starmap(
-        _parallel_loop,
-        [(pos, face, src, dest, max_distance, norm, i, dtype) for i in range(len(src))]
-    )
-    pool.close()
+    num_workers = mp.cpu_count() if num_workers < -1 else num_workers
+    if num_workers > 0:
+        with mp.Pool(num_workers) as pool:
+            outs = pool.map(
+                _parallel_loop,
+                [(pos, face, src, dest, max_distance, norm, i, dtype)
+                 for i in range(len(src))])
+    else:
+        outs = [
+            _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype)
+            for i in range(len(src))
+        ]
 
     out = torch.cat(outs, dim=0)
 
@@ -77,6 +88,7 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
         out = out.view(-1, pos.shape[0])
 
     return out
+
 
 def _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype):
     s = src[i:i + 1]
