@@ -34,7 +34,7 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
             up runtime dramatically. (default: :obj:`None`)
         num_workers (int, optional): How many subprocesses to use for
             calculating geodesic distances.
-            :obj:`0` means that the data will be sampled in the main process.
+            :obj:`0` means that computation takes place in the main process.
             :obj:`-1` means that the available amount of CPU cores is used.
             (default: :obj:`0`)
 
