@@ -61,6 +61,10 @@ class Inspector(object):
 
 
 class MessagePassing(torch.nn.Module):
+
+    adj_formats = ['edge_index', 'sparse_adj', 'dense_adj']
+    mp_formats = ['fused', 'sparse', 'partial']
+
     def __init__(self, aggr: str = "add", flow: str = "source_to_target",
                  format=None, node_dim: int = 0, partial_max_deg: int = -1,
                  partial_binning: bool = True, torchscript: bool = False):
@@ -87,6 +91,12 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.message_and_aggregate)
         self.inspector.inspect(self.update, pop_first=True)
 
+        self.__cached_mp_format__ = {}
+
+        # Support for GNNExplainer.
+        self.__explain__ = False
+        self.__edge_mask__ = None
+
     def supports_fused_format(self):
         return self.inspector.implements('message_and_aggregate')
 
@@ -99,9 +109,6 @@ class MessagePassing(torch.nn.Module):
                 (self.inspector.implements('partial_aggregate') or self.aggr))
 
     def format(self, adj_type: AdjType) -> Tuple[str, str]:
-        # adj_formats = ['edge_index', 'sparse_adj', 'dense_adj']
-        # mp_formats = ['fused', 'sparse', 'partial']
-
         adj_format = None
         if (torch.is_tensor(adj_type) and adj_type.size(0) == 2
                 and adj_type.dtype == torch.long):
@@ -122,8 +129,12 @@ class MessagePassing(torch.nn.Module):
 
         mp_format = None
 
+        # Use the already determined cached message passing format.
+        if adj_format in self.__cached_mp_format__:
+            mp_format = self.__cached_mp_format__[adj_format]
+
         # `edge_index` only support "tradional" message passing.
-        if adj_format == 'edge_index':
+        elif adj_format == 'edge_index':
             mp_format = 'sparse'
 
         # Set to user-desired format (in case it is given).
@@ -148,9 +159,11 @@ class MessagePassing(torch.nn.Module):
             mp_format = 'partial'
 
         if mp_format is None:
-            return ValueError(
+            return TypeError(
                 (f'Could not detect a valid message passing implementation '
                  f'for adjacency format "{adj_format}".'))
+
+        self.__cached_mp_format__[adj_format] = mp_format
 
         return adj_format, mp_format
 
@@ -159,29 +172,31 @@ class MessagePassing(torch.nn.Module):
 
         adj_format, mp_format = self.format(adj_type)
 
+        if self.__explain__:
+            mp_format = 'sparse'
+            if adj_format == 'dense_adj' or not self.supports_sparse_format():
+                raise TypeError(
+                    ('`MessagePassing.propagate` supports `GNNExplainer` only '
+                     'for sparse aggregations.`'))
+
         if ((adj_format == 'sparse_adj' or adj_format == 'dense_adj')
                 and self.flow == 'target_to_source'):
-            raise ValueError(
+            raise TypeError(
                 ('Flow direction "target_to_source" is invalid for message '
                  'passing based on adjacency matrices. If you really want to '
                  'make use of reverse message passing flow, pass in the '
                  'transposed adjacency matrix to the message passing module, '
                  'e.g., `adj_t.t()`.'))
 
+        # For `edge_index`, we also want to keep track of its actual sparse
+        # matrix shape.
         if adj_format == 'edge_index':
             size = [None, None] if size is None else size
             size = size.tolist() if torch.is_tensor(size) else size
             size = list(size)
             assert len(size) == 2
-        elif adj_format == 'sparse_adj':
-            size = list(adj_type.sparse_sizes())[::-1]
-        elif adj_format == 'dense_adj':
-            size = list(adj_type.sizes())[:-2:-1]
 
         # We collect all arguments used for message passing in `data`.
-        data = self.__collect__(adj_format, mp_format, adj_type, size, kwargs)
-
-        pass
 
     def message(self) -> torch.Tensor:
         raise NotImplementedError
