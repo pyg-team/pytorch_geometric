@@ -5,10 +5,13 @@ from torch_scatter import scatter
 from torch_sparse import SparseTensor
 
 from .inspector import Inspector
-from .collector import Collector, EdgeIndexSparseCollector
+from .collector import (Collector, EdgeIndexSparseCollector,
+                        SparseAdjSparseCollector, SparseAdjFusedCollector)
 
 __collectors__: Dict[str, Collector] = {
     ('edge_index', 'sparse'): EdgeIndexSparseCollector(),
+    ('sparse_adj', 'fused'): SparseAdjFusedCollector(),
+    ('sparse_adj', 'sparse'): SparseAdjSparseCollector(),
 }
 
 
@@ -152,12 +155,6 @@ class MessagePassing(torch.nn.Module):
 
         return collector
 
-    def __suffix2id__(self) -> Dict[str, int]:
-        suffix2idx: Dict[str, int] = {'_i': 1, '_j': 0}
-        if self.flow == 'target_to_source':
-            suffix2idx = {'_i': 0, '_j': 1}
-        return suffix2idx
-
     def propagate(self, adj_type: AdjType, size: Optional[Tuple[int]] = None,
                   **kwargs) -> torch.Tensor:
 
@@ -193,7 +190,7 @@ class MessagePassing(torch.nn.Module):
         collector = self.__get_collector__(adj_format, mp_format)
         kwargs = collector.collect(adj_type, size, kwargs)
 
-        # Perform conditional message passing.
+        # Perform "conditional" message passing.
         if mp_format == 'fused':
             inp = self.inspector.distribute(self.message_and_aggregate, kwargs)
             out = self.message_and_aggregate(**inp)
@@ -204,9 +201,15 @@ class MessagePassing(torch.nn.Module):
 
             if self.__explain__:
                 edge_mask = self.__edge_mask__.sigmoid()
+                # If the edge sizes do not match, we assume that the message
+                # passing implementation has added self-loops to the graph
+                # before calling `self.propagate`. This is not ideal, but
+                # sufficient in most cases.
                 if out.size(0) != edge_mask.size(0):
-                    # NOTE: This does only work for "edge_index" format.
-                    # TODO: Make use of unified `add_self_loops` interface.
+                    # NOTE: This does only work for "edge_index" format, but
+                    # could be enhanced to also support "sparse_adj" format.
+                    # TODO: Make use of unified `add_self_loops` interface to
+                    # implement this.
                     loop = edge_mask.new_ones(size[0])
                     edge_mask = torch.cat([edge_mask, loop], dim=0)
                 assert out.size(0) == edge_mask.size(0)

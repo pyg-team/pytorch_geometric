@@ -19,8 +19,7 @@ class MyConv(MessagePassing):
 def test_message_passing():
     row = torch.tensor([0, 0, 1, 1, 2, 2])
     col = torch.tensor([1, 2, 0, 2, 0, 1])
-    x = torch.randn(3, 2)
-    y = torch.randn(3, 4)
+    x = torch.Tensor([1, 2, 3])
 
     sparse_adj_t = SparseTensor(row=row, col=col).t()
     dense_adj_t = sparse_adj_t.to_dense()
@@ -37,7 +36,8 @@ def test_message_passing():
     print(conv.get_adj_format(dense_adj_t))
     print(conv.get_adj_format(edge_index))
 
-    conv.propagate(edge_index, x=x, y=y)
+    out = conv.propagate(edge_index, x=x)
+    print(out)
     # out = conv(x, edge_index)  # Example input
 
     # traced_bla = torch.jit.script(bla)
