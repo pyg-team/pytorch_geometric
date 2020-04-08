@@ -1,17 +1,23 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
-from torch_scatter import scatter
+from torch_scatter import scatter, segment_csr
 from torch_sparse import SparseTensor
 
 from .inspector import Inspector
-from .collector import (Collector, EdgeIndexSparseCollector,
-                        SparseAdjSparseCollector, SparseAdjFusedCollector)
+from .collector import (
+    Collector,
+    EdgeIndexSparseCollector,
+    SparseAdjSparseCollector,
+    SparseAdjFusedCollector,
+    DenseAdjFusedCollector,
+)
 
 __collectors__: Dict[str, Collector] = {
     ('edge_index', 'sparse'): EdgeIndexSparseCollector(),
     ('sparse_adj', 'fused'): SparseAdjFusedCollector(),
     ('sparse_adj', 'sparse'): SparseAdjSparseCollector(),
+    ('dense_adj', 'fused'): DenseAdjFusedCollector(),
 }
 
 
@@ -42,7 +48,8 @@ class MessagePassing(torch.nn.Module):
         assert self.node_dim >= 0
 
         self.inspector = Inspector(self)
-        self.inspector.inspect(self.message_and_aggregate)
+        self.inspector.inspect(self.sparse_message_and_aggregate)
+        self.inspector.inspect(self.dense_message_and_aggregate)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.partial_message)
@@ -60,8 +67,11 @@ class MessagePassing(torch.nn.Module):
         self.__explain__: bool = False
         self.__edge_mask__: bool = None
 
-    def supports_fused_format(self) -> bool:
-        return self.inspector.implements('message_and_aggregate')
+    def supports_sparse_fused_format(self) -> bool:
+        return self.inspector.implements('sparse_message_and_aggregate')
+
+    def supports_dense_fused_format(self) -> bool:
+        return self.inspector.implements('dense_message_and_aggregate')
 
     def supports_sparse_format(self) -> bool:
         return (self.inspector.implements('message')
@@ -116,7 +126,11 @@ class MessagePassing(torch.nn.Module):
             mp_format = self.format
 
         # Always choose `fused` if applicable.
-        elif self.supports_fused_format():
+        elif (adj_format == 'sparse_adj'
+              and self.supports_sparse_fused_format()):
+            mp_format = 'fused'
+
+        elif adj_format == 'dense_adj' and self.supports_dense_fused_format():
             mp_format = 'fused'
 
         # We prefer "sparse" format over the "partial" format for sparse
@@ -191,13 +205,19 @@ class MessagePassing(torch.nn.Module):
         kwargs = collector.collect(adj_type, size, kwargs)
 
         # Perform "conditional" message passing.
-        if mp_format == 'fused':
-            inp = self.inspector.distribute(self.message_and_aggregate, kwargs)
-            out = self.message_and_aggregate(**inp)
+        if adj_format == 'sparse_adj' and mp_format == 'fused':
+            inputs = self.inspector.distribute(
+                self.sparse_message_and_aggregate, kwargs)
+            out = self.sparse_message_and_aggregate(**inputs)
+
+        elif adj_format == 'dense_adj' and mp_format == 'fused':
+            inputs = self.inspector.distribute(
+                self.dense_message_and_aggregate, kwargs)
+            out = self.dense_message_and_aggregate(**inputs)
 
         elif mp_format == 'sparse':
-            inp = self.inspector.distribute(self.message, kwargs)
-            out = self.message(**inp)
+            inputs = self.inspector.distribute(self.message, kwargs)
+            out = self.message(**inputs)
 
             if self.__explain__:
                 edge_mask = self.__edge_mask__.sigmoid()
@@ -215,18 +235,21 @@ class MessagePassing(torch.nn.Module):
                 assert out.size(0) == edge_mask.size(0)
                 out = out * edge_mask.view(-1, 1)
 
-            inp = self.inspector.distribute(self.aggregate, kwargs)
-            out = self.aggregate(out, **inp)
+            inputs = self.inspector.distribute(self.aggregate, kwargs)
+            out = self.aggregate(out, **inputs)
 
         elif mp_format == 'partial':
-            inp = self.inspector.distribute(self.partial_message, kwargs)
-            out = self.__partial_message__(**inp)
-            inp = self.inspector.distribute(self.partial_aggregate, kwargs)
-            out = self.__partial__aggregate__(out, **inp)
+            inputs = self.inspector.distribute(self.partial_message, kwargs)
+            out = self.__partial_message__(**inputs)
+            inputs = self.inspector.distribute(self.partial_aggregate, kwargs)
+            out = self.__partial__aggregate__(out, **inputs)
 
         return out
 
-    def message_and_aggregate(self) -> torch.Tensor:
+    def sparse_message_and_aggregate(self) -> torch.Tensor:
+        raise NotImplementedError
+
+    def dense_message_and_aggregate(self) -> torch.Tensor:
         raise NotImplementedError
 
     def message(self) -> torch.Tensor:
@@ -239,8 +262,11 @@ class MessagePassing(torch.nn.Module):
         if self.aggr is None:
             raise NotImplementedError
 
-        return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
-                       reduce=self.aggr)
+        if ptr is not None:
+            return segment_csr(inputs, ptr, reduce=self.aggr)
+        else:
+            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
+                           reduce=self.aggr)
 
     def partial_message(self) -> torch.Tensor:
         raise NotImplementedError
@@ -254,8 +280,7 @@ class MessagePassing(torch.nn.Module):
     def __partial__aggregate__(self, kwargs):
         pass
 
-    def check_propagate_consistency(self, adj_type: AdjType,
-                                    size: Optional[Tuple[int]] = None,
+    def check_propagate_consistency(self, adj_t: SparseTensor,
                                     **kwargs) -> bool:
         raise NotImplementedError
 

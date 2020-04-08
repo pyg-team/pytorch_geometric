@@ -12,14 +12,20 @@ class MyConv(MessagePassing):
 
         return self.propagate(edge_index, x=x, y=x)
 
+    def sparse_message_and_aggregate(self, adj_t, x_j):
+        return adj_t.matmul(x_j, reduce='add')
+
+    def dense_message_and_aggregate(self, adj_t, x_j):
+        return adj_t.matmul(x_j)
+
     def message(self, x_j):
         return x_j
 
 
 def test_message_passing():
-    row = torch.tensor([0, 0, 1, 1, 2, 2])
-    col = torch.tensor([1, 2, 0, 2, 0, 1])
-    x = torch.Tensor([1, 2, 3])
+    row = torch.tensor([0, 1, 1, 2, 2])
+    col = torch.tensor([1, 0, 2, 0, 1])
+    x = torch.Tensor([1, 2, 3]).view(-1, 1)
 
     sparse_adj_t = SparseTensor(row=row, col=col).t()
     dense_adj_t = sparse_adj_t.to_dense()
@@ -28,7 +34,8 @@ def test_message_passing():
     conv = MyConv()
     print(conv)
 
-    print(conv.supports_fused_format())
+    print(conv.supports_sparse_fused_format())
+    print(conv.supports_dense_fused_format())
     print(conv.supports_sparse_format())
     print(conv.supports_partial_format())
 
@@ -36,13 +43,16 @@ def test_message_passing():
     print(conv.get_adj_format(dense_adj_t))
     print(conv.get_adj_format(edge_index))
 
-    out = conv.propagate(edge_index, x=x)
-    print(out)
-    # out = conv(x, edge_index)  # Example input
+    out1 = conv.propagate(edge_index, x=x)
+    out2 = conv.propagate(sparse_adj_t, x=x)
+    out3 = conv.propagate(dense_adj_t, x=x)
+    assert out1.tolist() == out2.tolist()
+    assert out1.tolist() == out3.tolist()
 
-    # traced_bla = torch.jit.script(bla)
-    # print(traced_bla)
-
-    # conv = torch.jit.script(conv)  # We can now convert it to a ScriptModule.
-    # out = conv(x, edge_index)
-    # print(out.size())
+    conv.node_dim = 1
+    x = torch.Tensor([[1, 2, 3], [1, 2, 3]]).view(2, -1, 1)
+    out1 = conv.propagate(edge_index, x=x)
+    out2 = conv.propagate(sparse_adj_t, x=x)
+    out3 = conv.propagate(dense_adj_t, x=x)
+    assert out1.tolist() == out2.tolist()
+    assert out2.tolist() == out3.tolist()

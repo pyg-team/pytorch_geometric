@@ -90,7 +90,7 @@ class SparseAdjFusedCollector(Collector):
                 kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
         suffix2idx: Dict[str, int] = {'_i': 0, '_j': 1}
-        keys = self.conv.inspector.keys(['message_and_aggregate'])
+        keys = self.conv.inspector.keys(['sparse_message_and_aggregate'])
 
         out: Dict[str, Any] = {}
         for key in keys - self.special_args:
@@ -153,12 +153,44 @@ class SparseAdjSparseCollector(Collector):
 
             out[key] = item
 
-        out['edge_index_j'] = adj_t.storage.row()
-        out['edge_index_i'] = col
+        out['edge_index_j'] = col
+        out['edge_index_i'] = adj_t.storage.row()
         out['index'] = out['edge_index_i']
-        out['size_j'] = adj_t.size()
-        out['size_i'] = adj_t.size()
+        out['size_j'] = adj_t.sparse_size(0)
+        out['size_i'] = adj_t.sparse_size(1)
         out['dim_size'] = out['size_i']
         out['ptr'] = rowptr
+
+        return out
+
+
+class DenseAdjFusedCollector(Collector):
+
+    special_args = set(['adj_t'])
+
+    def collect(self, adj_t: SparseTensor, size: Optional[Tuple[int, int]],
+                kwargs: Dict[str, Any]) -> Dict[str, Any]:
+
+        suffix2idx: Dict[str, int] = {'_i': 0, '_j': 1}
+        keys = self.conv.inspector.keys(['dense_message_and_aggregate'])
+
+        out: Dict[str, Any] = {}
+        for key in keys - self.special_args:
+            if key[-2:] not in self.conv.suffixes:
+                item = kwargs.get(key, inspect.Parameter.empty)
+            else:
+                idx = suffix2idx[key[-2:]]
+                item = kwargs.get(key[:-2], inspect.Parameter.empty)
+
+                if isinstance(item, (tuple, list)):
+                    assert len(item) == 2
+                    item = item[idx]
+
+            if item is inspect.Parameter.empty:
+                continue
+
+            out[key] = item
+
+        out['adj_t'] = adj_t
 
         return out
