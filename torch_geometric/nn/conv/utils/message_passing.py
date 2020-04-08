@@ -1,82 +1,36 @@
-import inspect
-from typing import Dict, List, Any, Optional, Callable, Set, Tuple, Union
-from collections import OrderedDict
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from torch_sparse import SparseTensor
 
-# TODO:
-# Check which implementation is implemented
-# Debug method that checks if computation is the same
-
-# TODO: edge_perm in padded_index
-
-# Base Class that handles the lifting logic
-# -> Gets the arguments and collects them into a dictionary
-# -> User Logic: fill argument list
-# -> Calls the functions by distributing the required data to the functions
-
-
-class Inspector(object):
-
-    # Argument names that should be ignored when inspecting methods.
-    special_args = set([
-        'adj_t', 'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr',
-        'index', 'dim_size', 'edge_mask'
-    ])
-
-    def __init__(self, base_class: Any):
-        self.base_class: Any = base_class
-        self.params: Dict[str, Dict[str, Any]] = {}
-
-    def inspect(self, func: Callable,
-                pop_first: bool = False) -> Dict[str, Any]:
-        params = inspect.signature(func).parameters
-        params = OrderedDict({k: v.default for k, v in params.items()})
-        if pop_first:
-            params.popitem(last=False)
-        self.params[func.__name__] = params
-
-    def keys(self, func_names: Optional[List[str]] = None) -> Set[str]:
-        keys = []
-        for func in func_names or list(self.params.keys()):
-            keys += self.params[func].keys()
-        return set(keys) - self.special_args
-
-    def distribute(self, func: Callable, kwargs: Dict[str, Any]):
-        out = {}
-        for key, default in self.params[func.__name__].items():
-            data = kwargs.get(key, inspect.Parameter.empty)
-            if data is inspect.Parameter.empty:
-                if default is inspect.Parameter.empty:
-                    raise TypeError(f'Required parameter {key} is empty.')
-                data = default
-            out[key] = data
-        return out
-
-    def implements(self, func_name: str) -> bool:
-        return func_name in self.base_class.__class__.__dict__.keys()
+from .inspector import Inspector
+from .collector import Collector
 
 
 class MessagePassing(torch.nn.Module):
 
     AdjType = Union[torch.Tensor, SparseTensor]
-    adj_formats = ['edge_index', 'sparse', 'dense']
-    mp_formats = ['fused', 'sparse', 'dense']
+    adj_formats: List[str] = ['edge_index', 'sparse', 'dense']
+    mp_formats: List[str] = ['fused', 'sparse', 'dense']
+    suffixes: List[str] = ['_i', '_j']
+
+    __collectors__: Dict[str, Collector] = {
+        ('edge_index', 'sparse'): Collector(),
+    }
 
     def __init__(self, aggr: str = "add", flow: str = "source_to_target",
                  format: Optional[str] = None, node_dim: int = 0,
-                 partial_max_deg: int = -1, partial_binning: bool = True,
-                 torchscript: bool = False):
+                 partial_max_deg: Optional[int] = None,
+                 partial_binning: bool = True, torchscript: bool = False):
         super(MessagePassing, self).__init__()
 
-        self.aggr = aggr
-        self.flow = flow
-        self.format = format
-        self.node_dim = node_dim
-        self.partial_max_deg = partial_max_deg
-        self.partial_binning = partial_binning
-        self.torchscript = torchscript
+        self.aggr: str = aggr
+        self.flow: str = flow
+        self.format: Optional[str] = format
+        self.node_dim: int = node_dim
+        self.partial_max_deg: Optional[int] = partial_max_deg
+        self.partial_binning: bool = partial_binning
+        self.torchscript: bool = torchscript
 
         assert self.aggr in ['add', 'sum', 'mean', 'max', None]
         assert self.flow in ['source_to_target', 'target_to_source']
@@ -94,19 +48,21 @@ class MessagePassing(torch.nn.Module):
         self.__cached_mp_format__ = {}
 
         # Support for `GNNExplainer`.
-        self.__explain__ = False
-        self.__edge_mask__ = None
+        self.__explain__: bool = False
+        self.__edge_mask__: bool = None
 
-    def supports_fused_format(self):
+    def supports_fused_format(self) -> bool:
         return self.inspector.implements('message_and_aggregate')
 
-    def supports_sparse_format(self):
+    def supports_sparse_format(self) -> bool:
         return (self.inspector.implements('message')
-                and (self.inspector.implements('aggregate') or self.aggr))
+                and (self.inspector.implements('aggregate')
+                     or self.aggr is not None))
 
-    def supports_partial_format(self):
-        return (self.inspector.implements('partial_message') and
-                (self.inspector.implements('partial_aggregate') or self.aggr))
+    def supports_partial_format(self) -> bool:
+        return (self.inspector.implements('partial_message')
+                and (self.inspector.implements('partial_aggregate')
+                     or self.aggr is not None))
 
     def get_adj_format(self, adj_type: AdjType) -> str:
         adj_format = None
@@ -125,7 +81,7 @@ class MessagePassing(torch.nn.Module):
             adj_format = 'dense_adj'
 
         if adj_format is None:
-            return ValueError(
+            raise ValueError(
                 ('Encountered an invalid object for `adj_type` in '
                  '`MessagePassing.propagate`. Supported types are (1) sparse '
                  'edge indices of type `torch.LongTensor` with shape '
@@ -138,7 +94,7 @@ class MessagePassing(torch.nn.Module):
     def get_mp_format(self, adj_format: str) -> str:
         mp_format = None
 
-        # Use the already determined cached message passing format.
+        # Use already determined cached message passing format (if present).
         if adj_format in self.__cached_mp_format__:
             mp_format = self.__cached_mp_format__[adj_format]
 
@@ -146,7 +102,7 @@ class MessagePassing(torch.nn.Module):
         elif adj_format == 'edge_index':
             mp_format = 'sparse'
 
-        # Set to user-desired format (in case it is given).
+        # Set to user-desired format (if present).
         elif self.format is not None:
             mp_format = self.format
 
@@ -168,28 +124,55 @@ class MessagePassing(torch.nn.Module):
             mp_format = 'partial'
 
         if mp_format is None:
-            return TypeError(
+            raise TypeError(
                 (f'Could not detect a valid message passing implementation '
                  f'for adjacency format "{adj_format}".'))
 
+        # Fill (or update) the cache.
         self.__cached_mp_format__[adj_format] = mp_format
 
-        return adj_format, mp_format
+        return mp_format
+
+    def __get_collector__(self, adj_format: str, mp_format: str) -> Collector:
+        collector = self.__collectors__.get((adj_format, mp_format), None)
+
+        if collector is None:
+            raise TypeError(
+                (f'Could not detect a valid message passing implementation '
+                 f'for adjacency format "{adj_format}" and message passing '
+                 f'format "{mp_format}".'))
+
+        collector.bind(self)
+
+        return collector
+
+    def __suffix2id__(self) -> Dict[str, int]:
+        suffix2idx: Dict[str, int] = {'_i': 1, '_j': 0}
+        if self.flow == 'target_to_source':
+            suffix2idx = {'_i': 0, '_j': 1}
+        return suffix2idx
 
     def propagate(self, adj_type: AdjType, size: Optional[Tuple[int]] = None,
                   **kwargs) -> torch.Tensor:
 
-        adj_format, mp_format = self.get_format(adj_type)
+        adj_format = self.get_adj_format(adj_type)
+        mp_format = self.get_mp_format(adj_format)
 
         # For `GNNExplainer`, we require "sparse" aggregation since this allows
-        # us to easily inject `edge_mask` into the computation.
+        # us to easily inject `edge_mask` into the message passing computation.
+        # NOTE: Technically, it is still possible to provide this for all
+        # types of message passing. However, for other formats it is a lot
+        # hackier to implement, so we leave this for future work at the moment.
         if self.__explain__:
-            mp_format = 'sparse'
-            if adj_format == 'dense_adj' or not self.supports_sparse_format():
+            if adj_format != 'edge_index' or not self.supports_sparse_format():
                 raise TypeError(
-                    ('`MessagePassing.propagate` supports `GNNExplainer` '
-                     'capabilties only for "sparse" aggregations.`'))
+                    ('`MessagePassing.propagate` only supports `GNNExplainer` '
+                     'capabilties for "sparse" aggregations based on '
+                     '"edge_index".`'))
+            mp_format = 'sparse'
 
+        # Customized flow direction is deprecated for "new" adjacency matrix
+        # formats, i.e., "sparse_adj" and "dense_adj".
         if ((adj_format == 'sparse_adj' or adj_format == 'dense_adj')
                 and self.flow == 'target_to_source'):
             raise TypeError(
@@ -199,7 +182,43 @@ class MessagePassing(torch.nn.Module):
                  'transposed adjacency matrix to the message passing module, '
                  'e.g., `adj_t.t()`.'))
 
-        # We collect all arguments used for message passing in `data`.
+        # We collect all arguments used for message passing dependening on the
+        # determined collector.
+        collector = self.__get_collector__(adj_format, mp_format)
+        kwargs = collector.collect(adj_type, size, kwargs)
+
+        # Perform conditional message passing.
+        if mp_format == 'fused':
+            inp = self.inspector.distribute(self.message_and_aggregate, kwargs)
+            out = self.message_and_aggregate(**inp)
+
+        elif mp_format == 'sparse':
+            inp = self.inspector.distribute(self.message, kwargs)
+            out = self.message(**inp)
+
+            if self.__explain__:
+                edge_mask = self.__edge_mask__.sigmoid()
+                if out.size(0) != edge_mask.size(0):
+                    # NOTE: This does only work for "edge_index" format.
+                    # TODO: Make use of unified `add_self_loops` interface.
+                    loop = edge_mask.new_ones(size[0])
+                    edge_mask = torch.cat([edge_mask, loop], dim=0)
+                assert out.size(0) == edge_mask.size(0)
+                out = out * edge_mask.view(-1, 1)
+
+            inp = self.inspector.distribute(self.aggregate, kwargs)
+            out = self.aggregate(out, **inp)
+
+        elif mp_format == 'partial':
+            inp = self.inspector.distribute(self.partial_message, kwargs)
+            out = self.__partial_message__(**inp)
+            inp = self.inspector.distribute(self.partial_aggregate, kwargs)
+            out = self.__partial__aggregate__(out, **inp)
+
+        inp = self.inspector.distribute(self.update, kwargs)
+        out = self.update(out, **inp)
+
+        return out
 
     def message_and_aggregate(self) -> torch.Tensor:
         raise NotImplementedError
@@ -221,7 +240,15 @@ class MessagePassing(torch.nn.Module):
     def update(self, inputs: torch.Tensor) -> torch.Tensor:
         return inputs
 
-    def check_consistency(self, *args, **kwargs) -> bool:
+    def __partial__message__(self, kwargs):
+        pass
+
+    def __partial__aggregate__(self, kwargs):
+        pass
+
+    def check_propagate_consistency(self, adj_type: AdjType,
+                                    size: Optional[Tuple[int]] = None,
+                                    **kwargs) -> bool:
         raise NotImplementedError
 
     def __repr__(self) -> str:
