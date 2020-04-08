@@ -31,8 +31,8 @@ class MessagePassing(torch.nn.Module):
 
     def __init__(self, aggr: str = "add", flow: str = "source_to_target",
                  mp_format: Optional[str] = None, node_dim: int = -2,
+                 partial_fill_value: float = 0.,
                  partial_max_deg: Optional[int] = None,
-                 partial_fill_value: Optional[float] = None,
                  partial_binning: bool = True, torchscript: bool = False):
         super(MessagePassing, self).__init__()
 
@@ -40,17 +40,14 @@ class MessagePassing(torch.nn.Module):
         self.flow: str = flow
         self.mp_format: Optional[str] = mp_format
         self.node_dim: int = node_dim
-        self.partial_max_deg = partial_max_deg
-        self.partial_fill_value = partial_fill_value
-        self.partial_binning = partial_binning
+        self.partial_fill_value: float = partial_fill_value
+        self.partial_max_deg: Optional[int] = partial_max_deg
+        self.partial_binning: bool = partial_binning
         self.torchscript: bool = torchscript
 
         assert self.aggr in ['add', 'sum', 'mean', 'max', None]
         assert self.flow in ['source_to_target', 'target_to_source']
         assert self.mp_format in self.mp_formats + [None]
-
-        if partial_fill_value is None and aggr is not None:
-            self.partial_fill_value = 0 if aggr != 'max' else float('-inf')
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.sparse_message_and_aggregate)
@@ -59,6 +56,9 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.partial_message)
         self.inspector.inspect(self.partial_aggregate, pop_first=True)
+
+        if not self.inspector.implements('partial_aggregate'):
+            self.partial_fill_value = 0 if aggr != 'max' else float('-inf')
 
         if self.inspector.implements('update'):
             raise TypeError(
@@ -280,8 +280,29 @@ class MessagePassing(torch.nn.Module):
     def partial_message(self) -> torch.Tensor:
         raise NotImplementedError
 
-    def partial_aggregate(self, inputs) -> torch.Tensor:
-        raise NotImplementedError
+    def partial_aggregate(self, inputs, inv_edge_mask) -> torch.Tensor:
+
+        if self.aggr is None:
+            raise NotImplementedError
+
+        # TODO: `node_dim` may not be the right choice here.
+
+        if self.aggr in ['sum', 'add']:
+            return inputs.sum(self.node_dim)
+
+        elif self.aggr == 'mean':
+            out = inputs.sum(self.node_dim)
+            deg = inv_edge_mask.size(-1) - inv_edge_mask.sum(dim=-1)
+            for _ in range(deg.dim(), out.dim()):
+                deg = deg.unsqueeze(-1)
+            out = out / deg
+            out.masked_fill_((out == float('inf')) | (out == float('-inf')), 0)
+            return out
+
+        elif self.aggr == 'max':
+            out = inputs.max(dim=self.node_dim)[0]
+            out.masked_fill_(out == float('-inf'), 0)
+            return out
 
     def __partial_message__(self, adj_format, kwargs):
         # There is no need to perform "expensive" degree iterations for
