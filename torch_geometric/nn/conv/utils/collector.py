@@ -211,8 +211,7 @@ class DenseAdjPartialCollector(Collector):
 
         node_dim = self.base_class.node_dim
         suffix2idx: Dict[str, int] = {'_i': 0, '_j': 1}
-        keys = self.base_class.inspector.keys(
-            ['partial_message', 'partial_aggregate'])
+        keys = self.base_class.inspector.keys(['message', 'partial_aggregate'])
         keys = keys - self.special_args
 
         out: Dict[str, Any] = {}

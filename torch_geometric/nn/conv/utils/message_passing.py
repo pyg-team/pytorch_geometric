@@ -57,6 +57,8 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.partial_message)
         self.inspector.inspect(self.partial_aggregate, pop_first=True)
 
+        # In case of partial "max" aggregation, it is faster to already fill
+        # invalid entries with `-inf` instead of `0`.
         if not self.inspector.implements('partial_aggregate'):
             self.partial_fill_value = 0 if aggr != 'max' else float('-inf')
 
@@ -84,7 +86,7 @@ class MessagePassing(torch.nn.Module):
                      or self.aggr is not None))
 
     def supports_partial_format(self) -> bool:
-        return (self.inspector.implements('partial_message')
+        return (self.inspector.implements('message')
                 and (self.inspector.implements('partial_aggregate')
                      or self.aggr is not None))
 
@@ -277,9 +279,6 @@ class MessagePassing(torch.nn.Module):
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
 
-    def partial_message(self) -> torch.Tensor:
-        raise NotImplementedError
-
     def partial_aggregate(self, inputs, inv_edge_mask) -> torch.Tensor:
 
         if self.aggr is None:
@@ -308,29 +307,29 @@ class MessagePassing(torch.nn.Module):
         # There is no need to perform "expensive" degree iterations for
         # "partial" message passing based on dense adjacency matrices.
         if adj_format == 'dense_adj':
-            kwargs = self.inspector.distribute(self.partial_message, kwargs)
-            return self.partial_message(**kwargs)
+            kwargs = self.inspector.distribute(self.message, kwargs)
+            return self.message(**kwargs)
 
         else:
-            kwargs = self.inspector.distribute(self.partial_message, kwargs)
+            kwargs = self.inspector.distribute(self.message, kwargs)
             keys = list(kwargs.keys())
             num_bins = len(kwargs[keys[0]])
 
             outs = []
             for i in range(num_bins):
                 tmp_kwargs = {key: item[i] for key, item in kwargs.items()}
-                outs.append(self.partial_message(**tmp_kwargs))
+                outs.append(self.message(**tmp_kwargs))
 
             return outs
 
     def __partial_aggregate__(self, adj_format, inputs, kwargs):
-        inputs = inputs.contiguous()
-
         # The "partial" aggregation based on dense adjacency matrices needs
         # special treatment here since we cannot infer the dimensions of
         # `adj_t`, i.e., `edge_attr` without looking at `inputs` for computing
         # `inv_edge_mask`.
         if adj_format == 'dense_adj':
+            inputs = inputs.contiguous()
+
             node_dim = self.node_dim
             node_dim = inputs.dim() + node_dim if node_dim < 0 else node_dim
 
