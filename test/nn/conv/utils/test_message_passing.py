@@ -22,10 +22,12 @@ class MyConv(MessagePassing):
         print(x_i.size(), x_j.size(), edge_attr.size())
         return x_j
 
-    def partial_aggregate(self, inputs, edge_attr):
-        out = (inputs * edge_attr.unsqueeze(-1))
-        out = out.sum(dim=-2)
-        return out
+    def partial_aggregate(self, inputs, inv_edge_mask):
+        # print(inputs.size(), edge_mask.size())
+        # inputs.masked_fill_(edge_mask, 0)
+        # out = (inputs * edge_attr.unsqueeze(-1))
+        # out = out.sum(dim=-2)
+        return inputs.sum(dim=-2)
 
     def message(self, x_j):
         return x_j

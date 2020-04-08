@@ -204,7 +204,7 @@ class DenseAdjFusedCollector(Collector):
 
 class DenseAdjPartialCollector(Collector):
 
-    special_args = set(['edge_attr, edge_mask'])
+    special_args = set(['edge_attr, inv_edge_mask'])
 
     def collect(self, adj_t: torch.Tensor, size: Optional[Tuple[int, int]],
                 kwargs: Dict[str, Any]) -> Dict[str, Any]:
