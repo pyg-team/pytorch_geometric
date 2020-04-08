@@ -54,7 +54,6 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.dense_message_and_aggregate)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
-        self.inspector.inspect(self.partial_message)
         self.inspector.inspect(self.partial_aggregate, pop_first=True)
 
         # In case of partial "max" aggregation, it is faster to already fill
