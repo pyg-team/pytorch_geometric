@@ -1,10 +1,15 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
+from torch_scatter import scatter
 from torch_sparse import SparseTensor
 
 from .inspector import Inspector
-from .collector import Collector
+from .collector import Collector, EdgeIndexSparseCollector
+
+__collectors__: Dict[str, Collector] = {
+    ('edge_index', 'sparse'): EdgeIndexSparseCollector(),
+}
 
 
 class MessagePassing(torch.nn.Module):
@@ -13,10 +18,6 @@ class MessagePassing(torch.nn.Module):
     adj_formats: List[str] = ['edge_index', 'sparse', 'dense']
     mp_formats: List[str] = ['fused', 'sparse', 'dense']
     suffixes: List[str] = ['_i', '_j']
-
-    __collectors__: Dict[str, Collector] = {
-        ('edge_index', 'sparse'): Collector(),
-    }
 
     def __init__(self, aggr: str = "add", flow: str = "source_to_target",
                  format: Optional[str] = None, node_dim: int = 0,
@@ -43,7 +44,12 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.partial_message)
         self.inspector.inspect(self.partial_aggregate, pop_first=True)
-        self.inspector.inspect(self.update, pop_first=True)
+
+        if self.inspector.implements('update'):
+            raise TypeError(
+                ('Updating node embeddings via `self.update` inside message '
+                 'propagation is no longer supported and should be performed '
+                 'on its own after `self.propagate`.'))
 
         self.__cached_mp_format__ = {}
 
@@ -134,7 +140,7 @@ class MessagePassing(torch.nn.Module):
         return mp_format
 
     def __get_collector__(self, adj_format: str, mp_format: str) -> Collector:
-        collector = self.__collectors__.get((adj_format, mp_format), None)
+        collector = __collectors__.get((adj_format, mp_format), None)
 
         if collector is None:
             raise TypeError(
@@ -215,9 +221,6 @@ class MessagePassing(torch.nn.Module):
             inp = self.inspector.distribute(self.partial_aggregate, kwargs)
             out = self.__partial__aggregate__(out, **inp)
 
-        inp = self.inspector.distribute(self.update, kwargs)
-        out = self.update(out, **inp)
-
         return out
 
     def message_and_aggregate(self) -> torch.Tensor:
@@ -229,16 +232,18 @@ class MessagePassing(torch.nn.Module):
     def aggregate(self, inputs: torch.Tensor, index: torch.Tensor,
                   ptr: Optional[torch.Tensor] = None,
                   dim_size: Optional[int] = None) -> torch.Tensor:
-        raise NotImplementedError
+
+        if self.aggr is None:
+            raise NotImplementedError
+
+        return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
+                       reduce=self.aggr)
 
     def partial_message(self) -> torch.Tensor:
         raise NotImplementedError
 
     def partial_aggregate(self, inputs) -> torch.Tensor:
         raise NotImplementedError
-
-    def update(self, inputs: torch.Tensor) -> torch.Tensor:
-        return inputs
 
     def __partial__message__(self, kwargs):
         pass
