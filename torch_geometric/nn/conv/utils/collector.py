@@ -10,8 +10,8 @@ class Collector(object):
 
     suffixes: List[str] = ['_i', '_j']
 
-    def bind(self, base_class: Any):
-        self.base_class = base_class
+    def __init__(self, base_class: Any):
+        self.base_class: Any = base_class
 
     def collect(self, adj_type: Any, size: Optional[Tuple[int, int]],
                 kwargs: Dict[str, Any]) -> Dict[str, Any]:
@@ -202,9 +202,29 @@ class DenseAdjFusedCollector(Collector):
         return out
 
 
+class SparseAdjPartialCollector(Collector):
+
+    special_args = set(['edge_attr, inv_edge_mask'])
+
+    def __init__(self, base_class: Any, fill_value: float = 0.,
+                 max_deg: Optional[int] = None, binning: bool = True):
+        super(SparseAdjPartialCollector, self).__init__(base_class)
+        self.fill_value: float = fill_value
+        self.max_deg: Optional[int] = max_deg
+        self.binning: bool = binning
+
+    def collect(self, adj_t: torch.Tensor, size: Optional[Tuple[int, int]],
+                kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        return kwargs
+
+
 class DenseAdjPartialCollector(Collector):
 
     special_args = set(['edge_attr, inv_edge_mask'])
+
+    def __init__(self, base_class: Any, fill_value: float = 0.):
+        super(DenseAdjPartialCollector, self).__init__(base_class)
+        self.fill_value: float = fill_value
 
     def collect(self, adj_t: torch.Tensor, size: Optional[Tuple[int, int]],
                 kwargs: Dict[str, Any]) -> Dict[str, Any]:

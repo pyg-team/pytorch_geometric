@@ -1,6 +1,6 @@
-import warnings
 from itertools import combinations
-from typing import Dict, List, Optional, Tuple, Union
+from collections import OrderedDict
+from typing import List, Dict, Optional, Tuple, Union
 
 import torch
 from torch_scatter import scatter, segment_csr
@@ -12,6 +12,7 @@ from .collector import (
     EdgeIndexSparseCollector,
     SparseAdjSparseCollector,
     SparseAdjFusedCollector,
+    SparseAdjPartialCollector,
     DenseAdjFusedCollector,
     DenseAdjPartialCollector,
 )
@@ -22,14 +23,6 @@ class MessagePassing(torch.nn.Module):
     AdjType = Union[torch.Tensor, SparseTensor]
     adj_formats: List[str] = ['edge_index', 'sparse', 'dense']
     mp_formats: List[str] = ['fused', 'sparse', 'dense']
-
-    __collectors__: Dict[str, Collector] = {
-        ('edge_index', 'sparse'): EdgeIndexSparseCollector(),
-        ('sparse_adj', 'fused'): SparseAdjFusedCollector(),
-        ('sparse_adj', 'sparse'): SparseAdjSparseCollector(),
-        ('dense_adj', 'fused'): DenseAdjFusedCollector(),
-        ('dense_adj', 'partial'): DenseAdjPartialCollector(),
-    }
 
     def __init__(self, aggr: str = "add", flow: str = "source_to_target",
                  mp_format: Optional[str] = None, node_dim: int = -2,
@@ -42,10 +35,7 @@ class MessagePassing(torch.nn.Module):
         self.flow: str = flow
         self.mp_format: Optional[str] = mp_format
         self.node_dim: int = node_dim
-        self.partial_fill_value: float = partial_fill_value
-        self.partial_max_deg: Optional[int] = partial_max_deg
-        self.partial_binning: bool = partial_binning
-        self.torchscript: bool = torchscript
+        self.torchscript: bool = torchscript  # TODO: This has no effect yet.
 
         assert self.aggr in ['add', 'sum', 'mean', 'max', None]
         assert self.flow in ['source_to_target', 'target_to_source']
@@ -58,18 +48,42 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.partial_aggregate, pop_first=True)
 
+        # In case `aggregate` or `partial_aggregate` is implemented by the
+        # user, we do not want to make use of the predefined aggregations.
+        if (self.inspector.implements('aggregate')
+                or self.inspector.implements('partial_aggregate')):
+            self.aggr = None
+
         # In case of partial "max" aggregation, it is faster to already fill
         # invalid entries with `-inf` instead of `0`.
-        if not self.inspector.implements('partial_aggregate'):
+        if self.aggr is not None:
             self.partial_fill_value = 0 if aggr != 'max' else float('-inf')
+
+        # An `OrderedDict` that dictates the preference of message passing.
+        coll = OrderedDict()
+        if self.supports_sparse_fused_format():
+            coll[('sparse_adj', 'fused')] = SparseAdjFusedCollector(self)
+        if self.supports_dense_fused_format():
+            coll[('dense_adj', 'fused')] = DenseAdjFusedCollector(self)
+        if self.supports_sparse_format():
+            coll[('edge_index', 'sparse')] = EdgeIndexSparseCollector(self)
+            coll[('sparse_adj', 'sparse')] = SparseAdjSparseCollector(self)
+        if self.supports_partial_format():
+            # coll[('sparse_adj', 'partial')] = SparseAdjPartialCollector(
+            #     self, partial_fill_value, partial_max_deg, partial_binning)
+            coll[('dense_adj', 'partial')] = DenseAdjPartialCollector(
+                self, partial_fill_value)
+        self.collectors = coll
 
         if self.inspector.implements('update'):
             raise TypeError(
-                ('Updating node embeddings via `self.update` inside message '
-                 'propagation is no longer supported and should be performed '
-                 'on its own after `self.propagate`.'))
+                (f'Updating node embeddings via '
+                 f'`{self.__class__.__name__}.update` inside message '
+                 f'propagation is no longer supported and should be performed '
+                 f'on its own after `{self.__class__.__name__}.propagate`.'))
 
-        self.__cached_mp_format__ = {}
+        # We cache the determined `mp_format` for faster re-access.
+        self.__cached_mp_format__: Dict[str, str] = {}
 
         # Support for `GNNExplainer`.
         self.__explain__: bool = False
@@ -92,88 +106,55 @@ class MessagePassing(torch.nn.Module):
                      or self.aggr is not None))
 
     def get_adj_format(self, adj_type: AdjType) -> str:
-        adj_format = None
-
         # edge_index: torch.LongTensor of shape [2, *].
         if (torch.is_tensor(adj_type) and adj_type.dim() == 2
                 and adj_type.size(0) == 2 and adj_type.dtype == torch.long):
-            adj_format = 'edge_index'
+            return 'edge_index'
 
         # sparse_adj: torch_sparse.SparseTensor.
         elif isinstance(adj_type, SparseTensor):
-            adj_format = 'sparse_adj'
+            return 'sparse_adj'
 
         # dense_adj: *Any* torch.Tensor.
         elif torch.is_tensor(adj_type):
-            adj_format = 'dense_adj'
+            return 'dense_adj'
 
-        if adj_format is None:
-            raise ValueError(
-                ('Encountered an invalid object for `adj_type` in '
-                 '`MessagePassing.propagate`. Supported types are (1) sparse '
-                 'edge indices of type `torch.LongTensor` with shape '
-                 '`[2, num_edges]`, (2) sparse adjacency matrices of type '
-                 '`torch_sparse.SparseTensor`, or (3) dense adjacency '
-                 'matrices of type `torch.Tensor`.'))
-
-        return adj_format
+        raise ValueError(
+            (f'Encountered an invalid object for `adj_type` in '
+             f'`{self.__class__.__name__}.propagate`. Supported types are (1) '
+             f'sparse edge indices of type `torch.LongTensor` with shape '
+             f'`[2, num_edges]`, (2) sparse adjacency matrices of type '
+             f'`torch_sparse.SparseTensor`, or (3) dense adjacency matrices '
+             f'of type `torch.Tensor`.'))
 
     def get_mp_format(self, adj_format: str) -> str:
-        mp_format = None
-
         # Set to user-desired format (if present).
         if self.mp_format is not None:
-            mp_format = self.mp_format
+            return self.mp_format
 
         # Use already determined cached message passing format (if present).
         elif adj_format in self.__cached_mp_format__:
-            mp_format = self.__cached_mp_format__[adj_format]
+            return self.__cached_mp_format__[adj_format]
 
-        # `edge_index` only support "tradional" message passing, i.e. "sparse".
-        elif adj_format == 'edge_index':
-            mp_format = 'sparse'
+        # Detect message passing format by iterating over remaining collectors.
+        elif adj_format not in self.__cached_mp_format__:
+            for key in self.collectors.keys():
+                if key[0] == adj_format:
+                    self.__cached_mp_format__[adj_format] = key[1]
+                    return key[1]
 
-        # Always choose `fused` if applicable.
-        elif (adj_format == 'sparse_adj'
-              and self.supports_sparse_fused_format()):
-            mp_format = 'fused'
-
-        elif adj_format == 'dense_adj' and self.supports_dense_fused_format():
-            mp_format = 'fused'
-
-        # We prefer "sparse" format over the "partial" format for sparse
-        # adjacency matrices since it is faster in general. We therefore only
-        # default to "partial" mode if the user wants to implement some fancy
-        # customized aggregation scheme.
-        elif adj_format == 'sparse_adj' and self.supports_sparse_format():
-            mp_format = 'sparse'
-        elif adj_format == 'sparse_adj' and self.supports_partial_format():
-            mp_format = 'partial'
-
-        # For "dense" adjacencies, we *require* "partial" aggregation.
-        elif adj_format == 'dense_adj' and self.supports_partial_format():
-            mp_format = 'partial'
-
-        if mp_format is None:
-            raise TypeError(
-                (f'Could not detect a valid message passing implementation '
-                 f'for adjacency format "{adj_format}".'))
-
-        # Fill (or update) the cache.
-        self.__cached_mp_format__[adj_format] = mp_format
-
-        return mp_format
+        raise TypeError(
+            (f'Could not detect a valid message passing implementation '
+             f'for adjacency format "{adj_format}".'))
 
     def __get_collector__(self, adj_format: str, mp_format: str) -> Collector:
-        collector = self.__collectors__.get((adj_format, mp_format), None)
+        collector = self.collectors.get((adj_format, mp_format), None)
 
         if collector is None:
             raise TypeError(
                 (f'Could not detect a valid message passing implementation '
                  f'for adjacency format "{adj_format}" and message passing '
                  f'format "{mp_format}".'))
-
-        collector.bind(self)
 
         return collector
 
@@ -183,9 +164,9 @@ class MessagePassing(torch.nn.Module):
         adj_format = self.get_adj_format(adj_type)
         mp_format = self.get_mp_format(adj_format)
 
-        # For `GNNExplainer`, we require "sparse" aggregation based on
-        # "edge_index" since this allows us to easily inject the `edge_mask`
-        # into the message passing computation.
+        # For `GNNExplainer`, we require "sparse" message passing based on
+        # "edge_index" adjacency format since this allows us to easily inject
+        # the `edge_mask` into the message passing computation.
         # NOTE: Technically, it is still possible to provide this for all
         # types of message passing. However, for other formats it is a lot
         # hackier to implement, so we leave this for future work at the moment.
@@ -193,9 +174,9 @@ class MessagePassing(torch.nn.Module):
             if (adj_format == 'sparse_adj' or adj_format == 'dense_adj'
                     or not self.supports_sparse_format()):
                 raise TypeError(
-                    ('`MessagePassing.propagate` only supports `GNNExplainer` '
-                     'capabilties for "sparse" aggregations based on '
-                     '"edge_index".`'))
+                    (f'`{self.__class__.__name__}.propagate` only supports '
+                     f'`GNNExplainer` capabilties for "sparse" message '
+                     f'passing based on "edge_index" adjacency format.`'))
             mp_format = 'sparse'
 
         # Customized flow direction is deprecated for "new" adjacency matrix
@@ -203,11 +184,12 @@ class MessagePassing(torch.nn.Module):
         if ((adj_format == 'sparse_adj' or adj_format == 'dense_adj')
                 and self.flow == 'target_to_source'):
             raise TypeError(
-                ('Flow direction "target_to_source" is invalid for message '
-                 'passing based on adjacency matrices. If you really want to '
-                 'make use of reverse message passing flow, pass in the '
-                 'transposed adjacency matrix to the message passing module, '
-                 'e.g., `adj_t.t()`.'))
+                (f'Flow direction "target_to_source" is invalid for message '
+                 f'passing based on adjacency matrices. If you really want to '
+                 f'make use of reverse message passing flow, pass in the '
+                 f'transposed adjacency matrix to '
+                 f'`{self.__class__.__name__}.propagate`, e.g., via '
+                 f'`adj_t.t()`.'))
 
         # We collect all arguments used for message passing dependening on the
         # determined collector.
@@ -369,56 +351,44 @@ class MessagePassing(torch.nn.Module):
     @torch.no_grad()
     def check_propagate_consistency(self, sparse_adj_t: SparseTensor,
                                     **kwargs) -> bool:
-        # Collect all possible tests for which we want to compare the results.
-        tests = []
-        if self.supports_sparse_fused_format():
-            tests.append(['sparse_adj', 'fused'])
+        keys = list(self.collectors.keys())
 
-        if self.supports_dense_fused_format():
-            tests.append(['dense_adj', 'fused'])
-
-        if self.supports_sparse_format():
-            tests.append(['edge_index', 'sparse'])
-            tests.append(['sparse_adj', 'sparse'])
-
-        if self.supports_partial_format():
-            # tests.append(['sparse_adj', 'partial']) # TODO
-            tests.append(['dense_adj', 'partial'])
-
-        if len(tests) < 2:
+        if len(keys) < 2:
             print((f'Skip `check_propagate_consistency` because '
-                   f'`{self.__class__.name__}.propagate` does only contain a '
-                   f'single message passing implementation ("{tests[0][1]}") '
-                   f'based on "{tests[0][0]}" adjacency information.'))
+                   f'`{self.__class__.name__}.propagate` does only support a '
+                   f'single message passing format ("{keys[0][1]}") '
+                   f'based on "{keys[0][0]}" adjacency format.'))
             return True
 
+        outs = []
         old_mp_format = self.mp_format
-        for test in tests:
-            self.mp_format = test[1]  # Force specific message passing format.
+        for (adj_format, mp_format) in keys:
+            self.mp_format = mp_format  # Force message passing format.
 
-            if test[0] == 'edge_index':
-                col, row, edge_attr = sparse_adj_t.coo()  # Transpose again.
+            if adj_format == 'edge_index':
+                row, col, edge_attr = sparse_adj_t.t().coo()  # Transpose.
                 edge_index = torch.stack([row, col], dim=0)
                 size = list(sparse_adj_t.sparse_sizes())[::-1]
                 out = self.propagate(edge_index, size=size,
                                      edge_attr=edge_attr, **kwargs)
-            elif test[0] == 'sparse_adj':
+            elif adj_format == 'sparse_adj':
                 out = self.propagate(sparse_adj_t, **kwargs)
-            elif test[0] == 'dense_adj':
+
+            elif adj_format == 'dense_adj':
                 dense_adj_t = sparse_adj_t.to_dense()
                 out = self.propagate(dense_adj_t, **kwargs)
 
-            test.append(out)
+            outs.append((adj_format, mp_format, out))
         self.mp_format = old_mp_format
 
+        # Perform `allclose` checks between all combinations.
         is_equal = True
-        for test1, test2 in combinations(tests, 2):
-            if not torch.allclose(test1[2], test2[2]):
-                print(
-                    (f'Output of "{test1[1]}" message passing based on '
-                     f'"{test1[0]}" adjacency information does not match with '
-                     f'the output of "{test2[1]}" message passing based on '
-                     f'"{test2[0]}" adjacency information.'))
+        for out1, out2 in combinations(outs, 2):
+            if not torch.allclose(out1[2], out2[2]):
+                print((f'Output of "{out1[1]}" message passing based on '
+                       f'"{out1[0]}" adjacency format does not match with '
+                       f'the output of "{out2[1]}" message passing based on '
+                       f'"{out2[0]}" adjacency format.'))
                 is_equal = False
 
         return is_equal
