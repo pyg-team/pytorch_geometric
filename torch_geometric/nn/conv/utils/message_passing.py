@@ -216,8 +216,8 @@ class MessagePassing(torch.nn.Module):
                 edge_mask = self.__edge_mask__.sigmoid()
                 # If the edge sizes do not match, we assume that the message
                 # passing implementation has added self-loops to the graph
-                # before calling `self.propagate`. This is not ideal, but
-                # sufficient in most cases.
+                # before calling `self.propagate`. This is just educated guess,
+                # but should be sufficient in most cases.
                 if out.size(0) != edge_mask.size(0):
                     # NOTE: This currently does only work for "edge_index"
                     # format, but could be enhanced to also support
@@ -282,8 +282,10 @@ class MessagePassing(torch.nn.Module):
             return out
 
     @torch.no_grad()
-    def check_propagate_consistency(self, sparse_adj_t: SparseTensor,
-                                    **kwargs) -> bool:
+    def check_consistency(self, sparse_adj_t: SparseTensor,
+                          static_graph: bool = False, rtol: float = 1e-05,
+                          atol: float = 1e-08, **kwargs) -> bool:
+
         keys = list(self.collectors.keys())
 
         if len(keys) < 2:
@@ -306,6 +308,8 @@ class MessagePassing(torch.nn.Module):
 
             elif adj_format == 'dense_adj':
                 dense_adj_t = sparse_adj_t.to_dense()
+                if static_graph:
+                    dense_adj_t = dense_adj_t.unsqueeze(0)
                 out = self.propagate(dense_adj_t, **kwargs)
 
             outs.append((adj_format, mp_format, out))
@@ -313,7 +317,7 @@ class MessagePassing(torch.nn.Module):
 
         # Perform `allclose` checks between all combinations.
         for out1, out2 in combinations(outs, 2):
-            if not torch.allclose(out1[2], out2[2]):
+            if not torch.allclose(out1[2], out2[2], rtol=rtol, atol=atol):
                 return False
 
         return True
