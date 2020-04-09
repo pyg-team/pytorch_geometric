@@ -1,3 +1,5 @@
+import warnings
+from itertools import combinations
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
@@ -119,17 +121,17 @@ class MessagePassing(torch.nn.Module):
     def get_mp_format(self, adj_format: str) -> str:
         mp_format = None
 
+        # Set to user-desired format (if present).
+        if self.mp_format is not None:
+            mp_format = self.mp_format
+
         # Use already determined cached message passing format (if present).
-        if adj_format in self.__cached_mp_format__:
+        elif adj_format in self.__cached_mp_format__:
             mp_format = self.__cached_mp_format__[adj_format]
 
         # `edge_index` only support "tradional" message passing, i.e. "sparse".
         elif adj_format == 'edge_index':
             mp_format = 'sparse'
-
-        # Set to user-desired format (if present).
-        elif self.mp_format is not None:
-            mp_format = self.mp_format
 
         # Always choose `fused` if applicable.
         elif (adj_format == 'sparse_adj'
@@ -283,13 +285,14 @@ class MessagePassing(torch.nn.Module):
         if self.aggr is None:
             raise NotImplementedError
 
-        # TODO: `node_dim` may not be the right choice here.
+        node_dim = self.node_dim
+        dim = inputs.dim() + node_dim if node_dim < 0 else node_dim
 
         if self.aggr in ['sum', 'add']:
-            return inputs.sum(self.node_dim)
+            return inputs.sum(dim=dim)
 
         elif self.aggr == 'mean':
-            out = inputs.sum(self.node_dim)
+            out = inputs.sum(dim=dim)
             deg = inv_edge_mask.size(-1) - inv_edge_mask.sum(dim=-1)
             for _ in range(deg.dim(), out.dim()):
                 deg = deg.unsqueeze(-1)
@@ -298,7 +301,7 @@ class MessagePassing(torch.nn.Module):
             return out
 
         elif self.aggr == 'max':
-            out = inputs.max(dim=self.node_dim)[0]
+            out = inputs.max(dim=dim)[0]
             out.masked_fill_(out == float('-inf'), 0)
             return out
 
@@ -332,8 +335,9 @@ class MessagePassing(torch.nn.Module):
             node_dim = self.node_dim
             node_dim = inputs.dim() + node_dim if node_dim < 0 else node_dim
 
-            # Find all entries zero entries (even for multi-dimensional edge
-            # features).
+            # Find all entries zero entries. This is a bit tricker to implement
+            # in case of multi-dimensional edge features where we aggregate the
+            # features by taking the sum of their absolute values.
             adj_t = kwargs['edge_attr']
             if adj_t.dim() > node_dim + 2:
                 dims = list(range(node_dim + 2, adj_t.dim()))
@@ -362,9 +366,62 @@ class MessagePassing(torch.nn.Module):
 
             return outs
 
-    def check_propagate_consistency(self, adj_t: SparseTensor,
+    @torch.no_grad()
+    def check_propagate_consistency(self, sparse_adj_t: SparseTensor,
                                     **kwargs) -> bool:
-        raise NotImplementedError
+        # Collect all possible tests for which we want to compare the results.
+        tests = []
+        if self.supports_sparse_fused_format():
+            tests.append(['sparse_adj', 'fused'])
+
+        if self.supports_dense_fused_format():
+            tests.append(['dense_adj', 'fused'])
+
+        if self.supports_sparse_format():
+            tests.append(['edge_index', 'sparse'])
+            tests.append(['sparse_adj', 'sparse'])
+
+        if self.supports_partial_format():
+            # tests.append(['sparse_adj', 'partial']) # TODO
+            tests.append(['dense_adj', 'partial'])
+
+        if len(tests) < 2:
+            print((f'Skip `check_propagate_consistency` because '
+                   f'`{self.__class__.name__}.propagate` does only contain a '
+                   f'single message passing implementation ("{tests[0][1]}") '
+                   f'based on "{tests[0][0]}" adjacency information.'))
+            return True
+
+        old_mp_format = self.mp_format
+        for test in tests:
+            self.mp_format = test[1]  # Force specific message passing format.
+
+            if test[0] == 'edge_index':
+                col, row, edge_attr = sparse_adj_t.coo()  # Transpose again.
+                edge_index = torch.stack([row, col], dim=0)
+                size = list(sparse_adj_t.sparse_sizes())[::-1]
+                out = self.propagate(edge_index, size=size,
+                                     edge_attr=edge_attr, **kwargs)
+            elif test[0] == 'sparse_adj':
+                out = self.propagate(sparse_adj_t, **kwargs)
+            elif test[0] == 'dense_adj':
+                dense_adj_t = sparse_adj_t.to_dense()
+                out = self.propagate(dense_adj_t, **kwargs)
+
+            test.append(out)
+        self.mp_format = old_mp_format
+
+        is_equal = True
+        for test1, test2 in combinations(tests, 2):
+            if not torch.allclose(test1[2], test2[2]):
+                print(
+                    (f'Output of "{test1[1]}" message passing based on '
+                     f'"{test1[0]}" adjacency information does not match with '
+                     f'the output of "{test2[1]}" message passing based on '
+                     f'"{test2[0]}" adjacency information.'))
+                is_equal = False
+
+        return is_equal
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

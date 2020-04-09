@@ -18,10 +18,6 @@ class MyConv(MessagePassing):
     # def dense_message_and_aggregate(self, adj_t, x_j):
     #     return adj_t.matmul(x_j)
 
-    def partial_message(self, x_i, x_j, edge_attr):
-        print(x_i.size(), x_j.size(), edge_attr.size())
-        return x_j
-
     # def partial_aggregate(self, inputs, inv_edge_mask):
     # print(inputs.size(), edge_mask.size())
     # inputs.masked_fill_(edge_mask, 0)
@@ -60,10 +56,12 @@ def test_message_passing():
     assert out1.tolist() == out2.tolist()
     assert out1.tolist() == out3.tolist()
 
+    conv.check_propagate_consistency(sparse_adj_t, x=x)
+
     # Static graph.
-    x = torch.Tensor([[1, 2, 3], [1, 2, 3]]).view(2, -1, 1)
-    out1 = conv.propagate(edge_index, x=x)
-    out2 = conv.propagate(sparse_adj_t, x=x)
-    out3 = conv.propagate(dense_adj_t.unsqueeze(0), x=x)
-    assert out1.tolist() == out2.tolist()
-    assert out2.tolist() == out3.tolist()
+    # x = torch.Tensor([[1, 2, 3], [1, 2, 3]]).view(2, -1, 1)
+    # out1 = conv.propagate(edge_index, x=x)
+    # out2 = conv.propagate(sparse_adj_t, x=x)
+    # out3 = conv.propagate(dense_adj_t.unsqueeze(0), x=x)
+    # assert out1.tolist() == out2.tolist()
+    # assert out2.tolist() == out3.tolist()
