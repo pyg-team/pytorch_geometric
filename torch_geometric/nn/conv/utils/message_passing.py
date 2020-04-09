@@ -232,14 +232,17 @@ class MessagePassing(torch.nn.Module):
             inputs = self.inspector.distribute(self.aggregate, kwargs)
             return self.aggregate(out, **inputs)
 
-        elif (adj_format, mp_format) == ('dense_adj', 'partial'):
+        elif mp_format == 'partial':
             message_kwargs = collector.collect_message(adj_type, kwargs)
             inputs = self.inspector.distribute(self.message, message_kwargs)
             out = self.message(**inputs)
             out, kwargs = collector.collect_aggregate(adj_type, out, kwargs,
                                                       message_kwargs)
             inputs = self.inspector.distribute(self.partial_aggregate, kwargs)
-            return self.partial_aggregate(out, **inputs)
+            if adj_format == 'sparse_adj':
+                raise NotImplementedError
+            elif adj_format == 'dense_adj':
+                return self.partial_aggregate(out, **inputs)
 
     def sparse_message_and_aggregate(self) -> torch.Tensor:
         raise NotImplementedError
@@ -286,14 +289,12 @@ class MessagePassing(torch.nn.Module):
                           static_graph: bool = False, rtol: float = 1e-05,
                           atol: float = 1e-08, **kwargs) -> bool:
 
-        keys = list(self.collectors.keys())
-
-        if len(keys) < 2:
+        if len(self.collectors) < 2:
             return True
 
         outs = []
         old_mp_format = self.mp_format
-        for (adj_format, mp_format) in keys:
+        for (adj_format, mp_format) in self.collectors.keys():
             self.mp_format = mp_format  # Force message passing format.
 
             if adj_format == 'edge_index':
