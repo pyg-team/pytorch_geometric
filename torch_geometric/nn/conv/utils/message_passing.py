@@ -9,13 +9,14 @@ from torch_sparse import SparseTensor
 from .inspector import Inspector
 from .collector import (
     Collector,
+    SparseAdjFusedCollector,
+    DenseAdjFusedCollector,
     EdgeIndexSparseCollector,
     SparseAdjSparseCollector,
-    SparseAdjFusedCollector,
     SparseAdjPartialCollector,
-    DenseAdjFusedCollector,
     DenseAdjPartialCollector,
 )
+from .helpers import abs_dim, unsqueeze
 
 
 class MessagePassing(torch.nn.Module):
@@ -106,16 +107,16 @@ class MessagePassing(torch.nn.Module):
                      or self.aggr is not None))
 
     def get_adj_format(self, adj_type: AdjType) -> str:
-        # edge_index: torch.LongTensor of shape [2, *].
+        # "edge_index": torch.LongTensor of shape [2, *].
         if (torch.is_tensor(adj_type) and adj_type.dim() == 2
                 and adj_type.size(0) == 2 and adj_type.dtype == torch.long):
             return 'edge_index'
 
-        # sparse_adj: torch_sparse.SparseTensor.
+        # "sparse_adj": torch_sparse.SparseTensor.
         elif isinstance(adj_type, SparseTensor):
             return 'sparse_adj'
 
-        # dense_adj: *Any* torch.Tensor.
+        # "dense_adj": *Any* other torch.Tensor.
         elif torch.is_tensor(adj_type):
             return 'dense_adj'
 
@@ -191,23 +192,23 @@ class MessagePassing(torch.nn.Module):
                  f'`{self.__class__.__name__}.propagate`, e.g., via '
                  f'`adj_t.t()`.'))
 
-        # We collect all arguments used for message passing dependening on the
-        # determined collector.
         collector = self.__get_collector__(adj_format, mp_format)
-        kwargs = collector.collect(adj_type, size, kwargs)
 
         # Perform "conditional" message passing.
-        if adj_format == 'sparse_adj' and mp_format == 'fused':
+        if (adj_format, mp_format) == ('sparse_adj', 'fused'):
+            kwargs = collector.collect(adj_type, size, kwargs)
             inputs = self.inspector.distribute(
                 self.sparse_message_and_aggregate, kwargs)
-            out = self.sparse_message_and_aggregate(**inputs)
+            return self.sparse_message_and_aggregate(**inputs)
 
-        elif adj_format == 'dense_adj' and mp_format == 'fused':
+        elif (adj_format, mp_format) == ('dense_adj', 'fused'):
+            kwargs = collector.collect(adj_type, size, kwargs)
             inputs = self.inspector.distribute(
                 self.dense_message_and_aggregate, kwargs)
-            out = self.dense_message_and_aggregate(**inputs)
+            return self.dense_message_and_aggregate(**inputs)
 
         elif mp_format == 'sparse':
+            kwargs = collector.collect(adj_type, size, kwargs)
             inputs = self.inspector.distribute(self.message, kwargs)
             out = self.message(**inputs)
 
@@ -218,23 +219,27 @@ class MessagePassing(torch.nn.Module):
                 # before calling `self.propagate`. This is not ideal, but
                 # sufficient in most cases.
                 if out.size(0) != edge_mask.size(0):
-                    # NOTE: This does only work for "edge_index" format, but
-                    # could be enhanced to also support "sparse_adj" format.
+                    # NOTE: This currently does only work for "edge_index"
+                    # format, but could be enhanced to also support
+                    # "sparse_adj" format.
                     # TODO: Make use of unified `add_self_loops` interface to
                     # implement this.
                     loop = edge_mask.new_ones(size[0])
                     edge_mask = torch.cat([edge_mask, loop], dim=0)
                 assert out.size(0) == edge_mask.size(0)
-                out = out * edge_mask.view(-1, 1)
+                out = out * unsqueeze(edge_mask, dim=-1, length=out.dim() - 1)
 
             inputs = self.inspector.distribute(self.aggregate, kwargs)
-            out = self.aggregate(out, **inputs)
+            return self.aggregate(out, **inputs)
 
-        elif mp_format == 'partial':
-            out = self.__partial_message__(adj_format, kwargs)
-            out = self.__partial_aggregate__(adj_format, out, kwargs)
-
-        return out
+        elif (adj_format, mp_format) == ('dense_adj', 'partial'):
+            message_kwargs = collector.collect_message(adj_type, kwargs)
+            inputs = self.inspector.distribute(self.message, message_kwargs)
+            out = self.message(**inputs)
+            out, kwargs = collector.collect_aggregate(adj_type, out, kwargs,
+                                                      message_kwargs)
+            inputs = self.inspector.distribute(self.partial_aggregate, kwargs)
+            return self.partial_aggregate(out, **inputs)
 
     def sparse_message_and_aggregate(self) -> torch.Tensor:
         raise NotImplementedError
@@ -249,35 +254,24 @@ class MessagePassing(torch.nn.Module):
                   ptr: Optional[torch.Tensor] = None,
                   dim_size: Optional[int] = None) -> torch.Tensor:
 
-        if self.aggr is None:
-            raise NotImplementedError
-
         if ptr is not None:
-            node_dim = self.node_dim
-            iters = inputs.dim() + node_dim if node_dim < 0 else node_dim
-            for _ in range(iters):
-                ptr = ptr.unsqueeze(0)
+            ptr = unsqueeze(ptr, dim=0, length=abs_dim(inputs, self.node_dim))
             return segment_csr(inputs, ptr, reduce=self.aggr)
         else:
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
 
-    def partial_aggregate(self, inputs, inv_edge_mask) -> torch.Tensor:
+    def partial_aggregate(self, inputs, edge_mask) -> torch.Tensor:
 
-        if self.aggr is None:
-            raise NotImplementedError
-
-        node_dim = self.node_dim
-        dim = inputs.dim() + node_dim if node_dim < 0 else node_dim
+        dim = self.node_dim + 1 if self.node_dim > 0 else self.node_dim
 
         if self.aggr in ['sum', 'add']:
             return inputs.sum(dim=dim)
 
         elif self.aggr == 'mean':
             out = inputs.sum(dim=dim)
-            deg = inv_edge_mask.size(-1) - inv_edge_mask.sum(dim=-1)
-            for _ in range(deg.dim(), out.dim()):
-                deg = deg.unsqueeze(-1)
+            deg = edge_mask.sum(dim=-1)
+            deg = unsqueeze(deg, dim=-1, length=out.dim() - deg.dim())
             out = out / deg
             out.masked_fill_((out == float('inf')) | (out == float('-inf')), 0)
             return out
@@ -287,77 +281,12 @@ class MessagePassing(torch.nn.Module):
             out.masked_fill_(out == float('-inf'), 0)
             return out
 
-    def __partial_message__(self, adj_format, kwargs):
-        # There is no need to perform "expensive" degree iterations for
-        # "partial" message passing based on dense adjacency matrices.
-        if adj_format == 'dense_adj':
-            kwargs = self.inspector.distribute(self.message, kwargs)
-            return self.message(**kwargs)
-
-        else:
-            kwargs = self.inspector.distribute(self.message, kwargs)
-            keys = list(kwargs.keys())
-            num_bins = len(kwargs[keys[0]])
-
-            outs = []
-            for i in range(num_bins):
-                tmp_kwargs = {key: item[i] for key, item in kwargs.items()}
-                outs.append(self.message(**tmp_kwargs))
-
-            return outs
-
-    def __partial_aggregate__(self, adj_format, inputs, kwargs):
-        # The "partial" aggregation based on dense adjacency matrices needs
-        # special treatment here since we cannot infer the dimensions of
-        # `adj_t`, i.e., `edge_attr` without looking at `inputs` for computing
-        # `inv_edge_mask`.
-        if adj_format == 'dense_adj':
-            inputs = inputs.contiguous()
-
-            node_dim = self.node_dim
-            node_dim = inputs.dim() + node_dim if node_dim < 0 else node_dim
-
-            # Find all entries zero entries. This is a bit tricker to implement
-            # in case of multi-dimensional edge features where we aggregate the
-            # features by taking the sum of their absolute values.
-            adj_t = kwargs['edge_attr']
-            if adj_t.dim() > node_dim + 2:
-                dims = list(range(node_dim + 2, adj_t.dim()))
-                inv_edge_mask = adj_t.abs().sum(dims) == 0
-            else:
-                inv_edge_mask = adj_t == 0
-            kwargs['inv_edge_mask'] = inv_edge_mask
-
-            for _ in range(node_dim + 1, inputs.dim()):
-                inv_edge_mask = inv_edge_mask.unsqueeze(-1)
-
-            if self.partial_fill_value is not None:
-                inputs.masked_fill_(inv_edge_mask, self.partial_fill_value)
-
-            kwargs = self.inspector.distribute(self.partial_aggregate, kwargs)
-            return self.partial_aggregate(inputs, **kwargs)
-
-        else:
-            kwargs = self.inspector.distribute(self.partial_aggregate, kwargs)
-            num_bins = len(inputs)
-
-            outs = []
-            for i in range(num_bins):
-                tmp_kwargs = {key: item[i] for key, item in kwargs.items()}
-                outs.append(self.partial_aggregate(inputs[i], **tmp_kwargs))
-
-            return outs
-
     @torch.no_grad()
     def check_propagate_consistency(self, sparse_adj_t: SparseTensor,
                                     **kwargs) -> bool:
         keys = list(self.collectors.keys())
 
         if len(keys) < 2:
-            print((f'Skip `check_propagate_consistency` because '
-                   f'`{self.__class__.name__}.propagate` does only support a '
-                   f'single message passing format ("{keys[0][1]}") '
-                   f'based on "{keys[0][0]}" adjacency format.'))
             return True
 
         outs = []
@@ -371,6 +300,7 @@ class MessagePassing(torch.nn.Module):
                 size = list(sparse_adj_t.sparse_sizes())[::-1]
                 out = self.propagate(edge_index, size=size,
                                      edge_attr=edge_attr, **kwargs)
+
             elif adj_format == 'sparse_adj':
                 out = self.propagate(sparse_adj_t, **kwargs)
 
@@ -382,16 +312,11 @@ class MessagePassing(torch.nn.Module):
         self.mp_format = old_mp_format
 
         # Perform `allclose` checks between all combinations.
-        is_equal = True
         for out1, out2 in combinations(outs, 2):
             if not torch.allclose(out1[2], out2[2]):
-                print((f'Output of "{out1[1]}" message passing based on '
-                       f'"{out1[0]}" adjacency format does not match with '
-                       f'the output of "{out2[1]}" message passing based on '
-                       f'"{out2[0]}" adjacency format.'))
-                is_equal = False
+                return False
 
-        return is_equal
+        return True
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

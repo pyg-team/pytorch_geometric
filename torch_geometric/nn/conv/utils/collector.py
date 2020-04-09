@@ -5,6 +5,8 @@ import torch
 from torch_scatter import gather_csr
 from torch_sparse import SparseTensor
 
+from .helpers import abs_dim, unsqueeze, unsqueeze_and_expand
+
 
 class Collector(object):
 
@@ -13,9 +15,73 @@ class Collector(object):
     def __init__(self, base_class: Any):
         self.base_class: Any = base_class
 
-    def collect(self, adj_type: Any, size: Optional[Tuple[int, int]],
+    def collect(self, adj_t: Any, size: Optional[Tuple[int, int]],
                 kwargs: Dict[str, Any]) -> Dict[str, Any]:
         raise NotImplementedError
+
+
+class SparseAdjFusedCollector(Collector):
+
+    special_args = set(['adj_t'])
+
+    def collect(self, adj_t: SparseTensor, size: Optional[Tuple[int, int]],
+                kwargs: Dict[str, Any]) -> Dict[str, Any]:
+
+        suffix2idx: Dict[str, int] = {'_i': 0, '_j': 1}
+        keys = self.base_class.inspector.keys(['sparse_message_and_aggregate'])
+
+        out: Dict[str, Any] = {}
+        for key in keys - self.special_args:
+            if key[-2:] not in self.suffixes:
+                item = kwargs.get(key, inspect.Parameter.empty)
+            else:
+                idx = suffix2idx[key[-2:]]
+                item = kwargs.get(key[:-2], inspect.Parameter.empty)
+
+                if isinstance(item, (tuple, list)):
+                    assert len(item) == 2
+                    item = item[idx]
+
+            if item is inspect.Parameter.empty:
+                continue
+
+            out[key] = item
+
+        out['adj_t'] = adj_t
+
+        return out
+
+
+class DenseAdjFusedCollector(Collector):
+
+    special_args = set(['adj_t'])
+
+    def collect(self, adj_t: torch.Tensor, size: Optional[Tuple[int, int]],
+                kwargs: Dict[str, Any]) -> Dict[str, Any]:
+
+        suffix2idx: Dict[str, int] = {'_i': 0, '_j': 1}
+        keys = self.base_class.inspector.keys(['dense_message_and_aggregate'])
+
+        out: Dict[str, Any] = {}
+        for key in keys - self.special_args:
+            if key[-2:] not in self.suffixes:
+                item = kwargs.get(key, inspect.Parameter.empty)
+            else:
+                idx = suffix2idx[key[-2:]]
+                item = kwargs.get(key[:-2], inspect.Parameter.empty)
+
+                if isinstance(item, (tuple, list)):
+                    assert len(item) == 2
+                    item = item[idx]
+
+            if item is inspect.Parameter.empty:
+                continue
+
+            out[key] = item
+
+        out['adj_t'] = adj_t
+
+        return out
 
 
 class EdgeIndexSparseCollector(Collector):
@@ -85,38 +151,6 @@ class EdgeIndexSparseCollector(Collector):
         return out
 
 
-class SparseAdjFusedCollector(Collector):
-
-    special_args = set(['adj_t'])
-
-    def collect(self, adj_t: SparseTensor, size: Optional[Tuple[int, int]],
-                kwargs: Dict[str, Any]) -> Dict[str, Any]:
-
-        suffix2idx: Dict[str, int] = {'_i': 0, '_j': 1}
-        keys = self.base_class.inspector.keys(['sparse_message_and_aggregate'])
-
-        out: Dict[str, Any] = {}
-        for key in keys - self.special_args:
-            if key[-2:] not in self.suffixes:
-                item = kwargs.get(key, inspect.Parameter.empty)
-            else:
-                idx = suffix2idx[key[-2:]]
-                item = kwargs.get(key[:-2], inspect.Parameter.empty)
-
-                if isinstance(item, (tuple, list)):
-                    assert len(item) == 2
-                    item = item[idx]
-
-            if item is inspect.Parameter.empty:
-                continue
-
-            out[key] = item
-
-        out['adj_t'] = adj_t
-
-        return out
-
-
 class SparseAdjSparseCollector(Collector):
 
     special_args = set([
@@ -144,11 +178,9 @@ class SparseAdjSparseCollector(Collector):
                     item = item[idx]
 
                 if torch.is_tensor(item) and idx == 0:  # _i
-                    rowptr = adj_t.storage.rowptr()
-                    iters = item.dim() + node_dim if node_dim < 0 else node_dim
-                    for _ in range(iters):
-                        rowptr = rowptr.unsqueeze(0)
-                    item = gather_csr(item, rowptr)
+                    ptr = adj_t.storage.rowptr()
+                    ptr = unsqueeze(ptr, dim=0, length=abs_dim(item, node_dim))
+                    item = gather_csr(item, ptr)
 
                 elif torch.is_tensor(item) and idx == 1:  # _j
                     col = adj_t.storage.col()
@@ -166,38 +198,6 @@ class SparseAdjSparseCollector(Collector):
         out['size_i'] = adj_t.sparse_size(1)
         out['dim_size'] = out['size_i']
         out['ptr'] = adj_t.storage.rowptr()
-
-        return out
-
-
-class DenseAdjFusedCollector(Collector):
-
-    special_args = set(['adj_t'])
-
-    def collect(self, adj_t: torch.Tensor, size: Optional[Tuple[int, int]],
-                kwargs: Dict[str, Any]) -> Dict[str, Any]:
-
-        suffix2idx: Dict[str, int] = {'_i': 0, '_j': 1}
-        keys = self.base_class.inspector.keys(['dense_message_and_aggregate'])
-
-        out: Dict[str, Any] = {}
-        for key in keys - self.special_args:
-            if key[-2:] not in self.suffixes:
-                item = kwargs.get(key, inspect.Parameter.empty)
-            else:
-                idx = suffix2idx[key[-2:]]
-                item = kwargs.get(key[:-2], inspect.Parameter.empty)
-
-                if isinstance(item, (tuple, list)):
-                    assert len(item) == 2
-                    item = item[idx]
-
-            if item is inspect.Parameter.empty:
-                continue
-
-            out[key] = item
-
-        out['adj_t'] = adj_t
 
         return out
 
@@ -220,14 +220,14 @@ class SparseAdjPartialCollector(Collector):
 
 class DenseAdjPartialCollector(Collector):
 
-    special_args = set(['edge_attr, inv_edge_mask'])
+    special_args = set(['edge_attr', 'edge_mask', 'inv_edge_mask'])
 
     def __init__(self, base_class: Any, fill_value: float = 0.):
         super(DenseAdjPartialCollector, self).__init__(base_class)
         self.fill_value: float = fill_value
 
-    def collect(self, adj_t: torch.Tensor, size: Optional[Tuple[int, int]],
-                kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    def collect_message(self, adj_t: torch.Tensor,
+                        kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
         node_dim = self.base_class.node_dim
         suffix2idx: Dict[str, int] = {'_i': 0, '_j': 1}
@@ -246,21 +246,14 @@ class DenseAdjPartialCollector(Collector):
                     assert len(item) == 2
                     item = item[idx]
 
-                # Convert to positive integer for correct unsqueezing
-                # behaviour.
-                dim = item.dim() + node_dim if node_dim < 0 else node_dim
+                # Convert to positive integer for correct unsqueezing.
+                dim = abs_dim(item, node_dim)
 
                 if torch.is_tensor(item) and idx == 0:  # _i
-                    item = item.unsqueeze(dim + 1)
-                    sizes = [-1] * item.dim()
-                    sizes[dim + 1] = adj_t.size(dim)
-                    item = item.expand(sizes)
+                    item = unsqueeze_and_expand(item, dim + 1, adj_t.size(dim))
 
                 elif torch.is_tensor(item) and idx == 1:  # _j
-                    item = item.unsqueeze(dim)
-                    sizes = [-1] * item.dim()
-                    sizes[dim] = adj_t.size(dim + 1)
-                    item = item.expand(sizes)
+                    item = unsqueeze_and_expand(item, dim, adj_t.size(dim + 1))
 
             if item is inspect.Parameter.empty:
                 continue
@@ -270,3 +263,30 @@ class DenseAdjPartialCollector(Collector):
         out['edge_attr'] = adj_t
 
         return out
+
+    def collect_aggregate(self, adj_t: torch.Tensor, inputs: torch.Tensor,
+                          kwargs: Dict[str, Any],
+                          message_kwargs: Dict[str, Any]) -> Dict[str, Any]:
+
+        keys = self.base_class.inspector.keys(['partial_aggregate'])
+
+        # Find all entries zero entries. This is a bit tricker to implement
+        # in case of multi-dimensional edge features where we aggregate the
+        # features by taking the sum of their absolute values.
+        dim = abs_dim(inputs, self.base_class.node_dim)
+        if adj_t.dim() > dim + 2:
+            dims = list(range(dim + 2, adj_t.dim()))
+            inv_edge_mask = adj_t.abs().sum(dims) == 0
+        else:
+            inv_edge_mask = adj_t == 0
+
+        message_kwargs['inv_edge_mask'] = 'inv_edge_mask'
+        if 'edge_mask' in keys:
+            message_kwargs['edge_mask'] = ~inv_edge_mask
+
+        inv_edge_mask = unsqueeze(inv_edge_mask, dim=inv_edge_mask.dim(),
+                                  length=inputs.dim() - inv_edge_mask.dim())
+        inputs = inputs.contiguous()  # Needed for correct masking.
+        inputs.masked_fill_(inv_edge_mask, self.fill_value)
+
+        return inputs, message_kwargs
