@@ -1,3 +1,4 @@
+import warnings
 from itertools import combinations
 from collections import OrderedDict
 from typing import List, Dict, Optional, Tuple, Union
@@ -60,7 +61,9 @@ class MessagePassing(torch.nn.Module):
         if self.aggr is not None:
             self.partial_fill_value = 0 if aggr != 'max' else float('-inf')
 
-        # An `OrderedDict` that dictates the preference of message passing.
+        # An `OrderedDict` that dictates the preference of message passing:
+        # 1. We prefer "fused" message passing over anything else.
+        # 2. For sparse adjacencies, we prefer "sparse" over "partial" format.
         coll = OrderedDict()
         if self.supports_sparse_fused_format():
             coll[('sparse_adj', 'fused')] = SparseAdjFusedCollector(self)
@@ -297,23 +300,34 @@ class MessagePassing(torch.nn.Module):
         for (adj_format, mp_format) in self.collectors.keys():
             self.mp_format = mp_format  # Force message passing format.
 
-            if adj_format == 'edge_index':
-                row, col, edge_attr = sparse_adj_t.t().coo()  # Transpose.
-                edge_index = torch.stack([row, col], dim=0)
-                size = list(sparse_adj_t.sparse_sizes())[::-1]
-                out = self.propagate(edge_index, size=size,
-                                     edge_attr=edge_attr, **kwargs)
+            try:
+                if adj_format == 'edge_index':
+                    row, col, edge_attr = sparse_adj_t.t().coo()  # Transpose.
+                    edge_index = torch.stack([row, col], dim=0)
+                    size = list(sparse_adj_t.sparse_sizes())[::-1]
+                    out = self.propagate(edge_index, size=size,
+                                         edge_attr=edge_attr, **kwargs)
 
-            elif adj_format == 'sparse_adj':
-                out = self.propagate(sparse_adj_t, **kwargs)
+                elif adj_format == 'sparse_adj':
+                    out = self.propagate(sparse_adj_t, **kwargs)
 
-            elif adj_format == 'dense_adj':
-                dense_adj_t = sparse_adj_t.to_dense()
-                if static_graph:
-                    dense_adj_t = dense_adj_t.unsqueeze(0)
-                out = self.propagate(dense_adj_t, **kwargs)
+                elif adj_format == 'dense_adj':
+                    dense_adj_t = sparse_adj_t.to_dense()
+                    if static_graph:
+                        dense_adj_t = dense_adj_t.unsqueeze(0)
+                    out = self.propagate(dense_adj_t, **kwargs)
 
-            outs.append((adj_format, mp_format, out))
+                outs.append((adj_format, mp_format, out.to('cpu')))
+
+            except RuntimeError as e:
+                if 'CUDA out of memory' not in str(e):
+                    raise RuntimeError(e)
+                torch.cuda.empty_cache()
+                warnings.warn(
+                    (f'Skipping "{mp_format}" message passing based on '
+                     f'"{adj_format}" adjacency format because a CUDA out '
+                     f'of memory error occured.'))
+
         self.mp_format = old_mp_format
 
         # Perform `allclose` checks between all combinations.
