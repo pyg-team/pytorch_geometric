@@ -90,7 +90,7 @@ ENV HOME=/home/user
 RUN chmod 777 /home/user
 
 # Install Miniconda.
-RUN curl -so ~/miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-4.5.12-Linux-x86_64.sh \
+RUN curl -so ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
  && chmod +x ~/miniconda.sh \
  && ~/miniconda.sh -b -p ~/miniconda \
  && rm ~/miniconda.sh
@@ -141,10 +141,10 @@ RUN CPATH=/usr/local/cuda/include:$CPATH \
  && LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH \
  && DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
 
-RUN pip install --verbose --no-cache-dir torch-scatter \
- && pip install --verbose --no-cache-dir torch-sparse \
- && pip install --verbose --no-cache-dir torch-cluster \
- && pip install --verbose --no-cache-dir torch-spline-conv \
+RUN pip install torch-scatter==latest+cu101 -f https://pytorch-geometric.com/whl/torch-1.4.0.html \
+ && pip install torch-sparse==latest+cu101 -f https://pytorch-geometric.com/whl/torch-1.4.0.html \
+ && pip install torch-cluster==latest+cu101 -f https://pytorch-geometric.com/whl/torch-1.4.0.html \
+ && pip install torch-spline-conv==latest+cu101 -f https://pytorch-geometric.com/whl/torch-1.4.0.html \
  && pip install torch-geometric
 
 # Set the default command to python3.
