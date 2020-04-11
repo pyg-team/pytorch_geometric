@@ -105,22 +105,22 @@ class SplineConv(MessagePassing):
                           'your data to the GPU.')
 
         if torch_geometric.is_debug_enabled():
-            if x.size(1) != self.in_channels:
+            if x.size(-1) != self.in_channels:
                 raise RuntimeError(
                     'Expected {} node features, but found {}'.format(
                         self.in_channels, x.size(1)))
 
-            if pseudo.size(1) != self.dim:
+            if pseudo.size(-1) != self.dim:
                 raise RuntimeError(
                     ('Expected pseudo-coordinate dimensionality of {}, but '
                      'found {}').format(self.dim, pseudo.size(1)))
 
             min_index, max_index = edge_index.min(), edge_index.max()
-            if min_index < 0 or max_index > x.size(0) - 1:
+            if min_index < 0 or max_index > x.size(self.node_dim) - 1:
                 raise RuntimeError(
                     ('Edge indices must lay in the interval [0, {}]'
                      ' but found them in the interval [{}, {}]').format(
-                         x.size(0) - 1, min_index, max_index))
+                         x.size(self.node_dim) - 1, min_index, max_index))
 
             min_pseudo, max_pseudo = pseudo.min(), pseudo.max()
             if min_pseudo < 0 or max_pseudo > 1:
