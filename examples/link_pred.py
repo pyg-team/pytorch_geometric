@@ -31,8 +31,8 @@ class Net(torch.nn.Module):
 
     def forward(self, pos_edge_index, neg_edge_index):
 
-        x = F.relu(self.conv1(data.x, pos_edge_index))
-        x = self.conv2(x, pos_edge_index)
+        x = F.relu(self.conv1(data.x, data.train_pos_edge_index))
+        x = self.conv2(x, data.train_pos_edge_index)
 
         total_edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
         x_j = torch.index_select(x, 0, total_edge_index[0])
