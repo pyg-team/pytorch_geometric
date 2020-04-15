@@ -32,9 +32,12 @@ class Node2Vec(torch.nn.Module):
         num_negative_samples (int, optional): The number of negative samples to
             use for each node. If set to :obj:`None`, this parameter gets set
             to :obj:`context_size - 1`. (default: :obj:`None`)
+        sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
+            weight matrix will be sparse. (default: :obj:`False`)
     """
     def __init__(self, num_nodes, embedding_dim, walk_length, context_size,
-                 walks_per_node=1, p=1, q=1, num_negative_samples=None):
+                 walks_per_node=1, p=1, q=1, num_negative_samples=None,
+                 sparse=False):
         super(Node2Vec, self).__init__()
 
         if random_walk is None:
@@ -50,7 +53,8 @@ class Node2Vec(torch.nn.Module):
         self.q = q
         self.num_negative_samples = num_negative_samples
 
-        self.embedding = torch.nn.Embedding(num_nodes, embedding_dim)
+        self.embedding = torch.nn.Embedding(num_nodes, embedding_dim,
+                                            sparse=sparse)
 
         self.reset_parameters()
 
