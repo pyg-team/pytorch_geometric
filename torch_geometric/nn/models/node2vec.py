@@ -61,9 +61,12 @@ class Node2Vec(torch.nn.Module):
     def reset_parameters(self):
         self.embedding.reset_parameters()
 
-    def forward(self, subset):
+    def forward(self, subset=None):
         """Returns the embeddings for the nodes in :obj:`subset`."""
-        return self.embedding(subset)
+        if subset is None:
+            return self.embedding.weight
+        else:
+            return self.embedding(subset)
 
     def __random_walk__(self, edge_index, subset=None):
         if subset is None:
