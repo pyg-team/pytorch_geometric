@@ -1,6 +1,6 @@
 import torch
 from torch_scatter import scatter_add
-from torch_geometric.utils import add_self_loops
+from torch_geometric.utils import add_self_loops, remove_self_loops
 
 from .num_nodes import maybe_num_nodes
 
@@ -33,6 +33,8 @@ def get_laplacian(edge_index, edge_weight=None, normalization=None, dtype=None,
     """
 
     assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
+
+    edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
     if edge_weight is None:
         edge_weight = torch.ones(edge_index.size(1), dtype=dtype,
