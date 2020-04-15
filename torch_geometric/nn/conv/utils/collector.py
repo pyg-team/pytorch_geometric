@@ -257,6 +257,18 @@ class SparseAdjPartialCollector(Collector):
 
         keys = self.base_class.inspector.keys(['partial_aggregate'])
 
+        # We first look for specific keys in `adj_t.storage` that may be
+        # already set:
+        # node_size, length, node_perm, edge_perm
+        # node features will be mapped to `[..., size, 1, dim]
+        # edge features will be mapped to `[..., size, length, dim]
+
+        # If binning is False, we will map each deg to its own list (remove
+        # empty lists)
+        # Otherwise, we rely on a pre-computed binning strategy.
+
+        # Otherwise, we need to compute a binning strategy
+
         # TODO: Generate splits if not given.
         # Convert edge features, convert node features
         # Make to lists
