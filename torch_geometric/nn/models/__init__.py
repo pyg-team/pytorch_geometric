@@ -5,6 +5,7 @@ from .autoencoder import InnerProductDecoder, GAE, VGAE, ARGA, ARGVA
 from .signed_gcn import SignedGCN
 from .re_net import RENet
 from .graph_unet import GraphUNet
+from .dimenet import DimeNet
 from .gnn_explainer import GNNExplainer
 
 __all__ = [
@@ -19,5 +20,6 @@ __all__ = [
     'SignedGCN',
     'RENet',
     'GraphUNet',
+    'DimeNet',
     'GNNExplainer',
 ]
