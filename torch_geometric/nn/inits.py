@@ -1,5 +1,7 @@
 import math
 
+import torch
+
 
 def uniform(size, tensor):
     bound = 1.0 / math.sqrt(size)
@@ -17,6 +19,13 @@ def glorot(tensor):
     if tensor is not None:
         stdv = math.sqrt(6.0 / (tensor.size(-2) + tensor.size(-1)))
         tensor.data.uniform_(-stdv, stdv)
+
+
+def glorot_orthogonal(tensor, scale):
+    if tensor is not None:
+        torch.nn.init.orthogonal_(tensor.data)
+        scale /= ((tensor.size(-2) + tensor.size(-1)) * tensor.var())
+        tensor.data *= scale.sqrt()
 
 
 def zeros(tensor):

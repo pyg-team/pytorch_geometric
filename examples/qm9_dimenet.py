@@ -20,18 +20,17 @@ print(test_dataset)
 data = dataset[0]
 print(data)
 
-cutoff = 1.5
+cutoff = 5.0
 
 dist = (data.pos.view(-1, 1, 3) - data.pos.view(1, -1, 3)).norm(dim=-1)
 dist.fill_diagonal_(float('inf'))
 mask = dist <= cutoff
 edge_index = mask.nonzero().t()
 
-in_channels = 5
-model = DimeNet(in_channels, hidden_channels=128, num_blocks=6, num_bilinear=8,
-                num_spherical=7, num_radial=6, cutoff=cutoff, num_targets=1)
+in_channels = 13
+model = DimeNet(in_channels, hidden_channels=128, out_channels=1, num_blocks=6,
+                num_bilinear=8, num_spherical=7, num_radial=6, cutoff=cutoff)
 
-edge_index = torch.tensor([[2, 4, 1, 3], [1, 3, 0, 0]])
 model(data.x, data.pos, edge_index)
 
 # batch_size = 32
