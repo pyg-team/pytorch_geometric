@@ -2,6 +2,7 @@ import os.path as osp
 import argparse
 
 import torch
+from tqdm import tqdm
 from torch_geometric.datasets import QM9
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import DimeNet
@@ -45,15 +46,20 @@ def train(loader):
     model.train()
 
     total_loss = 0
-    for i, data in enumerate(loader):
+    pbar = tqdm(total=len(loader))
+    for data in loader:
         optimizer.zero_grad()
         data = data.to(device)
         out = model(data.x, data.pos, data.edge_index, data.batch)
         loss = (out.squeeze(-1) - data.y).abs().mean()
         loss.backward()
-        print(i, len(loader), loss.item())
         optimizer.step()
+
         total_loss += loss.item() * data.num_graphs
+        pbar.set_description(f'Loss: {loss:.4f}')
+        pbar.update()
+
+    pbar.close()
 
     return total_loss / len(loader.dataset)
 
