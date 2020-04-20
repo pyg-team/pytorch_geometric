@@ -13,7 +13,7 @@ parser.add_argument('--cutoff', type=float, default=5.0)
 args = parser.parse_args()
 
 
-class MyTransform(object):  # k-NN graph and feature and target selection.
+class MyTransform(object):  # k-NN graph, and feature and target selection.
     def __call__(self, data):
         dist = (data.pos.view(-1, 1, 3) - data.pos.view(1, -1, 3)).norm(dim=-1)
         dist.fill_diagonal_(float('inf'))
