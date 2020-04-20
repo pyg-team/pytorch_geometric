@@ -1,52 +1,82 @@
-import torch
 import os.path as osp
+import argparse
+
+import torch
 from torch_geometric.datasets import QM9
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import DimeNet
-from torch_sparse import SparseTensor
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--target', type=int, default=0)
+parser.add_argument('--cutoff', type=float, default=5.0)
+args = parser.parse_args()
+
+
+class MyTransform(object):  # k-NN graph and feature and target selection.
+    def __call__(self, data):
+        dist = (data.pos.view(-1, 1, 3) - data.pos.view(1, -1, 3)).norm(dim=-1)
+        dist.fill_diagonal_(float('inf'))
+        mask = dist <= args.cutoff
+        data.edge_index = mask.nonzero().t()
+        data.edge_attr = None  # No need to maintain bond types.
+        data.x = data.x[:, :5]  # Just make use of atom types as features.
+        data.y = data.y[:, args.target]
+        return data
+
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
-# dataset = QM9(path).shuffle()
-dataset = QM9(path)
+dataset = QM9(path, transform=MyTransform()).shuffle()
 train_dataset = dataset[:110000]
-valid_dataset = dataset[110000:120000]
+val_dataset = dataset[110000:120000]
 test_dataset = dataset[120000:]
-print(dataset)
-print(train_dataset)
-print(valid_dataset)
-print(test_dataset)
-# transform = T.Compose([MyTransform(), Complete(), T.Distance(norm=False)])
 
-data = dataset[0]
-print(data)
+train_loader = DataLoader(train_dataset, 48, shuffle=True, num_workers=6)
+val_loader = DataLoader(val_dataset, 48, num_workers=6)
+test_loader = DataLoader(test_dataset, 48, num_workers=6)
 
-cutoff = 5.0
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = DimeNet(in_channels=dataset.num_node_features, hidden_channels=128,
+                out_channels=1, num_blocks=6, num_bilinear=8, num_spherical=7,
+                num_radial=6, cutoff=args.cutoff).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001, amsgrad=True)
 
-dist = (data.pos.view(-1, 1, 3) - data.pos.view(1, -1, 3)).norm(dim=-1)
-dist.fill_diagonal_(float('inf'))
-mask = dist <= cutoff
-edge_index = mask.nonzero().t()
 
-in_channels = 13
-model = DimeNet(in_channels, hidden_channels=128, out_channels=1, num_blocks=6,
-                num_bilinear=8, num_spherical=7, num_radial=6, cutoff=cutoff)
+def train(loader):
+    model.train()
 
-model(data.x, data.pos, edge_index)
+    total_loss = 0
+    for data in loader:
+        optimizer.zero_grad()
+        data = data.to(device)
+        out = model(data.x, data.pos, data.edge_index, data.batch)
+        loss = (out.squeeze(-1) - data.y).abs().mean()
+        loss.backward()
+        print(loss.item())
+        optimizer.step()
+        total_loss += loss.item() * data.num_graphs
 
-# batch_size = 32
-# num_steps = 3000000
-# num_epochs = int(num_steps / (len(train_dataset) / batch_size))
-# train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
+    return total_loss / len(loader.dataset)
 
-# def train(epoch):
-#     model.train()
-#     loss_all = 0
 
-#     for data in train_loader:
-#         data = data.to(device)
-#         optimizer.zero_grad()
-#         loss = F.mse_loss(model(data), data.y)
-#         loss.backward()
-#         loss_all += loss.item() * data.num_graphs
-#         optimizer.step()
-#     return loss_all / len(train_loader.dataset)
+@torch.no_grad()
+def test(loader):
+    model.eval()
+
+    total_mae = 0
+    for data in loader:
+        data = data.to(device)
+        out = model(data.x, data.pos, data.edge_index, data.batch)
+        total_mae = (out.squeeze(-1) - data.y).abs().sum()
+
+    return total_mae / len(loader.dataset)
+
+
+best_val_mae = test_mae = float('inf')
+for epoch in range(1, 501):
+    train_mae = train(train_loader)
+    val_mae = test(val_loader)
+    if val_mae < best_val_mae:
+        best_val_mae = val_mae
+        test_mae = test(test_loader)
+    print(f'Epoch: {epoch:02d}, Train: {train_mae:.4f}, Val: {val_mae:.4f}, '
+          f'Test: {test_mae:.4f}')
