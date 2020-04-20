@@ -30,9 +30,9 @@ train_dataset = dataset[:110000]
 val_dataset = dataset[110000:120000]
 test_dataset = dataset[120000:]
 
-train_loader = DataLoader(train_dataset, 48, shuffle=True, num_workers=6)
-val_loader = DataLoader(val_dataset, 48, num_workers=6)
-test_loader = DataLoader(test_dataset, 48, num_workers=6)
+train_loader = DataLoader(train_dataset, 44, shuffle=True, num_workers=6)
+val_loader = DataLoader(val_dataset, 44, num_workers=6)
+test_loader = DataLoader(test_dataset, 44, num_workers=6)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = DimeNet(in_channels=dataset.num_node_features, hidden_channels=128,
@@ -45,13 +45,13 @@ def train(loader):
     model.train()
 
     total_loss = 0
-    for data in loader:
+    for i, data in enumerate(loader):
         optimizer.zero_grad()
         data = data.to(device)
         out = model(data.x, data.pos, data.edge_index, data.batch)
         loss = (out.squeeze(-1) - data.y).abs().mean()
         loss.backward()
-        print(loss.item())
+        print(i, len(loader), loss.item())
         optimizer.step()
         total_loss += loss.item() * data.num_graphs
 
@@ -66,7 +66,7 @@ def test(loader):
     for data in loader:
         data = data.to(device)
         out = model(data.x, data.pos, data.edge_index, data.batch)
-        total_mae = (out.squeeze(-1) - data.y).abs().sum()
+        total_mae += (out.squeeze(-1) - data.y).abs().sum().item()
 
     return total_mae / len(loader.dataset)
 
