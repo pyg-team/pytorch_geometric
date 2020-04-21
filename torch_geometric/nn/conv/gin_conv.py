@@ -11,9 +11,15 @@ class GINConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = h_{\mathbf{\Theta}} \left( (1 + \epsilon) \cdot
-        \mathbf{x}_i + \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \right),
+        \mathbf{x}_i + \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j \right)
 
-    here :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.* a MLP.
+    or
+
+    .. math::
+        \mathbf{X}^{\prime} = h_{\mathbf{\Theta}} \left( \left( \mathbf{A} +
+        (1 + \epsilon) \cdot \mathbf{I} \right) \cdot \mathbf{X} \right),
+
+    here :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.* an MLP.
 
     Args:
         nn (torch.nn.Module): A neural network :math:`h_{\mathbf{\Theta}}` that
