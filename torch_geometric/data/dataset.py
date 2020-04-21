@@ -16,7 +16,7 @@ def to_list(x):
 
 
 def files_exist(files):
-    return all([osp.exists(f) for f in files])
+    return len(files) != 0 and all([osp.exists(f) for f in files])
 
 
 def __repr__(obj):
