@@ -147,7 +147,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101` or `cu102` d
 
 ### PyTorch 1.4.0
 
-To install the binaries for PyTorch 1.4.0, simpyl run
+To install the binaries for PyTorch 1.4.0, simply run
 
 ```sh
 $ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
