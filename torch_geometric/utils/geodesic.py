@@ -72,13 +72,13 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
     num_workers = mp.cpu_count() if num_workers <= -1 else num_workers
     if num_workers > 0:
         with mp.Pool(num_workers) as pool:
-            outs = pool.map(
+            outs = pool.starmap(
                 _parallel_loop,
                 [(pos, face, src, dest, max_distance, norm, i, dtype)
                  for i in range(len(src))])
     else:
         outs = [
-            _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype)
+            _parallel_loop(pos, face, src, max_distance, norm, i, dtype, dest)
             for i in range(len(src))
         ]
 
