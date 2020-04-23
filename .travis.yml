@@ -7,7 +7,8 @@ os:
 
 env:
   jobs:
-    - TORCH_VERSION=1.4.0 PYTHON_VERSION=3.7 IDX=cpu
+    - TORCH_VERSION=1.4.0 PYTHON_VERSION=3.8 IDX=cpu
+    - TORCH_VERSION=1.5.0 PYTHON_VERSION=3.8 IDX=cpu
 
 install:
   - source script/conda.sh
