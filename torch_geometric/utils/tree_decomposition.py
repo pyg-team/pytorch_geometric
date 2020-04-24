@@ -26,9 +26,6 @@ def tree_decomposition(mol):
     if Chem is None:
         raise ImportError('Package `rdkit` could not be found.')
 
-    if mol.GetNumAtoms() <= 1:
-        return torch.tensor((2, 0)), torch.tensor((2, 0)), 0
-
     # Cliques = rings and bonds.
     cliques = [list(x) for x in Chem.GetSymmSSSR(mol)]
     for bond in mol.GetBonds():
@@ -48,7 +45,7 @@ def tree_decomposition(mol):
                 if c1 >= c2 or len(cliques[c1]) <= 2 or len(cliques[c2]) <= 2:
                     continue
                 if len(set(cliques[c1]) & set(cliques[c2])) > 2:
-                    cliques[c1] = set(cliques[c1]) + set(cliques[c2])
+                    cliques[c1] = set(cliques[c1]) | set(cliques[c2])
                     cliques[c2] = []
     cliques = [c for c in cliques if len(c) > 0]
 
@@ -90,15 +87,18 @@ def tree_decomposition(mol):
                     count = len(set(cliques[c1]) & set(cliques[c2]))
                     edges[(c1, c2)] = min(count, edges.get((c1, c2), 99))
 
-    edge_index_T, weight = zip(*edges.items())
-    row, col = torch.tensor(edge_index_T).t()
-    inv_weight = 100 - torch.tensor(weight)
-    clique_graph = SparseTensor(row=row, col=col, value=inv_weight,
-                                sparse_sizes=(len(cliques), len(cliques)))
-    junc_tree = minimum_spanning_tree(clique_graph.to_scipy('csr'))
-    row, col, _ = SparseTensor.from_scipy(junc_tree).coo()
-    edge_index = torch.stack([row, col], dim=0)
-    edge_index = to_undirected(edge_index, num_nodes=len(cliques))
+    if len(edges) > 0:
+        edge_index_T, weight = zip(*edges.items())
+        row, col = torch.tensor(edge_index_T).t()
+        inv_weight = 100 - torch.tensor(weight)
+        clique_graph = SparseTensor(row=row, col=col, value=inv_weight,
+                                    sparse_sizes=(len(cliques), len(cliques)))
+        junc_tree = minimum_spanning_tree(clique_graph.to_scipy('csr'))
+        row, col, _ = SparseTensor.from_scipy(junc_tree).coo()
+        edge_index = torch.stack([row, col], dim=0)
+        edge_index = to_undirected(edge_index, num_nodes=len(cliques))
+    else:
+        edge_index = torch.tensor((2, 0), dtype=torch.long)
 
     rows = [[i] * len(atom2clique[i]) for i in range(mol.GetNumAtoms())]
     row = torch.tensor(list(chain.from_iterable(rows)))
