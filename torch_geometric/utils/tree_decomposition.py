@@ -12,16 +12,15 @@ except ImportError:
     Chem = None
 
 
-def tree_decomposition(mol, return_smiles_cliques=False):
+def tree_decomposition(mol):
     r"""The tree decomposition algorithm of molecules from the
     `"Junction Tree Variational Autoencoder for Molecular Graph Generation"
     <https://arxiv.org/abs/1802.04364>`_ paper.
+    Returns the graph connectivity of the junction tree, the assigmnet mapping
+    each atom to its clique in the junction tree, and the number of cliques.
 
     Args:
         mol (rdkit.Chem.Mol): A :obj:`rdkit` molecule.
-        return_smiles_cliques (int, optional): If set to :obj:`True`, will
-            return the smiles representation of each clique.
-            (default: :obj:`False`)
 
     :rtype: (LongTensor, LongTensor, int)
     """
@@ -108,8 +107,4 @@ def tree_decomposition(mol, return_smiles_cliques=False):
     col = torch.tensor(list(chain.from_iterable(atom2clique)))
     atom2clique = torch.stack([row, col], dim=0)
 
-    if return_smiles_cliques:
-        smiles = [Chem.MolFragmentToSmiles(mol, c) for c in cliques]
-        return edge_index, atom2clique, len(cliques), smiles
-    else:
-        return edge_index, atom2clique, len(cliques)
+    return edge_index, atom2clique, len(cliques)
