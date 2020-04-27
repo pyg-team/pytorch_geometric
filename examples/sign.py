@@ -11,7 +11,6 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
 transform = T.Compose([T.NormalizeFeatures(), T.SIGN(num_hops)])
 dataset = Flickr(path, transform=transform)
 data = dataset[0]
-print(data)
 
 
 class Net(torch.nn.Module):
