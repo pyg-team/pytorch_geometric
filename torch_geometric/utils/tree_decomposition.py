@@ -16,8 +16,9 @@ def tree_decomposition(mol):
     r"""The tree decomposition algorithm of molecules from the
     `"Junction Tree Variational Autoencoder for Molecular Graph Generation"
     <https://arxiv.org/abs/1802.04364>`_ paper.
-    Returns the graph connectivity of the junction tree, the assigmnet mapping
-    each atom to its clique in the junction tree, and the number of cliques.
+    Returns the graph connectivity of the junction tree, the assignment
+    mapping of each atom to the clique in the junction tree, and the number
+    of cliques.
 
     Args:
         mol (rdkit.Chem.Mol): A :obj:`rdkit` molecule.
