@@ -6,8 +6,8 @@ class SIGN(object):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
     <https://arxiv.org/abs/2004.11198>`_ paper, which precomputes fixed
-    GNN representations up to :obj:`num_hops` in :obj:`data.x1`,
-    :obj:`data.x2`, ...
+    GNN representations up to :obj:`num_hops` and saves them in
+    :obj:`data.x1`, :obj:`data.x2`, ...
 
     .. note::
 
