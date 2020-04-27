@@ -12,7 +12,10 @@ class SIGN(object):
     .. note::
 
         Since intermediate node representations are pre-computed, this operator
-        scales well to large graphs.
+        is able to scale well to large graphs.
+        For an example of using SIGN, see `examples/sign.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        sign.py>`_.
 
     Args:
         num_hops (int): The number of hops/layer.
