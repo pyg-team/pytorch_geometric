@@ -6,9 +6,9 @@ from torch.nn import Linear
 from torch_geometric.datasets import Flickr
 import torch_geometric.transforms as T
 
-num_hops = 2
+K = 2
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
-transform = T.Compose([T.NormalizeFeatures(), T.SIGN(num_hops)])
+transform = T.Compose([T.NormalizeFeatures(), T.SIGN(K)])
 dataset = Flickr(path, transform=transform)
 data = dataset[0]
 
@@ -18,12 +18,12 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
 
         self.lins = torch.nn.ModuleList()
-        for _ in range(num_hops + 1):
+        for _ in range(K + 1):
             self.lins.append(Linear(dataset.num_node_features, 1024))
-        self.lin = Linear((num_hops + 1) * 1024, dataset.num_classes)
+        self.lin = Linear((K + 1) * 1024, dataset.num_classes)
 
     def forward(self):
-        xs = [data.x] + [data[f'x{i}'] for i in range(1, num_hops + 1)]
+        xs = [data.x] + [data[f'x{i}'] for i in range(1, K + 1)]
         for i, lin in enumerate(self.lins):
             out = F.dropout(F.relu(lin(xs[i])), p=0.5, training=self.training)
             xs[i] = out
