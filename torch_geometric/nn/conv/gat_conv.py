@@ -93,8 +93,7 @@ class GATConv(MessagePassing):
                              return_attention_weights=return_attention_weights)
 
         if return_attention_weights:
-            alpha = self.alpha
-            self.alpha = None
+            alpha, self.alpha = self.alpha, None
             return out, alpha
         else:
             return out
