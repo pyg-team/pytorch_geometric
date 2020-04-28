@@ -5,23 +5,30 @@ from torch_sparse import SparseTensor
 class SIGN(object):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
-    <https://arxiv.org/abs/2004.11198>`_ paper, which precomputes fixed
-    GNN representations up to :obj:`num_hops` and saves them in
+    <https://arxiv.org/abs/2004.11198>`_ paper, which precomputes the fixed
+    representations
+
+    .. :math::
+
+    `\mathbf{X}^{(i)}` = {\left( \mathbf{D}^{-1/2} \mathbf{A} \mathbf{D}^{-1/2}
+    \right)}^i \mathbf{X}
+
+    for :math:`i \in \{ 1, \ldots, K \}` and saves them in
     :obj:`data.x1`, :obj:`data.x2`, ...
 
     .. note::
 
         Since intermediate node representations are pre-computed, this operator
-        is able to scale well to large graphs.
+        is able to scale well to large graphs via classic mini-batching.
         For an example of using SIGN, see `examples/sign.py
         <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
         sign.py>`_.
 
     Args:
-        num_hops (int): The number of hops/layer.
+        K (int): The number of hops/layer.
     """
-    def __init__(self, num_hops):
-        self.num_hops = num_hops
+    def __init__(self, K):
+        self.K = K
 
     def __call__(self, data):
         assert data.edge_index is not None
@@ -36,11 +43,11 @@ class SIGN(object):
 
         assert data.x is not None
         xs = [data.x]
-        for i in range(1, self.num_hops + 1):
+        for i in range(1, self.K + 1):
             xs += [adj_t @ xs[-1]]
             data[f'x{i}'] = xs[-1]
 
         return data
 
     def __repr__(self):
-        return '{}(num_hops={})'.format(self.__class__.__name__, self.num_hops)
+        return '{}(K={})'.format(self.__class__.__name__, self.K)
