@@ -9,8 +9,7 @@ class SIGN(object):
     representations
 
     .. :math::
-
-        \mathbf{X}^{(i)}` = {\left( \mathbf{D}^{-1/2} \mathbf{A}
+        \mathbf{X}^{(i)} = {\left( \mathbf{D}^{-1/2} \mathbf{A}
         \mathbf{D}^{-1/2} \right)}^i \mathbf{X}
 
     for :math:`i \in \{ 1, \ldots, K \}` and saves them in
