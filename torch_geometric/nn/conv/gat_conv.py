@@ -75,7 +75,8 @@ class GATConv(MessagePassing):
         glorot(self.att)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, size=None):
+    def forward(self, x, edge_index, size=None,
+                return_attention_weights=False):
         """"""
         if size is None and torch.is_tensor(x):
             edge_index, _ = remove_self_loops(edge_index)
@@ -88,9 +89,18 @@ class GATConv(MessagePassing):
             x = (None if x[0] is None else torch.matmul(x[0], self.weight),
                  None if x[1] is None else torch.matmul(x[1], self.weight))
 
-        return self.propagate(edge_index, size=size, x=x)
+        out = self.propagate(edge_index, size=size, x=x,
+                             return_attention_weights=return_attention_weights)
 
-    def message(self, edge_index_i, x_i, x_j, size_i):
+        if return_attention_weights:
+            alpha = self.alpha
+            self.alpha = None
+            return out, alpha
+        else:
+            return out
+
+    def message(self, edge_index_i, x_i, x_j, size_i,
+                return_attention_weights):
         # Compute attention coefficients.
         x_j = x_j.view(-1, self.heads, self.out_channels)
         if x_i is None:
@@ -104,6 +114,9 @@ class GATConv(MessagePassing):
 
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
+
+        if return_attention_weights:
+            self.alpha = alpha
 
         return x_j * alpha.view(-1, self.heads, 1)
 
