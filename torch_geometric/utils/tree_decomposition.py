@@ -106,6 +106,6 @@ def tree_decomposition(mol):
     rows = [[i] * len(atom2clique[i]) for i in range(mol.GetNumAtoms())]
     row = torch.tensor(list(chain.from_iterable(rows)))
     col = torch.tensor(list(chain.from_iterable(atom2clique)))
-    atom2clique = torch.stack([row, col], dim=0)
+    atom2clique = torch.stack([row, col], dim=0).to(torch.long)
 
     return edge_index, atom2clique, len(cliques)
