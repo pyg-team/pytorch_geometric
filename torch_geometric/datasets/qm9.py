@@ -31,7 +31,7 @@ conversion = torch.tensor([
 class QM9(InMemoryDataset):
     r"""The QM9 dataset from the `"MoleculeNet: A Benchmark for Molecular
     Machine Learning" <https://arxiv.org/abs/1703.00564>`_ paper, consisting of
-    about 130,000 molecules with 16 regression targets.
+    about 130,000 molecules with 19 regression targets.
     Each molecule includes complete spatial information for the single low
     energy conformation of the atoms in the molecule.
     In addition, we provide the atom features from the `"Neural Message
