@@ -8,7 +8,7 @@ class SIGN(object):
     <https://arxiv.org/abs/2004.11198>`_ paper, which precomputes the fixed
     representations
 
-    .. :math::
+    .. math::
         \mathbf{X}^{(i)} = {\left( \mathbf{D}^{-1/2} \mathbf{A}
         \mathbf{D}^{-1/2} \right)}^i \mathbf{X}
 
