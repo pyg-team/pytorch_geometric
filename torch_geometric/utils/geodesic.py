@@ -69,10 +69,10 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
 
     dest = None if dest is None else dest.detach().cpu().to(torch.int).numpy()
 
-    num_workers = mp.cpu_count() if num_workers < -1 else num_workers
+    num_workers = mp.cpu_count() if num_workers <= -1 else num_workers
     if num_workers > 0:
         with mp.Pool(num_workers) as pool:
-            outs = pool.map(
+            outs = pool.starmap(
                 _parallel_loop,
                 [(pos, face, src, dest, max_distance, norm, i, dtype)
                  for i in range(len(src))])
