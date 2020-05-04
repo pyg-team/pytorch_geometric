@@ -12,7 +12,7 @@ except ImportError:
     Chem = None
 
 
-def tree_decomposition(mol):
+def tree_decomposition(mol, return_vocab=False):
     r"""The tree decomposition algorithm of molecules from the
     `"Junction Tree Variational Autoencoder for Molecular Graph Generation"
     <https://arxiv.org/abs/1802.04364>`_ paper.
@@ -22,6 +22,9 @@ def tree_decomposition(mol):
 
     Args:
         mol (rdkit.Chem.Mol): A :obj:`rdkit` molecule.
+        return_vocab (bool, optional): If set to :obj:`True`, will return an
+            identifier for each clique (ring, bond, bridged compounds, single).
+            (default: :obj:`False`)
 
     :rtype: (LongTensor, LongTensor, int)
     """
@@ -31,9 +34,11 @@ def tree_decomposition(mol):
 
     # Cliques = rings and bonds.
     cliques = [list(x) for x in Chem.GetSymmSSSR(mol)]
+    xs = [0] * len(cliques)
     for bond in mol.GetBonds():
         if not bond.IsInRing():
             cliques.append([bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()])
+            xs.append(1)
 
     # Generate `atom2clique` mappings.
     atom2clique = [[] for i in range(mol.GetNumAtoms())]
@@ -49,8 +54,11 @@ def tree_decomposition(mol):
                     continue
                 if len(set(cliques[c1]) & set(cliques[c2])) > 2:
                     cliques[c1] = set(cliques[c1]) | set(cliques[c2])
+                    xs[c1] = 2
                     cliques[c2] = []
+                    xs[c2] = -1
     cliques = [c for c in cliques if len(c) > 0]
+    xs = [x for x in xs if x >= 0]
 
     # Update `atom2clique` mappings.
     atom2clique = [[] for i in range(mol.GetNumAtoms())]
@@ -73,12 +81,14 @@ def tree_decomposition(mol):
 
         if len(bonds) > 2 or (len(bonds) == 2 and len(cs) > 2):
             cliques.append([atom])
+            xs.append(3)
             c2 = len(cliques) - 1
             for c1 in cs:
                 edges[(c1, c2)] = 1
 
         elif len(rings) > 2:
             cliques.append([atom])
+            xs.append(3)
             c2 = len(cliques) - 1
             for c1 in cs:
                 edges[(c1, c2)] = 99
@@ -89,6 +99,12 @@ def tree_decomposition(mol):
                     c1, c2 = cs[i], cs[j]
                     count = len(set(cliques[c1]) & set(cliques[c2]))
                     edges[(c1, c2)] = min(count, edges.get((c1, c2), 99))
+
+    # Update `atom2clique` mappings.
+    atom2clique = [[] for i in range(mol.GetNumAtoms())]
+    for c in range(len(cliques)):
+        for atom in cliques[c]:
+            atom2clique[atom].append(c)
 
     if len(edges) > 0:
         edge_index_T, weight = zip(*edges.items())
@@ -108,4 +124,7 @@ def tree_decomposition(mol):
     col = torch.tensor(list(chain.from_iterable(atom2clique)))
     atom2clique = torch.stack([row, col], dim=0).to(torch.long)
 
-    return edge_index, atom2clique, len(cliques)
+    if return_vocab:
+        return edge_index, atom2clique, len(cliques), torch.tensor(xs)
+    else:
+        return edge_index, atom2clique, len(cliques)
