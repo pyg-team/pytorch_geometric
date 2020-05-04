@@ -78,7 +78,7 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
                  for i in range(len(src))])
     else:
         outs = [
-            _parallel_loop(pos, face, src, max_distance, norm, i, dtype, dest)
+            _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype)
             for i in range(len(src))
         ]
 
