@@ -23,6 +23,7 @@ def train_test_split_edges(data, val_ratio=0.05, test_ratio=0.1):
 
     assert 'batch' not in data  # No batch-mode.
 
+    num_nodes = data.num_nodes
     row, col = data.edge_index
     data.edge_index = None
 
@@ -47,7 +48,6 @@ def train_test_split_edges(data, val_ratio=0.05, test_ratio=0.1):
     data.train_pos_edge_index = to_undirected(data.train_pos_edge_index)
 
     # Negative edges.
-    num_nodes = data.num_nodes
     neg_adj_mask = torch.ones(num_nodes, num_nodes, dtype=torch.uint8)
     neg_adj_mask = neg_adj_mask.triu(diagonal=1).to(torch.bool)
     neg_adj_mask[row, col] = 0
