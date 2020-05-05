@@ -22,9 +22,9 @@ def train_test_split_edges(data, val_ratio=0.05, test_ratio=0.1):
     """
 
     assert 'batch' not in data  # No batch-mode.
-
     num_nodes = data.num_nodes
     row, col = data.edge_index
+    
     data.edge_index = None
 
     # Return upper triangular portion.
@@ -36,16 +36,27 @@ def train_test_split_edges(data, val_ratio=0.05, test_ratio=0.1):
 
     # Positive edges.
     perm = torch.randperm(row.size(0))
+    mask = mask[perm]
     row, col = row[perm], col[perm]
 
-    r, c = row[:n_v], col[:n_v]
+    # Validation set.
+    r, c, m = row[:n_v], col[:n_v], mask[:n_v]
     data.val_pos_edge_index = torch.stack([r, c], dim=0)
-    r, c = row[n_v:n_v + n_t], col[n_v:n_v + n_t]
+    data.val_pos_mask = torch.tensor([False]*row.size(0))
+    data.val_pos_mask[:n_v] = m
+    
+    # Test set.
+    r, c, m = row[n_v:n_v + n_t], col[n_v:n_v + n_t], mask[n_v:n_v + n_t]
     data.test_pos_edge_index = torch.stack([r, c], dim=0)
-
-    r, c = row[n_v + n_t:], col[n_v + n_t:]
+    data.test_pos_mask = torch.tensor([False]*row.size(0))
+    data.test_pos_mask[n_v:n_v + n_t] = m
+    
+    # Train set.
+    r, c, m = row[n_v + n_t:], col[n_v + n_t:], mask[n_v + n_t:]
     data.train_pos_edge_index = torch.stack([r, c], dim=0)
     data.train_pos_edge_index = to_undirected(data.train_pos_edge_index)
+    data.train_pos_mask = torch.tensor([False]*row.size(0))
+    data.train_pos_mask[n_v + n_t:] = m
 
     # Negative edges.
     neg_adj_mask = torch.ones(num_nodes, num_nodes, dtype=torch.uint8)
