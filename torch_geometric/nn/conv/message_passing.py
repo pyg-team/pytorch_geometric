@@ -4,7 +4,7 @@ from uuid import uuid1
 from tempfile import NamedTemporaryFile
 from importlib.util import spec_from_file_location, module_from_spec
 import sys
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import torch
 from torch_sparse import SparseTensor
@@ -79,15 +79,16 @@ Args:
 
 propagate_jittable_string = """
 import {parent_module}
+from typing import List, Optional
 
 class {clsname}Jittable_{uid}({parent_module}.{clsname}):
 
-    def propagate(self, edge_index, size=None, {in_kwargs}):
+    def propagate(self, edge_index, {in_kwargs}, size: Optional[List[int]] =None):
         in_kwargs = {in_kwargs_dict}
         user_args = {user_args_set}
         
         mp_type, size = self.__determine_type_and_size_jittable__(edge_index, size)
-        kwargs = self.__collect_jittable__(edge_index, size, mp_type, in_kwargs, user_args)
+        kwargs, size_kwargs = self.__collect_jittable__(edge_index, size, mp_type, in_kwargs, user_args)
 
         {msg_aggr_type}
 
@@ -179,16 +180,19 @@ class MessagePassing(torch.nn.Module):
                  'of shape `[2, num_messages]` or `torch_sparse.SparseTensor` '
                  'for argument :obj:`edge_index`.'))
 
-    def __set_size__(self, size: List[int], idx: int, tensor):
+    def __set_size__(self, size: List[Optional[int]], idx: int, tensor):
         if not isinstance(tensor, torch.Tensor):
             pass
         elif size[idx] is None:
             size[idx] = tensor.size(self.node_dim)
-        elif size[idx] != tensor.size(self.node_dim):
-            raise ValueError(
-                (f'Encountered node tensor with size '
-                 f'{tensor.size(self.node_dim)} in dimension {self.node_dim}, '
-                 f'but expected size {size[idx]}.'))
+        else:
+            the_size = size[idx]
+            assert the_size is not None
+            if the_size != tensor.size(self.node_dim):
+                raise ValueError(
+                    (f'Encountered node tensor with size '
+                     f'{tensor.size(self.node_dim)} in dimension {self.node_dim}, '
+                     f'but expected size {size[idx]}.'))
 
     def __collect__(self, edge_index, size, mp_type, kwargs, user_args):
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
@@ -251,22 +255,24 @@ class MessagePassing(torch.nn.Module):
 
         return out
         
-    def __collect_jittable__(self, edge_index, size: List[int], mp_type: str, kwargs: Dict[str, torch.Tensor], user_args: List[str]):
+    def __collect_jittable__(self, edge_index, size: List[Optional[int]], mp_type: str, kwargs: Dict[str, torch.Tensor], user_args: List[str]):
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
         ij = {'_i': i, '_j': j}
 
         out = {}
-        parm_empty = torch.tensor([])
+        out_size: Dict[str, Optional[int]] = {}
+        list_empty: List[float] = []
+        tensor_empty = torch.tensor(list_empty)
         for arg in user_args:
             arg = str(arg)
             trailer = str(arg[-2:])
             if trailer not in ij:
-                out[arg] = kwargs.get(arg, parm_empty)
+                out[arg] = kwargs.get(arg, tensor_empty)
             else:
                 idx = ij[trailer]
-                data = kwargs.get(arg[:-2], parm_empty)
+                data = kwargs.get(arg[:-2], tensor_empty)
 
-                if data is parm_empty:
+                if data is tensor_empty:
                     out[arg] = data
                     continue
 
@@ -297,11 +303,11 @@ class MessagePassing(torch.nn.Module):
         elif mp_type == 'adj_t':
             raise ValueError('Cannot use \'adj_t\' from \'torch_sparse\' in jitted mode!')
 
-        out['size_j'] = torch.tensor(size[j])
-        out['size_i'] = torch.tensor(size[i])
-        out['dim_size'] = out['size_i']
-
-        return out
+        out_size['size_j'] = size[j]
+        out_size['size_i'] = size[i]
+        out_size['dim_size'] = out_size['size_i']
+                
+        return out, out_size
     
     def __distribute__(self, params, kwargs):
         out = {}
@@ -342,7 +348,7 @@ class MessagePassing(torch.nn.Module):
 
         return mp_type, size
         
-    def __determine_type_and_size_jittable__(self, edge_index, size):
+    def __determine_type_and_size_jittable__(self, edge_index, size: Optional[List[int]]):
         mp_type = self.__get_mp_type__(edge_index)
 
         if mp_type == 'adj_t' and self.flow == 'target_to_source':
@@ -352,10 +358,10 @@ class MessagePassing(torch.nn.Module):
                 'really want to make use of a reverse message passing flow, '
                 'pass in the transposed sparse tensor to the message passing '
                 'module, e.g., `adj.t()`.'))
-        size_out = [0, 0]
+        size_out: List[Optional[int]] = [0, 0]
         if mp_type == 'edge_index':
             if size is None:
-                size_out[0], size_out[1] = [None, None]
+                size_out[0], size_out[1] = None, None
             elif isinstance(size, int):
                 size_out[0], size_out[1] = size, size
             elif isinstance(size, torch.Tensor):
@@ -380,7 +386,7 @@ class MessagePassing(torch.nn.Module):
         kwargs_orig = kwargs
         kwargs = self.__collect__(edge_index, size, mp_type, kwargs, self.__user_args__)
 
-        print('kwags processed ->', kwargs.keys())
+        print('kwargs processed ->', kwargs.keys())
 
         msg_aggr_kwargs, msg_kwargs, aggr_kwargs = None, None, None
         # Try to run `message_and_aggregate` first and see if it succeeds:
@@ -434,7 +440,7 @@ class MessagePassing(torch.nn.Module):
 
         return x_j
 
-    def aggregate(self, inputs, index, ptr=None, dim_size=None):
+    def aggregate(self, inputs, index, ptr: Optional[torch.Tensor] =None, dim_size: Optional[int] =None):
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -445,14 +451,12 @@ class MessagePassing(torch.nn.Module):
         that support "add", "mean" and "max" operations as specified in
         :meth:`__init__` by the :obj:`aggr` argument.
         """
-        print(self.__class__.__name__, ptr, dim_size)
         if ptr is not None:
             for _ in range(self.node_dim):
                 ptr = ptr.unsqueeze(0)
             return segment_csr(inputs, ptr, reduce=self.aggr)
         else:
-            dim_size_int = dim_size.item() if isinstance(dim_size, torch.Tensor) else dim_size
-            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size_int,
+            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
 
     def message_and_aggregate(self, adj_t):
@@ -485,7 +489,7 @@ class MessagePassing(torch.nn.Module):
         msg_aggr_type = None
         if self.__record_dict__['msg_aggr_kwargs'] is not None:
             theargs = list(self.__record_dict__['msg_aggr_kwargs'].keys())
-            theargs = ['{0}=kwargs[\'{0}\']'.format(a) for a in theargs]
+            theargs = ['{0}={1}kwargs[\'{0}\']'.format(a, 'size_' if 'size' in a else '') for a in theargs]
             msg_aggr_type = msg_aggr_fused.format(msg_aggr_kwargs=', '.join(theargs))
         elif (self.__record_dict__['msg_kwargs'] is not None and
               self.__record_dict__['aggr_kwargs'] is not None):
@@ -494,8 +498,8 @@ class MessagePassing(torch.nn.Module):
             aggr_args = list(self.__record_dict__['aggr_kwargs'].keys())
             if self.__record_dict__['mp_type'] == 'edge_index':
                 aggr_args.remove('ptr')
+            aggr_args = ['{0}={1}kwargs[\'{0}\']'.format(a, 'size_' if 'size' in a else '') for a in aggr_args]
             print('aggr_kwargs --->', aggr_args)
-            aggr_args = ['{0}=kwargs[\'{0}\']'.format(a) for a in aggr_args]
             msg_aggr_type = msg_aggr_sequential.format(msg_kwargs=', '.join(msg_args),
                                                        aggr_kwargs=', '.join(aggr_args))
         else:
@@ -506,7 +510,7 @@ class MessagePassing(torch.nn.Module):
 
         in_kwargs = list(self.__record_dict__['kwargs'].keys())
         in_kwargs_dict = ['\'{0}\': {0}'.format(a) for a in in_kwargs]
-        in_kwargs = ['{0}=None'.format(a) for a in in_kwargs]
+        in_kwargs = ['{0}'.format(a) for a in in_kwargs]
         in_kwargs_dict = '{' + ', '.join(in_kwargs_dict)+ '}'
         
         user_args_set = ['\'{0}\''.format(uarg) for uarg in self.__user_args__]
@@ -605,7 +609,6 @@ class MessagePassing(torch.nn.Module):
         print(out)
         print(out.aggregate)
         print(out.forward)
-        out = torch.jit.script(out)
                 
         print('new forward()')
         with torch.no_grad():
