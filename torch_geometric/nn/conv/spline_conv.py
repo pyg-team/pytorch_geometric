@@ -87,6 +87,7 @@ class SplineConv(MessagePassing):
             self.register_parameter('bias', None)
 
         self.reset_parameters()
+        
 
     def reset_parameters(self):
         size = self.in_channels * self.weight.size(0)
@@ -103,8 +104,8 @@ class SplineConv(MessagePassing):
             warnings.warn('We do not recommend using the non-optimized CPU '
                           'version of SplineConv. If possible, please convert '
                           'your data to the GPU.')
-
-        if torch_geometric.is_debug_enabled():
+        # FIXME - shouldn't have to force debug to false
+        if False:
             if x.size(-1) != self.in_channels:
                 raise RuntimeError(
                     'Expected {} node features, but found {}'.format(

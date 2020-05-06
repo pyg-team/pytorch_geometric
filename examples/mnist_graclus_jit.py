@@ -18,10 +18,10 @@ test_loader = DataLoader(test_dataset, batch_size=64)
 d = train_dataset
 
 init_data = None
-for i, data in enumerate(test_loader):
+for i, tdata in enumerate(test_loader):
     if i > 0:
         break
-    init_data = data
+    init_data = tdata
 
 def normalized_cut_2d(edge_index, pos):
     row, col = edge_index
@@ -32,14 +32,14 @@ def normalized_cut_2d(edge_index, pos):
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = SplineConv(d.num_features, 32, dim=2, kernel_size=5)
-        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
+        conv1 = SplineConv(d.num_features, 32, dim=2, kernel_size=5)
+        conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.fc1 = torch.nn.Linear(64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
         
-        self.conv1.jittable(x=init_data.x, edge_index=init_data.edge_index, pseudo=init_data.edge_attr)
+        self.conv1 = torch.jit.script(conv1.jittable(x=init_data.x, edge_index=init_data.edge_index, pseudo=init_data.edge_attr))
         tempx = self.conv1(x=init_data.x, edge_index=init_data.edge_index, pseudo=init_data.edge_attr)
-        self.conv2.jittable(x=tempx, edge_index=init_data.edge_index, pseudo=init_data.edge_attr)
+        self.conv2 = torch.jit.script(conv2.jittable(x=tempx, edge_index=init_data.edge_index, pseudo=init_data.edge_attr))
 
     def forward(self, data):
         data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
@@ -60,7 +60,7 @@ class Net(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = torch.jit.script(Net().to(device))
+model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 print(model)

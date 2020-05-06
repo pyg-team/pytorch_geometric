@@ -80,9 +80,6 @@ class Net(nn.Module):
         tempx = self.conv1(x=init_data.x, edge_index=init_data.edge_index, edge_attr=init_data.edge_attr)
         self.conv2 = torch.jit.script(conv2.jittable(x=tempx, edge_index=init_data.edge_index, edge_attr=init_data.edge_attr))
         
-        print('NET CONV1 --->', self.conv1)
-        print('NET CONV2 --->', self.conv2)
-
     def forward(self, x, edge_index, edge_attr, pos, batch):
         x = F.elu(self.conv1(x, edge_index, edge_attr))
         weight = normalized_cut_2d(edge_index, pos)

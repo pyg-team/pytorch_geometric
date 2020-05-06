@@ -262,7 +262,7 @@ class MessagePassing(torch.nn.Module):
         out = {}
         out_size: Dict[str, Optional[int]] = {}
         list_empty: List[float] = []
-        tensor_empty = torch.tensor(list_empty)
+        tensor_empty = torch.tensor(list_empty, dtype=torch.float)
         for arg in user_args:
             arg = str(arg)
             trailer = str(arg[-2:])
@@ -516,9 +516,13 @@ class MessagePassing(torch.nn.Module):
         user_args_set = ['\'{0}\''.format(uarg) for uarg in self.__user_args__]
         user_args_set = '[' + ', '.join(user_args_set) + ']'
         
+        from torch.jit.frontend import get_source_lines_and_file
+        initlines, file_lineno, filename = get_source_lines_and_file(self.__init__, torch._C.ErrorReport.call_stack())
+        
         propagate_string = propagate_jittable_string.format(uid=uid,
                                                             clsname=clsname,
                                                             parent_module=self.__class__.__module__,
+                                                            initdef=''.join(initlines),
                                                             in_kwargs=', '.join(in_kwargs),
                                                             in_kwargs_dict=in_kwargs_dict,
                                                             user_args_set=user_args_set,
@@ -569,6 +573,7 @@ class MessagePassing(torch.nn.Module):
             print(self.forward(**kwargs))
         self.__record_propagate = False
         
+        
         print(self.__class__)
         
         print('all kwargs :',self.__record_dict__['kwargs'].keys())
@@ -583,14 +588,26 @@ class MessagePassing(torch.nn.Module):
 
         
         out = self.__make_jittable_fcn__()
+        self.__record_dict__ = {}
+                
         out.__dict__.update(self.__dict__)
+        
+        print('self buffers')
+        print(self._buffers)
+        print('out buffers')
+        print(out._buffers)
+        
+        out._buffers = OrderedDict()
+        for k, v in self._buffers.items():
+            print('registering buffer:', k, v)
+            out.register_buffer(k, v)
         
         
         print(inspect.getfile(out.__class__))
         print(out.__class__.__name__, type(out.__class__))
         
         from torch.jit.frontend import get_source_lines_and_file
-        sourcelines, file_lineno, filename = get_source_lines_and_file(out.propagate, torch._C.ErrorReport.call_stack())
+        sourcelines, file_lineno, filename = get_source_lines_and_file(self.__init__, torch._C.ErrorReport.call_stack())
         print(sourcelines, file_lineno, filename)
         
         print('USER ARGS --->', out.__user_args__)
