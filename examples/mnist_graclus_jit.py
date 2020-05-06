@@ -1,13 +1,12 @@
 import os.path as osp
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.datasets import MNISTSuperpixels
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import normalized_cut
-from torch_geometric.nn import (NNConv, graclus, max_pool, max_pool_x,
+from torch_geometric.nn import (SplineConv, graclus, max_pool, max_pool_x,
                                 global_mean_pool)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
@@ -15,9 +14,14 @@ transform = T.Cartesian(cat=False)
 train_dataset = MNISTSuperpixels(path, True, transform=transform)
 test_dataset = MNISTSuperpixels(path, False, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=64)
 d = train_dataset
 
+init_data = None
+for i, data in enumerate(test_loader):
+    if i > 0:
+        break
+    init_data = data
 
 def normalized_cut_2d(edge_index, pos):
     row, col = edge_index
@@ -25,17 +29,17 @@ def normalized_cut_2d(edge_index, pos):
     return normalized_cut(edge_index, edge_attr, num_nodes=pos.size(0))
 
 
-class Net(nn.Module):
+class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        nn1 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 32))
-        self.conv1 = NNConv(d.num_features, 32, nn1, aggr='mean')
-
-        nn2 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 2048))
-        self.conv2 = NNConv(32, 64, nn2, aggr='mean')
-
+        self.conv1 = SplineConv(d.num_features, 32, dim=2, kernel_size=5)
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         self.fc1 = torch.nn.Linear(64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
+        
+        self.conv1.jittable(x=init_data.x, edge_index=init_data.edge_index, pseudo=init_data.edge_attr)
+        tempx = self.conv1(x=init_data.x, edge_index=init_data.edge_index, pseudo=init_data.edge_attr)
+        self.conv2.jittable(x=tempx, edge_index=init_data.edge_index, pseudo=init_data.edge_attr)
 
     def forward(self, data):
         data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
@@ -56,9 +60,12 @@ class Net(nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net().to(device)
+model = torch.jit.script(Net().to(device))
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
+print(model)
+
+exit()
 
 def train(epoch):
     model.train()
