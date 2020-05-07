@@ -95,7 +95,7 @@ class SplineConv(MessagePassing):
         uniform(size, self.root)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, pseudo):
+    def forward(self, x, edge_index, pseudo, _debug: bool =False):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
@@ -104,8 +104,8 @@ class SplineConv(MessagePassing):
             warnings.warn('We do not recommend using the non-optimized CPU '
                           'version of SplineConv. If possible, please convert '
                           'your data to the GPU.')
-        # FIXME - shouldn't have to force debug to false
-        if False:
+        # FIXME - why can't we use the global debug???
+        if _debug:
             if x.size(-1) != self.in_channels:
                 raise RuntimeError(
                     'Expected {} node features, but found {}'.format(
@@ -133,8 +133,8 @@ class SplineConv(MessagePassing):
         return self.propagate(edge_index, x=x, pseudo=pseudo)
 
     def message(self, x_j, pseudo):
-        data = spline_basis(pseudo, self._buffers['kernel_size'],
-                            self._buffers['is_open_spline'], self.degree)
+        data = spline_basis(pseudo, self.kernel_size,
+                            self.is_open_spline, self.degree)
         return spline_weighting(x_j, self.weight, *data)
 
     def update(self, aggr_out, x):

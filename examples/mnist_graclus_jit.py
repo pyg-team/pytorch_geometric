@@ -32,15 +32,22 @@ def normalized_cut_2d(edge_index, pos):
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        conv1 = SplineConv(d.num_features, 32, dim=2, kernel_size=5)
-        conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
+        conv1_class = SplineConv(d.num_features, 32, dim=2, kernel_size=5) \
+                      .jittable(x=init_data.x,
+                                edge_index=init_data.edge_index,
+                                pseudo=init_data.edge_attr)
+        self.conv1 = torch.jit.script(conv1_class(d.num_features, 32, dim=2, kernel_size=5))
+        tempx = self.conv1(x=init_data.x, edge_index=init_data.edge_index, pseudo=init_data.edge_attr)
+                
+        conv2_class = SplineConv(32, 64, dim=2, kernel_size=5) \
+                      .jittable(x=tempx,
+                                edge_index=init_data.edge_index,
+                                pseudo=init_data.edge_attr)
+        self.conv2 = torch.jit.script(conv2_class(32, 64, dim=2, kernel_size=5))
+        
         self.fc1 = torch.nn.Linear(64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
         
-        self.conv1 = torch.jit.script(conv1.jittable(x=init_data.x, edge_index=init_data.edge_index, pseudo=init_data.edge_attr))
-        tempx = self.conv1(x=init_data.x, edge_index=init_data.edge_index, pseudo=init_data.edge_attr)
-        self.conv2 = torch.jit.script(conv2.jittable(x=tempx, edge_index=init_data.edge_index, pseudo=init_data.edge_attr))
-
     def forward(self, data):
         data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
         weight = normalized_cut_2d(data.edge_index, data.pos)
@@ -64,8 +71,6 @@ model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 print(model)
-
-exit()
 
 def train(epoch):
     model.train()

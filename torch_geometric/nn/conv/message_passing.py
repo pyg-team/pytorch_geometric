@@ -83,6 +83,9 @@ from typing import List, Optional
 
 class {clsname}Jittable_{uid}({parent_module}.{clsname}):
 
+    def __init__{unboundinitsig}:
+        super({clsname}Jittable_{uid}, self).__init__{boundinitsig}
+
     def propagate(self, edge_index, {in_kwargs}, size: Optional[List[int]] =None):
         in_kwargs = {in_kwargs_dict}
         user_args = {user_args_set}
@@ -519,8 +522,17 @@ class MessagePassing(torch.nn.Module):
         from torch.jit.frontend import get_source_lines_and_file
         initlines, file_lineno, filename = get_source_lines_and_file(self.__init__, torch._C.ErrorReport.call_stack())
         
+        init_def = str(inspect.signature(self.__class__.__init__)) # unbound signature
+        init_args = inspect.signature(self.__init__) # bound signature
+        init_args = '(' + ', '.join(list(init_args.parameters.keys())).replace(' kwargs',' **kwargs') + ')'
+        
+                
+        print('init lines\n', ''.join(initlines))
+        
         propagate_string = propagate_jittable_string.format(uid=uid,
                                                             clsname=clsname,
+                                                            unboundinitsig=init_def,
+                                                            boundinitsig=init_args,
                                                             parent_module=self.__class__.__module__,
                                                             initdef=''.join(initlines),
                                                             in_kwargs=', '.join(in_kwargs),
@@ -541,10 +553,8 @@ class MessagePassing(torch.nn.Module):
         sys.modules[modname] = mod
         spec.loader.exec_module(mod)
         cls = getattr(mod, f'{clsname}Jittable_{uid}')
-        
-        out = cls.__new__(cls)
-
-        return out
+                
+        return cls
     
     @torch.jit.unused
     def jittable(self, **kwargs):
@@ -589,48 +599,7 @@ class MessagePassing(torch.nn.Module):
         
         out = self.__make_jittable_fcn__()
         self.__record_dict__ = {}
-                
-        out.__dict__.update(self.__dict__)
-        
-        print('self buffers')
-        print(self._buffers)
-        print('out buffers')
-        print(out._buffers)
-        
-        out._buffers = OrderedDict()
-        for k, v in self._buffers.items():
-            print('registering buffer:', k, v)
-            out.register_buffer(k, v)
-        
-        
-        print(inspect.getfile(out.__class__))
-        print(out.__class__.__name__, type(out.__class__))
-        
-        from torch.jit.frontend import get_source_lines_and_file
-        sourcelines, file_lineno, filename = get_source_lines_and_file(self.__init__, torch._C.ErrorReport.call_stack())
-        print(sourcelines, file_lineno, filename)
-        
-        print('USER ARGS --->', out.__user_args__)
-        
-        print('unjittable')
-        print(self)
-        print(self.__class__.__bases__)
-        print(self.propagate)
-                
-        print('jittable')
-        print(out)
-        print(out.__class__.__bases__)
-        print(out.propagate)
-        
-        print(type(out))
-        print(out)
-        print(out.aggregate)
-        print(out.forward)
-                
-        print('new forward()')
-        with torch.no_grad():
-            print(out.forward(**kwargs))
-            
+                    
         return out
 
 MessagePassing.propagate.__doc__ = propagate_docstring

@@ -68,17 +68,23 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         nn1 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 32))
-        conv1 = NNConv(d.num_features, 32, nn1, aggr='mean')
+        conv1_class = NNConv(d.num_features, 32, nn1, aggr='mean') \
+                      .jittable(x=init_data.x,
+                                edge_index=init_data.edge_index,
+                                edge_attr=init_data.edge_attr)
+        self.conv1 = torch.jit.script(conv1_class(d.num_features, 32, nn1, aggr='mean'))
+        tempx = self.conv1(x=init_data.x, edge_index=init_data.edge_index, edge_attr=init_data.edge_attr)
 
         nn2 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 2048))
-        conv2 = NNConv(32, 64, nn2, aggr='mean')
+        conv2_class = NNConv(32, 64, nn2, aggr='mean') \
+                      .jittable(x=tempx,
+                                edge_index=init_data.edge_index,
+                                edge_attr=init_data.edge_attr)
+        self.conv2 = torch.jit.script(conv2_class(32, 64, nn2, aggr='mean'))
+        
 
         self.fc1 = torch.nn.Linear(64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
-        
-        self.conv1 = torch.jit.script(conv1.jittable(x=init_data.x, edge_index=init_data.edge_index, edge_attr=init_data.edge_attr))
-        tempx = self.conv1(x=init_data.x, edge_index=init_data.edge_index, edge_attr=init_data.edge_attr)
-        self.conv2 = torch.jit.script(conv2.jittable(x=tempx, edge_index=init_data.edge_index, edge_attr=init_data.edge_attr))
         
     def forward(self, x, edge_index, edge_attr, pos, batch):
         x = F.elu(self.conv1(x, edge_index, edge_attr))
