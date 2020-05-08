@@ -31,8 +31,8 @@ def subgraph(subset, edge_index, edge_attr=None, relabel_nodes=False,
         n_mask = subset
 
         if relabel_nodes:
-            n_idx = torch.zeros(
-                n_mask.size(0), dtype=torch.long, device=device)
+            n_idx = torch.zeros(n_mask.size(0), dtype=torch.long,
+                                device=device)
             n_idx[subset] = torch.arange(subset.sum().item(), device=device)
     else:
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -58,8 +58,8 @@ def k_hop_subgraph(node_idx, num_hops, edge_index, relabel_nodes=False,
     r"""Computes the :math:`k`-hop subgraph of :obj:`edge_index` around node
     :attr:`node_idx`.
     It returns (1) the nodes involved in the subgraph, (2) the filtered
-    :obj`edge_index` connectivity, and (3) the edge mask indicating which edges
-    were preserved.
+    :obj:`edge_index` connectivity, and (3) the edge mask indicating which
+    edges were preserved.
 
     Args:
         node_idx (int): The central node.
