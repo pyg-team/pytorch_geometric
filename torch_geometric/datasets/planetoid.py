@@ -28,13 +28,13 @@ class Planetoid(InMemoryDataset):
             <https://arxiv.org/abs/1801.10247>`_ paper. If set to :obj:`"random"`,
             train, validation, and test sets will be randomly sampled.
             (default: :obj:`"public"`)
-        num_train_per_class (int, optional): number of training samples per
-            class, for :obj:`"random"` split. (default: :obj:`20`)
-        num_val (int, optional): number of validation samples per for
+        num_train_per_class (int, optional): The number of training samples
+            per class, for :obj:`"random"` split. (default: :obj:`20`)
+        num_val (int, optional): The number of validation samples for
             :obj:`"random"` split. (default: :obj:`500`)
-        num_test (int, optional): number of test samples per for
+        num_test (int, optional): The number of test samples for
             :obj:`"random"` split. (default: :obj:`1000`)
-        seed (int, optional): seed for :obj:`"random"`
+        seed (int, optional): A random seed for :obj:`"random"`.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
