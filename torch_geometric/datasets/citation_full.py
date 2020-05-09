@@ -30,7 +30,7 @@ class CitationFull(InMemoryDataset):
 
     def __init__(self, root, name, transform=None, pre_transform=None):
         self.name = name.lower()
-        assert name in ['cora', 'cora_ml', 'citeseer', 'dblp', 'pubmed']
+        assert self.name in ['cora', 'cora_ml', 'citeseer', 'dblp', 'pubmed']
         super(CitationFull, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
