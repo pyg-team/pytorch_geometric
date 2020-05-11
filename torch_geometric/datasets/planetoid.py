@@ -1,5 +1,4 @@
 import os.path as osp
-import random
 
 import torch
 from torch_geometric.data import InMemoryDataset, download_url
@@ -17,8 +16,8 @@ class Planetoid(InMemoryDataset):
         root (string): Root directory where the dataset should be saved.
         name (string): The name of the dataset (:obj:`"Cora"`,
             :obj:`"CiteSeer"`, :obj:`"PubMed"`).
-        split (string): The type of dataset split (:obj:`"public"`,
-            :obj:`"full"`, :obj:`"random"`).
+        split (string): The type of dataset split
+            (:obj:`"public"`, :obj:`"full"`, :obj:`"random"`).
             If set to :obj:`"public"`, the split will be the public fixed split
             from the
             `"Revisiting Semi-Supervised Learning with Graph Embeddings"
