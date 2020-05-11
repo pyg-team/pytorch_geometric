@@ -2,6 +2,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, GNNExplainer
@@ -44,5 +45,5 @@ for epoch in range(1, 201):
 explainer = GNNExplainer(model, epochs=200)
 node_idx = 10
 node_feat_mask, edge_mask = explainer.explain_node(node_idx, x, edge_index)
-plt = explainer.visualize_subgraph(node_idx, edge_index, edge_mask, y=data.y)
-# plt.show()
+ax, G = explainer.visualize_subgraph(node_idx, edge_index, edge_mask, y=data.y)
+plt.show()

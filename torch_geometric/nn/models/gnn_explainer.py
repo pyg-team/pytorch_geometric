@@ -86,7 +86,7 @@ class GNNExplainer(torch.nn.Module):
     def __subgraph__(self, node_idx, x, edge_index, **kwargs):
         num_nodes, num_edges = x.size(0), edge_index.size(1)
 
-        subset, edge_index, edge_mask = k_hop_subgraph(
+        subset, edge_index, mapping, edge_mask = k_hop_subgraph(
             node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
             num_nodes=num_nodes, flow=self.__flow__())
 
@@ -98,7 +98,7 @@ class GNNExplainer(torch.nn.Module):
                 item = item[edge_mask]
             kwargs[key] = item
 
-        return x, edge_index, edge_mask, kwargs
+        return x, edge_index, mapping, edge_mask, kwargs
 
     def __loss__(self, node_idx, log_logits, pred_label):
         loss = -log_logits[node_idx, pred_label[node_idx]]
@@ -135,7 +135,7 @@ class GNNExplainer(torch.nn.Module):
         num_edges = edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.
-        x, edge_index, hard_edge_mask, kwargs = self.__subgraph__(
+        x, edge_index, mapping, hard_edge_mask, kwargs = self.__subgraph__(
             node_idx, x, edge_index, **kwargs)
 
         # Get the initial prediction.
@@ -157,7 +157,7 @@ class GNNExplainer(torch.nn.Module):
             optimizer.zero_grad()
             h = x * self.node_feat_mask.view(1, -1).sigmoid()
             log_logits = self.model(x=h, edge_index=edge_index, **kwargs)
-            loss = self.__loss__(0, log_logits, pred_label)
+            loss = self.__loss__(mapping, log_logits, pred_label)
             loss.backward()
             optimizer.step()
 
@@ -193,13 +193,13 @@ class GNNExplainer(torch.nn.Module):
             **kwargs (optional): Additional arguments passed to
                 :func:`nx.draw`.
 
-        :rtype: :class:`matplotlib.pyplot`
+        :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
 
         assert edge_mask.size(0) == edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.
-        subset, edge_index, hard_edge_mask = k_hop_subgraph(
+        subset, edge_index, _, hard_edge_mask = k_hop_subgraph(
             node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
             num_nodes=None, flow=self.__flow__())
 
@@ -239,8 +239,8 @@ class GNNExplainer(torch.nn.Module):
                 ))
         nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **kwargs)
         nx.draw_networkx_labels(G, pos, **kwargs)
-        plt.axis('off')
-        return plt
+
+        return ax, G
 
     def __repr__(self):
         return f'{self.__class__.__name__}()'
