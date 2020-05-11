@@ -497,10 +497,11 @@ class MessagePassing(torch.nn.Module):
         elif (self.__record_dict__['msg_kwargs'] is not None and
               self.__record_dict__['aggr_kwargs'] is not None):
             msg_args = list(self.__record_dict__['msg_kwargs'].keys())
-            msg_args = ['{0}=kwargs[\'{0}\']'.format(a) for a in msg_args]
+            msg_args = ['{0}={1}kwargs[\'{0}\']'.format(a, 'size_' if 'size' in a else '') for a in msg_args]
+            print('msg_kwargs --->', msg_args)
             aggr_args = list(self.__record_dict__['aggr_kwargs'].keys())
             if self.__record_dict__['mp_type'] == 'edge_index':
-                aggr_args.remove('ptr')
+                aggr_args.remove('ptr')            
             aggr_args = ['{0}={1}kwargs[\'{0}\']'.format(a, 'size_' if 'size' in a else '') for a in aggr_args]
             print('aggr_kwargs --->', aggr_args)
             msg_aggr_type = msg_aggr_sequential.format(msg_kwargs=', '.join(msg_args),
