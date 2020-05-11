@@ -7,6 +7,7 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .dimenet import DimeNet
 from .gnn_explainer import GNNExplainer
+from .schnet import SchNet
 
 __all__ = [
     'JumpingKnowledge',
@@ -22,4 +23,5 @@ __all__ = [
     'GraphUNet',
     'DimeNet',
     'GNNExplainer',
+    'SchNet'
 ]
