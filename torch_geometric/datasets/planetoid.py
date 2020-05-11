@@ -18,23 +18,24 @@ class Planetoid(InMemoryDataset):
         name (string): The name of the dataset (:obj:`"Cora"`,
             :obj:`"CiteSeer"`, :obj:`"PubMed"`).
         split (string): The type of dataset split (:obj:`"public"`,
-            :obj:`"full"`, :obj:`"random"`).  If set to :obj:`"public"`, the
-            split will be the public fixed split from the `"Revisiting
-            Semi-Supervised Learning with Graph Embeddings"
-            <https://arxiv.org/abs/1603.08861>`_ paper. If set to :obj:`"full"`,
-            all samples except validation and test sets in :obj:`"public"` split
-            will be used for training, from `"FastGCN: Fast Learning with
-            Graph Convolutional Networks via Importance Sampling"
-            <https://arxiv.org/abs/1801.10247>`_ paper. If set to :obj:`"random"`,
-            train, validation, and test sets will be randomly sampled.
-            (default: :obj:`"public"`)
+            :obj:`"full"`, :obj:`"random"`).
+            If set to :obj:`"public"`, the split will be the public fixed split
+            from the
+            `"Revisiting Semi-Supervised Learning with Graph Embeddings"
+            <https://arxiv.org/abs/1603.08861>`_ paper.
+            If set to :obj:`"full"`, all nodes except those in the validation
+            and test sets will be used for training (as in the
+            `"FastGCN: Fast Learning with Graph Convolutional Networks via
+            Importance Sampling" <https://arxiv.org/abs/1801.10247>`_ paper).
+            If set to :obj:`"random"`, train, validation, and test sets will be
+            randomly generated, according to :obj:`num_train_per_class`,
+            :obj:`num_val` and :obj:`num_test`. (default: :obj:`"public"`)
         num_train_per_class (int, optional): The number of training samples
-            per class, for :obj:`"random"` split. (default: :obj:`20`)
-        num_val (int, optional): The number of validation samples for
+            per class in case of :obj:`"random"` split. (default: :obj:`20`)
+        num_val (int, optional): The number of validation samples in case of
             :obj:`"random"` split. (default: :obj:`500`)
-        num_test (int, optional): The number of test samples for
+        num_test (int, optional): The number of test samples in case of
             :obj:`"random"` split. (default: :obj:`1000`)
-        seed (int, optional): A random seed for :obj:`"random"`.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -47,21 +48,41 @@ class Planetoid(InMemoryDataset):
 
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
 
-    def __init__(self, root, name, split="public",
-                 num_train_per_class=20, num_val=500, num_test=1000, seed=42,
-                 transform=None, pre_transform=None):
+    def __init__(self, root, name, split="public", num_train_per_class=20,
+                 num_val=500, num_test=1000, transform=None,
+                 pre_transform=None):
         self.name = name
-
-        self.split = split
-        assert self.split in ["public", "full", "random"]
-
-        self.num_train_per_class = num_train_per_class
-        self.num_val = num_val
-        self.num_test = num_test
-        self.seed = seed
 
         super(Planetoid, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
+
+        self.split = split
+        assert self.split in ['public', 'full', 'random']
+
+        if split == 'full':
+            data = self.get(0)
+            data.train_mask.fill_(True)
+            data.train_mask[data.val_mask | data.test_mask] = False
+            self.data, self.slices = self.collate([data])
+
+        elif split == 'random':
+            data = self.get(0)
+            data.train_mask.fill_(False)
+            for c in range(self.num_classes):
+                idx = (data.y == c).nonzero().view(-1)
+                idx = idx[torch.randperm(idx.size(0))[:num_train_per_class]]
+                data.train_mask[idx] = True
+
+            remaining = (~data.train_mask).nonzero().view(-1)
+            remaining = remaining[torch.randperm(remaining.size(0))]
+
+            data.val_mask.fill_(False)
+            data.val_mask[remaining[:num_val]] = True
+
+            data.test_mask.fill_(False)
+            data.test_mask[remaining[num_val:num_val + num_test]] = True
+
+            self.data, self.slices = self.collate([data])
 
     @property
     def raw_dir(self):
@@ -69,7 +90,7 @@ class Planetoid(InMemoryDataset):
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.name, 'processed', self.split)
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self):
@@ -86,36 +107,8 @@ class Planetoid(InMemoryDataset):
 
     def process(self):
         data = read_planetoid_data(self.raw_dir, self.name)
-
-        if self.split == "full":
-            data.train_mask[:] = True
-            data.train_mask[data.val_mask] = False
-            data.train_mask[data.test_mask] = False
-
-        elif self.split == "random":
-            data.train_mask[:] = False
-            data.val_mask[:] = False
-            data.test_mask[:] = False
-
         data = data if self.pre_transform is None else self.pre_transform(data)
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def _get_data_with_random_train_val_test_mask(self, data):
-        random.seed(self.seed)
-        for c in range(self.num_classes):
-            idx = random.sample((data.y == c).nonzero().squeeze().tolist(), self.num_train_per_class)
-            data.train_mask[torch.Tensor(idx).long()] = True
-        val_test_idx = random.sample((~data.train_mask).nonzero().squeeze().tolist(),
-                                     self.num_val + self.num_test)
-        data.val_mask[val_test_idx[:self.num_val]] = True
-        data.test_mask[val_test_idx[self.num_val:]] = True
-        return data
-
-    def __getitem__(self, idx):
-        data = super().__getitem__(idx)
-        if self.split == "random":
-            data = self._get_data_with_random_train_val_test_mask(data)
-        return data
 
     def __repr__(self):
         return '{}()'.format(self.name)
