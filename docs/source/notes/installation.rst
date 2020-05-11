@@ -10,12 +10,12 @@ These packages come with their own CPU and GPU kernel implementations based on `
 
 Please follow the steps below for a successful installation:
 
-#. Ensure that PyTorch 1.4.0 is installed:
+#. Ensure that PyTorch 1.5.0 is installed:
 
     .. code-block:: none
 
         $ python -c "import torch; print(torch.__version__)"
-        >>> 1.4.0
+        >>> 1.5.0
 
 #. Ensure CUDA is setup correctly (optional):
 
@@ -71,10 +71,10 @@ Please follow the steps below for a successful installation:
 
     .. code-block:: none
 
-      $ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
-      $ pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
-      $ pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
-      $ pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+      $ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+      $ pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+      $ pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+      $ pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
       $ python setup.py install or pip install torch-geometric
 
 
