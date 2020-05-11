@@ -3,7 +3,11 @@
 import numpy as np
 from scipy.optimize import brentq
 from scipy import special as sp
-import sympy as sym
+
+try:
+    import sympy as sym
+except ImportError:
+    sym = None
 
 
 def Jn(r, n):
