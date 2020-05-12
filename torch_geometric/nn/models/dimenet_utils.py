@@ -65,29 +65,29 @@ def bessel_basis(n, k):
     return bess_basis
 
 
-def sph_harm_prefactor(l, m):
-    return ((2 * l + 1) * np.math.factorial(l - abs(m)) /
-            (4 * np.pi * np.math.factorial(l + abs(m))))**0.5
+def sph_harm_prefactor(k, m):
+    return ((2 * k + 1) * np.math.factorial(k - abs(m)) /
+            (4 * np.pi * np.math.factorial(k + abs(m))))**0.5
 
 
-def associated_legendre_polynomials(l, zero_m_only=True):
+def associated_legendre_polynomials(k, zero_m_only=True):
     z = sym.symbols('z')
-    P_l_m = [[0] * (j + 1) for j in range(l)]
+    P_l_m = [[0] * (j + 1) for j in range(k)]
 
     P_l_m[0][0] = 1
-    if l > 0:
+    if k > 0:
         P_l_m[1][0] = z
 
-        for j in range(2, l):
+        for j in range(2, k):
             P_l_m[j][0] = sym.simplify(((2 * j - 1) * z * P_l_m[j - 1][0] -
                                         (j - 1) * P_l_m[j - 2][0]) / j)
         if not zero_m_only:
-            for i in range(1, l):
+            for i in range(1, k):
                 P_l_m[i][i] = sym.simplify((1 - 2 * i) * P_l_m[i - 1][i - 1])
-                if i + 1 < l:
+                if i + 1 < k:
                     P_l_m[i + 1][i] = sym.simplify(
                         (2 * i + 1) * z * P_l_m[i][i])
-                for j in range(i + 2, l):
+                for j in range(i + 2, k):
                     P_l_m[j][i] = sym.simplify(
                         ((2 * j - 1) * z * P_l_m[j - 1][i] -
                          (i + j - 1) * P_l_m[j - 2][i]) / (j - i))
@@ -95,17 +95,17 @@ def associated_legendre_polynomials(l, zero_m_only=True):
     return P_l_m
 
 
-def real_sph_harm(l, zero_m_only=True, spherical_coordinates=True):
+def real_sph_harm(k, zero_m_only=True, spherical_coordinates=True):
     if not zero_m_only:
         S_m = [0]
         C_m = [1]
-        for i in range(1, l):
+        for i in range(1, k):
             x = sym.symbols('x')
             y = sym.symbols('y')
             S_m += [x * S_m[i - 1] + y * C_m[i - 1]]
             C_m += [x * C_m[i - 1] - y * S_m[i - 1]]
 
-    P_l_m = associated_legendre_polynomials(l, zero_m_only)
+    P_l_m = associated_legendre_polynomials(k, zero_m_only)
     if spherical_coordinates:
         theta = sym.symbols('theta')
         z = sym.symbols('z')
@@ -126,16 +126,16 @@ def real_sph_harm(l, zero_m_only=True, spherical_coordinates=True):
                                          y,
                                          sym.sin(theta) * sym.sin(phi))
 
-    Y_func_l_m = [['0'] * (2 * j + 1) for j in range(l)]
-    for i in range(l):
+    Y_func_l_m = [['0'] * (2 * j + 1) for j in range(k)]
+    for i in range(k):
         Y_func_l_m[i][0] = sym.simplify(sph_harm_prefactor(i, 0) * P_l_m[i][0])
 
     if not zero_m_only:
-        for i in range(1, l):
+        for i in range(1, k):
             for j in range(1, i + 1):
                 Y_func_l_m[i][j] = sym.simplify(
                     2**0.5 * sph_harm_prefactor(i, j) * C_m[j] * P_l_m[i][j])
-        for i in range(1, l):
+        for i in range(1, k):
             for j in range(1, i + 1):
                 Y_func_l_m[i][-j] = sym.simplify(
                     2**0.5 * sph_harm_prefactor(i, -j) * S_m[j] * P_l_m[i][j])
