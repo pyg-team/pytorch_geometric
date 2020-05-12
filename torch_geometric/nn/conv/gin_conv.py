@@ -63,9 +63,9 @@ class GINConv(MessagePassing):
 
 
 class GINEConv(MessagePassing):
-    r"""The modified :class:`GINConv` operator from the
-    `"Strategies for Pre-training Graph Neural Networks"
-     <https://arxiv.org/abs/1905.12265>`_ paper
+    r"""The modified :class:`GINConv` operator from the `"Strategies for
+    Pre-training Graph Neural Networks" <https://arxiv.org/abs/1905.12265>`_
+    paper
 
     .. math::
         \mathbf{x}^{\prime}_i = h_{\mathbf{\Theta}} \left( (1 + \epsilon) \cdot
