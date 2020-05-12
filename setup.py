@@ -10,7 +10,6 @@ install_requires = [
     'scipy',
     'networkx',
     'scikit-learn',
-    'scikit-image',
     'numba',
     'requests',
     'plyfile',
