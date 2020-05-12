@@ -230,8 +230,8 @@ class NeighborSampler(object):
         e_ids = []
         edge_indices = []
 
-        for l in range(self.num_hops):
-            e_id = neighbor_sampler(n_ids[-1], self.cumdeg, self.size[l])
+        for k in range(self.num_hops):
+            e_id = neighbor_sampler(n_ids[-1], self.cumdeg, self.size[k])
             n_id = self.edge_index_j.index_select(0, e_id)
             n_id = n_id.unique(sorted=False)
             n_ids.append(n_id)
