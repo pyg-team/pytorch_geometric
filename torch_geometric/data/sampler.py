@@ -168,8 +168,8 @@ class NeighborSampler(object):
         matrix for a given mini-batch :obj:`n_id`."""
         data_flow = DataFlow(n_id, self.flow)
 
-        for l in range(self.num_hops):
-            e_id = neighbor_sampler(n_id, self.cumdeg, self.size[l])
+        for k in range(self.num_hops):
+            e_id = neighbor_sampler(n_id, self.cumdeg, self.size[k])
 
             new_n_id = self.edge_index_j.index_select(0, e_id)
             e_id = self.e_assoc[e_id]
