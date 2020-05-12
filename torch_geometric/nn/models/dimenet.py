@@ -223,8 +223,9 @@ class OutputBlock(torch.nn.Module):
 class DimeNet(torch.nn.Module):
     r"""The directional message passing neural network (DimeNet) from the
     `"Directional Message Passing for Molecular Graphs"
-    <https://arxiv.org/abs/2003.03123>`_ paper that transforms messages based
-    on the angle between them in a rotationally equivariant fashion.
+    <https://arxiv.org/abs/2003.03123>`_ paper.
+    DimeNet transforms messages based on the angle between them in a
+    rotation-equivariant fashion.
 
     .. note::
 
@@ -315,6 +316,7 @@ class DimeNet(torch.nn.Module):
         return idx_i, idx_j, idx_k, idx_kj, idx_ji
 
     def forward(self, x, pos, edge_index, batch=None):
+        """"""
         j, i = edge_index
         idx_i, idx_j, idx_k, idx_kj, idx_ji = self.triplets(
             edge_index, num_nodes=x.size(0))
