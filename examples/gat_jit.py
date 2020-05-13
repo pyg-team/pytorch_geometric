@@ -16,14 +16,15 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         conv1_class = GATConv(dataset.num_features, 8, heads=8, dropout=0.6) \
-                      .jittable(x=data.x, edge_index=data.edge_index)
+            .jittable(x=data.x, edge_index=data.edge_index)
         self.conv1 = conv1_class(dataset.num_features, 8, heads=8, dropout=0.6)
         tempx = self.conv1(x=data.x, edge_index=data.edge_index)
         # On the Pubmed dataset, use heads=8 in conv2.
-        conv2_class = GATConv(
-            8 * 8, dataset.num_classes, heads=1, concat=True, dropout=0.6) \
-                      .jittable(x=tempx, edge_index=data.edge_index)
-        self.conv2 = conv2_class(8 * 8, dataset.num_classes, heads=1, concat=True, dropout=0.6)
+        conv2_class = GATConv(8 * 8, dataset.num_classes, heads=1,
+                              concat=True, dropout=0.6) \
+            .jittable(x=tempx, edge_index=data.edge_index)
+        self.conv2 = conv2_class(8 * 8, dataset.num_classes, heads=1,
+                                 concat=True, dropout=0.6)
 
     def forward(self):
         x = F.dropout(data.x, p=0.6, training=self.training)
