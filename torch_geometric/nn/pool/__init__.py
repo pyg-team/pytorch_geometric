@@ -5,6 +5,7 @@ from .voxel_grid import voxel_grid
 from .topk_pool import TopKPooling
 from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
+from .asap_pool import ASAP_Pooling
 
 try:
     import torch_cluster
@@ -234,6 +235,7 @@ def nearest(x, y, batch_x=None, batch_y=None):
 __all__ = [
     'TopKPooling',
     'SAGPooling',
+    'ASAP_Pooling',
     'EdgePooling',
     'max_pool',
     'avg_pool',

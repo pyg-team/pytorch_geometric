@@ -15,6 +15,7 @@ from edge_pool import EdgePool
 from global_attention import GlobalAttentionNet
 from set2set import Set2SetNet
 from sort_pool import SortPool
+from asap_pool import ASAP_Pool
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=100)
@@ -44,6 +45,7 @@ nets = [
     GlobalAttentionNet,
     Set2SetNet,
     SortPool,
+    ASAP_Pool
 ]
 
 
