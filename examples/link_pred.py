@@ -15,7 +15,7 @@ torch.manual_seed(12345)
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-dataset = Planetoid(path, dataset, T.NormalizeFeatures())
+dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
 # Train/validation/test

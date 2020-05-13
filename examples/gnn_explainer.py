@@ -10,7 +10,7 @@ from torch.nn import Sequential, Linear
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-dataset = Planetoid(path, dataset, T.NormalizeFeatures())
+dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
 
