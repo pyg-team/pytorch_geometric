@@ -76,9 +76,8 @@ class ASAP_Pooling(torch.nn.Module):
             using intra-cluster properties more. More helpful for graphs with
             higher degree of neighborhood. (one of
             :class:`torch_geometric.nn.conv.GraphConv`,
-            :class:`torch_geometric.nn.conv.GCNConv`,
-            :class:`torch_geometric.nn.conv.GATConv` or
-            :class:`torch_geometric.nn.conv.SAGEConv`).
+            :class:`torch_geometric.nn.conv.GCNConv` or
+            any GNN which supports edge_weights parameter).
             (default: :obj:`None`)
         dropout_att (float, optional): Dropout to be applied on the attention scores
             found via Master2Token attention framework for obtaining cluster
