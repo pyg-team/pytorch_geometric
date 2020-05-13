@@ -1,9 +1,9 @@
-import torch
 from torch_scatter import scatter
 
 from typing import Optional
 
-def global_add_pool(x, batch, size: Optional[int]=None):
+
+def global_add_pool(x, batch, size: Optional[int] = None):
     r"""Returns batch-wise graph-level-outputs by adding node features
     across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
@@ -26,7 +26,7 @@ def global_add_pool(x, batch, size: Optional[int]=None):
     return scatter(x, batch, dim=0, dim_size=size, reduce='add')
 
 
-def global_mean_pool(x, batch, size: Optional[int]=None):
+def global_mean_pool(x, batch, size: Optional[int] = None):
     r"""Returns batch-wise graph-level-outputs by averaging node features
     across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
@@ -49,7 +49,7 @@ def global_mean_pool(x, batch, size: Optional[int]=None):
     return scatter(x, batch, dim=0, dim_size=size, reduce='mean')
 
 
-def global_max_pool(x, batch, size: Optional[int]=None):
+def global_max_pool(x, batch, size: Optional[int] = None):
     r"""Returns batch-wise graph-level-outputs by taking the channel-wise
     maximum across the node dimension, so that for a single graph
     :math:`\mathcal{G}_i` its output is computed by
@@ -68,4 +68,4 @@ def global_max_pool(x, batch, size: Optional[int]=None):
     :rtype: :class:`Tensor`
     """
     size = int(batch.max().item() + 1) if size is None else size
-    return scatter(x, batch, dim=0, dim_size=scatter_size, reduce='max')
+    return scatter(x, batch, dim=0, dim_size=size, reduce='max')

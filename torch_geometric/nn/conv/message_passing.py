@@ -34,7 +34,7 @@ msg_aggr_fused = """out = self.message_and_aggregate({msg_aggr_kwargs})
         self.__fuse__ = False"""
 
 msg_aggr_sequential = """out = self.message({msg_kwargs})
-        
+
         # turn off gnn explainer for now in jitted mode
         # if self.__gnn_explainer__:
         #     edge_mask = self.__edge_mask__.sigmoid()
@@ -86,12 +86,19 @@ class {clsname}Jittable_{uid}({parent_module}.{clsname}):
     def __init__{unboundinitsig}:
         super({clsname}Jittable_{uid}, self).__init__{boundinitsig}
 
-    def propagate(self, edge_index, {in_kwargs}, size: Optional[List[int]] =None):
+    def propagate(self, edge_index,
+                  {in_kwargs},
+                  size: Optional[List[int]] = None):
         in_kwargs = {in_kwargs_dict}
         user_args = {user_args_set}
-        
-        mp_type, size = self.__determine_type_and_size_jittable__(edge_index, size)
-        kwargs, size_kwargs = self.__collect_jittable__(edge_index, size, mp_type, in_kwargs, user_args)
+
+        mp_type, size = self.__determine_type_and_size_jittable__(edge_index,
+                                                                  size)
+        kwargs, size_kwargs = self.__collect_jittable__(edge_index,
+                                                        size,
+                                                        mp_type,
+                                                        in_kwargs,
+                                                        user_args)
 
         {msg_aggr_type}
 
@@ -157,7 +164,8 @@ class MessagePassing(torch.nn.Module):
         self.__record_propagate = False
         self.__record_dict__ = None
 
-        msg_aggr_args = set(self.__msg_aggr_params__.keys()) - msg_aggr_special_args
+        msg_aggr_args = (set(self.__msg_aggr_params__.keys())
+                         - msg_aggr_special_args)
         msg_args = set(self.__msg_params__.keys()) - msg_special_args
         aggr_args = set(self.__aggr_params__.keys()) - aggr_special_args
         update_args = set(self.__update_params__.keys()) - update_special_args
@@ -172,8 +180,10 @@ class MessagePassing(torch.nn.Module):
         self.__edge_mask__ = None
 
     def __get_mp_type__(self, edge_index):
-        if (isinstance(edge_index, torch.Tensor) and edge_index.dtype == torch.long
-                and edge_index.dim() == 2 and edge_index.size(0)):
+        if (isinstance(edge_index, torch.Tensor)
+           and edge_index.dtype == torch.long
+           and edge_index.dim() == 2
+           and edge_index.size(0)):
             return 'edge_index'
         elif isinstance(edge_index, SparseTensor):
             return 'adj_t'
@@ -194,7 +204,8 @@ class MessagePassing(torch.nn.Module):
             if the_size != tensor.size(self.node_dim):
                 raise ValueError(
                     (f'Encountered node tensor with size '
-                     f'{tensor.size(self.node_dim)} in dimension {self.node_dim}, '
+                     f'{tensor.size(self.node_dim)} '
+                     f'in dimension {self.node_dim}, '
                      f'but expected size {size[idx]}.'))
 
     def __collect__(self, edge_index, size, mp_type, kwargs, user_args):
@@ -257,8 +268,13 @@ class MessagePassing(torch.nn.Module):
         out['dim_size'] = out['size_i']
 
         return out
-        
-    def __collect_jittable__(self, edge_index, size: List[Optional[int]], mp_type: str, kwargs: Dict[str, torch.Tensor], user_args: List[str]):
+
+    def __collect_jittable__(self,
+                             edge_index,
+                             size: List[Optional[int]],
+                             mp_type: str,
+                             kwargs: Dict[str, torch.Tensor],
+                             user_args: List[str]):
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
         ij = {'_i': i, '_j': j}
 
@@ -294,7 +310,8 @@ class MessagePassing(torch.nn.Module):
                     out[arg] = data.index_select(self.node_dim,
                                                  edge_index[idx])
                 elif mp_type == 'adj_t':
-                    raise ValueError('Cannot use \'adj_t\' from \'torch_sparse\' in jitted mode!')
+                    raise ValueError('Cannot use \'adj_t\' from '
+                                     '\'torch_sparse\' in jitted mode!')
 
         size[0] = size[1] if size[0] is None else size[0]
         size[1] = size[0] if size[1] is None else size[1]
@@ -304,14 +321,15 @@ class MessagePassing(torch.nn.Module):
             out['edge_index_i'] = edge_index[i]
             out['index'] = out['edge_index_i']
         elif mp_type == 'adj_t':
-            raise ValueError('Cannot use \'adj_t\' from \'torch_sparse\' in jitted mode!')
+            raise ValueError('Cannot use \'adj_t\' from '
+                             '\'torch_sparse\' in jitted mode!')
 
         out_size['size_j'] = size[j]
         out_size['size_i'] = size[i]
         out_size['dim_size'] = out_size['size_i']
-                
+
         return out, out_size
-    
+
     def __distribute__(self, params, kwargs):
         out = {}
         for key, param in params.items():
@@ -350,17 +368,19 @@ class MessagePassing(torch.nn.Module):
         assert len(size) == 2
 
         return mp_type, size
-        
-    def __determine_type_and_size_jittable__(self, edge_index, size: Optional[List[int]]):
+
+    def __determine_type_and_size_jittable__(self,
+                                             edge_index,
+                                             size: Optional[List[int]]):
         mp_type = self.__get_mp_type__(edge_index)
 
         if mp_type == 'adj_t' and self.flow == 'target_to_source':
             raise ValueError(
                 ('Flow direction "target_to_source" is invalid for message '
-                'propagation based on `torch_sparse.SparseTensor`. If you '
-                'really want to make use of a reverse message passing flow, '
-                'pass in the transposed sparse tensor to the message passing '
-                'module, e.g., `adj.t()`.'))
+                 'propagation based on `torch_sparse.SparseTensor`. If you '
+                 'really want to make use of a reverse message passing flow, '
+                 'pass in the transposed sparse tensor to the message passing '
+                 'module, e.g., `adj.t()`.'))
         size_out: List[Optional[int]] = [0, 0]
         if mp_type == 'edge_index':
             if size is None:
@@ -375,7 +395,8 @@ class MessagePassing(torch.nn.Module):
                 assert len(size) == 2
                 size_out[0], size_out[1] = size[0], size[1]
         elif mp_type == 'adj_t':
-            raise ValueError('Cannot use \'adj_t\' from \'torch_sparse\' in jitted mode!')
+            raise ValueError('Cannot use \'adj_t\' from '
+                             '\'torch_sparse\' in jitted mode!')
 
         assert isinstance(size_out, list)
         assert len(size_out) == 2
@@ -387,9 +408,11 @@ class MessagePassing(torch.nn.Module):
 
         # We collect all arguments used for message passing in `kwargs`.
         kwargs_orig = kwargs
-        kwargs = self.__collect__(edge_index, size, mp_type, kwargs, self.__user_args__)
-
-        print('kwargs processed ->', kwargs.keys())
+        kwargs = self.__collect__(edge_index,
+                                  size,
+                                  mp_type,
+                                  kwargs,
+                                  self.__user_args__)
 
         msg_aggr_kwargs, msg_kwargs, aggr_kwargs = None, None, None
         # Try to run `message_and_aggregate` first and see if it succeeds:
@@ -443,7 +466,11 @@ class MessagePassing(torch.nn.Module):
 
         return x_j
 
-    def aggregate(self, inputs, index, ptr: Optional[torch.Tensor] =None, dim_size: Optional[int] =None):
+    def aggregate(self,
+                  inputs,
+                  index,
+                  ptr: Optional[torch.Tensor] = None,
+                  dim_size: Optional[int] = None):
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -482,7 +509,7 @@ class MessagePassing(torch.nn.Module):
         """
 
         return inputs
-    
+
     @torch.jit.unused
     def __make_jittable_fcn__(self):
         # define a new base class with the propagate method replaced
@@ -490,22 +517,30 @@ class MessagePassing(torch.nn.Module):
         clsname = self.__class__.__name__
         # write the new propagate function
         msg_aggr_type = None
+        kwarg_templ = '{0}={1}kwargs[\'{0}\']'
+
+        def render_kwargs(theargs):
+            return [kwarg_templ.format(a, 'size_' if 'size' in a else '')
+                    for a in theargs]
+
         if self.__record_dict__['msg_aggr_kwargs'] is not None:
             theargs = list(self.__record_dict__['msg_aggr_kwargs'].keys())
-            theargs = ['{0}={1}kwargs[\'{0}\']'.format(a, 'size_' if 'size' in a else '') for a in theargs]
-            msg_aggr_type = msg_aggr_fused.format(msg_aggr_kwargs=', '.join(theargs))
+            theargs = render_kwargs(theargs)
+            msg_aggr_type = msg_aggr_fused \
+                .format(msg_aggr_kwargs=', '.join(theargs))
         elif (self.__record_dict__['msg_kwargs'] is not None and
               self.__record_dict__['aggr_kwargs'] is not None):
             msg_args = list(self.__record_dict__['msg_kwargs'].keys())
-            msg_args = ['{0}={1}kwargs[\'{0}\']'.format(a, 'size_' if 'size' in a else '') for a in msg_args]
+            msg_args = render_kwargs(msg_args)
             print('msg_kwargs --->', msg_args)
             aggr_args = list(self.__record_dict__['aggr_kwargs'].keys())
             if self.__record_dict__['mp_type'] == 'edge_index':
-                aggr_args.remove('ptr')            
-            aggr_args = ['{0}={1}kwargs[\'{0}\']'.format(a, 'size_' if 'size' in a else '') for a in aggr_args]
+                aggr_args.remove('ptr')
+            aggr_args = render_kwargs(aggr_args)
             print('aggr_kwargs --->', aggr_args)
-            msg_aggr_type = msg_aggr_sequential.format(msg_kwargs=', '.join(msg_args),
-                                                       aggr_kwargs=', '.join(aggr_args))
+            msg_aggr_type = msg_aggr_sequential \
+                .format(msg_kwargs=', '.join(msg_args),
+                        aggr_kwargs=', '.join(aggr_args))
         else:
             raise Exception('No kwargs filled for model!')
 
@@ -515,37 +550,41 @@ class MessagePassing(torch.nn.Module):
         in_kwargs = list(self.__record_dict__['kwargs'].keys())
         in_kwargs_dict = ['\'{0}\': {0}'.format(a) for a in in_kwargs]
         in_kwargs = ['{0}'.format(a) for a in in_kwargs]
-        in_kwargs_dict = '{' + ', '.join(in_kwargs_dict)+ '}'
-        
+        in_kwargs_dict = '{' + ', '.join(in_kwargs_dict) + '}'
+
         user_args_set = ['\'{0}\''.format(uarg) for uarg in self.__user_args__]
         user_args_set = '[' + ', '.join(user_args_set) + ']'
-        
+
         from torch.jit.frontend import get_source_lines_and_file
-        initlines, file_lineno, filename = get_source_lines_and_file(self.__init__, torch._C.ErrorReport.call_stack())
-        
-        init_def = str(inspect.signature(self.__class__.__init__)) # unbound signature
-        init_args = inspect.signature(self.__init__) # bound signature
-        init_args = '(' + ', '.join(list(init_args.parameters.keys())).replace(' kwargs',' **kwargs') + ')'
-        
-                
+        initlines, file_lineno, filename = \
+            get_source_lines_and_file(self.__init__,
+                                      torch._C.ErrorReport.call_stack())
+
+        init_def = str(inspect.signature(self.__class__.__init__))
+        init_args = inspect.signature(self.__init__)
+        init_args = '(' + ', '.join(list(init_args.parameters.keys())) \
+            .replace(' kwargs', ' **kwargs') + ')'
+
         print('init lines\n', ''.join(initlines))
-        
-        propagate_string = propagate_jittable_string.format(uid=uid,
-                                                            clsname=clsname,
-                                                            unboundinitsig=init_def,
-                                                            boundinitsig=init_args,
-                                                            parent_module=self.__class__.__module__,
-                                                            initdef=''.join(initlines),
-                                                            in_kwargs=', '.join(in_kwargs),
-                                                            in_kwargs_dict=in_kwargs_dict,
-                                                            user_args_set=user_args_set,
-                                                            msg_aggr_type=msg_aggr_type,
-                                                            update_args=', '.join(update_args))
+
+        propagate_string = propagate_jittable_string \
+            .format(uid=uid,
+                    clsname=clsname,
+                    unboundinitsig=init_def,
+                    boundinitsig=init_args,
+                    parent_module=self.__class__.__module__,
+                    initdef=''.join(initlines),
+                    in_kwargs=', '.join(in_kwargs),
+                    in_kwargs_dict=in_kwargs_dict,
+                    user_args_set=user_args_set,
+                    msg_aggr_type=msg_aggr_type,
+                    update_args=', '.join(update_args))
         # create a temp file with our class in it
-        ftemp = NamedTemporaryFile(mode='w+', encoding='utf-8', suffix='.py', delete=False)
+        ftemp = NamedTemporaryFile(mode='w+', encoding='utf-8',
+                                   suffix='.py', delete=False)
         ftemp.write(propagate_string)
         ftemp.close()
-        #create a python module out of it
+        # create a python module out of it
         print(ftemp.name)
         print(propagate_string)
         modname = f'pyg_jit_{uid}'
@@ -554,40 +593,39 @@ class MessagePassing(torch.nn.Module):
         sys.modules[modname] = mod
         spec.loader.exec_module(mod)
         cls = getattr(mod, f'{clsname}Jittable_{uid}')
-                
+
         return cls
-    
+
     @torch.jit.unused
     def jittable(self, **kwargs):
         r"""Alters this this PyG module such that it is torch-jit-scriptable.
-        The MessagePassing module is manifestly not jittable but can be analyzed
-        to produce jittable modules. This function implements that analysis and
-        synthesis."""
-        
+        The MessagePassing module is manifestly not jittable but can be
+        analyzed to produce jittable modules. This function implements that
+        analysis and synthesis."""
+
         print(self.__class__.__name__)
         print(self.__class__.__module__)
         print(self.__class__.__qualname__)
         print(self.__class__.__bases__)
-        
+
         fwd_sig = inspect.signature(self.forward)
         print('forward signature:')
         print(fwd_sig.parameters)
-        
+
         prop_sig = inspect.signature(self.propagate)
         print('propagate signature:')
         print(prop_sig.parameters)
-        
-        #initialize the model
+
+        # initialize the model
         print('old forward()')
         self.__record_propagate = True
         with torch.no_grad():
             print(self.forward(**kwargs))
         self.__record_propagate = False
-        
-        
+
         print(self.__class__)
-        
-        print('all kwargs :',self.__record_dict__['kwargs'].keys())
+
+        print('all kwargs :', self.__record_dict__['kwargs'].keys())
         if self.__record_dict__['msg_aggr_kwargs'] is not None:
             print('msg_aggr :', self.__record_dict__['msg_aggr_kwargs'].keys())
         if self.__record_dict__['msg_kwargs'] is not None:
@@ -597,10 +635,10 @@ class MessagePassing(torch.nn.Module):
         if self.__record_dict__['update_kwargs'] is not None:
             print('update   :', self.__record_dict__['update_kwargs'].keys())
 
-        
         out = self.__make_jittable_fcn__()
         self.__record_dict__ = {}
-                    
+
         return out
+
 
 MessagePassing.propagate.__doc__ = propagate_docstring

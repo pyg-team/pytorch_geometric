@@ -169,7 +169,6 @@ class NeighborSampler(object):
 
         for k in range(self.num_hops):
             e_id = neighbor_sampler(n_id, self.cumdeg, self.size[k])
-
             new_n_id = self.edge_index_j.index_select(0, e_id)
             e_id = self.e_assoc[e_id]
 

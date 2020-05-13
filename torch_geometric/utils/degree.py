@@ -3,7 +3,10 @@ import torch
 from .num_nodes import maybe_num_nodes
 from typing import Optional
 
-def degree(index, num_nodes: Optional[int] =None, dtype: Optional[int] =None):
+
+def degree(index,
+           num_nodes: Optional[int] = None,
+           dtype: Optional[int] = None):
     r"""Computes the (unweighted) degree of a given one-dimensional index
     tensor.
 

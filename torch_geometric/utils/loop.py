@@ -4,6 +4,7 @@ from .num_nodes import maybe_num_nodes
 
 from typing import Optional
 
+
 def contains_self_loops(edge_index):
     r"""Returns :obj:`True` if the graph given by :attr:`edge_index` contains
     self-loops.
@@ -18,7 +19,7 @@ def contains_self_loops(edge_index):
     return mask.sum().item() > 0
 
 
-def remove_self_loops(edge_index, edge_attr: Optional[torch.Tensor]=None):
+def remove_self_loops(edge_index, edge_attr: Optional[torch.Tensor] = None):
     r"""Removes every self-loop in the graph given by :attr:`edge_index`, so
     that :math:`(i,i) \not\in \mathcal{E}` for every :math:`i \in \mathcal{V}`.
 
@@ -62,7 +63,10 @@ def segregate_self_loops(edge_index, edge_attr=None):
     return edge_index, edge_attr, loop_edge_index, loop_edge_attr
 
 
-def add_self_loops(edge_index, edge_weight: Optional[torch.Tensor]=None, fill_value: int=1, num_nodes: Optional[int]=None):
+def add_self_loops(edge_index,
+                   edge_weight: Optional[torch.Tensor] = None,
+                   fill_value: int = 1,
+                   num_nodes: Optional[int] = None):
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted, self-loops will be added with edge weights
@@ -96,7 +100,9 @@ def add_self_loops(edge_index, edge_weight: Optional[torch.Tensor]=None, fill_va
     return edge_index, edge_weight
 
 
-def add_remaining_self_loops(edge_index, edge_weight=None, fill_value=1,
+def add_remaining_self_loops(edge_index,
+                             edge_weight=None,
+                             fill_value=1,
                              num_nodes=None):
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.

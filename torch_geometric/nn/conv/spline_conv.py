@@ -1,7 +1,6 @@
 import warnings
 
 import torch
-import torch_geometric
 from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils.repeat import repeat
@@ -87,7 +86,6 @@ class SplineConv(MessagePassing):
             self.register_parameter('bias', None)
 
         self.reset_parameters()
-        
 
     def reset_parameters(self):
         size = self.in_channels * self.weight.size(0)
@@ -95,7 +93,7 @@ class SplineConv(MessagePassing):
         uniform(size, self.root)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, pseudo, _debug: bool =False):
+    def forward(self, x, edge_index, pseudo, _debug: bool = False):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         pseudo = pseudo.unsqueeze(-1) if pseudo.dim() == 1 else pseudo
