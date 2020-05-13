@@ -15,6 +15,12 @@ parser.add_argument('--target', type=int, default=0)
 parser.add_argument('--cutoff', type=float, default=5.0)
 args = parser.parse_args()
 
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
+dataset = QM9(path)
+
+model = SchNet.from_qm9_pretrained('/tmp/SchNet', dataset, target=7)
+raise NotImplementedError
+
 
 class TargetSelectTransform(object):
     def __init__(self, target_id=0):
@@ -38,9 +44,9 @@ class DistanceTransform(object):
         return data
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
-transform = T.Compose([TargetSelectTransform(args.target), DistanceTransform()])
-dataset = QM9(path, transform=transform).shuffle()
+transform = T.Compose(
+    [TargetSelectTransform(args.target),
+     DistanceTransform()])
 train_dataset = dataset[:110000]
 val_dataset = dataset[110000:120000]
 test_dataset = dataset[120000:]
