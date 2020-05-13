@@ -22,14 +22,26 @@ from torch_geometric.nn.pool.consecutive import consecutive_cluster
 from torch_geometric.nn.pool.pool import pool_edge, pool_batch, pool_pos
 from torch_geometric.nn.pool.max_pool import _max_pool_x
 
-def cartesian_jit(x, edge_index, edge_attr, pos, batch, cat=False, norm=True, max=None):
-    (row, col), pos, pseudo = edge_index, pos, edge_attr
+from typing import Optional
+
+def cartesian_jit(x: Optional[torch.Tensor],
+                  edge_index: Optional[torch.Tensor],
+                  edge_attr: Optional[torch.Tensor],
+                  pos: Optional[torch.Tensor],
+                  batch: Optional[torch.Tensor],
+                  cat: bool=False,
+                  norm: bool=True,
+                  max: Optional[float]=None):
+    assert pos is not None
+    assert edge_index is not None
+    
+    row, col, pos, pseudo = edge_index[0], edge_index[1], pos, edge_attr
 
     cart = pos[col] - pos[row]
     cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
     if norm and cart.numel() > 0:
-        max_value = cart.abs().max() if max is None else max
+        max_value = cart.abs().max() if max is None else torch.tensor(max)
         cart = cart / (2 * max_value) + 0.5
 
     if pseudo is not None and cat:
@@ -40,7 +52,13 @@ def cartesian_jit(x, edge_index, edge_attr, pos, batch, cat=False, norm=True, ma
 
     return x, edge_index, edge_attr, pos, batch
 
-def max_pool_jit(cluster, x, edge_index, edge_attr, pos, batch, transform):
+
+def max_pool_jit(cluster,
+                 x,
+                 edge_index,
+                 edge_attr: Optional[torch.Tensor],
+                 pos,
+                 batch: Optional[torch.Tensor]):
     cluster, perm = consecutive_cluster(cluster)
 
     x = None if x is None else _max_pool_x(cluster, x)
@@ -48,8 +66,7 @@ def max_pool_jit(cluster, x, edge_index, edge_attr, pos, batch, transform):
     batch = None if batch is None else pool_batch(perm, batch)
     pos = None if pos is None else pool_pos(cluster, pos)
 
-    if transform is not None:
-        x, edge_index, edge_attr, pos, batch = transform(x, edge_index, edge_attr, pos, batch)
+    x, edge_index, edge_attr, pos, batch = cartesian_jit(x, edge_index, edge_attr, pos, batch)
 
     return x, edge_index, edge_attr, pos, batch
 
@@ -72,7 +89,7 @@ class Net(nn.Module):
                       .jittable(x=init_data.x,
                                 edge_index=init_data.edge_index,
                                 edge_attr=init_data.edge_attr)
-        self.conv1 = torch.jit.script(conv1_class(d.num_features, 32, nn1, aggr='mean'))
+        self.conv1 = conv1_class(d.num_features, 32, nn1, aggr='mean')
         tempx = self.conv1(x=init_data.x, edge_index=init_data.edge_index, edge_attr=init_data.edge_attr)
 
         nn2 = nn.Sequential(nn.Linear(2, 25), nn.ReLU(), nn.Linear(25, 2048))
@@ -80,24 +97,29 @@ class Net(nn.Module):
                       .jittable(x=tempx,
                                 edge_index=init_data.edge_index,
                                 edge_attr=init_data.edge_attr)
-        self.conv2 = torch.jit.script(conv2_class(32, 64, nn2, aggr='mean'))
+        self.conv2 = conv2_class(32, 64, nn2, aggr='mean')
         
 
         self.fc1 = torch.nn.Linear(64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
         
-    def forward(self, x, edge_index, edge_attr, pos, batch):
+    def forward(self, x, edge_index, edge_attr, pos, batch: Optional[torch.Tensor]):
         x = F.elu(self.conv1(x, edge_index, edge_attr))
         weight = normalized_cut_2d(edge_index, pos)
         cluster = graclus(edge_index, weight, x.size(0))
         
-        x, edge_index, edge_attr, pos, batch = max_pool_jit(cluster, x, edge_index, None, pos, batch, transform=cartesian_jit)
+        x, edge_index, edge_attr, pos, batch = max_pool_jit(cluster, x, edge_index, None, pos, batch)
 
+        assert x is not None
+        assert edge_index is not None
+        assert edge_attr is not None
+        
         x = F.elu(self.conv2(x, edge_index, edge_attr))
         weight = normalized_cut_2d(edge_index, pos)
         cluster = graclus(edge_index, weight, x.size(0))
         x, batch = max_pool_x(cluster, x, batch)
-
+        
+        assert batch is not None
         x = global_mean_pool(x, batch)
         x = F.elu(self.fc1(x))
         x = F.dropout(x, training=self.training)
@@ -105,7 +127,7 @@ class Net(nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net().to(device)
+model = torch.jit.script(Net().to(device))
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 print(model)
