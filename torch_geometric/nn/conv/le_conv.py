@@ -7,22 +7,22 @@ from torch_geometric.nn.inits import uniform
 
 
 class LEConv(torch.nn.Module):
-    r"""The Local Extremum graph neural network operator from the `"ASAP: Adaptive
-    Structure Aware Pooling for Learning Hierarchical Graph
-    Representations" <https://arxiv.org/pdf/1911.07979.pdf>`_ paper. It finds the
-    importance of the central node with respect to the neighboring nodes using
-    difference operator.
+    r"""The Local Extremum graph neural network operator from the
+    `"ASAP: Adaptive Structure Aware Pooling for Learning Hierarchical Graph
+    Representations" <https://arxiv.org/pdf/1911.07979.pdf>`_ paper.
+    It finds the importance of the central node with respect to the
+    neighboring nodes using difference operator.
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{x}_i \mathbf{\Theta}_1 +
-        \sum_{j \in \mathcal{N}(i)} \mathbf{A}_{i, j} (\mathbf{x}_i \mathbf{\Theta}_2
-        - \mathbf{x}_j \mathbf{\Theta}_3)
+        \sum_{j \in \mathcal{N}(i)} \mathbf{A}_{i, j}
+        (\mathbf{x}_i \mathbf{\Theta}_2 - \mathbf{x}_j \mathbf{\Theta}_3)
 
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        bias (bool, optional): If set to :obj:`False`, the layer will not learn
-            an additive bias. (default: :obj:`True`).
+        bias (bool, optional): If set to :obj:`False`, the layer will
+            not learn an additive bias. (default: :obj:`True`).
     """
 
     def __init__(self, in_channels, out_channels, bias=True):
@@ -51,13 +51,17 @@ class LEConv(torch.nn.Module):
             edge_weight = torch.ones((edge_index.size(1), ),
                                      dtype=x.dtype,
                                      device=edge_index.device)
-        edge_index, edge_weight = remove_self_loops(edge_index=edge_index, edge_attr=edge_weight)
-        deg = scatter_add(edge_weight, edge_index[0], dim=0, dim_size=num_nodes)
+        edge_index, edge_weight = remove_self_loops(edge_index=edge_index,
+                                                    edge_attr=edge_weight)
+        deg = scatter_add(edge_weight, edge_index[0], dim=0,
+                          dim_size=num_nodes)
 
         h_j = edge_weight.view(-1, 1) * h[edge_index[1]]
         aggr_out = scatter_add(h_j, edge_index[0], dim=0, dim_size=num_nodes)
         out = (deg.view(-1, 1) * self.lin1(x) + aggr_out) + self.lin2(x)
-        edge_index, edge_weight = add_self_loops(edge_index=edge_index, edge_weight=edge_weight, num_nodes=num_nodes)
+        edge_index, edge_weight = add_self_loops(edge_index=edge_index,
+                                                 edge_weight=edge_weight,
+                                                 num_nodes=num_nodes)
         return out
 
     def __repr__(self):

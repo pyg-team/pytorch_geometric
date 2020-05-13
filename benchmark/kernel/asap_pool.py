@@ -16,7 +16,8 @@ class ASAP_Pool(torch.nn.Module):
             for i in range(num_layers - 1)
         ])
         self.pools.extend(
-            [ASAP_Pooling(hidden, ratio, None, dropout_att) for i in range((num_layers) // 2)])
+            [ASAP_Pooling(hidden, ratio, None, dropout_att)
+             for i in range((num_layers) // 2)])
         self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
@@ -36,11 +37,16 @@ class ASAP_Pool(torch.nn.Module):
         x = F.relu(self.conv1(x, edge_index))
         xs = [global_mean_pool(x, batch)]
         for i, conv in enumerate(self.convs):
-            x = F.relu(conv(x=x, edge_index=edge_index, edge_weight=edge_weight))
+            x = F.relu(conv(x=x, edge_index=edge_index,
+                            edge_weight=edge_weight))
             xs += [global_mean_pool(x, batch)]
             if i % 2 == 0 and i < len(self.convs) - 1:
                 pool = self.pools[i // 2]
-                x, edge_index, edge_weight, batch, _ = pool(x=x, edge_index=edge_index, edge_weight=edge_weight, batch=batch)
+                x, edge_index, edge_weight, batch, _ = pool(
+                    x=x,
+                    edge_index=edge_index,
+                    edge_weight=edge_weight,
+                    batch=batch)
         x = self.jump(xs)
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)

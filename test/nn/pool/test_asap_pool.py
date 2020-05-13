@@ -12,14 +12,18 @@ def test_asap_pooling():
     x = torch.randn((num_nodes, in_channels))
 
     for GNN in [GraphConv, GCNConv]:
-        pool = ASAP_Pooling(in_channels, ratio=0.5, GNN=GNN, dropout_att=0, negative_slope=0.2, self_loops=False)
-        assert pool.__repr__() == ('ASAP_Pooling({}, 16, ratio=0.5, 0, 0.2, False)').format(GNN.__name__)
+        pool = ASAP_Pooling(in_channels, ratio=0.5, GNN=GNN, dropout_att=0,
+                            negative_slope=0.2, self_loops=False)
+        assert pool.__repr__() == ('ASAP_Pooling({}, 16, ratio=0.5, 0, '
+                                   '0.2, False)').format(GNN.__name__)
         out = pool(x, edge_index)
         assert out[0].size() == (num_nodes // 2, in_channels)
         assert out[1].size() == (2, 2)
 
-        pool = ASAP_Pooling(in_channels, ratio=0.5, GNN=GNN, dropout_att=0, negative_slope=0.2, self_loops=True)
-        assert pool.__repr__() == ('ASAP_Pooling({}, 16, ratio=0.5, 0, 0.2, True)').format(GNN.__name__)
+        pool = ASAP_Pooling(in_channels, ratio=0.5, GNN=GNN, dropout_att=0,
+                            negative_slope=0.2, self_loops=True)
+        assert pool.__repr__() == ('ASAP_Pooling({}, 16, ratio=0.5, 0, '
+                                   '0.2, True)').format(GNN.__name__)
         out = pool(x, edge_index)
         assert out[0].size() == (num_nodes // 2, in_channels)
         assert out[1].size() == (2, 4)
