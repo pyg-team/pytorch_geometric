@@ -1,6 +1,7 @@
 import os
 import os.path as osp
 from math import pi as PI
+import warnings
 
 import torch
 import torch.nn.functional as F
@@ -19,7 +20,7 @@ except ImportError:
 
 qm9_target_dict = {
     0: 'dipole_moment',
-    1: 'isotropic"polarizability',
+    1: 'isotropic_polarizability',
     2: 'homo',
     3: 'lumo',
     4: 'gap',
@@ -105,12 +106,18 @@ class SchNet(torch.nn.Module):
 
         # Filter the splits to only contain characterized molecules.
         idx = dataset.data.idx
-        train_idx = torch.from_numpy(train_idx[np.isin(train_idx, idx)])
-        val_idx = torch.from_numpy(val_idx[np.isin(val_idx, idx)])
-        test_idx = torch.from_numpy(test_idx[np.isin(test_idx, idx)])
+        assoc = idx.new_empty(idx.max().item() + 1)
+        assoc[idx] = torch.arange(idx.size(0))
+
+        train_idx = assoc[train_idx[np.isin(train_idx, idx)]]
+        val_idx = assoc[val_idx[np.isin(val_idx, idx)]]
+        test_idx = assoc[test_idx[np.isin(test_idx, idx)]]
 
         path = osp.join(root, 'trained_schnet_models', name, 'best_model')
-        state = torch.load(path, map_location='cpu')
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore')
+            state = torch.load(path, map_location='cpu')
 
         net = SchNet(hidden_channels=128, num_filters=128, num_interactions=6,
                      num_gaussians=50, cutoff=10.0,
@@ -138,9 +145,10 @@ class SchNet(torch.nn.Module):
 
         net.mean = state.output_modules[0].standardize.mean.item()
         net.std = state.output_modules[0].standardize.stddev.item()
-        net.atomref.weight = state.output_modules[0].atomref.weight
+        if net.atomref is not None:
+            net.atomref.weight = state.output_modules[0].atomref.weight
 
-        return net, dataset[train_idx], dataset[val_idx], dataset[test_idx]
+        return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
     def forward(self, z, pos, batch=None):
         assert z.dim() == 1 and z.dtype == torch.long
