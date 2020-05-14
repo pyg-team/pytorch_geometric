@@ -72,13 +72,15 @@ class InMemoryDataset(Dataset):
 
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
+            start, end = slices[idx].item(), slices[idx + 1].item()
+            # print(slices[idx], slices[idx + 1])
             if torch.is_tensor(item):
                 s = list(repeat(slice(None), item.dim()))
-                s[self.data.__cat_dim__(key,
-                                        item)] = slice(slices[idx],
-                                                       slices[idx + 1])
+                s[self.data.__cat_dim__(key, item)] = slice(start, end)
+            elif start + 1 == end:
+                s = slices[start]
             else:
-                s = slice(slices[idx], slices[idx + 1])
+                s = slice(start, end)
             data[key] = item[s]
         return data
 
