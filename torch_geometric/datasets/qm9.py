@@ -44,6 +44,7 @@ atomrefs = {
         -13.90303183, -1030.25891228, -1485.71166277, -2043.01812778,
         -2713.88796536
     ],
+    11: [0., 0., 0., 0., 0.]
 }
 
 
@@ -138,10 +139,9 @@ class QM9(InMemoryDataset):
         return y[:, target].std().item()
 
     def atomref(self, target):
-        atomref = atomrefs.get(target, None)
-        if atomref is not None:
+        if target in atomrefs:
             out = torch.zeros(100)
-            out[torch.tensor([1, 6, 7, 8, 9])] = torch.tensor(atomref)
+            out[torch.tensor([1, 6, 7, 8, 9])] = torch.tensor(atomrefs[target])
             return out.view(-1, 1)
         return None
 
