@@ -27,4 +27,4 @@ for target in range(12):
         maes.append(mae)
 
     mae = torch.cat(maes, dim=0)
-    print(f'Target: {target}, MAE: {mae.mean():.5f} ± {mae.std():.5f}')
+    print(f'Target: {target:02d}, MAE: {mae.mean():.5f} ± {mae.std():.5f}')
