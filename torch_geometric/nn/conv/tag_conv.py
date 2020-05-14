@@ -22,16 +22,19 @@ class TAGConv(MessagePassing):
         K (int, optional): Number of hops :math:`K`. (default: :obj:`3`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        normalize (bool, optional): Whether to apply symmetric normalization.
+            (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    def __init__(self, in_channels, out_channels, K=3, bias=True, **kwargs):
+    def __init__(self, in_channels, out_channels, K=3, bias=True,
+                 normalize=True, **kwargs):
         super(TAGConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.K = K
+        self.normalize = normalize
 
         self.lin = Linear(in_channels * (self.K + 1), out_channels, bias=bias)
 
@@ -55,8 +58,11 @@ class TAGConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_weight=None):
         """"""
-        edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
-                                     edge_weight, dtype=x.dtype)
+        if self.normalize:
+            edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
+                                         edge_weight, dtype=x.dtype)
+        else:
+            norm = edge_weight
 
         xs = [x]
         for k in range(self.K):
