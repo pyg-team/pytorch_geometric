@@ -1,3 +1,4 @@
+import copy
 from itertools import repeat, product
 
 import torch
@@ -119,3 +120,10 @@ class InMemoryDataset(Dataset):
             slices[key] = torch.tensor(slices[key], dtype=torch.long)
 
         return data, slices
+
+    def copy(self):
+        data_list = [self.get(i) for i in range(len(self))]
+        dataset = copy.copy(self)
+        dataset.__indices__ = None
+        dataset.data, dataset.slices = self.collate(data_list)
+        return dataset
