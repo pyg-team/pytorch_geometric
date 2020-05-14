@@ -23,7 +23,7 @@ def size_repr(key, item, pad=0):
     if torch.is_tensor(item):
         out = str(list(item.size()))
     elif isinstance(item, list) or isinstance(item, tuple):
-        out = str(len(item))
+        out = str([len(item)])
     elif isinstance(item, dict):
         lines = [pad_str + size_repr(k, v, 2) for k, v in item.items()]
         out = '{\n' + ',\n'.join(lines) + '\n' + pad_str + '}'
@@ -258,14 +258,23 @@ class Data(object):
         r"""Returns :obj:`True`, if graph edges are directed."""
         return not self.is_undirected()
 
+    def __apply__(self, item, func):
+        if torch.is_tensor(item):
+            return func(item)
+        elif isinstance(item, (tuple, list)):
+            return [self.__apply__(v, func) for v in item]
+        elif isinstance(item, dict):
+            return {k: self.__apply__(v, func) for k, v in item.items()}
+        else:
+            return item
+
     def apply(self, func, *keys):
         r"""Applies the function :obj:`func` to all tensor attributes
         :obj:`*keys`. If :obj:`*keys` is not given, :obj:`func` is applied to
         all present attributes.
         """
         for key, item in self(*keys):
-            if torch.is_tensor(item):
-                self[key] = func(item)
+            self[key] = self.__apply__(item, func)
         return self
 
     def contiguous(self, *keys):
@@ -369,7 +378,7 @@ class Data(object):
         has_dict = any([isinstance(item, dict) for _, item in self])
 
         if not has_dict:
-            info = [size_repr(key, item, pad=0) for key, item in self]
+            info = [size_repr(key, item) for key, item in self]
             return '{}({})'.format(cls, ', '.join(info))
         else:
             info = [size_repr(key, item, pad=2) for key, item in self]
