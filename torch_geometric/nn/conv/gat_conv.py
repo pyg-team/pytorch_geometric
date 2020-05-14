@@ -121,7 +121,7 @@ class GATConv(MessagePassing):
             return out
 
     def message(self, x_i, x_j, edge_index_i, size_i,
-                return_attention_weights):
+                return_attention_weights: bool):
         # Compute attention coefficients.
         x_i = x_i.view(-1, self.heads, self.out_channels)
         x_j = x_j.view(-1, self.heads, self.out_channels)
