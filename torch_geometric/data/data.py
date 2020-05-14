@@ -25,6 +25,8 @@ def size_repr(value):
         return [1]
     elif isinstance(value, list) or isinstance(value, tuple):
         return [len(value)]
+    elif isinstance(value, dict):
+        return {key: size_repr(item) for key, item in value.items()}
     else:
         return value
 
