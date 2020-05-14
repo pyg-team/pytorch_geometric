@@ -18,17 +18,19 @@ __num_nodes_warn_msg__ = (
     'data.num_nodes.')
 
 
-def size_repr(value):
-    if torch.is_tensor(value):
-        return list(value.size())
-    elif isinstance(value, int) or isinstance(value, float):
-        return [1]
-    elif isinstance(value, list) or isinstance(value, tuple):
-        return [len(value)]
-    elif isinstance(value, dict):
-        return {key: size_repr(item) for key, item in value.items()}
+def size_repr(key, item, pad=0):
+    pad_str = ' ' * pad
+    if torch.is_tensor(item):
+        out = str(list(item.size()))
+    elif isinstance(item, list) or isinstance(item, tuple):
+        out = str(len(item))
+    elif isinstance(item, dict):
+        lines = [pad_str + size_repr(k, v, 2) for k, v in item.items()]
+        out = '{\n' + ',\n'.join(lines) + '\n' + pad_str + '}'
     else:
-        return value
+        out = str(item)
+
+    return f'{pad_str}{key}={out}'
 
 
 class Data(object):
@@ -363,5 +365,12 @@ class Data(object):
                                                       self.norm.size(0)))
 
     def __repr__(self):
-        info = ['{}={}'.format(key, size_repr(item)) for key, item in self]
-        return '{}({})'.format(self.__class__.__name__, ', '.join(info))
+        cls = str(self.__class__.__name__)
+        has_dict = any([isinstance(item, dict) for _, item in self])
+
+        if not has_dict:
+            info = [size_repr(key, item, pad=0) for key, item in self]
+            return '{}({})'.format(cls, ', '.join(info))
+        else:
+            info = [size_repr(key, item, pad=2) for key, item in self]
+            return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
