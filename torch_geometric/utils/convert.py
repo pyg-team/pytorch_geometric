@@ -76,7 +76,15 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
         G = nx.DiGraph()
 
     G.add_nodes_from(range(data.num_nodes))
-    values = {key: data[key].squeeze().tolist() for key in data.keys}
+
+    values = {}
+    for key, item in data:
+        if torch.is_tensor(item):
+            values[key] = item.squeeze().tolist()
+        else:
+            values[key] = item
+        if isinstance(values[key], (list, tuple)) and len(values[key]) == 1:
+            values[key] = item[0]
 
     for i, (u, v) in enumerate(data.edge_index.t().tolist()):
 
