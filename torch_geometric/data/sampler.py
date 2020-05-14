@@ -24,8 +24,7 @@ class Block(object):
         self.size = size
 
     def __repr__(self):
-        info = [(key, getattr(self, key)) for key in self.__dict__]
-        info = ['{}={}'.format(key, size_repr(item)) for key, item in info]
+        info = [size_repr(key, getattr(self, key)) for key in self.__dict__]
         return '{}({})'.format(self.__class__.__name__, ', '.join(info))
 
 
