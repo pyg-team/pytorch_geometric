@@ -17,6 +17,7 @@ install_requires = [
     'rdflib',
     'h5py',
     'googledrivedownloader',
+    'ase',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov', 'mock']
