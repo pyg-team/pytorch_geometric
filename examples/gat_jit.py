@@ -8,7 +8,7 @@ from torch_geometric.nn import GATConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-dataset = Planetoid(path, dataset, T.NormalizeFeatures())
+dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
 
@@ -28,14 +28,14 @@ class Net(torch.nn.Module):
 
     def forward(self):
         x = F.dropout(data.x, p=0.6, training=self.training)
-        x = F.elu(self.conv1(x, data.edge_index))
+        x = F.elu(self.conv1(x, data.edge_index)[0])
         x = F.dropout(x, p=0.6, training=self.training)
-        x = self.conv2(x, data.edge_index)
+        x, _ = self.conv2(x, data.edge_index)
         return F.log_softmax(x, dim=1)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model, data = torch.jit.script(Net().to(device)), data.to(device)
+model, data = torch.jit.script(Net()).to(device), data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 
