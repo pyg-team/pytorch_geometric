@@ -248,7 +248,6 @@ class MessagePassing(torch.nn.Module):
             else:
                 idx = ij[arg[-2:]]
                 data = kwargs.get(arg[:-2], inspect.Parameter.empty)
-                print(arg[:-2], type(data), arg)
 
                 if data is inspect.Parameter.empty:
                     out[arg] = data
@@ -257,14 +256,12 @@ class MessagePassing(torch.nn.Module):
                                               '{0}_out = None'.format(arg)]
                     continue
 
-                print('---->', type(data))
                 if isinstance(data, tuple) or isinstance(data, list):
                     assert len(data) == 2
                     self.__set_size__(size, 1 - idx, data[1 - idx])
                     data = data[idx]
 
                 if not isinstance(data, torch.Tensor):
-                    print('data type -->', type(data))
                     out[arg] = data
                     if self.__record_propagate:
                         if isinstance(data, tuple) or isinstance(data, list):
@@ -348,14 +345,6 @@ class MessagePassing(torch.nn.Module):
                                        'size_j_out = size[{0}]'.format(j)]
             collect_trace['dim_size'] = [type(out['dim_size']),
                                          'dim_size_out = size_i_out']
-
-        for val in user_args:
-            print('user_args -->', val)
-        for k, v in out.items():
-            print('out -->', k, v)
-        if collect_trace is not None:
-            for k, v in collect_trace.items():
-                print('trace -->', k, v)
 
         return out, collect_trace
 
