@@ -101,9 +101,9 @@ def add_self_loops(edge_index,
 
 
 def add_remaining_self_loops(edge_index,
-                             edge_weight=None,
-                             fill_value=1,
-                             num_nodes=None):
+                             edge_weight: Optional[torch.Tensor] = None,
+                             fill_value: int = 1,
+                             num_nodes: Optional[int] = None):
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted and already contains a few self-loops, only
@@ -123,7 +123,7 @@ def add_remaining_self_loops(edge_index,
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-    row, col = edge_index
+    row, col = edge_index[0], edge_index[1]
 
     mask = row != col
 
