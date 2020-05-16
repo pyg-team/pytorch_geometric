@@ -22,7 +22,7 @@ def test_spline_conv():
     conv.eval()
     jitconv.eval()
     jittedconv.eval()
+    assert (torch.abs(conv(x, edge_index, pseudo) -
+            jitconv(x, edge_index, pseudo)) < 1e-6).all().item()
     assert (torch.abs(conv(x, edge_index, pseudo)[0] -
-            jitconv(x, edge_index, pseudo)[0]) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index, pseudo)[0] -
-            jittedconv(x, edge_index, pseudo)[0]) < 1e-6).all().item()
+            jittedconv(x, edge_index, pseudo)) < 1e-6).all().item()

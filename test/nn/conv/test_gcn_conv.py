@@ -25,10 +25,10 @@ def test_gcn_conv():
     conv.eval()
     jitconv.eval()
     jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index)[0] -
-            jitconv(x, edge_index)[0]) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index)[0] -
-            jittedconv(x, edge_index)[0]) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jitconv(x, edge_index)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jittedconv(x, edge_index)) < 1e-6).all().item()
 
     conv = GCNConv(in_channels, out_channels, cached=True)
     conv(x, edge_index).size() == (num_nodes, out_channels)
@@ -40,10 +40,10 @@ def test_gcn_conv():
     conv.eval()
     jitconv.eval()
     jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index)[0] -
-            jitconv(x, edge_index)[0]) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index)[0] -
-            jittedconv(x, edge_index)[0]) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jitconv(x, edge_index)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jittedconv(x, edge_index)) < 1e-6).all().item()
 
 
 def test_static_gcn_conv():
@@ -61,7 +61,7 @@ def test_static_gcn_conv():
     conv.eval()
     jitconv.eval()
     jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index)[0] -
-            jitconv(x, edge_index)[0]) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index)[0] -
-            jittedconv(x, edge_index)[0]) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jitconv(x, edge_index)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jittedconv(x, edge_index)) < 1e-6).all().item()

@@ -19,7 +19,7 @@ def test_appnp():
     conv.eval()
     jitconv.eval()
     jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index)[0] -
-            jitconv(x, edge_index)[0]) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index)[0] -
-            jittedconv(x, edge_index)[0]) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jitconv(x, edge_index)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jittedconv(x, edge_index)) < 1e-6).all().item()
