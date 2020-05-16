@@ -91,7 +91,7 @@ class GCNConv(MessagePassing):
         deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
         deg_inv_sqrt = deg.pow(-0.5)
         mask = (deg_inv_sqrt == float('inf'))
-        zeros = torch.zeros_like(mask, dtype=torch.float)
+        zeros = torch.zeros(deg_inv_sqrt.shape, dtype=deg_inv_sqrt.dtype)
         deg_inv_sqrt = torch.where(mask, zeros, deg_inv_sqrt)
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
