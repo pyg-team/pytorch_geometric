@@ -643,11 +643,6 @@ class MessagePassing(torch.nn.Module):
 
         in_kwargs_typed = ['{0}: {1}'.format(name, args_mapping['in_kwargs_types'][name]) for name in in_kwargs] # noqa
 
-        from torch.jit.frontend import get_source_lines_and_file
-        initlines, file_lineno, filename = \
-            get_source_lines_and_file(self.__init__,
-                                      torch._C.ErrorReport.call_stack())
-
         init_def = str(inspect.signature(self.__class__.__init__))
         init_args = inspect.signature(self.__init__)
         init_args = '(' + ', '.join(list(init_args.parameters.keys())) \
@@ -663,7 +658,6 @@ class MessagePassing(torch.nn.Module):
                     unboundinitsig=init_def,
                     boundinitsig=init_args,
                     parent_module=self.__class__.__module__,
-                    initdef=''.join(initlines),
                     in_kwargs=', '.join(in_kwargs_typed),
                     in_kwargs_dict=in_kwargs_dict,
                     in_kwargs_types='\n'.join(['    %s: %s' % (k, v) for k, v in args_mapping['in_kwargs_types'].items()]), # noqa
