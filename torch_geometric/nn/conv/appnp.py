@@ -32,6 +32,9 @@ class APPNP(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+    K: int
+    alpha: float
+
     def __init__(self, K, alpha, bias=True, **kwargs):
         super(APPNP, self).__init__(aggr='add', **kwargs)
         self.K = K
@@ -54,19 +57,24 @@ class APPNP(MessagePassing):
         deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
         deg_inv_sqrt = deg.pow(-0.5)
         mask = (deg_inv_sqrt == float('inf'))
-        zeros = torch.zeros(deg_inv_sqrt.shape, dtype=deg_inv_sqrt.dtype)
+        zeros = torch.zeros(deg_inv_sqrt.shape,
+                            dtype=deg_inv_sqrt.dtype,
+                            device=deg_inv_sqrt.device)
         deg_inv_sqrt = torch.where(mask, zeros, deg_inv_sqrt)
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
         edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
                                      edge_weight, dtype=x.dtype)
 
         hidden = x
         for k in range(self.K):
-            x = self.propagate(edge_index, x=x, norm=norm)
+            prop = self.propagate(edge_index, x=x, norm=norm)
+            # spoof x when rendering jittable class
+            x = prop if prop is not None else hidden
             x = x * (1 - self.alpha)
             x = x + self.alpha * hidden
 
