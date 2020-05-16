@@ -551,7 +551,7 @@ class MessagePassing(torch.nn.Module):
         return inputs
 
     @torch.jit.unused
-    def __make_jittable_fcn__(self):
+    def __make_jittable_fcn__(self, print_model=False):
         # define a new base class with the propagate method replaced
         uid = uuid1().hex
         clsname = self.__class__.__name__
@@ -572,12 +572,10 @@ class MessagePassing(torch.nn.Module):
               self.__record_dict__['aggr_kwargs'] is not None):
             msg_args = list(self.__record_dict__['msg_kwargs'].keys())
             msg_args = render_kwargs(msg_args)
-            print('msg_kwargs --->', msg_args)
             aggr_args = list(self.__record_dict__['aggr_kwargs'].keys())
             if self.__record_dict__['mp_type'] == 'edge_index':
                 aggr_args.remove('ptr')
             aggr_args = render_kwargs(aggr_args)
-            print('aggr_kwargs --->', aggr_args)
             msg_aggr_type = msg_aggr_sequential \
                 .format(uid=uid,
                         msg_kwargs=', '.join(msg_args),
@@ -598,8 +596,6 @@ class MessagePassing(torch.nn.Module):
         user_args_set = ['\'{0}\''.format(uarg) for uarg in self.__user_args__]
         user_args_set = '[' + ', '.join(user_args_set) + ']'
 
-        print('user args -->', self.__user_args__)
-
         args_mapping = {'kwargs_types': {'edge_index_i': 'torch.Tensor',
                                          'edge_index_j': 'torch.Tensor',
                                          'index': 'torch.Tensor',
@@ -611,7 +607,6 @@ class MessagePassing(torch.nn.Module):
         collect_trace = self.__record_dict__['collect_trace']
         for k, v in self.__record_dict__.items():
             if 'types' in k:
-                print(k, '--->', v)
                 args_mapping[k] = {}
                 if v is None:
                     continue
@@ -636,8 +631,6 @@ class MessagePassing(torch.nn.Module):
             else:
                 args_mapping['kwargs_types'][k] = \
                     '{0}'.format(qualtype)
-        import pprint
-        pprint.pprint(args_mapping)
 
         rendered_collect = [v[1] for v in collect_trace.values()]
         collect_trace_outs = \
@@ -647,10 +640,8 @@ class MessagePassing(torch.nn.Module):
         rendered_collect.append(return_stmt)
         rendered_collect = \
             '\n'.join(['        {0}'.format(ln) for ln in rendered_collect])
-        print(rendered_collect)
 
         in_kwargs_typed = ['{0}: {1}'.format(name, args_mapping['in_kwargs_types'][name]) for name in in_kwargs] # noqa
-        print(in_kwargs_typed)
 
         from torch.jit.frontend import get_source_lines_and_file
         initlines, file_lineno, filename = \
@@ -691,8 +682,8 @@ class MessagePassing(torch.nn.Module):
         ftemp.write(propagate_string)
         ftemp.close()
         # create a python module out of it
-        print(ftemp.name)
-        print(propagate_string)
+        if print_model:
+            print(propagate_string)
         modname = f'pyg_jit_{uid}'
         spec = spec_from_file_location(modname, ftemp.name)
         mod = module_from_spec(spec)
@@ -709,37 +700,17 @@ class MessagePassing(torch.nn.Module):
         analyzed to produce jittable modules. This function implements that
         analysis and synthesis."""
 
-        print(self.__class__.__name__)
-        print(self.__class__.__module__)
-        print(self.__class__.__qualname__)
-        print(self.__class__.__bases__)
-
-        fwd_sig = inspect.signature(self.forward)
-        print('forward signature:')
-        print(fwd_sig.parameters)
-
-        prop_sig = inspect.signature(self.propagate)
-        print('propagate signature:')
-        print(prop_sig.parameters)
+        print_model = kwargs.pop('print_model', False)
 
         # initialize the model
         self.__record_propagate = True
         with torch.no_grad():
-            print(self.forward(**kwargs))
+            self.forward(**kwargs)
         self.__record_propagate = False
 
-        print('all kwargs :', self.__record_dict__['in_kwargs'].keys())
-        if self.__record_dict__['msg_aggr_kwargs'] is not None:
-            print('msg_aggr :', self.__record_dict__['msg_aggr_kwargs'].keys())
-        if self.__record_dict__['msg_kwargs'] is not None:
-            print('msg      :', self.__record_dict__['msg_kwargs'].keys())
-        if self.__record_dict__['aggr_kwargs'] is not None:
-            print('aggr     :', self.__record_dict__['aggr_kwargs'].keys())
-        if self.__record_dict__['update_kwargs'] is not None:
-            print('update   :', self.__record_dict__['update_kwargs'].keys())
-
-        out = self.__make_jittable_fcn__()
-        self.__record_dict__ = {}
+        
+        out = self.__make_jittable_fcn__(print_model)
+        self.__record_dict__ = None
 
         return out
 
