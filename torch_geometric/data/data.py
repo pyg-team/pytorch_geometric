@@ -283,12 +283,12 @@ class Data(object):
         have a contiguous memory layout."""
         return self.apply(lambda x: x.contiguous(), *keys)
 
-    def to(self, device, *keys):
+    def to(self, device, *keys, **kwargs):
         r"""Performs tensor dtype and/or device conversion to all attributes
         :obj:`*keys`.
         If :obj:`*keys` is not given, the conversion is applied to all present
         attributes."""
-        return self.apply(lambda x: x.to(device), *keys)
+        return self.apply(lambda x: x.to(device, **kwargs), *keys)
 
     def clone(self):
         return self.__class__.from_dict({
