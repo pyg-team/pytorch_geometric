@@ -702,7 +702,6 @@ class MessagePassing(torch.nn.Module):
             self.forward(**kwargs)
         self.__record_propagate = False
 
-        
         out = self.__make_jittable_fcn__(print_model)
         self.__record_dict__ = None
 
