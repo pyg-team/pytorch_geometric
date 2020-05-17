@@ -19,6 +19,9 @@ class Net(torch.nn.Module):
             .jittable(x=data.x, edge_index=data.edge_index)
         self.conv1 = conv1_class(dataset.num_features, 8, heads=8, dropout=0.6)
         tempx = self.conv1(x=data.x, edge_index=data.edge_index)[0]
+        print(data.x.size())
+        print(tempx.size())
+        print(data.edge_index)
         # On the Pubmed dataset, use heads=8 in conv2.
         conv2_class = GATConv(8 * 8, dataset.num_classes, heads=1,
                               concat=True, dropout=0.6) \
@@ -39,7 +42,6 @@ model, data = torch.jit.script(Net()).to(device), data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 print(model)
-
 
 def train():
     model.train()
