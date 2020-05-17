@@ -15,25 +15,22 @@ data = dataset[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        conv1_class = GATConv(dataset.num_features, 8, heads=8, dropout=0.6) \
+        class_conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6) \
             .jittable(x=data.x, edge_index=data.edge_index)
-        self.conv1 = conv1_class(dataset.num_features, 8, heads=8, dropout=0.6)
-        tempx = self.conv1(x=data.x, edge_index=data.edge_index)[0]
-        print(data.x.size())
-        print(tempx.size())
-        print(data.edge_index)
+        self.conv1 = class_conv1(data.num_features, 8, heads=8, dropout=0.6)
+        tempx = self.conv1(x=data.x, edge_index=data.edge_index)
         # On the Pubmed dataset, use heads=8 in conv2.
-        conv2_class = GATConv(8 * 8, dataset.num_classes, heads=1,
-                              concat=True, dropout=0.6) \
+        conv2_class = GATConv(8 * 8, dataset.num_classes, heads=1, concat=True,
+                              dropout=0.6) \
             .jittable(x=tempx, edge_index=data.edge_index)
         self.conv2 = conv2_class(8 * 8, dataset.num_classes, heads=1,
                                  concat=True, dropout=0.6)
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
-        x = F.elu(self.conv1(x, edge_index)[0])
+        x = F.elu(self.conv1(x, edge_index))
         x = F.dropout(x, p=0.6, training=self.training)
-        x, _ = self.conv2(x, edge_index)
+        x = self.conv2(x, edge_index)
         return F.log_softmax(x, dim=1)
 
 
@@ -42,6 +39,7 @@ model, data = torch.jit.script(Net()).to(device), data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 print(model)
+
 
 def train():
     model.train()

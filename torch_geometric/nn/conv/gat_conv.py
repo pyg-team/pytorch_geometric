@@ -6,6 +6,8 @@ from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 from ..inits import glorot, zeros
 
+from typing import Optional, List
+
 
 class GATConv(MessagePassing):
     r"""The graph attentional operator from the `"Graph Attention Networks"
@@ -46,8 +48,9 @@ class GATConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(self, in_channels, out_channels, heads=1, concat=True,
-                 negative_slope=0.2, dropout=0, bias=True, **kwargs):
+                 negative_slope=0.2, dropout=0., bias=True, **kwargs):
         super(GATConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
@@ -78,12 +81,15 @@ class GATConv(MessagePassing):
         glorot(self.att_i)
         glorot(self.att_j)
         zeros(self.bias)
+        self.__save_att__ = False
+        self.__edge_index__ = torch.tensor([], dtype=torch.int64)
+        self.__alpha__ = torch.tensor([], dtype=torch.float)
 
     def forward(self, x, edge_index,
                 size: Optional[List[int]] = None,
                 return_attention_weights: bool = False):
         """"""
-        if size is None and torch.is_tensor(x):
+        if size is None and isinstance(x, torch.Tensor):
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index,
                                            num_nodes=x.size(self.node_dim))
@@ -115,7 +121,8 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_i, x_j, edge_index_i, size_i,
+    def message(self, x_i, x_j, edge_index_i,
+                size_i: Optional[int],
                 return_attention_weights: bool):
         # Compute attention coefficients.
         x_i = x_i.view(-1, self.heads, self.out_channels)
