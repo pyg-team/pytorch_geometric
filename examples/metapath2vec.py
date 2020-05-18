@@ -20,22 +20,28 @@ metapath = [
 ]
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+data = data.to(device)
 model = MetaPath2Vec(data.edge_index_dict, embedding_dim=128,
                      metapath=metapath, walks_per_node=10, sparse=True)
 model = model.to(device)
 optimizer = torch.optim.SparseAdam(model.parameters(), lr=0.01)
 
 
-def train():
+def train(epoch, log_steps=500):
     model.train()
+
     total_loss = 0
-    for subset in loader:
+    for i, subset in enumerate(loader):
         optimizer.zero_grad()
         loss = model.loss(subset)
         loss.backward()
         optimizer.step()
-        total_loss += loss.item() * subset.size(0)
-    return total_loss / len(loader.dataset)
+
+        total_loss += loss.item()
+        if (i + 1) % log_steps == 0:
+            print((f'Epoch: {epoch}, Step: {i + 1:05d}/{len(loader)}, '
+                   f'Loss: {total_loss / log_steps:.4f}'))
+            total_loss = 0
 
 
 @torch.no_grad()
@@ -47,7 +53,7 @@ def test():
 
     # 10/90 Split:
     perm = torch.randperm(z.size(0))
-    train_perm = perm[:int(z.size(0) * 0.1):]
+    train_perm = perm[:int(z.size(0) * 0.1)]
     test_perm = perm[int(z.size(0) * 0.1):]
 
     return model.test(z[train_perm], y[train_perm], z[test_perm], y[test_perm],
@@ -55,7 +61,6 @@ def test():
 
 
 for epoch in range(1, 6):
-    loss = train()
-    print('Epoch: {:02d}, Loss: {:.4f}'.format(epoch, loss))
-acc = test()
-print('Accuracy: {:.4f}'.format(acc))
+    train(epoch)
+    acc = test()
+    print(f'Epoch: {epoch}, Accuracy: {acc:.4f}')

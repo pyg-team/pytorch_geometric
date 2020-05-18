@@ -7,6 +7,33 @@ EPS = 1e-15
 
 
 class MetaPath2Vec(torch.nn.Module):
+    r"""The MetaPath2Vec model from the `"metapath2vec: Scalable Representation
+    Learning for Heterogeneous Networks"
+    <https://ericdongyx.github.io/papers/
+    KDD17-dong-chawla-swami-metapath2vec.pdf>`_ paper where random walks based
+    on a given :obj:`metapath` are sampled in a heterogeneous graph, and node
+    embeddings are learned via negative sampling optimization.
+
+    .. note::
+
+        For an example of using MetaPath2Vec, see `examples/metapath2vec.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        metapath2vec.py>`_.
+
+    Args:
+        edge_index_dict (dict): Dictionary holding edge indices for each
+            :obj:`(source_node_type, relation_type, target_node_type)` present
+            in the heterogeneous graph.
+        embedding_dim (int): The size of each embedding vector.
+        metapath (list): The metapath described as a list of
+            :obj:`(source_node_type, relation_type, target_node_type)` tuples.
+        walks_per_node (int, optional): The number of walks to sample for each
+            node. (default: :obj:`1`)
+        num_nodes_dict (dict, optional): Dictionary holding the number of nodes
+            for each node type. (default: :obj:`None`)
+        sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
+            weight matrix will be sparse. (default: :obj:`False`)
+    """
     def __init__(self, edge_index_dict, embedding_dim, metapath,
                  walks_per_node=1, num_nodes_dict=None, sparse=False):
         super(MetaPath2Vec, self).__init__()
@@ -63,6 +90,7 @@ class MetaPath2Vec(torch.nn.Module):
 
     def __positive_sampling__(self, subset):
         device = self.embedding.weight.device
+        subset = subset.to(self.adj_dict[self.metapath[0]].device())
 
         subsets = []
         for keys in self.metapath:
@@ -74,21 +102,21 @@ class MetaPath2Vec(torch.nn.Module):
         return out
 
     def __negative_sampling__(self, subset):
-        device = self.embedding.weight.device
-
         subsets = []
         for keys in self.metapath:
             node_type = keys[-1]
             subset = torch.randint(self.start[node_type], self.end[node_type],
                                    (subset.size(0), ), dtype=torch.long,
-                                   device=device)
+                                   device=subset.device)
             subsets.append(subset)
         return torch.stack(subsets, dim=-1)
 
     def loss(self, subset):
         r"""Computes the loss for the nodes in :obj:`subset` with negative
         sampling."""
-        subset = subset.repeat(self.walks_per_node)
+        device = self.embedding.weight.device
+
+        subset = subset.repeat(self.walks_per_node).to(device)
 
         pos_rest = self.__positive_sampling__(subset)
         neg_rest = self.__negative_sampling__(subset)
