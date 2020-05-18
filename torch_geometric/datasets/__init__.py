@@ -33,6 +33,7 @@ from .pascal_pf import PascalPF
 from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
 from .particle import TrackMLParticleTrackingDataset
+from .aminer import AMiner
 
 __all__ = [
     'KarateClub',
@@ -71,4 +72,5 @@ __all__ = [
     'SNAPDataset',
     'SuiteSparseMatrixCollection',
     'TrackMLParticleTrackingDataset',
+    'AMiner',
 ]
