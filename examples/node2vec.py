@@ -15,9 +15,9 @@ loader = DataLoader(torch.arange(data.num_nodes), batch_size=128, shuffle=True)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = Node2Vec(data.num_nodes, embedding_dim=128, walk_length=20,
-                 context_size=10, walks_per_node=10)
+                 context_size=10, walks_per_node=10, sparse=True)
 model, data = model.to(device), data.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+optimizer = torch.optim.SparseAdam(model.parameters(), lr=0.01)
 
 
 def train():
