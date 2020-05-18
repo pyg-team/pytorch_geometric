@@ -9,7 +9,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'AMiner')
 dataset = AMiner(path)
 data = dataset[0]
 print(data)
-N = data.num_nodes_dict['paper']
+N = data.num_nodes_dict['author']
 loader = DataLoader(torch.arange(N), batch_size=128, shuffle=True)
 
 metapath = [
@@ -54,7 +54,7 @@ def test():
                       max_iter=150)
 
 
-for epoch in range(1, 101):
+for epoch in range(1, 6):
     loss = train()
     print('Epoch: {:02d}, Loss: {:.4f}'.format(epoch, loss))
 acc = test()
