@@ -1,3 +1,5 @@
+# MetaPath2Vec on AMiner: reaches around 92.2% Micro-F1 after 5 epochs.
+
 import os.path as osp
 
 import torch
