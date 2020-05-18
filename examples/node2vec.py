@@ -32,10 +32,10 @@ def train():
     return total_loss / len(loader)
 
 
+@torch.no_grad()
 def test():
     model.eval()
-    with torch.no_grad():
-        z = model(torch.arange(data.num_nodes, device=device))
+    z = model(torch.arange(data.num_nodes, device=device))
     acc = model.test(z[data.train_mask], data.y[data.train_mask],
                      z[data.test_mask], data.y[data.test_mask], max_iter=150)
     return acc

@@ -8,6 +8,7 @@ from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet
 from .gnn_explainer import GNNExplainer
+from .metapath2vec import MetaPath2Vec
 
 __all__ = [
     'JumpingKnowledge',
@@ -24,4 +25,5 @@ __all__ = [
     'SchNet',
     'DimeNet',
     'GNNExplainer',
+    'MetaPath2Vec',
 ]
