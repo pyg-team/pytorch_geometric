@@ -3,11 +3,6 @@ from torch.nn import Embedding
 from torch_sparse import SparseTensor
 from sklearn.linear_model import LogisticRegression
 
-try:
-    from torch_cluster import metapath_walk
-except ImportError:
-    metapath_walk = None
-
 EPS = 1e-15
 
 
@@ -15,9 +10,6 @@ class MetaPath2Vec(torch.nn.Module):
     def __init__(self, edge_index_dict, embedding_dim, metapath,
                  walks_per_node=1, num_nodes_dict=None, sparse=False):
         super(MetaPath2Vec, self).__init__()
-
-        # if metapath_walk is None:
-        #     raise ImportError('`MetaPath2Vec` requires `torch-cluster`.')
 
         if num_nodes_dict is None:
             num_nodes_dict = {}
@@ -70,27 +62,36 @@ class MetaPath2Vec(torch.nn.Module):
         return emb if subset is None else emb[subset]
 
     def __positive_sampling__(self, subset):
-        raise NotImplementedError
+        device = self.embedding.weight.device
+
+        subsets = []
+        for keys in self.metapath:
+            adj = self.adj_dict[keys]
+            subset = adj.sample(num_neighbors=1, subset=subset).squeeze()
+            subsets.append(subset)
+        out = torch.stack(subsets, dim=-1).to(device)
+        out.add_(self.offset[1:].view(1, -1))
+        return out
 
     def __negative_sampling__(self, subset):
+        device = self.embedding.weight.device
+
         subsets = []
         for keys in self.metapath:
             node_type = keys[-1]
             subset = torch.randint(self.start[node_type], self.end[node_type],
                                    (subset.size(0), ), dtype=torch.long,
-                                   device=subset.device)
+                                   device=device)
             subsets.append(subset)
         return torch.stack(subsets, dim=-1)
 
     def loss(self, subset):
         r"""Computes the loss for the nodes in :obj:`subset` with negative
         sampling."""
-        device = self.embedding.weight.device
-
         subset = subset.repeat(self.walks_per_node)
 
-        pos_rest = self.__negative_sampling__(subset).to(device)
-        neg_rest = self.__negative_sampling__(subset).to(device)
+        pos_rest = self.__positive_sampling__(subset)
+        neg_rest = self.__negative_sampling__(subset)
 
         start = subset + self.start[self.metapath[0][0]]
 
