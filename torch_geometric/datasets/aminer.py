@@ -106,7 +106,7 @@ class AMiner(InMemoryDataset):
         data = Data(
             edge_index_dict={
                 ('paper', 'written by', 'author'): paper_author,
-                ('author', 'writes', 'paper'): author_paper,
+                ('author', 'wrote', 'paper'): author_paper,
                 ('paper', 'published in', 'venue'): paper_venue,
                 ('venue', 'published', 'paper'): venue_paper,
             },
@@ -115,8 +115,8 @@ class AMiner(InMemoryDataset):
                 'venue': venue_y,
             },
             y_index_dict={
-                'author_y_index': author_y_index,
-                'venue_y_index': venue_y_index,
+                'author': author_y_index,
+                'venue': venue_y_index,
             },
             num_nodes_dict={
                 'paper': int(paper_author[0].max()) + 1,
