@@ -52,7 +52,9 @@ class GINConv(MessagePassing):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         edge_index, _ = remove_self_loops(edge_index)
-        out = self.nn((1 + self.eps) * x + self.propagate(edge_index, x=x))
+        prop = self.propagate(edge_index, x=x)
+        prop = prop if prop is not None else x
+        out = self.nn((1 + self.eps) * x + prop)
         return out
 
     def message(self, x_j):
@@ -108,8 +110,9 @@ class GINEConv(MessagePassing):
             edge_attr = edge_attr.unsqueeze(-1)
         assert x.size(-1) == edge_attr.size(-1)
         edge_index, _ = remove_self_loops(edge_index)
-        out = self.nn((1 + self.eps) * x +
-                      self.propagate(edge_index, x=x, edge_attr=edge_attr))
+        prop = self.propagate(edge_index, x=x, edge_attr=edge_attr)
+        prop = prop if prop is not None else x
+        out = self.nn((1 + self.eps) * x + prop)
         return out
 
     def message(self, x_j, edge_attr):
