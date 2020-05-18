@@ -4,6 +4,8 @@ import torch.nn.functional as F
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
+from typing import Optional
+
 
 class AGNNConv(MessagePassing):
     r"""Graph attentional propagation layer from the
@@ -50,14 +52,15 @@ class AGNNConv(MessagePassing):
         edge_index, _ = add_self_loops(edge_index,
                                        num_nodes=x.size(self.node_dim))
 
-        x_norm = F.normalize(x, p=2, dim=-1)
+        x_norm = F.normalize(x, p=2., dim=-1)
 
         return self.propagate(edge_index, x=x, x_norm=x_norm,
                               num_nodes=x.size(self.node_dim))
 
-    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes):
+    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j,
+                num_nodes: Optional[int]):
         # Compute attention coefficients.
-        beta = self.beta if self.requires_grad else self._buffers['beta']
+        beta = self.beta
         alpha = beta * (x_norm_i * x_norm_j).sum(dim=-1)
         alpha = softmax(alpha, edge_index_i, num_nodes)
 
