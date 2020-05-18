@@ -5,6 +5,8 @@ from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import uniform
 
+from typing import Optional
+
 
 class GatedGraphConv(MessagePassing):
     r"""The gated graph convolution operator from the `"Gated Graph Sequence
@@ -55,20 +57,28 @@ class GatedGraphConv(MessagePassing):
         uniform(self.out_channels, self.weight)
         self.rnn.reset_parameters()
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
         h = x if x.dim() == 2 else x.unsqueeze(-1)
         if h.size(1) > self.out_channels:
             raise ValueError('The number of input channels is not allowed to '
                              'be larger than the number of output channels')
 
+        if edge_weight is None:
+            edge_weight = torch.ones((edge_index.size(1), ),
+                                     dtype=x.dtype,
+                                     device=x.device)
+
         if h.size(1) < self.out_channels:
             zero = h.new_zeros(h.size(0), self.out_channels - h.size(1))
             h = torch.cat([h, zero], dim=1)
 
+        assert edge_weight is not None
         for i in range(self.num_layers):
             m = torch.matmul(h, self.weight[i])
-            m = self.propagate(edge_index, x=m, edge_weight=edge_weight)
+            prop = self.propagate(edge_index, x=m, edge_weight=edge_weight)
+            m = prop if prop is not None else m
             h = self.rnn(m, h)
 
         return h
