@@ -20,14 +20,15 @@ metapath = [
 ]
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-data = data.to(device)
 model = MetaPath2Vec(data.edge_index_dict, embedding_dim=128,
-                     metapath=metapath, walks_per_node=10, sparse=True)
+                     metapath=metapath, walk_length=50, context_size=7,
+                     walks_per_node=5, num_negative_samples=5, sparse=True)
+
 model = model.to(device)
 optimizer = torch.optim.SparseAdam(model.parameters(), lr=0.01)
 
 
-def train(epoch, log_steps=500):
+def train(epoch, log_steps=100, eval_steps=2000):
     model.train()
 
     total_loss = 0
@@ -43,18 +44,22 @@ def train(epoch, log_steps=500):
                    f'Loss: {total_loss / log_steps:.4f}'))
             total_loss = 0
 
+        if (i + 1) % eval_steps == 0:
+            acc = test()
+            print((f'Epoch: {epoch}, Step: {i + 1:05d}/{len(loader)}, '
+                   f'Acc: {acc:.4f}'))
+
 
 @torch.no_grad()
-def test():
+def test(train_ratio=0.1):
     model.eval()
 
     z = model('author', subset=data.y_index_dict['author'])
     y = data.y_dict['author']
 
-    # 10/90 Split:
     perm = torch.randperm(z.size(0))
-    train_perm = perm[:int(z.size(0) * 0.1)]
-    test_perm = perm[int(z.size(0) * 0.1):]
+    train_perm = perm[:int(z.size(0) * train_ratio)]
+    test_perm = perm[int(z.size(0) * train_ratio):]
 
     return model.test(z[train_perm], y[train_perm], z[test_perm], y[test_perm],
                       max_iter=150)
