@@ -15,7 +15,7 @@ def test_gat_conv():
 
     out = conv(x, edge_index, return_attention_weights=True)
     assert out[0].size() == (num_nodes, 2 * out_channels)
-    assert out[1][0].size() == (edge_index.size(1) + num_nodes, 2)
+    assert out[1][1].size() == (edge_index.size(1) + num_nodes, 2)
     assert conv.__alpha__ is None
 
     conv = GATConv(in_channels, out_channels, heads=2, concat=False)
@@ -24,5 +24,5 @@ def test_gat_conv():
 
     out = conv(x, edge_index, return_attention_weights=True)
     assert out[0].size() == (num_nodes, out_channels)
-    assert out[1][0].size() == (edge_index.size(1) + num_nodes, 2)
+    assert out[1][1].size() == (edge_index.size(1) + num_nodes, 2)
     assert conv.__alpha__ is None

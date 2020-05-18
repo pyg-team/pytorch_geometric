@@ -56,7 +56,7 @@ class GATConv(MessagePassing):
         self.concat = concat
         self.negative_slope = negative_slope
         self.dropout = dropout
-        
+
         self.__alpha__ = None
 
         self.weight = Parameter(torch.Tensor(in_channels,
@@ -96,7 +96,7 @@ class GATConv(MessagePassing):
 
         if return_attention_weights:
             alpha, self.__alpha__ = self.__alpha__, None
-            return out, (alpha, edge_index)
+            return out, (edge_index, alpha)
         else:
             return out
 
