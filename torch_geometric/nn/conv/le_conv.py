@@ -1,12 +1,13 @@
 import torch
 from torch.nn import Parameter
-from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import add_remaining_self_loops
 from torch_scatter import scatter_add
 
 from torch_geometric.nn.inits import uniform
 
 
-class LEConv(torch.nn.Module):
+class LEConv(MessagePassing):
     r"""The Local Extremum graph neural network operator from the
     `"ASAP: Adaptive Structure Aware Pooling for Learning Hierarchical Graph
     Representations" <https://arxiv.org/pdf/1911.07979.pdf>`_ paper.
@@ -44,25 +45,21 @@ class LEConv(torch.nn.Module):
 
     def forward(self, x, edge_index, edge_weight=None, size=None):
         """"""
-        num_nodes = x.shape[0]
         h = torch.matmul(x, self.weight)
+        edge_index, edge_weight = add_remaining_self_loops(
+            edge_index, edge_weight, 1, x.size(self.node_dim))
 
+        return self.propagate(edge_index, size=size, x=x, h=h,
+                              edge_weight=edge_weight)
+
+    def message(self, x_i, h_j, edge_weight):
         if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1), ),
-                                     dtype=x.dtype,
-                                     device=edge_index.device)
-        edge_index, edge_weight = remove_self_loops(edge_index=edge_index,
-                                                    edge_attr=edge_weight)
-        deg = scatter_add(edge_weight, edge_index[0], dim=0,
-                          dim_size=num_nodes)
+            return (self.lin1(x_i) - h_j)
+        else:
+            return edge_weight.view(-1, 1) * (self.lin1(x_i) - h_j)
 
-        h_j = edge_weight.view(-1, 1) * h[edge_index[1]]
-        aggr_out = scatter_add(h_j, edge_index[0], dim=0, dim_size=num_nodes)
-        out = (deg.view(-1, 1) * self.lin1(x) + aggr_out) + self.lin2(x)
-        edge_index, edge_weight = add_self_loops(edge_index=edge_index,
-                                                 edge_weight=edge_weight,
-                                                 num_nodes=num_nodes)
-        return out
+    def update(self, aggr_out, x):
+        return aggr_out + self.lin2(x)
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
