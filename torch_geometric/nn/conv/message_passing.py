@@ -115,10 +115,11 @@ class {clsname}Jittable_{uid}({parent_module}.{clsname}):
         in_kwargs = InKwargs_{uid}({in_kwargs_init})
         user_args = {user_args_set}
 
-        mp_type, size = self.__determine_type_and_size_jittable__(edge_index,
-                                                                  size)
+        mp_type, thesize = \
+            self.__determine_type_and_size_jittable__(edge_index,
+                                                      size)
         kwargs = self.__collect__(edge_index,
-                                  size,
+                                  thesize,
                                   mp_type,
                                   in_kwargs,
                                   user_args)
@@ -216,14 +217,19 @@ class MessagePassing(torch.nn.Module):
                  'of shape `[2, num_messages]` or `torch_sparse.SparseTensor` '
                  'for argument :obj:`edge_index`.'))
 
-    def __set_size__(self, size: List[Optional[int]], idx: int, tensor):
+    def __set_size__(self,
+                     size: List[Optional[int]],
+                     idx: int,
+                     tensor: Optional[torch.Tensor]):
         if not isinstance(tensor, torch.Tensor):
             pass
         elif size[idx] is None:
+            assert tensor is not None
             size[idx] = tensor.size(self.node_dim)
         else:
             the_size = size[idx]
             assert the_size is not None
+            assert tensor is not None
             if the_size != tensor.size(self.node_dim):
                 raise ValueError(
                     (f'Encountered node tensor with size '
@@ -246,6 +252,7 @@ class MessagePassing(torch.nn.Module):
                     collect_trace[arg] = [type(out[arg]),
                                           '{0}_out = kwargs.{0}'.format(arg)]
             else:
+                sizestr = ''
                 idx = ij[arg[-2:]]
                 data = kwargs.get(arg[:-2], inspect.Parameter.empty)
                 is_tuple_or_list = (isinstance(data, tuple) or
@@ -261,6 +268,7 @@ class MessagePassing(torch.nn.Module):
                 if is_tuple_or_list:
                     assert len(data) == 2
                     self.__set_size__(size, 1 - idx, data[1 - idx])
+                    sizestr = '        self.__set_size__(size, {0}, kwargs.{1}[{0}])'.format(1 - idx, arg[:-2]) # noqa
                     data = data[idx]
 
                 if not isinstance(data, torch.Tensor):
@@ -274,9 +282,12 @@ class MessagePassing(torch.nn.Module):
                             collect_trace[arg] = [outtype, '{0}_out = kwargs.{1}'.format(arg, arg[:-2])] # noqa
                         else:  # we have to assume it's a tensor
                             collect_trace[arg] = [outtype, '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1}[{2}] is not None:\n            temp_{0} = kwargs.{1}[{2}]\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
+                        collect_trace[arg][1] += '\n' + sizestr
                     continue
 
                 self.__set_size__(size, idx, data)
+                if not is_tuple_or_list:
+                    sizestr = '        self.__set_size__(size, {0}, kwargs.{1})'.format(idx, arg[:-2]) # noqa
 
                 if mp_type == 'edge_index':
                     out[arg] = data.index_select(self.node_dim,
@@ -286,6 +297,7 @@ class MessagePassing(torch.nn.Module):
                             collect_trace[arg] = [Optional[torch.Tensor], '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1}[{2}] is not None:\n            temp_{0} = kwargs.{1}[{2}]\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
                         else:
                             collect_trace[arg] = [type(out[arg]), '{0}_out = kwargs.{1}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
+                        collect_trace[arg][1] += '\n' + sizestr
                 elif mp_type == 'adj_t' and idx == 1:
                     rowptr = edge_index.storage.rowptr()
                     for _ in range(self.node_dim):
@@ -349,7 +361,7 @@ class MessagePassing(torch.nn.Module):
         out['dim_size'] = out['size_i']
         if self.__record_propagate:
             collect_trace['size_i'] = [type(out['size_i']),
-                                       'size_i_out = size[{0}]'.format(i)]
+                                       'size[0] = size[1] if size[0] is None else size[0]\n        size[1] = size[0] if size[1] is None else size[1]\n        size_i_out = size[{0}]'.format(i)] # noqa
             collect_trace['size_j'] = [type(out['size_j']),
                                        'size_j_out = size[{0}]'.format(j)]
             collect_trace['dim_size'] = [type(out['dim_size']),
@@ -408,7 +420,7 @@ class MessagePassing(torch.nn.Module):
                  'really want to make use of a reverse message passing flow, '
                  'pass in the transposed sparse tensor to the message passing '
                  'module, e.g., `adj.t()`.'))
-        size_out: List[Optional[int]] = [0, 0]
+        size_out: List[Optional[int]] = [None, None]
         if mp_type == 'edge_index':
             if size is None:
                 size_out[0], size_out[1] = None, None

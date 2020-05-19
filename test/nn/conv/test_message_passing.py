@@ -4,6 +4,8 @@ import torch
 from torch_sparse import SparseTensor
 from torch_geometric.nn import MessagePassing
 
+from typing import Optional
+
 
 def test_message_passing_with_edge_index():
     edge_index = torch.tensor([
@@ -54,10 +56,14 @@ class MyConv(MessagePassing):
         super(MyConv, self).__init__(aggr='add')
         self.weight = torch.nn.Parameter(torch.randn(16, 16))
 
-    def forward(self, x, edge_index, **kwargs):
-        return self.propagate(edge_index, x=x, **kwargs)
+    def forward(self, x, edge_index, zeros: bool = True):
+        return self.propagate(edge_index, x=x, zeros=zeros)
 
-    def message(self, x, x_j, edge_index_j, size_i, size_j, zeros=True):
+    def message(self, x, x_j, edge_index_j,
+                size_i: Optional[int], size_j: Optional[int],
+                zeros: bool = True):
+        assert size_i is not None
+        assert size_j is not None
         assert size_i == x.size(self.node_dim)
         assert size_j == x.size(self.node_dim)
         assert x_j.size(self.node_dim) == edge_index_j.size(0)
@@ -74,8 +80,24 @@ def test_default_arguments():
     conv = MyConv()
     out = conv(x, edge_index)
     assert (out == 0).all()
+    jitcls = conv.jittable(x=x, edge_index=edge_index)
+    jitconv = jitcls()
+    jitconv.load_state_dict(conv.state_dict())
+    jittedconv = torch.jit.script(jitconv)
+    conv.eval()
+    jitconv.eval()
+    jittedconv.eval()
+    assert (torch.abs(conv(x, edge_index) -
+            jitconv(x, edge_index)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index) -
+            jittedconv(x, edge_index)) < 1e-6).all().item()
+
     out = conv(x, edge_index, zeros=False)
     assert (out != 0).all()
+    assert (torch.abs(conv(x, edge_index, zeros=False) -
+            jitconv(x, edge_index, zeros=False)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index, zeros=False) -
+            jittedconv(x, edge_index, zeros=False)) < 1e-6).all().item()
 
 
 def test_copy():
