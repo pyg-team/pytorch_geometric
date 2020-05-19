@@ -6,7 +6,7 @@ from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 from ..inits import glorot, zeros
 
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 
 class GATConv(MessagePassing):
@@ -48,7 +48,6 @@ class GATConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, heads=1, concat=True,
                  negative_slope=0.2, dropout=0., bias=True, **kwargs):
         super(GATConv, self).__init__(aggr='add', **kwargs)
@@ -60,7 +59,7 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.__alpha__ = None
+        self.register_buffer('__alpha__', torch.tensor([], dtype=torch.float))
 
         self.lin = Linear(in_channels, heads * out_channels, bias=False)
 
@@ -81,30 +80,25 @@ class GATConv(MessagePassing):
         glorot(self.att_i)
         glorot(self.att_j)
         zeros(self.bias)
-        self.__save_att__ = False
-        self.__edge_index__ = torch.tensor([], dtype=torch.int64)
-        self.__alpha__ = torch.tensor([], dtype=torch.float)
 
     def forward(self, x, edge_index,
                 size: Optional[List[int]] = None,
                 return_attention_weights: bool = False):
         """"""
-        if size is None and isinstance(x, torch.Tensor):
-            edge_index, _ = remove_self_loops(edge_index)
-            edge_index, _ = add_self_loops(edge_index,
-                                           num_nodes=x.size(self.node_dim))
-
-        if isinstance(x, torch.Tensor):
-            x = self.lin(x)
-            x = (x, x)
+        x_is_tensor = isinstance(x, torch.Tensor)
+        x_prop: Tuple[Optional[torch.Tensor],
+                      Optional[torch.Tensor]] = (None, None)
+        if x_is_tensor:
+            x_prop = self.lin(x)
+            x_prop = (x, x)
         else:
-            x = (self.lin(x[0]), self.lin(x[1]))
+            x_prop = (self.lin(x[0]), self.lin(x[1]))
 
         edge_index, _ = remove_self_loops(edge_index)
         edge_index, _ = add_self_loops(edge_index,
                                        num_nodes=x[1].size(self.node_dim))
 
-        out = self.propagate(edge_index, x=x,
+        out = self.propagate(edge_index, x=x_prop,
                              return_attention_weights=return_attention_weights)
 
         if self.concat:
@@ -116,15 +110,22 @@ class GATConv(MessagePassing):
             out = out + self.bias
 
         if return_attention_weights:
-            alpha, self.__alpha__ = self.__alpha__, None
+            alpha = self.__alpha__
+            empty: List[float] = []
+            self.__alpha__ = torch.tensor(empty, dtype=torch.float)
             return out, (edge_index, alpha)
         else:
-            return out
+            return out, (None, None)
 
-    def message(self, x_i, x_j, edge_index_i,
+    def message(self,
+                x_i: Optional[torch.Tensor],
+                x_j: Optional[torch.Tensor],
+                edge_index_i,
                 size_i: Optional[int],
                 return_attention_weights: bool):
         # Compute attention coefficients.
+        assert x_i is not None
+        assert x_j is not None
         x_i = x_i.view(-1, self.heads, self.out_channels)
         x_j = x_j.view(-1, self.heads, self.out_channels)
 

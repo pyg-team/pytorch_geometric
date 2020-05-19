@@ -18,7 +18,7 @@ class Net(torch.nn.Module):
         class_conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6) \
             .jittable(x=data.x, edge_index=data.edge_index)
         self.conv1 = class_conv1(data.num_features, 8, heads=8, dropout=0.6)
-        tempx = self.conv1(x=data.x, edge_index=data.edge_index)
+        tempx = self.conv1(x=data.x, edge_index=data.edge_index)[0]
         # On the Pubmed dataset, use heads=8 in conv2.
         conv2_class = GATConv(8 * 8, dataset.num_classes, heads=1, concat=True,
                               dropout=0.6) \
@@ -28,9 +28,9 @@ class Net(torch.nn.Module):
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
-        x = F.elu(self.conv1(x, edge_index))
+        x = F.elu(self.conv1(x, edge_index)[0])
         x = F.dropout(x, p=0.6, training=self.training)
-        x = self.conv2(x, edge_index)
+        x = self.conv2(x, edge_index)[0]
         return F.log_softmax(x, dim=1)
 
 

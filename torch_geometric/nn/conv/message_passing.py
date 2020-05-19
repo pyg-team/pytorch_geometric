@@ -79,7 +79,7 @@ Args:
 
 propagate_jittable_string = """import torch
 import {parent_module}
-from typing import List, Optional, NamedTuple
+from typing import List, Tuple, Optional, NamedTuple
 
 class InKwargs_{uid}(NamedTuple):
 {in_kwargs_types}
@@ -248,6 +248,8 @@ class MessagePassing(torch.nn.Module):
             else:
                 idx = ij[arg[-2:]]
                 data = kwargs.get(arg[:-2], inspect.Parameter.empty)
+                is_tuple_or_list = (isinstance(data, tuple) or
+                                    isinstance(data, list))
 
                 if data is inspect.Parameter.empty:
                     out[arg] = data
@@ -256,18 +258,22 @@ class MessagePassing(torch.nn.Module):
                                               '{0}_out = None'.format(arg)]
                     continue
 
-                if isinstance(data, tuple) or isinstance(data, list):
+                if is_tuple_or_list:
                     assert len(data) == 2
                     self.__set_size__(size, 1 - idx, data[1 - idx])
                     data = data[idx]
 
                 if not isinstance(data, torch.Tensor):
                     out[arg] = data
+                    outtype = type(data) if data is not None \
+                        else Optional[torch.Tensor]
                     if self.__record_propagate:
-                        if isinstance(data, tuple) or isinstance(data, list):
-                            collect_trace[arg] = [type(out[arg]), '{0}_out = kwargs.{1}[{2}]'.format(arg, arg[:-2], idx)] # noqa
-                        else:
-                            collect_trace[arg] = [type(out[arg]), '{0}_out = kwargs.{1}'.format(arg, arg[:-2])] # noqa
+                        if is_tuple_or_list and data is not None:
+                            collect_trace[arg] = [outtype, '{0}_out = kwargs.{1}[{2}]'.format(arg, arg[:-2], idx)] # noqa
+                        elif data is not None:
+                            collect_trace[arg] = [outtype, '{0}_out = kwargs.{1}'.format(arg, arg[:-2])] # noqa
+                        else:  # we have to assume it's a tensor
+                            collect_trace[arg] = [outtype, '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1}[{2}] is not None:\n            temp_{0} = kwargs.{1}[{2}]\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
                     continue
 
                 self.__set_size__(size, idx, data)
@@ -276,7 +282,10 @@ class MessagePassing(torch.nn.Module):
                     out[arg] = data.index_select(self.node_dim,
                                                  edge_index[idx])
                     if self.__record_propagate:
-                        collect_trace[arg] = [type(out[arg]), '{0}_out = kwargs.{1}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
+                        if is_tuple_or_list:
+                            collect_trace[arg] = [Optional[torch.Tensor], '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1}[{2}] is not None:\n            temp_{0} = kwargs.{1}[{2}]\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
+                        else:
+                            collect_trace[arg] = [type(out[arg]), '{0}_out = kwargs.{1}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
                 elif mp_type == 'adj_t' and idx == 1:
                     rowptr = edge_index.storage.rowptr()
                     for _ in range(self.node_dim):
@@ -613,18 +622,44 @@ class MessagePassing(torch.nn.Module):
                 for name, thetype in v.items():
                     qualtype = thetype.__name__
                     thetype = thetype
+                    if thetype is not Optional[torch.Tensor]:
+                        if thetype.__module__ != 'builtins':
+                            qualtype = thetype.__module__ + '.' + qualtype
                     if name in collect_trace:
-                        qualtype = collect_trace[name][0].__name__
-                        thetype = collect_trace[name][0]
-                    if thetype.__module__ != 'builtins':
-                        qualtype = thetype.__module__ + '.' + qualtype
+                        if collect_trace[name][0] is Optional[torch.Tensor]:
+                            qualtype = 'Optional[torch.Tensor]'
+                        else:
+                            qualtype = collect_trace[name][0].__name__
+                            thetype = collect_trace[name][0]
+                            if thetype.__module__ != 'builtins':
+                                qualtype = thetype.__module__ + '.' + qualtype
+                    if thetype == tuple:
+                        kwname = k[:k.find('_type')]
+                        thetuple = self.__record_dict__[kwname][name]
+                        mytypes = []
+                        for i in range(len(thetuple)):
+                            if thetuple[i] is not None:
+                                atype = type(thetuple[i])
+                                atypestr = atype.__name__
+                                if atype.__module__ != 'builtins':
+                                    atypestr = \
+                                        atype.__module__ + '.' + atypestr
+                                mytypes.append('Optional[{0}]'
+                                               .format(atypestr))
+                            else:
+                                mytypes.append('Optional[torch.Tensor]')
+                        qualtype = 'Tuple[{0}]'.format(', '.join(mytypes))
+                    if thetype == list:
+                        pass  # fixme add in list stuff later
                     if name not in args_mapping[k].keys():
                         args_mapping[k][name] = '{0}'.format(qualtype)
 
         for k, v in self.__record_dict__['collect_trace'].items():
-            qualtype = v[0].__name__
-            if v[0].__module__ != 'builtins':
-                qualtype = v[0].__module__ + '.' + qualtype
+            qualtype = 'Optional[torch.Tensor]'
+            if v[0] is not Optional[torch.Tensor]:
+                qualtype = v[0].__name__
+                if v[0].__module__ != 'builtins':
+                    qualtype = v[0].__module__ + '.' + qualtype
             if 'ptr' in k or 'size' in k:
                 args_mapping['kwargs_types'][k] = \
                     'Optional[{0}]'.format(qualtype)

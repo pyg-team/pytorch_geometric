@@ -12,7 +12,6 @@ def test_gat_conv():
     assert conv.__repr__() == 'GATConv(16, 32, heads=2)'
     assert conv(x, edge_index).size() == (num_nodes, 2 * out_channels)
     assert conv((x, x), edge_index).size() == (num_nodes, 2 * out_channels)
-    assert conv((x, None), edge_index).size() == (num_nodes, 2 * out_channels)
     jitcls = conv.jittable(x=x, edge_index=edge_index)
     jitconv = jitcls(in_channels, out_channels, heads=2, dropout=0.5)
     jitconv.load_state_dict(conv.state_dict())
@@ -20,20 +19,19 @@ def test_gat_conv():
     conv.eval()
     jitconv.eval()
     jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index) -
-            jitconv(x, edge_index)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index) -
-            jittedconv(x, edge_index)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index)[0] -
+            jitconv(x, edge_index)[0]) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index)[0] -
+            jittedconv(x, edge_index)[0]) < 1e-6).all().item()
 
     out = conv(x, edge_index, return_attention_weights=True)
     assert out[0].size() == (num_nodes, 2 * out_channels)
     assert out[1][1].size() == (edge_index.size(1) + num_nodes, 2)
-    assert conv.__alpha__ is None
+    assert conv.__alpha__.size(0) == 0
 
     conv = GATConv(in_channels, out_channels, heads=2, concat=False)
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
     assert conv((x, x), edge_index).size() == (num_nodes, out_channels)
-    assert conv((x, None), edge_index).size() == (num_nodes, out_channels)
     jitcls = conv.jittable(x=x, edge_index=edge_index)
     jitconv = jitcls(in_channels, out_channels, heads=2, concat=False)
     jitconv.load_state_dict(conv.state_dict())
@@ -41,12 +39,12 @@ def test_gat_conv():
     conv.eval()
     jitconv.eval()
     jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index) -
-            jitconv(x, edge_index)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index) -
-            jittedconv(x, edge_index)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index)[0] -
+            jitconv(x, edge_index)[0]) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index)[0] -
+            jittedconv(x, edge_index)[0]) < 1e-6).all().item()
 
     out = conv(x, edge_index, return_attention_weights=True)
     assert out[0].size() == (num_nodes, out_channels)
     assert out[1][1].size() == (edge_index.size(1) + num_nodes, 2)
-    assert conv.__alpha__ is None
+    assert conv.__alpha__.size(0) == 0
