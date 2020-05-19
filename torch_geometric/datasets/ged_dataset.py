@@ -69,13 +69,8 @@ class GEDDataset(InMemoryDataset):
         'Sb', 'Se', 'Ni', 'Te'
     ]
 
-    def __init__(self,
-                 root,
-                 name,
-                 train=True,
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root, name, train=True, transform=None,
+                 pre_transform=None, pre_filter=None):
         self.name = name
         assert self.name in self.datasets.keys()
         super(GEDDataset, self).__init__(root, transform, pre_transform,
@@ -130,8 +125,8 @@ class GEDDataset(InMemoryDataset):
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
                         x[int(node)] = self.types.index(info['type'])
-                    data.x = F.one_hot(
-                        x, num_classes=len(self.types)).to(torch.float)
+                    data.x = F.one_hot(x, num_classes=len(self.types)).to(
+                        torch.float)
 
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
@@ -152,7 +147,8 @@ class GEDDataset(InMemoryDataset):
                 xs += [assoc[x]]
                 ys += [assoc[y]]
                 gs += [g]
-            x, y, g = torch.tensor(xs), torch.tensor(ys), torch.tensor(gs)
+            x, y = torch.tensor(xs), torch.tensor(ys)
+            g = torch.tensor(gs, dtype=torch.float)
             mat[x, y], mat[y, x] = g, g
 
         path = osp.join(self.processed_dir, '{}_ged.pt'.format(self.name))
