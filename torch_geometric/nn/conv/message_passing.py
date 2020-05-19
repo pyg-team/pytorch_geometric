@@ -46,37 +46,6 @@ msg_aggr_sequential = """out = self.message({msg_kwargs})
 
         out = self.aggregate(inputs=out, {aggr_kwargs})"""
 
-propagate_docstring = r"""The initial call to start propagating messages.
-
-Args:
-    adj (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
-        :obj:`torch_sparse.SparseTensor` that defines the underlying
-        message propagation.
-        :obj:`edge_index` holds the indices of a general (sparse)
-        assignment matrix of shape :obj:`[N, M]`.
-        If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its
-        shape must be defined as :obj:`[2, num_messages]`, where
-        messages from nodes in :obj:`edge_index[0]` are sent to
-        nodes in :obj:`edge_index[1]`
-        (in case :obj:`flow="source_to_target"`).
-        If :obj:`edge_index` is of type
-        :obj:`torch_sparse.SparseTensor`, its sparse indices
-        :obj:`(row, col)` should relate to :obj:`row = edge_index[1]`
-        and :obj:`col = edge_index[0]`.
-        Hence, the only difference between those formats is that we
-        need to input the *transposed* sparse adjacency matrix into
-        :func:`propagate`.
-    size (list or tuple, optional): The size :obj:`[N, M]` of the
-        assignment matrix in case :obj:`edge_index` is a
-        :obj:`LongTensor`.
-        If set to :obj:`None`, the size will be automatically inferred
-        and assumed to be quadratic.
-        This argument is ignored in case :obj:`edge_index` is a
-        :obj:`torch_sparse.SparseTensor`. (default: :obj:`None`)
-    **kwargs: Any additional data which is needed to construct and
-        aggregate messages, and to update node embeddings.
-"""
-
 propagate_jittable_string = """import torch
 import {parent_module}
 from typing import List, Tuple, Optional, NamedTuple
@@ -129,6 +98,9 @@ class {clsname}Jittable_{uid}({parent_module}.{clsname}):
         out = self.update(out, {update_args})
 
         return out
+
+{clsname}Jittable_{uid}.propagate.__doc__ = \
+    {parent_module}.{clsname}.propagate.__doc__
 """
 
 
@@ -443,6 +415,36 @@ class MessagePassing(torch.nn.Module):
         return mp_type, size_out
 
     def propagate(self, edge_index, size=None, **kwargs):
+        r"""The initial call to start propagating messages.
+
+        Args:
+            adj (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
+                :obj:`torch_sparse.SparseTensor` that defines the underlying
+                message propagation.
+                :obj:`edge_index` holds the indices of a general (sparse)
+                assignment matrix of shape :obj:`[N, M]`.
+                If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its
+                shape must be defined as :obj:`[2, num_messages]`, where
+                messages from nodes in :obj:`edge_index[0]` are sent to
+                nodes in :obj:`edge_index[1]`
+                (in case :obj:`flow="source_to_target"`).
+                If :obj:`edge_index` is of type
+                :obj:`torch_sparse.SparseTensor`, its sparse indices
+                :obj:`(row, col)` should relate to :obj:`row = edge_index[1]`
+                and :obj:`col = edge_index[0]`.
+                Hence, the only difference between those formats is that we
+                need to input the *transposed* sparse adjacency matrix into
+                :func:`propagate`.
+            size (list or tuple, optional): The size :obj:`[N, M]` of the
+                assignment matrix in case :obj:`edge_index` is a
+                :obj:`LongTensor`.
+                If set to :obj:`None`, the size will be automatically inferred
+                and assumed to be quadratic.
+                This argument is ignored in case :obj:`edge_index` is a
+                :obj:`torch_sparse.SparseTensor`. (default: :obj:`None`)
+            **kwargs: Any additional data which is needed to construct and
+                aggregate messages, and to update node embeddings.
+        """
         mp_type, size = self.__determine_type_and_size__(edge_index, size)
 
         # We collect all arguments used for message passing in `kwargs`.
@@ -753,6 +755,3 @@ class MessagePassing(torch.nn.Module):
         self.__record_dict__ = None
 
         return out
-
-
-MessagePassing.propagate.__doc__ = propagate_docstring
