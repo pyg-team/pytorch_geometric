@@ -77,24 +77,37 @@ class SignedConv(MessagePassing):
         if self.first_aggr:
             assert x.size(1) == self.in_channels
 
-            x_pos = torch.cat([self.propagate(pos_edge_index, x=x), x], dim=1)
-            x_neg = torch.cat([self.propagate(neg_edge_index, x=x), x], dim=1)
+            pos_prop = self.propagate(pos_edge_index, x=x)
+            neg_prop = self.propagate(neg_edge_index, x=x)
+
+            x_pos = torch.cat([
+                pos_prop if pos_prop is not None else x,
+                x], dim=1)
+            x_neg = torch.cat([
+                neg_prop if neg_prop is not None else x,
+                x], dim=1)
 
         else:
             assert x.size(1) == 2 * self.in_channels
 
             x_1, x_2 = x[:, :self.in_channels], x[:, self.in_channels:]
 
+            pos_prop = self.propagate(pos_edge_index, x=x_1)
+            neg_prop = self.propagate(neg_edge_index, x=x_2)
+
             x_pos = torch.cat([
-                self.propagate(pos_edge_index, x=x_1),
-                self.propagate(neg_edge_index, x=x_2),
+                pos_prop if pos_prop is not None else x_1,
+                neg_prop if neg_prop is not None else x_2,
                 x_1,
             ],
                               dim=1)
 
+            pos_prop = self.propagate(pos_edge_index, x=x_2)
+            neg_prop = self.propagate(neg_edge_index, x=x_1)
+
             x_neg = torch.cat([
-                self.propagate(pos_edge_index, x=x_2),
-                self.propagate(neg_edge_index, x=x_1),
+                pos_prop if pos_prop is not None else x_2,
+                neg_prop if neg_prop is not None else x_1,
                 x_2,
             ],
                               dim=1)
