@@ -4,7 +4,7 @@ from uuid import uuid1
 from tempfile import NamedTemporaryFile
 from importlib.util import spec_from_file_location, module_from_spec
 import sys
-from typing import List, Optional
+from typing import List, Optional, get_type_hints
 
 import torch
 from torch_sparse import SparseTensor
@@ -85,8 +85,7 @@ class {clsname}Jittable_{uid}({parent_module}.{clsname}):
         user_args = {user_args_set}
 
         mp_type, thesize = \
-            self.__determine_type_and_size_jittable__(edge_index,
-                                                      size)
+self.__determine_type_and_size_jittable__(edge_index, size)
         kwargs = self.__collect__(edge_index,
                                   thesize,
                                   mp_type,
@@ -100,7 +99,7 @@ class {clsname}Jittable_{uid}({parent_module}.{clsname}):
         return out
 
 {clsname}Jittable_{uid}.propagate.__doc__ = \
-    {parent_module}.{clsname}.propagate.__doc__
+{parent_module}.{clsname}.propagate.__doc__
 """
 
 
@@ -252,7 +251,10 @@ class MessagePassing(torch.nn.Module):
                             collect_trace[arg] = [outtype, '{0}_out = kwargs.{1}[{2}]'.format(arg, arg[:-2], idx)] # noqa
                         elif data is not None:
                             collect_trace[arg] = [outtype, '{0}_out = kwargs.{1}'.format(arg, arg[:-2])] # noqa
-                        else:  # we have to assume it's a tensor
+                        elif data is None and not is_tuple_or_list:
+                            # we have to assume it's a tensor
+                            collect_trace[arg] = [outtype, '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1} is not None:\n            temp_{0} = kwargs.{1}\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
+                        elif data is None:  # we have to assume it's a tensor
                             collect_trace[arg] = [outtype, '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1}[{2}] is not None:\n            temp_{0} = kwargs.{1}[{2}]\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
                         collect_trace[arg][1] += '\n' + sizestr
                     continue
@@ -268,7 +270,12 @@ class MessagePassing(torch.nn.Module):
                         if is_tuple_or_list:
                             collect_trace[arg] = [Optional[torch.Tensor], '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1}[{2}] is not None:\n            temp_{0} = kwargs.{1}[{2}]\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
                         else:
-                            collect_trace[arg] = [type(out[arg]), '{0}_out = kwargs.{1}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
+                            parent_arg = arg[:-2]
+                            typeout = type(out[arg]) if parent_arg not in self.__fwd_hints__ else self.__fwd_hints__[parent_arg] # noqa
+                            if typeout == Optional[torch.Tensor]:
+                                collect_trace[arg] = [typeout, '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1} is not None:\n            temp{1} = kwargs.{1}\n            assert temp{1} is not None\n            temp_{0} = temp{1}\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
+                            else:
+                                collect_trace[arg] = [typeout, '{0}_out = kwargs.{1}.index_select(self.node_dim, edge_index[{2}])'.format(arg, arg[:-2], idx)] # noqa
                         collect_trace[arg][1] += '\n' + sizestr
                 elif mp_type == 'adj_t' and idx == 1:
                     rowptr = edge_index.storage.rowptr()
@@ -332,11 +339,11 @@ class MessagePassing(torch.nn.Module):
         out['size_i'] = size[i]
         out['dim_size'] = out['size_i']
         if self.__record_propagate:
-            collect_trace['size_i'] = [type(out['size_i']),
+            collect_trace['size_i'] = [int,
                                        'size[0] = size[1] if size[0] is None else size[0]\n        size[1] = size[0] if size[1] is None else size[1]\n        size_i_out = size[{0}]'.format(i)] # noqa
-            collect_trace['size_j'] = [type(out['size_j']),
+            collect_trace['size_j'] = [int,
                                        'size_j_out = size[{0}]'.format(j)]
-            collect_trace['dim_size'] = [type(out['dim_size']),
+            collect_trace['dim_size'] = [int,
                                          'dim_size_out = size_i_out']
 
         return out, collect_trace
@@ -574,7 +581,7 @@ class MessagePassing(torch.nn.Module):
         return inputs
 
     @torch.jit.unused
-    def __make_jittable_fcn__(self, print_model=False):
+    def __make_jittable_fcn__(self, fwd_hints, print_model):
         # define a new base class with the propagate method replaced
         uid = uuid1().hex
         clsname = self.__class__.__name__
@@ -583,8 +590,7 @@ class MessagePassing(torch.nn.Module):
         kwarg_templ = '{0}=kwargs.{0}'
 
         def render_kwargs(theargs):
-            return [kwarg_templ.format(a, 'size_' if 'size' in a else '')
-                    for a in theargs]
+            return [kwarg_templ.format(a) for a in theargs]
 
         if self.__record_dict__['msg_aggr_kwargs'] is not None:
             theargs = list(self.__record_dict__['msg_aggr_kwargs'].keys())
@@ -636,17 +642,23 @@ class MessagePassing(torch.nn.Module):
                 for name, thetype in v.items():
                     qualtype = thetype.__name__
                     thetype = thetype
-                    if thetype is not Optional[torch.Tensor]:
-                        if thetype.__module__ != 'builtins':
-                            qualtype = thetype.__module__ + '.' + qualtype
-                    if name in collect_trace:
-                        if collect_trace[name][0] is Optional[torch.Tensor]:
+                    if name in fwd_hints:
+                        thetype = fwd_hints[name]
+                        if thetype == Optional[torch.Tensor]:
+                            qualtype = 'Optional[torch.Tensor]'
+                        else:
+                            qualtype = thetype.__name__
+                    elif name in collect_trace:
+                        if collect_trace[name][0] == Optional[torch.Tensor]:
                             qualtype = 'Optional[torch.Tensor]'
                         else:
                             qualtype = collect_trace[name][0].__name__
                             thetype = collect_trace[name][0]
                             if thetype.__module__ != 'builtins':
                                 qualtype = thetype.__module__ + '.' + qualtype
+                    elif thetype is not Optional[torch.Tensor]:
+                        if thetype.__module__ != 'builtins':
+                            qualtype = thetype.__module__ + '.' + qualtype
                     if thetype == tuple:
                         kwname = k[:k.find('_type')]
                         thetuple = self.__record_dict__[kwname][name]
@@ -670,10 +682,16 @@ class MessagePassing(torch.nn.Module):
 
         for k, v in self.__record_dict__['collect_trace'].items():
             qualtype = 'Optional[torch.Tensor]'
-            if v[0] is not Optional[torch.Tensor]:
+            if v[0] != Optional[torch.Tensor]:
                 qualtype = v[0].__name__
                 if v[0].__module__ != 'builtins':
                     qualtype = v[0].__module__ + '.' + qualtype
+            if k in fwd_hints:
+                qualtype = fwd_hints[k]
+                if qualtype == Optional[torch.Tensor]:
+                    qualtype = 'Optional[torch.Tensor]'
+                else:
+                    qualtype = qualtype.__name__
             if 'ptr' in k or 'size' in k:
                 args_mapping['kwargs_types'][k] = \
                     'Optional[{0}]'.format(qualtype)
@@ -746,12 +764,15 @@ class MessagePassing(torch.nn.Module):
         print_model = kwargs.pop('print_model', False)
 
         # initialize the model
+        fwd_hints = get_type_hints(self.forward)
         self.__record_propagate = True
         with torch.no_grad():
+            self.__fwd_hints__ = fwd_hints
             self.forward(**kwargs)
         self.__record_propagate = False
 
-        out = self.__make_jittable_fcn__(print_model)
+        out = self.__make_jittable_fcn__(fwd_hints, print_model)
         self.__record_dict__ = None
+        self.__fwd_hints__ = None
 
         return out
