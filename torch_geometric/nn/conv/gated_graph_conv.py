@@ -83,7 +83,9 @@ class GatedGraphConv(MessagePassing):
 
         return h
 
-    def message(self, x_j, edge_weight):
+    def message(self,
+                x_j,
+                edge_weight: Optional[torch.Tensor]):
         if edge_weight is not None:
             return edge_weight.view(-1, 1) * x_j
         return x_j

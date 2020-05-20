@@ -52,12 +52,12 @@ class GraphConv(MessagePassing):
             edge_weight = torch.ones((self.weight.size(1), ),
                                      dtype=x.dtype,
                                      device=x.device)
-        assert edge_weight is not None
         h = torch.matmul(x, self.weight)
         return self.propagate(edge_index, size=size, x=x, h=h,
                               edge_weight=edge_weight)
 
-    def message(self, h_j, edge_weight):
+    def message(self, h_j, edge_weight: Optional[torch.Tensor]):
+        assert edge_weight is not None
         return edge_weight.view(1, -1) * h_j
 
     def update(self, aggr_out, x):
