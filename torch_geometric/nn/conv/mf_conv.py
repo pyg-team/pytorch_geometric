@@ -103,7 +103,7 @@ class MFConv(MessagePassing):
             if self.self_weights:
                 H_self = self.H_self[str(i)]
                 r += H_self(selector @ x)
-        return torch.sigmoid(r)
+        return r
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
