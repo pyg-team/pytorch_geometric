@@ -12,6 +12,7 @@ from .gin_conv import GINConv, GINEConv
 from .arma_conv import ARMAConv
 from .sg_conv import SGConv
 from .appnp import APPNP
+from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
@@ -42,6 +43,7 @@ __all__ = [
     'ARMAConv',
     'SGConv',
     'APPNP',
+    'MFConv',
     'RGCNConv',
     'SignedConv',
     'DNAConv',
