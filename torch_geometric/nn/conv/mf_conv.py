@@ -45,7 +45,7 @@ class MFConv(MessagePassing):
 
         if root_weight:
             self.root_lins = ModuleList([
-                Linear(in_channels, out_channels, bias=True)
+                Linear(in_channels, out_channels, bias=False)
                 for _ in range(max_degree + 1)
             ])
 
