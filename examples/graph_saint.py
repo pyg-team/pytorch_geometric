@@ -24,9 +24,9 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         in_channels = dataset.num_node_features
         out_channels = dataset.num_classes
-        self.conv1 = SAGEConv(in_channels, hidden_channels, concat=True)
-        self.conv2 = SAGEConv(hidden_channels, hidden_channels, concat=True)
-        self.conv3 = SAGEConv(hidden_channels, hidden_channels, concat=True)
+        self.conv1 = SAGEConv(in_channels, hidden_channels)
+        self.conv2 = SAGEConv(hidden_channels, hidden_channels)
+        self.conv3 = SAGEConv(hidden_channels, hidden_channels)
         self.lin = torch.nn.Linear(3 * hidden_channels, out_channels)
 
     def set_aggr(self, aggr):

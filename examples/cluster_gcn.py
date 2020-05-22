@@ -18,8 +18,8 @@ print('Done!')
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
         super(Net, self).__init__()
-        self.conv1 = SAGEConv(in_channels, 128, normalize=False)
-        self.conv2 = SAGEConv(128, out_channels, normalize=False)
+        self.conv1 = SAGEConv(in_channels, 128)
+        self.conv2 = SAGEConv(128, out_channels)
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.2, training=self.training)
