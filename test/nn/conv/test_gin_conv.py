@@ -20,7 +20,7 @@ def test_gin_conv():
         '  (2): Linear(in_features=32, out_features=32, bias=True)\n'
         '))')
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index)
+    jitcls = conv.jittable(x=x, edge_index=edge_index, full_eval=True)
     jitconv = jitcls(nn, train_eps=True)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)
@@ -34,7 +34,7 @@ def test_gin_conv():
 
     conv = GINConv(nn, train_eps=False)
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index)
+    jitcls = conv.jittable(x=x, edge_index=edge_index, full_eval=True)
     jitconv = jitcls(nn, train_eps=False)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)
@@ -63,7 +63,8 @@ def test_gine_conv():
         '  (2): Linear(in_features=32, out_features=32, bias=True)\n'
         '))')
     assert conv(x, edge_index, edge_attr).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    jitcls = conv.jittable(x=x, edge_index=edge_index,
+                           edge_attr=edge_attr, full_eval=True)
     jitconv = jitcls(nn, train_eps=True)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)
@@ -77,7 +78,8 @@ def test_gine_conv():
 
     conv = GINEConv(nn, train_eps=False)
     assert conv(x, edge_index, edge_attr).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    jitcls = conv.jittable(x=x, edge_index=edge_index,
+                           edge_attr=edge_attr, full_eval=True)
     jitconv = jitcls(nn, train_eps=False)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)

@@ -12,7 +12,7 @@ def test_gat_conv():
     assert conv.__repr__() == 'GATConv(16, 32, heads=2)'
     assert conv(x, edge_index)[0].size() == (num_nodes, 2 * out_channels)
     assert conv((x, x), edge_index)[0].size() == (num_nodes, 2 * out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index)
+    jitcls = conv.jittable(x=x, edge_index=edge_index, full_eval=True)
     jitconv = jitcls(in_channels, out_channels, heads=2, dropout=0.5)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)
@@ -32,7 +32,7 @@ def test_gat_conv():
     conv = GATConv(in_channels, out_channels, heads=2, concat=False)
     assert conv(x, edge_index)[0].size() == (num_nodes, out_channels)
     assert conv((x, x), edge_index)[0].size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index)
+    jitcls = conv.jittable(x=x, edge_index=edge_index, full_eval=True)
     jitconv = jitcls(in_channels, out_channels, heads=2, concat=False)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)

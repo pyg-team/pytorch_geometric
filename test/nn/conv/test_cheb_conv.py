@@ -15,7 +15,7 @@ def test_cheb_conv():
     assert conv(x, edge_index, edge_weight).size() == (num_nodes, out_channels)
     assert conv(x, edge_index, edge_weight,
                 lambda_max=2.0).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index)
+    jitcls = conv.jittable(x=x, edge_index=edge_index, full_eval=True)
     jitconv = jitcls(in_channels, out_channels, K=3)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)

@@ -484,7 +484,7 @@ class MessagePassing(torch.nn.Module):
         if mp_type == 'edge_index' or not self.__fuse__ or self.__explain__:
             msg_kwargs = self.__distribute__(self.__msg_params__, kwargs)
             msg_kwargs_types = {k: type(v) for k, v in msg_kwargs.items()}
-            if not self.__record_propagate:
+            if not self.__record_propagate or self.__full_eval__:
                 out = self.message(**msg_kwargs)
 
             if self.__explain__:
@@ -497,12 +497,12 @@ class MessagePassing(torch.nn.Module):
 
             aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
             aggr_kwargs_types = {k: type(v) for k, v in aggr_kwargs.items()}
-            if not self.__record_propagate:
+            if not self.__record_propagate or self.__full_eval__:
                 out = self.aggregate(out, **aggr_kwargs)
 
         update_kwargs = self.__distribute__(self.__update_params__, kwargs)
         update_kwargs_types = {k: type(v) for k, v in update_kwargs.items()}
-        if not self.__record_propagate:
+        if not self.__record_propagate or self.__full_eval__:
             out = self.update(out, **update_kwargs)
 
         if self.__record_propagate:
@@ -755,24 +755,35 @@ class MessagePassing(torch.nn.Module):
         return cls
 
     @torch.jit.unused
-    def jittable(self, **kwargs):
+    def jittable(self,
+                 print_model=False,
+                 full_eval=False,
+                 **kwargs):
         r"""Alters this this PyG module such that it is torch-jit-scriptable.
         The MessagePassing module is manifestly not jittable but can be
         analyzed to produce jittable modules. This function implements that
-        analysis and synthesis."""
+        analysis and synthesis.
 
-        print_model = kwargs.pop('print_model', False)
-
-        # initialize the model
+        Args:
+            print_model (bool, Optional): Print out the jitted version of
+                the model. Default is False.
+            full_eval (bool, Optional): Perform a full evaluation of
+                propagating when tracing the module. Turn this on when you
+                need to assign from propagate within forward. Default is
+                False.
+        """
+        # run a partial trace of the model's forward() to get types
         fwd_hints = get_type_hints(self.forward)
         self.__record_propagate = True
         with torch.no_grad():
             self.__fwd_hints__ = fwd_hints
+            self.__full_eval__ = full_eval
             self.forward(**kwargs)
         self.__record_propagate = False
 
         out = self.__make_jittable_fcn__(fwd_hints, print_model)
         self.__record_dict__ = None
         self.__fwd_hints__ = None
+        self.__full_eval__ = None
 
         return out

@@ -55,8 +55,7 @@ class SAGEConv(MessagePassing):
         else:
             x_prop = x
 
-        prop = self.propagate(edge_index, x=x_prop, edge_weight=edge_weight)
-        out = prop if prop is not None else x_prop[0]
+        out = self.propagate(edge_index, x=x_prop, edge_weight=edge_weight)
         out = self.lin_rel(out) + self.lin_root(x_prop[1])
 
         if self.normalize:

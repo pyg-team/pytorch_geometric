@@ -12,7 +12,8 @@ def test_gmm_conv():
     conv = GMMConv(in_channels, out_channels, dim=3, kernel_size=25)
     assert conv.__repr__() == 'GMMConv(16, 32)'
     assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index, pseudo=pseudo)
+    jitcls = conv.jittable(x=x, edge_index=edge_index,
+                           pseudo=pseudo, full_eval=True)
     jitconv = jitcls(in_channels, out_channels, dim=3, kernel_size=25)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)
@@ -27,7 +28,8 @@ def test_gmm_conv():
     conv = GMMConv(in_channels, out_channels, dim=3, kernel_size=25,
                    separate_gaussians=True)
     assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index, pseudo=pseudo)
+    jitcls = conv.jittable(x=x, edge_index=edge_index,
+                           pseudo=pseudo, full_eval=True)
     jitconv = jitcls(in_channels, out_channels, dim=3, kernel_size=25,
                      separate_gaussians=True)
     jitconv.load_state_dict(conv.state_dict())

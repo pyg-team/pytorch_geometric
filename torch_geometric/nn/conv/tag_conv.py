@@ -64,9 +64,7 @@ class TAGConv(MessagePassing):
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
-    def forward(self,
-                x,
-                edge_index,
+    def forward(self, x, edge_index,
                 edge_weight: Optional[torch.Tensor] = None):
         """"""
         if self.normalize:
@@ -75,10 +73,10 @@ class TAGConv(MessagePassing):
         else:
             norm = edge_weight
         assert norm is not None
+
         xs = [x]
         for k in range(self.K):
-            prop = self.propagate(edge_index, x=xs[-1], norm=norm)
-            xs.append(prop if prop is not None else x)
+            xs.append(self.propagate(edge_index, x=xs[-1], norm=norm))
         return self.lin(torch.cat(xs, dim=-1))
 
     def message(self, x_j, norm):

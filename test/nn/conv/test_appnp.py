@@ -12,7 +12,7 @@ def test_appnp():
     conv = APPNP(K=10, alpha=0.1)
     assert conv.__repr__() == 'APPNP(K=10, alpha=0.1)'
     assert conv(lin(x), edge_index).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=lin(x), edge_index=edge_index)
+    jitcls = conv.jittable(x=lin(x), edge_index=edge_index, full_eval=True)
     jitconv = jitcls(K=10, alpha=0.1)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)

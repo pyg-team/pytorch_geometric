@@ -107,9 +107,7 @@ class SGConv(MessagePassing):
                                          edge_weight, dtype=x.dtype)
 
             for k in range(self.K):
-                prop = self.propagate(edge_index, x=x, norm=norm)
-                # spoof propagated with x when synthing jit
-                x = prop if prop is not None else x
+                x = self.propagate(edge_index, x=x, norm=norm)
             self.cached_result = x
             self.has_cached_result = True
 

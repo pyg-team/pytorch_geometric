@@ -101,14 +101,9 @@ class GATConv(MessagePassing):
         edge_index, _ = remove_self_loops(edge_index)
         edge_index, _ = add_self_loops(edge_index,
                                        num_nodes=x_prop[1].size(self.node_dim))
-        prop = \
-            self.propagate(edge_index, x=x_prop,
-                           return_attention_weights=return_attention_weights)
-        dim0 = self.heads if self.concat else 1
-        out = \
-            prop if prop is not None else torch.ones((dim0, self.out_channels),
-                                                     device=x_prop[1].device,
-                                                     dtype=x_prop[1].dtype)
+
+        out = self.propagate(edge_index, x=x_prop,
+                             return_attention_weights=return_attention_weights)
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)

@@ -136,13 +136,11 @@ class ChebConv(MessagePassing):
         assert norm is not None
 
         if self.weight.size(0) > 1:
-            prop = self.propagate(edge_index, x=x, norm=norm)
-            Tx_1 = prop if prop is not None else x
+            Tx_1 = self.propagate(edge_index, x=x, norm=norm)
             out = out + torch.matmul(Tx_1, self.weight[1])
 
         for k in range(2, self.weight.size(0)):
-            prop = self.propagate(edge_index, x=Tx_1, norm=norm)
-            Tx_2 = prop if prop is not None else x
+            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm)
             Tx_2 = 2 * Tx_2 - Tx_0
             out = out + torch.matmul(Tx_2, self.weight[k])
             Tx_0, Tx_1 = Tx_1, Tx_2

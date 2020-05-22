@@ -12,7 +12,8 @@ def test_signed_conv():
     conv = SignedConv(in_channels, out_channels, first_aggr=True)
     assert conv.__repr__() == 'SignedConv(16, 32, first_aggr=True)'
 
-    jitcls = conv.jittable(x=x, pos_edge_index=pos_ei, neg_edge_index=neg_ei)
+    jitcls = conv.jittable(x=x, pos_edge_index=pos_ei,
+                           neg_edge_index=neg_ei, full_eval=True)
     jitconv = jitcls(in_channels, out_channels, first_aggr=True)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)
@@ -30,7 +31,8 @@ def test_signed_conv():
     conv = SignedConv(out_channels, out_channels, first_aggr=False)
     assert conv.__repr__() == 'SignedConv(32, 32, first_aggr=False)'
     assert conv(x, pos_ei, neg_ei).size() == (num_nodes, 2 * out_channels)
-    jitcls = conv.jittable(x=x, pos_edge_index=pos_ei, neg_edge_index=neg_ei)
+    jitcls = conv.jittable(x=x, pos_edge_index=pos_ei,
+                           neg_edge_index=neg_ei, full_eval=True)
     jitconv = jitcls(out_channels, out_channels, first_aggr=False)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)

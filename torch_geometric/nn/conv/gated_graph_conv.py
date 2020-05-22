@@ -77,8 +77,7 @@ class GatedGraphConv(MessagePassing):
         assert edge_weight is not None
         for i in range(self.num_layers):
             m = torch.matmul(h, self.weight[i])
-            prop = self.propagate(edge_index, x=m, edge_weight=edge_weight)
-            m = prop if prop is not None else m
+            m = self.propagate(edge_index, x=m, edge_weight=edge_weight)
             h = self.rnn(m, h)
 
         return h

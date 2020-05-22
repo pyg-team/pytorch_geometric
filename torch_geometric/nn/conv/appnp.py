@@ -72,9 +72,7 @@ class APPNP(MessagePassing):
 
         hidden = x
         for k in range(self.K):
-            prop = self.propagate(edge_index, x=x, norm=norm)
-            # spoof x when rendering jittable class
-            x = prop if prop is not None else hidden
+            x = self.propagate(edge_index, x=x, norm=norm)
             x = x * (1 - self.alpha)
             x = x + self.alpha * hidden
 

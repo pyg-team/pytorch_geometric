@@ -11,7 +11,7 @@ def test_gated_graph_conv():
     conv = GatedGraphConv(out_channels, num_layers=3)
     assert conv.__repr__() == 'GatedGraphConv(32, num_layers=3)'
     assert conv(x, edge_index).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index)
+    jitcls = conv.jittable(x=x, edge_index=edge_index, full_eval=True)
     jitconv = jitcls(out_channels, num_layers=3)
     jitconv.load_state_dict(conv.state_dict())
     jittedconv = torch.jit.script(jitconv)
