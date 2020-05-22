@@ -18,19 +18,19 @@ __num_nodes_warn_msg__ = (
     'data.num_nodes.')
 
 
-def size_repr(key, item, pad=0):
-    pad_str = ' ' * pad
+def size_repr(key, item, indent=0):
+    indent_str = ' ' * indent
     if torch.is_tensor(item):
         out = str(list(item.size()))
     elif isinstance(item, list) or isinstance(item, tuple):
         out = str([len(item)])
     elif isinstance(item, dict):
-        lines = [pad_str + size_repr(k, v, 2) for k, v in item.items()]
-        out = '{\n' + ',\n'.join(lines) + '\n' + pad_str + '}'
+        lines = [indent_str + size_repr(k, v, 2) for k, v in item.items()]
+        out = '{\n' + ',\n'.join(lines) + '\n' + indent_str + '}'
     else:
         out = str(item)
 
-    return f'{pad_str}{key}={out}'
+    return f'{indent_str}{key}={out}'
 
 
 class Data(object):
@@ -391,5 +391,5 @@ class Data(object):
             info = [size_repr(key, item) for key, item in self]
             return '{}({})'.format(cls, ', '.join(info))
         else:
-            info = [size_repr(key, item, pad=2) for key, item in self]
+            info = [size_repr(key, item, indent=2) for key, item in self]
             return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
