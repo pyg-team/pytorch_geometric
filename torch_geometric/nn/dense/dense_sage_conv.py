@@ -2,8 +2,6 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from ..inits import uniform
-
 
 class DenseSAGEConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.SAGEConv`.

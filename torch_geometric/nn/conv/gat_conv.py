@@ -1,5 +1,5 @@
 import torch
-from torch.nn import Parameter
+from torch.nn import Parameter, Linear
 import torch.nn.functional as F
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
@@ -59,9 +59,10 @@ class GATConv(MessagePassing):
 
         self.__alpha__ = None
 
-        self.weight = Parameter(torch.Tensor(in_channels,
-                                             heads * out_channels))
-        self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
+        self.lin = Linear(in_channels, heads * out_channels, bias=False)
+
+        self.att_i = Parameter(torch.Tensor(1, heads, out_channels))
+        self.att_j = Parameter(torch.Tensor(1, heads, out_channels))
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -73,26 +74,34 @@ class GATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
-        glorot(self.att)
+        glorot(self.lin.weight)
+        glorot(self.att_i)
+        glorot(self.att_j)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, size=None,
-                return_attention_weights=False):
+    def forward(self, x, edge_index, return_attention_weights=False):
         """"""
-        if size is None and torch.is_tensor(x):
-            edge_index, _ = remove_self_loops(edge_index)
-            edge_index, _ = add_self_loops(edge_index,
-                                           num_nodes=x.size(self.node_dim))
 
         if torch.is_tensor(x):
-            x = torch.matmul(x, self.weight)
+            x = self.lin(x)
+            x = (x, x)
         else:
-            x = (None if x[0] is None else torch.matmul(x[0], self.weight),
-                 None if x[1] is None else torch.matmul(x[1], self.weight))
+            x = (self.lin(x[0]), self.lin(x[1]))
 
-        out = self.propagate(edge_index, size=size, x=x,
+        edge_index, _ = remove_self_loops(edge_index)
+        edge_index, _ = add_self_loops(edge_index,
+                                       num_nodes=x[1].size(self.node_dim))
+
+        out = self.propagate(edge_index, x=x,
                              return_attention_weights=return_attention_weights)
+
+        if self.concat:
+            out = out.view(-1, self.heads * self.out_channels)
+        else:
+            out = out.mean(dim=1)
+
+        if self.bias is not None:
+            out = out + self.bias
 
         if return_attention_weights:
             alpha, self.__alpha__ = self.__alpha__, None
@@ -100,16 +109,13 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, edge_index_i, x_i, x_j, size_i,
+    def message(self, x_i, x_j, edge_index_i, size_i,
                 return_attention_weights):
         # Compute attention coefficients.
+        x_i = x_i.view(-1, self.heads, self.out_channels)
         x_j = x_j.view(-1, self.heads, self.out_channels)
-        if x_i is None:
-            alpha = (x_j * self.att[:, :, self.out_channels:]).sum(dim=-1)
-        else:
-            x_i = x_i.view(-1, self.heads, self.out_channels)
-            alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
 
+        alpha = (x_i * self.att_i).sum(-1) + (x_j * self.att_j).sum(-1)
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, edge_index_i, size_i)
 
@@ -120,16 +126,6 @@ class GATConv(MessagePassing):
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
         return x_j * alpha.view(-1, self.heads, 1)
-
-    def update(self, aggr_out):
-        if self.concat is True:
-            aggr_out = aggr_out.view(-1, self.heads * self.out_channels)
-        else:
-            aggr_out = aggr_out.mean(dim=1)
-
-        if self.bias is not None:
-            aggr_out = aggr_out + self.bias
-        return aggr_out
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
