@@ -6,7 +6,7 @@ from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 from ..inits import glorot, zeros
 
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 
 
 class GATConv(MessagePassing):
@@ -88,9 +88,10 @@ class GATConv(MessagePassing):
                 edge_index,
                 return_attention_weights: bool = False):
         """"""
+        emptylist: List[float] = []
         x_prop: Tuple[torch.Tensor,
-                      torch.Tensor] = (torch.tensor([]),
-                                       torch.tensor([]))
+                      torch.Tensor] = (torch.tensor(emptylist),
+                                       torch.tensor(emptylist))
         if isinstance(x, torch.Tensor):
             x = self.lin(x)
             x_prop = (x, x)
