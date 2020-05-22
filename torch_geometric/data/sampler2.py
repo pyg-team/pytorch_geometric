@@ -28,6 +28,8 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         if node_idx is None:
             node_idx = torch.arange(N)
+        elif node_idx.dtype == torch.bool:
+            node_idx = node_idx.nonzero().view(-1)
 
         self.sizes = sizes
         self.flow = flow
