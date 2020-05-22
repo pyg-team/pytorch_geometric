@@ -115,7 +115,10 @@ def train(epoch):
 
     pbar.close()
 
-    return total_loss / len(train_loader), total_correct / train_idx.size(0)
+    loss = total_loss / len(train_loader)
+    approx_acc = total_correct / train_idx.size(0)
+
+    return loss, approx_acc
 
 
 @torch.no_grad()
@@ -143,7 +146,9 @@ def test():
 
 test_accs = []
 for run in range(1, 11):
+    print('')
     print(f'Run {run:02d}:')
+    print('')
 
     model.reset_parameters()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.003)
