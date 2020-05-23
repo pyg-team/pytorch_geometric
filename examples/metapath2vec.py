@@ -1,4 +1,4 @@
-# Reaches around 92.2% Micro-F1 after 5 epochs.
+# Reaches around 91.8% Micro-F1 after 5 epochs.
 
 import os.path as osp
 

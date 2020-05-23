@@ -60,7 +60,8 @@ class MetaPath2Vec(torch.nn.Module):
         adj_dict = {}
         for keys, edge_index in edge_index_dict.items():
             sizes = (num_nodes_dict[keys[0]], num_nodes_dict[keys[-1]])
-            adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=sizes)
+            row, col = edge_index
+            adj = SparseTensor(row=row, col=col, sparse_sizes=sizes)
             adj = adj.to('cpu')
             adj_dict[keys] = adj
 
