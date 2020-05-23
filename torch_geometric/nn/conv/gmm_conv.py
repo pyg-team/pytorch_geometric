@@ -4,8 +4,6 @@ from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import zeros, glorot
 
-EPS = 1e-15
-
 
 class GMMConv(MessagePassing):
     r"""The gaussian mixture model convolutional operator from the `"Geometric
@@ -112,6 +110,7 @@ class GMMConv(MessagePassing):
         return out
 
     def message(self, x_j, pseudo):
+        EPS = 1e-15
         F, M = self.in_channels, self.out_channels
         (E, D), K = pseudo.size(), self.kernel_size
 
