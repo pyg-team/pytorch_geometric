@@ -1,4 +1,5 @@
 import torch
+from torch.nn import Embedding
 from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
 from sklearn.linear_model import LogisticRegression
@@ -69,7 +70,7 @@ class Node2Vec(torch.nn.Module):
         self.q = q
         self.num_negative_samples = num_negative_samples
 
-        self.embedding = torch.nn.Embedding(N, embedding_dim, sparse=sparse)
+        self.embedding = Embedding(N, embedding_dim, sparse=sparse)
 
         self.reset_parameters()
 
@@ -80,6 +81,10 @@ class Node2Vec(torch.nn.Module):
         """Returns the embeddings for the nodes in :obj:`batch`."""
         emb = self.embedding.weight
         return emb if batch is None else emb[batch]
+
+    def loader(self, **kwargs):
+        return DataLoader(range(self.adj.sparse_size(0)),
+                          collate_fn=self.sample, **kwargs)
 
     def pos_sample(self, batch):
         batch = batch.repeat(self.walks_per_node)
@@ -109,10 +114,6 @@ class Node2Vec(torch.nn.Module):
         if not isinstance(batch, torch.Tensor):
             batch = torch.tensor(batch)
         return self.pos_sample(batch), self.neg_sample(batch)
-
-    def loader(self, **kwargs):
-        return DataLoader(range(self.adj.sparse_size(0)),
-                          collate_fn=self.sample, **kwargs)
 
     def loss(self, pos_rw, neg_rw):
         r"""Computes the loss given positive and negative random walks."""
