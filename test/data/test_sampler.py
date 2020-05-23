@@ -15,7 +15,7 @@ from torch_geometric.nn.conv import SAGEConv, GATConv
 try:
     from torch_sparse import sample_adj  # noqa
     with_sample = True
-except RuntimeError:
+except ImportError:
     with_sample = False
 
 

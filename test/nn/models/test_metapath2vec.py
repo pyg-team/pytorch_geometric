@@ -6,7 +6,7 @@ from torch_geometric.nn import MetaPath2Vec
 try:
     from torch_sparse import sample  # noqa
     with_sample = True
-except RuntimeError:
+except ImportError:
     with_sample = False
 
 

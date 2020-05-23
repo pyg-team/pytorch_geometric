@@ -31,9 +31,9 @@ class NeighborSampler(torch.utils.data.DataLoader):
     :obj:`sizes[l]` for each node involved in layer :obj:`l`.
     In the next layer, sampling is repeated for the union of nodes that were
     already encountered.
-    The actual computation is then returned backwards, meaning that we pass
-    messages from a larger set of nodes to a smaller one, until we reach the
-    nodes for which we originally wanted to compute embeddings.
+    The actual computation is then returned in reverse-mode, meaning that we
+    pass messages from a larger set of nodes to a smaller one, until we reach
+    the nodes for which we originally wanted to compute embeddings.
 
     Hence, an item returned by :class:`NeighborSampler` holds the current
     :obj:`batch_size`, the IDs :obj:`n_id` of all nodes involved in the
