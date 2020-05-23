@@ -59,7 +59,8 @@ class PointConv(MessagePassing):
                 in message passing in bipartite graphs.
             edge_index (LongTensor): The edge indices.
         """
-        if torch.is_tensor(pos):  # Add self-loops for symmetric adjacencies.
+        if isinstance(pos, torch.Tensor):
+            # Add self-loops for symmetric adjacencies.
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=pos.size(0))
 

@@ -22,3 +22,14 @@ def test_point_conv():
         '  (0): Linear(in_features=32, out_features=32, bias=True)\n'
         '))')
     assert conv(x, pos, edge_index).size() == (num_nodes, out_channels)
+    jitcls = conv.jittable(x=x, pos=pos, edge_index=edge_index)
+    jitconv = jitcls(local_nn, global_nn)
+    jitconv.load_state_dict(conv.state_dict())
+    jittedconv = torch.jit.script(jitconv)
+    conv.eval()
+    jitconv.eval()
+    jittedconv.eval()
+    assert (torch.abs(conv(x, pos, edge_index) -
+            jitconv(x, pos, edge_index)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, pos, edge_index) -
+            jittedconv(x, pos, edge_index)) < 1e-6).all().item()
