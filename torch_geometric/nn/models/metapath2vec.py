@@ -195,4 +195,4 @@ class MetaPath2Vec(torch.nn.Module):
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__,
                                    self.embedding.weight.size(0),
-                                   self.embedding_dim)
+                                   self.embedding.weight.size(1))

@@ -153,7 +153,6 @@ class Node2Vec(torch.nn.Module):
                          test_y.detach().cpu().numpy())
 
     def __repr__(self):
-        return '{}({}, {}, p={}, q={})'.format(self.__class__.__name__,
-                                               self.num_nodes,
-                                               self.embedding_dim, self.p,
-                                               self.q)
+        return '{}({}, {})'.format(self.__class__.__name__,
+                                   self.embedding.weight.size(0),
+                                   self.embedding.weight.size(1))
