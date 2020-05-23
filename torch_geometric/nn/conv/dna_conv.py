@@ -6,9 +6,13 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 import torch.nn.functional as F
-from torch_geometric.nn.conv import MessagePassing, GCNConv
+from torch_scatter import scatter_add
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.utils import add_remaining_self_loops
 
 from ..inits import uniform, kaiming_uniform
+
+from typing import Optional, Tuple
 
 
 class Linear(torch.nn.Module):
@@ -39,12 +43,12 @@ class Linear(torch.nn.Module):
         # Output: [*, out_channels]
 
         if self.groups > 1:
-            size = list(src.size())[:-1]
+            size = src.size()[:-1]
             src = src.view(-1, self.groups, self.in_channels // self.groups)
             src = src.transpose(0, 1).contiguous()
             out = torch.matmul(src, self.weight)
             out = out.transpose(1, 0).contiguous()
-            out = out.view(*(size + [self.out_channels]))
+            out = out.view((size + (self.out_channels, )))
         else:
             out = torch.matmul(src, self.weight.squeeze(0))
 
@@ -61,8 +65,10 @@ class Linear(torch.nn.Module):
                                                        self.bias is not None)
 
 
-def restricted_softmax(src, dim=-1, margin=0):
-    src_max = torch.clamp(src.max(dim=dim, keepdim=True)[0], min=0)
+def restricted_softmax(src,
+                       dim: int = -1,
+                       margin: float = 0.):
+    src_max = torch.clamp(src.max(dim=dim, keepdim=True)[0], min=0.)
     out = (src - src_max).exp()
     out = out / (out.sum(dim=dim, keepdim=True) + (margin - src_max).exp())
     return out
@@ -74,6 +80,9 @@ class Attention(torch.nn.Module):
         self.dropout = dropout
 
     def forward(self, query, key, value):
+        return self.forward_Attention(query, key, value)
+
+    def forward_Attention(self, query, key, value):
         # query: [*, query_entries, dim_k]
         # key: [*, key_entries, dim_k]
         # value: [*, key_entries, dim_v]
@@ -138,24 +147,24 @@ class MultiHead(Attention):
         # query: [*, heads, query_entries, out_channels // heads]
         # key: [*, heads, key_entries, out_channels // heads]
         # value: [*, heads, key_entries, out_channels // heads]
-        size = list(query.size())[:-2]
+        size = query.size()[:-2]
         out_channels_per_head = self.out_channels // self.heads
 
-        query_size = size + [query.size(-2), self.heads, out_channels_per_head]
-        query = query.view(*query_size).transpose(-2, -3)
+        query_size = size + (query.size(-2), self.heads, out_channels_per_head)
+        query = query.view(query_size).transpose(-2, -3)
 
-        key_size = size + [key.size(-2), self.heads, out_channels_per_head]
-        key = key.view(*key_size).transpose(-2, -3)
+        key_size = size + (key.size(-2), self.heads, out_channels_per_head)
+        key = key.view(key_size).transpose(-2, -3)
 
-        value_size = size + [value.size(-2), self.heads, out_channels_per_head]
-        value = value.view(*value_size).transpose(-2, -3)
+        value_size = size + (value.size(-2), self.heads, out_channels_per_head)
+        value = value.view(value_size).transpose(-2, -3)
 
         # Output: [*, heads, query_entries, out_channels // heads]
-        out = super(MultiHead, self).forward(query, key, value)
+        out = self.forward_Attention(query, key, value)
         # Output: [*, query_entries, heads, out_channels // heads]
         out = out.transpose(-3, -2).contiguous()
         # Output: [*, query_entries, out_channels]
-        out = out.view(*(size + [query.size(-2), self.out_channels]))
+        out = out.view(size + (query.size(-2), self.out_channels))
 
         return out
 
@@ -213,7 +222,10 @@ class DNAConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, channels, heads=1, groups=1, dropout=0, cached=False,
+    cached_result: Optional[Tuple[Tensor, Tensor]]
+    cached_num_edges: Optional[int]
+
+    def __init__(self, channels, heads=1, groups=1, dropout=0., cached=False,
                  bias=True, **kwargs):
         super(DNAConv, self).__init__(aggr='add', **kwargs)
         self.bias = bias
@@ -228,7 +240,32 @@ class DNAConv(MessagePassing):
         self.cached_result = None
         self.cached_num_edges = None
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def norm(self, edge_index, num_nodes: int,
+             edge_weight: Optional[torch.Tensor] = None,
+             improved: bool = False,
+             dtype: Optional[int] = None):
+        if edge_weight is None:
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
+                                     device=edge_index.device)
+
+        fill_value = 1 if not improved else 2
+        edge_index, edge_weight = add_remaining_self_loops(
+            edge_index, edge_weight, fill_value, num_nodes)
+
+        row, col = edge_index[0], edge_index[1]
+        assert edge_weight is not None
+        deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+        deg_inv_sqrt = deg.pow(-0.5)
+        mask = (deg_inv_sqrt == float('inf'))
+        zeros = torch.zeros(deg_inv_sqrt.shape,
+                            dtype=deg_inv_sqrt.dtype,
+                            device=deg_inv_sqrt.device)
+        deg_inv_sqrt = torch.where(mask, zeros, deg_inv_sqrt)
+
+        return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
         # x: [num_nodes, num_layers, channels]
         # edge_index: [2, num_edges]
@@ -240,7 +277,9 @@ class DNAConv(MessagePassing):
         num_nodes, num_layers, channels = x.size()
 
         if self.cached and self.cached_result is not None:
-            if edge_index.size(1) != self.cached_num_edges:
+            cached_num_edges = self.cached_num_edges
+            assert cached_num_edges is not None
+            if edge_index.size(1) != cached_num_edges:
                 raise RuntimeError(
                     'Cached {} number of edges, but found {}. Please '
                     'disable the caching behavior of this layer by removing '
@@ -249,11 +288,13 @@ class DNAConv(MessagePassing):
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
-            edge_index, norm = GCNConv.norm(edge_index, x.size(self.node_dim),
-                                            edge_weight, dtype=x.dtype)
+            edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
+                                         edge_weight, dtype=x.dtype)
             self.cached_result = edge_index, norm
 
-        edge_index, norm = self.cached_result
+        cached_result = self.cached_result
+        assert cached_result is not None
+        edge_index, norm = cached_result
 
         return self.propagate(edge_index, x=x, norm=norm)
 
