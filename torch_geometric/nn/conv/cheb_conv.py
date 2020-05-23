@@ -6,6 +6,8 @@ from torch_geometric.utils import get_laplacian
 
 from ..inits import glorot, zeros
 
+from typing import Optional
+
 
 class ChebConv(MessagePassing):
     r"""The chebyshev spectral graph convolutional operator from the
@@ -81,9 +83,13 @@ class ChebConv(MessagePassing):
         glorot(self.weight)
         zeros(self.bias)
 
-    @staticmethod
-    def norm(edge_index, num_nodes, edge_weight, normalization, lambda_max,
-             dtype=None, batch=None):
+    def norm(self, edge_index,
+             num_nodes: Optional[int],
+             edge_weight: Optional[torch.Tensor],
+             normalization: Optional[str],
+             lambda_max,
+             dtype: Optional[int] = None,
+             batch: Optional[torch.Tensor] = None):
 
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
@@ -91,11 +97,17 @@ class ChebConv(MessagePassing):
                                                 normalization, dtype,
                                                 num_nodes)
 
-        if batch is not None and torch.is_tensor(lambda_max):
+        if (batch is not None and
+           isinstance(lambda_max, torch.Tensor) and
+           len(lambda_max.shape) > 0):
             lambda_max = lambda_max[batch[edge_index[0]]]
 
         edge_weight = (2.0 * edge_weight) / lambda_max
-        edge_weight[edge_weight == float('inf')] = 0
+        mask = (edge_weight == float('inf'))
+        zeros = torch.zeros(edge_weight.shape,
+                            dtype=edge_weight.dtype,
+                            device=edge_weight.device)
+        edge_weight = torch.where(mask, zeros, edge_weight)
 
         edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
                                                  fill_value=-1,
@@ -103,27 +115,33 @@ class ChebConv(MessagePassing):
 
         return edge_index, edge_weight
 
-    def forward(self, x, edge_index, edge_weight=None, batch=None,
-                lambda_max=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None,
+                batch: Optional[torch.Tensor] = None,
+                lambda_max: Optional[torch.Tensor] = None):
         """"""
         if self.normalization != 'sym' and lambda_max is None:
             raise ValueError('You need to pass `lambda_max` to `forward() in`'
                              'case the normalization is non-symmetric.')
-        lambda_max = 2.0 if lambda_max is None else lambda_max
+        if lambda_max is None:
+            lambda_max = torch.tensor(2.0, dtype=x.dtype)
 
         edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
                                      edge_weight, self.normalization,
                                      lambda_max, dtype=x.dtype, batch=batch)
 
         Tx_0 = x
+        Tx_1 = x
         out = torch.matmul(Tx_0, self.weight[0])
+        assert norm is not None
 
         if self.weight.size(0) > 1:
             Tx_1 = self.propagate(edge_index, x=x, norm=norm)
             out = out + torch.matmul(Tx_1, self.weight[1])
 
         for k in range(2, self.weight.size(0)):
-            Tx_2 = 2 * self.propagate(edge_index, x=Tx_1, norm=norm) - Tx_0
+            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm)
+            Tx_2 = 2 * Tx_2 - Tx_0
             out = out + torch.matmul(Tx_2, self.weight[k])
             Tx_0, Tx_1 = Tx_1, Tx_2
 
