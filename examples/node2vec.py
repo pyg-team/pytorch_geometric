@@ -35,7 +35,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    z = model().cpu()
+    z = model()
     acc = model.test(z[data.train_mask], data.y[data.train_mask],
                      z[data.test_mask], data.y[data.test_mask], max_iter=150)
     return acc
