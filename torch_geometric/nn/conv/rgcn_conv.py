@@ -4,6 +4,8 @@ from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import uniform
 
+from typing import Optional, List
+
 
 class RGCNConv(MessagePassing):
     r"""The relational graph convolutional operator from the `"Modeling
@@ -64,12 +66,21 @@ class RGCNConv(MessagePassing):
         uniform(size, self.root)
         uniform(size, self.bias)
 
-    def forward(self, x, edge_index, edge_type, edge_norm=None, size=None):
+    def forward(self,
+                x: Optional[torch.Tensor],
+                edge_index,
+                edge_type,
+                edge_norm: Optional[torch.Tensor] = None,
+                size: Optional[List[int]] = None):
         """"""
         return self.propagate(edge_index, size=size, x=x, edge_type=edge_type,
                               edge_norm=edge_norm)
 
-    def message(self, x_j, edge_index_j, edge_type, edge_norm):
+    def message(self,
+                x_j: Optional[torch.Tensor],
+                edge_index_j,
+                edge_type,
+                edge_norm: Optional[torch.Tensor]):
         w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))
 
         # If no node features are given, we implement a simple embedding
@@ -85,7 +96,7 @@ class RGCNConv(MessagePassing):
 
         return out if edge_norm is None else out * edge_norm.view(-1, 1)
 
-    def update(self, aggr_out, x):
+    def update(self, aggr_out, x: Optional[torch.Tensor]):
         if self.root is not None:
             if x is None:
                 aggr_out = aggr_out + self.root
