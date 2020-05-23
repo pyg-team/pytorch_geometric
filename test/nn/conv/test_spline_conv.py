@@ -14,3 +14,15 @@ def test_spline_conv():
     assert conv.__repr__() == 'SplineConv(16, 32, dim=3)'
     with torch_geometric.debug():
         assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
+
+    jitcls = conv.jittable(x=x, edge_index=edge_index, pseudo=pseudo)
+    jitconv = jitcls(in_channels, out_channels, dim=3, kernel_size=5)
+    jitconv.load_state_dict(conv.state_dict())
+    jittedconv = torch.jit.script(jitconv)
+    conv.eval()
+    jitconv.eval()
+    jittedconv.eval()
+    assert (torch.abs(conv(x, edge_index, pseudo) -
+            jitconv(x, edge_index, pseudo)) < 1e-6).all().item()
+    assert (torch.abs(conv(x, edge_index, pseudo) -
+            jittedconv(x, edge_index, pseudo)) < 1e-6).all().item()
