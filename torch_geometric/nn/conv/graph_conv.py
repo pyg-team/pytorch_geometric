@@ -4,6 +4,8 @@ from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import uniform
 
+from typing import Optional, List
+
 
 class GraphConv(MessagePassing):
     r"""The graph neural network operator from the `"Weisfeiler and Leman Go
@@ -42,14 +44,21 @@ class GraphConv(MessagePassing):
         uniform(self.in_channels, self.weight)
         self.lin.reset_parameters()
 
-    def forward(self, x, edge_index, edge_weight=None, size=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None,
+                size: Optional[List[int]] = None):
         """"""
+        if edge_weight is None:
+            edge_weight = torch.ones((self.weight.size(1), ),
+                                     dtype=x.dtype,
+                                     device=x.device)
         h = torch.matmul(x, self.weight)
         return self.propagate(edge_index, size=size, x=x, h=h,
                               edge_weight=edge_weight)
 
-    def message(self, h_j, edge_weight):
-        return h_j if edge_weight is None else edge_weight.view(-1, 1) * h_j
+    def message(self, h_j, edge_weight: Optional[torch.Tensor]):
+        assert edge_weight is not None
+        return edge_weight.view(1, -1) * h_j
 
     def update(self, aggr_out, x):
         return aggr_out + self.lin(x)
