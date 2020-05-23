@@ -1,3 +1,5 @@
+# Reaches 0.7870 ± 0.0036 test accuracy.
+
 import os.path as osp
 
 import torch
