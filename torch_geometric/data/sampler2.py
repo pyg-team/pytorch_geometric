@@ -24,7 +24,8 @@ class NeighborSampler(torch.utils.data.DataLoader):
         edge_attr = torch.arange(edge_index.size(1))
         adj = SparseTensor.from_edge_index(edge_index, edge_attr, (N, N),
                                            is_sorted=False)
-        self.adj = adj.t() if flow == 'source_to_target' else adj
+        adj = adj.t() if flow == 'source_to_target' else adj
+        self.adj = adj.to('cpu')
 
         if node_idx is None:
             node_idx = torch.arange(N)
@@ -35,15 +36,12 @@ class NeighborSampler(torch.utils.data.DataLoader):
         self.flow = flow
         assert self.flow in ['source_to_target', 'target_to_source']
 
-        super(NeighborSampler,
-              self).__init__(node_idx.tolist(), collate_fn=self.__gen_batch__,
-                             **kwargs)
+        super(NeighborSampler, self).__init__(node_idx.tolist(),
+                                              collate_fn=self.sample, **kwargs)
 
-    def __gen_batch__(self, n_id: torch.Tensor
-                      ) -> Tuple[torch.Tensor, List[SparseTensor]]:
-
-        batch_size = len(n_id)
-        n_id = torch.tensor(n_id)
+    def sample(self, batch):
+        batch_size = len(batch)
+        n_id = torch.tensor(batch)
         adjs = []
 
         for size in self.sizes:
