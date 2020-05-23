@@ -87,7 +87,11 @@ class SAGPooling(torch.nn.Module):
 
         attn = x if attn is None else attn
         attn = attn.unsqueeze(-1) if attn.dim() == 1 else attn
-        score = self.gnn(attn, edge_index).view(-1)
+        score = self.gnn(attn, edge_index)
+        if isinstance(score, tuple):
+            score = score[0].view(-1)
+        else:
+            score = score.view(-1)
 
         if self.min_score is None:
             score = self.nonlinearity(score)
