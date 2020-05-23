@@ -6,6 +6,8 @@ from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 from ..inits import glorot, zeros
 
+from typing import Tuple, Optional, List
+
 
 class GATConv(MessagePassing):
     r"""The graph attentional operator from the `"Graph Attention Networks"
@@ -46,8 +48,10 @@ class GATConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+    alpha_save: Optional[torch.Tensor]
+
     def __init__(self, in_channels, out_channels, heads=1, concat=True,
-                 negative_slope=0.2, dropout=0, bias=True, **kwargs):
+                 negative_slope=0.2, dropout=0., bias=True, **kwargs):
         super(GATConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
@@ -57,7 +61,7 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.__alpha__ = None
+        self.alpha_save = None
 
         self.lin = Linear(in_channels, heads * out_channels, bias=False)
 
@@ -79,20 +83,26 @@ class GATConv(MessagePassing):
         glorot(self.att_j)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, return_attention_weights=False):
+    def forward(self,
+                x,
+                edge_index,
+                return_attention_weights: bool = False):
         """"""
-
-        if torch.is_tensor(x):
+        emptylist: List[float] = []
+        x_prop: Tuple[torch.Tensor,
+                      torch.Tensor] = (torch.tensor(emptylist),
+                                       torch.tensor(emptylist))
+        if isinstance(x, torch.Tensor):
             x = self.lin(x)
-            x = (x, x)
+            x_prop = (x, x)
         else:
-            x = (self.lin(x[0]), self.lin(x[1]))
+            x_prop = (self.lin(x[0]), self.lin(x[1]))
 
         edge_index, _ = remove_self_loops(edge_index)
         edge_index, _ = add_self_loops(edge_index,
-                                       num_nodes=x[1].size(self.node_dim))
+                                       num_nodes=x_prop[1].size(self.node_dim))
 
-        out = self.propagate(edge_index, x=x,
+        out = self.propagate(edge_index, x=x_prop,
                              return_attention_weights=return_attention_weights)
 
         if self.concat:
@@ -104,14 +114,21 @@ class GATConv(MessagePassing):
             out = out + self.bias
 
         if return_attention_weights:
-            alpha, self.__alpha__ = self.__alpha__, None
+            alpha = self.alpha_save
+            self.alpha_save = None
             return out, (edge_index, alpha)
         else:
-            return out
+            return out, (None, None)
 
-    def message(self, x_i, x_j, edge_index_i, size_i,
-                return_attention_weights):
+    def message(self,
+                x_i: Optional[torch.Tensor],
+                x_j: Optional[torch.Tensor],
+                edge_index_i,
+                size_i: Optional[int],
+                return_attention_weights: bool):
         # Compute attention coefficients.
+        assert x_i is not None
+        assert x_j is not None
         x_i = x_i.view(-1, self.heads, self.out_channels)
         x_j = x_j.view(-1, self.heads, self.out_channels)
 
@@ -120,7 +137,7 @@ class GATConv(MessagePassing):
         alpha = softmax(alpha, edge_index_i, size_i)
 
         if return_attention_weights:
-            self.__alpha__ = alpha
+            self.alpha_save = alpha
 
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
