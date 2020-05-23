@@ -1,7 +1,8 @@
 from torch_geometric.utils import degree
+from typing import Optional
 
 
-def normalized_cut(edge_index, edge_attr, num_nodes=None):
+def normalized_cut(edge_index, edge_attr, num_nodes: Optional[int] = None):
     r"""Computes the normalized cut :math:`\mathbf{e}_{i,j} \cdot
     \left( \frac{1}{\deg(i)} + \frac{1}{\deg(j)} \right)` of a weighted graph
     given by edge indices and edge attributes.
@@ -15,7 +16,7 @@ def normalized_cut(edge_index, edge_attr, num_nodes=None):
     :rtype: :class:`Tensor`
     """
 
-    row, col = edge_index
+    row, col = edge_index[0], edge_index[1]
     deg = 1 / degree(row, num_nodes, edge_attr.dtype)
     deg = deg[row] + deg[col]
     cut = edge_attr * deg

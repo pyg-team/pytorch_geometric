@@ -4,9 +4,14 @@ from torch_geometric.utils import add_self_loops, remove_self_loops
 
 from .num_nodes import maybe_num_nodes
 
+from typing import Optional
 
-def get_laplacian(edge_index, edge_weight=None, normalization=None, dtype=None,
-                  num_nodes=None):
+
+def get_laplacian(edge_index,
+                  edge_weight: Optional[torch.Tensor] = None,
+                  normalization: Optional[str] = None,
+                  dtype: Optional[int] = None,
+                  num_nodes: Optional[int] = None):
     r""" Computes the graph Laplacian of the graph given by :obj:`edge_index`
     and optional :obj:`edge_weight`.
 
@@ -31,18 +36,21 @@ def get_laplacian(edge_index, edge_weight=None, normalization=None, dtype=None,
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
     """
-
-    assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
+    if normalization is None:
+        pass
+    else:
+        assert normalization in ['sym', 'rw']
 
     edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
     if edge_weight is None:
         edge_weight = torch.ones(edge_index.size(1), dtype=dtype,
                                  device=edge_index.device)
+    assert edge_weight is not None
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    row, col = edge_index
+    row, col = edge_index[0], edge_index[1]
     deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
 
     if normalization is None:
@@ -52,22 +60,34 @@ def get_laplacian(edge_index, edge_weight=None, normalization=None, dtype=None,
     elif normalization == 'sym':
         # Compute A_norm = -D^{-1/2} A D^{-1/2}.
         deg_inv_sqrt = deg.pow(-0.5)
-        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+        mask = (deg_inv_sqrt == float('inf'))
+        zeros = torch.zeros(deg_inv_sqrt.shape,
+                            dtype=deg_inv_sqrt.dtype,
+                            device=deg_inv_sqrt.device)
+        deg_inv_sqrt = torch.where(mask, zeros, deg_inv_sqrt)
         edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
         # L = I - A_norm.
-        edge_index, edge_weight = add_self_loops(edge_index, -edge_weight,
-                                                 fill_value=1,
-                                                 num_nodes=num_nodes)
+        edge_index, edge_weight_temp = add_self_loops(edge_index, -edge_weight,
+                                                      fill_value=1,
+                                                      num_nodes=num_nodes)
+        assert edge_weight_temp is not None
+        edge_weight = edge_weight_temp
     else:
         # Compute A_norm = -D^{-1} A.
         deg_inv = 1.0 / deg
-        deg_inv[deg_inv == float('inf')] = 0
+        mask = (deg_inv == float('inf'))
+        zeros = torch.zeros(deg_inv.shape,
+                            dtype=deg_inv.dtype,
+                            device=deg_inv.device)
+        deg_inv = torch.where(mask, zeros, deg_inv)
         edge_weight = deg_inv[row] * edge_weight
 
         # L = I - A_norm.
-        edge_index, edge_weight = add_self_loops(edge_index, -edge_weight,
-                                                 fill_value=1,
-                                                 num_nodes=num_nodes)
+        edge_index, edge_weight_temp = add_self_loops(edge_index, -edge_weight,
+                                                      fill_value=1,
+                                                      num_nodes=num_nodes)
+        assert edge_weight_temp is not None
+        edge_weight = edge_weight_temp
 
     return edge_index, edge_weight
