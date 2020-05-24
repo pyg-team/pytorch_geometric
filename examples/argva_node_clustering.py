@@ -1,38 +1,32 @@
 import os.path as osp
 
-from torch_geometric.datasets import Planetoid
-import torch_geometric.transforms as T
-from torch_geometric.utils import train_test_split_edges
-from torch_geometric.nn import GCNConv, ARGVA
-import torch.nn.functional as F
 import torch
+import torch.nn.functional as F
 from sklearn.cluster import KMeans
-from sklearn.metrics.cluster import v_measure_score, homogeneity_score, completeness_score
+from sklearn.metrics.cluster import (v_measure_score, homogeneity_score,
+                                     completeness_score)
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
-
-
-ENCODER_HIDDEN_CHANNEL = 32
-ENCODER_OUTPUT_CHANNEL = 32
-DISCRIMINATOR_HIDDEN_CHANNEL = 64
-
-DISCRIMINATOR_TRAIN_COUNT = 5
+import torch_geometric.transforms as T
+from torch_geometric.datasets import Planetoid
+from torch_geometric.nn import GCNConv, ARGVA
+from torch_geometric.utils import train_test_split_edges
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-cora = Planetoid(path, dataset, T.NormalizeFeatures())
-data = cora.get(0)
+dataset = Planetoid(path, dataset, T.NormalizeFeatures())
+data = dataset.get(0)
 
 data.train_mask = data.val_mask = data.test_mask = None
 data = train_test_split_edges(data)
 
 
 class Encoder(torch.nn.Module):
-    def __init__(self, in_channels, hidden, out_channels):
+    def __init__(self, in_channels, hidden_channels, out_channels):
         super(Encoder, self).__init__()
-        self.conv1 = GCNConv(in_channels, hidden, cached=True)
-        self.conv_mu = GCNConv(hidden, out_channels, cached=True)
-        self.conv_logvar = GCNConv(hidden, out_channels, cached=True)
+        self.conv1 = GCNConv(in_channels, hidden_channels, cached=True)
+        self.conv_mu = GCNConv(hidden_channels, out_channels, cached=True)
+        self.conv_logvar = GCNConv(hidden_channels, out_channels, cached=True)
 
     def forward(self, x, edge_index):
         x = F.relu(self.conv1(x, edge_index))
@@ -40,41 +34,38 @@ class Encoder(torch.nn.Module):
 
 
 class Discriminator(torch.nn.Module):
-    def __init__(self, in_channel, hidden, out_channel):
+    def __init__(self, in_channels, hidden_channels, out_channels):
         super(Discriminator, self).__init__()
-        self.dense1 = torch.nn.Linear(in_channel, hidden)
-        self.dense2 = torch.nn.Linear(hidden, out_channel)
-        self.dense3 = torch.nn.Linear(out_channel, out_channel)
+        self.lin1 = torch.nn.Linear(in_channels, hidden_channels)
+        self.lin2 = torch.nn.Linear(hidden_channels, hidden_channels)
+        self.lin3 = torch.nn.Linear(hidden_channels, out_channels)
 
     def forward(self, x):
-        x = F.relu(self.dense1(x))
-        x = F.relu(self.dense2(x))
-        x = self.dense3(x)
+        x = F.relu(self.lin1(x))
+        x = F.relu(self.lin2(x))
+        x = self.lin3(x)
         return x
 
 
-encoder = Encoder(data.num_features, ENCODER_HIDDEN_CHANNEL,
-                  ENCODER_OUTPUT_CHANNEL)
-discriminator = Discriminator(
-    ENCODER_OUTPUT_CHANNEL, DISCRIMINATOR_HIDDEN_CHANNEL, ENCODER_OUTPUT_CHANNEL)
+encoder = Encoder(data.num_features, hidden_channels=32, out_channels=32)
+discriminator = Discriminator(in_channels=32, hidden_channels=64,
+                              out_channels=32)
 model = ARGVA(encoder, discriminator)
 
-discriminator_optimizer = torch.optim.Adam(
-    model.discriminator.parameters(), lr=0.001)
-model_optimizer = torch.optim.Adam(model.parameters(), lr=5*0.001)
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-discriminator.to(device)
-model.to(device)
-data = data.to(device)
+model, data = model.to(device), data.to(device)
+
+discriminator_optimizer = torch.optim.Adam(discriminator.parameters(),
+                                           lr=0.001)
+encoder_optimizer = torch.optim.Adam(encoder.parameters(), lr=0.005)
 
 
 def train():
     model.train()
-    model_optimizer.zero_grad()
+    encoder_optimizer.zero_grad()
     z = model.encode(data.x, data.train_pos_edge_index)
 
-    for i in range(DISCRIMINATOR_TRAIN_COUNT):
+    for i in range(5):
         discriminator.train()
         discriminator_optimizer.zero_grad()
         discriminator_loss = model.discriminator_loss(z)
@@ -84,52 +75,53 @@ def train():
     loss = model.recon_loss(z, data.train_pos_edge_index)
     loss = loss + (1 / data.num_nodes) * model.kl_loss()
     loss.backward()
-    model_optimizer.step()
+    encoder_optimizer.step()
     return loss
 
 
+@torch.no_grad()
 def test():
     model.eval()
-    with torch.no_grad():
-        z = model.encode(data.x, data.train_pos_edge_index)
-        # Cluster embedded values using kmeans
-        kmeans_input = z.cpu().data.numpy()
-        kmeans = KMeans(n_clusters=7, random_state=0).fit(kmeans_input)
-        pred = kmeans.predict(kmeans_input)
+    z = model.encode(data.x, data.train_pos_edge_index)
 
-        labels = data.y.cpu().numpy()
-        completeness = completeness_score(labels, pred)
-        hm = homogeneity_score(labels, pred)
-        nmi = v_measure_score(labels, pred)
+    # Cluster embedded values using k-means.
+    kmeans_input = z.cpu().numpy()
+    kmeans = KMeans(n_clusters=7, random_state=0).fit(kmeans_input)
+    pred = kmeans.predict(kmeans_input)
 
-    return model.test(z, data.test_pos_edge_index, data.test_neg_edge_index), completeness, hm, nmi
+    labels = data.y.cpu().numpy()
+    completeness = completeness_score(labels, pred)
+    hm = homogeneity_score(labels, pred)
+    nmi = v_measure_score(labels, pred)
+
+    auc, ap = model.test(z, data.test_pos_edge_index, data.test_neg_edge_index)
+
+    return auc, ap, completeness, hm, nmi
 
 
-for epoch in range(150):
+for epoch in range(1, 151):
     loss = train()
-    (auc, ap), completeness, hm, nmi = test()
-    print('Epoch: {:05d}, '
-          'Train Loss: {:.3f}, AUC: {:.3f}, AP: {:.3f}, Homogeneity: {:.3f}; Completeness: {:.3f}; NMI: {:.3f},  '.format(epoch, loss,
-                                                                                                                          auc, ap, hm, completeness, nmi))
+    auc, ap, completeness, hm, nmi = test()
+    print((f'Epoch: {epoch:03d}, Loss: {loss:.3f}, AUC: {auc:.3f}, '
+           f'AP: {ap:.3f}, Completeness: {completeness:.3f}, '
+           f'Homogeneity: {hm:.3f}, NMI: {nmi:.3f}'))
 
 
-def plot(X, fig, col, size, true_labels):
-    ax = fig.add_subplot(1, 1, 1)
-    for i, point in enumerate(X):
-        ax.scatter(point[0], point[1], s=size, c=col[true_labels[i]])
+@torch.no_grad()
+def plot_points(colors):
+    model.eval()
+    z = model.encode(data.x, data.train_pos_edge_index)
+    z = TSNE(n_components=2).fit_transform(z.cpu().numpy())
+    y = data.y.cpu().numpy()
 
-
-def plot_clusters(hidden_emb, true_labels):
-    # Doing dimensionality reduction for plotting
-    tsne = TSNE(n_components=2)
-    X_tsne = tsne.fit_transform(hidden_emb)
-    # Plot figure
-    fig = plt.figure()
-    plot(X_tsne, fig, ['red', 'green', 'blue', 'brown',
-                       'purple', 'yellow', 'pink', 'orange'], 2, true_labels)
+    plt.figure(figsize=(8, 8))
+    for i in range(dataset.num_classes):
+        plt.scatter(z[y == i, 0], z[y == i, 1], s=20, color=colors[i])
+    plt.axis('off')
     plt.show()
 
 
-with torch.no_grad():
-    z = model.encode(data.x, data.train_pos_edge_index)
-    plot_clusters(z.cpu().data, data.y.cpu().data)
+colors = [
+    '#ffc0cb', '#bada55', '#008080', '#420420', '#7fe5f0', '#065535', '#ffd700'
+]
+plot_points(colors)
