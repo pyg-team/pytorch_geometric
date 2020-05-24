@@ -49,7 +49,7 @@ class LEConv(MessagePassing):
         return out + self.lin3(x)
 
     def message(self, a_i, b_j, edge_weight):
-        out = (a_i - b_j)
+        out = a_i - b_j
         return out if edge_weight is None else out * edge_weight.view(-1, 1)
 
     def __repr__(self):

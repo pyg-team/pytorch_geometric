@@ -1,13 +1,13 @@
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch_geometric.nn import (GraphConv, ASAP_Pooling, global_mean_pool,
+from torch_geometric.nn import (ASAPooling, GraphConv, global_mean_pool,
                                 JumpingKnowledge)
 
 
-class ASAP_Pool(torch.nn.Module):
-    def __init__(self, dataset, num_layers, hidden, ratio=0.8, dropout_att=0):
-        super(ASAP_Pool, self).__init__()
+class ASAP(torch.nn.Module):
+    def __init__(self, dataset, num_layers, hidden, ratio=0.8, dropout=0):
+        super(ASAP, self).__init__()
         self.conv1 = GraphConv(dataset.num_features, hidden, aggr='mean')
         self.convs = torch.nn.ModuleList()
         self.pools = torch.nn.ModuleList()
@@ -15,9 +15,10 @@ class ASAP_Pool(torch.nn.Module):
             GraphConv(hidden, hidden, aggr='mean')
             for i in range(num_layers - 1)
         ])
-        self.pools.extend(
-            [ASAP_Pooling(hidden, ratio, None, dropout_att)
-             for i in range((num_layers) // 2)])
+        self.pools.extend([
+            ASAPooling(hidden, ratio, dropout=dropout)
+            for i in range((num_layers) // 2)
+        ])
         self.jump = JumpingKnowledge(mode='cat')
         self.lin1 = Linear(num_layers * hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
@@ -37,15 +38,13 @@ class ASAP_Pool(torch.nn.Module):
         x = F.relu(self.conv1(x, edge_index))
         xs = [global_mean_pool(x, batch)]
         for i, conv in enumerate(self.convs):
-            x = F.relu(conv(x=x, edge_index=edge_index,
-                            edge_weight=edge_weight))
+            x = conv(x=x, edge_index=edge_index, edge_weight=edge_weight)
+            x = F.relu(x)
             xs += [global_mean_pool(x, batch)]
             if i % 2 == 0 and i < len(self.convs) - 1:
                 pool = self.pools[i // 2]
                 x, edge_index, edge_weight, batch, _ = pool(
-                    x=x,
-                    edge_index=edge_index,
-                    edge_weight=edge_weight,
+                    x=x, edge_index=edge_index, edge_weight=edge_weight,
                     batch=batch)
         x = self.jump(xs)
         x = F.relu(self.lin1(x))
