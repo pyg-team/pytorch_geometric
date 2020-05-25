@@ -4,7 +4,7 @@ import warnings
 
 import torch
 import torch_geometric
-from torch_sparse import coalesce
+from torch_sparse import coalesce, SparseTensor
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
@@ -22,6 +22,8 @@ def size_repr(key, item, indent=0):
     indent_str = ' ' * indent
     if torch.is_tensor(item):
         out = str(list(item.size()))
+    elif isinstance(item, SparseTensor):
+        out = str(item.sizes())[:-1] + f', nnz={item.nnz()}]'
     elif isinstance(item, list) or isinstance(item, tuple):
         out = str([len(item)])
     elif isinstance(item, dict):
@@ -269,7 +271,7 @@ class Data(object):
         return not self.is_undirected()
 
     def __apply__(self, item, func):
-        if torch.is_tensor(item):
+        if torch.is_tensor(item) or isinstance(item, SparseTensor):
             return func(item)
         elif isinstance(item, (tuple, list)):
             return [self.__apply__(v, func) for v in item]
