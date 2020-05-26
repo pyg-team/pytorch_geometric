@@ -105,13 +105,11 @@ class NeighborSampler(torch.utils.data.DataLoader):
         n_id = batch
         for size in self.sizes:
             adj, n_id = self.adj.sample_adj(n_id, size, replace=False)
+            if self.flow == 'source_to_target':
+                adj = adj.t()
             row, col, e_id = adj.coo()
             size = adj.sparse_sizes()
-            if self.flow == 'source_to_target':
-                edge_index = torch.stack([col, row], dim=0)
-                size = size[::-1]
-            else:
-                edge_index = torch.stack([row, col], dim=0)
+            edge_index = torch.stack([row, col], dim=0)
 
             adjs.append(Adj(edge_index, e_id, size))
 
