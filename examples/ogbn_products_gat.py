@@ -72,8 +72,6 @@ class GAT(torch.nn.Module):
         return x.log_softmax(dim=-1)
 
     def inference(self, x_all):
-        model.eval()
-
         pbar = tqdm(total=x_all.size(0) * self.num_layers)
         pbar.set_description('Evaluating')
 
@@ -91,7 +89,7 @@ class GAT(torch.nn.Module):
                 x = self.convs[i]((x, x_target), edge_index)
                 x = x + self.skips[i](x_target)
 
-                if i - 1 < self.num_layers:
+                if i != self.num_layers - 1:
                     x = F.elu(x)
                 xs.append(x.cpu())
 
@@ -144,6 +142,8 @@ def train(epoch):
 
 @torch.no_grad()
 def test():
+    model.eval()
+
     out = model.inference(x)
 
     y_true = y.cpu().unsqueeze(-1)

@@ -56,8 +56,6 @@ class SAGE(torch.nn.Module):
         return x.log_softmax(dim=-1)
 
     def inference(self, x_all):
-        model.eval()
-
         pbar = tqdm(total=x_all.size(0) * self.num_layers)
         pbar.set_description('Evaluating')
 
@@ -73,7 +71,7 @@ class SAGE(torch.nn.Module):
                 x = x_all[n_id].to(device)
                 x_target = x[:size[1]]
                 x = self.convs[i]((x, x_target), edge_index)
-                if i - 1 < self.num_layers:
+                if i != self.num_layers - 1:
                     x = F.relu(x)
                 xs.append(x.cpu())
 
@@ -125,6 +123,8 @@ def train(epoch):
 
 @torch.no_grad()
 def test():
+    model.eval()
+
     out = model.inference(x)
 
     y_true = y.cpu().unsqueeze(-1)
