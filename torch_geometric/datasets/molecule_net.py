@@ -65,21 +65,24 @@ class MoleculeNet(InMemoryDataset):
     url = ('https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/'
            'molnet_publish/{}.zip')
 
-    # Format: name: [url_name, csv_name, smiles_idx, y_idx]
+    # Format: name: [display_name, url_name, csv_name, smiles_idx, y_idx]
     names = {
-        'esol': ['ESOL', 'delaney-processed', -1, -2],
-        'freesolv': ['FreeSolv', 'SAMPL', 1, 2],
-        'lipo': ['lipophilicity', 'Lipophilicity', 2, 1],
-        'pcba': ['pcba', 'pcba', -1, slice(0, 128)],
-        'muv': ['muv', 'muv', -1, slice(0, 17)],
-        'hiv': ['hiv', 'HIV', 0, -1],
-        'bace': ['bace', 'bace', 0, 2],
-        'bbbp': ['bbbp', 'BBBP', -1, -2],
-        'tox21': ['tox21', 'tox21', -1, slice(0, 12)],
-        'toxcast': ['toxcast', 'toxcast_data', 0,
+        'esol': ['ESOL', 'ESOL', 'delaney-processed', -1, -2],
+        'freesolv': ['FreeSolv', 'FreeSolv', 'SAMPL', 1, 2],
+        'lipo': ['Lipophilicity', 'lipophilicity', 'Lipophilicity', 2, 1],
+        'pcba': ['PCBA', 'pcba', 'pcba', -1,
+                 slice(0, 128)],
+        'muv': ['MUV', 'muv', 'muv', -1, slice(0, 17)],
+        'hiv': ['HIV', 'hiv', 'HIV', 0, -1],
+        'bace': ['BACE', 'bace', 'bace', 0, 2],
+        'bbbp': ['BBPB', 'bbbp', 'BBBP', -1, -2],
+        'tox21': ['Tox21', 'tox21', 'tox21', -1,
+                  slice(0, 12)],
+        'toxcast': ['ToxCast', 'toxcast', 'toxcast_data', 0,
                     slice(1, 618)],
-        'sider': ['sider', 'sider', 0, slice(1, 28)],
-        'clintox': ['clintox', 'clintox', 0,
+        'sider': ['SIDER', 'sider', 'sider', 0,
+                  slice(1, 28)],
+        'clintox': ['ClinTox', 'clintox', 'clintox', 0,
                     slice(1, 3)],
     }
 
@@ -105,14 +108,14 @@ class MoleculeNet(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return f'{self.names[self.name][1]}.csv'
+        return f'{self.names[self.name][2]}.csv'
 
     @property
     def processed_file_names(self):
         return 'data.pt'
 
     def download(self):
-        url = self.url.format(self.names[self.name][0])
+        url = self.url.format(self.names[self.name][1])
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
@@ -127,8 +130,8 @@ class MoleculeNet(InMemoryDataset):
             line = re.sub(r'\".*\"', '', line)  # Replace ".*" strings.
             line = line.split(',')
 
-            smiles = line[self.names[self.name][2]]
-            ys = line[self.names[self.name][3]]
+            smiles = line[self.names[self.name][3]]
+            ys = line[self.names[self.name][4]]
             ys = ys if isinstance(ys, list) else [ys]
 
             ys = [float(y) if len(y) > 0 else float('NaN') for y in ys]
@@ -192,5 +195,4 @@ class MoleculeNet(InMemoryDataset):
         torch.save(self.collate(data_list), self.processed_paths[0])
 
     def __repr__(self):
-        return '{}({}, name={})'.format(self.__class__.__name__, len(self),
-                                        self.name)
+        return '{}({})'.format(self.names[self.name][0], len(self))
