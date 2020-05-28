@@ -81,14 +81,14 @@ class ZINC(InMemoryDataset):
             for idx in indices:
                 mol = mols[idx]
 
-                z = mol['atom_type'].to(torch.long)
-                y = mol['logP_SA_cycle_normalized']
+                x = mol['atom_type'].to(torch.long).view(-1, 1)
+                y = mol['logP_SA_cycle_normalized'].to(torch.float)
 
                 adj = mol['bond_type']
                 edge_index = adj.nonzero().t().contiguous()
                 edge_attr = adj[edge_index[0], edge_index[1]].to(torch.long)
 
-                data = Data(z=z, edge_index=edge_index, edge_attr=edge_attr,
+                data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,
                             y=y)
 
                 if self.pre_filter is not None and not self.pre_filter(data):
