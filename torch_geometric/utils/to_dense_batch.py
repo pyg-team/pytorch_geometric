@@ -2,7 +2,7 @@ import torch
 from torch_scatter import scatter_add
 
 
-def to_dense_batch(x, batch=None, fill_value=0):
+def to_dense_batch(x, batch=None, fill_value=0, desired_max_num_nodes=0):
     r"""Given a sparse batch of node features
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}` (with
     :math:`N_i` indicating the number of nodes in graph :math:`i`), creates a
@@ -31,7 +31,7 @@ def to_dense_batch(x, batch=None, fill_value=0):
     num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
                             dim_size=batch_size)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
-    max_num_nodes = num_nodes.max().item()
+    max_num_nodes = max(num_nodes.max().item(), desired_max_num_nodes)
 
     idx = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
     idx = (idx - cum_nodes[batch]) + (batch * max_num_nodes)
