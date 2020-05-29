@@ -50,9 +50,8 @@ class ZINC(InMemoryDataset):
     @property
     def raw_file_names(self):
         return [
-            'atom_dict.pickle', 'bond_dict.pickle', 'train.pickle',
-            'val.pickle', 'test.pickle', 'train.index', 'val.index',
-            'test.index'
+            'train.pickle', 'val.pickle', 'test.pickle', 'train.index',
+            'val.index', 'test.index'
         ]
 
     @property
