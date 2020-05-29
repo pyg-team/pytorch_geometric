@@ -44,6 +44,7 @@ x_map = {
 
 e_map = {
     'bond_type': [
+        'misc',
         'SINGLE',
         'DOUBLE',
         'TRIPLE',
