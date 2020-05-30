@@ -4,7 +4,7 @@ import warnings
 
 import torch
 import torch_geometric
-from torch_sparse import coalesce
+from torch_sparse import coalesce, SparseTensor
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
@@ -18,19 +18,21 @@ __num_nodes_warn_msg__ = (
     'data.num_nodes.')
 
 
-def size_repr(key, item, pad=0):
-    pad_str = ' ' * pad
+def size_repr(key, item, indent=0):
+    indent_str = ' ' * indent
     if torch.is_tensor(item):
         out = str(list(item.size()))
+    elif isinstance(item, SparseTensor):
+        out = str(item.sizes())[:-1] + f', nnz={item.nnz()}]'
     elif isinstance(item, list) or isinstance(item, tuple):
         out = str([len(item)])
     elif isinstance(item, dict):
-        lines = [pad_str + size_repr(k, v, 2) for k, v in item.items()]
-        out = '{\n' + ',\n'.join(lines) + '\n' + pad_str + '}'
+        lines = [indent_str + size_repr(k, v, 2) for k, v in item.items()]
+        out = '{\n' + ',\n'.join(lines) + '\n' + indent_str + '}'
     else:
         out = str(item)
 
-    return f'{pad_str}{key}={out}'
+    return f'{indent_str}{key}={out}'
 
 
 class Data(object):
@@ -269,7 +271,7 @@ class Data(object):
         return not self.is_undirected()
 
     def __apply__(self, item, func):
-        if torch.is_tensor(item):
+        if torch.is_tensor(item) or isinstance(item, SparseTensor):
             return func(item)
         elif isinstance(item, (tuple, list)):
             return [self.__apply__(v, func) for v in item]
@@ -391,5 +393,5 @@ class Data(object):
             info = [size_repr(key, item) for key, item in self]
             return '{}({})'.format(cls, ', '.join(info))
         else:
-            info = [size_repr(key, item, pad=2) for key, item in self]
+            info = [size_repr(key, item, indent=2) for key, item in self]
             return '{}(\n{}\n)'.format(cls, ',\n'.join(info))

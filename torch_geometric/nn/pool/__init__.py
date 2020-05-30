@@ -5,6 +5,7 @@ from .voxel_grid import voxel_grid
 from .topk_pool import TopKPooling
 from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
+from .asap import ASAPooling
 
 try:
     import torch_cluster
@@ -235,6 +236,7 @@ __all__ = [
     'TopKPooling',
     'SAGPooling',
     'EdgePooling',
+    'ASAPooling',
     'max_pool',
     'avg_pool',
     'max_pool_x',
