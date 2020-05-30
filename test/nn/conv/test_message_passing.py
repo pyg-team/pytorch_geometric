@@ -15,9 +15,8 @@ class MyConv(MessagePassing):
     def forward(self, x, edge_index, zeros: bool = True):
         return self.propagate(edge_index, x=x, zeros=zeros)
 
-    def message(self, x, x_j, edge_index_j, edge_index_i,
-                size_i: Optional[int], size_j: Optional[int],
-                zeros: bool = True):
+    def message(self, x, x_j, edge_index_j, size_i: Optional[int],
+                size_j: Optional[int], zeros: bool = True):
         assert size_i is not None
         assert size_j is not None
         assert size_i == x.size(self.node_dim)

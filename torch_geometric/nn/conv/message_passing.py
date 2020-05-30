@@ -14,24 +14,10 @@ from torch_scatter import gather_csr, scatter, segment_csr
 from .utils.helpers import unsqueeze
 from .utils.inspector import Inspector, get_type
 
-msg_aggr_special_args = set([
-    'adj_t',
+special_args = set([
+    'adj_t', 'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr',
+    'index', 'dim_size'
 ])
-
-msg_special_args = set([
-    'edge_index_i',
-    'edge_index_j',
-    'size_i',
-    'size_j',
-])
-
-aggr_special_args = set([
-    'ptr',
-    'index',
-    'dim_size',
-])
-
-update_special_args = set([])
 
 
 class MessagePassing(torch.nn.Module):
@@ -78,29 +64,7 @@ class MessagePassing(torch.nn.Module):
         # self.inspector.inspect(self.message_and_aggregate)
         self.inspector.inspect(self.update, pop_first=True)
 
-        self.__msg_aggr_params__ = inspect.signature(
-            self.message_and_aggregate).parameters
-        self.__msg_aggr_params__ = OrderedDict(self.__msg_aggr_params__)
-
-        self.__msg_params__ = inspect.signature(self.message).parameters
-        self.__msg_params__ = OrderedDict(self.__msg_params__)
-
-        self.__aggr_params__ = inspect.signature(self.aggregate).parameters
-        self.__aggr_params__ = OrderedDict(self.__aggr_params__)
-        self.__aggr_params__.popitem(last=False)
-
-        self.__update_params__ = inspect.signature(self.update).parameters
-        self.__update_params__ = OrderedDict(self.__update_params__)
-        self.__update_params__.popitem(last=False)
-
-        msg_aggr_args = (set(self.__msg_aggr_params__.keys()) -
-                         msg_aggr_special_args)
-        msg_args = set(self.__msg_params__.keys()) - msg_special_args
-        aggr_args = set(self.__aggr_params__.keys()) - aggr_special_args
-        update_args = set(self.__update_params__.keys()) - update_special_args
-
-        self.__user_args__ = set().union(msg_aggr_args, msg_args, aggr_args,
-                                         update_args)
+        self.__user_args__ = self.inspector.keys().difference(special_args)
 
         # Support for "fused" message passing.
         self.__fuse__ = True
@@ -112,212 +76,6 @@ class MessagePassing(torch.nn.Module):
         # Support for TorchScript.
         self.__record_propagate__ = False
         self.__records__ = None
-
-    def __set_size__(self, size: List[Optional[int]], idx: int,
-                     tensor: Optional[torch.Tensor]):
-        if not isinstance(tensor, torch.Tensor):
-            pass
-        elif size[idx] is None:
-            assert tensor is not None
-            size[idx] = tensor.size(self.node_dim)
-        else:
-            the_size = size[idx]
-            assert the_size is not None
-            assert tensor is not None
-            if the_size != tensor.size(self.node_dim):
-                raise ValueError((f'Encountered node tensor with size '
-                                  f'{tensor.size(self.node_dim)} '
-                                  f'in dimension {self.node_dim}, '
-                                  f'but expected size {size[idx]}.'))
-
-    def __collect__(self, edge_index, size, mp_type, kwargs, user_args):
-        collect_trace = None
-        if self.__record_propagate__:
-            collect_trace = {}
-        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
-        ij = {'_i': i, '_j': j}
-
-        out = {}
-        for arg in user_args:
-            if arg[-2:] not in ij.keys():
-                out[arg] = kwargs.get(arg, inspect.Parameter.empty)
-                if self.__record_propagate__:
-                    collect_trace[arg] = [
-                        type(out[arg]), '{0}_out = kwargs.{0}'.format(arg)
-                    ]
-            else:
-                sizestr = ''
-                idx = ij[arg[-2:]]
-                data = kwargs.get(arg[:-2], inspect.Parameter.empty)
-                is_tuple_or_list = (isinstance(data, tuple)
-                                    or isinstance(data, list))
-
-                if data is inspect.Parameter.empty:
-                    out[arg] = data
-                    if self.__record_propagate__:
-                        collect_trace[arg] = [
-                            type(out[arg]), '{0}_out = None'.format(arg)
-                        ]
-                    continue
-
-                if is_tuple_or_list:
-                    assert len(data) == 2
-                    self.__set_size__(size, 1 - idx, data[1 - idx])
-                    sizestr = '        self.__set_size__(size, {0}, kwargs.{1}[{0}])'.format(
-                        1 - idx, arg[:-2])  # noqa
-                    data = data[idx]
-
-                if not isinstance(data, torch.Tensor):
-                    out[arg] = data
-                    outtype = type(data) if data is not None \
-                        else Optional[torch.Tensor]
-                    if self.__record_propagate__:
-                        if is_tuple_or_list and data is not None:
-                            collect_trace[arg] = [
-                                outtype, '{0}_out = kwargs.{1}[{2}]'.format(
-                                    arg, arg[:-2], idx)
-                            ]  # noqa
-                        elif data is not None:
-                            collect_trace[arg] = [
-                                outtype,
-                                '{0}_out = kwargs.{1}'.format(arg, arg[:-2])
-                            ]  # noqa
-                        elif data is None and not is_tuple_or_list:
-                            # we have to assume it's a tensor
-                            collect_trace[arg] = [
-                                outtype,
-                                '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1} is not None:\n            temp_{0} = kwargs.{1}\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'
-                                .format(arg, arg[:-2], idx)
-                            ]  # noqa
-                        elif data is None:  # we have to assume it's a tensor
-                            collect_trace[arg] = [
-                                outtype,
-                                '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1}[{2}] is not None:\n            temp_{0} = kwargs.{1}[{2}]\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'
-                                .format(arg, arg[:-2], idx)
-                            ]  # noqa
-                        collect_trace[arg][1] += '\n' + sizestr
-                    continue
-
-                self.__set_size__(size, idx, data)
-                if not is_tuple_or_list:
-                    sizestr = '        self.__set_size__(size, {0}, kwargs.{1})'.format(
-                        idx, arg[:-2])  # noqa
-
-                if mp_type == 'edge_index':
-                    out[arg] = data.index_select(self.node_dim,
-                                                 edge_index[idx])
-                    if self.__record_propagate__:
-                        if is_tuple_or_list:
-                            collect_trace[arg] = [
-                                Optional[torch.Tensor],
-                                '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1}[{2}] is not None:\n            temp_{0} = kwargs.{1}[{2}]\n            assert temp_{0} is not None\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'
-                                .format(arg, arg[:-2], idx)
-                            ]  # noqa
-                        else:
-                            typeout = type(out[arg])
-                            if typeout == Optional[torch.Tensor]:
-                                collect_trace[arg] = [
-                                    typeout,
-                                    '{0}_out: Optional[torch.Tensor] = None\n        if kwargs.{1} is not None:\n            temp{1} = kwargs.{1}\n            assert temp{1} is not None\n            temp_{0} = temp{1}\n            {0}_out = temp_{0}.index_select(self.node_dim, edge_index[{2}])'
-                                    .format(arg, arg[:-2], idx)
-                                ]  # noqa
-                            else:
-                                collect_trace[arg] = [
-                                    typeout,
-                                    '{0}_out = kwargs.{1}.index_select(self.node_dim, edge_index[{2}])'
-                                    .format(arg, arg[:-2], idx)
-                                ]  # noqa
-                        collect_trace[arg][1] += '\n' + sizestr
-                elif mp_type == 'adj_t' and idx == 1:
-                    rowptr = edge_index.storage.rowptr()
-                    rowptr = unsqueeze(rowptr, dim=0, length=self.node_dim)
-                    out[arg] = gather_csr(data, rowptr)
-                    if self.__record_propagate__:
-                        collect_trace[arg] = [
-                            type(out[arg]),
-                            '{0}_out = gather_csr(kwargs.{1}, edge_index.storage.rowptr())'
-                            .format(arg, arg[:-2])
-                        ]  # noqa
-                elif mp_type == 'adj_t' and idx == 0:
-                    col = edge_index.storage.col()
-                    out[arg] = data.index_select(self.node_dim, col)
-                    if self.__record_propagate__:
-                        collect_trace[arg] = [
-                            type(out[arg]),
-                            '{0}_out = kwargs.{1}.index_select(self.node_dim, edge_index.storage.colptr())'
-                            .format(arg, arg[:-2])
-                        ]  # noqa
-
-        size[0] = size[1] if size[0] is None else size[0]
-        size[1] = size[0] if size[1] is None else size[1]
-
-        if mp_type == 'edge_index':
-            out['edge_index_j'] = edge_index[j]
-            out['edge_index_i'] = edge_index[i]
-            out['index'] = out['edge_index_i']
-            out['ptr'] = None
-            if self.__record_propagate__:
-                collect_trace['edge_index_i'] = \
-                    [type(out['edge_index_i']),
-                     'edge_index_i_out = edge_index[{0}]'.format(i)]
-                collect_trace['edge_index_j'] = \
-                    [type(out['edge_index_j']),
-                     'edge_index_j_out = edge_index[{0}]'.format(j)]
-                collect_trace['index'] = [
-                    type(out['index']), 'index_out = edge_index_i_out'
-                ]
-                collect_trace['ptr'] = [torch.Tensor, 'ptr_out = None']
-        elif mp_type == 'adj_t':
-            out['adj_t'] = edge_index
-            out['edge_index_i'] = edge_index.storage.row()
-            out['edge_index_j'] = edge_index.storage.col()
-            out['index'] = edge_index.storage.row()
-            out['ptr'] = edge_index.storage.rowptr()
-            out['edge_attr'] = edge_index.storage.value()
-            if self.__record_propagate__:
-                collect_trace['adj_t'] = [
-                    type(out['adj_t']), 'adj_t_out = edge_index'
-                ]
-                collect_trace['edge_index_i'] = \
-                    [type(out['edge_index_i']),
-                     'edge_index_i_out = edge_index.storage.row()']
-                collect_trace['edge_index_j'] = \
-                    [type(out['edge_index_j']),
-                     'edge_index_j_out = edge_index.storage.col()']
-                collect_trace['index'] = \
-                    [type(out['index']),
-                     'index_out = edge_index.storage.row()']
-                collect_trace['ptr'] = \
-                    [type(out['ptr']),
-                     'ptr_out = edge_index.storage.rowptr()']
-                collect_trace['edge_attr'] = \
-                    [type(out['edge_attr']),
-                     'edge_attr_out = edge_index.storage.value()']
-
-        out['size_j'] = size[j]
-        out['size_i'] = size[i]
-        out['dim_size'] = out['size_i']
-        if self.__record_propagate__:
-            collect_trace['size_i'] = [
-                int,
-                'size[0] = size[1] if size[0] is None else size[0]\n        size[1] = size[0] if size[1] is None else size[1]\n        size_i_out = size[{0}]'
-                .format(i)
-            ]  # noqa
-            collect_trace['size_j'] = [int, 'size_j_out = size[{0}]'.format(j)]
-            collect_trace['dim_size'] = [int, 'dim_size_out = size_i_out']
-
-        return out, collect_trace
-
-    def __distribute__(self, params, kwargs):
-        out = {}
-        for key, param in params.items():
-            data = kwargs.get(key, inspect.Parameter.empty)
-            if data is inspect.Parameter.empty:
-                if param.default is inspect.Parameter.empty:
-                    raise TypeError(f'Required parameter {key} is empty.')
-                data = param.default
-            out[key] = data
-        return out
 
     @torch.jit._overload_method  # noqa: F811
     def __determine_type_and_size__(
@@ -373,7 +131,160 @@ class MessagePassing(torch.nn.Module):
 
         return mp_type, size_out
 
-    # TODO: Use overload.
+    def __set_size__(self, size: List[Optional[int]], idx: int,
+                     tensor: Optional[torch.Tensor]):
+        if not isinstance(tensor, torch.Tensor):
+            pass
+        elif size[idx] is None:
+            assert tensor is not None
+            size[idx] = tensor.size(self.node_dim)
+        else:
+            the_size = size[idx]
+            assert the_size is not None
+            assert tensor is not None
+            if the_size != tensor.size(self.node_dim):
+                raise ValueError((f'Encountered node tensor with size '
+                                  f'{tensor.size(self.node_dim)} '
+                                  f'in dimension {self.node_dim}, '
+                                  f'but expected size {size[idx]}.'))
+
+    def __collect__(self, edge_index, size, mp_type, kwargs):
+        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
+        ij = {'_i': i, '_j': j}
+
+        out = {}
+        for arg in self.__user_args__:
+            if arg[-2:] not in ij.keys():
+                out[arg] = kwargs.get(arg, inspect.Parameter.empty)
+            else:
+                idx = ij[arg[-2:]]
+                data = kwargs.get(arg[:-2], inspect.Parameter.empty)
+
+                if data is inspect.Parameter.empty:
+                    out[arg] = data
+                    continue
+
+                if isinstance(data, (tuple, list)):
+                    assert len(data) == 2
+                    self.__set_size__(size, 1 - idx, data[1 - idx])
+                    data = data[idx]
+
+                if not isinstance(data, torch.Tensor):
+                    out[arg] = data
+                    continue
+
+                self.__set_size__(size, idx, data)
+
+                if mp_type == 'edge_index':
+                    out[arg] = data.index_select(self.node_dim,
+                                                 edge_index[idx])
+                elif mp_type == 'adj_t' and idx == 1:
+                    rowptr = edge_index.storage.rowptr()
+                    rowptr = unsqueeze(rowptr, dim=0, length=self.node_dim)
+                    out[arg] = gather_csr(data, rowptr)
+                elif mp_type == 'adj_t' and idx == 0:
+                    col = edge_index.storage.col()
+                    out[arg] = data.index_select(self.node_dim, col)
+
+        size[0] = size[1] if size[0] is None else size[0]
+        size[1] = size[0] if size[1] is None else size[1]
+
+        if mp_type == 'edge_index':
+            out['edge_index_j'] = edge_index[j]
+            out['edge_index_i'] = edge_index[i]
+            out['index'] = out['edge_index_i']
+            out['ptr'] = None
+        elif mp_type == 'adj_t':
+            out['adj_t'] = edge_index
+            out['edge_index_i'] = edge_index.storage.row()
+            out['edge_index_j'] = edge_index.storage.col()
+            out['index'] = edge_index.storage.row()
+            out['ptr'] = edge_index.storage.rowptr()
+            out['edge_attr'] = edge_index.storage.value()
+
+        out['size_j'] = size[j]
+        out['size_i'] = size[i]
+        out['dim_size'] = out['size_i']
+
+        return out
+
+    def __trace_collect__(self, edge_index, size, mp_type, kwargs):
+        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
+        ij = {'_i': i, '_j': j}
+
+        lines = []
+        for arg in self.__user_args__:
+            if arg[-2:] not in ij.keys():
+                lines += [f'{arg}_out = kwargs.{arg}']
+            else:
+                idx = ij[arg[-2:]]
+                data = kwargs.get(arg[:-2], inspect.Parameter.empty)
+
+                if data is inspect.Parameter.empty:
+                    lines += [f'{arg}_out = None']
+                    continue
+
+                lines += [f'data = kwargs.{arg[:-2]}']
+
+                if isinstance(data, (tuple, list)):
+                    assert len(data) == 2
+                    lines += [(f'self.__set_size__(size, {1 - idx}, '
+                               f'data[{1 - idx}])')]
+                    lines += [f'data = data[{idx}]']
+                    data = data[idx]
+
+                if not isinstance(data, torch.Tensor):
+                    lines += [f'{arg}_out = data']
+                    continue
+
+                lines += [f'self.__set_size__(size, {idx}, data)']
+
+                if mp_type == 'edge_index':
+                    lines += [(f'{arg}_out = data.index_select('
+                               f'self.node_dim, edge_index[{idx}])')]
+                elif mp_type == 'adj_t' and idx == 1:
+                    lines += ['rowptr = edge_index.storage.rowptr()']
+                    lines += [('rowptr = unsqueeze(rowptr, dim=0, '
+                               'length=self.node_dim)')]
+                    lines += [f'{arg}_out = gather_csr(data, rowptr)']
+                elif mp_type == 'adj_t' and idx == 0:
+                    lines += ['col = edge_index.storage.col()']
+                    lines += [(f'{arg}_out = data.index_select('
+                               f'self.node_dim, col)')]
+
+        lines += ['size[0] = size[1] if size[0] is None else size[0]']
+        lines += ['size[1] = size[0] if size[1] is None else size[1]']
+
+        if mp_type == 'edge_index':
+            lines += [f'edge_index_j_out = edge_index[{j}]']
+            lines += [f'edge_index_i_out = edge_index[{i}]']
+            lines += ['ptr_out: Optional[torch.Tensor] = None']
+        elif mp_type == 'adj_t':
+            lines += ['adj_t_out = edge_index']
+            lines += ['edge_index_i_out = edge_index.storage.row()']
+            lines += ['edge_index_j_out = edge_index.storage.col()']
+            lines += ['ptr_out = edge_index.storage.rowptr()']
+            lines += ['edge_attr_out = edge_index.storage.value()']
+
+        lines += ['index_out = edge_index_i_out']
+
+        lines += [f'size_j_out = size[{j}]']
+        lines += [f'size_i_out = size[{i}]']
+        lines += ['dim_size_out = size_i_out']
+
+        return lines
+
+    def __distribute__(self, args, kwargs):
+        out = {}
+        for arg in args:
+            data = kwargs.get(arg, inspect.Parameter.empty)
+            # if data is inspect.Parameter.empty:
+            #     if param.default is inspect.Parameter.empty:
+            #         raise TypeError(f'Required parameter {key} is empty.')
+            #     data = param.default
+            out[arg] = data
+        return out
+
     def propagate(self, edge_index, size: Optional[Tuple[int, int]] = None,
                   **kwargs):
         r"""The initial call to start propagating messages.
@@ -408,16 +319,13 @@ class MessagePassing(torch.nn.Module):
         mp_type, size = self.__determine_type_and_size__(edge_index, size)
 
         # We collect all arguments used for message passing in `kwargs`.
-        prop_kwargs = kwargs
-        kwargs, collect_trace = self.__collect__(edge_index, size, mp_type,
-                                                 kwargs, self.__user_args__)
+        coll_dict = self.__collect__(edge_index, size, mp_type, kwargs)
 
         # Try to run `message_and_aggregate` first and see if it succeeds:
         if mp_type == 'adj_t' and self.__fuse__ and not self.__explain__:
-            msg_aggr_kwargs = self.__distribute__(self.__msg_aggr_params__,
-                                                  kwargs)
-            msg_aggr_kwargs = {k: type(v) for k, v in msg_aggr_kwargs.items()}
-            # Currently not supported in jitted-mode.
+            msg_aggr_kwargs = self.__distribute__(
+                self.inspector.keys(['message_and_aggregate']), coll_dict)
+
             if not self.__record_propagate__:
                 out = self.message_and_aggregate(**msg_aggr_kwargs)
                 if out == NotImplemented:
@@ -425,7 +333,8 @@ class MessagePassing(torch.nn.Module):
 
         # Otherwise, run both functions in separation.
         if mp_type == 'edge_index' or not self.__fuse__ or self.__explain__:
-            msg_kwargs = self.__distribute__(self.__msg_params__, kwargs)
+            msg_kwargs = self.__distribute__(self.inspector.keys(['message']),
+                                             coll_dict)
             out = self.message(**msg_kwargs)
 
             # For `GNNExplainer`, we require separate a separate message and
@@ -439,17 +348,17 @@ class MessagePassing(torch.nn.Module):
                 assert out.size(0) == edge_mask.size(0)
                 out = out * edge_mask.view(-1, 1)
 
-            aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
+            aggr_kwargs = self.__distribute__(
+                self.inspector.keys(['aggregate']), coll_dict)
             out = self.aggregate(out, **aggr_kwargs)
 
-        update_kwargs = self.__distribute__(self.__update_params__, kwargs)
+        update_kwargs = self.__distribute__(self.inspector.keys(['update']),
+                                            coll_dict)
         out = self.update(out, **update_kwargs)
 
         if self.__record_propagate__:
-            self.__records__ = {
-                'prop_kwargs': prop_kwargs,
-                'collect_trace': collect_trace
-            }
+            lines = self.__trace_collect__(edge_index, size, mp_type, kwargs)
+            self.__records__ = {'prop_kwargs': kwargs, 'traced_collect': lines}
 
         return out
 
@@ -506,7 +415,7 @@ class MessagePassing(torch.nn.Module):
         return inputs
 
     @torch.jit.unused
-    def __create_jittable_class__(self, prop_kwargs, collect_trace):
+    def __create_jittable_class__(self, prop_kwargs, traced_collect):
         # Define a new base class that replaces the `propagate` method.
 
         uid = uuid1().hex
@@ -518,12 +427,15 @@ class MessagePassing(torch.nn.Module):
         init_args = re.sub(r'=(.*?)\)', ')', init_args)
 
         # `propagate` substitution.
-        prop_init = ', '.join([f'{key}={key}' for key in prop_kwargs.keys()])
         prop_types = [f'{k}: {get_type(v)}' for k, v in prop_kwargs.items()]
+        prop_tuple_def = f'class PropagateKwargs_{uid}(NamedTuple):\n'
+        prop_tuple_def += '\n'.join([' ' * 4 + x for x in prop_types])
+        prop_types = ', '.join(prop_types)
+        prop_args = ', '.join([f'{key}={key}' for key in prop_kwargs.keys()])
 
         # `__collect__` substitution.
-        collect_body = [v[1] for v in collect_trace.values()]
-        args = ['{0}={0}_out'.format(key) for key in collect_trace]
+        collect_body = traced_collect
+        args = ['{0}={0}_out'.format(key) for key in self.inspector.keys()]
         collect_body += ['return Collect_{}({})'.format(uid, ', '.join(args))]
         collect_body = '\n'.join([' ' * 8 + x for x in collect_body])
         collector_tuple_def = self.inspector.to_named_tuple(f'Collect_{uid}')
@@ -542,16 +454,15 @@ class MessagePassing(torch.nn.Module):
             clsname=self.__class__.__name__,
             init_def=init_def,
             init_args=init_args,
-            in_kwargs=', '.join(prop_types),
-            in_kwargs_types='\n'.join([' ' * 4 + a for a in prop_types]),
-            in_kwargs_init=prop_init,
+            prop_tuple_def=prop_tuple_def,
+            prop_types=prop_types,
+            prop_args=prop_args,
             collector_tuple_def=collector_tuple_def,
             collect_body=collect_body,
             msg_args=msg_args,
             aggr_args=aggr_args,
             update_args=update_args,
         )
-        print(jit_module_repr)
 
         ftemp = NamedTemporaryFile(mode='w+', encoding='utf-8', suffix='.py',
                                    delete=False)
@@ -576,12 +487,12 @@ class MessagePassing(torch.nn.Module):
             self.forward(**kwargs)
 
         prop_kwargs = self.__records__['prop_kwargs']
-        collect_trace = self.__records__['collect_trace']
+        traced_collect = self.__records__['traced_collect']
 
         self.__record_propagate__ = False
         self.__records__ = None
 
-        return self.__create_jittable_class__(prop_kwargs, collect_trace)
+        return self.__create_jittable_class__(prop_kwargs, traced_collect)
 
 
 propagate_jittable_string = """
@@ -590,8 +501,7 @@ from typing import List, Tuple, Optional, NamedTuple
 import torch
 import {module}
 
-class InKwargs_{uid}(NamedTuple):
-{in_kwargs_types}
+{prop_tuple_def}
 
 {collector_tuple_def}
 
@@ -600,13 +510,13 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
         super({clsname}Jittable_{uid}, self).__init__{init_args}
 
     def __collect__(self, edge_index, size: List[Optional[int]], mp_type: str,
-                    kwargs: InKwargs_{uid}):
+                    kwargs: PropagateKwargs_{uid}):
 {collect_body}
 
-    def propagate(self, edge_index, {in_kwargs},
+    def propagate(self, edge_index, {prop_types},
                   size: Optional[Tuple[int, int]] = None):
 
-        in_kwargs = InKwargs_{uid}({in_kwargs_init})
+        in_kwargs = PropagateKwargs_{uid}({prop_args})
 
         mp_type, the_size = self.__determine_type_and_size__(edge_index, size)
         kwargs = self.__collect__(edge_index, the_size, mp_type, in_kwargs)
