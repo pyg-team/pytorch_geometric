@@ -14,7 +14,7 @@ class AMiner(InMemoryDataset):
     Representation Learning for Heterogeneous Networks"
     <https://ericdongyx.github.io/papers/
     KDD17-dong-chawla-swami-metapath2vec.pdf>`_ paper, consisting of nodes from
-    type :obj:`"paper"`, :obj:`"author"` and :obj:`"venue"`
+    type :obj:`"paper"`, :obj:`"author"` and :obj:`"venue"`.
     Venue categories and author research interests are available as ground
     truth labels for a subset of nodes.
 

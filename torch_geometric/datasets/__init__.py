@@ -10,6 +10,8 @@ from .flickr import Flickr
 from .yelp import Yelp
 from .qm7 import QM7b
 from .qm9 import QM9
+from .zinc import ZINC
+from .molecule_net import MoleculeNet
 from .entities import Entities
 from .ged_dataset import GEDDataset
 from .mnist_superpixels import MNISTSuperpixels
@@ -49,6 +51,8 @@ __all__ = [
     'Yelp',
     'QM7b',
     'QM9',
+    'ZINC',
+    'MoleculeNet',
     'Entities',
     'GEDDataset',
     'MNISTSuperpixels',

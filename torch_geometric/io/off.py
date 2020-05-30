@@ -1,11 +1,9 @@
 import re
 
 import torch
-from torch._tensor_str import PRINT_OPTS
+from torch._tensor_str import PRINT_OPTS, _tensor_str
 from torch_geometric.io import parse_txt_array
 from torch_geometric.data import Data
-
-REGEX = r'[\[\]\(\),]|tensor|(\s)\1{2,}'
 
 
 def parse_off(src):
@@ -29,7 +27,7 @@ def parse_off(src):
 
 
 def face_to_tri(face):
-    face = [[int(x) for x in line.strip().split(' ')] for line in face]
+    face = [[int(x) for x in line.strip().split()] for line in face]
 
     triangle = torch.tensor([line[1:] for line in face if line[0] == 3])
     triangle = triangle.to(torch.int64)
@@ -67,16 +65,24 @@ def write_off(data, path):
     """
     num_nodes, num_faces = data.pos.size(0), data.face.size(1)
 
+    pos = data.pos.to(torch.float)
     face = data.face.t()
     num_vertices = torch.full((num_faces, 1), face.size(1), dtype=torch.long)
     face = torch.cat([num_vertices, face], dim=-1)
 
     threshold = PRINT_OPTS.threshold
     torch.set_printoptions(threshold=float('inf'))
+
+    pos_repr = re.sub(',', '', _tensor_str(pos, indent=0))
+    pos_repr = '\n'.join([x[2:-1] for x in pos_repr.split('\n')])[:-1]
+
+    face_repr = re.sub(',', '', _tensor_str(face, indent=0))
+    face_repr = '\n'.join([x[2:-1] for x in face_repr.split('\n')])[:-1]
+
     with open(path, 'w') as f:
         f.write('OFF\n{} {} 0\n'.format(num_nodes, num_faces))
-        f.write(re.sub(REGEX, r'', data.pos.__repr__()))
+        f.write(pos_repr)
         f.write('\n')
-        f.write(re.sub(REGEX, r'', face.__repr__()))
+        f.write(face_repr)
         f.write('\n')
     torch.set_printoptions(threshold=threshold)
