@@ -1,6 +1,5 @@
 import re
 import inspect
-from collections import OrderedDict
 from uuid import uuid1
 from tempfile import NamedTemporaryFile
 from importlib.util import spec_from_file_location, module_from_spec
@@ -61,7 +60,7 @@ class MessagePassing(torch.nn.Module):
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
-        # self.inspector.inspect(self.message_and_aggregate)
+        self.inspector.inspect(self.message_and_aggregate)
         self.inspector.inspect(self.update, pop_first=True)
 
         self.__user_args__ = self.inspector.keys().difference(special_args)
@@ -193,7 +192,6 @@ class MessagePassing(torch.nn.Module):
             out['edge_index_j'] = edge_index[j]
             out['edge_index_i'] = edge_index[i]
             out['index'] = out['edge_index_i']
-            out['ptr'] = None
         elif mp_type == 'adj_t':
             out['adj_t'] = edge_index
             out['edge_index_i'] = edge_index.storage.row()
@@ -265,6 +263,7 @@ class MessagePassing(torch.nn.Module):
             lines += ['edge_index_j_out = edge_index[j]']
             lines += ['edge_index_i_out = edge_index[i]']
             lines += ['ptr_out: Optional[torch.Tensor] = None']
+            lines += ['adj_t_out: Optional[SparseTensor] = None']
         elif mp_type == 'adj_t':
             lines += ['adj_t_out = edge_index']
             lines += ['edge_index_i_out = edge_index.storage.row()']
@@ -280,15 +279,15 @@ class MessagePassing(torch.nn.Module):
 
         return lines
 
-    def __distribute__(self, args, kwargs):
+    def __distribute__(self, params, kwargs):
         out = {}
-        for arg in args:
-            data = kwargs.get(arg, inspect.Parameter.empty)
-            # if data is inspect.Parameter.empty:
-            #     if param.default is inspect.Parameter.empty:
-            #         raise TypeError(f'Required parameter {key} is empty.')
-            #     data = param.default
-            out[arg] = data
+        for key, param in params.items():
+            data = kwargs.get(key, inspect.Parameter.empty)
+            if data is inspect.Parameter.empty:
+                if param.default is inspect.Parameter.empty:
+                    raise TypeError(f'Required parameter {key} is empty.')
+                data = param.default
+            out[key] = data
         return out
 
     def propagate(self, edge_index, size: Optional[Tuple[int, int]] = None,
@@ -330,7 +329,7 @@ class MessagePassing(torch.nn.Module):
         # Try to run `message_and_aggregate` first and see if it succeeds:
         if mp_type == 'adj_t' and self.__fuse__ and not self.__explain__:
             msg_aggr_kwargs = self.__distribute__(
-                self.inspector.keys(['message_and_aggregate']), coll_dict)
+                self.inspector.params['message_and_aggregate'], coll_dict)
 
             if not self.__record_propagate__:
                 out = self.message_and_aggregate(**msg_aggr_kwargs)
@@ -339,7 +338,7 @@ class MessagePassing(torch.nn.Module):
 
         # Otherwise, run both functions in separation.
         if mp_type == 'edge_index' or not self.__fuse__ or self.__explain__:
-            msg_kwargs = self.__distribute__(self.inspector.keys(['message']),
+            msg_kwargs = self.__distribute__(self.inspector.params['message'],
                                              coll_dict)
             out = self.message(**msg_kwargs)
 
@@ -355,10 +354,10 @@ class MessagePassing(torch.nn.Module):
                 out = out * edge_mask.view(-1, 1)
 
             aggr_kwargs = self.__distribute__(
-                self.inspector.keys(['aggregate']), coll_dict)
+                self.inspector.params['aggregate'], coll_dict)
             out = self.aggregate(out, **aggr_kwargs)
 
-        update_kwargs = self.__distribute__(self.inspector.keys(['update']),
+        update_kwargs = self.__distribute__(self.inspector.params['update'],
                                             coll_dict)
         out = self.update(out, **update_kwargs)
 
@@ -400,7 +399,8 @@ class MessagePassing(torch.nn.Module):
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
 
-    def message_and_aggregate(self, adj_t: SparseTensor) -> torch.Tensor:
+    def message_and_aggregate(self,
+                              adj_t: Optional[SparseTensor]) -> torch.Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
         single function.
         If applicable, this saves both time and memory since messages do not
@@ -445,8 +445,6 @@ class MessagePassing(torch.nn.Module):
         collect_body += ['return Collect_{}({})'.format(uid, ', '.join(args))]
         collect_body = '\n'.join([' ' * 8 + x for x in collect_body])
         collector_tuple_def = self.inspector.to_named_tuple(f'Collect_{uid}')
-        print()
-        print(collect_body)
 
         # `message`, `aggregate` and `update` header substitutions.
         def render_args(args):
@@ -507,6 +505,8 @@ propagate_jittable_string = """
 from typing import List, Tuple, Optional, NamedTuple
 
 import torch
+import torch_sparse
+from torch_sparse import SparseTensor
 import {module}
 
 {prop_tuple_def}
