@@ -14,7 +14,7 @@ from torch_geometric.utils import train_test_split_edges
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-dataset = Planetoid(path, dataset, T.NormalizeFeatures())
+dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset.get(0)
 
 data.train_mask = data.val_mask = data.test_mask = None
