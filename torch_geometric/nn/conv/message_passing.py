@@ -234,7 +234,7 @@ class MessagePassing(torch.nn.Module):
                     assert len(data) == 2
                     lines += [('self.__set_size__(size, 1 - idx, '
                                'data[1 - idx])')]
-                    lines += [f'data = data[idx]']
+                    lines += ['data = data[idx]']
                     data = data[idx]
 
                 if not isinstance(data, torch.Tensor):
