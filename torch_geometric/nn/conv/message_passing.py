@@ -209,14 +209,20 @@ class MessagePassing(torch.nn.Module):
         return out
 
     def __trace_collect__(self, edge_index, size, mp_type, kwargs):
+        lines = []
+
         i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
         ij = {'_i': i, '_j': j}
 
-        lines = []
+        lines += [('i, j = (0, 1) if self.flow == "target_to_source"'
+                   ' else (1, 0)')]
+        lines += ['ij = {"_i": i, "_j": j}']
+
         for arg in self.__user_args__:
             if arg[-2:] not in ij.keys():
                 lines += [f'{arg}_out = kwargs.{arg}']
             else:
+                lines += [f'idx = ij["{arg[-2:]}"]']
                 idx = ij[arg[-2:]]
                 data = kwargs.get(arg[:-2], inspect.Parameter.empty)
 
@@ -228,20 +234,20 @@ class MessagePassing(torch.nn.Module):
 
                 if isinstance(data, (tuple, list)):
                     assert len(data) == 2
-                    lines += [(f'self.__set_size__(size, {1 - idx}, '
-                               f'data[{1 - idx}])')]
-                    lines += [f'data = data[{idx}]']
+                    lines += [('self.__set_size__(size, 1 - idx, '
+                               'data[1 - idx])')]
+                    lines += [f'data = data[idx]']
                     data = data[idx]
 
                 if not isinstance(data, torch.Tensor):
                     lines += [f'{arg}_out = data']
                     continue
 
-                lines += [f'self.__set_size__(size, {idx}, data)']
+                lines += ['self.__set_size__(size, idx, data)']
 
                 if mp_type == 'edge_index':
                     lines += [(f'{arg}_out = data.index_select('
-                               f'self.node_dim, edge_index[{idx}])')]
+                               f'self.node_dim, edge_index[idx])')]
                 elif mp_type == 'adj_t' and idx == 1:
                     lines += ['rowptr = edge_index.storage.rowptr()']
                     lines += [('rowptr = unsqueeze(rowptr, dim=0, '
@@ -256,8 +262,8 @@ class MessagePassing(torch.nn.Module):
         lines += ['size[1] = size[0] if size[1] is None else size[1]']
 
         if mp_type == 'edge_index':
-            lines += [f'edge_index_j_out = edge_index[{j}]']
-            lines += [f'edge_index_i_out = edge_index[{i}]']
+            lines += ['edge_index_j_out = edge_index[j]']
+            lines += ['edge_index_i_out = edge_index[i]']
             lines += ['ptr_out: Optional[torch.Tensor] = None']
         elif mp_type == 'adj_t':
             lines += ['adj_t_out = edge_index']
@@ -268,8 +274,8 @@ class MessagePassing(torch.nn.Module):
 
         lines += ['index_out = edge_index_i_out']
 
-        lines += [f'size_j_out = size[{j}]']
-        lines += [f'size_i_out = size[{i}]']
+        lines += ['size_j_out = size[j]']
+        lines += ['size_i_out = size[i]']
         lines += ['dim_size_out = size_i_out']
 
         return lines
@@ -439,6 +445,8 @@ class MessagePassing(torch.nn.Module):
         collect_body += ['return Collect_{}({})'.format(uid, ', '.join(args))]
         collect_body = '\n'.join([' ' * 8 + x for x in collect_body])
         collector_tuple_def = self.inspector.to_named_tuple(f'Collect_{uid}')
+        print()
+        print(collect_body)
 
         # `message`, `aggregate` and `update` header substitutions.
         def render_args(args):
