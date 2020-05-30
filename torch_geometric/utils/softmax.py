@@ -1,9 +1,13 @@
+from typing import Optional
+
+import torch
 from torch_scatter import scatter_max, scatter_add
 
 from .num_nodes import maybe_num_nodes
 
 
-def softmax(src, index, num_nodes=None):
+def softmax(src: torch.Tensor, index: torch.Tensor,
+            num_nodes: Optional[int] = None) -> torch.Tensor:
     r"""Computes a sparsely evaluated softmax.
     Given a value tensor :attr:`src`, this function first groups the values
     along the first dimension based on the indices specified in :attr:`index`,
@@ -22,7 +26,7 @@ def softmax(src, index, num_nodes=None):
 
     out = src - scatter_max(src, index, dim=0, dim_size=num_nodes)[0][index]
     out = out.exp()
-    out = out / (
-        scatter_add(out, index, dim=0, dim_size=num_nodes)[index] + 1e-16)
+    out = out / (scatter_add(out, index, dim=0, dim_size=num_nodes)[index] +
+                 1e-16)
 
     return out

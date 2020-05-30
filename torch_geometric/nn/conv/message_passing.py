@@ -77,7 +77,7 @@ class MessagePassing(torch.nn.Module):
         self.__records__ = None
 
     @torch.jit._overload_method  # noqa: F811
-    def __determine_type_and_size__(
+    def __determine_type_and_size__(  # noqa: F811
         self,
         edge_index: torch.Tensor,
         size: Optional[Tuple[int, int]],
@@ -85,7 +85,7 @@ class MessagePassing(torch.nn.Module):
         pass
 
     @torch.jit._overload_method  # noqa: F811
-    def __determine_type_and_size__(
+    def __determine_type_and_size__(  # noqa: F811
         self,
         edge_index: SparseTensor,
         size: Optional[Tuple[int, int]],
@@ -326,6 +326,8 @@ class MessagePassing(torch.nn.Module):
         # We collect all arguments used for message passing in `kwargs`.
         coll_dict = self.__collect__(edge_index, size, mp_type, kwargs)
 
+        out: torch.Tensor = torch.tensor(0.)
+
         # Try to run `message_and_aggregate` first and see if it succeeds:
         if mp_type == 'adj_t' and self.__fuse__ and not self.__explain__:
             msg_aggr_kwargs = self.__distribute__(
@@ -337,7 +339,7 @@ class MessagePassing(torch.nn.Module):
                     self.__fuse__ = False
 
         # Otherwise, run both functions in separation.
-        if mp_type == 'edge_index' or not self.__fuse__ or self.__explain__:
+        elif mp_type == 'edge_index' or not self.__fuse__ or self.__explain__:
             msg_kwargs = self.__distribute__(self.inspector.params['message'],
                                              coll_dict)
             out = self.message(**msg_kwargs)
@@ -434,7 +436,7 @@ class MessagePassing(torch.nn.Module):
 
         # `propagate` substitution.
         prop_types = [f'{k}: {get_type(v)}' for k, v in prop_kwargs.items()]
-        prop_tuple_def = f'class PropagateKwargs_{uid}(NamedTuple):\n'
+        prop_tuple_def = f'class Propagate_{uid}(NamedTuple):\n'
         prop_tuple_def += '\n'.join([' ' * 4 + x for x in prop_types])
         prop_types = ', '.join(prop_types)
         prop_args = ', '.join([f'{key}={key}' for key in prop_kwargs.keys()])
@@ -492,6 +494,9 @@ class MessagePassing(torch.nn.Module):
         with torch.no_grad():
             self.forward(**kwargs)
 
+        if self.__records__ is None:
+            return self.__class__
+
         prop_kwargs = self.__records__['prop_kwargs']
         traced_collect = self.__records__['traced_collect']
 
@@ -518,13 +523,13 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
         super({clsname}Jittable_{uid}, self).__init__{init_args}
 
     def __collect__(self, edge_index, size: List[Optional[int]], mp_type: str,
-                    kwargs: PropagateKwargs_{uid}):
+                    kwargs: Propagate_{uid}):
 {collect_body}
 
     def propagate(self, edge_index, {prop_types},
                   size: Optional[Tuple[int, int]] = None):
 
-        in_kwargs = PropagateKwargs_{uid}({prop_args})
+        in_kwargs = Propagate_{uid}({prop_args})
 
         mp_type, the_size = self.__determine_type_and_size__(edge_index, size)
         kwargs = self.__collect__(edge_index, the_size, mp_type, in_kwargs)
