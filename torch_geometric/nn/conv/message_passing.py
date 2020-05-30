@@ -66,7 +66,7 @@ class MessagePassing(torch.nn.Module):
         self.__user_args__ = self.inspector.keys().difference(special_args)
 
         # Support for "fused" message passing.
-        self.__fuse__ = True
+        self.__fuse__ = self.inspector.implements('message_and_aggregate')
 
         # Support for GNNExplainer.
         self.__explain__ = False
@@ -326,17 +326,10 @@ class MessagePassing(torch.nn.Module):
         # We collect all arguments used for message passing in `kwargs`.
         coll_dict = self.__collect__(edge_index, size, mp_type, kwargs)
 
-        out: torch.Tensor = torch.tensor(0.)
-
-        # Try to run `message_and_aggregate` first and see if it succeeds:
         if mp_type == 'adj_t' and self.__fuse__ and not self.__explain__:
             msg_aggr_kwargs = self.__distribute__(
                 self.inspector.params['message_and_aggregate'], coll_dict)
-
-            if not self.__record_propagate__:
-                out = self.message_and_aggregate(**msg_aggr_kwargs)
-                if out == NotImplemented:
-                    self.__fuse__ = False
+            out = self.message_and_aggregate(**msg_aggr_kwargs)
 
         # Otherwise, run both functions in separation.
         elif mp_type == 'edge_index' or not self.__fuse__ or self.__explain__:
@@ -365,7 +358,11 @@ class MessagePassing(torch.nn.Module):
 
         if self.__record_propagate__:
             lines = self.__trace_collect__(edge_index, size, mp_type, kwargs)
-            self.__records__ = {'prop_kwargs': kwargs, 'traced_collect': lines}
+            self.__records__ = {
+                'mp_type': type(edge_index).__name__,
+                'prop_kwargs': kwargs,
+                'traced_collect': lines,
+            }
 
         return out
 
@@ -423,7 +420,7 @@ class MessagePassing(torch.nn.Module):
         return inputs
 
     @torch.jit.unused
-    def __create_jittable_class__(self, prop_kwargs, traced_collect):
+    def __create_jittable_class__(self, mp_type, prop_kwargs, traced_collect):
         # Define a new base class that replaces the `propagate` method.
 
         uid = uuid1().hex
@@ -454,6 +451,8 @@ class MessagePassing(torch.nn.Module):
 
         msg_args = render_args(self.inspector.keys(['message']))
         aggr_args = render_args(self.inspector.keys(['aggregate']))
+        msg_aggr_args = render_args(
+            self.inspector.keys(['message_and_aggregate']))
         update_args = render_args(self.inspector.keys(['update']))
 
         jit_module_repr = propagate_jittable_string.format(
@@ -462,6 +461,7 @@ class MessagePassing(torch.nn.Module):
             clsname=self.__class__.__name__,
             init_def=init_def,
             init_args=init_args,
+            mp_type=mp_type,
             prop_tuple_def=prop_tuple_def,
             prop_types=prop_types,
             prop_args=prop_args,
@@ -469,6 +469,7 @@ class MessagePassing(torch.nn.Module):
             collect_body=collect_body,
             msg_args=msg_args,
             aggr_args=aggr_args,
+            msg_aggr_args=msg_aggr_args,
             update_args=update_args,
         )
 
@@ -497,19 +498,22 @@ class MessagePassing(torch.nn.Module):
         if self.__records__ is None:
             return self.__class__
 
+        mp_type = self.__records__['mp_type']
         prop_kwargs = self.__records__['prop_kwargs']
         traced_collect = self.__records__['traced_collect']
 
         self.__record_propagate__ = False
         self.__records__ = None
 
-        return self.__create_jittable_class__(prop_kwargs, traced_collect)
+        return self.__create_jittable_class__(mp_type, prop_kwargs,
+                                              traced_collect)
 
 
 propagate_jittable_string = """
 from typing import List, Tuple, Optional, NamedTuple
 
 import torch
+from torch import Tensor
 import torch_sparse
 from torch_sparse import SparseTensor
 import {module}
@@ -522,11 +526,12 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
     def __init__{init_def}:
         super({clsname}Jittable_{uid}, self).__init__{init_args}
 
-    def __collect__(self, edge_index, size: List[Optional[int]], mp_type: str,
+    def __collect__(self, edge_index: {mp_type},
+                    size: List[Optional[int]], mp_type: str,
                     kwargs: Propagate_{uid}):
 {collect_body}
 
-    def propagate(self, edge_index, {prop_types},
+    def propagate(self, edge_index: {mp_type}, {prop_types},
                   size: Optional[Tuple[int, int]] = None):
 
         in_kwargs = Propagate_{uid}({prop_args})
@@ -536,6 +541,5 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
 
         out = self.message({msg_args})
         out = self.aggregate(out, {aggr_args})
-        out = self.update(out, {update_args})
-        return out
+        return self.update(out, {update_args})
 """

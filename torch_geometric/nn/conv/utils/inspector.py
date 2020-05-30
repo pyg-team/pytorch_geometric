@@ -1,19 +1,7 @@
+import re
 import inspect
 from collections import OrderedDict
 from typing import Dict, List, Any, Optional, Callable, Set
-
-import re
-
-
-def params2namedtuple(name, parameters):
-    params: str = []
-    for param in parameters.values():
-        # Replace "Union[..., NoneType] by Optional[...].
-        param = re.sub(r"Union\[(.*), NoneType\]", r"Optional[\1]", str(param))
-        params.append('    ' + param)
-
-    params = '\n'.join(params)
-    return f'class {name}(NamedTuple):\n{params}'
 
 
 class Inspector(object):
@@ -34,6 +22,9 @@ class Inspector(object):
         for func in func_names or list(self.params.keys()):
             keys += self.params[func].keys()
         return set(keys)
+
+    def implements(self, func_name: str) -> bool:
+        return func_name in self.base_class.__class__.__dict__.keys()
 
     def to_named_tuple(self, name, func_names: Optional[List[str]] = None):
         used: set = set()
