@@ -176,20 +176,42 @@ def test_my_double_propagate_conv():
     assert jitted(x[1], edge_index).tolist() == out.tolist()
 
 
-class MyMessageAndAggregateConv(MessagePassing):
+class MyMessageAndAggregateConv1(MessagePassing):
     def __init__(self):
-        super(MyMessageAndAggregateConv, self).__init__(aggr='add')
+        super(MyMessageAndAggregateConv1, self).__init__()
+
+    def forward(self, x, edge_index):
+        return self.propagate(edge_index, x=x)
+
+    def message_and_aggregate(self, adj_t: SparseTensor, x):
+        assert adj_t is not None
+        return spmm(adj_t, x.view(-1, 1)).view(-1)
+
+
+class MyMessageAndAggregateConv2(MessagePassing):
+    def __init__(self):
+        super(MyMessageAndAggregateConv2, self).__init__()
 
     def forward(self, x, edge_index: SparseTensor):
         return self.propagate(edge_index, x=x)
 
-    def message_and_aggregate(self, adj_t: Optional[SparseTensor], x):
+    def message_and_aggregate(self, adj_t: SparseTensor, x):
         assert adj_t is not None
         return spmm(adj_t, x.view(-1, 1)).view(-1)
 
 
 def test_my_message_and_aggregate_conv():
-    conv = MyMessageAndAggregateConv()
+    conv = MyMessageAndAggregateConv1()
+
+    out = conv(x[1], edge_index)
+    assert out.tolist() == [3.0, 1.0, 3.0]
+    assert conv(x[0], adj_t).tolist() == out.tolist()
+
+    jitted = conv.jittable(x=x[1], edge_index=edge_index)()
+    jitted = torch.jit.script(jitted)
+    assert jitted(x[1], edge_index).tolist() == [3.0, 1.0, 3.0]
+
+    conv = MyMessageAndAggregateConv2()
 
     out = conv(x[1], edge_index)
     assert out.tolist() == [3.0, 1.0, 3.0]

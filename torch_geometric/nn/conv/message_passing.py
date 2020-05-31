@@ -14,8 +14,8 @@ from .utils.helpers import unsqueeze
 from .utils.inspector import Inspector, get_type
 
 special_args = set([
-    'adj_t', 'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr',
-    'index', 'dim_size'
+    'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr', 'index',
+    'dim_size'
 ])
 
 
@@ -60,14 +60,13 @@ class MessagePassing(torch.nn.Module):
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)
-        self.inspector.inspect(self.message_and_aggregate)
+        self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
 
         self.__user_args__ = self.inspector.keys().difference(special_args)
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
-        print(self.fuse)
 
         # Support for GNNExplainer.
         self.__explain__ = False
@@ -171,7 +170,6 @@ class MessagePassing(torch.nn.Module):
             out['edge_index_i'] = edge_index[i]
             out['index'] = out['edge_index_i']
         elif mp_type == 'adj_t':
-            out['adj_t'] = edge_index
             out['edge_index_i'] = edge_index.storage.row()
             out['edge_index_j'] = edge_index.storage.col()
             out['index'] = edge_index.storage.row()
@@ -241,16 +239,13 @@ class MessagePassing(torch.nn.Module):
             lines += ['edge_index_j_out = edge_index[j]']
             lines += ['edge_index_i_out = edge_index[i]']
             lines += ['ptr_out: Optional[torch.Tensor] = None']
-            lines += ['adj_t_out: Optional[SparseTensor] = None']
         elif mp_type == 'adj_t':
-            lines += ['adj_t_out = edge_index']
             lines += ['edge_index_i_out = edge_index.storage.row()']
             lines += ['edge_index_j_out = edge_index.storage.col()']
             lines += ['ptr_out = edge_index.storage.rowptr()']
             lines += ['edge_attr_out = edge_index.storage.value()']
 
         lines += ['index_out = edge_index_i_out']
-
         lines += ['size_j_out = size[j]']
         lines += ['size_i_out = size[i]']
         lines += ['dim_size_out = size_i_out']
@@ -307,7 +302,7 @@ class MessagePassing(torch.nn.Module):
         if mp_type == 'adj_t' and self.fuse and not self.__explain__:
             msg_aggr_kwargs = self.__distribute__(
                 self.inspector.params['message_and_aggregate'], coll_dict)
-            out = self.message_and_aggregate(**msg_aggr_kwargs)
+            out = self.message_and_aggregate(edge_index, **msg_aggr_kwargs)
 
         # Otherwise, run both functions in separation.
         elif mp_type == 'edge_index' or not self.fuse or self.__explain__:
@@ -376,8 +371,7 @@ class MessagePassing(torch.nn.Module):
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
 
-    def message_and_aggregate(self,
-                              adj_t: Optional[SparseTensor]) -> torch.Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor) -> torch.Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
         single function.
         If applicable, this saves both time and memory since messages do not
@@ -538,11 +532,12 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
         mp_type, the_size = self.__determine_type_and_size__(edge_index, size)
         kwargs = self.__collect__(edge_index, the_size, mp_type, in_kwargs)
 
-        if isinstance(edge_index, SparseTensor) and self.fuse:
-            out = self.message_and_aggregate({msg_aggr_args})
-            return self.update(out, {update_args})
-        else:
-            out = self.message({msg_args})
-            out = self.aggregate(out, {aggr_args})
-            return self.update(out, {update_args})
+        if self.fuse:
+            if isinstance(edge_index, SparseTensor):
+                out = self.message_and_aggregate(edge_index, {msg_aggr_args})
+                return self.update(out, {update_args})
+
+        out = self.message({msg_args})
+        out = self.aggregate(out, {aggr_args})
+        return self.update(out, {update_args})
 """
