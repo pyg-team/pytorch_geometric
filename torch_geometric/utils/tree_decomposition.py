@@ -125,6 +125,7 @@ def tree_decomposition(mol, return_vocab=False):
     atom2clique = torch.stack([row, col], dim=0).to(torch.long)
 
     if return_vocab:
-        return edge_index, atom2clique, len(cliques), torch.tensor(xs)
+        vocab = torch.tensor(xs, dtype=torch.long)
+        return edge_index, atom2clique, len(cliques), vocab
     else:
         return edge_index, atom2clique, len(cliques)
