@@ -192,9 +192,9 @@ def test_my_message_and_aggregate_conv():
     out = conv(x[0], adj_t)
     assert out.tolist() == [3.0, 1.0, 3.0]
 
-    with pytest.raises(RuntimeError):
-        jitted = conv.jittable(x=x[0], adj_t=adj_t)()
-        jitted = torch.jit.script(jitted)
+    jitted = conv.jittable(x=x[0], adj_t=adj_t)()
+    jitted = torch.jit.script(jitted)
+    assert jitted(x[0], adj_t).tolist() == [3.0, 1.0, 3.0]
 
 
 class MyCopyConv(MessagePassing):

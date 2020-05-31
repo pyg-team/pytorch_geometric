@@ -76,59 +76,36 @@ class MessagePassing(torch.nn.Module):
         self.__record_propagate__ = False
         self.__records__ = None
 
-    @torch.jit._overload_method  # noqa: F811
-    def __determine_type_and_size__(  # noqa: F811
-        self,
-        edge_index: torch.Tensor,
-        size: Optional[Tuple[int, int]],
-    ) -> Tuple[str, List[Optional[int]]]:
-        pass
-
-    @torch.jit._overload_method  # noqa: F811
-    def __determine_type_and_size__(  # noqa: F811
-        self,
-        edge_index: SparseTensor,
-        size: Optional[Tuple[int, int]],
-    ) -> Tuple[str, List[Optional[int]]]:
-        pass
-
-    def __determine_type_and_size__(  # noqa: F811
-        self,
-        edge_index,
-        size: Optional[Tuple[int, int]],
-    ) -> Tuple[str, List[Optional[int]]]:
-
-        mp_type: str = ''
+    def __determine_type_and_size__(self, edge_index, size):
+        the_size: List[Optional[int]] = [None, None]
 
         if isinstance(edge_index, torch.Tensor):
             assert edge_index.dtype == torch.long
             assert edge_index.dim() == 2
             assert edge_index.size(0) == 2
-            mp_type = 'edge_index'
+            if size is not None:
+                the_size[0] = size[0]
+                the_size[1] = size[1]
+            return 'edge_index', the_size
+
         elif isinstance(edge_index, SparseTensor):
-            mp_type = 'adj_t'
+            if self.flow == 'target_to_source':
+                raise ValueError(
+                    ('Flow direction "target_to_source" is invalid for '
+                     'message propagation via `torch_sparse.SparseTensor`. If '
+                     'you  really want to make use of a reverse message '
+                     'passing flow, pass in the transposed sparse tensor to '
+                     'the message passing module, e.g., `adj.t()`.'))
+
+            the_size[0] = edge_index.sparse_size(1)
+            the_size[1] = edge_index.sparse_size(0)
+            return 'adj_t', the_size
+
         else:
             raise ValueError(
                 ('`MessagePassing.propagate` only supports `torch.LongTensor` '
                  'of shape `[2, num_messages]` or `torch_sparse.SparseTensor` '
                  'for argument :obj:`edge_index`.'))
-
-        if mp_type == 'adj_t' and self.flow == 'target_to_source':
-            raise ValueError(
-                ('Flow direction "target_to_source" is invalid for message '
-                 'propagation based on `torch_sparse.SparseTensor`. If you '
-                 'really want to make use of a reverse message passing flow, '
-                 'pass in the transposed sparse tensor to the message passing '
-                 'module, e.g., `adj.t()`.'))
-
-        size_out: List[Optional[int]] = [None, None]
-        if mp_type == 'edge_index' and size is not None:
-            size_out[0], size_out[1] = size[0], size[1]
-        elif isinstance(edge_index, SparseTensor):
-            size_out[0] = edge_index.sparse_size(1)
-            size_out[1] = edge_index.sparse_size(0)
-
-        return mp_type, size_out
 
     def __set_size__(self, size: List[Optional[int]], idx: int,
                      tensor: Optional[torch.Tensor]):
@@ -455,6 +432,9 @@ class MessagePassing(torch.nn.Module):
             self.inspector.keys(['message_and_aggregate']))
         update_args = render_args(self.inspector.keys(['update']))
 
+        # Get `__determine_type_and_size__` source code to allow overloads.
+        determine = inspect.getsource(self.__determine_type_and_size__)
+
         jit_module_repr = propagate_jittable_string.format(
             uid=uid,
             module=self.__class__.__module__,
@@ -471,6 +451,7 @@ class MessagePassing(torch.nn.Module):
             aggr_args=aggr_args,
             msg_aggr_args=msg_aggr_args,
             update_args=update_args,
+            determine_type_and_size=determine,
         )
 
         ftemp = NamedTemporaryFile(mode='w+', encoding='utf-8', suffix='.py',
@@ -525,6 +506,24 @@ import {module}
 class {clsname}Jittable_{uid}({module}.{clsname}):
     def __init__{init_def}:
         super({clsname}Jittable_{uid}, self).__init__{init_args}
+
+    @torch.jit._overload_method
+    def __determine_type_and_size__(
+        self,
+        edge_index: torch.Tensor,
+        size: Optional[Tuple[int, int]],
+    ) -> Tuple[str, List[Optional[int]]]:
+        pass
+
+    @torch.jit._overload_method
+    def __determine_type_and_size__(
+        self,
+        edge_index: SparseTensor,
+        size: Optional[Tuple[int, int]],
+    ) -> Tuple[str, List[Optional[int]]]:
+        pass
+
+{determine_type_and_size}
 
     def __collect__(self, edge_index: {mp_type},
                     size: List[Optional[int]], mp_type: str,
