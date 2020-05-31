@@ -26,6 +26,7 @@ from .x_conv import XConv
 from .ppf_conv import PPFConv
 from .feast_conv import FeaStConv
 from .hypergraph_conv import HypergraphConv
+from .le_conv import LEConv
 
 __all__ = [
     'MessagePassing',
@@ -59,4 +60,5 @@ __all__ = [
     'PPFConv',
     'FeaStConv',
     'HypergraphConv',
+    'LEConv',
 ]

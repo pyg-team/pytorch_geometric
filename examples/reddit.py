@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 from torch_geometric.datasets import Reddit
-from torch_geometric.data.sampler2 import NeighborSampler
+from torch_geometric.data import NeighborSampler
 from torch_geometric.nn import SAGEConv
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
@@ -45,24 +45,20 @@ class SAGE(torch.nn.Module):
         return x.log_softmax(dim=-1)
 
     def inference(self, x_all):
-        model.eval()
-
         pbar = tqdm(total=x_all.size(0) * self.num_layers)
         pbar.set_description('Evaluating')
 
         # Compute representations of nodes layer by layer, using *all*
         # available edges. This leads to faster computation in contrast to
         # immediately computing the final representations of each batch.
-        total_edges = 0
         for i in range(self.num_layers):
             xs = []
             for batch_size, n_id, adj in subgraph_loader:
                 edge_index, _, size = adj.to(device)
-                total_edges += edge_index.size(1)
                 x = x_all[n_id].to(device)
                 x_target = x[:size[1]]
                 x = self.convs[i]((x, x_target), edge_index)
-                if i - 1 < self.num_layers:
+                if i != self.num_layers - 1:
                     x = F.relu(x)
                 xs.append(x.cpu())
 
@@ -78,7 +74,7 @@ class SAGE(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = SAGE(dataset.num_features, 256, dataset.num_classes)
 model = model.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 x = data.x.to(device)
 y = data.y.squeeze().to(device)
@@ -115,6 +111,8 @@ def train(epoch):
 
 @torch.no_grad()
 def test():
+    model.eval()
+
     out = model.inference(x)
 
     y_true = y.cpu().unsqueeze(-1)

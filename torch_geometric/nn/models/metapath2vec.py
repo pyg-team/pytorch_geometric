@@ -1,5 +1,6 @@
 import torch
 from torch.nn import Embedding
+from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
 from sklearn.linear_model import LogisticRegression
 
@@ -59,13 +60,17 @@ class MetaPath2Vec(torch.nn.Module):
         adj_dict = {}
         for keys, edge_index in edge_index_dict.items():
             sizes = (num_nodes_dict[keys[0]], num_nodes_dict[keys[-1]])
-            adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=sizes)
+            row, col = edge_index
+            adj = SparseTensor(row=row, col=col, sparse_sizes=sizes)
+            adj = adj.to('cpu')
             adj_dict[keys] = adj
+
+        assert metapath[0][0] == metapath[-1][-1]
+        assert walk_length >= context_size
 
         self.adj_dict = adj_dict
         self.embedding_dim = embedding_dim
         self.metapath = metapath
-        assert metapath[0][0] == metapath[-1][-1]
         self.walk_length = walk_length
         self.context_size = context_size
         self.walks_per_node = walks_per_node
@@ -87,7 +92,7 @@ class MetaPath2Vec(torch.nn.Module):
                    ] * int((walk_length / len(metapath)) + 1)
         offset = offset[:walk_length + 1]
         assert len(offset) == walk_length + 1
-        self.register_buffer('offset', torch.tensor(offset))
+        self.offset = torch.tensor(offset)
 
         self.embedding = Embedding(count, embedding_dim, sparse=sparse)
 
@@ -96,26 +101,29 @@ class MetaPath2Vec(torch.nn.Module):
     def reset_parameters(self):
         self.embedding.reset_parameters()
 
-    def forward(self, node_type, subset=None):
+    def forward(self, node_type, batch=None):
         """Returns the embeddings for the nodes in :obj:`subset` of type
         :obj:`node_type`."""
         emb = self.embedding.weight[self.start[node_type]:self.end[node_type]]
-        return emb if subset is None else emb[subset]
+        return emb if batch is None else emb[batch]
 
-    def __positive_sampling__(self, subset):
-        device = self.embedding.weight.device
+    def loader(self, **kwargs):
+        return DataLoader(range(self.num_nodes_dict[self.metapath[0][0]]),
+                          collate_fn=self.sample, **kwargs)
 
-        subset = subset.repeat(self.walks_per_node)
-        subset = subset.to(self.adj_dict[self.metapath[0]].device())
+    def pos_sample(self, batch):
+        # device = self.embedding.weight.device
 
-        rws = [subset]
+        batch = batch.repeat(self.walks_per_node)
+
+        rws = [batch]
         for i in range(self.walk_length):
             keys = self.metapath[i % len(self.metapath)]
             adj = self.adj_dict[keys]
-            subset = adj.sample(num_neighbors=1, subset=subset).squeeze()
-            rws.append(subset)
+            batch = adj.sample(num_neighbors=1, subset=batch).squeeze()
+            rws.append(batch)
 
-        rw = torch.stack(rws, dim=-1).to(device)
+        rw = torch.stack(rws, dim=-1)
         rw.add_(self.offset.view(1, -1))
 
         walks = []
@@ -124,20 +132,17 @@ class MetaPath2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
-    def __negative_sampling__(self, subset):
-        device = self.embedding.weight.device
+    def neg_sample(self, batch):
+        batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
-        subset = subset.repeat(self.walks_per_node * self.num_negative_samples)
-
-        rws = [subset]
+        rws = [batch]
         for i in range(self.walk_length):
             keys = self.metapath[i % len(self.metapath)]
-            subset = torch.randint(0, self.num_nodes_dict[keys[-1]],
-                                   (subset.size(0), ), dtype=torch.long,
-                                   device=subset.device)
-            rws.append(subset)
+            batch = torch.randint(0, self.num_nodes_dict[keys[-1]],
+                                  (batch.size(0), ), dtype=torch.long)
+            rws.append(batch)
 
-        rw = torch.stack(rws, dim=-1).to(device)
+        rw = torch.stack(rws, dim=-1)
         rw.add_(self.offset.view(1, -1))
 
         walks = []
@@ -146,25 +151,31 @@ class MetaPath2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
-    def loss(self, subset):
-        r"""Computes the loss for the nodes in :obj:`subset` with negative
-        sampling."""
-        walk = self.__positive_sampling__(subset)
-        start, rest = walk[:, 0], walk[:, 1:].contiguous()
+    def sample(self, batch):
+        if not isinstance(batch, torch.Tensor):
+            batch = torch.tensor(batch)
+        return self.pos_sample(batch), self.neg_sample(batch)
 
-        h_start = self.embedding(start).view(walk.size(0), 1,
+    def loss(self, pos_rw, neg_rw):
+        r"""Computes the loss given positive and negative random walks."""
+
+        # Positive loss.
+        start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
+
+        h_start = self.embedding(start).view(pos_rw.size(0), 1,
                                              self.embedding_dim)
-        h_rest = self.embedding(rest.view(-1)).view(walk.size(0), rest.size(1),
+        h_rest = self.embedding(rest.view(-1)).view(pos_rw.size(0), -1,
                                                     self.embedding_dim)
+
         out = (h_start * h_rest).sum(dim=-1).view(-1)
         pos_loss = -torch.log(torch.sigmoid(out) + EPS).mean()
 
-        walk = self.__negative_sampling__(subset)
-        start, rest = walk[:, 0], walk[:, 1:].contiguous()
+        # Negative loss.
+        start, rest = neg_rw[:, 0], neg_rw[:, 1:].contiguous()
 
-        h_start = self.embedding(start).view(walk.size(0), 1,
+        h_start = self.embedding(start).view(neg_rw.size(0), 1,
                                              self.embedding_dim)
-        h_rest = self.embedding(rest.view(-1)).view(walk.size(0), rest.size(1),
+        h_rest = self.embedding(rest.view(-1)).view(neg_rw.size(0), -1,
                                                     self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
@@ -185,4 +196,4 @@ class MetaPath2Vec(torch.nn.Module):
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__,
                                    self.embedding.weight.size(0),
-                                   self.embedding_dim)
+                                   self.embedding.weight.size(1))
