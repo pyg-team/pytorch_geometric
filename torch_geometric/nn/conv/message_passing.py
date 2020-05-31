@@ -117,7 +117,6 @@ class MessagePassing(torch.nn.Module):
         else:
             the_size = size[idx]
             assert the_size is not None
-            assert tensor is not None
             if the_size != tensor.size(self.node_dim):
                 raise ValueError((f'Encountered node tensor with size '
                                   f'{tensor.size(self.node_dim)} '
