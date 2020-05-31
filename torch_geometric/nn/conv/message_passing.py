@@ -66,7 +66,7 @@ class MessagePassing(torch.nn.Module):
         self.__user_args__ = self.inspector.keys().difference(special_args)
 
         # Support for "fused" message passing.
-        self.__fuse__ = self.inspector.implements('message_and_aggregate')
+        self.fuse = self.inspector.implements('message_and_aggregate')
 
         # Support for GNNExplainer.
         self.__explain__ = False
@@ -303,13 +303,13 @@ class MessagePassing(torch.nn.Module):
         # We collect all arguments used for message passing in `kwargs`.
         coll_dict = self.__collect__(edge_index, size, mp_type, kwargs)
 
-        if mp_type == 'adj_t' and self.__fuse__ and not self.__explain__:
+        if mp_type == 'adj_t' and self.fuse and not self.__explain__:
             msg_aggr_kwargs = self.__distribute__(
                 self.inspector.params['message_and_aggregate'], coll_dict)
             out = self.message_and_aggregate(**msg_aggr_kwargs)
 
         # Otherwise, run both functions in separation.
-        elif mp_type == 'edge_index' or not self.__fuse__ or self.__explain__:
+        elif mp_type == 'edge_index' or not self.fuse or self.__explain__:
             msg_kwargs = self.__distribute__(self.inspector.params['message'],
                                              coll_dict)
             out = self.message(**msg_kwargs)
@@ -538,7 +538,11 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
         mp_type, the_size = self.__determine_type_and_size__(edge_index, size)
         kwargs = self.__collect__(edge_index, the_size, mp_type, in_kwargs)
 
-        out = self.message({msg_args})
-        out = self.aggregate(out, {aggr_args})
-        return self.update(out, {update_args})
+        if isinstance(edge_index, SparseTensor) and self.fuse:
+            out = self.message_and_aggregate({msg_aggr_args})
+            return self.update(out, {update_args})
+        else:
+            out = self.message({msg_args})
+            out = self.aggregate(out, {aggr_args})
+            return self.update(out, {update_args})
 """

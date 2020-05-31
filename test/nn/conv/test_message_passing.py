@@ -4,6 +4,7 @@ from typing import Tuple, Optional
 
 import torch
 from torch_sparse import SparseTensor
+from torch_sparse.matmul import spmm
 from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import softmax
 
@@ -179,20 +180,22 @@ class MyMessageAndAggregateConv(MessagePassing):
     def __init__(self):
         super(MyMessageAndAggregateConv, self).__init__(aggr='add')
 
-    def forward(self, x, adj_t: SparseTensor):
-        return self.propagate(adj_t, x=x)
+    def forward(self, x, edge_index: SparseTensor):
+        return self.propagate(edge_index, x=x)
 
     def message_and_aggregate(self, adj_t: Optional[SparseTensor], x):
-        return (adj_t @ x.view(-1, 1)).view(-1)
+        assert adj_t is not None
+        return spmm(adj_t, x.view(-1, 1)).view(-1)
 
 
 def test_my_message_and_aggregate_conv():
     conv = MyMessageAndAggregateConv()
 
-    out = conv(x[0], adj_t)
+    out = conv(x[1], edge_index)
     assert out.tolist() == [3.0, 1.0, 3.0]
+    assert conv(x[0], adj_t).tolist() == out.tolist()
 
-    jitted = conv.jittable(x=x[0], adj_t=adj_t)()
+    jitted = conv.jittable(x=x[0], edge_index=adj_t)()
     jitted = torch.jit.script(jitted)
     assert jitted(x[0], adj_t).tolist() == [3.0, 1.0, 3.0]
 

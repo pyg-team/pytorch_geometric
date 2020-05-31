@@ -23,8 +23,17 @@ class Inspector(object):
             keys += self.params[func].keys()
         return set(keys)
 
+    def __implements__(self, cls, func_name: str) -> bool:
+        if cls.__name__ == 'MessagePassing':
+            return False
+
+        if func_name in cls.__dict__.keys():
+            return True
+
+        return any(self.__implements__(c, func_name) for c in cls.__bases__)
+
     def implements(self, func_name: str) -> bool:
-        return func_name in self.base_class.__class__.__dict__.keys()
+        return self.__implements__(self.base_class.__class__, func_name)
 
     def to_named_tuple(self, name, func_names: Optional[List[str]] = None):
         used: set = set()
