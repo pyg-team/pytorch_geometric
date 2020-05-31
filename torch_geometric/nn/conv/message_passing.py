@@ -504,8 +504,8 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
     @torch.jit._overload_method
     def __determine_type_and_size__(
         self,
-        edge_index: torch.Tensor,
-        size: Optional[Tuple[int, int]],
+        edge_index: Tensor,
+        size: Optional[Tuple[int, int]]
     ) -> Tuple[str, List[Optional[int]]]:
         pass
 
@@ -513,7 +513,7 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
     def __determine_type_and_size__(
         self,
         edge_index: SparseTensor,
-        size: Optional[Tuple[int, int]],
+        size: Optional[Tuple[int, int]]
     ) -> Tuple[str, List[Optional[int]]]:
         pass
 
