@@ -67,6 +67,7 @@ class MessagePassing(torch.nn.Module):
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
+        print(self.fuse)
 
         # Support for GNNExplainer.
         self.__explain__ = False
@@ -384,7 +385,7 @@ class MessagePassing(torch.nn.Module):
         This function will only gets called in case it is implemented and
         propagation takes place based on a :obj:`torch_sparse.SparseTensor`.
         """
-        return NotImplemented
+        raise NotImplementedError
 
     def update(self, inputs: torch.Tensor):
         r"""Updates node embeddings in analogy to
@@ -393,7 +394,6 @@ class MessagePassing(torch.nn.Module):
         Takes in the output of aggregation as first argument and any argument
         which was initially passed to :meth:`propagate`.
         """
-
         return inputs
 
     @torch.jit.unused
