@@ -5,7 +5,6 @@ from torch_scatter import scatter_max, scatter_add
 
 from .num_nodes import maybe_num_nodes
 
-from typing import Optional
 
 def softmax(src: torch.Tensor, index: torch.Tensor,
             num_nodes: Optional[int] = None) -> torch.Tensor:
