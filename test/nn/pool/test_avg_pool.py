@@ -12,7 +12,7 @@ def test_avg_pool_x():
     assert out[0].tolist() == [[3, 4], [5, 6], [10, 11]]
     assert out[1].tolist() == [0, 0, 1]
 
-    out = avg_pool_x(cluster, x, batch, size=2)
+    out, _ = avg_pool_x(cluster, x, batch, size=2)
     assert out.tolist() == [[3, 4], [5, 6], [10, 11], [0, 0]]
 
 
@@ -25,8 +25,8 @@ def test_avg_pool():
     edge_attr = torch.Tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
     batch = torch.tensor([0, 0, 0, 0, 1, 1])
 
-    data = Batch(
-        x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr, batch=batch)
+    data = Batch(x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr,
+                 batch=batch)
 
     data = avg_pool(cluster, data, transform=lambda x: x)
 
