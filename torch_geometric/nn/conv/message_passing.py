@@ -391,15 +391,9 @@ class MessagePassing(torch.nn.Module):
 
     @torch.jit.unused
     def __create_jittable_class__(self, mp_type, prop_kwargs, traced_collect):
-        # Define a new base class that replaces the `propagate` method.
+        """Defines a new base class that replaces the `propagate` method."""
 
         uid = uuid1().hex
-
-        # `__init__` substitution.
-        init_def = str(inspect.signature(self.__class__.__init__))
-        init_args = str(inspect.signature(self.__init__))
-        init_args = re.sub(r'=(.*?),', ',', init_args)
-        init_args = re.sub(r'=(.*?)\)', ')', init_args)
 
         # `propagate` substitution.
         prop_types = [f'{k}: {get_type(v)}' for k, v in prop_kwargs.items()]
@@ -432,8 +426,6 @@ class MessagePassing(torch.nn.Module):
             uid=uid,
             module=self.__class__.__module__,
             clsname=self.__class__.__name__,
-            init_def=init_def,
-            init_args=init_args,
             mp_type=mp_type,
             prop_tuple_def=prop_tuple_def,
             prop_types=prop_types,
@@ -460,7 +452,7 @@ class MessagePassing(torch.nn.Module):
 
     @torch.jit.unused
     def jittable(self, **kwargs):
-        r"""Analyzes the :obj:`MessagePassing` module and produces a
+        r"""Analyzes the :obj:`MessagePassing` module and produces a new
         jittable module."""
 
         # Run a partial trace of `forward` to gather type information.
@@ -479,8 +471,12 @@ class MessagePassing(torch.nn.Module):
         self.__record_propagate__ = False
         self.__records__ = None
 
-        return self.__create_jittable_class__(mp_type, prop_kwargs,
-                                              traced_collect)
+        cls = self.__create_jittable_class__(mp_type, prop_kwargs,
+                                             traced_collect)
+
+        out = cls.__new__(cls)
+        out.__dict__ = self.__dict__.copy()
+        return out
 
 
 propagate_jittable_string = """
@@ -497,9 +493,6 @@ import {module}
 {collector_tuple_def}
 
 class {clsname}Jittable_{uid}({module}.{clsname}):
-    def __init__{init_def}:
-        super({clsname}Jittable_{uid}, self).__init__{init_args}
-
     @torch.jit._overload_method
     def __determine_type_and_size__(
         self,

@@ -35,16 +35,16 @@ def test_my_basic_conv():
     assert conv(x[0], adj_t).tolist() == out.tolist()
     assert conv(x, adj_t).tolist() == out.tolist()
 
-    jitted = conv.jittable(x=x[1], edge_index=edge_index)()
+    jitted = conv.jittable(x=x[1], edge_index=edge_index)
     jitted = torch.jit.script(jitted)
     assert jitted(x[1], edge_index).tolist() == out.tolist()
 
     with pytest.raises(RuntimeError):
-        jitted = conv.jittable(x=x, edge_index=edge_index)()
+        jitted = conv.jittable(x=x, edge_index=edge_index)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x[0], edge_index=adj_t)()
+        jitted = conv.jittable(x=x[0], edge_index=adj_t)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=adj_t)()
+        jitted = conv.jittable(x=x, edge_index=adj_t)
         jitted = torch.jit.script(jitted)
 
 
@@ -71,16 +71,16 @@ def test_my_advanced_conv():
     assert conv(x[0], adj_t).tolist() == out.tolist()
     assert conv(x, adj_t).tolist() == out.tolist()
 
-    jitted = conv.jittable(x=x[1], edge_index=edge_index)()
+    jitted = conv.jittable(x=x[1], edge_index=edge_index)
     jitted = torch.jit.script(jitted)
     assert jitted(x[1], edge_index).tolist() == out.tolist()
 
     with pytest.raises(RuntimeError):
-        jitted = conv.jittable(x=x, edge_index=edge_index)()
+        jitted = conv.jittable(x=x, edge_index=edge_index)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x[0], edge_index=adj_t)()
+        jitted = conv.jittable(x=x[0], edge_index=adj_t)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=adj_t)()
+        jitted = conv.jittable(x=x, edge_index=adj_t)
         jitted = torch.jit.script(jitted)
 
 
@@ -104,13 +104,13 @@ def test_my_default_arguments_conv():
     assert conv(x, adj_t).tolist() == out.tolist()
 
     with pytest.raises(torch.jit.frontend.NotSupportedError):
-        jitted = conv.jittable(x=x[1], edge_index=edge_index)()
+        jitted = conv.jittable(x=x[1], edge_index=edge_index)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=edge_index)()
+        jitted = conv.jittable(x=x, edge_index=edge_index)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x[0], edge_index=adj_t)()
+        jitted = conv.jittable(x=x[0], edge_index=adj_t)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=adj_t)()
+        jitted = conv.jittable(x=x, edge_index=adj_t)
         jitted = torch.jit.script(jitted)
 
 
@@ -138,16 +138,16 @@ def test_my_bipartite_conv():
     with pytest.raises(RuntimeError):
         conv(x[0], adj_t)
 
-    jitted = conv.jittable(x=x, edge_index=edge_index)()
+    jitted = conv.jittable(x=x, edge_index=edge_index)
     jitted = torch.jit.script(jitted)
     assert jitted(x, edge_index).tolist() == out.tolist()
 
     with pytest.raises(RuntimeError):
-        jitted = conv.jittable(x=x[1], edge_index=edge_index)()
+        jitted = conv.jittable(x=x[1], edge_index=edge_index)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x[0], edge_index=adj_t)()
+        jitted = conv.jittable(x=x[0], edge_index=adj_t)
         jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=adj_t)()
+        jitted = conv.jittable(x=x, edge_index=adj_t)
         jitted = torch.jit.script(jitted)
 
 
@@ -171,7 +171,7 @@ def test_my_double_propagate_conv():
     with pytest.raises(ValueError):
         assert conv(x[0], adj_t).tolist() == out.tolist()
 
-    jitted = conv.jittable(x=x[1], edge_index=edge_index)()
+    jitted = conv.jittable(x=x[1], edge_index=edge_index)
     jitted = torch.jit.script(jitted)
     assert jitted(x[1], edge_index).tolist() == out.tolist()
 
@@ -207,7 +207,7 @@ def test_my_message_and_aggregate_conv():
     assert out.tolist() == [3.0, 1.0, 3.0]
     assert conv(x[0], adj_t).tolist() == out.tolist()
 
-    jitted = conv.jittable(x=x[1], edge_index=edge_index)()
+    jitted = conv.jittable(x=x[1], edge_index=edge_index)
     jitted = torch.jit.script(jitted)
     assert jitted(x[1], edge_index).tolist() == [3.0, 1.0, 3.0]
 
@@ -217,7 +217,7 @@ def test_my_message_and_aggregate_conv():
     assert out.tolist() == [3.0, 1.0, 3.0]
     assert conv(x[0], adj_t).tolist() == out.tolist()
 
-    jitted = conv.jittable(x=x[0], edge_index=adj_t)()
+    jitted = conv.jittable(x=x[0], edge_index=adj_t)
     jitted = torch.jit.script(jitted)
     assert jitted(x[0], adj_t).tolist() == [3.0, 1.0, 3.0]
 
