@@ -1,10 +1,9 @@
-import re
+import sys
 import inspect
 from uuid import uuid1
 from tempfile import NamedTemporaryFile
-from importlib.util import spec_from_file_location, module_from_spec
-import sys
 from typing import List, Tuple, Optional
+from importlib.util import spec_from_file_location, module_from_spec
 
 import torch
 from torch_sparse import SparseTensor
