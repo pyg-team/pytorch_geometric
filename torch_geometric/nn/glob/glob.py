@@ -1,6 +1,6 @@
-from torch_scatter import scatter
-
 from typing import Optional
+
+from torch_scatter import scatter
 
 
 def global_add_pool(x, batch, size: Optional[int] = None):
