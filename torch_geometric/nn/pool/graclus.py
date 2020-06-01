@@ -1,17 +1,15 @@
-import torch
 from typing import Optional
-has_graclus = False
+
+import torch
+
 try:
     from torch_cluster import graclus_cluster
-    has_graclus = True
 except ImportError:
     graclus_cluster = None
 
 
-def graclus(edge_index,
-            weight: Optional[torch.Tensor] = None,
-            num_nodes: Optional[int] = None,
-            has_graclus_cluster: bool = has_graclus):
+def graclus(edge_index, weight: Optional[torch.Tensor] = None,
+            num_nodes: Optional[int] = None):
     r"""A greedy clustering algorithm from the `"Weighted Graph Cuts without
     Eigenvectors: A Multilevel Approach" <http://www.cs.utexas.edu/users/
     inderjit/public_papers/multilevel_pami.pdf>`_ paper of picking an unmarked
@@ -31,8 +29,7 @@ def graclus(edge_index,
     :rtype: :class:`LongTensor`
     """
 
-    if has_graclus_cluster is None:
+    if graclus_cluster is None:
         raise ImportError('`graclus` requires `torch-cluster`.')
 
-    row, col = edge_index[0], edge_index[1]
-    return graclus_cluster(row, col, weight, num_nodes)
+    return graclus_cluster(edge_index[0], edge_index[1], weight, num_nodes)

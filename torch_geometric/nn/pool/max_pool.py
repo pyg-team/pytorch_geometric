@@ -1,21 +1,17 @@
-import torch
+from typing import Optional
+
 from torch_scatter import scatter
 from torch_geometric.data import Batch
 
 from .consecutive import consecutive_cluster
 from .pool import pool_edge, pool_batch, pool_pos
 
-from typing import Optional
-
 
 def _max_pool_x(cluster, x, size: Optional[int] = None):
     return scatter(x, cluster, dim=0, dim_size=size, reduce='max')
 
 
-def max_pool_x(cluster,
-               x,
-               batch: Optional[torch.Tensor],
-               size: Optional[int] = None):
+def max_pool_x(cluster, x, batch, size: Optional[int] = None):
     r"""Max-Pools node features according to the clustering defined in
     :attr:`cluster`.
 
@@ -36,13 +32,11 @@ def max_pool_x(cluster,
         :obj:`None`, else :class:`Tensor`
     """
     if size is not None:
-        assert batch is not None
-        return _max_pool_x(cluster, x,
-                           int((batch.max().item() + 1) * size)), None
+        batch_size = int(batch.max().item()) + 1
+        return _max_pool_x(cluster, x, batch_size * size), None
 
     cluster, perm = consecutive_cluster(cluster)
     x = _max_pool_x(cluster, x)
-    assert batch is not None
     batch = pool_batch(perm, batch)
 
     return x, batch

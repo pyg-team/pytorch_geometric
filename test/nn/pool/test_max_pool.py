@@ -25,8 +25,8 @@ def test_max_pool():
     edge_attr = torch.Tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
     batch = torch.tensor([0, 0, 0, 0, 1, 1])
 
-    data = Batch(
-        x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr, batch=batch)
+    data = Batch(x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr,
+                 batch=batch)
 
     data = max_pool(cluster, data, transform=lambda x: x)
 
