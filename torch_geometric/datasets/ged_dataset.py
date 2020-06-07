@@ -26,7 +26,9 @@ class GEDDataset(InMemoryDataset):
 
     .. note::
 
-        :obj:`ALKANE` is missing GEDs for train/test graph pairs.
+        :obj:`ALKANE` is missing GEDs for train/test graph pairs since they are
+        not provided in the `official datasets
+        <https://github.com/yunshengb/SimGNN>`_.
 
     Args:
         root (string): Root directory where the dataset should be saved.
