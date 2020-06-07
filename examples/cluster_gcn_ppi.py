@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import PPI
-from torch_geometric.nn import GATConv
+from torch_geometric.nn import GATConv, SAGEConv, BatchNorm
 from torch_geometric.data import Batch, ClusterData, ClusterLoader, DataLoader
 from sklearn.metrics import f1_score
 
@@ -23,27 +23,31 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
 
 class Net(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, in_channels, hidden_channels, out_channels, num_layers):
         super(Net, self).__init__()
-        self.conv1 = GATConv(train_dataset.num_features, 256, heads=4)
-        self.lin1 = torch.nn.Linear(train_dataset.num_features, 4 * 256)
-        self.conv2 = GATConv(4 * 256, 256, heads=4)
-        self.lin2 = torch.nn.Linear(4 * 256, 4 * 256)
-        self.conv3 = GATConv(4 * 256, train_dataset.num_classes, heads=6,
-                             concat=False)
-        self.lin3 = torch.nn.Linear(4 * 256, train_dataset.num_classes)
+        self.convs = torch.nn.ModuleList()
+        self.batch_norms = torch.nn.ModuleList()
+        self.convs.append(SAGEConv(in_channels, hidden_channels))
+        self.batch_norms.append(BatchNorm(hidden_channels))
+        for _ in range(num_layers - 2):
+            self.convs.append(SAGEConv(hidden_channels, hidden_channels))
+            self.batch_norms.append(BatchNorm(hidden_channels))
+        self.convs.append(SAGEConv(hidden_channels, out_channels))
 
     def forward(self, x, edge_index):
-        x = F.elu(self.conv1(x, edge_index) + self.lin1(x))
-        x = F.elu(self.conv2(x, edge_index) + self.lin2(x))
-        x = self.conv3(x, edge_index) + self.lin3(x)
-        return x
+        for conv, batch_norm in zip(self.convs[:-1], self.batch_norms):
+            x = conv(x, edge_index)
+            x = batch_norm(x)
+            x = F.relu(x)
+            x = F.dropout(x, p=0.2, training=self.training)
+        return self.convs[-1](x, edge_index)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net().to(device)
+model = Net(in_channels=train_dataset.num_features, hidden_channels=1024,
+            out_channels=train_dataset.num_classes, num_layers=6).to(device)
 loss_op = torch.nn.BCEWithLogitsLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train():
@@ -74,7 +78,7 @@ def test(loader):
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
-for epoch in range(1, 101):
+for epoch in range(1, 201):
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
