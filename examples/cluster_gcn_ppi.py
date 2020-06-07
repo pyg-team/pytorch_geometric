@@ -1,137 +1,82 @@
-import os
-import time
-import math    
-import torch
-import numpy as np
-import torch.nn as nn
 import os.path as osp
-import torch.nn.functional as F
-from sklearn.metrics import f1_score 
-import torch_geometric.transforms as T
-from torch_geometric.data import Batch
-from torch_geometric.nn import ChebConv
-from torch_geometric.datasets import PPI
-from torch_geometric.datasets import Planetoid
-from cluster import ClusterData, ClusterLoader
-from torch_geometric.data import DataLoader, Data
 
+import torch
+import torch.nn.functional as F
+from torch_geometric.datasets import PPI
+from torch_geometric.nn import GATConv
+from torch_geometric.data import Batch, ClusterData, ClusterLoader, DataLoader
+from sklearn.metrics import f1_score
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
-train_dataset = PPI(path, split='train')    #20graphs
-val_dataset = PPI(path, split='val')        #2graphs
-test_dataset = PPI(path, split='test')      #2graphs
-dataset = PPI(path)
+train_dataset = PPI(path, split='train')
+val_dataset = PPI(path, split='val')
+test_dataset = PPI(path, split='test')
 
+train_data = Batch.from_data_list(train_dataset)
+cluster_data = ClusterData(train_data, num_parts=50, recursive=False,
+                           save_dir=train_dataset.processed_dir)
+train_loader = ClusterLoader(cluster_data, batch_size=1, shuffle=True,
+                             num_workers=0)
 
-train_data_list = [data for data in train_dataset]
-for data in train_data_list:
-    data.train_mask = torch.ones(data.num_nodes, dtype=torch.bool)
-    data.val_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-    data.test_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-    
-val_data_list = [data for data in val_dataset]
-for data in val_data_list:
-    data.train_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-    data.val_mask = torch.ones(data.num_nodes, dtype=torch.bool)
-    data.test_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-
-test_data_list = [data for data in test_dataset]
-for data in test_data_list:
-    data.train_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-    data.val_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-    data.test_mask = torch.ones(data.num_nodes, dtype=torch.bool)
-
-
-data = Batch.from_data_list(train_data_list + val_data_list + test_data_list)
-cluster_data = ClusterData(data, num_parts=50, recursive=False,
-                            save_dir=dataset.processed_dir)
-loader = ClusterLoader(cluster_data, batch_size=1, shuffle=True,
-                        num_workers=0)    
-
+val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
 
 class Net(torch.nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self):
         super(Net, self).__init__()
-        dim = 2048
-        self.gcn1 = ChebConv(in_channels, dim, K=1)
-        self.lin1 = nn.Linear(in_channels, dim)
-        
-        self.gcn2 = ChebConv(dim, dim, K=1)
-        self.lin2 = nn.Linear(dim, dim)
-        
-        self.gcn3 = ChebConv(dim, dim, K=1)
-        self.lin3 = nn.Linear(dim, dim)
-        
-        self.gcn4 = ChebConv(dim, dim, K=1)
-        self.lin4 = nn.Linear(dim, dim)
-        
-        self.gcn5 = ChebConv(dim, out_channels, K=1)
-        self.lin5 = nn.Linear(dim, out_channels)
-        
+        self.conv1 = GATConv(train_dataset.num_features, 256, heads=4)
+        self.lin1 = torch.nn.Linear(train_dataset.num_features, 4 * 256)
+        self.conv2 = GATConv(4 * 256, 256, heads=4)
+        self.lin2 = torch.nn.Linear(4 * 256, 4 * 256)
+        self.conv3 = GATConv(4 * 256, train_dataset.num_classes, heads=6,
+                             concat=False)
+        self.lin3 = torch.nn.Linear(4 * 256, train_dataset.num_classes)
 
     def forward(self, x, edge_index):
-        x = F.elu(self.gcn1(x, edge_index) + self.lin1(x))
-        x = F.elu(self.gcn2(x, edge_index) + self.lin2(x))
-        x = F.elu(self.gcn3(x, edge_index) + self.lin3(x))
-        x = F.elu(self.gcn4(x, edge_index) + self.lin4(x))
-        x = self.gcn5(x, edge_index) + self.lin5(x)
-
+        x = F.elu(self.conv1(x, edge_index) + self.lin1(x))
+        x = F.elu(self.conv2(x, edge_index) + self.lin2(x))
+        x = self.conv3(x, edge_index) + self.lin3(x)
         return x
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net(dataset.num_features, dataset.num_classes).to(device)
+model = Net().to(device)
 loss_op = torch.nn.BCEWithLogitsLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.003)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 
 
 def train():
     model.train()
-    total_loss = total_nodes = 0
-    for data in loader:
-        #because some data.train_mask in loader are all False, it would cause the loss=nan
-        if data.train_mask.sum().item() == 0:
-            continue
+
+    total_loss = 0
+    for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        out = model(data.x, data.edge_index)
-        loss = loss_op(out[data.train_mask], data.y[data.train_mask])
+        loss = loss_op(model(data.x, data.edge_index), data.y)
         loss.backward()
-        optimizer.step()        
-        nodes = data.train_mask.sum().item()
-        total_loss += loss.item() * nodes
-        total_nodes += nodes
+        optimizer.step()
+        total_loss += loss.item() * data.num_nodes
+    return total_loss / train_data.num_nodes
 
-    return total_loss / total_nodes     
-        
-        
-def test():
+
+@torch.no_grad()
+def test(loader):
     model.eval()
-    ys, preds = [[], [], []], [[], [], []]
-    accs = []
+
+    ys, preds = [], []
     for data in loader:
-        data = data.to(device)
-        with torch.no_grad():
-            out = model(data.x, data.edge_index)
-        masks = [data.train_mask, data.val_mask, data.test_mask]
-        for i, mask in enumerate(masks):
-            ys[i].append(data.y[mask])
-            preds[i].append((out[mask]>0).float().cpu())
-            
-    for i in range(3):
-        y, pred = torch.cat(ys[i], dim=0).cpu(), torch.cat(preds[i], dim=0).cpu()
-        acc = f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
-        accs.append(acc)
-    return accs
-        
-       
-for epoch in range(1, 500):
-    loss = train()     
-    accs= test()
-    print('Epoch: {:02d}, Loss: {:.4f}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}, '
-          .format(epoch, loss, *accs))
-        
-        
-        
-    
+        ys.append(data.y)
+        out = model(data.x.to(device), data.edge_index.to(device))
+        preds.append((out > 0).float().cpu())
+
+    y, pred = torch.cat(ys, dim=0).numpy(), torch.cat(preds, dim=0).numpy()
+    return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
+
+
+for epoch in range(1, 101):
+    loss = train()
+    val_f1 = test(val_loader)
+    test_f1 = test(test_loader)
+    print('Epoch: {:02d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'.format(
+        epoch, loss, val_f1, test_f1))
