@@ -108,9 +108,11 @@ class ClusterLoader(torch.utils.data.DataLoader):
         Use :class:`torch_geometric.data.ClusterData` and
         :class:`torch_geometric.data.ClusterLoader` in conjunction to
         form mini-batches of clusters.
-        For an example of using Cluster-GCN, see `examples/cluster_gcn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
-        cluster_gcn.py>`_.
+        For an example of using Cluster-GCN, see
+        `examples/cluster_gcn_reddit.py <https://github.com/rusty1s/
+        pytorch_geometric/blob/master/examples/cluster_gcn_reddit.py>`_ or
+        `examples/cluster_gcn_ppi.py <https://github.com/rusty1s/
+        pytorch_geometric/blob/master/examples/cluster_gcn_ppi.py>`_.
 
     Args:
         cluster_data (torch_geometric.data.ClusterData): The already
