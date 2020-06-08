@@ -457,11 +457,16 @@ class MessagePassing(torch.nn.Module):
         # Run a partial trace of `forward` to gather type information.
         self.__record_propagate__ = True
 
+        # Some operators make use of caches, we need to disable them.
+        self._cache = None
+
         with torch.no_grad():
             self.forward(**kwargs)
 
+        # In case `propagate` never gets called, just return the current
+        # instance.
         if self.__records__ is None:
-            return self.__class__
+            return self
 
         mp_type = self.__records__['mp_type']
         prop_kwargs = self.__records__['prop_kwargs']

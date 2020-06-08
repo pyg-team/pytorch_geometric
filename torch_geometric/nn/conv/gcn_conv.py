@@ -90,8 +90,8 @@ class GCNConv(MessagePassing):
         zeros(self.bias)
         self._cache = None
 
-    def __gcn_norm__(self, x, edge_index,
-                     edge_weight: Optional[torch.Tensor] = None):
+    def __norm__(self, x, edge_index,
+                 edge_weight: Optional[torch.Tensor] = None):
 
         if not self.normalize:
             assert edge_weight is not None
@@ -121,7 +121,7 @@ class GCNConv(MessagePassing):
                 edge_weight: Optional[torch.Tensor] = None):
         """"""
         x = torch.matmul(x, self.weight)
-        edge_index, norm = self.__gcn_norm__(x, edge_index, edge_weight)
+        edge_index, norm = self.__norm__(x, edge_index, edge_weight)
         out = self.propagate(edge_index, x=x, norm=norm)
         if self.bias is not None:
             out += self.bias

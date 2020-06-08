@@ -21,11 +21,13 @@ def test_gcn_conv():
 
     conv = GCNConv(in_channels, out_channels, cached=True)
     out = conv(x, edge_index)
+    out = conv(x, edge_index)
     assert out.size() == (num_nodes, out_channels)
     assert conv(x, edge_index, edge_weight).size() == (num_nodes, out_channels)
 
     jit_conv = conv.jittable(x=x, edge_index=edge_index)
     jit_conv = torch.jit.script(jit_conv)
+    jit_conv(x, edge_index)
     assert jit_conv(x, edge_index).tolist() == out.tolist()
 
 
