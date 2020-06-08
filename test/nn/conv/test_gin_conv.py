@@ -24,8 +24,7 @@ def test_gin_conv():
 
     jit_conv = conv.jittable(x=x, edge_index=edge_index)
     jit_conv = torch.jit.script(jit_conv)
-    jit_out = jit_conv(x, edge_index)
-    assert jit_out.tolist() == out.tolist()
+    assert jit_conv(x, edge_index).tolist() == out.tolist()
 
 
 def test_gine_conv():
@@ -48,8 +47,7 @@ def test_gine_conv():
 
     jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_attr=edge_attr)
     jit_conv = torch.jit.script(jit_conv)
-    jit_out = conv(x, edge_index, edge_attr)
-    assert jit_out.tolist() == out.tolist()
+    assert jit_conv(x, edge_index, edge_attr).tolist() == out.tolist()
 
 
 def test_gin_conv_on_regular_graph():

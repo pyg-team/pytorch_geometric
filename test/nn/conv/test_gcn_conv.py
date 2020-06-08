@@ -17,8 +17,7 @@ def test_gcn_conv():
 
     jit_conv = conv.jittable(x=x, edge_index=edge_index)
     jit_conv = torch.jit.script(jit_conv)
-    jit_out = jit_conv(x, edge_index)
-    assert jit_out.tolist() == out.tolist()
+    assert jit_conv(x, edge_index).tolist() == out.tolist()
 
     conv = GCNConv(in_channels, out_channels, cached=True)
     out = conv(x, edge_index)
@@ -27,8 +26,7 @@ def test_gcn_conv():
 
     jit_conv = conv.jittable(x=x, edge_index=edge_index)
     jit_conv = torch.jit.script(jit_conv)
-    jit_out = jit_conv(x, edge_index)
-    assert jit_out.tolist() == out.tolist()
+    assert jit_conv(x, edge_index).tolist() == out.tolist()
 
 
 def test_sparse_gcn_conv():
@@ -55,5 +53,4 @@ def test_static_gcn_conv():
 
     jit_conv = conv.jittable(x=x, edge_index=edge_index)
     jit_conv = torch.jit.script(jit_conv)
-    jit_out = jit_conv(x, edge_index)
-    assert jit_out.tolist() == out.tolist()
+    assert jit_conv(x, edge_index).tolist() == out.tolist()
