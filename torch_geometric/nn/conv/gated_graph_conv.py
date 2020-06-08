@@ -1,11 +1,11 @@
+from typing import Optional
+
 import torch
 from torch import Tensor
 from torch.nn import Parameter as Param
 from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import uniform
-
-from typing import Optional
 
 
 class GatedGraphConv(MessagePassing):
@@ -36,12 +36,7 @@ class GatedGraphConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    def __init__(self,
-                 out_channels,
-                 num_layers,
-                 aggr='add',
-                 bias=True,
+    def __init__(self, out_channels, num_layers, aggr='add', bias=True,
                  **kwargs):
         super(GatedGraphConv, self).__init__(aggr=aggr, **kwargs)
 
@@ -65,16 +60,10 @@ class GatedGraphConv(MessagePassing):
             raise ValueError('The number of input channels is not allowed to '
                              'be larger than the number of output channels')
 
-        if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1), ),
-                                     dtype=x.dtype,
-                                     device=x.device)
-
         if h.size(1) < self.out_channels:
             zero = h.new_zeros(h.size(0), self.out_channels - h.size(1))
             h = torch.cat([h, zero], dim=1)
 
-        assert edge_weight is not None
         for i in range(self.num_layers):
             m = torch.matmul(h, self.weight[i])
             m = self.propagate(edge_index, x=m, edge_weight=edge_weight)
@@ -82,13 +71,10 @@ class GatedGraphConv(MessagePassing):
 
         return h
 
-    def message(self,
-                x_j,
-                edge_weight: Optional[torch.Tensor]):
-        if edge_weight is not None:
-            return edge_weight.view(-1, 1) * x_j
-        return x_j
+    def message(self, x_j, edge_weight: Optional[torch.Tensor]):
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def __repr__(self):
-        return '{}({}, num_layers={})'.format(
-            self.__class__.__name__, self.out_channels, self.num_layers)
+        return '{}({}, num_layers={})'.format(self.__class__.__name__,
+                                              self.out_channels,
+                                              self.num_layers)
