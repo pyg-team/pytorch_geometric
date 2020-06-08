@@ -45,22 +45,18 @@ class TAGConv(MessagePassing):
     def reset_parameters(self):
         self.lin.reset_parameters()
 
-    def norm(self, edge_index,
-             num_nodes: int,
+    def norm(self, edge_index, num_nodes: int,
              edge_weight: Optional[torch.Tensor] = None,
              dtype: Optional[int] = None):
+
         if edge_weight is None:
             edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
         row, col = edge_index[0], edge_index[1]
         deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
-        deg_inv_sqrt = deg.pow(-0.5)
-        mask = (deg_inv_sqrt == float('inf'))
-        zeros = torch.zeros(deg_inv_sqrt.shape,
-                            dtype=deg_inv_sqrt.dtype,
-                            device=deg_inv_sqrt.device)
-        deg_inv_sqrt = torch.where(mask, zeros, deg_inv_sqrt)
+        deg_inv_sqrt = deg.pow_(-0.5)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
@@ -71,8 +67,8 @@ class TAGConv(MessagePassing):
             edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
                                          edge_weight, dtype=x.dtype)
         else:
+            assert edge_weight is not None
             norm = edge_weight
-        assert norm is not None
 
         xs = [x]
         for k in range(self.K):
