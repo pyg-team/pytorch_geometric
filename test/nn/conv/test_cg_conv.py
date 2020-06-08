@@ -10,15 +10,9 @@ def test_cg_conv():
 
     conv = CGConv(16, 3)
     assert conv.__repr__() == 'CGConv(16, 16, dim=3)'
-    assert conv(x, edge_index, pseudo).size() == (num_nodes, 16)
-    jitcls = conv.jittable(x=x, edge_index=edge_index, edge_attr=pseudo)
-    jitconv = jitcls(16, 3)
-    jitconv.load_state_dict(conv.state_dict())
-    jittedconv = torch.jit.script(jitconv)
-    conv.eval()
-    jitconv.eval()
-    jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index, pseudo) -
-            jitconv(x, edge_index, pseudo)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index, pseudo) -
-            jittedconv(x, edge_index, pseudo)) < 1e-6).all().item()
+    out = conv(x, edge_index, pseudo)
+    assert out.size() == (num_nodes, 16)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_attr=pseudo)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index, pseudo).tolist() == out.tolist()
