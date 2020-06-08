@@ -17,8 +17,7 @@ def point_pair_features(pos_i, pos_j, norm_i, norm_j):
         get_angle(norm_i, pseudo),
         get_angle(norm_j, pseudo),
         get_angle(norm_i, norm_j)
-    ],
-                       dim=1)
+    ], dim=1)
 
 
 class PPFConv(MessagePassing):
@@ -52,7 +51,6 @@ class PPFConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, local_nn=None, global_nn=None, **kwargs):
         super(PPFConv, self).__init__(aggr='max', **kwargs)
 
@@ -65,10 +63,7 @@ class PPFConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self,
-                x,
-                pos, norm,
-                edge_index):
+    def forward(self, x, pos, norm, edge_index):
         r"""
         Args:
             x (Tensor): The node feature matrix. Allowed to be :obj:`None`.
@@ -101,5 +96,6 @@ class PPFConv(MessagePassing):
         return aggr_out
 
     def __repr__(self):
-        return '{}(local_nn={}, global_nn={})'.format(
-            self.__class__.__name__, self.local_nn, self.global_nn)
+        return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
+                                                      self.local_nn,
+                                                      self.global_nn)

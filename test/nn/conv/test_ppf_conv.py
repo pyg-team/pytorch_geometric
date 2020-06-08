@@ -22,15 +22,9 @@ def test_point_conv():
         '), global_nn=Sequential(\n'
         '  (0): Linear(in_features=32, out_features=32, bias=True)\n'
         '))')
-    assert conv(x, pos, norm, edge_index).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, pos=pos, norm=norm, edge_index=edge_index)
-    jitconv = jitcls(local_nn, global_nn)
-    jitconv.load_state_dict(conv.state_dict())
-    jittedconv = torch.jit.script(jitconv)
-    conv.eval()
-    jitconv.eval()
-    jittedconv.eval()
-    assert (torch.abs(conv(x, pos, norm, edge_index) -
-            jitconv(x, pos, norm, edge_index)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, pos, norm, edge_index) -
-            jittedconv(x, pos, norm, edge_index)) < 1e-6).all().item()
+    out = conv(x, pos, norm, edge_index)
+    assert out.size() == (num_nodes, out_channels)
+
+    jit_conv = conv.jittable(x=x, pos=pos, norm=norm, edge_index=edge_index)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, pos, norm, edge_index).tolist() == out.tolist()
