@@ -10,29 +10,17 @@ def test_agnn_conv():
 
     conv = AGNNConv(requires_grad=True)
     assert conv.__repr__() == 'AGNNConv()'
-    assert conv(x, edge_index).size() == (num_nodes, in_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index)
-    jitconv = jitcls(requires_grad=True)
-    jitconv.load_state_dict(conv.state_dict())
-    jittedconv = torch.jit.script(jitconv)
-    conv.eval()
-    jitconv.eval()
-    jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index) -
-            jitconv(x, edge_index)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index) -
-            jittedconv(x, edge_index)) < 1e-6).all().item()
+    out = conv(x, edge_index)
+    assert out.size() == (num_nodes, in_channels)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index).tolist() == out.tolist()
 
     conv = AGNNConv(requires_grad=False)
-    assert conv(x, edge_index).size() == (num_nodes, in_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index)
-    jitconv = jitcls(requires_grad=False)
-    jitconv.load_state_dict(conv.state_dict())
-    jittedconv = torch.jit.script(jitconv)
-    conv.eval()
-    jitconv.eval()
-    jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index) -
-            jitconv(x, edge_index)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index) -
-            jittedconv(x, edge_index)) < 1e-6).all().item()
+    out = conv(x, edge_index)
+    assert out.size() == (num_nodes, in_channels)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index).tolist() == out.tolist()
