@@ -45,7 +45,6 @@ class GMMConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, dim, kernel_size,
                  separate_gaussians=False, aggr='mean', root_weight=True,
                  bias=True, **kwargs):
