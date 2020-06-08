@@ -45,7 +45,8 @@ class GraphConv(MessagePassing):
                 edge_weight: Optional[torch.Tensor] = None):
         """"""
         out = self.propagate(edge_index, x=self.lin_rel(x), norm=edge_weight)
-        return out + self.lin_root(x)
+        out += self.lin_root(x)
+        return out
 
     def message(self, x_j, norm: Optional[torch.Tensor]):
         return norm.view(-1, 1) * x_j if norm is not None else x_j

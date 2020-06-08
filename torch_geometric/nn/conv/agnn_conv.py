@@ -52,7 +52,7 @@ class AGNNConv(MessagePassing):
         edge_index, _ = add_self_loops(edge_index,
                                        num_nodes=x.size(self.node_dim))
 
-        x_norm = F.normalize(x, p=2, dim=-1)
+        x_norm = F.normalize(x, p=2., dim=-1)
 
         return self.propagate(edge_index, x=x, x_norm=x_norm,
                               num_nodes=x.size(self.node_dim))
