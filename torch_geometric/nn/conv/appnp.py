@@ -33,8 +33,8 @@ class APPNP(MessagePassing):
     """
     def __init__(self, K, alpha, bias=True, **kwargs):
         super(APPNP, self).__init__(aggr='add', **kwargs)
-        self.K: int = K
-        self.alpha: float = alpha
+        self.K = K
+        self.alpha = alpha
 
     def forward(self, x, edge_index,
                 edge_weight: Optional[torch.Tensor] = None):
