@@ -57,8 +57,7 @@ class AGNNConv(MessagePassing):
         return self.propagate(edge_index, x=x, x_norm=x_norm,
                               num_nodes=x.size(self.node_dim))
 
-    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j,
-                num_nodes: Optional[int]):
+    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes: int):
         # Compute attention coefficients.
         alpha = self.beta * (x_norm_i * x_norm_j).sum(dim=-1)
         alpha = softmax(alpha, edge_index_i, num_nodes)
