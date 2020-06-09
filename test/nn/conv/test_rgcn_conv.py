@@ -12,30 +12,18 @@ def test_rgcn_conv():
 
     conv = RGCNConv(in_channels, out_channels, num_relations, num_bases=4)
     assert conv.__repr__() == 'RGCNConv(16, 32, num_relations=8)'
-    assert conv(x, edge_index, edge_type).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index, edge_type=edge_type)
-    jitconv = jitcls(in_channels, out_channels, num_relations, num_bases=4)
-    jitconv.load_state_dict(conv.state_dict())
-    jittedconv = torch.jit.script(jitconv)
-    conv.eval()
-    jitconv.eval()
-    jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index, edge_type) -
-            jitconv(x, edge_index, edge_type)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index, edge_type) -
-            jittedconv(x, edge_index, edge_type)) < 1e-6).all().item()
+    out = conv(x, edge_index, edge_type)
+    assert out.size() == (num_nodes, out_channels)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_type=edge_type)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index, edge_type).tolist() == out.tolist()
 
     x = None
     conv = RGCNConv(num_nodes, out_channels, num_relations, num_bases=4)
-    assert conv(x, edge_index, edge_type).size() == (num_nodes, out_channels)
-    jitcls = conv.jittable(x=x, edge_index=edge_index, edge_type=edge_type)
-    jitconv = jitcls(num_nodes, out_channels, num_relations, num_bases=4)
-    jitconv.load_state_dict(conv.state_dict())
-    jittedconv = torch.jit.script(jitconv)
-    conv.eval()
-    jitconv.eval()
-    jittedconv.eval()
-    assert (torch.abs(conv(x, edge_index, edge_type) -
-            jitconv(x, edge_index, edge_type)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, edge_index, edge_type) -
-            jittedconv(x, edge_index, edge_type)) < 1e-6).all().item()
+    out = conv(x, edge_index, edge_type)
+    assert out.size() == (num_nodes, out_channels)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_type=edge_type)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index, edge_type).tolist() == out.tolist()

@@ -45,7 +45,7 @@ class SGConv(MessagePassing):
         self.out_channels = out_channels
         self.K = K
         self.cached = cached
-        self._cache: Optional[Tuple[int, torch.Tensor]] = None
+        self._cache = None
 
         self.lin = Linear(in_channels, out_channels, bias=bias)
 

@@ -1,10 +1,10 @@
+from typing import Optional, List
+
 import torch
 from torch.nn import Parameter as Param
 from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import uniform
-
-from typing import Optional, List
 
 
 class RGCNConv(MessagePassing):
@@ -66,20 +66,20 @@ class RGCNConv(MessagePassing):
         uniform(size, self.root)
         uniform(size, self.bias)
 
-    def forward(self,
-                x: Optional[torch.Tensor],
-                edge_index,
-                edge_type,
-                edge_norm: Optional[torch.Tensor] = None,
-                size: Optional[List[int]] = None):
+    def forward(self, x: Optional[torch.Tensor], edge_index, edge_type,
+                edge_norm: Optional[torch.Tensor] = None):
         """"""
-        return self.propagate(edge_index, size=size, x=x, edge_type=edge_type,
-                              edge_norm=edge_norm)
+        out = self.propagate(edge_index, x=x, edge_type=edge_type,
+                             edge_norm=edge_norm)
 
-    def message(self,
-                x_j: Optional[torch.Tensor],
-                edge_index_j,
-                edge_type,
+        if self.root is not None:
+            out += self.root if x is None else torch.matmul(x, self.root)
+        if self.bias is not None:
+            out += self.bias
+
+        return out
+
+    def message(self, x_j: Optional[torch.Tensor], edge_index_j, edge_type,
                 edge_norm: Optional[torch.Tensor]):
         w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))
 
@@ -95,18 +95,6 @@ class RGCNConv(MessagePassing):
             out = torch.bmm(x_j.unsqueeze(1), w).squeeze(-2)
 
         return out if edge_norm is None else out * edge_norm.view(-1, 1)
-
-    def update(self, aggr_out, x: Optional[torch.Tensor]):
-        if self.root is not None:
-            if x is None:
-                aggr_out = aggr_out + self.root
-            else:
-                aggr_out = aggr_out + torch.matmul(x, self.root)
-
-        if self.bias is not None:
-            aggr_out = aggr_out + self.bias
-
-        return aggr_out
 
     def __repr__(self):
         return '{}({}, {}, num_relations={})'.format(self.__class__.__name__,

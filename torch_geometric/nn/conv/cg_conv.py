@@ -50,14 +50,11 @@ class CGConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_attr):
         """"""
-        return self.propagate(edge_index, x=x, edge_attr=edge_attr)
+        return self.propagate(edge_index, x=x, edge_attr=edge_attr) + x
 
     def message(self, x_i, x_j, edge_attr):
         z = torch.cat([x_i, x_j, edge_attr], dim=-1)
         return self.lin_f(z).sigmoid() * F.softplus(self.lin_s(z))
-
-    def update(self, aggr_out, x):
-        return aggr_out + x
 
     def __repr__(self):
         return '{}({}, {}, dim={})'.format(self.__class__.__name__,

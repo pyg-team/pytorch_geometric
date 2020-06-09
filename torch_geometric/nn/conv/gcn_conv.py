@@ -73,7 +73,7 @@ class GCNConv(MessagePassing):
         self.out_channels = out_channels
         self.improved = improved
         self.cached = cached
-        self._cache: Optional[Tuple[int, torch.Tensor, torch.Tensor]] = None
+        self._cache = None
         self.normalize = normalize
 
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))

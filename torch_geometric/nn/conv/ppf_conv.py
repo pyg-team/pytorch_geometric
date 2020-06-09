@@ -80,7 +80,10 @@ class PPFConv(MessagePassing):
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=pos.size(0))
 
-        return self.propagate(edge_index, x=x, pos=pos, norm=norm)
+        out = self.propagate(edge_index, x=x, pos=pos, norm=norm)
+        if self.global_nn is not None:
+            out = self.global_nn(out)
+        return out
 
     def message(self, x_j, pos_i, pos_j, norm_i, norm_j):
         msg = point_pair_features(pos_i, pos_j, norm_i, norm_j)
@@ -89,11 +92,6 @@ class PPFConv(MessagePassing):
         if self.local_nn is not None:
             msg = self.local_nn(msg)
         return msg
-
-    def update(self, aggr_out):
-        if self.global_nn is not None:
-            aggr_out = self.global_nn(aggr_out)
-        return aggr_out
 
     def __repr__(self):
         return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,

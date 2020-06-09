@@ -463,6 +463,9 @@ class MessagePassing(torch.nn.Module):
         with torch.no_grad():
             self.forward(**kwargs)
 
+        # Some operators make use of caches, we need to disable them.
+        self._cache = None
+
         # In case `propagate` never gets called, just return the current
         # instance.
         if self.__records__ is None:
