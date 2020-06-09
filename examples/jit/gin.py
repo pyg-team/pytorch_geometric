@@ -32,7 +32,7 @@ class Net(torch.nn.Module):
                 ReLU(),
                 Linear(2 * hidden_channels, hidden_channels),
             )
-            conv = GINConv(mlp)
+            conv = GINConv(mlp, train_eps=True)
             conv = conv.jittable(x=torch.randn(data.num_nodes, in_channels),
                                  edge_index=data.edge_index)
 
