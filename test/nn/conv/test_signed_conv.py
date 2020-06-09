@@ -11,35 +11,19 @@ def test_signed_conv():
 
     conv = SignedConv(in_channels, out_channels, first_aggr=True)
     assert conv.__repr__() == 'SignedConv(16, 32, first_aggr=True)'
+    out1 = conv(x, pos_ei, neg_ei)
+    assert out1.size() == (num_nodes, 2 * out_channels)
 
-    jitcls = conv.jittable(x=x, pos_edge_index=pos_ei,
-                           neg_edge_index=neg_ei, full_eval=True)
-    jitconv = jitcls(in_channels, out_channels, first_aggr=True)
-    jitconv.load_state_dict(conv.state_dict())
-    jittedconv = torch.jit.script(jitconv)
-    conv.eval()
-    jitconv.eval()
-    jittedconv.eval()
-    assert (torch.abs(conv(x, pos_ei, neg_ei) -
-            jitconv(x, pos_ei, neg_ei)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, pos_ei, neg_ei) -
-            jittedconv(x, pos_ei, neg_ei)) < 1e-6).all().item()
-
-    x = conv(x, pos_ei, neg_ei)
-    assert x.size() == (num_nodes, 2 * out_channels)
+    jit_conv = conv.jittable(x=x, pos_edge_index=pos_ei, neg_edge_index=neg_ei)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, pos_ei, neg_ei).tolist() == out1.tolist()
 
     conv = SignedConv(out_channels, out_channels, first_aggr=False)
     assert conv.__repr__() == 'SignedConv(32, 32, first_aggr=False)'
-    assert conv(x, pos_ei, neg_ei).size() == (num_nodes, 2 * out_channels)
-    jitcls = conv.jittable(x=x, pos_edge_index=pos_ei,
-                           neg_edge_index=neg_ei, full_eval=True)
-    jitconv = jitcls(out_channels, out_channels, first_aggr=False)
-    jitconv.load_state_dict(conv.state_dict())
-    jittedconv = torch.jit.script(jitconv)
-    conv.eval()
-    jitconv.eval()
-    jittedconv.eval()
-    assert (torch.abs(conv(x, pos_ei, neg_ei) -
-            jitconv(x, pos_ei, neg_ei)) < 1e-6).all().item()
-    assert (torch.abs(conv(x, pos_ei, neg_ei) -
-            jittedconv(x, pos_ei, neg_ei)) < 1e-6).all().item()
+    out2 = conv(out1, pos_ei, neg_ei)
+    assert out2.size() == (num_nodes, 2 * out_channels)
+
+    jit_conv = conv.jittable(x=out1, pos_edge_index=pos_ei,
+                             neg_edge_index=neg_ei)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(out1, pos_ei, neg_ei).tolist() == out2.tolist()
