@@ -51,8 +51,8 @@ class ChebConv(MessagePassing):
             You need to pass :obj:`lambda_max` to the :meth:`forward` method of
             this operator in case the normalization is non-symmetric.
             :obj:`\lambda_max` should be a :class:`torch.Tensor` of size
-            :obj:`[num_graphs]` in a mini-batch scenario and a scalar when
-            operating on single graphs.
+            :obj:`[num_graphs]` in a mini-batch scenario and a
+            scalar/zero-dimensional tensor when operating on single graphs.
             You can pre-compute :obj:`lambda_max` via the
             :class:`torch_geometric.transforms.LaplacianLambdaMax` transform.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
@@ -83,13 +83,11 @@ class ChebConv(MessagePassing):
         glorot(self.weight)
         zeros(self.bias)
 
-    def norm(self, edge_index,
-             num_nodes: Optional[int],
-             edge_weight: Optional[torch.Tensor],
-             normalization: Optional[str],
-             lambda_max,
-             dtype: Optional[int] = None,
-             batch: Optional[torch.Tensor] = None):
+    def __norm__(self, edge_index, num_nodes: Optional[int],
+                 edge_weight: Optional[torch.Tensor],
+                 normalization: Optional[str], lambda_max,
+                 dtype: Optional[int] = None,
+                 batch: Optional[torch.Tensor] = None):
 
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
 
@@ -97,21 +95,16 @@ class ChebConv(MessagePassing):
                                                 normalization, dtype,
                                                 num_nodes)
 
-        if (batch is not None and
-           isinstance(lambda_max, torch.Tensor) and
-           len(lambda_max.shape) > 0):
+        if batch is not None and lambda_max.numel() > 1:
             lambda_max = lambda_max[batch[edge_index[0]]]
 
         edge_weight = (2.0 * edge_weight) / lambda_max
-        mask = (edge_weight == float('inf'))
-        zeros = torch.zeros(edge_weight.shape,
-                            dtype=edge_weight.dtype,
-                            device=edge_weight.device)
-        edge_weight = torch.where(mask, zeros, edge_weight)
+        edge_weight.masked_fill_(edge_weight == float('inf'), 0)
 
         edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
                                                  fill_value=-1,
                                                  num_nodes=num_nodes)
+        assert edge_weight is not None
 
         return edge_index, edge_weight
 
@@ -123,30 +116,34 @@ class ChebConv(MessagePassing):
         if self.normalization != 'sym' and lambda_max is None:
             raise ValueError('You need to pass `lambda_max` to `forward() in`'
                              'case the normalization is non-symmetric.')
-        if lambda_max is None:
-            lambda_max = torch.tensor(2.0, dtype=x.dtype)
 
-        edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
-                                     edge_weight, self.normalization,
-                                     lambda_max, dtype=x.dtype, batch=batch)
+        if lambda_max is None:
+            lambda_max = torch.tensor(2.0, dtype=x.dtype, device=x.device)
+        if not isinstance(lambda_max, torch.Tensor):
+            lambda_max = torch.tensor(lambda_max, dtype=x.dtype,
+                                      device=x.device)
+        assert lambda_max is not None
+
+        edge_index, norm = self.__norm__(edge_index, x.size(self.node_dim),
+                                         edge_weight, self.normalization,
+                                         lambda_max, dtype=x.dtype,
+                                         batch=batch)
 
         Tx_0 = x
-        Tx_1 = x
+        Tx_1 = x  # Dummy.
         out = torch.matmul(Tx_0, self.weight[0])
-        assert norm is not None
 
         if self.weight.size(0) > 1:
             Tx_1 = self.propagate(edge_index, x=x, norm=norm)
             out = out + torch.matmul(Tx_1, self.weight[1])
 
         for k in range(2, self.weight.size(0)):
-            Tx_2 = self.propagate(edge_index, x=Tx_1, norm=norm)
-            Tx_2 = 2 * Tx_2 - Tx_0
+            Tx_2 = 2. * self.propagate(edge_index, x=Tx_1, norm=norm) - Tx_0
             out = out + torch.matmul(Tx_2, self.weight[k])
             Tx_0, Tx_1 = Tx_1, Tx_2
 
         if self.bias is not None:
-            out = out + self.bias
+            out += self.bias
 
         return out
 
