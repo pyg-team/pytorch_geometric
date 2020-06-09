@@ -49,7 +49,7 @@ class GATConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    _alpha: Optional[torch.Tensor]
+    _alpha: Optional[Tensor]
 
     def __init__(self, in_channels, out_channels, heads=1, concat=True,
                  negative_slope=0.2, dropout=0., bias=True, **kwargs):
@@ -103,7 +103,7 @@ class GATConv(MessagePassing):
                 attention weights for each edge. (default: :obj:`None`)
         """
 
-        x_prop: Tuple[torch.Tensor, torch.Tensor] = (x, x)  # Dummy.
+        x_prop: Tuple[Tensor, Tensor] = (x, x)  # Dummy.
         if isinstance(x, torch.Tensor):
             x = self.lin(x)
             x_prop = (x, x)
@@ -133,7 +133,7 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_i: torch.Tensor, x_j: torch.Tensor, edge_index_i,
+    def message(self, x_i: Tensor, x_j: Tensor, edge_index_i: Tensor,
                 size_i: Optional[int]):
         # Compute attention coefficients.
         x_i = x_i.view(-1, self.heads, self.out_channels)
