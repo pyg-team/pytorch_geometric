@@ -54,11 +54,9 @@ class Linear(torch.nn.Module):
         return out
 
     def __repr__(self):  # pragma: no cover
-        return '{}({}, {}, groups={}, bias={})'.format(self.__class__.__name__,
-                                                       self.in_channels,
-                                                       self.out_channels,
-                                                       self.groups, self.bias
-                                                       is not None)
+        return '{}({}, {}, groups={})'.format(self.__class__.__name__,
+                                              self.in_channels,
+                                              self.out_channels, self.groups)
 
 
 def restricted_softmax(src, dim: int = -1, margin: float = 0.):
