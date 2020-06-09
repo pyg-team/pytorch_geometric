@@ -56,7 +56,6 @@ class MyAdvancedConv(MessagePassing):
         return self.propagate(edge_index, x=x)
 
     def message(self, x_j, edge_index_i, size_i: Optional[int]):
-        assert size_i is not None
         alpha = softmax(x_j, edge_index_i, num_nodes=size_i)
         return alpha * x_j
 
@@ -184,7 +183,6 @@ class MyMessageAndAggregateConv1(MessagePassing):
         return self.propagate(edge_index, x=x)
 
     def message_and_aggregate(self, adj_t: SparseTensor, x):
-        assert adj_t is not None
         return spmm(adj_t, x.view(-1, 1)).view(-1)
 
 
@@ -196,7 +194,6 @@ class MyMessageAndAggregateConv2(MessagePassing):
         return self.propagate(edge_index, x=x)
 
     def message_and_aggregate(self, adj_t: SparseTensor, x):
-        assert adj_t is not None
         return spmm(adj_t, x.view(-1, 1)).view(-1)
 
 
