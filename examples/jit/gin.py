@@ -2,7 +2,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, ReLU, BatchNorm1d as BN
+from torch.nn import Sequential, Linear, ReLU, BatchNorm1d as BatchNorm
 from torch_geometric.transforms import OneHotDegree
 from torch_geometric.datasets import TUDataset
 from torch_geometric.data import DataLoader
@@ -26,24 +26,24 @@ class Net(torch.nn.Module):
         self.batch_norms = torch.nn.ModuleList()
 
         for i in range(num_layers):
-            mlp = Seq(
-                Lin(in_channels, 2 * hidden_channels),
-                BN(2 * hidden_channels),
+            mlp = Sequential(
+                Linear(in_channels, 2 * hidden_channels),
+                BatchNorm(2 * hidden_channels),
                 ReLU(),
-                Lin(2 * hidden_channels, hidden_channels),
+                Linear(2 * hidden_channels, hidden_channels),
             )
             conv = GINConv(mlp)
             conv = conv.jittable(x=torch.randn(data.num_nodes, in_channels),
                                  edge_index=data.edge_index)
 
             self.convs.append(conv)
-            self.batch_norms.append(BN(hidden_channels))
+            self.batch_norms.append(BatchNorm(hidden_channels))
 
             in_channels = hidden_channels
 
-        self.lin1 = Lin(hidden_channels, hidden_channels)
-        self.batch_norm1 = BN(hidden_channels)
-        self.lin2 = Lin(hidden_channels, out_channels)
+        self.lin1 = Linear(hidden_channels, hidden_channels)
+        self.batch_norm1 = BatchNorm(hidden_channels)
+        self.lin2 = Linear(hidden_channels, out_channels)
 
     def forward(self, x, edge_index, batch):
         for conv, batch_norm in zip(self.convs, self.batch_norms):
