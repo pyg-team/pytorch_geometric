@@ -26,9 +26,12 @@ class Net(torch.nn.Module):
         self.batch_norms = torch.nn.ModuleList()
 
         for i in range(num_layers):
-            mlp = Seq(Lin(in_channels, 2 * hidden_channels),
-                      BN(2 * hidden_channels), ReLU(),
-                      Lin(2 * hidden_channels, hidden_channels))
+            mlp = Seq(
+                Lin(in_channels, 2 * hidden_channels),
+                BN(2 * hidden_channels),
+                ReLU(),
+                Lin(2 * hidden_channels, hidden_channels),
+            )
             conv = GINConv(mlp)
             conv = conv.jittable(x=torch.randn(data.num_nodes, in_channels),
                                  edge_index=data.edge_index)
