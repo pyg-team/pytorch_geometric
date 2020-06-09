@@ -15,37 +15,34 @@ data = dataset[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        class_conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6) \
-            .jittable(x=data.x, edge_index=data.edge_index, full_eval=True)
-        self.conv1 = class_conv1(data.num_features, 8, heads=8, dropout=0.6)
-        tempx = self.conv1(x=data.x, edge_index=data.edge_index)[0]
-        # On the Pubmed dataset, use heads=8 in conv2.
-        conv2_class = GATConv(8 * 8, dataset.num_classes, heads=1, concat=True,
-                              dropout=0.6) \
-            .jittable(x=tempx, edge_index=data.edge_index, full_eval=True)
-        self.conv2 = conv2_class(8 * 8, dataset.num_classes, heads=1,
-                                 concat=True, dropout=0.6)
+        self.conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6)
+        self.conv1 = self.conv1.jittable(x=data.x, edge_index=data.edge_index)
+
+        self.conv2 = GATConv(64, dataset.num_classes, heads=1, concat=True,
+                             dropout=0.6)
+        self.conv2 = self.conv2.jittable(x=torch.randn(data.num_nodes, 64),
+                                         edge_index=data.edge_index)
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
-        x = F.elu(self.conv1(x, edge_index)[0])
+        x = F.elu(self.conv1(x, edge_index))
         x = F.dropout(x, p=0.6, training=self.training)
-        x = self.conv2(x, edge_index)[0]
+        x = self.conv2(x, edge_index)
         return F.log_softmax(x, dim=1)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model, data = torch.jit.script(Net()).to(device), data.to(device)
+model, data = Net().to(device), data.to(device)
+moel = torch.jit.script(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
-
-print(model)
 
 
 def train():
     model.train()
     optimizer.zero_grad()
-    F.nll_loss(model(data.x, data.edge_index)[data.train_mask],
-               data.y[data.train_mask]).backward()
+    F.nll_loss(
+        model(data.x, data.edge_index)[data.train_mask],
+        data.y[data.train_mask]).backward()
     optimizer.step()
 
 
