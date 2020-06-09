@@ -3,6 +3,8 @@ import torch.nn.functional as F
 from torch.nn import Linear
 from torch_geometric.nn.conv import MessagePassing
 
+from typing import Optional, Tuple
+
 
 class SAGEConv(MessagePassing):
     r"""The GraphSAGE operator from the `"Inductive Representation Learning on
@@ -42,21 +44,23 @@ class SAGEConv(MessagePassing):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
+        x_prop: Tuple[torch.Tensor, torch.Tensor] = (x, x)  # Dummy.
+        if isinstance(x, torch.Tensor):
+            x_prop = (x, x)
+        else:
+            x_prop = x
 
-        if torch.is_tensor(x):
-            x = (x, x)
-
-        out = self.propagate(edge_index, x=x, edge_weight=edge_weight)
-        out = self.lin_rel(out) + self.lin_root(x[1])
-
+        out = self.propagate(edge_index, x=x_prop, edge_weight=edge_weight)
+        out = self.lin_rel(out)
+        out += self.lin_root(x_prop[1])
         if self.normalize:
-            out = F.normalize(out, p=2, dim=-1)
-
+            out = F.normalize(out, p=2., dim=-1)
         return out
 
-    def message(self, x_j, edge_weight):
+    def message(self, x_j, edge_weight: Optional[torch.Tensor]):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def __repr__(self):

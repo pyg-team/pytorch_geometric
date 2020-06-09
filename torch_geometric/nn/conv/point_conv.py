@@ -37,7 +37,6 @@ class PointConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, local_nn=None, global_nn=None, **kwargs):
         super(PointConv, self).__init__(aggr='max', **kwargs)
 
@@ -59,11 +58,15 @@ class PointConv(MessagePassing):
                 in message passing in bipartite graphs.
             edge_index (LongTensor): The edge indices.
         """
-        if torch.is_tensor(pos):  # Add self-loops for symmetric adjacencies.
+        if isinstance(pos, torch.Tensor):
+            # Add self-loops for symmetric adjacencies.
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=pos.size(0))
 
-        return self.propagate(edge_index, x=x, pos=pos)
+        out = self.propagate(edge_index, x=x, pos=pos)
+        if self.global_nn is not None:
+            out = self.global_nn(out)
+        return out
 
     def message(self, x_j, pos_i, pos_j):
         msg = pos_j - pos_i
@@ -73,11 +76,7 @@ class PointConv(MessagePassing):
             msg = self.local_nn(msg)
         return msg
 
-    def update(self, aggr_out):
-        if self.global_nn is not None:
-            aggr_out = self.global_nn(aggr_out)
-        return aggr_out
-
     def __repr__(self):
-        return '{}(local_nn={}, global_nn={})'.format(
-            self.__class__.__name__, self.local_nn, self.global_nn)
+        return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
+                                                      self.local_nn,
+                                                      self.global_nn)

@@ -3,6 +3,8 @@ from torch.nn import Linear
 from torch_scatter import scatter_add
 from torch_geometric.nn.conv import MessagePassing
 
+from typing import Optional
+
 
 class TAGConv(MessagePassing):
     r"""The topology adaptive graph convolutional networks operator from the
@@ -43,25 +45,29 @@ class TAGConv(MessagePassing):
     def reset_parameters(self):
         self.lin.reset_parameters()
 
-    @staticmethod
-    def norm(edge_index, num_nodes, edge_weight=None, dtype=None):
+    def norm(self, edge_index, num_nodes: int,
+             edge_weight: Optional[torch.Tensor] = None,
+             dtype: Optional[int] = None):
+
         if edge_weight is None:
             edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
-        row, col = edge_index
+        row, col = edge_index[0], edge_index[1]
         deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
-        deg_inv_sqrt = deg.pow(-0.5)
-        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+        deg_inv_sqrt = deg.pow_(-0.5)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
         if self.normalize:
             edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
                                          edge_weight, dtype=x.dtype)
         else:
+            assert edge_weight is not None
             norm = edge_weight
 
         xs = [x]

@@ -10,4 +10,9 @@ def test_cg_conv():
 
     conv = CGConv(16, 3)
     assert conv.__repr__() == 'CGConv(16, 16, dim=3)'
-    assert conv(x, edge_index, pseudo).size() == (num_nodes, 16)
+    out = conv(x, edge_index, pseudo)
+    assert out.size() == (num_nodes, 16)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_attr=pseudo)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index, pseudo).tolist() == out.tolist()

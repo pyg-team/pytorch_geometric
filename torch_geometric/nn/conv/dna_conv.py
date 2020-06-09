@@ -1,12 +1,11 @@
-from __future__ import division
-
 import math
+from typing import Optional, Tuple
 
 import torch
-from torch import Tensor
 from torch.nn import Parameter
 import torch.nn.functional as F
-from torch_geometric.nn.conv import MessagePassing, GCNConv
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 from ..inits import uniform, kaiming_uniform
 
@@ -21,7 +20,8 @@ class Linear(torch.nn.Module):
         self.groups = groups
 
         self.weight = Parameter(
-            Tensor(groups, in_channels // groups, out_channels // groups))
+            torch.Tensor(groups, in_channels // groups,
+                         out_channels // groups))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -39,12 +39,12 @@ class Linear(torch.nn.Module):
         # Output: [*, out_channels]
 
         if self.groups > 1:
-            size = list(src.size())[:-1]
+            size = src.size()[:-1]
             src = src.view(-1, self.groups, self.in_channels // self.groups)
             src = src.transpose(0, 1).contiguous()
             out = torch.matmul(src, self.weight)
             out = out.transpose(1, 0).contiguous()
-            out = out.view(*(size + [self.out_channels]))
+            out = out.view(size + (self.out_channels, ))
         else:
             out = torch.matmul(src, self.weight.squeeze(0))
 
@@ -54,15 +54,13 @@ class Linear(torch.nn.Module):
         return out
 
     def __repr__(self):  # pragma: no cover
-        return '{}({}, {}, groups={}, bias={})'.format(self.__class__.__name__,
-                                                       self.in_channels,
-                                                       self.out_channels,
-                                                       self.groups,
-                                                       self.bias is not None)
+        return '{}({}, {}, groups={})'.format(self.__class__.__name__,
+                                              self.in_channels,
+                                              self.out_channels, self.groups)
 
 
-def restricted_softmax(src, dim=-1, margin=0):
-    src_max = torch.clamp(src.max(dim=dim, keepdim=True)[0], min=0)
+def restricted_softmax(src, dim: int = -1, margin: float = 0.):
+    src_max = torch.clamp(src.max(dim=dim, keepdim=True)[0], min=0.)
     out = (src - src_max).exp()
     out = out / (out.sum(dim=dim, keepdim=True) + (margin - src_max).exp())
     return out
@@ -74,6 +72,9 @@ class Attention(torch.nn.Module):
         self.dropout = dropout
 
     def forward(self, query, key, value):
+        return self.compute_attention(query, key, value)
+
+    def compute_attention(self, query, key, value):
         # query: [*, query_entries, dim_k]
         # key: [*, key_entries, dim_k]
         # value: [*, key_entries, dim_v]
@@ -138,24 +139,24 @@ class MultiHead(Attention):
         # query: [*, heads, query_entries, out_channels // heads]
         # key: [*, heads, key_entries, out_channels // heads]
         # value: [*, heads, key_entries, out_channels // heads]
-        size = list(query.size())[:-2]
+        size = query.size()[:-2]
         out_channels_per_head = self.out_channels // self.heads
 
-        query_size = size + [query.size(-2), self.heads, out_channels_per_head]
-        query = query.view(*query_size).transpose(-2, -3)
+        query_size = size + (query.size(-2), self.heads, out_channels_per_head)
+        query = query.view(query_size).transpose(-2, -3)
 
-        key_size = size + [key.size(-2), self.heads, out_channels_per_head]
-        key = key.view(*key_size).transpose(-2, -3)
+        key_size = size + (key.size(-2), self.heads, out_channels_per_head)
+        key = key.view(key_size).transpose(-2, -3)
 
-        value_size = size + [value.size(-2), self.heads, out_channels_per_head]
-        value = value.view(*value_size).transpose(-2, -3)
+        value_size = size + (value.size(-2), self.heads, out_channels_per_head)
+        value = value.view(value_size).transpose(-2, -3)
 
         # Output: [*, heads, query_entries, out_channels // heads]
-        out = super(MultiHead, self).forward(query, key, value)
+        out = self.compute_attention(query, key, value)
         # Output: [*, query_entries, heads, out_channels // heads]
         out = out.transpose(-3, -2).contiguous()
         # Output: [*, query_entries, out_channels]
-        out = out.view(*(size + [query.size(-2), self.out_channels]))
+        out = out.view(size + (query.size(-2), self.out_channels))
 
         return out
 
@@ -213,11 +214,16 @@ class DNAConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, channels, heads=1, groups=1, dropout=0, cached=False,
+
+    _cache: Optional[Tuple[int, torch.Tensor, torch.Tensor]]
+
+    def __init__(self, channels, heads=1, groups=1, dropout=0., cached=False,
                  bias=True, **kwargs):
         super(DNAConv, self).__init__(aggr='add', **kwargs)
+
         self.bias = bias
         self.cached = cached
+        self._cache = None
 
         self.multi_head = MultiHead(channels, channels, heads, groups, dropout,
                                     bias)
@@ -225,10 +231,33 @@ class DNAConv(MessagePassing):
 
     def reset_parameters(self):
         self.multi_head.reset_parameters()
-        self.cached_result = None
-        self.cached_num_edges = None
+        self._cache = None
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def __norm__(self, x, edge_index,
+                 edge_weight: Optional[torch.Tensor] = None):
+
+        cache = self._cache
+        if cache is not None:
+            if edge_index.size(1) != cache[0]:
+                raise RuntimeError(
+                    'Cached {} number of edges, but found {}. Please disable '
+                    'the caching behavior of this layer by removing the '
+                    '`cached=True` argument in its constructor.'.format(
+                        cache[0], edge_index.size(1)))
+            return cache[1:]
+
+        num_edges = edge_index.size(1)
+
+        edge_index, edge_weight = gcn_norm(edge_index, x.size(self.node_dim),
+                                           edge_weight, dtype=x.dtype)
+
+        if self.cached:
+            self._cache = (num_edges, edge_index, edge_weight)
+
+        return edge_index, edge_weight
+
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
         # x: [num_nodes, num_layers, channels]
         # edge_index: [2, num_edges]
@@ -237,24 +266,8 @@ class DNAConv(MessagePassing):
         if x.dim() != 3:
             raise ValueError('Feature shape must be [num_nodes, num_layers, '
                              'channels].')
-        num_nodes, num_layers, channels = x.size()
 
-        if self.cached and self.cached_result is not None:
-            if edge_index.size(1) != self.cached_num_edges:
-                raise RuntimeError(
-                    'Cached {} number of edges, but found {}. Please '
-                    'disable the caching behavior of this layer by removing '
-                    'the `cached=True` argument in its constructor.'.format(
-                        self.cached_num_edges, edge_index.size(1)))
-
-        if not self.cached or self.cached_result is None:
-            self.cached_num_edges = edge_index.size(1)
-            edge_index, norm = GCNConv.norm(edge_index, x.size(self.node_dim),
-                                            edge_weight, dtype=x.dtype)
-            self.cached_result = edge_index, norm
-
-        edge_index, norm = self.cached_result
-
+        edge_index, norm = self.__norm__(x, edge_index, edge_weight)
         return self.propagate(edge_index, x=x, norm=norm)
 
     def message(self, x_i, x_j, norm):

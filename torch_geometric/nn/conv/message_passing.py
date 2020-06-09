@@ -1,3 +1,4 @@
+import re
 import sys
 import inspect
 from uuid import uuid1
@@ -421,6 +422,13 @@ class MessagePassing(torch.nn.Module):
         # Get `__determine_type_and_size__` source code to allow overloads.
         determine = inspect.getsource(self.__determine_type_and_size__)
 
+        # Get `forward` source code with potential overloads.
+        REGEX = r'    @torch.jit._overload_method\s*def forward\(.*?pass'
+        REGEX = re.compile(REGEX, re.DOTALL)
+        overloads = re.findall(REGEX, inspect.getsource(self.__class__))
+        forward = inspect.getsource(self.forward)
+        forward = '\n\n'.join(overloads + [forward])
+
         jit_module_repr = propagate_jittable_string.format(
             uid=uid,
             module=self.__class__.__module__,
@@ -436,6 +444,7 @@ class MessagePassing(torch.nn.Module):
             msg_aggr_args=msg_aggr_args,
             update_args=update_args,
             determine_type_and_size=determine,
+            forward=forward,
         )
 
         ftemp = NamedTemporaryFile(mode='w+', encoding='utf-8', suffix='.py',
@@ -457,11 +466,19 @@ class MessagePassing(torch.nn.Module):
         # Run a partial trace of `forward` to gather type information.
         self.__record_propagate__ = True
 
+        # Some operators make use of caches, we need to disable them.
+        self._cache = None
+
         with torch.no_grad():
             self.forward(**kwargs)
 
+        # Some operators make use of caches, we need to disable them again.
+        self._cache = None
+
+        # In case `propagate` never gets called, just return the current
+        # instance.
         if self.__records__ is None:
-            return self.__class__
+            return self
 
         mp_type = self.__records__['mp_type']
         prop_kwargs = self.__records__['prop_kwargs']
@@ -485,27 +502,21 @@ import torch
 from torch import Tensor
 import torch_sparse
 from torch_sparse import SparseTensor
-import {module}
+from {module} import *
 
 {prop_tuple_def}
 
 {collector_tuple_def}
 
-class {clsname}Jittable_{uid}({module}.{clsname}):
+class {clsname}Jittable_{uid}({clsname}):
     @torch.jit._overload_method
-    def __determine_type_and_size__(
-        self,
-        edge_index: Tensor,
-        size: Optional[Tuple[int, int]]
-    ) -> Tuple[str, List[Optional[int]]]:
+    def __determine_type_and_size__(self, edge_index, size):
+        # type: (Tensor, Optional[Tuple[int, int]]) -> Tuple[str, List[Optional[int]]]  # noqa: E501
         pass
 
     @torch.jit._overload_method
-    def __determine_type_and_size__(
-        self,
-        edge_index: SparseTensor,
-        size: Optional[Tuple[int, int]]
-    ) -> Tuple[str, List[Optional[int]]]:
+    def __determine_type_and_size__(self, edge_index, size):
+        # type: (SparseTensor, Optional[Tuple[int, int]]) -> Tuple[str, List[Optional[int]]]  # noqa: E501
         pass
 
 {determine_type_and_size}
@@ -531,4 +542,6 @@ class {clsname}Jittable_{uid}({module}.{clsname}):
         out = self.message({msg_args})
         out = self.aggregate(out, {aggr_args})
         return self.update(out, {update_args})
+
+{forward}
 """

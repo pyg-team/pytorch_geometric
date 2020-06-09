@@ -1,4 +1,7 @@
+from typing import Tuple, Optional
+
 import torch
+from torch import Tensor
 from torch.nn import Parameter, Linear
 import torch.nn.functional as F
 from torch_geometric.nn.conv import MessagePassing
@@ -46,8 +49,10 @@ class GATConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+    _alpha: Optional[Tensor]
+
     def __init__(self, in_channels, out_channels, heads=1, concat=True,
-                 negative_slope=0.2, dropout=0, bias=True, **kwargs):
+                 negative_slope=0.2, dropout=0., bias=True, **kwargs):
         super(GATConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
@@ -57,7 +62,7 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.__alpha__ = None
+        self._alpha = None
 
         self.lin = Linear(in_channels, heads * out_channels, bias=False)
 
@@ -79,21 +84,41 @@ class GATConv(MessagePassing):
         glorot(self.att_j)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, return_attention_weights=False):
-        """"""
+    @torch.jit._overload_method
+    def forward(self, x, edge_index, return_attention_weights=None):
+        # type: (Tensor, Tensor, Optional[Tensor]) -> Tensor
+        pass
 
-        if torch.is_tensor(x):
+    @torch.jit._overload_method
+    def forward(self, x, edge_index, return_attention_weights=None):
+        # type: (Tensor, Tensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]
+        pass
+
+    def forward(self, x, edge_index, return_attention_weights=None):
+        r""""
+        Args:
+            return_attention_weights (bool, optional): If set to :obj:`True`,
+                will additionally return the tuple
+                :obj:`(edge_index, attention_weights)`, holding the computed
+                attention weights for each edge. (default: :obj:`None`)
+        """
+
+        x_prop: Tuple[Tensor, Tensor] = (x, x)  # Dummy.
+        if isinstance(x, torch.Tensor):
             x = self.lin(x)
-            x = (x, x)
+            x_prop = (x, x)
         else:
-            x = (self.lin(x[0]), self.lin(x[1]))
+            x_prop = (self.lin(x[0]), self.lin(x[1]))
 
         edge_index, _ = remove_self_loops(edge_index)
         edge_index, _ = add_self_loops(edge_index,
-                                       num_nodes=x[1].size(self.node_dim))
+                                       num_nodes=x_prop[1].size(self.node_dim))
 
-        out = self.propagate(edge_index, x=x,
-                             return_attention_weights=return_attention_weights)
+        out = self.propagate(edge_index, x=x_prop)
+
+        alpha = self._alpha
+        self._alpha = None
+        assert alpha is not None
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -101,16 +126,15 @@ class GATConv(MessagePassing):
             out = out.mean(dim=1)
 
         if self.bias is not None:
-            out = out + self.bias
+            out += self.bias
 
-        if return_attention_weights:
-            alpha, self.__alpha__ = self.__alpha__, None
+        if isinstance(return_attention_weights, bool):
             return out, (edge_index, alpha)
         else:
             return out
 
-    def message(self, x_i, x_j, edge_index_i, size_i,
-                return_attention_weights):
+    def message(self, x_i: Tensor, x_j: Tensor, edge_index_i: Tensor,
+                size_i: Optional[int]):
         # Compute attention coefficients.
         x_i = x_i.view(-1, self.heads, self.out_channels)
         x_j = x_j.view(-1, self.heads, self.out_channels)
@@ -118,9 +142,7 @@ class GATConv(MessagePassing):
         alpha = (x_i * self.att_i).sum(-1) + (x_j * self.att_j).sum(-1)
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, edge_index_i, size_i)
-
-        if return_attention_weights:
-            self.__alpha__ = alpha
+        self._alpha = alpha
 
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)

@@ -10,5 +10,10 @@ def test_sage_conv():
 
     conv = SAGEConv(in_channels, out_channels)
     assert conv.__repr__() == 'SAGEConv(16, 32)'
-    assert conv(x, edge_index).size() == (num_nodes, out_channels)
-    assert conv((x, x), edge_index).size() == (num_nodes, out_channels)
+    out = conv(x, edge_index)
+    assert out.size() == (num_nodes, out_channels)
+    assert conv((x, x), edge_index).tolist() == out.tolist()
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index).tolist() == out.tolist()

@@ -13,4 +13,9 @@ def test_nn_conv():
     nn = Seq(Lin(3, 32), ReLU(), Lin(32, in_channels * out_channels))
     conv = NNConv(in_channels, out_channels, nn)
     assert conv.__repr__() == 'NNConv(16, 32)'
-    assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
+    out = conv(x, edge_index, pseudo)
+    assert out.size() == (num_nodes, out_channels)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_attr=pseudo)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index, pseudo).tolist() == out.tolist()

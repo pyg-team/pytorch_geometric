@@ -46,12 +46,7 @@ class SignedConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 first_aggr,
-                 bias=True,
+    def __init__(self, in_channels, out_channels, first_aggr, bias=True,
                  **kwargs):
         super(SignedConv, self).__init__(aggr='mean', **kwargs)
 
@@ -89,19 +84,18 @@ class SignedConv(MessagePassing):
                 self.propagate(pos_edge_index, x=x_1),
                 self.propagate(neg_edge_index, x=x_2),
                 x_1,
-            ],
-                              dim=1)
+            ], dim=1)
 
             x_neg = torch.cat([
                 self.propagate(pos_edge_index, x=x_2),
                 self.propagate(neg_edge_index, x=x_1),
                 x_2,
-            ],
-                              dim=1)
+            ], dim=1)
 
         return torch.cat([self.lin_pos(x_pos), self.lin_neg(x_neg)], dim=1)
 
     def __repr__(self):
-        return '{}({}, {}, first_aggr={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.first_aggr)
+        return '{}({}, {}, first_aggr={})'.format(self.__class__.__name__,
+                                                  self.in_channels,
+                                                  self.out_channels,
+                                                  self.first_aggr)

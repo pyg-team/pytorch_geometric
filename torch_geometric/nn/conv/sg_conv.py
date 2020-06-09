@@ -1,5 +1,9 @@
+from typing import Optional, Tuple
+
+import torch
 from torch.nn import Linear
-from torch_geometric.nn.conv import MessagePassing, GCNConv
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 
 class SGConv(MessagePassing):
@@ -20,8 +24,9 @@ class SGConv(MessagePassing):
         K (int, optional): Number of hops :math:`K`. (default: :obj:`1`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of :math:`{\left(\mathbf{\hat{D}}^{-1/2}
-            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}^K` on first
-            execution, and will use the cached version for further executions.
+            \mathbf{\hat{A}} \mathbf{\hat{D}}^{-1/2} \right)}^K \mathbf{X}` on
+            first execution, and will use the cached version for further
+            executions.
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
@@ -29,6 +34,9 @@ class SGConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
+    _cache: Optional[Tuple[int, torch.Tensor]]
+
     def __init__(self, in_channels, out_channels, K=1, cached=False, bias=True,
                  **kwargs):
         super(SGConv, self).__init__(aggr='add', **kwargs)
@@ -37,6 +45,7 @@ class SGConv(MessagePassing):
         self.out_channels = out_channels
         self.K = K
         self.cached = cached
+        self._cache = None
 
         self.lin = Linear(in_channels, out_channels, bias=bias)
 
@@ -44,35 +53,34 @@ class SGConv(MessagePassing):
 
     def reset_parameters(self):
         self.lin.reset_parameters()
-        self.cached_result = None
-        self.cached_num_edges = None
+        self._cache = None
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
-        if self.cached and self.cached_result is not None:
-            if edge_index.size(1) != self.cached_num_edges:
+        cache = self._cache
+        if cache is not None:
+            if edge_index.size(1) != cache[0]:
                 raise RuntimeError(
-                    'Cached {} number of edges, but found {}. Please '
-                    'disable the caching behavior of this layer by removing '
-                    'the `cached=True` argument in its constructor.'.format(
-                        self.cached_num_edges, edge_index.size(1)))
+                    'Cached {} number of edges, but found {}. Please disable '
+                    'the caching behavior of this layer by removing the '
+                    '`cached=True` argument in its constructor.'.format(
+                        cache[0], edge_index.size(1)))
+            x = cache[1]
 
-        if not self.cached:
-            x = self.lin(x)
+        else:
+            num_edges = edge_index.size(1)
 
-        if not self.cached or self.cached_result is None:
-            self.cached_num_edges = edge_index.size(1)
-            edge_index, norm = GCNConv.norm(edge_index, x.size(self.node_dim),
-                                            edge_weight, dtype=x.dtype)
+            edge_index, norm = gcn_norm(edge_index, x.size(self.node_dim),
+                                        edge_weight, dtype=x.dtype)
 
             for k in range(self.K):
                 x = self.propagate(edge_index, x=x, norm=norm)
-            self.cached_result = x
 
-        if self.cached:
-            x = self.lin(self.cached_result)
+            if self.cached:
+                self._cache = (num_edges, x)
 
-        return x
+        return self.lin(x)
 
     def message(self, x_j, norm):
         return norm.view(-1, 1) * x_j

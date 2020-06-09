@@ -5,19 +5,19 @@ from torch_geometric.utils import remove_self_loops, add_self_loops
 from ..inits import reset
 
 
-def point_pair_features(pos_i, pos_j, norm_i, norm_j):
-    def get_angle(v1, v2):
-        return torch.atan2(
-            torch.cross(v1, v2, dim=1).norm(p=2, dim=1), (v1 * v2).sum(dim=1))
+def get_angle(v1, v2):
+    return torch.atan2(
+        torch.cross(v1, v2, dim=1).norm(p=2, dim=1), (v1 * v2).sum(dim=1))
 
+
+def point_pair_features(pos_i, pos_j, norm_i, norm_j):
     pseudo = pos_j - pos_i
     return torch.stack([
         pseudo.norm(p=2, dim=1),
         get_angle(norm_i, pseudo),
         get_angle(norm_j, pseudo),
         get_angle(norm_i, norm_j)
-    ],
-                       dim=1)
+    ], dim=1)
 
 
 class PPFConv(MessagePassing):
@@ -51,7 +51,6 @@ class PPFConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, local_nn=None, global_nn=None, **kwargs):
         super(PPFConv, self).__init__(aggr='max', **kwargs)
 
@@ -76,11 +75,15 @@ class PPFConv(MessagePassing):
                 for use in message passing in bipartite graphs.
             edge_index (LongTensor): The edge indices.
         """
-        if torch.is_tensor(pos):  # Add self-loops for symmetric adjacencies.
+        # Add self-loops for symmetric adjacencies.
+        if isinstance(pos, torch.Tensor):
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=pos.size(0))
 
-        return self.propagate(edge_index, x=x, pos=pos, norm=norm)
+        out = self.propagate(edge_index, x=x, pos=pos, norm=norm)
+        if self.global_nn is not None:
+            out = self.global_nn(out)
+        return out
 
     def message(self, x_j, pos_i, pos_j, norm_i, norm_j):
         msg = point_pair_features(pos_i, pos_j, norm_i, norm_j)
@@ -90,11 +93,7 @@ class PPFConv(MessagePassing):
             msg = self.local_nn(msg)
         return msg
 
-    def update(self, aggr_out):
-        if self.global_nn is not None:
-            aggr_out = self.global_nn(aggr_out)
-        return aggr_out
-
     def __repr__(self):
-        return '{}(local_nn={}, global_nn={})'.format(
-            self.__class__.__name__, self.local_nn, self.global_nn)
+        return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
+                                                      self.local_nn,
+                                                      self.global_nn)

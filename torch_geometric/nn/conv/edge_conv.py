@@ -42,7 +42,6 @@ class EdgeConv(MessagePassing):
     def forward(self, x, edge_index):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
-
         return self.propagate(edge_index, x=x)
 
     def message(self, x_i, x_j):

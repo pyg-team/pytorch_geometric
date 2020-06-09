@@ -1,7 +1,6 @@
 import warnings
 
 import torch
-import torch_geometric
 from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils.repeat import repeat
@@ -104,44 +103,43 @@ class SplineConv(MessagePassing):
                           'version of SplineConv. If possible, please convert '
                           'your data to the GPU.')
 
-        if torch_geometric.is_debug_enabled():
-            if x.size(-1) != self.in_channels:
-                raise RuntimeError(
-                    'Expected {} node features, but found {}'.format(
-                        self.in_channels, x.size(1)))
+        # FIXME: Does not work in `jitted` mode.
+        # if torch_geometric.is_debug_enabled():
+        #     if x.size(-1) != self.in_channels:
+        #         raise RuntimeError(
+        #             'Expected {} node features, but found {}'.format(
+        #                 self.in_channels, x.size(1)))
 
-            if pseudo.size(-1) != self.dim:
-                raise RuntimeError(
-                    ('Expected pseudo-coordinate dimensionality of {}, but '
-                     'found {}').format(self.dim, pseudo.size(1)))
+        #     if pseudo.size(-1) != self.dim:
+        #         raise RuntimeError(
+        #             ('Expected pseudo-coordinate dimensionality of {}, but '
+        #              'found {}').format(self.dim, pseudo.size(1)))
 
-            min_index, max_index = edge_index.min(), edge_index.max()
-            if min_index < 0 or max_index > x.size(self.node_dim) - 1:
-                raise RuntimeError(
-                    ('Edge indices must lay in the interval [0, {}]'
-                     ' but found them in the interval [{}, {}]').format(
-                         x.size(self.node_dim) - 1, min_index, max_index))
+        #     min_index, max_index = edge_index.min(), edge_index.max()
+        #     if min_index < 0 or max_index > x.size(self.node_dim) - 1:
+        #         raise RuntimeError(
+        #             ('Edge indices must lay in the interval [0, {}]'
+        #              ' but found them in the interval [{}, {}]').format(
+        #                  x.size(self.node_dim) - 1, min_index, max_index))
 
-            min_pseudo, max_pseudo = pseudo.min(), pseudo.max()
-            if min_pseudo < 0 or max_pseudo > 1:
-                raise RuntimeError(
-                    ('Pseudo-coordinates must lay in the fixed interval [0, 1]'
-                     ' but found them in the interval [{}, {}]').format(
-                         min_pseudo, max_pseudo))
+        #     min_pseudo, max_pseudo = pseudo.min(), pseudo.max()
+        #     if min_pseudo < 0 or max_pseudo > 1:
+        #         raise RuntimeError(
+        #             ('Pseudo-coordinates must lay in the interval [0, 1] '
+        #              'but found them in the interval [{}, {}]').format(
+        #                  min_pseudo, max_pseudo))
 
-        return self.propagate(edge_index, x=x, pseudo=pseudo)
+        out = self.propagate(edge_index, x=x, pseudo=pseudo)
+        if self.root is not None:
+            out += torch.matmul(x, self.root)
+        if self.bias is not None:
+            out += self.bias
+        return out
 
     def message(self, x_j, pseudo):
-        data = spline_basis(pseudo, self._buffers['kernel_size'],
-                            self._buffers['is_open_spline'], self.degree)
+        data = spline_basis(pseudo, self.kernel_size, self.is_open_spline,
+                            self.degree)
         return spline_weighting(x_j, self.weight, *data)
-
-    def update(self, aggr_out, x):
-        if self.root is not None:
-            aggr_out = aggr_out + torch.mm(x, self.root)
-        if self.bias is not None:
-            aggr_out = aggr_out + self.bias
-        return aggr_out
 
     def __repr__(self):
         return '{}({}, {}, dim={})'.format(self.__class__.__name__,

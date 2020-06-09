@@ -1,4 +1,8 @@
-from torch_geometric.nn.conv import MessagePassing, GCNConv
+from typing import Optional
+
+import torch
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 
 class APPNP(MessagePassing):
@@ -32,10 +36,11 @@ class APPNP(MessagePassing):
         self.K = K
         self.alpha = alpha
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
-        edge_index, norm = GCNConv.norm(edge_index, x.size(self.node_dim),
-                                        edge_weight, dtype=x.dtype)
+        edge_index, norm = gcn_norm(edge_index, x.size(self.node_dim),
+                                    edge_weight, dtype=x.dtype)
 
         hidden = x
         for k in range(self.K):
