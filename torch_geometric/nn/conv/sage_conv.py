@@ -1,3 +1,6 @@
+from typing import Optional
+from torch_geometric.typing import OptPairTensor, Size
+
 import torch
 from torch import Tensor
 from torch.nn import Linear
@@ -5,8 +8,6 @@ import torch.nn.functional as F
 from torch_sparse import SparseTensor
 from torch_sparse.matmul import spmm
 from torch_geometric.nn.conv import MessagePassing
-
-from typing import Optional, Tuple
 
 
 class SAGEConv(MessagePassing):
@@ -18,7 +19,9 @@ class SAGEConv(MessagePassing):
         \mathrm{mean}_{j \in \mathcal{N(i)}} \mathbf{x}_j
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or tuple): Size of each input sample. A tuple of
+            feature sizes corresponds to the dimensionality of source and
+            target node dimensionalities.
         out_channels (int): Size of each output sample.
         normalize (bool, optional): If set to :obj:`True`, output features
             will be :math:`\ell_2`-normalized, *i.e.*,
@@ -38,8 +41,11 @@ class SAGEConv(MessagePassing):
         self.out_channels = out_channels
         self.normalize = normalize
 
-        self.lin_rel = Linear(in_channels, out_channels, bias=bias)
-        self.lin_root = Linear(in_channels, out_channels, bias=False)
+        if isinstance(in_channels, int):
+            in_channels = (in_channels, in_channels)
+
+        self.lin_rel = Linear(in_channels[0], out_channels, bias=bias)
+        self.lin_root = Linear(in_channels[1], out_channels, bias=False)
 
         self.reset_parameters()
 
@@ -47,18 +53,25 @@ class SAGEConv(MessagePassing):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x, edge_index,
-                edge_weight: Optional[torch.Tensor] = None):
-        """"""
-        x_prop: Tuple[torch.Tensor, torch.Tensor] = (x, x)  # Dummy.
-        if isinstance(x, torch.Tensor):
-            x_prop = (x, x)
-        else:
-            x_prop = x
+    # TODO: Allow different feature sizes (CHECK)
+    # TODO: Allow tuples and tensors as inputs (CHECK)
+    # TODO: Allow adj and edge_index as input (CHECK)
+    # TODO: Make that jittable.
 
-        out = self.propagate(edge_index, x=x_prop, edge_weight=edge_weight)
+    # propagate_kwargs: (x: OptPairTensor) -> Tensor
+
+    def forward(self, x, edge_index, edge_weight=None, size=None):
+        """"""
+        # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
+        # type: (OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor
+        # type: (Tensor, SparseTensor, Optional[Tensor]) -> Tensor
+        # type: (OptPairTensor, SparseTensor) -> Tensor
+
+        xs: OptPairTensor = (x, None) if isinstance(x, Tensor) else x
+        out = self.propagate(edge_index, size, x=xs, edge_weight=edge_weight)
         out = self.lin_rel(out)
-        out += self.lin_root(x_prop[1])
+        if xs[1] is not None:
+            out += self.lin_root(xs[1])
         if self.normalize:
             out = F.normalize(out, p=2., dim=-1)
         return out
@@ -67,7 +80,7 @@ class SAGEConv(MessagePassing):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: Tuple[Tensor, Tensor]) -> Tensor:
+                              x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self):
