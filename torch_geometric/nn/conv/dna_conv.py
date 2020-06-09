@@ -215,7 +215,7 @@ class DNAConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    _cache: Optional[Tuple[int, torch.Tensor, torch.Tensor, torch.Tensor]]
+    _cache: Optional[Tuple[int, torch.Tensor, torch.Tensor]]
 
     def __init__(self, channels, heads=1, groups=1, dropout=0., cached=False,
                  bias=True, **kwargs):
@@ -249,7 +249,7 @@ class DNAConv(MessagePassing):
         num_edges = edge_index.size(1)
 
         edge_index, edge_weight = gcn_norm(edge_index, x.size(self.node_dim),
-                                           edge_weight, self.improved, x.dtype)
+                                           edge_weight, dtype=x.dtype)
 
         if self.cached:
             self._cache = (num_edges, edge_index, edge_weight)

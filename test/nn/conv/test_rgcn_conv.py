@@ -12,18 +12,8 @@ def test_rgcn_conv():
 
     conv = RGCNConv(in_channels, out_channels, num_relations, num_bases=4)
     assert conv.__repr__() == 'RGCNConv(16, 32, num_relations=8)'
-    out = conv(x, edge_index, edge_type)
-    assert out.size() == (num_nodes, out_channels)
-
-    jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_type=edge_type)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, edge_index, edge_type).tolist() == out.tolist()
+    assert conv(x, edge_index, edge_type).size() == (num_nodes, out_channels)
 
     x = None
     conv = RGCNConv(num_nodes, out_channels, num_relations, num_bases=4)
-    out = conv(x, edge_index, edge_type)
-    assert out.size() == (num_nodes, out_channels)
-
-    jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_type=edge_type)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, edge_index, edge_type).tolist() == out.tolist()
+    assert conv(x, edge_index, edge_type).size() == (num_nodes, out_channels)

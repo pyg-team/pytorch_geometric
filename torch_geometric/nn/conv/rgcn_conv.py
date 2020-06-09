@@ -1,5 +1,3 @@
-from typing import Optional
-
 import torch
 from torch.nn import Parameter as Param
 from torch_geometric.nn.conv import MessagePassing
@@ -66,21 +64,12 @@ class RGCNConv(MessagePassing):
         uniform(size, self.root)
         uniform(size, self.bias)
 
-    def forward(self, x: Optional[torch.Tensor], edge_index, edge_type,
-                edge_norm: Optional[torch.Tensor] = None):
+    def forward(self, x, edge_index, edge_type, edge_norm=None, size=None):
         """"""
-        out = self.propagate(edge_index, x=x, edge_type=edge_type,
-                             edge_norm=edge_norm)
+        return self.propagate(edge_index, size=size, x=x, edge_type=edge_type,
+                              edge_norm=edge_norm)
 
-        if self.root is not None:
-            out += self.root if x is None else torch.matmul(x, self.root)
-        if self.bias is not None:
-            out += self.bias
-
-        return out
-
-    def message(self, x_j: Optional[torch.Tensor], edge_index_j, edge_type,
-                edge_norm: Optional[torch.Tensor]):
+    def message(self, x_j, edge_index_j, edge_type, edge_norm):
         w = torch.matmul(self.att, self.basis.view(self.num_bases, -1))
 
         # If no node features are given, we implement a simple embedding
@@ -95,6 +84,18 @@ class RGCNConv(MessagePassing):
             out = torch.bmm(x_j.unsqueeze(1), w).squeeze(-2)
 
         return out if edge_norm is None else out * edge_norm.view(-1, 1)
+
+    def update(self, aggr_out, x):
+        if self.root is not None:
+            if x is None:
+                aggr_out = aggr_out + self.root
+            else:
+                aggr_out = aggr_out + torch.matmul(x, self.root)
+
+        if self.bias is not None:
+            aggr_out = aggr_out + self.bias
+
+        return aggr_out
 
     def __repr__(self):
         return '{}({}, {}, num_relations={})'.format(self.__class__.__name__,
