@@ -1,8 +1,6 @@
 import torch
 from torch.nn import Linear
 
-from ..inits import uniform
-
 
 class DenseGraphConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GraphConv`.
