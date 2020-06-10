@@ -49,18 +49,3 @@ class Inspector(object):
                     s = f'{s}: torch.Tensor'
                 out += f'    {s}\n'
         return out
-
-
-def get_type(item):
-    if item is None:
-        return 'Optional[torch.Tensor]'
-    elif isinstance(item, tuple):
-        return 'Tuple[' + ', '.join(get_type(v) for v in item) + ']'
-    elif isinstance(item, list):
-        return 'List[' + get_type(item[0]) + ']'
-    else:
-        thetype = type(item)
-        if thetype.__module__ == 'builtins':
-            return thetype.__name__
-        else:
-            return f'{thetype.__module__}.{thetype.__name__}'
