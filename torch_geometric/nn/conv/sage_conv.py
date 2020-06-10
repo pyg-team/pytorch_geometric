@@ -58,29 +58,30 @@ class SAGEConv(MessagePassing):
     # TODO: Allow adj and edge_index as input (CHECK)
     # TODO: Make that jittable.
 
-    # propagate_kwargs: (x: OptPairTensor) -> Tensor
-
-    def forward(self, x, edge_index, edge_weight=None, size=None):
+    # propagate_type: (x: OptPairTensor)
+    def forward(self, x, edge_index, size=None):
+        # type: (Tensor, Tensor, Size) -> Tensor
+        # type: (OptPairTensor, Tensor, Size) -> Tensor
+        # type: (Tensor, SparseTensor, Size) -> Tensor
+        # type: (OptPairTensor, SparseTensor, Size) -> Tensor
         """"""
-        # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (Tensor, SparseTensor, Optional[Tensor]) -> Tensor
-        # type: (OptPairTensor, SparseTensor) -> Tensor
-
-        xs: OptPairTensor = (x, None) if isinstance(x, Tensor) else x
-        out = self.propagate(edge_index, size, x=xs, edge_weight=edge_weight)
+        if isinstance(x, Tensor):
+            x: OptPairTensor = (x, x)
+        out = self.propagate(edge_index, size=size, x=x)
         out = self.lin_rel(out)
-        if xs[1] is not None:
-            out += self.lin_root(xs[1])
+        x_root = x[1]
+        if x_root is not None:
+            out += self.lin_root(x_root)
         if self.normalize:
             out = F.normalize(out, p=2., dim=-1)
         return out
 
-    def message(self, x_j: Tensor, edge_weight: Optional[Tensor]) -> Tensor:
-        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor) -> Tensor:
+        return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
+        # TODO: adj_t = adj_t.set_value(None)
         return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self):
