@@ -34,6 +34,8 @@ from .generate_mesh_normals import GenerateMeshNormals
 from .delaunay import Delaunay
 from .to_superpixels import ToSLIC
 from .gdc import GDC
+from .sign import SIGN
+from .grid_sampling import GridSampling
 
 __all__ = [
     'Compose',
@@ -72,4 +74,6 @@ __all__ = [
     'Delaunay',
     'ToSLIC',
     'GDC',
+    'SIGN',
+    'GridSampling',
 ]

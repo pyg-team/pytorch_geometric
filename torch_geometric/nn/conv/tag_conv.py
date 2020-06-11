@@ -1,7 +1,9 @@
+import torch
 from torch.nn import Linear
 from torch_scatter import scatter_add
 from torch_geometric.nn.conv import MessagePassing
-import torch
+
+from typing import Optional
 
 
 class TAGConv(MessagePassing):
@@ -10,7 +12,7 @@ class TAGConv(MessagePassing):
      <https://arxiv.org/abs/1710.10370>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} = \sum_{k=0}^K \mathbf{D}^{-1/2} \mathbf{A}
+        \mathbf{X}^{\prime} = \sum_{k=0}^K \mathbf{D}^{-1/2} \mathbf{A}^k
         \mathbf{D}^{-1/2}\mathbf{X} \mathbf{\Theta}_{k},
 
     where :math:`\mathbf{A}` denotes the adjacency matrix and
@@ -22,16 +24,19 @@ class TAGConv(MessagePassing):
         K (int, optional): Number of hops :math:`K`. (default: :obj:`3`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        normalize (bool, optional): Whether to apply symmetric normalization.
+            (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    def __init__(self, in_channels, out_channels, K=3, bias=True, **kwargs):
+    def __init__(self, in_channels, out_channels, K=3, bias=True,
+                 normalize=True, **kwargs):
         super(TAGConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.K = K
+        self.normalize = normalize
 
         self.lin = Linear(in_channels * (self.K + 1), out_channels, bias=bias)
 
@@ -40,23 +45,30 @@ class TAGConv(MessagePassing):
     def reset_parameters(self):
         self.lin.reset_parameters()
 
-    @staticmethod
-    def norm(edge_index, num_nodes, edge_weight=None, dtype=None):
+    def norm(self, edge_index, num_nodes: int,
+             edge_weight: Optional[torch.Tensor] = None,
+             dtype: Optional[int] = None):
+
         if edge_weight is None:
             edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
-        row, col = edge_index
+        row, col = edge_index[0], edge_index[1]
         deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
-        deg_inv_sqrt = deg.pow(-0.5)
-        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+        deg_inv_sqrt = deg.pow_(-0.5)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
-        edge_index, norm = self.norm(edge_index, x.size(0), edge_weight,
-                                     dtype=x.dtype)
+        if self.normalize:
+            edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
+                                         edge_weight, dtype=x.dtype)
+        else:
+            assert edge_weight is not None
+            norm = edge_weight
 
         xs = [x]
         for k in range(self.K):

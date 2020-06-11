@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 from torch import Tensor
 from torch.nn import Parameter as Param
@@ -34,12 +36,7 @@ class GatedGraphConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    def __init__(self,
-                 out_channels,
-                 num_layers,
-                 aggr='add',
-                 bias=True,
+    def __init__(self, out_channels, num_layers, aggr='add', bias=True,
                  **kwargs):
         super(GatedGraphConv, self).__init__(aggr=aggr, **kwargs)
 
@@ -55,7 +52,8 @@ class GatedGraphConv(MessagePassing):
         uniform(self.out_channels, self.weight)
         self.rnn.reset_parameters()
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index,
+                edge_weight: Optional[torch.Tensor] = None):
         """"""
         h = x if x.dim() == 2 else x.unsqueeze(-1)
         if h.size(1) > self.out_channels:
@@ -73,11 +71,10 @@ class GatedGraphConv(MessagePassing):
 
         return h
 
-    def message(self, x_j, edge_weight):
-        if edge_weight is not None:
-            return edge_weight.view(-1, 1) * x_j
-        return x_j
+    def message(self, x_j, edge_weight: Optional[torch.Tensor]):
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def __repr__(self):
-        return '{}({}, num_layers={})'.format(
-            self.__class__.__name__, self.out_channels, self.num_layers)
+        return '{}({}, num_layers={})'.format(self.__class__.__name__,
+                                              self.out_channels,
+                                              self.num_layers)

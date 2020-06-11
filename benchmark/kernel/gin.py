@@ -7,25 +7,25 @@ from torch_geometric.nn import GINConv, global_mean_pool, JumpingKnowledge
 class GIN0(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden):
         super(GIN0, self).__init__()
-        self.conv1 = GINConv(Sequential(
-            Linear(dataset.num_features, hidden),
-            ReLU(),
-            Linear(hidden, hidden),
-            ReLU(),
-            BN(hidden),
-        ),
-                             train_eps=False)
+        self.conv1 = GINConv(
+            Sequential(
+                Linear(dataset.num_features, hidden),
+                ReLU(),
+                Linear(hidden, hidden),
+                ReLU(),
+                BN(hidden),
+            ), train_eps=False)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(
-                GINConv(Sequential(
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    BN(hidden),
-                ),
-                        train_eps=False))
+                GINConv(
+                    Sequential(
+                        Linear(hidden, hidden),
+                        ReLU(),
+                        Linear(hidden, hidden),
+                        ReLU(),
+                        BN(hidden),
+                    ), train_eps=False))
         self.lin1 = Linear(hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
@@ -54,25 +54,25 @@ class GIN0(torch.nn.Module):
 class GIN0WithJK(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super(GIN0WithJK, self).__init__()
-        self.conv1 = GINConv(Sequential(
-            Linear(dataset.num_features, hidden),
-            ReLU(),
-            Linear(hidden, hidden),
-            ReLU(),
-            BN(hidden),
-        ),
-                             train_eps=False)
+        self.conv1 = GINConv(
+            Sequential(
+                Linear(dataset.num_features, hidden),
+                ReLU(),
+                Linear(hidden, hidden),
+                ReLU(),
+                BN(hidden),
+            ), train_eps=False)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(
-                GINConv(Sequential(
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    BN(hidden),
-                ),
-                        train_eps=False))
+                GINConv(
+                    Sequential(
+                        Linear(hidden, hidden),
+                        ReLU(),
+                        Linear(hidden, hidden),
+                        ReLU(),
+                        BN(hidden),
+                    ), train_eps=False))
         self.jump = JumpingKnowledge(mode)
         if mode == 'cat':
             self.lin1 = Linear(num_layers * hidden, hidden)
@@ -109,25 +109,25 @@ class GIN0WithJK(torch.nn.Module):
 class GIN(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden):
         super(GIN, self).__init__()
-        self.conv1 = GINConv(Sequential(
-            Linear(dataset.num_features, hidden),
-            ReLU(),
-            Linear(hidden, hidden),
-            ReLU(),
-            BN(hidden),
-        ),
-                             train_eps=True)
+        self.conv1 = GINConv(
+            Sequential(
+                Linear(dataset.num_features, hidden),
+                ReLU(),
+                Linear(hidden, hidden),
+                ReLU(),
+                BN(hidden),
+            ), train_eps=True)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(
-                GINConv(Sequential(
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    BN(hidden),
-                ),
-                        train_eps=True))
+                GINConv(
+                    Sequential(
+                        Linear(hidden, hidden),
+                        ReLU(),
+                        Linear(hidden, hidden),
+                        ReLU(),
+                        BN(hidden),
+                    ), train_eps=True))
         self.lin1 = Linear(hidden, hidden)
         self.lin2 = Linear(hidden, dataset.num_classes)
 
@@ -156,25 +156,25 @@ class GIN(torch.nn.Module):
 class GINWithJK(torch.nn.Module):
     def __init__(self, dataset, num_layers, hidden, mode='cat'):
         super(GINWithJK, self).__init__()
-        self.conv1 = GINConv(Sequential(
-            Linear(dataset.num_features, hidden),
-            ReLU(),
-            Linear(hidden, hidden),
-            ReLU(),
-            BN(hidden),
-        ),
-                             train_eps=True)
+        self.conv1 = GINConv(
+            Sequential(
+                Linear(dataset.num_features, hidden),
+                ReLU(),
+                Linear(hidden, hidden),
+                ReLU(),
+                BN(hidden),
+            ), train_eps=True)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(
-                GINConv(Sequential(
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    BN(hidden),
-                ),
-                        train_eps=True))
+                GINConv(
+                    Sequential(
+                        Linear(hidden, hidden),
+                        ReLU(),
+                        Linear(hidden, hidden),
+                        ReLU(),
+                        BN(hidden),
+                    ), train_eps=True))
         self.jump = JumpingKnowledge(mode)
         if mode == 'cat':
             self.lin1 = Linear(num_layers * hidden, hidden)

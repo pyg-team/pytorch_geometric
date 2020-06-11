@@ -28,7 +28,6 @@ class AGNNConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, requires_grad=True, **kwargs):
         super(AGNNConv, self).__init__(aggr='add', **kwargs)
 
@@ -48,19 +47,18 @@ class AGNNConv(MessagePassing):
     def forward(self, x, edge_index):
         """"""
         edge_index, _ = remove_self_loops(edge_index)
-        edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
+        edge_index, _ = add_self_loops(edge_index,
+                                       num_nodes=x.size(self.node_dim))
 
-        x_norm = F.normalize(x, p=2, dim=-1)
+        x_norm = F.normalize(x, p=2., dim=-1)
 
-        return self.propagate(
-            edge_index, x=x, x_norm=x_norm, num_nodes=x.size(0))
+        return self.propagate(edge_index, x=x, x_norm=x_norm,
+                              num_nodes=x.size(self.node_dim))
 
-    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes):
+    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes: int):
         # Compute attention coefficients.
-        beta = self.beta if self.requires_grad else self._buffers['beta']
-        alpha = beta * (x_norm_i * x_norm_j).sum(dim=-1)
+        alpha = self.beta * (x_norm_i * x_norm_j).sum(dim=-1)
         alpha = softmax(alpha, edge_index_i, num_nodes)
-
         return x_j * alpha.view(-1, 1)
 
     def __repr__(self):

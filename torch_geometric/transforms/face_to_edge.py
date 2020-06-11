@@ -15,14 +15,15 @@ class FaceToEdge(object):
         self.remove_faces = remove_faces
 
     def __call__(self, data):
-        face = data.face
+        if data.face is not None:
+            face = data.face
+            edge_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
+            edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
 
-        edge_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
-        edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
+            data.edge_index = edge_index
+            if self.remove_faces:
+                data.face = None
 
-        data.edge_index = edge_index
-        if self.remove_faces:
-            data.face = None
         return data
 
     def __repr__(self):

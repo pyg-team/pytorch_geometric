@@ -1,3 +1,0 @@
-torch-scatter
-torch-sparse
-torch-cluster

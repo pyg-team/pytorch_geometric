@@ -17,7 +17,12 @@ def test_edge_conv_conv():
         '  (1): ReLU()\n'
         '  (2): Linear(in_features=32, out_features=32, bias=True)\n'
         '))')
-    assert conv(x, edge_index).size() == (num_nodes, out_channels)
+    out = conv(x, edge_index)
+    assert out.size() == (num_nodes, out_channels)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index).tolist() == out.tolist()
 
 
 def test_dynamic_edge_conv_conv():

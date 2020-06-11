@@ -32,7 +32,6 @@ class FeaStConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
     def __init__(self, in_channels, out_channels, heads=1, bias=True,
                  **kwargs):
         super(FeaStConv, self).__init__(aggr='mean', **kwargs)
@@ -41,8 +40,8 @@ class FeaStConv(MessagePassing):
         self.out_channels = out_channels
         self.heads = heads
 
-        self.weight = Parameter(
-            torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.u = Parameter(torch.Tensor(in_channels, heads))
         self.c = Parameter(torch.Tensor(heads))
 
@@ -64,20 +63,16 @@ class FeaStConv(MessagePassing):
         edge_index, _ = remove_self_loops(edge_index)
         edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
-        return self.propagate(edge_index, x=x)
+        out = self.propagate(edge_index, x=x)
+        if self.bias is not None:
+            out += self.bias
+        return out
 
     def message(self, x_i, x_j):
         q = torch.mm((x_j - x_i), self.u) + self.c  # Translation invariance.
         q = F.softmax(q, dim=1)
-
         x_j = torch.mm(x_j, self.weight).view(x_j.size(0), self.heads, -1)
-
         return (x_j * q.view(-1, self.heads, 1)).sum(dim=1)
-
-    def update(self, aggr_out):
-        if self.bias is not None:
-            aggr_out = aggr_out + self.bias
-        return aggr_out
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

@@ -6,6 +6,7 @@ from xml.dom import minidom
 
 import torch
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
 import numpy as np
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_tar)
@@ -24,7 +25,7 @@ class PascalVOCKeypoints(InMemoryDataset):
     r"""The Pascal VOC 2011 dataset with Berkely annotations of keypoints from
     the `"Poselets: Body Part Detectors Trained Using 3D Human Pose
     Annotations" <https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/
-    human/ poselets_iccv09.pdf>`_ paper, containing 3 to 23 keypoints per
+    human/ poselets_iccv09.pdf>`_ paper, containing 0 to 23 keypoints per
     example over 20 categories.
     The dataset is pre-filtered to exclude difficult, occluded and truncated
     objects.
@@ -57,10 +58,12 @@ class PascalVOCKeypoints(InMemoryDataset):
     """
     image_url = ('http://host.robots.ox.ac.uk/pascal/VOC/voc2011/'
                  'VOCtrainval_25-May-2011.tar')
-    # annotation_url = ('https://www2.eecs.berkeley.edu/Research/Projects/CS/'
-    #                   'vision/shape/poselets/voc2011_keypoints_Feb2012.tgz')
-    annotation_url = 'http://www.roemisch-drei.de/pascal_annotations.tar'
-    split_url = 'http://cvgl.stanford.edu/projects/ucn/voc2011_pairs.npz'
+    annotation_url = ('https://www2.eecs.berkeley.edu/Research/Projects/CS/'
+                      'vision/shape/poselets/voc2011_keypoints_Feb2012.tgz')
+    # annotation_url = 'http://www.roemisch-drei.de/pascal_annotations.tar'
+    # split_url = 'http://cvgl.stanford.edu/projects/ucn/voc2011_pairs.npz'
+    split_url = ('https://github.com/Thinklab-SJTU/PCA-GM/raw/master/data/'
+                 'PascalVOC/voc2011_pairs.npz')
 
     categories = [
         'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat',
@@ -69,6 +72,7 @@ class PascalVOCKeypoints(InMemoryDataset):
     ]
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    batch_size = 32
 
     def __init__(self, root, category, train=True, transform=None,
                  pre_transform=None, pre_filter=None):
@@ -80,13 +84,20 @@ class PascalVOCKeypoints(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
+    def raw_dir(self):
+        return osp.join(self.root, 'raw')
+
+    @property
+    def processed_dir(self):
+        return osp.join(self.root, self.category.capitalize(), 'processed')
+
+    @property
     def raw_file_names(self):
         return ['images', 'annotations', 'splits.npz']
 
     @property
     def processed_file_names(self):
-        category = self.category
-        return [x.format(category) for x in ['training_{}.pt', 'test_{}.pt']]
+        return ['training.pt', 'test.pt']
 
     def download(self):
         path = download_url(self.image_url, self.raw_dir)
@@ -122,7 +133,7 @@ class PascalVOCKeypoints(InMemoryDataset):
         vgg16_outputs = []
 
         def hook(module, x, y):
-            vgg16_outputs.append(y.to('cpu'))
+            vgg16_outputs.append(y)
 
         vgg16 = models.vgg16(pretrained=True).to(self.device)
         vgg16.eval()
@@ -134,7 +145,7 @@ class PascalVOCKeypoints(InMemoryDataset):
             T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
-        train_data_list, test_data_list = [], []
+        train_set, test_set = [], []
         for i, name in enumerate(chain(train_split, test_split)):
             filename = '_'.join(name.split('/')[1].split('_')[:-1])
             idx = int(name.split('_')[-1].split('.')[0]) - 1
@@ -150,6 +161,9 @@ class PascalVOCKeypoints(InMemoryDataset):
             if bool(int(trunc)) or bool(int(occ)) or bool(int(diff)):
                 continue
 
+            if self.category == 'person' and int(filename[:4]) > 2008:
+                continue
+
             xmin = float(obj.getElementsByTagName('xmin')[0].firstChild.data)
             xmax = float(obj.getElementsByTagName('xmax')[0].firstChild.data)
             ymin = float(obj.getElementsByTagName('ymin')[0].firstChild.data)
@@ -158,65 +172,80 @@ class PascalVOCKeypoints(InMemoryDataset):
 
             dom = minidom.parse(osp.join(annotation_path, name))
             keypoints = dom.getElementsByTagName('keypoint')
-            if len(keypoints) == 0:
-                continue
             poss, ys = [], []
             for keypoint in keypoints:
                 label = keypoint.attributes['name'].value
                 if label not in labels:
                     labels[label] = len(labels)
                 ys.append(labels[label])
-                poss.append(float(keypoint.attributes['x'].value))
-                poss.append(float(keypoint.attributes['y'].value))
+                x = float(keypoint.attributes['x'].value)
+                y = float(keypoint.attributes['y'].value)
+                poss += [x, y]
             y = torch.tensor(ys, dtype=torch.long)
             pos = torch.tensor(poss, dtype=torch.float).view(-1, 2)
 
-            # Adjust bounding box (and positions) + add a small offset because
-            # some keypoints lay outside the bounding boxes.
-            box = (min(pos[:, 0].min().item(), box[0]) - 20,
-                   min(pos[:, 1].min().item(), box[1]) - 20,
-                   max(pos[:, 0].max().item(), box[2]) + 20,
-                   max(pos[:, 1].max().item(), box[3]) + 20)
+            if pos.numel() == 0:
+                continue  # These examples do not make any sense anyway...
 
-            pos[:, 0] = pos[:, 0] - box[0]
-            pos[:, 1] = pos[:, 1] - box[1]
+            # Add a small offset to the bounding because some keypoints lay
+            # outside the bounding box intervals.
+            box = (min(pos[:, 0].min().floor().item(), box[0]) - 16,
+                   min(pos[:, 1].min().floor().item(), box[1]) - 16,
+                   max(pos[:, 0].max().ceil().item(), box[2]) + 16,
+                   max(pos[:, 1].max().ceil().item(), box[3]) + 16)
+
+            # Rescale keypoints.
+            pos[:, 0] = (pos[:, 0] - box[0]) * 256.0 / (box[2] - box[0])
+            pos[:, 1] = (pos[:, 1] - box[1]) * 256.0 / (box[3] - box[1])
 
             path = osp.join(image_path, '{}.jpg'.format(filename))
             with open(path, 'rb') as f:
                 img = Image.open(f).convert('RGB').crop(box)
+                img = img.resize((256, 256), resample=Image.BICUBIC)
 
             img = transform(img)
-            size = img.size()[-2:]
-            vgg16_outputs.clear()
-            with torch.no_grad():
-                vgg16(img.unsqueeze(0).to(self.device))
 
-            xs = []
-            for out in vgg16_outputs:
-                out = F.interpolate(out, size, mode='bilinear',
-                                    align_corners=False)
-                out = out.squeeze(0).permute(1, 2, 0)
-                out = out[pos[:, 1].round().long(), pos[:, 0].round().long()]
-                xs.append(out)
-
-            # Reset position.
-            pos[:, 0] = pos[:, 0] + box[0] - xmin
-            pos[:, 1] = pos[:, 1] + box[1] - ymin
-
-            data = Data(x=torch.cat(xs, dim=-1), pos=pos, y=y)
-
-            if self.pre_filter is not None and not self.pre_filter(data):
-                continue
-            if self.pre_transform is not None:
-                data = self.pre_transform(data)
+            data = Data(img=img, pos=pos, y=y, name=filename)
 
             if i < len(train_split):
-                train_data_list.append(data)
+                train_set.append(data)
             else:
-                test_data_list.append(data)
+                test_set.append(data)
 
-        torch.save(self.collate(train_data_list), self.processed_paths[0])
-        torch.save(self.collate(test_data_list), self.processed_paths[1])
+        data_list = list(chain(train_set, test_set))
+        imgs = [data.img for data in data_list]
+        loader = DataLoader(imgs, self.batch_size, shuffle=False)
+        for i, batch_img in enumerate(loader):
+            vgg16_outputs.clear()
+
+            with torch.no_grad():
+                vgg16(batch_img.to(self.device))
+
+            out1 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+                                 align_corners=False)
+            out2 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+                                 align_corners=False)
+
+            for j in range(out1.size(0)):
+                data = data_list[i * self.batch_size + j]
+                idx = data.pos.round().long().clamp(0, 255)
+                x_1 = out1[j, :, idx[:, 1], idx[:, 0]].to('cpu')
+                x_2 = out2[j, :, idx[:, 1], idx[:, 0]].to('cpu')
+                data.img = None
+                data.x = torch.cat([x_1.t(), x_2.t()], dim=-1)
+            del out1
+            del out2
+
+        if self.pre_filter is not None:
+            train_set = [data for data in train_set if self.pre_filter(data)]
+            test_set = [data for data in test_set if self.pre_filter(data)]
+
+        if self.pre_transform is not None:
+            train_set = [self.pre_transform(data) for data in train_set]
+            test_set = [self.pre_transform(data) for data in test_set]
+
+        torch.save(self.collate(train_set), self.processed_paths[0])
+        torch.save(self.collate(test_set), self.processed_paths[1])
 
     def __repr__(self):
         return '{}({}, category={})'.format(self.__class__.__name__, len(self),

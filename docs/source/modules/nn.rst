@@ -13,7 +13,7 @@ Convolutional Layers
 .. automodule:: torch_geometric.nn.conv
     :members:
     :undoc-members:
-    :exclude-members: message, update, MessagePassing
+    :exclude-members: message, update, aggregate, MessagePassing
 
 .. automodule:: torch_geometric.nn.meta
     :members:
@@ -27,6 +27,10 @@ Dense Convolutional Layers
     :undoc-members:
 
 .. automodule:: torch_geometric.nn.dense.dense_sage_conv
+    :members:
+    :undoc-members:
+
+.. automodule:: torch_geometric.nn.dense.dense_graph_conv
     :members:
     :undoc-members:
 
@@ -59,6 +63,10 @@ Dense Pooling Layers
 --------------------
 
 .. automodule:: torch_geometric.nn.dense.diff_pool
+    :members:
+    :undoc-members:
+
+.. automodule:: torch_geometric.nn.dense.mincut_pool
     :members:
     :undoc-members:
 

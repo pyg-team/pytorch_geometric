@@ -3,8 +3,18 @@ import numba
 import numpy as np
 from scipy.linalg import expm
 from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
-from torch_sparse import coalesce, spspmm
+from torch_sparse import coalesce
 from torch_scatter import scatter_add
+
+
+def jit():
+    def decorator(func):
+        try:
+            return numba.jit(cache=True)(func)
+        except RuntimeError:
+            return numba.jit(cache=False)(func)
+
+    return decorator
 
 
 class GDC(object):
@@ -16,7 +26,7 @@ class GDC(object):
 
         The paper offers additional advice on how to choose the
         hyperparameters.
-        For an example of using GCN with GDC, see `:source:`examples/gcn.py`
+        For an example of using GCN with GDC, see `examples/gcn.py
         <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
         gcn.py>`_.
 
@@ -25,26 +35,26 @@ class GDC(object):
             Set to :obj:`None` to add no self-loops. (default: :obj:`1`)
         normalization_in (str, optional): Normalization of the transition
             matrix on the original (input) graph. Possible values:
-            `"sym"`, `"col"`, and `"row"`.
+            :obj:`"sym"`, :obj:`"col"`, and :obj:`"row"`.
             See :func:`GDC.transition_matrix` for details.
             (default: :obj:`"sym"`)
         normalization_out (str, optional): Normalization of the transition
             matrix on the transformed GDC (output) graph. Possible values:
-            `"sym"`, `"col"`, `"row"`, and `None`.
+            :obj:`"sym"`, :obj:`"col"`, :obj:`"row"`, and :obj:`None`.
             See :func:`GDC.transition_matrix` for details.
             (default: :obj:`"col"`)
         diffusion_kwargs (dict, optional): Dictionary containing the parameters
             for diffusion.
-            `method` specifies the diffusion method (`"ppr"`, `"heat"` or
-            `"coeff"`).
+            `method` specifies the diffusion method (:obj:`"ppr"`,
+            :obj:`"heat"` or :obj:`"coeff"`).
             Each diffusion method requires different additional parameters.
             See :func:`GDC.diffusion_matrix_exact` or
             :func:`GDC.diffusion_matrix_approx` for details.
             (default: :obj:`dict(method='ppr', alpha=0.15)`)
         sparsification_kwargs (dict, optional): Dictionary containing the
             parameters for sparsification.
-            `method` specifies the sparsification method (`threshold` or
-            `topk`).
+            `method` specifies the sparsification method (:obj:`"threshold"` or
+            :obj:`"topk"`).
             Each sparsification method requires different additional
             parameters.
             See :func:`GDC.sparsify_dense` for details.
@@ -127,49 +137,37 @@ class GDC(object):
             edge_index (LongTensor): The edge indices.
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
-            normalization (str): Normalization scheme. Options:
-                1. `"sym"`: Symmetric normalization:
-                :math:`\mathbf{T} = \mathbf{D}^{-1/2} \mathbf{A}
-                \mathbf{D}^{-1/2}`
+            normalization (str): Normalization scheme:
 
-                2. `"col"`: Column-wise normalization:
-                :math:`\mathbf{T} = \mathbf{A} \mathbf{D}^{-1}`
-
-                3. `"row"`: Row-wise normalization:
-                :math:`\mathbf{T} = \mathbf{D}^{-1} \mathbf{A}`
-
-                4. `None`: No normalization.
+                1. :obj:`"sym"`: Symmetric normalization
+                   :math:`\mathbf{T} = \mathbf{D}^{-1/2} \mathbf{A}
+                   \mathbf{D}^{-1/2}`.
+                2. :obj:`"col"`: Column-wise normalization
+                   :math:`\mathbf{T} = \mathbf{A} \mathbf{D}^{-1}`.
+                3. :obj:`"row"`: Row-wise normalization
+                   :math:`\mathbf{T} = \mathbf{D}^{-1} \mathbf{A}`.
+                4. :obj:`None`: No normalization.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        diag_idx = torch.arange(0, num_nodes, dtype=torch.long,
-                                device=edge_index.device)
-        diag_idx = diag_idx.unsqueeze(0).repeat(2, 1)
-
         if normalization == 'sym':
-            _, col = edge_index
-            D_vec = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
-            D_vec_invsqrt = 1 / torch.sqrt(D_vec)
-            edge_index, edge_weight = spspmm(diag_idx, D_vec_invsqrt,
-                                             edge_index, edge_weight,
-                                             num_nodes, num_nodes, num_nodes)
-            edge_index, edge_weight = spspmm(edge_index, edge_weight, diag_idx,
-                                             D_vec_invsqrt, num_nodes,
-                                             num_nodes, num_nodes)
+            row, col = edge_index
+            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg_inv_sqrt = deg.pow(-0.5)
+            deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+            edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
         elif normalization == 'col':
             _, col = edge_index
-            D_vec = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
-            D_vec_inv = 1 / D_vec
-            edge_index, edge_weight = spspmm(edge_index, edge_weight, diag_idx,
-                                             D_vec_inv, num_nodes, num_nodes,
-                                             num_nodes)
+            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg_inv = 1. / deg
+            deg_inv[deg_inv == float('inf')] = 0
+            edge_weight = edge_weight * deg_inv[col]
         elif normalization == 'row':
             row, _ = edge_index
-            D_vec = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
-            D_vec_inv = 1 / D_vec
-            edge_index, edge_weight = spspmm(diag_idx, D_vec_inv, edge_index,
-                                             edge_weight, num_nodes, num_nodes,
-                                             num_nodes)
+            deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+            deg_inv = 1. / deg
+            deg_inv[deg_inv == float('inf')] = 0
+            edge_weight = edge_weight * deg_inv[row]
         elif normalization is None:
             pass
         else:
@@ -190,21 +188,26 @@ class GDC(object):
             edge_index (LongTensor): The edge indices.
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
-            method (str): Diffusion method. Options:
-                1. :obj:`"ppr"`: Use personalized PageRank as diffusion.
-                Additionally expects the parameter:
-                - alpha (float): Return probability in PPR. Commonly lies in
-                    :obj:`[0.05, 0.2]`.
+            method (str): Diffusion method:
 
-                2. `"heat"`: Use heat kernel diffusion.
-                Additionally expects the parameter:
-                - :obj:`t` (float): Time of diffusion. Commonly lies in
-                    :obj:`[2, 10]`.
+                1. :obj:`"ppr"`: Use personalized PageRank as diffusion.
+                   Additionally expects the parameter:
+
+                   - **alpha** (*float*) - Return probability in PPR.
+                     Commonly lies in :obj:`[0.05, 0.2]`.
+
+                2. :obj:`"heat"`: Use heat kernel diffusion.
+                   Additionally expects the parameter:
+
+                   - **t** (*float*) - Time of diffusion. Commonly lies in
+                     :obj:`[2, 10]`.
 
                 3. :obj:`"coeff"`: Freely choose diffusion coefficients.
-                Additionally expects the parameter:
-                - coeffs (List[float]): List of coefficients :obj:`theta_k`
-                for each power of the transition matrix (starting at :obj:`0`).
+                   Additionally expects the parameter:
+
+                   - **coeffs** (*List[float]*) - List of coefficients
+                     :obj:`theta_k` for each power of the transition matrix
+                     (starting at :obj:`0`).
 
         :rtype: (:class:`Tensor`)
         """
@@ -251,16 +254,19 @@ class GDC(object):
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
             normalization (str): Transition matrix normalization scheme
-                (`"sym"`, `"row"`, or `"col"`).
+                (:obj:`"sym"`, :obj:`"row"`, or :obj:`"col"`).
                 See :func:`GDC.transition_matrix` for details.
-            method (str): Diffusion method. Options:
-                1. `"ppr"`: Use personalized PageRank as diffusion.
-                Additionally expects the parameters:
-                - alpha (float): Return probability in PPR. Commonly lies in
-                    :obj:`[0.05, 0.2]`.
-                - eps (float): Threshold for PPR calculation stopping criterion
-                    (:obj:`edge_weight >= eps * out_degree`).
-                    Recommended default: :obj:`1e-4`.
+            method (str): Diffusion method:
+
+                1. :obj:`"ppr"`: Use personalized PageRank as diffusion.
+                   Additionally expects the parameters:
+
+                   - **alpha** (*float*) - Return probability in PPR.
+                     Commonly lies in :obj:`[0.05, 0.2]`.
+
+                   - **eps** (*float*) - Threshold for PPR calculation stopping
+                     criterion (:obj:`edge_weight >= eps * out_degree`).
+                     Recommended default: :obj:`1e-4`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -268,8 +274,7 @@ class GDC(object):
             if normalization == 'sym':
                 # Calculate original degrees.
                 _, col = edge_index
-                D_vec_orig = scatter_add(edge_weight, col, dim=0,
-                                         dim_size=num_nodes)
+                deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
 
             edge_index_np = edge_index.cpu().numpy()
             # Assumes coalesced edge_index.
@@ -284,6 +289,7 @@ class GDC(object):
             edge_index, edge_weight = self.__neighbors_to_graph__(
                 neighbors, neighbor_weights, ppr_normalization,
                 device=edge_index.device)
+            edge_index = edge_index.to(torch.long)
 
             if normalization == 'sym':
                 # We can change the normalization from row-normalized to
@@ -292,20 +298,11 @@ class GDC(object):
                 # Since we use the original degrees for this it will be like
                 # we had used symmetric normalization from the beginning
                 # (except for errors due to approximation).
-                diag_idx = torch.arange(0, num_nodes, dtype=torch.long,
-                                        device=edge_index.device)
-                diag_idx = diag_idx.unsqueeze(0).repeat(2, 1)
-
-                D_vec_sqrt = torch.sqrt(D_vec_orig)
-                edge_index, edge_weight = spspmm(diag_idx, D_vec_sqrt,
-                                                 edge_index, edge_weight,
-                                                 num_nodes, num_nodes,
-                                                 num_nodes)
-                D_vec_invsqrt = 1 / D_vec_sqrt
-                edge_index, edge_weight = spspmm(edge_index, edge_weight,
-                                                 diag_idx, D_vec_invsqrt,
-                                                 num_nodes, num_nodes,
-                                                 num_nodes)
+                row, col = edge_index
+                deg_inv = deg.sqrt()
+                deg_inv_sqrt = deg.pow(-0.5)
+                deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+                edge_weight = deg_inv[row] * edge_weight * deg_inv_sqrt[col]
             elif normalization in ['col', 'row']:
                 pass
             else:
@@ -332,19 +329,25 @@ class GDC(object):
             matrix (Tensor): Matrix to sparsify.
             num_nodes (int): Number of nodes.
             method (str): Method of sparsification. Options:
-                1. :obj:`"threshold"`: Remove all edges with weights smaller
-                    than :obj:`eps`.
-                    Additionally expects one of these parameters:
-                - eps (float): Threshold to bound edges at.
-                - avg_degree (int): If `eps` is not given,
-                it can optionally be calculated by calculating
-                the `eps` required to achieve a given `avg_degree`.
 
-                2. `"topk"`: Keep edges with top `k` edge weights per node
-                    (column).
-                    Additionally expects the following parameters:
-                    - k (int): Specifies the number of edges to keep.
-                    - dim (int): The axis along which to take the top k.
+                1. :obj:`"threshold"`: Remove all edges with weights smaller
+                   than :obj:`eps`.
+                   Additionally expects one of these parameters:
+
+                   - **eps** (*float*) - Threshold to bound edges at.
+
+                   - **avg_degree** (*int*) - If :obj:`eps` is not given,
+                     it can optionally be calculated by calculating the
+                     :obj:`eps` required to achieve a given :obj:`avg_degree`.
+
+                2. :obj:`"topk"`: Keep edges with top :obj:`k` edge weights per
+                   node (column).
+                   Additionally expects the following parameters:
+
+                   - **k** (*int*) - Specifies the number of edges to keep.
+
+                   - **dim** (*int*) - The axis along which to take the top
+                     :obj:`k`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -393,14 +396,17 @@ class GDC(object):
             edge_index (LongTensor): The edge indices.
             edge_weight (Tensor): One-dimensional edge weights.
             num_nodes (int): Number of nodes.
-            method (str): Method of sparsification. Options:
-                1. `"threshold"`: Remove all edges with weights smaller than
-                :obj:`eps`.
-                Additionally expects one of these parameters:
-                - eps (float): Threshold to bound edges at.
-                - avg_degree (int): If `eps` is not given,
-                it can optionally be calculated by calculating
-                the `eps` required to achieve a given `avg_degree`.
+            method (str): Method of sparsification:
+
+                1. :obj:`"threshold"`: Remove all edges with weights smaller
+                   than :obj:`eps`.
+                   Additionally expects one of these parameters:
+
+                   - **eps** (*float*) - Threshold to bound edges at.
+
+                   - **avg_degree** (*int*) - If :obj:`eps` is not given,
+                     it can optionally be calculated by calculating the
+                     :obj:`eps` required to achieve a given :obj:`avg_degree`.
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
@@ -451,7 +457,10 @@ class GDC(object):
         sorted_edges = torch.sort(matrix.flatten(), descending=True).values
         if avg_degree * num_nodes > len(sorted_edges):
             return -np.inf
-        return sorted_edges[avg_degree * num_nodes - 1]
+
+        left = sorted_edges[avg_degree * num_nodes - 1]
+        right = sorted_edges[avg_degree * num_nodes]
+        return (left + right) / 2.0
 
     def __neighbors_to_graph__(self, neighbors, neighbor_weights,
                                normalization='row', device='cpu'):
@@ -463,7 +472,7 @@ class GDC(object):
             neighbor_weights (List[List[float]]): List of weights for the
                 neighbors of each node.
             normalization (str): Normalization of resulting matrix
-                (options: `row`, `col`). (default: :obj:`"row"`)
+                (options: :obj:`"row"`, :obj:`"col"`). (default: :obj:`"row"`)
             device (torch.device): Device to create output tensors on.
                 (default: :obj:`"cpu"`)
 
@@ -485,7 +494,7 @@ class GDC(object):
         return edge_index, edge_weight
 
     @staticmethod
-    @numba.njit(cache=True)
+    @jit()
     def __calc_ppr__(indptr, indices, out_degree, alpha, eps):
         r"""Calculate the personalized PageRank vector for all nodes
         using a variant of the Andersen algorithm

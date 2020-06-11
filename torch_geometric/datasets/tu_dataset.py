@@ -10,7 +10,7 @@ from torch_geometric.io import read_tu_data
 class TUDataset(InMemoryDataset):
     r"""A variety of graph kernel benchmark datasets, *.e.g.* "IMDB-BINARY",
     "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
-    <http://graphkernels.cs.tu-dortmund.de>`_.
+    <https://chrsmrrs.github.io/datasets>`_.
     In addition, this dataset wrapper provides `cleaned dataset versions
     <https://github.com/nd7141/graph_datasets>`_ as motivated by the
     `"Understanding Isomorphism Bias in Graph Data Sets"
@@ -27,8 +27,9 @@ class TUDataset(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        name (string): The `name <http://graphkernels.cs.tu-dortmund.de>`_ of
-            the dataset.
+        name (string): The `name
+            <https://chrsmrrs.github.io/datasets/docs/datasets/>`_ of the
+            dataset.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -51,7 +52,7 @@ class TUDataset(InMemoryDataset):
             contain only non-isomorphic graphs. (default: :obj:`False`)
     """
 
-    url = ('https://ls11-www.cs.tu-dortmund.de/people/morris/'
+    url = ('http://ls11-www.cs.tu-dortmund.de/people/morris/'
            'graphkerneldatasets')
     cleaned_url = ('https://raw.githubusercontent.com/nd7141/'
                    'graph_datasets/master/datasets')
@@ -86,7 +87,8 @@ class TUDataset(InMemoryDataset):
         if self.data.x is None:
             return 0
         for i in range(self.data.x.size(1)):
-            if self.data.x[:, i:].sum() == self.data.x.size(0):
+            x = self.data.x[:, i:]
+            if ((x == 0) | (x == 1)).all() and (x.sum(dim=1) == 1).all():
                 return self.data.x.size(1) - i
         return 0
 

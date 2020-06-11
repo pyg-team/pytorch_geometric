@@ -1,14 +1,10 @@
 import torch
 import torch.nn.functional as F
-from torch.nn import Parameter
-
-from ..inits import uniform
+from torch.nn import Linear
 
 
 class DenseSAGEConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.SAGEConv`.
-
-    :rtype: :class:`Tensor`
     """
     def __init__(self, in_channels, out_channels, normalize=False, bias=True):
         super(DenseSAGEConv, self).__init__()
@@ -16,19 +12,17 @@ class DenseSAGEConv(torch.nn.Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.normalize = normalize
-        self.weight = Parameter(torch.Tensor(self.in_channels, out_channels))
-        if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
-        else:
-            self.register_parameter('bias', None)
+
+        self.lin_rel = Linear(in_channels, out_channels, bias=False)
+        self.lin_root = Linear(in_channels, out_channels, bias=bias)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        uniform(self.in_channels, self.weight)
-        uniform(self.in_channels, self.bias)
+        self.lin_rel.reset_parameters()
+        self.lin_root.reset_parameters()
 
-    def forward(self, x, adj, mask=None, add_loop=True):
+    def forward(self, x, adj, mask=None):
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
@@ -50,17 +44,9 @@ class DenseSAGEConv(torch.nn.Module):
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         B, N, _ = adj.size()
 
-        if add_loop:
-            adj = adj.clone()
-            idx = torch.arange(N, dtype=torch.long, device=adj.device)
-            adj[:, idx, idx] = 1
-
         out = torch.matmul(adj, x)
         out = out / adj.sum(dim=-1, keepdim=True).clamp(min=1)
-        out = torch.matmul(out, self.weight)
-
-        if self.bias is not None:
-            out = out + self.bias
+        out = self.lin_rel(out) + self.lin_root(x)
 
         if self.normalize:
             out = F.normalize(out, p=2, dim=-1)

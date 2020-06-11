@@ -1,6 +1,10 @@
 import torch
-from torch_cluster import grid_cluster
 from torch_geometric.utils.repeat import repeat
+
+try:
+    from torch_cluster import grid_cluster
+except ImportError:
+    grid_cluster = None
 
 
 def voxel_grid(pos, batch, size, start=None, end=None):
@@ -24,6 +28,10 @@ def voxel_grid(pos, batch, size, start=None, end=None):
 
     :rtype: :class:`LongTensor`
     """
+
+    if grid_cluster is None:
+        raise ImportError('`voxel_grid` requires `torch-cluster`.')
+
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
     num_nodes, dim = pos.size()
 

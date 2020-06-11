@@ -15,7 +15,6 @@ class Cartesian(object):
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
     """
-
     def __init__(self, norm=True, max_value=None, cat=True):
         self.norm = norm
         self.max = max_value
@@ -27,7 +26,7 @@ class Cartesian(object):
         cart = pos[col] - pos[row]
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
-        if self.norm:
+        if self.norm and cart.numel() > 0:
             max_value = cart.abs().max() if self.max is None else self.max
             cart = cart / (2 * max_value) + 0.5
 

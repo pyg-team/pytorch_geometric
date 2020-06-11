@@ -13,7 +13,7 @@ from torch_scatter import scatter_mean
 
 class HandleNodeAttention(object):
     def __call__(self, data):
-        data.attn = torch.softmax(data.x, dim=0)
+        data.attn = torch.softmax(data.x, dim=0).flatten()
         data.x = None
         return data
 

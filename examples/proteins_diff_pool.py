@@ -8,7 +8,7 @@ import torch_geometric.transforms as T
 from torch_geometric.data import DenseDataLoader
 from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
 
-max_nodes = 100
+max_nodes = 150
 
 
 class MyFilter(object):
@@ -16,12 +16,10 @@ class MyFilter(object):
         return data.num_nodes <= max_nodes
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ENZYMES_d')
-dataset = TUDataset(
-    path,
-    name='ENZYMES',
-    transform=T.ToDense(max_nodes),
-    pre_filter=MyFilter())
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                'PROTEINS_dense')
+dataset = TUDataset(path, name='PROTEINS', transform=T.ToDense(max_nodes),
+                    pre_filter=MyFilter())
 dataset = dataset.shuffle()
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]
@@ -33,13 +31,8 @@ train_loader = DenseDataLoader(train_dataset, batch_size=20)
 
 
 class GNN(torch.nn.Module):
-    def __init__(self,
-                 in_channels,
-                 hidden_channels,
-                 out_channels,
-                 normalize=False,
-                 add_loop=False,
-                 lin=True):
+    def __init__(self, in_channels, hidden_channels, out_channels,
+                 normalize=False, add_loop=False, lin=True):
         super(GNN, self).__init__()
 
         self.add_loop = add_loop
@@ -129,14 +122,15 @@ def train(epoch):
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        output, link_loss, ent_loss = model(data.x, data.adj, data.mask)
-        loss = F.nll_loss(output, data.y.view(-1)) + link_loss + ent_loss
+        output, _, _ = model(data.x, data.adj, data.mask)
+        loss = F.nll_loss(output, data.y.view(-1))
         loss.backward()
         loss_all += data.y.size(0) * loss.item()
         optimizer.step()
     return loss_all / len(train_dataset)
 
 
+@torch.no_grad()
 def test(loader):
     model.eval()
     correct = 0

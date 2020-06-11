@@ -2,10 +2,10 @@ Creating Message Passing Networks
 =================================
 
 Generalizing the convolution operator to irregular domains is typically expressed as a *neighborhood aggregation* or *message passing* scheme.
-With :math:`\mathbf{x}^{(k-1)}_i \in \mathbb{R}^F` denoting node features of node :math:`i` in layer :math:`(k-1)` and :math:`\mathbf{e}_{i,j} \in \mathbb{R}^D` denoting (optional) edge features from node :math:`i` to node :math:`j`, message passing graph neural networks can be described as
+With :math:`\mathbf{x}^{(k-1)}_i \in \mathbb{R}^F` denoting node features of node :math:`i` in layer :math:`(k-1)` and :math:`\mathbf{e}_{j,i} \in \mathbb{R}^D` denoting (optional) edge features from node :math:`j` to node :math:`i`, message passing graph neural networks can be described as
 
 .. math::
-  \mathbf{x}_i^{(k)} = \gamma^{(k)} \left( \mathbf{x}_i^{(k-1)}, \square_{j \in \mathcal{N}(i)} \, \phi^{(k)}\left(\mathbf{x}_i^{(k-1)}, \mathbf{x}_j^{(k-1)},\mathbf{e}_{i,j}\right) \right),
+  \mathbf{x}_i^{(k)} = \gamma^{(k)} \left( \mathbf{x}_i^{(k-1)}, \square_{j \in \mathcal{N}(i)} \, \phi^{(k)}\left(\mathbf{x}_i^{(k-1)}, \mathbf{x}_j^{(k-1)},\mathbf{e}_{j,i}\right) \right),
 
 where :math:`\square` denotes a differentiable, permutation invariant function, *e.g.*, sum, mean or max, and :math:`\gamma` and :math:`\phi` denote differentiable functions such as MLPs (Multi Layer Perceptrons).
 
@@ -43,19 +43,20 @@ The `GCN layer <https://arxiv.org/abs/1609.02907>`_ is mathematically defined as
 
 .. math::
 
-    \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{deg(j)}} \cdot \left( \mathbf{\Theta} \cdot \mathbf{x}_j^{(k-1)} \right),
+    \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{\deg(j)}} \cdot \left( \mathbf{\Theta} \cdot \mathbf{x}_j^{(k-1)} \right),
 
 where neighboring node features are first transformed by a weight matrix :math:`\mathbf{\Theta}`, normalized by their degree, and finally summed up.
 This formula can be divided into the following steps:
 
 1. Add self-loops to the adjacency matrix.
 2. Linearly transform node feature matrix.
-3. Normalize node features in :math:`\phi`.
-4. Sum up neighboring node features (:obj:`"add"` aggregation).
-5. Return new node embeddings in :math:`\gamma`.
+3. Compute normalization coefficients.
+4. Normalize node features in :math:`\phi`.
+5. Sum up neighboring node features (:obj:`"add"` aggregation).
+6. Return new node embeddings in :math:`\gamma`.
 
-Steps 1-2 are typically computed before message passing takes place.
-Steps 3-5 can be easily processed using the :class:`torch_geometric.nn.MessagePassing` base class.
+Steps 1-3 are typically computed before message passing takes place.
+Steps 4-6 can be easily processed using the :class:`torch_geometric.nn.MessagePassing` base class.
 The full layer implementation is shown below:
 
 .. code-block:: python
@@ -79,24 +80,26 @@ The full layer implementation is shown below:
             # Step 2: Linearly transform node feature matrix.
             x = self.lin(x)
 
-            # Step 3-5: Start propagating messages.
-            return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x)
-
-        def message(self, x_j, edge_index, size):
-            # x_j has shape [E, out_channels]
-
-            # Step 3: Normalize node features.
+            # Step 3: Compute normalization
             row, col = edge_index
-            deg = degree(row, size[0], dtype=x_j.dtype)
+            deg = degree(row, x.size(0), dtype=x.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 
+            # Step 4-6: Start propagating messages.
+            return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x,
+                                  norm=norm)
+
+        def message(self, x_j, norm):
+            # x_j has shape [E, out_channels]
+
+            # Step 4: Normalize node features.
             return norm.view(-1, 1) * x_j
 
         def update(self, aggr_out):
             # aggr_out has shape [N, out_channels]
 
-            # Step 5: Return new node embeddings.
+            # Step 6: Return new node embeddings.
             return aggr_out
 
 :class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing` with :obj:`"add"` propagation.

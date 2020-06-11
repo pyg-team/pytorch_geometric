@@ -2,7 +2,6 @@ import os
 from collections import Counter
 
 import gzip
-import rdflib as rdf
 import pandas as pd
 import numpy as np
 import torch
@@ -72,6 +71,8 @@ class Entities(InMemoryDataset):
             yield s, p, o
 
     def process(self):
+        import rdflib as rdf
+
         graph_file, task_file, train_file, test_file = self.raw_paths
 
         g = rdf.Graph()
@@ -101,8 +102,8 @@ class Entities(InMemoryDataset):
         edge = torch.tensor(edge_list, dtype=torch.long).t().contiguous()
         edge_index, edge_type = edge[:2], edge[2]
 
-        oh = F.one_hot(
-            edge_type, num_classes=2 * len(relations)).to(torch.float)
+        oh = F.one_hot(edge_type,
+                       num_classes=2 * len(relations)).to(torch.float)
         deg = scatter_add(oh, edge_index[0], dim=0, dim_size=len(nodes))
         index = edge_type + torch.arange(len(edge_list)) * 2 * len(relations)
         edge_norm = 1 / deg[edge_index[0]].view(-1)[index]

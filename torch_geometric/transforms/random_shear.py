@@ -24,7 +24,7 @@ class RandomShear(object):
         self.shear = abs(shear)
 
     def __call__(self, data):
-        dim = data.pos.size(1)
+        dim = data.pos.size(-1)
 
         matrix = data.pos.new_empty(dim, dim).uniform_(-self.shear, self.shear)
         eye = torch.arange(dim, dtype=torch.long)

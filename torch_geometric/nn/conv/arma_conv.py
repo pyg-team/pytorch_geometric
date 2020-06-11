@@ -41,16 +41,8 @@ class ARMAConv(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
-
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 num_stacks=1,
-                 num_layers=1,
-                 shared_weights=False,
-                 act=F.relu,
-                 dropout=0,
-                 bias=True):
+    def __init__(self, in_channels, out_channels, num_stacks=1, num_layers=1,
+                 shared_weights=False, act=F.relu, dropout=0, bias=True):
         super(ARMAConv, self).__init__()
 
         self.in_channels = in_channels

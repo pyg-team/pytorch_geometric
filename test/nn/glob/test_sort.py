@@ -11,10 +11,6 @@ def test_global_sort_pool():
     assert out.size() == (2, 5 * 4)
     out = out.view(2, 5, 4)
 
-    # Features are individually sorted.
-    expected = torch.arange(4).view(1, 1, 4).expand_as(out)
-    assert out.argsort(dim=2).tolist() == expected.tolist()
-
     # First graph output has been filled up with zeros.
     assert out[0, -1].tolist() == [0, 0, 0, 0]
 
@@ -35,10 +31,6 @@ def test_global_sort_pool_smaller_than_k():
     out = global_sort_pool(x, batch, k=10)
     assert out.size() == (2, 10 * 4)
     out = out.view(2, 10, 4)
-
-    # Features are individually sorted.
-    expected = torch.arange(4).view(1, 1, 4).expand_as(out)
-    assert out.argsort(dim=2).tolist() == expected.tolist()
 
     # Both graph outputs have been filled up with zeros.
     assert out[0, -1].tolist() == [0, 0, 0, 0]

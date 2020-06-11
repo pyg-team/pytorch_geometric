@@ -39,16 +39,8 @@ class HypergraphConv(MessagePassing):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
     """
-
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 use_attention=False,
-                 heads=1,
-                 concat=True,
-                 negative_slope=0.2,
-                 dropout=0,
-                 bias=True):
+    def __init__(self, in_channels, out_channels, use_attention=False, heads=1,
+                 concat=True, negative_slope=0.2, dropout=0, bias=True):
         super(HypergraphConv, self).__init__(aggr='add')
 
         self.in_channels = in_channels
@@ -83,24 +75,21 @@ class HypergraphConv(MessagePassing):
             glorot(self.att)
         zeros(self.bias)
 
-    def __forward__(self,
-                    x,
-                    hyperedge_index,
-                    hyperedge_weight=None,
+    def __forward__(self, x, hyperedge_index, hyperedge_weight=None,
                     alpha=None):
 
         if hyperedge_weight is None:
             D = degree(hyperedge_index[0], x.size(0), x.dtype)
         else:
-            D = scatter_add(
-                hyperedge_weight[hyperedge_index[1]],
-                hyperedge_index[0],
-                dim=0,
-                dim_size=x.size(0))
+            D = scatter_add(hyperedge_weight[hyperedge_index[1]],
+                            hyperedge_index[0], dim=0, dim_size=x.size(0))
         D = 1.0 / D
         D[D == float("inf")] = 0
 
-        num_edges = hyperedge_index[1].max().item() + 1
+        if hyperedge_index.numel() == 0:
+            num_edges = 0
+        else:
+            num_edges = hyperedge_index[1].max().item() + 1
         B = 1.0 / degree(hyperedge_index[1], num_edges, x.dtype)
         B[B == float("inf")] = 0
         if hyperedge_weight is not None:

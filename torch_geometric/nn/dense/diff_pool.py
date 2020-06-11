@@ -17,10 +17,18 @@ def dense_diff_pool(x, adj, s, mask=None):
 
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
-    Returns pooled node feature matrix, coarsened adjacency matrix and the
-    auxiliary link prediction objective :math:`\| \mathbf{A} -
-    \mathrm{softmax}(\mathbf{S}) \cdot {\mathrm{softmax}(\mathbf{S})}^{\top}
-    \|_F`.
+    Returns pooled node feature matrix, coarsened adjacency matrix and two
+    auxiliary objectives: (1) The link prediction loss
+
+    .. math::
+        \mathcal{L}_{LP} = {\| \mathbf{A} -
+        \mathrm{softmax}(\mathbf{S}) {\mathrm{softmax}(\mathbf{S})}^{\top}
+        \|}_F,
+
+    and the entropy regularization
+
+    .. math::
+        \mathcal{L}_E = \frac{1}{N} \sum_{n=1}^N H(\mathbf{S}_n).
 
     Args:
         x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B

@@ -4,7 +4,7 @@ import warnings
 
 import torch
 import torch_geometric
-from torch_sparse import coalesce
+from torch_sparse import coalesce, SparseTensor
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
@@ -18,15 +18,21 @@ __num_nodes_warn_msg__ = (
     'data.num_nodes.')
 
 
-def size_repr(value):
-    if torch.is_tensor(value):
-        return list(value.size())
-    elif isinstance(value, int) or isinstance(value, float):
-        return [1]
-    elif isinstance(value, list) or isinstance(value, tuple):
-        return [len(value)]
+def size_repr(key, item, indent=0):
+    indent_str = ' ' * indent
+    if torch.is_tensor(item):
+        out = str(list(item.size()))
+    elif isinstance(item, SparseTensor):
+        out = str(item.sizes())[:-1] + f', nnz={item.nnz()}]'
+    elif isinstance(item, list) or isinstance(item, tuple):
+        out = str([len(item)])
+    elif isinstance(item, dict):
+        lines = [indent_str + size_repr(k, v, 2) for k, v in item.items()]
+        out = '{\n' + ',\n'.join(lines) + '\n' + indent_str + '}'
     else:
-        return value
+        out = str(item)
+
+    return f'{indent_str}{key}={out}'
 
 
 class Data(object):
@@ -72,6 +78,16 @@ class Data(object):
                 self.__num_nodes__ = item
             else:
                 self[key] = item
+
+        if edge_index is not None and edge_index.dtype != torch.long:
+            raise ValueError(
+                (f'Argument `edge_index` needs to be of type `torch.long` but '
+                 f'found type `{edge_index.dtype}`.'))
+
+        if face is not None and face.dtype != torch.long:
+            raise ValueError(
+                (f'Argument `face` needs to be of type `torch.long` but found '
+                 f'type `{face.dtype}`.'))
 
         if torch_geometric.is_debug_enabled():
             self.debug()
@@ -254,14 +270,23 @@ class Data(object):
         r"""Returns :obj:`True`, if graph edges are directed."""
         return not self.is_undirected()
 
+    def __apply__(self, item, func):
+        if torch.is_tensor(item) or isinstance(item, SparseTensor):
+            return func(item)
+        elif isinstance(item, (tuple, list)):
+            return [self.__apply__(v, func) for v in item]
+        elif isinstance(item, dict):
+            return {k: self.__apply__(v, func) for k, v in item.items()}
+        else:
+            return item
+
     def apply(self, func, *keys):
         r"""Applies the function :obj:`func` to all tensor attributes
         :obj:`*keys`. If :obj:`*keys` is not given, :obj:`func` is applied to
         all present attributes.
         """
         for key, item in self(*keys):
-            if torch.is_tensor(item):
-                self[key] = func(item)
+            self[key] = self.__apply__(item, func)
         return self
 
     def contiguous(self, *keys):
@@ -270,12 +295,12 @@ class Data(object):
         have a contiguous memory layout."""
         return self.apply(lambda x: x.contiguous(), *keys)
 
-    def to(self, device, *keys):
+    def to(self, device, *keys, **kwargs):
         r"""Performs tensor dtype and/or device conversion to all attributes
         :obj:`*keys`.
         If :obj:`*keys` is not given, the conversion is applied to all present
         attributes."""
-        return self.apply(lambda x: x.to(device), *keys)
+        return self.apply(lambda x: x.to(device, **kwargs), *keys)
 
     def clone(self):
         return self.__class__.from_dict({
@@ -361,5 +386,12 @@ class Data(object):
                                                       self.norm.size(0)))
 
     def __repr__(self):
-        info = ['{}={}'.format(key, size_repr(item)) for key, item in self]
-        return '{}({})'.format(self.__class__.__name__, ', '.join(info))
+        cls = str(self.__class__.__name__)
+        has_dict = any([isinstance(item, dict) for _, item in self])
+
+        if not has_dict:
+            info = [size_repr(key, item) for key, item in self]
+            return '{}({})'.format(cls, ', '.join(info))
+        else:
+            info = [size_repr(key, item, indent=2) for key, item in self]
+            return '{}(\n{}\n)'.format(cls, ',\n'.join(info))

@@ -1,15 +1,15 @@
 from setuptools import setup, find_packages
 
-__version__ = '1.3.2'
+__version__ = '1.5.0'
 url = 'https://github.com/rusty1s/pytorch_geometric'
 
 install_requires = [
     'torch',
     'numpy',
+    'tqdm',
     'scipy',
     'networkx',
     'scikit-learn',
-    'scikit-image',
     'numba',
     'requests',
     'plyfile',
@@ -17,6 +17,7 @@ install_requires = [
     'rdflib',
     'h5py',
     'googledrivedownloader',
+    'ase',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov', 'mock']
@@ -34,6 +35,7 @@ setup(
         'geometric-deep-learning',
         'graph-neural-networks',
     ],
+    python_requires='>=3.6',
     install_requires=install_requires,
     setup_requires=setup_requires,
     tests_require=tests_require,

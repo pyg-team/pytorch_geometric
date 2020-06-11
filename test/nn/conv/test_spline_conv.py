@@ -1,5 +1,4 @@
 import torch
-import torch_geometric
 from torch_geometric.nn import SplineConv
 
 
@@ -12,5 +11,9 @@ def test_spline_conv():
 
     conv = SplineConv(in_channels, out_channels, dim=3, kernel_size=5)
     assert conv.__repr__() == 'SplineConv(16, 32, dim=3)'
-    with torch_geometric.debug():
-        assert conv(x, edge_index, pseudo).size() == (num_nodes, out_channels)
+    out = conv(x, edge_index, pseudo)
+    assert out.size() == (num_nodes, out_channels)
+
+    jit_conv = conv.jittable(x=x, edge_index=edge_index, pseudo=pseudo)
+    jit_conv = torch.jit.script(jit_conv)
+    assert jit_conv(x, edge_index, pseudo).tolist() == out.tolist()
