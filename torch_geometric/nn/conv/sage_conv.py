@@ -59,16 +59,17 @@ class SAGEConv(MessagePassing):
     # TODO: Make that jittable.
     # TODO: TEST DEFAULT PARAMS
 
-    # propagate_type: (x: OptPairTensor)
-    def forward(self, x, edge_index, size=None):
-        # type: (Tensor, Tensor, Size) -> Tensor
-        # type: (OptPairTensor, Tensor, Size) -> Tensor
-        # type: (Tensor, SparseTensor, Size) -> Tensor
-        # type: (OptPairTensor, SparseTensor, Size) -> Tensor
+    # propagate_type: (x: OptPairTensor, edge_weight: Optional[Tensor])
+    def forward(self, x, edge_index, edge_weight=None, size=None):
+        # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
+        # type: (OptPairTensor, Tensor, Optional[Tensor],  Size) -> Tensor
+        # type: (Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor
+        # type: (OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
-        out = self.propagate(edge_index, size=size, x=x)
+        out = self.propagate(edge_index, size=size, x=x,
+                             edge_weight=edge_weight)
         out = self.lin_rel(out)
         x_root = x[1]
         if x_root is not None:
@@ -77,7 +78,7 @@ class SAGEConv(MessagePassing):
             out = F.normalize(out, p=2., dim=-1)
         return out
 
-    def message(self, x_j: Tensor) -> Tensor:
+    def message(self, x_j: Tensor, edge_weight: Optional[Tensor]) -> Tensor:
         return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor,

@@ -130,14 +130,13 @@ class MessagePassing(torch.nn.Module):
 
     def __collect__(self, edge_index, size, kwargs):
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
-        ij = {'_i': i, '_j': j}
 
         out = {}
         for arg in self.__user_args__:
-            if arg[-2:] not in ij.keys():
+            if arg[-2:] not in ['_i', '_j']:
                 out[arg] = kwargs.get(arg, inspect.Parameter.empty)
             else:
-                dim = ij[arg[-2:]]
+                dim = 0 if arg[-2:] == '_j' else 1
                 data = kwargs.get(arg[:-2], inspect.Parameter.empty)
 
                 if isinstance(data, (tuple, list)):
@@ -148,13 +147,14 @@ class MessagePassing(torch.nn.Module):
 
                 if isinstance(data, Tensor):
                     self.__set_size__(size, dim, data)
-                    data = self.__lift__(data, edge_index, dim)
+                    data = self.__lift__(data, edge_index,
+                                         j if arg[-2:] == '_j' else i)
 
                 out[arg] = data
 
         if isinstance(edge_index, Tensor):
-            out['edge_index_j'] = edge_index[j]
             out['edge_index_i'] = edge_index[i]
+            out['edge_index_j'] = edge_index[j]
         elif isinstance(edge_index, SparseTensor):
             out['edge_index_i'] = edge_index.storage.row()
             out['edge_index_j'] = edge_index.storage.col()
@@ -162,8 +162,8 @@ class MessagePassing(torch.nn.Module):
             out['edge_attr'] = out['edge_weight'] = edge_index.storage.value()
 
         out['index'] = out['edge_index_i']
-        out['size_j'] = size[j] or size[i]
         out['size_i'] = size[i] or size[j]
+        out['size_j'] = size[j] or size[i]
         out['dim_size'] = out['size_i']
 
         return out
@@ -333,10 +333,11 @@ class MessagePassing(torch.nn.Module):
             uid=uid,
             module=str(self.__class__.__module__),
             clsname=self.__class__.__name__,
-            check_input=inspect.getsource(self.__check_input__),
-            lift=inspect.getsource(self.__lift__),
+            check_input=inspect.getsource(self.__check_input__)[:-1],
+            lift=inspect.getsource(self.__lift__)[:-1],
             prop_dict=prop_dict,
             collect_dict=collect_dict,
+            user_args=self.__user_args__,
             msg_args=self.inspector.keys(['message']),
             aggr_args=self.inspector.keys(['aggregate']),
             msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
@@ -345,7 +346,6 @@ class MessagePassing(torch.nn.Module):
             forward_types=forward_types,
             forward_body=forward_body,
         )
-        print(jit_module_repr)
 
         ftemp = NamedTemporaryFile(mode='w+', encoding='utf-8', suffix='.py',
                                    delete=False)
