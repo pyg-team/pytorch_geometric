@@ -104,8 +104,8 @@ class {{clsname}}Jittable_{{uid}}({{clsname}}):
             {%- endif %}
 
         index = edge_index_i
-        size_i = size[i] if size[i] is not None else size[j]
-        size_j = size[j] if size[j] is not None else size[i]
+        size_i = size[1] if size[1] is not None else size[0]
+        size_j = size[0] if size[0] is not None else size[1]
         dim_size = size_i
 
         return Collect_{{uid}}({% for k in collect_dict.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})

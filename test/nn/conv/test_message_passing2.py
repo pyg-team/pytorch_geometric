@@ -123,6 +123,10 @@ def test_my_conv():
     assert out1.tolist() == out2.tolist()
     assert out1.tolist() == out3.tolist()
 
+    hete_edge_index.conv.flow = 'target_to_source'
+    hete_edge_index((x2[:, :8], x1.repeat(1, 2)), edge_index)
+    hete_edge_index.conv.flow = 'source_to_target'
+
     out1 = hete_edge_index((x1, None), edge_index, edge_weight, (4, 2))
     out2 = hete_sparse_tensor((x1, None), adj.t())
     assert out1.size() == (2, 32)
@@ -158,6 +162,10 @@ def test_my_conv():
     assert out1.size() == (2, 32)
     assert out1.tolist() == out2.tolist()
     assert out1.tolist() == out3.tolist()
+
+    hete_edge_index.conv.flow = 'target_to_source'
+    hete_edge_index((x2[:, :8], x1.repeat(1, 2)), edge_index)
+    hete_edge_index.conv.flow = 'source_to_target'
 
     out1 = hete_edge_index((x1, None), edge_index, edge_weight, (4, 2))
     out2 = hete_sparse_tensor((x1, None), adj.t())
