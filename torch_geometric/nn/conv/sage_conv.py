@@ -58,18 +58,18 @@ class SAGEConv(MessagePassing):
     # TODO: Allow adj and edge_index as input (CHECK)
     # TODO: Make that jittable.
     # TODO: TEST DEFAULT PARAMS
+    # TODO: adj_t.set_value()
 
-    # propagate_type: (x: OptPairTensor, edge_weight: Optional[Tensor])
-    def forward(self, x, edge_index, edge_weight=None, size=None):
-        # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, Tensor, Optional[Tensor],  Size) -> Tensor
-        # type: (Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
+    # propagate_type: (x: OptPairTensor)
+    def forward(self, x, edge_index, size=None):
+        # type: (Tensor, Tensor, Size) -> Tensor
+        # type: (OptPairTensor, Tensor, Size) -> Tensor
+        # type: (Tensor, SparseTensor, Size) -> Tensor
+        # type: (OptPairTensor, SparseTensor, Size) -> Tensor
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
-        out = self.propagate(edge_index, size=size, x=x,
-                             edge_weight=edge_weight)
+        out = self.propagate(edge_index, size=size, x=x)
         out = self.lin_rel(out)
         x_root = x[1]
         if x_root is not None:
@@ -78,12 +78,11 @@ class SAGEConv(MessagePassing):
             out = F.normalize(out, p=2., dim=-1)
         return out
 
-    def message(self, x_j: Tensor, edge_weight: Optional[Tensor]) -> Tensor:
+    def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        # TODO: adj_t = adj_t.set_value(None)
         return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self):
