@@ -57,6 +57,7 @@ class SAGEConv(MessagePassing):
     # TODO: Allow tuples and tensors as inputs (CHECK)
     # TODO: Allow adj and edge_index as input (CHECK)
     # TODO: Make that jittable.
+    # TODO: TEST DEFAULT PARAMS
 
     # propagate_type: (x: OptPairTensor)
     def forward(self, x, edge_index, size=None):

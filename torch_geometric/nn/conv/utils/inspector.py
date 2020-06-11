@@ -26,26 +26,26 @@ class Inspector(object):
     def __implements__(self, cls, func_name: str) -> bool:
         if cls.__name__ == 'MessagePassing':
             return False
-
         if func_name in cls.__dict__.keys():
             return True
-
         return any(self.__implements__(c, func_name) for c in cls.__bases__)
 
     def implements(self, func_name: str) -> bool:
         return self.__implements__(self.base_class.__class__, func_name)
 
-    def to_named_tuple(self, name, func_names: Optional[List[str]] = None):
-        used: set = set()
-        out: str = f'class {name}(NamedTuple):\n'
+    def types(self, func_names: Optional[List[str]] = None) -> Dict[str, str]:
+        out: Dict[str, str] = {}
         for func in func_names or list(self.params.keys()):
-            for key, p in self.params[func].items():
-                if key in used:
-                    continue
-                used.add(key)
-                s = re.sub(r'Union\[(.*), NoneType\]', r'Optional[\1]', str(p))
-                s = re.sub(r' = .*', r'', s)
-                if p.annotation == inspect.Parameter.empty:
-                    s = f'{s}: torch.Tensor'
-                out += f'    {s}\n'
+            for key, param in self.params[func].items():
+                if param.annotation is inspect.Parameter.empty:
+                    v = 'torch.Tensor'
+                else:
+                    v = str(param)
+                    v = re.sub(r'Union\[(.*?), NoneType\]', r'Optional[\1]', v)
+                    v = re.split(r': | =', v)[1]
+                if key in out and out[key] != v:
+                    raise ValueError(
+                        (f'Found inconsistent types for argument {key}. '
+                         f'Expected type {out[key]} but found type {v}.'))
+                out[key] = v
         return out
