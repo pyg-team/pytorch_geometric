@@ -1,6 +1,11 @@
+from typing import Optional
+from torch_geometric.typing import PairTensor, Size
+
 import torch
+from torch import Tensor
+from torch_sparse import SparseTensor, set_diag
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops
+from torch_geometric.utils import add_self_loops
 
 from ..inits import reset
 
@@ -49,26 +54,29 @@ class PointConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x, pos, edge_index):
-        r"""
-        Args:
-            x (Tensor): The node feature matrix. Allowed to be :obj:`None`.
-            pos (Tensor or tuple): The node position matrix. Either given as
-                tensor for use in general message passing or as tuple for use
-                in message passing in bipartite graphs.
-            edge_index (LongTensor): The edge indices.
-        """
-        if isinstance(pos, torch.Tensor):
-            # Add self-loops for symmetric adjacencies.
-            edge_index, _ = remove_self_loops(edge_index)
-            edge_index, _ = add_self_loops(edge_index, num_nodes=pos.size(0))
+    # propagate_type: (Optional[Tensor], PairTensor)
+    def forward(self, x, pos, edge_index, size=None):
+        # type: (Optional[Tensor], Tensor, Tensor, Size) -> Tensor
+        # type: (Optional[Tensor], Tensor, SparseTensor, Size) -> Tensor
+        # type: (Optional[Tensor], PairTensor, Tensor, Size) -> Tensor
+        # type: (Optional[Tensor], PairTensor, SparseTensor, Size) -> Tensor
+        """"""
+        if isinstance(pos, Tensor):
+            pos: PairTensor = (pos, pos)
 
-        out = self.propagate(edge_index, x=x, pos=pos)
+        if isinstance(edge_index, Tensor):
+            num_nodes = pos[1].size(0)
+            edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+        elif isinstance(edge_index, SparseTensor):
+            edge_index = set_diag(edge_index)
+
+        out = self.propagate(edge_index, x=x, pos=pos, size=size)
         if self.global_nn is not None:
             out = self.global_nn(out)
         return out
 
-    def message(self, x_j, pos_i, pos_j):
+    def message(self, x_j: Optional[Tensor], pos_i: Tensor,
+                pos_j: Tensor) -> Tensor:
         msg = pos_j - pos_i
         if x_j is not None:
             msg = torch.cat([x_j, msg], dim=1)

@@ -60,7 +60,7 @@ class GINConv(MessagePassing):
         # type: (OptPairTensor, SparseTensor, Size) -> Tensor
         """"""
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x: OptPairTensor = (x, x)
 
         out = self.propagate(edge_index, x=x, size=size)
         x_r = x[1]
@@ -68,11 +68,11 @@ class GINConv(MessagePassing):
             out += (1 + self.eps) * x_r
         return self.nn(out)
 
-    def message(self, x_j):
+    def message(self, x_j: Tensor) -> Tensor:
         return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor,
-                              x: PairTensor) -> Tensor:
+                              x: OptPairTensor) -> Tensor:
         adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
