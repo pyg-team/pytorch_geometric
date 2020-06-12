@@ -1,12 +1,11 @@
 from typing import Optional
-from torch_geometric.typing import PairTensor, Size
+from torch_geometric.typing import OptPairTensor, Size
 
 import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops
 
 from ..inits import reset
 
@@ -57,14 +56,16 @@ class GINConv(MessagePassing):
     def forward(self, x, edge_index, size=None):
         # type: (Tensor, Tensor, Size) -> Tensor
         # type: (Tensor, SparseTensor, Size) -> Tensor
-        # type: (PairTensor, Tensor, Size) -> Tensor
-        # type: (PairTensor, SparseTensor, Size) -> Tensor
+        # type: (OptPairTensor, Tensor, Size) -> Tensor
+        # type: (OptPairTensor, SparseTensor, Size) -> Tensor
         """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
         out = self.propagate(edge_index, x=x, size=size)
-        out += (1 + self.eps) * x[1]
+        x_r = x[1]
+        if x_r is not None:
+            out += (1 + self.eps) * x_r
         return self.nn(out)
 
     def message(self, x_j):
@@ -122,9 +123,10 @@ class GINEConv(MessagePassing):
     def forward(self, x, edge_index, edge_attr=None, size=None):
         # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
         # type: (Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor
-        # type: (PairTensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (PairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
+        # type: (OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor
+        # type: (OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
         """"""
+        # Node and edge feature dimensionalites need to match.
         if isinstance(edge_index, Tensor):
             assert edge_attr is not None
             assert x.size(-1) == edge_attr.size(-1)
@@ -132,10 +134,12 @@ class GINEConv(MessagePassing):
             assert x.size(-1) == edge_index.size(-1)
 
         if isinstance(x, Tensor):
-            x: PairTensor = (x, x)
+            x: OptPairTensor = (x, x)
 
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
-        out += (1 + self.eps) * x[1]
+        x_r = x[1]
+        if x_r is not None:
+            out += (1 + self.eps) * x_r
         return self.nn(out)
 
     def message(self, x_j: Tensor, edge_attr: Optional[Tensor]) -> Tensor:
