@@ -1,5 +1,10 @@
+from typing import Optional
+from torch_geometric.typing import PairTensor, Size
+
 import torch
+from torch import Tensor
 import torch.nn.functional as F
+from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops
 
@@ -48,15 +53,27 @@ class GINConv(MessagePassing):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    def forward(self, x, edge_index):
+    # propagate_type: (PairTensor)
+    def forward(self, x, edge_index, size=None):
+        # type: (Tensor, Tensor, Size) -> Tensor
+        # type: (Tensor, SparseTensor, Size) -> Tensor
+        # type: (PairTensor, Tensor, Size) -> Tensor
+        # type: (PairTensor, SparseTensor, Size) -> Tensor
         """"""
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        edge_index, _ = remove_self_loops(edge_index)
-        out = self.nn((1 + self.eps) * x + self.propagate(edge_index, x=x))
-        return out
+        if isinstance(x, Tensor):
+            x: PairTensor = (x, x)
+
+        out = self.propagate(edge_index, x=x, size=size)
+        out += (1 + self.eps) * x[1]
+        return self.nn(out)
 
     def message(self, x_j):
         return x_j
+
+    def message_and_aggregate(self, adj_t: SparseTensor,
+                              x: PairTensor) -> Tensor:
+        adj_t = adj_t.set_value(None, layout=None)
+        return matmul(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self):
         return '{}(nn={})'.format(self.__class__.__name__, self.nn)
@@ -101,18 +118,28 @@ class GINEConv(MessagePassing):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    def forward(self, x, edge_index, edge_attr):
+    # propagate_type: (PairTensor, Optional[Tensor])
+    def forward(self, x, edge_index, edge_attr=None, size=None):
+        # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
+        # type: (Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor
+        # type: (PairTensor, Tensor, Optional[Tensor], Size) -> Tensor
+        # type: (PairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
         """"""
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        if edge_attr.dim() == 1:
-            edge_attr = edge_attr.unsqueeze(-1)
-        assert x.size(-1) == edge_attr.size(-1)
-        edge_index, _ = remove_self_loops(edge_index)
-        out = self.nn((1 + self.eps) * x +
-                      self.propagate(edge_index, x=x, edge_attr=edge_attr))
-        return out
+        if isinstance(edge_index, Tensor):
+            assert edge_attr is not None
+            assert x.size(-1) == edge_attr.size(-1)
+        elif isinstance(edge_index, SparseTensor):
+            assert x.size(-1) == edge_index.size(-1)
 
-    def message(self, x_j, edge_attr):
+        if isinstance(x, Tensor):
+            x: PairTensor = (x, x)
+
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
+        out += (1 + self.eps) * x[1]
+        return self.nn(out)
+
+    def message(self, x_j: Tensor, edge_attr: Optional[Tensor]) -> Tensor:
+        assert edge_attr is not None
         return F.relu(x_j + edge_attr)
 
     def __repr__(self):
