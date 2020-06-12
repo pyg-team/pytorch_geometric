@@ -296,13 +296,16 @@ class MessagePassing(torch.nn.Module):
         """
         return inputs
 
-    def check_consistency(self, **kwargs):
-        pass
-
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None):
         r"""Analyzes the :obj:`MessagePassing` module and produces a new
-        jittable module."""
+        jittable module.
+
+        Args:
+            typing (string, optional): If given, will generate a concrete
+                instance with :meth:`forward` types based on :obj:`typing`,
+                *e.g.*: `"(Tensor, Optional[Tensor]) -> Tensor"`.
+        """
         uid = uuid1().hex[:6]
 
         # Parse `propagate()` types to format `{arg1: type1, ...}`.

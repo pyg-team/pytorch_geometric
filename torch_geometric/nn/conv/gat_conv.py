@@ -165,7 +165,7 @@ class GATConv(MessagePassing):
             return out
 
     def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: Optional[Tensor],
-                edge_index_i: Tensor, size_i: Optional[int]):
+                edge_index_i: Tensor, size_i: Optional[int]) -> Tensor:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, edge_index_i, size_i)

@@ -1,4 +1,8 @@
+from torch_geometric.typing import PairTensor, Size
+
 import torch
+from torch import Tensor
+from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import reset
@@ -39,12 +43,18 @@ class EdgeConv(MessagePassing):
     def reset_parameters(self):
         reset(self.nn)
 
-    def forward(self, x, edge_index):
+    # propagate_type: (PairTensor)
+    def forward(self, x, edge_index, size=None):
+        # type: (Tensor, Tensor, Size) -> Tensor
+        # type: (Tensor, SparseTensor, Size) -> Tensor
+        # type: (PairTensor, Tensor, Size) -> Tensor
+        # type: (PairTensor, SparseTensor, Size) -> Tensor
         """"""
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        return self.propagate(edge_index, x=x)
+        if isinstance(x, Tensor):
+            x: PairTensor = (x, x)
+        return self.propagate(edge_index, x=x, size=size)
 
-    def message(self, x_i, x_j):
+    def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=1))
 
     def __repr__(self):

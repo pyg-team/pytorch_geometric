@@ -56,10 +56,6 @@ def test_my_conv():
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
     conv = MyConv(8, 32)
-
-    bla = conv.check_consistency(x=x1, edge_index=edge_index, value=value)
-    print(bla)
-
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
