@@ -17,9 +17,8 @@ class SAGEConv(MessagePassing):
         \mathrm{mean}_{j \in \mathcal{N(i)}} \mathbf{x}_j
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple of
-            feature sizes corresponds to the dimensionality of source and
-            target node dimensionalities.
+        in_channels (int or tuple): Size of each input sample. A tuple
+            corresponds to the sizes of source and target dimensionalities.
         out_channels (int): Size of each output sample.
         normalize (bool, optional): If set to :obj:`True`, output features
             will be :math:`\ell_2`-normalized, *i.e.*,
@@ -42,14 +41,14 @@ class SAGEConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lin_rel = Linear(in_channels[0], out_channels, bias=bias)
-        self.lin_root = Linear(in_channels[1], out_channels, bias=False)
+        self.lin_l = Linear(in_channels[0], out_channels, bias=bias)
+        self.lin_r = Linear(in_channels[1], out_channels, bias=False)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin_rel.reset_parameters()
-        self.lin_root.reset_parameters()
+        self.lin_l.reset_parameters()
+        self.lin_r.reset_parameters()
 
     # propagate_type: (x: OptPairTensor)
     def forward(self, x, edge_index, size=None):
@@ -61,11 +60,11 @@ class SAGEConv(MessagePassing):
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
-        out = self.lin_rel(self.propagate(edge_index, x=x, size=size))
+        out = self.lin_l(self.propagate(edge_index, x=x, size=size))
 
-        x_root = x[1]
-        if x_root is not None:
-            out += self.lin_root(x_root)
+        x_r = x[1]
+        if x_r is not None:
+            out += self.lin_r(x_r)
 
         if self.normalize:
             out = F.normalize(out, p=2., dim=-1)
@@ -77,7 +76,7 @@ class SAGEConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None, layout=None)  # Remove any edge values.
+        adj_t = adj_t.set_value(None, layout=None)
         return matmul(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self):

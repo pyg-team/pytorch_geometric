@@ -1,9 +1,12 @@
+from torch_geometric.typing import OptPairTensor, Size
+
 from typing import Tuple, Optional
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter, Linear
 import torch.nn.functional as F
+from torch.nn import Parameter, Linear
+from torch_sparse import SparseTensor, set_diag
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
@@ -32,7 +35,8 @@ class GATConv(MessagePassing):
         \right)\right)}.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or tuple): Size of each input sample. A tuple
+            corresponds to the sizes of source and target dimensionalities.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -61,13 +65,17 @@ class GATConv(MessagePassing):
         self.concat = concat
         self.negative_slope = negative_slope
         self.dropout = dropout
+        self.node_dim = 0
 
-        self._alpha = None
+        if isinstance(in_channels, int):
+            self.lin_l = Linear(in_channels, heads * out_channels, bias=False)
+            self.lin_r = self.lin_l
+        else:
+            self.lin_l = Linear(in_channels[0], heads * out_channels, False)
+            self.lin_r = Linear(in_channels[1], heads * out_channels, False)
 
-        self.lin = Linear(in_channels, heads * out_channels, bias=False)
-
-        self.att_i = Parameter(torch.Tensor(1, heads, out_channels))
-        self.att_j = Parameter(torch.Tensor(1, heads, out_channels))
+        self.att_l = Parameter(torch.Tensor(1, heads, out_channels))
+        self.att_r = Parameter(torch.Tensor(1, heads, out_channels))
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -76,25 +84,27 @@ class GATConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
 
+        self._alpha = None
+
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.lin.weight)
-        glorot(self.att_i)
-        glorot(self.att_j)
+        glorot(self.lin_l.weight)
+        glorot(self.lin_r.weight)
+        glorot(self.att_l)
+        glorot(self.att_r)
         zeros(self.bias)
 
-    @torch.jit._overload_method
-    def forward(self, x, edge_index, return_attention_weights=None):
-        # type: (Tensor, Tensor, Optional[Tensor]) -> Tensor
-        pass
-
-    @torch.jit._overload_method
-    def forward(self, x, edge_index, return_attention_weights=None):
-        # type: (Tensor, Tensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]
-        pass
-
-    def forward(self, x, edge_index, return_attention_weights=None):
+    # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
+    def forward(self, x, edge_index, size=None, return_attention_weights=None):
+        # type: (Tensor, Tensor, Size, Optional[Tensor]) -> Tensor
+        # type: (OptPairTensor, Tensor, Size, Optional[Tensor]) -> Tensor
+        # type: (Tensor, SparseTensor, Size, Optional[Tensor]) -> Tensor
+        # type: (OptPairTensor, SparseTensor, Size, Optional[Tensor]) -> Tensor
+        # type: (Tensor, Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]] # noqa
+        # type: (OptPairTensor, Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]] # noqa
+        # type: (Tensor, SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor] # noqa
+        # type: (OptPairTensor, SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor] # noqa
         r""""
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
@@ -103,22 +113,40 @@ class GATConv(MessagePassing):
                 attention weights for each edge. (default: :obj:`None`)
         """
 
-        x_prop: Tuple[Tensor, Tensor] = (x, x)  # Dummy.
-        if isinstance(x, torch.Tensor):
-            x = self.lin(x)
-            x_prop = (x, x)
+        H, C = self.heads, self.out_channels
+
+        if isinstance(x, Tensor):
+            assert x.dim() >= 2, 'Static graphs not supported in `GATConv`.'
+            x_l = self.lin_l(x).view(-1, H, C)
+            x: OptPairTensor = (x_l, x_l)
         else:
-            x_prop = (self.lin(x[0]), self.lin(x[1]))
+            x_l, x_r = x[0], x[1]
+            assert x_l.dim() >= 2, 'Static graphs not supported in `GATConv`.'
+            x_l = self.lin_l(x_l).view(-1, H, C)
+            x_r = self.lin_r(x_r).view(-1, H, C) if x_r is not None else None
+            x = (x_l, x_r)
 
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index, _ = add_self_loops(edge_index,
-                                       num_nodes=x_prop[1].size(self.node_dim))
+        x_l, x_r = x[0], x[1]
 
-        out = self.propagate(edge_index, x=x_prop)
+        if not isinstance(self.in_channels, (tuple, list)):
+            # Add self-loops to the graph.
+            if isinstance(edge_index, Tensor):
+                edge_index, _ = remove_self_loops(edge_index)
+                num_nodes = size[1] if size is not None else None
+                num_nodes = x_r.size(0) if x_r is not None else None
+                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+            elif isinstance(edge_index, SparseTensor):
+                edge_index = set_diag(edge_index)
 
+        # Compute node-wise attention scores.
+        node_alpha: OptPairTensor = (
+            (x_l * self.att_l).sum(dim=-1),
+            (x_r * self.att_l).sum(dim=-1) if x_r is not None else None,
+        )
+
+        out = self.propagate(edge_index, x=x, alpha=node_alpha, size=size)
         alpha = self._alpha
         self._alpha = None
-        assert alpha is not None
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -129,24 +157,21 @@ class GATConv(MessagePassing):
             out += self.bias
 
         if isinstance(return_attention_weights, bool):
-            return out, (edge_index, alpha)
+            assert alpha is not None
+            if isinstance(edge_index, Tensor):
+                return out, (edge_index, alpha)
+            elif isinstance(edge_index, SparseTensor):
+                return out, edge_index.set_value(alpha, layout='coo')
         else:
             return out
 
-    def message(self, x_i: Tensor, x_j: Tensor, edge_index_i: Tensor,
-                size_i: Optional[int]):
-        # Compute attention coefficients.
-        x_i = x_i.view(-1, self.heads, self.out_channels)
-        x_j = x_j.view(-1, self.heads, self.out_channels)
-
-        alpha = (x_i * self.att_i).sum(-1) + (x_j * self.att_j).sum(-1)
+    def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: Optional[Tensor],
+                edge_index_i: Tensor, size_i: Optional[int]):
+        alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, edge_index_i, size_i)
         self._alpha = alpha
-
-        # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-
         return x_j * alpha.view(-1, self.heads, 1)
 
     def __repr__(self):
