@@ -31,7 +31,7 @@ def test_gat_conv():
     assert conv((x, x), edge_index).tolist() == out.tolist()
 
     model = Net1()
-    model.conv = conv.jittable(x=x, edge_index=edge_index)
+    model.conv = conv.jittable()
     model = torch.jit.script(model)
     assert model(x, edge_index).tolist() == out.tolist()
 
@@ -42,7 +42,7 @@ def test_gat_conv():
     assert conv._alpha is None
 
     model = Net2()
-    model.conv = conv.jittable(x=x, edge_index=edge_index)
+    model.conv = conv.jittable()
     model = torch.jit.script(model)
     assert model(x, edge_index)[0].tolist() == result[0].tolist()
     assert model(x, edge_index)[1][0].tolist() == result[1][0].tolist()
@@ -54,7 +54,7 @@ def test_gat_conv():
     assert conv((x, x), edge_index).tolist() == out.tolist()
 
     model = Net1()
-    model.conv = conv.jittable(x=x, edge_index=edge_index)
+    model.conv = conv.jittable()
     model = torch.jit.script(model)
     assert model(x, edge_index).tolist() == out.tolist()
 
@@ -65,7 +65,7 @@ def test_gat_conv():
     assert conv._alpha is None
 
     model = Net2()
-    model.conv = conv.jittable(x=x, edge_index=edge_index)
+    model.conv = conv.jittable()
     model = torch.jit.script(model)
     assert model(x, edge_index)[0].tolist() == result[0].tolist()
     assert model(x, edge_index)[1][0].tolist() == result[1][0].tolist()

@@ -297,7 +297,7 @@ class MessagePassing(torch.nn.Module):
         return inputs
 
     @torch.jit.unused
-    def jittable(self, **kwargs):
+    def jittable(self, typing: Optional[str] = None):
         r"""Analyzes the :obj:`MessagePassing` module and produces a new
         jittable module."""
         uid = uuid1().hex[:6]
@@ -320,9 +320,14 @@ class MessagePassing(torch.nn.Module):
         # Collect `forward()` header, body and overload types.
         REGEX = r' *#\s*type:.*'
         forward = inspect.getsource(self.forward)
-        forward_header, forward_body = re.split(r':.*\n', forward, maxsplit=1)
+        forward = re.split(r'(\).*?:.*?\n)', forward, maxsplit=1)
+        forward_header, forward_body = forward[0] + forward[1][:-1], forward[2]
         forward_types = re.findall(REGEX, forward_body)
         forward_body = re.sub(REGEX + '\n', '', forward_body)
+
+        if typing is not None:
+            forward_types = []
+            forward_body = f'        # type: {typing}\n{forward_body}'
 
         root = os.path.dirname(os.path.realpath(__file__))
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:

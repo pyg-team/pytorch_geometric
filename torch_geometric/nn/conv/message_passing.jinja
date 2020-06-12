@@ -133,13 +133,11 @@ class {{clsname}}Jittable_{{uid}}({{clsname}}):
         out = self.message({% for k in msg_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
         out = self.aggregate(out{% for k in aggr_args %}, {{k}}=kwargs.{{k}}{% endfor %})
         return self.update(out{% for k in update_args %}, {{k}}=kwargs.{{k}}{% endfor %})
-
 {% for t in forward_types %}
     @torch.jit._overload_method
-{{forward_header}}:
+{{forward_header}}
 {{t}}
         pass
 {% endfor %}
-
-{{forward_header}}:
+{{forward_header}}
 {{forward_body}}

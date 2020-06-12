@@ -25,7 +25,7 @@ class MyConv(MessagePassing):
         # type: (OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor
         # type: (Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor
         # type: (OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
-
+        """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -47,137 +47,92 @@ class MyConv(MessagePassing):
         return spmm(adj_t, x[0], reduce=self.aggr)
 
 
-class HomoEdgeIndexNet(torch.nn.Module):
-    def __init__(self):
-        super(HomoEdgeIndexNet, self).__init__()
-        torch.manual_seed(42)
-        self.conv = MyConv(8, 32)
-
-    def forward(self, x: Tensor, edge_index: Tensor,
-                edge_weight: Optional[Tensor] = None,
-                size: Size = None) -> Tensor:
-        return self.conv(x, edge_index, edge_weight, size)
-
-
-class HomoSparseTensorNet(torch.nn.Module):
-    def __init__(self):
-        super(HomoSparseTensorNet, self).__init__()
-        torch.manual_seed(42)
-        self.conv = MyConv(8, 32)
-
-    def forward(self, x: Tensor, adj_t: SparseTensor) -> Tensor:
-        return self.conv(x, adj_t)
-
-
-class HeteEdgeIndexNet(torch.nn.Module):
-    def __init__(self):
-        super(HeteEdgeIndexNet, self).__init__()
-        torch.manual_seed(42)
-        self.conv = MyConv((8, 16), 32)
-
-    def forward(self, x: OptPairTensor, edge_index: Tensor,
-                edge_weight: Optional[Tensor] = None,
-                size: Size = None) -> Tensor:
-        return self.conv(x, edge_index, edge_weight, size)
-
-
-class HeteSparseTensorNet(torch.nn.Module):
-    def __init__(self):
-        super(HeteSparseTensorNet, self).__init__()
-        torch.manual_seed(42)
-        self.conv = MyConv((8, 16), 32)
-
-    def forward(self, x: OptPairTensor, adj_t: SparseTensor) -> Tensor:
-        return self.conv(x, adj_t)
-
-
 def test_my_conv():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
-    edge_index = torch.tensor([
-        [0, 1, 2, 3],
-        [0, 0, 1, 1],
-    ])
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
-    assert row.max() < x1.size(0)
-    assert col.max() < x2.size(0)
-    edge_weight = torch.randn(row.size(0))
-    adj = SparseTensor(row=row, col=col, value=edge_weight,
-                       sparse_sizes=(4, 4))
+    value = torch.randn(row.size(0))
+    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
-    homo_edge_index = HomoEdgeIndexNet()
-    homo_sparse_tensor = HomoSparseTensorNet()
+    conv = MyConv(8, 32)
+    out = conv(x1, edge_index, value)
+    assert out.size() == (4, 32)
+    assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
+    assert conv(x1, adj.t()).tolist() == out.tolist()
+    conv.fuse = False
+    assert conv(x1, adj.t()).tolist() == out.tolist()
+    conv.fuse = True
 
-    out1 = homo_edge_index(x1, edge_index, edge_weight)
-    out2 = homo_edge_index(x1, edge_index, edge_weight, (4, 4))
-    out3 = homo_sparse_tensor(x1, adj.t())
-    assert out1.size() == (4, 32)
-    assert out1.tolist() == out2.tolist()
-    assert out1.tolist() == out3.tolist()
+    # This should succeed. However, testing overloads is really cumbersome, so
+    # we generate special JIT instances via `jittable(typing)` in what follows.
+    torch.jit.script(conv.jittable())
+
+    t = '(Tensor, Tensor, Optional[Tensor], Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit(x1, edge_index, value).tolist() == out.tolist()
+    assert jit(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
+
+    t = '(Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit(x1, adj.t()).tolist() == out.tolist()
+    jit.fuse = False
+    assert jit(x1, adj.t()).tolist() == out.tolist()
+    jit.fuse = True
 
     adj = adj.sparse_resize((4, 2))
-
-    hete_edge_index = HeteEdgeIndexNet()
-    hete_sparse_tensor = HeteSparseTensorNet()
-
-    out1 = hete_edge_index((x1, x2), edge_index, edge_weight)
-    out2 = hete_edge_index((x1, x2), edge_index, edge_weight, (4, 2))
-    out3 = hete_sparse_tensor((x1, x2), adj.t())
+    conv = MyConv((8, 16), 32)
+    out1 = conv((x1, x2), edge_index, value)
+    out2 = conv((x1, None), edge_index, value, (4, 2))
     assert out1.size() == (2, 32)
-    assert out1.tolist() == out2.tolist()
-    assert out1.tolist() == out3.tolist()
+    assert out2.size() == (2, 32)
+    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    conv.fuse = False
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    conv.fuse = True
 
-    hete_edge_index.conv.flow = 'target_to_source'
-    hete_edge_index((x2[:, :8], x1.repeat(1, 2)), edge_index)
-    hete_edge_index.conv.flow = 'source_to_target'
+    t = '(OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit((x1, x2), edge_index, value).tolist() == out1.tolist()
+    assert jit((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert jit((x1, None), edge_index, value, (4, 2)).tolist() == out2.tolist()
 
-    out1 = hete_edge_index((x1, None), edge_index, edge_weight, (4, 2))
-    out2 = hete_sparse_tensor((x1, None), adj.t())
-    assert out1.size() == (2, 32)
-    assert out1.tolist() == out2.tolist()
+    t = '(OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+    jit.fuse = False
+    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+    jit.fuse = True
 
-    out = hete_edge_index((x1, None), edge_index, edge_weight)
-    assert out.size() == (4, 32)
 
-    adj = adj.sparse_resize((4, 4))
+def test_my_static_graph_conv():
+    x1 = torch.randn(3, 4, 8)
+    x2 = torch.randn(3, 2, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    value = torch.randn(row.size(0))
+    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
-    homo_edge_index.conv = homo_edge_index.conv.jittable()
-    homo_edge_index = torch.jit.script(homo_edge_index)
-    homo_sparse_tensor.conv = homo_sparse_tensor.conv.jittable()
-    homo_sparse_tensor = torch.jit.script(homo_sparse_tensor)
-
-    out1 = homo_edge_index(x1, edge_index, edge_weight)
-    out2 = homo_edge_index(x1, edge_index, edge_weight, (4, 4))
-    out3 = homo_sparse_tensor(x1, adj.t())
-    assert out1.size() == (4, 32)
-    assert out1.tolist() == out2.tolist()
-    assert out1.tolist() == out3.tolist()
+    conv = MyConv(8, 32)
+    out = conv(x1, edge_index, value)
+    assert out.size() == (3, 4, 32)
+    assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
+    assert conv(x1, adj.t()).tolist() == out.tolist()
 
     adj = adj.sparse_resize((4, 2))
-
-    hete_edge_index.conv = hete_edge_index.conv.jittable()
-    hete_edge_index = torch.jit.script(hete_edge_index)
-    hete_sparse_tensor.conv = hete_sparse_tensor.conv.jittable()
-    hete_sparse_tensor = torch.jit.script(hete_sparse_tensor)
-
-    out1 = hete_edge_index((x1, x2), edge_index, edge_weight)
-    out2 = hete_edge_index((x1, x2), edge_index, edge_weight, (4, 2))
-    out3 = hete_sparse_tensor((x1, x2), adj.t())
-    assert out1.size() == (2, 32)
-    assert out1.tolist() == out2.tolist()
-    assert out1.tolist() == out3.tolist()
-
-    hete_edge_index.conv.flow = 'target_to_source'
-    hete_edge_index((x2[:, :8], x1.repeat(1, 2)), edge_index)
-    hete_edge_index.conv.flow = 'source_to_target'
-
-    out1 = hete_edge_index((x1, None), edge_index, edge_weight, (4, 2))
-    out2 = hete_sparse_tensor((x1, None), adj.t())
-    assert out1.size() == (2, 32)
-    assert out1.tolist() == out2.tolist()
-
-    out = hete_edge_index((x1, None), edge_index, edge_weight)
-    assert out.size() == (4, 32)
+    conv = MyConv((8, 16), 32)
+    out1 = conv((x1, x2), edge_index, value)
+    assert out1.size() == (3, 2, 32)
+    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    out2 = conv((x1, None), edge_index, value, (4, 2))
+    assert out2.size() == (3, 2, 32)
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
 
 
 def test_copy():
@@ -214,10 +169,7 @@ class MyDefaultArgConv(MessagePassing):
 
 def test_my_default_arg_conv():
     x = torch.randn(4, 1)
-    edge_index = torch.tensor([
-        [0, 1, 2, 3],
-        [0, 0, 1, 1],
-    ])
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
