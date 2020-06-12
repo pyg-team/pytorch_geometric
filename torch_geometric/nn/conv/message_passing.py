@@ -14,7 +14,7 @@ from jinja2 import Template
 from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
 
-from .utils.helpers import unsqueeze
+from .utils.helpers import expand_left
 from .utils.inspector import Inspector
 
 special_args = set([
@@ -46,10 +46,10 @@ class MessagePassing(torch.nn.Module):
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
         node_dim (int, optional): The axis along which to propagate.
-            (default: :obj:`0`)
+            (default: :obj:`-2`)
     """
     def __init__(self, aggr: str = "add", flow: str = "source_to_target",
-                 node_dim: int = 0):
+                 node_dim: int = -2):
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
@@ -59,7 +59,6 @@ class MessagePassing(torch.nn.Module):
         assert self.flow in ['source_to_target', 'target_to_source']
 
         self.node_dim = node_dim
-        assert self.node_dim >= 0
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
@@ -105,13 +104,13 @@ class MessagePassing(torch.nn.Module):
              'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
              'argument `edge_index`.'))
 
-    def __set_size__(self, size: List[Optional[int]], dim: int, item: Tensor):
+    def __set_size__(self, size: List[Optional[int]], dim: int, src: Tensor):
         the_size = size[dim]
         if the_size is None:
-            size[dim] = item.size(self.node_dim)
-        elif the_size != item.size(self.node_dim):
+            size[dim] = src.size(self.node_dim)
+        elif the_size != src.size(self.node_dim):
             raise ValueError(
-                (f'Encountered tensor with size {item.size(self.node_dim)} in '
+                (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
     def __lift__(self, src, edge_index, dim):
@@ -121,7 +120,7 @@ class MessagePassing(torch.nn.Module):
         elif isinstance(edge_index, SparseTensor):
             if dim == 1:
                 rowptr = edge_index.storage.rowptr()
-                rowptr = unsqueeze(rowptr, dim=0, length=self.node_dim)
+                rowptr = expand_left(rowptr, dim=self.node_dim, dims=src.dim())
                 return gather_csr(src, rowptr)
             elif dim == 0:
                 col = edge_index.storage.col()
@@ -272,7 +271,7 @@ class MessagePassing(torch.nn.Module):
         :meth:`__init__` by the :obj:`aggr` argument.
         """
         if ptr is not None:
-            ptr = unsqueeze(ptr, dim=0, length=self.node_dim)
+            ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())
             return segment_csr(inputs, ptr, reduce=self.aggr)
         else:
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,

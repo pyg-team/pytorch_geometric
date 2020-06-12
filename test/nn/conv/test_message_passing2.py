@@ -209,7 +209,7 @@ class MyDefaultArgConv(MessagePassing):
 
 
 def test_my_default_arg_conv():
-    x = torch.randn(4)
+    x = torch.randn(4, 1)
     edge_index = torch.tensor([
         [0, 1, 2, 3],
         [0, 0, 1, 1],
@@ -218,8 +218,8 @@ def test_my_default_arg_conv():
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = MyDefaultArgConv()
-    assert conv(x, edge_index).tolist() == [0, 0, 0, 0]
-    assert conv(x, adj.t()).tolist() == [0, 0, 0, 0]
+    assert conv(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
+    assert conv(x, adj.t()).view(-1).tolist() == [0, 0, 0, 0]
 
     # This should not succeed in JIT mode.
     with pytest.raises(RuntimeError):

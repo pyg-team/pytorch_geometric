@@ -1,12 +1,10 @@
-from typing import Optional
 from torch_geometric.typing import OptPairTensor, Size
 
-import torch
 from torch import Tensor
 from torch.nn import Linear
 import torch.nn.functional as F
 from torch_sparse import SparseTensor
-from torch_sparse.matmul import spmm
+from torch_sparse import matmul
 from torch_geometric.nn.conv import MessagePassing
 
 
@@ -53,13 +51,6 @@ class SAGEConv(MessagePassing):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    # TODO: Allow different feature sizes (CHECK)
-    # TODO: Allow tuples and tensors as inputs (CHECK)
-    # TODO: Allow adj and edge_index as input (CHECK)
-    # TODO: Make that jittable.
-    # TODO: TEST DEFAULT PARAMS
-    # TODO: adj_t.set_value()
-
     # propagate_type: (x: OptPairTensor)
     def forward(self, x, edge_index, size=None):
         # type: (Tensor, Tensor, Size) -> Tensor
@@ -69,13 +60,16 @@ class SAGEConv(MessagePassing):
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
-        out = self.propagate(edge_index, size=size, x=x)
-        out = self.lin_rel(out)
+
+        out = self.lin_rel(self.propagate(edge_index, x=x, size=size))
+
         x_root = x[1]
         if x_root is not None:
             out += self.lin_root(x_root)
+
         if self.normalize:
             out = F.normalize(out, p=2., dim=-1)
+
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
@@ -83,7 +77,8 @@ class SAGEConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        return spmm(adj_t, x[0], reduce=self.aggr)
+        adj_t = adj_t.set_value(None, layout=None)  # Remove any edge values.
+        return matmul(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
