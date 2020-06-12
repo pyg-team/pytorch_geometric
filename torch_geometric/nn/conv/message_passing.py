@@ -296,6 +296,9 @@ class MessagePassing(torch.nn.Module):
         """
         return inputs
 
+    def check_consistency(self, **kwargs):
+        pass
+
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None):
         r"""Analyzes the :obj:`MessagePassing` module and produces a new

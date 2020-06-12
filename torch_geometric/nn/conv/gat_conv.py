@@ -114,20 +114,19 @@ class GATConv(MessagePassing):
         """
         H, C = self.heads, self.out_channels
 
+        x_l: Optional[Tensor] = None
+        x_r: Optional[Tensor] = None
         if isinstance(x, Tensor):
             assert x.dim() >= 2, 'Static graphs not supported in `GATConv`.'
-            x_l = self.lin_l(x).view(-1, H, C)
-            x: OptPairTensor = (x_l, x_l)
+            x_l = x_r = self.lin_l(x).view(-1, H, C)
         else:
-            x_l, x_r = x[0], x[1]
-            assert x_l.dim() >= 2, 'Static graphs not supported in `GATConv`.'
-            x_l = self.lin_l(x_l).view(-1, H, C)
+            x_r = x[1]
+            assert x[0].dim() >= 2, 'Static graphs not supported in `GATConv`.'
+            x_l = self.lin_l(x[0]).view(-1, H, C)
             x_r = self.lin_r(x_r).view(-1, H, C) if x_r is not None else None
-            x = (x_l, x_r)
+        assert x_l is not None
 
-        x_l, x_r = x[0], x[1]
-
-        if not isinstance(self.in_channels, (tuple, list)):
+        if isinstance(x, Tensor):
             # Add self-loops to the graph.
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)
@@ -143,7 +142,8 @@ class GATConv(MessagePassing):
             (x_r * self.att_l).sum(dim=-1) if x_r is not None else None,
         )
 
-        out = self.propagate(edge_index, x=x, alpha=node_alpha, size=size)
+        out = self.propagate(edge_index, x=(x_l, x_r), alpha=node_alpha,
+                             size=size)
         alpha = self._alpha
         self._alpha = None
 
@@ -171,7 +171,8 @@ class GATConv(MessagePassing):
         alpha = softmax(alpha, edge_index_i, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return x_j * alpha.view(-1, self.heads, 1)
+        print(x_j.size(), alpha.size())
+        return x_j * alpha.unsqueeze(-1)
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
