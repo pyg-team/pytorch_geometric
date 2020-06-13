@@ -1,5 +1,5 @@
 import copy
-from typing import Union, Tuple
+from typing import Tuple, Union
 from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
 import pytest

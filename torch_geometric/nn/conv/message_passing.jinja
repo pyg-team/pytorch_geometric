@@ -22,7 +22,7 @@ class Collect_{{uid}}(NamedTuple):
 
 
 
-class {{clsname}}Jittable_{{uid}}({{clsname}}):
+class {{cls_name}}Jittable_{{uid}}({{cls_name}}):
 
     @torch.jit._overload_method
     def __check_input__(self, edge_index, size):

@@ -15,7 +15,7 @@ def test_gcn_conv():
     assert out.size() == (num_nodes, out_channels)
     assert conv(x, edge_index, edge_weight).size() == (num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index)
+    jit_conv = conv.jittable()
     jit_conv = torch.jit.script(jit_conv)
     assert jit_conv(x, edge_index).tolist() == out.tolist()
 
@@ -25,7 +25,7 @@ def test_gcn_conv():
     assert out.size() == (num_nodes, out_channels)
     assert conv(x, edge_index, edge_weight).size() == (num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index)
+    jit_conv = conv.jittable()
     jit_conv = torch.jit.script(jit_conv)
     jit_conv(x, edge_index)
     assert jit_conv(x, edge_index).tolist() == out.tolist()
@@ -49,10 +49,10 @@ def test_static_gcn_conv():
     num_nodes = edge_index.max().item() + 1
     x = torch.randn((4, num_nodes, in_channels))
 
-    conv = GCNConv(in_channels, out_channels, node_dim=1)
+    conv = GCNConv(in_channels, out_channels)
     out = conv(x, edge_index)
     assert out.size() == (4, num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index)
+    jit_conv = conv.jittable()
     jit_conv = torch.jit.script(jit_conv)
     assert jit_conv(x, edge_index).tolist() == out.tolist()

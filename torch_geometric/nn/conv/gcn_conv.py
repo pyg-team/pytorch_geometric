@@ -122,7 +122,8 @@ class GCNConv(MessagePassing):
         """"""
         x = torch.matmul(x, self.weight)
         edge_index, norm = self.__norm__(x, edge_index, edge_weight)
-        out = self.propagate(edge_index, x=x, norm=norm)
+        # propagate_type: (x: Tensor, norm: Tensor)
+        out = self.propagate(edge_index, x=x, norm=norm, size=None)
         if self.bias is not None:
             out += self.bias
         return out

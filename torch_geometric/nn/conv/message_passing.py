@@ -1,13 +1,11 @@
 import os
 import re
-import sys
 import inspect
 import os.path as osp
-from inspect import Parameter
 from uuid import uuid1
-from tempfile import NamedTemporaryFile
-from typing import List, Tuple, Optional
-from importlib.util import spec_from_file_location, module_from_spec
+from inspect import Parameter
+from typing import List, Optional, Set
+from torch_geometric.typing import Adj, Size
 
 import torch
 from torch import Tensor
@@ -17,11 +15,8 @@ from torch_scatter import gather_csr, scatter, segment_csr
 
 from .utils.helpers import expand_left
 from .utils.inspector import Inspector, parse_types, resolve_types
-
-special_args = set([
-    'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr', 'index',
-    'dim_size'
-])
+from .utils.jit import class_from_module_repr
+from .utils.parser import split_type_repr
 
 
 class MessagePassing(torch.nn.Module):
@@ -49,8 +44,15 @@ class MessagePassing(torch.nn.Module):
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`-2`)
     """
+
+    special_args: Set[str] = set([
+        'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr', 'index',
+        'dim_size'
+    ])
+
     def __init__(self, aggr: str = "add", flow: str = "source_to_target",
                  node_dim: int = -2):
+
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
@@ -66,8 +68,7 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
-
-        self.__user_args__ = self.inspector.keys().difference(special_args)
+        self.__user_args = self.inspector.keys().difference(self.special_args)
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -132,7 +133,7 @@ class MessagePassing(torch.nn.Module):
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 
         out = {}
-        for arg in self.__user_args__:
+        for arg in self.__user_args:
             if arg[-2:] not in ['_i', '_j']:
                 out[arg] = kwargs.get(arg, Parameter.empty)
             else:
@@ -168,19 +169,7 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def __distribute__(self, params, kwargs):
-        out = {}
-        for key, param in params.items():
-            data = kwargs.get(key, Parameter.empty)
-            if data is Parameter.empty:
-                if param.default is Parameter.empty:
-                    raise TypeError(f'Required parameter {key} is empty.')
-                data = param.default
-            out[key] = data
-        return out
-
-    def propagate(self, edge_index, size: Optional[Tuple[int, int]] = None,
-                  **kwargs):
+    def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
         r"""The initial call to start propagating messages.
 
         Args:
@@ -212,38 +201,38 @@ class MessagePassing(torch.nn.Module):
         """
         size = self.__check_input__(edge_index, size)
 
-        # We collect all arguments used for message passing in `kwargs`.
+        # Collect all arguments used for message passing from `kwargs`.
         coll_dict = self.__collect__(edge_index, size, kwargs)
 
+        # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
                 and not self.__explain__):
-            msg_aggr_kwargs = self.__distribute__(
-                self.inspector.params['message_and_aggregate'], coll_dict)
+            msg_aggr_kwargs = self.inspector.distribute(
+                'message_and_aggregate', coll_dict)
             out = self.message_and_aggregate(edge_index, **msg_aggr_kwargs)
 
         # Otherwise, run both functions in separation.
         elif isinstance(edge_index, Tensor) or not self.fuse:
-            msg_kwargs = self.__distribute__(self.inspector.params['message'],
-                                             coll_dict)
+            msg_kwargs = self.inspector.distribute('message', coll_dict)
             out = self.message(**msg_kwargs)
 
             # For `GNNExplainer`, we require separate a separate message and
-            # aggregate procedure since this allows us to easily inject an
-            # `edge_mask` into the message passing computation.
+            # aggregate procedure since this allows us to inject the
+            # `edge_mask` into the message passing computation scheme.
             if self.__explain__:
                 edge_mask = self.__edge_mask__.sigmoid()
+                # Some ops add self-loops to `edge_index`. We need to do the
+                # same for `edge_mask` (but do not train those).
                 if out.size(0) != edge_mask.size(0):
                     loop = edge_mask.new_ones(size[0])
                     edge_mask = torch.cat([edge_mask, loop], dim=0)
                 assert out.size(0) == edge_mask.size(0)
                 out = out * edge_mask.view(-1, 1)
 
-            aggr_kwargs = self.__distribute__(
-                self.inspector.params['aggregate'], coll_dict)
+            aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
             out = self.aggregate(out, **aggr_kwargs)
 
-        update_kwargs = self.__distribute__(self.inspector.params['update'],
-                                            coll_dict)
+        update_kwargs = self.inspector.distribute('update', coll_dict)
         return self.update(out, **update_kwargs)
 
     def message(self, x_j: Tensor) -> Tensor:
@@ -307,24 +296,22 @@ class MessagePassing(torch.nn.Module):
                 instance with :meth:`forward` types based on :obj:`typing`,
                 *e.g.*: `"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
-        uid = uuid1().hex[:6]
-
         # Parse `propagate()` types to format `{arg1: type1, ...}`.
         source = inspect.getsource(self.__class__)
-        prop_types = re.search(r'#\s*propagate_type: \((.*)\)', source)
-        if not prop_types:
+        match = re.search(r'#\s*propagate_type:\s*\((.*)\)', source)
+        if match is None:
             raise TypeError(
                 'TorchScript support requires the definition of the types '
                 'passed to `propagate`. Please specificy them via\n\n'
                 '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
                 'anywhere inside the `MessagePassing` module.')
-        prop_types = re.split(r':\s?|,\s?', prop_types.group(1))
-        prop_types = {k: v for k, v in zip(prop_types[0::2], prop_types[1::2])}
+        prop_types = split_type_repr(match.group(1))
+        prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.types()
 
-        # Collect `forward()` header, body and @overload argument types.
+        # Collect `forward()` header, body and all @overload types.
         forward_arg_types, forward_return_type = parse_types(self.forward)
         forward_arg_types = resolve_types(forward_arg_types)
 
@@ -342,7 +329,7 @@ class MessagePassing(torch.nn.Module):
             forward_arg_types = []
             split = re.split(r'(\).*?:.*?\n)', forward, maxsplit=1)
             forward_header, forward_body = split[0] + split[1][:-1], split[2]
-        elif typing is not None:
+        elif typing is not None:  # Only implement a special instance.
             forward_arg_types = []
             forward_body = f'        # type: {typing}\n{forward_body}'
 
@@ -350,35 +337,30 @@ class MessagePassing(torch.nn.Module):
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 
+        uid = uuid1().hex[:6]
         jit_module_repr = template.render(
             uid=uid,
             module=str(self.__class__.__module__),
-            clsname=self.__class__.__name__,
-            check_input=inspect.getsource(self.__check_input__)[:-1],
-            lift=inspect.getsource(self.__lift__)[:-1],
+            cls_name=self.__class__.__name__,
             prop_types=prop_types,
             collect_types=collect_types,
-            user_args=self.__user_args__,
-            msg_args=self.inspector.keys(['message']),
-            aggr_args=self.inspector.keys(['aggregate']),
-            msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
-            update_args=self.inspector.keys(['update']),
             forward_header=forward_header,
             forward_arg_types=forward_arg_types,
             forward_return_type=forward_return_type,
             forward_body=forward_body,
+            user_args=self.__user_args,
+            msg_args=self.inspector.keys(['message']),
+            aggr_args=self.inspector.keys(['aggregate']),
+            msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
+            update_args=self.inspector.keys(['update']),
+            check_input=inspect.getsource(self.__check_input__)[:-1],
+            lift=inspect.getsource(self.__lift__)[:-1],
         )
 
-        ftemp = NamedTemporaryFile(mode='w+', encoding='utf-8', suffix='.py',
-                                   delete=False)
-        ftemp.write(jit_module_repr)
-        ftemp.close()
-        modname = f'{self.__class__.__name__}Jittable_{uid}'
-        spec = spec_from_file_location(modname, ftemp.name)
-        mod = module_from_spec(spec)
-        sys.modules[modname] = mod
-        spec.loader.exec_module(mod)
-        cls = getattr(mod, f'{self.__class__.__name__}Jittable_{uid}')
+        # Instantiate a class from the rendered JIT module representation.
+        jit_cls_name = f'{self.__class__.__name__}Jittable_{uid}'
+        cls = class_from_module_repr(jit_cls_name, jit_module_repr)
         module = cls.__new__(cls)
         module.__dict__ = self.__dict__.copy()
+
         return module

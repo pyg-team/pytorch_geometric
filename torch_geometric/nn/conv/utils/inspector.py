@@ -5,6 +5,8 @@ from itertools import product
 from collections import OrderedDict
 from typing import Dict, List, Any, Optional, Callable, Set, Tuple
 
+from .parser import split_type_repr
+
 
 class Inspector(object):
     def __init__(self, base_class: Any):
@@ -48,6 +50,17 @@ class Inspector(object):
                 out[key] = arg_types[key]
         return out
 
+    def distribute(self, func_name, kwargs: Dict[str, Any]):
+        out = {}
+        for key, param in self.params[func_name].items():
+            data = kwargs.get(key, inspect.Parameter.empty)
+            if data is inspect.Parameter.empty:
+                if param.default is inspect.Parameter.empty:
+                    raise TypeError(f'Required parameter {key} is empty.')
+                data = param.default
+            out[key] = data
+        return out
+
 
 def type_to_tree(src):
     src = src.replace(',', ' ')
@@ -76,18 +89,8 @@ def parse_types(func: Callable) -> Tuple[OrderedDict, str]:
     # Parse `# type: (...) -> ...` annotation.
     match = re.search(r'#\s*type:\s*\((.*)\)\s*->\s*(.*)\s*\n', source)
     if match and len(match.groups()) == 2:
-        arg_types = []
         arg_type_str, return_type = match.groups()
-        i = depth = 0
-        for j, char in enumerate(arg_type_str):
-            if char == '[':
-                depth += 1
-            elif char == ']':
-                depth += -1
-            elif char == ',' and depth == 0:
-                arg_types.append(arg_type_str[i:j].strip())
-                i = j + 1
-        arg_types.append(arg_type_str[i:].strip())
+        arg_types = split_type_repr(arg_type_str)
         arg_types = OrderedDict({k: v for k, v in zip(param_names, arg_types)})
         return_type = return_type.split('#')[0].strip()
 
@@ -112,7 +115,7 @@ def parse_types(func: Callable) -> Tuple[OrderedDict, str]:
         else:
             return_type = f'{return_type.__module__}.{return_type.__name__}'
 
-    # FIXME JIT cannot handle `torch_sparse.tensor.SparseTensor` type.
+    # JIT cannot handle `torch_sparse.tensor.SparseTensor` type.
     return_type = return_type.replace('torch_sparse.tensor.', '')
     for key, arg_type in arg_types.items():
         arg_types[key] = arg_type.replace('torch_sparse.tensor.', '')
