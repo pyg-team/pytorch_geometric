@@ -3,6 +3,7 @@ import re
 import sys
 import inspect
 import os.path as osp
+from inspect import Parameter
 from uuid import uuid1
 from tempfile import NamedTemporaryFile
 from typing import List, Tuple, Optional
@@ -15,7 +16,7 @@ from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
 
 from .utils.helpers import expand_left
-from .utils.inspector import Inspector
+from .utils.inspector import Inspector, parse_types, resolve_types
 
 special_args = set([
     'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr', 'index',
@@ -133,10 +134,10 @@ class MessagePassing(torch.nn.Module):
         out = {}
         for arg in self.__user_args__:
             if arg[-2:] not in ['_i', '_j']:
-                out[arg] = kwargs.get(arg, inspect.Parameter.empty)
+                out[arg] = kwargs.get(arg, Parameter.empty)
             else:
                 dim = 0 if arg[-2:] == '_j' else 1
-                data = kwargs.get(arg[:-2], inspect.Parameter.empty)
+                data = kwargs.get(arg[:-2], Parameter.empty)
 
                 if isinstance(data, (tuple, list)):
                     assert len(data) == 2
@@ -170,9 +171,9 @@ class MessagePassing(torch.nn.Module):
     def __distribute__(self, params, kwargs):
         out = {}
         for key, param in params.items():
-            data = kwargs.get(key, inspect.Parameter.empty)
-            if data is inspect.Parameter.empty:
-                if param.default is inspect.Parameter.empty:
+            data = kwargs.get(key, Parameter.empty)
+            if data is Parameter.empty:
+                if param.default is Parameter.empty:
                     raise TypeError(f'Required parameter {key} is empty.')
                 data = param.default
             out[key] = data
@@ -298,7 +299,7 @@ class MessagePassing(torch.nn.Module):
 
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None):
-        r"""Analyzes the :obj:`MessagePassing` module and produces a new
+        r"""Analyzes the :class:`MessagePassing` instance and produces a new
         jittable module.
 
         Args:
@@ -318,21 +319,31 @@ class MessagePassing(torch.nn.Module):
                 '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
                 'anywhere inside the `MessagePassing` module.')
         prop_types = re.split(r':\s?|,\s?', prop_types.group(1))
-        prop_dict = {k: v for k, v in zip(prop_types[0::2], prop_types[1::2])}
+        prop_types = {k: v for k, v in zip(prop_types[0::2], prop_types[1::2])}
 
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
-        collect_dict = self.inspector.types()
+        collect_types = self.inspector.types()
 
-        # Collect `forward()` header, body and overload types.
-        REGEX = r' *#\s*type:.*'
+        # Collect `forward()` header, body and @overload argument types.
+        forward_arg_types, forward_return_type = parse_types(self.forward)
+        forward_arg_types = resolve_types(forward_arg_types)
+
+        sig = inspect.signature(self.forward).replace()
+        params = sig.parameters.values()
+        params = [p.replace(annotation=Parameter.empty) for p in params]
+        sig = sig.replace(parameters=params, return_annotation=Parameter.empty)
+        forward_header = f'    def forward(self, {str(sig)[1:-1]}):'
+
         forward = inspect.getsource(self.forward)
-        forward = re.split(r'(\).*?:.*?\n)', forward, maxsplit=1)
-        forward_header, forward_body = forward[0] + forward[1][:-1], forward[2]
-        forward_types = re.findall(REGEX, forward_body)
-        forward_body = re.sub(REGEX + '\n', '', forward_body)
+        forward_body = re.split(r'\).*?:.*?\n', forward, maxsplit=1)[1]
+        forward_body = re.sub(r'\s*# type:.*\n', '', forward_body)
 
-        if typing is not None:
-            forward_types = []
+        if len(forward_arg_types) < 2:  # No need to implement `@overload`.
+            forward_arg_types = []
+            split = re.split(r'(\).*?:.*?\n)', forward, maxsplit=1)
+            forward_header, forward_body = split[0] + split[1][:-1], split[2]
+        elif typing is not None:
+            forward_arg_types = []
             forward_body = f'        # type: {typing}\n{forward_body}'
 
         root = os.path.dirname(os.path.realpath(__file__))
@@ -345,15 +356,16 @@ class MessagePassing(torch.nn.Module):
             clsname=self.__class__.__name__,
             check_input=inspect.getsource(self.__check_input__)[:-1],
             lift=inspect.getsource(self.__lift__)[:-1],
-            prop_dict=prop_dict,
-            collect_dict=collect_dict,
+            prop_types=prop_types,
+            collect_types=collect_types,
             user_args=self.__user_args__,
             msg_args=self.inspector.keys(['message']),
             aggr_args=self.inspector.keys(['aggregate']),
             msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
             update_args=self.inspector.keys(['update']),
             forward_header=forward_header,
-            forward_types=forward_types,
+            forward_arg_types=forward_arg_types,
+            forward_return_type=forward_return_type,
             forward_body=forward_body,
         )
 

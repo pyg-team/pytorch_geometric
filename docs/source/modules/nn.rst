@@ -13,7 +13,7 @@ Convolutional Layers
 .. automodule:: torch_geometric.nn.conv
     :members:
     :undoc-members:
-    :exclude-members: message, update, aggregate, MessagePassing
+    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing
 
 .. automodule:: torch_geometric.nn.meta
     :members:

@@ -1,3 +1,4 @@
+from typing import Union, Tuple
 from torch_geometric.typing import OptPairTensor, Size
 
 from torch import Tensor
@@ -30,8 +31,9 @@ class SAGEConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels, out_channels, normalize=False, bias=True,
-                 **kwargs):
+    def __init__(self, in_channels: Union[int, Tuple[int,
+                                                     int]], out_channels: int,
+                 normalize: bool = False, bias: bool = True, **kwargs):
         super(SAGEConv, self).__init__(aggr='mean', **kwargs)
 
         self.in_channels = in_channels
@@ -50,17 +52,16 @@ class SAGEConv(MessagePassing):
         self.lin_l.reset_parameters()
         self.lin_r.reset_parameters()
 
-    # propagate_type: (x: OptPairTensor)
-    def forward(self, x, edge_index, size=None):
-        # type: (Tensor, Tensor, Size) -> Tensor
-        # type: (OptPairTensor, Tensor, Size) -> Tensor
-        # type: (Tensor, SparseTensor, Size) -> Tensor
-        # type: (OptPairTensor, SparseTensor, Size) -> Tensor
+    def forward(self, x: Union[Tensor, OptPairTensor],
+                edge_index: Union[Tensor,
+                                  SparseTensor], size: Size = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
-        out = self.lin_l(self.propagate(edge_index, x=x, size=size))
+        # propagate_type: (x: OptPairTensor)
+        out = self.propagate(edge_index, x=x, size=size)
+        out = self.lin_l(out)
 
         x_r = x[1]
         if x_r is not None:

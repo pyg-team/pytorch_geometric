@@ -1,6 +1,6 @@
 import copy
-from typing import Optional
-from torch_geometric.typing import OptPairTensor, Size
+from typing import Union, Tuple
+from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
 import pytest
 import torch
@@ -12,23 +12,24 @@ from torch_geometric.nn import MessagePassing
 
 
 class MyConv(MessagePassing):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int):
+        """"""
         super(MyConv, self).__init__(aggr='add')
+
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
+
         self.lin_rel = Linear(in_channels[0], out_channels)
         self.lin_root = Linear(in_channels[1], out_channels)
 
-    # propagate_type: (x: OptPairTensor, edge_weight: Optional[Tensor])
-    def forward(self, x, edge_index, edge_weight=None, size=None):
-        # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                edge_weight: OptTensor = None, size: Size = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
+        # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=size)
         out = self.lin_rel(out)
@@ -39,7 +40,7 @@ class MyConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_weight: Optional[Tensor]) -> Tensor:
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else x_j * edge_weight.view(-1, 1)
 
     def message_and_aggregate(self, adj_t: SparseTensor,
@@ -158,9 +159,7 @@ class MyDefaultArgConv(MessagePassing):
         super(MyDefaultArgConv, self).__init__(aggr='mean')
 
     # propagate_type: (x: Tensor)
-    def forward(self, x, edge_index):
-        # type: (Tensor, Tensor) -> Tensor
-        # type: (Tensor, SparseTensor) -> Tensor
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         return self.propagate(edge_index, x=x)
 
     def message(self, x_j, zeros: bool = True):
