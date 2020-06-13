@@ -108,6 +108,15 @@ class HypergraphConv(MessagePassing):
             out = alpha.view(-1, self.heads, 1) * out
         return out
 
+    def aggregate(self, inputs, index, ptr=None, dim_size=None):
+        if ptr is not None:
+            for _ in range(self.node_dim):
+                ptr = ptr.unsqueeze(0)
+            return segment_csr(inputs, ptr, reduce=self.aggr)
+        else:
+            return scatter(inputs, index, dim=self.node_dim, reduce=self.aggr)
+
+
     def forward(self, x, hyperedge_index, hyperedge_weight=None):
         r"""
         Args:
