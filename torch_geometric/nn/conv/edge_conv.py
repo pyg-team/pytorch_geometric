@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Callable, Union
 from torch_geometric.typing import PairTensor, Adj
 
 import torch
@@ -35,7 +35,7 @@ class EdgeConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, nn, aggr='max', **kwargs):
+    def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
         super(EdgeConv, self).__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
@@ -43,7 +43,7 @@ class EdgeConv(MessagePassing):
     def reset_parameters(self):
         reset(self.nn)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj):
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)

@@ -1,11 +1,10 @@
 import warnings
-from typing import Optional
-from torch_geometric.typing import OptPairTensor, Size
+from typing import Union, Tuple, List
+from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils.repeat import repeat
 
@@ -57,9 +56,16 @@ class SplineConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels, out_channels, dim, kernel_size,
-                 is_open_spline=True, degree=1, aggr='mean', root_weight=True,
-                 bias=True, **kwargs):
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int,
+                 dim: int,
+                 kernel_size: Union[int, List[int]],
+                 is_open_spline: bool = True,
+                 degree: int = 1,
+                 aggr: str = 'mean',
+                 root_weight: bool = True,
+                 bias: bool = True,
+                 **kwargs):  # yapf: disable
         super(SplineConv, self).__init__(aggr=aggr, **kwargs)
 
         if spline_basis is None:
@@ -96,17 +102,13 @@ class SplineConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.in_channels * self.weight.size(0)
+        size = self.weight.size(0) * self.weight.size(1)
         uniform(size, self.weight)
         uniform(size, self.root)
         zeros(self.bias)
 
-    # propagate_type: (OptPairTensor, Optional[Tensor])
-    def forward(self, x, edge_index, edge_attr=None, size=None):
-        # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
@@ -116,7 +118,8 @@ class SplineConv(MessagePassing):
                 'We do not recommend using the non-optimized CPU version of '
                 '`SplineConv`. If possible, please convert your data to GPU.')
 
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr)
+        # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
         x_r = x[1]
         if x_r is not None and self.root is not None:
@@ -127,7 +130,7 @@ class SplineConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_attr: Optional[Tensor]) -> Tensor:
+    def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
         assert edge_attr is not None
         data = spline_basis(edge_attr, self.kernel_size, self.is_open_spline,
                             self.degree)
