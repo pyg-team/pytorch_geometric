@@ -295,7 +295,7 @@ class MessagePassing(torch.nn.Module):
         Args:
             typing (string, optional): If given, will generate a concrete
                 instance with :meth:`forward` types based on :obj:`typing`,
-                *e.g.*: `"(Tensor, Optional[Tensor]) -> Tensor"`.
+                *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
         # Parse `propagate()` types to format `{arg1: type1, ...}`.
         source = inspect.getsource(self.__class__)
