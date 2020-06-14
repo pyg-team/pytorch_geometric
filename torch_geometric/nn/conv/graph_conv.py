@@ -1,6 +1,6 @@
-from typing import Optional
+from torch_geometric.typing import OptTensor
 
-import torch
+from torch import Tensor
 from torch.nn import Linear
 from torch_geometric.nn.conv import MessagePassing
 
@@ -41,14 +41,15 @@ class GraphConv(MessagePassing):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x, edge_index,
-                edge_weight: Optional[torch.Tensor] = None):
+    def forward(self, x, edge_index, edge_weight: OptTensor = None):
         """"""
-        out = self.propagate(edge_index, x=self.lin_rel(x), norm=edge_weight)
+        h = self.lin_rel(x)
+        # propagate_type: (x: Tensor, norm: OptTensor)
+        out = self.propagate(edge_index, x=h, norm=edge_weight, size=None)
         out += self.lin_root(x)
         return out
 
-    def message(self, x_j, norm: Optional[torch.Tensor]):
+    def message(self, x_j: Tensor, norm: OptTensor) -> Tensor:
         return norm.view(-1, 1) * x_j if norm is not None else x_j
 
     def __repr__(self):
