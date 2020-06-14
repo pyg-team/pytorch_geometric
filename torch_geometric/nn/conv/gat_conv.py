@@ -105,7 +105,7 @@ class GATConv(MessagePassing):
         # type: (OptPairTensor, Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]] # noqa
         # type: (Tensor, SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor] # noqa
         # type: (OptPairTensor, SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor] # noqa
-        r""""
+        r"""
 
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
