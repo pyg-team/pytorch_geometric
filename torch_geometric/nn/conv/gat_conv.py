@@ -1,6 +1,5 @@
-from torch_geometric.typing import OptPairTensor, Size
-
-from typing import Tuple, Optional
+from typing import Union, Tuple, Optional
+from torch_geometric.typing import OptPairTensor, Adj, Size, OptTensor
 
 import torch
 from torch import Tensor
@@ -95,16 +94,12 @@ class GATConv(MessagePassing):
         glorot(self.att_r)
         zeros(self.bias)
 
-    # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
-    def forward(self, x, edge_index, size=None, return_attention_weights=None):
-        # type: (Tensor, Tensor, Size, Optional[Tensor]) -> Tensor
-        # type: (OptPairTensor, Tensor, Size, Optional[Tensor]) -> Tensor
-        # type: (Tensor, SparseTensor, Size, Optional[Tensor]) -> Tensor
-        # type: (OptPairTensor, SparseTensor, Size, Optional[Tensor]) -> Tensor
-        # type: (Tensor, Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]] # noqa
-        # type: (OptPairTensor, Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]] # noqa
-        # type: (Tensor, SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor] # noqa
-        # type: (OptPairTensor, SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor] # noqa
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                size: Size = None, return_attention_weights=None):
+        # type: (Union[Tensor, OptPairTensor], Tensor, Size, OptTensor) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, OptTensor) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""
 
         Args:
@@ -127,7 +122,7 @@ class GATConv(MessagePassing):
             x_r = self.lin_r(x_r).view(-1, H, C) if x_r is not None else None
         assert x_l is not None
 
-        if isinstance(x, Tensor):
+        if isinstance(self.in_channels, int):
             # Add self-loops to the graph.
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)
@@ -143,6 +138,7 @@ class GATConv(MessagePassing):
             (x_r * self.att_l).sum(dim=-1) if x_r is not None else None,
         )
 
+        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
         out = self.propagate(edge_index, x=(x_l, x_r), alpha=node_alpha,
                              size=size)
         alpha = self._alpha
@@ -172,7 +168,6 @@ class GATConv(MessagePassing):
         alpha = softmax(alpha, edge_index_i, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        print(x_j.size(), alpha.size())
         return x_j * alpha.unsqueeze(-1)
 
     def __repr__(self):
