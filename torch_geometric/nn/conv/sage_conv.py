@@ -1,5 +1,5 @@
 from typing import Union, Tuple
-from torch_geometric.typing import OptPairTensor, Size
+from torch_geometric.typing import OptPairTensor, Adj, Size
 
 from torch import Tensor
 from torch.nn import Linear
@@ -31,9 +31,9 @@ class SAGEConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels: Union[int, Tuple[int,
-                                                     int]], out_channels: int,
-                 normalize: bool = False, bias: bool = True, **kwargs):
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int, normalize: bool = False,
+                 bias: bool = True, **kwargs):  # yapf: disable
         super(SAGEConv, self).__init__(aggr='mean', **kwargs)
 
         self.in_channels = in_channels
@@ -52,9 +52,8 @@ class SAGEConv(MessagePassing):
         self.lin_l.reset_parameters()
         self.lin_r.reset_parameters()
 
-    def forward(self, x: Union[Tensor, OptPairTensor],
-                edge_index: Union[Tensor,
-                                  SparseTensor], size: Size = None) -> Tensor:
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                size: Size = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
