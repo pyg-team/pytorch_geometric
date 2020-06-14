@@ -31,11 +31,16 @@ def sanitize(type_repr: str):
 
     def union_to_optional_(tree):
         for i in range(len(tree)):
-            if tree[i] == 'Union' and tree[i + 1][-1] == 'NoneType':
+            e, n = tree[i], tree[i + 1] if i + 1 < len(tree) else []
+            if e == 'Union' and n[-1] == 'NoneType':
                 tree[i] = 'Optional'
                 tree[i + 1] = tree[i + 1][:-1]
-            if isinstance(tree[i], list):
-                tree[i] = union_to_optional_(tree[i])
+            elif e == 'Union' and 'NoneType' in n:
+                idx = n.index('NoneType')
+                n[idx] = [n[idx - 1]]
+                n[idx - 1] = 'Optional'
+            elif isinstance(e, list):
+                tree[i] = union_to_optional_(e)
         return tree
 
     tree = union_to_optional_(tree)

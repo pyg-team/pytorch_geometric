@@ -1,11 +1,12 @@
-from typing import Optional
-from torch_geometric.typing import PairTensor, Size
+from typing import Optional, Callable, Union
+from torch_geometric.typing import (OptTensor, PairOptTensor, PairTensor, Adj,
+                                    Size)
 
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, set_diag
-from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import add_self_loops
+from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import reset
 
@@ -42,7 +43,8 @@ class PointConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, local_nn=None, global_nn=None, **kwargs):
+    def __init__(self, local_nn: Optional[Callable] = None,
+                 global_nn: Optional[Callable] = None, **kwargs):
         super(PointConv, self).__init__(aggr='max', **kwargs)
 
         self.local_nn = local_nn
@@ -54,13 +56,13 @@ class PointConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    # propagate_type: (Optional[Tensor], PairTensor)
-    def forward(self, x, pos, edge_index, size=None):
-        # type: (Optional[Tensor], Tensor, Tensor, Size) -> Tensor
-        # type: (Optional[Tensor], Tensor, SparseTensor, Size) -> Tensor
-        # type: (Optional[Tensor], PairTensor, Tensor, Size) -> Tensor
-        # type: (Optional[Tensor], PairTensor, SparseTensor, Size) -> Tensor
+    def forward(self, x: Union[OptTensor, PairOptTensor],
+                pos: Union[Tensor, PairTensor], edge_index: Adj,
+                size: Size = None) -> Tensor:  # yapf: disable
         """"""
+        if not isinstance(x, tuple):
+            x: PairOptTensor = (x, None)
+
         if isinstance(pos, Tensor):
             pos: PairTensor = (pos, pos)
 
@@ -70,9 +72,12 @@ class PointConv(MessagePassing):
         elif isinstance(edge_index, SparseTensor):
             edge_index = set_diag(edge_index)
 
+        # propagate_type: (x: PairOptTensor, pos: PairTensor)
         out = self.propagate(edge_index, x=x, pos=pos, size=size)
+
         if self.global_nn is not None:
             out = self.global_nn(out)
+
         return out
 
     def message(self, x_j: Optional[Tensor], pos_i: Tensor,
