@@ -54,8 +54,10 @@ class GATConv(MessagePassing):
     """
     _alpha: Optional[Tensor]
 
-    def __init__(self, in_channels, out_channels, heads=1, concat=True,
-                 negative_slope=0.2, dropout=0., bias=True, **kwargs):
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int, heads: int = 1, concat: bool = True,
+                 negative_slope: float = 0.2, dropout: float = 0.,
+                 bias: bool = True, **kwargs):
         super(GATConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
