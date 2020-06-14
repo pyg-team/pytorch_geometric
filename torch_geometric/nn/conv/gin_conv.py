@@ -31,8 +31,8 @@ class GINConv(MessagePassing):
             maps node features :obj:`x` of shape :obj:`[-1, in_channels]` to
             shape :obj:`[-1, out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`.
-        eps (float, optional): (Initial) :math:`\epsilon` value.
-            (default: :obj:`0`)
+        eps (float, optional): (Initial) :math:`\epsilon`-value.
+            (default: :obj:`0.`)
         train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`
             will be a trainable parameter. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
@@ -98,8 +98,8 @@ class GINEConv(MessagePassing):
             maps node features :obj:`x` of shape :obj:`[-1, in_channels]` to
             shape :obj:`[-1, out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`.
-        eps (float, optional): (Initial) :math:`\epsilon` value.
-            (default: :obj:`0`)
+        eps (float, optional): (Initial) :math:`\epsilon`-value.
+            (default: :obj:`0.`)
         train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`
             will be a trainable parameter. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
