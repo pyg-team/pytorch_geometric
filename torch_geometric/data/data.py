@@ -159,7 +159,7 @@ class Data(object):
         return -1 if bool(re.search('(index|face)', key)) else 0
 
     def __inc__(self, key, value):
-        r""""Returns the incremental count to cumulatively increase the value
+        r"""Returns the incremental count to cumulatively increase the value
         of the next attribute of :obj:`key` when creating batches.
 
         .. note::
