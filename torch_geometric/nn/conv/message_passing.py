@@ -3,6 +3,7 @@ import re
 import inspect
 import os.path as osp
 from uuid import uuid1
+from itertools import chain
 from inspect import Parameter
 from typing import List, Optional, Set
 from torch_geometric.typing import Adj, Size
@@ -14,9 +15,9 @@ from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
 
 from .utils.helpers import expand_left
-from .utils.inspector import Inspector, parse_types, resolve_types
 from .utils.jit import class_from_module_repr
-from .utils.parser import split_type_repr
+from .utils.typing import split_types_repr, parse_types, resolve_types
+from .utils.inspector import Inspector, func_header_repr, func_body_repr
 
 
 class MessagePassing(torch.nn.Module):
@@ -305,48 +306,42 @@ class MessagePassing(torch.nn.Module):
                 'passed to `propagate`. Please specificy them via\n\n'
                 '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
                 'anywhere inside the `MessagePassing` module.')
-        prop_types = split_type_repr(match.group(1))
+        prop_types = split_types_repr(match.group(1))
         prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.types()
 
-        # Collect `forward()` header, body and all @overload types.
-        forward_arg_types, forward_return_type = parse_types(self.forward)
-        forward_arg_types = resolve_types(forward_arg_types)
+        # Collect `forward()` header, body and @overload types.
+        forward_types = parse_types(self.forward)
+        forward_types = [resolve_types(*types) for types in forward_types]
+        forward_types = list(chain.from_iterable(forward_types))
 
-        sig = inspect.signature(self.forward).replace()
-        params = sig.parameters.values()
-        params = [p.replace(annotation=Parameter.empty) for p in params]
-        sig = sig.replace(parameters=params, return_annotation=Parameter.empty)
-        forward_header = f'    def forward(self, {str(sig)[1:-1]}):'
+        keep_annotation = len(forward_types) < 2
+        forward_header = func_header_repr(self.forward, keep_annotation)
+        forward_body = func_body_repr(self.forward, keep_annotation)
 
-        forward = inspect.getsource(self.forward)
-        forward_body = re.split(r'\).*?:.*?\n', forward, maxsplit=1)[1]
-        forward_body = re.sub(r'\s*# type:.*\n', '', forward_body)
+        if keep_annotation:
+            forward_types = []
+        elif typing is not None:
+            forward_types = []
+            forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
 
-        if len(forward_arg_types) < 2:  # No need to implement `@overload`.
-            forward_arg_types = []
-            split = re.split(r'(\).*?:.*?\n)', forward, maxsplit=1)
-            forward_header, forward_body = split[0] + split[1][:-1], split[2]
-        elif typing is not None:  # Only implement a special instance.
-            forward_arg_types = []
-            forward_body = f'        # type: {typing}\n{forward_body}'
-
-        root = os.path.dirname(os.path.realpath(__file__))
+        root = os.path.dirname(osp.realpath(__file__))
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 
         uid = uuid1().hex[:6]
+        cls_name = f'{self.__class__.__name__}Jittable_{uid}'
         jit_module_repr = template.render(
             uid=uid,
             module=str(self.__class__.__module__),
-            cls_name=self.__class__.__name__,
+            cls_name=cls_name,
+            parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
             collect_types=collect_types,
             forward_header=forward_header,
-            forward_arg_types=forward_arg_types,
-            forward_return_type=forward_return_type,
+            forward_types=forward_types,
             forward_body=forward_body,
             user_args=self.__user_args,
             msg_args=self.inspector.keys(['message']),
@@ -358,8 +353,7 @@ class MessagePassing(torch.nn.Module):
         )
 
         # Instantiate a class from the rendered JIT module representation.
-        jit_cls_name = f'{self.__class__.__name__}Jittable_{uid}'
-        cls = class_from_module_repr(jit_cls_name, jit_module_repr)
+        cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
         module.__dict__ = self.__dict__.copy()
 

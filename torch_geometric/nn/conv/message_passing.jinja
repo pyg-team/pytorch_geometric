@@ -22,7 +22,7 @@ class Collect_{{uid}}(NamedTuple):
 
 
 
-class {{cls_name}}Jittable_{{uid}}({{cls_name}}):
+class {{cls_name}}({{parent_cls_name}}):
 
     @torch.jit._overload_method
     def __check_input__(self, edge_index, size):
@@ -133,11 +133,14 @@ class {{cls_name}}Jittable_{{uid}}({{cls_name}}):
         out = self.message({% for k in msg_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
         out = self.aggregate(out{% for k in aggr_args %}, {{k}}=kwargs.{{k}}{% endfor %})
         return self.update(out{% for k in update_args %}, {{k}}=kwargs.{{k}}{% endfor %})
-{% for t in forward_arg_types %}
+
+{%- for (arg_types, return_type_repr) in forward_types %}
+
     @torch.jit._overload_method
-{{forward_header}}
-        # type: ({{t|join(', ')}}) -> {{forward_return_type}}
+    {{forward_header}}
+        # type: ({{arg_types|join(', ')}}) -> {{return_type_repr}}
         pass
-{% endfor %}
-{{forward_header}}
+{%- endfor %}
+
+    {{forward_header}}
 {{forward_body}}
