@@ -1,5 +1,5 @@
-from typing import Optional
-from torch_geometric.typing import OptPairTensor, Size
+from typing import Callable, Union
+from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
 import torch
 from torch import Tensor
@@ -38,7 +38,8 @@ class GINConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, nn, eps=0, train_eps=False, **kwargs):
+    def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
+                 **kwargs):
         super(GINConv, self).__init__(aggr='add', **kwargs)
         self.nn = nn
         self.initial_eps = eps
@@ -52,20 +53,19 @@ class GINConv(MessagePassing):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    # propagate_type: (PairTensor)
-    def forward(self, x, edge_index, size=None):
-        # type: (Tensor, Tensor, Size) -> Tensor
-        # type: (Tensor, SparseTensor, Size) -> Tensor
-        # type: (OptPairTensor, Tensor, Size) -> Tensor
-        # type: (OptPairTensor, SparseTensor, Size) -> Tensor
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                size: Size = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
+        # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
+
         x_r = x[1]
         if x_r is not None:
             out += (1 + self.eps) * x_r
+
         return self.nn(out)
 
     def message(self, x_j: Tensor) -> Tensor:
@@ -105,7 +105,8 @@ class GINEConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, nn, eps=0, train_eps=False, **kwargs):
+    def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
+                 **kwargs):
         super(GINEConv, self).__init__(aggr='add', **kwargs)
         self.nn = nn
         self.initial_eps = eps
@@ -119,30 +120,29 @@ class GINEConv(MessagePassing):
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    # propagate_type: (PairTensor, Optional[Tensor])
-    def forward(self, x, edge_index, edge_attr=None, size=None):
-        # type: (Tensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor
-        # type: (OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
         """"""
-        # Node and edge feature dimensionalites need to match.
-        if isinstance(edge_index, Tensor):
-            assert edge_attr is not None
-            assert x.size(-1) == edge_attr.size(-1)
-        elif isinstance(edge_index, SparseTensor):
-            assert x.size(-1) == edge_index.size(-1)
-
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
+        # Node and edge feature dimensionalites need to match.
+        if isinstance(edge_index, Tensor):
+            assert edge_attr is not None
+            assert x[0].size(-1) == edge_attr.size(-1)
+        elif isinstance(edge_index, SparseTensor):
+            assert x[0].size(-1) == edge_index.size(-1)
+
+        # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
+
         x_r = x[1]
         if x_r is not None:
             out += (1 + self.eps) * x_r
+
         return self.nn(out)
 
-    def message(self, x_j: Tensor, edge_attr: Optional[Tensor]) -> Tensor:
+    def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
         assert edge_attr is not None
         return F.relu(x_j + edge_attr)
 
