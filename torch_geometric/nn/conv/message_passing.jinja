@@ -4,7 +4,6 @@ import torch
 from torch import Tensor
 import torch_sparse
 from torch_sparse import SparseTensor
-from torch_geometric.typing import Size
 from torch_geometric.nn.conv.message_passing import *
 from {{module}} import *
 
@@ -26,12 +25,12 @@ class {{cls_name}}({{parent_cls_name}}):
 
     @torch.jit._overload_method
     def __check_input__(self, edge_index, size):
-        # type: (Tensor, Size) -> List[Optional[int]]
+        # type: (Tensor, Optional[Tuple[int, int]]) -> List[Optional[int]]
         pass
 
     @torch.jit._overload_method
     def __check_input__(self, edge_index, size):
-        # type: (SparseTensor, Size) -> List[Optional[int]]
+        # type: (SparseTensor, Optional[Tuple[int, int]]) -> List[Optional[int]]
         pass
 
 {{check_input}}
@@ -112,12 +111,12 @@ class {{cls_name}}({{parent_cls_name}}):
 
     @torch.jit._overload_method
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
-        # type: (Tensor, {{ prop_types.values()|join(', ') }}, Size) -> Tensor
+        # type: (Tensor, {{ prop_types.values()|join(', ') }}, Optional[Tuple[int, int]]) -> Tensor
         pass
 
     @torch.jit._overload_method
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
-        # type: (SparseTensor, {{ prop_types.values()|join(', ') }}, Size) -> Tensor
+        # type: (SparseTensor, {{ prop_types.values()|join(', ') }}, Optional[Tuple[int, int]]) -> Tensor
         pass
 
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
