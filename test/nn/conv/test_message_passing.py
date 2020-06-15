@@ -20,8 +20,8 @@ class MyConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lin_rel = Linear(in_channels[0], out_channels)
-        self.lin_root = Linear(in_channels[1], out_channels)
+        self.lin_l = Linear(in_channels[0], out_channels)
+        self.lin_r = Linear(in_channels[1], out_channels)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:
@@ -32,11 +32,11 @@ class MyConv(MessagePassing):
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=size)
-        out = self.lin_rel(out)
+        out = self.lin_l(out)
 
-        x_root = x[1]
-        if x_root is not None:
-            out += self.lin_root(x_root)
+        x_r = x[1]
+        if x_r is not None:
+            out += self.lin_r(x_r)
 
         return out
 
@@ -141,17 +141,17 @@ def test_copy():
     conv2 = copy.copy(conv)
 
     assert conv != conv2
-    assert conv.lin_rel.weight.tolist() == conv2.lin_rel.weight.tolist()
-    assert conv.lin_root.weight.tolist() == conv2.lin_root.weight.tolist()
-    assert conv.lin_rel.weight.data_ptr == conv2.lin_rel.weight.data_ptr
-    assert conv.lin_root.weight.data_ptr == conv2.lin_root.weight.data_ptr
+    assert conv.lin_l.weight.tolist() == conv2.lin_l.weight.tolist()
+    assert conv.lin_r.weight.tolist() == conv2.lin_r.weight.tolist()
+    assert conv.lin_l.weight.data_ptr == conv2.lin_l.weight.data_ptr
+    assert conv.lin_r.weight.data_ptr == conv2.lin_r.weight.data_ptr
 
     conv = copy.deepcopy(conv)
     assert conv != conv2
-    assert conv.lin_rel.weight.tolist() == conv2.lin_rel.weight.tolist()
-    assert conv.lin_root.weight.tolist() == conv2.lin_root.weight.tolist()
-    assert conv.lin_rel.weight.data_ptr != conv2.lin_rel.weight.data_ptr
-    assert conv.lin_root.weight.data_ptr != conv2.lin_root.weight.data_ptr
+    assert conv.lin_l.weight.tolist() == conv2.lin_l.weight.tolist()
+    assert conv.lin_r.weight.tolist() == conv2.lin_r.weight.tolist()
+    assert conv.lin_l.weight.data_ptr != conv2.lin_l.weight.data_ptr
+    assert conv.lin_r.weight.data_ptr != conv2.lin_r.weight.data_ptr
 
 
 class MyDefaultArgConv(MessagePassing):
