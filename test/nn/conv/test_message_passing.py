@@ -12,6 +12,9 @@ from torch_geometric.nn import MessagePassing
 
 
 class MyConv(MessagePassing):
+
+    propagate_type = {'x': OptPairTensor, 'edge_weight': OptTensor}
+
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int):
         """"""
@@ -29,7 +32,6 @@ class MyConv(MessagePassing):
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
-        # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=size)
         out = self.lin_l(out)
