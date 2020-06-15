@@ -356,5 +356,6 @@ class MessagePassing(torch.nn.Module):
         cls = class_from_module_repr(cls_name, jit_module_repr)
         module = cls.__new__(cls)
         module.__dict__ = self.__dict__.copy()
+        module.jittable = None
 
         return module
