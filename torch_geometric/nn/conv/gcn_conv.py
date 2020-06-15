@@ -1,33 +1,65 @@
 from typing import Optional, Tuple
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 import torch
+from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter_add
+from torch_sparse import SparseTensor, matmul, fill_diag, sum, mul_
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from ..inits import glorot, zeros
 
 
-def gcn_norm(edge_index: torch.Tensor, num_nodes: int,
-             edge_weight: Optional[torch.Tensor] = None,
-             improved: bool = False, dtype: Optional[int] = None):
+@torch.jit._overload
+def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
+             dtype=None):
+    # type: (Tensor, OptTensor, Optional[int], bool, Optional[int]) -> PairTensor  # noqa
+    pass
 
-    if edge_weight is None:
-        edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
-                                 device=edge_index.device)
 
-    fill_value = 1 if not improved else 2
-    edge_index, edge_weight = add_remaining_self_loops(edge_index, edge_weight,
-                                                       fill_value, num_nodes)
-    assert edge_weight is not None
+@torch.jit._overload
+def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
+             dtype=None):
+    # type: (SparseTensor, OptTensor, Optional[int], bool, Optional[int]) -> SparseTensor  # noqa
+    pass
 
-    row, col = edge_index[0], edge_index[1]
-    deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
-    deg_inv_sqrt = deg.pow_(-0.5)
-    deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
 
-    return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
+             dtype=None):
+
+    fill_value = 2. if improved else 1.
+
+    if isinstance(edge_index, SparseTensor):
+        adj_t = edge_index
+        if not adj_t.has_value():
+            adj_t.fill_value(1., dtype=dtype)
+        adj_t = fill_diag(adj_t, fill_value)
+        deg = sum(adj_t, dim=1)
+        deg_inv_sqrt = deg.pow_(-0.5)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
+        adj_t = mul_(adj_t, deg_inv_sqrt.view(-1, 1))
+        adj_t = mul_(adj_t, deg_inv_sqrt.view(1, -1))
+        return adj_t
+
+    else:
+        num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+        if edge_weight is None:
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
+                                     device=edge_index.device)
+
+        edge_index, edge_weight = add_remaining_self_loops(
+            edge_index, edge_weight, fill_value, num_nodes)
+
+        assert edge_weight is not None
+        row, col = edge_index[0], edge_index[1]
+        deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+        deg_inv_sqrt = deg.pow_(-0.5)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
+        return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
 
 class GCNConv(MessagePassing):
@@ -63,18 +95,23 @@ class GCNConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    _cache: Optional[Tuple[int, torch.Tensor, torch.Tensor]]
+    _cached_edge_index: Optional[Tuple[torch.Tensor, torch.Tensor]]
+    _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, in_channels, out_channels, improved=False, cached=False,
-                 bias=True, normalize=True, **kwargs):
+    def __init__(self, in_channels: int, out_channels: int,
+                 improved: bool = False, cached: bool = False,
+                 bias: bool = True, normalize: bool = True, **kwargs):
+
         super(GCNConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.improved = improved
         self.cached = cached
-        self._cache = None
         self.normalize = normalize
+
+        self._cached_edge_index = None
+        self._cached_adj_t = None
 
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
 
@@ -88,48 +125,53 @@ class GCNConv(MessagePassing):
     def reset_parameters(self):
         glorot(self.weight)
         zeros(self.bias)
-        self._cache = None
+        self._cached_edge_index = None
+        self._cached_adj_t = None
 
-    def __norm__(self, x, edge_index,
-                 edge_weight: Optional[torch.Tensor] = None):
-
-        if not self.normalize:
-            assert edge_weight is not None
-            return edge_index, edge_weight
-
-        cache = self._cache
-        if cache is not None:
-            if edge_index.size(1) != cache[0]:
-                raise RuntimeError(
-                    'Cached {} number of edges, but found {}. Please disable '
-                    'the caching behavior of this layer by removing the '
-                    '`cached=True` argument in its constructor.'.format(
-                        cache[0], edge_index.size(1)))
-            return cache[1:]
-
-        num_edges = edge_index.size(1)
-
-        edge_index, edge_weight = gcn_norm(edge_index, x.size(self.node_dim),
-                                           edge_weight, self.improved, x.dtype)
-
-        if self.cached:
-            self._cache = (num_edges, edge_index, edge_weight)
-
-        return edge_index, edge_weight
-
-    def forward(self, x, edge_index,
-                edge_weight: Optional[torch.Tensor] = None):
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
         """"""
+
+        if self.normalize:
+            if isinstance(edge_index, Tensor):
+                cache = self._cached_edge_index
+                if cache is None:
+                    edge_index, edge_weight = gcn_norm(edge_index, edge_weight,
+                                                       x.size(self.node_dim),
+                                                       self.improved, x.dtype)
+                    if self.cached:
+                        self._cached_edge_index = (edge_index, edge_weight)
+                else:
+                    edge_index, edge_weight = cache[0], cache[1]
+
+            elif isinstance(edge_index, SparseTensor):
+                cache = self._cached_adj_t
+                if cache is None:
+                    edge_index = gcn_norm(edge_index, edge_weight,
+                                          x.size(self.node_dim), self.improved,
+                                          x.dtype)
+                    if self.cached:
+                        self._cached_adj_t = edge_index
+                else:
+                    edge_index = cache
+
         x = torch.matmul(x, self.weight)
-        edge_index, norm = self.__norm__(x, edge_index, edge_weight)
-        # propagate_type: (x: Tensor, norm: Tensor)
-        out = self.propagate(edge_index, x=x, norm=norm, size=None)
+
+        # propagate_type: (x: Tensor, edge_weight: OptTensor)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                             size=None)
+
         if self.bias is not None:
             out += self.bias
+
         return out
 
-    def message(self, x_j, norm):
-        return norm.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        assert edge_weight is not None
+        return edge_weight.view(-1, 1) * x_j
+
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+        return matmul(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
