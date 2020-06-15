@@ -58,7 +58,7 @@ class {{cls_name}}({{parent_cls_name}}):
         pass
 
     def __collect__(self, edge_index, size, kwargs):
-        init = torch.tensor([])
+        init = torch.tensor(0.)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 {% for arg in user_args %}
 {%- if arg[-2:] not in ['_i', '_j'] %}
