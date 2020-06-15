@@ -52,8 +52,9 @@ class AGNNConv(MessagePassing):
 
         x_norm = F.normalize(x, p=2., dim=-1)
 
+        # propagate_type: (x: Tensor, x_norm: Tensor, num_nodes: int)
         return self.propagate(edge_index, x=x, x_norm=x_norm,
-                              num_nodes=x.size(self.node_dim))
+                              num_nodes=x.size(self.node_dim), size=None)
 
     def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes: int):
         # Compute attention coefficients.

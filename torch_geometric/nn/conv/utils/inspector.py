@@ -66,7 +66,8 @@ def func_header_repr(func: Callable, keep_annotation: bool = True) -> str:
     signature = inspect.signature(func)
 
     if keep_annotation:
-        return re.split(r'(def.*\(.*\).*?:.*?\n)', source, maxsplit=1)[1]
+        return ''.join(re.split(r'(\).*?:.*?\n)', source,
+                                maxsplit=1)[:2]).strip()
 
     params_repr = ['self']
     for param in signature.parameters.values():

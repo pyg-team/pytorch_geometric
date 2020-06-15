@@ -20,12 +20,12 @@ def test_gat_conv():
 
     torch.jit.script(conv.jittable())
 
-    t = '(Tensor, Tensor, Size, OptTensor) -> Tensor'
+    t = '(Tensor, Tensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index).tolist() == out.tolist()
     assert jit(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor, Size, OptTensor) -> Tensor'
+    t = '(Tensor, SparseTensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
 
@@ -70,13 +70,13 @@ def test_gat_conv():
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
 
-    t = '(OptPairTensor, Tensor, Size, OptTensor) -> Tensor'
+    t = '(OptPairTensor, Tensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2), edge_index).tolist() == out1.tolist()
     assert jit((x1, x2), edge_index, size=(4, 2)).tolist() == out1.tolist()
     assert jit((x1, None), edge_index, size=(4, 2)).tolist() == out2.tolist()
 
-    t = '(OptPairTensor, SparseTensor, Size, OptTensor) -> Tensor'
+    t = '(OptPairTensor, SparseTensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
     assert jit((x1, None), adj.t()).tolist() == out2.tolist()

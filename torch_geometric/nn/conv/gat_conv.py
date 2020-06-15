@@ -1,5 +1,5 @@
 from typing import Union, Tuple, Optional
-from torch_geometric.typing import OptPairTensor, Adj, Size, OptTensor
+from torch_geometric.typing import OptPairTensor, Adj, Size, NoneType
 
 import torch
 from torch import Tensor
@@ -98,8 +98,8 @@ class GATConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None, return_attention_weights=None):
-        # type: (Union[Tensor, OptPairTensor], Tensor, Size, OptTensor) -> Tensor  # noqa
-        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, OptTensor) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, OptPairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""

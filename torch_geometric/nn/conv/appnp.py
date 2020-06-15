@@ -44,7 +44,8 @@ class APPNP(MessagePassing):
 
         hidden = x
         for k in range(self.K):
-            x = self.propagate(edge_index, x=x, norm=norm)
+            # propagate_type: (x: Tensor, norm: Tensor)
+            x = self.propagate(edge_index, x=x, norm=norm, size=None)
             x = x * (1 - self.alpha)
             x = x + self.alpha * hidden
 
