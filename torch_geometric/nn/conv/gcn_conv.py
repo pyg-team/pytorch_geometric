@@ -157,7 +157,7 @@ class GCNConv(MessagePassing):
 
         x = torch.matmul(x, self.weight)
 
-        # propagate_tye: (x: Tensor, edge_weight: OptTensor)
+        # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=None)
 
