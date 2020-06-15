@@ -14,25 +14,22 @@ def test_dna_conv():
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, edge_index).tolist() == out.tolist()
+    jit = torch.jit.script(conv.jittable())
+    assert jit(x, edge_index).tolist() == out.tolist()
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0)
     assert conv.__repr__() == 'DNAConv(32, heads=1, groups=1)'
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, edge_index).tolist() == out.tolist()
+    jit = torch.jit.script(conv.jittable())
+    assert jit(x, edge_index).tolist() == out.tolist()
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0, cached=True)
     out = conv(x, edge_index)
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index)
-    jit_conv = torch.jit.script(jit_conv)
-    jit_conv(x, edge_index)
-    assert jit_conv(x, edge_index).tolist() == out.tolist()
+    jit = torch.jit.script(conv.jittable())
+    jit(x, edge_index)
+    assert jit(x, edge_index).tolist() == out.tolist()
