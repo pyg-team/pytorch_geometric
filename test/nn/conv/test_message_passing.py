@@ -65,16 +65,12 @@ def test_my_conv():
     assert conv(x1, adj.t()).tolist() == out.tolist()
     conv.fuse = True
 
-    # This should succeed. However, testing overloads is really cumbersome, so
-    # we generate special JIT instances via `jittable(typing)` in what follows.
-    torch.jit.script(conv.jittable())
-
-    t = '(Tensor, Tensor, Optional[Tensor], Size) -> Tensor'
+    t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index, value).tolist() == out.tolist()
     assert jit(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor, Optional[Tensor], Size) -> Tensor'
+    t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, adj.t()).tolist() == out.tolist()
     jit.fuse = False
@@ -95,13 +91,13 @@ def test_my_conv():
     assert conv((x1, None), adj.t()).tolist() == out2.tolist()
     conv.fuse = True
 
-    t = '(OptPairTensor, Tensor, Optional[Tensor], Size) -> Tensor'
+    t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2), edge_index, value).tolist() == out1.tolist()
     assert jit((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
     assert jit((x1, None), edge_index, value, (4, 2)).tolist() == out2.tolist()
 
-    t = '(OptPairTensor, SparseTensor, Optional[Tensor], Size) -> Tensor'
+    t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
     assert jit((x1, None), adj.t()).tolist() == out2.tolist()

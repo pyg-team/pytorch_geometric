@@ -25,8 +25,6 @@ def test_edge_conv_conv():
     assert conv(x, adj.t()).tolist() == out.tolist()
     assert conv((x, x), adj.t()).tolist() == out.tolist()
 
-    torch.jit.script(conv.jittable())
-
     t = '(Tensor, Tensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x, edge_index).tolist() == out.tolist()

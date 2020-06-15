@@ -18,8 +18,6 @@ def test_sage_conv():
     assert conv(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
 
-    torch.jit.script(conv.jittable())
-
     t = '(Tensor, Tensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index).tolist() == out.tolist()

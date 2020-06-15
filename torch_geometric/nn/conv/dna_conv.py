@@ -248,8 +248,9 @@ class DNAConv(MessagePassing):
 
         num_edges = edge_index.size(1)
 
-        edge_index, edge_weight = gcn_norm(edge_index, x.size(self.node_dim),
-                                           edge_weight, dtype=x.dtype)
+        edge_index, edge_weight = gcn_norm(edge_index, edge_weight,
+                                           num_nodes=x.size(self.node_dim),
+                                           dtype=x.dtype)
 
         if self.cached:
             self._cache = (num_edges, edge_index, edge_weight)

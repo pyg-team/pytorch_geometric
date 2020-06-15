@@ -20,8 +20,6 @@ def test_nn_conv():
     assert conv(x1, edge_index, value, size=(4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
 
-    torch.jit.script(conv.jittable())
-
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index, value).tolist() == out.tolist()

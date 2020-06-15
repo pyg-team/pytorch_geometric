@@ -18,6 +18,7 @@ install_requires = [
     'h5py',
     'googledrivedownloader',
     'ase',
+    'jinja2',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov', 'mock']

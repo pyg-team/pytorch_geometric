@@ -102,7 +102,7 @@ class ChebConv(MessagePassing):
         edge_weight.masked_fill_(edge_weight == float('inf'), 0)
 
         edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
-                                                 fill_value=-1,
+                                                 fill_value=-1.,
                                                  num_nodes=num_nodes)
         assert edge_weight is not None
 

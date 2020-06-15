@@ -24,8 +24,6 @@ def test_gin_conv():
     assert conv(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
 
-    torch.jit.script(conv.jittable())
-
     t = '(Tensor, Tensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index).tolist() == out.tolist()
@@ -76,8 +74,6 @@ def test_gine_conv():
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, value, size=(4, 4)).tolist() == out.tolist()
     assert conv(x1, adj.t()).tolist() == out.tolist()
-
-    torch.jit.script(conv.jittable())
 
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))

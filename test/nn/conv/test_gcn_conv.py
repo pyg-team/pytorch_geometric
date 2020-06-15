@@ -20,8 +20,6 @@ def test_gcn_conv():
     assert out2.size() == (4, 32)
     assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
 
-    torch.jit.script(conv.jittable())
-
     t = '(Tensor, Tensor, OptTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x, edge_index).tolist() == out1.tolist()

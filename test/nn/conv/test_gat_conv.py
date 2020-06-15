@@ -18,8 +18,6 @@ def test_gat_conv():
     assert conv(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
 
-    torch.jit.script(conv.jittable())
-
     t = '(Tensor, Tensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index).tolist() == out.tolist()
