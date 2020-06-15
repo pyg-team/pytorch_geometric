@@ -95,8 +95,6 @@ class GCNConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    propagate_type = {'x': Tensor, 'edge_weight': OptTensor}
-
     _cached_edge_index: Optional[Tuple[torch.Tensor, torch.Tensor]]
     _cached_adj_t: Optional[SparseTensor]
 
@@ -159,6 +157,7 @@ class GCNConv(MessagePassing):
 
         x = torch.matmul(x, self.weight)
 
+        # propagate_tye: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=None)
 
