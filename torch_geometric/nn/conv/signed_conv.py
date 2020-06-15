@@ -69,11 +69,14 @@ class SignedConv(MessagePassing):
 
     def forward(self, x, pos_edge_index, neg_edge_index):
         """"""
+        # propagate_type: (x: Tensor)
         if self.first_aggr:
             assert x.size(1) == self.in_channels
 
-            x_pos = torch.cat([self.propagate(pos_edge_index, x=x), x], dim=1)
-            x_neg = torch.cat([self.propagate(neg_edge_index, x=x), x], dim=1)
+            x_pos = torch.cat(
+                [self.propagate(pos_edge_index, x=x, size=None), x], dim=1)
+            x_neg = torch.cat(
+                [self.propagate(neg_edge_index, x=x, size=None), x], dim=1)
 
         else:
             assert x.size(1) == 2 * self.in_channels
@@ -81,14 +84,14 @@ class SignedConv(MessagePassing):
             x_1, x_2 = x[:, :self.in_channels], x[:, self.in_channels:]
 
             x_pos = torch.cat([
-                self.propagate(pos_edge_index, x=x_1),
-                self.propagate(neg_edge_index, x=x_2),
+                self.propagate(pos_edge_index, x=x_1, size=None),
+                self.propagate(neg_edge_index, x=x_2, size=None),
                 x_1,
             ], dim=1)
 
             x_neg = torch.cat([
-                self.propagate(pos_edge_index, x=x_2),
-                self.propagate(neg_edge_index, x=x_1),
+                self.propagate(pos_edge_index, x=x_2, size=None),
+                self.propagate(neg_edge_index, x=x_1, size=None),
                 x_2,
             ], dim=1)
 

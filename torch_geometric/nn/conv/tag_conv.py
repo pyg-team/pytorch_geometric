@@ -1,9 +1,10 @@
+from typing import Optional
+from torch_geometric.typing import OptTensor
+
 import torch
 from torch.nn import Linear
 from torch_scatter import scatter_add
 from torch_geometric.nn.conv import MessagePassing
-
-from typing import Optional
 
 
 class TAGConv(MessagePassing):
@@ -45,8 +46,7 @@ class TAGConv(MessagePassing):
     def reset_parameters(self):
         self.lin.reset_parameters()
 
-    def norm(self, edge_index, num_nodes: int,
-             edge_weight: Optional[torch.Tensor] = None,
+    def norm(self, edge_index, num_nodes: int, edge_weight: OptTensor = None,
              dtype: Optional[int] = None):
 
         if edge_weight is None:
@@ -60,8 +60,7 @@ class TAGConv(MessagePassing):
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
-    def forward(self, x, edge_index,
-                edge_weight: Optional[torch.Tensor] = None):
+    def forward(self, x, edge_index, edge_weight: OptTensor = None):
         """"""
         if self.normalize:
             edge_index, norm = self.norm(edge_index, x.size(self.node_dim),
@@ -72,7 +71,9 @@ class TAGConv(MessagePassing):
 
         xs = [x]
         for k in range(self.K):
-            xs.append(self.propagate(edge_index, x=xs[-1], norm=norm))
+            x = xs[-1]
+            # propagate_type: (x: Tensor, norm: Tensor)
+            xs.append(self.propagate(edge_index, x=x, norm=norm, size=None))
         return self.lin(torch.cat(xs, dim=-1))
 
     def message(self, x_j, norm):

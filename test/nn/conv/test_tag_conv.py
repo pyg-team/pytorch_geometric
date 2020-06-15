@@ -16,16 +16,13 @@ def test_tag_conv():
     out2 = conv(x, edge_index, edge_weight)
     assert out2.size() == (num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, edge_index).tolist() == out1.tolist()
-    assert jit_conv(x, edge_index, edge_weight).tolist() == out2.tolist()
+    jit = torch.jit.script(conv.jittable())
+    assert jit(x, edge_index).tolist() == out1.tolist()
+    assert jit(x, edge_index, edge_weight).tolist() == out2.tolist()
 
     conv = TAGConv(in_channels, out_channels, normalize=False)
     out = conv(x, edge_index, edge_weight)
     assert out.size() == (num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index,
-                             edge_weight=edge_weight)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, edge_index, edge_weight).tolist() == out.tolist()
+    jit = torch.jit.script(conv.jittable())
+    assert jit(x, edge_index, edge_weight).tolist() == out.tolist()

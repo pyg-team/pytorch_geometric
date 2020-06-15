@@ -14,16 +14,13 @@ def test_signed_conv():
     out1 = conv(x, pos_ei, neg_ei)
     assert out1.size() == (num_nodes, 2 * out_channels)
 
-    jit_conv = conv.jittable(x=x, pos_edge_index=pos_ei, neg_edge_index=neg_ei)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, pos_ei, neg_ei).tolist() == out1.tolist()
+    jit = torch.jit.script(conv.jittable())
+    assert jit(x, pos_ei, neg_ei).tolist() == out1.tolist()
 
     conv = SignedConv(out_channels, out_channels, first_aggr=False)
     assert conv.__repr__() == 'SignedConv(32, 32, first_aggr=False)'
     out2 = conv(out1, pos_ei, neg_ei)
     assert out2.size() == (num_nodes, 2 * out_channels)
 
-    jit_conv = conv.jittable(x=out1, pos_edge_index=pos_ei,
-                             neg_edge_index=neg_ei)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(out1, pos_ei, neg_ei).tolist() == out2.tolist()
+    jit = torch.jit.script(conv.jittable())
+    assert jit(out1, pos_ei, neg_ei).tolist() == out2.tolist()

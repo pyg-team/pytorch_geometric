@@ -1,3 +1,5 @@
+from torch_geometric.typing import OptTensor
+
 import torch
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops
@@ -63,7 +65,7 @@ class PPFConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x, pos, norm, edge_index):
+    def forward(self, x: OptTensor, pos, norm, edge_index):
         r"""
         Args:
             x (Tensor): The node feature matrix. Allowed to be :obj:`None`.
@@ -80,12 +82,13 @@ class PPFConv(MessagePassing):
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=pos.size(0))
 
-        out = self.propagate(edge_index, x=x, pos=pos, norm=norm)
+        # propagate_type: (x: OptTensor, pos: Tensor, norm: Tensor)
+        out = self.propagate(edge_index, x=x, pos=pos, norm=norm, size=None)
         if self.global_nn is not None:
             out = self.global_nn(out)
         return out
 
-    def message(self, x_j, pos_i, pos_j, norm_i, norm_j):
+    def message(self, x_j: OptTensor, pos_i, pos_j, norm_i, norm_j):
         msg = point_pair_features(pos_i, pos_j, norm_i, norm_j)
         if x_j is not None:
             msg = torch.cat([x_j, msg], dim=1)

@@ -15,7 +15,6 @@ test_dataset = dataset[:len(dataset) // 10]
 train_dataset = dataset[len(dataset) // 10:]
 test_loader = DataLoader(test_dataset, batch_size=128)
 train_loader = DataLoader(train_dataset, batch_size=128)
-data = dataset[0]
 
 
 class Net(torch.nn.Module):
@@ -32,9 +31,7 @@ class Net(torch.nn.Module):
                 ReLU(),
                 Linear(2 * hidden_channels, hidden_channels),
             )
-            conv = GINConv(mlp, train_eps=True)
-            conv = conv.jittable(x=torch.randn(data.num_nodes, in_channels),
-                                 edge_index=data.edge_index)
+            conv = GINConv(mlp, train_eps=True).jittable()
 
             self.convs.append(conv)
             self.batch_norms.append(BatchNorm(hidden_channels))

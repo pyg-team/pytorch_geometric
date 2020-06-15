@@ -220,12 +220,11 @@ class DNAConv(MessagePassing):
 
     def __init__(self, channels, heads=1, groups=1, dropout=0., cached=False,
                  bias=True, **kwargs):
-        super(DNAConv, self).__init__(aggr='add', **kwargs)
+        super(DNAConv, self).__init__(aggr='add', node_dim=0, **kwargs)
 
         self.bias = bias
         self.cached = cached
         self._cache = None
-        self.node_dim = 0
 
         self.multi_head = MultiHead(channels, channels, heads, groups, dropout,
                                     bias)

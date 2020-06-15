@@ -1,4 +1,4 @@
-from typing import Optional
+from torch_geometric.typing import OptTensor
 
 import torch
 from torch import Tensor
@@ -52,8 +52,7 @@ class GatedGraphConv(MessagePassing):
         uniform(self.out_channels, self.weight)
         self.rnn.reset_parameters()
 
-    def forward(self, x, edge_index,
-                edge_weight: Optional[torch.Tensor] = None):
+    def forward(self, x, edge_index, edge_weight: OptTensor = None):
         """"""
         h = x if x.dim() == 2 else x.unsqueeze(-1)
         if h.size(1) > self.out_channels:
@@ -66,12 +65,14 @@ class GatedGraphConv(MessagePassing):
 
         for i in range(self.num_layers):
             m = torch.matmul(h, self.weight[i])
-            m = self.propagate(edge_index, x=m, edge_weight=edge_weight)
+            # propagate_type: (x: Tensor, edge_weight: OptTensor)
+            m = self.propagate(edge_index, x=m, edge_weight=edge_weight,
+                               size=None)
             h = self.rnn(m, h)
 
         return h
 
-    def message(self, x_j, edge_weight: Optional[torch.Tensor]):
+    def message(self, x_j, edge_weight: OptTensor):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def __repr__(self):

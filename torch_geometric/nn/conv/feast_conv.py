@@ -63,7 +63,8 @@ class FeaStConv(MessagePassing):
         edge_index, _ = remove_self_loops(edge_index)
         edge_index, _ = add_self_loops(edge_index, num_nodes=x.size(0))
 
-        out = self.propagate(edge_index, x=x)
+        # propagate_type: (x: Tensor)
+        out = self.propagate(edge_index, x=x, size=None)
         if self.bias is not None:
             out += self.bias
         return out

@@ -16,20 +16,14 @@ def test_hypergraph_conv():
     out = conv(x, hyperedge_index, hyperedge_weight)
     assert out.size() == (num_nodes, out_channels)
 
-    conv = HypergraphConv(in_channels,
-                          out_channels,
-                          use_attention=True,
+    conv = HypergraphConv(in_channels, out_channels, use_attention=True,
                           heads=2)
     out = conv(x, hyperedge_index)
     assert out.size() == (num_nodes, 2 * out_channels)
     out = conv(x, hyperedge_index, hyperedge_weight)
     assert out.size() == (num_nodes, 2 * out_channels)
 
-    conv = HypergraphConv(in_channels,
-                          out_channels,
-                          use_attention=True,
-                          heads=2,
-                          concat=False,
-                          dropout=0.5)
+    conv = HypergraphConv(in_channels, out_channels, use_attention=True,
+                          heads=2, concat=False, dropout=0.5)
     out = conv(x, hyperedge_index, hyperedge_weight)
     assert out.size() == (num_nodes, out_channels)

@@ -16,6 +16,5 @@ def test_nn_conv():
     out = conv(x, edge_index, pseudo)
     assert out.size() == (num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index, edge_attr=pseudo)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, edge_index, pseudo).tolist() == out.tolist()
+    jit = torch.jit.script(conv.jittable())
+    assert jit(x, edge_index, pseudo).tolist() == out.tolist()

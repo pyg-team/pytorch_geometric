@@ -1,3 +1,5 @@
+from torch_geometric.typing import OptTensor
+
 import torch
 from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
@@ -67,19 +69,20 @@ class NNConv(MessagePassing):
         uniform(self.in_channels, self.root)
         zeros(self.bias)
 
-    def forward(self, x, edge_index, edge_attr):
+    def forward(self, x, edge_index, edge_attr: OptTensor = None):
         """"""
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        pseudo = edge_attr.unsqueeze(-1) if edge_attr.dim() == 1 else edge_attr
-        out = self.propagate(edge_index, x=x, pseudo=pseudo)
+        # propagate_type: (x: Tensor, edge_attr: OptTensor)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
         if self.root is not None:
             out += torch.matmul(x, self.root)
         if self.bias is not None:
             out += self.bias
         return out
 
-    def message(self, x_j, pseudo):
-        weight = self.nn(pseudo).view(-1, self.in_channels, self.out_channels)
+    def message(self, x_j, edge_attr: OptTensor):
+        assert edge_attr is not None
+        weight = self.nn(edge_attr)
+        weight = weight.view(-1, self.in_channels, self.out_channels)
         return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
 
     def __repr__(self):

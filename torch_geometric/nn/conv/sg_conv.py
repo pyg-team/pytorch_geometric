@@ -1,4 +1,5 @@
 from typing import Optional, Tuple
+from torch_geometric.typing import OptTensor
 
 import torch
 from torch.nn import Linear
@@ -55,8 +56,7 @@ class SGConv(MessagePassing):
         self.lin.reset_parameters()
         self._cache = None
 
-    def forward(self, x, edge_index,
-                edge_weight: Optional[torch.Tensor] = None):
+    def forward(self, x, edge_index, edge_weight: OptTensor = None):
         """"""
         cache = self._cache
         if cache is not None:
@@ -75,7 +75,8 @@ class SGConv(MessagePassing):
                                         edge_weight, dtype=x.dtype)
 
             for k in range(self.K):
-                x = self.propagate(edge_index, x=x, norm=norm)
+                # propagate_type: (x: Tensor, norm: Tensor)
+                x = self.propagate(edge_index, x=x, norm=norm, size=None)
 
             if self.cached:
                 self._cache = (num_edges, x)
