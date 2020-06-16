@@ -40,8 +40,9 @@ def test_point_conv():
     out = conv(x1, (pos1, pos2), edge_index)
     assert out.size() == (2, 32)
     assert conv((x1, None), (pos1, pos2), edge_index).tolist() == out.tolist()
-    assert conv(x1, (pos1, pos2), adj.t()).tolist() == out.tolist()
-    assert conv((x1, None), (pos1, pos2), adj.t()).tolist() == out.tolist()
+    assert torch.allclose(conv(x1, (pos1, pos2), adj.t()), out, atol=1e-6)
+    assert torch.allclose(conv((x1, None), (pos1, pos2), adj.t()), out,
+                          atol=1e-6)
 
     t = '(PairOptTensor, PairTensor, Tensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
@@ -49,4 +50,5 @@ def test_point_conv():
 
     t = '(PairOptTensor, PairTensor, SparseTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, None), (pos1, pos2), adj.t()).tolist() == out.tolist()
+    assert torch.allclose(jit((x1, None), (pos1, pos2), adj.t()), out,
+                          atol=1e-6)
