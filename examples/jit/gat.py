@@ -7,7 +7,8 @@ import torch_geometric.transforms as T
 from torch_geometric.nn import GATConv
 
 dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data',
+                dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 
 
