@@ -24,7 +24,6 @@ fi
 conda update --yes conda
 
 conda create --yes -n test python="${PYTHON_VERSION}"
-pip install --upgrade pip
 
 if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
   export TOOLKIT=cpuonly
