@@ -15,20 +15,20 @@ from ..inits import glorot, zeros
 
 @torch.jit._overload
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             dtype=None):
-    # type: (Tensor, OptTensor, Optional[int], bool, Optional[int]) -> PairTensor  # noqa
+             add_self_loops=True, dtype=None):
+    # type: (Tensor, OptTensor, Optional[int], bool, bool, Optional[int]) -> PairTensor  # noqa
     pass
 
 
 @torch.jit._overload
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             dtype=None):
-    # type: (SparseTensor, OptTensor, Optional[int], bool, Optional[int]) -> SparseTensor  # noqa
+             add_self_loops=True, dtype=None):
+    # type: (SparseTensor, OptTensor, Optional[int], bool, bool, Optional[int]) -> SparseTensor  # noqa
     pass
 
 
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             dtype=None):
+             add_self_loops=True, dtype=None):
 
     fill_value = 2. if improved else 1.
 
@@ -36,7 +36,8 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         adj_t = edge_index
         if not adj_t.has_value():
             adj_t.fill_value(1., dtype=dtype)
-        adj_t = fill_diag(adj_t, fill_value)
+        if add_self_loops:
+            adj_t = fill_diag(adj_t, fill_value)
         deg = sum(adj_t, dim=1)
         deg_inv_sqrt = deg.pow_(-0.5)
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
@@ -51,10 +52,12 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
             edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
-        edge_index, edge_weight = add_remaining_self_loops(
-            edge_index, edge_weight, fill_value, num_nodes)
+        if add_self_loops:
+            edge_index, tmp_edge_weight = add_remaining_self_loops(
+                edge_index, edge_weight, fill_value, num_nodes)
+            assert tmp_edge_weight is not None
+            edge_weight = tmp_edge_weight
 
-        assert edge_weight is not None
         row, col = edge_index[0], edge_index[1]
         deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
         deg_inv_sqrt = deg.pow_(-0.5)
@@ -136,9 +139,9 @@ class GCNConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
                 if cache is None:
-                    edge_index, edge_weight = gcn_norm(edge_index, edge_weight,
-                                                       x.size(self.node_dim),
-                                                       self.improved, x.dtype)
+                    edge_index, edge_weight = gcn_norm(  # yapf: disable
+                        edge_index, edge_weight, x.size(self.node_dim),
+                        self.improved, add_self_loops=True, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -147,9 +150,9 @@ class GCNConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 cache = self._cached_adj_t
                 if cache is None:
-                    edge_index = gcn_norm(edge_index, edge_weight,
-                                          x.size(self.node_dim), self.improved,
-                                          x.dtype)
+                    edge_index = gcn_norm(  # yapf: disable
+                        edge_index, edge_weight, x.size(self.node_dim),
+                        self.improved, add_self_loops=True, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
