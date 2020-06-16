@@ -59,7 +59,7 @@ class AGNNConv(MessagePassing):
     def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes: int):
         # Compute attention coefficients.
         alpha = self.beta * (x_norm_i * x_norm_j).sum(dim=-1)
-        alpha = softmax(alpha, edge_index_i, num_nodes)
+        alpha = softmax(alpha, edge_index_i, num_nodes=num_nodes)
         return x_j * alpha.view(-1, 1)
 
     def __repr__(self):

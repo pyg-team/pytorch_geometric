@@ -158,6 +158,7 @@ class MessagePassing(torch.nn.Module):
         if isinstance(edge_index, Tensor):
             out['edge_index_i'] = edge_index[i]
             out['edge_index_j'] = edge_index[j]
+            out['ptr'] = None
         elif isinstance(edge_index, SparseTensor):
             out['edge_index_i'] = edge_index.storage.row()
             out['edge_index_j'] = edge_index.storage.col()

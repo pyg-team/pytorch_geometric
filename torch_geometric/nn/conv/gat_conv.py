@@ -1,5 +1,6 @@
 from typing import Union, Tuple, Optional
-from torch_geometric.typing import OptPairTensor, Adj, Size, NoneType
+from torch_geometric.typing import (OptPairTensor, Adj, Size, NoneType,
+                                    OptTensor)
 
 import torch
 from torch import Tensor
@@ -52,7 +53,7 @@ class GATConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    _alpha: Optional[Tensor]
+    _alpha: OptTensor
 
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, heads: int = 1, concat: bool = True,
@@ -111,8 +112,8 @@ class GATConv(MessagePassing):
         """
         H, C = self.heads, self.out_channels
 
-        x_l: Optional[Tensor] = None
-        x_r: Optional[Tensor] = None
+        x_l: OptTensor = None
+        x_r: OptTensor = None
         if isinstance(x, Tensor):
             assert x.dim() >= 2, 'Static graphs not supported in `GATConv`.'
             x_l = x_r = self.lin_l(x).view(-1, H, C)
@@ -162,11 +163,12 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: Optional[Tensor],
-                edge_index_i: Tensor, size_i: Optional[int]) -> Tensor:
+    def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
+                index: Tensor, ptr: OptTensor,
+                size_i: Optional[int]) -> Tensor:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = softmax(alpha, edge_index_i, size_i)
+        alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return x_j * alpha.unsqueeze(-1)

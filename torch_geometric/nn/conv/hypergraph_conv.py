@@ -102,7 +102,7 @@ class HypergraphConv(MessagePassing):
             x_i, x_j = x[hyperedge_index[0]], x[hyperedge_index[1]]
             alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
             alpha = F.leaky_relu(alpha, self.negative_slope)
-            alpha = softmax(alpha, hyperedge_index[0], x.size(0))
+            alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
             alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
         if hyperedge_weight is None:
