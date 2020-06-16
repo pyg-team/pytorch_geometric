@@ -1,18 +1,22 @@
-from torch_geometric.typing import OptTensor
+from typing import Optional, Callable, Union
+from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor, Adj
 
 import torch
+from torch import Tensor
+from torch_sparse import SparseTensor, set_diag
+from torch_geometric.utils import add_self_loops
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from ..inits import reset
 
 
-def get_angle(v1, v2):
+def get_angle(v1: Tensor, v2: Tensor) -> Tensor:
     return torch.atan2(
         torch.cross(v1, v2, dim=1).norm(p=2, dim=1), (v1 * v2).sum(dim=1))
 
 
-def point_pair_features(pos_i, pos_j, norm_i, norm_j):
+def point_pair_features(pos_i: Tensor, pos_j: Tensor, norm_i: Tensor,
+                        norm_j: Tensor) -> Tensor:
     pseudo = pos_j - pos_i
     return torch.stack([
         pseudo.norm(p=2, dim=1),
@@ -53,7 +57,8 @@ class PPFConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, local_nn=None, global_nn=None, **kwargs):
+    def __init__(self, local_nn: Optional[Callable] = None,
+                 global_nn: Optional[Callable] = None, **kwargs):
         super(PPFConv, self).__init__(aggr='max', **kwargs)
 
         self.local_nn = local_nn
@@ -65,31 +70,38 @@ class PPFConv(MessagePassing):
         reset(self.local_nn)
         reset(self.global_nn)
 
-    def forward(self, x: OptTensor, pos, norm, edge_index):
-        r"""
-        Args:
-            x (Tensor): The node feature matrix. Allowed to be :obj:`None`.
-            pos (Tensor or tuple): The node position matrix. Either given as
-                tensor for use in general message passing or as tuple for use
-                in message passing in bipartite graphs.
-            norm (Tensor or tuple): The normal vectors of each node. Either
-                given as tensor for use in general message passing or as tuple
-                for use in message passing in bipartite graphs.
-            edge_index (LongTensor): The edge indices.
-        """
-        # Add self-loops for symmetric adjacencies.
-        if isinstance(pos, torch.Tensor):
-            edge_index, _ = remove_self_loops(edge_index)
-            edge_index, _ = add_self_loops(edge_index, num_nodes=pos.size(0))
+    def forward(self, x: Union[OptTensor, PairOptTensor],
+                pos: Union[Tensor, PairTensor],
+                normal: Union[Tensor, PairTensor],
+                edge_index: Adj) -> Tensor:  # yapf: disable
+        """"""
+        if not isinstance(x, tuple):
+            x: PairOptTensor = (x, None)
 
-        # propagate_type: (x: OptTensor, pos: Tensor, norm: Tensor)
-        out = self.propagate(edge_index, x=x, pos=pos, norm=norm, size=None)
+        if isinstance(pos, Tensor):
+            pos: PairTensor = (pos, pos)
+
+        if isinstance(normal, Tensor):
+            normal: PairTensor = (normal, normal)
+
+        if isinstance(edge_index, Tensor):
+            num_nodes = pos[1].size(0)
+            edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+        elif isinstance(edge_index, SparseTensor):
+            edge_index = set_diag(edge_index)
+
+        # propagate_type: (x: PairOptTensor, pos: PairTensor, normal: PairTensor)  # noqa
+        out = self.propagate(edge_index, x=x, pos=pos, normal=normal,
+                             size=None)
+
         if self.global_nn is not None:
             out = self.global_nn(out)
+
         return out
 
-    def message(self, x_j: OptTensor, pos_i, pos_j, norm_i, norm_j):
-        msg = point_pair_features(pos_i, pos_j, norm_i, norm_j)
+    def message(self, x_j: OptTensor, pos_i: Tensor, pos_j: Tensor,
+                normal_i: Tensor, normal_j: Tensor) -> Tensor:
+        msg = point_pair_features(pos_i, pos_j, normal_i, normal_j)
         if x_j is not None:
             msg = torch.cat([x_j, msg], dim=1)
         if self.local_nn is not None:

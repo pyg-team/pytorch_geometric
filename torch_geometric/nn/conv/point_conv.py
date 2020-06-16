@@ -1,6 +1,5 @@
 from typing import Optional, Callable, Union
-from torch_geometric.typing import (OptTensor, PairOptTensor, PairTensor, Adj,
-                                    Size)
+from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor, Adj
 
 import torch
 from torch import Tensor
@@ -57,8 +56,7 @@ class PointConv(MessagePassing):
         reset(self.global_nn)
 
     def forward(self, x: Union[OptTensor, PairOptTensor],
-                pos: Union[Tensor, PairTensor], edge_index: Adj,
-                size: Size = None) -> Tensor:  # yapf: disable
+                pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """"""
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
@@ -73,7 +71,7 @@ class PointConv(MessagePassing):
             edge_index = set_diag(edge_index)
 
         # propagate_type: (x: PairOptTensor, pos: PairTensor)
-        out = self.propagate(edge_index, x=x, pos=pos, size=size)
+        out = self.propagate(edge_index, x=x, pos=pos, size=None)
 
         if self.global_nn is not None:
             out = self.global_nn(out)
