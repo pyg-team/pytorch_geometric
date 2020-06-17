@@ -70,7 +70,11 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
-        self.__user_args = self.inspector.keys().difference(self.special_args)
+
+        self.__user_args__ = self.inspector.keys(
+            ['message', 'aggregate', 'update']).difference(self.special_args)
+        self.__fused_user_args__ = self.inspector.keys(
+            ['message_and_aggregate', 'update']).difference(self.special_args)
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -131,11 +135,11 @@ class MessagePassing(torch.nn.Module):
                 return src.index_select(self.node_dim, col)
         raise ValueError
 
-    def __collect__(self, edge_index, size, kwargs):
+    def __collect__(self, args, edge_index, size, kwargs):
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 
         out = {}
-        for arg in self.__user_args:
+        for arg in args:
             if arg[-2:] not in ['_i', '_j']:
                 out[arg] = kwargs.get(arg, Parameter.empty)
             else:
@@ -204,18 +208,24 @@ class MessagePassing(torch.nn.Module):
         """
         size = self.__check_input__(edge_index, size)
 
-        # Collect all arguments used for message passing from `kwargs`.
-        coll_dict = self.__collect__(edge_index, size, kwargs)
-
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
                 and not self.__explain__):
+            coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
+                                         size, kwargs)
+
             msg_aggr_kwargs = self.inspector.distribute(
                 'message_and_aggregate', coll_dict)
             out = self.message_and_aggregate(edge_index, **msg_aggr_kwargs)
 
+            update_kwargs = self.inspector.distribute('update', coll_dict)
+            return self.update(out, **update_kwargs)
+
         # Otherwise, run both functions in separation.
         elif isinstance(edge_index, Tensor) or not self.fuse:
+            coll_dict = self.__collect__(self.__user_args__, edge_index, size,
+                                         kwargs)
+
             msg_kwargs = self.inspector.distribute('message', coll_dict)
             out = self.message(**msg_kwargs)
 
@@ -235,8 +245,8 @@ class MessagePassing(torch.nn.Module):
             aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
             out = self.aggregate(out, **aggr_kwargs)
 
-        update_kwargs = self.inspector.distribute('update', coll_dict)
-        return self.update(out, **update_kwargs)
+            update_kwargs = self.inspector.distribute('update', coll_dict)
+            return self.update(out, **update_kwargs)
 
     def message(self, x_j: Tensor) -> Tensor:
         r"""Constructs messages from node :math:`j` to node :math:`i`
