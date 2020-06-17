@@ -25,7 +25,7 @@ install:
   - pip install trimesh
   - pip install flake8 codecov
   - pip install sphinx sphinx_rtd_theme
-  - python setup.py install
+  - pip install --trusted-host=files.pythonhosted.org .
 script:
   - flake8 .
   - python setup.py test
