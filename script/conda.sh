@@ -25,6 +25,8 @@ conda update --yes conda
 
 conda create --yes -n test python="${PYTHON_VERSION}"
 
+export PIP_TRUSTED_HOST=files.pythonhosted.org
+
 if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
   export TOOLKIT=cpuonly
 fi
