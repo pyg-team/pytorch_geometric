@@ -29,7 +29,7 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
         $ python -c "import torch; print(torch.version.cuda)"
         >>> 10.2
 
-# Install the relevant packages:
+#. Install the relevant packages:
 
     .. code-block:: none
 
@@ -84,7 +84,7 @@ In case a specific verion is not supported by `our wheels <https://pytorch-geome
         .. code-block:: none
 
             $ nvcc --version
-            >>> 10.0
+            >>> 10.2
 
     #. Ensure that PyTorch and system CUDA versions match:
 
