@@ -1,4 +1,8 @@
+from typing import Callable, Union
+from torch_geometric.typing import PairTensor, Adj
+
 import torch
+from torch import Tensor
 from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import reset
@@ -31,7 +35,7 @@ class EdgeConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, nn, aggr='max', **kwargs):
+    def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
         super(EdgeConv, self).__init__(aggr=aggr, **kwargs)
         self.nn = nn
         self.reset_parameters()
@@ -39,13 +43,15 @@ class EdgeConv(MessagePassing):
     def reset_parameters(self):
         reset(self.nn)
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """"""
-        x = x.unsqueeze(-1) if x.dim() == 1 else x
-        return self.propagate(edge_index, x=x)
+        if isinstance(x, Tensor):
+            x: PairTensor = (x, x)
+        # propagate_type: (x: PairTensor)
+        return self.propagate(edge_index, x=x, size=None)
 
-    def message(self, x_i, x_j):
-        return self.nn(torch.cat([x_i, x_j - x_i], dim=1))
+    def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
+        return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
 
     def __repr__(self):
         return '{}(nn={})'.format(self.__class__.__name__, self.nn)

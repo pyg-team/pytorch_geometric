@@ -49,7 +49,7 @@ class GlobalAttention(torch.nn.Module):
         x = self.nn(x) if self.nn is not None else x
         assert gate.dim() == x.dim() and gate.size(0) == x.size(0)
 
-        gate = softmax(gate, batch, size)
+        gate = softmax(gate, batch, num_nodes=size)
         out = scatter_add(gate * x, batch, dim=0, dim_size=size)
 
         return out

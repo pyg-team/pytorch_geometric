@@ -1,240 +1,179 @@
 import copy
-import pytest
-from typing import Tuple, Optional
+from typing import Tuple, Union
+from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
+import pytest
 import torch
+from torch import Tensor
+from torch.nn import Linear
 from torch_sparse import SparseTensor
 from torch_sparse.matmul import spmm
 from torch_geometric.nn import MessagePassing
-from torch_geometric.utils import softmax
-
-edge_index = torch.tensor([
-    [0, 0, 0, 1, 1],
-    [0, 1, 2, 0, 2],
-])
-adj_t = SparseTensor(row=edge_index[1], col=edge_index[0])
-x = (
-    torch.arange(1, 3, dtype=torch.float),
-    torch.arange(1, 4, dtype=torch.float),
-)
 
 
-class MyBasicConv(MessagePassing):
+class MyConv(MessagePassing):
+
+    propagate_type = {'x': OptPairTensor, 'edge_weight': OptTensor}
+
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int):
+        """"""
+        super(MyConv, self).__init__(aggr='add')
+
+        if isinstance(in_channels, int):
+            in_channels = (in_channels, in_channels)
+
+        self.lin_l = Linear(in_channels[0], out_channels)
+        self.lin_r = Linear(in_channels[1], out_channels)
+
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                edge_weight: OptTensor = None, size: Size = None) -> Tensor:
+        """"""
+        if isinstance(x, Tensor):
+            x: OptPairTensor = (x, x)
+
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                             size=size)
+        out = self.lin_l(out)
+
+        x_r = x[1]
+        if x_r is not None:
+            out += self.lin_r(x_r)
+
+        return out
+
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else x_j * edge_weight.view(-1, 1)
+
+    def message_and_aggregate(self, adj_t: SparseTensor,
+                              x: OptPairTensor) -> Tensor:
+        return spmm(adj_t, x[0], reduce=self.aggr)
+
+
+def test_my_conv():
+    x1 = torch.randn(4, 8)
+    x2 = torch.randn(2, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    value = torch.randn(row.size(0))
+    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+
+    conv = MyConv(8, 32)
+    out = conv(x1, edge_index, value)
+    assert out.size() == (4, 32)
+    assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
+    assert conv(x1, adj.t()).tolist() == out.tolist()
+    conv.fuse = False
+    assert conv(x1, adj.t()).tolist() == out.tolist()
+    conv.fuse = True
+
+    t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit(x1, edge_index, value).tolist() == out.tolist()
+    assert jit(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
+
+    t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit(x1, adj.t()).tolist() == out.tolist()
+    jit.fuse = False
+    assert jit(x1, adj.t()).tolist() == out.tolist()
+    jit.fuse = True
+
+    adj = adj.sparse_resize((4, 2))
+    conv = MyConv((8, 16), 32)
+    out1 = conv((x1, x2), edge_index, value)
+    out2 = conv((x1, None), edge_index, value, (4, 2))
+    assert out1.size() == (2, 32)
+    assert out2.size() == (2, 32)
+    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    conv.fuse = False
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    conv.fuse = True
+
+    t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit((x1, x2), edge_index, value).tolist() == out1.tolist()
+    assert jit((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert jit((x1, None), edge_index, value, (4, 2)).tolist() == out2.tolist()
+
+    t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+    jit.fuse = False
+    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+    jit.fuse = True
+
+
+def test_my_static_graph_conv():
+    x1 = torch.randn(3, 4, 8)
+    x2 = torch.randn(3, 2, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    value = torch.randn(row.size(0))
+    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+
+    conv = MyConv(8, 32)
+    out = conv(x1, edge_index, value)
+    assert out.size() == (3, 4, 32)
+    assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
+    assert conv(x1, adj.t()).tolist() == out.tolist()
+
+    adj = adj.sparse_resize((4, 2))
+    conv = MyConv((8, 16), 32)
+    out1 = conv((x1, x2), edge_index, value)
+    assert out1.size() == (3, 2, 32)
+    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
+    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    out2 = conv((x1, None), edge_index, value, (4, 2))
+    assert out2.size() == (3, 2, 32)
+    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+
+
+def test_copy():
+    conv = MyConv(8, 32)
+    conv2 = copy.copy(conv)
+
+    assert conv != conv2
+    assert conv.lin_l.weight.tolist() == conv2.lin_l.weight.tolist()
+    assert conv.lin_r.weight.tolist() == conv2.lin_r.weight.tolist()
+    assert conv.lin_l.weight.data_ptr == conv2.lin_l.weight.data_ptr
+    assert conv.lin_r.weight.data_ptr == conv2.lin_r.weight.data_ptr
+
+    conv = copy.deepcopy(conv)
+    assert conv != conv2
+    assert conv.lin_l.weight.tolist() == conv2.lin_l.weight.tolist()
+    assert conv.lin_r.weight.tolist() == conv2.lin_r.weight.tolist()
+    assert conv.lin_l.weight.data_ptr != conv2.lin_l.weight.data_ptr
+    assert conv.lin_r.weight.data_ptr != conv2.lin_r.weight.data_ptr
+
+
+class MyDefaultArgConv(MessagePassing):
     def __init__(self):
-        super(MyBasicConv, self).__init__()
+        super(MyDefaultArgConv, self).__init__(aggr='mean')
 
-    def forward(self, x, edge_index):
+    # propagate_type: (x: Tensor)
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         return self.propagate(edge_index, x=x)
-
-
-def test_my_basic_conv():
-    conv = MyBasicConv()
-    out = conv(x[1], edge_index)
-    assert out.tolist() == [3.0, 1.0, 3.0]
-    assert conv(x, edge_index).tolist() == out.tolist()
-    assert conv(x[0], adj_t).tolist() == out.tolist()
-    assert conv(x, adj_t).tolist() == out.tolist()
-
-    jitted = conv.jittable(x=x[1], edge_index=edge_index)
-    jitted = torch.jit.script(jitted)
-    assert jitted(x[1], edge_index).tolist() == out.tolist()
-
-    with pytest.raises(RuntimeError):
-        jitted = conv.jittable(x=x, edge_index=edge_index)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x[0], edge_index=adj_t)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=adj_t)
-        jitted = torch.jit.script(jitted)
-
-
-class MyAdvancedConv(MessagePassing):
-    def __init__(self):
-        super(MyAdvancedConv, self).__init__(aggr='add')
-
-    def forward(self, x, edge_index):
-        return self.propagate(edge_index, x=x)
-
-    def message(self, x_j, edge_index_i, size_i: Optional[int]):
-        alpha = softmax(x_j, edge_index_i, num_nodes=size_i)
-        return alpha * x_j
-
-    def update(self, inputs):
-        return inputs + 2
-
-
-def test_my_advanced_conv():
-    conv = MyAdvancedConv()
-    out = conv(x[1], edge_index)
-    assert conv(x, edge_index).tolist() == out.tolist()
-    assert conv(x[0], adj_t).tolist() == out.tolist()
-    assert conv(x, adj_t).tolist() == out.tolist()
-
-    jitted = conv.jittable(x=x[1], edge_index=edge_index)
-    jitted = torch.jit.script(jitted)
-    assert jitted(x[1], edge_index).tolist() == out.tolist()
-
-    with pytest.raises(RuntimeError):
-        jitted = conv.jittable(x=x, edge_index=edge_index)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x[0], edge_index=adj_t)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=adj_t)
-        jitted = torch.jit.script(jitted)
-
-
-class MyDefaultArgumentsConv(MessagePassing):
-    def __init__(self):
-        super(MyDefaultArgumentsConv, self).__init__(aggr='mean')
-
-    def forward(self, x, edge_index, **kwargs):
-        return self.propagate(edge_index, x=x, **kwargs)
 
     def message(self, x_j, zeros: bool = True):
         return x_j * 0 if zeros else x_j
 
 
-def test_my_default_arguments_conv():
-    conv = MyDefaultArgumentsConv()
-    out = conv(x[1], edge_index)
-    assert out.tolist() == [0, 0, 0]
-    assert conv(x, edge_index).tolist() == out.tolist()
-    assert conv(x[0], adj_t).tolist() == out.tolist()
-    assert conv(x, adj_t).tolist() == out.tolist()
+def test_my_default_arg_conv():
+    x = torch.randn(4, 1)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    with pytest.raises(torch.jit.frontend.NotSupportedError):
-        jitted = conv.jittable(x=x[1], edge_index=edge_index)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=edge_index)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x[0], edge_index=adj_t)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=adj_t)
-        jitted = torch.jit.script(jitted)
+    conv = MyDefaultArgConv()
+    assert conv(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
+    assert conv(x, adj.t()).view(-1).tolist() == [0, 0, 0, 0]
 
-
-class MyBipartiteConv(MessagePassing):
-    def __init__(self):
-        super(MyBipartiteConv, self).__init__(aggr='mean')
-
-    def forward(self, x: Tuple[torch.Tensor, torch.Tensor], edge_index,
-                size: Optional[Tuple[int, int]] = None):
-        return self.propagate(edge_index, size=size, x=x)
-
-    def update(self, inputs, x: Tuple[torch.Tensor, torch.Tensor]):
-        if isinstance(x, tuple):
-            x = x[-1]
-        return inputs + x
-
-
-def test_my_bipartite_conv():
-    conv = MyBipartiteConv()
-    out = conv(x[1], edge_index)
-    assert out.tolist() == [2.5, 3.0, 4.5]
-    assert conv(x, edge_index).tolist() == out.tolist()
-    assert conv(x, adj_t).tolist() == out.tolist()
-
+    # This should not succeed in JIT mode.
     with pytest.raises(RuntimeError):
-        conv(x[0], adj_t)
-
-    jitted = conv.jittable(x=x, edge_index=edge_index)
-    jitted = torch.jit.script(jitted)
-    assert jitted(x, edge_index).tolist() == out.tolist()
-
-    with pytest.raises(RuntimeError):
-        jitted = conv.jittable(x=x[1], edge_index=edge_index)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x[0], edge_index=adj_t)
-        jitted = torch.jit.script(jitted)
-        jitted = conv.jittable(x=x, edge_index=adj_t)
-        jitted = torch.jit.script(jitted)
-
-
-class MyDoublePropagateConv(MessagePassing):
-    def __init__(self):
-        super(MyDoublePropagateConv, self).__init__(aggr='max')
-
-    def forward(self, x, edge_index):
-        self.flow = 'source_to_target'
-        out1 = self.propagate(edge_index, x=x)
-        self.flow = 'target_to_source'
-        out2 = self.propagate(edge_index, x=x)
-        return out1 + out2
-
-
-def test_my_double_propagate_conv():
-    conv = MyDoublePropagateConv()
-    out = conv(x[1], edge_index)
-    assert out.tolist() == [5.0, 4.0, 2.0]
-
-    with pytest.raises(ValueError):
-        assert conv(x[0], adj_t).tolist() == out.tolist()
-
-    jitted = conv.jittable(x=x[1], edge_index=edge_index)
-    jitted = torch.jit.script(jitted)
-    assert jitted(x[1], edge_index).tolist() == out.tolist()
-
-
-class MyMessageAndAggregateConv1(MessagePassing):
-    def __init__(self):
-        super(MyMessageAndAggregateConv1, self).__init__()
-
-    def forward(self, x, edge_index):
-        return self.propagate(edge_index, x=x)
-
-    def message_and_aggregate(self, adj_t: SparseTensor, x):
-        return spmm(adj_t, x.view(-1, 1)).view(-1)
-
-
-class MyMessageAndAggregateConv2(MessagePassing):
-    def __init__(self):
-        super(MyMessageAndAggregateConv2, self).__init__()
-
-    def forward(self, x, edge_index: SparseTensor):
-        return self.propagate(edge_index, x=x)
-
-    def message_and_aggregate(self, adj_t: SparseTensor, x):
-        return spmm(adj_t, x.view(-1, 1)).view(-1)
-
-
-def test_my_message_and_aggregate_conv():
-    conv = MyMessageAndAggregateConv1()
-
-    out = conv(x[1], edge_index)
-    assert out.tolist() == [3.0, 1.0, 3.0]
-    assert conv(x[0], adj_t).tolist() == out.tolist()
-
-    jitted = conv.jittable(x=x[1], edge_index=edge_index)
-    jitted = torch.jit.script(jitted)
-    assert jitted(x[1], edge_index).tolist() == [3.0, 1.0, 3.0]
-
-    conv = MyMessageAndAggregateConv2()
-
-    out = conv(x[1], edge_index)
-    assert out.tolist() == [3.0, 1.0, 3.0]
-    assert conv(x[0], adj_t).tolist() == out.tolist()
-
-    jitted = conv.jittable(x=x[0], edge_index=adj_t)
-    jitted = torch.jit.script(jitted)
-    assert jitted(x[0], adj_t).tolist() == [3.0, 1.0, 3.0]
-
-
-class MyCopyConv(MessagePassing):
-    def __init__(self):
-        super(MyCopyConv, self).__init__()
-        self.weight = torch.nn.Parameter(torch.Tensor(10))
-
-    def forward(self, x, edge_index):
-        return self.propagate(edge_index, x=x)
-
-
-def test_copy():
-    conv = MyCopyConv()
-    conv2 = copy.copy(conv)
-
-    assert conv != conv2
-    assert conv.weight.data_ptr == conv2.weight.data_ptr
-
-    conv = copy.deepcopy(conv)
-    assert conv != conv2
-    assert conv.weight.data_ptr != conv2.weight.data_ptr
+        torch.jit.script(conv.jittable())

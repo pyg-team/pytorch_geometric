@@ -1,7 +1,7 @@
 import torch
 
 
-def unsqueeze(src: torch.Tensor, dim: int, length: int) -> torch.Tensor:
-    for _ in range(length):
-        src = src.unsqueeze(dim)
+def expand_left(src: torch.Tensor, dim: int, dims: int) -> torch.Tensor:
+    for _ in range(dims + dim if dim < 0 else dim):
+        src = src.unsqueeze(0)
     return src

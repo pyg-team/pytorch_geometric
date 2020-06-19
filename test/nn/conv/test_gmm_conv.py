@@ -14,7 +14,7 @@ def test_gmm_conv():
     out = conv(x, edge_index, pseudo)
     assert out.size() == (num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index, pseudo=pseudo)
+    jit_conv = conv.jittable()
     jit_conv = torch.jit.script(jit_conv)
     assert jit_conv(x, edge_index, pseudo).tolist() == out.tolist()
 
@@ -23,6 +23,6 @@ def test_gmm_conv():
     out = conv(x, edge_index, pseudo)
     assert out.size() == (num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index, pseudo=pseudo)
+    jit_conv = conv.jittable()
     jit_conv = torch.jit.script(jit_conv)
     assert jit_conv(x, edge_index, pseudo).tolist() == out.tolist()

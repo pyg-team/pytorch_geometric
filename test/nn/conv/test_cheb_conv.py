@@ -18,12 +18,11 @@ def test_cheb_conv():
     out3 = conv(x, edge_index, edge_weight, lambda_max=3.0)
     assert out3.size() == (num_nodes, out_channels)
 
-    jit_conv = conv.jittable(x=x, edge_index=edge_index)
-    jit_conv = torch.jit.script(jit_conv)
-    assert jit_conv(x, edge_index).tolist() == out1.tolist()
-    assert jit_conv(x, edge_index, edge_weight).tolist() == out2.tolist()
-    assert jit_conv(x, edge_index, edge_weight,
-                    lambda_max=torch.tensor(3.0)).tolist() == out3.tolist()
+    jit = torch.jit.script(conv.jittable())
+    assert jit(x, edge_index).tolist() == out1.tolist()
+    assert jit(x, edge_index, edge_weight).tolist() == out2.tolist()
+    assert jit(x, edge_index, edge_weight,
+               lambda_max=torch.tensor(3.0)).tolist() == out3.tolist()
 
     batch = torch.tensor([0, 0, 1, 1])
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]])
@@ -37,7 +36,6 @@ def test_cheb_conv():
     out5 = conv(x, edge_index, edge_weight, batch, lambda_max)
     assert out5.size() == (num_nodes, out_channels)
 
-    assert jit_conv(x, edge_index, edge_weight,
-                    batch).tolist() == out4.tolist()
-    assert jit_conv(x, edge_index, edge_weight, batch,
-                    lambda_max).tolist() == out5.tolist()
+    assert jit(x, edge_index, edge_weight, batch).tolist() == out4.tolist()
+    assert jit(x, edge_index, edge_weight, batch,
+               lambda_max).tolist() == out5.tolist()

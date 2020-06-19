@@ -8,14 +8,13 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.data import DataLoader
 from torch_geometric.nn import GINConv, global_add_pool
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TU')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data', 'TU')
 dataset = TUDataset(path, name='IMDB-BINARY', transform=OneHotDegree(135))
 dataset = dataset.shuffle()
 test_dataset = dataset[:len(dataset) // 10]
 train_dataset = dataset[len(dataset) // 10:]
 test_loader = DataLoader(test_dataset, batch_size=128)
 train_loader = DataLoader(train_dataset, batch_size=128)
-data = dataset[0]
 
 
 class Net(torch.nn.Module):
@@ -32,9 +31,7 @@ class Net(torch.nn.Module):
                 ReLU(),
                 Linear(2 * hidden_channels, hidden_channels),
             )
-            conv = GINConv(mlp, train_eps=True)
-            conv = conv.jittable(x=torch.randn(data.num_nodes, in_channels),
-                                 edge_index=data.edge_index)
+            conv = GINConv(mlp, train_eps=True).jittable()
 
             self.convs.append(conv)
             self.batch_norms.append(BatchNorm(hidden_channels))

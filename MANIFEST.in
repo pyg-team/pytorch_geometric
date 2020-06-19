@@ -1,5 +1,6 @@
 include README.md
 include LICENSE
+include torch_geometric/nn/conv/message_passing.jinja
 
 recursive-exclude test *
 recursive-exclude examples *

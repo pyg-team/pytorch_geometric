@@ -61,7 +61,7 @@ def segregate_self_loops(edge_index, edge_attr: Optional[torch.Tensor] = None):
 
 
 def add_self_loops(edge_index, edge_weight: Optional[torch.Tensor] = None,
-                   fill_value: int = 1, num_nodes: Optional[int] = None):
+                   fill_value: float = 1., num_nodes: Optional[int] = None):
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted, self-loops will be added with edge weights
@@ -71,9 +71,9 @@ def add_self_loops(edge_index, edge_weight: Optional[torch.Tensor] = None,
         edge_index (LongTensor): The edge indices.
         edge_weight (Tensor, optional): One-dimensional edge weights.
             (default: :obj:`None`)
-        fill_value (int, optional): If :obj:`edge_weight` is not :obj:`None`,
+        fill_value (float, optional): If :obj:`edge_weight` is not :obj:`None`,
             will add self-loops with edge weights of :obj:`fill_value` to the
-            graph. (default: :obj:`1`)
+            graph. (default: :obj:`1.`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
@@ -96,7 +96,7 @@ def add_self_loops(edge_index, edge_weight: Optional[torch.Tensor] = None,
 
 def add_remaining_self_loops(edge_index,
                              edge_weight: Optional[torch.Tensor] = None,
-                             fill_value: int = 1,
+                             fill_value: float = 1.,
                              num_nodes: Optional[int] = None):
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
@@ -108,9 +108,9 @@ def add_remaining_self_loops(edge_index,
         edge_index (LongTensor): The edge indices.
         edge_weight (Tensor, optional): One-dimensional edge weights.
             (default: :obj:`None`)
-        fill_value (int, optional): If :obj:`edge_weight` is not :obj:`None`,
+        fill_value (float, optional): If :obj:`edge_weight` is not :obj:`None`,
             will add self-loops with edge weights of :obj:`fill_value` to the
-            graph. (default: :obj:`1`)
+            graph. (default: :obj:`1.`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
@@ -120,8 +120,11 @@ def add_remaining_self_loops(edge_index,
     row, col = edge_index[0], edge_index[1]
     mask = row != col
 
+    loop_index = torch.arange(0, N, dtype=row.dtype, device=row.device)
+    loop_index = loop_index.unsqueeze(0).repeat(2, 1)
+    edge_index = torch.cat([edge_index[:, mask], loop_index], dim=1)
+
     if edge_weight is not None:
-        assert edge_weight.numel() == edge_index.size(1)
         inv_mask = ~mask
 
         loop_weight = torch.full((N, ), fill_value, dtype=edge_weight.dtype,
@@ -130,9 +133,5 @@ def add_remaining_self_loops(edge_index,
         if remaining_edge_weight.numel() > 0:
             loop_weight[row[inv_mask]] = remaining_edge_weight
         edge_weight = torch.cat([edge_weight[mask], loop_weight], dim=0)
-
-    loop_index = torch.arange(0, N, dtype=row.dtype, device=row.device)
-    loop_index = loop_index.unsqueeze(0).repeat(2, 1)
-    edge_index = torch.cat([edge_index[:, mask], loop_index], dim=1)
 
     return edge_index, edge_weight

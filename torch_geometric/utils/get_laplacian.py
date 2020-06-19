@@ -62,7 +62,7 @@ def get_laplacian(edge_index, edge_weight: Optional[torch.Tensor] = None,
 
         # L = I - A_norm.
         edge_index, tmp = add_self_loops(edge_index, -edge_weight,
-                                         fill_value=1, num_nodes=num_nodes)
+                                         fill_value=1., num_nodes=num_nodes)
         assert tmp is not None
         edge_weight = tmp
     else:
@@ -73,7 +73,7 @@ def get_laplacian(edge_index, edge_weight: Optional[torch.Tensor] = None,
 
         # L = I - A_norm.
         edge_index, tmp = add_self_loops(edge_index, -edge_weight,
-                                         fill_value=1, num_nodes=num_nodes)
+                                         fill_value=1., num_nodes=num_nodes)
         assert tmp is not None
         edge_weight = tmp
 

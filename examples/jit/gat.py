@@ -7,21 +7,19 @@ import torch_geometric.transforms as T
 from torch_geometric.nn import GATConv
 
 dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data',
+                dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
-data = dataset[0]
 
 
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6)
-        self.conv1 = self.conv1.jittable(x=data.x, edge_index=data.edge_index)
+        self.conv1 = GATConv(dataset.num_features, 8, heads=8,
+                             dropout=0.6).jittable()
 
         self.conv2 = GATConv(64, dataset.num_classes, heads=1, concat=True,
-                             dropout=0.6)
-        self.conv2 = self.conv2.jittable(x=torch.randn(data.num_nodes, 64),
-                                         edge_index=data.edge_index)
+                             dropout=0.6).jittable()
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
@@ -32,7 +30,7 @@ class Net(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model, data = Net().to(device), data.to(device)
+model, data = Net().to(device), dataset[0].to(device)
 moel = torch.jit.script(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 

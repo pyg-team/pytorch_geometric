@@ -1,9 +1,12 @@
-from typing import Tuple, Optional
+from typing import Union, Tuple, Optional
+from torch_geometric.typing import (OptPairTensor, Adj, Size, NoneType,
+                                    OptTensor)
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter, Linear
 import torch.nn.functional as F
+from torch.nn import Parameter, Linear
+from torch_sparse import SparseTensor, set_diag
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
@@ -32,7 +35,8 @@ class GATConv(MessagePassing):
         \right)\right)}.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or tuple): Size of each input sample. A tuple
+            corresponds to the sizes of source and target dimensionalities.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -44,16 +48,20 @@ class GATConv(MessagePassing):
         dropout (float, optional): Dropout probability of the normalized
             attention coefficients which exposes each node to a stochastically
             sampled neighborhood during training. (default: :obj:`0`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    _alpha: Optional[Tensor]
+    _alpha: OptTensor
 
-    def __init__(self, in_channels, out_channels, heads=1, concat=True,
-                 negative_slope=0.2, dropout=0., bias=True, **kwargs):
-        super(GATConv, self).__init__(aggr='add', **kwargs)
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int, heads: int = 1, concat: bool = True,
+                 negative_slope: float = 0.2, dropout: float = 0.,
+                 add_self_loops: bool = True, bias: bool = True, **kwargs):
+        super(GATConv, self).__init__(aggr='add', node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -61,13 +69,17 @@ class GATConv(MessagePassing):
         self.concat = concat
         self.negative_slope = negative_slope
         self.dropout = dropout
+        self.add_self_loops = add_self_loops
 
-        self._alpha = None
+        if isinstance(in_channels, int):
+            self.lin_l = Linear(in_channels, heads * out_channels, bias=False)
+            self.lin_r = self.lin_l
+        else:
+            self.lin_l = Linear(in_channels[0], heads * out_channels, False)
+            self.lin_r = Linear(in_channels[1], heads * out_channels, False)
 
-        self.lin = Linear(in_channels, heads * out_channels, bias=False)
-
-        self.att_i = Parameter(torch.Tensor(1, heads, out_channels))
-        self.att_j = Parameter(torch.Tensor(1, heads, out_channels))
+        self.att_l = Parameter(torch.Tensor(1, heads, out_channels))
+        self.att_r = Parameter(torch.Tensor(1, heads, out_channels))
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -76,49 +88,69 @@ class GATConv(MessagePassing):
         else:
             self.register_parameter('bias', None)
 
+        self._alpha = None
+
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.lin.weight)
-        glorot(self.att_i)
-        glorot(self.att_j)
+        glorot(self.lin_l.weight)
+        glorot(self.lin_r.weight)
+        glorot(self.att_l)
+        glorot(self.att_r)
         zeros(self.bias)
 
-    @torch.jit._overload_method
-    def forward(self, x, edge_index, return_attention_weights=None):
-        # type: (Tensor, Tensor, Optional[Tensor]) -> Tensor
-        pass
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                size: Size = None, return_attention_weights=None):
+        # type: (Union[Tensor, OptPairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+        r"""
 
-    @torch.jit._overload_method
-    def forward(self, x, edge_index, return_attention_weights=None):
-        # type: (Tensor, Tensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]
-        pass
-
-    def forward(self, x, edge_index, return_attention_weights=None):
-        r""""
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
                 :obj:`(edge_index, attention_weights)`, holding the computed
                 attention weights for each edge. (default: :obj:`None`)
         """
+        H, C = self.heads, self.out_channels
 
-        x_prop: Tuple[Tensor, Tensor] = (x, x)  # Dummy.
-        if isinstance(x, torch.Tensor):
-            x = self.lin(x)
-            x_prop = (x, x)
+        x_l: OptTensor = None
+        x_r: OptTensor = None
+        alpha_l: OptTensor = None
+        alpha_r: OptTensor = None
+        if isinstance(x, Tensor):
+            assert x.dim() == 2, 'Static graphs not supported in `GATConv`.'
+            x_l = x_r = self.lin_l(x).view(-1, H, C)
+            alpha_l = alpha_r = (x_l * self.att_l).sum(dim=-1)
         else:
-            x_prop = (self.lin(x[0]), self.lin(x[1]))
+            x_l, x_r = x[0], x[1]
+            assert x[0].dim() == 2, 'Static graphs not supported in `GATConv`.'
+            x_l = self.lin_l(x_l).view(-1, H, C)
+            alpha_l = (x_l * self.att_l).sum(dim=-1)
+            if x_r is not None:
+                x_r = self.lin_r(x_r).view(-1, H, C)
+                alpha_r = (x_r * self.att_r).sum(dim=-1)
 
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index, _ = add_self_loops(edge_index,
-                                       num_nodes=x_prop[1].size(self.node_dim))
+        assert x_l is not None
+        assert alpha_l is not None
 
-        out = self.propagate(edge_index, x=x_prop)
+        if self.add_self_loops:
+            if isinstance(edge_index, Tensor):
+                num_nodes = x_l.size(0)
+                num_nodes = size[1] if size is not None else num_nodes
+                num_nodes = x_r.size(0) if x_r is not None else num_nodes
+                edge_index, _ = remove_self_loops(edge_index)
+                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+            elif isinstance(edge_index, SparseTensor):
+                edge_index = set_diag(edge_index)
+
+        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
+        out = self.propagate(edge_index, x=(x_l, x_r),
+                             alpha=(alpha_l, alpha_r), size=size)
 
         alpha = self._alpha
         self._alpha = None
-        assert alpha is not None
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -129,25 +161,23 @@ class GATConv(MessagePassing):
             out += self.bias
 
         if isinstance(return_attention_weights, bool):
-            return out, (edge_index, alpha)
+            assert alpha is not None
+            if isinstance(edge_index, Tensor):
+                return out, (edge_index, alpha)
+            elif isinstance(edge_index, SparseTensor):
+                return out, edge_index.set_value(alpha, layout='coo')
         else:
             return out
 
-    def message(self, x_i: Tensor, x_j: Tensor, edge_index_i: Tensor,
-                size_i: Optional[int]):
-        # Compute attention coefficients.
-        x_i = x_i.view(-1, self.heads, self.out_channels)
-        x_j = x_j.view(-1, self.heads, self.out_channels)
-
-        alpha = (x_i * self.att_i).sum(-1) + (x_j * self.att_j).sum(-1)
+    def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
+                index: Tensor, ptr: OptTensor,
+                size_i: Optional[int]) -> Tensor:
+        alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = softmax(alpha, edge_index_i, size_i)
+        alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
-
-        # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-
-        return x_j * alpha.view(-1, self.heads, 1)
+        return x_j * alpha.unsqueeze(-1)
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,

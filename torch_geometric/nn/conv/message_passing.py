@@ -1,22 +1,24 @@
+import os
 import re
-import sys
 import inspect
+import os.path as osp
 from uuid import uuid1
-from tempfile import NamedTemporaryFile
-from typing import List, Tuple, Optional
-from importlib.util import spec_from_file_location, module_from_spec
+from itertools import chain
+from inspect import Parameter
+from typing import List, Optional, Set
+from torch_geometric.typing import Adj, Size
 
 import torch
+from torch import Tensor
+from jinja2 import Template
 from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
 
-from .utils.helpers import unsqueeze
-from .utils.inspector import Inspector, get_type
-
-special_args = set([
-    'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr', 'index',
-    'dim_size'
-])
+from .utils.helpers import expand_left
+from .utils.jit import class_from_module_repr
+from .utils.typing import (sanitize, split_types_repr, parse_types,
+                           resolve_types)
+from .utils.inspector import Inspector, func_header_repr, func_body_repr
 
 
 class MessagePassing(torch.nn.Module):
@@ -42,10 +44,17 @@ class MessagePassing(torch.nn.Module):
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
         node_dim (int, optional): The axis along which to propagate.
-            (default: :obj:`0`)
+            (default: :obj:`-2`)
     """
+
+    special_args: Set[str] = set([
+        'edge_index_i', 'edge_index_j', 'size_i', 'size_j', 'ptr', 'index',
+        'dim_size'
+    ])
+
     def __init__(self, aggr: str = "add", flow: str = "source_to_target",
-                 node_dim: int = 0):
+                 node_dim: int = -2):
+
         super(MessagePassing, self).__init__()
 
         self.aggr = aggr
@@ -55,7 +64,6 @@ class MessagePassing(torch.nn.Module):
         assert self.flow in ['source_to_target', 'target_to_source']
 
         self.node_dim = node_dim
-        assert self.node_dim >= 0
 
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
@@ -63,7 +71,10 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
 
-        self.__user_args__ = self.inspector.keys().difference(special_args)
+        self.__user_args__ = self.inspector.keys(
+            ['message', 'aggregate', 'update']).difference(self.special_args)
+        self.__fused_user_args__ = self.inspector.keys(
+            ['message_and_aggregate', 'update']).difference(self.special_args)
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -72,198 +83,100 @@ class MessagePassing(torch.nn.Module):
         self.__explain__ = False
         self.__edge_mask__ = None
 
-        # Support for TorchScript.
-        self.__record_propagate__ = False
-        self.__records__ = None
-
-    def __determine_type_and_size__(self, edge_index, size):
+    def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 
-        if isinstance(edge_index, torch.Tensor):
+        if isinstance(edge_index, Tensor):
             assert edge_index.dtype == torch.long
             assert edge_index.dim() == 2
             assert edge_index.size(0) == 2
             if size is not None:
                 the_size[0] = size[0]
                 the_size[1] = size[1]
-            return 'edge_index', the_size
+            return the_size
 
         elif isinstance(edge_index, SparseTensor):
             if self.flow == 'target_to_source':
                 raise ValueError(
                     ('Flow direction "target_to_source" is invalid for '
                      'message propagation via `torch_sparse.SparseTensor`. If '
-                     'you  really want to make use of a reverse message '
+                     'you really want to make use of a reverse message '
                      'passing flow, pass in the transposed sparse tensor to '
-                     'the message passing module, e.g., `adj.t()`.'))
-
+                     'the message passing module, e.g., `adj_t.t()`.'))
             the_size[0] = edge_index.sparse_size(1)
             the_size[1] = edge_index.sparse_size(0)
-            return 'adj_t', the_size
+            return the_size
 
-        else:
+        raise ValueError(
+            ('`MessagePassing.propagate` only supports `torch.LongTensor` of '
+             'shape `[2, num_messages]` or `torch_sparse.SparseTensor` for '
+             'argument `edge_index`.'))
+
+    def __set_size__(self, size: List[Optional[int]], dim: int, src: Tensor):
+        the_size = size[dim]
+        if the_size is None:
+            size[dim] = src.size(self.node_dim)
+        elif the_size != src.size(self.node_dim):
             raise ValueError(
-                ('`MessagePassing.propagate` only supports `torch.LongTensor` '
-                 'of shape `[2, num_messages]` or `torch_sparse.SparseTensor` '
-                 'for argument :obj:`edge_index`.'))
+                (f'Encountered tensor with size {src.size(self.node_dim)} in '
+                 f'dimension {self.node_dim}, but expected size {the_size}.'))
 
-    def __set_size__(self, size: List[Optional[int]], idx: int,
-                     tensor: Optional[torch.Tensor]):
-        if not isinstance(tensor, torch.Tensor):
-            pass
-        elif size[idx] is None:
-            assert tensor is not None
-            size[idx] = tensor.size(self.node_dim)
-        else:
-            the_size = size[idx]
-            assert the_size is not None
-            if the_size != tensor.size(self.node_dim):
-                raise ValueError((f'Encountered node tensor with size '
-                                  f'{tensor.size(self.node_dim)} '
-                                  f'in dimension {self.node_dim}, '
-                                  f'but expected size {size[idx]}.'))
+    def __lift__(self, src, edge_index, dim):
+        if isinstance(edge_index, Tensor):
+            index = edge_index[dim]
+            return src.index_select(self.node_dim, index)
+        elif isinstance(edge_index, SparseTensor):
+            if dim == 1:
+                rowptr = edge_index.storage.rowptr()
+                rowptr = expand_left(rowptr, dim=self.node_dim, dims=src.dim())
+                return gather_csr(src, rowptr)
+            elif dim == 0:
+                col = edge_index.storage.col()
+                return src.index_select(self.node_dim, col)
+        raise ValueError
 
-    def __collect__(self, edge_index, size, mp_type, kwargs):
-        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
-        ij = {'_i': i, '_j': j}
+    def __collect__(self, args, edge_index, size, kwargs):
+        i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 
         out = {}
-        for arg in self.__user_args__:
-            if arg[-2:] not in ij.keys():
-                out[arg] = kwargs.get(arg, inspect.Parameter.empty)
+        for arg in args:
+            if arg[-2:] not in ['_i', '_j']:
+                out[arg] = kwargs.get(arg, Parameter.empty)
             else:
-                idx = ij[arg[-2:]]
-                data = kwargs.get(arg[:-2], inspect.Parameter.empty)
-
-                if data is inspect.Parameter.empty:
-                    out[arg] = data
-                    continue
+                dim = 0 if arg[-2:] == '_j' else 1
+                data = kwargs.get(arg[:-2], Parameter.empty)
 
                 if isinstance(data, (tuple, list)):
                     assert len(data) == 2
-                    self.__set_size__(size, 1 - idx, data[1 - idx])
-                    data = data[idx]
+                    if isinstance(data[1 - dim], Tensor):
+                        self.__set_size__(size, 1 - dim, data[1 - dim])
+                    data = data[dim]
 
-                if not isinstance(data, torch.Tensor):
-                    out[arg] = data
-                    continue
+                if isinstance(data, Tensor):
+                    self.__set_size__(size, dim, data)
+                    data = self.__lift__(data, edge_index,
+                                         j if arg[-2:] == '_j' else i)
 
-                self.__set_size__(size, idx, data)
+                out[arg] = data
 
-                if mp_type == 'edge_index':
-                    out[arg] = data.index_select(self.node_dim,
-                                                 edge_index[idx])
-                elif mp_type == 'adj_t' and idx == 1:
-                    rowptr = edge_index.storage.rowptr()
-                    rowptr = unsqueeze(rowptr, dim=0, length=self.node_dim)
-                    out[arg] = gather_csr(data, rowptr)
-                elif mp_type == 'adj_t' and idx == 0:
-                    col = edge_index.storage.col()
-                    out[arg] = data.index_select(self.node_dim, col)
-
-        size[0] = size[1] if size[0] is None else size[0]
-        size[1] = size[0] if size[1] is None else size[1]
-
-        if mp_type == 'edge_index':
-            out['edge_index_j'] = edge_index[j]
+        if isinstance(edge_index, Tensor):
             out['edge_index_i'] = edge_index[i]
-            out['index'] = out['edge_index_i']
-        elif mp_type == 'adj_t':
+            out['edge_index_j'] = edge_index[j]
+            out['ptr'] = None
+        elif isinstance(edge_index, SparseTensor):
             out['edge_index_i'] = edge_index.storage.row()
             out['edge_index_j'] = edge_index.storage.col()
-            out['index'] = edge_index.storage.row()
             out['ptr'] = edge_index.storage.rowptr()
-            out['edge_attr'] = edge_index.storage.value()
+            out['edge_attr'] = out['edge_weight'] = edge_index.storage.value()
 
-        out['size_j'] = size[j]
-        out['size_i'] = size[i]
+        out['index'] = out['edge_index_i']
+        out['size_i'] = size[1] or size[0]
+        out['size_j'] = size[0] or size[1]
         out['dim_size'] = out['size_i']
 
         return out
 
-    def __trace_collect__(self, edge_index, size, mp_type, kwargs):
-        lines = []
-
-        i, j = (0, 1) if self.flow == 'target_to_source' else (1, 0)
-        ij = {'_i': i, '_j': j}
-
-        lines += [('i, j = (0, 1) if self.flow == "target_to_source"'
-                   ' else (1, 0)')]
-        lines += ['ij = {"_i": i, "_j": j}']
-
-        for arg in self.__user_args__:
-            if arg[-2:] not in ij.keys():
-                lines += [f'{arg}_out = kwargs.{arg}']
-            else:
-                lines += [f'idx = ij["{arg[-2:]}"]']
-                idx = ij[arg[-2:]]
-                data = kwargs.get(arg[:-2], inspect.Parameter.empty)
-
-                if data is inspect.Parameter.empty:
-                    lines += [f'{arg}_out = None']
-                    continue
-
-                lines += [f'data = kwargs.{arg[:-2]}']
-
-                if isinstance(data, (tuple, list)):
-                    assert len(data) == 2
-                    lines += [('self.__set_size__(size, 1 - idx, '
-                               'data[1 - idx])')]
-                    lines += ['data = data[idx]']
-                    data = data[idx]
-
-                if not isinstance(data, torch.Tensor):
-                    lines += [f'{arg}_out = data']
-                    continue
-
-                lines += ['self.__set_size__(size, idx, data)']
-
-                if mp_type == 'edge_index':
-                    lines += [(f'{arg}_out = data.index_select('
-                               f'self.node_dim, edge_index[idx])')]
-                elif mp_type == 'adj_t' and idx == 1:
-                    lines += ['rowptr = edge_index.storage.rowptr()']
-                    lines += [('rowptr = unsqueeze(rowptr, dim=0, '
-                               'length=self.node_dim)')]
-                    lines += [f'{arg}_out = gather_csr(data, rowptr)']
-                elif mp_type == 'adj_t' and idx == 0:
-                    lines += ['col = edge_index.storage.col()']
-                    lines += [(f'{arg}_out = data.index_select('
-                               f'self.node_dim, col)')]
-
-        lines += ['size[0] = size[1] if size[0] is None else size[0]']
-        lines += ['size[1] = size[0] if size[1] is None else size[1]']
-
-        if mp_type == 'edge_index':
-            lines += ['edge_index_j_out = edge_index[j]']
-            lines += ['edge_index_i_out = edge_index[i]']
-            lines += ['ptr_out: Optional[torch.Tensor] = None']
-        elif mp_type == 'adj_t':
-            lines += ['edge_index_i_out = edge_index.storage.row()']
-            lines += ['edge_index_j_out = edge_index.storage.col()']
-            lines += ['ptr_out = edge_index.storage.rowptr()']
-            lines += ['edge_attr_out = edge_index.storage.value()']
-
-        lines += ['index_out = edge_index_i_out']
-        lines += ['size_j_out = size[j]']
-        lines += ['size_i_out = size[i]']
-        lines += ['dim_size_out = size_i_out']
-
-        return lines
-
-    def __distribute__(self, params, kwargs):
-        out = {}
-        for key, param in params.items():
-            data = kwargs.get(key, inspect.Parameter.empty)
-            if data is inspect.Parameter.empty:
-                if param.default is inspect.Parameter.empty:
-                    raise TypeError(f'Required parameter {key} is empty.')
-                data = param.default
-            out[key] = data
-        return out
-
-    def propagate(self, edge_index, size: Optional[Tuple[int, int]] = None,
-                  **kwargs):
+    def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
         r"""The initial call to start propagating messages.
 
         Args:
@@ -293,52 +206,49 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
-        mp_type, size = self.__determine_type_and_size__(edge_index, size)
+        size = self.__check_input__(edge_index, size)
 
-        # We collect all arguments used for message passing in `kwargs`.
-        coll_dict = self.__collect__(edge_index, size, mp_type, kwargs)
+        # Run "fused" message and aggregation (if applicable).
+        if (isinstance(edge_index, SparseTensor) and self.fuse
+                and not self.__explain__):
+            coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
+                                         size, kwargs)
 
-        if mp_type == 'adj_t' and self.fuse and not self.__explain__:
-            msg_aggr_kwargs = self.__distribute__(
-                self.inspector.params['message_and_aggregate'], coll_dict)
+            msg_aggr_kwargs = self.inspector.distribute(
+                'message_and_aggregate', coll_dict)
             out = self.message_and_aggregate(edge_index, **msg_aggr_kwargs)
 
+            update_kwargs = self.inspector.distribute('update', coll_dict)
+            return self.update(out, **update_kwargs)
+
         # Otherwise, run both functions in separation.
-        elif mp_type == 'edge_index' or not self.fuse or self.__explain__:
-            msg_kwargs = self.__distribute__(self.inspector.params['message'],
-                                             coll_dict)
+        elif isinstance(edge_index, Tensor) or not self.fuse:
+            coll_dict = self.__collect__(self.__user_args__, edge_index, size,
+                                         kwargs)
+
+            msg_kwargs = self.inspector.distribute('message', coll_dict)
             out = self.message(**msg_kwargs)
 
-            # For `GNNExplainer`, we require separate a separate message and
-            # aggregate procedure since this allows us to easily inject an
-            # `edge_mask` into the message passing computation.
+            # For `GNNExplainer`, we require a separate message and aggregate
+            # procedure since this allows us to inject the `edge_mask` into the
+            # message passing computation scheme.
             if self.__explain__:
                 edge_mask = self.__edge_mask__.sigmoid()
+                # Some ops add self-loops to `edge_index`. We need to do the
+                # same for `edge_mask` (but do not train those).
                 if out.size(0) != edge_mask.size(0):
                     loop = edge_mask.new_ones(size[0])
                     edge_mask = torch.cat([edge_mask, loop], dim=0)
                 assert out.size(0) == edge_mask.size(0)
                 out = out * edge_mask.view(-1, 1)
 
-            aggr_kwargs = self.__distribute__(
-                self.inspector.params['aggregate'], coll_dict)
+            aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
             out = self.aggregate(out, **aggr_kwargs)
 
-        update_kwargs = self.__distribute__(self.inspector.params['update'],
-                                            coll_dict)
-        out = self.update(out, **update_kwargs)
+            update_kwargs = self.inspector.distribute('update', coll_dict)
+            return self.update(out, **update_kwargs)
 
-        if self.__record_propagate__:
-            lines = self.__trace_collect__(edge_index, size, mp_type, kwargs)
-            self.__records__ = {
-                'mp_type': type(edge_index).__name__,
-                'prop_kwargs': kwargs,
-                'traced_collect': lines,
-            }
-
-        return out
-
-    def message(self, x_j: torch.Tensor) -> torch.Tensor:
+    def message(self, x_j: Tensor) -> Tensor:
         r"""Constructs messages from node :math:`j` to node :math:`i`
         in analogy to :math:`\phi_{\mathbf{\Theta}}` for each edge in
         :obj:`edge_index`.
@@ -350,9 +260,9 @@ class MessagePassing(torch.nn.Module):
         """
         return x_j
 
-    def aggregate(self, inputs: torch.Tensor, index: torch.Tensor,
-                  ptr: Optional[torch.Tensor] = None,
-                  dim_size: Optional[int] = None) -> torch.Tensor:
+    def aggregate(self, inputs: Tensor, index: Tensor,
+                  ptr: Optional[Tensor] = None,
+                  dim_size: Optional[int] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
         :math:`\square_{j \in \mathcal{N}(i)}`.
 
@@ -364,13 +274,13 @@ class MessagePassing(torch.nn.Module):
         :meth:`__init__` by the :obj:`aggr` argument.
         """
         if ptr is not None:
-            ptr = unsqueeze(ptr, dim=0, length=self.node_dim)
+            ptr = expand_left(ptr, dim=self.node_dim, dims=inputs.dim())
             return segment_csr(inputs, ptr, reduce=self.aggr)
         else:
             return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
                            reduce=self.aggr)
 
-    def message_and_aggregate(self, adj_t: SparseTensor) -> torch.Tensor:
+    def message_and_aggregate(self, adj_t: SparseTensor) -> Tensor:
         r"""Fuses computations of :func:`message` and :func:`aggregate` into a
         single function.
         If applicable, this saves both time and memory since messages do not
@@ -380,7 +290,7 @@ class MessagePassing(torch.nn.Module):
         """
         raise NotImplementedError
 
-    def update(self, inputs: torch.Tensor):
+    def update(self, inputs: Tensor) -> Tensor:
         r"""Updates node embeddings in analogy to
         :math:`\gamma_{\mathbf{\Theta}}` for each node
         :math:`i \in \mathcal{V}`.
@@ -390,158 +300,83 @@ class MessagePassing(torch.nn.Module):
         return inputs
 
     @torch.jit.unused
-    def __create_jittable_class__(self, mp_type, prop_kwargs, traced_collect):
-        """Defines a new base class that replaces the `propagate` method."""
+    def jittable(self, typing: Optional[str] = None):
+        r"""Analyzes the :class:`MessagePassing` instance and produces a new
+        jittable module.
 
-        uid = uuid1().hex
+        Args:
+            typing (string, optional): If given, will generate a concrete
+                instance with :meth:`forward` types based on :obj:`typing`,
+                *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
+        """
+        # Find and parse `propagate()` types to format `{arg1: type1, ...}`.
+        if hasattr(self, 'propagate_type'):
+            prop_types = {
+                k: sanitize(str(v))
+                for k, v in self.propagate_type.items()
+            }
+        else:
+            source = inspect.getsource(self.__class__)
+            match = re.search(r'#\s*propagate_type:\s*\((.*)\)', source)
+            if match is None:
+                raise TypeError(
+                    'TorchScript support requires the definition of the types '
+                    'passed to `propagate()`. Please specificy them via\n\n'
+                    'propagate_type: {"arg1": type1, "arg2": type2, ... }\n\n'
+                    'or via\n\n'
+                    '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
+                    'inside the `MessagePassing` module.')
+            prop_types = split_types_repr(match.group(1))
+            prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
-        # `propagate` substitution.
-        prop_types = [f'{k}: {get_type(v)}' for k, v in prop_kwargs.items()]
-        prop_tuple_def = f'class Propagate_{uid}(NamedTuple):\n'
-        prop_tuple_def += '\n'.join([' ' * 4 + x for x in prop_types])
-        prop_types = ', '.join(prop_types)
-        prop_args = ', '.join([f'{key}={key}' for key in prop_kwargs.keys()])
+        # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
+        collect_types = self.inspector.types(
+            ['message', 'aggregate', 'update'])
 
-        # `__collect__` substitution.
-        collect_body = traced_collect
-        args = ['{0}={0}_out'.format(key) for key in self.inspector.keys()]
-        collect_body += ['return Collect_{}({})'.format(uid, ', '.join(args))]
-        collect_body = '\n'.join([' ' * 8 + x for x in collect_body])
-        collector_tuple_def = self.inspector.to_named_tuple(f'Collect_{uid}')
+        # Collect `forward()` header, body and @overload types.
+        forward_types = parse_types(self.forward)
+        forward_types = [resolve_types(*types) for types in forward_types]
+        forward_types = list(chain.from_iterable(forward_types))
 
-        # `message`, `aggregate` and `update` header substitutions.
-        def render_args(args):
-            return ', '.join([f'{arg}=kwargs.{arg}' for arg in args])
+        keep_annotation = len(forward_types) < 2
+        forward_header = func_header_repr(self.forward, keep_annotation)
+        forward_body = func_body_repr(self.forward, keep_annotation)
 
-        msg_args = render_args(self.inspector.keys(['message']))
-        aggr_args = render_args(self.inspector.keys(['aggregate']))
-        msg_aggr_args = render_args(
-            self.inspector.keys(['message_and_aggregate']))
-        update_args = render_args(self.inspector.keys(['update']))
+        if keep_annotation:
+            forward_types = []
+        elif typing is not None:
+            forward_types = []
+            forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
 
-        # Get `__determine_type_and_size__` source code to allow overloads.
-        determine = inspect.getsource(self.__determine_type_and_size__)
+        root = os.path.dirname(osp.realpath(__file__))
+        with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
+            template = Template(f.read())
 
-        # Get `forward` source code with potential overloads.
-        REGEX = r'    @torch.jit._overload_method\s*def forward\(.*?pass'
-        REGEX = re.compile(REGEX, re.DOTALL)
-        overloads = re.findall(REGEX, inspect.getsource(self.__class__))
-        forward = inspect.getsource(self.forward)
-        forward = '\n\n'.join(overloads + [forward])
-
-        jit_module_repr = propagate_jittable_string.format(
+        uid = uuid1().hex[:6]
+        cls_name = f'{self.__class__.__name__}Jittable_{uid}'
+        jit_module_repr = template.render(
             uid=uid,
-            module=self.__class__.__module__,
-            clsname=self.__class__.__name__,
-            mp_type=mp_type,
-            prop_tuple_def=prop_tuple_def,
+            module=str(self.__class__.__module__),
+            cls_name=cls_name,
+            parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
-            prop_args=prop_args,
-            collector_tuple_def=collector_tuple_def,
-            collect_body=collect_body,
-            msg_args=msg_args,
-            aggr_args=aggr_args,
-            msg_aggr_args=msg_aggr_args,
-            update_args=update_args,
-            determine_type_and_size=determine,
-            forward=forward,
+            collect_types=collect_types,
+            user_args=self.__user_args__,
+            forward_header=forward_header,
+            forward_types=forward_types,
+            forward_body=forward_body,
+            msg_args=self.inspector.keys(['message']),
+            aggr_args=self.inspector.keys(['aggregate']),
+            msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),
+            update_args=self.inspector.keys(['update']),
+            check_input=inspect.getsource(self.__check_input__)[:-1],
+            lift=inspect.getsource(self.__lift__)[:-1],
         )
 
-        ftemp = NamedTemporaryFile(mode='w+', encoding='utf-8', suffix='.py',
-                                   delete=False)
-        ftemp.write(jit_module_repr)
-        ftemp.close()
-        modname = f'{self.__class__.__name__}Jittable_{uid}'
-        spec = spec_from_file_location(modname, ftemp.name)
-        mod = module_from_spec(spec)
-        sys.modules[modname] = mod
-        spec.loader.exec_module(mod)
-        return getattr(mod, f'{self.__class__.__name__}Jittable_{uid}')
+        # Instantiate a class from the rendered JIT module representation.
+        cls = class_from_module_repr(cls_name, jit_module_repr)
+        module = cls.__new__(cls)
+        module.__dict__ = self.__dict__.copy()
+        module.jittable = None
 
-    @torch.jit.unused
-    def jittable(self, **kwargs):
-        r"""Analyzes the :obj:`MessagePassing` module and produces a new
-        jittable module."""
-
-        # Run a partial trace of `forward` to gather type information.
-        self.__record_propagate__ = True
-
-        # Some operators make use of caches, we need to disable them.
-        self._cache = None
-
-        with torch.no_grad():
-            self.forward(**kwargs)
-
-        # Some operators make use of caches, we need to disable them again.
-        self._cache = None
-
-        # In case `propagate` never gets called, just return the current
-        # instance.
-        if self.__records__ is None:
-            return self
-
-        mp_type = self.__records__['mp_type']
-        prop_kwargs = self.__records__['prop_kwargs']
-        traced_collect = self.__records__['traced_collect']
-
-        self.__record_propagate__ = False
-        self.__records__ = None
-
-        cls = self.__create_jittable_class__(mp_type, prop_kwargs,
-                                             traced_collect)
-
-        out = cls.__new__(cls)
-        out.__dict__ = self.__dict__.copy()
-        return out
-
-
-propagate_jittable_string = """
-from typing import List, Tuple, Optional, NamedTuple
-
-import torch
-from torch import Tensor
-import torch_sparse
-from torch_sparse import SparseTensor
-from {module} import *
-
-{prop_tuple_def}
-
-{collector_tuple_def}
-
-class {clsname}Jittable_{uid}({clsname}):
-    @torch.jit._overload_method
-    def __determine_type_and_size__(self, edge_index, size):
-        # type: (Tensor, Optional[Tuple[int, int]]) -> Tuple[str, List[Optional[int]]]  # noqa: E501
-        pass
-
-    @torch.jit._overload_method
-    def __determine_type_and_size__(self, edge_index, size):
-        # type: (SparseTensor, Optional[Tuple[int, int]]) -> Tuple[str, List[Optional[int]]]  # noqa: E501
-        pass
-
-{determine_type_and_size}
-
-    def __collect__(self, edge_index: {mp_type},
-                    size: List[Optional[int]], mp_type: str,
-                    kwargs: Propagate_{uid}):
-{collect_body}
-
-    def propagate(self, edge_index: {mp_type}, {prop_types},
-                  size: Optional[Tuple[int, int]] = None):
-
-        in_kwargs = Propagate_{uid}({prop_args})
-
-        mp_type, the_size = self.__determine_type_and_size__(edge_index, size)
-        kwargs = self.__collect__(edge_index, the_size, mp_type, in_kwargs)
-
-        if self.fuse:
-            if isinstance(edge_index, SparseTensor):
-                out = self.message_and_aggregate(edge_index, {msg_aggr_args})
-                return self.update(out, {update_args})
-
-        out = self.message({msg_args})
-        out = self.aggregate(out, {aggr_args})
-        return self.update(out, {update_args})
-
-{forward}
-"""
+        return module

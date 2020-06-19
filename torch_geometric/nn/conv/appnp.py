@@ -39,12 +39,14 @@ class APPNP(MessagePassing):
     def forward(self, x, edge_index,
                 edge_weight: Optional[torch.Tensor] = None):
         """"""
-        edge_index, norm = gcn_norm(edge_index, x.size(self.node_dim),
-                                    edge_weight, dtype=x.dtype)
+        edge_index, norm = gcn_norm(edge_index, edge_weight,
+                                    num_nodes=x.size(self.node_dim),
+                                    dtype=x.dtype)
 
         hidden = x
         for k in range(self.K):
-            x = self.propagate(edge_index, x=x, norm=norm)
+            # propagate_type: (x: Tensor, norm: Tensor)
+            x = self.propagate(edge_index, x=x, norm=norm, size=None)
             x = x * (1 - self.alpha)
             x = x + self.alpha * hidden
 

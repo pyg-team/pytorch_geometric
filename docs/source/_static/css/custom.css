@@ -6,3 +6,22 @@
 .wy-side-nav-search > div.version {
   color: #000;
 }
+
+em.sig-param span.n:first-child, em.sig-param span.n:nth-child(2) {
+  color: black;
+  font-style: normal;
+}
+
+em.sig-param span.n:nth-child(3),
+em.sig-param span.n:nth-child(3) a {
+  color: inherit;
+  font-weight: normal;
+  font-style: normal;
+}
+
+em.sig-param span.default_value {
+}
+
+.sig-paren {
+  padding: 0 1px;
+}

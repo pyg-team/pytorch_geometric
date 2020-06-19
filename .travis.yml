@@ -7,7 +7,6 @@ os:
 
 env:
   jobs:
-    - TORCH_VERSION=1.4.0 PYTHON_VERSION=3.8 IDX=cpu
     - TORCH_VERSION=1.5.0 PYTHON_VERSION=3.8 IDX=cpu
 
 install:
@@ -26,7 +25,7 @@ install:
   - pip install trimesh
   - pip install flake8 codecov
   - pip install sphinx sphinx_rtd_theme
-  - python setup.py install
+  - pip install .[test]
 script:
   - flake8 .
   - python setup.py test

@@ -1,5 +1,6 @@
 import math
 from typing import Optional, Tuple
+from torch_geometric.typing import OptTensor
 
 import torch
 from torch.nn import Parameter
@@ -219,7 +220,7 @@ class DNAConv(MessagePassing):
 
     def __init__(self, channels, heads=1, groups=1, dropout=0., cached=False,
                  bias=True, **kwargs):
-        super(DNAConv, self).__init__(aggr='add', **kwargs)
+        super(DNAConv, self).__init__(aggr='add', node_dim=0, **kwargs)
 
         self.bias = bias
         self.cached = cached
@@ -233,8 +234,7 @@ class DNAConv(MessagePassing):
         self.multi_head.reset_parameters()
         self._cache = None
 
-    def __norm__(self, x, edge_index,
-                 edge_weight: Optional[torch.Tensor] = None):
+    def __norm__(self, x, edge_index, edge_weight: OptTensor = None):
 
         cache = self._cache
         if cache is not None:
@@ -248,16 +248,16 @@ class DNAConv(MessagePassing):
 
         num_edges = edge_index.size(1)
 
-        edge_index, edge_weight = gcn_norm(edge_index, x.size(self.node_dim),
-                                           edge_weight, dtype=x.dtype)
+        edge_index, edge_weight = gcn_norm(edge_index, edge_weight,
+                                           num_nodes=x.size(self.node_dim),
+                                           dtype=x.dtype)
 
         if self.cached:
             self._cache = (num_edges, edge_index, edge_weight)
 
         return edge_index, edge_weight
 
-    def forward(self, x, edge_index,
-                edge_weight: Optional[torch.Tensor] = None):
+    def forward(self, x, edge_index, edge_weight: OptTensor = None):
         """"""
         # x: [num_nodes, num_layers, channels]
         # edge_index: [2, num_edges]
@@ -268,7 +268,8 @@ class DNAConv(MessagePassing):
                              'channels].')
 
         edge_index, norm = self.__norm__(x, edge_index, edge_weight)
-        return self.propagate(edge_index, x=x, norm=norm)
+        # propagate_type: (x: Tensor, norm: Tensor)
+        return self.propagate(edge_index, x=x, norm=norm, size=None)
 
     def message(self, x_i, x_j, norm):
         # x_i: [num_edges, num_layers, channels]
