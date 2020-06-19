@@ -39,7 +39,7 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
          $ pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
          $ pip install torch-geometric
 
-    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your respective CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`), respectively.
+    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`), respectively.
 
 Installation from Source
 ------------------------
