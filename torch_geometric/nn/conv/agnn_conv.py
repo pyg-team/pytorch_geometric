@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 from torch.nn import Parameter
 import torch.nn.functional as F
@@ -52,14 +54,14 @@ class AGNNConv(MessagePassing):
 
         x_norm = F.normalize(x, p=2., dim=-1)
 
-        # propagate_type: (x: Tensor, x_norm: Tensor, num_nodes: int)
-        return self.propagate(edge_index, x=x, x_norm=x_norm,
-                              num_nodes=x.size(self.node_dim), size=None)
+        # propagate_type: (x: Tensor, x_norm: Tensor)
+        return self.propagate(edge_index, x=x, x_norm=x_norm, size=None)
 
-    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j, num_nodes: int):
+    def message(self, edge_index_i, x_j, x_norm_i, x_norm_j,
+                size_i: Optional[int]):
         # Compute attention coefficients.
         alpha = self.beta * (x_norm_i * x_norm_j).sum(dim=-1)
-        alpha = softmax(alpha, edge_index_i, num_nodes=num_nodes)
+        alpha = softmax(alpha, edge_index_i, num_nodes=size_i)
         return x_j * alpha.view(-1, 1)
 
     def __repr__(self):
