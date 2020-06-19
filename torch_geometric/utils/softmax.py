@@ -26,12 +26,10 @@ def softmax(src: Tensor, index: Tensor, ptr: Optional[Tensor] = None,
         N = maybe_num_nodes(index, num_nodes)
         out = scatter(src, index, dim=0, dim_size=N, reduce='max')[index]
         out = out.exp()
-        out_sum = scatter(out, index, dim=0, dim_size=N, reduce='sum')
-        out = out / (out_sum[index] + 1e-16)
-        return out
+        out_sum = scatter(out, index, dim=0, dim_size=N, reduce='sum')[index]
+        return out / (out_sum + 1e-16)
     else:
         out = gather_csr(segment_csr(src, ptr, reduce='max'), ptr)
         out = out.exp()
-        out_sum = segment_csr(out, ptr, reduce='sum')
-        out = out / (gather_csr(out_sum, ptr) + 1e-16)
-        return out
+        out_sum = gather_csr(segment_csr(out, ptr, reduce='sum'), ptr)
+        return out / (out_sum + 1e-16)

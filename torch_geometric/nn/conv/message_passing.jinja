@@ -123,13 +123,13 @@ class {{cls_name}}({{parent_cls_name}}):
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
         the_size = self.__check_input__(edge_index, size)
         in_kwargs = Propagate_{{uid}}({% for k in prop_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
-        kwargs = self.__collect__(edge_index, the_size, in_kwargs)
 
         if self.fuse:
             if isinstance(edge_index, SparseTensor):
-                out = self.message_and_aggregate(edge_index{% for k in msg_and_aggr_args %}, {{k}}=kwargs.{{k}}{% endfor %})
-                return self.update(out{% for k in update_args %}, {{k}}=kwargs.{{k}}{% endfor %})
+                out = self.message_and_aggregate(edge_index{% for k in msg_and_aggr_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
+                return self.update(out{% for k in update_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
 
+        kwargs = self.__collect__(edge_index, the_size, in_kwargs)
         out = self.message({% for k in msg_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
         out = self.aggregate(out{% for k in aggr_args %}, {{k}}=kwargs.{{k}}{% endfor %})
         return self.update(out{% for k in update_args %}, {{k}}=kwargs.{{k}}{% endfor %})

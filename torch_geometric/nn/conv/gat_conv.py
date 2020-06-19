@@ -48,6 +48,8 @@ class GATConv(MessagePassing):
         dropout (float, optional): Dropout probability of the normalized
             attention coefficients which exposes each node to a stochastically
             sampled neighborhood during training. (default: :obj:`0`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -58,7 +60,7 @@ class GATConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, heads: int = 1, concat: bool = True,
                  negative_slope: float = 0.2, dropout: float = 0.,
-                 bias: bool = True, **kwargs):
+                 add_self_loops: bool = True, bias: bool = True, **kwargs):
         super(GATConv, self).__init__(aggr='add', node_dim=0, **kwargs)
 
         self.in_channels = in_channels
@@ -67,6 +69,7 @@ class GATConv(MessagePassing):
         self.concat = concat
         self.negative_slope = negative_slope
         self.dropout = dropout
+        self.add_self_loops = add_self_loops
 
         if isinstance(in_channels, int):
             self.lin_l = Linear(in_channels, heads * out_channels, bias=False)
@@ -114,35 +117,38 @@ class GATConv(MessagePassing):
 
         x_l: OptTensor = None
         x_r: OptTensor = None
+        alpha_l: OptTensor = None
+        alpha_r: OptTensor = None
         if isinstance(x, Tensor):
-            assert x.dim() >= 2, 'Static graphs not supported in `GATConv`.'
+            assert x.dim() == 2, 'Static graphs not supported in `GATConv`.'
             x_l = x_r = self.lin_l(x).view(-1, H, C)
+            alpha_l = alpha_r = (x_l * self.att_l).sum(dim=-1)
         else:
-            x_r = x[1]
-            assert x[0].dim() >= 2, 'Static graphs not supported in `GATConv`.'
-            x_l = self.lin_l(x[0]).view(-1, H, C)
-            x_r = self.lin_r(x_r).view(-1, H, C) if x_r is not None else None
-        assert x_l is not None
+            x_l, x_r = x[0], x[1]
+            assert x[0].dim() == 2, 'Static graphs not supported in `GATConv`.'
+            x_l = self.lin_l(x_l).view(-1, H, C)
+            alpha_l = (x_l * self.att_l).sum(dim=-1)
+            if x_r is not None:
+                x_r = self.lin_r(x_r).view(-1, H, C)
+                alpha_r = (x_r * self.att_r).sum(dim=-1)
 
-        if isinstance(self.in_channels, int):
-            # Add self-loops to the graph.
+        assert x_l is not None
+        assert alpha_l is not None
+
+        if self.add_self_loops:
             if isinstance(edge_index, Tensor):
+                num_nodes = x_l.size(0)
+                num_nodes = size[1] if size is not None else num_nodes
+                num_nodes = x_r.size(0) if x_r is not None else num_nodes
                 edge_index, _ = remove_self_loops(edge_index)
-                num_nodes = size[1] if size is not None else None
-                num_nodes = x_r.size(0) if x_r is not None else None
                 edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
-        # Compute node-wise attention scores.
-        node_alpha: OptPairTensor = (
-            (x_l * self.att_l).sum(dim=-1),
-            (x_r * self.att_l).sum(dim=-1) if x_r is not None else None,
-        )
-
         # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), alpha=node_alpha,
-                             size=size)
+        out = self.propagate(edge_index, x=(x_l, x_r),
+                             alpha=(alpha_l, alpha_r), size=size)
+
         alpha = self._alpha
         self._alpha = None
 

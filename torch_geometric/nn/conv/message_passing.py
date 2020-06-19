@@ -229,9 +229,9 @@ class MessagePassing(torch.nn.Module):
             msg_kwargs = self.inspector.distribute('message', coll_dict)
             out = self.message(**msg_kwargs)
 
-            # For `GNNExplainer`, we require separate a separate message and
-            # aggregate procedure since this allows us to inject the
-            # `edge_mask` into the message passing computation scheme.
+            # For `GNNExplainer`, we require a separate message and aggregate
+            # procedure since this allows us to inject the `edge_mask` into the
+            # message passing computation scheme.
             if self.__explain__:
                 edge_mask = self.__edge_mask__.sigmoid()
                 # Some ops add self-loops to `edge_index`. We need to do the
@@ -330,7 +330,8 @@ class MessagePassing(torch.nn.Module):
             prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
-        collect_types = self.inspector.types()
+        collect_types = self.inspector.types(
+            ['message', 'aggregate', 'update'])
 
         # Collect `forward()` header, body and @overload types.
         forward_types = parse_types(self.forward)
@@ -360,10 +361,10 @@ class MessagePassing(torch.nn.Module):
             parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
             collect_types=collect_types,
+            user_args=self.__user_args__,
             forward_header=forward_header,
             forward_types=forward_types,
             forward_body=forward_body,
-            user_args=self.__user_args,
             msg_args=self.inspector.keys(['message']),
             aggr_args=self.inspector.keys(['aggregate']),
             msg_and_aggr_args=self.inspector.keys(['message_and_aggregate']),

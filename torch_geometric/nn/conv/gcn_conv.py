@@ -90,10 +90,12 @@ class GCNConv(MessagePassing):
             cached version for further executions.
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
-        bias (bool, optional): If set to :obj:`False`, the layer will not learn
-            an additive bias. (default: :obj:`True`)
         normalize (bool, optional): Whether to add self-loops and apply
             symmetric normalization. (default: :obj:`True`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+            an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -103,7 +105,8 @@ class GCNConv(MessagePassing):
 
     def __init__(self, in_channels: int, out_channels: int,
                  improved: bool = False, cached: bool = False,
-                 bias: bool = True, normalize: bool = True, **kwargs):
+                 add_self_loops: bool = True, normalize: bool = True,
+                 bias: bool = True, **kwargs):
 
         super(GCNConv, self).__init__(aggr='add', **kwargs)
 
@@ -112,6 +115,7 @@ class GCNConv(MessagePassing):
         self.improved = improved
         self.cached = cached
         self.normalize = normalize
+        self.add_self_loops = add_self_loops
 
         self._cached_edge_index = None
         self._cached_adj_t = None
@@ -141,7 +145,7 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, add_self_loops=True, dtype=x.dtype)
+                        self.improved, self.add_self_loops, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -152,7 +156,7 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, add_self_loops=True, dtype=x.dtype)
+                        self.improved, self.add_self_loops, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
