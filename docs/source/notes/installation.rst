@@ -1,23 +1,52 @@
 Installation
 ============
 
-We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be installed in advance.
-These packages come with their own CPU and GPU kernel implementations based on `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_ introduced in PyTorch 0.4.0.
+We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be additionally installed.
+These packages come with their own CPU and GPU kernel implementations based on `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_.
 
 .. note::
     We do not recommend installation as root user on your system python.
     Please setup an `Anaconda/Miniconda <https://conda.io/docs/user-guide/install/index.html/>`_ environment or create a `Docker image <https://www.docker.com/>`_.
 
-Please follow the steps below for a successful installation:
+Please follow the steps below for a successful installation.
 
-#. Ensure that PyTorch 1.5.0 is installed:
+Installation via Binaries
+-------------------------
+
+We provide pip wheels for all major OS/PyTorch/CUDA combinations:
+
+#. Ensure that at least PyTorch 1.4.0 is installed:
 
     .. code-block:: none
 
         $ python -c "import torch; print(torch.__version__)"
         >>> 1.5.0
 
-#. Ensure CUDA is setup correctly (optional):
+#. Find the CUDA version PyTorch was installed with:
+
+    .. code-block:: none
+
+        $ python -c "import torch; print(torch.version.cuda)"
+        >>> 10.2
+
+# Install the relevant packages:
+
+    .. code-block:: none
+
+         $ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
+         $ pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
+         $ pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
+         $ pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
+         $ pip install torch-geometric
+
+    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your respective CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`), respectively.
+
+Installation from Source
+------------------------
+
+In case a specific verion is not supported by `our wheels <https://pytorch-geometric.com/whl/>`_, you can alternatively install PyTorch Geometric from source:
+
+#. Ensure that your CUDA is setup correctly (optional):
 
     #. Check if PyTorch is installed with CUDA support:
 
@@ -62,20 +91,20 @@ Please follow the steps below for a successful installation:
         .. code-block:: none
 
             $ python -c "import torch; print(torch.version.cuda)"
-            >>> 10.0
+            >>> 10.2
 
             $ nvcc --version
-            >>> 10.0
+            >>> 10.2
 
-#. Install all needed packages with ``${CUDA}`` replaced by either ``cpu``, ``cu92``, ``cu100`` or ``cu101`` depending on your PyTorch installation:
+#. Install all needed packages:
 
     .. code-block:: none
 
-      $ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-      $ pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-      $ pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-      $ pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-      $ python setup.py install or pip install torch-geometric
+      $ pip install torch-scatter
+      $ pip install torch-sparse
+      $ pip install torch-cluster
+      $ pip install torch-spline-conv
+      $ pip install torch-geometric
 
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
@@ -83,27 +112,6 @@ In rare cases, CUDA or Python path problems can prevent a successful installatio
 We collected a lot of common installation errors in the `Frequently Asked Questions <https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#frequently-asked-questions>`_ subsection.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
 You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda/index.html>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
-
-C++/CUDA Extensions on macOS
-----------------------------
-
-In order to compile CUDA extensions on macOS with Python <3.7, you need to replace the call
-
-.. code-block:: python
-
-    def spawn(self, cmd):
-        spawn(cmd, dry_run=self.dry_run)
-
-with
-
-.. code-block:: python
-
-    import subprocess
-
-    def spawn(self, cmd):
-        subprocess.call(cmd)
-
-in ``lib/python{xxx}/distutils/ccompiler.py``.
 
 Frequently Asked Questions
 --------------------------
