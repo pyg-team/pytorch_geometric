@@ -2,7 +2,8 @@ import re
 import inspect
 import pyparsing as pp
 from itertools import product
-from typing import Callable, Tuple, OrderedDict, List
+from collections import OrderedDict
+from typing import Callable, Tuple, Dict, List
 
 
 def split_types_repr(types_repr: str) -> List[str]:
@@ -67,7 +68,7 @@ def return_type_repr(signature) -> str:
         return f'{return_type.__module__}.{return_type.__name__}'
 
 
-def parse_types(func: Callable) -> List[Tuple[OrderedDict, str]]:
+def parse_types(func: Callable) -> List[Tuple[Dict[str, str], str]]:
     source = inspect.getsource(func)
     signature = inspect.signature(func)
 
@@ -94,7 +95,7 @@ def parse_types(func: Callable) -> List[Tuple[OrderedDict, str]]:
         return [(arg_types, return_type_repr(signature))]
 
 
-def resolve_types(arg_types: OrderedDict,
+def resolve_types(arg_types: Dict[str, str],
                   return_type_repr: str) -> List[Tuple[List[str], str]]:
     out = []
     for type_repr in arg_types.values():
