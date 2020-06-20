@@ -6,5 +6,5 @@ In particular, we take care to avoid to perform hyperparameter and model selecti
 ## Installation
 
 ```
-$ python setup.py install
+$ pip install -e .
 ```
