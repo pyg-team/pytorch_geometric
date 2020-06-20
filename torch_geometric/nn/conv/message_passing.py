@@ -52,8 +52,8 @@ class MessagePassing(torch.nn.Module):
         'dim_size'
     ])
 
-    def __init__(self, aggr: str = "add", flow: str = "source_to_target",
-                 node_dim: int = -2):
+    def __init__(self, aggr: Optional[str] = "add",
+                 flow: str = "source_to_target", node_dim: int = -2):
 
         super(MessagePassing, self).__init__()
 
