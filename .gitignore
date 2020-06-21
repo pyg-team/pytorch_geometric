@@ -10,6 +10,7 @@ runs/
 .coverage
 .coverage.*
 .vscode
+.idea
 
 !torch_geometric/data/
 !test/data/

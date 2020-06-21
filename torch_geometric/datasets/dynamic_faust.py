@@ -7,7 +7,7 @@ from torch_geometric.data import InMemoryDataset, Data
 
 class DynamicFAUST(InMemoryDataset):
     r"""The dynamic FAUST humans dataset from the `"Dynamic FAUST: Registering
-    Human Bodies in Motion"
+    Human Bodies in Motion``"
     <http://files.is.tue.mpg.de/black/papers/dfaust2017.pdf>`_ paper.
 
     .. note::
