@@ -217,7 +217,8 @@ class GDC(object):
             edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
                                                      fill_value=1,
                                                      num_nodes=num_nodes)
-            edge_index, edge_weight = coalesce(edge_index, edge_weight, num_nodes, num_nodes)
+            edge_index, edge_weight = coalesce(edge_index, edge_weight,
+                                               num_nodes, num_nodes)
             mat = to_dense_adj(edge_index, edge_attr=edge_weight).squeeze()
             diff_matrix = kwargs['alpha'] * torch.inverse(mat)
 
@@ -227,7 +228,8 @@ class GDC(object):
                                                      fill_value=-1,
                                                      num_nodes=num_nodes)
             edge_weight = kwargs['t'] * edge_weight
-            edge_index, edge_weight = coalesce(edge_index, edge_weight, num_nodes, num_nodes)
+            edge_index, edge_weight = coalesce(edge_index, edge_weight,
+                                               num_nodes, num_nodes)
             mat = to_dense_adj(edge_index, edge_attr=edge_weight).squeeze()
             undirected = is_undirected(edge_index, edge_weight, num_nodes)
             diff_matrix = self.__expm__(mat, undirected)
