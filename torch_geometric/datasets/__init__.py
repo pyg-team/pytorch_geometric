@@ -36,6 +36,7 @@ from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
 from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
+from .word_net import WordNet18
 
 __all__ = [
     'KarateClub',
@@ -77,4 +78,5 @@ __all__ = [
     'SuiteSparseMatrixCollection',
     'TrackMLParticleTrackingDataset',
     'AMiner',
+    'WordNet18',
 ]
