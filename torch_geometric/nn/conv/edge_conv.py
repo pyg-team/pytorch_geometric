@@ -44,7 +44,7 @@ class EdgeConv(MessagePassing):
 
     def reset_parameters(self):
         reset(self.nn)
-    
+
     def fwd_edgeconv(self, x: PairTensor, edge_index):
         """"""
         return self.propagate(edge_index, x=x, size=None)
@@ -87,7 +87,7 @@ class DynamicEdgeConv(EdgeConv):
 
         self.k = k
 
-    def forward(self, x: Tensor, batch: OptTensor=None):
+    def forward(self, x: Tensor, batch: OptTensor = None):
         """"""
         edge_index = knn_graph(x, self.k, batch, loop=False, flow=self.flow)
         return self.fwd_edgeconv((x, x), edge_index)

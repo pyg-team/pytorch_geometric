@@ -1,5 +1,5 @@
 from typing import Optional
-from torch_geometric.typing import OptTensor, Adj
+from torch_geometric.typing import OptTensor
 
 import torch
 from torch import Tensor
@@ -61,13 +61,13 @@ class GravNetConv(MessagePassing):
         self.lin_flr.reset_parameters()
         self.lin_fout.reset_parameters()
 
-    def forward(self, x: Tensor, batch: OptTensor=None) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
         """"""
         spatial = self.lin_s(x)
         to_propagate = self.lin_flr(x)
 
         edge_index = knn_graph(spatial, self.k, batch, loop=False,
-                                    flow=self.flow)
+                               flow=self.flow)
 
         reference = spatial.index_select(0, edge_index[1])
         neighbors = spatial.index_select(0, edge_index[0])
@@ -75,7 +75,7 @@ class GravNetConv(MessagePassing):
         distancessq = torch.sum((reference - neighbors)**2, dim=-1)
         # Factor 10 gives a better initial spread
         distance_weight = torch.exp(-10. * distancessq)
-        
+
         prop_feat = self.propagate(edge_index, x=to_propagate,
                                    edge_weight=distance_weight,
                                    size=None)
@@ -87,7 +87,8 @@ class GravNetConv(MessagePassing):
         return x_j * edge_weight.unsqueeze(1)
 
     def aggregate(self, inputs: Tensor, index: Tensor,
-                  ptr: OptTensor=None, dim_size: Optional[int]=None) -> Tensor:
+                  ptr: OptTensor = None,
+                  dim_size: Optional[int] = None) -> Tensor:
         if ptr is not None:
             for _ in range(self.node_dim):
                 ptr = ptr.unsqueeze(0)
