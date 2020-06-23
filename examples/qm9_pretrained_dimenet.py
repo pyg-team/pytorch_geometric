@@ -37,7 +37,7 @@ for target in range(12):
 
     mae = torch.cat(maes, dim=0)
 
-    # Report mEV instead of eV.
-    mae = 1000 * mae if target in [2, 3, 6, 7, 8, 9, 10] else mae
+    # Report meV instead of eV.
+    mae = 1000 * mae if target in [2, 3, 4, 6, 7, 8, 9, 10] else mae
 
     print(f'Target: {target:02d}, MAE: {mae.mean():.5f} ± {mae.std():.5f}')
