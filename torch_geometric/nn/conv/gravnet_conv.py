@@ -1,4 +1,8 @@
+from typing import Optional
+from torch_geometric.typing import OptTensor, Adj
+
 import torch
+from torch import Tensor
 from torch.nn import Linear
 from torch_scatter import scatter, segment_csr
 from torch_geometric.nn.conv import MessagePassing
@@ -32,6 +36,7 @@ class GravNetConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+    propagate_type = {"x": Tensor, "edge_weight": Tensor}
 
     def __init__(self, in_channels, out_channels, space_dimensions,
                  propagate_dimensions, k, **kwargs):
@@ -56,13 +61,13 @@ class GravNetConv(MessagePassing):
         self.lin_flr.reset_parameters()
         self.lin_fout.reset_parameters()
 
-    def forward(self, x, batch=None):
+    def forward(self, x: Tensor, batch: OptTensor=None) -> Tensor:
         """"""
         spatial = self.lin_s(x)
         to_propagate = self.lin_flr(x)
 
         edge_index = knn_graph(spatial, self.k, batch, loop=False,
-                               flow=self.flow)
+                                    flow=self.flow)
 
         reference = spatial.index_select(0, edge_index[1])
         neighbors = spatial.index_select(0, edge_index[0])
@@ -70,16 +75,19 @@ class GravNetConv(MessagePassing):
         distancessq = torch.sum((reference - neighbors)**2, dim=-1)
         # Factor 10 gives a better initial spread
         distance_weight = torch.exp(-10. * distancessq)
-
+        
         prop_feat = self.propagate(edge_index, x=to_propagate,
-                                   edge_weight=distance_weight)
+                                   edge_weight=distance_weight,
+                                   size=None)
 
         return self.lin_fout(torch.cat([prop_feat, x], dim=-1))
 
-    def message(self, x_j, edge_weight):
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        assert edge_weight is not None
         return x_j * edge_weight.unsqueeze(1)
 
-    def aggregate(self, inputs, index, ptr=None, dim_size=None):
+    def aggregate(self, inputs: Tensor, index: Tensor,
+                  ptr: OptTensor=None, dim_size: Optional[int]=None) -> Tensor:
         if ptr is not None:
             for _ in range(self.node_dim):
                 ptr = ptr.unsqueeze(0)

@@ -8,5 +8,10 @@ def test_gravnet_conv():
 
     conv = GravNetConv(in_channels, out_channels, space_dimensions=4,
                        propagate_dimensions=8, k=12)
+    out = conv(x)
     assert conv.__repr__() == 'GravNetConv(16, 32, k=12)'
-    assert conv(x).size() == (num_nodes, out_channels)
+    assert out.size() == (num_nodes, out_channels)
+
+    t = '(Tensor) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit(x).tolist() == out.tolist()
