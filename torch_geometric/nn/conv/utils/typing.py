@@ -22,6 +22,7 @@ def split_types_repr(types_repr: str) -> List[str]:
 
 
 def sanitize(type_repr: str):
+    type_repr = type_repr.replace('<class \'torch.Tensor\'>','torch.Tensor')
     type_repr = type_repr.replace('typing.', '')
     type_repr = type_repr.replace('torch_sparse.tensor.', '')
     type_repr = type_repr.replace('Adj', 'Union[Tensor, SparseTensor]')
