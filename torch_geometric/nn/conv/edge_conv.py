@@ -1,5 +1,5 @@
 from typing import Callable, Union
-from torch_geometric.typing import PairTensor, Adj
+from torch_geometric.typing import OptTensor, PairTensor, Adj
 
 import torch
 from torch import Tensor
@@ -35,6 +35,8 @@ class EdgeConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+    propagate_type = {"x": PairTensor}
+
     def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
         super(EdgeConv, self).__init__(aggr=aggr, **kwargs)
         self.nn = nn
@@ -42,13 +44,16 @@ class EdgeConv(MessagePassing):
 
     def reset_parameters(self):
         reset(self.nn)
+    
+    def fwd_edgeconv(self, x: PairTensor, edge_index):
+        """"""
+        return self.propagate(edge_index, x=x, size=None)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
-        # propagate_type: (x: PairTensor)
-        return self.propagate(edge_index, x=x, size=None)
+        return self.fwd_edgeconv(x, edge_index)
 
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
@@ -82,10 +87,10 @@ class DynamicEdgeConv(EdgeConv):
 
         self.k = k
 
-    def forward(self, x, batch=None):
+    def forward(self, x: Tensor, batch: OptTensor=None):
         """"""
         edge_index = knn_graph(x, self.k, batch, loop=False, flow=self.flow)
-        return super(DynamicEdgeConv, self).forward(x, edge_index)
+        return self.fwd_edgeconv((x, x), edge_index)
 
     def __repr__(self):
         return '{}(nn={}, k={})'.format(self.__class__.__name__, self.nn,

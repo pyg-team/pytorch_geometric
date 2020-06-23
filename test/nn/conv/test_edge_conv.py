@@ -47,10 +47,15 @@ def test_dynamic_edge_conv_conv():
 
     nn = Seq(Lin(32, 16), ReLU(), Lin(16, 32))
     conv = DynamicEdgeConv(nn, k=6)
+    out = conv(x)
     assert conv.__repr__() == (
         'DynamicEdgeConv(nn=Sequential(\n'
         '  (0): Linear(in_features=32, out_features=16, bias=True)\n'
         '  (1): ReLU()\n'
         '  (2): Linear(in_features=16, out_features=32, bias=True)\n'
         '), k=6)')
-    assert conv(x).size() == (4, 32)
+    assert out.size() == (4, 32)
+
+    t = '(Tensor) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit(x).tolist() == out.tolist()
