@@ -46,6 +46,8 @@ class Batch(Data):
                 item = data[key]
                 if torch.is_tensor(item) and item.dtype != torch.bool:
                     item = item + cumsum[key]
+                if torch.is_tensor(item) and item.dim() == 0:
+                    item = item.unsqueeze(0)
                 if torch.is_tensor(item):
                     size = item.size(data.__cat_dim__(key, data[key]))
                 else:
