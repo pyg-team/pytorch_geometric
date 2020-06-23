@@ -322,7 +322,7 @@ class MessagePassing(torch.nn.Module):
                 raise TypeError(
                     'TorchScript support requires the definition of the types '
                     'passed to `propagate()`. Please specificy them via\n\n'
-                    'propagate_type: {"arg1": type1, "arg2": type2, ... }\n\n'
+                    'propagate_type = {"arg1": type1, "arg2": type2, ... }\n\n'
                     'or via\n\n'
                     '# propagate_type: (arg1: type1, arg2: type2, ...)\n\n'
                     'inside the `MessagePassing` module.')
