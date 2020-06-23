@@ -214,8 +214,10 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
         batch_size (int): The number of nodes to sample per batch.
     """
     def __sample_nodes__(self, num_examples):
+
         edge_sample = torch.randint(0, self.E, (num_examples, self.batch_size),
                                     dtype=torch.long)
+
         node_sample = self.adj.storage.row()[edge_sample]
         return node_sample.unbind(dim=0)
 
@@ -228,14 +230,19 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
         batch_size (int): The number of edges to sample per batch.
     """
     def __sample_nodes__(self, num_examples):
-        # This function corresponds to the `Edge2` sampler in the official
-        # code repository that weights all edges as equally important.
-        # This is the default configuration in the GraphSAINT implementation.
-        edge_sample = torch.randint(0, self.E, (num_examples, self.batch_size),
-                                    dtype=torch.long)
+        row, col, _ = self.adj.coo()
 
-        source_node_sample = self.adj.storage.row()[edge_sample]
-        target_node_sample = self.adj.storage.col()[edge_sample]
+        deg_in = 1. / self.adj.storage.rowcount()
+        deg_out = 1. / self.adj.storage.colcount()
+        prob = (1. / deg_in[row]) + (1. / deg_out[col])
+
+        # Parallel multinomial sampling (without replacement)
+        # https://github.com/pytorch/pytorch/issues/11931#issuecomment-625882503
+        rand = torch.rand(num_examples, self.E).log() / (prob + 1e-10)
+        edge_sample = rand.topk(self.batch_size, dim=-1).indices
+
+        source_node_sample = row[edge_sample]
+        target_node_sample = col[edge_sample]
 
         node_sample = torch.cat([source_node_sample, target_node_sample], -1)
         return node_sample.unbind(dim=0)
