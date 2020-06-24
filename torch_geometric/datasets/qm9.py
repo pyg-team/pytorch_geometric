@@ -118,7 +118,7 @@ class QM9(InMemoryDataset):
     raw_url = ('https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/'
                'molnet_publish/qm9.zip')
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
-    processed_url = 'https://pytorch-geometric.com/datasets/qm9_v2.pt'
+    processed_url = 'https://pytorch-geometric.com/datasets/qm9_v2.zip'
 
     if rdkit is not None:
         types = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
@@ -148,7 +148,7 @@ class QM9(InMemoryDataset):
     @property
     def raw_file_names(self):
         if rdkit is None:
-            return 'qm9_v1.pt'
+            return 'qm9_v2.pt'
         else:
             return ['gdb9.sdf', 'gdb9.sdf.csv', 'uncharacterized.txt']
 
@@ -158,7 +158,9 @@ class QM9(InMemoryDataset):
 
     def download(self):
         if rdkit is None:
-            download_url(self.processed_url, self.raw_dir)
+            path = download_url(self.processed_url, self.raw_dir)
+            extract_zip(path, self.raw_dir)
+            os.unlink(path)
         else:
             file_path = download_url(self.raw_url, self.raw_dir)
             extract_zip(file_path, self.raw_dir)
