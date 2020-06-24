@@ -26,11 +26,11 @@ class Encoder(torch.nn.Module):
         super(Encoder, self).__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels, cached=True)
         self.conv_mu = GCNConv(hidden_channels, out_channels, cached=True)
-        self.conv_logvar = GCNConv(hidden_channels, out_channels, cached=True)
+        self.conv_logstd = GCNConv(hidden_channels, out_channels, cached=True)
 
     def forward(self, x, edge_index):
         x = F.relu(self.conv1(x, edge_index))
-        return self.conv_mu(x, edge_index), self.conv_logvar(x, edge_index)
+        return self.conv_mu(x, edge_index), self.conv_logstd(x, edge_index)
 
 
 class Discriminator(torch.nn.Module):
