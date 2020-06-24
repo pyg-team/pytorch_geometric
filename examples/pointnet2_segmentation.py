@@ -122,7 +122,7 @@ def test(loader):
             ious[category.item()].append(iou[y_mask[category]])
 
     # Compute mean IoU.
-    ious = [torch.stack(iou).mean() for iou in ious]
+    ious = [torch.stack(iou).mean(0).mean(0) for iou in ious]
     return torch.tensor(ious).mean().item()
 
 
