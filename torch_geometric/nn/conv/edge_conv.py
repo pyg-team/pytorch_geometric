@@ -1,5 +1,5 @@
-from typing import Callable, Union
-from torch_geometric.typing import OptTensor, PairTensor, Adj
+from typing import Callable, Union, Optional
+from torch_geometric.typing import OptTensor, PairTensor, PairOptTensor, Adj
 
 import torch
 from torch import Tensor
@@ -8,9 +8,9 @@ from torch_geometric.nn.conv import MessagePassing
 from ..inits import reset
 
 try:
-    from torch_cluster import knn_graph
+    from torch_cluster import knn
 except ImportError:
-    knn_graph = None
+    knn = None
 
 
 class EdgeConv(MessagePassing):
@@ -35,8 +35,6 @@ class EdgeConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    propagate_type = {"x": PairTensor}
-
     def __init__(self, nn: Callable, aggr: str = 'max', **kwargs):
         super(EdgeConv, self).__init__(aggr=aggr, **kwargs)
         self.nn = nn
@@ -45,15 +43,12 @@ class EdgeConv(MessagePassing):
     def reset_parameters(self):
         reset(self.nn)
 
-    def fwd_edgeconv(self, x: PairTensor, edge_index):
-        """"""
-        return self.propagate(edge_index, x=x, size=None)
-
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
-        return self.fwd_edgeconv(x, edge_index)
+        # propagate_type: (x: PairTensor)
+        return self.propagate(edge_index, x=x, size=None)
 
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
@@ -62,7 +57,7 @@ class EdgeConv(MessagePassing):
         return '{}(nn={})'.format(self.__class__.__name__, self.nn)
 
 
-class DynamicEdgeConv(EdgeConv):
+class DynamicEdgeConv(MessagePassing):
     r"""The dynamic edge convolutional operator from the `"Dynamic Graph CNN
     for Learning on Point Clouds" <https://arxiv.org/abs/1801.07829>`_ paper
     (see :class:`torch_geometric.nn.conv.EdgeConv`), where the graph is
@@ -76,21 +71,49 @@ class DynamicEdgeConv(EdgeConv):
         k (int): Number of nearest neighbors.
         aggr (string): The aggregation operator to use (:obj:`"add"`,
             :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"max"`)
+        num_workers (int): Number of workers to use for k-NN computation.
+            Has no effect in case :obj:`batch` is not :obj:`None`, or the input
+            lies on the GPU. (default: :obj:`1`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, nn, k, aggr='max', **kwargs):
-        super(DynamicEdgeConv, self).__init__(nn=nn, aggr=aggr, **kwargs)
+    def __init__(self, nn: Callable, k: int, aggr: str = 'max',
+                 num_workers: int = 1, **kwargs):
+        super(DynamicEdgeConv,
+              self).__init__(aggr=aggr, flow='target_to_source', **kwargs)
 
-        if knn_graph is None:
+        if knn is None:
             raise ImportError('`DynamicEdgeConv` requires `torch-cluster`.')
 
+        self.nn = nn
         self.k = k
+        self.num_workers = num_workers
+        self.reset_parameters()
 
-    def forward(self, x: Tensor, batch: OptTensor = None):
+    def reset_parameters(self):
+        reset(self.nn)
+
+    def forward(self, x: Union[Tensor, PairTensor],
+                batch: Union[OptTensor, Optional[PairOptTensor]] = None):
         """"""
-        edge_index = knn_graph(x, self.k, batch, loop=False, flow=self.flow)
-        return self.fwd_edgeconv((x, x), edge_index)
+        if isinstance(x, Tensor):
+            x: PairTensor = (x, x)
+
+        b: PairOptTensor = (None, None)
+        if isinstance(batch, Tensor):
+            b = (batch, batch)
+        elif isinstance(batch, tuple):
+            assert batch is not None
+            b = (batch[0], batch[1])
+
+        edge_index = knn(x[0], x[1], self.k, b[0], b[1],
+                         num_workers=self.num_workers)
+
+        # propagate_type: (x: PairTensor)
+        return self.propagate(edge_index, x=x, size=None)
+
+    def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
+        return self.nn(torch.cat([x_i, x_j - x_i], dim=-1))
 
     def __repr__(self):
         return '{}(nn={}, k={})'.format(self.__class__.__name__, self.nn,
