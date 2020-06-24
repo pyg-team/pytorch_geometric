@@ -124,6 +124,10 @@ class ShapeNet(InMemoryDataset):
             self.y_mask[i, labels] = 1
 
     @property
+    def num_classes(self):
+        return self.y_mask.size(-1)
+
+    @property
     def raw_file_names(self):
         return list(self.category_ids.values()) + ['train_test_split']
 
