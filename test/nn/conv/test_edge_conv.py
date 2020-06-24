@@ -82,7 +82,7 @@ def test_dynamic_edge_conv_conv():
     assert jit(x1).tolist() == out11.tolist()
     assert jit(x1, batch1).tolist() == out12.tolist()
 
-    t = '(PairTensor, Optional[PairOptTensor]) -> Tensor'
+    t = '(PairTensor, Optional[PairTensor]) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2)).tolist() == out21.tolist()
     assert jit((x1, x2), (batch1, batch2)).tolist() == out22.tolist()

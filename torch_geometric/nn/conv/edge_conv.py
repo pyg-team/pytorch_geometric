@@ -93,11 +93,14 @@ class DynamicEdgeConv(MessagePassing):
     def reset_parameters(self):
         reset(self.nn)
 
-    def forward(self, x: Union[Tensor, PairTensor],
-                batch: Union[OptTensor, Optional[PairOptTensor]] = None):
+    def forward(
+            self, x: Union[Tensor, PairTensor],
+            batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
         """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
+        assert x[0].dim() == 2, \
+            'Static graphs not supported in `DynamicEdgeConv`.'
 
         b: PairOptTensor = (None, None)
         if isinstance(batch, Tensor):
