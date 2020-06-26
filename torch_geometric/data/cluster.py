@@ -117,12 +117,11 @@ class ClusterLoader(torch.utils.data.DataLoader):
     Args:
         cluster_data (torch_geometric.data.ClusterData): The already
             partioned data object.
-        batch_size (int, optional): How many samples per batch to load.
-            (default: :obj:`1`)
-        shuffle (bool, optional): If set to :obj:`True`, the data will be
-            reshuffled at every epoch. (default: :obj:`False`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
+            :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
-    def __init__(self, cluster_data, batch_size=1, shuffle=False, **kwargs):
+    def __init__(self, cluster_data, **kwargs):
         class HelperDataset(torch.utils.data.Dataset):
             def __len__(self):
                 return len(cluster_data)
@@ -173,6 +172,5 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
             return data
 
-        super(ClusterLoader,
-              self).__init__(HelperDataset(), batch_size, shuffle,
-                             collate_fn=collate, **kwargs)
+        super(ClusterLoader, self).__init__(HelperDataset(),
+                                            collate_fn=collate, **kwargs)
