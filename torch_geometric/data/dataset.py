@@ -1,5 +1,4 @@
 import copy
-import collections
 import os.path as osp
 import warnings
 import re
@@ -10,7 +9,7 @@ from .makedirs import makedirs
 
 
 def to_list(x):
-    if not isinstance(x, collections.Iterable) or isinstance(x, str):
+    if not isinstance(x, (tuple, list)) or isinstance(x, str):
         x = [x]
     return x
 
