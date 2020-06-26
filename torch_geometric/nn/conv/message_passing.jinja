@@ -49,16 +49,16 @@ class {{cls_name}}({{parent_cls_name}}):
 {{lift}}
 
     @torch.jit._overload_method
-    def __collect__(self, edge_index, size, kwargs):
+    def __collect__(self, edge_def, size, kwargs):
         # type: (Tensor, List[Optional[int]], Propagate_{{uid}}) -> Collect_{{uid}}
         pass
 
     @torch.jit._overload_method
-    def __collect__(self, edge_index, size, kwargs):
+    def __collect__(self, edge_def, size, kwargs):
         # type: (SparseTensor, List[Optional[int]], Propagate_{{uid}}) -> Collect_{{uid}}
         pass
 
-    def __collect__(self, edge_index, size, kwargs):
+    def __collect__(self, edge_def, size, kwargs):
         init = torch.tensor(0.)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 {% for arg in user_args %}
@@ -84,23 +84,27 @@ class {{cls_name}}({{parent_cls_name}}):
             {{arg}} = data
         if isinstance({{arg}}, Tensor):
             self.__set_size__(size, {% if arg[-2:] == '_j'%}0{% else %}1{% endif %}, {{arg}})
-            {{arg}} = self.__lift__({{arg}}, edge_index, {% if arg[-2:] == "_j" %}j{% else %}i{% endif %})
+            {{arg}} = self.__lift__({{arg}}, edge_def, {% if arg[-2:] == "_j" %}j{% else %}i{% endif %})
 {%- endif %}
 {%- endfor %}
 
+        edge_index: Optional[Tensor] = None
+        adj_t: Optional[SparseTensor] = None
         edge_index_i: torch.Tensor = init
         edge_index_j: torch.Tensor = init
         ptr: Optional[Tensor] = None
-        if isinstance(edge_index, Tensor):
-            edge_index_i = edge_index[i]
-            edge_index_j = edge_index[j]
-        elif isinstance(edge_index, SparseTensor):
-            edge_index_i = edge_index.storage.row()
-            edge_index_j = edge_index.storage.col()
-            ptr = edge_index.storage.rowptr()
+        if isinstance(edge_def, Tensor):
+            edge_index = edge_def
+            edge_index_i = edge_def[i]
+            edge_index_j = edge_def[j]
+        elif isinstance(edge_def, SparseTensor):
+            adj_t = edge_def
+            edge_index_i = edge_def.storage.row()
+            edge_index_j = edge_def.storage.col()
+            ptr = edge_def.storage.rowptr()
             {% if 'edge_attr' in collect_types.keys() or 'edge_weight' in collect_types.keys() -%}
-            edge_attr = edge_index.storage.value()
-            edge_weight = edge_index.storage.value()
+            edge_attr = edge_def.storage.value()
+            edge_weight = edge_def.storage.value()
             {%- endif %}
 
         index = edge_index_i
