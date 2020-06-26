@@ -1,7 +1,7 @@
 import os
+import warnings
 import os.path as osp
 from math import pi as PI
-import warnings
 
 import ase
 import torch
@@ -179,7 +179,7 @@ class SchNet(torch.nn.Module):
         path = osp.join(root, 'trained_schnet_models', name, 'best_model')
 
         with warnings.catch_warnings():
-            warnings.filterwarnings('ignore')
+            warnings.simplefilter('ignore')
             state = torch.load(path, map_location='cpu')
 
         net = SchNet(hidden_channels=128, num_filters=128, num_interactions=6,

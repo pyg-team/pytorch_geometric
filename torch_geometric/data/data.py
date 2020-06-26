@@ -1,6 +1,6 @@
 import re
 import copy
-import warnings
+import logging
 
 import torch
 import torch_geometric
@@ -198,10 +198,10 @@ class Data(object):
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
         if self.face is not None:
-            warnings.warn(__num_nodes_warn_msg__.format('face'))
+            logging.warning(__num_nodes_warn_msg__.format('face'))
             return maybe_num_nodes(self.face)
         if self.edge_index is not None:
-            warnings.warn(__num_nodes_warn_msg__.format('edge'))
+            logging.warning(__num_nodes_warn_msg__.format('edge'))
             return maybe_num_nodes(self.edge_index)
         return None
 

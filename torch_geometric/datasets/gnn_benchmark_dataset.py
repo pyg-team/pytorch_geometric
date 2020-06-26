@@ -1,7 +1,7 @@
 import os
 import os.path as osp
 import pickle
-import warnings
+import logging
 
 import torch
 from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
@@ -55,7 +55,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
 
         if self.name == 'CSL' and split != 'train':
             split = 'train'
-            warnings.warn(
+            logging.warning(
                 ('Dataset `CSL` does not provide a standardized splitting. '
                  'Instead, it is recommended to perform 5-fold cross '
                  'validation with stratifed sampling.'))
