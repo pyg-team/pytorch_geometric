@@ -1,5 +1,6 @@
 from .karate import KarateClub
 from .tu_dataset import TUDataset
+from .gnn_benchmark_dataset import GNNBenchmarkDataset
 from .planetoid import Planetoid
 from .citation_full import CitationFull, CoraFull
 from .coauthor import Coauthor
@@ -41,6 +42,7 @@ from .word_net import WordNet18
 __all__ = [
     'KarateClub',
     'TUDataset',
+    'GNNBenchmarkDataset',
     'Planetoid',
     'CitationFull',
     'CoraFull',
