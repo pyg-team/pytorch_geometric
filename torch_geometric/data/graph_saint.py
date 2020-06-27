@@ -1,5 +1,6 @@
 import copy
 import os.path as osp
+from typing import Optional
 
 import torch
 from tqdm import tqdm
@@ -42,7 +43,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
             :obj:`num_workers`.
     """
     def __init__(self, data, batch_size: int, num_steps: int = 1,
-                 sample_coverage: int = 0, save_dir: bool = None,
+                 sample_coverage: int = 0, save_dir: Optional[str] = None,
                  log: bool = True, **kwargs):
 
         assert data.edge_index is not None
@@ -196,7 +197,7 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
     """
     def __init__(self, data, batch_size: int, walk_length: int,
                  num_steps: int = 1, sample_coverage: int = 0,
-                 save_dir: bool = None, log: bool = True, **kwargs):
+                 save_dir: Optional[str] = None, log: bool = True, **kwargs):
         self.walk_length = walk_length
         super(GraphSAINTRandomWalkSampler,
               self).__init__(data, batch_size, num_steps, sample_coverage,
