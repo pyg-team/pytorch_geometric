@@ -1,4 +1,4 @@
-from typing import Union, Tuple
+from typing import Union
 from torch_geometric.typing import PairTensor, Adj
 
 import torch
