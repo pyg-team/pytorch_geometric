@@ -154,7 +154,7 @@ class MLP(nn.Module):
 class PNAConv(MessagePassing):
 
     def __init__(self, in_channels, out_channels, aggregators, scalers, avg_d, towers=1,
-                 pretrans_layers=1, posttrans_layers=1, divide_input=False, **kwargs):
+                 pretrans_layers=1, posttrans_layers=1, divide_input=False, edge_features=True, **kwargs):
         r"""
         :param in_channels:         size of the input per node
         :param in_channels:         size of the output per node
@@ -175,6 +175,7 @@ class PNAConv(MessagePassing):
         self.out_channels = out_channels
         self.towers = towers
         self.divide_input = divide_input
+        self.edge_features = edge_features
         self.input_tower = self.in_channels // towers if divide_input else self.in_channels
         self.output_tower = self.out_channels // towers
 
@@ -182,14 +183,14 @@ class PNAConv(MessagePassing):
         self.aggregators = [AGGREGATORS[aggr] for aggr in aggregators]
         self.scalers = [SCALERS[scale] for scale in scalers]
         self.avg_d = avg_d
-        self.edge_encoder = FCLayer(in_size=in_channels, out_size=self.input_tower, activation=None)
+        self.edge_encoder = FCLayer(in_size=in_channels, out_size=self.input_tower, activation=None) if edge_features else None
 
         # build pre-transformations and post-transformation MLP for each tower
         self.pretrans = nn.ModuleList()
         self.posttrans = nn.ModuleList()
         for _ in range(towers):
             self.pretrans.append(
-                MLP(in_size=3 * self.input_tower, hidden_size=self.input_tower, out_size=self.input_tower,
+                MLP(in_size=(3 if edge_features else 2)* self.input_tower, hidden_size=self.input_tower, out_size=self.input_tower,
                     layers=pretrans_layers, mid_activation=activation.ReLU(), last_activation=None))
             self.posttrans.append(
                 MLP(in_size=(len(self.aggregators) * len(self.scalers) + 1) * self.input_tower,
@@ -200,8 +201,7 @@ class PNAConv(MessagePassing):
         self.mixing_network = FCLayer(self.out_channels, self.out_channels, activation=activation.LeakyReLU())
 
     def forward(self, x, edge_index, edge_attr):
-        edge_embedding = self.edge_encoder(edge_attr) if edge_attr else None
-        return self.propagate(edge_index, x=x, edge_attr=edge_embedding)
+        return self.propagate(edge_index, x=x, edge_attr=self.edge_encoder(edge_attr) if self.edge_features else None)
 
     def message(self, x_i, x_j, edge_attr):
         if self.divide_input:
@@ -213,7 +213,7 @@ class PNAConv(MessagePassing):
             x_i = x_i.view(-1, 1, self.input_tower).repeat(1, self.towers, 1)
             x_j = x_j.view(-1, 1, self.input_tower).repeat(1, self.towers, 1)
 
-        if edge_attr:
+        if self.edge_features:
             edge_attr = edge_attr.view(-1, 1, self.input_tower).repeat(1, self.towers, 1)
 
         # pre-transformation

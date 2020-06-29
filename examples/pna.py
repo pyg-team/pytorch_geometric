@@ -24,8 +24,8 @@ dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = PNAConv(aggregators=args.aggregators.split(), scalers=args.scalers.split(), towers=args.towers,
                 divide_input=args.divide_input,
-                pretrans_layers=args.pretrans_layers, posttrans_layers=args.posttrans_layers, in_channels=5,
-                out_channels=5, avg_d=3.14).to(device)
+                pretrans_layers=args.pretrans_layers, posttrans_layers=args.posttrans_layers, in_channels=dataset[0].x.shape[-1],
+                out_channels=5, avg_d=3.14, edge_features=dataset[0].edge_attr is not None).to(device)
 data = dataset[0].to(device)
 print(data)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
