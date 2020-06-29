@@ -142,8 +142,7 @@ class GINEConv(MessagePassing):
 
         return self.nn(out)
 
-    def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
-        assert edge_attr is not None
+    def message(self, x_j: Tensor, edge_attr: Tensor) -> Tensor:
         return F.relu(x_j + edge_attr)
 
     def __repr__(self):

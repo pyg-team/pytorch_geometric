@@ -130,8 +130,7 @@ class SplineConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
-        assert edge_attr is not None
+    def message(self, x_j: Tensor, edge_attr: Tensor) -> Tensor:
         data = spline_basis(edge_attr, self.kernel_size, self.is_open_spline,
                             self.degree)
         return spline_weighting(x_j, self.weight, *data)
