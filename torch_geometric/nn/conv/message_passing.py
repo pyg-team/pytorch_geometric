@@ -171,7 +171,9 @@ class MessagePassing(torch.nn.Module):
             out['edge_index_i'] = edge_index.storage.row()
             out['edge_index_j'] = edge_index.storage.col()
             out['ptr'] = edge_index.storage.rowptr()
-            out['edge_attr'] = out['edge_weight'] = edge_index.storage.value()
+            out['edge_weight'] = edge_index.storage.value()
+            out['edge_attr'] = edge_index.storage.value()
+            out['edge_type'] = edge_index.storage.value()
 
         out['index'] = out['edge_index_i']
         out['size_i'] = size[1] or size[0]
