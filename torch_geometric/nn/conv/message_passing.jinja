@@ -107,6 +107,9 @@ class {{cls_name}}({{parent_cls_name}}):
             edge_weight = edge_def.storage.value()
             {%- endif %}
 
+        {% if collect_types.get('edge_weight', 'Optional')[:8] != 'Optional' %}assert edge_weight is not None{% endif %}
+        {% if collect_types.get('edge_attr', 'Optional')[:8] != 'Optional' %}assert edge_attr is not None{% endif %}
+
         index = edge_index_i
         size_i = size[1] if size[1] is not None else size[0]
         size_j = size[0] if size[0] is not None else size[1]
