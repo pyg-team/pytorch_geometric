@@ -87,8 +87,6 @@ class FCLayer(nn.Module):
             self.linear.bias.data.zero_()
 
     def forward(self, x):
-        print('x',x.shape)
-        print('L',self.linear)
         h = self.linear(x)
         if self.activation is not None:
             h = self.activation(h)
@@ -224,10 +222,10 @@ class PNAConv(MessagePassing):
         return y
 
     def aggregate(self, inputs, index, dim_size=None):
-        D = get_degree(inputs, index, self.node_dim, dim_size)
+        D = get_degree(inputs, index, 0, dim_size)
 
         # aggregators
-        inputs = torch.cat([aggregator(inputs, index, dim=self.node_dim, dim_size=dim_size)
+        inputs = torch.cat([aggregator(inputs, index, dim=0, dim_size=dim_size)
                             for aggregator in self.aggregators], dim=-1)
         # scalers
         return torch.cat([scaler(inputs, D, self.avg_d) for scaler in self.scalers], dim=-1)

@@ -26,6 +26,7 @@ model = PNAConv(aggregators=args.aggregators.split(), scalers=args.scalers.split
                 divide_input=args.divide_input,
                 pretrans_layers=args.pretrans_layers, posttrans_layers=args.posttrans_layers, in_channels=dataset[0].x.shape[-1],
                 out_channels=5, avg_d=3.14, edge_features=dataset[0].edge_attr is not None).to(device)
+#TODO: actual avg_d
 data = dataset[0].to(device)
 print(data)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
@@ -34,8 +35,8 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train():
     model.train()
     optimizer.zero_grad()
-    pos_z, neg_z, summary = model(data.x, data.edge_index, data.edge_attr)
-    loss = model.loss(pos_z, neg_z, summary)
+    y = model(data.x, data.edge_index, data.edge_attr)
+    loss = torch.sum(y) #TODO: actual loss function
     loss.backward()
     optimizer.step()
     return loss.item()
