@@ -1,6 +1,7 @@
 import os.path as osp
 import argparse
 
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
@@ -20,39 +21,43 @@ args = parser.parse_args()
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
+data = dataset[0]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device', device)
 model = PNAConv(aggregators=args.aggregators.split(), scalers=args.scalers.split(), towers=args.towers,
                 divide_input=args.divide_input,
-                pretrans_layers=args.pretrans_layers, posttrans_layers=args.posttrans_layers, in_channels=dataset[0].x.shape[-1],
-                out_channels=5, avg_d=3.14, edge_features=dataset[0].edge_attr is not None).to(device)
-#TODO: actual avg_d
-data = dataset[0].to(device)
-print(data)
+                pretrans_layers=args.pretrans_layers, posttrans_layers=args.posttrans_layers,
+                in_channels=dataset.num_node_features,
+                out_channels=dataset.num_classes, avg_d=data.num_edges / data.num_nodes,
+                edge_features=bool(dataset.num_edge_features)).to(device)
+data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train():
     model.train()
     optimizer.zero_grad()
-    y = model(data.x, data.edge_index, data.edge_attr)
-    loss = torch.sum(y) #TODO: actual loss function
-    loss.backward()
+    y = model(data.x, data.edge_index, data.edge_attr)[data.train_mask]
+    train_loss, val_loss = [torch.nn.CrossEntropyLoss()(y, data.y[data.train_mask]) for mask in
+                            (data.train_mask, data.val_mask)]
+    train_loss.backward()
     optimizer.step()
-    return loss.item()
+    return train_loss.item(), val_loss.item()
 
 
 @torch.no_grad()
 def test():
     model.eval()
-    z, _, _ = model(data.x, data.edge_index)
-    acc = model.test(z[data.train_mask], data.y[data.train_mask],
-                     z[data.test_mask], data.y[data.test_mask], max_iter=150)
-    return acc
+    y = model(data.x, data.edge_index, data.edge_attr)
+    train_acc, val_acc, test_acc = [torch.mean((torch.argmax(y[mask], dim=1) == data.y[mask]).float()).item() for mask
+                                    in (data.train_mask, data.val_mask, data.test_mask)]
+    return train_acc, val_acc, test_acc
 
 
-for epoch in range(1, 301):
-    loss = train()
-    print('Epoch: {:03d}, Loss: {:.4f}'.format(epoch, loss))
-acc = test()
-print('Accuracy: {:.4f}'.format(acc))
+for epoch in range(1, 30):
+    train_loss, val_loss = train()
+    print('Epoch: {:03d}, Loss: {:.8f}, Val Loss {:.8f}'.format(epoch, train_loss, val_loss))
+
+train_acc, val_acc, test_acc = test()
+print('Accuracy: train: {:.4f} val: {:.4f} test: {:.4f}'.format(train_acc, val_acc, test_acc))
