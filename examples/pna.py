@@ -18,20 +18,24 @@ parser.add_argument('--pretrans_layers', type=int, help='pretrans_layers.', defa
 parser.add_argument('--posttrans_layers', type=int, help='posttrans_layers.', default=1)
 args = parser.parse_args()
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device:', device)
+
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
-data = dataset[0]
+data = dataset[0].to(device)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print('Using device', device)
+D = torch.bincount(data.edge_index[1], minlength=data.num_nodes).float()
+
 model = PNAConv(aggregators=args.aggregators.split(), scalers=args.scalers.split(), towers=args.towers,
                 divide_input=args.divide_input,
                 pretrans_layers=args.pretrans_layers, posttrans_layers=args.posttrans_layers,
                 in_channels=dataset.num_node_features,
-                out_channels=dataset.num_classes, avg_d=data.num_edges / data.num_nodes,
+                out_channels=dataset.num_classes,
+                avg_d=dict(lin=torch.mean(D).item(), log=torch.mean(torch.log(D + 1)).item(),
+                           exp=torch.mean(torch.exp(D)).item()),
                 edge_features=bool(dataset.num_edge_features)).to(device)
-data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 

@@ -149,35 +149,36 @@ class MLP(nn.Module):
 
 
 class PNAConv(MessagePassing):
-    r"""The Principal Neighbourhood Aggregator from the `"Principal Neighbourhood Aggregation for Graph Nets"
-        <https://arxiv.org/abs/2004.05718>`_ paper
+    r"""The PNA convolution from the `"Principal Neighbourhood Aggregation
+    for Graph Nets" <https://arxiv.org/abs/2004.05718>`_ paper
 
         .. math::
-            TODO
+            \bigoplus = \underbrace{\begin{bmatrix}I \\ S(D, \alpha=1) \\ S(D, \alpha=-1)
+            \end{bmatrix} }_{\text{scalers}}
+            \otimes \underbrace{\begin{bmatrix} \mu \\ \sigma \\ \max \\ \min \end{bmatrix}}_{\text{aggregators}},
 
-        where the general aggregation is performed
+        in:
 
         .. math::
-            TODO
+            X_i^{(t+1)} = U \left( X_i^{(t)}, \underset{(j,i) \in E}{\bigoplus}
+            M \left( X_i^{(t)}, X_j^{(t)} \right) \right)
+
+        where :math:`M` and :math:`U` denote the MLP referred to with pretrans and posttrans
+        respectively.
 
         Args:
             in_channels (int): Size of each input sample.
             out_channels (int): Size of each output sample.
             aggregators (str iterable): Set of aggregation function identifiers.
-            scalers (str iterable): Set of scaling function identifiers.
-            avg_d (float): The average in-degree of nodes in the training set.
-            towers (int, optional): Number of towers to use.
-                (default: :obj:`1`)
-            pretrans_layers (int, optional): Number of layers in the transformation before the aggregation.
-                (default: :obj:`1`)
-            posttrans_layers (int, optional): Number of layers in the transformation after the aggregation.
-                (default: :obj:`1`)
-            divide_input (bool, optional): Whether the input features should be split between towers or not.
-                (default: :obj:`False`)
-            edge_features (bool, optional): Whether to consider the edge features. If set to :obj:`True`,
-                a non-zero number of edge fetuares is expected.
-                (default: :obj:`True`)
-
+            scalers: (str iterable): Set of scaling function identifiers.
+            avg_d (str -> float dict): Average in-degree of nodes in the training set, used by scalers to normalize.
+            towers (int, optional): Number of towers to use (default: :obj:`1`).
+            pretrans_layers (int, optional): Number of layers in the transformation before the aggregation (default: :obj:`1`).
+            posttrans_layers (int, optional): Number of layers in the transformation after the aggregation (default: :obj:`1`).
+            divide_input (bool, optional): Whether the input features should be split between towers or not (default: :obj:`False`).
+            edge_features (bool, optional): Whether there are edge features (default: :obj:`False`).
+            **kwargs (optional): Additional arguments of
+                :class:`torch_geometric.nn.conv.MessagePassing`.
         """
 
     def __init__(self, in_channels, out_channels, aggregators, scalers, avg_d, towers=1,
