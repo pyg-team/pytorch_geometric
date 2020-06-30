@@ -37,7 +37,6 @@ AGGREGATORS = {'mean': aggregate_mean, 'sum': aggregate_sum, 'max': aggregate_ma
                'std': aggregate_std, 'var': aggregate_var}
 
 
-
 def get_degree(src, index, dim, dim_size):
     # returns a tensor with the various degrees of the nodes
     index_dim = dim
@@ -48,7 +47,7 @@ def get_degree(src, index, dim, dim_size):
 
     ones = torch.ones(index.size(), dtype=src.dtype, device=src.device)
     count = scatter_sum(ones, index, index_dim, None, dim_size)
-    count.clamp_(1) # ensure no 0s
+    count.clamp_(1)  # ensure no 0s
     count = count.unsqueeze(-1).unsqueeze(-1)
     return count
 
