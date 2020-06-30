@@ -4,6 +4,12 @@ from torch_geometric.nn.conv import MessagePassing
 from torch.nn.modules import activation
 from .utils.aggregators_and_scalers import AGGREGATORS, SCALERS, get_degree
 
+"""
+    PNA: Principal Neighbourhood Aggregation 
+    Gabriele Corso, Luca Cavalleri, Dominique Beaini, Pietro Lio, Petar Velickovic
+    https://arxiv.org/abs/2004.05718
+"""
+
 
 class FCLayer(nn.Module):
     r"""
@@ -142,28 +148,41 @@ class MLP(nn.Module):
                + str(self.out_size) + ')'
 
 
-"""
-    PNA: Principal Neighbourhood Aggregation 
-    Gabriele Corso, Luca Cavalleri, Dominique Beaini, Pietro Lio, Petar Velickovic
-    https://arxiv.org/abs/2004.05718
-"""
-
-
 class PNAConv(MessagePassing):
+    r"""The Principal Neighbourhood Aggregator from the `"Principal Neighbourhood Aggregation for Graph Nets"
+        <https://arxiv.org/abs/2004.05718>`_ paper
+
+        .. math::
+            TODO
+
+        where the general aggregation is performed
+
+        .. math::
+            TODO
+
+        Args:
+            in_channels (int): Size of each input sample.
+            out_channels (int): Size of each output sample.
+            aggregators (str iterable): Set of aggregation function identifiers.
+            scalers (str iterable): Set of scaling function identifiers.
+            avg_d (float): The average in-degree of nodes in the training set.
+            towers (int, optional): Number of towers to use.
+                (default: :obj:`1`)
+            pretrans_layers (int, optional): Number of layers in the transformation before the aggregation.
+                (default: :obj:`1`)
+            posttrans_layers (int, optional): Number of layers in the transformation after the aggregation.
+                (default: :obj:`1`)
+            divide_input (bool, optional): Whether the input features should be split between towers or not.
+                (default: :obj:`False`)
+            edge_features (bool, optional): Whether to consider the edge features. If set to :obj:`True`,
+                a non-zero number of edge fetuares is expected.
+                (default: :obj:`True`)
+
+        """
 
     def __init__(self, in_channels, out_channels, aggregators, scalers, avg_d, towers=1,
                  pretrans_layers=1, posttrans_layers=1, divide_input=False, edge_features=True, **kwargs):
-        r"""
-        :param in_channels:         size of the input per node
-        :param in_channels:         size of the output per node
-        :param aggregators:         set of aggregation function identifiers
-        :param scalers:             set of scaling functions identifiers
-        :param avg_d:               average degree of nodes in the training set, used by scalers to normalize
-        :param towers:              number of towers to use
-        :param pretrans_layers:     number of layers in the transformation before the aggregation
-        :param posttrans_layers:    number of layers in the transformation after the aggregation
-        :param divide_input:        whether the input features should be split between towers or not
-        """
+
         super(PNAConv, self).__init__(aggr=None, **kwargs)
         assert ((
                     not divide_input) or in_channels % towers == 0), "if divide_input is set the number of towers has to divide in_features"
@@ -181,14 +200,16 @@ class PNAConv(MessagePassing):
         self.aggregators = [AGGREGATORS[aggr] for aggr in aggregators]
         self.scalers = [SCALERS[scale] for scale in scalers]
         self.avg_d = avg_d
-        self.edge_encoder = FCLayer(in_size=in_channels, out_size=self.input_tower, activation=None) if edge_features else None
+        self.edge_encoder = FCLayer(in_size=in_channels, out_size=self.input_tower,
+                                    activation=None) if edge_features else None
 
         # build pre-transformations and post-transformation MLP for each tower
         self.pretrans = nn.ModuleList()
         self.posttrans = nn.ModuleList()
         for _ in range(towers):
             self.pretrans.append(
-                MLP(in_size=(3 if edge_features else 2)* self.input_tower, hidden_size=self.input_tower, out_size=self.input_tower,
+                MLP(in_size=(3 if edge_features else 2) * self.input_tower, hidden_size=self.input_tower,
+                    out_size=self.input_tower,
                     layers=pretrans_layers, mid_activation=activation.ReLU(), last_activation=None))
             self.posttrans.append(
                 MLP(in_size=(len(self.aggregators) * len(self.scalers) + 1) * self.input_tower,
