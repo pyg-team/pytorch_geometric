@@ -237,6 +237,7 @@ class RGCNConv(MessagePassing):
 
 
 class FastRGCNConv(RGCNConv):
+    r"""See :class:`RGCNConv`."""
     def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
                 edge_index: Adj, edge_type: OptTensor = None):
         """"""
