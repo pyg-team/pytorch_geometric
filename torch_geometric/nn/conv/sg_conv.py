@@ -1,7 +1,6 @@
-from typing import Optional, Tuple
+from typing import Optional
 from torch_geometric.typing import Adj, OptTensor
 
-import torch
 from torch import Tensor
 from torch.nn import Linear
 from torch_sparse import SparseTensor, matmul
@@ -40,7 +39,7 @@ class SGConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    _cache: OptTensor
+    _cached_x: Optional[Tensor]
 
     def __init__(self, in_channels: int, out_channels: int, K: int = 1,
                  cached: bool = False, add_self_loops: bool = True,
@@ -53,7 +52,7 @@ class SGConv(MessagePassing):
         self.cached = cached
         self.add_self_loops = add_self_loops
 
-        self._cache = None
+        self._cached_x = None
 
         self.lin = Linear(in_channels, out_channels, bias=bias)
 
@@ -61,12 +60,12 @@ class SGConv(MessagePassing):
 
     def reset_parameters(self):
         self.lin.reset_parameters()
-        self._cache = None
+        self._cached_x = None
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
         """"""
-        cache = self._cache
+        cache = self._cached_x
         if cache is None:
             if isinstance(edge_index, Tensor):
                 edge_index, edge_weight = gcn_norm(  # yapf: disable
@@ -82,7 +81,7 @@ class SGConv(MessagePassing):
                 x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                                    size=None)
                 if self.cached:
-                    self._cache = x
+                    self._cached_x = x
         else:
             x = cache
 

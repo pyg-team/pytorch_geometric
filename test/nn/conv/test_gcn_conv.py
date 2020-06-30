@@ -30,6 +30,12 @@ def test_gcn_conv():
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
     assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
 
+    conv.cached = True
+    conv(x, edge_index)
+    assert conv(x, edge_index).tolist() == out1.tolist()
+    conv(x, adj1.t())
+    assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
+
 
 def test_gcn_conv_with_sparse_input_feature():
     x = torch.sparse_coo_tensor(indices=torch.tensor([[0, 0], [0, 1]]),

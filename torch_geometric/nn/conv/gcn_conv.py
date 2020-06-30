@@ -100,7 +100,7 @@ class GCNConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    _cached_edge_index: Optional[Tuple[torch.Tensor, torch.Tensor]]
+    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, in_channels: int, out_channels: int,
