@@ -55,7 +55,7 @@ def test():
     return train_acc, val_acc, test_acc
 
 
-for epoch in range(1, 30):
+for epoch in range(1, 301):
     train_loss, val_loss = train()
     print('Epoch: {:03d}, Loss: {:.8f}, Val Loss {:.8f}'.format(epoch, train_loss, val_loss))
 
