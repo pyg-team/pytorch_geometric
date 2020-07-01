@@ -85,11 +85,13 @@ class Batch(Data):
                         for j, size in enumerate(size.tolist()):
                             tmp = f'{key}_{j}_batch'
                             batch[tmp] = [] if i == 0 else batch[tmp]
-                            batch[tmp].append(torch.full((size, ), i))
+                            batch[tmp].append(
+                                torch.full((size, ), i, dtype=torch.long))
                     else:
                         tmp = f'{key}_batch'
                         batch[tmp] = [] if i == 0 else batch[tmp]
-                        batch[tmp].append(torch.full((size, ), i))
+                        batch[tmp].append(
+                            torch.full((size, ), i, dtype=torch.long))
 
             if hasattr(data, '__num_nodes__'):
                 num_nodes_list.append(data.__num_nodes__)
@@ -119,7 +121,7 @@ class Batch(Data):
                 batch[key] = torch.cat(items, ref_data.__cat_dim__(key, item))
             elif isinstance(item, SparseTensor):
                 batch[key] = cat(items, ref_data.__cat_dim__(key, item))
-            elif isinstance(item, int) or isinstance(item, float):
+            elif isinstance(item, (int, float)):
                 batch[key] = torch.tensor(items)
 
         if torch_geometric.is_debug_enabled():
