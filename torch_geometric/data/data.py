@@ -159,7 +159,7 @@ class Data(object):
             attribute.
         """
         # Concatenate `*index*` and `*face*` attributes in the last dimension.
-        if bool(re.search('(index|face)'), key):
+        if bool(re.search('(index|face)', key)):
             return -1
         # By default, concatenate sparse matrices diagonally.
         elif isinstance(value, SparseTensor):
@@ -201,6 +201,10 @@ class Data(object):
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
+        if hasattr(self, 'adj'):
+            return self.adj.size(0)
+        if hasattr(self, 'adj_t'):
+            return self.adj_t.size(1)
         if self.face is not None:
             logging.warning(__num_nodes_warn_msg__.format('face'))
             return maybe_num_nodes(self.face)
