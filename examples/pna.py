@@ -98,4 +98,4 @@ for epoch in range(1, 101):
     test_mae = test(test_loader)
     scheduler.step(val_mae)
     print(f'Epoch: {epoch:02d}, Loss:{loss:.4f}, Val: {val_mae:.4f}, '
-          f'Test:{test_mae}:.4f')
+          f'Test:{test_mae:.4f}')
