@@ -27,17 +27,20 @@ class Batch(Data):
 
         keys = [set(data.keys) for data in data_list]
         keys = list(set.union(*keys))
-        print(keys)
         assert 'batch' not in keys
 
-        batch = Batch.from_dict({key: [] for key in keys + ['batch']})
+        batch = Batch()
         batch.__data_class__ = data_list[0].__class__
         batch.__slices__ = {key: [0] for key in keys}
 
+        for key in keys:
+            batch[key] = []
+
         for key in follow_batch:
-            batch[f'{key}_batch'] = []
+            batch['{}_batch'.format(key)] = []
 
         cumsum = {key: 0 for key in keys}
+        batch.batch = []
         for i, data in enumerate(data_list):
             for key in data.keys:
                 item = data[key]
