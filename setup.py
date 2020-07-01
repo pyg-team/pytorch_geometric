@@ -12,7 +12,6 @@ install_requires = [
     'scikit-learn',
     'numba',
     'requests',
-    'openmesh',
     'pandas',
     'rdflib',
     'h5py',
