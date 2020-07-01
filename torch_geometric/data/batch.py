@@ -87,7 +87,7 @@ class Batch(Data):
                             batch[tmp] = [] if i == 0 else batch[tmp]
                             batch[tmp].append(torch.full((size, ), i))
                     else:
-                        tmp = f'{key}_{j}_batch'
+                        tmp = f'{key}_batch'
                         batch[tmp] = [] if i == 0 else batch[tmp]
                         batch[tmp].append(torch.full((size, ), i))
 
@@ -122,8 +122,8 @@ class Batch(Data):
             elif isinstance(item, int) or isinstance(item, float):
                 batch[key] = torch.tensor(items)
 
-        # if torch_geometric.is_debug_enabled():
-        #     batch.debug()
+        if torch_geometric.is_debug_enabled():
+            batch.debug()
 
         return batch.contiguous()
 
