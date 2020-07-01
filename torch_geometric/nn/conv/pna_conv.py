@@ -38,10 +38,10 @@ def aggregate_std(src, index, dim_size):
 
 
 AGGREGATORS = {
-    'mean': aggregate_mean,
     'sum': aggregate_sum,
-    'max': aggregate_max,
+    'mean': aggregate_mean,
     'min': aggregate_min,
+    'max': aggregate_max,
     'var': aggregate_var,
     'std': aggregate_std,
 }
@@ -99,15 +99,20 @@ class PNAConv(MessagePassing):
         Args:
             in_channels (int): Size of each input sample.
             out_channels (int): Size of each output sample.
-            aggregators (list of str): Set of aggregation function identifiers.
-            scalers: (list of str): Set of scaling function identifiers.
+            aggregators (list of str): Set of aggregation function identifiers,
+                namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
+                :obj:`"var"` and :obj:`"std"`.
+            scalers: (list of str): Set of scaling function identifiers, namely
+                :obj:`"identity"`, :obj:`"amplification"`,
+                :obj:`"attenuation"`, :obj:`"linear"` and
+                :obj:`"inverse_linear"`.
             deg (Tensor): Histogram of in-degrees of nodes in the training set,
                 used by scalers to normalize.
-            dim (int, optional): Edge feature dimensionality (in case there
-                are any). (default :obj:`None`)
+            edge_dim (int, optional): Edge feature dimensionality (in case
+                there are any). (default :obj:`None`)
             towers (int, optional): Number of towers (default: :obj:`1`).
             pre_layers (int, optional): Number of transformation layers before
-                transformation before the aggregation (default: :obj:`1`).
+                aggregation (default: :obj:`1`).
             post_layers (int, optional): Number of transformation layers after
                 aggregation (default: :obj:`1`).
             divide_input (bool, optional): Whether the input features should
@@ -117,7 +122,7 @@ class PNAConv(MessagePassing):
         """
     def __init__(self, in_channels: int, out_channels: int,
                  aggregators: List[str], scalers: List[str], deg: Tensor,
-                 dim: Optional[int] = None, towers: int = 1,
+                 edge_dim: Optional[int] = None, towers: int = 1,
                  pre_layers: int = 1, post_layers: int = 1,
                  divide_input: bool = False, **kwargs):
 
@@ -131,7 +136,7 @@ class PNAConv(MessagePassing):
         self.out_channels = out_channels
         self.aggregators = [AGGREGATORS[aggr] for aggr in aggregators]
         self.scalers = [SCALERS[scale] for scale in scalers]
-        self.dim = dim
+        self.edge_dim = edge_dim
         self.towers = towers
         self.divide_input = divide_input
 
@@ -145,13 +150,13 @@ class PNAConv(MessagePassing):
             'exp': deg.exp().mean().item(),
         }
 
-        if self.dim is not None:
-            self.edge_encoder = Linear(dim, self.F_in)
+        if self.edge_dim is not None:
+            self.edge_encoder = Linear(edge_dim, self.F_in)
 
         self.pre_nns = ModuleList()
         self.post_nns = ModuleList()
         for _ in range(towers):
-            modules = [Linear((3 if dim else 2) * self.F_in, self.F_in)]
+            modules = [Linear((3 if edge_dim else 2) * self.F_in, self.F_in)]
             for _ in range(pre_layers - 1):
                 modules += [ReLU()]
                 modules += [Linear(self.F_in, self.F_in)]
@@ -169,7 +174,7 @@ class PNAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        if self.dim is not None:
+        if self.edge_dim is not None:
             self.edge_encoder.reset_parameters()
         for nn in self.pre_nns:
             reset(nn)
