@@ -92,7 +92,7 @@ def test(loader):
     return total_error / len(loader.dataset)
 
 
-for epoch in range(1, 101):
+for epoch in range(1, 301):
     loss = train(epoch)
     val_mae = test(val_loader)
     test_mae = test(test_loader)
