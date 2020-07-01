@@ -12,7 +12,7 @@ install_requires = [
     'scikit-learn',
     'numba',
     'requests',
-    'plyfile',
+    'openmesh',
     'pandas',
     'rdflib',
     'h5py',
