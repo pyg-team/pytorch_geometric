@@ -13,4 +13,4 @@ External Resources
 
 * **DeepSNAP** - A PyTorch library that bridges between graph libraries such as NetworkX and PyTorch Geometric [`GitHub <https://github.com/snap-stanford/deepsnap>`__]
 
-* **PyTorch Geometric Temporal** - A temporal GNN library built upon PyTorch Geometric [`Website <https://pytorch-geometric-temporal.readthedocs.io/en/latest/>`__, `GitHub <https://github.com/benedekrozemberczki/pytorch_geometric_temporal>`__]
+* Benedek Rozemberczki: **PyTorch Geometric Temporal** - A temporal GNN library built upon PyTorch Geometric [`Website <https://pytorch-geometric-temporal.readthedocs.io/en/latest/>`__, `GitHub <https://github.com/benedekrozemberczki/pytorch_geometric_temporal>`__]
