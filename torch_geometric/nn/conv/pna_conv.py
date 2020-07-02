@@ -91,7 +91,7 @@ class PNAConv(MessagePassing):
 
     .. math::
         \bigoplus = \underbrace{\begin{bmatrix}
-            \mathbf{I} \\
+            1 \\
             S(\mathbf{D}, \alpha=1) \\
             S(\mathbf{D}, \alpha=-1)
         \end{bmatrix} }_{\text{scalers}}
