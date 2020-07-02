@@ -11,71 +11,6 @@ from torch_geometric.utils import degree
 from ..inits import reset
 
 
-def aggregate_sum(src: Tensor, index: Tensor, dim_size: Optional[int]):
-    return scatter(src, index, 0, None, dim_size, reduce='sum')
-
-
-def aggregate_mean(src: Tensor, index: Tensor, dim_size: Optional[int]):
-    return scatter(src, index, 0, None, dim_size, reduce='mean')
-
-
-def aggregate_min(src: Tensor, index: Tensor, dim_size: Optional[int]):
-    return scatter(src, index, 0, None, dim_size, reduce='min')
-
-
-def aggregate_max(src: Tensor, index: Tensor, dim_size: Optional[int]):
-    return scatter(src, index, 0, None, dim_size, reduce='max')
-
-
-def aggregate_var(src, index, dim_size):
-    mean = aggregate_mean(src, index, dim_size)
-    mean_squares = aggregate_mean(src * src, index, dim_size)
-    return mean_squares - mean * mean
-
-
-def aggregate_std(src, index, dim_size):
-    return torch.sqrt(torch.relu(aggregate_var(src, index, dim_size)) + 1e-5)
-
-
-AGGREGATORS = {
-    'sum': aggregate_sum,
-    'mean': aggregate_mean,
-    'min': aggregate_min,
-    'max': aggregate_max,
-    'var': aggregate_var,
-    'std': aggregate_std,
-}
-
-
-def scale_identity(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
-    return src
-
-
-def scale_amplification(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
-    return src * (torch.log(deg + 1) / avg_deg['log'])
-
-
-def scale_attenuation(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
-    return src * (avg_deg['log'] / torch.log(deg + 1))
-
-
-def scale_linear(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
-    return src * (deg / avg_deg['lin'])
-
-
-def scale_inverse_linear(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
-    return src * (avg_deg['lin'] / deg)
-
-
-SCALERS = {
-    'identity': scale_identity,
-    'amplification': scale_amplification,
-    'attenuation': scale_attenuation,
-    'linear': scale_linear,
-    'inverse_linear': scale_inverse_linear
-}
-
-
 class PNAConv(MessagePassing):
     r"""The Principal Neighbourhood Aggregation graph convolution operator
     from the `"Principal Neighbourhood Aggregation for Graph Nets"
@@ -143,8 +78,8 @@ class PNAConv(MessagePassing):
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.aggregators = [AGGREGATORS[aggr] for aggr in aggregators]
-        self.scalers = [SCALERS[scale] for scale in scalers]
+        self.aggregators = aggregators
+        self.scalers = scalers
         self.edge_dim = edge_dim
         self.towers = towers
         self.divide_input = divide_input
@@ -226,14 +161,51 @@ class PNAConv(MessagePassing):
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   dim_size: Optional[int] = None) -> Tensor:
-        outs = [aggr(inputs, index, dim_size) for aggr in self.aggregators]
+
+        outs = []
+        for aggregator in self.aggregators:
+            if aggregator == 'sum':
+                out = scatter(inputs, index, 0, None, dim_size, reduce='sum')
+            elif aggregator == 'mean':
+                out = scatter(inputs, index, 0, None, dim_size, reduce='mean')
+            elif aggregator == 'min':
+                out = scatter(inputs, index, 0, None, dim_size, reduce='min')
+            elif aggregator == 'max':
+                out = scatter(inputs, index, 0, None, dim_size, reduce='max')
+            elif aggregator == 'var' or aggregator == 'std':
+                mean = scatter(inputs, index, 0, None, dim_size, reduce='mean')
+                mean_squares = scatter(inputs * inputs, index, 0, None,
+                                       dim_size, reduce='mean')
+                out = mean_squares - mean * mean
+                if aggregator == 'std':
+                    out = torch.sqrt(torch.relu(out) + 1e-5)
+            else:
+                raise ValueError(f'Unknown aggregator "{aggregator}".')
+            outs.append(out)
         out = torch.cat(outs, dim=-1)
 
-        deg = degree(index, dim_size, dtype=inputs.dtype).view(-1, 1, 1)
-        outs = [scaler(out, deg, self.avg_deg) for scaler in self.scalers]
+        deg = degree(index, dim_size, dtype=inputs.dtype)
+        deg = deg.clamp_(1).view(-1, 1, 1)
+
+        outs = []
+        for scaler in self.scalers:
+            if scaler == 'identity':
+                pass
+            elif scaler == 'amplification':
+                out = out * (torch.log(deg + 1) / self.avg_deg['log'])
+            elif scaler == 'attenuation':
+                out = out * (self.avg_deg['log'] / torch.log(deg + 1))
+            elif scaler == 'linear':
+                out = out * (deg / self.avg_deg['lin'])
+            elif scaler == 'inverse_linear':
+                out = out * (self.avg_deg['lin'] / deg)
+            else:
+                raise ValueError(f'Unknown scaler "{scaler}".')
+            outs.append(out)
         return torch.cat(outs, dim=-1)
 
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, towers={self.towers}, dim={self.dim})')
+                f'{self.out_channels}, towers={self.towers}, '
+                f'edge_dim={self.edge_dim})')
         raise NotImplementedError
