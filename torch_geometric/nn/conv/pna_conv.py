@@ -208,4 +208,3 @@ class PNAConv(MessagePassing):
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, towers={self.towers}, '
                 f'edge_dim={self.edge_dim})')
-        raise NotImplementedError
