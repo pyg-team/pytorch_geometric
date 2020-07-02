@@ -81,45 +81,54 @@ class PNAConv(MessagePassing):
     from the `"Principal Neighbourhood Aggregation for Graph Nets"
     <https://arxiv.org/abs/2004.05718>`_ paper
 
-        .. math::
-            \bigoplus = \underbrace{\begin{bmatrix}I \\ S(D, \alpha=1) \\
-            S(D, \alpha=-1) \end{bmatrix} }_{\text{scalers}}
-            \otimes \underbrace{\begin{bmatrix} \mu \\ \sigma \\ \max \\ \min
-            \end{bmatrix}}_{\text{aggregators}},
+    .. math::
+        \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left(
+        \mathbf{x}_i, \underset{j \in \mathcal{N}(i)}{\bigoplus}
+        h_{\mathbf{\Theta}} \left( \mathbf{x}_i, \mathbf{x}_j \right)
+        \right)
 
-        in:
+    with
 
-        .. math::
-            X_i^{(t+1)} = U \left( X_i^{(t)}, \underset{(j,i) \in E}{\bigoplus}
-            M \left( X_i^{(t)}, X_j^{(t)} \right) \right)
+    .. math::
+        \bigoplus = \underbrace{\begin{bmatrix}
+            \mathbf{I} \\
+            S(\mathbf{D}, \alpha=1) \\
+            S(\mathbf{D}, \alpha=-1)
+        \end{bmatrix} }_{\text{scalers}}
+        \otimes \underbrace{\begin{bmatrix}
+            \mu \\
+            \sigma \\
+            \max \\
+            \min
+        \end{bmatrix}}_{\text{aggregators}},
 
-        where :math:`M` and :math:`U` denote the MLP referred to with pretrans
-        and posttrans respectively.
+    where :math:`\gamma_{\mathbf{\Theta}}` and :math:`h_{\mathbf{\Theta}}`
+    denote MLPs.
 
-        Args:
-            in_channels (int): Size of each input sample.
-            out_channels (int): Size of each output sample.
-            aggregators (list of str): Set of aggregation function identifiers,
-                namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
-                :obj:`"var"` and :obj:`"std"`.
-            scalers: (list of str): Set of scaling function identifiers, namely
-                :obj:`"identity"`, :obj:`"amplification"`,
-                :obj:`"attenuation"`, :obj:`"linear"` and
-                :obj:`"inverse_linear"`.
-            deg (Tensor): Histogram of in-degrees of nodes in the training set,
-                used by scalers to normalize.
-            edge_dim (int, optional): Edge feature dimensionality (in case
-                there are any). (default :obj:`None`)
-            towers (int, optional): Number of towers (default: :obj:`1`).
-            pre_layers (int, optional): Number of transformation layers before
-                aggregation (default: :obj:`1`).
-            post_layers (int, optional): Number of transformation layers after
-                aggregation (default: :obj:`1`).
-            divide_input (bool, optional): Whether the input features should
-                be split between towers or not (default: :obj:`False`).
-            **kwargs (optional): Additional arguments of
-                :class:`torch_geometric.nn.conv.MessagePassing`.
-        """
+    Args:
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        aggregators (list of str): Set of aggregation function identifiers,
+            namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
+            :obj:`"var"` and :obj:`"std"`.
+        scalers: (list of str): Set of scaling function identifiers, namely
+            :obj:`"identity"`, :obj:`"amplification"`,
+            :obj:`"attenuation"`, :obj:`"linear"` and
+            :obj:`"inverse_linear"`.
+        deg (Tensor): Histogram of in-degrees of nodes in the training set,
+            used by scalers to normalize.
+        edge_dim (int, optional): Edge feature dimensionality (in case
+            there are any). (default :obj:`None`)
+        towers (int, optional): Number of towers (default: :obj:`1`).
+        pre_layers (int, optional): Number of transformation layers before
+            aggregation (default: :obj:`1`).
+        post_layers (int, optional): Number of transformation layers after
+            aggregation (default: :obj:`1`).
+        divide_input (bool, optional): Whether the input features should
+            be split between towers or not (default: :obj:`False`).
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
+    """
     def __init__(self, in_channels: int, out_channels: int,
                  aggregators: List[str], scalers: List[str], deg: Tensor,
                  edge_dim: Optional[int] = None, towers: int = 1,
@@ -184,6 +193,7 @@ class PNAConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
+        """"""
 
         if self.divide_input:
             x = x.view(-1, self.towers, self.F_in)
