@@ -5,7 +5,7 @@ TorchScript is a way to create serializable and optimizable models from PyTorch 
 Any TorchScript program can be saved from a Python process and loaded in a process where there is no Python dependency.
 If you are unfamilar with TorchScript, we recommend to read the official "`Introduction to TorchScript <https://pytorch.org/tutorials/beginner/Intro_to_TorchScript_tutorial.html>`_" tutorial first.
 
-Converting Your Model
+Converting GNN Models
 ---------------------
 
 Converting your PyTorch Geometric model to a TorchScript program is straightforward and requires only a few code changes.
@@ -33,7 +33,7 @@ As always, it is best understood by an example, so let's consider the following 
     model = Net(dataset.num_features, dataset.num_classes)
 
 For TorchScript support, we need to convert our GNN operators into "jittable" instances.
-This is done by calling the :func:`jittable` function provided by the underlying :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` interface:
+This is done by calling the :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.jittable` function provided by the underlying :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` interface:
 
 .. code-block:: python
 
@@ -48,12 +48,16 @@ This will create temporary instances of the :class:`~torch_geometric.nn.conv.GCN
 
     model = torch.jit.script(model)
 
-Under the hood, the :func:`jittable` call applies the following two modifications to the original class:
+Under the hood, the :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.jittable` call applies the following two modifications to the original class:
 
-1. It parses and converts the arguments of the internal :func:`propagate` function into a :obj:`NamedTuple` which can be handled by the TorchScript compiler.
-2. It replaces any :obj:`Union` arguments of the :func:`forward` function (*i.e.*, arguments that may contain different types) with :obj:`@torch.jit._overload_method` annotations. With this, we can do the following while everything remains jittable:
+1. It parses and converts the arguments of the internal :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate` function into a :obj:`NamedTuple` which can be handled by the TorchScript compiler.
+2. It replaces any :obj:`Union` arguments of the :func:`forward` function (*i.e.*, arguments that may contain different types) with :obj:`@torch.jit._overload_method` annotations.
+   With this, we can do the following while everything remains jittable:
 
 .. code-block:: python
+
+    from typing import Union, Tuple
+    from torch import Tensor
 
     def forward(self, x: Union[Tensor, Tuple[Tensor, Tensor]], edge_index: Tensor) -> Tensor:
         pass
@@ -66,7 +70,49 @@ This technique is, *e.g.*, applied in the :class:`~torch_geometric.nn.conv.SAGEC
 And that is all you need to know on how to convert your PyTorch Geometric models to TorchScript programs.
 You can have a further look at our JIT examples that show-case how to obtain TorchScript programs for `node <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/jit/gat.py>`_ and `graph classification <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/jit/gin.py>`_ models.
 
-.. Note::
+.. note::
     TorchScript support is still experimental.
     If you have problems converting your model to a TorchScript program, *e.g.*, because an internal function does not support TorchScript yet, please `let us know <https://github.com/rusty1s/pytorch_geometric/issues/new/choose>`_.
 
+Creating Jittable GNN Operators
+--------------------------------
+
+All PyTorch Geometric GNN operators are tested to be convertible to a TorchScript program.
+However, if you want your own GNN module to be jittable, you need to account for the following two things:
+
+1. As one would expect, your :meth:`forward` code may need to be adjusted so that it passes the TorchScript compiler requirements, *e.g.*, by adding type notations.
+2. You need to tell the :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` module the types that you pass to the :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate` function.
+   This can be achieved in two different ways:
+
+   1. Declaring the type of propagation arguments in a dictionary called :obj:`propagate_type`:
+
+    .. code-block:: python
+
+        from typing import Optional
+        from torch import Tensor
+        from torch_geometric.nn import MessagePassing
+
+        class MyConv(MessagePassing):
+
+            propagate_type = {'x': Tensor, 'edge_weight': Optional[Tensor] }
+
+            def forward(self, x: Tensor, edge_index: Tensor,
+                        edge_weight: Optional[Tensor]) -> Tensor:
+
+                return self.propagate(edge_index, x=x, edge_weight=edge_weight)
+
+   2. Declaring the type of propagation arguments as a comment:
+
+    .. code-block:: python
+
+        from typing import Optional
+        from torch import Tensor
+        from torch_geometric.nn import MessagePassing
+
+        class MyConv(MessagePassing):
+
+            def forward(self, x: Tensor, edge_index: Tensor,
+                        edge_weight: Optional[Tensor]) -> Tensor:
+
+                # propagate_type: (x: Tensor, edge_weight: Optional[Tensor])
+                return self.propagate(edge_index, x=x, edge_weight=edge_weight)
