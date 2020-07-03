@@ -77,11 +77,11 @@ You can have a further look at our JIT examples that show-case how to obtain Tor
 Creating Jittable GNN Operators
 --------------------------------
 
-All PyTorch Geometric GNN operators are tested to be convertible to a TorchScript program.
+All PyTorch Geometric :class:`~torch_geometric.nn.conv.MessagePassing` operators are tested to be convertible to a TorchScript program.
 However, if you want your own GNN module to be jittable, you need to account for the following two things:
 
 1. As one would expect, your :meth:`forward` code may need to be adjusted so that it passes the TorchScript compiler requirements, *e.g.*, by adding type notations.
-2. You need to tell the :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` module the types that you pass to the :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate` function.
+2. You need to tell the :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` module the types that you pass to its :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate` function.
    This can be achieved in two different ways:
 
    1. Declaring the type of propagation arguments in a dictionary called :obj:`propagate_type`:
@@ -101,7 +101,7 @@ However, if you want your own GNN module to be jittable, you need to account for
 
                 return self.propagate(edge_index, x=x, edge_weight=edge_weight)
 
-   2. Declaring the type of propagation arguments as a comment:
+   2. Declaring the type of propagation arguments as a comment anywhere inside your module:
 
     .. code-block:: python
 
