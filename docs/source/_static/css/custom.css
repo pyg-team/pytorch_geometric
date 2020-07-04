@@ -1,10 +1,47 @@
-/* Use white for logo background. */
 .wy-side-nav-search {
-  background-color: #fff;
+  background: white;
 }
 
-.wy-side-nav-search > div.version {
-  color: #000;
+.wy-side-nav-search .version {
+  color: black;
+}
+
+.wy-nav-content-wrap {
+  background: inherit;
+}
+
+h1 {
+  text-transform: uppercase;
+  font-family: inherit;
+  font-weight: 200;
+}
+
+h2 {
+  font-family: inherit;
+  font-weight: 200;
+}
+
+a:visited {
+  color: inherit;
+}
+
+.rst-content dl:not(.docutils) dt,
+.rst-content dl:not(.docutils) dl dt {
+  background: rgb(243,244,247);
+}
+
+.rst-content dl:not(.docutils) dt.field-odd,
+.rst-content dl:not(.docutils) dt.field-odd {
+  text-transform: uppercase;
+  background: inherit;
+  border: none;
+  padding: 6px 0;
+}
+
+.rst-content dl:not(.docutils) .property {
+  text-transform: uppercase;
+  font-style: normal;
+  padding-right: 12px;
 }
 
 em.sig-param span.n:first-child, em.sig-param span.n:nth-child(2) {
@@ -23,5 +60,5 @@ em.sig-param span.default_value {
 }
 
 .sig-paren {
-  padding: 0 1px;
+  padding: 0 4px;
 }
