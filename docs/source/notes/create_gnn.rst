@@ -20,14 +20,14 @@ The user only has to define the functions :math:`\phi` , *i.e.* :meth:`message`,
 
 This is done with the help of the following methods:
 
-* :obj:`torch_geometric.nn.MessagePassing(aggr="add", flow="source_to_target")`: Defines the aggregation scheme to use (:obj:`"add"`, :obj:`"mean"` or :obj:`"max"`) and the flow direction of message passing (either :obj:`"source_to_target"` or :obj:`"target_to_source"`).
-* :obj:`torch_geometric.nn.MessagePassing.propagate(edge_index, size=None, dim=0, **kwargs)`:
+* :obj:`torch_geometric.nn.MessagePassing(aggr="add", flow="source_to_target", node_dim=-2)`: Defines the aggregation scheme to use (:obj:`"add"`, :obj:`"mean"` or :obj:`"max"`) and the flow direction of message passing (either :obj:`"source_to_target"` or :obj:`"target_to_source"`).
+  Furthermore, the :obj:`dim` attribute indicates along which axis to propagate.
+* :obj:`torch_geometric.nn.MessagePassing.propagate(edge_index, size=None, **kwargs)`:
   The initial call to start propagating messages.
   Takes in the edge indices and all additional data which is needed to construct messages and to update node embeddings.
   Note that :meth:`propagate` is not limited to exchange messages in symmetric adjacency matrices of shape :obj:`[N, N]` only, but can also exchange messages in general sparse assignment matrices, *.e.g.*, bipartite graphs, of shape :obj:`[N, M]` by passing :obj:`size=(N, M)` as an additional argument.
   If set to :obj:`None`, the assignment matrix is assumed to be symmetric.
   For bipartite graphs with two independent sets of nodes and indices, and each set holding its own information, this split can be marked by passing the information as a tuple, *e.g.* :obj:`x=(x_N, x_M)`.
-  Furthermore, the :obj:`dim` attribute indicates along which axis to propagate.
 * :meth:`torch_geometric.nn.MessagePassing.message`: Constructs messages to node :math:`i` in analogy to :math:`\phi` for each edge in :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and :math:`(i,j) \in \mathcal{E}` if :obj:`flow="target_to_source"`.
   Can take any argument which was initially passed to :meth:`propagate`.
   In addition, tensors passed to :meth:`propagate` can be mapped to the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
@@ -80,15 +80,14 @@ The full layer implementation is shown below:
             # Step 2: Linearly transform node feature matrix.
             x = self.lin(x)
 
-            # Step 3: Compute normalization
+            # Step 3: Compute normalization.
             row, col = edge_index
             deg = degree(row, x.size(0), dtype=x.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 
             # Step 4-6: Start propagating messages.
-            return self.propagate(edge_index, size=(x.size(0), x.size(0)), x=x,
-                                  norm=norm)
+            return self.propagate(edge_index, x=x, norm=norm)
 
         def message(self, x_j, norm):
             # x_j has shape [E, out_channels]
@@ -96,27 +95,20 @@ The full layer implementation is shown below:
             # Step 4: Normalize node features.
             return norm.view(-1, 1) * x_j
 
-        def update(self, aggr_out):
-            # aggr_out has shape [N, out_channels]
-
-            # Step 6: Return new node embeddings.
-            return aggr_out
-
-:class:`GCNConv` inherits from :class:`torch_geometric.nn.MessagePassing` with :obj:`"add"` propagation.
+:class:`GCNConv` inherits from :class:`~torch_geometric.nn.MessagePassing` with :obj:`"add"` propagation.
 All the logic of the layer takes place in :meth:`forward`.
 Here, we first add self-loops to our edge indices using the :meth:`torch_geometric.utils.add_self_loops` function (step 1), as well as linearly transform node features by calling the :class:`torch.nn.Linear` instance (step 2).
 
+The normalization coefficients are derived by the node degrees :math:`\deg(j)` for each node :math:`j` and transformed to :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` for each edge :math:`(j,i) \in \mathcal{E}`.
+The result is saved in the tensor :obj:`norm` of shape :obj:`[num_edges, ]` (step 3).
+
 We then proceed to call :meth:`propagate`, which internally calls the :meth:`message` and :meth:`update` functions.
-As additional arguments for message propagation, we pass the node embeddings :obj:`x`.
+As additional arguments for message propagation, we pass the node embeddings :obj:`x` and the normalization coefficients :obj:`norm`.
 
-In the :meth:`message` function, we need to normalize the neighboring node features :obj:`x_j`.
-Here, :obj:`x_j` denotes a *mapped* tensor, which contains the neighboring node features of each edge.
-Node features can be automatically mapped by appending :obj:`_i` or :obj:`_j` to the variable name.
-In fact, any tensor can be mapped this way, as long as they have :math:`N` entries in its first dimension.
-
-The neighboring node features are normalized by computing node degrees :math:`\deg(i)` for each node :math:`i` and saving :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` in :obj:`norm` for each edge :math:`(i,j) \in \mathcal{E}`.
-
-In the :meth:`update` function, we simply return the output of the aggregation.
+In the :meth:`message` function, we need to normalize the neighboring node features :obj:`x_j` by :obj:`norm`.
+Here, :obj:`x_j` denotes a *lifted* tensor, which contains the neighboring node features of each edge.
+Node features can be automatically lifted by appending :obj:`_i` or :obj:`_j` to the variable name.
+In fact, any tensor can be converted this way, as long as they hold source or destination node features.
 
 That is all that it takes to create a simple message passing layer.
 You can use this layer as a building block for deep architectures.
@@ -136,8 +128,8 @@ The `edge convolutional layer <https://arxiv.org/abs/1801.07829>`_ processes gra
 
     \mathbf{x}_i^{(k)} = \max_{j \in \mathcal{N}(i)} h_{\mathbf{\Theta}} \left( \mathbf{x}_i^{(k-1)}, \mathbf{x}_j^{(k-1)} - \mathbf{x}_i^{(k-1)} \right),
 
-where :math:`h_{\mathbf{\Theta}}` denotes a MLP.
-Analogous to the GCN layer, we can use the :class:`torch_geometric.nn.MessagePassing` class to implement this layer, this time using the :obj:`"max"` aggregation:
+where :math:`h_{\mathbf{\Theta}}` denotes an MLP.
+In analogy to the GCN layer, we can use the :class:`~torch_geometric.nn.MessagePassing` class to implement this layer, this time using the :obj:`"max"` aggregation:
 
 .. code-block:: python
 
