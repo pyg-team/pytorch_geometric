@@ -106,7 +106,7 @@ We then proceed to call :meth:`propagate`, which internally calls the :meth:`mes
 As additional arguments for message propagation, we pass the node embeddings :obj:`x` and the normalization coefficients :obj:`norm`.
 
 In the :meth:`message` function, we need to normalize the neighboring node features :obj:`x_j` by :obj:`norm`.
-Here, :obj:`x_j` denotes a *lifted* tensor, which contains the neighboring node features of each edge.
+Here, :obj:`x_j` denotes a *lifted* tensor, which contains the source node features of each edge, *i.e*, the neighbors of each node.
 Node features can be automatically lifted by appending :obj:`_i` or :obj:`_j` to the variable name.
 In fact, any tensor can be converted this way, as long as they hold source or destination node features.
 
