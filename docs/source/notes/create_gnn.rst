@@ -99,10 +99,10 @@ The full layer implementation is shown below:
 All the logic of the layer takes place in :meth:`forward`.
 Here, we first add self-loops to our edge indices using the :meth:`torch_geometric.utils.add_self_loops` function (step 1), as well as linearly transform node features by calling the :class:`torch.nn.Linear` instance (step 2).
 
-The normalization coefficients are derived by the node degrees :math:`\deg(i)` for each node :math:`i` and transformed to :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` for each edge :math:`(j,i) \in \mathcal{E}`.
+The normalization coefficients are derived by the node degrees :math:`\deg(i)` for each node :math:`i` which gets transformed to :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` for each edge :math:`(j,i) \in \mathcal{E}`.
 The result is saved in the tensor :obj:`norm` of shape :obj:`[num_edges, ]` (step 3).
 
-We then proceed to call :meth:`propagate`, which internally calls the :meth:`message` and :meth:`update` functions.
+We then proceed to call :meth:`propagate`, which internally calls the :meth:`message`, :meth:`aggregate` and :meth:`update` functions.
 As additional arguments for message propagation, we pass the node embeddings :obj:`x` and the normalization coefficients :obj:`norm`.
 
 In the :meth:`message` function, we need to normalize the neighboring node features :obj:`x_j` by :obj:`norm`.
@@ -156,11 +156,6 @@ In analogy to the GCN layer, we can use the :class:`~torch_geometric.nn.MessageP
 
             tmp = torch.cat([x_i, x_j - x_i], dim=1)  # tmp has shape [E, 2 * in_channels]
             return self.mlp(tmp)
-
-        def update(self, aggr_out):
-            # aggr_out has shape [N, out_channels]
-
-            return aggr_out
 
 Inside the :meth:`message` function, we use :obj:`self.mlp` to transform both the target node features :obj:`x_i` and the relative source node features :obj:`x_j - x_i` for each edge :math:`(j,i) \in \mathcal{E}`.
 
