@@ -18,6 +18,7 @@ In addition, it consists of an easy-to-use mini-batch loader, a large number of 
    notes/create_gnn
    notes/create_dataset
    notes/batching
+   notes/jit
    notes/resources
 
 .. toctree::
