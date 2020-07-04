@@ -16,8 +16,9 @@ class ClusterGCNConv(MessagePassing):
     Convolutional Networks" <https://arxiv.org/abs/1905.07953>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} = \left( \mathbf{\hat{A}} + \lambda
-        \textrm{diag}(\mathbf{\hat{A}}) \right) \mathbf{X} \mathbf{\Theta}
+        \mathbf{X}^{\prime} = \left( \mathbf{\hat{A}} + \lambda \cdot
+        \textrm{diag}(\mathbf{\hat{A}}) \right) \mathbf{X} \mathbf{W}_1 +
+        \mathbf{X} \mathbf{W}_2
 
     where :math:`\mathbf{\hat{A}} = {(\mathbf{D} + \mathbf{I})}^{-1}(\mathbf{A}
     + \mathbf{I})`.
