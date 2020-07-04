@@ -188,7 +188,7 @@ class MessagePassing(torch.nn.Module):
         Args:
             adj (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
                 :obj:`torch_sparse.SparseTensor` that defines the underlying
-                message propagation.
+                graph connectivity/message passing flow.
                 :obj:`edge_index` holds the indices of a general (sparse)
                 assignment matrix of shape :obj:`[N, M]`.
                 If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its
