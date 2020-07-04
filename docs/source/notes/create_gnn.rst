@@ -21,7 +21,7 @@ The user only has to define the functions :math:`\phi` , *i.e.* :meth:`message`,
 This is done with the help of the following methods:
 
 * :obj:`torch_geometric.nn.MessagePassing(aggr="add", flow="source_to_target", node_dim=-2)`: Defines the aggregation scheme to use (:obj:`"add"`, :obj:`"mean"` or :obj:`"max"`) and the flow direction of message passing (either :obj:`"source_to_target"` or :obj:`"target_to_source"`).
-  Furthermore, the :obj:`dim` attribute indicates along which axis to propagate.
+  Furthermore, the :obj:`node_dim` attribute indicates along which axis to propagate.
 * :obj:`torch_geometric.nn.MessagePassing.propagate(edge_index, size=None, **kwargs)`:
   The initial call to start propagating messages.
   Takes in the edge indices and all additional data which is needed to construct messages and to update node embeddings.
@@ -31,6 +31,7 @@ This is done with the help of the following methods:
 * :meth:`torch_geometric.nn.MessagePassing.message`: Constructs messages to node :math:`i` in analogy to :math:`\phi` for each edge in :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and :math:`(i,j) \in \mathcal{E}` if :obj:`flow="target_to_source"`.
   Can take any argument which was initially passed to :meth:`propagate`.
   In addition, tensors passed to :meth:`propagate` can be mapped to the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+  Note that we generally refer to :math:`i` as the central nodes that aggregates information, and refer to :math:`j` as the neighboring nodes, since this is the most common notation.
 * :meth:`torch_geometric.nn.MessagePassing.update`: Updates node embeddings in analogy to :math:`\gamma` for each node :math:`i \in \mathcal{V}`.
   Takes in the output of aggregation as first argument and any argument which was initially passed to :meth:`propagate`.
 
@@ -53,10 +54,9 @@ This formula can be divided into the following steps:
 3. Compute normalization coefficients.
 4. Normalize node features in :math:`\phi`.
 5. Sum up neighboring node features (:obj:`"add"` aggregation).
-6. Return new node embeddings in :math:`\gamma`.
 
 Steps 1-3 are typically computed before message passing takes place.
-Steps 4-6 can be easily processed using the :class:`torch_geometric.nn.MessagePassing` base class.
+Steps 4-5 can be easily processed using the :class:`torch_geometric.nn.MessagePassing` base class.
 The full layer implementation is shown below:
 
 .. code-block:: python
@@ -67,7 +67,7 @@ The full layer implementation is shown below:
 
     class GCNConv(MessagePassing):
         def __init__(self, in_channels, out_channels):
-            super(GCNConv, self).__init__(aggr='add')  # "Add" aggregation.
+            super(GCNConv, self).__init__(aggr='add')  # "Add" aggregation (Step 5).
             self.lin = torch.nn.Linear(in_channels, out_channels)
 
         def forward(self, x, edge_index):
@@ -82,11 +82,11 @@ The full layer implementation is shown below:
 
             # Step 3: Compute normalization.
             row, col = edge_index
-            deg = degree(row, x.size(0), dtype=x.dtype)
+            deg = degree(col, x.size(0), dtype=x.dtype)
             deg_inv_sqrt = deg.pow(-0.5)
             norm = deg_inv_sqrt[row] * deg_inv_sqrt[col]
 
-            # Step 4-6: Start propagating messages.
+            # Step 4-5: Start propagating messages.
             return self.propagate(edge_index, x=x, norm=norm)
 
         def message(self, x_j, norm):
@@ -99,7 +99,7 @@ The full layer implementation is shown below:
 All the logic of the layer takes place in :meth:`forward`.
 Here, we first add self-loops to our edge indices using the :meth:`torch_geometric.utils.add_self_loops` function (step 1), as well as linearly transform node features by calling the :class:`torch.nn.Linear` instance (step 2).
 
-The normalization coefficients are derived by the node degrees :math:`\deg(j)` for each node :math:`j` and transformed to :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` for each edge :math:`(j,i) \in \mathcal{E}`.
+The normalization coefficients are derived by the node degrees :math:`\deg(i)` for each node :math:`i` and transformed to :math:`1/(\sqrt{\deg(i)} \cdot \sqrt{\deg(j)})` for each edge :math:`(j,i) \in \mathcal{E}`.
 The result is saved in the tensor :obj:`norm` of shape :obj:`[num_edges, ]` (step 3).
 
 We then proceed to call :meth:`propagate`, which internally calls the :meth:`message` and :meth:`update` functions.
