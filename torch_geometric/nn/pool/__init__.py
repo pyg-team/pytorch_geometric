@@ -14,7 +14,7 @@ except ImportError:
 
 
 def fps(x, batch=None, ratio=0.5, random_start=True):
-    r""""A sampling algorithm from the `"PointNet++: Deep Hierarchical Feature
+    r"""A sampling algorithm from the `"PointNet++: Deep Hierarchical Feature
     Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper, which iteratively samples the
     most distant point with regard to the rest points.

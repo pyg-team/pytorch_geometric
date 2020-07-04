@@ -11,7 +11,7 @@ from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 
 class AGNNConv(MessagePassing):
-    r"""Graph attentional propagation layer from the
+    r"""The graph attentional propagation layer from the
     `"Attention-based Graph Neural Network for Semi-Supervised Learning"
     <https://arxiv.org/abs/1803.03735>`_ paper
 
