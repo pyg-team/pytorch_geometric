@@ -80,9 +80,8 @@ Let's see this process in a simplified example:
 Creating "Larger" Datasets
 --------------------------
 
-For creating datasets which do not fit into memory, the :class:`torch_geometric.data.Dataset` must be used, where we closely follow the concepts of the :obj:`torchvision` datasets.
-
-Therefore, the following methods need to be further implemented:
+For creating datasets which do not fit into memory, the :class:`torch_geometric.data.Dataset` can be used, which closely follows the concepts of the :obj:`torchvision` datasets.
+It expects the following methods to be implemented in addition:
 
 :meth:`torch_geometric.data.Dataset.len`:
     Returns the number of examples in your dataset.
