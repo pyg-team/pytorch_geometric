@@ -182,4 +182,4 @@ This leaves us with a clean interface for initializing and calling this layer:
 .. code-block:: python
 
     conv = DynamicEdgeConv(3, 128, k=6)
-    x = conv(pos, batch)
+    x = conv(x, batch)
