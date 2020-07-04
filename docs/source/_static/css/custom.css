@@ -16,13 +16,10 @@ h1 {
   font-weight: 200;
 }
 
-h2 {
+h2,
+.rst-content .toctree-wrapper p.caption {
   font-family: inherit;
   font-weight: 200;
-}
-
-a:visited {
-  color: inherit;
 }
 
 .rst-content dl:not(.docutils) dt,
