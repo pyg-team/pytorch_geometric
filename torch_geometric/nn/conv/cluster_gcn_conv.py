@@ -16,8 +16,8 @@ class ClusterGCNConv(MessagePassing):
     Convolutional Networks" <https://arxiv.org/abs/1905.07953>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} = \mathbf{\hat{A}} + \lambda
-        \diag(\mathbf{\hat{A}}) \mathbf{X} \mathbf{\Theta}
+        \mathbf{X}^{\prime} = \left( \mathbf{\hat{A}} + \lambda
+        \textrm{diag}(\mathbf{\hat{A}}) \right) \mathbf{X} \mathbf{\Theta}
 
     where :math:`\mathbf{\hat{A}} = {(\mathbf{D} + \mathbf{I})}^{-1}(\mathbf{A}
     + \mathbf{I})`.
@@ -45,6 +45,7 @@ class ClusterGCNConv(MessagePassing):
         self.add_self_loops = add_self_loops
 
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.root_weight = Parameter(torch.Tensor(in_channels, out_channels))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -55,6 +56,7 @@ class ClusterGCNConv(MessagePassing):
 
     def reset_parameters(self):
         glorot(self.weight)
+        glorot(self.root_weight)
         zeros(self.bias)
 
     def forward(self, x: Tensor, edge_index: Adj, size: Size = None) -> Tensor:
@@ -86,7 +88,7 @@ class ClusterGCNConv(MessagePassing):
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=None)
-        out = out @ self.weight
+        out = out @ self.weight + x @ self.root_weight
 
         if self.bias is not None:
             out += self.bias
