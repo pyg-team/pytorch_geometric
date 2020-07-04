@@ -28,6 +28,7 @@ from .feast_conv import FeaStConv
 from .hypergraph_conv import HypergraphConv
 from .le_conv import LEConv
 from .pna_conv import PNAConv
+from .cluster_gcn_conv import ClusterGCNConv
 
 __all__ = [
     'MessagePassing',
@@ -63,5 +64,6 @@ __all__ = [
     'FeaStConv',
     'HypergraphConv',
     'LEConv',
-    'PNAConv'
+    'PNAConv',
+    'ClusterGCNConv',
 ]
