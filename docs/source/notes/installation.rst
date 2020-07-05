@@ -44,7 +44,7 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 Installation from Source
 ------------------------
 
-In case a specific verion is not supported by `our wheels <https://pytorch-geometric.com/whl/>`_, you can alternatively install PyTorch Geometric from source:
+In case a specific version is not supported by `our wheels <https://pytorch-geometric.com/whl/>`_, you can alternatively install PyTorch Geometric from source:
 
 #. Ensure that your CUDA is setup correctly (optional):
 

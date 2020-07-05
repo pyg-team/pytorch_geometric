@@ -10,6 +10,19 @@
   background: inherit;
 }
 
+.wy-side-nav-search input[type="text"] {
+  border: none;
+  box-shadow: none;
+  background: rgb(243,244,247);
+  border-radius: 0;
+  font-size: 100%;
+}
+
+.wy-menu-vertical li.current a,
+.wy-menu-vertical li.toctree-l1.current > a {
+  border: none;
+}
+
 h1 {
   text-transform: uppercase;
   font-family: inherit;
@@ -54,6 +67,9 @@ em.sig-param span.n:nth-child(3) a {
 }
 
 em.sig-param span.default_value {
+  font-family: IBMPlexMono,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-style: normal;
+  font-size: 90%;
 }
 
 .sig-paren {
