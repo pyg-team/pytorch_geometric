@@ -195,7 +195,7 @@ class DGCNN(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = DGCNN(hidden_channels=32, num_layers=3).to(device)
-optimizer = torch.optim.Adam(params=model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(params=model.parameters(), lr=0.0001)
 
 
 def train():
@@ -228,9 +228,12 @@ def test(loader):
     return roc_auc_score(torch.cat(y_true), torch.cat(y_pred))
 
 
+best_val_auc = test_auc = 0
 for epoch in range(1, 51):
     loss = train()
     val_auc = test(val_loader)
-    test_auc = test(test_loader)
+    if val_auc > best_val_auc:
+        best_val_auc = val_auc
+        test_auc = test(test_loader)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
