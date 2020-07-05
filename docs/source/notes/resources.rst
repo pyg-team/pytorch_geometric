@@ -11,6 +11,6 @@ External Resources
 
 * Weihua Hu *et al.*: **Open Graph Benchmark** - A collection of large-scale benchmark datasets, data loaders, and evaluators for graph machine learning, including PyTorch Geometric support and examples [`Website <https://ogb.stanford.edu>`__, `GitHub <https://github.com/snap-stanford/ogb>`__]
 
-* **DeepSNAP** - A PyTorch library that bridges between graph libraries such as NetworkX and PyTorch Geometric [`GitHub <https://github.com/snap-stanford/deepsnap>`__]
+* **DeepSNAP** - A PyTorch library that bridges between graph libraries such as NetworkX and PyTorch Geometric [`GitHub <https://github.com/snap-stanford/deepsnap>`__, `Documentation <https://snap.stanford.edu/deepsnap/>__`]
 
-* Benedek Rozemberczki: **PyTorch Geometric Temporal** - A temporal GNN library built upon PyTorch Geometric [`Website <https://pytorch-geometric-temporal.readthedocs.io/en/latest/>`__, `GitHub <https://github.com/benedekrozemberczki/pytorch_geometric_temporal>`__]
+* Benedek Rozemberczki: **PyTorch Geometric Temporal** - A temporal GNN library built upon PyTorch Geometric [`GitHub <https://github.com/benedekrozemberczki/pytorch_geometric_temporal>`__, `Documentation <https://pytorch-geometric-temporal.readthedocs.io/en/latest/>`__]

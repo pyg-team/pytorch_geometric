@@ -23,6 +23,10 @@
   border: none;
 }
 
+.ethical-sidebar {
+  display: none !important;
+}
+
 h1 {
   text-transform: uppercase;
   font-family: inherit;
