@@ -23,8 +23,8 @@
   border: none;
 }
 
-div.ethical-sidebar,
-div.ethical-footer {
+.ethical-rtd > div.ethical-sidebar,
+.ethical-rtd > div.ethical-footer {
   display: none !important;
 }
 
