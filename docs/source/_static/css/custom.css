@@ -2,7 +2,7 @@
   background: white;
 }
 
-.wy-side-nav-search .version {
+.wy-side-nav-search > div.version {
   color: black;
 }
 
