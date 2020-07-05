@@ -9,6 +9,7 @@ from .schnet import SchNet
 from .dimenet import DimeNet
 from .gnn_explainer import GNNExplainer
 from .metapath2vec import MetaPath2Vec
+from .deepgcns import DeepGCNs
 
 __all__ = [
     'JumpingKnowledge',
@@ -26,4 +27,5 @@ __all__ = [
     'DimeNet',
     'GNNExplainer',
     'MetaPath2Vec',
+    'DeepGCNs',
 ]

@@ -27,6 +27,8 @@ from .ppf_conv import PPFConv
 from .feast_conv import FeaStConv
 from .hypergraph_conv import HypergraphConv
 from .le_conv import LEConv
+from .deepgcns_message import GenMessagePassing
+from .gen_conv import GENConv
 
 __all__ = [
     'MessagePassing',
@@ -61,4 +63,6 @@ __all__ = [
     'FeaStConv',
     'HypergraphConv',
     'LEConv',
+    'GenMessagePassing',
+    'GENConv',
 ]
