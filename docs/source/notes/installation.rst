@@ -40,6 +40,15 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
          $ pip install torch-geometric
 
     where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`), respectively.
+    For example, for PyTorch 1.5.0 and CUDA 10.2, type:
+
+    .. code-block:: none
+
+         $ pip install torch-scatter==latest+cu102 -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+         $ pip install torch-sparse==latest+cu102 -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+         $ pip install torch-cluster==latest+cu102 -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+         $ pip install torch-spline-conv==latest+cu102 -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+         $ pip install torch-geometric
 
 Installation from Source
 ------------------------
@@ -55,7 +64,7 @@ In case a specific version is not supported by `our wheels <https://pytorch-geom
             $ python -c "import torch; print(torch.cuda.is_available())"
             >>> True
 
-    #. Add CUDA to ``$PATH`` and ``$CPATH`` (note that your actual CUDA path may vary from ``/usr/local/cuda``):
+    #. Add CUDA to :obj:`$PATH` and :obj:`$CPATH` (note that your actual CUDA path may vary from :obj:`/usr/local/cuda`):
 
         .. code-block:: none
 
@@ -67,7 +76,7 @@ In case a specific version is not supported by `our wheels <https://pytorch-geom
             $ echo $CPATH
             >>> /usr/local/cuda/include:...
 
-    #. Add CUDA to ``$LD_LIBRARY_PATH`` on Linux and to ``$DYLD_LIBRARY_PATH`` on macOS (note that your actual CUDA path may vary from ``/usr/local/cuda``):
+    #. Add CUDA to :obj:`$LD_LIBRARY_PATH` on Linux and to :obj:`$DYLD_LIBRARY_PATH` on macOS (note that your actual CUDA path may vary from :obj:`/usr/local/cuda`):
 
         .. code-block:: none
 
@@ -79,7 +88,7 @@ In case a specific version is not supported by `our wheels <https://pytorch-geom
             $ echo $DYLD_LIBRARY_PATH
             >>> /usr/local/cuda/lib:...
 
-    #. Verify that ``nvcc`` is accessible from terminal:
+    #. Verify that :obj:`nvcc` is accessible from terminal:
 
         .. code-block:: none
 
@@ -108,7 +117,7 @@ In case a specific version is not supported by `our wheels <https://pytorch-geom
 
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
-``pip`` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, ``No module named 'torch_*.*_cuda'``, or execution simply crashes with ``Segmentation fault (core dumped)``.
+:obj:`pip` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, :obj:`No module named 'torch_*.*_cuda'`, or execution simply crashes with :obj:`Segmentation fault (core dumped)`.
 We collected a lot of common installation errors in the `Frequently Asked Questions <https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#frequently-asked-questions>`_ subsection.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
 You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda/index.html>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
