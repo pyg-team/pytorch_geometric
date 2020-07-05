@@ -1,4 +1,6 @@
 import torch
+from torch import Tensor
+from torch_sparse import SparseTensor, cat
 import torch_geometric
 from torch_geometric.data import Data
 
@@ -16,6 +18,9 @@ class Batch(Data):
         self.batch = batch
         self.__data_class__ = Data
         self.__slices__ = None
+        self.__cumsum__ = None
+        self.__cat_dims__ = None
+        self.__num_nodes_list__ = None
 
     @staticmethod
     def from_data_list(data_list, follow_batch=[]):
@@ -31,58 +36,93 @@ class Batch(Data):
 
         batch = Batch()
         batch.__data_class__ = data_list[0].__class__
-        batch.__slices__ = {key: [0] for key in keys}
-
-        for key in keys:
+        for key in keys + ['batch']:
             batch[key] = []
 
-        for key in follow_batch:
-            batch['{}_batch'.format(key)] = []
-
-        cumsum = {key: 0 for key in keys}
-        batch.batch = []
+        slices = {key: [0] for key in keys}
+        cumsum = {key: [0] for key in keys}
+        cat_dims = {}
+        num_nodes_list = []
         for i, data in enumerate(data_list):
-            for key in data.keys:
+            for key in keys:
                 item = data[key]
-                if torch.is_tensor(item) and item.dtype != torch.bool:
-                    item = item + cumsum[key]
-                if torch.is_tensor(item) and item.dim() == 0:
+
+                # Increase values by `cumsum` value.
+                cum = cumsum[key][-1]
+                if isinstance(item, Tensor) and item.dtype != torch.bool:
+                    item = item + cum if cum != 0 else item
+                elif isinstance(item, SparseTensor):
+                    value = item.storage.value()
+                    if value is not None and value.dtype != torch.bool:
+                        value = value + cum if cum != 0 else value
+                        item = item.set_value(value, layout='coo')
+                elif isinstance(item, (int, float)):
+                    item = item + cum
+
+                # Treat 0-dimensional tensors as 1-dimensional.
+                if isinstance(item, Tensor) and item.dim() == 0:
                     item = item.unsqueeze(0)
-                if torch.is_tensor(item):
-                    size = item.size(data.__cat_dim__(key, data[key]))
-                else:
-                    size = 1
-                batch.__slices__[key].append(size + batch.__slices__[key][-1])
-                cumsum[key] = cumsum[key] + data.__inc__(key, item)
+
                 batch[key].append(item)
 
+                # Gather the size of the `cat` dimension.
+                size = 1
+                cat_dim = data.__cat_dim__(key, data[key])
+                cat_dims[key] = cat_dim
+                if isinstance(item, Tensor):
+                    size = item.size(cat_dim)
+                elif isinstance(item, SparseTensor):
+                    size = torch.tensor(item.sizes())[torch.tensor(cat_dim)]
+
+                slices[key].append(size + slices[key][-1])
+                inc = data.__inc__(key, item)
+                if isinstance(inc, (tuple, list)):
+                    inc = torch.tensor(inc)
+                cumsum[key].append(inc + cumsum[key][-1])
+
                 if key in follow_batch:
-                    item = torch.full((size, ), i, dtype=torch.long)
-                    batch['{}_batch'.format(key)].append(item)
+                    if isinstance(size, Tensor):
+                        for j, size in enumerate(size.tolist()):
+                            tmp = f'{key}_{j}_batch'
+                            batch[tmp] = [] if i == 0 else batch[tmp]
+                            batch[tmp].append(
+                                torch.full((size, ), i, dtype=torch.long))
+                    else:
+                        tmp = f'{key}_batch'
+                        batch[tmp] = [] if i == 0 else batch[tmp]
+                        batch[tmp].append(
+                            torch.full((size, ), i, dtype=torch.long))
+
+            if hasattr(data, '__num_nodes__'):
+                num_nodes_list.append(data.__num_nodes__)
+            else:
+                num_nodes_list.append(None)
 
             num_nodes = data.num_nodes
             if num_nodes is not None:
                 item = torch.full((num_nodes, ), i, dtype=torch.long)
                 batch.batch.append(item)
 
-        if num_nodes is None:
-            batch.batch = None
+        # Fix initial slice values:
+        for key in keys:
+            slices[key][0] = slices[key][1] - slices[key][1]
 
+        batch.batch = None if len(batch.batch) == 0 else batch.batch
+        batch.__slices__ = slices
+        batch.__cumsum__ = cumsum
+        batch.__cat_dims__ = cat_dims
+        batch.__num_nodes_list__ = num_nodes_list
+
+        ref_data = data_list[0]
         for key in batch.keys:
-            item = batch[key][0]
-            if torch.is_tensor(item):
-                batch[key] = torch.cat(batch[key],
-                                       dim=data_list[0].__cat_dim__(key, item))
-            elif isinstance(item, int) or isinstance(item, float):
-                batch[key] = torch.tensor(batch[key])
-
-        # Copy custom data functions to batch (does not work yet):
-        # if data_list.__class__ != Data:
-        #     org_funcs = set(Data.__dict__.keys())
-        #     funcs = set(data_list[0].__class__.__dict__.keys())
-        #     batch.__custom_funcs__ = funcs.difference(org_funcs)
-        #     for func in funcs.difference(org_funcs):
-        #         setattr(batch, func, getattr(data_list[0], func))
+            items = batch[key]
+            item = items[0]
+            if isinstance(item, Tensor):
+                batch[key] = torch.cat(items, ref_data.__cat_dim__(key, item))
+            elif isinstance(item, SparseTensor):
+                batch[key] = cat(items, ref_data.__cat_dim__(key, item))
+            elif isinstance(item, (int, float)):
+                batch[key] = torch.tensor(items)
 
         if torch_geometric.is_debug_enabled():
             batch.debug()
@@ -93,30 +133,52 @@ class Batch(Data):
         r"""Reconstructs the list of :class:`torch_geometric.data.Data` objects
         from the batch object.
         The batch object must have been created via :meth:`from_data_list` in
-        order to be able reconstruct the initial objects."""
+        order to be able to reconstruct the initial objects."""
 
         if self.__slices__ is None:
             raise RuntimeError(
                 ('Cannot reconstruct data list from batch because the batch '
-                 'object was not created using Batch.from_data_list()'))
+                 'object was not created using `Batch.from_data_list()`.'))
 
-        keys = [key for key in self.keys if key[-5:] != 'batch']
-        cumsum = {key: 0 for key in keys}
         data_list = []
-        for i in range(len(self.__slices__[keys[0]]) - 1):
+        for i in range(len(list(self.__slices__.values())[0]) - 1):
             data = self.__data_class__()
-            for key in keys:
-                if torch.is_tensor(self[key]):
-                    data[key] = self[key].narrow(
-                        data.__cat_dim__(key,
-                                         self[key]), self.__slices__[key][i],
-                        self.__slices__[key][i + 1] - self.__slices__[key][i])
-                    if self[key].dtype != torch.bool:
-                        data[key] = data[key] - cumsum[key]
+
+            for key in self.__slices__.keys():
+                item = self[key]
+                # Narrow the item based on the values in `__slices__`.
+                if isinstance(item, Tensor):
+                    dim = self.__cat_dims__[key]
+                    start = self.__slices__[key][i]
+                    end = self.__slices__[key][i + 1]
+                    item = item.narrow(dim, start, end - start)
+                elif isinstance(item, SparseTensor):
+                    for j, dim in enumerate(self.__cat_dims__[key]):
+                        start = self.__slices__[key][i][j].item()
+                        end = self.__slices__[key][i + 1][j].item()
+                        item = item.narrow(dim, start, end - start)
                 else:
-                    data[key] = self[key][self.__slices__[key][i]:self.
-                                          __slices__[key][i + 1]]
-                cumsum[key] = cumsum[key] + data.__inc__(key, data[key])
+                    item = item[self.__slices__[key][i]:self.
+                                __slices__[key][i + 1]]
+                    item = item[0] if len(item) == 1 else item
+
+                # Decrease its value by `cumsum` value:
+                cum = self.__cumsum__[key][i]
+                if isinstance(item, Tensor):
+                    item = item - cum if cum != 0 else item
+                elif isinstance(item, SparseTensor):
+                    value = item.storage.value()
+                    if value is not None and value.dtype != torch.bool:
+                        value = value - cum if cum != 0 else value
+                        item = item.set_value(value, layout='coo')
+                elif isinstance(item, (int, float)):
+                    item = item - cum
+
+                data[key] = item
+
+            if self.__num_nodes_list__[i] is not None:
+                data.num_nodes = self.__num_nodes_list__[i]
+
             data_list.append(data)
 
         return data_list

@@ -99,8 +99,7 @@ class GravNetConv(MessagePassing):
 
         return self.lin(torch.cat([out, x[1]], dim=-1))
 
-    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
-        assert edge_weight is not None
+    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return x_j * edge_weight.unsqueeze(1)
 
     def aggregate(self, inputs: Tensor, index: Tensor,

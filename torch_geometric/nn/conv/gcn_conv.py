@@ -100,7 +100,7 @@ class GCNConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    _cached_edge_index: Optional[Tuple[torch.Tensor, torch.Tensor]]
+    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, in_channels: int, out_channels: int,
@@ -173,8 +173,7 @@ class GCNConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
-        assert edge_weight is not None
+    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:

@@ -1,10 +1,12 @@
 import math
 from typing import Optional, Tuple
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import Adj, OptTensor
 
 import torch
+from torch import Tensor
 from torch.nn import Parameter
 import torch.nn.functional as F
+from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
@@ -203,28 +205,35 @@ class DNAConv(MessagePassing):
         groups (int, optional): Number of groups to use for all linear
             projections. (default: :obj:`1`)
         dropout (float, optional): Dropout probability of attention
-            coefficients. (default: :obj:`0`)
+            coefficients. (default: :obj:`0.`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of :math:`\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
             \mathbf{\hat{D}}^{-1/2}` on first execution, and will use the
             cached version for further executions.
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    _cache: Optional[Tuple[int, torch.Tensor, torch.Tensor]]
+    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
+    _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, channels, heads=1, groups=1, dropout=0., cached=False,
-                 bias=True, **kwargs):
+    def __init__(self, channels: int, heads: int = 1, groups: int = 1,
+                 dropout: float = 0., cached: bool = False,
+                 add_self_loops: bool = True, bias: bool = True, **kwargs):
         super(DNAConv, self).__init__(aggr='add', node_dim=0, **kwargs)
 
         self.bias = bias
         self.cached = cached
-        self._cache = None
+        self.add_self_loops = add_self_loops
+
+        self._cached_edge_index = None
+        self._cached_adj_t = None
 
         self.multi_head = MultiHead(channels, channels, heads, groups, dropout,
                                     bias)
@@ -232,54 +241,51 @@ class DNAConv(MessagePassing):
 
     def reset_parameters(self):
         self.multi_head.reset_parameters()
-        self._cache = None
+        self._cached_edge_index = None
+        self._cached_adj_t = None
 
-    def __norm__(self, x, edge_index, edge_weight: OptTensor = None):
-
-        cache = self._cache
-        if cache is not None:
-            if edge_index.size(1) != cache[0]:
-                raise RuntimeError(
-                    'Cached {} number of edges, but found {}. Please disable '
-                    'the caching behavior of this layer by removing the '
-                    '`cached=True` argument in its constructor.'.format(
-                        cache[0], edge_index.size(1)))
-            return cache[1:]
-
-        num_edges = edge_index.size(1)
-
-        edge_index, edge_weight = gcn_norm(edge_index, edge_weight,
-                                           num_nodes=x.size(self.node_dim),
-                                           dtype=x.dtype)
-
-        if self.cached:
-            self._cache = (num_edges, edge_index, edge_weight)
-
-        return edge_index, edge_weight
-
-    def forward(self, x, edge_index, edge_weight: OptTensor = None):
-        """"""
-        # x: [num_nodes, num_layers, channels]
-        # edge_index: [2, num_edges]
-        # edge_weight: [num_edges]
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
+        r"""
+        Args:
+            x: The input node features of shape :obj:`[num_nodes, num_layers,
+                channels]`.
+        """
 
         if x.dim() != 3:
             raise ValueError('Feature shape must be [num_nodes, num_layers, '
                              'channels].')
 
-        edge_index, norm = self.__norm__(x, edge_index, edge_weight)
-        # propagate_type: (x: Tensor, norm: Tensor)
-        return self.propagate(edge_index, x=x, norm=norm, size=None)
+        if isinstance(edge_index, Tensor):
+            cache = self._cached_edge_index
+            if cache is None:
+                edge_index, edge_weight = gcn_norm(  # yapf: disable
+                    edge_index, edge_weight, x.size(self.node_dim), False,
+                    self.add_self_loops, dtype=x.dtype)
+                if self.cached:
+                    self._cached_edge_index = (edge_index, edge_weight)
+            else:
+                edge_index, edge_weight = cache[0], cache[1]
 
-    def message(self, x_i, x_j, norm):
-        # x_i: [num_edges, num_layers, channels]
-        # x_j: [num_edges, num_layers, channels]
-        # norm: [num_edges]
-        # Output: [num_edges, channels]
+        elif isinstance(edge_index, SparseTensor):
+            cache = self._cached_adj_t
+            if cache is None:
+                edge_index = gcn_norm(  # yapf: disable
+                    edge_index, edge_weight, x.size(self.node_dim), False,
+                    self.add_self_loops, dtype=x.dtype)
+                if self.cached:
+                    self._cached_adj_t = edge_index
+            else:
+                edge_index = cache
 
+        # propagate_type: (x: Tensor, edge_weight: OptTensor)
+        return self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                              size=None)
+
+    def message(self, x_i: Tensor, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         x_i = x_i[:, -1:]  # [num_edges, 1, channels]
         out = self.multi_head(x_i, x_j, x_j)  # [num_edges, 1, channels]
-        return norm.view(-1, 1) * out.squeeze(1)
+        return edge_weight.view(-1, 1) * out.squeeze(1)
 
     def __repr__(self):
         return '{}({}, heads={}, groups={})'.format(

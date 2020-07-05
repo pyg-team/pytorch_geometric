@@ -1,10 +1,62 @@
-/* Use white for logo background. */
 .wy-side-nav-search {
-  background-color: #fff;
+  background: rgb(243,244,247);
 }
 
 .wy-side-nav-search > div.version {
-  color: #000;
+  color: black;
+}
+
+.wy-nav-content-wrap {
+  background: inherit;
+}
+
+.wy-side-nav-search input[type="text"] {
+  border: none;
+  box-shadow: none;
+  background: white;
+  border-radius: 0;
+  font-size: 100%;
+}
+
+.wy-menu-vertical li.current a,
+.wy-menu-vertical li.toctree-l1.current > a {
+  border: none;
+}
+
+.ethical-rtd > div.ethical-sidebar,
+.ethical-rtd > div.ethical-footer {
+  display: none !important;
+}
+
+h1 {
+  text-transform: uppercase;
+  font-family: inherit;
+  font-weight: 200;
+}
+
+h2,
+.rst-content .toctree-wrapper p.caption {
+  font-family: inherit;
+  font-weight: 200;
+}
+
+.rst-content dl:not(.docutils) dt,
+.rst-content dl:not(.docutils) dl dt {
+  background: rgb(243,244,247);
+}
+
+.rst-content dl:not(.docutils) dt.field-odd,
+.rst-content dl:not(.docutils) dt.field-odd {
+  text-transform: uppercase;
+  background: inherit;
+  border: none;
+  padding: 6px 0;
+}
+
+.rst-content dl:not(.docutils) .property {
+  text-transform: uppercase;
+  font-style: normal;
+  padding-right: 12px;
 }
 
 em.sig-param span.n:first-child, em.sig-param span.n:nth-child(2) {
@@ -20,8 +72,11 @@ em.sig-param span.n:nth-child(3) a {
 }
 
 em.sig-param span.default_value {
+  font-family: IBMPlexMono,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-style: normal;
+  font-size: 90%;
 }
 
 .sig-paren {
-  padding: 0 1px;
+  padding: 0 4px;
 }

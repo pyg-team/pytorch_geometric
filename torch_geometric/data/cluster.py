@@ -1,7 +1,6 @@
-from typing import List
-
 import copy
 import os.path as osp
+from typing import Optional
 
 import torch
 import torch.utils.data
@@ -26,22 +25,27 @@ class ClusterData(torch.utils.data.Dataset):
         log (bool, optional): If set to :obj:`False`, will not log any
             progress. (default: :obj:`True`)
     """
-    def __init__(self, data, num_parts, recursive=False, save_dir=None,
-                 log=True):
+    def __init__(self, data, num_parts: int, recursive: bool = False,
+                 save_dir: Optional[str] = None, log: bool = True):
+
         assert data.edge_index is not None
+
+        self.num_parts = num_parts
 
         recursive_str = '_recursive' if recursive else ''
         filename = f'partition_{num_parts}{recursive_str}.pt'
-
         path = osp.join(save_dir or '', filename)
         if save_dir is not None and osp.exists(path):
             adj, partptr, perm = torch.load(path)
         else:
             if log:  # pragma: no cover
-                print('Compute METIS partitioning...')
+                print('Computing METIS partitioning...')
 
-            (row, col), edge_attr = data.edge_index, data.edge_attr
-            adj = SparseTensor(row=row, col=col, value=edge_attr)
+            N, E = data.num_nodes, data.num_edges
+            adj = SparseTensor(
+                row=data.edge_index[0], col=data.edge_index[1],
+                value=torch.arange(E, device=data.edge_index.device),
+                sparse_sizes=(N, N)).t()
             adj, partptr, perm = adj.partition(num_parts, recursive)
 
             if save_dir is not None:
@@ -54,16 +58,18 @@ class ClusterData(torch.utils.data.Dataset):
         self.partptr = partptr
         self.perm = perm
 
-    def __permute_data__(self, data, perm, adj):
+    def __permute_data__(self, data, node_idx, adj):
+        edge_idx = adj.storage.value()
         data = copy.copy(data)
-        num_nodes = data.num_nodes
+        N, E = data.num_nodes, data.num_edges
 
         for key, item in data:
-            if item.size(0) == num_nodes:
-                data[key] = item[perm]
+            if item.size(0) == N:
+                data[key] = item[node_idx]
+            if item.size(0) == E:
+                data[key] = item[edge_idx]
 
         data.edge_index = None
-        data.edge_attr = None
         data.adj = adj
 
         return data
@@ -76,24 +82,28 @@ class ClusterData(torch.utils.data.Dataset):
         length = int(self.partptr[idx + 1]) - start
 
         data = copy.copy(self.data)
-        num_nodes = data.num_nodes
+        N, E = data.num_nodes, data.num_edges
+        adj, data.adj = data.adj, None
+
+        adj = adj.narrow(0, start, length).narrow(1, start, length)
+        edge_idx = adj.storage.value()
 
         for key, item in data:
-            if item.size(0) == num_nodes:
+            if item.size(0) == N:
                 data[key] = item.narrow(0, start, length)
+            if item.size(0) == E:
+                data[key] = item[edge_idx]
 
-        data.adj = data.adj.narrow(1, start, length)
-
-        row, col, value = data.adj.coo()
-        data.adj = None
+        row, col, _ = adj.coo()
         data.edge_index = torch.stack([row, col], dim=0)
-        data.edge_attr = value
 
         return data
 
     def __repr__(self):
-        return (f'{self.__class__.__name__}({self.data}, '
-                f'num_parts={self.num_parts})')
+        return (f'{self.__class__.__name__}(\n'
+                f'  data={self.data},\n'
+                f'  num_parts={self.num_parts}\n'
+                f')')
 
 
 class ClusterLoader(torch.utils.data.DataLoader):
@@ -117,62 +127,39 @@ class ClusterLoader(torch.utils.data.DataLoader):
     Args:
         cluster_data (torch_geometric.data.ClusterData): The already
             partioned data object.
-        batch_size (int, optional): How many samples per batch to load.
-            (default: :obj:`1`)
-        shuffle (bool, optional): If set to :obj:`True`, the data will be
-            reshuffled at every epoch. (default: :obj:`False`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
+            :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
-    def __init__(self, cluster_data, batch_size=1, shuffle=False, **kwargs):
-        class HelperDataset(torch.utils.data.Dataset):
-            def __len__(self):
-                return len(cluster_data)
-
-            def __getitem__(self, idx):
-                start = int(cluster_data.partptr[idx])
-                length = int(cluster_data.partptr[idx + 1]) - start
-
-                data = copy.copy(cluster_data.data)
-                num_nodes = data.num_nodes
-                for key, item in data:
-                    if item.size(0) == num_nodes:
-                        data[key] = item.narrow(0, start, length)
-
-                return data, idx
-
-        def collate(batch):
-            data_list = [data[0] for data in batch]
-            parts: List[int] = [data[1] for data in batch]
-            partptr = cluster_data.partptr
-
-            adj = cat([data.adj for data in data_list], dim=0)
-
-            adj = adj.t()
-            adjs = []
-            for part in parts:
-                start = partptr[part]
-                length = partptr[part + 1] - start
-                adjs.append(adj.narrow(0, start, length))
-            adj = cat(adjs, dim=0).t()
-            row, col, value = adj.coo()
-
-            data = cluster_data.data.__class__()
-            data.num_nodes = adj.size(0)
-            data.edge_index = torch.stack([row, col], dim=0)
-            data.edge_attr = value
-
-            ref = data_list[0]
-            keys = ref.keys
-            keys.remove('adj')
-
-            for key in keys:
-                if ref[key].size(0) != ref.adj.size(0):
-                    data[key] = ref[key]
-                else:
-                    data[key] = torch.cat([d[key] for d in data_list],
-                                          dim=ref.__cat_dim__(key, ref[key]))
-
-            return data
+    def __init__(self, cluster_data, **kwargs):
+        self.cluster_data = cluster_data
 
         super(ClusterLoader,
-              self).__init__(HelperDataset(), batch_size, shuffle,
-                             collate_fn=collate, **kwargs)
+              self).__init__(range(len(cluster_data)),
+                             collate_fn=self.__collate__, **kwargs)
+
+    def __collate__(self, batch):
+        if not isinstance(batch, torch.Tensor):
+            batch = torch.tensor(batch)
+
+        N = self.cluster_data.data.num_nodes
+        E = self.cluster_data.data.num_edges
+
+        start = self.cluster_data.partptr[batch].tolist()
+        end = self.cluster_data.partptr[batch + 1].tolist()
+        node_idx = torch.cat([torch.arange(s, e) for s, e in zip(start, end)])
+
+        data = copy.copy(self.cluster_data.data)
+        adj, data.adj = self.cluster_data.data.adj, None
+        adj = cat([adj.narrow(0, s, e - s) for s, e in zip(start, end)], dim=0)
+        adj = adj.index_select(1, node_idx)
+        row, col, edge_idx = adj.coo()
+        data.edge_index = torch.stack([row, col], dim=0)
+
+        for key, item in data:
+            if item.size(0) == N:
+                data[key] = item[node_idx]
+            if item.size(0) == E:
+                data[key] = item[edge_idx]
+
+        return data

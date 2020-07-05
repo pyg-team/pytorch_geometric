@@ -12,7 +12,6 @@ install_requires = [
     'scikit-learn',
     'numba',
     'requests',
-    'plyfile',
     'pandas',
     'rdflib',
     'h5py',

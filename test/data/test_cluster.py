@@ -39,12 +39,12 @@ def test_cluster_gcn():
         [5, 5],
     ]
     assert cluster_data.data.adj.to_dense().tolist() == [
-        [1, 1, 1, 1, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [1, 0, 0, 1, 1, 1],
-        [0, 0, 0, 1, 1, 1],
-        [0, 0, 0, 1, 1, 1],
+        [0, 8, 14, 4, 0, 0],
+        [2, 9, 15, 0, 0, 0],
+        [3, 10, 16, 0, 0, 0],
+        [1, 0, 0, 5, 11, 17],
+        [0, 0, 0, 6, 12, 18],
+        [0, 0, 0, 7, 13, 19],
     ]
 
     data = cluster_data[0]
@@ -58,14 +58,14 @@ def test_cluster_gcn():
                                         [0, 1, 2, 0, 1, 2, 0, 1, 2]]
 
     loader = ClusterLoader(cluster_data, batch_size=1)
-    it = iter(loader)
+    iterator = iter(loader)
 
-    data = next(it)
+    data = next(iterator)
     assert data.x.tolist() == [[0, 0], [2, 2], [4, 4]]
     assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
                                         [0, 1, 2, 0, 1, 2, 0, 1, 2]]
 
-    data = next(it)
+    data = next(iterator)
     assert data.x.tolist() == [[1, 1], [3, 3], [5, 5]]
     assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
                                         [0, 1, 2, 0, 1, 2, 0, 1, 2]]

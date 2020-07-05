@@ -1,8 +1,9 @@
-from typing import Optional, Tuple
-from torch_geometric.typing import OptTensor
+from typing import Optional
+from torch_geometric.typing import Adj, OptTensor
 
-import torch
+from torch import Tensor
 from torch.nn import Linear
+from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
@@ -30,23 +31,28 @@ class SGConv(MessagePassing):
             executions.
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
 
-    _cache: Optional[Tuple[int, torch.Tensor]]
+    _cached_x: Optional[Tensor]
 
-    def __init__(self, in_channels, out_channels, K=1, cached=False, bias=True,
-                 **kwargs):
+    def __init__(self, in_channels: int, out_channels: int, K: int = 1,
+                 cached: bool = False, add_self_loops: bool = True,
+                 bias: bool = True, **kwargs):
         super(SGConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.K = K
         self.cached = cached
-        self._cache = None
+        self.add_self_loops = add_self_loops
+
+        self._cached_x = None
 
         self.lin = Linear(in_channels, out_channels, bias=bias)
 
@@ -54,38 +60,38 @@ class SGConv(MessagePassing):
 
     def reset_parameters(self):
         self.lin.reset_parameters()
-        self._cache = None
+        self._cached_x = None
 
-    def forward(self, x, edge_index, edge_weight: OptTensor = None):
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
         """"""
-        cache = self._cache
-        if cache is not None:
-            if edge_index.size(1) != cache[0]:
-                raise RuntimeError(
-                    'Cached {} number of edges, but found {}. Please disable '
-                    'the caching behavior of this layer by removing the '
-                    '`cached=True` argument in its constructor.'.format(
-                        cache[0], edge_index.size(1)))
-            x = cache[1]
-
-        else:
-            num_edges = edge_index.size(1)
-
-            edge_index, norm = gcn_norm(edge_index, edge_weight,
-                                        num_nodes=x.size(self.node_dim),
-                                        dtype=x.dtype)
+        cache = self._cached_x
+        if cache is None:
+            if isinstance(edge_index, Tensor):
+                edge_index, edge_weight = gcn_norm(  # yapf: disable
+                    edge_index, edge_weight, x.size(self.node_dim), False,
+                    self.add_self_loops, dtype=x.dtype)
+            elif isinstance(edge_index, SparseTensor):
+                edge_index = gcn_norm(  # yapf: disable
+                    edge_index, edge_weight, x.size(self.node_dim), False,
+                    self.add_self_loops, dtype=x.dtype)
 
             for k in range(self.K):
-                # propagate_type: (x: Tensor, norm: Tensor)
-                x = self.propagate(edge_index, x=x, norm=norm, size=None)
-
-            if self.cached:
-                self._cache = (num_edges, x)
+                # propagate_type: (x: Tensor, edge_weight: OptTensor)
+                x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                                   size=None)
+                if self.cached:
+                    self._cached_x = x
+        else:
+            x = cache
 
         return self.lin(x)
 
-    def message(self, x_j, norm):
-        return norm.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
+        return edge_weight.view(-1, 1) * x_j
+
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+        return matmul(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
         return '{}({}, {}, K={})'.format(self.__class__.__name__,

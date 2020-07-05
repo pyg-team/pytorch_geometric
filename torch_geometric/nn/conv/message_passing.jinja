@@ -102,10 +102,13 @@ class {{cls_name}}({{parent_cls_name}}):
             edge_index_i = edge_def.storage.row()
             edge_index_j = edge_def.storage.col()
             ptr = edge_def.storage.rowptr()
-            {% if 'edge_attr' in collect_types.keys() or 'edge_weight' in collect_types.keys() -%}
-            edge_attr = edge_def.storage.value()
-            edge_weight = edge_def.storage.value()
-            {%- endif %}
+            {% if 'edge_weight' in collect_types.keys() %}edge_weight = edge_def.storage.value(){% endif %}
+            {% if 'edge_attr' in collect_types.keys() %}edge_attr = edge_def.storage.value(){% endif %}
+            {% if 'edge_type' in collect_types.keys() %}edge_type = edge_def.storage.value(){% endif %}
+
+        {% if collect_types.get('edge_weight', 'Optional')[:8] != 'Optional' %}assert edge_weight is not None{% endif %}
+        {% if collect_types.get('edge_attr', 'Optional')[:8] != 'Optional' %}assert edge_attr is not None{% endif %}
+        {% if collect_types.get('edge_type', 'Optional')[:8] != 'Optional' %}assert edge_type is not None{% endif %}
 
         index = edge_index_i
         size_i = size[1] if size[1] is not None else size[0]
