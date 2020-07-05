@@ -1,5 +1,5 @@
 .wy-side-nav-search {
-  background: white;
+  background: rgb(243,244,247);
 }
 
 .wy-side-nav-search > div.version {
@@ -13,7 +13,7 @@
 .wy-side-nav-search input[type="text"] {
   border: none;
   box-shadow: none;
-  background: rgb(243,244,247);
+  background: white;
   border-radius: 0;
   font-size: 100%;
 }
