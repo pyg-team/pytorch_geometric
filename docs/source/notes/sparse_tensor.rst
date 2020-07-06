@@ -48,7 +48,7 @@ While the gather-scatter formulation generalizes to a lot of useful GNN implemen
 
 Luckily, not all GNNs need to be implemented by explicitely materalizing :obj:`x_j` and/or :obj:`x_i`.
 In some cases, GNNs can also be implemented as a simple-sparse matrix multiplication.
-As a rule of thumb, this holds true for GNNs that do not make use of the central node :obj:`x_i` when computing messages.
+As a general rule of thumb, this holds true for GNNs that do not make use of the central node features :obj:`x_i` or multi-dimensional edge features when computing messages.
 For example, the :class:`~torch_geometric.nn.conv.GINConv` layer
 
 .. math::
@@ -83,7 +83,7 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
     colptr, row, value = adj.csc()
 
     adj = adj[:100, :100]  # Slicing, indexing and masking support
-    adj = adj.set_diag()   # Add diagonal entries.
+    adj = adj.set_diag()   # Add diagonal entries
     adj_t = adj.t()        # Transpose
     out = adj @ x          # Sparse-dense matrix multiplication
     adj = adj @ adj        # Sparse-sparse matrix multiplication
