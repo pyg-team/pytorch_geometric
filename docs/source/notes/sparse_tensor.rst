@@ -77,7 +77,7 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
                        sparse_sizes=(num_nodes, num_nodes))
     # `value` is optional and can be None.
 
-    # Obtain different representations (COO, CSR, CSC).
+    # Obtain different representations (COO, CSR, CSC):
     row,    col, value = adj.coo()
     rowptr, col, value = adj.csr()
     colptr, row, value = adj.csc()
@@ -87,6 +87,11 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
     adj_t = adj.t()        # Transpose
     out = adj @ x          # Sparse-dense matrix multiplication
     adj = adj @ adj        # Sparse-sparse matrix multiplication
+
+    # Creating `SparseTensor` instances:
+    adj = SparseTensor.from_dense(mat)
+    adj = SparseTensor.eye(100, 100)
+    adj = SparseTensor.from_scipy(mat)
 
 Our :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` interface can handle both :obj:`torch.Tensor` and :class:`SparseTensor` as input for propagating messages.
 However, when holding a directed graph in :class:`SparseTensor`, you need to make sure to input the **transposed sparse matrix** to :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate`:
