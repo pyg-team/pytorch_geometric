@@ -132,6 +132,7 @@ To convert the :obj:`edge_index` format to the newly introduced :class:`SparseTe
     import torch
     import torch.nn.functional as F
 
+    from torch_geometric.nn import GCNConv
     import torch_geometric.transforms as T
     from torch_geometric.datasets import Planetoid
 
