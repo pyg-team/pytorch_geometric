@@ -18,6 +18,7 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    notes/create_gnn
    notes/create_dataset
    notes/batching
+   notes/sparse_tensor
    notes/jit
    notes/resources
 
