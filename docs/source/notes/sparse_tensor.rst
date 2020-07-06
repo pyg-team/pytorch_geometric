@@ -83,7 +83,7 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
     colptr, row, value = adj.csc()
 
     adj = adj[:100, :100]  # Slicing, indexing and masking support
-    adj = adj.set_diag()   # Add diagonals
+    adj = adj.set_diag()   # Add diagonal entries.
     adj_t = adj.t()        # Transpose
     out = adj @ x          # Sparse-dense matrix multiplication
     adj = adj @ adj        # Sparse-sparse matrix multiplication
