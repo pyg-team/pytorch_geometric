@@ -14,7 +14,7 @@ that can be implemented as:
 
     from torch_geometric.nn import MessagePassing
 
-    x = ...  # Node features of shape [num_nodes, num_features]
+    x = ...           # Node features of shape [num_nodes, num_features]
     edge_index = ...  # Edge indices of shape [2, num_nodes]
 
     class MyConv(MessagePassing):
@@ -33,7 +33,7 @@ Under the hood, the :class:`~torch_geometric.nn.conv.message_passing.MessagePass
 
     from torch_scatter import scatter
 
-    x = ...  # Node features of shape [num_nodes, num_features]
+    x = ...           # Node features of shape [num_nodes, num_features]
     edge_index = ...  # Edge indices of shape [2, num_nodes]
 
     x_j = edge_index[0]  # Source node features [num_edges, num_features]
