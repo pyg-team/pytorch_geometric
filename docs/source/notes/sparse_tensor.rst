@@ -174,7 +174,7 @@ To convert the :obj:`edge_index` format to the newly introduced :class:`SparseTe
         loss = train(data)
 
 All code remains the same as before, except for the :obj:`data` transform via :obj:`T.ToSparseTensor()`.
-As an additional advantage, :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` implementations that utilize the :class:`SparseTensor` class are deterministic on the GPU since computations no longer rely on atomic operations.
+As an additional advantage, :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` implementations that utilize the :class:`SparseTensor` class are deterministic on the GPU since aggregations no longer rely on atomic operations.
 
 .. note::
 
