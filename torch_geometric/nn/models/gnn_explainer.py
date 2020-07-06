@@ -91,7 +91,7 @@ class GNNExplainer(torch.nn.Module):
             num_nodes=num_nodes, flow=self.__flow__())
 
         x = x[subset]
-        for key, item in kwargs:
+        for key, item in kwargs.items():
             if torch.is_tensor(item) and item.size(0) == num_nodes:
                 item = item[subset]
             elif torch.is_tensor(item) and item.size(0) == num_edges:
