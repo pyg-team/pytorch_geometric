@@ -40,6 +40,13 @@ class PNAConv(MessagePassing):
     where :math:`\gamma_{\mathbf{\Theta}}` and :math:`h_{\mathbf{\Theta}}`
     denote MLPs.
 
+    .. note::
+
+        form mini-batches of clusters.
+        For an example of using :obj:`PNAConv`, see `examples/pna.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/
+        examples/pna.py>`_.
+
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
