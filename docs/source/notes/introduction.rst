@@ -404,8 +404,8 @@ Finally we can evaluate our model on the test nodes:
 
     model.eval()
     _, pred = model(data).max(dim=1)
-    correct = float (pred[data.test_mask].eq(data.y[data.test_mask]).sum().item())
-    acc = correct / data.test_mask.sum().item()
+    correct = int(pred[data.test_mask].eq(data.y[data.test_mask]).sum().item())
+    acc = correct / int(data.test_mask.sum())
     print('Accuracy: {:.4f}'.format(acc))
     >>> Accuracy: 0.8150
 
