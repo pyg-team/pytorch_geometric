@@ -98,7 +98,7 @@ However, when holding a directed graph in :class:`SparseTensor`, you need to mak
     out2 = conv(x, adj.t())
     assert torch.allclose(out1, out2)
 
-    conv = GINConv(nn=Sequential(Linear(16, 32), ReLU(), Lienar(32, 32)))
+    conv = GINConv(nn=Sequential(Linear(16, 32), ReLU(), Linear(32, 32)))
     out1 = conv(x, edge_index)
     out2 = conv(x, adj.t())
     assert torch.allclose(out1, out2)
