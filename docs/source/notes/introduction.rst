@@ -289,7 +289,7 @@ Data Transforms
 ---------------
 
 Transforms are a common way in :obj:`torchvision` to transform images and perform augmentation.
-PyTorch Geometric comes with its own transforms, which expect a :class`~torch_geometric.data.Data` object as input and return a new transformed :class:`~torch_geometric.data.Data` object.
+PyTorch Geometric comes with its own transforms, which expect a :class:`~torch_geometric.data.Data` object as input and return a new transformed :class:`~torch_geometric.data.Data` object.
 Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset on disk (:obj:`pre_transform`) or before accessing a graph in a dataset (:obj:`transform`).
 
 Let's look at an example, where we apply transforms on the ShapeNet dataset (containing 17,000 3D shape point clouds and per point labels from 16 shape categories).
