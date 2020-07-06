@@ -178,7 +178,7 @@ As an additional advantage, :class:`~torch_geometric.nn.conv.message_passing.Mes
 
     .. code-block:: python
 
-        row, col, edge_attr = adj_t.t()
+        row, col, edge_attr = adj_t.t().coo()
         edge_index = torch.stack([row, col], dim=0)
 
 Please let us know what you think of :class:`SparseTensor`, how we can improve it, and whenever you encounter any unexpected behaviour.
