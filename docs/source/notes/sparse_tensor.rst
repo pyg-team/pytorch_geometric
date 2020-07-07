@@ -82,17 +82,11 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
     rowptr, col, value = adj.csr()
     colptr, row, value = adj.csc()
 
-.. code-block:: python
-
     adj = adj[:100, :100]  # Slicing, indexing and masking support
     adj = adj.set_diag()   # Add diagonal entries
     adj_t = adj.t()        # Transpose
-
-.. code-block:: python
-    out = adj @ x          # Sparse-dense matrix multiplication
-    adj = adj @ adj        # Sparse-sparse matrix multiplication
-
-.. code-block:: python
+    out = adj.matmul(x)x   # Sparse-dense matrix multiplication
+    adj = adj.matmul(adj)  # Sparse-sparse matrix multiplication
 
     # Creating SparseTensor instances:
     adj = SparseTensor.from_dense(mat)
