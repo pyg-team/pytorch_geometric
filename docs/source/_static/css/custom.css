@@ -88,6 +88,9 @@ h2,
 .highlight .s1,
 .highlight .s2,
 .highlight .mi,
+.highlight .mf,
+.highlight .bp,
+.highlight .bn,
 .highlight .ow {
   color: #005cc5;
   font-weight: inherit;
