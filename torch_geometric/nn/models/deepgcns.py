@@ -5,8 +5,8 @@ from torch.utils.checkpoint import checkpoint
 class DeepGCNs(torch.nn.Module):
     r"""The skip connection operations from the
     `"DeepGCNs: Can GCNs Go as Deep as CNNs?"
-    <https://arxiv.org/abs/1904.03751>`_ paper and the `"All
-    You Need to Train Deeper GCNs" <https://arxiv.org/abs/2006.07739>`_ paper.
+    <https://arxiv.org/abs/1904.03751>`_ and `"All You Need to Train Deeper
+    GCNs" <https://arxiv.org/abs/2006.07739>`_ papers.
     The implemented skip connections includes the pre-activation residual
     connection (:obj:`"res+"`), the residual connection (:obj:`"res+"`),
     the dense connection (:obj:`"dense"`) and no connections (:obj:`"plain"`).
@@ -28,14 +28,13 @@ class DeepGCNs(torch.nn.Module):
             (:obj:`"res+"`, :obj:`"res"`, :obj:`"dense"` or :obj:`"plain"`).
             (default: :obj:`"res+"`)
     """
-
     def __init__(self, block='res+'):
         super(DeepGCNs, self).__init__()
         self.block = block.lower()
         assert self.block in ['res+', 'res', 'dense', 'plain']
 
-    def forward(self, inputs, conv_layer=None, norm_layer=None,
-                act_layer=None, dropout_layer=None, ckpt_grad=False):
+    def forward(self, inputs, conv_layer=None, norm_layer=None, act_layer=None,
+                dropout_layer=None, ckpt_grad=False):
 
         if self.block == 'res+':
             if norm_layer is not None:

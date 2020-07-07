@@ -1,44 +1,47 @@
+from typing import Optional, List, Union
+from torch_geometric.typing import OptPairTensor, Adj, Size, OptTensor
+
 import torch
+from torch import Tensor
+from torch.nn import Parameter
 import torch.nn.functional as F
-from torch import nn
-from torch.nn import Sequential as Seq, Linear as Lin
-from .deepgcns_message import GenMessagePassing
-from torch_geometric.nn.norm import MsgNorm
-from torch_geometric.nn.conv.utils.helpers import act_layer, norm_layer
-try:
-    from ogb.graphproppred.mol_encoder import BondEncoder
-except ImportError:
-    print('BondEncoder not imported')
+from torch.nn import Sequential, Linear, ReLU, Dropout
+from torch.nn import BatchNorm1d, LayerNorm, InstanceNorm1d
+from torch_sparse import SparseTensor
+from torch_scatter import scatter, scatter_softmax
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.norm import MessageNorm
+
+from ..inits import reset
 
 
-class MLP(Seq):
-    def __init__(self, channels, act='relu',
-                 norm=None, bias=True,
-                 drop=0., last_lin=False):
+class MLP(Sequential):
+    def __init__(self, channels: List[int], norm: Optional[str] = None,
+                 bias: bool = True, dropout: float = 0.):
         m = []
-
         for i in range(1, len(channels)):
+            m.append(Linear(channels[i - 1], channels[i], bias))
 
-            m.append(Lin(channels[i - 1], channels[i], bias))
+            if i < len(channels) - 1:
+                if norm and norm == 'batch':
+                    m.append(BatchNorm1d(channels[i], affine=True))
+                elif norm and norm == 'layer':
+                    m.append(LayerNorm(channels[i], elementwise_affine=True))
+                elif norm and norm == 'instance':
+                    m.append(InstanceNorm1d(channels[i], affine=False))
+                elif norm:
+                    raise NotImplementedError(
+                        f'Normalization layer "{norm}" not supported.')
+                m.append(ReLU())
+                m.append(Dropout(dropout))
 
-            if (i == len(channels) - 1) and last_lin:
-                pass
-            else:
-                if norm:
-                    m.append(norm_layer(norm, channels[i]))
-                if act:
-                    m.append(act_layer(act))
-                if drop > 0:
-                    m.append(nn.Dropout2d(drop))
-
-        self.m = m
-        super(MLP, self).__init__(*self.m)
+        super(MLP, self).__init__(*m)
 
 
-class GENConv(GenMessagePassing):
+class GENConv(MessagePassing):
     r"""The GENeralized Graph Convolution (GENConv) from the `"DeeperGCN: All
     You Need to Train Deeper GCNs" <https://arxiv.org/abs/2006.07739>`_ paper.
-    Support SoftMax  &  PowerMean Aggregation. The message construnction is:
+    Supports SoftMax & PowerMean aggregation. The message construction is:
 
     .. math::
         \mathbf{m}_{vu}^{(l)} = \bm{\rho}^{(l)}(\mathbf{h}_{v}^{(l)},
@@ -49,109 +52,131 @@ class GENConv(GenMessagePassing):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        aggr (str, optional): Message Aggregator supports :obj:`"softmax"`,
+        aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
             :obj:`"softmax_sg"`, :obj:`"power"`, :obj:`"add"`, :obj:`"mean"`,
-            :obj:`max`. (default: :obj:`"softmax"`)
-        t (float, optional): Initial inverse temperature of softmax aggr.
-            (default: :obj:`1.0`)
-        learn_t (bool, optional): If set to :obj:`True`, will learn t for
-            softmax aggr dynamically. (default: :obj:`False`)
-        p (float, optional): Initial power for softmax aggr.
-            (default: :obj:`1.0`)
-        learn_p (bool, optional): If set to :obj:`True`, will learn p for
-            power mean aggr dynamically. (default: :obj:`False`)
-        msg_norm (bool, optinal): If set to :obj:`True`, will use message norm.
+            :obj:`max`). (default: :obj:`"softmax"`)
+        t (float, optional): Initial inverse temperature for softmax
+            aggregation. (default: :obj:`1.0`)
+        learn_t (bool, optional): If set to :obj:`True`, will learn the value
+            :obj:`t` for softmax aggregation dynamically.
             (default: :obj:`False`)
+        p (float, optional): Initial power for power mean aggregation.
+            (default: :obj:`1.0`)
+        learn_p (bool, optional): If set to :obj:`True`, will learn the value
+            :obj:`p` for power mean aggregation dynamically.
+            (default: :obj:`False`)
+        msg_norm (bool, optional): If set to :obj:`True`, will use message
+            normalization. (default: :obj:`False`)
         learn_msg_scale (bool, optional): If set to :obj:`True`, will learn the
-            scaling factor of message norm. (default: :obj:`False`)
-        encode_edge (bool, optional): If set to :obj:`True`, will encode the
-            edge features. (default: :obj:`False`)
-        bond_encoder (bool, optional): If set to :obj:`True`, will use the bond
-            encoder to encode edge features. (default: :obj:`False`)
-        edge_feat_dim (int, optional): Size of each edge features.
-            (default: :obj:`None`)
-        norm (str, optional): Norm layer of mlp layers. (default: :obj:`batch`)
-        mlp_layers (int, optional): The num of mlp layers. (default: :obj:`2`)
+            scaling factor of message normalization. (default: :obj:`False`)
+        norm (str, optional): Norm layer of MLP layers (:obj:`"batch"`,
+            :obj:`"layer"`, :obj:`"instance"`) (default: :obj:`batch`)
+        num_layers (int, optional): The number of MLP layers.
+            (default: :obj:`2`)
         eps (float, optional): The epsilon value of the message construction
             function. (default: :obj:`1e-7`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GenMessagePassing`.
     """
     def __init__(self, in_channels: int, out_channels: int,
-                 aggr: str = 'softmax',
-                 t: float = 1.0, learn_t: bool = False,
-                 p: float = 1.0, learn_p: bool = False,
-                 msg_norm: bool = False, learn_msg_scale: bool = True,
-                 encode_edge: bool = False, bond_encoder: bool = False,
-                 edge_feat_dim=None,
-                 norm: str = 'batch', mlp_layers: int = 2,
-                 eps: float = 1e-7, **kwargs):
+                 aggr: str = 'softmax', t: float = 1.0, learn_t: bool = False,
+                 p: float = 1.0, learn_p: bool = False, msg_norm: bool = False,
+                 learn_msg_scale: bool = True, norm: str = 'batch',
+                 num_layers: int = 2, eps: float = 1e-7, **kwargs):
 
-        super(GENConv, self).__init__(aggr=aggr,
-                                      t=t, learn_t=learn_t,
-                                      p=p, learn_p=learn_p, **kwargs)
+        super(GENConv, self).__init__(aggr=None, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        channels_list = [in_channels]
-
-        for i in range(mlp_layers-1):
-            channels_list.append(in_channels*2)
-
-        channels_list.append(out_channels)
-
-        self.mlp = MLP(channels=channels_list,
-                       norm=norm,
-                       last_lin=True)
-
-        self.msg_encoder = torch.nn.ReLU()
+        self.aggr = aggr
         self.eps = eps
 
-        self.msg_norm = msg_norm
-        self.encode_edge = encode_edge
-        self.bond_encoder = bond_encoder
+        assert aggr in ['softmax', 'softmax_sg', 'power']
 
-        if msg_norm:
-            self.msg_norm = MsgNorm(learn_msg_scale=learn_msg_scale)
+        channels = [in_channels]
+        for i in range(num_layers - 1):
+            channels.append(in_channels * 2)
+        channels.append(out_channels)
+        self.mlp = MLP(channels, norm=norm)
+
+        self.msg_norm = MessageNorm(learn_msg_scale) if msg_norm else None
+
+        self.initial_t = t
+        self.initial_p = p
+
+        if learn_t and aggr == 'softmax':
+            self.t = Parameter(torch.Tensor([t]), requires_grad=True)
         else:
-            self.msg_norm = None
+            self.t = t
 
-        if self.encode_edge:
-            if self.bond_encoder:
-                self.edge_encoder = BondEncoder(emb_dim=in_channels)
-            else:
-                self.edge_encoder = torch.nn.Linear(edge_feat_dim, in_channels)
-
-    def forward(self, x, edge_index, edge_attr=None):
-        x = x
-
-        if self.encode_edge and edge_attr is not None:
-            edge_emb = self.edge_encoder(edge_attr)
+        if learn_p:
+            self.p = Parameter(torch.Tensor([p]), requires_grad=True)
         else:
-            edge_emb = edge_attr
+            self.p = p
 
-        m = self.propagate(edge_index, x=x, edge_attr=edge_emb)
+    def reset_parameters(self):
+        reset(self.mlp)
+        if self.msg_norm is not None:
+            self.msg_norm.reset_parameters()
+        if self.t and isinstance(self.t, Tensor):
+            self.t.data.fill_(self.initial_t)
+        if self.p and isinstance(self.p, Tensor):
+            self.p.data.fill_(self.initial_p)
+
+    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+                edge_attr: OptTensor = None, size: Size = None) -> Tensor:
+
+        if isinstance(x, Tensor):
+            x: OptPairTensor = (x, x)
+
+        # Node and edge feature dimensionalites need to match.
+        if isinstance(edge_index, Tensor):
+            if edge_attr is not None:
+                assert x[0].size(-1) == edge_attr.size(-1)
+        elif isinstance(edge_index, SparseTensor):
+            edge_attr = edge_index.storage.value()
+            if edge_attr is not None:
+                assert x[0].size(-1) == edge_attr.size(-1)
+
+        # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
         if self.msg_norm is not None:
-            m = self.msg_norm(x, m)
+            out = self.msg_norm(x, out)
 
-        h = x + m
-        out = self.mlp(h)
+        x_r = x[1]
+        if x_r is not None:
+            out += x_r
 
-        return out
+        return self.mlp(out)
 
-    def message(self, x_j, edge_attr=None):
+    def message(self, x_j: Tensor, edge_attr: OptTensor) -> Tensor:
+        msg = x_j if edge_attr is None else x_j + edge_attr
+        return F.relu(msg) + self.eps
 
-        if edge_attr is not None:
-            msg = x_j + edge_attr
+    def aggregate(self, inputs: Tensor, index: Tensor,
+                  dim_size: Optional[int] = None) -> Tensor:
+
+        if self.aggr == 'softmax':
+            out = scatter_softmax(inputs * self.t, index, dim=self.node_dim)
+            return scatter(inputs * out, index, dim=self.node_dim,
+                           dim_size=dim_size, reduce='sum')
+
+        elif self.aggr == 'softmax_sg':
+            out = scatter_softmax(inputs * self.t, index,
+                                  dim=self.node_dim).detach()
+            return scatter(inputs * out, index, dim=self.node_dim,
+                           dim_size=dim_size, reduce='sum')
+
         else:
-            msg = x_j
-
-        return self.msg_encoder(msg) + self.eps
-
-    def update(self, aggr_out):
-        return aggr_out
+            min_value, max_value = 1e-7, 1e1
+            torch.clamp_(inputs, min_value, max_value)
+            out = scatter(torch.pow(inputs, self.p), index, dim=self.node_dim,
+                          dim_size=dim_size, reduce='mean')
+            torch.clamp_(out, min_value, max_value)
+            return torch.pow(out, 1 / self.p)
 
     def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+        return '{}({}, {}, aggr={})'.format(self.__class__.__name__,
+                                            self.in_channels,
+                                            self.out_channels, self.aggr)
