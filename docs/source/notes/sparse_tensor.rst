@@ -73,20 +73,26 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
 
     from torch_sparse import SparseTensor
 
-    adj = SparseTensor(row=edge_index[0], col=edge_index[1], value=None,
+    adj = SparseTensor(row=edge_index[0], col=edge_index[1], value=...,
                        sparse_sizes=(num_nodes, num_nodes))
     # value is optional and can be None
+
+.. code-block:: python
 
     # Obtain different representations (COO, CSR, CSC):
     row,    col, value = adj.coo()
     rowptr, col, value = adj.csr()
     colptr, row, value = adj.csc()
 
+.. code-block:: python
+
     adj = adj[:100, :100]  # Slicing, indexing and masking support
     adj = adj.set_diag()   # Add diagonal entries
     adj_t = adj.t()        # Transpose
     out = adj @ x          # Sparse-dense matrix multiplication
     adj = adj @ adj        # Sparse-sparse matrix multiplication
+
+.. code-block:: python
 
     # Creating SparseTensor instances:
     adj = SparseTensor.from_dense(mat)
