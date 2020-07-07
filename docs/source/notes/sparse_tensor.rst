@@ -73,9 +73,9 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
 
     from torch_sparse import SparseTensor
 
-    adj = SparseTensor(row=edge_index[0], col=edge_index[1], value=...,
+    adj = SparseTensor(row=edge_index[0], col=edge_index[1], value=None,
                        sparse_sizes=(num_nodes, num_nodes))
-    # value is optional and can be None.
+    # value is optional and can be None
 
     # Obtain different representations (COO, CSR, CSC):
     row,    col, value = adj.coo()
