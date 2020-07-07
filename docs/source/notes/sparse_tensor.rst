@@ -75,7 +75,7 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
 
     adj = SparseTensor(row=edge_index[0], col=edge_index[1], value=...,
                        sparse_sizes=(num_nodes, num_nodes))
-    # `value` is optional and can be None.
+    # value is optional and can be None.
 
     # Obtain different representations (COO, CSR, CSC):
     row,    col, value = adj.coo()
@@ -88,7 +88,7 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
     out = adj @ x          # Sparse-dense matrix multiplication
     adj = adj @ adj        # Sparse-sparse matrix multiplication
 
-    # Creating `SparseTensor` instances:
+    # Creating SparseTensor instances:
     adj = SparseTensor.from_dense(mat)
     adj = SparseTensor.eye(100, 100)
     adj = SparseTensor.from_scipy(mat)
