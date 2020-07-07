@@ -67,6 +67,9 @@ class WikiCS(InMemoryDataset):
                     val_mask=val_mask, test_mask=test_mask,
                     stopping_mask=stopping_mask)
 
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
+
         torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self):
