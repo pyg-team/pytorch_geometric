@@ -6,6 +6,7 @@ from .topk_pool import TopKPooling
 from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
 from .asap import ASAPooling
+from .neighbor_max_pool import neighbor_max_pool
 
 try:
     import torch_cluster
@@ -249,4 +250,5 @@ __all__ = [
     'radius',
     'radius_graph',
     'nearest',
+    'neighbor_max_pool'
 ]
