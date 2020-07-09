@@ -54,7 +54,7 @@ def sanitize(type_repr: str):
 def param_type_repr(param) -> str:
     if param.annotation is inspect.Parameter.empty:
         return 'torch.Tensor'
-    return sanitize(re.split(r': | =', str(param))[1])
+    return sanitize(re.split(r':\s*|\s*=', str(param))[1])
 
 
 def return_type_repr(signature) -> str:

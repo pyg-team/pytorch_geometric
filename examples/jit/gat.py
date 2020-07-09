@@ -31,7 +31,7 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model, data = Net().to(device), dataset[0].to(device)
-moel = torch.jit.script(model)
+model = torch.jit.script(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 
