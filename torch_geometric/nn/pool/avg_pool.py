@@ -76,7 +76,7 @@ def avg_pool(cluster, data, transform=None):
 
 def avg_pool_neighbor_x(data, flow='source_to_target'):
     r"""Average pools neighboring node features, where each feature in
-    :obj:`data.x` is replaced by the feature average value from the central
+    :obj:`data.x` is replaced by the average feature values from the central
     node and its neighbors.
     """
     x, edge_index = data.x, data.edge_index
