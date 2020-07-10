@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.data import Batch
-from torch_geometric.nn import max_pool_x, max_pool
+from torch_geometric.nn import max_pool_x, max_pool, max_pool_neighbor_x
 
 
 def test_max_pool_x():
@@ -35,3 +35,23 @@ def test_max_pool():
     assert data.edge_index.tolist() == [[0, 1], [1, 0]]
     assert data.edge_attr.tolist() == [4, 4]
     assert data.batch.tolist() == [0, 0, 1]
+
+
+def test_max_pool_neighbor_x():
+    x = torch.Tensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
+    edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5],
+                               [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2, 5, 4]])
+    batch = torch.tensor([0, 0, 0, 0, 1, 1])
+
+    data = Batch(x=x, edge_index=edge_index, batch=batch)
+    data = max_pool_neighbor_x(data)
+
+    assert data.x.tolist() == [
+        [7, 8],
+        [7, 8],
+        [7, 8],
+        [7, 8],
+        [11, 12],
+        [11, 12],
+    ]
+    assert data.edge_index.tolist() == edge_index.tolist()

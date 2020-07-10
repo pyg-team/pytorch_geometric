@@ -1,5 +1,5 @@
-from .max_pool import max_pool, max_pool_x
-from .avg_pool import avg_pool, avg_pool_x
+from .max_pool import max_pool, max_pool_x, max_pool_neighbor_x
+from .avg_pool import avg_pool, avg_pool_x, avg_pool_neighbor_x
 from .graclus import graclus
 from .voxel_grid import voxel_grid
 from .topk_pool import TopKPooling
@@ -240,7 +240,9 @@ __all__ = [
     'max_pool',
     'avg_pool',
     'max_pool_x',
+    'max_pool_neighbor_x',
     'avg_pool_x',
+    'avg_pool_neighbor_x',
     'graclus',
     'voxel_grid',
     'fps',
