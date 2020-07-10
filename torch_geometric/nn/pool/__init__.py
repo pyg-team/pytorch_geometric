@@ -1,12 +1,11 @@
-from .max_pool import max_pool, max_pool_x
-from .avg_pool import avg_pool, avg_pool_x
+from .max_pool import max_pool, max_pool_x, max_pool_neighbor_x
+from .avg_pool import avg_pool, avg_pool_x, avg_pool_neighbor_x
 from .graclus import graclus
 from .voxel_grid import voxel_grid
 from .topk_pool import TopKPooling
 from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
 from .asap import ASAPooling
-from .neighbor_max_pool import neighbor_max_pool
 
 try:
     import torch_cluster
@@ -241,7 +240,9 @@ __all__ = [
     'max_pool',
     'avg_pool',
     'max_pool_x',
+    'max_pool_neighbor_x',
     'avg_pool_x',
+    'avg_pool_neighbor_x',
     'graclus',
     'voxel_grid',
     'fps',
@@ -250,5 +251,4 @@ __all__ = [
     'radius',
     'radius_graph',
     'nearest',
-    'neighbor_max_pool'
 ]
