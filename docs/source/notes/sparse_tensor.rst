@@ -85,7 +85,7 @@ Using the :class:`SparseTensor` class is straightforward and similar to the way 
     adj = adj[:100, :100]  # Slicing, indexing and masking support
     adj = adj.set_diag()   # Add diagonal entries
     adj_t = adj.t()        # Transpose
-    out = adj.matmul(x)x   # Sparse-dense matrix multiplication
+    out = adj.matmul(x)    # Sparse-dense matrix multiplication
     adj = adj.matmul(adj)  # Sparse-sparse matrix multiplication
 
     # Creating SparseTensor instances:
