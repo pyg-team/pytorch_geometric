@@ -45,7 +45,7 @@ class ClusterData(torch.utils.data.Dataset):
             adj = SparseTensor(
                 row=data.edge_index[0], col=data.edge_index[1],
                 value=torch.arange(E, device=data.edge_index.device),
-                sparse_sizes=(N, N)).t()
+                sparse_sizes=(N, N))
             adj, partptr, perm = adj.partition(num_parts, recursive)
 
             if save_dir is not None:
