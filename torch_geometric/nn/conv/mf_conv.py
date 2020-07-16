@@ -16,7 +16,7 @@ class MFConv(MessagePassing):
     <https://arxiv.org/abs/1509.09292>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{W}^{(\deg(i))}_1 + \mathbf{x}_i +
+        \mathbf{x}^{\prime}_i = \mathbf{W}^{(\deg(i))}_1 \mathbf{x}_i +
         \mathbf{W}^{(\deg(i))}_2 \sum_{j \in \mathcal{N}(i)} \mathbf{x}_j
 
     which trains a distinct weight matrix for each possible vertex degree.
