@@ -133,9 +133,9 @@ We are motivated to constantly make PyTorch Geometric even better.
 
 We provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
 
-### PyTorch 1.5.0
+### PyTorch 1.5.0/1.5.1
 
-To install the binaries for PyTorch 1.5.0, simply run
+To install the binaries for PyTorch 1.5.0/1.5.1, simply run
 
 ```sh
 $ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html

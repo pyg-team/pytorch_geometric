@@ -40,7 +40,7 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
          $ pip install torch-geometric
 
     where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`), respectively.
-    For example, for PyTorch 1.5.0 and CUDA 10.2, type:
+    For example, for PyTorch 1.5.0/1.5.1 and CUDA 10.2, type:
 
     .. code-block:: none
 
