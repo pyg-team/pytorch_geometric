@@ -44,7 +44,7 @@ class MFConv(MessagePassing):
             in_channels = (in_channels, in_channels)
 
         self.lins_l = ModuleList([
-            Linear(in_channels[0], out_channels, bias=False)
+            Linear(in_channels[0], out_channels, bias=bias)
             for _ in range(max_degree + 1)
         ])
 
