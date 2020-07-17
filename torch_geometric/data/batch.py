@@ -50,11 +50,13 @@ class Batch(Data):
                 # Increase values by `cumsum` value.
                 cum = cumsum[key][-1]
                 if isinstance(item, Tensor) and item.dtype != torch.bool:
-                    item = item + cum if cum != 0 else item
+                    if not isinstance(cum, int) or cum != 0:
+                        item = item + cum
                 elif isinstance(item, SparseTensor):
                     value = item.storage.value()
                     if value is not None and value.dtype != torch.bool:
-                        value = value + cum if cum != 0 else value
+                        if not isinstance(cum, int) or cum != 0:
+                            value = value + cum
                         item = item.set_value(value, layout='coo')
                 elif isinstance(item, (int, float)):
                     item = item + cum
@@ -165,11 +167,13 @@ class Batch(Data):
                 # Decrease its value by `cumsum` value:
                 cum = self.__cumsum__[key][i]
                 if isinstance(item, Tensor):
-                    item = item - cum if cum != 0 else item
+                    if not isinstance(cum, int) or cum != 0:
+                        item = item - cum
                 elif isinstance(item, SparseTensor):
                     value = item.storage.value()
                     if value is not None and value.dtype != torch.bool:
-                        value = value - cum if cum != 0 else value
+                        if not isinstance(cum, int) or cum != 0:
+                            value = value - cum
                         item = item.set_value(value, layout='coo')
                 elif isinstance(item, (int, float)):
                     item = item - cum
