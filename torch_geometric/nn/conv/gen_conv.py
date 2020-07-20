@@ -81,7 +81,7 @@ class GENConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int,
                  aggr: str = 'softmax', t: float = 1.0, learn_t: bool = False,
                  p: float = 1.0, learn_p: bool = False, msg_norm: bool = False,
-                 learn_msg_scale: bool = True, norm: str = 'batch',
+                 learn_msg_scale: bool = False, norm: str = 'batch',
                  num_layers: int = 2, eps: float = 1e-7, **kwargs):
 
         super(GENConv, self).__init__(aggr=None, **kwargs)
