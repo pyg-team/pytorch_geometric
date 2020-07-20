@@ -1,12 +1,11 @@
 import torch
-import torch.nn.functional as F
-from torch.nn import Linear, LayerNorm
-from torch.utils.checkpoint import checkpoint
 from tqdm import tqdm
+import torch.nn.functional as F
+from torch.nn import Linear, LayerNorm, ReLU
 from torch_scatter import scatter
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 
-from torch_geometric.nn import GENConv
+from torch_geometric.nn import GENConv, DeepGCNLayer
 from torch_geometric.data import GraphSAINTNodeSampler
 
 dataset = PygNodePropPredDataset('ogbn-proteins', root='../../data')
@@ -44,7 +43,7 @@ class RandomClusterSampler(GraphSAINTNodeSampler):
 
 train_loader = GraphSAINTNodeSampler(data, batch_size=data.num_nodes // 40,
                                      num_steps=40, num_workers=6)
-test_loader = RandomClusterSampler(data, num_clusters=10, num_workers=6)
+test_loader = RandomClusterSampler(data, num_clusters=5, num_workers=5)
 
 
 class DeeperGCN(torch.nn.Module):
@@ -54,14 +53,16 @@ class DeeperGCN(torch.nn.Module):
         self.node_encoder = Linear(data.x.size(-1), hidden_channels)
         self.edge_encoder = Linear(data.edge_attr.size(-1), hidden_channels)
 
-        self.convs = torch.nn.ModuleList()
-        self.norms = torch.nn.ModuleList()
-        for i in range(num_layers):
-            self.convs.append(
-                GENConv(hidden_channels, hidden_channels, aggr='softmax',
-                        t=1.0, learn_t=True, num_layers=2, norm='layer'))
-            self.norms.append(
-                LayerNorm(hidden_channels, elementwise_affine=True))
+        self.layers = torch.nn.ModuleList()
+        for i in range(1, num_layers + 1):
+            conv = GENConv(hidden_channels, hidden_channels, aggr='softmax',
+                           t=1.0, learn_t=True, num_layers=2, norm='layer')
+            norm = LayerNorm(hidden_channels, elementwise_affine=True)
+            act = ReLU(inplace=True)
+
+            layer = DeepGCNLayer(conv, norm, act, block='res+', dropout=0.1,
+                                 ckpt_grad=i % 3)
+            self.layers.append(layer)
 
         self.lin = Linear(hidden_channels, data.y.size(-1))
 
@@ -69,17 +70,13 @@ class DeeperGCN(torch.nn.Module):
         x = self.node_encoder(x)
         edge_attr = self.edge_encoder(edge_attr)
 
-        for i, (conv, norm) in enumerate(zip(self.convs, self.norms)):
-            # Implement "res+" block:
-            if i > 0 and i % 3 == 0 and x.requires_grad:
-                h = checkpoint(conv, x, edge_index, edge_attr)
-            else:
-                h = conv(x, edge_index, edge_attr)
+        x = self.layers[0].conv(x, edge_index, edge_attr)
 
-            h = norm(h)
-            h = torch.relu_(h)
-            h = F.dropout(h, p=0.1, training=self.training)
-            x = x + h
+        for layer in self.layers[1:]:
+            x = layer(x, edge_index, edge_attr)
+
+        x = self.layers[0].act(self.layers[0].norm(x))
+        x = F.dropout(x, p=0.1, training=self.training)
 
         return self.lin(x)
 
@@ -95,7 +92,7 @@ def train(epoch):
     model.train()
 
     pbar = tqdm(total=len(train_loader))
-    pbar.set_description(f'Training Epoch: {epoch:04d}')
+    pbar.set_description(f'Training epoch: {epoch:04d}')
 
     total_loss = total_examples = 0
     for data in train_loader:
@@ -124,7 +121,7 @@ def test():
     y_pred = {'train': [], 'valid': [], 'test': []}
 
     pbar = tqdm(total=len(test_loader))
-    pbar.set_description(f'Evaluating Epoch: {epoch:04d}')
+    pbar.set_description(f'Evaluating epoch: {epoch:04d}')
 
     for data in test_loader:
         data = data.to(device)
