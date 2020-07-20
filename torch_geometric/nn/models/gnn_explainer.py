@@ -1,4 +1,5 @@
 from math import sqrt
+from typing import Optional
 
 import torch
 from tqdm import tqdm
@@ -30,6 +31,12 @@ class GNNExplainer(torch.nn.Module):
             (default: :obj:`100`)
         lr (float, optional): The learning rate to apply.
             (default: :obj:`0.01`)
+        num_hops (int, optional): The number of hops the :obj:`model` is
+            aggregating information from.
+            If set to :obj:`None`, will automatically try to detect this
+            information based on the number of
+            :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
+            layers inside :obj:`model`. (default: :obj:`None`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
@@ -41,11 +48,13 @@ class GNNExplainer(torch.nn.Module):
         'node_feat_ent': 0.1,
     }
 
-    def __init__(self, model, epochs=100, lr=0.01, log=True):
+    def __init__(self, model, epochs: int = 100, lr: float = 0.01,
+                 num_hops: Optional[int] = None, log: bool = True):
         super(GNNExplainer, self).__init__()
         self.model = model
         self.epochs = epochs
         self.lr = lr
+        self.__num_hops__ = num_hops
         self.log = log
 
     def __set_masks__(self, x, edge_index, init="normal"):
@@ -70,12 +79,16 @@ class GNNExplainer(torch.nn.Module):
         self.node_feat_masks = None
         self.edge_mask = None
 
-    def __num_hops__(self):
-        num_hops = 0
+    @property
+    def num_hops(self):
+        if self.__num_hops__ is not None:
+            return self.__num_hops__
+
+        k = 0
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
-                num_hops += 1
-        return num_hops
+                k += 1
+        return k
 
     def __flow__(self):
         for module in self.model.modules():
@@ -87,7 +100,7 @@ class GNNExplainer(torch.nn.Module):
         num_nodes, num_edges = x.size(0), edge_index.size(1)
 
         subset, edge_index, mapping, edge_mask = k_hop_subgraph(
-            node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
+            node_idx, self.num_hops, edge_index, relabel_nodes=True,
             num_nodes=num_nodes, flow=self.__flow__())
 
         x = x[subset]
@@ -200,7 +213,7 @@ class GNNExplainer(torch.nn.Module):
 
         # Only operate on a k-hop subgraph around `node_idx`.
         subset, edge_index, _, hard_edge_mask = k_hop_subgraph(
-            node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
+            node_idx, self.num_hops, edge_index, relabel_nodes=True,
             num_nodes=None, flow=self.__flow__())
 
         edge_mask = edge_mask[hard_edge_mask]
