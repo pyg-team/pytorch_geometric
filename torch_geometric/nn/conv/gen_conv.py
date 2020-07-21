@@ -47,7 +47,7 @@ class GENConv(MessagePassing):
         \mathbf{x}_i^{\prime} = \mathrm{MLP} \left( \mathbf{x}_i +
         \mathrm{AGG} \left( \left\{
         \mathrm{ReLU} \left( \mathbf{x}_j + \mathbf{e_{ji}} \right) +\epsilon
-        \right\} : j \in \mathcal{N}(i) \right)
+        : j \in \mathcal{N}(i) \right\} \right)
         \right)
 
     .. note::
