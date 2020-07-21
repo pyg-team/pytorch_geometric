@@ -49,6 +49,13 @@ class GENConv(MessagePassing):
         \text{ReLU}(\mathbf{h}_{u}^{(l)}+\mathbbm{1}(\mathbf{h}_{e_{vu}}^{(l)})
         \cdot\mathbf{h}_{e_{vu}}^{(l)})+\epsilon, ~u \in \mathcal{N}(v)
 
+    .. note::
+
+        For an example of using :obj:`GENConv`, see
+        `examples/ogbn_proteins_deepgcn.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        ogbn_proteins_deepgcn.py>`_.
+
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.

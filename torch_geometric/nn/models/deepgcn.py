@@ -24,6 +24,13 @@ class DeepGCNLayer(torch.nn.Module):
         \text{GraphConv}\to\text{Normalization}\to\text{Activation}\to
         \text{Res/Dense/Plain}\to\text{Dropout}
 
+    .. note::
+
+        For an example of using :obj:`GENConv`, see
+        `examples/ogbn_proteins_deepgcn.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        ogbn_proteins_deepgcn.py>`_.
+
     Args:
         conv (torch.nn.Module, optional): the GCN operator.
             (default: :obj:`None`)
