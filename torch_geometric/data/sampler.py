@@ -171,10 +171,10 @@ class RandomNodeSampler(torch.utils.data.DataLoader):
         self.N = N = data.num_nodes
         self.E = data.num_edges
 
-        self.adj_t = SparseTensor(
+        self.adj = SparseTensor(
             row=data.edge_index[0], col=data.edge_index[1],
             value=torch.arange(self.E, device=data.edge_index.device),
-            sparse_sizes=(N, N)).t()
+            sparse_sizes=(N, N))
 
         self.data = copy.copy(data)
         self.data.edge_index = None
@@ -192,8 +192,8 @@ class RandomNodeSampler(torch.utils.data.DataLoader):
 
         data = self.data.__class__()
         data.num_nodes = node_idx.size(0)
-        adj_t, _ = self.adj_t.saint_subgraph(node_idx)
-        row, col, edge_idx = adj_t.t().coo()
+        adj, _ = self.adj.saint_subgraph(node_idx)
+        row, col, edge_idx = adj.coo()
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in self.data:
