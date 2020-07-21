@@ -35,7 +35,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
     if isinstance(edge_index, SparseTensor):
         adj_t = edge_index
         if not adj_t.has_value():
-            adj_t.fill_value_(1., dtype=dtype)
+            adj_t = adj_t.fill_value(1., dtype=dtype)
         if add_self_loops:
             adj_t = fill_diag(adj_t, fill_value)
         deg = sum(adj_t, dim=1)
