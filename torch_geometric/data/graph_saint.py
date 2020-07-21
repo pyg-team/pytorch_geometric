@@ -58,7 +58,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         self.N = N = data.num_nodes
         self.E = data.num_edges
 
-        self.adj_t = SparseTensor(
+        self.adj = SparseTensor(
             row=data.edge_index[0], col=data.edge_index[1],
             value=torch.arange(self.E, device=data.edge_index.device),
             sparse_sizes=(N, N)).t()
@@ -91,17 +91,16 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
     def __getitem__(self, idx):
         node_idx = self.__sample_nodes__(self.__batch_size__).unique()
-        adj_t, edge_idx = self.adj_t.saint_subgraph(node_idx)
-        edge_idx = self.adj_t.storage.value()[edge_idx]
-        return node_idx, edge_idx, adj_t
+        adj, _ = self.adj.saint_subgraph(node_idx)
+        return node_idx, adj
 
     def __collate__(self, data_list):
         assert len(data_list) == 1
-        node_idx, edge_idx, adj_t = data_list[0]
+        node_idx, adj = data_list[0]
 
         data = self.data.__class__()
         data.num_nodes = node_idx.size(0)
-        col, row, edge_idx = adj_t.coo()
+        row, col, edge_idx = adj.coo()
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in self.data:
@@ -133,7 +132,8 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         num_samples = total_sampled_nodes = 0
         while total_sampled_nodes < self.N * self.sample_coverage:
             for data in loader:
-                for (node_idx, edge_idx, _) in data:
+                for node_idx, adj in data:
+                    edge_idx = adj.storage.value()
                     node_count[node_idx] += 1
                     edge_count[edge_idx] += 1
                     total_sampled_nodes += node_idx.size(0)
@@ -145,7 +145,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         if self.log:  # pragma: no cover
             pbar.close()
 
-        row, _, edge_idx = self.adj_t.coo()
+        row, _, edge_idx = self.adj.coo()
         edge_norm = (node_count[row[edge_idx]] / edge_count).clamp_(0, 1e4)
         edge_norm[torch.isnan(edge_norm)] = 0.1
 
@@ -163,7 +163,7 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
         edge_sample = torch.randint(0, self.E, (batch_size, self.batch_size),
                                     dtype=torch.long)
 
-        return self.adj_t.storage.row()[edge_sample]
+        return self.adj.storage.row()[edge_sample]
 
 
 class GraphSAINTEdgeSampler(GraphSAINTSampler):
@@ -171,10 +171,10 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
     :class:`torch_geometric.data.GraphSAINTSampler`).
     """
     def __sample_nodes__(self, batch_size):
-        row, col, _ = self.adj_t.coo()
+        row, col, _ = self.adj.coo()
 
-        deg_in = 1. / self.adj_t.storage.rowcount()
-        deg_out = 1. / self.adj_t.storage.colcount()
+        deg_in = 1. / self.adj.storage.colcount()
+        deg_out = 1. / self.adj.storage.rowcount()
         prob = (1. / deg_in[row]) + (1. / deg_out[col])
 
         # Parallel multinomial sampling (without replacement)
@@ -210,5 +210,5 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
 
     def __sample_nodes__(self, batch_size):
         start = torch.randint(0, self.N, (batch_size, ), dtype=torch.long)
-        node_idx = self.adj_t.random_walk(start.flatten(), self.walk_length)
+        node_idx = self.adj.random_walk(start.flatten(), self.walk_length)
         return node_idx.view(-1)
