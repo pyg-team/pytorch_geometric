@@ -18,7 +18,7 @@ class DeepGCNLayer(torch.nn.Module):
         \text{Normalization}\to\text{Activation}\to\text{Dropout}\to
         \text{GraphConv}\to\text{Res}
 
-  or **Res/Dense/Plain** (:obj:`"res"`, :obj:`"dense"` or :obj:`"plain"`):
+    or **Res/Dense/Plain** (:obj:`"res"`, :obj:`"dense"` or :obj:`"plain"`):
 
     .. math::
         \text{GraphConv}\to\text{Normalization}\to\text{Activation}\to
@@ -45,7 +45,7 @@ class DeepGCNLayer(torch.nn.Module):
             part of the model. Checkpointing works by trading compute for
             memory, since intermediate activations do not need to be kept in
             memory. Set this to :obj:`True` in case you encounter out-of-memory
-            errors while going deep. (default: :obj:`False.`)
+            errors while going deep. (default: :obj:`False`)
     """
     def __init__(self, conv=None, norm=None, act=None, block='res+',
                  dropout=0., ckpt_grad=False):
@@ -64,6 +64,7 @@ class DeepGCNLayer(torch.nn.Module):
         self.norm.reset_parameters()
 
     def forward(self, *args, **kwargs):
+        """"""
         args = list(args)
         x = args.pop(0)
 
