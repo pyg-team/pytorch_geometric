@@ -6,7 +6,7 @@ from torch_scatter import scatter
 from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 
 from torch_geometric.nn import GENConv, DeepGCNLayer
-from torch_geometric.data import GraphSAINTNodeSampler
+from torch_geometric.data import RandomNodeSampler
 
 dataset = PygNodePropPredDataset('ogbn-proteins', root='../../data')
 splitted_idx = dataset.get_idx_split()
@@ -24,26 +24,9 @@ for split in ['train', 'valid', 'test']:
     mask[splitted_idx[split]] = True
     data[f'{split}_mask'] = mask
 
-
-# Create `num_clusters` random subgraphs. This needs a special loader since
-# each node should only be sampled once per epoch and subgraphs should not
-# change across epochs.
-class RandomClusterSampler(GraphSAINTNodeSampler):
-    def __init__(self, data, num_clusters: int, **kwargs):
-        self.cluster = torch.randint(num_clusters, (data.num_nodes, )).long()
-        super(RandomClusterSampler,
-              self).__init__(data, None, num_steps=num_clusters, **kwargs)
-
-    def __getitem__(self, idx):
-        node_idx = (self.cluster == idx).nonzero().view(-1)
-        adj_t, edge_idx = self.adj_t.saint_subgraph(node_idx)
-        edge_idx = self.adj_t.storage.value()[edge_idx]
-        return node_idx, edge_idx, adj_t
-
-
-train_loader = GraphSAINTNodeSampler(data, batch_size=data.num_nodes // 40,
-                                     num_steps=40, num_workers=6)
-test_loader = RandomClusterSampler(data, num_clusters=5, num_workers=5)
+train_loader = RandomNodeSampler(data, num_parts=40, shuffle=True,
+                                 num_workers=5)
+test_loader = RandomNodeSampler(data, num_parts=5, num_workers=5)
 
 
 class DeeperGCN(torch.nn.Module):

@@ -91,17 +91,16 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
     def __getitem__(self, idx):
         node_idx = self.__sample_nodes__(self.__batch_size__).unique()
-        adj_t, edge_idx = self.adj_t.saint_subgraph(node_idx)
-        edge_idx = self.adj_t.storage.value()[edge_idx]
-        return node_idx, edge_idx, adj_t
+        adj_t, _ = self.adj_t.saint_subgraph(node_idx)
+        return node_idx, adj_t
 
     def __collate__(self, data_list):
         assert len(data_list) == 1
-        node_idx, edge_idx, adj_t = data_list[0]
+        node_idx, adj_t = data_list[0]
 
         data = self.data.__class__()
         data.num_nodes = node_idx.size(0)
-        col, row, edge_idx = adj_t.coo()
+        row, col, edge_idx = adj_t.t().coo()
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in self.data:
@@ -133,7 +132,8 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         num_samples = total_sampled_nodes = 0
         while total_sampled_nodes < self.N * self.sample_coverage:
             for data in loader:
-                for (node_idx, edge_idx, _) in data:
+                for node_idx, adj_t in data:
+                    edge_idx = adj_t.storage.value()
                     node_count[node_idx] += 1
                     edge_count[edge_idx] += 1
                     total_sampled_nodes += node_idx.size(0)
