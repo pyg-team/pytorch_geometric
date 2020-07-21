@@ -44,10 +44,11 @@ class GENConv(MessagePassing):
     Supports SoftMax & PowerMean aggregation. The message construction is:
 
     .. math::
-        \mathbf{m}_{vu}^{(l)} = \bm{\rho}^{(l)}(\mathbf{h}_{v}^{(l)},
-        \mathbf{h}_{u}^{(l)}, \mathbf{h}_{e_{vu}}^{(l)})=
-        \text{ReLU}(\mathbf{h}_{u}^{(l)}+\mathbbm{1}(\mathbf{h}_{e_{vu}}^{(l)})
-        \cdot\mathbf{h}_{e_{vu}}^{(l)})+\epsilon, ~u \in \mathcal{N}(v)
+        \mathbf{x}_i^{\prime} = \mathrm{MLP} \left( \mathbf{x}_i +
+        \mathrm{AGG} \left( \left\{
+        \mathrm{ReLU} \left( \mathbf{x}_j + \mathbf{e_{ji}} \right) +\epsilon
+        \right\} : j \in \mathcal{N}(i) \right)
+        \right)
 
     .. note::
 
@@ -132,6 +133,7 @@ class GENConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
+        """"""
 
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)

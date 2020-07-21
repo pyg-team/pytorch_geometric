@@ -12,13 +12,14 @@ class DeepGCNLayer(torch.nn.Module):
     connection (:obj:`"res+"`), the residual connection (:obj:`"res"`),
     the dense connection (:obj:`"dense"`) and no connections (:obj:`"plain"`).
 
-    **Res+** (:obj:`"res+"`):
+    * **Res+** (:obj:`"res+"`):
 
     .. math::
         \text{Normalization}\to\text{Activation}\to\text{Dropout}\to
         \text{GraphConv}\to\text{Res}
 
-    or **Res/Dense/Plain** (:obj:`"res"`, :obj:`"dense"` or :obj:`"plain"`):
+    * **Res** (:obj:`"res"`) / **Dense** (:obj:`"dense"`) / **Plain**
+      (:obj:`"plain"`):
 
     .. math::
         \text{GraphConv}\to\text{Normalization}\to\text{Activation}\to

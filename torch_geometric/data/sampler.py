@@ -159,7 +159,7 @@ class RandomNodeSampler(torch.utils.data.DataLoader):
     Args:
         data (torch_geometric.data.Data): The graph data object.
         num_parts (int): The number of partitions.
-        shuffle (bool, optional): If set to :obj`True`, the data is reshuffled
+        shuffle (bool, optional): If set to :obj:`True`, the data is reshuffled
             at every epoch (default: :obj:`False`).
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`num_workers`.
