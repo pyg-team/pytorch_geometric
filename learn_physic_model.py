@@ -363,14 +363,14 @@ def create_loss(target, output):
     -----------
         target: tensor
             The target nodes.
-        output: tensor
-            Output graphs from the model.
+        output: graph
+            Output graph from the model.
 
     Returns:
     --------
         Loss value (tensor).
     """
-    return torch.sum((target_op-output_op["x"])**2)
+    return torch.sum((target-output["x"])**2)
 
 """
 Blocks for Graph Networks:
