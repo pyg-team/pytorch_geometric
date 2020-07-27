@@ -9,7 +9,6 @@ class Constant(object):
         cat (bool, optional): If set to :obj:`False`, all existing node
             features will be replaced. (default: :obj:`True`)
     """
-
     def __init__(self, value=1, cat=True):
         self.value = value
         self.cat = cat
@@ -17,7 +16,7 @@ class Constant(object):
     def __call__(self, data):
         x = data.x
 
-        c = torch.full((data.num_nodes, 1), self.value)
+        c = torch.full((data.num_nodes, 1), self.value, dtype=torch.float)
 
         if x is not None and self.cat:
             x = x.view(-1, 1) if x.dim() == 1 else x
