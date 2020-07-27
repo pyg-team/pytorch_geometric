@@ -937,13 +937,15 @@ class EncodeProcessDecode(nn.Module):
         #outputs = []
 
         for _ in range(num_processing_steps):
+            idx = latent['edge_index']
             cat_x = torch.cat([latent0['x'], latent['x']], axis=-1)
-            cat_idx = torch.cat([latent0['edge_index'], latent['edge_index']+latent0['edge_index'].size()[0]], axis=-1)
+            cat_idx = torch.cat([latent0['edge_index'], idx+latent0['edge_index'].size()[0]], axis=-1)
             cat_edge = torch.cat([latent0['edge_attr'], latent['edge_attr']], axis=-1)
             cat_global = torch.cat([latent0['u'], latent['u']], axis=-1)
             core_input = Data(x= cat_x, edge_index=cat_idx, edge_attr= cat_edge, u = cat_global)
             latent = self._core(core_input)
-            decoded = self._decoder(latent)
+            decoded = self._decoder(latent.clone())
+            decoded['edge_attr'] = idx
 
             #outputs.append(decoded)
 
