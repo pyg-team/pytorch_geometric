@@ -41,4 +41,5 @@ setup(
     tests_require=tests_require,
     extras_require={'test': tests_require},
     packages=find_packages(),
+    include_package_data=True,
 )
