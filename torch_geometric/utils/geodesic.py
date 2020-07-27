@@ -95,11 +95,5 @@ def _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype):
     s = src[i:i + 1]
     d = None if dest is None else dest[i:i + 1]
 
-    print(gdist.compute_gdist)
-    print(pos)
-    print(face)
-    print(s)
-    print(d)
-    print(max_distance * norm)
     out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
     return torch.from_numpy(out).to(dtype)
