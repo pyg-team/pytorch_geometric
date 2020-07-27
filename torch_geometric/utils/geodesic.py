@@ -70,6 +70,7 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
     dest = None if dest is None else dest.detach().cpu().to(torch.int).numpy()
 
     num_workers = mp.cpu_count() if num_workers <= -1 else num_workers
+    num_workers = 0
     if num_workers > 0:
         with mp.Pool(num_workers) as pool:
             outs = pool.starmap(
@@ -94,5 +95,11 @@ def _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype):
     s = src[i:i + 1]
     d = None if dest is None else dest[i:i + 1]
 
+    print(gdist.compute_gdist)
+    print(pos)
+    print(face)
+    print(s)
+    print(d)
+    print(max_distance * norm)
     out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
     return torch.from_numpy(out).to(dtype)
