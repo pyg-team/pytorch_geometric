@@ -36,7 +36,7 @@ class PairNorm(torch.nn.Module):
         self.scale_individually = scale_individually
         self.eps = eps
 
-    def forward(self, x: Tensor, batch: OptTensor = None):
+    def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
         """"""
         scale = self.scale
 
