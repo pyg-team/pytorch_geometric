@@ -1,12 +1,11 @@
 import os
+import os.path as osp
 from collections import Counter
 
 import gzip
 import pandas as pd
 import numpy as np
 import torch
-import torch.nn.functional as F
-from torch_scatter import scatter_add
 
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_tar)
@@ -39,6 +38,14 @@ class Entities(InMemoryDataset):
         self.name = name.lower()
         super(Entities, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
+
+    @property
+    def raw_dir(self):
+        return osp.join(self.root, self.name, 'raw')
+
+    @property
+    def processed_dir(self):
+        return osp.join(self.root, self.name, 'processed')
 
     @property
     def num_relations(self):
@@ -102,12 +109,6 @@ class Entities(InMemoryDataset):
         edge = torch.tensor(edge_list, dtype=torch.long).t().contiguous()
         edge_index, edge_type = edge[:2], edge[2]
 
-        oh = F.one_hot(edge_type,
-                       num_classes=2 * len(relations)).to(torch.float)
-        deg = scatter_add(oh, edge_index[0], dim=0, dim_size=len(nodes))
-        index = edge_type + torch.arange(len(edge_list)) * 2 * len(relations)
-        edge_norm = 1 / deg[edge_index[0]].view(-1)[index]
-
         if self.name == 'am':
             label_header = 'label_cateogory'
             nodes_header = 'proxy'
@@ -148,7 +149,6 @@ class Entities(InMemoryDataset):
 
         data = Data(edge_index=edge_index)
         data.edge_type = edge_type
-        data.edge_norm = edge_norm
         data.train_idx = train_idx
         data.train_y = train_y
         data.test_idx = test_idx

@@ -31,7 +31,7 @@ class WILLOWObjectClass(InMemoryDataset):
         root (string): Root directory where the dataset should be saved.
         category (string): The category of the images (one of :obj:`"Car"`,
             :obj:`"Duck"`, :obj:`"Face"`, :obj:`"Motorbike"`,
-            :obj:`"Winebottle"`)
+            :obj:`"Winebottle"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

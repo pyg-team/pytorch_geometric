@@ -18,9 +18,9 @@ assert args.model in ['GAE', 'VGAE']
 assert args.dataset in ['Cora', 'CiteSeer', 'PubMed']
 kwargs = {'GAE': GAE, 'VGAE': VGAE}
 
-path = osp.join(
-    osp.dirname(osp.realpath(__file__)), '..', 'data', args.dataset)
-dataset = Planetoid(path, args.dataset, T.NormalizeFeatures())
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                args.dataset)
+dataset = Planetoid(path, args.dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
 
@@ -32,15 +32,15 @@ class Encoder(torch.nn.Module):
             self.conv2 = GCNConv(2 * out_channels, out_channels, cached=True)
         elif args.model in ['VGAE']:
             self.conv_mu = GCNConv(2 * out_channels, out_channels, cached=True)
-            self.conv_logvar = GCNConv(
-                2 * out_channels, out_channels, cached=True)
+            self.conv_logstd = GCNConv(2 * out_channels, out_channels,
+                                       cached=True)
 
     def forward(self, x, edge_index):
         x = F.relu(self.conv1(x, edge_index))
         if args.model in ['GAE']:
             return self.conv2(x, edge_index)
         elif args.model in ['VGAE']:
-            return self.conv_mu(x, edge_index), self.conv_logvar(x, edge_index)
+            return self.conv_mu(x, edge_index), self.conv_logstd(x, edge_index)
 
 
 channels = 16

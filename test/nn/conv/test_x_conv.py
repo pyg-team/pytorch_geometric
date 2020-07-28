@@ -3,12 +3,25 @@ from torch_geometric.nn import XConv
 
 
 def test_x_conv():
-    in_channels, out_channels = (16, 32)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
-    num_nodes = edge_index.max().item() + 1
-    x = torch.randn((num_nodes, in_channels))
-    pos = torch.rand((num_nodes, 3))
+    x = torch.randn(8, 16)
+    pos = torch.rand(8, 3)
+    batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
 
-    conv = XConv(in_channels, out_channels, dim=3, kernel_size=2, dilation=2)
+    conv = XConv(16, 32, dim=3, kernel_size=2, dilation=2)
     assert conv.__repr__() == 'XConv(16, 32)'
-    assert conv(x, pos).size() == (num_nodes, out_channels)
+
+    torch.manual_seed(12345)
+    out1 = conv(x, pos)
+    assert out1.size() == (8, 32)
+
+    torch.manual_seed(12345)
+    out2 = conv(x, pos, batch)
+    assert out2.size() == (8, 32)
+
+    jit = torch.jit.script(conv)
+
+    torch.manual_seed(12345)
+    assert jit(x, pos).tolist() == out1.tolist()
+
+    torch.manual_seed(12345)
+    assert jit(x, pos, batch).tolist() == out2.tolist()

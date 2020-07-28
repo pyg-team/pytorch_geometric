@@ -1,5 +1,10 @@
+from typing import Union
+from torch_geometric.typing import PairTensor, Adj
+
 import torch
+from torch import Tensor
 from torch.nn import Linear
+from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 
 
@@ -22,13 +27,13 @@ class SignedConv(MessagePassing):
         \mathbf{x}_v^{(\textrm{pos})} &= \mathbf{\Theta}^{(\textrm{pos})}
         \left[ \frac{1}{|\mathcal{N}^{+}(v)|} \sum_{w \in \mathcal{N}^{+}(v)}
         \mathbf{x}_w^{(\textrm{pos})}, \frac{1}{|\mathcal{N}^{-}(v)|}
-        \sum_{w \in \mathcal{N}^{-}(v)} \mathbf{x}_w^{(\textrm{neg})} ,
+        \sum_{w \in \mathcal{N}^{-}(v)} \mathbf{x}_w^{(\textrm{neg})},
         \mathbf{x}_v^{(\textrm{pos})} \right]
 
         \mathbf{x}_v^{(\textrm{neg})} &= \mathbf{\Theta}^{(\textrm{pos})}
         \left[ \frac{1}{|\mathcal{N}^{+}(v)|} \sum_{w \in \mathcal{N}^{+}(v)}
         \mathbf{x}_w^{(\textrm{neg})}, \frac{1}{|\mathcal{N}^{-}(v)|}
-        \sum_{w \in \mathcal{N}^{-}(v)} \mathbf{x}_w^{(\textrm{pos})} ,
+        \sum_{w \in \mathcal{N}^{-}(v)} \mathbf{x}_w^{(\textrm{pos})},
         \mathbf{x}_v^{(\textrm{neg})} \right]
 
     otherwise.
@@ -46,13 +51,9 @@ class SignedConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+    def __init__(self, in_channels: int, out_channels: int, first_aggr: bool,
+                 bias: bool = True, **kwargs):
 
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 first_aggr,
-                 bias=True,
-                 **kwargs):
         super(SignedConv, self).__init__(aggr='mean', **kwargs)
 
         self.in_channels = in_channels
@@ -60,48 +61,75 @@ class SignedConv(MessagePassing):
         self.first_aggr = first_aggr
 
         if first_aggr:
-            self.lin_pos = Linear(2 * in_channels, out_channels, bias=bias)
-            self.lin_neg = Linear(2 * in_channels, out_channels, bias=bias)
+            self.lin_pos_l = Linear(in_channels, out_channels, False)
+            self.lin_pos_r = Linear(in_channels, out_channels, bias)
+            self.lin_neg_l = Linear(in_channels, out_channels, False)
+            self.lin_neg_r = Linear(in_channels, out_channels, bias)
         else:
-            self.lin_pos = Linear(3 * in_channels, out_channels, bias=bias)
-            self.lin_neg = Linear(3 * in_channels, out_channels, bias=bias)
+            self.lin_pos_l = Linear(2 * in_channels, out_channels, False)
+            self.lin_pos_r = Linear(in_channels, out_channels, bias)
+            self.lin_neg_l = Linear(2 * in_channels, out_channels, False)
+            self.lin_neg_r = Linear(in_channels, out_channels, bias)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin_pos.reset_parameters()
-        self.lin_neg.reset_parameters()
+        self.lin_pos_l.reset_parameters()
+        self.lin_pos_r.reset_parameters()
+        self.lin_neg_l.reset_parameters()
+        self.lin_neg_r.reset_parameters()
 
-    def forward(self, x, pos_edge_index, neg_edge_index):
+    def forward(self, x: Union[Tensor, PairTensor], pos_edge_index: Adj,
+                neg_edge_index: Adj):
         """"""
-        if self.first_aggr:
-            assert x.size(1) == self.in_channels
 
-            x_pos = torch.cat([self.propagate(pos_edge_index, x=x), x], dim=1)
-            x_neg = torch.cat([self.propagate(neg_edge_index, x=x), x], dim=1)
+        if isinstance(x, Tensor):
+            x: PairTensor = (x, x)
+
+        # propagate_type: (x: PairTensor)
+        if self.first_aggr:
+
+            out_pos = self.propagate(pos_edge_index, x=x, size=None)
+            out_pos = self.lin_pos_l(out_pos)
+            out_pos += self.lin_pos_r(x[1])
+
+            out_neg = self.propagate(neg_edge_index, x=x, size=None)
+            out_neg = self.lin_neg_l(out_neg)
+            out_neg += self.lin_neg_r(x[1])
+
+            return torch.cat([out_pos, out_neg], dim=-1)
 
         else:
-            assert x.size(1) == 2 * self.in_channels
+            F_in = self.in_channels
 
-            x_1, x_2 = x[:, :self.in_channels], x[:, self.in_channels:]
+            out_pos1 = self.propagate(pos_edge_index, size=None,
+                                      x=(x[0][..., :F_in], x[1][..., :F_in]))
+            out_pos2 = self.propagate(neg_edge_index, size=None,
+                                      x=(x[0][..., F_in:], x[1][..., F_in:]))
+            out_pos = torch.cat([out_pos1, out_pos2], dim=-1)
+            out_pos = self.lin_pos_l(out_pos)
+            out_pos += self.lin_pos_r(x[1][..., :F_in])
 
-            x_pos = torch.cat([
-                self.propagate(pos_edge_index, x=x_1),
-                self.propagate(neg_edge_index, x=x_2),
-                x_1,
-            ],
-                              dim=1)
+            out_neg1 = self.propagate(pos_edge_index, size=None,
+                                      x=(x[0][..., F_in:], x[1][..., F_in:]))
+            out_neg2 = self.propagate(neg_edge_index, size=None,
+                                      x=(x[0][..., :F_in], x[1][..., :F_in]))
+            out_neg = torch.cat([out_neg1, out_neg2], dim=-1)
+            out_neg = self.lin_neg_l(out_neg)
+            out_neg += self.lin_neg_r(x[1][..., F_in:])
 
-            x_neg = torch.cat([
-                self.propagate(pos_edge_index, x=x_2),
-                self.propagate(neg_edge_index, x=x_1),
-                x_2,
-            ],
-                              dim=1)
+            return torch.cat([out_pos, out_neg], dim=-1)
 
-        return torch.cat([self.lin_pos(x_pos), self.lin_neg(x_neg)], dim=1)
+    def message(self, x_j: Tensor) -> Tensor:
+        return x_j
+
+    def message_and_aggregate(self, adj_t: SparseTensor,
+                              x: PairTensor) -> Tensor:
+        adj_t = adj_t.set_value(None, layout=None)
+        return matmul(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self):
-        return '{}({}, {}, first_aggr={})'.format(
-            self.__class__.__name__, self.in_channels, self.out_channels,
-            self.first_aggr)
+        return '{}({}, {}, first_aggr={})'.format(self.__class__.__name__,
+                                                  self.in_channels,
+                                                  self.out_channels,
+                                                  self.first_aggr)

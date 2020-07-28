@@ -84,7 +84,7 @@ def k_fold(dataset, folds):
 
     test_indices, train_indices = [], []
     for _, idx in skf.split(torch.zeros(len(dataset)), dataset.data.y):
-        test_indices.append(torch.from_numpy(idx))
+        test_indices.append(torch.from_numpy(idx).to(torch.long))
 
     val_indices = [test_indices[i - 1] for i in range(folds)]
 

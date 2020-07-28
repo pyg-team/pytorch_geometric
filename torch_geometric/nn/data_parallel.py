@@ -1,4 +1,4 @@
-import warnings
+import logging
 from itertools import chain
 
 import torch
@@ -33,7 +33,6 @@ class DataParallel(torch.nn.DataParallel):
         output_device (int or torch.device): Device location of output.
             (default: :obj:`device_ids[0]`)
     """
-
     def __init__(self, module, device_ids=None, output_device=None):
         super(DataParallel, self).__init__(module, device_ids, output_device)
         self.src_device = torch.device("cuda:{}".format(self.device_ids[0]))
@@ -41,8 +40,8 @@ class DataParallel(torch.nn.DataParallel):
     def forward(self, data_list):
         """"""
         if len(data_list) == 0:
-            warnings.warn('DataParallel received an empty data list, which '
-                          'may result in unexpected behaviour.')
+            logging.warning('DataParallel received an empty data list, which '
+                            'may result in unexpected behaviour.')
             return None
 
         if not self.device_ids or len(self.device_ids) == 1:  # Fallback

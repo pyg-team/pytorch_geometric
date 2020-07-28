@@ -1,4 +1,9 @@
-from torch_geometric.nn.conv import MessagePassing, GCNConv
+from torch_geometric.typing import Adj, OptTensor
+
+from torch import Tensor
+from torch_sparse import SparseTensor, matmul
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 
 class APPNP(MessagePassing):
@@ -22,31 +27,46 @@ class APPNP(MessagePassing):
     Args:
         K (int): Number of iterations :math:`K`.
         alpha (float): Teleport probability :math:`\alpha`.
-        bias (bool, optional): If set to :obj:`False`, the layer will not learn
-            an additive bias. (default: :obj:`True`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, K, alpha, bias=True, **kwargs):
+    def __init__(self, K: int, alpha: float, add_self_loops: bool = True,
+                 **kwargs):
         super(APPNP, self).__init__(aggr='add', **kwargs)
         self.K = K
         self.alpha = alpha
+        self.add_self_loops = add_self_loops
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
         """"""
-        edge_index, norm = GCNConv.norm(edge_index, x.size(self.node_dim),
-                                        edge_weight, dtype=x.dtype)
+        if isinstance(edge_index, Tensor):
+            edge_index, edge_weight = gcn_norm(
+                edge_index, edge_weight, x.size(self.node_dim),
+                add_self_loops=self.add_self_loops, dtype=x.dtype)
 
-        hidden = x
+        elif isinstance(edge_index, SparseTensor):
+            edge_index = gcn_norm(  # yapf: disable
+                edge_index, edge_weight, x.size(self.node_dim),
+                add_self_loops=self.add_self_loops, dtype=x.dtype)
+
+        h = x
         for k in range(self.K):
-            x = self.propagate(edge_index, x=x, norm=norm)
+            # propagate_type: (x: Tensor, edge_weight: OptTensor)
+            x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                               size=None)
             x = x * (1 - self.alpha)
-            x = x + self.alpha * hidden
+            x += self.alpha * h
 
         return x
 
-    def message(self, x_j, norm):
-        return norm.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
+        return edge_weight.view(-1, 1) * x_j
+
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+        return matmul(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
         return '{}(K={}, alpha={})'.format(self.__class__.__name__, self.K,

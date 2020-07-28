@@ -1,7 +1,5 @@
 import torch
-from torch.nn import Parameter
-
-from ..inits import uniform
+from torch.nn import Linear
 
 
 class DenseGraphConv(torch.nn.Module):
@@ -15,14 +13,14 @@ class DenseGraphConv(torch.nn.Module):
         self.out_channels = out_channels
         self.aggr = aggr
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
-        self.lin = torch.nn.Linear(in_channels, out_channels, bias=bias)
+        self.lin_rel = Linear(in_channels, out_channels, bias=False)
+        self.lin_root = Linear(in_channels, out_channels, bias=bias)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        uniform(self.in_channels, self.weight)
-        self.lin.reset_parameters()
+        self.lin_rel.reset_parameters()
+        self.lin_root.reset_parameters()
 
     def forward(self, x, adj, mask=None):
         r"""
@@ -43,15 +41,14 @@ class DenseGraphConv(torch.nn.Module):
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         B, N, _ = adj.size()
 
-        out = torch.matmul(adj, x)
-        out = torch.matmul(out, self.weight)
+        out = self.lin_rel(torch.matmul(adj, x))
 
         if self.aggr == 'mean':
             out = out / adj.sum(dim=-1, keepdim=True).clamp(min=1)
         elif self.aggr == 'max':
             out = out.max(dim=-1)[0]
 
-        out = out + self.lin(x)
+        out += self.lin_root(x)
 
         if mask is not None:
             out = out * mask.view(B, N, 1).to(x.dtype)

@@ -4,13 +4,14 @@ import glob
 import torch
 import pandas
 import numpy as np
+from torch_scatter import scatter_add
 from torch_geometric.data import Data, Dataset
 
 
 class TrackingData(Data):
     def __inc__(self, key, item):
-        if key == 'y':
-            return item.max().item() + 1
+        if key == 'y_index':
+            return torch.tensor([item[0].max().item() + 1, self.num_nodes])
         else:
             return super(TrackingData, self).__inc__(key, item)
 
@@ -57,15 +58,43 @@ class TrackMLParticleTrackingDataset(Dataset):
     def get(self, idx):
         idx = self.events[idx]
 
+        # Get hit positions.
         hits_path = osp.join(self.raw_dir, f'event{idx}-hits.csv')
         pos = pandas.read_csv(hits_path, usecols=['x', 'y', 'z'],
                               dtype=np.float32)
-        pos = torch.from_numpy(pos.values)
+        pos = torch.from_numpy(pos.values).div_(1000.)
 
+        # Get hit features.
+        cells_path = osp.join(self.raw_dir, f'event{idx}-cells.csv')
+        cell = pandas.read_csv(cells_path, usecols=['hit_id', 'value'])
+        hit_id = torch.from_numpy(cell['hit_id'].values).to(torch.long).sub_(1)
+        value = torch.from_numpy(cell['value'].values).to(torch.float)
+        ones = torch.ones(hit_id.size(0))
+        num_cells = scatter_add(ones, hit_id, dim_size=pos.size(0)).div_(10.)
+        value = scatter_add(value, hit_id, dim_size=pos.size(0))
+        x = torch.stack([num_cells, value], dim=-1)
+
+        # Get ground-truth hit assignments.
         truth_path = osp.join(self.raw_dir, f'event{idx}-truth.csv')
-        y = pandas.read_csv(truth_path, usecols=['particle_id'],
-                            dtype=np.int64)
-        y = torch.from_numpy(y.values).squeeze()
-        _, y = y.unique(return_inverse=True)
+        y = pandas.read_csv(truth_path,
+                            usecols=['hit_id', 'particle_id', 'weight'])
+        hit_id = torch.from_numpy(y['hit_id'].values).to(torch.long).sub_(1)
+        particle_id = torch.from_numpy(y['particle_id'].values).to(torch.long)
+        particle_id = particle_id.unique(return_inverse=True)[1].sub_(1)
+        weight = torch.from_numpy(y['weight'].values).to(torch.float)
 
-        return TrackingData(pos=pos, y=y)
+        # Sort.
+        perm = (particle_id * hit_id.size(0) + hit_id).argsort()
+        hit_id = hit_id[perm]
+        particle_id = particle_id[perm]
+        weight = weight[perm]
+
+        # Remove invalid particle ids.
+        mask = particle_id >= 0
+        hit_id = hit_id[mask]
+        particle_id = particle_id[mask]
+        weight = weight[mask]
+
+        y_index = torch.stack([particle_id, hit_id], dim=0)
+
+        return TrackingData(x=x, pos=pos, y_index=y_index, y_weight=weight)

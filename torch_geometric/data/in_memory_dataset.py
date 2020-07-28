@@ -1,3 +1,4 @@
+import copy
 from itertools import repeat, product
 
 import torch
@@ -72,17 +73,20 @@ class InMemoryDataset(Dataset):
 
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
+            start, end = slices[idx].item(), slices[idx + 1].item()
+            # print(slices[idx], slices[idx + 1])
             if torch.is_tensor(item):
                 s = list(repeat(slice(None), item.dim()))
-                s[self.data.__cat_dim__(key,
-                                        item)] = slice(slices[idx],
-                                                       slices[idx + 1])
+                s[self.data.__cat_dim__(key, item)] = slice(start, end)
+            elif start + 1 == end:
+                s = slices[start]
             else:
-                s = slice(slices[idx], slices[idx + 1])
+                s = slice(start, end)
             data[key] = item[s]
         return data
 
-    def collate(self, data_list):
+    @staticmethod
+    def collate(data_list):
         r"""Collates a python list of data objects to the internal storage
         format of :class:`torch_geometric.data.InMemoryDataset`."""
         keys = data_list[0].keys
@@ -117,3 +121,13 @@ class InMemoryDataset(Dataset):
             slices[key] = torch.tensor(slices[key], dtype=torch.long)
 
         return data, slices
+
+    def copy(self, idx=None):
+        if idx is None:
+            data_list = [self.get(i) for i in range(len(self))]
+        else:
+            data_list = [self.get(i) for i in idx]
+        dataset = copy.copy(self)
+        dataset.__indices__ = None
+        dataset.data, dataset.slices = self.collate(data_list)
+        return dataset

@@ -70,7 +70,7 @@ class EdgePooling(torch.nn.Module):
 
     @staticmethod
     def compute_edge_score_softmax(raw_edge_score, edge_index, num_nodes):
-        return softmax(raw_edge_score, edge_index[1], num_nodes)
+        return softmax(raw_edge_score, edge_index[1], num_nodes=num_nodes)
 
     @staticmethod
     def compute_edge_score_tanh(raw_edge_score, edge_index, num_nodes):

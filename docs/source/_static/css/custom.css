@@ -1,8 +1,150 @@
-/* Use white for logo background. */
 .wy-side-nav-search {
-  background-color: #fff;
+  background: rgb(243,244,247);
 }
 
 .wy-side-nav-search > div.version {
-  color: #000;
+  color: black;
+}
+
+.wy-nav-content-wrap {
+  background: inherit;
+}
+
+.wy-side-nav-search input[type="text"] {
+  border: none;
+  box-shadow: none;
+  background: white;
+  border-radius: 0;
+  font-size: 100%;
+}
+
+.wy-menu-vertical li.current a,
+.wy-menu-vertical li.toctree-l1.current > a {
+  border: none;
+}
+
+.ethical-rtd > div.ethical-sidebar,
+.ethical-rtd > div.ethical-footer {
+  display: none !important;
+}
+
+h1 {
+  text-transform: uppercase;
+  font-family: inherit;
+  font-weight: 200;
+}
+
+h2,
+.rst-content .toctree-wrapper p.caption {
+  font-family: inherit;
+  font-weight: 200;
+}
+
+/* Begin code */
+.rst-content pre.literal-block,
+.rst-content div[class^="highlight"] {
+  border: none;
+}
+
+.rst-content pre.literal-block,
+.rst-content div[class^="highlight"] pre,
+.rst-content .linenodiv pre {
+  font-size: 80%;
+}
+
+.highlight {
+  background: #f6f8fa;
+  border-radius: 6px;
+}
+
+.highlight .kn,
+.highlight .k {
+  color: #d73a49;
+}
+
+.highlight .nn {
+  color: inherit;
+  font-weight: inherit;
+}
+
+.highlight .nc {
+  color: #e36209;
+  font-weight: inherit;
+}
+
+.highlight .fm,
+.highlight .nd,
+.highlight .nf,
+.highlight .nb {
+  color: #6f42c1;
+}
+
+.highlight .bp,
+.highlight .n {
+  color: inherit;
+}
+
+.highlight .kc,
+.highlight .s1,
+.highlight .s2,
+.highlight .mi,
+.highlight .mf,
+.highlight .bp,
+.highlight .bn,
+.highlight .ow {
+  color: #005cc5;
+  font-weight: inherit;
+}
+
+.highlight .c1 {
+  color: #6a737d;
+}
+
+.rst-content code.xref {
+  padding: .2em .4em;
+  background: rgba(27,31,35,.05);
+  border-radius: 6px;
+  border: none;
+}
+/* End code */
+
+.rst-content dl:not(.docutils) dt,
+.rst-content dl:not(.docutils) dl dt {
+  background: rgb(243,244,247);
+}
+
+.rst-content dl:not(.docutils) dt.field-odd,
+.rst-content dl:not(.docutils) dt.field-odd {
+  text-transform: uppercase;
+  background: inherit;
+  border: none;
+  padding: 6px 0;
+}
+
+.rst-content dl:not(.docutils) .property {
+  text-transform: uppercase;
+  font-style: normal;
+  padding-right: 12px;
+}
+
+em.sig-param span.n:first-child, em.sig-param span.n:nth-child(2) {
+  color: black;
+  font-style: normal;
+}
+
+em.sig-param span.n:nth-child(3),
+em.sig-param span.n:nth-child(3) a {
+  color: inherit;
+  font-weight: normal;
+  font-style: normal;
+}
+
+em.sig-param span.default_value {
+  font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",Courier,monospace;
+  font-style: normal;
+  font-size: 90%;
+}
+
+.sig-paren {
+  padding: 0 4px;
 }

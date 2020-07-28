@@ -1,7 +1,8 @@
-from torch.nn import BatchNorm1d
+import torch
+from torch import Tensor
 
 
-class BatchNorm(BatchNorm1d):
+class BatchNorm(torch.nn.Module):
     r"""Applies batch normalization over a batch of node features as described
     in the `"Batch Normalization: Accelerating Deep Network Training by
     Reducing Internal Covariate Shift" <https://arxiv.org/abs/1502.03167>`_
@@ -11,6 +12,9 @@ class BatchNorm(BatchNorm1d):
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
         \textrm{E}[\mathbf{x}]}{\sqrt{\textrm{Var}[\mathbf{x}] + \epsilon}}
         \odot \gamma + \beta
+
+    The mean and standard-deviation are calculated per-dimension over all nodes
+    inside the mini-batch.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -29,16 +33,16 @@ class BatchNorm(BatchNorm1d):
     """
     def __init__(self, in_channels, eps=1e-5, momentum=0.1, affine=True,
                  track_running_stats=True):
-        super(BatchNorm, self).__init__(in_channels, eps, momentum, affine,
-                                        track_running_stats)
+        super(BatchNorm, self).__init__()
+        self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
+                                           track_running_stats)
 
-    def forward(self, x):
+    def reset_parameters(self):
+        self.module.reset_parameters()
+
+    def forward(self, x: Tensor) -> Tensor:
         """"""
-        return super(BatchNorm, self).forward(x)
+        return self.module(x)
 
     def __repr__(self):
-        return ('{}({}, eps={}, momentum={}, affine={}, '
-                'track_running_stats={})').format(self.__class__.__name__,
-                                                  self.num_features, self.eps,
-                                                  self.momentum, self.affine,
-                                                  self.track_running_stats)
+        return f'{self.__class__.__name__}({self.module.num_features})'

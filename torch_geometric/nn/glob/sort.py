@@ -6,9 +6,8 @@ def global_sort_pool(x, batch, k):
     r"""The global pooling operator from the `"An End-to-End Deep Learning
     Architecture for Graph Classification"
     <https://www.cse.wustl.edu/~muhan/papers/AAAI_2018_DGCNN.pdf>`_ paper,
-    where node features are first sorted individually and then  sorted in
-    descending order based on their last features. The first :math:`k` nodes
-    form the output of the layer.
+    where node features are sorted in descending order based on their last
+    feature channel. The first :math:`k` nodes form the output of the layer.
 
     Args:
         x (Tensor): Node feature matrix
@@ -19,8 +18,6 @@ def global_sort_pool(x, batch, k):
 
     :rtype: :class:`Tensor`
     """
-    x, _ = x.sort(dim=-1)
-
     fill_value = x.min().item() - 1
     batch_x, _ = to_dense_batch(x, batch, fill_value)
     B, N, D = batch_x.size()

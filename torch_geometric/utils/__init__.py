@@ -1,5 +1,4 @@
 from .degree import degree
-from .scatter import scatter_
 from .softmax import softmax
 from .dropout import dropout_adj
 from .sort_edge_index import sort_edge_index
@@ -8,7 +7,7 @@ from .loop import (contains_self_loops, remove_self_loops,
                    segregate_self_loops, add_self_loops,
                    add_remaining_self_loops)
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
-from .subgraph import subgraph
+from .subgraph import subgraph, k_hop_subgraph
 from .get_laplacian import get_laplacian
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
@@ -16,6 +15,7 @@ from .sparse import dense_to_sparse
 from .normalized_cut import normalized_cut
 from .grid import grid
 from .geodesic import geodesic_distance
+from .tree_decomposition import tree_decomposition
 from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .convert import to_trimesh, from_trimesh
@@ -31,7 +31,6 @@ from .metric import (accuracy, true_positive, true_negative, false_positive,
 
 __all__ = [
     'degree',
-    'scatter_',
     'softmax',
     'dropout_adj',
     'sort_edge_index',
@@ -45,6 +44,7 @@ __all__ = [
     'contains_isolated_nodes',
     'remove_isolated_nodes',
     'subgraph',
+    'k_hop_subgraph',
     'get_laplacian',
     'to_dense_batch',
     'to_dense_adj',
@@ -52,6 +52,7 @@ __all__ = [
     'normalized_cut',
     'grid',
     'geodesic_distance',
+    'tree_decomposition',
     'to_scipy_sparse_matrix',
     'from_scipy_sparse_matrix',
     'to_networkx',

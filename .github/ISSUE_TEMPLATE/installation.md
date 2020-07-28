@@ -14,18 +14,15 @@ about: Report an installation problem with PyTorch Geometric
 * PyTorch version:
 * CUDA/cuDNN version:
 * GCC version:
-* How did you try to install PyTorch Geometric and its extensions (pip, source):
+* How did you try to install PyTorch Geometric and its extensions (wheel, source):
 * Any other relevant information:
 
 ## Checklist
 
-- [ ] I followed the installation guide.
-- [ ] I cannot find my error message in the FAQ.
+- [ ] I followed the [installation guide](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html).
+- [ ] I cannot find my error message in the [FAQ](https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#id1).
 - [ ] I set up CUDA correctly and can compile CUDA code via `nvcc`.
-- [ ] I have cloned the repository and tried a manual installation from source.
 - [ ] I do have multiple CUDA versions on my machine.
-- [ ] I checked if the official extension example runs on my machine.
-- [ ] The offical extension example runs on my machine.
 
 ## Additional context
 
