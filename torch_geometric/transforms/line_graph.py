@@ -2,6 +2,10 @@ import torch
 from torch_sparse import coalesce
 from torch_scatter import scatter_add
 from torch_geometric.utils import remove_self_loops
+import scipy as sp
+import numpy as np
+from torch_sparse import SparseTensor
+
 
 
 class LineGraph(object):
@@ -16,8 +20,6 @@ class LineGraph(object):
 
     Line-graph node indices are equal to indices in the original graph's
     coalesced :obj:`edge_index`.
-    For undirected graphs, the maximum line-graph node index is
-    :obj:`(data.edge_index.size(1) // 2) - 1`.
 
     New node features are given by old edge attributes.
     For undirected graphs, edge attributes for reciprocal edges
@@ -35,57 +37,55 @@ class LineGraph(object):
         edge_index, edge_attr = data.edge_index, data.edge_attr
         (row, col), edge_attr = coalesce(edge_index, edge_attr, N, N)
 
+        def sparse_edge_multiply(row, col, N):
+            
+            # 100x speed-up if using cuda with SparseTensor class
+            if row.device.type == 'cuda':          
+                e_in_coo = SparseTensor(row=row, col=torch.arange(row.size(0), dtype=torch.long, device=row.device), sparse_sizes=(N+1, row.size(0)))
+                e_out_coo = SparseTensor(row=col, col=torch.arange(row.size(0), dtype=torch.long, device=row.device), sparse_sizes=(N+1, row.size(0)))
+                
+                e_line_graph = e_out_coo.t().matmul(e_in_coo)
+            
+            # 10x speed-up if using cpu with scipy sparse class
+            else:
+                e_in_coo = sp.sparse.coo_matrix(([1]*row.size(0), np.vstack([row, np.arange(row.size(0))])), shape=[N+1, row.size(0)])
+                e_out_coo = sp.sparse.coo_matrix(([1]*row.size(0), np.vstack([col, np.arange(row.size(0))])), shape=[N+1, row.size(0)])
+                e_in_csr, e_out_csr = e_in_coo.tocsr(), e_out_coo.tocsr()
+                
+                e_total = e_out_csr.T * e_in_csr
+                e_line_graph = SparseTensor.from_scipy(e_total)
+                
+            return e_line_graph
+        
         if self.force_directed or data.is_directed():
-            i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
-
-            count = scatter_add(torch.ones_like(row), row, dim=0,
-                                dim_size=data.num_nodes)
-            cumsum = torch.cat([count.new_zeros(1), count.cumsum(0)], dim=0)
-
-            cols = [
-                i[cumsum[col[j]]:cumsum[col[j] + 1]]
-                for j in range(col.size(0))
-            ]
-            rows = [row.new_full((c.numel(), ), j) for j, c in enumerate(cols)]
-
-            row, col = torch.cat(rows, dim=0), torch.cat(cols, dim=0)
-
+            
+            # Convert to Line Graph
+            e_line_graph = sparse_edge_multiply(row, col, N)
+            
+            row, col, _ = e_line_graph.coo()
             data.edge_index = torch.stack([row, col], dim=0)
-            data.x = data.edge_attr
+            data.x = edge_attr
             data.num_nodes = edge_index.size(1)
 
         else:
-            # Compute node indices.
-            mask = row < col
-            row, col = row[mask], col[mask]
-            i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
+            # Remove self-loops
+            self_mask = row!=col
+            row, col = row[self_mask], col[self_mask]
+            invert_self_mask = torch.where(self_mask)[0] #Used to recover the original edge_list ordering
+            
+            e_nonzero = sparse_edge_multiply(row, col, N)
+            
+            trip_row, trip_col, _ = e_nonzero.coo()
+            trip_self_mask = row[trip_row] != col[trip_col]
+            masked_trip_row, masked_trip_col = trip_row[trip_self_mask], trip_col[trip_self_mask]
 
-            (row, col), i = coalesce(
-                torch.stack([
-                    torch.cat([row, col], dim=0),
-                    torch.cat([col, row], dim=0)
-                ], dim=0), torch.cat([i, i], dim=0), N, N)
-
-            # Compute new edge indices according to `i`.
-            count = scatter_add(torch.ones_like(row), row, dim=0,
-                                dim_size=data.num_nodes)
-            joints = torch.split(i, count.tolist())
-
-            def generate_grid(x):
-                row = x.view(-1, 1).repeat(1, x.numel()).view(-1)
-                col = x.repeat(x.numel())
-                return torch.stack([row, col], dim=0)
-
-            joints = [generate_grid(joint) for joint in joints]
-            joints = torch.cat(joints, dim=1)
-            joints, _ = remove_self_loops(joints)
-            N = row.size(0) // 2
-            joints, _ = coalesce(joints, None, N, N)
-
+            invert_row, invert_col = invert_self_mask[masked_trip_row], invert_self_mask[masked_trip_col]
+            
+            data.edge_index = torch.stack([invert_row, invert_col], dim=0)
+            
             if edge_attr is not None:
-                data.x = scatter_add(edge_attr, i, dim=0, dim_size=N)
-            data.edge_index = joints
-            data.num_nodes = edge_index.size(1) // 2
+                data.x = 2*edge_attr
+            data.num_nodes = edge_index.size(1)
 
         data.edge_attr = None
         return data
