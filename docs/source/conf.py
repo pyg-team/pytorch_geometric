@@ -5,6 +5,7 @@ import torch_geometric
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
@@ -12,6 +13,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
 ]
+
+autosummary_generate = True
 
 source_suffix = '.rst'
 master_doc = 'index'
