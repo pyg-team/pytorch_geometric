@@ -15,6 +15,7 @@ extensions = [
 ]
 
 autosummary_generate = True
+templates_path = ['_templates']
 
 source_suffix = '.rst'
 master_doc = 'index'
@@ -36,6 +37,7 @@ html_theme_options = {
     'collapse_navigation': False,
     'display_version': True,
     'logo_only': True,
+    'navigation_depth': 2,
 }
 
 html_logo = '_static/img/pyg_logo_text.svg'

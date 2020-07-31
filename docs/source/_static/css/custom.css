@@ -40,6 +40,10 @@ h2,
   font-weight: 200;
 }
 
+.rst-content a:visited {
+  color: #3091d1;
+}
+
 /* Begin code */
 .rst-content pre.literal-block,
 .rst-content div[class^="highlight"] {
