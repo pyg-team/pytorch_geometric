@@ -1103,6 +1103,7 @@ for e in range(epochs):
     if e%freq_val == 0:
         model.eval()
         with torch.no_grad():
+            tot_loss = 0
             for initial_condition, true_trajectory in zip(val_initial_conditions, val_true_trajectory_tr_s):
                 t = np.random.randint(0, num_time_steps-num_processing_steps_tr)
                 initial_condition['x'] = true_trajectory[t]
