@@ -13,7 +13,9 @@ install:
   - source script/conda.sh
   - conda create --yes -n test python="${PYTHON_VERSION}"
   - source activate test
-  - conda install pytorch=${TORCH_VERSION} torchvision ${TOOLKIT} -c pytorch --yes
+  - conda install pytorch=${TORCH_VERSION} ${TOOLKIT} -c pytorch --yes
+  - if [ "${TORCH_VERSION}" = "1.5.0" ]; then pip install torchvision==0.6.0; fi
+  - if [ "${TORCH_VERSION}" = "1.6.0" ]; then pip install torchvision==0.7.0; fi
   - pip install torch-scatter==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
   - pip install torch-sparse==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
   - pip install torch-cluster==latest+${IDX} -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}.html
