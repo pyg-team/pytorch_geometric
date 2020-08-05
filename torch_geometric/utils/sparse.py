@@ -7,6 +7,6 @@ def dense_to_sparse(tensor):
      :rtype: (:class:`LongTensor`, :class:`Tensor`)
     """
     assert tensor.dim() == 2
-    index = tensor.nonzero().t().contiguous()
+    index = tensor.nonzero(as_tuple=False).t().contiguous()
     value = tensor[index[0], index[1]]
     return index, value

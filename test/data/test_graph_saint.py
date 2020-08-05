@@ -14,7 +14,7 @@ def test_graph_saint():
         [0, 1, 0, 1, 0, 1],
     ])
 
-    edge_index = adj.nonzero().t()
+    edge_index = adj.nonzero(as_tuple=False).t()
     x = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
     data = Data(edge_index=edge_index, x=x, num_nodes=6)
 

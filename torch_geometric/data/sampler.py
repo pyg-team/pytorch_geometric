@@ -88,7 +88,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
         if node_idx is None:
             node_idx = torch.arange(N)
         elif node_idx.dtype == torch.bool:
-            node_idx = node_idx.nonzero().view(-1)
+            node_idx = node_idx.nonzero(as_tuple=False).view(-1)
 
         self.sizes = sizes
         self.flow = flow
@@ -133,7 +133,8 @@ class RandomIndexSampler(torch.utils.data.Sampler):
 
     def get_node_indices(self):
         n_id = torch.randint(self.num_parts, (self.N, ), dtype=torch.long)
-        n_ids = [(n_id == i).nonzero().view(-1) for i in range(self.num_parts)]
+        n_ids = [(n_id == i).nonzero(as_tuple=False).view(-1)
+                 for i in range(self.num_parts)]
         return n_ids
 
     def __iter__(self):

@@ -101,7 +101,7 @@ class ZINC(InMemoryDataset):
                 y = mol['logP_SA_cycle_normalized'].to(torch.float)
 
                 adj = mol['bond_type']
-                edge_index = adj.nonzero().t().contiguous()
+                edge_index = adj.nonzero(as_tuple=False).t().contiguous()
                 edge_attr = adj[edge_index[0], edge_index[1]].to(torch.long)
 
                 data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,

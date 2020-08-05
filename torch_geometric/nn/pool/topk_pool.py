@@ -13,7 +13,7 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
         scores_max = scatter_max(x, batch)[0][batch] - tol
         scores_min = scores_max.clamp(max=min_score)
 
-        perm = torch.nonzero(x > scores_min).view(-1)
+        perm = (x > scores_min).nonzero(as_tuple=False).view(-1)
     else:
         num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
         batch_size, max_num_nodes = num_nodes.size(0), num_nodes.max().item()
@@ -115,7 +115,6 @@ class TopKPooling(torch.nn.Module):
         nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
             (default: :obj:`torch.tanh`)
     """
-
     def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1,
                  nonlinearity=torch.tanh):
         super(TopKPooling, self).__init__()

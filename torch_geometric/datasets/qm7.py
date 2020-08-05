@@ -27,10 +27,7 @@ class QM7b(InMemoryDataset):
     url = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/' \
           'datasets/qm7b.mat'
 
-    def __init__(self,
-                 root,
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):
         super(QM7b, self).__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -53,7 +50,8 @@ class QM7b(InMemoryDataset):
 
         data_list = []
         for i in range(target.shape[0]):
-            edge_index = coulomb_matrix[i].nonzero().t().contiguous()
+            edge_index = coulomb_matrix[i].nonzero(
+                as_tuple=False).t().contiguous()
             edge_attr = coulomb_matrix[i, edge_index[0], edge_index[1]]
             y = target[i].view(1, -1)
             data = Data(edge_index=edge_index, edge_attr=edge_attr, y=y)

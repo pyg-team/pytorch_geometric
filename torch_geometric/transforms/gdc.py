@@ -359,7 +359,7 @@ class GDC(object):
                 kwargs['eps'] = self.__calculate_eps__(matrix, N,
                                                        kwargs['avg_degree'])
 
-            edge_index = torch.nonzero(matrix >= kwargs['eps']).t()
+            edge_index = (matrix >= kwargs['eps']).nonzero(as_tuple=False).t()
             edge_index_flat = edge_index[0] * N + edge_index[1]
             edge_weight = matrix.flatten()[edge_index_flat]
 
@@ -415,8 +415,8 @@ class GDC(object):
                 kwargs['eps'] = self.__calculate_eps__(edge_weight, num_nodes,
                                                        kwargs['avg_degree'])
 
-            remaining_edge_idx = torch.nonzero(
-                edge_weight >= kwargs['eps']).flatten()
+            remaining_edge_idx = (edge_weight >= kwargs['eps']).nonzero(
+                as_tuple=False).flatten()
             edge_index = edge_index[:, remaining_edge_idx]
             edge_weight = edge_weight[remaining_edge_idx]
         elif method == 'topk':
