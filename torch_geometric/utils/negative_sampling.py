@@ -85,7 +85,7 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None,
         neg_edge_index = torch.stack([row, col], dim=0).long()
         neg_edge_index = to_undirected(neg_edge_index)
     else:
-        row = perm / num_nodes
+        row = perm // num_nodes
         col = perm % num_nodes
         neg_edge_index = torch.stack([row, col], dim=0).long()
 
