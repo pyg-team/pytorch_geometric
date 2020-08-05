@@ -2,7 +2,6 @@ language: shell
 
 os:
   - linux
-  - osx
   - windows
 
 env:
@@ -22,7 +21,6 @@ install:
   - pip install cython
   - git clone https://github.com/the-virtual-brain/tvb-geodesic /tmp/gdist
   - cd /tmp/gdist && python setup.py install && cd -
-  - pip install numba
   - pip install scikit-image
   - pip install trimesh
   - pip install flake8 codecov
