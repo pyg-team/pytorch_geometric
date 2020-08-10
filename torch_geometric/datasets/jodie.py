@@ -1,6 +1,8 @@
 import os.path as osp
 
-from torch_geometric.data import InMemoryDataset, download_url
+import torch
+import pandas
+from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 
 
 class JODIEDataset(InMemoryDataset):
@@ -13,7 +15,7 @@ class JODIEDataset(InMemoryDataset):
         assert self.name in self.names
 
         super(JODIEDataset, self).__init__(root, transform, pre_transform)
-        # self.data, self.slices = torch.load(self.processed_paths[0])
+        self.data = torch.load(self.processed_paths[0])
 
     @property
     def raw_dir(self):
@@ -35,7 +37,21 @@ class JODIEDataset(InMemoryDataset):
         download_url(self.url.format(self.name), self.raw_dir)
 
     def process(self):
-        raise NotImplementedError
+        df = pandas.read_csv(self.raw_paths[0])
+
+        src = torch.from_numpy(df.iloc[:, 0].values).to(torch.long)
+        dst = torch.from_numpy(df.iloc[:, 1].values).to(torch.long)
+        t = torch.from_numpy(df.iloc[:, 2].values).to(torch.long)
+        y = torch.from_numpy(df.iloc[:, 3].values).to(torch.long)
+        x = torch.from_numpy(df.iloc[:, 3:].values).to(torch.float)
+
+        bipartite = self.name in ['lastfm']
+
+        if bipartite:
+            dst += int(src.max()) + 1
+
+        data = TemporalData(src=src, dst=dst, t=t, x=x, y=y)
+        torch.save(data, self.processed_paths[0])
 
     def __repr__(self):
         return f'{self.name.capitalize()}()'
