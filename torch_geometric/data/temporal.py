@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 
 class TemporalData(object):
@@ -10,6 +11,14 @@ class TemporalData(object):
         self.y = y
         for key, item in kwargs.items():
             self[key] = item
+
+    def __getitem__(self, key):
+        r"""Gets the data of the attribute :obj:`key`."""
+        return getattr(self, key, None)
+
+    def __setitem__(self, key, value):
+        """Sets the attribute :obj:`key` to :obj:`value`."""
+        setattr(self, key, value)
 
     @property
     def keys(self):
@@ -59,3 +68,17 @@ class TemporalData(object):
 
     def to(self, device, *keys, **kwargs):
         return self.apply(lambda x: x.to(device, **kwargs), *keys)
+
+    def __cat_dim__(self, key, value):
+        return 0
+
+    def __inc__(self, key, value):
+        return 0
+
+    def train_val_test_split(self, val_ratio=0.15, test_ratio=0.15):
+        val_time, test_time = np.quantile(self.t.cpu().numpy(), [0.7, 0.85])
+
+    def __repr__(self):
+        cls = str(self.__class__.__name__)
+        shapes = ', '.join([f'{k}={list(v.shape)}' for k, v in self])
+        return f'{cls}({shapes})'
