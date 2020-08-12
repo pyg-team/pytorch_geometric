@@ -7,6 +7,7 @@ from tqdm import tqdm
 from torch_geometric.datasets import Planetoid
 from torch_geometric.data import NeighborSampler
 from torch_geometric.nn import SAGEConv
+from torch_geometric.utils import degree
 from torch_cluster import random_walk
 from sklearn.linear_model import LogisticRegression
 
@@ -19,6 +20,7 @@ num_samples = [10, 5]
 batch_size = 64
 hidden_channels = 32
 walk_length = 1
+num_neg_samples = 1
 epochs = 10
 
 subgraph_loader = NeighborSampler(
@@ -102,10 +104,15 @@ def train(epoch):
         sizes=num_samples, batch_size=batch_size * walk_length, shuffle=False,
         num_workers=0)
 
+    # negative sampling as node2vec
+    deg = degree(data.edge_index[0])
+    distribution = deg ** 0.75
+    neg_idx = torch.multinomial(
+        distribution, data.num_nodes * num_neg_samples, replacement=True)
     neg_loader = NeighborSampler(
-        data.edge_index, node_idx=node_idx,
-        sizes=num_samples, batch_size=batch_size, shuffle=True,
-        num_workers=0)
+        data.edge_index, node_idx=neg_idx,
+        sizes=num_samples, batch_size=batch_size * num_neg_samples,
+        shuffle=True, num_workers=0)
 
     for (batch_size_, u_id, adjs_u), (_, v_id, adjs_v), (_, vn_id, adjs_vn) in\
             zip(train_loader, pos_loader, neg_loader):
@@ -121,9 +128,11 @@ def train(epoch):
 
         optimizer.zero_grad()
         pos_loss = -F.logsigmoid(
-            (z_u.repeat_interleave(walk_length, dim=0)*z_v).sum(dim=1)).mean()
+            (z_u.repeat_interleave(walk_length, dim=0)*z_v)
+            .sum(dim=1)).mean()
         neg_loss = -F.logsigmoid(
-            -(z_u*z_vn).sum(dim=1)).mean()
+            -(z_u.repeat_interleave(num_neg_samples, dim=0)*z_vn)
+            .sum(dim=1)).mean()
         loss = pos_loss + neg_loss
         loss.backward()
         optimizer.step()
