@@ -1,6 +1,8 @@
 from typing import Optional, Tuple
 from torch_geometric.typing import Adj, OptTensor
 
+from math import log
+
 import torch
 from torch import Tensor
 from torch.nn import Parameter
@@ -35,7 +37,12 @@ class GCN2Conv(MessagePassing):
         channels (int): Size of each input and output sample.
         alpha (float): The strength of the initial residual connection
             :math:`\alpha`.
-        beta (float): The strength of the identity mapping :math:`\beta`.
+        theta (float, optional): The hyperparameter :math:`\theta` to compute
+            the strength of the identity mapping
+            :math:`\beta = \log \left( \frac{\theta}{\ell} + 1 \right)`.
+            (default: :obj:`None`)
+        layer (int, optional): The layer :math:`\ell` in which this module is
+            executed. (default: :obj:`None`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of :math:`\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
             \mathbf{\hat{D}}^{-1/2}` on first execution, and will use the
@@ -55,15 +62,19 @@ class GCN2Conv(MessagePassing):
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, channels: int, alpha: float, beta: float,
-                 cached: bool = False, add_self_loops: bool = True,
-                 normalize: bool = True, bias: bool = True, **kwargs):
+    def __init__(self, channels: int, alpha: float, theta: float = None,
+                 layer: int = None, cached: bool = False,
+                 add_self_loops: bool = True, normalize: bool = True,
+                 bias: bool = True, **kwargs):
 
         super(GCN2Conv, self).__init__(aggr='add', **kwargs)
 
         self.channels = channels
         self.alpha = alpha
-        self.beta = beta
+        self.beta = None
+        if theta is not None or layer is not None:
+            assert theta is not None and layer is not None
+            self.beta = log(theta / layer + 1)
         self.cached = cached
         self.normalize = normalize
         self.add_self_loops = add_self_loops
@@ -117,7 +128,9 @@ class GCN2Conv(MessagePassing):
         x = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
 
         out = (1 - self.alpha) * x + self.alpha * x_0
-        out = (1 - self.beta) * out + self.beta * (out @ self.weight)
+
+        if self.beta is not None:
+            out = (1 - self.beta) * out + self.beta * (out @ self.weight)
 
         if self.bias is not None:
             out += self.bias
