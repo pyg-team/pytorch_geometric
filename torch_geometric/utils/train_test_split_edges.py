@@ -1,5 +1,4 @@
 import math
-import random
 import torch
 from torch_geometric.utils import to_undirected
 
@@ -53,10 +52,7 @@ def train_test_split_edges(data, val_ratio=0.05, test_ratio=0.1):
     neg_adj_mask[row, col] = 0
 
     neg_row, neg_col = neg_adj_mask.nonzero(as_tuple=False).t()
-    perm = random.sample(range(neg_row.size(0)), min(n_v + n_t,
-                                                     neg_row.size(0)))
-    perm = torch.tensor(perm)
-    perm = perm.to(torch.long)
+    perm = torch.randperm(neg_row.size(0))[:n_v + n_t]
     neg_row, neg_col = neg_row[perm], neg_col[perm]
 
     neg_adj_mask[neg_row, neg_col] = 0
