@@ -49,7 +49,8 @@ class DataParallel(torch.nn.DataParallel):
             return None
 
         if not self.device_ids or len(self.device_ids) == 1:  # Fallback
-            data = Batch.from_data_list(data_list).to(self.src_device)
+            data = Batch.from_data_list(
+                data_list, follow_batch=self.follow_batch).to(self.src_device)
             return self.module(data)
 
         for t in chain(self.module.parameters(), self.module.buffers()):
