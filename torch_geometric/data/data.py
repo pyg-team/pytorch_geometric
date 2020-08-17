@@ -1,6 +1,7 @@
 import re
 import copy
 import logging
+import collections
 
 import torch
 import torch_geometric
@@ -108,6 +109,14 @@ class Data(object):
             data.debug()
 
         return data
+
+    def to_dict(self):
+        return {key: item for key, item in self}
+
+    def to_namedtuple(self):
+        keys = self.keys
+        DataTuple = collections.namedtuple('DataTuple', keys)
+        return DataTuple(*[self[key] for key in keys])
 
     def __getitem__(self, key):
         r"""Gets the data of the attribute :obj:`key`."""
