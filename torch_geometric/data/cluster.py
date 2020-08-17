@@ -59,15 +59,12 @@ class ClusterData(torch.utils.data.Dataset):
         self.perm = perm
 
     def __permute_data__(self, data, node_idx, adj):
-        edge_idx = adj.storage.value()
         data = copy.copy(data)
-        N, E = data.num_nodes, data.num_edges
+        N = data.num_nodes
 
         for key, item in data:
             if item.size(0) == N:
                 data[key] = item[node_idx]
-            if item.size(0) == E:
-                data[key] = item[edge_idx]
 
         data.edge_index = None
         data.adj = adj
