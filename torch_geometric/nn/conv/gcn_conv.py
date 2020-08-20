@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter_add
-from torch_sparse import SparseTensor, matmul, fill_diag, sum, mul_
+from torch_sparse import SparseTensor, matmul, fill_diag, sum, mul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -41,8 +41,8 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         deg = sum(adj_t, dim=1)
         deg_inv_sqrt = deg.pow_(-0.5)
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
-        adj_t = mul_(adj_t, deg_inv_sqrt.view(-1, 1))
-        adj_t = mul_(adj_t, deg_inv_sqrt.view(1, -1))
+        adj_t = mul(adj_t, deg_inv_sqrt.view(-1, 1))
+        adj_t = mul(adj_t, deg_inv_sqrt.view(1, -1))
         return adj_t
 
     else:
