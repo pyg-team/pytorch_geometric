@@ -74,8 +74,8 @@ class GDC(object):
     def __init__(self, self_loop_weight=1, normalization_in='sym',
                  normalization_out='col',
                  diffusion_kwargs=dict(method='ppr', alpha=0.15),
-                 sparsification_kwargs=dict(method='threshold',
-                                            avg_degree=64), exact=True):
+                 sparsification_kwargs=dict(method='threshold', avg_degree=64),
+                 exact=True):
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -281,6 +281,7 @@ class GDC(object):
             _, indptr, out_degree = np.unique(edge_index_np[0],
                                               return_index=True,
                                               return_counts=True)
+            indptr = np.append(indptr, len(edge_index_np[0]))
 
             neighbors, neighbor_weights = GDC.__calc_ppr__(
                 indptr, edge_index_np[1], out_degree, kwargs['alpha'],
