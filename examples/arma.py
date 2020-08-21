@@ -20,8 +20,7 @@ class Net(torch.nn.Module):
                               num_layers=2, shared_weights=True, dropout=0.25)
 
         self.conv2 = ARMAConv(16, dataset.num_classes, num_stacks=3,
-                              num_layers=2, shared_weights=True, dropout=0.25,
-                              act=None)
+                              num_layers=2, shared_weights=True, dropout=0.25)
 
     def forward(self):
         x, edge_index = data.x, data.edge_index

@@ -67,7 +67,7 @@ class ARMAConv(MessagePassing):
         T = 1 if self.shared_weights else T
 
         self.init_weight = Parameter(torch.Tensor(K, F_in, F_out))
-        self.weight = Parameter(torch.Tensor(max(0, T - 1), K, F_out, F_out))
+        self.weight = Parameter(torch.Tensor(max(1, T - 1), K, F_out, F_out))
         self.root_weight = Parameter(torch.Tensor(T, K, F_in, F_out))
 
         if bias:
@@ -115,7 +115,7 @@ class ARMAConv(MessagePassing):
             if self.bias is not None:
                 out += self.bias[0 if self.shared_weights else t]
 
-            if t < self.num_layers - 1:
+            if self.act is not None and t < self.num_layers - 1:
                 out = self.act(out)
 
         return out.mean(dim=-3)
