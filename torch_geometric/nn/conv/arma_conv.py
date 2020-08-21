@@ -115,8 +115,7 @@ class ARMAConv(MessagePassing):
             if self.bias is not None:
                 out += self.bias[0 if self.shared_weights else t]
 
-            if self.act is not None:
-                out = self.act(out)
+            out = self.act(out)
 
         return out.mean(dim=-3)
 
