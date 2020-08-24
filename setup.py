@@ -10,7 +10,7 @@ install_requires = [
     'scipy',
     'networkx',
     'scikit-learn',
-    'numba',
+    'numba==0.50.1',
     'requests',
     'pandas',
     'rdflib',
