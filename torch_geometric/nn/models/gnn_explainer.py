@@ -1,3 +1,4 @@
+from copy import copy
 from math import sqrt
 from typing import Optional
 
@@ -233,10 +234,12 @@ class GNNExplainer(torch.nn.Module):
         mapping = {k: i for k, i in enumerate(subset.tolist())}
         G = nx.relabel_nodes(G, mapping)
 
-        kwargs['with_labels'] = kwargs.get('with_labels') or True
-        kwargs['font_size'] = kwargs.get('font_size') or 10
-        kwargs['node_size'] = kwargs.get('node_size') or 800
-        kwargs['cmap'] = kwargs.get('cmap') or 'cool'
+        node_kwargs = copy(kwargs)
+        node_kwargs['node_size'] = kwargs.get('node_size') or 800
+        node_kwargs['cmap'] = kwargs.get('cmap') or 'cool'
+
+        label_kwargs = copy(kwargs)
+        label_kwargs['font_size'] = kwargs.get('font_size') or 10
 
         pos = nx.spring_layout(G)
         ax = plt.gca()
@@ -246,12 +249,12 @@ class GNNExplainer(torch.nn.Module):
                 textcoords='data', arrowprops=dict(
                     arrowstyle="->",
                     alpha=max(data['att'], 0.1),
-                    shrinkA=sqrt(kwargs['node_size']) / 2.0,
-                    shrinkB=sqrt(kwargs['node_size']) / 2.0,
+                    shrinkA=sqrt(node_kwargs['node_size']) / 2.0,
+                    shrinkB=sqrt(node_kwargs['node_size']) / 2.0,
                     connectionstyle="arc3,rad=0.1",
                 ))
-        nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **kwargs)
-        nx.draw_networkx_labels(G, pos, **kwargs)
+        nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **node_kwargs)
+        nx.draw_networkx_labels(G, pos, **label_kwargs)
 
         return ax, G
 
