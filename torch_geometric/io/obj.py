@@ -10,9 +10,9 @@ def yield_file(in_file):
         if b.startswith('v '):
             yield ['v', [float(x) for x in b.split(" ")[1:]]]
         elif b.startswith('f '):
-            triangle = b.split(' ')[1:]
+            tris = b.split(' ')[1:]
             # -1 as .obj is base 1 but the Data class expects base 0 indices
-            yield ['f', [[int(i) - 1 for i in t.split("/")] for t in triangle]]
+            yield ['f', [[int(i) - 1 for i in t.split("/")[0]] for t in tris]]
         else:
             yield ['', ""]
 
