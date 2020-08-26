@@ -239,8 +239,8 @@ class QM9(InMemoryDataset):
                 edge_type += 2 * [self.bonds[bond.GetBondType()]]
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
-            edge_type = torch.tensor(edge_type)
-            edge_attr = F.one_hot(torch.tensor(edge_type),
+            edge_type = torch.tensor(edge_type, dtype=torch.long)
+            edge_attr = F.one_hot(edge_type,
                                   num_classes=len(self.bonds)).to(torch.float)
 
             perm = (edge_index[0] * N + edge_index[1]).argsort()
