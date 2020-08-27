@@ -195,6 +195,14 @@ where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu100` or `cu101` d
 | **Windows** | ✅    | ❌     | ❌      | ✅      |
 | **macOS**   | ✅    |        |         |         |
 
+### From master
+
+In case you want to experience with the latest PyG features which did not get released yet, you can install PyG from master via
+
+```
+pip install git+https://github.com/rusty1s/pytorch_geometric.git
+```
+
 ## Running examples
 
 ```
