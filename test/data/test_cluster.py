@@ -26,6 +26,7 @@ def test_cluster_gcn():
     edge_index = adj.nonzero(as_tuple=False).t()
     edge_attr = torch.arange(edge_index.size(1))
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    data.num_nodes = 6
 
     cluster_data = ClusterData(data, num_parts=2, log=False)
 
@@ -49,12 +50,14 @@ def test_cluster_gcn():
     ]
 
     data = cluster_data[0]
+    assert data.num_nodes == 3
     assert data.x.tolist() == [[0, 0], [2, 2], [4, 4]]
     assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
                                         [0, 1, 2, 0, 1, 2, 0, 1, 2]]
     assert data.edge_attr.tolist() == [0, 2, 3, 8, 9, 10, 14, 15, 16]
 
     data = cluster_data[1]
+    assert data.num_nodes == 3
     assert data.x.tolist() == [[1, 1], [3, 3], [5, 5]]
     assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
                                         [0, 1, 2, 0, 1, 2, 0, 1, 2]]
@@ -76,6 +79,7 @@ def test_cluster_gcn():
     torch.manual_seed(1)
     loader = ClusterLoader(cluster_data, batch_size=2, shuffle=True)
     data = next(iter(loader))
+    assert data.num_nodes == 6
     assert data.x.tolist() == [
         [0, 0],
         [2, 2],
@@ -96,6 +100,7 @@ def test_cluster_gcn():
     torch.manual_seed(2)
     loader = ClusterLoader(cluster_data, batch_size=2, shuffle=True)
     data = next(iter(loader))
+    assert data.num_nodes == 6
     assert data.x.tolist() == [
         [1, 1],
         [3, 3],
@@ -112,3 +117,7 @@ def test_cluster_gcn():
         [0, 0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1, 1],
     ]
+
+    loader = ClusterLoader(cluster_data, batch_size=1, shuffle=True)
+    data = next(iter(loader))
+    assert data.num_nodes == 3
