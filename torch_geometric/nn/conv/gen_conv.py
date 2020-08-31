@@ -151,7 +151,7 @@ class GENConv(MessagePassing):
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
         if self.msg_norm is not None:
-            out = self.msg_norm(x, out)
+            out = self.msg_norm(x[0], out)
 
         x_r = x[1]
         if x_r is not None:
