@@ -123,7 +123,7 @@ class GNNExplainer(torch.nn.Module):
         loss = loss + self.coeffs['edge_ent'] * ent.mean()
 
         m = self.node_feat_mask.sigmoid()
-        loss = loss + self.coeffs['node_feat_size'] * m.sum()
+        loss = loss + self.coeffs['node_feat_size'] * m.mean()
         ent = -m * torch.log(m + EPS) - (1 - m) * torch.log(1 - m + EPS)
         loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
 
