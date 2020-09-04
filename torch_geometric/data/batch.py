@@ -39,6 +39,7 @@ class Batch(Data):
         for key in keys + ['batch']:
             batch[key] = []
 
+        device = None
         slices = {key: [0] for key in keys}
         cumsum = {key: [0] for key in keys}
         cat_dims = {}
@@ -73,8 +74,10 @@ class Batch(Data):
                 cat_dims[key] = cat_dim
                 if isinstance(item, Tensor):
                     size = item.size(cat_dim)
+                    device = item.device
                 elif isinstance(item, SparseTensor):
                     size = torch.tensor(item.sizes())[torch.tensor(cat_dim)]
+                    device = item.device()
 
                 slices[key].append(size + slices[key][-1])
                 inc = data.__inc__(key, item)
@@ -88,12 +91,14 @@ class Batch(Data):
                             tmp = f'{key}_{j}_batch'
                             batch[tmp] = [] if i == 0 else batch[tmp]
                             batch[tmp].append(
-                                torch.full((size, ), i, dtype=torch.long))
+                                torch.full((size, ), i, dtype=torch.long,
+                                           device=device))
                     else:
                         tmp = f'{key}_batch'
                         batch[tmp] = [] if i == 0 else batch[tmp]
                         batch[tmp].append(
-                            torch.full((size, ), i, dtype=torch.long))
+                            torch.full((size, ), i, dtype=torch.long,
+                                       device=device))
 
             if hasattr(data, '__num_nodes__'):
                 num_nodes_list.append(data.__num_nodes__)
@@ -102,7 +107,8 @@ class Batch(Data):
 
             num_nodes = data.num_nodes
             if num_nodes is not None:
-                item = torch.full((num_nodes, ), i, dtype=torch.long)
+                item = torch.full((num_nodes, ), i, dtype=torch.long,
+                                  device=device)
                 batch.batch.append(item)
 
         # Fix initial slice values:
