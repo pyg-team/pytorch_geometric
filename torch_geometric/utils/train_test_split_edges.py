@@ -1,5 +1,4 @@
 import math
-import random
 import torch
 from torch_geometric.utils import to_undirected
 
@@ -23,6 +22,7 @@ def train_test_split_edges(data, val_ratio=0.05, test_ratio=0.1):
 
     assert 'batch' not in data  # No batch-mode.
 
+    num_nodes = data.num_nodes
     row, col = data.edge_index
     data.edge_index = None
 
@@ -47,16 +47,12 @@ def train_test_split_edges(data, val_ratio=0.05, test_ratio=0.1):
     data.train_pos_edge_index = to_undirected(data.train_pos_edge_index)
 
     # Negative edges.
-    num_nodes = data.num_nodes
     neg_adj_mask = torch.ones(num_nodes, num_nodes, dtype=torch.uint8)
     neg_adj_mask = neg_adj_mask.triu(diagonal=1).to(torch.bool)
     neg_adj_mask[row, col] = 0
 
-    neg_row, neg_col = neg_adj_mask.nonzero().t()
-    perm = random.sample(range(neg_row.size(0)),
-                         min(n_v + n_t, neg_row.size(0)))
-    perm = torch.tensor(perm)
-    perm = perm.to(torch.long)
+    neg_row, neg_col = neg_adj_mask.nonzero(as_tuple=False).t()
+    perm = torch.randperm(neg_row.size(0))[:n_v + n_t]
     neg_row, neg_col = neg_row[perm], neg_col[perm]
 
     neg_adj_mask[neg_row, neg_col] = 0

@@ -6,7 +6,7 @@ from torch_geometric.utils import (negative_sampling, remove_self_loops,
 from ..inits import reset
 
 EPS = 1e-15
-MAX_LOGVAR = 10
+MAX_LOGSTD = 10
 
 
 class InnerProductDecoder(torch.nn.Module):
@@ -141,36 +141,36 @@ class VGAE(GAE):
     def __init__(self, encoder, decoder=None):
         super(VGAE, self).__init__(encoder, decoder)
 
-    def reparametrize(self, mu, logvar):
+    def reparametrize(self, mu, logstd):
         if self.training:
-            return mu + torch.randn_like(logvar) * torch.exp(logvar)
+            return mu + torch.randn_like(logstd) * torch.exp(logstd)
         else:
             return mu
 
     def encode(self, *args, **kwargs):
         """"""
-        self.__mu__, self.__logvar__ = self.encoder(*args, **kwargs)
-        self.__logvar__ = self.__logvar__.clamp(max=MAX_LOGVAR)
-        z = self.reparametrize(self.__mu__, self.__logvar__)
+        self.__mu__, self.__logstd__ = self.encoder(*args, **kwargs)
+        self.__logstd__ = self.__logstd__.clamp(max=MAX_LOGSTD)
+        z = self.reparametrize(self.__mu__, self.__logstd__)
         return z
 
-    def kl_loss(self, mu=None, logvar=None):
+    def kl_loss(self, mu=None, logstd=None):
         r"""Computes the KL loss, either for the passed arguments :obj:`mu`
-        and :obj:`logvar`, or based on latent variables from last encoding.
+        and :obj:`logstd`, or based on latent variables from last encoding.
 
         Args:
             mu (Tensor, optional): The latent space for :math:`\mu`. If set to
                 :obj:`None`, uses the last computation of :math:`mu`.
                 (default: :obj:`None`)
-            logvar (Tensor, optional): The latent space for
-                :math:`\log\sigma^2`.  If set to :obj:`None`, uses the last
+            logstd (Tensor, optional): The latent space for
+                :math:`\log\sigma`.  If set to :obj:`None`, uses the last
                 computation of :math:`\log\sigma^2`.(default: :obj:`None`)
         """
         mu = self.__mu__ if mu is None else mu
-        logvar = self.__logvar__ if logvar is None else logvar.clamp(
-            max=MAX_LOGVAR)
+        logstd = self.__logstd__ if logstd is None else logstd.clamp(
+            max=MAX_LOGSTD)
         return -0.5 * torch.mean(
-            torch.sum(1 + logvar - mu**2 - logvar.exp(), dim=1))
+            torch.sum(1 + 2 * logstd - mu**2 - logstd.exp()**2, dim=1))
 
 
 class ARGA(GAE):
@@ -243,15 +243,15 @@ class ARGVA(ARGA):
         return self.VGAE.__mu__
 
     @property
-    def __logvar__(self):
-        return self.VGAE.__logvar__
+    def __logstd__(self):
+        return self.VGAE.__logstd__
 
-    def reparametrize(self, mu, logvar):
-        return self.VGAE.reparametrize(mu, logvar)
+    def reparametrize(self, mu, logstd):
+        return self.VGAE.reparametrize(mu, logstd)
 
     def encode(self, *args, **kwargs):
         """"""
         return self.VGAE.encode(*args, **kwargs)
 
-    def kl_loss(self, mu=None, logvar=None):
-        return self.VGAE.kl_loss(mu, logvar)
+    def kl_loss(self, mu=None, logstd=None):
+        return self.VGAE.kl_loss(mu, logstd)

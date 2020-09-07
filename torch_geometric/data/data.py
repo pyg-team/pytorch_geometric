@@ -1,10 +1,11 @@
 import re
 import copy
-import warnings
+import logging
+import collections
 
 import torch
 import torch_geometric
-from torch_sparse import coalesce
+from torch_sparse import coalesce, SparseTensor
 from torch_geometric.utils import (contains_isolated_nodes,
                                    contains_self_loops, is_undirected)
 
@@ -18,15 +19,25 @@ __num_nodes_warn_msg__ = (
     'data.num_nodes.')
 
 
-def size_repr(value):
-    if torch.is_tensor(value):
-        return list(value.size())
-    elif isinstance(value, int) or isinstance(value, float):
-        return [1]
-    elif isinstance(value, list) or isinstance(value, tuple):
-        return [len(value)]
+def size_repr(key, item, indent=0):
+    indent_str = ' ' * indent
+    if torch.is_tensor(item) and item.dim() == 0:
+        out = item.item()
+    elif torch.is_tensor(item):
+        out = str(list(item.size()))
+    elif isinstance(item, SparseTensor):
+        out = str(item.sizes())[:-1] + f', nnz={item.nnz()}]'
+    elif isinstance(item, list) or isinstance(item, tuple):
+        out = str([len(item)])
+    elif isinstance(item, dict):
+        lines = [indent_str + size_repr(k, v, 2) for k, v in item.items()]
+        out = '{\n' + ',\n'.join(lines) + '\n' + indent_str + '}'
+    elif isinstance(item, str):
+        out = f'"{item}"'
     else:
-        return value
+        out = str(item)
+
+    return f'{indent_str}{key}={out}'
 
 
 class Data(object):
@@ -73,6 +84,16 @@ class Data(object):
             else:
                 self[key] = item
 
+        if edge_index is not None and edge_index.dtype != torch.long:
+            raise ValueError(
+                (f'Argument `edge_index` needs to be of type `torch.long` but '
+                 f'found type `{edge_index.dtype}`.'))
+
+        if face is not None and face.dtype != torch.long:
+            raise ValueError(
+                (f'Argument `face` needs to be of type `torch.long` but found '
+                 f'type `{face.dtype}`.'))
+
         if torch_geometric.is_debug_enabled():
             self.debug()
 
@@ -88,6 +109,14 @@ class Data(object):
             data.debug()
 
         return data
+
+    def to_dict(self):
+        return {key: item for key, item in self}
+
+    def to_namedtuple(self):
+        keys = self.keys
+        DataTuple = collections.namedtuple('DataTuple', keys)
+        return DataTuple(*[self[key] for key in keys])
 
     def __getitem__(self, key):
         r"""Gets the data of the attribute :obj:`key`."""
@@ -138,12 +167,16 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # `*index*` and `*face*` should be concatenated in the last dimension,
-        # everything else in the first dimension.
-        return -1 if bool(re.search('(index|face)', key)) else 0
+        # Concatenate `*index*` and `*face*` attributes in the last dimension.
+        if bool(re.search('(index|face)', key)):
+            return -1
+        # By default, concatenate sparse matrices diagonally.
+        elif isinstance(value, SparseTensor):
+            return (0, 1)
+        return 0
 
     def __inc__(self, key, value):
-        r""""Returns the incremental count to cumulatively increase the value
+        r"""Returns the incremental count to cumulatively increase the value
         of the next attribute of :obj:`key` when creating batches.
 
         .. note::
@@ -152,8 +185,8 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # Only `*index*` and `*face*` should be cumulatively summed up when
-        # creating batches.
+        # Only `*index*` and `*face*` attributes should be cumulatively summed
+        # up when creating batches.
         return self.num_nodes if bool(re.search('(index|face)', key)) else 0
 
     @property
@@ -177,11 +210,15 @@ class Data(object):
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'norm', 'batch'):
             return item.size(self.__cat_dim__(key, item))
+        if hasattr(self, 'adj'):
+            return self.adj.size(0)
+        if hasattr(self, 'adj_t'):
+            return self.adj_t.size(1)
         if self.face is not None:
-            warnings.warn(__num_nodes_warn_msg__.format('face'))
+            logging.warning(__num_nodes_warn_msg__.format('face'))
             return maybe_num_nodes(self.face)
         if self.edge_index is not None:
-            warnings.warn(__num_nodes_warn_msg__.format('edge'))
+            logging.warning(__num_nodes_warn_msg__.format('edge'))
             return maybe_num_nodes(self.edge_index)
         return None
 
@@ -254,14 +291,30 @@ class Data(object):
         r"""Returns :obj:`True`, if graph edges are directed."""
         return not self.is_undirected()
 
+    def __apply__(self, item, func):
+        if torch.is_tensor(item):
+            return func(item)
+        elif isinstance(item, SparseTensor):
+            # Not all apply methods are supported for `SparseTensor`, e.g.,
+            # `contiguous()`. We can get around it by capturing the exception.
+            try:
+                return func(item)
+            except AttributeError:
+                return item
+        elif isinstance(item, (tuple, list)):
+            return [self.__apply__(v, func) for v in item]
+        elif isinstance(item, dict):
+            return {k: self.__apply__(v, func) for k, v in item.items()}
+        else:
+            return item
+
     def apply(self, func, *keys):
         r"""Applies the function :obj:`func` to all tensor attributes
         :obj:`*keys`. If :obj:`*keys` is not given, :obj:`func` is applied to
         all present attributes.
         """
         for key, item in self(*keys):
-            if torch.is_tensor(item):
-                self[key] = func(item)
+            self[key] = self.__apply__(item, func)
         return self
 
     def contiguous(self, *keys):
@@ -270,12 +323,12 @@ class Data(object):
         have a contiguous memory layout."""
         return self.apply(lambda x: x.contiguous(), *keys)
 
-    def to(self, device, *keys):
+    def to(self, device, *keys, **kwargs):
         r"""Performs tensor dtype and/or device conversion to all attributes
         :obj:`*keys`.
         If :obj:`*keys` is not given, the conversion is applied to all present
         attributes."""
-        return self.apply(lambda x: x.to(device), *keys)
+        return self.apply(lambda x: x.to(device, **kwargs), *keys)
 
     def clone(self):
         return self.__class__.from_dict({
@@ -361,5 +414,12 @@ class Data(object):
                                                       self.norm.size(0)))
 
     def __repr__(self):
-        info = ['{}={}'.format(key, size_repr(item)) for key, item in self]
-        return '{}({})'.format(self.__class__.__name__, ', '.join(info))
+        cls = str(self.__class__.__name__)
+        has_dict = any([isinstance(item, dict) for _, item in self])
+
+        if not has_dict:
+            info = [size_repr(key, item) for key, item in self]
+            return '{}({})'.format(cls, ', '.join(info))
+        else:
+            info = [size_repr(key, item, indent=2) for key, item in self]
+            return '{}(\n{}\n)'.format(cls, ',\n'.join(info))

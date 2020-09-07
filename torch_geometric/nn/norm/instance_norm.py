@@ -1,6 +1,9 @@
-import torch
+from torch_geometric.typing import OptTensor
+
+import torch.nn.functional as F
+from torch import Tensor
 from torch.nn.modules.instancenorm import _InstanceNorm
-from torch_scatter import scatter_add
+from torch_scatter import scatter
 from torch_geometric.utils import degree
 
 
@@ -14,6 +17,9 @@ class InstanceNorm(_InstanceNorm):
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
         \textrm{E}[\mathbf{x}]}{\sqrt{\textrm{Var}[\mathbf{x}] + \epsilon}}
         \odot \gamma + \beta
+
+    The mean and standard-deviation are calculated per-dimension separately for
+    each object in a mini-batch.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -35,38 +41,56 @@ class InstanceNorm(_InstanceNorm):
         super(InstanceNorm, self).__init__(in_channels, eps, momentum, affine,
                                            track_running_stats)
 
-    def forward(self, x, batch=None):
+    def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
         """"""
         if batch is None:
-            batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
+            out = F.instance_norm(
+                x.t().unsqueeze(0), self.running_mean, self.running_var,
+                self.weight, self.bias, self.training
+                or not self.track_running_stats, self.momentum, self.eps)
+            return out.squeeze(0).t()
 
-        batch_size = batch.max().item() + 1
+        batch_size = int(batch.max()) + 1
+
+        mean = var = unbiased_var = x  # Dummies.
 
         if self.training or not self.track_running_stats:
-            count = degree(batch, batch_size, dtype=x.dtype).view(-1, 1)
-            tmp = scatter_add(x, batch, dim=0, dim_size=batch_size)
-            mean = tmp / count.clamp(min=1)
+            norm = degree(batch, batch_size, dtype=x.dtype).clamp_(min=1)
+            norm = norm.view(-1, 1)
+            unbiased_norm = (norm - 1).clamp_(min=1)
 
-            tmp = (x - mean[batch])
-            tmp = scatter_add(tmp * tmp, batch, dim=0, dim_size=batch_size)
-            var = tmp / count.clamp(min=1)
-            unbiased_var = tmp / (count - 1).clamp(min=1)
+            mean = scatter(x, batch, dim=0, dim_size=batch_size,
+                           reduce='add') / norm
 
-        if self.training and self.track_running_stats:
+            x = x - mean[batch]
+
+            var = scatter(x * x, batch, dim=0, dim_size=batch_size,
+                          reduce='add')
+            unbiased_var = var / unbiased_norm
+            var = var / norm
+
             momentum = self.momentum
-            self.running_mean = (
-                1 - momentum) * self.running_mean + momentum * mean.mean(dim=0)
-            self.running_var = (
-                1 - momentum
-            ) * self.running_var + momentum * unbiased_var.mean(dim=0)
+            if self.running_mean is not None:
+                self.running_mean = (
+                    1 - momentum) * self.running_mean + momentum * mean.mean(0)
+            if self.running_var is not None:
+                self.running_var = (
+                    1 - momentum
+                ) * self.running_var + momentum * unbiased_var.mean(0)
+        else:
+            if self.running_mean is not None:
+                mean = self.running_mean.view(1, -1).expand(batch_size, -1)
+            if self.running_var is not None:
+                var = self.running_var.view(1, -1).expand(batch_size, -1)
 
-        if not self.training and self.track_running_stats:
-            mean = self.running_mean.view(1, -1).expand(batch_size, -1)
-            var = self.running_var.view(1, -1).expand(batch_size, -1)
+            x = x - mean[batch]
 
-        out = (x - mean[batch]) / torch.sqrt(var[batch] + self.eps)
+        out = x / (var.sqrt()[batch] + self.eps)
 
-        if self.affine:
+        if self.weight is not None and self.bias is not None:
             out = out * self.weight.view(1, -1) + self.bias.view(1, -1)
 
         return out
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.num_features})'

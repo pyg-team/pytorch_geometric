@@ -1,4 +1,6 @@
+from copy import copy
 from math import sqrt
+from typing import Optional
 
 import torch
 from tqdm import tqdm
@@ -30,6 +32,12 @@ class GNNExplainer(torch.nn.Module):
             (default: :obj:`100`)
         lr (float, optional): The learning rate to apply.
             (default: :obj:`0.01`)
+        num_hops (int, optional): The number of hops the :obj:`model` is
+            aggregating information from.
+            If set to :obj:`None`, will automatically try to detect this
+            information based on the number of
+            :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
+            layers inside :obj:`model`. (default: :obj:`None`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
@@ -41,11 +49,13 @@ class GNNExplainer(torch.nn.Module):
         'node_feat_ent': 0.1,
     }
 
-    def __init__(self, model, epochs=100, lr=0.01, log=True):
+    def __init__(self, model, epochs: int = 100, lr: float = 0.01,
+                 num_hops: Optional[int] = None, log: bool = True):
         super(GNNExplainer, self).__init__()
         self.model = model
         self.epochs = epochs
         self.lr = lr
+        self.__num_hops__ = num_hops
         self.log = log
 
     def __set_masks__(self, x, edge_index, init="normal"):
@@ -70,12 +80,16 @@ class GNNExplainer(torch.nn.Module):
         self.node_feat_masks = None
         self.edge_mask = None
 
-    def __num_hops__(self):
-        num_hops = 0
+    @property
+    def num_hops(self):
+        if self.__num_hops__ is not None:
+            return self.__num_hops__
+
+        k = 0
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
-                num_hops += 1
-        return num_hops
+                k += 1
+        return k
 
     def __flow__(self):
         for module in self.model.modules():
@@ -86,19 +100,19 @@ class GNNExplainer(torch.nn.Module):
     def __subgraph__(self, node_idx, x, edge_index, **kwargs):
         num_nodes, num_edges = x.size(0), edge_index.size(1)
 
-        subset, edge_index, edge_mask = k_hop_subgraph(
-            node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
+        subset, edge_index, mapping, edge_mask = k_hop_subgraph(
+            node_idx, self.num_hops, edge_index, relabel_nodes=True,
             num_nodes=num_nodes, flow=self.__flow__())
 
         x = x[subset]
-        for key, item in kwargs:
+        for key, item in kwargs.items():
             if torch.is_tensor(item) and item.size(0) == num_nodes:
                 item = item[subset]
             elif torch.is_tensor(item) and item.size(0) == num_edges:
                 item = item[edge_mask]
             kwargs[key] = item
 
-        return x, edge_index, edge_mask, kwargs
+        return x, edge_index, mapping, edge_mask, kwargs
 
     def __loss__(self, node_idx, log_logits, pred_label):
         loss = -log_logits[node_idx, pred_label[node_idx]]
@@ -135,7 +149,7 @@ class GNNExplainer(torch.nn.Module):
         num_edges = edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.
-        x, edge_index, hard_edge_mask, kwargs = self.__subgraph__(
+        x, edge_index, mapping, hard_edge_mask, kwargs = self.__subgraph__(
             node_idx, x, edge_index, **kwargs)
 
         # Get the initial prediction.
@@ -157,7 +171,7 @@ class GNNExplainer(torch.nn.Module):
             optimizer.zero_grad()
             h = x * self.node_feat_mask.view(1, -1).sigmoid()
             log_logits = self.model(x=h, edge_index=edge_index, **kwargs)
-            loss = self.__loss__(0, log_logits, pred_label)
+            loss = self.__loss__(mapping, log_logits, pred_label)
             loss.backward()
             optimizer.step()
 
@@ -193,14 +207,14 @@ class GNNExplainer(torch.nn.Module):
             **kwargs (optional): Additional arguments passed to
                 :func:`nx.draw`.
 
-        :rtype: :class:`matplotlib.pyplot`
+        :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
 
         assert edge_mask.size(0) == edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.
-        subset, edge_index, hard_edge_mask = k_hop_subgraph(
-            node_idx, self.__num_hops__(), edge_index, relabel_nodes=True,
+        subset, edge_index, _, hard_edge_mask = k_hop_subgraph(
+            node_idx, self.num_hops, edge_index, relabel_nodes=True,
             num_nodes=None, flow=self.__flow__())
 
         edge_mask = edge_mask[hard_edge_mask]
@@ -220,10 +234,12 @@ class GNNExplainer(torch.nn.Module):
         mapping = {k: i for k, i in enumerate(subset.tolist())}
         G = nx.relabel_nodes(G, mapping)
 
-        kwargs['with_labels'] = kwargs.get('with_labels') or True
-        kwargs['font_size'] = kwargs.get('font_size') or 10
-        kwargs['node_size'] = kwargs.get('node_size') or 800
-        kwargs['cmap'] = kwargs.get('cmap') or 'cool'
+        node_kwargs = copy(kwargs)
+        node_kwargs['node_size'] = kwargs.get('node_size') or 800
+        node_kwargs['cmap'] = kwargs.get('cmap') or 'cool'
+
+        label_kwargs = copy(kwargs)
+        label_kwargs['font_size'] = kwargs.get('font_size') or 10
 
         pos = nx.spring_layout(G)
         ax = plt.gca()
@@ -233,14 +249,14 @@ class GNNExplainer(torch.nn.Module):
                 textcoords='data', arrowprops=dict(
                     arrowstyle="->",
                     alpha=max(data['att'], 0.1),
-                    shrinkA=sqrt(kwargs['node_size']) / 2.0,
-                    shrinkB=sqrt(kwargs['node_size']) / 2.0,
+                    shrinkA=sqrt(node_kwargs['node_size']) / 2.0,
+                    shrinkB=sqrt(node_kwargs['node_size']) / 2.0,
                     connectionstyle="arc3,rad=0.1",
                 ))
-        nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **kwargs)
-        nx.draw_networkx_labels(G, pos, **kwargs)
-        plt.axis('off')
-        return plt
+        nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **node_kwargs)
+        nx.draw_networkx_labels(G, pos, **label_kwargs)
+
+        return ax, G
 
     def __repr__(self):
         return f'{self.__class__.__name__}()'

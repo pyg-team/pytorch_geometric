@@ -23,20 +23,19 @@ Creating "In Memory Datasets"
 
 In order to create a :class:`torch_geometric.data.InMemoryDataset`, you need to implement four fundamental methods:
 
-:meth:`torch_geometric.data.InMemoryDataset.raw_file_names`:
-    A list of files in the :obj:`raw_dir` which needs to be found in order to skip the download.
-:meth:`torch_geometric.data.InMemoryDataset.processed_file_names`:
-    A list of files in the :obj:`processed_dir` which needs to be found in order to skip the processing.
-:meth:`torch_geometric.data.InMemoryDataset.download`:
-    Downloads raw data into :obj:`raw_dir`.
-:meth:`torch_geometric.data.InMemoryDataset.process`:
-    Processes raw data and saves it into the :obj:`processed_dir`.
+* :func:`torch_geometric.data.InMemoryDataset.raw_file_names`: A list of files in the :obj:`raw_dir` which needs to be found in order to skip the download.
+
+* :func:`torch_geometric.data.InMemoryDataset.processed_file_names`: A list of files in the :obj:`processed_dir` which needs to be found in order to skip the processing.
+
+* :func:`torch_geometric.data.InMemoryDataset.download`: Downloads raw data into :obj:`raw_dir`.
+
+* :func:`torch_geometric.data.InMemoryDataset.process`: Processes raw data and saves it into the :obj:`processed_dir`.
 
 You can find helpful methods to download and extract data in :mod:`torch_geometric.data`.
 
-The real magic happens in the body of :meth:`torch_geometric.data.InMemoryDataset.process`.
-Here, we need to read and create a list of :class:`torch_geometric.data.Data` objects and save it into the :obj:`processed_dir`.
-Because saving a huge python list is really slow, we collate the list into one huge :class:`torch_geometric.data.Data` object via :meth:`torch_geometric.data.InMemoryDataset.collate` before saving .
+The real magic happens in the body of :meth:`~torch_geometric.data.InMemoryDataset.process`.
+Here, we need to read and create a list of :class:`~torch_geometric.data.Data` objects and save it into the :obj:`processed_dir`.
+Because saving a huge python list is rather slow, we collate the list into one huge :class:`~torch_geometric.data.Data` object via :meth:`torch_geometric.data.InMemoryDataset.collate` before saving .
 The collated data object has concatenated all examples into one big data object and, in addition, returns a :obj:`slices` dictionary to reconstruct single examples from this object.
 Finally, we need to load these two objects in the constructor into the properties :obj:`self.data` and :obj:`self.slices`.
 
@@ -80,15 +79,12 @@ Let's see this process in a simplified example:
 Creating "Larger" Datasets
 --------------------------
 
-For creating datasets which do not fit into memory, the :class:`torch_geometric.data.Dataset` must be used, where we closely follow the concepts of the :obj:`torchvision` datasets.
+For creating datasets which do not fit into memory, the :class:`torch_geometric.data.Dataset` can be used, which closely follows the concepts of the :obj:`torchvision` datasets.
+It expects the following methods to be implemented in addition:
 
-Therefore, the following methods need to be further implemented:
+* :func:`torch_geometric.data.Dataset.len`: Returns the number of examples in your dataset.
 
-:meth:`torch_geometric.data.Dataset.len`:
-    Returns the number of examples in your dataset.
-
-:meth:`torch_geometric.data.Dataset.get`:
-    Implements the logic to load a single graph.
+* :func:`torch_geometric.data.Dataset.get`: Implements the logic to load a single graph.
 
 Internally, :meth:`torch_geometric.data.Dataset.__getitem__` gets data objects from :meth:`torch_geometric.data.Dataset.get` and optionally transforms them according to :obj:`transform`.
 
@@ -139,7 +135,7 @@ Let's see this process in a simplified example:
             data = torch.load(osp.join(self.processed_dir, 'data_{}.pt'.format(idx)))
             return data
 
-Here, each graph data object gets saved individually in :meth:`torch_geometric.data.Dataset.process`, and is manually loaded in :meth:`torch_geometric.data.Dataset.get`.
+Here, each graph data object gets saved individually in :meth:`~torch_geometric.data.Dataset.process`, and is manually loaded in :meth:`~torch_geometric.data.Dataset.get`.
 
 Frequently Asked Questions
 --------------------------

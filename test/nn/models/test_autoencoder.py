@@ -63,7 +63,7 @@ def test_argva():
 
     x = torch.Tensor([[1, -1], [1, 2], [2, 1]])
     model.encode(x)
-    model.reparametrize(model.__mu__, model.__logvar__)
+    model.reparametrize(model.__mu__, model.__logstd__)
     assert model.kl_loss().item() > 0
 
 

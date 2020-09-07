@@ -40,11 +40,7 @@ class PPI(InMemoryDataset):
 
     url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/ppi.zip'
 
-    def __init__(self,
-                 root,
-                 split='train',
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, split='train', transform=None, pre_transform=None,
                  pre_filter=None):
 
         assert split in ['train', 'val', 'test']
@@ -93,7 +89,8 @@ class PPI(InMemoryDataset):
             for i in range(idx.max().item() + 1):
                 mask = idx == i
 
-                G_s = G.subgraph(mask.nonzero().view(-1).tolist())
+                G_s = G.subgraph(
+                    mask.nonzero(as_tuple=False).view(-1).tolist())
                 edge_index = torch.tensor(list(G_s.edges)).t().contiguous()
                 edge_index = edge_index - edge_index.min()
                 edge_index, _ = remove_self_loops(edge_index)

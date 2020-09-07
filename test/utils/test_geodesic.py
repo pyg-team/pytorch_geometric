@@ -16,6 +16,7 @@ def test_geodesic_distance():
         [sqrt(2), 1, 1, 0],
     ]
     assert torch.allclose(out, torch.tensor(expected))
+    assert torch.allclose(out, geodesic_distance(pos, face, num_workers=-1))
 
     out = geodesic_distance(pos, face, norm=False)
     expected = [
@@ -29,10 +30,6 @@ def test_geodesic_distance():
     src = torch.tensor([0, 0, 0, 0])
     dest = torch.tensor([0, 1, 2, 3])
     out = geodesic_distance(pos, face, src=src, dest=dest)
-    expected = [0, 1, 1, sqrt(2)]
-    assert torch.allclose(out, torch.tensor(expected))
-
-    out = geodesic_distance(pos, face, src=src[0:1])
     expected = [0, 1, 1, sqrt(2)]
     assert torch.allclose(out, torch.tensor(expected))
 

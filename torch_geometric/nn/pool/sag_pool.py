@@ -63,7 +63,6 @@ class SAGPooling(torch.nn.Module):
         **kwargs (optional): Additional parameters for initializing the graph
             neural network layer.
     """
-
     def __init__(self, in_channels, ratio=0.5, GNN=GraphConv, min_score=None,
                  multiplier=1, nonlinearity=torch.tanh, **kwargs):
         super(SAGPooling, self).__init__()

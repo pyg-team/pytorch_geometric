@@ -5,6 +5,7 @@ import torch_geometric
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
@@ -12,6 +13,9 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
 ]
+
+autosummary_generate = True
+templates_path = ['_templates']
 
 source_suffix = '.rst'
 master_doc = 'index'
@@ -33,6 +37,7 @@ html_theme_options = {
     'collapse_navigation': False,
     'display_version': True,
     'logo_only': True,
+    'navigation_depth': 2,
 }
 
 html_logo = '_static/img/pyg_logo_text.svg'

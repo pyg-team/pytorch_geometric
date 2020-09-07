@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-__version__ = '1.4.3'
+__version__ = '1.6.1'
 url = 'https://github.com/rusty1s/pytorch_geometric'
 
 install_requires = [
@@ -9,15 +9,16 @@ install_requires = [
     'tqdm',
     'scipy',
     'networkx',
+    'python-louvain',
     'scikit-learn',
-    'scikit-image',
-    'numba',
+    'numba==0.50.1',
     'requests',
-    'plyfile',
     'pandas',
     'rdflib',
     'h5py',
     'googledrivedownloader',
+    'ase',
+    'jinja2',
 ]
 setup_requires = ['pytest-runner']
 tests_require = ['pytest', 'pytest-cov', 'mock']
@@ -39,5 +40,7 @@ setup(
     install_requires=install_requires,
     setup_requires=setup_requires,
     tests_require=tests_require,
+    extras_require={'test': tests_require},
     packages=find_packages(),
+    include_package_data=True,
 )

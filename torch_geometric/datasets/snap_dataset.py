@@ -6,8 +6,8 @@ import pandas
 import numpy as npD
 from dateutil.parser import parse, parserinfo
 from torch_sparse import coalesce
-from torch_geometric.data import Data, InMemoryDataset, download_url, \
-                                 extract_gz, extract_tar, extract_zip
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_gz, extract_tar)
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.utils import to_undirected
 

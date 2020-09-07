@@ -1,4 +1,5 @@
 from .compose import Compose
+from .to_sparse_tensor import ToSparseTensor
 from .constant import Constant
 from .distance import Distance
 from .cartesian import Cartesian
@@ -34,10 +35,12 @@ from .generate_mesh_normals import GenerateMeshNormals
 from .delaunay import Delaunay
 from .to_superpixels import ToSLIC
 from .gdc import GDC
+from .sign import SIGN
 from .grid_sampling import GridSampling
 
 __all__ = [
     'Compose',
+    'ToSparseTensor',
     'Constant',
     'Distance',
     'Cartesian',
@@ -73,5 +76,6 @@ __all__ = [
     'Delaunay',
     'ToSLIC',
     'GDC',
-    'GridSampling'
+    'SIGN',
+    'GridSampling',
 ]

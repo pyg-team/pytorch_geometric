@@ -13,18 +13,18 @@ Data Handling of Graphs
 A graph is used to model pairwise relations (edges) between objects (nodes).
 A single graph in PyTorch Geometric is described by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
 
-- ``data.x``: Node feature matrix with shape ``[num_nodes, num_node_features]``
-- ``data.edge_index``: Graph connectivity in COO format with shape ``[2, num_edges]`` and type ``torch.long``
-- ``data.edge_attr``: Edge feature matrix with shape ``[num_edges, num_edge_features]``
-- ``data.y``: Target to train against (may have arbitrary shape), *e.g.*, node-level targets of shape ``[num_nodes, *]`` or graph-level targets of shape ``[1, *]``
-- ``data.pos``: Node position matrix with shape ``[num_nodes, num_dimensions]``
+- :obj:`data.x`: Node feature matrix with shape :obj:`[num_nodes, num_node_features]`
+- :obj:`data.edge_index`: Graph connectivity in COO format with shape :obj:`[2, num_edges]` and type :obj:`torch.long`
+- :obj:`data.edge_attr`: Edge feature matrix with shape :obj:`[num_edges, num_edge_features]`
+- :obj:`data.y`: Target to train against (may have arbitrary shape), *e.g.*, node-level targets of shape :obj:`[num_nodes, *]` or graph-level targets of shape :obj:`[1, *]`
+- :obj:`data.pos`: Node position matrix with shape :obj:`[num_nodes, num_dimensions]`
 
 None of these attributes is required.
-In fact, the ``Data`` object is not even restricted to these attributes.
-We can, *e.g.*, extend it by ``data.face`` to save the connectivity of triangles from a 3D mesh in a tensor with shape ``[3, num_faces]`` and type ``torch.long``.
+In fact, the :class:`~torch_geometric.data.Data` object is not even restricted to these attributes.
+We can, *e.g.*, extend it by :obj:`data.face` to save the connectivity of triangles from a 3D mesh in a tensor with shape :obj:`[3, num_faces]` and type :obj:`torch.long`.
 
 .. Note::
-    PyTorch and ``torchvision`` define an example as a tuple of an image and a target.
+    PyTorch and :obj:`torchvision` define an example as a tuple of an image and a target.
     We omit this notation in PyTorch Geometric to allow for various data structures in a clean and understandable way.
 
 We show a simple example of an unweighted and undirected graph with three nodes and four edges.
@@ -48,8 +48,8 @@ Each node contains exactly one feature:
 
 |
 
-Note that ``edge_index``, *i.e.* the tensor defining the source and target nodes of all edges, is NOT a list of index tuples.
-If you want to write your indices this way, you should transpose and call ``contiguous`` on it before passing them to the data constructor:
+Note that :obj:`edge_index`, *i.e.* the tensor defining the source and target nodes of all edges, is **not** a list of index tuples.
+If you want to write your indices this way, you should transpose and call :obj:`contiguous` on it before passing them to the data constructor:
 
 .. code-block:: python
 
@@ -70,7 +70,7 @@ Although the graph has only two edges, we need to define four index tuples to ac
 .. Note::
     You can print out your data object anytime and receive a short information about its attributes and their shapes.
 
-Besides of being a plain old python object, :class:`torch_geometric.data.Data` provides a number of utility functions, *e.g.*:
+Besides of being a plain old python object, :class:`~torch_geometric.data.Data` provides a number of utility functions, *e.g.*:
 
 .. code-block:: python
 
@@ -117,10 +117,10 @@ You can find a complete list of all methods at :class:`torch_geometric.data.Data
 Common Benchmark Datasets
 -------------------------
 
-PyTorch Geometric contains a large number of common benchmark datasets, *e.g.* all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de/ <http://graphkernels.cs.tu-dortmund.de/>`_ and their `cleaned versions <https://github.com/nd7141/graph_datasets>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
+PyTorch Geometric contains a large number of common benchmark datasets, *e.g.*, all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de <http://graphkernels.cs.tu-dortmund.de/>`_ and their `cleaned versions <https://github.com/nd7141/graph_datasets>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
 
 Initializing a dataset is straightforward.
-An initialization of a dataset will automatically download its raw files and process them to the previously described ``Data`` format.
+An initialization of a dataset will automatically download its raw files and process them to the previously described :class:`~torch_geometric.data.Data`` format.
 *E.g.*, to load the ENZYMES dataset (consisting of 600 graphs within 6 classes), type:
 
 .. code-block:: python
@@ -217,17 +217,17 @@ Here, the dataset contains only a single, undirected citation graph:
     data.test_mask.sum().item()
     >>> 1000
 
-This time, the ``Data`` objects holds a label for each node, and additional attributes: ``train_mask``, ``val_mask`` and ``test_mask``:
+This time, the :class:`~torch_geometric.data.Data` objects holds a label for each node, and additional attributes: :obj:`train_mask`, :obj:`val_mask` and :obj:`test_mask`:
 
-- ``train_mask`` denotes against which nodes to train (140 nodes)
-- ``val_mask`` denotes which nodes to use for validation, *e.g.*, to perform early stopping (500 nodes)
-- ``test_mask`` denotes against which nodes to test (1000 nodes)
+- :obj:`train_mask` denotes against which nodes to train (140 nodes)
+- :obj:`val_mask` denotes which nodes to use for validation, *e.g.*, to perform early stopping (500 nodes)
+- :obj:`test_mask` denotes against which nodes to test (1000 nodes)
 
 Mini-batches
 ------------
 
 Neural networks are usually trained in a batch-wise fashion.
-PyTorch Geometric achieves parallelization over a mini-batch by creating sparse block diagonal adjacency matrices (defined by ``edge_index`` and ``edge_attr``) and concatenating feature and target matrices in the node dimension.
+PyTorch Geometric achieves parallelization over a mini-batch by creating sparse block diagonal adjacency matrices (defined by :obj:`edge_index`) and concatenating feature and target matrices in the node dimension.
 This composition allows differing number of nodes and edges over examples in one batch:
 
 .. math::
@@ -252,9 +252,9 @@ Let's learn about it in an example:
         batch.num_graphs
         >>> 32
 
-:class:`torch_geometric.data.Batch` inherits from :class:`torch_geometric.data.Data` and contains an additional attribute: ``batch``.
+:class:`torch_geometric.data.Batch` inherits from :class:`torch_geometric.data.Data` and contains an additional attribute called :obj:`batch`.
 
-``batch`` is a column vector which maps each node to its respective graph in the batch:
+:obj:`batch` is a column vector which maps each node to its respective graph in the batch:
 
 .. math::
 
@@ -283,14 +283,14 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
         >>> torch.Size([32, 21])
 
 You can learn more about the internal batching procedure of PyTorch Geometric, *e.g.*, how to modify its behaviour, `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/batching.html>`_.
-For documentation of scatter operations, we refer the interested reader to the ``torch-scatter`` `documentation <https://pytorch-scatter.readthedocs.io>`_.
+For documentation of scatter operations, we refer the interested reader to the :obj:`torch-scatter` `documentation <https://pytorch-scatter.readthedocs.io>`_.
 
 Data Transforms
 ---------------
 
-Transforms are a common way in ``torchvision`` to transform images and perform augmentation.
-PyTorch Geometric comes with its own transforms, which expect a ``Data`` object as input and return a new transformed ``Data`` object.
-Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset on disk (``pre_transform``) or before accessing a graph in a dataset (``transform``).
+Transforms are a common way in :obj:`torchvision` to transform images and perform augmentation.
+PyTorch Geometric comes with its own transforms, which expect a :class:`~torch_geometric.data.Data` object as input and return a new transformed :class:`~torch_geometric.data.Data` object.
+Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset on disk (:obj:`pre_transform`) or before accessing a graph in a dataset (:obj:`transform`).
 
 Let's look at an example, where we apply transforms on the ShapeNet dataset (containing 17,000 3D shape point clouds and per point labels from 16 shape categories).
 
@@ -317,10 +317,10 @@ We can convert the point cloud dataset into a graph dataset by generating neares
     >>> Data(edge_index=[2, 15108], pos=[2518, 3], y=[2518])
 
 .. note::
-    We use the ``pre_transform`` to convert the data before saving it to disk (leading to faster loading times).
+    We use the :obj:`pre_transform` to convert the data before saving it to disk (leading to faster loading times).
     Note that the next time the dataset is initialized it will already contain graph edges, even if you do not pass any transform.
 
-In addition, we can use the ``transform`` argument to randomly augment a ``Data`` object, *e.g.* translating each node position by a small number:
+In addition, we can use the :obj:`transform` argument to randomly augment a :class:`~torch_geometric.data.Data` object, *e.g.*, translating each node position by a small number:
 
 .. code-block:: python
 
@@ -378,8 +378,8 @@ Now let's implement a two-layer GCN:
 
             return F.log_softmax(x, dim=1)
 
-The constructor defines two ``GCNConv`` layers which get called in the forward pass of our network.
-Note that the non-linearity is not integrated in the ``conv`` calls and hence needs to be applied afterwards (something which is consistent accross all operators in PyTorch Geometric).
+The constructor defines two :class:`~torch_geometric.nn.conv.GCNConv` layers which get called in the forward pass of our network.
+Note that the non-linearity is not integrated in the :obj:`conv` calls and hence needs to be applied afterwards (something which is consistent accross all operators in PyTorch Geometric).
 Here, we chose to use ReLU as our intermediate non-linearity between and finally output a softmax distribution over the number of classes.
 Let's train this model on the train nodes for 200 epochs:
 
@@ -404,11 +404,11 @@ Finally we can evaluate our model on the test nodes:
 
     model.eval()
     _, pred = model(data).max(dim=1)
-    correct = float (pred[data.test_mask].eq(data.y[data.test_mask]).sum().item())
-    acc = correct / data.test_mask.sum().item()
+    correct = int(pred[data.test_mask].eq(data.y[data.test_mask]).sum().item())
+    acc = correct / int(data.test_mask.sum())
     print('Accuracy: {:.4f}'.format(acc))
     >>> Accuracy: 0.8150
 
 That is all it takes to implement your first graph neural network.
-The easiest way to learn more about graph convolution and pooling is to study the examples in the ``examples/`` directory and to browse :mod:`torch_geometric.nn`.
+The easiest way to learn more about graph convolution and pooling is to study the examples in the :obj:`examples/` directory and to browse :mod:`torch_geometric.nn`.
 Happy hacking!

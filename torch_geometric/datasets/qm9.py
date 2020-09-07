@@ -1,21 +1,20 @@
 import os
 import os.path as osp
 
+from tqdm import tqdm
 import torch
 import torch.nn.functional as F
-from torch_sparse import coalesce
+from torch_scatter import scatter
 from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
                                   Data)
 
 try:
     import rdkit
     from rdkit import Chem
-    from rdkit import rdBase
     from rdkit.Chem.rdchem import HybridizationType
-    from rdkit import RDConfig
-    from rdkit.Chem import ChemicalFeatures
     from rdkit.Chem.rdchem import BondType as BT
-    rdBase.DisableLog('rdApp.error')
+    from rdkit import RDLogger
+    RDLogger.DisableLog('rdApp.*')
 except ImportError:
     rdkit = None
 
@@ -27,11 +26,32 @@ conversion = torch.tensor([
     1., KCALMOL2EV, KCALMOL2EV, KCALMOL2EV, KCALMOL2EV, 1., 1., 1.
 ])
 
+atomrefs = {
+    6: [0., 0., 0., 0., 0.],
+    7: [
+        -13.61312172, -1029.86312267, -1485.30251237, -2042.61123593,
+        -2713.48485589
+    ],
+    8: [
+        -13.5745904, -1029.82456413, -1485.26398105, -2042.5727046,
+        -2713.44632457
+    ],
+    9: [
+        -13.54887564, -1029.79887659, -1485.2382935, -2042.54701705,
+        -2713.42063702
+    ],
+    10: [
+        -13.90303183, -1030.25891228, -1485.71166277, -2043.01812778,
+        -2713.88796536
+    ],
+    11: [0., 0., 0., 0., 0.],
+}
+
 
 class QM9(InMemoryDataset):
     r"""The QM9 dataset from the `"MoleculeNet: A Benchmark for Molecular
     Machine Learning" <https://arxiv.org/abs/1703.00564>`_ paper, consisting of
-    about 130,000 molecules with 16 regression targets.
+    about 130,000 molecules with 19 regression targets.
     Each molecule includes complete spatial information for the single low
     energy conformation of the atoms in the molecule.
     In addition, we provide the atom features from the `"Neural Message
@@ -98,10 +118,11 @@ class QM9(InMemoryDataset):
     raw_url = ('https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/'
                'molnet_publish/qm9.zip')
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
-    processed_url = 'http://www.roemisch-drei.de/qm9.zip'
+    processed_url = 'https://pytorch-geometric.com/datasets/qm9_v2.zip'
 
     if rdkit is not None:
         types = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
+        symbols = {'H': 1, 'C': 6, 'N': 7, 'O': 8, 'F': 9}
         bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
     def __init__(self, root, transform=None, pre_transform=None,
@@ -109,31 +130,45 @@ class QM9(InMemoryDataset):
         super(QM9, self).__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
+    def mean(self, target):
+        y = torch.cat([self.get(i).y for i in range(len(self))], dim=0)
+        return y[:, target].mean().item()
+
+    def std(self, target):
+        y = torch.cat([self.get(i).y for i in range(len(self))], dim=0)
+        return y[:, target].std().item()
+
+    def atomref(self, target):
+        if target in atomrefs:
+            out = torch.zeros(100)
+            out[torch.tensor([1, 6, 7, 8, 9])] = torch.tensor(atomrefs[target])
+            return out.view(-1, 1)
+        return None
+
     @property
     def raw_file_names(self):
         if rdkit is None:
-            return 'qm9.pt'
+            return 'qm9_v2.pt'
         else:
             return ['gdb9.sdf', 'gdb9.sdf.csv', 'uncharacterized.txt']
 
     @property
     def processed_file_names(self):
-        return 'data.pt'
+        return 'data_v2.pt'
 
     def download(self):
         if rdkit is None:
-            file_path = download_url(self.processed_url, self.raw_dir)
-            extract_zip(file_path, self.raw_dir)
-            os.unlink(file_path)
+            path = download_url(self.processed_url, self.raw_dir)
+            extract_zip(path, self.raw_dir)
+            os.unlink(path)
         else:
             file_path = download_url(self.raw_url, self.raw_dir)
             extract_zip(file_path, self.raw_dir)
             os.unlink(file_path)
 
             file_path = download_url(self.raw_url2, self.raw_dir)
-            os.rename(
-                osp.join(self.raw_dir, '3195404'),
-                osp.join(self.raw_dir, 'uncharacterized.txt'))
+            os.rename(osp.join(self.raw_dir, '3195404'),
+                      osp.join(self.raw_dir, 'uncharacterized.txt'))
 
     def process(self):
         if rdkit is None:
@@ -149,8 +184,7 @@ class QM9(InMemoryDataset):
             if self.pre_transform is not None:
                 data_list = [self.pre_transform(d) for d in data_list]
 
-            data, slices = self.collate(data_list)
-            torch.save((data, slices), self.processed_paths[0])
+            torch.save(self.collate(data_list), self.processed_paths[0])
             return
 
         with open(self.raw_paths[1], 'r') as f:
@@ -163,30 +197,23 @@ class QM9(InMemoryDataset):
 
         with open(self.raw_paths[2], 'r') as f:
             skip = [int(x.split()[0]) for x in f.read().split('\n')[9:-2]]
-        assert len(skip) == 3054
 
-        suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False)
-        fdef_name = osp.join(RDConfig.RDDataDir, 'BaseFeatures.fdef')
-        factory = ChemicalFeatures.BuildFeatureFactory(fdef_name)
+        suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False,
+                                   sanitize=False)
 
         data_list = []
-        for i, mol in enumerate(suppl):
-            if mol is None:
-                continue
+        for i, mol in enumerate(tqdm(suppl)):
             if i in skip:
                 continue
 
-            text = suppl.GetItemText(i)
             N = mol.GetNumAtoms()
 
-            pos = text.split('\n')[4:4 + N]
+            pos = suppl.GetItemText(i).split('\n')[4:4 + N]
             pos = [[float(x) for x in line.split()[:3]] for line in pos]
             pos = torch.tensor(pos, dtype=torch.float)
 
             type_idx = []
             atomic_number = []
-            acceptor = []
-            donor = []
             aromatic = []
             sp = []
             sp2 = []
@@ -195,50 +222,45 @@ class QM9(InMemoryDataset):
             for atom in mol.GetAtoms():
                 type_idx.append(self.types[atom.GetSymbol()])
                 atomic_number.append(atom.GetAtomicNum())
-                donor.append(0)
-                acceptor.append(0)
                 aromatic.append(1 if atom.GetIsAromatic() else 0)
                 hybridization = atom.GetHybridization()
                 sp.append(1 if hybridization == HybridizationType.SP else 0)
                 sp2.append(1 if hybridization == HybridizationType.SP2 else 0)
                 sp3.append(1 if hybridization == HybridizationType.SP3 else 0)
-                num_hs.append(atom.GetTotalNumHs(includeNeighbors=True))
 
-            feats = factory.GetFeaturesForMol(mol)
-            for j in range(0, len(feats)):
-                if feats[j].GetFamily() == 'Donor':
-                    node_list = feats[j].GetAtomIds()
-                    for k in node_list:
-                        donor[k] = 1
-                elif feats[j].GetFamily() == 'Acceptor':
-                    node_list = feats[j].GetAtomIds()
-                    for k in node_list:
-                        acceptor[k] = 1
+            z = torch.tensor(atomic_number, dtype=torch.long)
 
-            x1 = F.one_hot(torch.tensor(type_idx), num_classes=len(self.types))
-            x2 = torch.tensor([
-                atomic_number, acceptor, donor, aromatic, sp, sp2, sp3, num_hs
-            ], dtype=torch.float).t().contiguous()
-            x = torch.cat([x1.to(torch.float), x2], dim=-1)
-
-            row, col, bond_idx = [], [], []
+            row, col, edge_type = [], [], []
             for bond in mol.GetBonds():
                 start, end = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                 row += [start, end]
                 col += [end, start]
-                bond_idx += 2 * [self.bonds[bond.GetBondType()]]
+                edge_type += 2 * [self.bonds[bond.GetBondType()]]
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
-            edge_attr = F.one_hot(
-                torch.tensor(bond_idx),
-                num_classes=len(self.bonds)).to(torch.float)
-            edge_index, edge_attr = coalesce(edge_index, edge_attr, N, N)
+            edge_type = torch.tensor(edge_type, dtype=torch.long)
+            edge_attr = F.one_hot(edge_type,
+                                  num_classes=len(self.bonds)).to(torch.float)
+
+            perm = (edge_index[0] * N + edge_index[1]).argsort()
+            edge_index = edge_index[:, perm]
+            edge_type = edge_type[perm]
+            edge_attr = edge_attr[perm]
+
+            row, col = edge_index
+            hs = (z == 1).to(torch.float)
+            num_hs = scatter(hs[row], col, dim_size=N).tolist()
+
+            x1 = F.one_hot(torch.tensor(type_idx), num_classes=len(self.types))
+            x2 = torch.tensor([atomic_number, aromatic, sp, sp2, sp3, num_hs],
+                              dtype=torch.float).t().contiguous()
+            x = torch.cat([x1.to(torch.float), x2], dim=-1)
 
             y = target[i].unsqueeze(0)
             name = mol.GetProp('_Name')
 
-            data = Data(x=x, pos=pos, edge_index=edge_index,
-                        edge_attr=edge_attr, y=y, name=name)
+            data = Data(x=x, z=z, pos=pos, edge_index=edge_index,
+                        edge_attr=edge_attr, y=y, name=name, idx=i)
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
