@@ -29,6 +29,8 @@ from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score,
                      intersection_and_union, mean_iou)
 
+from .mltrack_utils import process_event
+
 __all__ = [
     'degree',
     'softmax',
@@ -76,4 +78,5 @@ __all__ = [
     'f1_score',
     'intersection_and_union',
     'mean_iou',
+    'process_event'
 ]
