@@ -223,7 +223,7 @@ class PascalVOCKeypoints(InMemoryDataset):
 
             out1 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
                                  align_corners=False)
-            out2 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+            out2 = F.interpolate(vgg16_outputs[1], (256, 256), mode='bilinear',
                                  align_corners=False)
 
             for j in range(out1.size(0)):
