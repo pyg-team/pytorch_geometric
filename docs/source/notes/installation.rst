@@ -119,11 +119,11 @@ In case a specific version is not supported by `our wheels <https://pytorch-geom
 
     .. code-block:: none
 
-      $ pip install torch-scatter
-      $ pip install torch-sparse
-      $ pip install torch-cluster
-      $ pip install torch-spline-conv
-      $ pip install torch-geometric
+      pip install torch-scatter
+      pip install torch-sparse
+      pip install torch-cluster
+      pip install torch-spline-conv
+      pip install torch-geometric
 
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
