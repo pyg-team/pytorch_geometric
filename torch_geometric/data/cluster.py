@@ -88,10 +88,12 @@ class ClusterData(torch.utils.data.Dataset):
         edge_idx = adj.storage.value()
 
         for key, item in data:
-            if item.size(0) == N:
+            if isinstance(item, torch.Tensor) and item.size(0) == N:
                 data[key] = item.narrow(0, start, length)
-            if item.size(0) == E:
+            if isinstance(item, torch.Tensor) and item.size(0) == E:
                 data[key] = item[edge_idx]
+            else:
+                data[key] = item
 
         row, col, _ = adj.coo()
         data.edge_index = torch.stack([row, col], dim=0)
@@ -158,9 +160,11 @@ class ClusterLoader(torch.utils.data.DataLoader):
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in data:
-            if item.size(0) == N:
+            if isinstance(item, torch.Tensor) and item.size(0) == N:
                 data[key] = item[node_idx]
-            if item.size(0) == E:
+            if isinstance(item, torch.Tensor) and item.size(0) == E:
                 data[key] = item[edge_idx]
+            else:
+                data[key] = item
 
         return data
