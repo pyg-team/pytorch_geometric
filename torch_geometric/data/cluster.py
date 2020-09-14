@@ -90,7 +90,7 @@ class ClusterData(torch.utils.data.Dataset):
         for key, item in data:
             if isinstance(item, torch.Tensor) and item.size(0) == N:
                 data[key] = item.narrow(0, start, length)
-            if isinstance(item, torch.Tensor) and item.size(0) == E:
+            elif isinstance(item, torch.Tensor) and item.size(0) == E:
                 data[key] = item[edge_idx]
             else:
                 data[key] = item
@@ -162,7 +162,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
         for key, item in data:
             if isinstance(item, torch.Tensor) and item.size(0) == N:
                 data[key] = item[node_idx]
-            if isinstance(item, torch.Tensor) and item.size(0) == E:
+            elif isinstance(item, torch.Tensor) and item.size(0) == E:
                 data[key] = item[edge_idx]
             else:
                 data[key] = item
