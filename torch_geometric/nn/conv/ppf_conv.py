@@ -15,14 +15,14 @@ def get_angle(v1: Tensor, v2: Tensor) -> Tensor:
         torch.cross(v1, v2, dim=1).norm(p=2, dim=1), (v1 * v2).sum(dim=1))
 
 
-def point_pair_features(pos_i: Tensor, pos_j: Tensor, norm_i: Tensor,
-                        norm_j: Tensor) -> Tensor:
+def point_pair_features(pos_i: Tensor, pos_j: Tensor, normal_i: Tensor,
+                        normal_j: Tensor) -> Tensor:
     pseudo = pos_j - pos_i
     return torch.stack([
         pseudo.norm(p=2, dim=1),
-        get_angle(norm_i, pseudo),
-        get_angle(norm_j, pseudo),
-        get_angle(norm_i, norm_j)
+        get_angle(normal_i, pseudo),
+        get_angle(normal_j, pseudo),
+        get_angle(normal_i, normal_j)
     ], dim=1)
 
 
