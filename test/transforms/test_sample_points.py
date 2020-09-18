@@ -21,5 +21,5 @@ def test_sample_points():
     data.face = face
     data = SamplePoints(8, include_normals=True)(data)
     assert len(data) == 2
-    assert data.norm[:, :2].abs().sum().item() == 0
-    assert data.norm[:, 2].abs().sum().item() == 8
+    assert data.normal[:, :2].abs().sum().item() == 0
+    assert data.normal[:, 2].abs().sum().item() == 8
