@@ -15,6 +15,12 @@ class Batch(Data):
     def __init__(self, batch=None, **kwargs):
         super(Batch, self).__init__(**kwargs)
 
+        for key, item in kwargs.items():
+            if key == 'num_nodes':
+                self.__num_nodes__ = item
+            else:
+                self[key] = item
+
         self.batch = batch
         self.__data_class__ = Data
         self.__slices__ = None
@@ -35,6 +41,10 @@ class Batch(Data):
         assert 'batch' not in keys
 
         batch = Batch()
+        for key in data_list[0].__dict__.keys():
+            if key[:2] != '__' and key[-2:] != '__':
+                batch[key] = None
+
         batch.__data_class__ = data_list[0].__class__
         for key in keys + ['batch']:
             batch[key] = []
