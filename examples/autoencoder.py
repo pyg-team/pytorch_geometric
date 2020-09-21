@@ -80,7 +80,7 @@ def train():
     optimizer.zero_grad()
     z = model.encode(x, train_pos_edge_index)
     loss = model.recon_loss(z, train_pos_edge_index)
-    if args.model in ['VGAE']:
+    if args.model in ['VGAE','LinearVGAE']:
         loss = loss + (1 / data.num_nodes) * model.kl_loss()
     loss.backward()
     optimizer.step()
