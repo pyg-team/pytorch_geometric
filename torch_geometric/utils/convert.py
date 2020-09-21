@@ -121,11 +121,11 @@ def from_networkx(G):
 
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
         for key, value in feat_dict.items():
-            data[key] = [value] if i == 0 else data[key] + [value]
+            data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
 
     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
         for key, value in feat_dict.items():
-            data[key] = [value] if i == 0 else data[key] + [value]
+            data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
 
     for key, item in data.items():
         try:
