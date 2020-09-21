@@ -64,7 +64,7 @@ class GDELT(EventDataset):
         events = []
         for path in self.raw_paths:
             data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)
-            data[:, 3] = data[:, 3] / 15
+            data[:, 3] = data[:, 3] // 15
             events += [data]
         return torch.cat(events, dim=0)
 
