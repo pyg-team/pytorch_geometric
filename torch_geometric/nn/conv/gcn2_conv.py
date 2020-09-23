@@ -43,6 +43,9 @@ class GCN2Conv(MessagePassing):
             (default: :obj:`None`)
         layer (int, optional): The layer :math:`\ell` in which this module is
             executed. (default: :obj:`None`)
+        shared_weights (bool, optional): If set to :obj:`False`, will use
+            different weight matrices for the smoothed representation and the
+            initial residual ("GCNII*"). (default: :obj:`True`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of :math:`\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
             \mathbf{\hat{D}}^{-1/2}` on first execution, and will use the
@@ -53,8 +56,6 @@ class GCN2Conv(MessagePassing):
             symmetric normalization. (default: :obj:`True`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
-        bias (bool, optional): If set to :obj:`False`, the layer will not learn
-            an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -63,9 +64,9 @@ class GCN2Conv(MessagePassing):
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, channels: int, alpha: float, theta: float = None,
-                 layer: int = None, cached: bool = False,
-                 add_self_loops: bool = True, normalize: bool = True,
-                 bias: bool = True, **kwargs):
+                 layer: int = None, shared_weights: bool = True,
+                 cached: bool = False, add_self_loops: bool = True,
+                 normalize: bool = True, **kwargs):
 
         super(GCN2Conv, self).__init__(aggr='add', **kwargs)
 
@@ -82,18 +83,18 @@ class GCN2Conv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.weight = Parameter(torch.Tensor(channels, channels))
+        self.weight1 = Parameter(torch.Tensor(channels, channels))
 
-        if bias:
-            self.bias = Parameter(torch.Tensor(channels))
+        if shared_weights:
+            self.register_parameter('weight2', None)
         else:
-            self.register_parameter('bias', None)
+            self.weight2 = Parameter(torch.Tensor(channels, channels))
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
-        zeros(self.bias)
+        glorot(self.weight1)
+        glorot(self.weight2)
         self._cached_edge_index = None
         self._cached_adj_t = None
 
@@ -127,13 +128,15 @@ class GCN2Conv(MessagePassing):
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         x = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
 
-        out = (1 - self.alpha) * x + self.alpha * x_0
-
-        if self.beta is not None:
-            out = (1 - self.beta) * out + self.beta * (out @ self.weight)
-
-        if self.bias is not None:
-            out += self.bias
+        if self.weight2 is None:
+            out = (1 - self.alpha) * x + self.alpha * x_0
+            out = (1 - self.beta) * out + self.beta * (out @ self.weight1)
+        else:
+            out1 = (1 - self.alpha) * x
+            out1 = (1 - self.beta) * out1 + self.beta * (out1 @ self.weight1)
+            out2 = self.alpha * x_0
+            out2 = (1 - self.beta) * out2 + self.beta * (out2 @ self.weight2)
+            out = out1 + out2
 
         return out
 

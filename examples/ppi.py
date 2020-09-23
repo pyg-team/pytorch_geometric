@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import PPI
 from torch_geometric.data import DataLoader
-from torch_geometric.nn import GATConv
+from torch_geometric.nn import GATConv, SAGEConv
 from sklearn.metrics import f1_score
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
@@ -19,18 +19,22 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GATConv(train_dataset.num_features, 256, heads=4)
-        self.lin1 = torch.nn.Linear(train_dataset.num_features, 4 * 256)
-        self.conv2 = GATConv(4 * 256, 256, heads=4)
-        self.lin2 = torch.nn.Linear(4 * 256, 4 * 256)
-        self.conv3 = GATConv(4 * 256, train_dataset.num_classes, heads=6,
-                             concat=False)
-        self.lin3 = torch.nn.Linear(4 * 256, train_dataset.num_classes)
+        # self.conv1 = GATConv(train_dataset.num_features, 256, heads=4)
+        # self.lin1 = torch.nn.Linear(train_dataset.num_features, 4 * 256)
+        # self.conv2 = GATConv(4 * 256, 256, heads=4)
+        # self.lin2 = torch.nn.Linear(4 * 256, 4 * 256)
+        # self.conv3 = GATConv(4 * 256, train_dataset.num_classes, heads=6,
+        #                      concat=False)
+        # self.lin3 = torch.nn.Linear(4 * 256, train_dataset.num_classes)
+
+        self.conv1 = SAGEConv(train_dataset.num_features, 512)
+        self.conv2 = SAGEConv(512, 512)
+        self.conv3 = SAGEConv(512, train_dataset.num_classes)
 
     def forward(self, x, edge_index):
-        x = F.elu(self.conv1(x, edge_index) + self.lin1(x))
-        x = F.elu(self.conv2(x, edge_index) + self.lin2(x))
-        x = self.conv3(x, edge_index) + self.lin3(x)
+        x = F.relu(self.conv1(x, edge_index))
+        x = F.relu(self.conv2(x, edge_index))
+        x = self.conv3(x, edge_index)
         return x
 
 
