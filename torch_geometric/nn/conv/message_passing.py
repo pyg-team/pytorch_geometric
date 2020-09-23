@@ -48,8 +48,8 @@ class MessagePassing(torch.nn.Module):
     """
 
     special_args: Set[str] = set([
-        'edge_index', 'adj_t', 'edge_index_i', 'edge_index_j', 'size_i',
-        'size_j', 'ptr', 'index', 'dim_size'
+        'edge_index', 'adj_t', 'edge_index_i', 'edge_index_j', 'size',
+        'size_i', 'size_j', 'ptr', 'index', 'dim_size'
     ])
 
     def __init__(self, aggr: Optional[str] = "add",
@@ -176,6 +176,7 @@ class MessagePassing(torch.nn.Module):
             out['edge_type'] = edge_index.storage.value()
 
         out['index'] = out['edge_index_i']
+        out['size'] = size
         out['size_i'] = size[1] or size[0]
         out['size_j'] = size[0] or size[1]
         out['dim_size'] = out['size_i']
