@@ -10,7 +10,7 @@ from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
-from ..inits import glorot, zeros
+from ..inits import glorot
 
 
 class GCN2Conv(MessagePassing):
@@ -72,7 +72,7 @@ class GCN2Conv(MessagePassing):
 
         self.channels = channels
         self.alpha = alpha
-        self.beta = None
+        self.beta = 1.
         if theta is not None or layer is not None:
             assert theta is not None and layer is not None
             self.beta = log(theta / layer + 1)
