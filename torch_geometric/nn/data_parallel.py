@@ -36,10 +36,10 @@ class DataParallel(torch.nn.DataParallel):
             vectors for each key in the list. (default: :obj:`[]`)
     """
     def __init__(self, module, device_ids=None, output_device=None,
-                 follow_batch=[]):
+                 follow_batch=None):
         super(DataParallel, self).__init__(module, device_ids, output_device)
         self.src_device = torch.device("cuda:{}".format(self.device_ids[0]))
-        self.follow_batch = follow_batch
+        self.follow_batch = follow_batch if follow_batch is not None else []
 
     def forward(self, data_list):
         """"""
