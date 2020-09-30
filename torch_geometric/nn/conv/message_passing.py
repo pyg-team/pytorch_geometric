@@ -47,10 +47,10 @@ class MessagePassing(torch.nn.Module):
             (default: :obj:`-2`)
     """
 
-    special_args: Set[str] = set([
+    special_args: Set[str] = {
         'edge_index', 'adj_t', 'edge_index_i', 'edge_index_j', 'size',
         'size_i', 'size_j', 'ptr', 'index', 'dim_size'
-    ])
+    }
 
     def __init__(self, aggr: Optional[str] = "add",
                  flow: str = "source_to_target", node_dim: int = -2):
