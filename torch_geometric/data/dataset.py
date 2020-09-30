@@ -9,13 +9,13 @@ from .makedirs import makedirs
 
 
 def to_list(x):
-    if not isinstance(x, (tuple, list)) or isinstance(x, str):
+    if not isinstance(x, (tuple, list)):
         x = [x]
     return x
 
 
 def files_exist(files):
-    return len(files) != 0 and all([osp.exists(f) for f in files])
+    return len(files) != 0 and all(osp.exists(f) for f in files)
 
 
 def __repr__(obj):
