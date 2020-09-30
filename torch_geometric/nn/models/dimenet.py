@@ -444,9 +444,9 @@ class DimeNet(torch.nn.Module):
 
         # Calculate angles.
         pos_i = pos[idx_i]
-        pos_ji, pos_ki = pos[idx_j] - pos_i, pos[idx_k] - pos_i
-        a = (pos_ji * pos_ki).sum(dim=-1)
-        b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+        pos_ji, pos_kj = pos[idx_j] - pos_i, pos[idx_k] - pos_j
+        a = (pos_ji * pos_kj).sum(dim=-1)
+        b = torch.cross(pos_ji, pos_kj).norm(dim=-1)
         angle = torch.atan2(b, a)
 
         rbf = self.rbf(dist)
