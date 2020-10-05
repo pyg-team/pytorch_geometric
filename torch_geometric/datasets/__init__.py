@@ -6,7 +6,6 @@ from .citation_full import CitationFull, CoraFull
 from .coauthor import Coauthor
 from .amazon import Amazon
 from .ppi import PPI
-from .ppi_large import PPILarge
 from .reddit import Reddit
 from .flickr import Flickr
 from .yelp import Yelp
@@ -52,7 +51,6 @@ __all__ = [
     'Coauthor',
     'Amazon',
     'PPI',
-    'PPILarge',
     'Reddit',
     'Flickr',
     'Yelp',
