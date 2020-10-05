@@ -1,5 +1,3 @@
-from itertools import product
-import os
 import os.path as osp
 import json
 
@@ -8,10 +6,7 @@ import numpy as np
 import networkx as nx
 import scipy.sparse as sp
 from torch_sparse import SparseTensor
-from networkx.readwrite import json_graph
-from torch_geometric.data import (InMemoryDataset, Data, download_url,
-                                  extract_zip)
-from torch_geometric.utils import remove_self_loops
+from torch_geometric.data import InMemoryDataset, Data
 from google_drive_downloader import GoogleDriveDownloader as gdd
 
 
