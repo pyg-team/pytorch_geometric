@@ -71,9 +71,10 @@ class TransformerConv(MessagePassing):
         self.lin_key = Linear(in_channels[0], heads * out_channels)
         self.lin_query = Linear(in_channels[1], heads * out_channels)
         self.lin_value = Linear(in_channels[0], heads * out_channels)
-        self.lin_edge = None
-        if self.edge_dim:
+        if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False)
+        else:
+            self.lin_edge = Linear(1, 1)
 
         if concat:
             self.lin_skip = Linear(in_channels[1], heads * out_channels,
@@ -121,7 +122,7 @@ class TransformerConv(MessagePassing):
         key = self.lin_query(x_i).view(-1, self.heads, self.out_channels)
 
         lin_edge = self.lin_edge
-        if edge_attr is not None and lin_edge is not None:
+        if edge_attr is not None:
             edge_attr = lin_edge(edge_attr).view(-1, self.heads,
                                                  self.out_channels)
             key += edge_attr
