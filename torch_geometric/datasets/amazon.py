@@ -1,3 +1,5 @@
+import os.path as osp
+
 import torch
 from torch_geometric.data import InMemoryDataset, download_url
 from torch_geometric.io import read_npz
@@ -35,8 +37,16 @@ class Amazon(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
+    def raw_dir(self):
+        return osp.join(self.root, self.name.capitalize(), 'raw')
+
+    @property
+    def processed_dir(self):
+        return osp.join(self.root, self.name.capitalize(), 'processed')
+
+    @property
     def raw_file_names(self):
-        return 'amazon_electronics_{}.npz'.format(self.name)
+        return 'amazon_electronics_{}.npz'.format(self.name.lower())
 
     @property
     def processed_file_names(self):

@@ -6,6 +6,7 @@ from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .gat_conv import GATConv
+from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
 from .tag_conv import TAGConv
 from .gin_conv import GINConv, GINEConv
@@ -41,6 +42,7 @@ __all__ = [
     'GravNetConv',
     'GatedGraphConv',
     'GATConv',
+    'TransformerConv',
     'AGNNConv',
     'TAGConv',
     'GINConv',
