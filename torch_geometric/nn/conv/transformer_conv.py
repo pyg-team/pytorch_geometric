@@ -23,7 +23,7 @@ class TransformerConv(MessagePassing):
 
     .. math::
         \alpha_{i,j} = \textrm{softmax} \left(
-        \frac{(\mathbf{W}_3\mathbf{x}_i) (\mathbf{W}_4\mathbf{x}_j)^{\top}}
+        \frac{(\mathbf{W}_3\mathbf{x}_i)^{\top} (\mathbf{W}_4\mathbf{x}_j)}
         {\sqrt{d}} \right)
 
     Args:
