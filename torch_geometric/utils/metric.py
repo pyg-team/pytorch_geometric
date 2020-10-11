@@ -12,7 +12,7 @@ def accuracy(pred, target):
         pred (Tensor): The predictions.
         target (Tensor): The targets.
 
-    :rtype: int
+    :rtype: float
     """
     return (pred == target).sum().item() / target.numel()
 
