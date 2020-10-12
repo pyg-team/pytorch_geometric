@@ -54,7 +54,8 @@ class SignedConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, first_aggr: bool,
                  bias: bool = True, **kwargs):
 
-        super(SignedConv, self).__init__(aggr='mean', **kwargs)
+        kwargs.setdefault('aggr', 'mean')
+        super(SignedConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

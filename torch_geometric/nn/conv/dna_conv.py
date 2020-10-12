@@ -229,7 +229,8 @@ class DNAConv(MessagePassing):
                  dropout: float = 0., cached: bool = False,
                  normalize: bool = True, add_self_loops: bool = True,
                  bias: bool = True, **kwargs):
-        super(DNAConv, self).__init__(aggr='add', node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(DNAConv, self).__init__(node_dim=0, **kwargs)
 
         self.bias = bias
         self.cached = cached

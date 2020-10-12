@@ -55,7 +55,8 @@ class TransformerConv(MessagePassing):
                  out_channels: int, heads: int = 1, concat: bool = True,
                  beta: Optional[float] = None, dropout: float = 0.,
                  edge_dim: Optional[int] = None, bias: bool = True, **kwargs):
-        super(TransformerConv, self).__init__(aggr='add', node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(TransformerConv, self).__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

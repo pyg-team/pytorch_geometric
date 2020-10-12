@@ -61,7 +61,8 @@ class GATConv(MessagePassing):
                  out_channels: int, heads: int = 1, concat: bool = True,
                  negative_slope: float = 0.2, dropout: float = 0.,
                  add_self_loops: bool = True, bias: bool = True, **kwargs):
-        super(GATConv, self).__init__(aggr='add', node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(GATConv, self).__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
