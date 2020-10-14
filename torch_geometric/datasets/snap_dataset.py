@@ -39,7 +39,7 @@ def read_ego(files, name):
         feat_file = files[i + 3]
         featnames_file = files[i + 4]
 
-        x = pandas.read_csv(feat_file, sep=' ', header=None, dtype=np.float32)
+        x = pandas.read_csv(feat_file, sep=' ', header=None, dtype=np.int64)
         x = torch.from_numpy(x.values)
 
         idx, x = x[:, 0].to(torch.long), x[:, 1:].to(torch.float)
