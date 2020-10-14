@@ -31,7 +31,7 @@ class Entities(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/{}.tgz'
+    url = 'https://data.dgl.ai/dataset/{}.tgz'
 
     def __init__(self, root, name, transform=None, pre_transform=None):
         assert name in ['AIFB', 'AM', 'MUTAG', 'BGS']

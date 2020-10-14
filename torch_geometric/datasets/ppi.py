@@ -38,7 +38,7 @@ class PPI(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/ppi.zip'
+    url = 'https://data.dgl.ai/dataset/ppi.zip'
 
     def __init__(self, root, split='train', transform=None, pre_transform=None,
                  pre_filter=None):
