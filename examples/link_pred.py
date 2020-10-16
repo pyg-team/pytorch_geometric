@@ -54,7 +54,7 @@ def get_link_labels(pos_edge_index, neg_edge_index):
 
 def create_adj_prob_matrix(Latent_Vector):
     """Use it while inference to resolve the predicted Links"""
-    prob_adj_matrix = InnerProductDecoder()(Latent_Vector)
+    prob_adj_matrix = InnerProductDecoder().forward_all(Latent_Vector)
     edge_indices,confidence_probs = dense_to_sparse(prob_adj_matrix)
     return edge_indices,confidence_probs
 
