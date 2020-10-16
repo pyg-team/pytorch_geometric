@@ -5,11 +5,12 @@ import torch.nn.functional as F
 from sklearn.metrics import roc_auc_score
 
 from torch_geometric.utils import (negative_sampling, remove_self_loops,
-                                   add_self_loops)
+                                   add_self_loops,dense_to_sparse)
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, ChebConv  # noqa
 from torch_geometric.utils import train_test_split_edges
+from torch_geometric.nn.models.autoencoder import InnerProductDecoder
 
 torch.manual_seed(12345)
 
@@ -37,7 +38,7 @@ class Net(torch.nn.Module):
         total_edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
         x_j = torch.index_select(x, 0, total_edge_index[0])
         x_i = torch.index_select(x, 0, total_edge_index[1])
-        return torch.einsum("ef,ef->e", x_i, x_j)
+        return x,torch.einsum("ef,ef->e", x_i, x_j)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -51,6 +52,11 @@ def get_link_labels(pos_edge_index, neg_edge_index):
     link_labels[:pos_edge_index.size(1)] = 1.
     return link_labels
 
+def create_adj_prob_matrix(Latent_Vector):
+    """Use it while inference to resolve the predicted Links"""
+    prob_adj_matrix = InnerProductDecoder()(Latent_Vector)
+    edge_indices,confidence_probs = dense_to_sparse(prob_adj_matrix)
+    return edge_indices,confidence_probs
 
 def train():
     model.train()
@@ -66,7 +72,7 @@ def train():
         edge_index=pos_edge_index_with_self_loops, num_nodes=x.size(0),
         num_neg_samples=pos_edge_index.size(1))
 
-    link_logits = model(pos_edge_index, neg_edge_index)
+    _,link_logits = model(pos_edge_index, neg_edge_index)
     link_labels = get_link_labels(pos_edge_index, neg_edge_index)
 
     loss = F.binary_cross_entropy_with_logits(link_logits, link_labels)
@@ -84,14 +90,20 @@ def test():
             index for _, index in data("{}_pos_edge_index".format(prefix),
                                        "{}_neg_edge_index".format(prefix))
         ]
-        link_probs = torch.sigmoid(model(pos_edge_index, neg_edge_index))
+        _,link_logits = model(pos_edge_index,neg_edge_index)
+        link_probs = torch.sigmoid(link_logits)
         link_labels = get_link_labels(pos_edge_index, neg_edge_index)
         link_probs = link_probs.detach().cpu().numpy()
         link_labels = link_labels.detach().cpu().numpy()
         perfs.append(roc_auc_score(link_labels, link_probs))
     return perfs
 
-
+def infer(pos_edge_index,neg_edge_index):
+    """Infering the model"""
+    model.eval()
+    latent,link_logits = model(pos_edge_index,neg_edge_index)
+    pred_edge_index,pred_confidence = create_adj_prob_matrix(latent)
+    return pred_edge_index
 best_val_perf = test_perf = 0
 for epoch in range(1, 501):
     train_loss = train()
@@ -101,3 +113,5 @@ for epoch in range(1, 501):
         test_perf = tmp_test_perf
     log = 'Epoch: {:03d}, Loss: {:.4f}, Val: {:.4f}, Test: {:.4f}'
     print(log.format(epoch, train_loss, best_val_perf, test_perf))
+
+pred_edge_index = 
