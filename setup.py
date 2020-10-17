@@ -11,7 +11,7 @@ install_requires = [
     'networkx',
     'python-louvain',
     'scikit-learn',
-    'numba==0.50.1',
+    'numba',
     'requests',
     'pandas',
     'rdflib',
