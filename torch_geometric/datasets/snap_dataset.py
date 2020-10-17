@@ -36,7 +36,8 @@ def read_ego(files, name):
     all_featnames = {key: i for i, key in enumerate(all_featnames)}
 
     data_list = []
-    for i in range(0, len(files), 5):
+    for i in range(425, len(files), 5):
+        print(i, len(files), files[i])
         circles_file = files[i]
         edges_file = files[i + 1]
         egofeat_file = files[i + 2]
@@ -85,10 +86,13 @@ def read_ego(files, name):
         circle = torch.tensor(circles)
         circle_batch = torch.tensor(circles_batch)
 
-        row = pandas.read_csv(edges_file, sep=' ', header=None, dtype=str,
-                              usecols=[0], squeeze=True)
-        col = pandas.read_csv(edges_file, sep=' ', header=None, dtype=str,
-                              usecols=[1], squeeze=True)
+        try:
+            row = pandas.read_csv(edges_file, sep=' ', header=None, dtype=str,
+                                  usecols=[0], squeeze=True)
+            col = pandas.read_csv(edges_file, sep=' ', header=None, dtype=str,
+                                  usecols=[1], squeeze=True)
+        except:  # noqa
+            continue
 
         row = torch.tensor([idx_assoc[i] for i in row])
         col = torch.tensor([idx_assoc[i] for i in col])
