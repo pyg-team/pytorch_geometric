@@ -36,7 +36,7 @@ def read_ego(files, name):
     all_featnames = {key: i for i, key in enumerate(all_featnames)}
 
     data_list = []
-    for i in range(425, len(files), 5):
+    for i in range(0, len(files), 5):
         print(i, len(files), files[i])
         circles_file = files[i]
         edges_file = files[i + 1]
@@ -44,16 +44,12 @@ def read_ego(files, name):
         feat_file = files[i + 3]
         featnames_file = files[i + 4]
 
-        # Catch the case of empty features.
-        try:
+        x = None
+        if name != 'gplus':  # Don't read node features on g-plus:
             x_ego = pandas.read_csv(egofeat_file, sep=' ', header=None,
                                     dtype=np.float32)
             x_ego = torch.from_numpy(x_ego.values)
-        except:  # noqa
-            x_ego = None
 
-        x = None
-        if x_ego is not None:
             x = pandas.read_csv(feat_file, sep=' ', header=None,
                                 dtype=np.float32)
             x = torch.from_numpy(x.values)[:, 1:]
