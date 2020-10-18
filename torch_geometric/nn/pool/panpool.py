@@ -8,7 +8,32 @@ from torch_sparse import coalesce
 from torch_sparse import eye
 
 class PANPool(torch.nn.Module):
-    r""" General Graph pooling layer based on PAN, which can work with all layers.
+    r"""Path Integral Based Convolution and Pooling for Graph Neural Networks"
+    <https://arxiv.org/abs/2006.16811>`_ paper
+
+    .. math::
+        {\rm score} = Xp + \beta {\rm diag}(M).
+        
+    Args:
+        in_channels (int): Size of each input sample.
+        ratio (float): PAN pooling ratio, which is used to compute
+            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
+            This value is ignored if min_score is not None.
+            (default: :obj:`0.5`)
+        pan_pool_weight (float, optional): weight variable for PANPools.
+        min_score (float, optional): Minimal node score :math:`\tilde{\alpha}`
+            which is used to compute indices of pooled nodes
+            :math:`\mathbf{i} = \mathbf{y}_i > \tilde{\alpha}`.
+            When this value is not :obj:`None`, the :obj:`ratio` argument is
+            ignored. (default: :obj:`None`)
+        multiplier (float, optional): Coefficient by which features gets
+            multiplied after pooling. This can be useful for large graphs and
+            when :obj:`min_score` is used. (default: :obj:`1`)
+        nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
+            (default: :obj:`torch.tanh`)
+        filter_size (int): Highest order for PAN. (default: :obj:3)
+        panpool_filter_weight (float, optional): weight variable for PANPool.
+            
     """
     def __init__(self, in_channels, ratio=0.5, pan_pool_weight=None, min_score=None, multiplier=1,
                  nonlinearity=torch.tanh, filter_size=3, panpool_filter_weight=None):
