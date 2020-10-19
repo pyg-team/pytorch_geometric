@@ -68,7 +68,8 @@ class GCN2Conv(MessagePassing):
                  cached: bool = False, add_self_loops: bool = True,
                  normalize: bool = True, **kwargs):
 
-        super(GCN2Conv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(GCN2Conv, self).__init__(**kwargs)
 
         self.channels = channels
         self.alpha = alpha

@@ -53,7 +53,8 @@ class ARMAConv(MessagePassing):
                  num_stacks: int = 1, num_layers: int = 1,
                  shared_weights: bool = False, act: Callable = F.relu,
                  dropout: float = 0., bias: bool = True, **kwargs):
-        super(ARMAConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(ARMAConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

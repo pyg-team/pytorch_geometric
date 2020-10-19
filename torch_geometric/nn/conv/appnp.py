@@ -50,7 +50,8 @@ class APPNP(MessagePassing):
     def __init__(self, K: int, alpha: float, dropout: float = 0.,
                  cached: bool = False, add_self_loops: bool = True,
                  normalize: bool = True, **kwargs):
-        super(APPNP, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(APPNP, self).__init__(**kwargs)
         self.K = K
         self.alpha = alpha
         self.dropout = dropout

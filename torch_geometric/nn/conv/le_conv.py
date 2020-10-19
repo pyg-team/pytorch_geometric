@@ -24,7 +24,8 @@ class LEConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
-        super(LEConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(LEConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
