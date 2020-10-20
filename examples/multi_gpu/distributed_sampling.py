@@ -74,7 +74,7 @@ def run(rank, world_size, dataset):
     if rank == 0:
         subgraph_loader = NeighborSampler(data.edge_index, node_idx=None,
                                           sizes=[-1], batch_size=2048,
-                                          shuffle=False, num_workers=0)
+                                          shuffle=False, num_workers=6)
 
     model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
@@ -82,7 +82,7 @@ def run(rank, world_size, dataset):
 
     x, y = data.x.to(rank), data.y.to(rank)
 
-    for epoch in range(1, 201):
+    for epoch in range(1, 21):
         model.train()
 
         for batch_size, n_id, adjs in train_loader:
@@ -96,17 +96,18 @@ def run(rank, world_size, dataset):
 
         dist.barrier()
 
+        if rank == 0:
+            print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
+
         if rank == 0 and epoch % 5 == 0:
+            # We evaluate on a single GPU for now...
             model.eval()
             out = model.module.inference(x, rank, subgraph_loader)
             res = out.argmax(dim=-1) == data.y
             acc1 = int(res[data.train_mask].sum()) / int(data.train_mask.sum())
             acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
             acc3 = int(res[data.test_mask].sum()) / int(data.test_mask.sum())
-            print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
-                  f'Train: {acc1:.4f}, Val: {acc2:.4f}, Test: {acc3:.4f}')
-        elif rank == 0:
-            print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
+            print(f'Train: {acc1:.4f}, Val: {acc2:.4f}, Test: {acc3:.4f}')
 
         dist.barrier()
 
