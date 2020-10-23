@@ -111,7 +111,7 @@ def test():
     return val_acc, test_acc
 
 
-for epoch in range(1, 201):
+for epoch in range(1, 51):
     loss = train()
     val_acc, test_acc = test()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
