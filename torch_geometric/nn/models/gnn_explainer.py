@@ -44,7 +44,9 @@ class GNNExplainer(torch.nn.Module):
 
     coeffs = {
         'edge_size': 0.005,
+        'edge_reduction': 'sum',
         'node_feat_size': 1.0,
+        'node_feat_reduction': 'mean',
         'edge_ent': 1.0,
         'node_feat_ent': 0.1,
     }
@@ -118,12 +120,14 @@ class GNNExplainer(torch.nn.Module):
         loss = -log_logits[node_idx, pred_label[node_idx]]
 
         m = self.edge_mask.sigmoid()
-        loss = loss + self.coeffs['edge_size'] * m.sum()
+        edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
+        loss = loss + self.coeffs['edge_size'] * edge_reduce(m)
         ent = -m * torch.log(m + EPS) - (1 - m) * torch.log(1 - m + EPS)
         loss = loss + self.coeffs['edge_ent'] * ent.mean()
 
         m = self.node_feat_mask.sigmoid()
-        loss = loss + self.coeffs['node_feat_size'] * m.sum()
+        node_feat_reduce = getattr(torch, self.coeffs['node_feat_reduction'])
+        loss = loss + self.coeffs['node_feat_size'] * node_feat_reduce(m)
         ent = -m * torch.log(m + EPS) - (1 - m) * torch.log(1 - m + EPS)
         loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
 
