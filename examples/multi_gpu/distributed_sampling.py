@@ -99,10 +99,10 @@ def run(rank, world_size, dataset):
         if rank == 0:
             print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
 
-        if rank == 0 and epoch % 5 == 0:
-            # We evaluate on a single GPU for now...
+        if rank == 0 and epoch % 5 == 0:  # We evaluate on a single GPU for now
             model.eval()
-            out = model.module.inference(x, rank, subgraph_loader)
+            with torch.no_grad():
+                out = model.module.inference(x, rank, subgraph_loader)
             res = out.argmax(dim=-1) == data.y
             acc1 = int(res[data.train_mask].sum()) / int(data.train_mask.sum())
             acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
