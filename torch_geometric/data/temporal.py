@@ -18,22 +18,24 @@ class TemporalData(object):
         if isinstance(idx, str):
             return getattr(self, idx, None)
 
-        # Select entries based on **time**.
         if isinstance(idx, int):
-            mask = self.t == idx
+            idx = torch.tensor([idx])
+        if isinstance(idx, (list, tuple)):
+            idx = torch.tensor(idx)
         elif isinstance(idx, slice):
-            start = idx.start if idx.start is not None else int(self.t.min())
-            stop = idx.stop if idx.stop is not None else int(self.t.max() + 1)
-            assert idx.step is None and start <= stop
-            mask = (self.t >= start) & (self.t < stop)
+            pass
+        elif isinstance(idx, torch.Tensor) and (idx.dtype == torch.long
+                                                or idx.dtype == torch.bool):
+            pass
         else:
             raise IndexError(
-                f'Only integers, slices (`:`), and strings are valid indices '
-                f'(got {type(idx).__name__}).')
+                f'Only strings, integers, slices (`:`), list, tuples, and '
+                f'long or bool tensors are valid indices (got '
+                f'{type(idx).__name__}).')
 
         data = copy.copy(self)
         for key, item in data:
-            data[key] = item[mask]
+            data[key] = item[idx]
         return data
 
     def __setitem__(self, key, value):
@@ -100,10 +102,14 @@ class TemporalData(object):
             self.t.cpu().numpy(),
             [1. - val_ratio - test_ratio, 1. - test_ratio])
 
-        val_time = int(round(val_time))
-        test_time = int(round(test_time))
+        val_idx = int((self.t <= val_time).sum()) + 1
+        test_idx = int((self.t <= test_time).sum()) + 1
 
-        return self[:val_time], self[val_time:test_time], self[test_time:]
+        return self[:val_idx], self[val_idx:test_idx], self[test_idx:]
+
+    def seq_batches(self, batch_size):
+        for start in range(0, self.num_events, batch_size):
+            yield self[start:start + batch_size]
 
     def __repr__(self):
         cls = str(self.__class__.__name__)
