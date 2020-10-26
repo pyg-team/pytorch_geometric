@@ -34,7 +34,8 @@ class TGN(torch.nn.Module):
         )
 
         self.register_buffer('memory', torch.empty(num_nodes, memory_dim))
-        self.register_buffer('last_update', torch.empty(num_nodes))
+        self.register_buffer('last_update',
+                             torch.empty(num_nodes, dtype=torch.long))
         self.previous_events = None
 
         self.reset_parameters()
