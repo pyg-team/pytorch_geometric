@@ -1,6 +1,7 @@
 import re
 import copy
 import logging
+import collections
 
 import torch
 import torch_geometric
@@ -54,7 +55,7 @@ class Data(object):
             (default: :obj:`None`)
         pos (Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
-        norm (Tensor, optional): Normal vector matrix with shape
+        normal (Tensor, optional): Normal vector matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         face (LongTensor, optional): Face adjacency matrix with shape
             :obj:`[3, num_faces]`. (default: :obj:`None`)
@@ -69,13 +70,13 @@ class Data(object):
         data.test_mask = torch.tensor([...], dtype=torch.bool)
     """
     def __init__(self, x=None, edge_index=None, edge_attr=None, y=None,
-                 pos=None, norm=None, face=None, **kwargs):
+                 pos=None, normal=None, face=None, **kwargs):
         self.x = x
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.y = y
         self.pos = pos
-        self.norm = norm
+        self.normal = normal
         self.face = face
         for key, item in kwargs.items():
             if key == 'num_nodes':
@@ -108,6 +109,14 @@ class Data(object):
             data.debug()
 
         return data
+
+    def to_dict(self):
+        return {key: item for key, item in self}
+
+    def to_namedtuple(self):
+        keys = self.keys
+        DataTuple = collections.namedtuple('DataTuple', keys)
+        return DataTuple(*[self[key] for key in keys])
 
     def __getitem__(self, key):
         r"""Gets the data of the attribute :obj:`key`."""
@@ -199,7 +208,7 @@ class Data(object):
         """
         if hasattr(self, '__num_nodes__'):
             return self.__num_nodes__
-        for key, item in self('x', 'pos', 'norm', 'batch'):
+        for key, item in self('x', 'pos', 'normal', 'batch'):
             return item.size(self.__cat_dim__(key, item))
         if hasattr(self, 'adj'):
             return self.adj.size(0)
@@ -397,12 +406,12 @@ class Data(object):
                      'dimension but found {}').format(self.num_nodes,
                                                       self.pos.size(0)))
 
-        if self.norm is not None and self.num_nodes is not None:
-            if self.norm.size(0) != self.num_nodes:
+        if self.normal is not None and self.num_nodes is not None:
+            if self.normal.size(0) != self.num_nodes:
                 raise RuntimeError(
                     ('Node normals should hold {} elements in the first '
                      'dimension but found {}').format(self.num_nodes,
-                                                      self.norm.size(0)))
+                                                      self.normal.size(0)))
 
     def __repr__(self):
         cls = str(self.__class__.__name__)

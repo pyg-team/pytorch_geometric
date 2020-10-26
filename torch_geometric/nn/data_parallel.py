@@ -32,10 +32,14 @@ class DataParallel(torch.nn.DataParallel):
             (default: all devices)
         output_device (int or torch.device): Device location of output.
             (default: :obj:`device_ids[0]`)
+        follow_batch (list or tuple, optional): Creates assignment batch
+            vectors for each key in the list. (default: :obj:`[]`)
     """
-    def __init__(self, module, device_ids=None, output_device=None):
+    def __init__(self, module, device_ids=None, output_device=None,
+                 follow_batch=[]):
         super(DataParallel, self).__init__(module, device_ids, output_device)
         self.src_device = torch.device("cuda:{}".format(self.device_ids[0]))
+        self.follow_batch = follow_batch
 
     def forward(self, data_list):
         """"""
@@ -45,7 +49,8 @@ class DataParallel(torch.nn.DataParallel):
             return None
 
         if not self.device_ids or len(self.device_ids) == 1:  # Fallback
-            data = Batch.from_data_list(data_list).to(self.src_device)
+            data = Batch.from_data_list(
+                data_list, follow_batch=self.follow_batch).to(self.src_device)
             return self.module(data)
 
         for t in chain(self.module.parameters(), self.module.buffers()):
@@ -75,7 +80,9 @@ class DataParallel(torch.nn.DataParallel):
         split = split.tolist()
 
         return [
-            Batch.from_data_list(data_list[split[i]:split[i + 1]]).to(
-                torch.device('cuda:{}'.format(device_ids[i])))
+            Batch.from_data_list(data_list[split[i]:split[i + 1]],
+                                 follow_batch=self.follow_batch).to(
+                                     torch.device('cuda:{}'.format(
+                                         device_ids[i])))
             for i in range(len(split) - 1)
         ]

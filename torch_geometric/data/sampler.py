@@ -77,6 +77,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
                  num_nodes: Optional[int] = None,
                  flow: str = "source_to_target", **kwargs):
 
+        edge_index = edge_index.cpu()
         N = int(edge_index.max() + 1) if num_nodes is None else num_nodes
         edge_attr = torch.arange(edge_index.size(1))
         adj = SparseTensor(row=edge_index[0], col=edge_index[1],

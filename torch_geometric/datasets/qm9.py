@@ -197,7 +197,6 @@ class QM9(InMemoryDataset):
 
         with open(self.raw_paths[2], 'r') as f:
             skip = [int(x.split()[0]) for x in f.read().split('\n')[9:-2]]
-        assert len(skip) == 3054
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False,
                                    sanitize=False)
@@ -239,8 +238,8 @@ class QM9(InMemoryDataset):
                 edge_type += 2 * [self.bonds[bond.GetBondType()]]
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
-            edge_type = torch.tensor(edge_type)
-            edge_attr = F.one_hot(torch.tensor(edge_type),
+            edge_type = torch.tensor(edge_type, dtype=torch.long)
+            edge_attr = F.one_hot(edge_type,
                                   num_classes=len(self.bonds)).to(torch.float)
 
             perm = (edge_index[0] * N + edge_index[1]).argsort()
@@ -270,5 +269,4 @@ class QM9(InMemoryDataset):
 
             data_list.append(data)
 
-        assert len(data_list) == 130831
         torch.save(self.collate(data_list), self.processed_paths[0])

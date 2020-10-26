@@ -107,13 +107,13 @@ class SEALDataset(InMemoryDataset):
         idx = list(range(dst)) + list(range(dst + 1, adj.shape[0]))
         adj_wo_dst = adj[idx, :][:, idx]
 
-        dist2src = shortest_path(adj_wo_dst, directed=False, unweighted=True)
-        dist2src = dist2src[:, src]
+        dist2src = shortest_path(adj_wo_dst, directed=False, unweighted=True,
+                                 indices=src)
         dist2src = np.insert(dist2src, dst, 0, axis=0)
         dist2src = torch.from_numpy(dist2src)
 
-        dist2dst = shortest_path(adj_wo_src, directed=False, unweighted=True)
-        dist2dst = dist2dst[:, dst - 1]
+        dist2dst = shortest_path(adj_wo_src, directed=False, unweighted=True,
+                                 indices=dst - 1)
         dist2dst = np.insert(dist2dst, src, 0, axis=0)
         dist2dst = torch.from_numpy(dist2dst)
 

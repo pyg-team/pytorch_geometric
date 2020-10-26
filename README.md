@@ -8,6 +8,8 @@
 [coverage-url]: https://codecov.io/github/rusty1s/pytorch_geometric?branch=master
 [contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
 [contributing-url]: https://github.com/rusty1s/pytorch_geometric/blob/master/CONTRIBUTING.md
+[slack-image]: https://img.shields.io/badge/slack-pyg-brightgreen
+[slack-url]: https://torchgeometricco.slack.com/join/shared_invite/zt-hn9vter8-EQn4L4wLfE7PZEYbLMlw~Q#/
 
 <p align="center">
   <img width="40%" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/pyg_logo_text.svg?sanitize=true" />
@@ -20,13 +22,15 @@
 [![Docs Status][docs-image]][docs-url]
 [![Code Coverage][coverage-image]][coverage-url]
 [![Contributing][contributing-image]][contributing-url]
+[![Slack][slack-image]][slack-url]
 
-**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/notes/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/notes/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/notes/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
 
 *PyTorch Geometric* (PyG) is a geometric deep learning extension library for [PyTorch](https://pytorch.org/).
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
 In addition, it consists of an easy-to-use mini-batch loader for many small and single giant graphs, multi gpu-support, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
+[Click here to join our Slack community!](https://torchgeometricco.slack.com/join/shared_invite/zt-hn9vter8-EQn4L4wLfE7PZEYbLMlw~Q#/)
 
 --------------------------------------------------------------------------------
 
@@ -59,16 +63,18 @@ In detail, the following methods are currently implemented:
 
 * **[SplineConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SplineConv)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/cora.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/faust.py)]
 * **[GCNConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GCNConv)** from Kipf and Welling: [Semi-Supervised Classification with Graph Convolutional Networks](https://arxiv.org/abs/1609.02907) (ICLR 2017) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gcn.py)]
+* **[GCN2Conv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GCN2Conv)** from Chen *et al.*: [Simple and Deep Graph Convolutional Networks](https://arxiv.org/abs/2007.02133) (ICML 2020) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gcn2_cora.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gcn2_ppi.py)]
 * **[ChebConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.ChebConv)** from Defferrard *et al.*: [Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering](https://arxiv.org/abs/1606.09375) (NIPS 2016) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gcn.py#L36-L37)]
 * **[NNConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.NNConv)** from Gilmer *et al.*: [Neural Message Passing for Quantum Chemistry](https://arxiv.org/abs/1704.01212) (ICML 2017) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/qm9_nn_conv.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/mnist_nn_conv.py)]
 * **[CGConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.CGConv)** from Xie and Grossman: [Crystal Graph Convolutional Neural Networks for an Accurate and Interpretable Prediction of Material Properties](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.145301) (Physical Review Letters 120, 2018)
 * **[ECConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.ECConv)** from Simonovsky and Komodakis: [Edge-Conditioned Convolution on Graphs](https://arxiv.org/abs/1704.02901) (CVPR 2017)
 * **[GATConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GATConv)** from Veličković *et al.*: [Graph Attention Networks](https://arxiv.org/abs/1710.10903) (ICLR 2018) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gat.py)]
-* **[SAGEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SAGEConv)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/ogbn_products_sage.py)]
+* **[TransformerConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.TransformerConv)** from Shi *et al.*: [Masked Label Prediction: Unified Message Passing Model for Semi-Supervised Classification](https://arxiv.org/abs/2009.03509) (CoRR 2020)
+* **[SAGEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SAGEConv)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/graph_sage_unsup.py)]
 * **[GraphConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GraphConv)** from, *e.g.*, Morris *et al.*: [Weisfeiler and Leman Go Neural: Higher-order Graph Neural Networks](https://arxiv.org/abs/1810.02244) (AAAI 2019)
 * **[GatedGraphConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GatedGraphConv)** from Li *et al.*: [Gated Graph Sequence Neural Networks](https://arxiv.org/abs/1511.05493) (ICLR 2016)
 * **[GINConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GINConv)** from Xu *et al.*: [How Powerful are Graph Neural Networks?](https://arxiv.org/abs/1810.00826) (ICLR 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/mutag_gin.py)]
-* **[GINEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GINEConv)** from Wu *et al.*: [Strategies for Pre-training Graph Neural Networks](https://arxiv.org/abs/1905.12265) (ICLR 2020)
+* **[GINEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GINEConv)** from Hu *et al.*: [Strategies for Pre-training Graph Neural Networks](https://arxiv.org/abs/1905.12265) (ICLR 2020)
 * **[ARMAConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.ARMAConv)** from Bianchi *et al.*: [Graph Neural Networks with Convolutional ARMA Filters](https://arxiv.org/abs/1901.01343) (CoRR 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/arma.py)]
 * **[SGConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SGConv)** from Wu *et al.*: [Simplifying Graph Convolutional Networks](https://arxiv.org/abs/1902.07153) (CoRR 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/sgc.py)]
 * **[APPNP](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.APPNP)** from Klicpera *et al.*: [Predict then Propagate: Graph Neural Networks meet Personalized PageRank](https://arxiv.org/abs/1810.05997) (ICLR 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/citation/appnp.py)]
@@ -104,7 +110,10 @@ In detail, the following methods are currently implemented:
 * **[Node2Vec](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.Node2Vec)** from Grover and Leskovec: [node2vec: Scalable Feature Learning for Networks](https://arxiv.org/abs/1607.00653) (KDD 2016) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/node2vec.py)]
 * **[MetaPath2Vec](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.MetaPath2Vec)** from Dong *et al.*: [metapath2vec: Scalable Representation Learning for Heterogeneous Networks](https://ericdongyx.github.io/papers/KDD17-dong-chawla-swami-metapath2vec.pdf) (KDD 2017) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/metapath2vec.py)]
 * **[Deep Graph Infomax](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.DeepGraphInfomax)** from Veličković *et al.*: [Deep Graph Infomax](https://arxiv.org/abs/1809.10341) (ICLR 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/infomax.py)]
-* All variants of **[Graph Auto-Encoders](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GAE)** from Kipf and Welling: [Variational Graph Auto-Encoders](https://arxiv.org/abs/1611.07308) (NIPS-W 2016) and Pan *et al.*: [Adversarially Regularized Graph Autoencoder for Graph Embedding](https://arxiv.org/abs/1802.04407) (IJCAI 2018) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/autoencoder.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/argva_node_clustering.py)]
+* All variants of **[Graph Autoencoders](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GAE)** and **[Variational Autoencoders](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.VGAE)** from:
+    * [Variational Graph Auto-Encoders](https://arxiv.org/abs/1611.07308) from Kipf and Welling (NIPS-W 2016) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/autoencoder.py)]
+    * [Adversarially Regularized Graph Autoencoder for Graph Embedding](https://arxiv.org/abs/1802.04407) from Pan *et al.* (IJCAI 2018) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/argva_node_clustering.py)]
+    * [Simple and Effective Graph Autoencoders with One-Hop Linear Models](https://arxiv.org/abs/2001.07614) from Salha *et al.* (ECML 2020) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/autoencoder.py)]
 * **[SEAL](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/seal_link_pred.py)** from Zhang and Chen: [Link Prediction Based on Graph Neural Networks](https://arxiv.org/pdf/1802.09691.pdf) (NeurIPS 2018)
 * **[RENet](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.RENet)** from Jin *et al.*: [Recurrent Event Network for Reasoning over Temporal Knowledge Graphs](https://arxiv.org/abs/1904.05530) (ICLR-W 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/renet.py)]
 * **[GraphUNet](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GraphUNet)** from Gao and Ji: [Graph U-Nets](https://arxiv.org/abs/1905.05178) (ICML 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/graph_unet.py)]
@@ -160,11 +169,11 @@ where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101` or `cu102` d
 To install the binaries for PyTorch 1.5.0/1.5.1, simply run
 
 ```sh
-$ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-$ pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-$ pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-$ pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-$ pip install torch-geometric
+pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+pip install torch-geometric
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101` or `cu102` depending on your PyTorch installation.
@@ -180,11 +189,11 @@ where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101` or `cu102` d
 To install the binaries for PyTorch 1.4.0, simply run
 
 ```sh
-$ pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
-$ pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
-$ pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
-$ pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
-$ pip install torch-geometric
+pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-1.4.0.html
+pip install torch-geometric
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu100` or `cu101` depending on your PyTorch installation.
@@ -195,11 +204,19 @@ where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu100` or `cu101` d
 | **Windows** | ✅    | ❌     | ❌      | ✅      |
 | **macOS**   | ✅    |        |         |         |
 
+### From master
+
+In case you want to experiment with the latest PyG features which did not get released yet, you can install PyG from master via
+
+```
+pip install git+https://github.com/rusty1s/pytorch_geometric.git
+```
+
 ## Running examples
 
 ```
-$ cd examples
-$ python gcn.py
+cd examples
+python gcn.py
 ```
 
 ## Cite

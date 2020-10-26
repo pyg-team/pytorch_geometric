@@ -59,15 +59,12 @@ class ClusterData(torch.utils.data.Dataset):
         self.perm = perm
 
     def __permute_data__(self, data, node_idx, adj):
-        edge_idx = adj.storage.value()
         data = copy.copy(data)
-        N, E = data.num_nodes, data.num_edges
+        N = data.num_nodes
 
         for key, item in data:
             if item.size(0) == N:
                 data[key] = item[node_idx]
-            if item.size(0) == E:
-                data[key] = item[edge_idx]
 
         data.edge_index = None
         data.adj = adj
@@ -81,18 +78,22 @@ class ClusterData(torch.utils.data.Dataset):
         start = int(self.partptr[idx])
         length = int(self.partptr[idx + 1]) - start
 
+        N, E = self.data.num_nodes, self.data.num_edges
         data = copy.copy(self.data)
-        N, E = data.num_nodes, data.num_edges
+        if hasattr(data, '__num_nodes__'):
+            del data.__num_nodes__
         adj, data.adj = data.adj, None
 
         adj = adj.narrow(0, start, length).narrow(1, start, length)
         edge_idx = adj.storage.value()
 
         for key, item in data:
-            if item.size(0) == N:
+            if isinstance(item, torch.Tensor) and item.size(0) == N:
                 data[key] = item.narrow(0, start, length)
-            if item.size(0) == E:
+            elif isinstance(item, torch.Tensor) and item.size(0) == E:
                 data[key] = item[edge_idx]
+            else:
+                data[key] = item
 
         row, col, _ = adj.coo()
         data.edge_index = torch.stack([row, col], dim=0)
@@ -150,6 +151,8 @@ class ClusterLoader(torch.utils.data.DataLoader):
         node_idx = torch.cat([torch.arange(s, e) for s, e in zip(start, end)])
 
         data = copy.copy(self.cluster_data.data)
+        if hasattr(data, '__num_nodes__'):
+            del data.__num_nodes__
         adj, data.adj = self.cluster_data.data.adj, None
         adj = cat([adj.narrow(0, s, e - s) for s, e in zip(start, end)], dim=0)
         adj = adj.index_select(1, node_idx)
@@ -157,9 +160,11 @@ class ClusterLoader(torch.utils.data.DataLoader):
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in data:
-            if item.size(0) == N:
+            if isinstance(item, torch.Tensor) and item.size(0) == N:
                 data[key] = item[node_idx]
-            if item.size(0) == E:
+            elif isinstance(item, torch.Tensor) and item.size(0) == E:
                 data[key] = item[edge_idx]
+            else:
+                data[key] = item
 
         return data

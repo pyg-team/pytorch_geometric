@@ -20,6 +20,14 @@ def test_data():
     assert len(data) == 2
     assert 'x' in data and 'edge_index' in data and 'pos' not in data
 
+    D = data.to_dict()
+    assert len(D) == 2
+    assert 'x' in D and 'edge_index' in D
+
+    D = data.to_namedtuple()
+    assert len(D) == 2
+    assert D.x is not None and D.edge_index is not None
+
     assert data.__cat_dim__('x', data.x) == 0
     assert data.__cat_dim__('edge_index', data.edge_index) == -1
     assert data.__inc__('x', data.x) == 0

@@ -39,6 +39,7 @@ from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
 from .word_net import WordNet18
 from .wikics import WikiCS
+from .webkb import WebKB
 from .jodie import JODIEDataset
 
 __all__ = [
@@ -84,5 +85,6 @@ __all__ = [
     'AMiner',
     'WordNet18',
     'WikiCS',
+    'WebKB',
     'JODIEDataset',
 ]

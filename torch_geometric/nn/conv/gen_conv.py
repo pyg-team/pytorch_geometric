@@ -92,7 +92,8 @@ class GENConv(MessagePassing):
                  learn_msg_scale: bool = False, norm: str = 'batch',
                  num_layers: int = 2, eps: float = 1e-7, **kwargs):
 
-        super(GENConv, self).__init__(aggr=None, **kwargs)
+        kwargs.setdefault('aggr', None)
+        super(GENConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -151,7 +152,7 @@ class GENConv(MessagePassing):
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
         if self.msg_norm is not None:
-            out = self.msg_norm(x, out)
+            out = self.msg_norm(x[0], out)
 
         x_r = x[1]
         if x_r is not None:

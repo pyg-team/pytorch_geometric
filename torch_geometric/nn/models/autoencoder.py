@@ -75,7 +75,7 @@ class GAE(torch.nn.Module):
         r"""Runs the decoder and computes edge probabilities."""
         return self.decoder(*args, **kwargs)
 
-    def recon_loss(self, z, pos_edge_index):
+    def recon_loss(self, z, pos_edge_index, neg_edge_index=None):
         r"""Given latent variables :obj:`z`, computes the binary cross
         entropy loss for positive edges :obj:`pos_edge_index` and negative
         sampled edges.
@@ -83,6 +83,9 @@ class GAE(torch.nn.Module):
         Args:
             z (Tensor): The latent space :math:`\mathbf{Z}`.
             pos_edge_index (LongTensor): The positive edges to train against.
+            neg_edge_index (LongTensor, optional): The negative edges to train
+                against. If not given, uses negative sampling to calculate
+                negative edges. (default: :obj:`None`)
         """
 
         pos_loss = -torch.log(
@@ -91,8 +94,8 @@ class GAE(torch.nn.Module):
         # Do not include self-loops in negative samples
         pos_edge_index, _ = remove_self_loops(pos_edge_index)
         pos_edge_index, _ = add_self_loops(pos_edge_index)
-
-        neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
+        if neg_edge_index is None:
+            neg_edge_index = negative_sampling(pos_edge_index, z.size(0))
         neg_loss = -torch.log(1 -
                               self.decoder(z, neg_edge_index, sigmoid=True) +
                               EPS).mean()

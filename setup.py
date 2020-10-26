@@ -9,6 +9,7 @@ install_requires = [
     'tqdm',
     'scipy',
     'networkx',
+    'python-louvain',
     'scikit-learn',
     'numba',
     'requests',

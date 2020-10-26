@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import ssl
 import os.path as osp
 from six.moves import urllib
 
@@ -28,7 +29,9 @@ def download_url(url, folder, log=True):
         print('Downloading', url)
 
     makedirs(folder)
-    data = urllib.request.urlopen(url)
+
+    context = ssl._create_unverified_context()
+    data = urllib.request.urlopen(url, context=context)
 
     with open(path, 'wb') as f:
         f.write(data.read())

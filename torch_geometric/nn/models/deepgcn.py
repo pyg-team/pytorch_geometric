@@ -88,7 +88,7 @@ class DeepGCNLayer(torch.nn.Module):
             else:
                 h = self.conv(x, *args, **kwargs)
             if self.norm is not None:
-                h = self.norm(x)
+                h = self.norm(h)
             if self.act is not None:
                 h = self.act(h)
 

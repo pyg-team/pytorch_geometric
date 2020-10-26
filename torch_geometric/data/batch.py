@@ -15,6 +15,12 @@ class Batch(Data):
     def __init__(self, batch=None, **kwargs):
         super(Batch, self).__init__(**kwargs)
 
+        for key, item in kwargs.items():
+            if key == 'num_nodes':
+                self.__num_nodes__ = item
+            else:
+                self[key] = item
+
         self.batch = batch
         self.__data_class__ = Data
         self.__slices__ = None
@@ -35,10 +41,15 @@ class Batch(Data):
         assert 'batch' not in keys
 
         batch = Batch()
+        for key in data_list[0].__dict__.keys():
+            if key[:2] != '__' and key[-2:] != '__':
+                batch[key] = None
+
         batch.__data_class__ = data_list[0].__class__
         for key in keys + ['batch']:
             batch[key] = []
 
+        device = None
         slices = {key: [0] for key in keys}
         cumsum = {key: [0] for key in keys}
         cat_dims = {}
@@ -73,8 +84,10 @@ class Batch(Data):
                 cat_dims[key] = cat_dim
                 if isinstance(item, Tensor):
                     size = item.size(cat_dim)
+                    device = item.device
                 elif isinstance(item, SparseTensor):
                     size = torch.tensor(item.sizes())[torch.tensor(cat_dim)]
+                    device = item.device()
 
                 slices[key].append(size + slices[key][-1])
                 inc = data.__inc__(key, item)
@@ -88,12 +101,14 @@ class Batch(Data):
                             tmp = f'{key}_{j}_batch'
                             batch[tmp] = [] if i == 0 else batch[tmp]
                             batch[tmp].append(
-                                torch.full((size, ), i, dtype=torch.long))
+                                torch.full((size, ), i, dtype=torch.long,
+                                           device=device))
                     else:
                         tmp = f'{key}_batch'
                         batch[tmp] = [] if i == 0 else batch[tmp]
                         batch[tmp].append(
-                            torch.full((size, ), i, dtype=torch.long))
+                            torch.full((size, ), i, dtype=torch.long,
+                                       device=device))
 
             if hasattr(data, '__num_nodes__'):
                 num_nodes_list.append(data.__num_nodes__)
@@ -102,7 +117,8 @@ class Batch(Data):
 
             num_nodes = data.num_nodes
             if num_nodes is not None:
-                item = torch.full((num_nodes, ), i, dtype=torch.long)
+                item = torch.full((num_nodes, ), i, dtype=torch.long,
+                                  device=device)
                 batch.batch.append(item)
 
         # Fix initial slice values:

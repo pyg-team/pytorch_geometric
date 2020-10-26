@@ -47,7 +47,8 @@ class PointConv(MessagePassing):
     def __init__(self, local_nn: Optional[Callable] = None,
                  global_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, **kwargs):
-        super(PointConv, self).__init__(aggr='max', **kwargs)
+        kwargs.setdefault('aggr', 'max')
+        super(PointConv, self).__init__(**kwargs)
 
         self.local_nn = local_nn
         self.global_nn = global_nn

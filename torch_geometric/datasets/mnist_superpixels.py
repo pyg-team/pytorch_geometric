@@ -30,14 +30,10 @@ class MNISTSuperpixels(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'http://ls7-www.cs.uni-dortmund.de/cvpr_geometric_dl/' \
-          'mnist_superpixels.tar.gz'
+    url = ('https://graphics.cs.tu-dortmund.de/fileadmin/ls7-www/misc/cvpr/'
+           'mnist_superpixels.tar.gz')
 
-    def __init__(self,
-                 root,
-                 train=True,
-                 transform=None,
-                 pre_transform=None,
+    def __init__(self, root, train=True, transform=None, pre_transform=None,
                  pre_filter=None):
         super(MNISTSuperpixels, self).__init__(root, transform, pre_transform,
                                                pre_filter)

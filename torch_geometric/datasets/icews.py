@@ -96,7 +96,7 @@ class ICEWS18(EventDataset):
         events = []
         for path in self.raw_paths:
             data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)
-            data[:, 3] = data[:, 3] / 24
+            data[:, 3] = data[:, 3] // 24
             events += [data]
         return torch.cat(events, dim=0)
 

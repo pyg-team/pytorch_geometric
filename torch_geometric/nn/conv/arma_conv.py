@@ -53,7 +53,8 @@ class ARMAConv(MessagePassing):
                  num_stacks: int = 1, num_layers: int = 1,
                  shared_weights: bool = False, act: Callable = F.relu,
                  dropout: float = 0., bias: bool = True, **kwargs):
-        super(ARMAConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(ARMAConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -67,7 +68,7 @@ class ARMAConv(MessagePassing):
         T = 1 if self.shared_weights else T
 
         self.init_weight = Parameter(torch.Tensor(K, F_in, F_out))
-        self.weight = Parameter(torch.Tensor(max(0, T - 1), K, F_out, F_out))
+        self.weight = Parameter(torch.Tensor(max(1, T - 1), K, F_out, F_out))
         self.root_weight = Parameter(torch.Tensor(T, K, F_in, F_out))
 
         if bias:
@@ -115,8 +116,7 @@ class ARMAConv(MessagePassing):
             if self.bias is not None:
                 out += self.bias[0 if self.shared_weights else t]
 
-            if t < self.num_layers - 1:
-                out = self.act(out)
+            out = self.act(out)
 
         return out.mean(dim=-3)
 

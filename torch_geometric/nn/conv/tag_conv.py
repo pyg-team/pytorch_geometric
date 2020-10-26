@@ -33,7 +33,8 @@ class TAGConv(MessagePassing):
     """
     def __init__(self, in_channels: int, out_channels: int, K: int = 3,
                  bias: bool = True, normalize: bool = True, **kwargs):
-        super(TAGConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(TAGConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

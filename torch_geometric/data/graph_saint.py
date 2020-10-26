@@ -61,7 +61,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         self.adj = SparseTensor(
             row=data.edge_index[0], col=data.edge_index[1],
             value=torch.arange(self.E, device=data.edge_index.device),
-            sparse_sizes=(N, N)).t()
+            sparse_sizes=(N, N))
 
         self.data = copy.copy(data)
         self.data.edge_index = None
@@ -104,9 +104,9 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in self.data:
-            if item.size(0) == self.N:
+            if isinstance(item, torch.Tensor) and item.size(0) == self.N:
                 data[key] = item[node_idx]
-            elif item.size(0) == self.E:
+            elif isinstance(item, torch.Tensor) and item.size(0) == self.E:
                 data[key] = item[edge_idx]
             else:
                 data[key] = item

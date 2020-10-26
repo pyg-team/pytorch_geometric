@@ -282,7 +282,8 @@ class DimeNet(torch.nn.Module):
             (default: :obj:`swish`)
     """
 
-    url = 'https://github.com/klicperajo/dimenet/raw/master/pretrained'
+    url = ('https://github.com/klicperajo/dimenet/raw/master/pretrained/'
+           'dimenet')
 
     def __init__(self, hidden_channels, out_channels, num_blocks, num_bilinear,
                  num_spherical, num_radial, cutoff=5.0, envelope_exponent=5,

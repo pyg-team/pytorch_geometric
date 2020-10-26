@@ -25,7 +25,6 @@ class GraphUNet(torch.nn.Module):
         act (torch.nn.functional, optional): The nonlinearity to use.
             (default: :obj:`torch.nn.functional.relu`)
     """
-
     def __init__(self, in_channels, hidden_channels, out_channels, depth,
                  pool_ratios=0.5, sum_res=True, act=F.relu):
         super(GraphUNet, self).__init__()
@@ -111,6 +110,7 @@ class GraphUNet(torch.nn.Module):
         return x
 
     def augment_adj(self, edge_index, edge_weight, num_nodes):
+        edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
                                                  num_nodes=num_nodes)
         edge_index, edge_weight = sort_edge_index(edge_index, edge_weight,

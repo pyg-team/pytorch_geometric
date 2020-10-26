@@ -6,6 +6,7 @@ from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .gat_conv import GATConv
+from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
 from .tag_conv import TAGConv
 from .gin_conv import GINConv, GINEConv
@@ -30,6 +31,7 @@ from .le_conv import LEConv
 from .pna_conv import PNAConv
 from .cluster_gcn_conv import ClusterGCNConv
 from .gen_conv import GENConv
+from .gcn2_conv import GCN2Conv
 
 __all__ = [
     'MessagePassing',
@@ -40,6 +42,7 @@ __all__ = [
     'GravNetConv',
     'GatedGraphConv',
     'GATConv',
+    'TransformerConv',
     'AGNNConv',
     'TAGConv',
     'GINConv',
@@ -68,4 +71,5 @@ __all__ = [
     'PNAConv',
     'ClusterGCNConv',
     'GENConv',
+    'GCN2Conv',
 ]

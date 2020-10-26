@@ -1,3 +1,4 @@
+from copy import copy
 from math import sqrt
 from typing import Optional
 
@@ -43,7 +44,9 @@ class GNNExplainer(torch.nn.Module):
 
     coeffs = {
         'edge_size': 0.005,
+        'edge_reduction': 'sum',
         'node_feat_size': 1.0,
+        'node_feat_reduction': 'mean',
         'edge_ent': 1.0,
         'node_feat_ent': 0.1,
     }
@@ -117,12 +120,14 @@ class GNNExplainer(torch.nn.Module):
         loss = -log_logits[node_idx, pred_label[node_idx]]
 
         m = self.edge_mask.sigmoid()
-        loss = loss + self.coeffs['edge_size'] * m.sum()
+        edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
+        loss = loss + self.coeffs['edge_size'] * edge_reduce(m)
         ent = -m * torch.log(m + EPS) - (1 - m) * torch.log(1 - m + EPS)
         loss = loss + self.coeffs['edge_ent'] * ent.mean()
 
         m = self.node_feat_mask.sigmoid()
-        loss = loss + self.coeffs['node_feat_size'] * m.sum()
+        node_feat_reduce = getattr(torch, self.coeffs['node_feat_reduction'])
+        loss = loss + self.coeffs['node_feat_size'] * node_feat_reduce(m)
         ent = -m * torch.log(m + EPS) - (1 - m) * torch.log(1 - m + EPS)
         loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
 
@@ -233,10 +238,12 @@ class GNNExplainer(torch.nn.Module):
         mapping = {k: i for k, i in enumerate(subset.tolist())}
         G = nx.relabel_nodes(G, mapping)
 
-        kwargs['with_labels'] = kwargs.get('with_labels') or True
-        kwargs['font_size'] = kwargs.get('font_size') or 10
-        kwargs['node_size'] = kwargs.get('node_size') or 800
-        kwargs['cmap'] = kwargs.get('cmap') or 'cool'
+        node_kwargs = copy(kwargs)
+        node_kwargs['node_size'] = kwargs.get('node_size') or 800
+        node_kwargs['cmap'] = kwargs.get('cmap') or 'cool'
+
+        label_kwargs = copy(kwargs)
+        label_kwargs['font_size'] = kwargs.get('font_size') or 10
 
         pos = nx.spring_layout(G)
         ax = plt.gca()
@@ -246,12 +253,12 @@ class GNNExplainer(torch.nn.Module):
                 textcoords='data', arrowprops=dict(
                     arrowstyle="->",
                     alpha=max(data['att'], 0.1),
-                    shrinkA=sqrt(kwargs['node_size']) / 2.0,
-                    shrinkB=sqrt(kwargs['node_size']) / 2.0,
+                    shrinkA=sqrt(node_kwargs['node_size']) / 2.0,
+                    shrinkB=sqrt(node_kwargs['node_size']) / 2.0,
                     connectionstyle="arc3,rad=0.1",
                 ))
-        nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **kwargs)
-        nx.draw_networkx_labels(G, pos, **kwargs)
+        nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **node_kwargs)
+        nx.draw_networkx_labels(G, pos, **label_kwargs)
 
         return ax, G
 

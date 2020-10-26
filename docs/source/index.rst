@@ -20,6 +20,7 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    notes/batching
    notes/sparse_tensor
    notes/jit
+   notes/colabs
    notes/resources
 
 .. toctree::

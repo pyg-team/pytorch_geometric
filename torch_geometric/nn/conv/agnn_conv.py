@@ -37,7 +37,8 @@ class AGNNConv(MessagePassing):
     """
     def __init__(self, requires_grad: bool = True, add_self_loops: bool = True,
                  **kwargs):
-        super(AGNNConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(AGNNConv, self).__init__(**kwargs)
 
         self.requires_grad = requires_grad
         self.add_self_loops = add_self_loops
