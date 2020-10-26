@@ -34,6 +34,7 @@ class TGN(torch.nn.Module):
         )
 
         self.register_buffer('memory', torch.empty(num_nodes, memory_dim))
+        self.register_buffer('last_update', torch.empty(num_nodes))
         self.previous_events = None
 
         self.reset_parameters()
@@ -61,15 +62,20 @@ class TGN(torch.nn.Module):
 
     def reset_memory_(self):
         zeros(self.memory)
+        zeros(self.last_update)
 
     def update_memory_(self, src, dst, t, raw_msg):
         # Compute message.
-        t_enc = self.time_enc(t.view(-1, 1).to(raw_msg.dtype)).cos()
+        t_rel_src = (t - self.last_update[src]).view(-1, 1).to(raw_msg.dtype)
+        t_src_enc = self.time_enc(t_rel_src).cos()
+
+        t_rel_dst = (t - self.last_update[dst]).view(-1, 1).to(raw_msg.dtype)
+        t_dst_enc = self.time_enc(t_rel_dst).cos()
 
         msg_src = self.message_module_src(self.memory[src], self.memory[dst],
-                                          raw_msg, t_enc)
+                                          raw_msg, t_src_enc)
         msg_dst = self.message_module_dst(self.memory[dst], self.memory[src],
-                                          raw_msg, t_enc)
+                                          raw_msg, t_dst_enc)
 
         # Aggregate messages.
         idx, msg_aggr = self.aggregator_module(
@@ -77,6 +83,9 @@ class TGN(torch.nn.Module):
             torch.cat([src, dst], dim=0),
             torch.cat([t, t], dim=0),
         )
+
+        self.last_update[src] = t
+        self.last_update[dst] = t
 
         # Update memory.
         self.memory[idx] = self.gru(msg_aggr, self.memory[idx])
