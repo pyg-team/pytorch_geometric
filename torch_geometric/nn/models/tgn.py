@@ -39,10 +39,7 @@ class TGN(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.time_enc.reset_parameters()  # TODO
-        # self.time_enc.weight = torch.nn.Parameter((torch.from_numpy(
-        #     1 / 10**np.linspace(0, 9, dimension))).float().reshape(
-        #         dimension, -1))
+        self.time_enc.reset_parameters()
         self.gru.reset_parameters()
         reset(self.link_pred)
         self.reset_memory_()
