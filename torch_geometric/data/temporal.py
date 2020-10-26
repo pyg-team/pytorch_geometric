@@ -1,3 +1,5 @@
+import copy
+
 import torch
 import numpy as np
 
@@ -12,9 +14,27 @@ class TemporalData(object):
         for key, item in kwargs.items():
             self[key] = item
 
-    def __getitem__(self, key):
-        r"""Gets the data of the attribute :obj:`key`."""
-        return getattr(self, key, None)
+    def __getitem__(self, idx):
+        if isinstance(idx, str):
+            return getattr(self, idx, None)
+
+        # Select entries based on **time**.
+        if isinstance(idx, int):
+            mask = self.t == idx
+        elif isinstance(idx, slice):
+            start = idx.start if idx.start is not None else int(self.t.min())
+            stop = idx.stop if idx.stop is not None else int(self.t.max() + 1)
+            assert idx.step is None and start <= stop
+            mask = (self.t >= start) & (self.t < stop)
+        else:
+            raise IndexError(
+                f'Only integers, slices (`:`), and strings are valid indices '
+                f'(got {type(idx).__name__}).')
+
+        data = copy.copy(self)
+        for key, item in data:
+            data[key] = item[mask]
+        return data
 
     def __setitem__(self, key, value):
         """Sets the attribute :obj:`key` to :obj:`value`."""
@@ -76,7 +96,14 @@ class TemporalData(object):
         return 0
 
     def train_val_test_split(self, val_ratio=0.15, test_ratio=0.15):
-        val_time, test_time = np.quantile(self.t.cpu().numpy(), [0.7, 0.85])
+        val_time, test_time = np.quantile(
+            self.t.cpu().numpy(),
+            [1. - val_ratio - test_ratio, 1. - test_ratio])
+
+        val_time = int(round(val_time))
+        test_time = int(round(test_time))
+
+        return self[:val_time], self[val_time:test_time], self[test_time:]
 
     def __repr__(self):
         cls = str(self.__class__.__name__)

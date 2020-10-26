@@ -6,7 +6,6 @@ from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 
 
 class JODIEDataset(InMemoryDataset):
-
     url = 'http://snap.stanford.edu/jodie/{}.csv'
     names = ['reddit', 'wikipedia', 'mooc', 'lastfm']
 
@@ -47,6 +46,10 @@ class JODIEDataset(InMemoryDataset):
         x = torch.from_numpy(df.iloc[:, 4:].values).to(torch.float)
 
         data = TemporalData(src=src, dst=dst, t=t, x=x, y=y)
+
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
+
         torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self):
