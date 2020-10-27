@@ -13,7 +13,9 @@ class LEConv(MessagePassing):
         \mathbf{x}^{\prime}_i = \mathbf{x}_i \cdot \mathbf{\Theta}_1 +
         \sum_{j \in \mathcal{N}(i)} a_{j,i}
         (\mathbf{x}_i \cdot \mathbf{\Theta}_2 - \mathbf{x}_j \cdot
-        \mathbf{\Theta}_3)
+        \mathbf{\Theta}_3) e_{j,i}
+
+    where :math:`e_{j,i}` is the weight of edge with source i and target j (default: 1)
 
     Args:
         in_channels (int): Size of each input sample.

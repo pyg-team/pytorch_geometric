@@ -14,7 +14,9 @@ class GraphConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}_1 \mathbf{x}_i +
-        \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta}_2 \mathbf{x}_j.
+        \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta}_2 \mathbf{x}_j e_{j,i}.
+
+    where :math:`e_{j,i}` is the weight of edge with source i and target j (default: 1)
 
     Args:
         in_channels (int or tuple): Size of each input sample. A tuple

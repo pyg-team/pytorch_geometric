@@ -17,7 +17,7 @@ class GatedGraphConv(MessagePassing):
         \mathbf{h}_i^{(0)} &= \mathbf{x}_i \, \Vert \, \mathbf{0}
 
         \mathbf{m}_i^{(l+1)} &= \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta}
-        \cdot \mathbf{h}_j^{(l)}
+        \cdot \mathbf{h}_j^{(l)} \cdot e_{j,i}
 
         \mathbf{h}_i^{(l+1)} &= \textrm{GRU} (\mathbf{m}_i^{(l+1)},
         \mathbf{h}_i^{(l)})
@@ -25,6 +25,7 @@ class GatedGraphConv(MessagePassing):
     up to representation :math:`\mathbf{h}_i^{(L)}`.
     The number of input channels of :math:`\mathbf{x}_i` needs to be less or
     equal than :obj:`out_channels`.
+    :math:`e_{j,i}` is the weight of edge with source i and target j (default: 1)
 
     Args:
         out_channels (int): Size of each input sample.

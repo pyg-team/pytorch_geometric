@@ -25,6 +25,7 @@ class APPNP(MessagePassing):
     where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
     adjacency matrix with inserted self-loops and
     :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
+    Adjacency matrix can include values other than 0 or 1 representing the edge weights.
 
     Args:
         K (int): Number of iterations :math:`K`.
