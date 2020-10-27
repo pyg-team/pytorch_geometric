@@ -24,7 +24,7 @@ train_data, val_data, test_data = data.train_val_test_split(
 #                            out_channels=256, sampler=sampler)
 
 model = TGN(
-    data.num_nodes, memory_dim=100, time_dim=100,
+    data, memory_dim=100, time_dim=100,
     message_module=IdentityMessage(memory_dim=100, raw_msg_dim=172,
                                    time_dim=100),
     aggregator_module=LastAggregator(),
@@ -40,27 +40,31 @@ def train():
 
     total_loss = 0
     backprop_every = 1
-    for i, batch in enumerate(train_data.seq_batches(batch_size=200)):
+    for i, batch in enumerate(train_data.seq_batches(batch_size=5)):
 
-        if i % backprop_every == 0:
-            loss = 0
-            optimizer.zero_grad()
+        # if i % backprop_every == 0:
+        #     loss = 0
+        #     optimizer.zero_grad()
 
         src, pos_dst, t, x = batch.src, batch.dst, batch.t, batch.x
         neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
-        pos_out, neg_out = model(src, pos_dst, neg_dst, t, x)
-        loss += criterion(pos_out, torch.ones_like(pos_out))
-        loss += criterion(neg_out, torch.zeros_like(neg_out))
+        model(src, pos_dst, neg_dst, t, x)
 
-        total_loss += float(loss) * batch.num_events
+        if i == 2:
+            raise NotImplementedError
+        # pos_out, neg_out = model(src, pos_dst, neg_dst, t, x)
+        # loss += criterion(pos_out, torch.ones_like(pos_out))
+        # loss += criterion(neg_out, torch.zeros_like(neg_out))
 
-        if (i + 1) % backprop_every == 0:
-            loss = loss / backprop_every
-            loss.backward()
-            optimizer.step()
-            model.detach_memory()
+        # total_loss += float(loss) * batch.num_events
+
+        # if (i + 1) % backprop_every == 0:
+        #     loss = loss / backprop_every
+        #     loss.backward()
+        #     optimizer.step()
+        #     model.detach_memory()
 
     return total_loss / train_data.num_events
 

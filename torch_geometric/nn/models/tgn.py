@@ -5,28 +5,30 @@ import torch
 from torch.nn import Sequential, Linear, ReLU, GRUCell
 from torch_scatter import scatter_max, scatter_mean
 from torch_sparse import SparseTensor
+from torch_geometric.data import TemporalData
 
 from torch_geometric.nn import MessagePassing
 from torch_geometric.nn.inits import reset, zeros
 
 
 class TGN(torch.nn.Module):
-    def __init__(self, num_nodes: int, memory_dim: int, time_dim: int,
+    def __init__(self, data: TemporalData, memory_dim: int, time_dim: int,
                  message_module: Callable, aggregator_module: Callable,
                  embedding_module: Callable):
         super(TGN, self).__init__()
 
-        self.num_nodes = num_nodes
+        self.data = data
+        num_nodes = data.num_nodes
         self.memory_dim = memory_dim
         self.time_dim = time_dim
 
-        self.message_module_src = message_module
-        self.message_module_dst = copy.deepcopy(message_module)
+        self.message_s_module = message_module
+        self.message_d_module = copy.deepcopy(message_module)
         self.aggregator_module = aggregator_module
         self.embedding_module = embedding_module
 
         self.time_enc = Linear(1, time_dim)
-        self.gru = GRUCell(self.message_module_dst.out_channels, memory_dim)
+        self.gru = GRUCell(message_module.out_channels, memory_dim)
 
         embedding_dim = self.embedding_module.out_channels
         self.link_pred = Sequential(
@@ -36,19 +38,20 @@ class TGN(torch.nn.Module):
         )
 
         self.register_buffer('memory', torch.empty(num_nodes, memory_dim))
-        self.register_buffer('last_update',
-                             torch.empty(num_nodes, dtype=torch.long))
+        last_update = torch.empty(num_nodes, dtype=torch.long)
+        self.register_buffer('last_update', last_update)
 
-        self.previous_batch = None
         self.current_event_id = 0
+        self.msg_s_store = {}
+        self.msg_d_store = {}
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        if hasattr(self.message_module_src, 'reset_parameters'):
-            self.message_module_src.reset_parameters()
-        if hasattr(self.message_module_dst, 'reset_parameters'):
-            self.message_module_dst.reset_parameters()
+        if hasattr(self.message_s_module, 'reset_parameters'):
+            self.message_s_module.reset_parameters()
+        if hasattr(self.message_d_module, 'reset_parameters'):
+            self.message_d_module.reset_parameters()
         if hasattr(self.aggregator_module, 'reset_parameters'):
             self.aggregator_module.reset_parameters()
         if hasattr(self.embedding_module, 'reset_parameters'):
@@ -61,30 +64,89 @@ class TGN(torch.nn.Module):
     def reset_state(self):
         zeros(self.memory)
         zeros(self.last_update)
-        self.previous_batch = None
         self.current_event_id = 0
+        empty = torch.tensor([], dtype=torch.long, device=self.data.src.device)
+        num_nodes = self.data.num_nodes
+        self.msg_s_store = {i: empty for i in range(num_nodes)}
+        self.msg_d_store = {i: empty for i in range(num_nodes)}
+
+    def get_updated_memory(self, n_id):
+        nodes = n_id.tolist()
+
+        # Get previous raw messages (src->dst) involving all nodes in `n_id`.
+        idx = torch.cat([self.msg_s_store[i] for i in nodes], dim=0)
+        src1 = self.data.src[idx].to(n_id.device)
+        dst1 = self.data.dst[idx].to(n_id.device)
+        t1 = self.data.t[idx].to(n_id.device)
+        msg = self.data.x[idx].to(n_id.device)
+        t_enc = self.time_enc(
+            (self.last_update[idx] - t1).to(msg.dtype).view(-1, 1))
+
+        # Compute `msg_s` via message function.
+        msg_s = self.message_s_module(
+            self.memory[src1],
+            self.memory[dst1],
+            msg,
+            t_enc,
+        )
+
+        # Get previous raw messages (dst->src) involving all nodes in `n_id`.
+        idx = torch.cat([self.msg_d_store[i] for i in nodes], dim=0)
+        dst2 = self.data.dst[idx].to(n_id.device)
+        src2 = self.data.src[idx].to(n_id.device)
+        t2 = self.data.t[idx].to(n_id.device)
+        msg = self.data.x[idx].to(n_id.device)
+        t_enc = self.time_enc(
+            (self.last_update[idx] - t2).to(msg.dtype).view(-1, 1))
+
+        # Compute `msg_d` via message function.
+        msg_d = self.message_d_module(
+            self.memory[dst2],
+            self.memory[src2],
+            msg,
+            t_enc,
+        )
+
+        # Aggregate messages.
+        idx = torch.cat([src1, dst2], dim=0)
+        idx, perm = idx.unique(return_inverse=True)
+
+        # Aggregate messages.
+        msg_aggr = self.aggregator_module(torch.cat([msg_s, msg_d], dim=0),
+                                          perm, torch.cat([t1, t2], dim=0))
+
+        # Update "local" memory (we do not push to the real memory yet).
+        memory = self.memory.clone()
+        memory[idx] = self.gru(msg_aggr, memory[idx])
+        memory = memory[n_id]
+
+        return memory
 
     def forward(self, src, pos_dst, neg_dst, t, raw_msg):
-        # Update memory to incorporate the previous batch.
-        if self.previous_batch is not None:
-            self.update_memory(*self.previous_batch)
+        batch = torch.cat([src, pos_dst, neg_dst], dim=0).unique()
+        print(batch.shape)
+
+        memory = self.get_updated_memory(batch)  # Get local copy of memory.
+        # print(memory.shape)
+
+        # raise NotImplementedError
 
         # Embed current events.
-        emb_src = self.embedding_module(self.memory, src, t,
-                                        self.current_event_id)
-        emb_pos_dst = self.embedding_module(self.memory, pos_dst, t,
-                                            self.current_event_id)
-        emb_neg_dst = self.embedding_module(self.memory, neg_dst, t,
-                                            self.current_event_id)
+        # emb_src = self.embedding_module(self.memory, src, t,
+        #                                 self.current_event_id)
+        # emb_pos_dst = self.embedding_module(self.memory, pos_dst, t,
+        #                                     self.current_event_id)
+        # emb_neg_dst = self.embedding_module(self.memory, neg_dst, t,
+        #                                     self.current_event_id)
 
-        # Update state.
-        self.update_state(src, pos_dst, t, raw_msg)
+        # Update state and memory.
+        self.update_state(src, pos_dst)
 
-        # Perform final link prediction.
-        pos_out = self.link_pred(torch.cat([emb_src, emb_pos_dst], dim=-1))
-        neg_out = self.link_pred(torch.cat([emb_src, emb_neg_dst], dim=-1))
+        # # Perform final link prediction.
+        # pos_out = self.link_pred(torch.cat([emb_src, emb_pos_dst], dim=-1))
+        # neg_out = self.link_pred(torch.cat([emb_src, emb_neg_dst], dim=-1))
 
-        return pos_out, neg_out
+        # return pos_out, neg_out
 
     def update_memory(self, src, dst, t, raw_msg):
         # Compute message.
@@ -112,9 +174,33 @@ class TGN(torch.nn.Module):
         # Update memory.
         self.memory[idx] = self.gru(msg_aggr, self.memory[idx])
 
-    def update_state(self, src, dst, t, raw_msg):
-        self.previous_batch = (src, dst, t, raw_msg)
+    def update_state(self, src, dst):
+        event_id = torch.arange(src.size(0)) + self.current_event_id
         self.current_event_id += src.size(0)
+
+        src, perm = src.sort()
+        mask = src[1:] != src[:-1]
+        nnz = mask.nonzero(as_tuple=False).add_(1).view(-1).tolist()
+        nnz = [0] + nnz + [src.size(0)]
+        nnz = torch.tensor(nnz)
+        split = nnz[1:] - nnz[:-1]
+        splits = split.tolist()
+
+        for i, idx in zip(src.unique_consecutive().tolist(),
+                          event_id[perm].split(splits)):
+            self.msg_s_store[i] = idx
+
+        dst, perm = dst.sort()
+        mask = dst[1:] != dst[:-1]
+        nnz = mask.nonzero(as_tuple=False).add_(1).view(-1).tolist()
+        nnz = [0] + nnz + [dst.size(0)]
+        nnz = torch.tensor(nnz)
+        split = nnz[1:] - nnz[:-1]
+        splits = split.tolist()
+
+        for i, idx in zip(dst.unique_consecutive().tolist(),
+                          event_id[perm].split(splits)):
+            self.msg_d_store[i] = idx
 
     def detach_memory(self):
         self.memory.detach_()
@@ -132,15 +218,12 @@ class IdentityMessage(torch.nn.Module):
 class LastAggregator(torch.nn.Module):
     def forward(self, msg, index, t):
         _, argmax = scatter_max(t, index, dim=0)
-        index = index.unique()
-        return index, msg[argmax[index]]
+        return msg[argmax]
 
 
 class MeanAggregator(torch.nn.Module):
     def forward(self, msg, index, t):
-        out = scatter_mean(msg, index, dim=0)
-        index = index.unique()
-        return index, out[index]
+        return scatter_mean(msg, index, dim=0)
 
 
 class IdentityEmbedding(torch.nn.Module):
