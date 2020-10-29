@@ -79,6 +79,16 @@ class GCNConv(MessagePassing):
     :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
     Adjacency matrix can include values other than 0 or 1 representing the edge weights.
 
+    Another formulation is:
+
+    .. math::
+        \mathbf{x}^{\prime}_i =
+        (\sum_{j} \mathbf{x}_j \cdot e_{j,i} \cdot \frac{1}{\sqrt{d_jd_i}}) \mathbf{\Theta}
+
+    where :math:`e_{j,i}` is the weight of edge with source i and target j (default: 1) and
+    :math:`d_i = \sum_{j} e_{j,i}`
+
+
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
