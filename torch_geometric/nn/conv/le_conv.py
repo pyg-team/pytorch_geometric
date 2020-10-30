@@ -11,9 +11,11 @@ class LEConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{x}_i \cdot \mathbf{\Theta}_1 +
-        \sum_{j \in \mathcal{N}(i)} a_{j,i}
-        (\mathbf{x}_i \cdot \mathbf{\Theta}_2 - \mathbf{x}_j \cdot
-        \mathbf{\Theta}_3)
+        \sum_{j \in \mathcal{N}(i)} e_{j,i} \cdot
+        (\mathbf{\Theta}_2 \mathbf{x}_i - \mathbf{\Theta}_3 \mathbf{x}_j)
+
+    where :math:`e_{j,i}` denotes the edge weight from source node :obj:`i` to
+    target node :obj:`j` (default: :obj:`1`)
 
     Args:
         in_channels (int): Size of each input sample.

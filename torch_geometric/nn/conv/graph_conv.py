@@ -14,7 +14,11 @@ class GraphConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}_1 \mathbf{x}_i +
-        \sum_{j \in \mathcal{N}(i)} \mathbf{\Theta}_2 \mathbf{x}_j.
+        \mathbf{\Theta}_2 \sum_{j \in \mathcal{N}(i)} e_{j,i} \cdot
+        \mathbf{x}_j
+
+    where :math:`e_{j,i}` denotes the edge weight from source node :obj:`i` to
+    target node :obj:`j` (default: :obj:`1`)
 
     Args:
         in_channels (int or tuple): Size of each input sample. A tuple
@@ -28,9 +32,9 @@ class GraphConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
-                 out_channels: int, aggr: str = 'add', bias: bool = True,
-                 **kwargs):
+    def __init__(self, in_channels: Union[int, Tuple[int,
+                                                     int]], out_channels: int,
+                 aggr: str = 'add', bias: bool = True, **kwargs):
         super(GraphConv, self).__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
