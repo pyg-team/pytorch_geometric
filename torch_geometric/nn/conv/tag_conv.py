@@ -19,7 +19,8 @@ class TAGConv(MessagePassing):
 
     where :math:`\mathbf{A}` denotes the adjacency matrix and
     :math:`D_{ii} = \sum_{j=0} A_{ij}` its diagonal degree matrix.
-    Adjacency matrix can include values other than 0 or 1 representing the edge weights.
+    The adjacency matrix can include other values than :obj:`1` representing
+    edge weights via the optional :obj:`edge_weight` tensor.
 
     Args:
         in_channels (int): Size of each input sample.
