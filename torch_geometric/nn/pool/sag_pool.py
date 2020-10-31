@@ -39,8 +39,9 @@ class SAGPooling(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float): Graph pooling ratio, which is used to compute
-            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
+        ratio (float or int): Graph pooling ratio, which is used to compute
+            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
+            of :math:`k` itself, depending on whether type is float or int..
             This value is ignored if min_score is not None.
             (default: :obj:`0.5`)
         GNN (torch.nn.Module, optional): A graph neural network layer for

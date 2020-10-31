@@ -17,8 +17,9 @@ class ASAPooling(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float, optional): Graph pooling ratio, which is used to compute
-            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
+        ratio (float or int, optional): Graph pooling ratio, which is used to compute
+            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
+            of :math:`k` itself, depending on whether type is float or int..
             (default: :obj:`0.5`)
         GNN (torch.nn.Module, optional): A graph neural network layer for
             using intra-cluster properties.

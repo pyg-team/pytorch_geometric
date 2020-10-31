@@ -35,7 +35,11 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
         perm = perm + cum_num_nodes.view(-1, 1)
         perm = perm.view(-1)
 
-        k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)
+        if type(ratio) is int:
+            # Will fail if k is larger than num_nodes for any batch
+            k = num_nodes.new_full(num_nodes.shape, ratio)
+        else:
+            k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)
         mask = [
             torch.arange(k[i], dtype=torch.long, device=x.device) +
             i * max_num_nodes for i in range(batch_size)
@@ -100,8 +104,9 @@ class TopKPooling(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float): Graph pooling ratio, which is used to compute
-            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`.
+        ratio (float or int): Graph pooling ratio, which is used to compute
+            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
+            of :math:`k` itself, depending on whether type is float or int.
             This value is ignored if min_score is not None.
             (default: :obj:`0.5`)
         min_score (float, optional): Minimal node score :math:`\tilde{\alpha}`
