@@ -81,3 +81,5 @@ __all__ = [
     'GridSampling',
     'GCNNorm',
 ]
+
+classes = __all__

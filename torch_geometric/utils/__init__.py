@@ -77,3 +77,5 @@ __all__ = [
     'intersection_and_union',
     'mean_iou',
 ]
+
+classes = __all__
