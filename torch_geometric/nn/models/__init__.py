@@ -29,3 +29,5 @@ __all__ = [
     'MetaPath2Vec',
     'DeepGCNLayer',
 ]
+
+classes = sorted(__all__)

@@ -6,6 +6,14 @@ torch_geometric.nn
 
 Convolutional Layers
 --------------------
+.. currentmodule:: torch_geometric.nn.conv
+.. autosummary::
+   :nosignatures:
+
+    {% for cls in torch_geometric.nn.conv.classes %}
+    {{ cls }}
+    {% endfor %}
+
 
 .. automodule:: torch_geometric.nn.conv.message_passing
     :members:
@@ -21,25 +29,29 @@ Convolutional Layers
 
 Dense Convolutional Layers
 --------------------------
+.. currentmodule:: torch_geometric.nn.dense
+.. autosummary::
+   :nosignatures:
 
-.. automodule:: torch_geometric.nn.dense.dense_gcn_conv
+    {% for cls in torch_geometric.nn.dense.conv_classes %}
+    {{ cls }}
+    {% endfor %}
+
+    {% for cls in torch_geometric.nn.dense.conv_classes %}
+.. autoclass:: {{ cls }}
     :members:
     :undoc-members:
-
-.. automodule:: torch_geometric.nn.dense.dense_sage_conv
-    :members:
-    :undoc-members:
-
-.. automodule:: torch_geometric.nn.dense.dense_graph_conv
-    :members:
-    :undoc-members:
-
-.. automodule:: torch_geometric.nn.dense.dense_gin_conv
-    :members:
-    :undoc-members:
+    {% endfor %}
 
 Normalization Layers
 --------------------
+.. currentmodule:: torch_geometric.nn.norm
+.. autosummary::
+   :nosignatures:
+
+    {% for cls in torch_geometric.nn.norm.classes %}
+    {{ cls }}
+    {% endfor %}
 
 .. automodule:: torch_geometric.nn.norm
     :members:
@@ -47,6 +59,13 @@ Normalization Layers
 
 Global Pooling Layers
 ---------------------
+.. currentmodule:: torch_geometric.nn.glob
+.. autosummary::
+   :nosignatures:
+
+    {% for cls in torch_geometric.nn.glob.classes %}
+    {{ cls }}
+    {% endfor %}
 
 .. automodule:: torch_geometric.nn.glob
     :members:
@@ -54,6 +73,13 @@ Global Pooling Layers
 
 Pooling Layers
 --------------
+.. currentmodule:: torch_geometric.nn.pool
+.. autosummary::
+   :nosignatures:
+
+    {% for cls in torch_geometric.nn.pool.classes %}
+    {{ cls }}
+    {% endfor %}
 
 .. automodule:: torch_geometric.nn.pool
     :members:
@@ -61,6 +87,13 @@ Pooling Layers
 
 Dense Pooling Layers
 --------------------
+.. currentmodule:: torch_geometric.nn.dense
+.. autosummary::
+   :nosignatures:
+
+    {% for cls in torch_geometric.nn.dense.pool_classes %}
+    {{ cls }}
+    {% endfor %}
 
 .. automodule:: torch_geometric.nn.dense.diff_pool
     :members:
@@ -72,6 +105,13 @@ Dense Pooling Layers
 
 Unpooling Layers
 ----------------
+.. currentmodule:: torch_geometric.nn.unpool
+.. autosummary::
+   :nosignatures:
+
+    {% for cls in torch_geometric.nn.unpool.classes %}
+    {{ cls }}
+    {% endfor %}
 
 .. automodule:: torch_geometric.nn.unpool
     :members:
@@ -79,6 +119,13 @@ Unpooling Layers
 
 Models
 ------
+.. currentmodule:: torch_geometric.nn.models
+.. autosummary::
+   :nosignatures:
+
+    {% for cls in torch_geometric.nn.models.classes %}
+    {{ cls }}
+    {% endfor %}
 
 .. automodule:: torch_geometric.nn.models
     :members:

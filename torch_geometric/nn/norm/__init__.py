@@ -13,3 +13,5 @@ __all__ = [
     'PairNorm',
     'MessageNorm',
 ]
+
+classes = sorted(__all__)

@@ -11,3 +11,5 @@ __all__ = [
     'GlobalAttention',
     'Set2Set',
 ]
+
+classes = sorted(__all__)
