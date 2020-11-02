@@ -1,14 +1,11 @@
 import os.path as osp
 
 import torch
+from torch.nn import Linear
 from sklearn.metrics import average_precision_score, roc_auc_score
 from torch_geometric.datasets import JODIEDataset
 from torch_geometric.nn import TGN
-from torch_geometric.nn.models.tgn import (IdentityMessage, LastAggregator,
-                                           IdentityEmbedding)
-
-# from torch_geometric.nn.models.tgn import (NeighborSampler,
-#                                            TemporalGraphMeanGNN)
+from torch_geometric.nn.models.tgn import IdentityMessage, LastAggregator
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -18,53 +15,70 @@ data = dataset[0].to(device)
 train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
-# sampler = NeighborSampler(src=data.src, dst=data.dst, t=data.t, raw_msg=data.x,
-#                           sizes=[10])
-# GNN = TemporalGraphMeanGNN(memory_dim=100, raw_msg_dim=172, time_dim=100,
-#                            out_channels=256, sampler=sampler)
-
 model = TGN(
-    data, memory_dim=100, time_dim=100,
-    message_module=IdentityMessage(memory_dim=100, raw_msg_dim=172,
+    data.num_nodes, data.x.size(-1), memory_dim=100, time_dim=100,
+    message_module=IdentityMessage(raw_msg_dim=data.x.size(-1), memory_dim=100,
                                    time_dim=100),
-    aggregator_module=LastAggregator(),
-    embedding_module=IdentityEmbedding(memory_dim=100))
-model = model.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    aggregator_module=LastAggregator()).to(device)
+
+
+class LinkPredictor(torch.nn.Module):
+    def __init__(self, in_channels):
+        super(LinkPredictor, self).__init__()
+        self.lin_src = Linear(in_channels, in_channels)
+        self.lin_dst = Linear(in_channels, in_channels)
+        self.lin_end = Linear(in_channels, 1)
+
+    def forward(self, z_src, z_dst):
+        h = self.lin_src(z_src) + self.lin_dst(z_dst)
+        h = h.relu()
+        return self.lin_end(h)
+
+
+link_pred = LinkPredictor(in_channels=100).to(device)
+
+optimizer = torch.optim.Adam(
+    list(model.parameters()) + list(link_pred.parameters()), lr=0.0001)
 criterion = torch.nn.BCEWithLogitsLoss()
+
+assoc = torch.empty(data.num_nodes, dtype=torch.long)
 
 
 def train():
     model.train()
     model.reset_state()
+    link_pred.train()
 
     total_loss = 0
     backprop_every = 1
-    for i, batch in enumerate(train_data.seq_batches(batch_size=5)):
-
-        # if i % backprop_every == 0:
-        #     loss = 0
-        #     optimizer.zero_grad()
+    for i, batch in enumerate(train_data.seq_batches(batch_size=200)):
+        if i % backprop_every == 0:
+            loss = 0
+            optimizer.zero_grad()
 
         src, pos_dst, t, x = batch.src, batch.dst, batch.t, batch.x
         neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
-        model(src, pos_dst, neg_dst, t, x)
+        n_id = torch.cat([src, pos_dst, neg_dst]).unique()
+        assoc[n_id] = torch.arange(n_id.size(0))
 
-        if i == 2:
-            raise NotImplementedError
-        # pos_out, neg_out = model(src, pos_dst, neg_dst, t, x)
-        # loss += criterion(pos_out, torch.ones_like(pos_out))
-        # loss += criterion(neg_out, torch.zeros_like(neg_out))
+        z, last_update = model(n_id)
 
-        # total_loss += float(loss) * batch.num_events
+        pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
+        neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
 
-        # if (i + 1) % backprop_every == 0:
-        #     loss = loss / backprop_every
-        #     loss.backward()
-        #     optimizer.step()
-        #     model.detach_memory()
+        loss += criterion(pos_out, torch.ones_like(pos_out))
+        loss += criterion(neg_out, torch.zeros_like(neg_out))
+
+        model.update_state(src, pos_dst, t, raw_msg=x)
+        total_loss += float(loss) * batch.num_events
+
+        if (i + 1) % backprop_every == 0:
+            loss = loss / backprop_every
+            loss.backward()
+            optimizer.step()
+            model.detach_memory()
 
     return total_loss / train_data.num_events
 
@@ -80,7 +94,13 @@ def test(inference_data):
         neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
-        pos_out, neg_out = model(src, pos_dst, neg_dst, t, x)
+        n_id = torch.cat([src, pos_dst, neg_dst]).unique()
+        assoc[n_id] = torch.arange(n_id.size(0))
+
+        z, last_update = model(n_id)
+
+        pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
+        neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
 
         y_pred = torch.cat([pos_out, neg_out], dim=0).sigmoid().cpu()
         y_true = torch.cat(
@@ -89,6 +109,8 @@ def test(inference_data):
 
         aps.append(average_precision_score(y_true, y_pred))
         aucs.append(roc_auc_score(y_true, y_pred))
+
+        model.update_state(src, pos_dst, t, raw_msg=x)
 
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
