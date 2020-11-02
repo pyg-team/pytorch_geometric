@@ -16,9 +16,9 @@ train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
 model = TGN(
-    data.num_nodes, data.x.size(-1), memory_dim=100, time_dim=100,
-    message_module=IdentityMessage(raw_msg_dim=data.x.size(-1), memory_dim=100,
-                                   time_dim=100),
+    data.num_nodes, data.msg.size(-1), memory_dim=100, time_dim=100,
+    message_module=IdentityMessage(raw_msg_dim=data.msg.size(-1),
+                                   memory_dim=100, time_dim=100),
     aggregator_module=LastAggregator()).to(device)
 
 
@@ -56,7 +56,7 @@ def train():
             loss = 0
             optimizer.zero_grad()
 
-        src, pos_dst, t, raw_msg = batch.src, batch.dst, batch.t, batch.x
+        src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
         neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
@@ -71,7 +71,7 @@ def train():
         loss += criterion(pos_out, torch.ones_like(pos_out))
         loss += criterion(neg_out, torch.zeros_like(neg_out))
 
-        model.update_state(src, pos_dst, t, raw_msg)
+        model.update_state(src, pos_dst, t, msg)
         total_loss += float(loss) * batch.num_events
 
         if (i + 1) % backprop_every == 0:
@@ -91,7 +91,7 @@ def test(inference_data):
 
     aps, aucs = [], []
     for batch in inference_data.seq_batches(batch_size=200):
-        src, pos_dst, t, raw_msg = batch.src, batch.dst, batch.t, batch.x
+        src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
         neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
@@ -111,7 +111,7 @@ def test(inference_data):
         aps.append(average_precision_score(y_true, y_pred))
         aucs.append(roc_auc_score(y_true, y_pred))
 
-        model.update_state(src, pos_dst, t, raw_msg)
+        model.update_state(src, pos_dst, t, msg)
 
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 

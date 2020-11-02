@@ -43,9 +43,9 @@ class JODIEDataset(InMemoryDataset):
         dst += int(src.max()) + 1
         t = torch.from_numpy(df.iloc[:, 2].values).to(torch.long)
         y = torch.from_numpy(df.iloc[:, 3].values).to(torch.long)
-        x = torch.from_numpy(df.iloc[:, 4:].values).to(torch.float)
+        msg = torch.from_numpy(df.iloc[:, 4:].values).to(torch.float)
 
-        data = TemporalData(src=src, dst=dst, t=t, x=x, y=y)
+        data = TemporalData(src=src, dst=dst, t=t, msg=msg, y=y)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)

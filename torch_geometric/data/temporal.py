@@ -5,11 +5,11 @@ import numpy as np
 
 
 class TemporalData(object):
-    def __init__(self, src=None, dst=None, t=None, x=None, y=None, **kwargs):
+    def __init__(self, src=None, dst=None, t=None, msg=None, y=None, **kwargs):
         self.src = src
         self.dst = dst
         self.t = t
-        self.x = x
+        self.msg = msg
         self.y = y
         for key, item in kwargs.items():
             self[key] = item
