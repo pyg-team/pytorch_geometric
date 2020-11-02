@@ -73,3 +73,5 @@ __all__ = [
     'GENConv',
     'GCN2Conv',
 ]
+
+classes = __all__

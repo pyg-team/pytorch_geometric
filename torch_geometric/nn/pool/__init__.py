@@ -267,3 +267,5 @@ __all__ = [
     'radius_graph',
     'nearest',
 ]
+
+classes = __all__
