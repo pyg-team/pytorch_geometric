@@ -12,4 +12,4 @@ __all__ = [
     'Set2Set',
 ]
 
-classes = sorted(__all__)
+classes = __all__

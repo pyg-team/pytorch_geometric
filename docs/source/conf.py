@@ -43,7 +43,6 @@ html_theme_options = {
 html_logo = '_static/img/pyg_logo_text.svg'
 html_static_path = ['_static']
 html_context = {'css_files': ['_static/css/custom.css']}
-
 rst_context = {'torch_geometric': torch_geometric}
 
 add_module_names = False
@@ -61,13 +60,8 @@ def setup(app):
         return True if name in members else skip
 
     def rst_jinja_render(app, docname, source):
-        """
-        Render our rst pages as a jinja template for easier customization
-        """
         src = source[0]
-        rendered = app.builder.templates.render_string(
-            src, rst_context
-        )
+        rendered = app.builder.templates.render_string(src, rst_context)
         source[0] = rendered
 
     app.connect('autodoc-skip-member', skip)

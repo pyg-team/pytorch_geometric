@@ -5,14 +5,14 @@ from .dense_gin_conv import DenseGINConv
 from .diff_pool import dense_diff_pool
 from .mincut_pool import dense_mincut_pool
 
-conv_classes = [
+__all__ = [
     'DenseGCNConv',
     'DenseGINConv',
     'DenseGraphConv',
-    'DenseSAGEConv']
-pool_classes = [
+    'DenseSAGEConv',
     'dense_diff_pool',
     'dense_mincut_pool',
 ]
 
-__all__ = conv_classes + pool_classes
+conv_classes = __all__[:4]
+pool_classes = __all__[4:]

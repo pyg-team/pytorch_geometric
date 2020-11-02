@@ -268,4 +268,4 @@ __all__ = [
     'nearest',
 ]
 
-classes = sorted(__all__)
+classes = __all__

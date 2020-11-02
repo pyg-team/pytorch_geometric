@@ -87,4 +87,4 @@ __all__ = [
     'WebKB',
 ]
 
-classes = sorted(__all__)
+classes = __all__

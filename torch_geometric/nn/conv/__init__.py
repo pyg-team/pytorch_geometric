@@ -74,4 +74,4 @@ __all__ = [
     'GCN2Conv',
 ]
 
-classes = sorted(__all__)
+classes = __all__

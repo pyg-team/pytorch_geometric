@@ -4,4 +4,4 @@ __all__ = [
     'knn_interpolate',
 ]
 
-classes = sorted(__all__)
+classes = __all__

@@ -5,9 +5,8 @@ torch_geometric.datasets
 
 .. autosummary::
     :nosignatures:
-
     {% for cls in torch_geometric.datasets.classes %}
-    {{ cls }}
+      {{ cls }}
     {% endfor %}
 
 .. automodule:: torch_geometric.datasets
