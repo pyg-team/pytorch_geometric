@@ -9,6 +9,28 @@ from torch_geometric.nn.inits import zeros
 
 
 class TGN(torch.nn.Module):
+    r"""The Temporal Graph Network (TGN) model from the
+    `"Temporal Graph Networks for Deep Learning on Dynamic Graphs"
+    <https://arxiv.org/abs/2006.10637>`_ paper.
+
+    .. note::
+
+        For an example of using TGN, see `examples/tgn.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        tgn.py>`_.
+
+    Args:
+        num_nodes (int): The number of nodes to save memories for.
+        raw_msg_dim (int): The raw message dimensionality.
+        memory_dim (int): The hidden memory dimensionality.
+        time_dim (int): The time encoding dimensionality.
+        message_module (torch.nn.Module): The message function which
+            combines source and destination node memory embeddings, the raw
+            message and the time encoding.
+        aggregator_module (torch.nn.Module): The message aggregator function
+            which aggregates messages to the same destination into a single
+            representation.
+    """
     def __init__(self, num_nodes: int, raw_msg_dim: int, memory_dim: int,
                  time_dim: int, message_module: Callable,
                  aggregator_module: Callable):
@@ -52,6 +74,7 @@ class TGN(torch.nn.Module):
         zeros(self.last_update)
         i = self.memory.new_empty((0, ), dtype=torch.long)
         msg = self.memory.new_empty((0, self.raw_msg_dim))
+        # Message store format: (src, dst, t, msg)
         self.msg_s_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
         self.msg_d_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
 
@@ -105,12 +128,13 @@ class TGN(torch.nn.Module):
         self.memory[n_id] = memory
         self.last_update[n_id] = last_update
 
-        # Update message stores.
+        # Update message store (src->dst).
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
         for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
             self.msg_s_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
 
+        # Update message store (dst->src).
         n_id, perm = dst.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
         for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
@@ -123,7 +147,7 @@ class TGN(torch.nn.Module):
 class IdentityMessage(torch.nn.Module):
     def __init__(self, raw_msg_dim, memory_dim, time_dim):
         super(IdentityMessage, self).__init__()
-        self.out_channels = 2 * memory_dim + raw_msg_dim + time_dim
+        self.out_channels = raw_msg_dim + 2 * memory_dim + time_dim
 
     def forward(self, z_src, z_dst, raw_msg, t_enc):
         return torch.cat([z_src, z_dst, raw_msg, t_enc], dim=-1)
@@ -133,7 +157,7 @@ class LastAggregator(torch.nn.Module):
     def forward(self, msg, index, t, dim_size):
         _, argmax = scatter_max(t, index, dim=0, dim_size=dim_size)
         out = msg.new_zeros((dim_size, msg.size(-1)))
-        mask = argmax < msg.size(0)
+        mask = argmax < msg.size(0)  # Filter items with at least one entry.
         out[mask] = msg[argmax[mask]]
         return out
 
