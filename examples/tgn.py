@@ -56,7 +56,7 @@ def train():
             loss = 0
             optimizer.zero_grad()
 
-        src, pos_dst, t, x = batch.src, batch.dst, batch.t, batch.x
+        src, pos_dst, t, raw_msg = batch.src, batch.dst, batch.t, batch.x
         neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
@@ -71,7 +71,7 @@ def train():
         loss += criterion(pos_out, torch.ones_like(pos_out))
         loss += criterion(neg_out, torch.zeros_like(neg_out))
 
-        model.update_state(src, pos_dst, t, raw_msg=x)
+        model.update_state(src, pos_dst, t, raw_msg)
         total_loss += float(loss) * batch.num_events
 
         if (i + 1) % backprop_every == 0:
@@ -86,11 +86,12 @@ def train():
 @torch.no_grad()
 def test(inference_data):
     model.eval()
+    link_pred.eval()
     torch.manual_seed(12345)  # Ensure deterministic sampling across epochs.
 
     aps, aucs = [], []
     for batch in inference_data.seq_batches(batch_size=200):
-        src, pos_dst, t, x = batch.src, batch.dst, batch.t, batch.x
+        src, pos_dst, t, raw_msg = batch.src, batch.dst, batch.t, batch.x
         neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
@@ -110,7 +111,7 @@ def test(inference_data):
         aps.append(average_precision_score(y_true, y_pred))
         aucs.append(roc_auc_score(y_true, y_pred))
 
-        model.update_state(src, pos_dst, t, raw_msg=x)
+        model.update_state(src, pos_dst, t, raw_msg)
 
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
