@@ -49,9 +49,10 @@ class TGN(torch.nn.Module):
         self.gru = GRUCell(message_module.out_channels, memory_dim)
 
         self.register_buffer('memory', torch.empty(num_nodes, memory_dim))
-        last_update = torch.empty(self.num_nodes, dtype=torch.long)
+        last_update = torch.empty(num_nodes, dtype=torch.long)
         self.register_buffer('last_update', last_update)
-        self.register_buffer('assoc', torch.empty(num_nodes, dtype=torch.long))
+        assoc = torch.empty(num_nodes, dtype=torch.long)
+        self.register_buffer('__assoc__', assoc)
 
         self.msg_s_store = {}
         self.msg_d_store = {}
@@ -79,7 +80,7 @@ class TGN(torch.nn.Module):
         self.msg_d_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
 
     def forward(self, n_id):
-        self.assoc[n_id] = torch.arange(n_id.size(0), device=n_id.device)
+        self.__assoc__[n_id] = torch.arange(n_id.size(0), device=n_id.device)
 
         # Compute messages from src->dst.
         data = [self.msg_s_store[i] for i in n_id.tolist()]
@@ -111,7 +112,8 @@ class TGN(torch.nn.Module):
         idx = torch.cat([src_s, dst_d], dim=0)
         msg = torch.cat([msg_s, msg_d], dim=0)
         t = torch.cat([t_s, t_d], dim=0)
-        aggr = self.aggr_module(msg, self.assoc[idx], t, dim_size=n_id.size(0))
+        aggr = self.aggr_module(msg, self.__assoc__[idx], t,
+                                dim_size=n_id.size(0))
 
         # Get local copy of updated memory.
         memory = self.gru(aggr, self.memory[n_id])
@@ -131,14 +133,20 @@ class TGN(torch.nn.Module):
         # Update message store (src->dst).
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
-        for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
-            self.msg_s_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
+        n_id, count = n_id.tolist(), count.tolist()
+        for i, a, b, c, d in zip(n_id, src[perm].split(count),
+                                 dst[perm].split(count), t[perm].split(count),
+                                 raw_msg[perm].split(count)):
+            self.msg_s_store[i] = (a, b, c, d)
 
         # Update message store (dst->src).
         n_id, perm = dst.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
-        for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
-            self.msg_d_store[i] = (dst[idx], src[idx], t[idx], raw_msg[idx])
+        n_id, count = n_id.tolist(), count.tolist()
+        for i, a, b, c, d in zip(n_id, dst[perm].split(count),
+                                 src[perm].split(count), t[perm].split(count),
+                                 raw_msg[perm].split(count)):
+            self.msg_d_store[i] = (a, b, c, d)
 
     def detach_memory(self):
         self.memory.detach_()

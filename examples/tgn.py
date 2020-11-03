@@ -41,7 +41,7 @@ optimizer = torch.optim.Adam(
     list(model.parameters()) + list(link_pred.parameters()), lr=0.0001)
 criterion = torch.nn.BCEWithLogitsLoss()
 
-assoc = torch.empty(data.num_nodes, dtype=torch.long)
+assoc = torch.empty(data.num_nodes, dtype=torch.long, device=device)
 
 
 def train():
@@ -50,35 +50,30 @@ def train():
     link_pred.train()
 
     total_loss = 0
-    backprop_every = 1
-    for i, batch in enumerate(train_data.seq_batches(batch_size=200)):
-        if i % backprop_every == 0:
-            loss = 0
-            optimizer.zero_grad()
+    for batch in train_data.seq_batches(batch_size=200):
+        optimizer.zero_grad()
 
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
         neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        assoc[n_id] = torch.arange(n_id.size(0))
+        assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, last_update = model(n_id)
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
 
-        loss += criterion(pos_out, torch.ones_like(pos_out))
+        loss = criterion(pos_out, torch.ones_like(pos_out))
         loss += criterion(neg_out, torch.zeros_like(neg_out))
 
         model.update_state(src, pos_dst, t, msg)
-        total_loss += float(loss) * batch.num_events
 
-        if (i + 1) % backprop_every == 0:
-            loss = loss / backprop_every
-            loss.backward()
-            optimizer.step()
-            model.detach_memory()
+        loss.backward()
+        optimizer.step()
+        model.detach_memory()
+        total_loss += float(loss) * batch.num_events
 
     return total_loss / train_data.num_events
 
@@ -96,7 +91,7 @@ def test(inference_data):
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        assoc[n_id] = torch.arange(n_id.size(0))
+        assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, last_update = model(n_id)
 
