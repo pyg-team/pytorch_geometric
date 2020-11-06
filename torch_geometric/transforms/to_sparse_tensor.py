@@ -44,10 +44,8 @@ class ToSparseTensor(object):
         data.adj_t = SparseTensor(row=col, col=row, value=value,
                                   sparse_sizes=(N, N), is_sorted=True)
 
-        # Pre-process some important attributes.
-        data.adj_t.storage.rowptr()
-
-        if self.fill_cache:
+        if self.fill_cache:  # Pre-process some important attributes.
+            data.adj_t.storage.rowptr()
             data.adj_t.storage.csr2csc()
 
         return data
