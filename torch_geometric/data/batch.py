@@ -149,11 +149,14 @@ class Batch(Data):
 
                     nodes_in_batch = len(batch.batch)
                     for i, p in enumerate(batch[key]):
-                        batch[key][i][batch[key][i] >= nodes_in_batch] = nodes_in_batch
+                        batch[key][i][
+                            batch[key][i] >= nodes_in_batch] = nodes_in_batch
                         if p.shape[1] == max_len:
                             continue
-                        filler = torch.full((p.shape[0], max_len-p.shape[1]), nodes_in_batch, dtype=torch.long)
-                        batch[key][i] = torch.cat((batch[key][i], filler), dim=-1)
+                        filler = torch.full((p.shape[0], max_len - p.shape[1]),
+                                            nodes_in_batch, dtype=torch.long)
+                        batch[key][i] = torch.cat((batch[key][i], filler),
+                                                  dim=-1)
 
                 batch[key] = torch.cat(items, ref_data.__cat_dim__(key, item))
             elif isinstance(item, SparseTensor):

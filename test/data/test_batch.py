@@ -25,8 +25,7 @@ def test_batch():
 
     assert data.__repr__() == (
         'Batch(batch=[5], edge_index=[2, 6], paths=[3, 3]'
-        ', paths_features=[3], s=[2], x=[5])'
-    )
+        ', paths_features=[3], s=[2], x=[5])')
     assert len(data) == 6
     assert data.x.tolist() == [1, 2, 3, 1, 2]
     assert data.edge_index.tolist() == [[0, 1, 1, 2, 3, 4], [1, 0, 2, 1, 4, 3]]
@@ -40,13 +39,13 @@ def test_batch():
     assert len(data_list[0]) == 5
     assert data_list[0].x.tolist() == [1, 2, 3]
     assert data_list[0].edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
-     #NOTE paths not intended to be used, it preserves `uppading`
+    #NOTE paths not intended to be used, it preserves `uppading`
     assert data_list[0].paths.tolist() == [[1, 0, 2], [0, 2, 5]]
     assert data_list[0].s == '1'
     assert len(data_list[1]) == 5
     assert data_list[1].x.tolist() == [1, 2]
     assert data_list[1].edge_index.tolist() == [[0, 1], [1, 0]]
-     #NOTE paths not intended to be used, it preserves `uppading`
+    #NOTE paths not intended to be used, it preserves `uppading`
     assert data_list[1].paths.tolist() == [[1, 0, 2]]
     assert data_list[1].s == '2'
 
