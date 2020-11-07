@@ -185,9 +185,9 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # Only `*index*` and `*face*` attributes should be cumulatively summed
+        # Only `*index*`, `*face*` and `paths` attributes should be cumulatively summed
         # up when creating batches.
-        return self.num_nodes if bool(re.search('(index|face)', key)) else 0
+        return self.num_nodes if bool(re.search('(index|face)', key)) or key == 'paths' else 0
 
     @property
     def num_nodes(self):

@@ -71,11 +71,11 @@ class Batch(Data):
                         item = item.set_value(value, layout='coo')
                 elif isinstance(item, (int, float)):
                     item = item + cum
-                elif isinstance(item, list) and 'paths_index' in key:
-                    for pi in range(len(item)):
-                        if isinstance(item[pi],
-                                      Tensor) and item[pi].dtype != torch.bool:
-                            item[pi] = item[pi] + cum
+                # elif isinstance(item, list) and 'paths' in key:
+                #     for pi in range(len(item)):
+                #         if isinstance(item[pi],
+                #                       Tensor) and item[pi].dtype != torch.bool:
+                #             item[pi] = item[pi] + cum
 
                 # Treat 0-dimensional tensors as 1-dimensional.
                 if isinstance(item, Tensor) and item.dim() == 0:
@@ -144,6 +144,17 @@ class Batch(Data):
             items = batch[key]
             item = items[0]
             if isinstance(item, Tensor):
+                if key == 'paths':
+                    max_len = max(map(lambda x: x.shape[1], batch[key]))
+
+                    nodes_in_batch = len(batch.batch)
+                    for i, p in enumerate(batch[key]):
+                        batch[key][i][batch[key][i] >= nodes_in_batch] = nodes_in_batch
+                        if p.shape[1] == max_len:
+                            continue
+                        filler = torch.full((p.shape[0], max_len-p.shape[1]), nodes_in_batch, dtype=torch.long)
+                        batch[key][i] = torch.cat((batch[key][i], filler), dim=-1)
+
                 batch[key] = torch.cat(items, ref_data.__cat_dim__(key, item))
             elif isinstance(item, SparseTensor):
                 batch[key] = cat(items, ref_data.__cat_dim__(key, item))
@@ -188,8 +199,7 @@ class Batch(Data):
                 else:
                     item = item[self.__slices__[key][i]:self.
                                 __slices__[key][i + 1]]
-                    item = item[0] if len(
-                        item) == 1 and 'paths' not in key else item
+                    item = item[0] if len(item) == 1 else item
 
                 # Decrease its value by `cumsum` value:
                 cum = self.__cumsum__[key][i]
@@ -204,11 +214,6 @@ class Batch(Data):
                         item = item.set_value(value, layout='coo')
                 elif isinstance(item, (int, float)):
                     item = item - cum
-                elif isinstance(item, list) and 'paths_index' in key:
-                    for pi in range(len(item)):
-                        if isinstance(item[pi],
-                                      Tensor) and item[pi].dtype != torch.bool:
-                            item[pi] = item[pi] - cum
 
                 data[key] = item
 
