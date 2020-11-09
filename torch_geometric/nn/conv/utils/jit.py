@@ -1,16 +1,16 @@
-import os.path as osp
 import sys
+import os.path as osp
 from getpass import getuser
+from tempfile import NamedTemporaryFile as TempFile, gettempdir
 from importlib.util import module_from_spec, spec_from_file_location
-from tempfile import NamedTemporaryFile, gettempdir
 
 from torch_geometric.data.makedirs import makedirs
 
 
 def class_from_module_repr(cls_name, module_repr):
-    path = osp.join(gettempdir(), f"{getuser()}_pyg_jit")
+    path = osp.join(gettempdir(), f'{getuser()}_pyg_jit')
     makedirs(path)
-    with NamedTemporaryFile(mode="w+", suffix=".py", delete=False, dir=path) as f:
+    with TempFile(mode='w+', suffix='.py', delete=False, dir=path) as f:
         f.write(module_repr)
     spec = spec_from_file_location(cls_name, f.name)
     mod = module_from_spec(spec)
