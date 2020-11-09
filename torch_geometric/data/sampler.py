@@ -158,7 +158,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
                 adjs.append(Adj(adj_t, e_id, size))
             else:
                 row, col, _ = adj_t.coo()
-                edge_index = torch.cat([col, row], dim=0)
+                edge_index = torch.stack([col, row], dim=0)
                 adjs.append(EdgeIndex(edge_index, e_id, size))
 
         if len(adjs) > 1:
