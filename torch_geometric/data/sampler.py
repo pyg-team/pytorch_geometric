@@ -125,7 +125,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
             adj_t = edge_index
             if return_e_id:
                 self.__val__ = adj_t.storage.value()
-                value = torch.arange(adj_t.nnz()) if return_e_id else self.val
+                value = torch.arange(adj_t.nnz())
                 adj_t = adj_t.set_value(value, layout='coo')
             self.adj_t = adj_t
 

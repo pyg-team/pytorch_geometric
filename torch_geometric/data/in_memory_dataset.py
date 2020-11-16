@@ -53,6 +53,7 @@ class InMemoryDataset(Dataset):
         super(InMemoryDataset, self).__init__(root, transform, pre_transform,
                                               pre_filter)
         self.data, self.slices = None, None
+        self.__data_list__ = None
 
     @property
     def num_classes(self):
@@ -66,15 +67,20 @@ class InMemoryDataset(Dataset):
         return 0
 
     def get(self, idx):
-        data = self.data.__class__()
+        if self.__data_list__ is None:
+            self.__data_list__ = self.len() * [None]
+        else:
+            data = self.__data_list__[idx]
+            if data is not None:
+                return copy.copy(data)
 
+        data = self.data.__class__()
         if hasattr(self.data, '__num_nodes__'):
             data.num_nodes = self.data.__num_nodes__[idx]
 
         for key in self.data.keys:
             item, slices = self.data[key], self.slices[key]
             start, end = slices[idx].item(), slices[idx + 1].item()
-            # print(slices[idx], slices[idx + 1])
             if torch.is_tensor(item):
                 s = list(repeat(slice(None), item.dim()))
                 s[self.data.__cat_dim__(key, item)] = slice(start, end)
@@ -83,6 +89,8 @@ class InMemoryDataset(Dataset):
             else:
                 s = slice(start, end)
             data[key] = item[s]
+
+        self.__data_list__[idx] = data
         return data
 
     @staticmethod
@@ -131,5 +139,6 @@ class InMemoryDataset(Dataset):
             data_list = [self.get(i) for i in idx]
         dataset = copy.copy(self)
         dataset.__indices__ = None
+        dataset.__data_list == data_list
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
