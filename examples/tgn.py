@@ -14,6 +14,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
 data = dataset[0].to(device)
+min_dst_id = min(data.dst.unique())
+max_dst_id = max(data.dst.unique())
 
 
 class NeighborSampler(object):
@@ -92,7 +94,7 @@ def train():
         optimizer.zero_grad()
 
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-        neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
+        neg_dst = torch.randint(min_dst_id, max_dst_id + 1, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
@@ -131,7 +133,7 @@ def test(inference_data):
     current_event_id = train_data.num_events
     for batch in inference_data.seq_batches(batch_size=200):
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-        neg_dst = torch.randint(0, train_data.num_nodes, (src.size(0), ),
+        neg_dst = torch.randint(min_dst_id, max_dst_id + 1, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
@@ -164,4 +166,4 @@ for epoch in range(1, 51):
     val_ap, val_auc = test(val_data)
     test_ap, test_auc = test(test_data)
     print(f' Val AP: {val_ap:.4f},  Val AUC: {val_auc:.4f}')
-    print(f'Test AP: {val_ap:.4f}, Test AUC: {test_auc:.4f}')
+    print(f'Test AP: {test_ap:.4f}, Test AUC: {test_auc:.4f}')
