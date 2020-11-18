@@ -7,7 +7,7 @@ from torch_geometric.data import Dataset
 
 class InMemoryDataset(Dataset):
     r"""Dataset base class for creating graph datasets which fit completely
-    into memory.
+    into CPU memory.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_dataset.html#creating-in-memory-datasets>`__ for the accompanying
     tutorial.
