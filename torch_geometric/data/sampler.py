@@ -88,7 +88,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
             The major difference between both formats is that we need to input
             the *transposed* sparse adjacency matrix.
         size ([int]): The number of neighbors to sample for each node in each
-            layer. If set to :obj:`sizes[i] = -1`, all neighbors are included
+            layer. If set to :obj:`sizes[l] = -1`, all neighbors are included
             in layer :obj:`l`.
         node_idx (LongTensor, optional): The nodes that should be considered
             for creating mini-batches. If set to :obj:`None`, all nodes will be
