@@ -5,12 +5,14 @@ import numpy as np
 
 
 class TemporalData(object):
-    def __init__(self, src=None, dst=None, t=None, msg=None, y=None, **kwargs):
+    def __init__(self, src=None, dst=None, t=None, msg=None, y=None, x=None, **kwargs):
         self.src = src
         self.dst = dst
         self.t = t
         self.msg = msg
         self.y = y
+        self.x = x
+
         for key, item in kwargs.items():
             self[key] = item
 
@@ -35,7 +37,8 @@ class TemporalData(object):
 
         data = copy.copy(self)
         for key, item in data:
-            data[key] = item[idx]
+            if item.shape[0] == self.num_events:
+                data[key] = item[idx]
         return data
 
     def __setitem__(self, key, value):
