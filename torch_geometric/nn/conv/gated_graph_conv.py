@@ -31,6 +31,7 @@ class GatedGraphConv(MessagePassing):
     Args:
         out_channels (int): Size of each input sample.
         num_layers (int): The sequence length :math:`L`.
+        num_edge_types (int, optional): Number of edge types. (default: :obj:`1`)
         aggr (string, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
@@ -39,14 +40,14 @@ class GatedGraphConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, out_channels: int, num_layers: int, aggr: str = 'add',
-                 bias: bool = True, **kwargs):
+    def __init__(self, out_channels: int, num_layers: int, num_edge_types: int = 1,
+                 aggr: str = 'add', bias: bool = True, **kwargs):
         super(GatedGraphConv, self).__init__(aggr=aggr, **kwargs)
 
         self.out_channels = out_channels
         self.num_layers = num_layers
-
-        self.weight = Param(Tensor(num_layers, out_channels, out_channels))
+        self.num_edge_types = num_edge_types
+        self.weight = Param(Tensor(num_edge_types, out_channels, out_channels))
         self.rnn = torch.nn.GRUCell(out_channels, out_channels, bias=bias)
 
         self.reset_parameters()
@@ -55,9 +56,8 @@ class GatedGraphConv(MessagePassing):
         uniform(self.out_channels, self.weight)
         self.rnn.reset_parameters()
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
-        """"""
+    def forward(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor=None,
+                edge_weights: OptTensor = None) -> Tensor:
         if x.size(-1) > self.out_channels:
             raise ValueError('The number of input channels is not allowed to '
                              'be larger than the number of output channels')
@@ -66,22 +66,40 @@ class GatedGraphConv(MessagePassing):
             zero = x.new_zeros(x.size(0), self.out_channels - x.size(-1))
             x = torch.cat([x, zero], dim=1)
 
-        for i in range(self.num_layers):
-            m = torch.matmul(x, self.weight[i])
+        for _ in range(self.num_layers):
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            m = self.propagate(edge_index, x=m, edge_weight=edge_weight,
-                               size=None)
+            m = self.propagate(edge_index, x=x, edge_attr=edge_attr,
+                                edge_weights=edge_weights, size=None)
             x = self.rnn(m, x)
 
         return x
 
-    def message(self, x_j: Tensor, edge_weight: OptTensor):
-        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_attr: OptTensor=None,
+                edge_weights: OptTensor=None):
+        if edge_weights is not None:
+            x_j = edge_weights.view(-1, 1) * x_j
+        if self.weight.size(0) != 1 and edge_attr is not None:
+            assert(self.weight.size(0) == edge_attr.size(1))
+            edge_msgs = []
+            for idx in range(self.num_edge_types):
+                edge_attr_weight = self.weight[idx]
+                edge_indices = edge_attr[:, idx]
+                x_j_edge = x_j[edge_indices, :]
+                x_j_edge = x_j @ edge_attr_weight
+                edge_msgs.append(x_j_edge)
+            x_j = torch.stack(edge_msgs, 2).sum(2)
+        else:
+            x_j = x_j @ self.weight[0]
+        return x_j
+
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
-        return '{}({}, num_layers={})'.format(self.__class__.__name__,
-                                              self.out_channels,
-                                              self.num_layers)
+        return '{}({}, num_layers={}, num_edge_types={})'.format(
+            self.__class__.__name__,
+            self.out_channels,
+            self.num_layers,
+            self.num_edge_types
+        )
