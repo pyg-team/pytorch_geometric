@@ -1,25 +1,51 @@
 import os.path as osp
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
 from torch_geometric.datasets import Reddit
 from torch_geometric.data import NeighborSampler
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn import GCNConv, DeepGraphInfomax
+'''
+In '"Deep Graph Infomax" <https://arxiv.org/abs/1809.10341>' two methods
+were provided, a transductive method for small graphs (see examples/infomax.py)
+and a inductive method for large graphs, implemented here. The inductive implementation
+utilises the mean pooling propagation rule as detailed in `"Inductive Representation 
+Learning on Large Graphs" <https://arxiv.org/abs/1706.02216>`.
+'''
+
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
+dataset = Reddit(path)
+data = dataset[0]
+
+train_loader = NeighborSampler(data.edge_index, node_idx=data.train_mask,
+                               sizes=[10,10,25], batch_size=256, shuffle=True,
+                               num_workers=12)
+subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
+                                  batch_size=256, shuffle=False,
+                                  num_workers=12)
 
 
 class Encoder(nn.Module):
     def __init__(self, in_channels, hidden_channels):
         super(Encoder, self).__init__()
-        #TODO: Here I need to update it to the inductive version
-        self.conv = GCNConv(in_channels, hidden_channels, cached=True)
-        self.prelu = nn.PReLU(hidden_channels)
+        
+
+        convs = []
+        convs.append(SAGEConv(in_channels, hidden_channels))
+        convs.append(nn.PReLU(hidden_channels))
+        convs.append(SAGEConv(hidden_channels, hidden_channels))
+        convs.append(nn.PReLU(hidden_channels))
+        convs.append(SAGEConv(hidden_channels, hidden_channels))
+        convs.append(nn.PReLU(hidden_channels))
+
+        self.convs = nn.Sequential(*convs)
 
     def forward(self, x, edge_index):
-        x = self.conv(x, edge_index)
-        x = self.prelu(x)
-        return x
+
+        return self.convs(x)
 
 
 def corruption(x, edge_index):
@@ -33,16 +59,7 @@ model = DeepGraphInfomax(
     corruption=corruption).to(device)
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
-dataset = Reddit(path)
-data = dataset[0]
 
-train_loader = NeighborSampler(data.edge_index, node_idx=data.train_mask,
-                               sizes=[25, 10], batch_size=1024, shuffle=True,
-                               num_workers=12)
-subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
-                                  batch_size=1024, shuffle=False,
-                                  num_workers=12)
 
 
 
