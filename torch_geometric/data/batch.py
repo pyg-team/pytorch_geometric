@@ -27,6 +27,7 @@ class Batch(Data):
         self.__cumsum__ = None
         self.__cat_dims__ = None
         self.__num_nodes_list__ = None
+        self.__num_graphs__ = None
 
     @staticmethod
     def from_data_list(data_list, follow_batch=[]):
@@ -45,6 +46,7 @@ class Batch(Data):
             if key[:2] != '__' and key[-2:] != '__':
                 batch[key] = None
 
+        batch.__num_graphs__ = len(data_list)
         batch.__data_class__ = data_list[0].__class__
         for key in keys + ['batch']:
             batch[key] = []
@@ -206,4 +208,6 @@ class Batch(Data):
     @property
     def num_graphs(self):
         """Returns the number of graphs in the batch."""
+        if self.__num_graphs__ is not None:
+            return self.__num_graphs__
         return self.batch[-1].item() + 1

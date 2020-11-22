@@ -47,9 +47,9 @@ def train():
 
 def test():
     model.eval()
-    logits, accs = model(), []
+    log_probs, accs = model(), []
     for _, mask in data('train_mask', 'test_mask'):
-        pred = logits[mask].max(1)[1]
+        pred = log_probs[mask].max(1)[1]
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
         accs.append(acc)
     return accs

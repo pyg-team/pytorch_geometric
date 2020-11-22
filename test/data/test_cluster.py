@@ -70,14 +70,15 @@ def test_cluster_gcn():
     assert data.x.tolist() == [[0, 0], [2, 2], [4, 4]]
     assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
                                         [0, 1, 2, 0, 1, 2, 0, 1, 2]]
+    assert data.edge_attr.tolist() == [0, 2, 3, 8, 9, 10, 14, 15, 16]
 
     data = next(iterator)
     assert data.x.tolist() == [[1, 1], [3, 3], [5, 5]]
     assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
                                         [0, 1, 2, 0, 1, 2, 0, 1, 2]]
+    assert data.edge_attr.tolist() == [5, 6, 7, 11, 12, 13, 17, 18, 19]
 
-    torch.manual_seed(1)
-    loader = ClusterLoader(cluster_data, batch_size=2, shuffle=True)
+    loader = ClusterLoader(cluster_data, batch_size=2, shuffle=False)
     data = next(iter(loader))
     assert data.num_nodes == 6
     assert data.x.tolist() == [
@@ -96,28 +97,3 @@ def test_cluster_gcn():
         [0, 0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1, 1],
     ]
-
-    torch.manual_seed(2)
-    loader = ClusterLoader(cluster_data, batch_size=2, shuffle=True)
-    data = next(iter(loader))
-    assert data.num_nodes == 6
-    assert data.x.tolist() == [
-        [1, 1],
-        [3, 3],
-        [5, 5],
-        [0, 0],
-        [2, 2],
-        [4, 4],
-    ]
-    assert to_dense_adj(data.edge_index).squeeze().tolist() == [
-        [1, 1, 1, 1, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [1, 0, 0, 1, 1, 1],
-        [0, 0, 0, 1, 1, 1],
-        [0, 0, 0, 1, 1, 1],
-    ]
-
-    loader = ClusterLoader(cluster_data, batch_size=1, shuffle=True)
-    data = next(iter(loader))
-    assert data.num_nodes == 3

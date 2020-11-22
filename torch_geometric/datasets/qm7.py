@@ -24,8 +24,7 @@ class QM7b(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'http://deepchem.io.s3-website-us-west-1.amazonaws.com/' \
-          'datasets/qm7b.mat'
+    url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/qm7b.mat'
 
     def __init__(self, root, transform=None, pre_transform=None,
                  pre_filter=None):

@@ -1,15 +1,13 @@
 torch_geometric.datasets
 ========================
 
-.. .. currentmodule:: torch_geometric.datasets
+.. currentmodule:: torch_geometric.datasets
 
-.. .. autosummary::
-..     :toctree: generated
-..     :nosignatures:
-
-..     AMiner
-..     Amazon
-..     BitcoinOTC
+.. autosummary::
+    :nosignatures:
+    {% for cls in torch_geometric.datasets.classes %}
+      {{ cls }}
+    {% endfor %}
 
 .. automodule:: torch_geometric.datasets
     :members:
