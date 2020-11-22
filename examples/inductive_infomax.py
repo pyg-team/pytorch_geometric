@@ -20,9 +20,15 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
 dataset = Reddit(path)
 data = dataset[0]
 
-train_loader = NeighborSampler(data.edge_index, node_idx=data.train_mask,
+train_loader = NeighborSampler(data.edge_index, node_idx=None,
                                sizes=[10,10,25], batch_size=256, shuffle=True,
                                num_workers=12)
+
+test_loader = NeighborSampler(data.edge_index, node_idx=None,
+                               sizes=[10, 10, 25], batch_size=256,
+                               shuffle=False, num_workers=12)
+
+
 
 
 
@@ -48,7 +54,7 @@ class Encoder(nn.Module):
             x_target = x[:size[1]]  # Target nodes are always placed first.
             x = self.convs[i]((x, x_target), edge_index)
             x = self.activations[i](x)
-        return x 
+        return x
 
 
 
@@ -65,7 +71,7 @@ model = DeepGraphInfomax(
 
 
 model = model.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 x = data.x.to(device)
 y = data.y.squeeze().to(device)
@@ -74,10 +80,11 @@ y = data.y.squeeze().to(device)
 def train(epoch):
     model.train()
     total_loss = 0
-    pbar = tqdm(total=int(data.train_mask.sum()))
-    pbar.set_description(f'Epoch {epoch:02d}')
+    # pbar = tqdm(total=int(len(train_loader)))
+    # pbar.set_description(f'Epoch {epoch:02d}')
+    # description = 
 
-    for batch_size, n_id, adjs in train_loader:
+    for batch_size, n_id, adjs in tqdm(train_loader, desc=f'Epoch {epoch:02d}'):
         # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
         adjs = [adj.to(device) for adj in adjs]
 
@@ -88,28 +95,38 @@ def train(epoch):
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
-        pbar.update(batch_size)
 
-    pbar.close()
+
 
     loss = total_loss / len(train_loader)
 
 
     return loss
 
-
+@torch.no_grad()
 def test():
-    # TODO need to update the test function for inductive
+
     model.eval()
-    z, _, _ = model(data.x, data.edge_index)
-    acc = model.test(z[data.train_mask], y[data.train_mask],
-                     z[data.test_mask], y[data.test_mask], max_iter=150)
+
+    for i, (batch_size, n_id, adjs) in enumerate(test_loader):
+
+
+        adjs = [adj.to(device) for adj in adjs]
+        z, _, _ = model(x[n_id], adjs)
+
+        if i == 0:
+            z_test = z
+        else:
+            z_test = torch.cat([z_test, z], dim=0)
+
+    acc = model.test(z_test[data.train_mask], y[data.train_mask],
+                        z_test[data.test_mask], y[data.test_mask], max_iter=500)
+
     return acc
 
 
 for epoch in range(1, 11):
     loss = train(epoch)
-    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}')
-    # train_acc, val_acc, test_acc = test()
-    # print(f'Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
-    #       f'Test: {test_acc:.4f}')
+    test_acc = test()
+
+    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Test Accuracy: {test_acc:.4f}')
