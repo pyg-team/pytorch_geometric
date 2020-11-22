@@ -80,9 +80,6 @@ y = data.y.squeeze().to(device)
 def train(epoch):
     model.train()
     total_loss = 0
-    # pbar = tqdm(total=int(len(train_loader)))
-    # pbar.set_description(f'Epoch {epoch:02d}')
-    # description = 
 
     for batch_size, n_id, adjs in tqdm(train_loader, desc=f'Epoch {epoch:02d}'):
         # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
@@ -120,12 +117,12 @@ def test():
             z_test = torch.cat([z_test, z], dim=0)
 
     acc = model.test(z_test[data.train_mask], y[data.train_mask],
-                        z_test[data.test_mask], y[data.test_mask], max_iter=500)
+                        z_test[data.test_mask], y[data.test_mask], max_iter=1500)
 
     return acc
 
 
-for epoch in range(1, 11):
+for epoch in range(1, 150):
     loss = train(epoch)
     test_acc = test()
 
