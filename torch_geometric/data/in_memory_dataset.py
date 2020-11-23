@@ -90,7 +90,7 @@ class InMemoryDataset(Dataset):
                 s = slice(start, end)
             data[key] = item[s]
 
-        self.__data_list__[idx] = data
+        self.__data_list__[idx] = copy.copy(data)
         return data
 
     @staticmethod
