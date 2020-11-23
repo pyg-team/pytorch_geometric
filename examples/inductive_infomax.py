@@ -8,6 +8,9 @@ from torch_geometric.datasets import Reddit
 from torch_geometric.data import NeighborSampler
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn import GCNConv, DeepGraphInfomax
+
+
+import time
 '''
 In '"Deep Graph Infomax" <https://arxiv.org/abs/1809.10341>' two methods
 were provided, a transductive method for small graphs (see examples/infomax.py)
@@ -117,13 +120,19 @@ def test():
             z_test = torch.cat([z_test, z], dim=0)
 
     acc = model.test(z_test[data.train_mask], y[data.train_mask],
-                        z_test[data.test_mask], y[data.test_mask], max_iter=1500)
+                        z_test[data.test_mask], y[data.test_mask], max_iter=2500)
 
     return acc
 
 
 for epoch in range(1, 150):
+    time_start = time.time()
     loss = train(epoch)
+    time_middle = time.time()
     test_acc = test()
+    time_end = time.time()
 
-    print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Test Accuracy: {test_acc:.4f}')
+    print(
+        f'Epoch {epoch:02d}, Loss: {loss:.4f}, Test Accuracy: {test_acc:.4f}'
+        f', Time Train: {time_middle - time_start}, Time test: {time_end - time_middle}'
+    )
