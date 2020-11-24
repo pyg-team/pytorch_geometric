@@ -9,13 +9,21 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.utils import add_self_loops
 from typing import Optional
-from geom_typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor
 
 
 
-def get_appr_directed_adj(alpha, edge_index : Adj, num_nodes : int, dtype = Tensor, edge_weight=None):
-    """"""
-    dtype = torch.FloatTensor
+def get_appr_directed_adj(alpha, edge_index : Adj, num_nodes : int, edge_weight=None):
+    r"""
+    Getting directed page rank based adjacency matrix.
+    Digraph Inception Convolutional Networks
+    `<https://papers.nips.cc/paper/2020/file/cffb6e2288a630c2a787a64ccc67097c-Paper.pdf>`_ paper
+    Args:
+        alpha (float)-  Teleport probability in Page Rank.
+        edge_index - Edge Indices in the given Graph.
+        num_nodes (int) - Number of nodes in the given Graph.
+        edge_weight (torch.Tensor) - attribute for the corresponding edge indices.  
+    """
     if edge_weight ==None:
         edge_weight = torch.ones((edge_index.size(1), ))
     fill_value = 1
@@ -77,8 +85,15 @@ def get_appr_directed_adj(alpha, edge_index : Adj, num_nodes : int, dtype = Tens
 
     return edge_index,norm_edge_weight
 
-def get_second_directed_adj(edge_index : Adj , num_nodes, dtype = Tensor):
-    """"""
+def get_second_directed_adj(edge_index : Adj , num_nodes : int):
+    r"""
+    Getting additonal directed adjacency matrix,
+    from Digraph Inception Convolutional Networks.
+    `<https://papers.nips.cc/paper/2020/file/cffb6e2288a630c2a787a64ccc67097c-Paper.pdf>`_ paper
+    Args:
+        edge_index - Edge Indices in the given Graph.
+        num_nodes (int) - Number of nodes in the given Graph.
+    """
     edge_weight = torch.ones((edge_index.size(1), ))
     fill_value = 1
     edge_index, edge_weight = add_self_loops(
@@ -116,13 +131,24 @@ def get_second_directed_adj(edge_index : Adj , num_nodes, dtype = Tensor):
     return edge_index,norm_edge_weight 
 
 class DIGCNConv(MessagePassing):
-    def __init__(self, in_channels, out_channels, improved=False, cached=True,
+    """
+    Digraph Inception Convolutional Operator
+    `<https://papers.nips.cc/paper/2020/file/cffb6e2288a630c2a787a64ccc67097c-Paper.pdf>`_ paper
+    uses :class:`torch_geometric.nn.conv.digcn_conv` operator.   
+    
+    Args:
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        cached (boolean): caching for efficiency
+            :class:`torch_geometric.nn.conv.digcn_conv`.
+            (default: :obj:`None`)    
+    """
+    def __init__(self, in_channels, out_channels, cached=True,
                     bias=True, **kwargs):
         super(DIGCNConv, self).__init__(aggr='add', **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.improved = improved
         self.cached = cached
 
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
@@ -141,10 +167,7 @@ class DIGCNConv(MessagePassing):
         self.cached_num_edges = None 
         
     def forward(self, x : Tensor, edge_index : Adj, edge_weight: OptTensor = None):
-        """"""
-        
-        #edge_index,edge_weight = self.get_appr_directed_adj(self.alpha,edge_index, x.size(0)) 
-        #edge_index_2,edge_weight_2 = self.get_second_directed_adj(edge_index,x.size(0))
+
         x = torch.matmul(x, self.weight)
         if self.cached and self.cached_result is not None:
             if edge_index.size(1) != self.cached_num_edges:

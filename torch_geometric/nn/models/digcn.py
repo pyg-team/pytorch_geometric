@@ -3,11 +3,26 @@ from torch.nn import Module,Linear,ModuleList
 from torch import cat
 from torch.nn.functional import dropout
 class DiGCN(Module):
+    r"""
+    Digraph Inception Convolutional Networks
+    `<https://papers.nips.cc/paper/2020/file/cffb6e2288a630c2a787a64ccc67097c-Paper.pdf>`_ paper
+    uses :class:`torch_geometric.nn.conv.digcn_conv` operator.   
+    
+    Args:
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        dropout_prob (float): Dropout probability of all dropout layers.
+        nos_block (int): number of inception blocks to be stacked(each block contains 3 different receptive fields).
+        fusion_type (str): "sum" - summation as the fushion operation of the receptive fields.
+                           "concat" - concatenation as the fushion operation of the receptive fields.   
+            :class:`torch_geometric.nn.models.digcn`.
+            (default: :obj:`None`)
+    """
     def __init__(self, in_channels,out_channels,dropout_prob,nos_block,fusion_type="sum"):
         super(DiGCN, self).__init__()
-        self.Lin = Linear(in_channels,out_channels) #0th order
+        self.Lin = Linear(in_channels,out_channels)
         self.conv1 = DIGCNConv(in_channels, out_channels)
-        self.conv2 = DIGCNConv(in_channels, out_channels)
+        self.conv2 = DIGCNConv(in_channels, out_channels) 
         self.dropout_prob = dropout_prob
         self.nos_block = nos_block
         self.fusion_type = fusion_type
@@ -17,8 +32,14 @@ class DiGCN(Module):
         self.ln.reset_parameters()
         self.conv1.reset_parameters()
         self.conv2.reset_parameters()
-    def encode(self,x,edge_index,alpha,**kwargs):
-        """encoder block for receptive fields based inception convolutional layers"""
+    def encode(self,x,edge_index,alpha):
+        """encoder block for receptive fields based inception convolutional layers
+
+        Args:
+            x (torch.FloatTensor): Input State of Nodes.    
+            edge_index (torch.LongTensor): Edge Indices of the Graph.    
+            alpha (float): Teleport probability in Page Rank.
+        """
         edge_index,edge_weight = get_appr_directed_adj(alpha,edge_index,x.size(0))
         edge_index_2,edge_weight_2 = get_second_directed_adj(edge_index,x.size(0))
         for i in range(self.nos_block):
