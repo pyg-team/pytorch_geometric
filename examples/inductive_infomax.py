@@ -109,8 +109,7 @@ def test():
             z_test = z
         else:
             z_test = torch.cat([z_test, z], dim=0)
-
-    train_val_mask = torch.cat([data.train_mask, data.val_mask])
+    train_val_mask = data.train_mask + data.val_mask
     acc = model.test(z_test[train_val_mask], y[train_val_mask],
                      z_test[data.test_mask], y[data.test_mask], max_iter=10000)
 
