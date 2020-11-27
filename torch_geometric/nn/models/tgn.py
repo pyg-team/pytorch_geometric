@@ -49,10 +49,9 @@ class TGN(torch.nn.Module):
         self.gru = GRUCell(message_module.out_channels, memory_dim)
 
         self.register_buffer('memory', torch.empty(num_nodes, memory_dim))
-        last_update = torch.empty(num_nodes, dtype=torch.long)
+        last_update = torch.empty(self.num_nodes, dtype=torch.long)
         self.register_buffer('last_update', last_update)
-        assoc = torch.empty(num_nodes, dtype=torch.long)
-        self.register_buffer('__assoc__', assoc)
+        self.register_buffer('assoc', torch.empty(num_nodes, dtype=torch.long))
 
         self.msg_s_store = {}
         self.msg_d_store = {}
@@ -79,11 +78,40 @@ class TGN(torch.nn.Module):
         self.msg_s_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
         self.msg_d_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
 
-    def forward(self, n_id):
-        self.__assoc__[n_id] = torch.arange(n_id.size(0), device=n_id.device)
+    def forward(self, n_id, ts=None):
+        self.assoc[n_id] = torch.arange(n_id.size(0), device=n_id.device)
 
         # Compute messages from src->dst.
-        data = [self.msg_s_store[i] for i in n_id.tolist()]
+        msg_s, t_s, src_s, dst_s = self.compute_messages(n_id, self.msg_s_store)
+
+        # Compute messages from dst->src.
+        msg_d, t_d, src_d, dst_d = self.compute_messages(n_id, self.msg_d_store)
+
+        # Aggregate messages.
+        idx = torch.cat([src_s, dst_d], dim=0)
+        msg = torch.cat([msg_s, msg_d], dim=0)
+        t = torch.cat([t_s, t_d], dim=0)
+        aggr = self.aggr_module(msg, self.assoc[idx], t, dim_size=n_id.size(0))
+
+        # Get local copy of updated memory.
+        memory = self.gru(aggr, self.memory[n_id] )
+
+        # Get local copy of updated `last_update`.
+        last_update = self.last_update.scatter(0, idx, t)[n_id]
+
+        return memory, last_update
+    
+    def compute_embedding_test(self, n_id, ts=None):
+        return self.memory[n_id] 
+    
+    def update_message_store(self, src, dst, t, raw_msg):
+        n_id, perm = src.sort()
+        n_id, count = n_id.unique_consecutive(return_counts=True)
+        for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
+            self.msg_s_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
+            
+    def compute_messages(self, n_id, message_store):
+        data = [message_store[i] for i in n_id.tolist()]
         src_s, dst_s, t_s, raw_msg_s = list(zip(*data))
         src_s = torch.cat(src_s, dim=0)
         dst_s = torch.cat(dst_s, dim=0)
@@ -94,34 +122,38 @@ class TGN(torch.nn.Module):
 
         msg_s = self.msg_s_module(self.memory[src_s], self.memory[dst_s],
                                   raw_msg_s, t_enc_s)
+        
+        return msg_s, t_s, src_s, dst_s
+        
+    def update_state_test(self, src, dst, t, raw_msg):
+        # Update message store (src->dst).
+        self.update_message_store(src, dst, t, raw_msg)
+        
+        # Update message store (dst->src).
+        self.update_message_store(dst, src, t, raw_msg)
+
+        n_id = torch.cat([src, dst]).unique()
+        self.assoc[n_id] = torch.arange(n_id.size(0), device=n_id.device)
+        
+        # Compute messages from src->dst.
+        msg_s, t_s, src_s, dst_s = self.compute_messages(n_id, self.msg_s_store)
 
         # Compute messages from dst->src.
-        data = [self.msg_d_store[i] for i in n_id.tolist()]
-        dst_d, src_d, t_d, raw_msg_d = list(zip(*data))
-        dst_d = torch.cat(dst_d, dim=0)
-        src_d = torch.cat(src_d, dim=0)
-        t_d = torch.cat(t_d, dim=0)
-        raw_msg_d = torch.cat(raw_msg_d, dim=0)
-        t_rel_d = t_d - self.last_update[dst_d]
-        t_enc_d = self.time_enc(t_rel_d.to(raw_msg_d.dtype).view(-1, 1)).cos()
-
-        msg_d = self.msg_d_module(self.memory[dst_d], self.memory[src_d],
-                                  raw_msg_d, t_enc_d)
+        msg_d, t_d, src_d, dst_d = self.compute_messages(n_id, self.msg_d_store)
 
         # Aggregate messages.
         idx = torch.cat([src_s, dst_d], dim=0)
         msg = torch.cat([msg_s, msg_d], dim=0)
         t = torch.cat([t_s, t_d], dim=0)
-        aggr = self.aggr_module(msg, self.__assoc__[idx], t,
-                                dim_size=n_id.size(0))
+        aggr = self.aggr_module(msg, self.assoc[idx], t, dim_size=n_id.size(0))
 
         # Get local copy of updated memory.
-        memory = self.gru(aggr, self.memory[n_id])
-
-        # Get local copy of updated `last_update`.
+        m = self.memory[n_id] 
+        memory = self.gru(aggr, m)
         last_update = self.last_update.scatter(0, idx, t)[n_id]
-
-        return memory, last_update
+        
+        self.memory[n_id] = memory
+        self.last_update[n_id] = last_update
 
     def update_state(self, src, dst, t, raw_msg):
         # Update memory.
@@ -131,22 +163,10 @@ class TGN(torch.nn.Module):
         self.last_update[n_id] = last_update
 
         # Update message store (src->dst).
-        n_id, perm = src.sort()
-        n_id, count = n_id.unique_consecutive(return_counts=True)
-        n_id, count = n_id.tolist(), count.tolist()
-        for i, a, b, c, d in zip(n_id, src[perm].split(count),
-                                 dst[perm].split(count), t[perm].split(count),
-                                 raw_msg[perm].split(count)):
-            self.msg_s_store[i] = (a, b, c, d)
-
+        self.update_message_store(src, dst, t, raw_msg)
+        
         # Update message store (dst->src).
-        n_id, perm = dst.sort()
-        n_id, count = n_id.unique_consecutive(return_counts=True)
-        n_id, count = n_id.tolist(), count.tolist()
-        for i, a, b, c, d in zip(n_id, dst[perm].split(count),
-                                 src[perm].split(count), t[perm].split(count),
-                                 raw_msg[perm].split(count)):
-            self.msg_d_store[i] = (a, b, c, d)
+        self.update_message_store(dst, src, t, raw_msg)
 
     def detach_memory(self):
         self.memory.detach_()

@@ -140,7 +140,7 @@ def test(inference_data):
         # adj_t, n_id = sampler(n_id, threshold=current_event_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
-        z, last_update = model(n_id)
+        z = model.compute_embedding_test(n_id)
         # z = gnn(z, adj_t)  # Embed memory via graph convolution.
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
@@ -154,7 +154,7 @@ def test(inference_data):
         aps.append(average_precision_score(y_true, y_pred))
         aucs.append(roc_auc_score(y_true, y_pred))
 
-        model.update_state(src, pos_dst, t, msg)
+        model.update_state_test(src, pos_dst, t, msg)
         current_event_id += batch.num_events
 
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
