@@ -32,10 +32,8 @@ train_loader = DenseDataLoader(train_dataset, batch_size=20)
 
 class GNN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels,
-                 normalize=False, add_loop=False, lin=True):
+                 normalize=False, lin=True):
         super(GNN, self).__init__()
-
-        self.add_loop = add_loop
 
         self.conv1 = DenseSAGEConv(in_channels, hidden_channels, normalize)
         self.bn1 = torch.nn.BatchNorm1d(hidden_channels)
@@ -62,9 +60,9 @@ class GNN(torch.nn.Module):
         batch_size, num_nodes, in_channels = x.size()
 
         x0 = x
-        x1 = self.bn(1, F.relu(self.conv1(x0, adj, mask, self.add_loop)))
-        x2 = self.bn(2, F.relu(self.conv2(x1, adj, mask, self.add_loop)))
-        x3 = self.bn(3, F.relu(self.conv3(x2, adj, mask, self.add_loop)))
+        x1 = self.bn(1, F.relu(self.conv1(x0, adj, mask)))
+        x2 = self.bn(2, F.relu(self.conv2(x1, adj, mask)))
+        x3 = self.bn(3, F.relu(self.conv3(x2, adj, mask)))
 
         x = torch.cat([x1, x2, x3], dim=-1)
 
@@ -79,8 +77,8 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
 
         num_nodes = ceil(0.25 * max_nodes)
-        self.gnn1_pool = GNN(3, 64, num_nodes, add_loop=True)
-        self.gnn1_embed = GNN(3, 64, 64, add_loop=True, lin=False)
+        self.gnn1_pool = GNN(3, 64, num_nodes)
+        self.gnn1_embed = GNN(3, 64, 64, lin=False)
 
         num_nodes = ceil(0.25 * num_nodes)
         self.gnn2_pool = GNN(3 * 64, 64, num_nodes)
@@ -149,6 +147,5 @@ for epoch in range(1, 151):
     if val_acc > best_val_acc:
         test_acc = test(test_loader)
         best_val_acc = val_acc
-    print('Epoch: {:03d}, Train Loss: {:.7f}, '
-          'Val Acc: {:.7f}, Test Acc: {:.7f}'.format(epoch, train_loss,
-                                                     val_acc, test_acc))
+    print(f'Epoch: {epoch:03d}, Train Loss: {train_loss:.4f}, '
+          f'Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}')
