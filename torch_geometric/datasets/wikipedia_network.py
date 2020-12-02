@@ -6,19 +6,19 @@ from torch_sparse import coalesce
 from torch_geometric.data import InMemoryDataset, download_url, Data
 
 
-class WebKB(InMemoryDataset):
-    r"""The WebKB datasets used in the
+class WikipediaNetwork(InMemoryDataset):
+    r"""The Wikipedia networks used in the
     `"Geom-GCN: Geometric Graph Convolutional Networks"
     <https://openreview.net/forum?id=S1e2agrFvS>`_ paper.
     Nodes represent web pages and edges represent hyperlinks between them.
-    Node features are the bag-of-words representation of web pages.
-    The task is to classify the nodes into one of the five categories, student,
-    project, course, staff, and faculty.
+    Node features represent several informative nouns in the Wikipedia pages.
+    The task is to classify the nodes into five categories in term of the
+    number of average monthly traffic of the web page.
 
     Args:
         root (string): Root directory where the dataset should be saved.
         name (string): The name of the dataset (:obj:`"Cornell"`,
-            :obj:`"Texas"` :obj:`"Wisconsin"`).
+            :obj:`"Chameleon"` :obj:`"Squirrel"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -33,9 +33,9 @@ class WebKB(InMemoryDataset):
 
     def __init__(self, root, name, transform=None, pre_transform=None):
         self.name = name.lower()
-        assert self.name in ['cornell', 'texas', 'wisconsin']
+        assert self.name in ['chameleon', 'squirrel']
 
-        super(WebKB, self).__init__(root, transform, pre_transform)
+        super(WikipediaNetwork, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
