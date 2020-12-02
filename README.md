@@ -9,7 +9,7 @@
 [contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
 [contributing-url]: https://github.com/rusty1s/pytorch_geometric/blob/master/CONTRIBUTING.md
 [slack-image]: https://img.shields.io/badge/slack-pyg-brightgreen
-[slack-url]: https://join.slack.com/t/torchgeometricco/shared_invite/zt-imae9z78-U8p78pxOiYQDVGYAsQuSHg
+[slack-url]: https://join.slack.com/t/torchgeometricco/shared_invite/zt-jp16pdn7-ml5~1ZvtjVUsyUK~LhOztQ
 
 <p align="center">
   <img height="110" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/pyg_logo_text.svg?sanitize=true" />
