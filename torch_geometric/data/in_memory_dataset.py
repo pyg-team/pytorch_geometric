@@ -67,12 +67,13 @@ class InMemoryDataset(Dataset):
         return 0
 
     def get(self, idx):
-        if self.__data_list__ is None:
-            self.__data_list__ = self.len() * [None]
-        else:
-            data = self.__data_list__[idx]
-            if data is not None:
-                return copy.copy(data)
+        if hasattr(self, '__data_list__'):
+            if self.__data_list__ is None:
+                self.__data_list__ = self.len() * [None]
+            else:
+                data = self.__data_list__[idx]
+                if data is not None:
+                    return copy.copy(data)
 
         data = self.data.__class__()
         if hasattr(self.data, '__num_nodes__'):
@@ -90,7 +91,9 @@ class InMemoryDataset(Dataset):
                 s = slice(start, end)
             data[key] = item[s]
 
-        self.__data_list__[idx] = copy.copy(data)
+        if hasattr(self, '__data_list__'):
+            self.__data_list__[idx] = copy.copy(data)
+
         return data
 
     @staticmethod
