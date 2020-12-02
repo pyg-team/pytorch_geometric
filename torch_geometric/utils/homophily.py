@@ -19,6 +19,6 @@ def homophily_ratio(edge_index, y):
     if isinstance(edge_index, SparseTensor):
         row, col, _ = edge_index.coo()
     else:
-        row, col, _ = edge_index
+        row, col = edge_index
 
     return int((y[row] == y[col]).sum()) / row.size(0)
