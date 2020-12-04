@@ -163,6 +163,7 @@ def test(inference_data):
 for epoch in range(1, 51):
     loss = train()
     print(f'  Epoch: {epoch:02d}, Loss: {loss:.4f}')
+    model.flush_msg_store()
     val_ap, val_auc = test(val_data)
     test_ap, test_auc = test(test_data)
     print(f' Val AP: {val_ap:.4f},  Val AUC: {val_auc:.4f}')
