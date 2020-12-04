@@ -22,15 +22,19 @@ class NeighborSampler(object):
     def __init__(self, data, size):
         self.size = size
         self.device = data.src.device
-        self.adj = SparseTensor(row=data.src.cpu(), col=data.dst.cpu(),
-                                value=torch.arange(data.num_events),
+        self.adj = SparseTensor(row=torch.cat([data.src.cpu(), data.dst.cpu()]),
+                                col=torch.cat([data.dst.cpu(), data.src.cpu()]),
+                                value=torch.cat([data.t.cpu(), data.t.cpu()]),
                                 sparse_sizes=(data.num_nodes, data.num_nodes))
 
-    def __call__(self, n_id, threshold):
+    def __call__(self, n_id, t):
         _, _, value = self.adj.coo()
-        mask = value < threshold
+        mask = value < t
         adj = self.adj.masked_select_nnz(mask, layout='coo').set_value_(None)
-        adj, n_id = adj.sample_adj(n_id.cpu(), num_neighbors=self.size)
+        if adj.numel() == 0:	        
+            adj = adj.sparse_resize([n_id.numel(), n_id.numel()])	
+        else:	
+            adj, n_id = adj.sample_adj(n_id.cpu(), num_neighbors=self.size)
         return adj.to(self.device), n_id.to(self.device)
 
 
@@ -88,7 +92,7 @@ def train():
     model.reset_state()
     link_pred.train()
 
-    total_loss = current_event_id = 0
+    total_loss = 0
     for batch in train_data.seq_batches(batch_size=200):
         optimizer.zero_grad()
 
@@ -97,7 +101,7 @@ def train():
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        adj_t, n_id = sampler(n_id, threshold=current_event_id)
+        adj_t, n_id = sampler(n_id, t=t[0].cpu())
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, _ = model(n_id, t)  # Get memory.
@@ -115,7 +119,6 @@ def train():
         optimizer.step()
         model.detach_memory()
         total_loss += float(loss) * batch.num_events
-        current_event_id += batch.num_events
 
     model.flush_msg_store()
 
@@ -135,7 +138,7 @@ def test(data, current_event_id):
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        adj_t, n_id = sampler(n_id, threshold=current_event_id)
+        adj_t, n_id = sampler(n_id, t=t[0].cpu())
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, _ = model(n_id, t)
@@ -153,7 +156,6 @@ def test(data, current_event_id):
         aucs.append(roc_auc_score(y_true, y_pred))
 
         model.update_state(src, pos_dst, t, msg)
-        current_event_id += batch.num_events
 
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
