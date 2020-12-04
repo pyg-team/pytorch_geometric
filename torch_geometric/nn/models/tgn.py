@@ -99,12 +99,12 @@ class TGN(torch.nn.Module):
             self.last_update[n_id] = last_update
 
             # Store new messages in message store (src -> dst, dst -> src).
-            self.update_message_store(src, dst, t, raw_msg)
-            self.update_message_store(dst, src, t, raw_msg)
+            self.update_message_store(src, dst, t, raw_msg, self.msg_s_store)
+            self.update_message_store(dst, src, t, raw_msg, self.msg_d_store)
         else:
             # Update memory using new messages (src -> dst, dst -> src).
-            self.update_message_store(src, dst, t, raw_msg)
-            self.update_message_store(dst, src, t, raw_msg)
+            self.update_message_store(src, dst, t, raw_msg, self.msg_s_store)
+            self.update_message_store(dst, src, t, raw_msg, self.msg_d_store)
 
             self.update_memory(n_id)
 
@@ -143,18 +143,18 @@ class TGN(torch.nn.Module):
             n_id, self.msg_d_store, self.msg_d_module)
 
         # Aggregate messages.
-        idx = torch.cat([src_s, dst_d], dim=0)
+        idx = torch.cat([src_s, src_d], dim=0)
         msg = torch.cat([msg_s, msg_d], dim=0)
         t = torch.cat([t_s, t_d], dim=0)
         aggr = self.aggr_module(msg, self.assoc[idx], t, dim_size=n_id.size(0))
 
         return aggr, t, idx
 
-    def update_message_store(self, src, dst, t, raw_msg):
+    def update_message_store(self, src, dst, t, raw_msg, msg_store):
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
         for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
-            self.msg_s_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
+            msg_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
 
     def compute_messages(self, n_id, msg_store, msg_module):
         data = [msg_store[i] for i in n_id.tolist()]
