@@ -30,7 +30,7 @@ class NeighborSampler(object):
     def __call__(self, n_id, t):
         _, _, value = self.adj.coo()
         mask = value < t
-        adj = self.adj.masked_select_nnz(mask, layout='coo').set_value_(None)
+        adj = self.adj.masked_select_nnz(mask, layout='coo')
         if adj.numel() == 0:	        
             adj = adj.sparse_resize([n_id.numel(), n_id.numel()])	
         else:	
@@ -46,13 +46,14 @@ train_data, val_data, test_data = data.train_val_test_split(
 class GraphAttentionEmbedding(torch.nn.Module):
     def __init__(self, in_channels, out_channels, time_enc):
         super(GraphAttentionEmbedding, self).__init__()
-        self.conv = TransformerConv(in_channels, out_channels)
+        self.conv = TransformerConv(in_channels, out_channels, edge_dim=time_enc.dimension)
         self.time_enc = time_enc
 
-    def forward(self, x, adj_t):
+    def forward(self, x, adj_t, t):
         if adj_t.nnz() > 0:
-            ### TODO: Make time encodings relative to the query time
-            # edge_time_encoding = time_enc(adj_t.storage.value())
+            _, _, value = adj_t.coo()
+            rel_t = value - t
+            adj_t.set_value_(self.time_enc(rel_t.float()), layout='coo')
             x = self.conv((x, x[:adj_t.size(0)]), adj_t)
         else:
             x = self.conv.lin_skip(x) 
@@ -75,6 +76,7 @@ class LinkPredictor(torch.nn.Module):
 class TimeEncoder(torch.nn.Module):
     def __init__(self, dimension):
         super(TimeEncoder, self).__init__()
+        self.dimension = dimension
         self.lin = Linear(1, dimension)
     
     def forward(self, t):
@@ -118,11 +120,12 @@ def train():
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        adj_t, n_id = sampler(n_id, t=t[0].cpu())
+        query_t = t[0]
+        adj_t, n_id = sampler(n_id, t=query_t.cpu())
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
-        z, _ = model(n_id, t)  # Get memory.
-        z = gnn(z, adj_t)  # Embed memory via graph convolution.
+        z, _ = model(n_id, query_t)  # Get memory.
+        z = gnn(z, adj_t, query_t)  # Embed memory via graph convolution.
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
@@ -155,11 +158,12 @@ def test(data, current_event_id):
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        adj_t, n_id = sampler(n_id, t=t[0].cpu())
+        query_t = t[0]
+        adj_t, n_id = sampler(n_id, t=query_t.cpu())
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
-        z, _ = model(n_id, t)
-        z = gnn(z, adj_t)  # Embed memory via graph convolution.
+        z, _ = model(n_id, query_t)
+        z = gnn(z, adj_t, query_t)  # Embed memory via graph convolution.
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
