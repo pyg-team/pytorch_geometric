@@ -81,7 +81,7 @@ class TGN(torch.nn.Module):
 
     def forward(self, n_id: Tensor,
                 t: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
-        if self.train:
+        if self.training:
             memory, last_update = self.get_updated_memory(n_id, t)
         else:
             memory, last_update = self.memory[n_id], self.last_update[n_id]
@@ -91,19 +91,19 @@ class TGN(torch.nn.Module):
     def update_state(self, src, dst, t, raw_msg):
         n_id = torch.cat([src, dst]).unique()
 
-        if self.train:
+        if self.training:
             # Update memory using previously stored messages.
             memory, last_update = self.get_updated_memory(n_id, t)
             self.memory[n_id] = memory
             self.last_update[n_id] = last_update
 
-            # Store new messages in message store
-            self.update_message_store(src, dst, t, raw_msg)  # (src -> dst)
-            self.update_message_store(dst, src, t, raw_msg)  # (dst -> src)
+            # Store new messages in message store (src -> dst, dst -> src).
+            self.update_message_store(src, dst, t, raw_msg)
+            self.update_message_store(dst, src, t, raw_msg)
         else:
-            # Update memory using new messages
-            self.update_message_store(src, dst, t, raw_msg)  # (src -> dst)
-            self.update_message_store(dst, src, t, raw_msg)  # (dst -> src)
+            # Update memory using new messages (src -> dst, dst -> src).
+            self.update_message_store(src, dst, t, raw_msg)
+            self.update_message_store(dst, src, t, raw_msg)
 
             memory, last_update = self.get_updated_memory(n_id, t)
 

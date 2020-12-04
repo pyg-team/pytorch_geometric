@@ -68,12 +68,14 @@ class LinkPredictor(torch.nn.Module):
         return self.lin_end(h)
 
 
-model = TGN(
-    data.num_nodes, data.msg.size(-1), memory_dim=100, time_dim=100,
-    message_module=IdentityMessage(raw_msg_dim=data.msg.size(-1),
-                                   memory_dim=100, time_dim=100),
-    aggregator_module=LastAggregator()).to(device)
-gnn = GraphEmbedding(in_channels=100, out_channels=100).to(device)
+raw_msg_dim = data.msg.size(-1)
+memory_dim = 100
+time_dim = 100
+
+model = TGN(data.num_nodes, raw_msg_dim, memory_dim, time_dim,
+            message_module=IdentityMessage(raw_msg_dim, memory_dim, time_dim),
+            aggregator_module=LastAggregator()).to(device)
+gnn = GraphEmbedding(in_channels=memory_dim, out_channels=100).to(device)
 link_pred = LinkPredictor(in_channels=100).to(device)
 
 optimizer = torch.optim.Adam(
