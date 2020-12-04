@@ -14,8 +14,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
 data = dataset[0].to(device)
-min_dst_id = min(data.dst.unique())
-max_dst_id = max(data.dst.unique())
+# Ensure to only sample destination nodes in negative sampling:
+min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
 
 
 class NeighborSampler(object):
@@ -68,12 +68,14 @@ class LinkPredictor(torch.nn.Module):
         return self.lin_end(h)
 
 
-model = TGN(
-    data.num_nodes, data.msg.size(-1), memory_dim=100, time_dim=100,
-    message_module=IdentityMessage(raw_msg_dim=data.msg.size(-1),
-                                   memory_dim=100, time_dim=100),
-    aggregator_module=LastAggregator()).to(device)
-gnn = GraphEmbedding(in_channels=100, out_channels=100).to(device)
+raw_msg_dim = data.msg.size(-1)
+memory_dim = 100
+time_dim = 100
+
+model = TGN(data.num_nodes, raw_msg_dim, memory_dim, time_dim,
+            message_module=IdentityMessage(raw_msg_dim, memory_dim, time_dim),
+            aggregator_module=LastAggregator()).to(device)
+gnn = GraphEmbedding(in_channels=memory_dim, out_channels=100).to(device)
 link_pred = LinkPredictor(in_channels=100).to(device)
 
 optimizer = torch.optim.Adam(
@@ -94,7 +96,7 @@ def train():
         optimizer.zero_grad()
 
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-        neg_dst = torch.randint(min_dst_id, max_dst_id + 1, (src.size(0), ),
+        neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
@@ -124,23 +126,23 @@ def train():
 
 
 @torch.no_grad()
-def test(inference_data):
+def test(data):
     model.eval()
     link_pred.eval()
     torch.manual_seed(12345)  # Ensure deterministic sampling across epochs.
 
     aps, aucs = [], []
-    current_event_id = train_data.num_events
-    for batch in inference_data.seq_batches(batch_size=200):
+    # current_event_id = train_data.num_events
+    for batch in data.seq_batches(batch_size=200):
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-        neg_dst = torch.randint(min_dst_id, max_dst_id + 1, (src.size(0), ),
+        neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
         # adj_t, n_id = sampler(n_id, threshold=current_event_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
-        z, _ = model(n_id, t, train=False)
+        z, _ = model(n_id, t)
         # z = gnn(z, adj_t)  # Embed memory via graph convolution.
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
@@ -154,8 +156,8 @@ def test(inference_data):
         aps.append(average_precision_score(y_true, y_pred))
         aucs.append(roc_auc_score(y_true, y_pred))
 
-        model.update_state(src, pos_dst, t, msg, train=False)
-        current_event_id += batch.num_events
+        model.update_state(src, pos_dst, t, msg)
+        # current_event_id += batch.num_events
 
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
