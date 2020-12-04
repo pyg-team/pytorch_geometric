@@ -124,13 +124,13 @@ class TGN(torch.nn.Module):
     def get_aggregated_messages(self, n_id):
         self.assoc[n_id] = torch.arange(n_id.size(0), device=n_id.device)
 
-        # Compute messages from src->dst.
+        # Compute messages (src -> dst).
         msg_s, t_s, src_s, dst_s = self.compute_messages(
-            n_id, self.msg_s_store)
+            n_id, self.msg_s_store, self.msg_s_module)
 
-        # Compute messages from dst->src.
+        # Compute messages (dst -> src).
         msg_d, t_d, src_d, dst_d = self.compute_messages(
-            n_id, self.msg_d_store)
+            n_id, self.msg_d_store, self.msg_d_module)
 
         # Aggregate messages.
         idx = torch.cat([src_s, dst_d], dim=0)
@@ -146,20 +146,19 @@ class TGN(torch.nn.Module):
         for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
             self.msg_s_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
 
-    def compute_messages(self, n_id, message_store):
-        data = [message_store[i] for i in n_id.tolist()]
-        src_s, dst_s, t_s, raw_msg_s = list(zip(*data))
-        src_s = torch.cat(src_s, dim=0)
-        dst_s = torch.cat(dst_s, dim=0)
-        t_s = torch.cat(t_s, dim=0)
-        raw_msg_s = torch.cat(raw_msg_s, dim=0)
-        t_rel_s = t_s - self.last_update[src_s]
-        t_enc_s = self.time_enc(t_rel_s.to(raw_msg_s.dtype).view(-1, 1)).cos()
+    def compute_messages(self, n_id, msg_store, msg_module):
+        data = [msg_store[i] for i in n_id.tolist()]
+        src, dst, t, raw_msg = list(zip(*data))
+        src = torch.cat(src, dim=0)
+        dst = torch.cat(dst, dim=0)
+        t = torch.cat(t, dim=0)
+        raw_msg = torch.cat(raw_msg, dim=0)
+        t_rel = t - self.last_update[src]
+        t_enc = self.time_enc(t_rel.to(raw_msg.dtype).view(-1, 1)).cos()
 
-        msg_s = self.msg_s_module(self.memory[src_s], self.memory[dst_s],
-                                  raw_msg_s, t_enc_s)
+        msg = msg_module(self.memory[src], self.memory[dst], raw_msg, t_enc)
 
-        return msg_s, t_s, src_s, dst_s
+        return msg, t, src, dst
 
     def detach_memory(self):
         self.memory.detach_()
