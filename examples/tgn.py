@@ -14,7 +14,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
 data = dataset[0].to(device)
-# Ensure to only sample destination nodes in negative sampling:
+# Ensure to only sample *real* destination nodes as negatives.
 min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
 
 
@@ -30,10 +30,7 @@ class NeighborSampler(object):
         _, _, value = self.adj.coo()
         mask = value < threshold
         adj = self.adj.masked_select_nnz(mask, layout='coo').set_value_(None)
-        if adj.numel() == 0:
-            adj = adj.sparse_resize([n_id.numel(), n_id.numel()])
-        else:
-            adj, n_id = adj.sample_adj(n_id.cpu(), num_neighbors=self.size)
+        adj, n_id = adj.sample_adj(n_id.cpu(), num_neighbors=self.size)
         return adj.to(self.device), n_id.to(self.device)
 
 
@@ -100,13 +97,11 @@ def train():
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        # adj_t, n_id = sampler(n_id, threshold=current_event_id)
+        adj_t, n_id = sampler(n_id, threshold=current_event_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
-        # Sample 1-hop neighborhood.
-
         z, _ = model(n_id, t)  # Get memory.
-        # z = gnn(z, adj_t)  # Embed memory via graph convolution.
+        z = gnn(z, adj_t)  # Embed memory via graph convolution.
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
@@ -122,28 +117,29 @@ def train():
         total_loss += float(loss) * batch.num_events
         current_event_id += batch.num_events
 
+    model.flush_msg_store()
+
     return total_loss / train_data.num_events
 
 
 @torch.no_grad()
-def test(data):
+def test(data, current_event_id):
     model.eval()
     link_pred.eval()
     torch.manual_seed(12345)  # Ensure deterministic sampling across epochs.
 
     aps, aucs = [], []
-    # current_event_id = train_data.num_events
     for batch in data.seq_batches(batch_size=200):
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
         neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        # adj_t, n_id = sampler(n_id, threshold=current_event_id)
+        adj_t, n_id = sampler(n_id, threshold=current_event_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, _ = model(n_id, t)
-        # z = gnn(z, adj_t)  # Embed memory via graph convolution.
+        z = gnn(z, adj_t)  # Embed memory via graph convolution.
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
@@ -157,7 +153,7 @@ def test(data):
         aucs.append(roc_auc_score(y_true, y_pred))
 
         model.update_state(src, pos_dst, t, msg)
-        # current_event_id += batch.num_events
+        current_event_id += batch.num_events
 
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
@@ -165,8 +161,7 @@ def test(data):
 for epoch in range(1, 51):
     loss = train()
     print(f'  Epoch: {epoch:02d}, Loss: {loss:.4f}')
-    model.flush_msg_store()
-    val_ap, val_auc = test(val_data)
-    test_ap, test_auc = test(test_data)
+    val_ap, val_auc = test(val_data, len(train_data))
+    test_ap, test_auc = test(test_data, len(train_data) + len(val_data))
     print(f' Val AP: {val_ap:.4f},  Val AUC: {val_auc:.4f}')
     print(f'Test AP: {test_ap:.4f}, Test AUC: {test_auc:.4f}')
