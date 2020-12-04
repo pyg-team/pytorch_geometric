@@ -6,7 +6,7 @@ from torch_sparse import SparseTensor
 from sklearn.metrics import average_precision_score, roc_auc_score
 
 from torch_geometric.datasets import JODIEDataset
-from torch_geometric.nn import TGN, SAGEConv
+from torch_geometric.nn import TGN, TransformerConv
 from torch_geometric.nn.models.tgn import IdentityMessage, LastAggregator
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -43,16 +43,16 @@ train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
 
-class GraphEmbedding(torch.nn.Module):
+class GraphAttentionEmbedding(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(GraphEmbedding, self).__init__()
-        self.conv = SAGEConv(in_channels, out_channels)
+        super(GraphAttentionEmbedding, self).__init__()
+        self.conv = TransformerConv(in_channels, out_channels)
 
     def forward(self, x, adj_t):
         if adj_t.nnz() > 0:
             x = self.conv((x, x[:adj_t.size(0)]), adj_t)
         else:
-            x = self.conv.lin_r(x)
+            x = self.conv.lin_skip(x) 
         return x
 
 
@@ -76,7 +76,7 @@ time_dim = 100
 model = TGN(data.num_nodes, raw_msg_dim, memory_dim, time_dim,
             message_module=IdentityMessage(raw_msg_dim, memory_dim, time_dim),
             aggregator_module=LastAggregator()).to(device)
-gnn = GraphEmbedding(in_channels=memory_dim, out_channels=100).to(device)
+gnn = GraphAttentionEmbedding(in_channels=memory_dim, out_channels=100).to(device)
 link_pred = LinkPredictor(in_channels=100).to(device)
 
 optimizer = torch.optim.Adam(
