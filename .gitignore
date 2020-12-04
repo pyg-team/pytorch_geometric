@@ -15,5 +15,3 @@ runs/
 
 !torch_geometric/data/
 !test/data/
-
-call_gpu.py
