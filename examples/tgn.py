@@ -53,7 +53,7 @@ class GraphEmbedding(torch.nn.Module):
             x = self.conv((x, x[:adj_t.size(0)]), adj_t)
         else:
             x = self.conv.lin_r(x)
-        return x.relu()
+        return x
 
 
 class LinkPredictor(torch.nn.Module):
