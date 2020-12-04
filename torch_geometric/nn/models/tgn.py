@@ -53,6 +53,7 @@ class TGN(torch.nn.Module):
         last_update = torch.empty(self.num_nodes, dtype=torch.long)
         self.register_buffer('last_update', last_update)
         self.register_buffer('assoc', torch.empty(num_nodes, dtype=torch.long))
+        self.register_buffer('node_idxs', torch.LongTensor(range(num_nodes)))
 
         self.msg_s_store = {}
         self.msg_d_store = {}
@@ -82,7 +83,7 @@ class TGN(torch.nn.Module):
     def forward(self, n_id: Tensor,
                 t: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
         if self.training:
-            memory, last_update = self.get_updated_memory(n_id, t)
+            memory, last_update = self.get_updated_memory(n_id)
         else:
             memory, last_update = self.memory[n_id], self.last_update[n_id]
 
@@ -93,7 +94,7 @@ class TGN(torch.nn.Module):
 
         if self.training:
             # Update memory using previously stored messages.
-            memory, last_update = self.get_updated_memory(n_id, t)
+            memory, last_update = self.get_updated_memory(n_id)
             self.memory[n_id] = memory
             self.last_update[n_id] = last_update
 
@@ -105,12 +106,21 @@ class TGN(torch.nn.Module):
             self.update_message_store(src, dst, t, raw_msg)
             self.update_message_store(dst, src, t, raw_msg)
 
-            memory, last_update = self.get_updated_memory(n_id, t)
+            self.update_memory(n_id)
 
-            self.memory[n_id] = memory
-            self.last_update[n_id] = last_update
+    def update_memory(self, n_id):
+        """
+        Update the memory of the model for nodes in n_id using the messages stored in the message stores for these nodes
+        """
+        memory, last_update = self.get_updated_memory(n_id)
+            
+        self.memory[n_id] = memory
+        self.last_update[n_id] = last_update
 
-    def get_updated_memory(self, n_id, t):
+    def get_updated_memory(self, n_id):
+        """
+        Returns updated memory for nodes in n_id using the messages stored in the message stores for these nodes
+        """
         aggr, t, idx = self.get_aggregated_messages(n_id)
 
         # Get local copy of updated memory.
@@ -159,6 +169,16 @@ class TGN(torch.nn.Module):
         msg = msg_module(self.memory[src], self.memory[dst], raw_msg, t_enc)
 
         return msg, t, src, dst
+
+    def flush_msg_store(self):
+        """
+        Use all messages in the message stores to update the memory
+        """
+        self.update_memory(self.node_idxs)
+        i = self.memory.new_empty((0, ), dtype=torch.long)
+        msg = self.memory.new_empty((0, self.raw_msg_dim))
+        self.msg_s_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
+        self.msg_d_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
 
     def detach_memory(self):
         self.memory.detach_()
