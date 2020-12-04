@@ -17,8 +17,8 @@ class WikipediaNetwork(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cornell"`,
-            :obj:`"Chameleon"` :obj:`"Squirrel"`).
+        name (string): The name of the dataset (:obj:`"Chameleon"`,
+            :obj:`"Squirrel"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -69,7 +69,7 @@ class WikipediaNetwork(InMemoryDataset):
             x = torch.tensor(x, dtype=torch.float)
 
             y = [int(r.split('\t')[2]) for r in data]
-            y = torch.tensor(y, dtype=torch.float)
+            y = torch.tensor(y, dtype=torch.long)
 
         with open(self.raw_paths[1], 'r') as f:
             data = f.read().split('\n')[1:-1]
