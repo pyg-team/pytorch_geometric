@@ -93,7 +93,7 @@ class TGN(torch.nn.Module):
 
         if self.train:
             # Update memory using previously stored messages.
-            memory, last_update = self(n_id, t)
+            memory, last_update = self.get_updated_memory(n_id, t)
             self.memory[n_id] = memory
             self.last_update[n_id] = last_update
 
@@ -105,12 +105,7 @@ class TGN(torch.nn.Module):
             self.update_message_store(src, dst, t, raw_msg)  # (src -> dst)
             self.update_message_store(dst, src, t, raw_msg)  # (dst -> src)
 
-            aggr, t, idx = self.get_aggregated_messages(n_id)
-
-            # Get local copy of updated memory.
-            m = self.memory[n_id]
-            memory = self.gru(aggr, m)
-            last_update = self.last_update.scatter(0, idx, t)[n_id]
+            memory, last_update = self.get_updated_memory(n_id, t)
 
             self.memory[n_id] = memory
             self.last_update[n_id] = last_update
