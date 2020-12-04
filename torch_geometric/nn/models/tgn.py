@@ -33,20 +33,19 @@ class TGN(torch.nn.Module):
             representation.
     """
     def __init__(self, num_nodes: int, raw_msg_dim: int, memory_dim: int,
-                 time_dim: int, message_module: Callable,
-                 aggregator_module: Callable):
+                 message_module: Callable,
+                 aggregator_module: Callable, time_enc: Callable):
         super(TGN, self).__init__()
 
         self.num_nodes = num_nodes
         self.raw_msg_dim = raw_msg_dim
         self.memory_dim = memory_dim
-        self.time_dim = time_dim
 
         self.msg_s_module = message_module
         self.msg_d_module = copy.deepcopy(message_module)
         self.aggr_module = aggregator_module
 
-        self.time_enc = Linear(1, time_dim)
+        self.time_enc = time_enc
         self.gru = GRUCell(message_module.out_channels, memory_dim)
 
         self.register_buffer('memory', torch.empty(num_nodes, memory_dim))
@@ -164,7 +163,7 @@ class TGN(torch.nn.Module):
         t = torch.cat(t, dim=0)
         raw_msg = torch.cat(raw_msg, dim=0)
         t_rel = t - self.last_update[src]
-        t_enc = self.time_enc(t_rel.to(raw_msg.dtype).view(-1, 1)).cos()
+        t_enc = self.time_enc(t_rel.to(raw_msg.dtype))
 
         msg = msg_module(self.memory[src], self.memory[dst], raw_msg, t_enc)
 

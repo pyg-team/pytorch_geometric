@@ -44,12 +44,15 @@ train_data, val_data, test_data = data.train_val_test_split(
 
 
 class GraphAttentionEmbedding(torch.nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, time_enc):
         super(GraphAttentionEmbedding, self).__init__()
         self.conv = TransformerConv(in_channels, out_channels)
+        self.time_enc = time_enc
 
     def forward(self, x, adj_t):
         if adj_t.nnz() > 0:
+            ### TODO: Make time encodings relative to the query time
+            # edge_time_encoding = time_enc(adj_t.storage.value())
             x = self.conv((x, x[:adj_t.size(0)]), adj_t)
         else:
             x = self.conv.lin_skip(x) 
@@ -69,14 +72,28 @@ class LinkPredictor(torch.nn.Module):
         return self.lin_end(h)
 
 
+class TimeEncoder(torch.nn.Module):
+    def __init__(self, dimension):
+        super(TimeEncoder, self).__init__()
+        self.lin = Linear(1, dimension)
+    
+    def forward(self, t):
+        return self.lin(t.view(-1, 1)).cos()
+
+    def reset_parameters(self):
+        self.lin.reset_parameters()
+
+
 raw_msg_dim = data.msg.size(-1)
 memory_dim = 100
 time_dim = 100
 
-model = TGN(data.num_nodes, raw_msg_dim, memory_dim, time_dim,
+time_enc = TimeEncoder(time_dim)
+model = TGN(data.num_nodes, raw_msg_dim, memory_dim,
             message_module=IdentityMessage(raw_msg_dim, memory_dim, time_dim),
-            aggregator_module=LastAggregator()).to(device)
-gnn = GraphAttentionEmbedding(in_channels=memory_dim, out_channels=100).to(device)
+            aggregator_module=LastAggregator(),
+            time_enc=time_enc).to(device)
+gnn = GraphAttentionEmbedding(in_channels=memory_dim, out_channels=100, time_enc=time_enc).to(device)
 link_pred = LinkPredictor(in_channels=100).to(device)
 
 optimizer = torch.optim.Adam(
