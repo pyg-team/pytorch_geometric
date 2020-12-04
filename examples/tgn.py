@@ -22,14 +22,17 @@ class NeighborSampler(object):
     def __init__(self, data, size):
         self.size = size
         self.device = data.src.device
+        edge_features_one_dir = torch.cat([data.t.cpu().unsqueeze(1), data.msg.cpu()], dim=1)
+        edge_features = torch.cat([edge_features_one_dir, edge_features_one_dir], dim=0)
         self.adj = SparseTensor(row=torch.cat([data.src.cpu(), data.dst.cpu()]),
                                 col=torch.cat([data.dst.cpu(), data.src.cpu()]),
-                                value=torch.cat([data.t.cpu(), data.t.cpu()]),
+                                value=edge_features,
                                 sparse_sizes=(data.num_nodes, data.num_nodes))
 
     def __call__(self, n_id, t):
         _, _, value = self.adj.coo()
-        mask = value < t
+        edge_t = value[:, 0].squeeze()
+        mask = edge_t < t
         adj = self.adj.masked_select_nnz(mask, layout='coo')
         if adj.numel() == 0:	        
             adj = adj.sparse_resize([n_id.numel(), n_id.numel()])	
@@ -44,16 +47,23 @@ train_data, val_data, test_data = data.train_val_test_split(
 
 
 class GraphAttentionEmbedding(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, time_enc):
+    def __init__(self, in_channels, out_channels, time_enc, edge_dim):
         super(GraphAttentionEmbedding, self).__init__()
-        self.conv = TransformerConv(in_channels, out_channels, edge_dim=time_enc.dimension)
+        self.conv = TransformerConv(in_channels, out_channels, edge_dim=edge_dim)
         self.time_enc = time_enc
 
     def forward(self, x, adj_t, t):
         if adj_t.nnz() > 0:
             _, _, value = adj_t.coo()
-            rel_t = value - t
-            adj_t.set_value_(self.time_enc(rel_t.float()), layout='coo')
+            
+            edge_t = value[:, 0].squeeze()
+            rel_t = edge_t - t
+            rel_t_enc = self.time_enc(rel_t.float())
+            
+            edge_feat = value[:, 1:]
+            
+            edge_attr = torch.cat([rel_t_enc, edge_feat], dim=1)
+            adj_t.set_value_(edge_attr, layout='coo')
             x = self.conv((x, x[:adj_t.size(0)]), adj_t)
         else:
             x = self.conv.lin_skip(x) 
@@ -95,7 +105,7 @@ model = TGN(data.num_nodes, raw_msg_dim, memory_dim,
             message_module=IdentityMessage(raw_msg_dim, memory_dim, time_dim),
             aggregator_module=LastAggregator(),
             time_enc=time_enc).to(device)
-gnn = GraphAttentionEmbedding(in_channels=memory_dim, out_channels=100, time_enc=time_enc).to(device)
+gnn = GraphAttentionEmbedding(in_channels=memory_dim, out_channels=100, time_enc=time_enc, edge_dim=time_dim+raw_msg_dim).to(device)
 link_pred = LinkPredictor(in_channels=100).to(device)
 
 optimizer = torch.optim.Adam(
