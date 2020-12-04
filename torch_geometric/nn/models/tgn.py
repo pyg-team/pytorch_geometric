@@ -1,7 +1,8 @@
 import copy
-from typing import Callable
+from typing import Callable, Optional, Tuple
 
 import torch
+from torch import Tensor
 from torch.nn import Linear, GRUCell
 from torch_scatter import scatter_max, scatter_mean
 
@@ -78,43 +79,39 @@ class TGN(torch.nn.Module):
         self.msg_s_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
         self.msg_d_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
 
-    def forward(self, n_id, t=None, train=True):
-        if train:
+    def forward(self, n_id: Tensor,
+                t: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
+        if self.train:
             memory, last_update = self.get_updated_memory(n_id, t)
         else:
             memory, last_update = self.memory[n_id], self.last_update[n_id]
 
         return memory, last_update
 
-    def update_state(self, src, dst, t, raw_msg, train=True):
+    def update_state(self, src, dst, t, raw_msg):
         n_id = torch.cat([src, dst]).unique()
-        if train:
-            # Update memory using previously stored messages
+
+        if self.train:
+            # Update memory using previously stored messages.
             memory, last_update = self(n_id, t)
             self.memory[n_id] = memory
             self.last_update[n_id] = last_update
 
             # Store new messages in message store
-            # Update message store (src->dst).
-            self.update_message_store(src, dst, t, raw_msg)
-            
-            # Update message store (dst->src).
-            self.update_message_store(dst, src, t, raw_msg)
+            self.update_message_store(src, dst, t, raw_msg)  # (src -> dst)
+            self.update_message_store(dst, src, t, raw_msg)  # (dst -> src)
         else:
             # Update memory using new messages
-            # Update message store (src->dst).
-            self.update_message_store(src, dst, t, raw_msg)
-            
-            # Update message store (dst->src).
-            self.update_message_store(dst, src, t, raw_msg)
+            self.update_message_store(src, dst, t, raw_msg)  # (src -> dst)
+            self.update_message_store(dst, src, t, raw_msg)  # (dst -> src)
 
             aggr, t, idx = self.get_aggregated_messages(n_id)
 
             # Get local copy of updated memory.
-            m = self.memory[n_id] 
+            m = self.memory[n_id]
             memory = self.gru(aggr, m)
             last_update = self.last_update.scatter(0, idx, t)[n_id]
-            
+
             self.memory[n_id] = memory
             self.last_update[n_id] = last_update
 
@@ -123,7 +120,7 @@ class TGN(torch.nn.Module):
 
         # Get local copy of updated memory.
         memory = self.gru(aggr, self.memory[n_id])
-        
+
         # Get local copy of updated `last_update`.
         last_update = self.last_update.scatter(0, idx, t)[n_id]
 
@@ -133,10 +130,12 @@ class TGN(torch.nn.Module):
         self.assoc[n_id] = torch.arange(n_id.size(0), device=n_id.device)
 
         # Compute messages from src->dst.
-        msg_s, t_s, src_s, dst_s = self.compute_messages(n_id, self.msg_s_store)
+        msg_s, t_s, src_s, dst_s = self.compute_messages(
+            n_id, self.msg_s_store)
 
         # Compute messages from dst->src.
-        msg_d, t_d, src_d, dst_d = self.compute_messages(n_id, self.msg_d_store)
+        msg_d, t_d, src_d, dst_d = self.compute_messages(
+            n_id, self.msg_d_store)
 
         # Aggregate messages.
         idx = torch.cat([src_s, dst_d], dim=0)
@@ -145,13 +144,13 @@ class TGN(torch.nn.Module):
         aggr = self.aggr_module(msg, self.assoc[idx], t, dim_size=n_id.size(0))
 
         return aggr, t, idx
-    
+
     def update_message_store(self, src, dst, t, raw_msg):
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
         for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
             self.msg_s_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
-            
+
     def compute_messages(self, n_id, message_store):
         data = [message_store[i] for i in n_id.tolist()]
         src_s, dst_s, t_s, raw_msg_s = list(zip(*data))
@@ -164,7 +163,7 @@ class TGN(torch.nn.Module):
 
         msg_s = self.msg_s_module(self.memory[src_s], self.memory[dst_s],
                                   raw_msg_s, t_enc_s)
-        
+
         return msg_s, t_s, src_s, dst_s
 
     def detach_memory(self):
