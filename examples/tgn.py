@@ -24,12 +24,6 @@ train_data, val_data, test_data = data.train_val_test_split(
 neighbor_loader = LastNeighborLoader(data.num_nodes, size=10,
                                      msg_dim=data.msg.size(-1), device=device)
 
-# for batch in train_data.seq_batches(batch_size=200):
-#     src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-#     neighbors.insert(src, pos_dst, t, msg)
-
-# raise NotImplementedError
-
 
 class GraphAttentionEmbedding(torch.nn.Module):
     def __init__(self, in_channels, out_channels, msg_dim, time_enc):
@@ -93,6 +87,7 @@ def train():
     link_pred.train()
 
     memory.reset_state()  # Start with a fresh memory.
+    neighbor_loader.reset_state()  # Start with an empty graph.
 
     total_loss = 0
     for batch in train_data.seq_batches(batch_size=200):
@@ -105,13 +100,12 @@ def train():
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        n_id, edge_index, t_edge, msg_edge = neighbor_loader(n_id)
+        n_id, edge_index, e_id = neighbor_loader(n_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(n_id)
-
-        z = gnn(z, last_update, edge_index, t_edge, msg_edge)
+        z = gnn(z, last_update, edge_index, data.t[e_id], data.msg[e_id])
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
@@ -121,8 +115,7 @@ def train():
 
         # Update memory and neighbor loader with ground-truth state.
         memory.update_state(src, pos_dst, t, msg)
-        neighbor_loader.insert(src, pos_dst, t, msg)
-        neighbor_loader.insert(pos_dst, src, t, msg)
+        neighbor_loader.insert(src, pos_dst)
 
         loss.backward()
         optimizer.step()
@@ -133,7 +126,7 @@ def train():
 
 
 @torch.no_grad()
-def test(data):
+def test(inference_data):
     memory.eval()
     gnn.eval()
     link_pred.eval()
@@ -141,18 +134,18 @@ def test(data):
     torch.manual_seed(12345)  # Ensure deterministic sampling across epochs.
 
     aps, aucs = [], []
-    for batch in data.seq_batches(batch_size=200):
+    for batch in inference_data.seq_batches(batch_size=200):
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
 
         neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
                                 dtype=torch.long, device=device)
 
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        n_id, edge_index, t_edge, msg_edge = neighbor_loader(n_id)
+        n_id, edge_index, e_id = neighbor_loader(n_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, last_update = memory(n_id)
-        z = gnn(z, last_update, edge_index, t_edge, msg_edge)
+        z = gnn(z, last_update, edge_index, data.t[e_id], data.msg[e_id])
 
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
@@ -166,8 +159,7 @@ def test(data):
         aucs.append(roc_auc_score(y_true, y_pred))
 
         memory.update_state(src, pos_dst, t, msg)
-        neighbor_loader.insert(src, pos_dst, t, msg)
-        neighbor_loader.insert(pos_dst, src, t, msg)
+        neighbor_loader.insert(src, pos_dst)
 
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 

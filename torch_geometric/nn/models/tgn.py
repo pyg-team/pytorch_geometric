@@ -156,11 +156,11 @@ class TGNMemory(torch.nn.Module):
         return msg, t, src, dst
 
     def train(self, mode: bool = True):
-        super(TGNMemory, self).train(mode)
-        if not mode:  # Eval: Flush message store to memory.
+        if self.training and not mode:  # Eval: Flush message store to memory.
             self.update_memory(
                 torch.arange(self.num_nodes, device=self.memory.device))
             self.reset_message_store()
+        super(TGNMemory, self).train(mode)
 
     def detach(self):
         self.memory.detach_()
@@ -206,35 +206,60 @@ class LastNeighborLoader(object):
     def __init__(self, num_nodes: int, size: int, msg_dim: int, device=None):
         self.size = size
 
-        self.src = torch.empty(num_nodes, size, dtype=torch.long,
+        self.src = torch.empty((num_nodes, size), dtype=torch.long,
                                device=device)
-        self.t = torch.full((num_nodes, size), -1, dtype=torch.long,
-                            device=device)
-        self.msg = torch.empty(num_nodes, size, msg_dim, device=device)
+        self.e_id = torch.empty((num_nodes, size), dtype=torch.long,
+                                device=device)
         self.assoc = torch.empty(num_nodes, dtype=torch.long, device=device)
+
+        self.reset_state()
 
     def __call__(self, n_id):
         src = self.src[n_id]
         dst = n_id.view(-1, 1).repeat(1, self.size)
-        t = self.t[n_id]
-        msg = self.msg[n_id]
+        e_id = self.e_id[n_id]
 
-        mask = t >= 0
-        src, dst, t, msg = src[mask], dst[mask], t[mask], msg[mask]
+        mask = e_id >= 0
+        src, dst, e_id = src[mask], dst[mask], e_id[mask]
 
         n_id = torch.cat([n_id, src]).unique()
         self.assoc[n_id] = torch.arange(n_id.size(0), device=n_id.device)
         src, dst = self.assoc[src], self.assoc[dst]
 
-        return n_id, torch.stack([src, dst]), t, msg
+        return n_id, torch.stack([src, dst]), e_id
 
-    def insert(self, src, dst, t, msg):
-        # TODO
-        pass
-        # n_id = dst.unique()
-        # self.assoc[n_id] = torch.arange(n_id.size(0), device=n_id.device)
+    def insert(self, src, dst):
+        src, dst = torch.cat([src, dst], dim=0), torch.cat([dst, src], dim=0)
+        e_id = torch.arange(self.cur_e_id, self.cur_e_id + src.size(0) // 2,
+                            device=src.device).repeat(2)
+        self.cur_e_id += src.numel() // 2
 
-        # bincount = scatter(torch.ones_like(dst), self.assoc[dst], dim=0,
-        #                    dim_size=n_id.size(0), reduce='add')
+        dst, perm = dst.sort()
+        src, e_id = src[perm], e_id[perm]
 
-        # print(bincount)
+        n_id = dst.unique()
+        self.assoc[n_id] = torch.arange(n_id.numel(), device=n_id.device)
+
+        dense_id = torch.arange(dst.size(0), device=dst.device) % self.size
+        dense_id += self.assoc[dst].mul_(self.size)
+
+        dense_e_id = e_id.new_full((n_id.numel() * self.size, ), -1)
+        dense_e_id[dense_id] = e_id
+        dense_e_id = dense_e_id.view(-1, self.size)
+
+        dense_src = e_id.new_empty(n_id.numel() * self.size)
+        dense_src[dense_id] = src
+        dense_src = dense_src.view(-1, self.size)
+
+        # Collect new and old connections...
+        e_id = torch.cat([self.e_id[n_id, :self.size], dense_e_id], dim=-1)
+        src = torch.cat([self.src[n_id, :self.size], dense_src], dim=-1)
+
+        # And sort them based on `e_id`.
+        e_id, perm = e_id.topk(self.size, dim=-1)
+        self.e_id[n_id] = e_id
+        self.src[n_id] = torch.gather(src, 1, perm)
+
+    def reset_state(self):
+        self.cur_e_id = 0
+        self.e_id.fill_(-1)
