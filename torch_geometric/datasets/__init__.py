@@ -40,6 +40,8 @@ from .aminer import AMiner
 from .word_net import WordNet18
 from .wikics import WikiCS
 from .webkb import WebKB
+from .wikipedia_network import WikipediaNetwork
+from .actor import Actor
 
 __all__ = [
     'KarateClub',
@@ -85,6 +87,8 @@ __all__ = [
     'WordNet18',
     'WikiCS',
     'WebKB',
+    'WikipediaNetwork',
+    'Actor',
 ]
 
 classes = __all__
