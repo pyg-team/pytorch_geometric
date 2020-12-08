@@ -1,3 +1,5 @@
+from typing import Union, Optional, Callable
+
 import torch
 from torch_geometric.nn import GraphConv
 from torch_geometric.nn.pool.topk_pool import topk, filter_adj
@@ -41,8 +43,9 @@ class SAGPooling(torch.nn.Module):
         in_channels (int): Size of each input sample.
         ratio (float or int): Graph pooling ratio, which is used to compute
             :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
-            of :math:`k` itself, depending on whether type is float or int..
-            This value is ignored if min_score is not None.
+            of :math:`k` itself, depending on whether the type of :obj:`ratio`
+            is :obj:`float` or :obj:`int`.
+            This value is ignored if :obj:`min_score` is not :obj:`None`.
             (default: :obj:`0.5`)
         GNN (torch.nn.Module, optional): A graph neural network layer for
             calculating projection scores (one of
@@ -64,8 +67,10 @@ class SAGPooling(torch.nn.Module):
         **kwargs (optional): Additional parameters for initializing the graph
             neural network layer.
     """
-    def __init__(self, in_channels, ratio=0.5, GNN=GraphConv, min_score=None,
-                 multiplier=1, nonlinearity=torch.tanh, **kwargs):
+    def __init__(self, in_channels: int, ratio: Union[float, int] = 0.5,
+                 GNN: Callable = GraphConv, min_score: Optional[float] = None,
+                 multiplier: float = 1.0, nonlinearity: Callable = torch.tanh,
+                 **kwargs):
         super(SAGPooling, self).__init__()
 
         self.in_channels = in_channels

@@ -1,3 +1,5 @@
+from typing import Union, Optional, Callable
+
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
@@ -17,10 +19,10 @@ class ASAPooling(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float or int, optional): Graph pooling ratio, which is used to compute
+        ratio (float or int): Graph pooling ratio, which is used to compute
             :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
-            of :math:`k` itself, depending on whether type is float or int..
-            (default: :obj:`0.5`)
+            of :math:`k` itself, depending on whether the type of :obj:`ratio`
+            is :obj:`float` or :obj:`int`. (default: :obj:`0.5`)
         GNN (torch.nn.Module, optional): A graph neural network layer for
             using intra-cluster properties.
             Especially helpful for graphs with higher degree of neighborhood
@@ -38,8 +40,10 @@ class ASAPooling(torch.nn.Module):
         **kwargs (optional): Additional parameters for initializing the
             graph neural network layer.
     """
-    def __init__(self, in_channels, ratio=0.5, GNN=None, dropout=0,
-                 negative_slope=0.2, add_self_loops=False, **kwargs):
+    def __init__(self, in_channels: int, ratio: Union[float, int] = 0.5,
+                 GNN: Optional[Callable] = None, dropout: float = 0.0,
+                 negative_slope: float = 0.2, add_self_loops: bool = False,
+                 **kwargs):
         super(ASAPooling, self).__init__()
 
         self.in_channels = in_channels

@@ -1,3 +1,4 @@
+from typing import Union, Optional, Callable
 import torch
 from torch.nn import Parameter
 from torch_scatter import scatter_add, scatter_max
@@ -35,11 +36,12 @@ def topk(x, ratio, batch, min_score=None, tol=1e-7):
         perm = perm + cum_num_nodes.view(-1, 1)
         perm = perm.view(-1)
 
-        if type(ratio) is int:
-            # Will fail if k is larger than num_nodes for any batch
-            k = num_nodes.new_full(num_nodes.shape, ratio)
+        if isinstance(ratio, int):
+            k = num_nodes.new_full((num_nodes.size(0), ), ratio)
+            k = torch.min(k, num_nodes)
         else:
             k = (ratio * num_nodes.to(torch.float)).ceil().to(torch.long)
+
         mask = [
             torch.arange(k[i], dtype=torch.long, device=x.device) +
             i * max_num_nodes for i in range(batch_size)
@@ -106,8 +108,9 @@ class TopKPooling(torch.nn.Module):
         in_channels (int): Size of each input sample.
         ratio (float or int): Graph pooling ratio, which is used to compute
             :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
-            of :math:`k` itself, depending on whether type is float or int.
-            This value is ignored if min_score is not None.
+            of :math:`k` itself, depending on whether the type of :obj:`ratio`
+            is :obj:`float` or :obj:`int`.
+            This value is ignored if :obj:`min_score` is not :obj:`None`.
             (default: :obj:`0.5`)
         min_score (float, optional): Minimal node score :math:`\tilde{\alpha}`
             which is used to compute indices of pooled nodes
@@ -120,8 +123,9 @@ class TopKPooling(torch.nn.Module):
         nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
             (default: :obj:`torch.tanh`)
     """
-    def __init__(self, in_channels, ratio=0.5, min_score=None, multiplier=1,
-                 nonlinearity=torch.tanh):
+    def __init__(self, in_channels: int, ratio: Union[int, float] = 0.5,
+                 min_score: Optional[float] = None, multiplier: float = 1.,
+                 nonlinearity: Callable = torch.tanh):
         super(TopKPooling, self).__init__()
 
         self.in_channels = in_channels
