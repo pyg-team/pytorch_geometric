@@ -1,3 +1,4 @@
+from typing import Optional
 from torch_geometric.typing import Adj
 
 import torch
@@ -45,7 +46,7 @@ class WLConv(torch.nn.Module):
 
         return torch.tensor(out, device=x.device)
 
-    def histogram(self, x: Tensor, batch: Tensor = None,
+    def histogram(self, x: Tensor, batch: Optional[Tensor] = None,
                   norm: bool = False) -> Tensor:
         r"""Given a node coloring :obj:`x`, computes the color histograms of
         the respective graphs (separated by :obj:`batch`)."""
