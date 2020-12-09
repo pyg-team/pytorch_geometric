@@ -42,7 +42,7 @@ class WLConv(torch.nn.Module):
         if batch is None:
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
 
-        num_colors = int(x.max()) + 1
+        num_colors = len(self.hashmap)
         batch_size = int(batch.max()) + 1
 
         index = batch * num_colors + x
