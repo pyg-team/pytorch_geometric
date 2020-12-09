@@ -32,6 +32,7 @@ from .pna_conv import PNAConv
 from .cluster_gcn_conv import ClusterGCNConv
 from .gen_conv import GENConv
 from .gcn2_conv import GCN2Conv
+from .wl_conv import WLConv
 
 __all__ = [
     'MessagePassing',
@@ -72,6 +73,7 @@ __all__ = [
     'ClusterGCNConv',
     'GENConv',
     'GCN2Conv',
+    'WLConv',
 ]
 
 classes = __all__
