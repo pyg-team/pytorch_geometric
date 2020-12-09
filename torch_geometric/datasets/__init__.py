@@ -42,6 +42,7 @@ from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
+from .jodie import JODIEDataset
 
 __all__ = [
     'KarateClub',
@@ -89,6 +90,7 @@ __all__ = [
     'WebKB',
     'WikipediaNetwork',
     'Actor',
+    'JODIEDataset',
 ]
 
 classes = __all__
