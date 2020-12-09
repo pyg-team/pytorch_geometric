@@ -13,7 +13,7 @@ class WLConv(torch.nn.Module):
     iteratively refines node colorings:
 
     .. math::
-        \mathbf{x}_^{\prime}_i = \textrm{hash} \left( \mathbf{x}_i, \{
+        \mathbf{x}^{\prime}_i = \textrm{hash} \left( \mathbf{x}_i, \{
         \mathbf{x}_j \colon j \in \mathcal{N}(i) \} \right)
     """
     def __init__(self):
@@ -24,6 +24,7 @@ class WLConv(torch.nn.Module):
         self.hashmap = {}
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        """"""
         if x.dim() > 1:
             assert (x.sum(dim=-1) == 1).sum() == x.size(0)
             x = x.argmax(dim=-1)  # one-hot -> integer.
