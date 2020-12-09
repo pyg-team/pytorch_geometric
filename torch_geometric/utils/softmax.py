@@ -23,7 +23,9 @@ def softmax(src: Tensor, index: Optional[Tensor], ptr: Optional[Tensor] = None,
 
     :rtype: :class:`Tensor`
     """
-    out = src - src.max()
+    out = src
+    if src.numel() > 0:
+        out = out - src.max()
     out = out.exp()
 
     if ptr is not None:
