@@ -38,6 +38,7 @@ from .suite_sparse import SuiteSparseMatrixCollection
 from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
 from .word_net import WordNet18
+from .word_net_rr import WordNet18RR
 from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
@@ -86,6 +87,7 @@ __all__ = [
     'TrackMLParticleTrackingDataset',
     'AMiner',
     'WordNet18',
+    'WordNet18RR',
     'WikiCS',
     'WebKB',
     'WikipediaNetwork',
