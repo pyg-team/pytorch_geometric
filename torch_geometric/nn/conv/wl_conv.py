@@ -7,6 +7,15 @@ from torch_scatter import scatter_add
 
 
 class WLConv(torch.nn.Module):
+    r"""The Weisfeiler Lehman operator from the `"A Reduction of a Graph to a
+    Canonical Form and an Algebra Arising During this Reduction"
+    <https://www.iti.zcu.cz/wl2018/pdf/wl_paper_translation.pdf>`_ paper, which
+    iteratively refines node colorings:
+
+    .. math::
+        \mathbf{x}_^{\prime}_i = \textrm{hash} \left( \mathbf{x}_i, \{
+        \mathbf{x}_j \colon j \in \mathcal{N}(i) \} \right)
+    """
     def __init__(self):
         super(WLConv, self).__init__()
         self.hashmap = {}
@@ -38,6 +47,8 @@ class WLConv(torch.nn.Module):
 
     def histogram(self, x: Tensor, batch: Tensor = None,
                   norm: bool = False) -> Tensor:
+        r"""Given a node coloring :obj:`x`, computes the color histograms of
+        graphs."""
 
         if batch is None:
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
