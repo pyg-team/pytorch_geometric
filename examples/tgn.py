@@ -1,3 +1,16 @@
+# This code achieves a performance of around 96.60%. However, it is not
+# directly comparable to the results reported by the TGN paper since a
+# slightly different evaluation setup is used here.
+# In particular, predictions in the same batch are made in parallel, i.e.
+# predictions for interactions later in the batch have no access to any
+# information whatsoever about previous interactions in the same batch.
+# On the contrary, when sampling node neighborhoods for interactions later in
+# the batch, the TGN paper code has access to previous interactions in the
+# batch.
+# While both approaches are correct, together with the authors of the paper we
+# decided to present this version here as it is more realsitic and a better
+# test bed for future methods.
+
 import os.path as osp
 
 import torch
@@ -8,14 +21,6 @@ from torch_geometric.datasets import JODIEDataset
 from torch_geometric.nn import TGNMemory, TransformerConv
 from torch_geometric.nn.models.tgn import (LastNeighborLoader, IdentityMessage,
                                            LastAggregator)
-
-"""
-This code achieves a performance of around 96.60%. However, it is not directly comparable with the results reported in the `"Temporal Graph Networks for Deep Learning on Dynamic Graphs"
-    <https://arxiv.org/abs/2006.10637>`_ paper since a slightly different evaluation setup is used here. In particular, predictions in the same batch are made completely in parallel, i.e. 
-    predictions for interactions later in the batch have no access to any information whatsoever about previous interactions in the same batch. 
-    On the contrary, when sampling node neighborhoods for interactions later in the batch, the TGN paper code has access to previous interactions in the batch.
-    While both approaches are correct, together with the authors of the paper we decided to present this version here as it is more realsitic and a better test bed for future methods.
-"""
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -29,8 +34,7 @@ min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
 train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
-neighbor_loader = LastNeighborLoader(data.num_nodes, size=10,
-                                     msg_dim=data.msg.size(-1), device=device)
+neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
 
 class GraphAttentionEmbedding(torch.nn.Module):
