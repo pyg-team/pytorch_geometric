@@ -11,6 +11,7 @@ from .gnn_explainer import GNNExplainer
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
+from .label_prop import LabelPropagation
 
 __all__ = [
     'JumpingKnowledge',
@@ -30,6 +31,7 @@ __all__ = [
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
+    'LabelPropagation',
 ]
 
 classes = sorted(__all__)

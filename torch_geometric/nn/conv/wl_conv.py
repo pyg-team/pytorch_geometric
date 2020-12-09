@@ -24,6 +24,7 @@ class WLConv(torch.nn.Module):
     def reset_parameters(self):
         self.hashmap = {}
 
+    @torch.no_grad()
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         """"""
         if x.dim() > 1:
