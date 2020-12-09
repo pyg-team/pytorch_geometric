@@ -146,7 +146,8 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
             pbar.close()
 
         row, _, edge_idx = self.adj.coo()
-        edge_norm = (node_count[row[edge_idx]] / edge_count).clamp_(0, 1e4)
+        t = torch.empty_like(edge_count).scatter_(0, edge_idx, node_count[row])
+        edge_norm = (t / edge_count).clamp_(0, 1e4)
         edge_norm[torch.isnan(edge_norm)] = 0.1
 
         node_count[node_count == 0] = 0.1

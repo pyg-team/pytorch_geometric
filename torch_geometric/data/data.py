@@ -231,6 +231,8 @@ class Data(object):
         r"""Returns the number of edges in the graph."""
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
+        for key, item in self('adj', 'adj_t'):
+            return item.nnz()
         return None
 
     @property

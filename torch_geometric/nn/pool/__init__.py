@@ -79,7 +79,7 @@ def knn(x, y, k, batch_x=None, batch_y=None, cosine=False, num_workers=1):
         x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
         batch_x = torch.tensor([0, 0, 0, 0])
         y = torch.Tensor([[-1, 0], [1, 0]])
-        batch_x = torch.tensor([0, 0])
+        batch_y = torch.tensor([0, 0])
         assign_index = knn(x, y, 2, batch_x, batch_y)
     """
     if torch_cluster is None:
@@ -267,3 +267,5 @@ __all__ = [
     'radius_graph',
     'nearest',
 ]
+
+classes = __all__

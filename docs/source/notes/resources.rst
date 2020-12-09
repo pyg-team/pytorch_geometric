@@ -7,6 +7,8 @@ External Resources
 
 * Steeve Huang: **Hands-on Graph Neural Networks with PyTorch & PyTorch Geometric** [`Tutorial <https://towardsdatascience.com/hands-on-graph-neural-networks-with-pytorch-pytorch-geometric-359487e221a8>`__, `Code <https://github.com/khuangaf/Pytorch-Geometric-YooChoose>`__]
 
+* Stanford University: **Graph Neural Networks using PyTorch Geometric** [`Talk (starting from 33:33) <https://www.youtube.com/watch?v=-UjytpbqX4A&feature=youtu.be>`__]
+
 * Nicolas Chaulet *et al.*: **PyTorch Points 3D** - A framework for running common deep learning models for point cloud analysis tasks that heavily relies on Pytorch Geometric [`Github <https://github.com/nicolas-chaulet/torch-points3d>`__, `Documentation <https://torch-points3d.readthedocs.io/en/latest/>`__]
 
 * Weihua Hu *et al.*: **Open Graph Benchmark** - A collection of large-scale benchmark datasets, data loaders, and evaluators for graph machine learning, including PyTorch Geometric support and examples [`Website <https://ogb.stanford.edu>`__, `GitHub <https://github.com/snap-stanford/ogb>`__]

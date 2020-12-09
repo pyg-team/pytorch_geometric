@@ -31,3 +31,5 @@ __all__ = [
     'DeepGCNLayer',
     'TGNMemory',
 ]
+
+classes = sorted(__all__)

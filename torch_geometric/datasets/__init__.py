@@ -40,6 +40,8 @@ from .aminer import AMiner
 from .word_net import WordNet18
 from .wikics import WikiCS
 from .webkb import WebKB
+from .wikipedia_network import WikipediaNetwork
+from .actor import Actor
 from .jodie import JODIEDataset
 
 __all__ = [
@@ -86,5 +88,9 @@ __all__ = [
     'WordNet18',
     'WikiCS',
     'WebKB',
+    'WikipediaNetwork',
+    'Actor',
     'JODIEDataset',
 ]
+
+classes = __all__

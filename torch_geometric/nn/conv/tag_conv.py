@@ -14,11 +14,13 @@ class TAGConv(MessagePassing):
      <https://arxiv.org/abs/1710.10370>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} = \sum_{k=0}^K \mathbf{D}^{-1/2} \mathbf{A}^k
-        \mathbf{D}^{-1/2}\mathbf{X} \mathbf{\Theta}_{k},
+        \mathbf{X}^{\prime} = \sum_{k=0}^K \left( \mathbf{D}^{-1/2} \mathbf{A}
+        \mathbf{D}^{-1/2} \right)^k \mathbf{X} \mathbf{\Theta}_{k},
 
     where :math:`\mathbf{A}` denotes the adjacency matrix and
     :math:`D_{ii} = \sum_{j=0} A_{ij}` its diagonal degree matrix.
+    The adjacency matrix can include other values than :obj:`1` representing
+    edge weights via the optional :obj:`edge_weight` tensor.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -70,8 +72,8 @@ class TAGConv(MessagePassing):
             xs.append(out)
         return self.lin(torch.cat(xs, dim=-1))
 
-    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
-        return edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)
