@@ -162,7 +162,9 @@ class TGNMemory(torch.nn.Module):
         return msg, t, src, dst
 
     def train(self, mode: bool = True):
-        if self.training and not mode:  # Eval: Flush message store to memory.
+        """Sets the module in training mode."""
+        if self.training and not mode:
+            # Flush message store to memory in case we just entered eval mode.
             self.__update_memory__(
                 torch.arange(self.num_nodes, device=self.memory.device))
             self.__reset_message_store__()
