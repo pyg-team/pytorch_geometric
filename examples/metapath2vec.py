@@ -25,7 +25,7 @@ model = MetaPath2Vec(data.edge_index_dict, embedding_dim=128,
                      sparse=True).to(device)
 
 loader = model.loader(batch_size=128, shuffle=True, num_workers=12)
-optimizer = torch.optim.SparseAdam(model.parameters(), lr=0.01)
+optimizer = torch.optim.SparseAdam(list(model.parameters()), lr=0.01)
 
 
 def train(epoch, log_steps=100, eval_steps=2000):
