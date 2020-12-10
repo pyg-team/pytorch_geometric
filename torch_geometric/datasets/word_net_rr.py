@@ -70,10 +70,10 @@ class WordNet18RR(InMemoryDataset):
         train_mask = [True]*n_train + [False]*(n_val+n_test)
         val_mask = [False]*n_train + [True]*n_val + [False]*n_test
         test_mask = [False]*(n_train+n_val) + [True]*n_test
-        data_list = [Data(edge_index=edge_index, y=edge_type, train_mask=train_mask, val_mask=val_mask, test_mask=test_mask)]
-
         unique_vertices = edge_index.flatten().unique().tolist()
-        self.vertice_to_id = dict(zip(unique_vertices, range(len(unique_vertices))))
+        data_list = [Data(edge_index=edge_index, y=edge_type, train_mask=train_mask, val_mask=val_mask,
+                          test_mask=test_mask, vertice_to_id=dict(zip(unique_vertices, range(len(unique_vertices)))))]
+
         collated_data, slices = self.collate(data_list)
         torch.save((collated_data, slices), *self.processed_paths)
 
