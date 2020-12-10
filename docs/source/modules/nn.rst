@@ -15,15 +15,17 @@ Convolutional Layers
 
 .. automodule:: torch_geometric.nn.conv.message_passing
    :members:
+   :exclude-members: training
 
 .. automodule:: torch_geometric.nn.conv
    :members:
    :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing
+   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training
 
 .. automodule:: torch_geometric.nn.meta
    :members:
    :undoc-members:
+   :exclude-members: training
 
 Dense Convolutional Layers
 --------------------------
@@ -38,6 +40,7 @@ Dense Convolutional Layers
 .. autoclass:: {{ cls }}
    :members:
    :undoc-members:
+   :exclude-members: training
    {% endfor %}
 
 Normalization Layers
@@ -52,6 +55,7 @@ Normalization Layers
 .. automodule:: torch_geometric.nn.norm
    :members:
    :undoc-members:
+   :exclude-members: training
 
 Global Pooling Layers
 ---------------------
@@ -65,6 +69,7 @@ Global Pooling Layers
 .. automodule:: torch_geometric.nn.glob
    :members:
    :undoc-members:
+   :exclude-members: training
 
 Pooling Layers
 --------------
@@ -78,6 +83,7 @@ Pooling Layers
 .. automodule:: torch_geometric.nn.pool
    :members:
    :undoc-members:
+   :exclude-members: training
 
 Dense Pooling Layers
 --------------------
@@ -91,10 +97,12 @@ Dense Pooling Layers
 .. automodule:: torch_geometric.nn.dense.diff_pool
    :members:
    :undoc-members:
+   :exclude-members: training
 
 .. automodule:: torch_geometric.nn.dense.mincut_pool
    :members:
    :undoc-members:
+   :exclude-members: training
 
 Unpooling Layers
 ----------------
@@ -109,6 +117,7 @@ Unpooling Layers
 .. automodule:: torch_geometric.nn.unpool
    :members:
    :undoc-members:
+   :exclude-members: training
 
 Models
 ------
@@ -123,7 +132,7 @@ Models
 .. automodule:: torch_geometric.nn.models
    :members:
    :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing
+   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training
 
 DataParallel Layers
 -------------------
@@ -131,3 +140,4 @@ DataParallel Layers
 .. automodule:: torch_geometric.nn.data_parallel
    :members:
    :undoc-members:
+   :exclude-members: training
