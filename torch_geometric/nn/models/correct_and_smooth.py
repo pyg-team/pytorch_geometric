@@ -58,7 +58,7 @@ class CorrectAndSmooth(torch.nn.Module):
         num_correction_layers (int): The number of propagations :math:`L_1`.
         correction_alpha (float): The :math:`\alpha_1` coefficient.
         num_smoothing_layers (int): The number of propagations :math:`L_2`.
-        smooting_alpha (float): The :math:`\alpha_2` coefficient.
+        smoothing_alpha (float): The :math:`\alpha_2` coefficient.
         autoscale (bool, optional): If set to :obj:`True`, will automatically
             determine the scaling factor :math:`\gamma`. (default: :obj:`True`)
         scale (float, optional): The scaling factor :math:`\gamma`, in case
