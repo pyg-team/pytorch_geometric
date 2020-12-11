@@ -15,3 +15,4 @@ runs/
 
 !torch_geometric/data/
 !test/data/
+.venv
