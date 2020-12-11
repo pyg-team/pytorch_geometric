@@ -13,6 +13,7 @@ from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .curvGN import ConvCurv, compute_ricci_curvature
+from .correct_and_smooth import CorrectAndSmooth
 
 __all__ = [
     'JumpingKnowledge',
@@ -35,6 +36,7 @@ __all__ = [
     'LabelPropagation',
     'ConvCurv',
     'compute_ricci_curvature',
+    'CorrectAndSmooth',
 ]
 
 classes = sorted(__all__)

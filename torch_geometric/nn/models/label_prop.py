@@ -1,3 +1,4 @@
+from typing import Callable, Optional
 from torch_geometric.typing import Adj, OptTensor
 
 import torch
@@ -21,26 +22,28 @@ class LabelPropagation(MessagePassing):
 
     Args:
         num_layers (int): The number of propagations.
-        alpha (float, optional): The :math:`\alpha` coefficient.
-            (default: :obj:`0.9`)
+        alpha (float): The :math:`\alpha` coefficient.
     """
-    def __init__(self, num_layers: int, alpha: float = 0.9):
+    def __init__(self, num_layers: int, alpha: float):
         super(LabelPropagation, self).__init__(aggr='add')
         self.num_layers = num_layers
         self.alpha = alpha
 
     @torch.no_grad()
-    def forward(self, y: Tensor, edge_index: Adj, mask: Tensor,
-                edge_weight: OptTensor = None) -> Tensor:
+    def forward(
+        self, y: Tensor, edge_index: Adj, mask: Optional[Tensor] = None,
+        edge_weight: OptTensor = None,
+        post_step: Callable = lambda y: y.clamp_(0., 1.)
+    ) -> Tensor:
         """"""
 
-        if mask.dtype == torch.long:
-            idx = mask
-            mask = mask.new_zeros(y.size(0), dtype=torch.bool)
-            mask[idx] = True
+        if y.dtype == torch.long:
+            y = F.one_hot(y.view(-1)).to(torch.float)
 
-        y = F.one_hot(y.view(-1)).to(torch.float)
-        y[~mask] = 0.
+        out = y
+        if mask is not None:
+            out = torch.zeros_like(y)
+            out[mask] = y[mask]
 
         if isinstance(edge_index, SparseTensor) and not edge_index.has_value():
             edge_index = gcn_norm(edge_index, add_self_loops=False)
@@ -48,20 +51,21 @@ class LabelPropagation(MessagePassing):
             edge_index, edge_weight = gcn_norm(edge_index, num_nodes=y.size(0),
                                                add_self_loops=False)
 
-        res = (1 - self.alpha) * y
+        res = (1 - self.alpha) * out
         for _ in range(self.num_layers):
             # propagate_type: (y: Tensor, edge_weight: OptTensor)
-            y = self.propagate(edge_index, y=y, edge_weight=edge_weight,
-                               size=None)
-            y.mul_(self.alpha).add_(res).clamp_(0, 1)
+            out = self.propagate(edge_index, x=out, edge_weight=edge_weight,
+                                 size=None)
+            out.mul_(self.alpha).add_(res)
+            out = post_step(out)
 
-        return y
+        return out
 
-    def message(self, y_j: Tensor, edge_weight: OptTensor) -> Tensor:
-        return y_j if edge_weight is None else edge_weight.view(-1, 1) * y_j
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-    def message_and_aggregate(self, adj_t: SparseTensor, y: Tensor) -> Tensor:
-        return matmul(adj_t, y, reduce=self.aggr)
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+        return matmul(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
         return '{}(num_layers={}, alpha={})'.format(self.__class__.__name__,
