@@ -11,17 +11,17 @@ class WordNet18RR(InMemoryDataset):
     """
 
     edge_to_id = {
-        "_also_see": 1,
-        "_derivationally_related_form": 2,
-        "_has_part": 3,
-        "_hypernym": 4,
-        "_instance_hypernym": 5,
-        "_member_meronym": 6,
-        "_member_of_domain_region": 7,
-        "_member_of_domain_usage": 8,
-        "_similar_to": 9,
-        "_synset_domain_topic_of": 10,
-        "_verb_group": 11,
+        "_also_see": 0,
+        "_derivationally_related_form": 1,
+        "_has_part": 2,
+        "_hypernym": 3,
+        "_instance_hypernym": 4,
+        "_member_meronym": 5,
+        "_member_of_domain_region": 6,
+        "_member_of_domain_usage": 7,
+        "_similar_to": 8,
+        "_synset_domain_topic_of": 9,
+        "_verb_group": 10,
     }
 
     urls = {
