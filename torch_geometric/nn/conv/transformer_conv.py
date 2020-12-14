@@ -6,11 +6,8 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Linear
-from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import softmax
-
-from ..inits import zeros
 
 
 class TransformerConv(MessagePassing):
@@ -47,13 +44,8 @@ class TransformerConv(MessagePassing):
                 (1 - \beta_i) \underbrace{\left(\sum_{j \in \mathcal{N}(i)}
                 \alpha_{i,j} \mathbf{W}_2 \vec{x}_j \right)}_{=\mathbf{m}_i}
 
-            with
-
-            .. math::
-                \beta_i = \textrm{sigmoid}(\mathbf{w}_5^{\top}
-                [ \mathbf{x}_i \Vert \mathbf{m}_i \Vert
-                \mathbf{x}_i - \mathbf{m}_i ])
-
+            with :math:`\beta_i = \textrm{sigmoid}(\mathbf{w}_5^{\top}
+            [ \mathbf{x}_i, \mathbf{m}_i, \mathbf{x}_i - \mathbf{m}_i ])`
             (default: :obj:`False`)
         dropout (float, optional): Dropout probability of the normalized
             attention coefficients which exposes each node to a stochastically
@@ -118,17 +110,19 @@ class TransformerConv(MessagePassing):
         else:
             self.lin_edge = self.register_parameter('lin_edge', None)
 
-        self.lin_beta = self.register_parameter('lin_beta', None)
-
         if concat:
             self.lin_skip = Linear(in_channels[1], heads * out_channels,
                                    bias=bias)
             if self.beta:
                 self.lin_beta = Linear(3 * heads * out_channels, 1, bias=False)
+            else:
+                self.lin_beta = self.register_parameter('lin_beta', None)
         else:
             self.lin_skip = Linear(in_channels[1], out_channels, bias=bias)
             if self.beta:
                 self.lin_beta = Linear(3 * out_channels, 1, bias=False)
+            else:
+                self.lin_beta = self.register_parameter('lin_beta', None)
 
         self.reset_parameters()
 
@@ -176,6 +170,7 @@ class TransformerConv(MessagePassing):
         key = self.lin_key(x_j).view(-1, self.heads, self.out_channels)
 
         if self.lin_edge is not None:
+            assert edge_attr is not None
             edge_attr = self.lin_edge(edge_attr).view(-1, self.heads,
                                                       self.out_channels)
             key += edge_attr
