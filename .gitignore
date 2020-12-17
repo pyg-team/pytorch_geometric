@@ -14,6 +14,7 @@ lightning_logs/
 .idea
 .venv
 *.out
+*.pt
 
 !torch_geometric/data/
 !test/data/

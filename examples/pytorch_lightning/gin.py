@@ -9,12 +9,11 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import LightningDataModule, LightningModule, Trainer
 from pytorch_lightning import seed_everything
 
-from torch_scatter import segment_csr
 from torch_sparse import SparseTensor
 import torch_geometric.transforms as T
 from torch_geometric.datasets import TUDataset
 from torch_geometric.data import Data, DataLoader
-from torch_geometric.nn import GINConv
+from torch_geometric.nn import GINConv, global_add_pool
 
 
 class IMDBBinary(LightningDataModule):
@@ -71,7 +70,7 @@ class GIN(LightningModule):
                 BatchNorm1d(hidden_channels),
                 ReLU(inplace=True),
             )
-            self.convs.append(GINConv(mlp, train_eps=True))
+            self.convs.append(GINConv(mlp, train_eps=True).jittable())
             in_channels = hidden_channels
 
         self.classifier = Sequential(
@@ -87,8 +86,7 @@ class GIN(LightningModule):
     def forward(self, x: Tensor, adj_t: SparseTensor, batch: Tensor) -> Tensor:
         for conv in self.convs:
             x = conv(x, adj_t)
-        ptr = torch.cat([batch.new_zeros(1), batch.bincount().cumsum(0)])
-        x = segment_csr(x, ptr, reduce='sum')
+        x = global_add_pool(x, batch)
         return self.classifier(x)
 
     def training_step(self, data: Data, batch_idx: int):
@@ -121,12 +119,9 @@ def main():
     checkpoint_callback = ModelCheckpoint(monitor='val_acc')
     trainer = Trainer(gpus=1, max_epochs=20, callbacks=[checkpoint_callback])
     trainer.fit(model, datamodule=datamodule)
-    print('--------------------')
-    print(trainer.callbacks[0].best_model_path)
-    print('--------------------')
+    trainer.test()
     model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
-    trainer.test(model, datamodule=datamodule)
-    # model.to_torchscript(file_path='GIN_IMDB.pt', method='script')
+    model.to_torchscript(file_path='GIN_IMDB-BINARY.pt', method='script')
 
 
 if __name__ == "__main__":
