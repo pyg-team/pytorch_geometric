@@ -6,13 +6,15 @@ import torch.nn.functional as F
 from torch.nn import ModuleList, Sequential, Linear, BatchNorm1d, ReLU, Dropout
 from pytorch_lightning.metrics import Accuracy
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import LightningDataModule, LightningModule, Trainer
+from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
+                               seed_everything)
 
 from torch_sparse import SparseTensor
+from torch_scatter import segment_csr
 import torch_geometric.transforms as T
 from torch_geometric.datasets import TUDataset
-from torch_geometric.data import Data, DataLoader
-from torch_geometric.nn import GINConv, global_add_pool
+from torch_geometric.data import Batch, DataLoader
+from torch_geometric.nn import GINConv
 
 
 class IMDBBinary(LightningDataModule):
@@ -81,29 +83,29 @@ class GIN(LightningModule):
 
         self.acc = Accuracy(out_channels)
 
-    def forward(self, x: Tensor, adj_t: SparseTensor, batch: Tensor) -> Tensor:
+    def forward(self, x: Tensor, adj_t: SparseTensor, ptr: Tensor) -> Tensor:
         for conv in self.convs:
             x = conv(x, adj_t)
-        x = global_add_pool(x, batch)
+        x = segment_csr(x, ptr, reduce='sum')  # Global add pooling.
         return self.classifier(x)
 
-    def training_step(self, data: Data, batch_idx: int):
-        y_hat = self(data.x, data.adj_t, data.batch)
-        train_loss = F.cross_entropy(y_hat, data.y)
+    def training_step(self, batch: Batch, batch_idx: int):
+        y_hat = self(batch.x, batch.adj_t, batch.ptr)
+        train_loss = F.cross_entropy(y_hat, batch.y)
         self.log('train_loss', train_loss, prog_bar=True, on_step=False,
                  on_epoch=True)
-        self.log('train_acc', self.acc(y_hat, data.y), prog_bar=True,
+        self.log('train_acc', self.acc(y_hat, batch.y), prog_bar=True,
                  on_step=False, on_epoch=True)
         return train_loss
 
-    def validation_step(self, data: Data, batch_idx: int):
-        y_hat = self(data.x, data.adj_t, data.batch)
-        self.log('val_acc', self.acc(y_hat, data.y), on_step=False,
+    def validation_step(self, batch: Batch, batch_idx: int):
+        y_hat = self(batch.x, batch.adj_t, batch.ptr)
+        self.log('val_acc', self.acc(y_hat, batch.y), on_step=False,
                  on_epoch=True, prog_bar=True)
 
-    def test_step(self, data: Data, batch_idx: int):
-        y_hat = self(data.x, data.adj_t, data.batch)
-        self.log('test_acc', self.acc(y_hat, data.y), on_epoch=True,
+    def test_step(self, batch: Batch, batch_idx: int):
+        y_hat = self(batch.x, batch.adj_t, batch.ptr)
+        self.log('test_acc', self.acc(y_hat, batch.y), on_epoch=True,
                  prog_bar=True)
 
     def configure_optimizers(self):
@@ -111,6 +113,7 @@ class GIN(LightningModule):
 
 
 def main():
+    seed_everything(42)
     datamodule = IMDBBinary()
     model = GIN(datamodule.num_features, datamodule.num_classes)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc')

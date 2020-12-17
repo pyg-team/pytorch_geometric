@@ -12,7 +12,7 @@ class Batch(Data):
     In addition, single graphs can be reconstructed via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
-    def __init__(self, batch=None, **kwargs):
+    def __init__(self, batch=None, ptr=None, **kwargs):
         super(Batch, self).__init__(**kwargs)
 
         for key, item in kwargs.items():
@@ -22,6 +22,7 @@ class Batch(Data):
                 self[key] = item
 
         self.batch = batch
+        self.ptr = ptr
         self.__data_class__ = Data
         self.__slices__ = None
         self.__cumsum__ = None
@@ -39,7 +40,7 @@ class Batch(Data):
 
         keys = [set(data.keys) for data in data_list]
         keys = list(set.union(*keys))
-        assert 'batch' not in keys
+        assert 'batch' not in keys and 'ptr' not in keys
 
         batch = Batch()
         for key in data_list[0].__dict__.keys():
@@ -50,6 +51,7 @@ class Batch(Data):
         batch.__data_class__ = data_list[0].__class__
         for key in keys + ['batch']:
             batch[key] = []
+        batch['ptr'] = [0]
 
         device = None
         slices = {key: [0] for key in keys}
@@ -122,12 +124,14 @@ class Batch(Data):
                 item = torch.full((num_nodes, ), i, dtype=torch.long,
                                   device=device)
                 batch.batch.append(item)
+                batch.ptr.append(batch.ptr[-1] + num_nodes)
 
         # Fix initial slice values:
         for key in keys:
             slices[key][0] = slices[key][1] - slices[key][1]
 
         batch.batch = None if len(batch.batch) == 0 else batch.batch
+        batch.ptr = None if len(batch.ptr) == 1 else batch.ptr
         batch.__slices__ = slices
         batch.__cumsum__ = cumsum
         batch.__cat_dims__ = cat_dims
@@ -210,4 +214,4 @@ class Batch(Data):
         """Returns the number of graphs in the batch."""
         if self.__num_graphs__ is not None:
             return self.__num_graphs__
-        return self.batch[-1].item() + 1
+        return self.ptr.numel() + 1
