@@ -7,7 +7,6 @@ from torch.nn import ModuleList, Sequential, Linear, BatchNorm1d, ReLU, Dropout
 from pytorch_lightning.metrics import Accuracy
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import LightningDataModule, LightningModule, Trainer
-from pytorch_lightning import seed_everything
 
 from torch_sparse import SparseTensor
 import torch_geometric.transforms as T
@@ -68,7 +67,8 @@ class GIN(LightningModule):
                 BatchNorm1d(hidden_channels),
                 ReLU(inplace=True),
             )
-            self.convs.append(GINConv(mlp, train_eps=True))  #.jittable())
+            conv = GINConv(mlp, train_eps=True)  # .jittable()
+            self.convs.append(conv)
             in_channels = hidden_channels
 
         self.classifier = Sequential(
@@ -111,16 +111,17 @@ class GIN(LightningModule):
 
 
 def main():
-    seed_everything(42)
     datamodule = IMDBBinary()
     model = GIN(datamodule.num_features, datamodule.num_classes)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc')
     trainer = Trainer(gpus=2, accelerator='ddp', max_epochs=20,
                       callbacks=[checkpoint_callback])
+
     trainer.fit(model, datamodule=datamodule)
     trainer.test()
-    model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
-    model.to_torchscript(file_path='GIN_IMDB-BINARY.pt', method='script')
+
+    # model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
+    # model.to_torchscript(file_path='GIN_IMDB-BINARY.pt', method='script')
 
 
 if __name__ == "__main__":
