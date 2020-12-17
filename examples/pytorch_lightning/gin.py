@@ -5,14 +5,16 @@ from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import ModuleList, Sequential, Linear, BatchNorm1d, ReLU, Dropout
 from pytorch_lightning.metrics import Accuracy
-from pytorch_lightning import (Trainer, LightningDataModule, LightningModule,
-                               seed_everything)
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning import LightningDataModule, LightningModule, Trainer
+from pytorch_lightning import seed_everything
 
+from torch_scatter import segment_csr
 from torch_sparse import SparseTensor
 import torch_geometric.transforms as T
 from torch_geometric.datasets import TUDataset
 from torch_geometric.data import Data, DataLoader
-from torch_geometric.nn import GINConv, global_add_pool
+from torch_geometric.nn import GINConv
 
 
 class IMDBBinary(LightningDataModule):
@@ -55,8 +57,9 @@ class IMDBBinary(LightningDataModule):
 class GIN(LightningModule):
     def __init__(self, in_channels: int, out_channels: int,
                  hidden_channels: int = 64, num_layers: int = 3,
-                 dropout: float = 0.0):
+                 dropout: float = 0.5):
         super().__init__()
+        self.save_hyperparameters()
 
         self.convs = ModuleList()
         for _ in range(num_layers):
@@ -75,7 +78,7 @@ class GIN(LightningModule):
             Linear(hidden_channels, hidden_channels),
             BatchNorm1d(hidden_channels),
             ReLU(inplace=True),
-            Dropout(p=dropout, inplace=True),
+            Dropout(p=dropout),
             Linear(hidden_channels, out_channels),
         )
 
@@ -84,7 +87,8 @@ class GIN(LightningModule):
     def forward(self, x: Tensor, adj_t: SparseTensor, batch: Tensor) -> Tensor:
         for conv in self.convs:
             x = conv(x, adj_t)
-        x = global_add_pool(x, batch)
+        ptr = torch.cat([batch.new_zeros(1), batch.bincount().cumsum(0)])
+        x = segment_csr(x, ptr, reduce='sum')
         return self.classifier(x)
 
     def training_step(self, data: Data, batch_idx: int):
@@ -112,11 +116,16 @@ class GIN(LightningModule):
 
 def main():
     seed_everything(42)
-    data_module = IMDBBinary()
-    model = GIN(data_module.num_features, data_module.num_classes)
-    trainer = Trainer(gpus=1)
-    trainer.fit(model, data_module)
-    trainer.test()
+    datamodule = IMDBBinary()
+    model = GIN(datamodule.num_features, datamodule.num_classes)
+    checkpoint_callback = ModelCheckpoint(monitor='val_acc')
+    trainer = Trainer(gpus=1, max_epochs=20, callbacks=[checkpoint_callback])
+    trainer.fit(model, datamodule=datamodule)
+    print('--------------------')
+    print(trainer.callbacks[0].best_model_path)
+    print('--------------------')
+    model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
+    trainer.test(model, datamodule=datamodule)
     # model.to_torchscript(file_path='GIN_IMDB.pt', method='script')
 
 
