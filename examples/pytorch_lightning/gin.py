@@ -29,16 +29,14 @@ class IMDBBinary(LightningDataModule):
     def num_classes(self):
         return 2
 
-    def prepare_data(self):
+    def setup(self, stage: Optional[str] = None):
         transform = T.Compose([
             T.OneHotDegree(self.num_features - 1),
             T.ToSparseTensor(),
         ])
-        self.dataset = TUDataset(self.data_dir, name='IMDB-BINARY',
-                                 pre_transform=transform).shuffle()
+        dataset = TUDataset(self.data_dir, name='IMDB-BINARY',
+                            pre_transform=transform).shuffle()
 
-    def setup(self, stage: Optional[str] = None):
-        dataset = self.dataset
         self.test_dataset = dataset[:len(dataset) // 10]
         self.val_dataset = dataset[len(dataset) // 10:len(dataset) // 5]
         self.train_dataset = dataset[len(dataset) // 5:]
@@ -70,7 +68,7 @@ class GIN(LightningModule):
                 BatchNorm1d(hidden_channels),
                 ReLU(inplace=True),
             )
-            self.convs.append(GINConv(mlp, train_eps=True).jittable())
+            self.convs.append(GINConv(mlp, train_eps=True))  #.jittable())
             in_channels = hidden_channels
 
         self.classifier = Sequential(
@@ -117,7 +115,8 @@ def main():
     datamodule = IMDBBinary()
     model = GIN(datamodule.num_features, datamodule.num_classes)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc')
-    trainer = Trainer(gpus=1, max_epochs=20, callbacks=[checkpoint_callback])
+    trainer = Trainer(gpus=2, accelerator='ddp', max_epochs=20,
+                      callbacks=[checkpoint_callback])
     trainer.fit(model, datamodule=datamodule)
     trainer.test()
     model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
