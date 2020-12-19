@@ -64,13 +64,11 @@ class GINConv(MessagePassing):
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
 
-        #x_r = x[1]
-        #if x_r is not None:
-        #    out += (1 + self.eps) * x_r
-        #if os.environ["LOCAL_RANK"] == '0':
-        #    import pdb; pdb.set_trace()
-        nn = self.nn.to(out.device)
-        return nn(out)
+        x_r = x[1]
+        if x_r is not None:
+            out += (1 + self.eps) * x_r
+
+        return self.nn(out)
 
     def message(self, x_j: Tensor) -> Tensor:
         return x_j

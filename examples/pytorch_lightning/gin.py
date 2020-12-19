@@ -86,11 +86,10 @@ class GIN(LightningModule):
 
     def forward(self, x: Tensor, adj_t: SparseTensor, ptr: Tensor) -> Tensor:
         for conv in self.convs:
-            conv = conv.to("cuda")
             x = conv(x, adj_t)
         x = segment_csr(x, ptr, reduce='sum')  # Global add pooling.
-        classifier = self.classifier.to("cuda")
-        return classifier(x)
+        #classifier = self.classifier.to("cuda")
+        return self.classifier(x)
 
     def training_step(self, batch: Batch, batch_idx: int):
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
