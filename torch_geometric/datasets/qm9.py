@@ -196,7 +196,7 @@ class QM9(InMemoryDataset):
             target = target * conversion.view(1, -1)
 
         with open(self.raw_paths[2], 'r') as f:
-            skip = [int(x.split()[0]) for x in f.read().split('\n')[9:-2]]
+            skip = [int(x.split()[0]) - 1 for x in f.read().split('\n')[9:-2]]
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False,
                                    sanitize=False)
