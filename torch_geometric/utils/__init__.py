@@ -22,6 +22,7 @@ from .convert import to_networkx, from_networkx
 from .convert import to_trimesh, from_trimesh
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
+from .hetero import group_hetero_graph
 from .negative_sampling import (negative_sampling,
                                 structured_negative_sampling,
                                 batched_negative_sampling)
@@ -64,6 +65,7 @@ __all__ = [
     'erdos_renyi_graph',
     'stochastic_blockmodel_graph',
     'barabasi_albert_graph',
+    'group_hetero_graph',
     'negative_sampling',
     'structured_negative_sampling',
     'batched_negative_sampling',
