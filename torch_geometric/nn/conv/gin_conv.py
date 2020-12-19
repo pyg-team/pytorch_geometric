@@ -1,3 +1,4 @@
+import os
 from typing import Callable, Union
 from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
@@ -63,11 +64,13 @@ class GINConv(MessagePassing):
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
 
-        x_r = x[1]
-        if x_r is not None:
-            out += (1 + self.eps) * x_r
-
-        return self.nn(out)
+        #x_r = x[1]
+        #if x_r is not None:
+        #    out += (1 + self.eps) * x_r
+        #if os.environ["LOCAL_RANK"] == '0':
+        #    import pdb; pdb.set_trace()
+        nn = self.nn.to(out.device)
+        return nn(out)
 
     def message(self, x_j: Tensor) -> Tensor:
         return x_j
@@ -138,10 +141,10 @@ class GINEConv(MessagePassing):
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
-        x_r = x[1]
-        if x_r is not None:
-            out += (1 + self.eps) * x_r
-
+        #x_r = x[1]
+        #if x_r is not None:
+        #    out += (1 + self.eps) * x_r
+        self.nn.to("cuda")
         return self.nn(out)
 
     def message(self, x_j: Tensor, edge_attr: Tensor) -> Tensor:

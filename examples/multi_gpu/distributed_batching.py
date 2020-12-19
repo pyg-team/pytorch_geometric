@@ -73,7 +73,10 @@ def run(rank, world_size):
     model = GIN(128, dataset.num_tasks, num_layers=3, dropout=0.5).to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    criterion = torch.nn.BCEWithLogitsLoss()
+    criterion = torch.nn.
+    
+    
+    ()
 
     if rank == 0:
         val_loader = DataLoader(dataset[split_idx['valid']], batch_size=256)

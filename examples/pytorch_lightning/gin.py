@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 import torch
@@ -85,9 +86,11 @@ class GIN(LightningModule):
 
     def forward(self, x: Tensor, adj_t: SparseTensor, ptr: Tensor) -> Tensor:
         for conv in self.convs:
+            conv = conv.to("cuda")
             x = conv(x, adj_t)
         x = segment_csr(x, ptr, reduce='sum')  # Global add pooling.
-        return self.classifier(x)
+        classifier = self.classifier.to("cuda")
+        return classifier(x)
 
     def training_step(self, batch: Batch, batch_idx: int):
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
@@ -111,17 +114,22 @@ class GIN(LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
-
 def main():
     seed_everything(42)
     datamodule = IMDBBinary()
     model = GIN(datamodule.num_features, datamodule.num_classes)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc')
-    trainer = Trainer(gpus=2, accelerator='ddp', max_epochs=20,
-                      callbacks=[checkpoint_callback])
+    trainer = Trainer(
+        gpus=2, 
+        accelerator='ddp', 
+        max_epochs=20,
+        callbacks=[checkpoint_callback],
+        num_sanity_val_steps=0
+        )
 
     trainer.fit(model, datamodule=datamodule)
-    trainer.test()
+    if os.environ["LOCAL_RANK"] == '0':
+        trainer.test()
 
     # model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
     # model.to_torchscript(file_path='GIN_IMDB-BINARY.pt', method='script')

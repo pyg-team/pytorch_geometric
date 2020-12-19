@@ -50,6 +50,8 @@ class DataLoader(torch.utils.data.DataLoader):
 
     def __init__(self, dataset, batch_size=1, shuffle=False, follow_batch=[],
                  **kwargs):
+        if "collate_fn" in kwargs:
+            del kwargs["collate_fn"]
         super(DataLoader,
               self).__init__(dataset, batch_size, shuffle,
                              collate_fn=Collater(follow_batch), **kwargs)
