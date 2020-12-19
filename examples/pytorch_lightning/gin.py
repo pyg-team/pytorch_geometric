@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Any
 
 import torch
 from torch import Tensor
@@ -16,6 +16,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import TUDataset
 from torch_geometric.data import Batch, DataLoader
 from torch_geometric.nn import GINConv
+from pytorch_lightning.core.decorators import auto_move_data
 
 
 class IMDBBinary(LightningDataModule):
@@ -84,14 +85,18 @@ class GIN(LightningModule):
 
         self.acc = Accuracy(out_channels)
 
+    def move_data(self, batch):
+        return batch.to(self.device)
+
+    @auto_move_data
     def forward(self, x: Tensor, adj_t: SparseTensor, ptr: Tensor) -> Tensor:
         for conv in self.convs:
             x = conv(x, adj_t)
         x = segment_csr(x, ptr, reduce='sum')  # Global add pooling.
-        #classifier = self.classifier.to("cuda")
         return self.classifier(x)
 
     def training_step(self, batch: Batch, batch_idx: int):
+        batch = self.move_data(batch)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         train_loss = F.cross_entropy(y_hat, batch.y)
         self.log('train_loss', train_loss, prog_bar=True, on_step=False,
@@ -101,11 +106,13 @@ class GIN(LightningModule):
         return train_loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
+        batch = self.move_data(batch)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         self.log('val_acc', self.acc(y_hat, batch.y), on_step=False,
                  on_epoch=True, prog_bar=True)
 
     def test_step(self, batch: Batch, batch_idx: int):
+        batch = self.transfer_batch_to_device(batch)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         self.log('test_acc', self.acc(y_hat, batch.y), on_epoch=True,
                  prog_bar=True)
@@ -117,7 +124,7 @@ def main():
     seed_everything(42)
     datamodule = IMDBBinary()
     model = GIN(datamodule.num_features, datamodule.num_classes)
-    checkpoint_callback = ModelCheckpoint(monitor='val_acc')
+    checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=-1, save_last=True)
     trainer = Trainer(
         gpus=2, 
         accelerator='ddp', 
@@ -127,8 +134,7 @@ def main():
         )
 
     trainer.fit(model, datamodule=datamodule)
-    if os.environ["LOCAL_RANK"] == '0':
-        trainer.test()
+    trainer.test()
 
     # model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
     # model.to_torchscript(file_path='GIN_IMDB-BINARY.pt', method='script')
