@@ -88,7 +88,9 @@ class GIN(LightningModule):
     def move_data(self, batch):
         return batch.to(self.device)
 
-    @auto_move_data
+    def transfer_batch_to_device(self, batch: Any, device: torch.device):
+        return (batch[0].to(device), batch[1])
+
     def forward(self, x: Tensor, adj_t: SparseTensor, ptr: Tensor) -> Tensor:
         for conv in self.convs:
             x = conv(x, adj_t)
@@ -96,7 +98,6 @@ class GIN(LightningModule):
         return self.classifier(x)
 
     def training_step(self, batch: Batch, batch_idx: int):
-        batch = self.move_data(batch)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         train_loss = F.cross_entropy(y_hat, batch.y)
         self.log('train_loss', train_loss, prog_bar=True, on_step=False,
@@ -106,13 +107,11 @@ class GIN(LightningModule):
         return train_loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
-        batch = self.move_data(batch)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         self.log('val_acc', self.acc(y_hat, batch.y), on_step=False,
                  on_epoch=True, prog_bar=True)
 
     def test_step(self, batch: Batch, batch_idx: int):
-        batch = self.transfer_batch_to_device(batch)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         self.log('test_acc', self.acc(y_hat, batch.y), on_epoch=True,
                  prog_bar=True)
@@ -136,8 +135,9 @@ def main():
     trainer.fit(model, datamodule=datamodule)
     trainer.test()
 
-    # model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
-    # model.to_torchscript(file_path='GIN_IMDB-BINARY.pt', method='script')
+    # if os.environ["LOCAL_RANK"] == '0':
+        # model = GIN.load_from_checkpoint(checkpoint_callback.best_model_path)
+        # model.to_torchscript(file_path='GIN_IMDB-BINARY.pt', method='script')
 
 
 if __name__ == "__main__":
