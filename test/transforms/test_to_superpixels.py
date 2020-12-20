@@ -49,10 +49,11 @@ def test_to_superpixels():
 
     loader = DataLoader(dataset, batch_size=2, shuffle=False)
     for data, y in loader:
-        assert len(data) == 3
+        assert len(data) == 4
         assert data.pos.dim() == 2 and data.pos.size(1) == 2
         assert data.x.dim() == 2 and data.x.size(1) == 1
         assert data.batch.dim() == 1
+        assert data.ptr.dim() == 1
         assert data.pos.size(0) == data.x.size(0) == data.batch.size(0)
         assert y.tolist() == [7, 2]
         break
@@ -72,10 +73,11 @@ def test_to_superpixels():
 
     loader = DataLoader(dataset, batch_size=2, shuffle=False)
     for data, y in loader:
-        assert len(data) == 5
+        assert len(data) == 6
         assert data.pos.dim() == 2 and data.pos.size(1) == 2
         assert data.x.dim() == 2 and data.x.size(1) == 1
         assert data.batch.dim() == 1
+        assert data.ptr.dim() == 1
         assert data.pos.size(0) == data.x.size(0) == data.batch.size(0)
         assert data.seg.size() == (2, 28, 28)
         assert data.img.size() == (2, 1, 28, 28)
