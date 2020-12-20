@@ -1,4 +1,5 @@
 import os.path as osp
+import sys
 
 import torch
 import torch.nn.functional as F
@@ -8,10 +9,28 @@ from torch_geometric.datasets import Flickr
 import torch_geometric.transforms as T
 
 K = 2
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
-transform = T.Compose([T.NormalizeFeatures(), T.SIGN(K)])
+path = osp.join("/home/laurent/graph_data", 'Flickr')
+transform = T.Compose([T.NormalizeFeatures(), T.SIGN(K,1,0.5)])
 dataset = Flickr(path, transform=transform)
+
+print()
+print('==================')
+print(f'Number of graphs: {len(dataset)}')
+print(f'Number of features: {dataset.num_features}')
+print(f'Number of classes: {dataset.num_classes}')
+
 data = dataset[0]
+
+print(data)
+print('==============================================================')
+
+print(f'Number of nodes: {data.num_nodes}')
+print(f'Number of edges: {data.num_edges}')
+print(f'Average node degree: {data.num_edges / data.num_nodes:.2f}')
+print(f'Contains isolated nodes: {data.contains_isolated_nodes()}')
+print(f'Contains self-loops: {data.contains_self_loops()}')
+print(f'Is undirected: {data.is_undirected()}')
+
 
 train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
 val_idx = data.val_mask.nonzero(as_tuple=False).view(-1)
