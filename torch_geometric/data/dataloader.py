@@ -47,7 +47,6 @@ class DataLoader(torch.utils.data.DataLoader):
         follow_batch (list or tuple, optional): Creates assignment batch
             vectors for each key in the list. (default: :obj:`[]`)
     """
-
     def __init__(self, dataset, batch_size=1, shuffle=False, follow_batch=[],
                  **kwargs):
         if "collate_fn" in kwargs:
@@ -73,11 +72,10 @@ class DataListLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch (default: :obj:`False`)
     """
-
     def __init__(self, dataset, batch_size=1, shuffle=False, **kwargs):
-        super(DataListLoader, self).__init__(
-            dataset, batch_size, shuffle,
-            collate_fn=lambda data_list: data_list, **kwargs)
+        super(DataListLoader,
+              self).__init__(dataset, batch_size, shuffle,
+                             collate_fn=lambda data_list: data_list, **kwargs)
 
 
 class DenseCollater(object):
@@ -109,7 +107,7 @@ class DenseDataLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch (default: :obj:`False`)
     """
-
     def __init__(self, dataset, batch_size=1, shuffle=False, **kwargs):
-        super(DenseDataLoader, self).__init__(
-            dataset, batch_size, shuffle, collate_fn=DenseCollater(), **kwargs)
+        super(DenseDataLoader,
+              self).__init__(dataset, batch_size, shuffle,
+                             collate_fn=DenseCollater(), **kwargs)

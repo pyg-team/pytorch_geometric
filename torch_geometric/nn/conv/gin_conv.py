@@ -1,4 +1,3 @@
-import os
 from typing import Callable, Union
 from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
@@ -64,9 +63,9 @@ class GINConv(MessagePassing):
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size)
 
-        #x_r = x[1]
-        #if x_r is not None:
-        #    out += (1 + self.eps) * x_r
+        x_r = x[1]
+        if x_r is not None:
+            out += (1 + self.eps) * x_r
 
         return self.nn(out)
 
