@@ -7,7 +7,7 @@ from torch_geometric.data import DataLoader
 from torch_geometric.nn import GraphConv, TopKPooling
 from torch_geometric.nn import global_mean_pool as gap, global_max_pool as gmp
 
-path = osp.join("/home/laurent/graph_data", 'PROTEINS')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS')
 dataset = dataset.shuffle()
 n = len(dataset) // 10
@@ -28,7 +28,7 @@ class Net(torch.nn.Module):
         self.conv3 = GraphConv(128, 128)
         self.pool3 = TopKPooling(128, ratio=0.8)
 
-        self.lin1 = torch.nn.Linear(3*256, 128)
+        self.lin1 = torch.nn.Linear(256, 128)
         self.lin2 = torch.nn.Linear(128, 64)
         self.lin3 = torch.nn.Linear(64, dataset.num_classes)
 
@@ -46,8 +46,8 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv3(x, edge_index))
         x, edge_index, _, batch, _, _ = self.pool3(x, edge_index, None, batch)
         x3 = torch.cat([gmp(x, batch), gap(x, batch)], dim=1)
-        
-        x = torch.cat( [x1 , x2 , x3 ], dim=1 )
+
+        x = x1 + x2 + x3
 
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
@@ -59,7 +59,7 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
 
 
 def train(epoch):
