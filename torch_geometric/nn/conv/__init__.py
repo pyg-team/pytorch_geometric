@@ -1,6 +1,7 @@
 from .message_passing import MessagePassing
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
+from .cayley_conv import CayleyConv
 from .sage_conv import SAGEConv
 from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
