@@ -1,3 +1,4 @@
+import copy
 from typing import Union, Tuple, Optional, Callable
 from torch_geometric.typing import PairTensor, Adj, OptTensor
 
@@ -21,7 +22,7 @@ class FiLMConv(MessagePassing):
         \boldsymbol{\beta}_{r,i} \right)
 
     where :math:`\boldsymbol{\beta}_{r,i}, \boldsymbol{\gamma}_{r,i} =
-    g(\mathbf{x}_i)` with :math:`g` being a single linear layer.
+    g(\mathbf{x}_i)` with :math:`g` being a single linear layer by default.
     Self-loops are automatically added to the input graph and represented as
     its own relation type.
 
@@ -36,6 +37,11 @@ class FiLMConv(MessagePassing):
             corresponds to the sizes of source and target dimensionalities.
         out_channels (int): Size of each output sample.
         num_relations (int, optional): Number of relations. (default: :obj:`1`)
+        nn (torch.nn.Module, optional): The neural network :math:`g` that
+            maps node features :obj:`x_i` of shape
+            :obj:`[-1, in_channels]` to shape :obj:`[-1, 2 * out_channels]`.
+            If set to :obj:`None`, :math:`g` will be implemented as a single
+            linear layer. (default: :obj:`None`)
         act (callable, optional): Activation function :math:`\sigma`.
             (default: :meth:`torch.nn.ReLU()`)
         aggr (string, optional): The aggregation scheme to use
@@ -49,6 +55,7 @@ class FiLMConv(MessagePassing):
             in_channels: Union[int, Tuple[int, int]],
             out_channels: int,
             num_relations: int = 1,
+            nn: Optional[Callable] = None,
             act: Optional[Callable] = ReLU(),
             aggr: str = 'mean',
             **kwargs,
@@ -67,12 +74,18 @@ class FiLMConv(MessagePassing):
         self.films = ModuleList()
         for _ in range(num_relations):
             self.lins.append(Linear(in_channels[0], out_channels, bias=False))
-            self.films.append(
-                Linear(in_channels[1], 2 * out_channels, bias=False))
+            if nn is None:
+                film = Linear(in_channels[1], 2 * out_channels)
+            else:
+                film = copy.deepcopy(nn)
+            self.films.append(film)
 
         self.lin_skip = Linear(in_channels[1], self.out_channels, bias=False)
-        self.film_skip = Linear(in_channels[1], 2 * self.out_channels,
-                                bias=False)
+        if nn is None:
+            self.film_skip = Linear(in_channels[1], 2 * self.out_channels,
+                                    bias=False)
+        else:
+            self.film_skip = copy.deepcopy(nn)
 
         self.reset_parameters()
 
