@@ -30,8 +30,8 @@ class Batch(Data):
         self.__num_nodes_list__ = None
         self.__num_graphs__ = None
 
-    @staticmethod
-    def from_data_list(data_list, follow_batch=[]):
+    @classmethod
+    def from_data_list(cls, data_list, follow_batch=[]):
         r"""Constructs a batch object from a python list holding
         :class:`torch_geometric.data.Data` objects.
         The assignment vector :obj:`batch` is created on the fly.
@@ -42,7 +42,7 @@ class Batch(Data):
         keys = list(set.union(*keys))
         assert 'batch' not in keys and 'ptr' not in keys
 
-        batch = Batch()
+        batch = cls()
         for key in data_list[0].__dict__.keys():
             if key[:2] != '__' and key[-2:] != '__':
                 batch[key] = None
