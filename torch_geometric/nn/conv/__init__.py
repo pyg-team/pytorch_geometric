@@ -33,6 +33,7 @@ from .cluster_gcn_conv import ClusterGCNConv
 from .gen_conv import GENConv
 from .gcn2_conv import GCN2Conv
 from .wl_conv import WLConv
+from .film_conv import FiLMConv
 
 __all__ = [
     'MessagePassing',
@@ -74,6 +75,7 @@ __all__ = [
     'GENConv',
     'GCN2Conv',
     'WLConv',
+    'FiLMConv',
 ]
 
 classes = __all__

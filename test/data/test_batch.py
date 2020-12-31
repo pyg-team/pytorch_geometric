@@ -16,12 +16,13 @@ def test_batch():
     data = Batch.from_data_list([Data(x1, e1, s=s1), Data(x2, e2, s=s2)])
 
     assert data.__repr__() == (
-        'Batch(batch=[5], edge_index=[2, 6], s=[2], x=[5])')
-    assert len(data) == 4
+        'Batch(batch=[5], edge_index=[2, 6], ptr=[3], s=[2], x=[5])')
+    assert len(data) == 5
     assert data.x.tolist() == [1, 2, 3, 1, 2]
     assert data.edge_index.tolist() == [[0, 1, 1, 2, 3, 4], [1, 0, 2, 1, 4, 3]]
     assert data.s == ['1', '2']
     assert data.batch.tolist() == [0, 0, 0, 1, 1]
+    assert data.ptr.tolist() == [0, 3, 5]
     assert data.num_graphs == 2
 
     data_list = data.to_data_list()

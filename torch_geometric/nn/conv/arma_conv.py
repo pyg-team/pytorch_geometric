@@ -1,9 +1,9 @@
-from typing import Callable
+from typing import Callable, Optional
 from torch_geometric.typing import Adj, OptTensor
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter
+from torch.nn import Parameter, ReLU
 import torch.nn.functional as F
 from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
@@ -39,7 +39,7 @@ class ARMAConv(MessagePassing):
         num_layers (int, optional): Number of layers :math:`T`.
             (default: :obj:`1`)
         act (callable, optional): Activation function :math:`\sigma`.
-            (default: :meth:`torch.nn.functional.ReLU`)
+            (default: :meth:`torch.nn.ReLU()`)
         shared_weights (int, optional): If set to :obj:`True` the layers in
             each stack will share the same parameters. (default: :obj:`False`)
         dropout (float, optional): Dropout probability of the skip connection.
@@ -51,8 +51,9 @@ class ARMAConv(MessagePassing):
     """
     def __init__(self, in_channels: int, out_channels: int,
                  num_stacks: int = 1, num_layers: int = 1,
-                 shared_weights: bool = False, act: Callable = F.relu,
-                 dropout: float = 0., bias: bool = True, **kwargs):
+                 shared_weights: bool = False,
+                 act: Optional[Callable] = ReLU(), dropout: float = 0.,
+                 bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
         super(ARMAConv, self).__init__(**kwargs)
 
@@ -116,7 +117,8 @@ class ARMAConv(MessagePassing):
             if self.bias is not None:
                 out += self.bias[0 if self.shared_weights else t]
 
-            out = self.act(out)
+            if self.act is not None:
+                out = self.act(out)
 
         return out.mean(dim=-3)
 
