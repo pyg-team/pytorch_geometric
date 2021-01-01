@@ -1,24 +1,39 @@
+from typing import List
+
 import torch
+from torch import Tensor
+from torch_sparse import SparseTensor, cat
 import torch_geometric
 from torch_geometric.data import Data
 
 
 class Batch(Data):
     r"""A plain old python object modeling a batch of graphs as one big
-    (dicconnected) graph. With :class:`torch_geometric.data.Data` being the
+    (disconnected) graph. With :class:`torch_geometric.data.Data` being the
     base class, all its methods can also be used here.
     In addition, single graphs can be reconstructed via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
-    def __init__(self, batch=None, **kwargs):
+    def __init__(self, batch=None, ptr=None, **kwargs):
         super(Batch, self).__init__(**kwargs)
 
+        for key, item in kwargs.items():
+            if key == 'num_nodes':
+                self.__num_nodes__ = item
+            else:
+                self[key] = item
+
         self.batch = batch
+        self.ptr = ptr
         self.__data_class__ = Data
         self.__slices__ = None
+        self.__cumsum__ = None
+        self.__cat_dims__ = None
+        self.__num_nodes_list__ = None
+        self.__num_graphs__ = None
 
-    @staticmethod
-    def from_data_list(data_list, follow_batch=[]):
+    @classmethod
+    def from_data_list(cls, data_list, follow_batch=[]):
         r"""Constructs a batch object from a python list holding
         :class:`torch_geometric.data.Data` objects.
         The assignment vector :obj:`batch` is created on the fly.
@@ -27,99 +42,182 @@ class Batch(Data):
 
         keys = [set(data.keys) for data in data_list]
         keys = list(set.union(*keys))
-        assert 'batch' not in keys
+        assert 'batch' not in keys and 'ptr' not in keys
 
-        batch = Batch()
+        batch = cls()
+        for key in data_list[0].__dict__.keys():
+            if key[:2] != '__' and key[-2:] != '__':
+                batch[key] = None
+
+        batch.__num_graphs__ = len(data_list)
         batch.__data_class__ = data_list[0].__class__
-        batch.__slices__ = {key: [0] for key in keys}
-
-        for key in keys:
+        for key in keys + ['batch']:
             batch[key] = []
+        batch['ptr'] = [0]
 
-        for key in follow_batch:
-            batch['{}_batch'.format(key)] = []
-
-        cumsum = {key: 0 for key in keys}
-        batch.batch = []
+        device = None
+        slices = {key: [0] for key in keys}
+        cumsum = {key: [0] for key in keys}
+        cat_dims = {}
+        num_nodes_list = []
         for i, data in enumerate(data_list):
-            for key in data.keys:
+            for key in keys:
                 item = data[key]
-                if torch.is_tensor(item) and item.dtype != torch.bool:
-                    item = item + cumsum[key]
-                if torch.is_tensor(item):
-                    size = item.size(data.__cat_dim__(key, data[key]))
-                else:
-                    size = 1
-                batch.__slices__[key].append(size + batch.__slices__[key][-1])
-                cumsum[key] = cumsum[key] + data.__inc__(key, item)
+
+                # Increase values by `cumsum` value.
+                cum = cumsum[key][-1]
+                if isinstance(item, Tensor) and item.dtype != torch.bool:
+                    if not isinstance(cum, int) or cum != 0:
+                        item = item + cum
+                elif isinstance(item, SparseTensor):
+                    value = item.storage.value()
+                    if value is not None and value.dtype != torch.bool:
+                        if not isinstance(cum, int) or cum != 0:
+                            value = value + cum
+                        item = item.set_value(value, layout='coo')
+                elif isinstance(item, (int, float)):
+                    item = item + cum
+
+                # Treat 0-dimensional tensors as 1-dimensional.
+                if isinstance(item, Tensor) and item.dim() == 0:
+                    item = item.unsqueeze(0)
+
                 batch[key].append(item)
 
+                # Gather the size of the `cat` dimension.
+                size = 1
+                cat_dim = data.__cat_dim__(key, data[key])
+                cat_dims[key] = cat_dim
+                if isinstance(item, Tensor):
+                    size = item.size(cat_dim)
+                    device = item.device
+                elif isinstance(item, SparseTensor):
+                    size = torch.tensor(item.sizes())[torch.tensor(cat_dim)]
+                    device = item.device()
+
+                slices[key].append(size + slices[key][-1])
+                inc = data.__inc__(key, item)
+                if isinstance(inc, (tuple, list)):
+                    inc = torch.tensor(inc)
+                cumsum[key].append(inc + cumsum[key][-1])
+
                 if key in follow_batch:
-                    item = torch.full((size, ), i, dtype=torch.long)
-                    batch['{}_batch'.format(key)].append(item)
+                    if isinstance(size, Tensor):
+                        for j, size in enumerate(size.tolist()):
+                            tmp = f'{key}_{j}_batch'
+                            batch[tmp] = [] if i == 0 else batch[tmp]
+                            batch[tmp].append(
+                                torch.full((size, ), i, dtype=torch.long,
+                                           device=device))
+                    else:
+                        tmp = f'{key}_batch'
+                        batch[tmp] = [] if i == 0 else batch[tmp]
+                        batch[tmp].append(
+                            torch.full((size, ), i, dtype=torch.long,
+                                       device=device))
+
+            if hasattr(data, '__num_nodes__'):
+                num_nodes_list.append(data.__num_nodes__)
+            else:
+                num_nodes_list.append(None)
 
             num_nodes = data.num_nodes
             if num_nodes is not None:
-                item = torch.full((num_nodes, ), i, dtype=torch.long)
+                item = torch.full((num_nodes, ), i, dtype=torch.long,
+                                  device=device)
                 batch.batch.append(item)
+                batch.ptr.append(batch.ptr[-1] + num_nodes)
 
-        if num_nodes is None:
-            batch.batch = None
+        # Fix initial slice values:
+        for key in keys:
+            slices[key][0] = slices[key][1] - slices[key][1]
 
+        batch.batch = None if len(batch.batch) == 0 else batch.batch
+        batch.ptr = None if len(batch.ptr) == 1 else batch.ptr
+        batch.__slices__ = slices
+        batch.__cumsum__ = cumsum
+        batch.__cat_dims__ = cat_dims
+        batch.__num_nodes_list__ = num_nodes_list
+
+        ref_data = data_list[0]
         for key in batch.keys:
-            item = batch[key][0]
-            if torch.is_tensor(item):
-                batch[key] = torch.cat(batch[key],
-                                       dim=data_list[0].__cat_dim__(key, item))
-            elif isinstance(item, int) or isinstance(item, float):
-                batch[key] = torch.tensor(batch[key])
-
-        # Copy custom data functions to batch (does not work yet):
-        # if data_list.__class__ != Data:
-        #     org_funcs = set(Data.__dict__.keys())
-        #     funcs = set(data_list[0].__class__.__dict__.keys())
-        #     batch.__custom_funcs__ = funcs.difference(org_funcs)
-        #     for func in funcs.difference(org_funcs):
-        #         setattr(batch, func, getattr(data_list[0], func))
+            items = batch[key]
+            item = items[0]
+            if isinstance(item, Tensor):
+                batch[key] = torch.cat(items, ref_data.__cat_dim__(key, item))
+            elif isinstance(item, SparseTensor):
+                batch[key] = cat(items, ref_data.__cat_dim__(key, item))
+            elif isinstance(item, (int, float)):
+                batch[key] = torch.tensor(items)
 
         if torch_geometric.is_debug_enabled():
             batch.debug()
 
         return batch.contiguous()
 
-    def to_data_list(self):
-        r"""Reconstructs the list of :class:`torch_geometric.data.Data` objects
-        from the batch object.
+    def get_example(self, idx: int) -> Data:
+        r"""Reconstructs the :class:`torch_geometric.data.Data` object at index
+        :obj:`idx` from the batch object.
         The batch object must have been created via :meth:`from_data_list` in
-        order to be able reconstruct the initial objects."""
+        order to be able to reconstruct the initial objects."""
 
         if self.__slices__ is None:
             raise RuntimeError(
                 ('Cannot reconstruct data list from batch because the batch '
-                 'object was not created using Batch.from_data_list()'))
+                 'object was not created using `Batch.from_data_list()`.'))
 
-        keys = [key for key in self.keys if key[-5:] != 'batch']
-        cumsum = {key: 0 for key in keys}
-        data_list = []
-        for i in range(len(self.__slices__[keys[0]]) - 1):
-            data = self.__data_class__()
-            for key in keys:
-                if torch.is_tensor(self[key]):
-                    data[key] = self[key].narrow(
-                        data.__cat_dim__(key,
-                                         self[key]), self.__slices__[key][i],
-                        self.__slices__[key][i + 1] - self.__slices__[key][i])
-                    if self[key].dtype != torch.bool:
-                        data[key] = data[key] - cumsum[key]
-                else:
-                    data[key] = self[key][self.__slices__[key][i]:self.
-                                          __slices__[key][i + 1]]
-                cumsum[key] = cumsum[key] + data.__inc__(key, data[key])
-            data_list.append(data)
+        data = self.__data_class__()
 
-        return data_list
+        for key in self.__slices__.keys():
+            item = self[key]
+            # Narrow the item based on the values in `__slices__`.
+            if isinstance(item, Tensor):
+                dim = self.__cat_dims__[key]
+                start = self.__slices__[key][idx]
+                end = self.__slices__[key][idx + 1]
+                item = item.narrow(dim, start, end - start)
+            elif isinstance(item, SparseTensor):
+                for j, dim in enumerate(self.__cat_dims__[key]):
+                    start = self.__slices__[key][idx][j].item()
+                    end = self.__slices__[key][idx + 1][j].item()
+                    item = item.narrow(dim, start, end - start)
+            else:
+                start = self.__slices__[key][idx]
+                end = self.__slices__[key][idx + 1]
+                item = item[start:end]
+                item = item[0] if len(item) == 1 else item
+
+            # Decrease its value by `cumsum` value:
+            cum = self.__cumsum__[key][idx]
+            if isinstance(item, Tensor):
+                if not isinstance(cum, int) or cum != 0:
+                    item = item - cum
+            elif isinstance(item, SparseTensor):
+                value = item.storage.value()
+                if value is not None and value.dtype != torch.bool:
+                    if not isinstance(cum, int) or cum != 0:
+                        value = value - cum
+                    item = item.set_value(value, layout='coo')
+            elif isinstance(item, (int, float)):
+                item = item - cum
+
+            data[key] = item
+
+        if self.__num_nodes_list__[idx] is not None:
+            data.num_nodes = self.__num_nodes_list__[idx]
+
+        return data
+
+    def to_data_list(self) -> List[Data]:
+        r"""Reconstructs the list of :class:`torch_geometric.data.Data` objects
+        from the batch object.
+        The batch object must have been created via :meth:`from_data_list` in
+        order to be able to reconstruct the initial objects."""
+        return [self.get_example(i) for i in range(self.num_graphs)]
 
     @property
-    def num_graphs(self):
+    def num_graphs(self) -> int:
         """Returns the number of graphs in the batch."""
-        return self.batch[-1].item() + 1
+        if self.__num_graphs__ is not None:
+            return self.__num_graphs__
+        return self.ptr.numel() + 1

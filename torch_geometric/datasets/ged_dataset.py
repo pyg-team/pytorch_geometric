@@ -15,8 +15,20 @@ class GEDDataset(InMemoryDataset):
     r"""The GED datasets from the `"Graph Edit Distance Computation via Graph
     Neural Networks" <https://arxiv.org/abs/1808.05689>`_ paper.
     GEDs can be accessed via the global attributes :obj:`ged` and
-    :obj:`norm_ged` and provide the exact GEDs for all train/train graph pairs
-    and all train/test graph pairs.
+    :obj:`norm_ged` for all train/train graph pairs and all train/test graph
+    pairs:
+
+    .. code-block:: python
+
+        dataset = GEDDataset(root, name="LINUX")
+        data1, data2 = dataset[0], dataset[1]
+        ged = dataset.ged[data1.i, data2.i]  # GED between `data1` and `data2`.
+
+    .. note::
+
+        :obj:`ALKANE` is missing GEDs for train/test graph pairs since they are
+        not provided in the `official datasets
+        <https://github.com/yunshengb/SimGNN>`_.
 
     Args:
         root (string): Root directory where the dataset should be saved.

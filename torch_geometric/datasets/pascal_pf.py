@@ -89,7 +89,7 @@ class PascalPF(InMemoryDataset):
             pos = pos - pos.mean(dim=0, keepdim=True)
             pos = pos / pos.norm(dim=1).max()
 
-            y = mask.nonzero().flatten()
+            y = mask.nonzero(as_tuple=False).flatten()
 
             data = Data(pos=pos, y=y, name=name)
 

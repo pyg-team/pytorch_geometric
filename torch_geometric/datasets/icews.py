@@ -61,7 +61,7 @@ class ICEWS18(EventDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://github.com/INK-USC/RENet/raw/master/data/ICEWS18'
+    url = 'https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18'
     splits = [0, 373018, 419013, 468558]  # Train/Val/Test splits.
 
     def __init__(self, root, split='train', transform=None, pre_transform=None,
@@ -96,7 +96,7 @@ class ICEWS18(EventDataset):
         events = []
         for path in self.raw_paths:
             data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)
-            data[:, 3] = data[:, 3] / 24
+            data[:, 3] = data[:, 3] // 24
             events += [data]
         return torch.cat(events, dim=0)
 

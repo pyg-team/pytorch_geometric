@@ -11,19 +11,31 @@ def test_cheb_conv():
 
     conv = ChebConv(in_channels, out_channels, K=3)
     assert conv.__repr__() == 'ChebConv(16, 32, K=3, normalization=sym)'
-    assert conv(x, edge_index).size() == (num_nodes, out_channels)
-    assert conv(x, edge_index, edge_weight).size() == (num_nodes, out_channels)
-    assert conv(x, edge_index, edge_weight,
-                lambda_max=2.0).size() == (num_nodes, out_channels)
+    out1 = conv(x, edge_index)
+    assert out1.size() == (num_nodes, out_channels)
+    out2 = conv(x, edge_index, edge_weight)
+    assert out2.size() == (num_nodes, out_channels)
+    out3 = conv(x, edge_index, edge_weight, lambda_max=3.0)
+    assert out3.size() == (num_nodes, out_channels)
+
+    jit = torch.jit.script(conv.jittable())
+    assert jit(x, edge_index).tolist() == out1.tolist()
+    assert jit(x, edge_index, edge_weight).tolist() == out2.tolist()
+    assert jit(x, edge_index, edge_weight,
+               lambda_max=torch.tensor(3.0)).tolist() == out3.tolist()
 
     batch = torch.tensor([0, 0, 1, 1])
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]])
     num_nodes = edge_index.max().item() + 1
     edge_weight = torch.rand(edge_index.size(1))
     x = torch.randn((num_nodes, in_channels))
-    lambda_max = torch.tensor([2.0, 2.0])
+    lambda_max = torch.tensor([2.0, 3.0])
 
-    assert conv(x, edge_index, edge_weight, batch).size() == (num_nodes,
-                                                              out_channels)
-    assert conv(x, edge_index, edge_weight, batch,
-                lambda_max).size() == (num_nodes, out_channels)
+    out4 = conv(x, edge_index, edge_weight, batch)
+    assert out4.size() == (num_nodes, out_channels)
+    out5 = conv(x, edge_index, edge_weight, batch, lambda_max)
+    assert out5.size() == (num_nodes, out_channels)
+
+    assert jit(x, edge_index, edge_weight, batch).tolist() == out4.tolist()
+    assert jit(x, edge_index, edge_weight, batch,
+               lambda_max).tolist() == out5.tolist()

@@ -65,13 +65,8 @@ class DynamicFAUST(InMemoryDataset):
         'running_on_spot_bugfix', 'shake_arms', 'shake_hips', 'shake_shoulders'
     ]
 
-    def __init__(self,
-                 root,
-                 subjects=None,
-                 categories=None,
-                 transform=None,
-                 pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root, subjects=None, categories=None, transform=None,
+                 pre_transform=None, pre_filter=None):
 
         subjects = self.subjects if subjects is None else subjects
         subjects = [sid.lower() for sid in subjects]

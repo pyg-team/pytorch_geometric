@@ -6,6 +6,7 @@ from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .gat_conv import GATConv
+from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
 from .tag_conv import TAGConv
 from .gin_conv import GINConv, GINEConv
@@ -13,7 +14,7 @@ from .arma_conv import ARMAConv
 from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
-from .rgcn_conv import RGCNConv
+from .rgcn_conv import RGCNConv, FastRGCNConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
 from .point_conv import PointConv
@@ -27,6 +28,12 @@ from .ppf_conv import PPFConv
 from .feast_conv import FeaStConv
 from .hypergraph_conv import HypergraphConv
 from .le_conv import LEConv
+from .pna_conv import PNAConv
+from .cluster_gcn_conv import ClusterGCNConv
+from .gen_conv import GENConv
+from .gcn2_conv import GCN2Conv
+from .wl_conv import WLConv
+from .film_conv import FiLMConv
 
 __all__ = [
     'MessagePassing',
@@ -37,6 +44,7 @@ __all__ = [
     'GravNetConv',
     'GatedGraphConv',
     'GATConv',
+    'TransformerConv',
     'AGNNConv',
     'TAGConv',
     'GINConv',
@@ -46,6 +54,7 @@ __all__ = [
     'APPNP',
     'MFConv',
     'RGCNConv',
+    'FastRGCNConv',
     'SignedConv',
     'DNAConv',
     'PointConv',
@@ -61,4 +70,12 @@ __all__ = [
     'FeaStConv',
     'HypergraphConv',
     'LEConv',
+    'PNAConv',
+    'ClusterGCNConv',
+    'GENConv',
+    'GCN2Conv',
+    'WLConv',
+    'FiLMConv',
 ]
+
+classes = __all__

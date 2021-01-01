@@ -1,8 +1,7 @@
-import copy
-import collections
-import os.path as osp
-import warnings
 import re
+import copy
+import logging
+import os.path as osp
 
 import torch.utils.data
 
@@ -10,13 +9,13 @@ from .makedirs import makedirs
 
 
 def to_list(x):
-    if not isinstance(x, collections.Iterable) or isinstance(x, str):
+    if not isinstance(x, (tuple, list)):
         x = [x]
     return x
 
 
 def files_exist(files):
-    return len(files) != 0 and all([osp.exists(f) for f in files])
+    return len(files) != 0 and all(osp.exists(f) for f in files)
 
 
 def __repr__(obj):
@@ -144,14 +143,14 @@ class Dataset(torch.utils.data.Dataset):
     def _process(self):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
         if osp.exists(f) and torch.load(f) != __repr__(self.pre_transform):
-            warnings.warn(
+            logging.warning(
                 'The `pre_transform` argument differs from the one used in '
                 'the pre-processed version of this dataset. If you really '
                 'want to make use of another pre-processing technique, make '
                 'sure to delete `{}` first.'.format(self.processed_dir))
         f = osp.join(self.processed_dir, 'pre_filter.pt')
         if osp.exists(f) and torch.load(f) != __repr__(self.pre_filter):
-            warnings.warn(
+            logging.warning(
                 'The `pre_filter` argument differs from the one used in the '
                 'pre-processed version of this dataset. If you really want to '
                 'make use of another pre-fitering technique, make sure to '
@@ -202,7 +201,8 @@ class Dataset(torch.utils.data.Dataset):
                     idx = idx.unsqueeze(0)
                 return self.index_select(idx.tolist())
             elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
-                return self.index_select(idx.nonzero().flatten().tolist())
+                return self.index_select(
+                    idx.nonzero(as_tuple=False).flatten().tolist())
         elif isinstance(idx, list) or isinstance(idx, tuple):
             indices = [indices[i] for i in idx]
         else:

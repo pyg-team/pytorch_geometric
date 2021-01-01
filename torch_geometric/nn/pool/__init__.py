@@ -1,5 +1,5 @@
-from .max_pool import max_pool, max_pool_x
-from .avg_pool import avg_pool, avg_pool_x
+from .max_pool import max_pool, max_pool_x, max_pool_neighbor_x
+from .avg_pool import avg_pool, avg_pool_x, avg_pool_neighbor_x
 from .graclus import graclus
 from .voxel_grid import voxel_grid
 from .topk_pool import TopKPooling
@@ -14,7 +14,7 @@ except ImportError:
 
 
 def fps(x, batch=None, ratio=0.5, random_start=True):
-    r""""A sampling algorithm from the `"PointNet++: Deep Hierarchical Feature
+    r"""A sampling algorithm from the `"PointNet++: Deep Hierarchical Feature
     Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper, which iteratively samples the
     most distant point with regard to the rest points.
@@ -46,7 +46,7 @@ def fps(x, batch=None, ratio=0.5, random_start=True):
     return torch_cluster.fps(x, batch, ratio, random_start)
 
 
-def knn(x, y, k, batch_x=None, batch_y=None, cosine=False):
+def knn(x, y, k, batch_x=None, batch_y=None, cosine=False, num_workers=1):
     r"""Finds for each element in :obj:`y` the :obj:`k` nearest points in
     :obj:`x`.
 
@@ -65,6 +65,9 @@ def knn(x, y, k, batch_x=None, batch_y=None, cosine=False):
         cosine (boolean, optional): If :obj:`True`, will use the cosine
             distance instead of euclidean distance to find nearest neighbors.
             (default: :obj:`False`)
+        num_workers (int): Number of workers to use for computation. Has no
+            effect in case :obj:`batch_x` or :obj:`batch_y` is not
+            :obj:`None`, or the input lies on the GPU. (default: :obj:`1`)
 
     :rtype: :class:`LongTensor`
 
@@ -76,17 +79,17 @@ def knn(x, y, k, batch_x=None, batch_y=None, cosine=False):
         x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
         batch_x = torch.tensor([0, 0, 0, 0])
         y = torch.Tensor([[-1, 0], [1, 0]])
-        batch_x = torch.tensor([0, 0])
+        batch_y = torch.tensor([0, 0])
         assign_index = knn(x, y, 2, batch_x, batch_y)
     """
     if torch_cluster is None:
         raise ImportError('`knn` requires `torch-cluster`.')
 
-    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine)
+    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers)
 
 
 def knn_graph(x, k, batch=None, loop=False, flow='source_to_target',
-              cosine=False):
+              cosine=False, num_workers=1):
     r"""Computes graph edges to the nearest :obj:`k` points.
 
     Args:
@@ -104,6 +107,9 @@ def knn_graph(x, k, batch=None, loop=False, flow='source_to_target',
         cosine (boolean, optional): If :obj:`True`, will use the cosine
             distance instead of euclidean distance to find nearest neighbors.
             (default: :obj:`False`)
+        num_workers (int): Number of workers to use for computation. Has no
+            effect in case :obj:`batch` is not :obj:`None`, or the input lies
+            on the GPU. (default: :obj:`1`)
 
     :rtype: :class:`LongTensor`
 
@@ -119,10 +125,12 @@ def knn_graph(x, k, batch=None, loop=False, flow='source_to_target',
     if torch_cluster is None:
         raise ImportError('`knn_graph` requires `torch-cluster`.')
 
-    return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine)
+    return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+                                   num_workers)
 
 
-def radius(x, y, r, batch_x=None, batch_y=None, max_num_neighbors=32):
+def radius(x, y, r, batch_x=None, batch_y=None, max_num_neighbors=32,
+           num_workers=1):
     r"""Finds for each element in :obj:`y` all points in :obj:`x` within
     distance :obj:`r`.
 
@@ -140,6 +148,9 @@ def radius(x, y, r, batch_x=None, batch_y=None, max_num_neighbors=32):
             node to a specific example. (default: :obj:`None`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
             return for each element in :obj:`y`. (default: :obj:`32`)
+        num_workers (int): Number of workers to use for computation. Has no
+            effect in case :obj:`batch_x` or :obj:`batch_y` is not
+            :obj:`None`, or the input lies on the GPU. (default: :obj:`1`)
 
     :rtype: :class:`LongTensor`
 
@@ -157,11 +168,12 @@ def radius(x, y, r, batch_x=None, batch_y=None, max_num_neighbors=32):
     if torch_cluster is None:
         raise ImportError('`radius` requires `torch-cluster`.')
 
-    return torch_cluster.radius(x, y, r, batch_x, batch_y, max_num_neighbors)
+    return torch_cluster.radius(x, y, r, batch_x, batch_y, max_num_neighbors,
+                                num_workers)
 
 
 def radius_graph(x, r, batch=None, loop=False, max_num_neighbors=32,
-                 flow='source_to_target'):
+                 flow='source_to_target', num_workers=1):
     r"""Computes graph edges to all points within a given distance.
 
     Args:
@@ -178,6 +190,9 @@ def radius_graph(x, r, batch=None, loop=False, max_num_neighbors=32,
         flow (string, optional): The flow direction when using in combination
             with message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
+        num_workers (int): Number of workers to use for computation. Has no
+            effect in case :obj:`batch` is not :obj:`None`, or the input lies
+            on the GPU. (default: :obj:`1`)
 
     :rtype: :class:`LongTensor`
 
@@ -194,7 +209,7 @@ def radius_graph(x, r, batch=None, loop=False, max_num_neighbors=32,
         raise ImportError('`radius_graph` requires `torch-cluster`.')
 
     return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
-                                      flow)
+                                      flow, num_workers)
 
 
 def nearest(x, y, batch_x=None, batch_y=None):
@@ -240,7 +255,9 @@ __all__ = [
     'max_pool',
     'avg_pool',
     'max_pool_x',
+    'max_pool_neighbor_x',
     'avg_pool_x',
+    'avg_pool_neighbor_x',
     'graclus',
     'voxel_grid',
     'fps',
@@ -250,3 +267,5 @@ __all__ = [
     'radius_graph',
     'nearest',
 ]
+
+classes = __all__

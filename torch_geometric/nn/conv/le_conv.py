@@ -11,9 +11,11 @@ class LEConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{x}_i \cdot \mathbf{\Theta}_1 +
-        \sum_{j \in \mathcal{N}(i)} a_{j,i}
-        (\mathbf{x}_i \cdot \mathbf{\Theta}_2 - \mathbf{x}_j \cdot
-        \mathbf{\Theta}_3)
+        \sum_{j \in \mathcal{N}(i)} e_{j,i} \cdot
+        (\mathbf{\Theta}_2 \mathbf{x}_i - \mathbf{\Theta}_3 \mathbf{x}_j)
+
+    where :math:`e_{j,i}` denotes the edge weight from source node :obj:`i` to
+    target node :obj:`j` (default: :obj:`1`)
 
     Args:
         in_channels (int): Size of each input sample.
@@ -24,7 +26,8 @@ class LEConv(MessagePassing):
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
-        super(LEConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(LEConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

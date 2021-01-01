@@ -61,7 +61,7 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None,
 
     # Percentage of edges to oversample so that we are save to only sample once
     # (in most cases).
-    alpha = 1 / (1 - 1.1 * (edge_index.size(1) / size))
+    alpha = abs(1 / (1 - 1.1 * (edge_index.size(1) / size)))
 
     if method == 'dense':
         mask = edge_index.new_ones(size, dtype=torch.bool)
@@ -85,9 +85,9 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None,
         neg_edge_index = torch.stack([row, col], dim=0).long()
         neg_edge_index = to_undirected(neg_edge_index)
     else:
-        row = perm / num_nodes
+        row = perm // num_nodes
         col = perm % num_nodes
-        neg_edge_index = torch.stack([row, col], dim=0)
+        neg_edge_index = torch.stack([row, col], dim=0).long()
 
     return neg_edge_index
 
@@ -113,13 +113,13 @@ def structured_negative_sampling(edge_index, num_nodes=None):
     idx_2 = i * num_nodes + k
 
     mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
-    rest = mask.nonzero().view(-1)
+    rest = mask.nonzero(as_tuple=False).view(-1)
     while rest.numel() > 0:  # pragma: no cover
         tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
         idx_2 = i[rest] * num_nodes + tmp
         mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
         k[rest] = tmp
-        rest = rest[mask.nonzero().view(-1)]
+        rest = rest[mask.nonzero(as_tuple=False).view(-1)]
 
     return edge_index[0], edge_index[1], k.to(edge_index.device)
 

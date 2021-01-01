@@ -26,7 +26,7 @@ class Reddit(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = 'https://s3.us-east-2.amazonaws.com/dgl.ai/dataset/reddit.zip'
+    url = 'https://data.dgl.ai/dataset/reddit.zip'
 
     def __init__(self, root, transform=None, pre_transform=None):
         super(Reddit, self).__init__(root, transform, pre_transform)

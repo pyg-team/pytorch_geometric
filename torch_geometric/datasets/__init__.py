@@ -1,5 +1,6 @@
 from .karate import KarateClub
 from .tu_dataset import TUDataset
+from .gnn_benchmark_dataset import GNNBenchmarkDataset
 from .planetoid import Planetoid
 from .citation_full import CitationFull, CoraFull
 from .coauthor import Coauthor
@@ -36,10 +37,17 @@ from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
 from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
+from .word_net import WordNet18
+from .wikics import WikiCS
+from .webkb import WebKB
+from .wikipedia_network import WikipediaNetwork
+from .actor import Actor
+from .jodie import JODIEDataset
 
 __all__ = [
     'KarateClub',
     'TUDataset',
+    'GNNBenchmarkDataset',
     'Planetoid',
     'CitationFull',
     'CoraFull',
@@ -77,4 +85,12 @@ __all__ = [
     'SuiteSparseMatrixCollection',
     'TrackMLParticleTrackingDataset',
     'AMiner',
+    'WordNet18',
+    'WikiCS',
+    'WebKB',
+    'WikipediaNetwork',
+    'Actor',
+    'JODIEDataset',
 ]
+
+classes = __all__

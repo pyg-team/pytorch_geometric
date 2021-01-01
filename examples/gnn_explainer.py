@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, GNNExplainer
-from torch.nn import Sequential, Linear
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -17,7 +16,6 @@ data = dataset[0]
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.lin = Sequential(Linear(10, 10))
         self.conv1 = GCNConv(dataset.num_features, 16)
         self.conv2 = GCNConv(16, dataset.num_classes)
 

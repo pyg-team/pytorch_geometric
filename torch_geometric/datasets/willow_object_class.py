@@ -31,7 +31,7 @@ class WILLOWObjectClass(InMemoryDataset):
         root (string): Root directory where the dataset should be saved.
         category (string): The category of the images (one of :obj:`"Car"`,
             :obj:`"Duck"`, :obj:`"Face"`, :obj:`"Motorbike"`,
-            :obj:`"Winebottle"`)
+            :obj:`"Winebottle"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -143,7 +143,7 @@ class WILLOWObjectClass(InMemoryDataset):
 
             out1 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
                                  align_corners=False)
-            out2 = F.interpolate(vgg16_outputs[0], (256, 256), mode='bilinear',
+            out2 = F.interpolate(vgg16_outputs[1], (256, 256), mode='bilinear',
                                  align_corners=False)
 
             for j in range(out1.size(0)):

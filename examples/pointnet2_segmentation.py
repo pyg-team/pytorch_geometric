@@ -10,7 +10,7 @@ from torch_geometric.utils import intersection_and_union as i_and_u
 
 from pointnet2_classification import SAModule, GlobalSAModule, MLP
 
-category = 'Airplane'
+category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
 transform = T.Compose([
     T.RandomTranslate(0.01),
@@ -93,52 +93,40 @@ def train():
         loss.backward()
         optimizer.step()
         total_loss += loss.item()
-        correct_nodes += out.max(dim=1)[1].eq(data.y).sum().item()
+        correct_nodes += out.argmax(dim=1).eq(data.y).sum().item()
         total_nodes += data.num_nodes
 
         if (i + 1) % 10 == 0:
-            print('[{}/{}] Loss: {:.4f}, Train Accuracy: {:.4f}'.format(
-                i + 1, len(train_loader), total_loss / 10,
-                correct_nodes / total_nodes))
+            print(f'[{i+1}/{len(train_loader)}] Loss: {total_loss / 10:.4f} '
+                  f'Train Acc: {correct_nodes / total_nodes:.4f}')
             total_loss = correct_nodes = total_nodes = 0
 
 
+@torch.no_grad()
 def test(loader):
     model.eval()
 
-    correct_nodes = total_nodes = 0
-    intersections, unions, categories = [], [], []
+    y_mask = loader.dataset.y_mask
+    ious = [[] for _ in range(len(loader.dataset.categories))]
+
     for data in loader:
         data = data.to(device)
-        with torch.no_grad():
-            out = model(data)
-        pred = out.max(dim=1)[1]
-        correct_nodes += pred.eq(data.y).sum().item()
-        total_nodes += data.num_nodes
-        i, u = i_and_u(pred, data.y, test_dataset.num_classes, data.batch)
-        intersections.append(i.to(torch.device('cpu')))
-        unions.append(u.to(torch.device('cpu')))
-        categories.append(data.category.to(torch.device('cpu')))
+        pred = model(data).argmax(dim=1)
 
-    category = torch.cat(categories, dim=0)
-    intersection = torch.cat(intersections, dim=0)
-    union = torch.cat(unions, dim=0)
-
-    ious = [[] for _ in range(len(loader.dataset.categories))]
-    for j in range(len(loader.dataset)):
-        i = intersection[j, loader.dataset.y_mask[category[j]]]
-        u = union[j, loader.dataset.y_mask[category[j]]]
-        iou = i.to(torch.float) / u.to(torch.float)
+        i, u = i_and_u(pred, data.y, loader.dataset.num_classes, data.batch)
+        iou = i.cpu().to(torch.float) / u.cpu().to(torch.float)
         iou[torch.isnan(iou)] = 1
-        ious[category[j]].append(iou.mean().item())
 
-    for cat in range(len(loader.dataset.categories)):
-        ious[cat] = torch.tensor(ious[cat]).mean().item()
+        # Find and filter the relevant classes for each category.
+        for iou, category in zip(iou.unbind(), data.category.unbind()):
+            ious[category.item()].append(iou[y_mask[category]])
 
-    return correct_nodes / total_nodes, torch.tensor(ious).mean().item()
+    # Compute mean IoU.
+    ious = [torch.stack(iou).mean(0).mean(0) for iou in ious]
+    return torch.tensor(ious).mean().item()
 
 
 for epoch in range(1, 31):
     train()
-    acc, iou = test(test_loader)
-    print('Epoch: {:02d}, Acc: {:.4f}, IoU: {:.4f}'.format(epoch, acc, iou))
+    iou = test(test_loader)
+    print('Epoch: {:02d}, Test IoU: {:.4f}'.format(epoch, iou))

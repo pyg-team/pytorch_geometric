@@ -1,9 +1,12 @@
+from typing import Optional
+
 import torch
 
 from .num_nodes import maybe_num_nodes
 
 
-def degree(index, num_nodes=None, dtype=None):
+def degree(index, num_nodes: Optional[int] = None,
+           dtype: Optional[int] = None):
     r"""Computes the (unweighted) degree of a given one-dimensional index
     tensor.
 
@@ -16,6 +19,7 @@ def degree(index, num_nodes=None, dtype=None):
 
     :rtype: :class:`Tensor`
     """
-    num_nodes = maybe_num_nodes(index, num_nodes)
-    out = torch.zeros((num_nodes), dtype=dtype, device=index.device)
-    return out.scatter_add_(0, index, out.new_ones((index.size(0))))
+    N = maybe_num_nodes(index, num_nodes)
+    out = torch.zeros((N, ), dtype=dtype, device=index.device)
+    one = torch.ones((index.size(0), ), dtype=out.dtype, device=out.device)
+    return out.scatter_add_(0, index, one)

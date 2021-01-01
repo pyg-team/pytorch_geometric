@@ -1,4 +1,6 @@
 from .compose import Compose
+from .to_sparse_tensor import ToSparseTensor
+from .to_undirected import ToUndirected
 from .constant import Constant
 from .distance import Distance
 from .cartesian import Cartesian
@@ -36,9 +38,12 @@ from .to_superpixels import ToSLIC
 from .gdc import GDC
 from .sign import SIGN
 from .grid_sampling import GridSampling
+from .gcn_norm import GCNNorm
 
 __all__ = [
     'Compose',
+    'ToSparseTensor',
+    'ToUndirected',
     'Constant',
     'Distance',
     'Cartesian',
@@ -76,4 +81,7 @@ __all__ = [
     'GDC',
     'SIGN',
     'GridSampling',
+    'GCNNorm',
 ]
+
+classes = __all__

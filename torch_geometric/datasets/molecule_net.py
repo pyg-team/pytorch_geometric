@@ -4,7 +4,7 @@ import re
 
 import torch
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
-                                  extract_zip)
+                                  extract_gz)
 
 try:
     from rdkit import Chem
@@ -44,6 +44,7 @@ x_map = {
 
 e_map = {
     'bond_type': [
+        'misc',
         'SINGLE',
         'DOUBLE',
         'TRIPLE',
@@ -62,27 +63,55 @@ e_map = {
 
 
 class MoleculeNet(InMemoryDataset):
-    url = ('https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/'
-           'molnet_publish/{}.zip')
+    r"""The `MoleculeNet <http://moleculenet.ai/datasets-1>`_ benchmark
+    collection  from the `"MoleculeNet: A Benchmark for Molecular Machine
+    Learning" <https://arxiv.org/abs/1703.00564>`_ paper, containing datasets
+    from physical chemistry, biophysics and physiology.
+    All datasets come with the additional node and edge features introduced by
+    the `Open Graph Benchmark <https://ogb.stanford.edu/docs/graphprop/>`_.
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        name (string): The name of the dataset (:obj:`"ESOL"`,
+            :obj:`"FreeSolv"`, :obj:`"Lipo"`, :obj:`"PCBA"`, :obj:`"MUV"`,
+            :obj:`"HIV"`, :obj:`"BACE"`, :obj:`"BBPB"`, :obj:`"Tox21"`,
+            :obj:`"ToxCast"`, :obj:`"SIDER"`, :obj:`"ClinTox"`).
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
+    """
+
+    url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/{}'
 
     # Format: name: [display_name, url_name, csv_name, smiles_idx, y_idx]
     names = {
-        'esol': ['ESOL', 'ESOL', 'delaney-processed', -1, -2],
-        'freesolv': ['FreeSolv', 'FreeSolv', 'SAMPL', 1, 2],
-        'lipo': ['Lipophilicity', 'lipophilicity', 'Lipophilicity', 2, 1],
-        'pcba': ['PCBA', 'pcba', 'pcba', -1,
+        'esol': ['ESOL', 'delaney-processed.csv', 'delaney-processed', -1, -2],
+        'freesolv': ['FreeSolv', 'SAMPL.csv', 'SAMPL', 1, 2],
+        'lipo': ['Lipophilicity', 'Lipophilicity.csv', 'Lipophilicity', 2, 1],
+        'pcba': ['PCBA', 'pcba.csv.gz', 'pcba', -1,
                  slice(0, 128)],
-        'muv': ['MUV', 'muv', 'muv', -1, slice(0, 17)],
-        'hiv': ['HIV', 'hiv', 'HIV', 0, -1],
-        'bace': ['BACE', 'bace', 'bace', 0, 2],
-        'bbbp': ['BBPB', 'bbbp', 'BBBP', -1, -2],
-        'tox21': ['Tox21', 'tox21', 'tox21', -1,
+        'muv': ['MUV', 'muv.csv.gz', 'muv', -1,
+                slice(0, 17)],
+        'hiv': ['HIV', 'HIV.csv', 'HIV', 0, -1],
+        'bace': ['BACE', 'bace.csv', 'bace', 0, 2],
+        'bbbp': ['BBPB', 'BBBP.csv', 'BBBP', -1, -2],
+        'tox21': ['Tox21', 'tox21.csv.gz', 'tox21', -1,
                   slice(0, 12)],
-        'toxcast': ['ToxCast', 'toxcast', 'toxcast_data', 0,
-                    slice(1, 618)],
-        'sider': ['SIDER', 'sider', 'sider', 0,
+        'toxcast':
+        ['ToxCast', 'toxcast_data.csv.gz', 'toxcast_data', 0,
+         slice(1, 618)],
+        'sider': ['SIDER', 'sider.csv.gz', 'sider', 0,
                   slice(1, 28)],
-        'clintox': ['ClinTox', 'clintox', 'clintox', 0,
+        'clintox': ['ClinTox', 'clintox.csv.gz', 'clintox', 0,
                     slice(1, 3)],
     }
 
@@ -117,8 +146,9 @@ class MoleculeNet(InMemoryDataset):
     def download(self):
         url = self.url.format(self.names[self.name][1])
         path = download_url(url, self.raw_dir)
-        extract_zip(path, self.raw_dir)
-        os.unlink(path)
+        if self.names[self.name][1][-2:] == 'gz':
+            extract_gz(path, self.raw_dir)
+            os.unlink(path)
 
     def process(self):
         with open(self.raw_paths[0], 'r') as f:

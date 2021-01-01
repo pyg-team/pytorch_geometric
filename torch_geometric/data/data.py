@@ -1,6 +1,7 @@
 import re
 import copy
-import warnings
+import logging
+import collections
 
 import torch
 import torch_geometric
@@ -20,7 +21,9 @@ __num_nodes_warn_msg__ = (
 
 def size_repr(key, item, indent=0):
     indent_str = ' ' * indent
-    if torch.is_tensor(item):
+    if torch.is_tensor(item) and item.dim() == 0:
+        out = item.item()
+    elif torch.is_tensor(item):
         out = str(list(item.size()))
     elif isinstance(item, SparseTensor):
         out = str(item.sizes())[:-1] + f', nnz={item.nnz()}]'
@@ -29,6 +32,8 @@ def size_repr(key, item, indent=0):
     elif isinstance(item, dict):
         lines = [indent_str + size_repr(k, v, 2) for k, v in item.items()]
         out = '{\n' + ',\n'.join(lines) + '\n' + indent_str + '}'
+    elif isinstance(item, str):
+        out = f'"{item}"'
     else:
         out = str(item)
 
@@ -50,7 +55,7 @@ class Data(object):
             (default: :obj:`None`)
         pos (Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
-        norm (Tensor, optional): Normal vector matrix with shape
+        normal (Tensor, optional): Normal vector matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         face (LongTensor, optional): Face adjacency matrix with shape
             :obj:`[3, num_faces]`. (default: :obj:`None`)
@@ -65,13 +70,13 @@ class Data(object):
         data.test_mask = torch.tensor([...], dtype=torch.bool)
     """
     def __init__(self, x=None, edge_index=None, edge_attr=None, y=None,
-                 pos=None, norm=None, face=None, **kwargs):
+                 pos=None, normal=None, face=None, **kwargs):
         self.x = x
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.y = y
         self.pos = pos
-        self.norm = norm
+        self.normal = normal
         self.face = face
         for key, item in kwargs.items():
             if key == 'num_nodes':
@@ -104,6 +109,14 @@ class Data(object):
             data.debug()
 
         return data
+
+    def to_dict(self):
+        return {key: item for key, item in self}
+
+    def to_namedtuple(self):
+        keys = self.keys
+        DataTuple = collections.namedtuple('DataTuple', keys)
+        return DataTuple(*[self[key] for key in keys])
 
     def __getitem__(self, key):
         r"""Gets the data of the attribute :obj:`key`."""
@@ -154,12 +167,16 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # `*index*` and `*face*` should be concatenated in the last dimension,
-        # everything else in the first dimension.
-        return -1 if bool(re.search('(index|face)', key)) else 0
+        # Concatenate `*index*` and `*face*` attributes in the last dimension.
+        if bool(re.search('(index|face)', key)):
+            return -1
+        # By default, concatenate sparse matrices diagonally.
+        elif isinstance(value, SparseTensor):
+            return (0, 1)
+        return 0
 
     def __inc__(self, key, value):
-        r""""Returns the incremental count to cumulatively increase the value
+        r"""Returns the incremental count to cumulatively increase the value
         of the next attribute of :obj:`key` when creating batches.
 
         .. note::
@@ -168,8 +185,8 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # Only `*index*` and `*face*` should be cumulatively summed up when
-        # creating batches.
+        # Only `*index*` and `*face*` attributes should be cumulatively summed
+        # up when creating batches.
         return self.num_nodes if bool(re.search('(index|face)', key)) else 0
 
     @property
@@ -191,13 +208,17 @@ class Data(object):
         """
         if hasattr(self, '__num_nodes__'):
             return self.__num_nodes__
-        for key, item in self('x', 'pos', 'norm', 'batch'):
+        for key, item in self('x', 'pos', 'normal', 'batch'):
             return item.size(self.__cat_dim__(key, item))
+        if hasattr(self, 'adj'):
+            return self.adj.size(0)
+        if hasattr(self, 'adj_t'):
+            return self.adj_t.size(1)
         if self.face is not None:
-            warnings.warn(__num_nodes_warn_msg__.format('face'))
+            logging.warning(__num_nodes_warn_msg__.format('face'))
             return maybe_num_nodes(self.face)
         if self.edge_index is not None:
-            warnings.warn(__num_nodes_warn_msg__.format('edge'))
+            logging.warning(__num_nodes_warn_msg__.format('edge'))
             return maybe_num_nodes(self.edge_index)
         return None
 
@@ -210,6 +231,8 @@ class Data(object):
         r"""Returns the number of edges in the graph."""
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
+        for key, item in self('adj', 'adj_t'):
+            return item.nnz()
         return None
 
     @property
@@ -271,8 +294,15 @@ class Data(object):
         return not self.is_undirected()
 
     def __apply__(self, item, func):
-        if torch.is_tensor(item) or isinstance(item, SparseTensor):
+        if torch.is_tensor(item):
             return func(item)
+        elif isinstance(item, SparseTensor):
+            # Not all apply methods are supported for `SparseTensor`, e.g.,
+            # `contiguous()`. We can get around it by capturing the exception.
+            try:
+                return func(item)
+            except AttributeError:
+                return item
         elif isinstance(item, (tuple, list)):
             return [self.__apply__(v, func) for v in item]
         elif isinstance(item, dict):
@@ -378,12 +408,12 @@ class Data(object):
                      'dimension but found {}').format(self.num_nodes,
                                                       self.pos.size(0)))
 
-        if self.norm is not None and self.num_nodes is not None:
-            if self.norm.size(0) != self.num_nodes:
+        if self.normal is not None and self.num_nodes is not None:
+            if self.normal.size(0) != self.num_nodes:
                 raise RuntimeError(
                     ('Node normals should hold {} elements in the first '
                      'dimension but found {}').format(self.num_nodes,
-                                                      self.norm.size(0)))
+                                                      self.normal.size(0)))
 
     def __repr__(self):
         cls = str(self.__class__.__name__)

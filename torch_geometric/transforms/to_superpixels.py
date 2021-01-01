@@ -48,7 +48,7 @@ class ToSLIC(object):
         img = img.permute(1, 2, 0)
         h, w, c = img.size()
 
-        seg = slic(img.to(torch.double).numpy(), **self.kwargs)
+        seg = slic(img.to(torch.double).numpy(), start_label=0, **self.kwargs)
         seg = torch.from_numpy(seg)
 
         x = scatter_mean(img.view(h * w, c), seg.view(h * w), dim=0)

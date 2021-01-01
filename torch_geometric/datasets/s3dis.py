@@ -11,7 +11,7 @@ from torch_geometric.data import (InMemoryDataset, Data, download_url,
 class S3DIS(InMemoryDataset):
     r"""The (pre-processed) Stanford Large-Scale 3D Indoor Spaces dataset from
     the `"3D Semantic Parsing of Large-Scale Indoor Spaces"
-    <http://buildingparser.stanford.edu/images/3D_Semantic_Parsing.pdf>`_
+    <https://openaccess.thecvf.com/content_cvpr_2016/papers/Armeni_3D_Semantic_Parsing_CVPR_2016_paper.pdf>`_
     paper, containing point clouds of six large-scale indoor parts in three
     buildings with 12 semantic elements (and one clutter class).
 

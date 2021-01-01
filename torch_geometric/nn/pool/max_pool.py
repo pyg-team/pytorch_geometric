@@ -1,15 +1,18 @@
+from typing import Optional
+
 from torch_scatter import scatter
 from torch_geometric.data import Batch
+from torch_geometric.utils import add_self_loops
 
 from .consecutive import consecutive_cluster
 from .pool import pool_edge, pool_batch, pool_pos
 
 
-def _max_pool_x(cluster, x, size=None):
+def _max_pool_x(cluster, x, size: Optional[int] = None):
     return scatter(x, cluster, dim=0, dim_size=size, reduce='max')
 
 
-def max_pool_x(cluster, x, batch, size=None):
+def max_pool_x(cluster, x, batch, size: Optional[int] = None):
     r"""Max-Pools node features according to the clustering defined in
     :attr:`cluster`.
 
@@ -30,7 +33,8 @@ def max_pool_x(cluster, x, batch, size=None):
         :obj:`None`, else :class:`Tensor`
     """
     if size is not None:
-        return _max_pool_x(cluster, x, (batch.max().item() + 1) * size)
+        batch_size = int(batch.max().item()) + 1
+        return _max_pool_x(cluster, x, batch_size * size), None
 
     cluster, perm = consecutive_cluster(cluster)
     x = _max_pool_x(cluster, x)
@@ -71,4 +75,20 @@ def max_pool(cluster, data, transform=None):
     if transform is not None:
         data = transform(data)
 
+    return data
+
+
+def max_pool_neighbor_x(data, flow='source_to_target'):
+    r"""Max pools neighboring node features, where each feature in
+    :obj:`data.x` is replaced by the feature value with the maximum value from
+    the central node and its neighbors.
+    """
+    x, edge_index = data.x, data.edge_index
+
+    edge_index, _ = add_self_loops(edge_index, num_nodes=data.num_nodes)
+
+    row, col = edge_index
+    row, col = (row, col) if flow == 'source_to_target' else (col, row)
+
+    data.x = scatter(x[row], col, dim=0, dim_size=data.num_nodes, reduce='max')
     return data

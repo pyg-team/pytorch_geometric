@@ -36,7 +36,7 @@ def face_to_tri(face):
     rect = rect.to(torch.int64)
 
     if rect.numel() > 0:
-        first, second = rect[:, [0, 1, 2]], rect[:, [1, 2, 3]]
+        first, second = rect[:, [0, 1, 2]], rect[:, [0, 2, 3]]
         return torch.cat([triangle, first, second], dim=0).t().contiguous()
     else:
         return triangle.t().contiguous()

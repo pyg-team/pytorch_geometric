@@ -1,0 +1,16 @@
+package:
+  name: torch-geometric
+  version: 1.6.3
+
+requirements:
+  build:
+    - python
+    - pip
+    - setuptools
+  run:
+    - python
+
+about:
+  home: https://github.com/rusty1s/pytorch_geometric
+  license: MIT
+  summary: Geometric deep learning extension library for PyTorch
