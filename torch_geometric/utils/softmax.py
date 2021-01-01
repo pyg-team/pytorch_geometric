@@ -32,7 +32,8 @@ def softmax(src: Tensor, index: Optional[Tensor], ptr: Optional[Tensor] = None,
         out_sum = gather_csr(segment_csr(out, ptr, reduce='sum'), ptr)
     elif index is not None:
         N = maybe_num_nodes(index, num_nodes)
-        out_sum = scatter(out, index, dim=0, dim_size=N, reduce='sum')[index]
+        out_sum = scatter(out, index, dim=-2, dim_size=N, reduce='sum')[..., index, :]  # maybe use below one
+        # out_sum = scatter(out, index, dim=-2, dim_size=N, reduce='sum').index_select(-2, index)
     else:
         raise NotImplementedError
 
