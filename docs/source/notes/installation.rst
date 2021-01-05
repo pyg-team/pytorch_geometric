@@ -60,6 +60,8 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
          pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
          pip install torch-geometric
 
+   If you notice long installation times, please add the :obj:`--no-index` flag to the above :obj:`pip` calls.
+
 Installation from Source
 ------------------------
 
