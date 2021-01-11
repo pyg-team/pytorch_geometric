@@ -1,12 +1,24 @@
 from copy import copy
-from typing import Optional, Union
+from typing import Optional
 
+import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
 
-def maybe_num_nodes(edge_index: Union[Tensor, SparseTensor],
-                    num_nodes: Optional[int] = None) -> int:
+@torch.jit._overload
+def maybe_num_nodes(edge_index, num_nodes=None):
+    # type: (Tensor, Optional[int]) -> int
+    pass
+
+
+@torch.jit._overload
+def maybe_num_nodes(edge_index, num_nodes=None):
+    # type: (SparseTensor, Optional[int]) -> int
+    pass
+
+
+def maybe_num_nodes(edge_index, num_nodes=None):
     if num_nodes is not None:
         return num_nodes
     elif isinstance(edge_index, Tensor):
