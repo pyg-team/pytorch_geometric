@@ -1,3 +1,5 @@
+from typing import List
+
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, cat
@@ -153,9 +155,9 @@ class Batch(Data):
 
         return batch.contiguous()
 
-    def to_data_list(self):
-        r"""Reconstructs the list of :class:`torch_geometric.data.Data` objects
-        from the batch object.
+    def get_example(self, idx: int) -> Data:
+        r"""Reconstructs the :class:`torch_geometric.data.Data` object at index
+        :obj:`idx` from the batch object.
         The batch object must have been created via :meth:`from_data_list` in
         order to be able to reconstruct the initial objects."""
 
@@ -164,53 +166,82 @@ class Batch(Data):
                 ('Cannot reconstruct data list from batch because the batch '
                  'object was not created using `Batch.from_data_list()`.'))
 
-        data_list = []
-        for i in range(len(list(self.__slices__.values())[0]) - 1):
-            data = self.__data_class__()
+        data = self.__data_class__()
 
-            for key in self.__slices__.keys():
-                item = self[key]
-                # Narrow the item based on the values in `__slices__`.
-                if isinstance(item, Tensor):
-                    dim = self.__cat_dims__[key]
-                    start = self.__slices__[key][i]
-                    end = self.__slices__[key][i + 1]
+        for key in self.__slices__.keys():
+            item = self[key]
+            # Narrow the item based on the values in `__slices__`.
+            if isinstance(item, Tensor):
+                dim = self.__cat_dims__[key]
+                start = self.__slices__[key][idx]
+                end = self.__slices__[key][idx + 1]
+                item = item.narrow(dim, start, end - start)
+            elif isinstance(item, SparseTensor):
+                for j, dim in enumerate(self.__cat_dims__[key]):
+                    start = self.__slices__[key][idx][j].item()
+                    end = self.__slices__[key][idx + 1][j].item()
                     item = item.narrow(dim, start, end - start)
-                elif isinstance(item, SparseTensor):
-                    for j, dim in enumerate(self.__cat_dims__[key]):
-                        start = self.__slices__[key][i][j].item()
-                        end = self.__slices__[key][i + 1][j].item()
-                        item = item.narrow(dim, start, end - start)
-                else:
-                    item = item[self.__slices__[key][i]:self.
-                                __slices__[key][i + 1]]
-                    item = item[0] if len(item) == 1 else item
+            else:
+                start = self.__slices__[key][idx]
+                end = self.__slices__[key][idx + 1]
+                item = item[start:end]
+                item = item[0] if len(item) == 1 else item
 
-                # Decrease its value by `cumsum` value:
-                cum = self.__cumsum__[key][i]
-                if isinstance(item, Tensor):
-                    if not isinstance(cum, int) or cum != 0:
-                        item = item - cum
-                elif isinstance(item, SparseTensor):
-                    value = item.storage.value()
-                    if value is not None and value.dtype != torch.bool:
-                        if not isinstance(cum, int) or cum != 0:
-                            value = value - cum
-                        item = item.set_value(value, layout='coo')
-                elif isinstance(item, (int, float)):
+            # Decrease its value by `cumsum` value:
+            cum = self.__cumsum__[key][idx]
+            if isinstance(item, Tensor):
+                if not isinstance(cum, int) or cum != 0:
                     item = item - cum
+            elif isinstance(item, SparseTensor):
+                value = item.storage.value()
+                if value is not None and value.dtype != torch.bool:
+                    if not isinstance(cum, int) or cum != 0:
+                        value = value - cum
+                    item = item.set_value(value, layout='coo')
+            elif isinstance(item, (int, float)):
+                item = item - cum
 
-                data[key] = item
+            data[key] = item
 
-            if self.__num_nodes_list__[i] is not None:
-                data.num_nodes = self.__num_nodes_list__[i]
+        if self.__num_nodes_list__[idx] is not None:
+            data.num_nodes = self.__num_nodes_list__[idx]
 
-            data_list.append(data)
+        return data
 
-        return data_list
+    def index_select(self, idx: Tensor) -> List[Data]:
+        if isinstance(idx, slice):
+            idx = list(range(self.num_graphs)[idx])
+        elif torch.is_tensor(idx):
+            if idx.dtype == torch.bool:
+                idx = idx.nonzero(as_tuple=False).view(-1)
+            idx = idx.tolist()
+        elif isinstance(idx, list) or isinstance(idx, tuple):
+            pass
+        else:
+            raise IndexError(
+                'Only integers, slices (`:`), list, tuples, and long or bool '
+                'tensors are valid indices (got {}).'.format(
+                    type(idx).__name__))
+
+        return [self.get_example(i) for i in idx]
+
+    def __getitem__(self, idx):
+        if isinstance(idx, str):
+            return super(Batch, self).__getitem__(idx)
+        elif isinstance(idx, int):
+            return self.get_example(idx)
+        else:
+            return self.index_select(idx)
+
+    def to_data_list(self) -> List[Data]:
+        r"""Reconstructs the list of :class:`torch_geometric.data.Data` objects
+        from the batch object.
+        The batch object must have been created via :meth:`from_data_list` in
+        order to be able to reconstruct the initial objects."""
+        return [self.get_example(i) for i in range(self.num_graphs)]
 
     @property
-    def num_graphs(self):
+    def num_graphs(self) -> int:
         """Returns the number of graphs in the batch."""
         if self.__num_graphs__ is not None:
             return self.__num_graphs__
