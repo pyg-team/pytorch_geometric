@@ -142,6 +142,6 @@ class InMemoryDataset(Dataset):
             data_list = [self.get(i) for i in idx]
         dataset = copy.copy(self)
         dataset.__indices__ = None
-        dataset.__data_list == data_list
+        dataset.__data_list__ == data_list
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
