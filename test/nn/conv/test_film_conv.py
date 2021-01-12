@@ -22,7 +22,7 @@ def test_film_conv():
     assert jit(x1, edge_index).tolist() == out1.tolist()
     t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert conv(x1, adj.t().set_value(None)).tolist() == out1.tolist()
+    assert jit(x1, adj.t().set_value(None)).tolist() == out1.tolist()
 
     conv = FiLMConv(4, 32, num_relations=2)
     assert conv.__repr__() == 'FiLMConv(4, 32, num_relations=2)'
@@ -35,7 +35,7 @@ def test_film_conv():
     assert jit(x1, edge_index, edge_type).tolist() == out1.tolist()
     t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert conv(x1, adj.t()).tolist() == out1.tolist()
+    assert jit(x1, adj.t()).tolist() == out1.tolist()
 
     adj = adj.sparse_resize((4, 2))
 
@@ -50,7 +50,7 @@ def test_film_conv():
     assert jit((x1, x2), edge_index).tolist() == out1.tolist()
     t = '(PairTensor, SparseTensor, OptTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert conv((x1, x2), adj.t().set_value(None)).tolist() == out1.tolist()
+    assert jit((x1, x2), adj.t().set_value(None)).tolist() == out1.tolist()
 
     conv = FiLMConv((4, 16), 32, num_relations=2)
     assert conv.__repr__() == 'FiLMConv((4, 16), 32, num_relations=2)'
@@ -63,4 +63,4 @@ def test_film_conv():
     assert jit((x1, x2), edge_index, edge_type).tolist() == out1.tolist()
     t = '(PairTensor, SparseTensor, OptTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
+    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
