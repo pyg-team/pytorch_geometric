@@ -23,15 +23,14 @@ def softmax(src: Tensor, index: Optional[Tensor], ptr: Optional[Tensor] = None,
 
     :rtype: :class:`Tensor`
     """
-    out = src
-    if src.numel() > 0:
-        out = out - src.max()
-    out = out.exp()
-
     if ptr is not None:
+        src_max = gather_csr(segment_csr(src, ptr, reduce='max'), ptr)
+        out = (src - src_max).exp()
         out_sum = gather_csr(segment_csr(out, ptr, reduce='sum'), ptr)
     elif index is not None:
         N = maybe_num_nodes(index, num_nodes)
+        src_max = scatter(src, index, dim=0, dim_size=N, reduce='max')[index]
+        out = (src - src_max).exp()
         out_sum = scatter(out, index, dim=0, dim_size=N, reduce='sum')[index]
     else:
         raise NotImplementedError
