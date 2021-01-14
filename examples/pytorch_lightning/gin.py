@@ -12,9 +12,9 @@ from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
 from torch_sparse import SparseTensor
 from torch_scatter import segment_csr
 import torch_geometric.transforms as T
+from torch_geometric.nn import GINConv
 from torch_geometric.datasets import TUDataset
 from torch_geometric.data import Batch, DataLoader
-from torch_geometric.nn import GINConv
 
 
 class IMDBBinary(LightningDataModule):
@@ -27,11 +27,11 @@ class IMDBBinary(LightningDataModule):
         ])
 
     @property
-    def num_features(self):
+    def num_features(self) -> int:
         return 136
 
     @property
-    def num_classes(self):
+    def num_classes(self) -> int:
         return 2
 
     def prepare_data(self):
@@ -121,7 +121,7 @@ class GIN(LightningModule):
 
 def main():
     seed_everything(42)
-    datamodule = IMDBBinary('data/TUUDataset')
+    datamodule = IMDBBinary('data/TUDataset')
     model = GIN(datamodule.num_features, datamodule.num_classes)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
     trainer = Trainer(gpus=1, max_epochs=20, callbacks=[checkpoint_callback])

@@ -157,8 +157,9 @@ class NeighborSampler(torch.utils.data.DataLoader):
             adj_t, n_id = self.adj_t.sample_adj(n_id, size, replace=False)
             e_id = adj_t.storage.value()
             size = adj_t.sparse_sizes()[::-1]
-            if self.__val__ is not None:
-                adj_t.set_value_(self.__val__[e_id], layout='coo')
+            adj_t.set_value_(
+                self.__val__[e_id] if self.__val__ is not None else None,
+                layout='coo')
 
             if self.is_sparse_tensor:
                 adjs.append(Adj(adj_t, e_id, size))
