@@ -51,21 +51,24 @@ class Reddit(LightningDataModule):
 
     def train_dataloader(self):
         return NeighborSampler(self.data.adj_t, node_idx=self.data.train_mask,
-                               sizes=[25, 10], batch_size=1024, shuffle=True,
-                               num_workers=6, persistent_workers=True)
+                               sizes=[25, 10], return_e_id=False,
+                               transform=self.convert_batch, batch_size=1024,
+                               shuffle=True, num_workers=6,
+                               persistent_workers=True)
 
     def val_dataloader(self):
         return NeighborSampler(self.data.adj_t, node_idx=self.data.val_mask,
-                               sizes=[25, 10], batch_size=2048, num_workers=3,
-                               persistent_workers=True)
+                               sizes=[25, 10], return_e_id=False,
+                               transform=self.convert_batch, batch_size=2048,
+                               num_workers=3, persistent_workers=True)
 
     def test_dataloader(self):
         return NeighborSampler(self.data.adj_t, node_idx=self.data.test_mask,
-                               sizes=[25, 10], batch_size=2048, num_workers=3,
-                               persistent_workers=True)
+                               sizes=[25, 10], return_e_id=False,
+                               transform=self.convert_batch, batch_size=2048,
+                               num_workers=3, persistent_workers=True)
 
-    def create_batch(self, batch, batch_idx: int):
-        batch_size, n_id, adjs = batch
+    def convert_batch(self, batch_size, n_id, adjs):
         return Batch(
             x=self.data.x[n_id],
             y=self.data.y[n_id[:batch_size]],
@@ -103,7 +106,6 @@ class GraphSAGE(LightningModule):
         return x
 
     def training_step(self, batch, batch_idx: int):
-        batch = self.create_batch(batch, batch_idx).to(self.device)
         y_hat = self(batch.x, batch.adjs_t)
         train_loss = F.cross_entropy(y_hat, batch.y)
         train_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
@@ -112,7 +114,6 @@ class GraphSAGE(LightningModule):
         return train_loss
 
     def validation_step(self, batch, batch_idx: int):
-        batch = self.create_batch(batch, batch_idx).to(self.device)
         y_hat = self(batch.x, batch.adjs_t)
         val_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
         self.log('val_acc', val_acc, on_step=False, on_epoch=True,
@@ -120,7 +121,6 @@ class GraphSAGE(LightningModule):
         return val_acc
 
     def test_step(self, batch, batch_idx: int):
-        batch = self.create_batch(batch, batch_idx).to(self.device)
         y_hat = self(batch.x, batch.adjs_t)
         test_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
         self.log('test_acc', test_acc, on_step=False, on_epoch=True,
@@ -135,7 +135,6 @@ def main():
     seed_everything(42)
     datamodule = Reddit('data/Reddit')
     model = GraphSAGE(datamodule.num_features, datamodule.num_classes)
-    model.create_batch = datamodule.create_batch
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
     trainer = Trainer(gpus=1, max_epochs=10, callbacks=[checkpoint_callback])
 

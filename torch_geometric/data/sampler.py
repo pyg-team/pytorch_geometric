@@ -1,5 +1,5 @@
 import copy
-from typing import List, Optional, Tuple, NamedTuple, Union
+from typing import List, Optional, Tuple, NamedTuple, Union, Callable
 
 import torch
 from torch import Tensor
@@ -97,6 +97,9 @@ class NeighborSampler(torch.utils.data.DataLoader):
             original edge indices of sampled edges. This is only useful in case
             when operating on graphs without edge features to save memory.
             (default: :obj:`True`)
+        transform (callable, optional): A function/transform that takes in
+            an a sampled mini-batch and returns a transformed version.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -104,7 +107,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
     def __init__(self, edge_index: Union[Tensor, SparseTensor],
                  sizes: List[int], node_idx: Optional[Tensor] = None,
                  num_nodes: Optional[int] = None, return_e_id: bool = True,
-                 **kwargs):
+                 transform: Callable = None, **kwargs):
 
         edge_index = edge_index.to('cpu')
 
@@ -118,6 +121,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         self.sizes = sizes
         self.return_e_id = return_e_id
+        self.transform = transform
         self.is_sparse_tensor = isinstance(edge_index, SparseTensor)
         self.__val__ = None
 
@@ -177,10 +181,9 @@ class NeighborSampler(torch.utils.data.DataLoader):
                 edge_index = torch.stack([col, row], dim=0)
                 adjs.append(EdgeIndex(edge_index, e_id, size))
 
-        if len(adjs) > 1:
-            return batch_size, n_id, adjs[::-1]
-        else:
-            return batch_size, n_id, adjs[0]
+        out = (batch_size, n_id, adjs[::-1])
+        out = self.transform(*out) if self.transform is not None else out
+        return out
 
     def __repr__(self):
         return '{}(sizes={})'.format(self.__class__.__name__, self.sizes)
