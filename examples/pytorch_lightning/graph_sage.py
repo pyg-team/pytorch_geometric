@@ -137,10 +137,10 @@ def main():
     model = GraphSAGE(datamodule.num_features, datamodule.num_classes)
     model.create_batch = datamodule.create_batch
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
-    trainer = Trainer(gpus=1, max_epochs=2, callbacks=[checkpoint_callback])
+    trainer = Trainer(gpus=1, max_epochs=10, callbacks=[checkpoint_callback])
 
     # Uncomment to train on multiple GPUs:
-    # trainer = Trainer(gpus=2, accelerator='ddp', max_epochs=2,
+    # trainer = Trainer(gpus=2, accelerator='ddp', max_epochs=10,
     #                   callbacks=[checkpoint_callback])
 
     trainer.fit(model, datamodule=datamodule)
