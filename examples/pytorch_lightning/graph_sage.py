@@ -91,7 +91,7 @@ class GraphSAGE(LightningModule):
         for _ in range(num_layers - 1):
             self.bns.append(BatchNorm1d(hidden_channels))
 
-        self.acc = Accuracy(out_channels)
+        self.acc = Accuracy()
 
     def forward(self, x: Tensor, adjs_t: List[SparseTensor]) -> Tensor:
         for i, adj_t in enumerate(adjs_t):
@@ -106,23 +106,26 @@ class GraphSAGE(LightningModule):
         batch = self.create_batch(batch, batch_idx).to(self.device)
         y_hat = self(batch.x, batch.adjs_t)
         train_loss = F.cross_entropy(y_hat, batch.y)
-        self.log('train_loss', train_loss, prog_bar=True, on_step=False,
+        train_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('train_acc', train_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
-        self.log('train_acc', self.acc(y_hat, batch.y), prog_bar=True,
-                 on_step=False, on_epoch=True)
         return train_loss
 
     def validation_step(self, batch, batch_idx: int):
         batch = self.create_batch(batch, batch_idx).to(self.device)
         y_hat = self(batch.x, batch.adjs_t)
-        self.log('val_acc', self.acc(y_hat, batch.y), on_step=False,
-                 on_epoch=True, prog_bar=True, sync_dist=True)
+        val_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('val_acc', val_acc, on_step=False, on_epoch=True,
+                 prog_bar=True, sync_dist=True)
+        return val_acc
 
     def test_step(self, batch, batch_idx: int):
         batch = self.create_batch(batch, batch_idx).to(self.device)
         y_hat = self(batch.x, batch.adjs_t)
-        self.log('test_acc', self.acc(y_hat, batch.y), on_epoch=True,
+        test_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('test_acc', test_acc, on_step=False, on_epoch=True,
                  prog_bar=True, sync_dist=True)
+        return test_acc
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
@@ -134,7 +137,11 @@ def main():
     model = GraphSAGE(datamodule.num_features, datamodule.num_classes)
     model.create_batch = datamodule.create_batch
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
-    trainer = Trainer(gpus=1, max_epochs=10, callbacks=[checkpoint_callback])
+    trainer = Trainer(gpus=1, max_epochs=2, callbacks=[checkpoint_callback])
+
+    # Uncomment to train on multiple GPUs:
+    # trainer = Trainer(gpus=2, accelerator='ddp', max_epochs=2,
+    #                   callbacks=[checkpoint_callback])
 
     trainer.fit(model, datamodule=datamodule)
     trainer.test()

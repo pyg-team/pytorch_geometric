@@ -85,7 +85,7 @@ class GIN(LightningModule):
             Linear(hidden_channels, out_channels),
         )
 
-        self.acc = Accuracy(out_channels)
+        self.acc = Accuracy()
 
     def forward(self, x: Tensor, adj_t: SparseTensor, ptr: Tensor) -> Tensor:
         for conv in self.convs:
@@ -97,23 +97,26 @@ class GIN(LightningModule):
         batch = batch.to(self.device)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         train_loss = F.cross_entropy(y_hat, batch.y)
-        self.log('train_loss', train_loss, prog_bar=True, on_step=False,
+        train_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('train_acc', train_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
-        self.log('train_acc', self.acc(y_hat, batch.y), prog_bar=True,
-                 on_step=False, on_epoch=True)
         return train_loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
         batch = batch.to(self.device)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
-        self.log('val_acc', self.acc(y_hat, batch.y), on_step=False,
-                 on_epoch=True, prog_bar=True, sync_dist=True)
+        val_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('val_acc', val_acc, on_step=False, on_epoch=True,
+                 prog_bar=True, sync_dist=True)
+        return val_acc
 
     def test_step(self, batch: Batch, batch_idx: int):
         batch = batch.to(self.device)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
-        self.log('test_acc', self.acc(y_hat, batch.y), on_epoch=True,
-                 prog_bar=True, sync_dist=True)
+        test_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('test_acc', test_acc, on_epoch=True, prog_bar=True,
+                 sync_dist=True)
+        return test_acc
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
