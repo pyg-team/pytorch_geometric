@@ -212,8 +212,8 @@ class Batch(Data):
         r"""Constructs the :class:`torch_geometric.data.Data` object of one big (disconnected) grpah,
         whose each disconnected graph is a graph of index :obj:`idx` in input indices."""
         data_list = self.index_select(idx)
-        num_node_list = [data.num_nodes() for data in data_list]
-        total_num_nodes = sum([data.num_nodes() for data in data_list])
+        num_node_list = [data.num_nodes for data in data_list]
+        total_num_nodes = sum(num_node_list)
         batch_size = len(data_list)
         _, n_features = data_list[0].x.shape
         x = torch.FloatTensor(total_num_nodes, n_features)
@@ -223,11 +223,11 @@ class Batch(Data):
         for i, data in enumerate(data_list):
             n_nodes, _ = data.x.shape
             x[prev_num_node_list:prev_num_node_list + n_nodes, :] = data.x
-            edge_index.append(x.edge_index + prev_num_node_list)
+            edge_index.append(data.edge_index + prev_num_node_list)
             prev_num_node_list = prev_num_node_list + n_nodes
         edge_index = torch.cat(edge_index, -1)
 
-        return num_node_list, x, edge_index
+        return torch.LongTensor(num_node_list), x, edge_index
 
     def index_select(self, idx: Tensor) -> List[Data]:
         if isinstance(idx, slice):
