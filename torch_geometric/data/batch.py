@@ -227,7 +227,7 @@ class Batch(Data):
             prev_num_node_list = prev_num_node_list + n_nodes
         edge_index = torch.cat(edge_index, -1)
 
-        return torch.LongTensor(num_node_list), x, edge_index
+        return torch.LongTensor(num_node_list), Data(x=x, edge_index=edge_index)
 
     def index_select(self, idx: Tensor) -> List[Data]:
         if isinstance(idx, slice):
