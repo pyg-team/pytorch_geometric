@@ -17,7 +17,7 @@ class Reddit2(InMemoryDataset):
 
         This is a sparser version of the original
         :obj:`~torch_geometric.datasets.Reddit` dataset (~23M edges instead of
-        114M edges), and is used in papers such as
+        ~114M edges), and is used in papers such as
         `SGC <https://arxiv.org/abs/1902.07153>`_ and
         `GraphSAINT <https://arxiv.org/abs/1907.04931>`_.
 
