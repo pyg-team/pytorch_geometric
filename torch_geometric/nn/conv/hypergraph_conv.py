@@ -123,10 +123,15 @@ class HypergraphConv(MessagePassing):
         if hyperedge_weight is not None:
             B = B * hyperedge_weight
 
+        dif = max([num_nodes, num_edges]) - num_nodes # get size of padding 
+        x_help = F.pad(x, (0, dif)) # create dif many nodes
+
         self.flow = 'source_to_target'
-        out = self.propagate(hyperedge_index, x=x, norm=B, alpha=alpha)
+        out = self.propagate(hyperedge_index, x=x_help, norm=B, alpha=alpha)
         self.flow = 'target_to_source'
         out = self.propagate(hyperedge_index, x=out, norm=D, alpha=alpha)
+
+        out = out[:num_nodes] # prune back to original x.size()
 
         if self.concat is True:
             out = out.view(-1, self.heads * self.out_channels)
