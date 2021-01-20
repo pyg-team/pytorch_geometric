@@ -7,6 +7,9 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import zeros, glorot
+from ..epsilon import EPSILON
+
+EPS = EPSILON()
 
 
 class GMMConv(MessagePassing):
@@ -122,7 +125,6 @@ class GMMConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_attr: Tensor):
-        EPS = 1e-15
         F, M = self.rel_in_channels, self.out_channels
         (E, D), K = edge_attr.size(), self.kernel_size
 

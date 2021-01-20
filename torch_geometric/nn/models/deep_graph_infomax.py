@@ -3,8 +3,9 @@ from torch.nn import Parameter
 from sklearn.linear_model import LogisticRegression
 
 from ..inits import reset, uniform
+from ..epsilon import EPSILON
 
-EPS = 1e-15
+EPS = EPSILON()
 
 
 class DeepGraphInfomax(torch.nn.Module):

@@ -10,7 +10,9 @@ from torch_geometric.nn import MessagePassing
 from torch_geometric.data import Data
 from torch_geometric.utils import k_hop_subgraph, to_networkx
 
-EPS = 1e-15
+from ..epsilon import EPSILON
+
+EPS = EPSILON()
 
 
 class GNNExplainer(torch.nn.Module):
