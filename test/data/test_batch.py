@@ -48,3 +48,37 @@ def test_batch():
     assert data_list[1].s == '2'
 
     torch_geometric.set_debug(True)
+
+
+class MyData(Data):
+    def __cat_dim__(self, key, item):
+        if key == 'per_graph_tensor':
+            return None
+        else:
+            return super().__cat_dim__(key, item)
+
+
+def test_newaxis_batching():
+    torch_geometric.set_debug(True)
+    N_datas = 3
+    N_nodes = torch.randint(low=3, high=10, size=(N_datas,))
+    N_features = 8
+    target_shape = (4, 7)
+    datas = [
+        MyData(
+            x=torch.randn(n_node, N_features),
+            per_graph_tensor=torch.randn(target_shape)
+        )
+        for n_node in N_nodes
+    ]
+
+    batch = Batch.from_data_list(datas)
+
+    assert batch.x.shape == (sum(N_nodes), N_features)
+    assert batch.per_graph_tensor.shape == (N_datas,) + target_shape
+    for i in range(N_datas):
+        orig = datas[i].per_graph_tensor
+        from_batch = batch.get_example(i).per_graph_tensor
+        assert orig.shape == target_shape
+        assert orig.shape == from_batch.shape
+        assert torch.all(orig == from_batch)
