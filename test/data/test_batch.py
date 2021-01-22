@@ -50,15 +50,14 @@ def test_batch():
     torch_geometric.set_debug(True)
 
 
-class MyData(Data):
-    def __cat_dim__(self, key, item):
-        if key == 'per_graph_tensor':
-            return None
-        else:
-            return super().__cat_dim__(key, item)
-
-
 def test_newaxis_batching():
+    class MyData(Data):
+        def __cat_dim__(self, key, item):
+            if key == 'newaxis_field':
+                return None
+            else:
+                return super().__cat_dim__(key, item)
+
     torch_geometric.set_debug(True)
     N_datas = 3
     N_nodes = torch.randint(low=3, high=10, size=(N_datas,))
@@ -67,7 +66,7 @@ def test_newaxis_batching():
     datas = [
         MyData(
             x=torch.randn(n_node, N_features),
-            per_graph_tensor=torch.randn(target_shape)
+            newaxis_field=torch.randn(target_shape)
         )
         for n_node in N_nodes
     ]
@@ -75,10 +74,10 @@ def test_newaxis_batching():
     batch = Batch.from_data_list(datas)
 
     assert batch.x.shape == (sum(N_nodes), N_features)
-    assert batch.per_graph_tensor.shape == (N_datas,) + target_shape
+    assert batch.newaxis_field.shape == (N_datas,) + target_shape
     for i in range(N_datas):
-        orig = datas[i].per_graph_tensor
-        from_batch = batch.get_example(i).per_graph_tensor
+        orig = datas[i].newaxis_field
+        from_batch = batch.get_example(i).newaxis_field
         assert orig.shape == target_shape
         assert orig.shape == from_batch.shape
         assert torch.all(orig == from_batch)
