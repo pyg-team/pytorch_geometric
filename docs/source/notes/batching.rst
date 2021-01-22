@@ -188,3 +188,45 @@ We can again test our implementation by running a simple test script:
                 [0, 1, 1, 2, 3, 4, 4, 5]])
 
 Again, this is exactly the behaviour we aimed for!
+
+Graph-level Tensor Properties
+----------------
+
+Sometimes, `Data` objects may need to store graph-level properties or targets.
+When batched, these properties should gain a new batch dimension: if some specific graph has a property described by a 3-dimensional vector, for example, a batch of such data objects should have a property of dimension :obj:`[n_batch, 3]`.
+This is achieved by returning a concatenation dimension of :obj:`None` in :meth:`__cat_dim__`:
+
+.. code-block:: python
+
+    class GraphLevelData(Data):
+        def __cat_dim__(self, key, item):
+            if key.startswith('graph_level'):
+                return None
+            else:
+                return super().__cat_dim__(key, item)
+
+    edge_index = torch.tensor([
+        [0, 1],
+        [1, 0],
+    ])
+
+    # these graphs have some overall property that is always a [4,7] Tensor
+    datas = [
+        GraphLevelData(
+            edge_index=edge_index,
+            graph_level_property=torch.randn(4, 7)
+        )
+        for _ in range(3)
+    ]
+
+    batch = Batch.from_data_list(datas)
+    # the edge_index are brought together into a single graph
+    print(batch.edge_index)
+    >>> tensor([[0, 1, 2, 3, 4, 5],
+                [1, 0, 3, 2, 5, 4]])
+    # batch.graph_level_property is of shape [n_batch, (property_shape)]
+    print(batch.graph_level_property.shape)
+    >>> torch.Size([3, 4, 7])
+    # Index 0 in the batch dimension gives the graph-level property of the first data
+    print(torch.all(batch.graph_level_property[0] == datas[0].graph_level_property))
+    >>> tensor(True)
