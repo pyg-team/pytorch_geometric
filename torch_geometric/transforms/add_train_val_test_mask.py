@@ -26,17 +26,11 @@ class AddTrainValTestMask(object):
         num_test (int, optional): The number of test samples in case of
             :obj:`"train-rest"` and :obj:`"random"` split.
             (default: :obj:`1000`)
-        num_classes (int, optional): The number of classes. This parameter
-            should be set in case of :obj:`"test-rest"` and :obj:`"random"`
-            split. (default: :obj:`None`)
     """
-    def __init__(self, split, num_train_per_class=20, num_val=500,
-                 num_test=1000, num_classes=None):
+    def __init__(self, split, num_train_per_class=20,
+                 num_val=500, num_test=1000):
         assert split in ['train-rest', 'test-rest', 'random']
-        assert split == 'train-rest' or num_classes is not None, \
-            'num_classes should be set in case of test-rest and random split'
         self.split = split
-        self.num_classes = num_classes
         self.num_train_per_class = num_train_per_class
         self.num_val = num_val
         self.num_test = num_test
@@ -58,7 +52,8 @@ class AddTrainValTestMask(object):
             data.train_mask[data.val_mask | data.test_mask] = False
 
         else:
-            for c in range(self.num_classes):
+            num_classes = data.y.max().item() + 1
+            for c in range(num_classes):
                 idx = (data.y == c).nonzero(as_tuple=False).view(-1)
                 idx = idx[torch.randperm(idx.size(0))]
                 data.train_mask[idx[:self.num_train_per_class]] = True

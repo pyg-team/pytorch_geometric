@@ -13,8 +13,8 @@ def test_add_train_val_test_mask():
     num_val = 320
     num_test = 640
 
-    kw = dict(num_train_per_class=num_train_per_class, num_val=num_val,
-              num_test=num_test, num_classes=C)
+    kw = dict(num_train_per_class=num_train_per_class,
+              num_val=num_val, num_test=num_test)
 
     t = AddTrainValTestMask(split='train-rest', **kw)
     data = t(original_data)
