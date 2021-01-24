@@ -53,3 +53,17 @@ def test_add_train_val_test_mask():
     assert data.val_mask.sum() == int(N * 0.1)
     assert data.test_mask.sum() == int(N * 0.1)
     assert (data.train_mask & data.val_mask & data.test_mask).sum() == 0
+
+    M = 5
+    t = AddTrainValTestMask(split='train-rest', num_mask=M, **kw)
+    data = t(deepcopy(original_data))
+    assert data.train_mask.size(0) == data.val_mask.size(0) \
+           == data.test_mask.size(0) == N
+    assert data.train_mask.size(1) == data.val_mask.size(1) \
+           == data.test_mask.size(1) == M
+    for i in range(M):
+        assert data.train_mask[:, i].sum() == N - num_val - num_test
+        assert data.val_mask[:, i].sum() == num_val
+        assert data.test_mask[:, i].sum() == num_test
+        assert (data.train_mask[:, i] & data.val_mask[:, i]
+                & data.test_mask[:, i]).sum() == 0
