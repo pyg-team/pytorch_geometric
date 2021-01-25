@@ -98,11 +98,6 @@ class SuperGATConv(MessagePassing):
         is_undirected (bool, optional): Whether the input graph is undirected.
             If not given, will be automatically computed with the input graph
             when negative sampling is performed. (default: :obj:`False`)
-        att_label_cached (bool, optional): If set to :obj:`True`, the layer
-            will cache the labels of attention in the self-supervised task on
-            first execution, and will use the cached version for further
-            execution. This parameter should only be set to :obj:`True` in
-            transductive learning scenarios. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -115,7 +110,7 @@ class SuperGATConv(MessagePassing):
                  add_self_loops: bool = True, bias: bool = True,
                  attention_type: str = 'MX', neg_sample_ratio: float = 0.5,
                  edge_sample_ratio: float = 1.0, is_undirected: bool = False,
-                 att_label_cached: bool = False, **kwargs):
+                 **kwargs):
         kwargs.setdefault('aggr', 'add')
         super(SuperGATConv, self).__init__(node_dim=0, **kwargs)
 
@@ -133,7 +128,6 @@ class SuperGATConv(MessagePassing):
         self.neg_sample_ratio = neg_sample_ratio
         self.edge_sample_ratio = edge_sample_ratio
         self.is_undirected = is_undirected
-        self.att_label_cached = att_label_cached
 
         self.weight = Parameter(torch.Tensor(in_channels,
                                              heads * out_channels))
@@ -199,15 +193,11 @@ class SuperGATConv(MessagePassing):
                 neg_edge_index=neg_edge_index,
             )  # [E + neg_E, heads]
 
-            # Attention labels for the self-supervised task
-            if not self.att_label_cached or self.att_label is None:
-                num_neg_edges = att_with_neg_edges.size(0)
-                att_label = torch.zeros(num_neg_edges).float().to(x.device)
-                att_label[:pos_edge_index.size(1)] = 1.
-            else:
-                att_label = self.att_label
-
+            # X, Y for the self-supervised task
             self.att_with_neg_edges = att_with_neg_edges
+            num_neg_edges = att_with_neg_edges.size(0)
+            att_label = torch.zeros(num_neg_edges).float().to(x.device)
+            att_label[:pos_edge_index.size(1)] = 1.
             self.att_label = att_label
 
         if self.concat is True:
