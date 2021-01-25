@@ -17,7 +17,7 @@ def download_url(url, folder, log=True):
             console. (default: :obj:`True`)
     """
 
-    filename = url.rpartition('/')[2]
+    filename = url.rpartition('/')[2].split("?")[0]
     path = osp.join(folder, filename)
 
     if osp.exists(path):  # pragma: no cover
