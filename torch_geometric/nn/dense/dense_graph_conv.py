@@ -46,9 +46,9 @@ class DenseGraphConv(torch.nn.Module):
         if self.aggr == 'mean':
             out = out / adj.sum(dim=-1, keepdim=True).clamp(min=1)
         elif self.aggr == 'max':
-            out = out.max(dim=-1)[0]
+            out = out.max(dim=-1, keepdim=True)[0]
 
-        out += self.lin_root(x)
+        out = out + self.lin_root(x)
 
         if mask is not None:
             out = out * mask.view(B, N, 1).to(x.dtype)
