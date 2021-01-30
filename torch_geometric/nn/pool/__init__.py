@@ -6,6 +6,7 @@ from .topk_pool import TopKPooling
 from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
 from .asap import ASAPooling
+from .mem_pool import MemPool
 
 try:
     import torch_cluster
@@ -248,6 +249,7 @@ def nearest(x, y, batch_x=None, batch_y=None):
 
 
 __all__ = [
+    'MemPool',
     'TopKPooling',
     'SAGPooling',
     'EdgePooling',
