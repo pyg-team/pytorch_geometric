@@ -26,6 +26,7 @@ class MemPool(nn.Module):
     Pooled feature matrx.
     .. math::
         V^l=C^TQ^{l}
+
         Q^{l+1}=leakyRelu(V^lW)
     Args:
     heads (int): number of heads in keys.
@@ -47,7 +48,6 @@ class MemPool(nn.Module):
         self.initialize()
 
     def initialize(self):
-
         xavier_uniform_(self.conv)
         kaiming_uniform_(self.w)
 
@@ -111,7 +111,7 @@ class MemPool(nn.Module):
 
         dist = torch.pow(
             1 + torch.sum(torch.pow(q_broad - k_broad, 2), 4) / self.tau,
-            -(self.tau + 1) / 2)
+            -(self.tau + 1) / 2.0)
         denom = torch.unsqueeze(torch.sum(dist, 2),
                                 2).repeat(1, 1, clusters, 1)
 
