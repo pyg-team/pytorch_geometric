@@ -249,8 +249,8 @@ def nearest(x, y, batch_x=None, batch_y=None):
 
 
 __all__ = [
-    'MemPool',
     'TopKPooling',
+    'MemPool',
     'SAGPooling',
     'EdgePooling',
     'ASAPooling',
