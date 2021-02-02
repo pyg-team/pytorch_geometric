@@ -5,7 +5,7 @@ from torch_scatter import scatter_add
 from torch_geometric.utils import softmax, degree
 from torch_geometric.nn.conv import MessagePassing
 
-from ..inits import glorot, zeros
+from torch_geometric.nn.inits import glorot, zeros
 
 
 class HypergraphConv(MessagePassing):
@@ -123,8 +123,9 @@ class HypergraphConv(MessagePassing):
         if hyperedge_weight is not None:
             B = B * hyperedge_weight
 
-        dif = max([num_nodes, num_edges]) - num_nodes # get size of padding 
-        x_help = F.pad(x, (0, dif)) # create dif many nodes
+        num_nodes = x.size(0)
+        dif = max([num_nodes, num_edges]) - num_nodes # get size of padding
+        x_help = F.pad(x, (0,0,0, dif)) # create dif many nodes
 
         self.flow = 'source_to_target'
         out = self.propagate(hyperedge_index, x=x_help, norm=B, alpha=alpha)
