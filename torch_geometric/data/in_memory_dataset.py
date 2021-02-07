@@ -100,10 +100,10 @@ class InMemoryDataset(Dataset):
         return data
 
     @staticmethod
-    def collate(data_list):
+    def collate(data_list, exclude_keys=[]):
         r"""Collates a python list of data objects to the internal storage
         format of :class:`torch_geometric.data.InMemoryDataset`."""
-        keys = data_list[0].keys
+        keys = list(set(data_list[0].keys) - set(exclude_keys))
         data = data_list[0].__class__()
 
         for key in keys:
