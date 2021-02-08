@@ -181,7 +181,8 @@ class NeighborSampler(torch.utils.data.DataLoader):
                 edge_index = torch.stack([col, row], dim=0)
                 adjs.append(EdgeIndex(edge_index, e_id, size))
 
-        out = (batch_size, n_id, adjs[::-1])
+        adjs = adjs[0] if len(adjs) == 1 else adjs[::-1]
+        out = (batch_size, n_id, adjs)
         out = self.transform(*out) if self.transform is not None else out
         return out
 
