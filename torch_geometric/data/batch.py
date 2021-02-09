@@ -81,26 +81,25 @@ class Batch(Data):
                 # Gather the size of the `cat` dimension.
                 size = 1
                 cat_dim = data.__cat_dim__(key, data[key])
-                # store the original cat_dim
-                cat_dims[key] = cat_dim
-                # 0-dimensional tensors have no dimension along
-                # which to concatenate, so their cat_dim must be
-                # None to construct a new batch dimension.
-                if (isinstance(item, Tensor) and item.dim() == 0):
+                # 0-dimensional tensors have no dimension along which to
+                # concatenate, so we set `cat_dim` to `None`.
+                if isinstance(item, Tensor) and item.dim() == 0:
                     cat_dim = None
-                # add a batch dimension to items whose cat_dim is None:
-                if cat_dim is None:
+                cat_dims[key] = cat_dim
+
+                # Add a batch dimension to items whose `cat_dim` is `None`:
+                if isinstance(item, Tensor) and cat_dim is None:
+                    cat_dim = 0  # Concatenate along this new batch dimension.
                     item = item.unsqueeze(0)
-                    cat_dim = 0  # concatenate along this new batch dimension
-                if isinstance(item, Tensor):
+                    device = item.device
+                elif isinstance(item, Tensor):
                     size = item.size(cat_dim)
                     device = item.device
                 elif isinstance(item, SparseTensor):
                     size = torch.tensor(item.sizes())[torch.tensor(cat_dim)]
                     device = item.device()
 
-                # Append the processed item to the batch
-                batch[key].append(item)
+                batch[key].append(item)  # Append item to the attribute list.
 
                 slices[key].append(size + slices[key][-1])
                 inc = data.__inc__(key, item)
@@ -135,10 +134,6 @@ class Batch(Data):
                 batch.batch.append(item)
                 batch.ptr.append(batch.ptr[-1] + num_nodes)
 
-        # Fix initial slice values:
-        for key in keys:
-            slices[key][0] = slices[key][1] - slices[key][1]
-
         batch.batch = None if len(batch.batch) == 0 else batch.batch
         batch.ptr = None if len(batch.ptr) == 1 else batch.ptr
         batch.__slices__ = slices
@@ -151,8 +146,7 @@ class Batch(Data):
             items = batch[key]
             item = items[0]
             cat_dim = ref_data.__cat_dim__(key, item)
-            if cat_dim is None:
-                cat_dim = 0  # concatenate along the new batch dimension
+            cat_dim = 0 if cat_dim is None else cat_dim
             if isinstance(item, Tensor):
                 batch[key] = torch.cat(items, cat_dim)
             elif isinstance(item, SparseTensor):

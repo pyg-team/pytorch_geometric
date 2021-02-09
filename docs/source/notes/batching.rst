@@ -32,7 +32,7 @@ All other tensors will just get concatenated in the first dimension without any 
 
 However, there are a few special use-cases (as outlined below) where the user actively wants to modify this behaviour to its own needs.
 PyTorch Geometric allows modification to the underlying batching procedure by overwriting the :func:`torch_geometric.data.Data.__inc__` and :func:`torch_geometric.data.Data.__cat_dim__` functionalities.
-Without any modifications, these are defined as follows in the :class:`torch_geometric.data.Data` class:
+Without any modifications, these are defined as follows in the ~:class:`torch_geometric.data.Data` class:
 
 .. code-block:: python
 
@@ -49,15 +49,15 @@ Without any modifications, these are defined as follows in the :class:`torch_geo
             return 0
 
 We can see that :meth:`__inc__` defines the incremental count between two consecutive graph attributes, where as :meth:`__cat_dim__` defines in which dimension graph tensors of the same attribute should be concatenated together.
-Both functions are called for each attribute stored in the :class:`torch_geometric.data.Data` class, and get passed their specific :obj:`key` and value :obj:`item` as arguments.
+Both functions are called for each attribute stored in the ~:class:`torch_geometric.data.Data` class, and get passed their specific :obj:`key` and value :obj:`item` as arguments.
 
 In what follows, we present a few use-cases where the modification of :func:`__inc__` and :func:`__cat_dim__` might be absolutely necessary.
 
 Pairs of Graphs
 ---------------
 
-In case you want to store multiple graphs in a single :class:`torch_geometric.data.Data` object, *e.g.*, for applications such as graph matching, you need to ensure correct batching behaviour across all those graphs.
-For example, consider storing two graphs, a source graph :math:`\mathcal{G}_s` and a target graph :math:`\mathcal{G}_t` in a :class:`torch_geometric.data.Data`, *e.g.*:
+In case you want to store multiple graphs in a single ~:class:`torch_geometric.data.Data` object, *e.g.*, for applications such as graph matching, you need to ensure correct batching behaviour across all those graphs.
+For example, consider storing two graphs, a source graph :math:`\mathcal{G}_s` and a target graph :math:`\mathcal{G}_t` in a ~:class:`torch_geometric.data.Data`, *e.g.*:
 
 .. code-block:: python
 
@@ -79,7 +79,7 @@ In this case, :obj:`edge_index_s` should be increased by the number of nodes in 
         if key == 'edge_index_t':
             return self.x_t.size(0)
         else:
-            return super(PairData, self).__inc__(key, value)
+            return super().__inc__(key, value)
 
 We can test our :class:`PairData` batching behaviour by setting up a simple test script:
 
@@ -116,7 +116,7 @@ We can test our :class:`PairData` batching behaviour by setting up a simple test
 Everything looks good so far!
 :obj:`edge_index_s` and :obj:`edge_index_t` get correctly batched together, even when using different numbers of nodes for :math:`\mathcal{G}_s` and :math:`\mathcal{G}_t`.
 However, the :obj:`batch` attribute (that maps each node to its respective graph) is missing since PyTorch Geometric fails to identify the actual graph in the :class:`PairData` object.
-That's where the :obj:`follow_batch` argument of the :class:`torch_geometric.data.DataLoader` comes into play.
+That's where the :obj:`follow_batch` argument of the ~:class:`torch_geometric.data.DataLoader` comes into play.
 Here, we can specify for which attributes we want to maintain the batch information:
 
 .. code-block:: python
@@ -161,7 +161,7 @@ For a correct mini-batching procedure in bipartite graphs, we need to tell PyTor
         if key == 'edge_index':
             return torch.tensor([[self.x_s.size(0)], [self.x_t.size(0)]])
         else:
-            return super(BipartiteData, self).__inc__(key, value)
+            return super().__inc__(key, value)
 
 Here, :obj:`edge_index[0]` (the source nodes of edges) get incremented by :obj:`x_s.size(0)` while :obj:`edge_index[1]` (the target nodes of edges) get incremented by :obj:`x_t.size(0)`.
 We can again test our implementation by running a simple test script:
@@ -189,44 +189,34 @@ We can again test our implementation by running a simple test script:
 
 Again, this is exactly the behaviour we aimed for!
 
-Graph-level Tensor Properties
-----------------
+Batching Along New Dimensions
+-----------------------------
 
-Sometimes, `Data` objects may need to store graph-level properties or targets.
-When batched, these properties should gain a new batch dimension: if some specific graph has a property described by a 3-dimensional vector, for example, a batch of such data objects should have a property of dimension :obj:`[n_batch, 3]`.
-This is achieved by returning a concatenation dimension of :obj:`None` in :meth:`__cat_dim__`:
+Sometimes, attributes of :obj:`data` objects should be batched by gaining a new batch dimension (as in classical mini-batching), *e.g.*, for graph-level properties or targets.
+Specifically, a list of attributes of shape :obj:`[num_features]` should be returned as :obj:`[num_examples, num_features]` rather than :obj:`[num_examples * num_features]`.
+PyTorch Geometric achieves this by returning a concatenation dimension of :obj:`None` in ~:meth:`torch_geometric.data.Data.__cat_dim__`:
 
 .. code-block:: python
 
-    class GraphLevelData(Data):
+    class MyData(Data):
         def __cat_dim__(self, key, item):
-            if key.startswith('graph_level'):
+            if key == 'foo':
                 return None
             else:
                 return super().__cat_dim__(key, item)
 
-    edge_index = torch.tensor([
-        [0, 1],
-        [1, 0],
-    ])
+   edge_index = torch.tensor([
+      [0, 1, 1, 2],
+      [1, 0, 2, 1],
+   ])
+   foo = torch.randn(16)
 
-    # these graphs have some overall property that is always a [4,7] Tensor
-    datas = [
-        GraphLevelData(
-            edge_index=edge_index,
-            graph_level_property=torch.randn(4, 7)
-        )
-        for _ in range(3)
-    ]
+   data = MyData(edge_index=edge_index, foo=foo)
+   data_list = [data, data]
+   loader = DataLoader(data_list, batch_size=2)
+   batch = next(iter(loader))
 
-    batch = Batch.from_data_list(datas)
-    # the edge_index are brought together into a single graph
-    print(batch.edge_index)
-    >>> tensor([[0, 1, 2, 3, 4, 5],
-                [1, 0, 3, 2, 5, 4]])
-    # batch.graph_level_property is of shape [n_batch, (property_shape)]
-    print(batch.graph_level_property.shape)
-    >>> torch.Size([3, 4, 7])
-    # Index 0 in the batch dimension gives the graph-level property of the first data
-    print(torch.all(batch.graph_level_property[0] == datas[0].graph_level_property))
-    >>> tensor(True)
+   print(batch)
+   >>> Batch(edge_index=[2, 8], foo=[2, 16])
+
+As desired, :obj:`batch.foo` is now described by two dimensions: The batch dimension and the feature dimension.
