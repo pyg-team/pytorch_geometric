@@ -142,7 +142,7 @@ Head over to our [documentation](https://pytorch-geometric.readthedocs.io) to fi
 For a quick start, check out our [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in the `examples/` directory.
 
 If you notice anything unexpected, please open an [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
-If you are missing a specific method, feel free to open a [feature request](https://github.com/rusty1s/pytorch_geometric/issues).
+If you have any questions or are missing a specific feature, feel free [to discuss them with us](https://github.com/rusty1s/pytorch_geometric/discussions).
 We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation
