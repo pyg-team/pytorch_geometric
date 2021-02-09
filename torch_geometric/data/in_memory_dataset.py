@@ -2,6 +2,7 @@ import copy
 from itertools import repeat, product
 
 import torch
+from torch import Tensor
 from torch_geometric.data import Dataset
 
 
@@ -84,7 +85,10 @@ class InMemoryDataset(Dataset):
             start, end = slices[idx].item(), slices[idx + 1].item()
             if torch.is_tensor(item):
                 s = list(repeat(slice(None), item.dim()))
-                s[self.data.__cat_dim__(key, item)] = slice(start, end)
+                cat_dim = self.data.__cat_dim__(key, item)
+                if cat_dim is None:
+                    cat_dim = 0
+                s[cat_dim] = slice(start, end)
             elif start + 1 == end:
                 s = slices[start]
             else:
@@ -109,9 +113,10 @@ class InMemoryDataset(Dataset):
 
         for item, key in product(data_list, keys):
             data[key].append(item[key])
-            if torch.is_tensor(item[key]):
-                s = slices[key][-1] + item[key].size(
-                    item.__cat_dim__(key, item[key]))
+            if isinstance(item[key], Tensor) and item[key].dim() > 0:
+                cat_dim = item.__cat_dim__(key, item[key])
+                cat_dim = 0 if cat_dim is None else cat_dim
+                s = slices[key][-1] + item[key].size(cat_dim)
             else:
                 s = slices[key][-1] + 1
             slices[key].append(s)
@@ -123,10 +128,14 @@ class InMemoryDataset(Dataset):
 
         for key in keys:
             item = data_list[0][key]
-            if torch.is_tensor(item) and len(data_list) > 1:
-                data[key] = torch.cat(data[key],
-                                      dim=data.__cat_dim__(key, item))
-            elif torch.is_tensor(item):  # Don't duplicate attributes...
+            if isinstance(item, Tensor) and len(data_list) > 1:
+                if item.dim() > 0:
+                    cat_dim = data.__cat_dim__(key, item)
+                    cat_dim = 0 if cat_dim is None else cat_dim
+                    data[key] = torch.cat(data[key], dim=cat_dim)
+                else:
+                    data[key] = torch.stack(data[key])
+            elif isinstance(item, Tensor):  # Don't duplicate attributes...
                 data[key] = data[key][0]
             elif isinstance(item, int) or isinstance(item, float):
                 data[key] = torch.tensor(data[key])
