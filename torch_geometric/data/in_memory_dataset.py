@@ -60,6 +60,7 @@ class InMemoryDataset(Dataset):
     def num_classes(self):
         r"""The number of classes in the dataset."""
         y = self.data.y
+        if y is None: return 0
         return int(y.max().item() + 1 if y.dim() == 1 else y.size(1))
 
     def len(self):
