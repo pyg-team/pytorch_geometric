@@ -9,7 +9,7 @@
 [contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
 [contributing-url]: https://github.com/rusty1s/pytorch_geometric/blob/master/CONTRIBUTING.md
 [slack-image]: https://img.shields.io/badge/slack-pyg-brightgreen
-[slack-url]: https://join.slack.com/t/torchgeometricco/shared_invite/zt-kijf8k6b-ClJZ3ieYmViQrcjvMG2apQ
+[slack-url]: https://join.slack.com/t/torchgeometricco/shared_invite/zt-ls02l7hg-R1Od4~vZTn3kWeXKU1iIVA
 
 <p align="center">
   <img height="110" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/pyg_logo_text.svg?sanitize=true" />
@@ -142,22 +142,22 @@ Head over to our [documentation](https://pytorch-geometric.readthedocs.io) to fi
 For a quick start, check out our [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in the `examples/` directory.
 
 If you notice anything unexpected, please open an [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
-If you are missing a specific method, feel free to open a [feature request](https://github.com/rusty1s/pytorch_geometric/issues).
+If you have any questions or are missing a specific feature, feel free [to discuss them with us](https://github.com/rusty1s/pytorch_geometric/discussions).
 We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation
 
 We provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
 
-### PyTorch 1.7.0
+### PyTorch 1.7.0/1.7.1
 
 To install the binaries for PyTorch 1.7.0, simply run
 
 ```sh
-$ pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-$ pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-$ pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-$ pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
+$ pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
+$ pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
+$ pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
+$ pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
 $ pip install torch-geometric
 ```
 
@@ -174,10 +174,10 @@ where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101`, `cu102`, or
 To install the binaries for PyTorch 1.6.0, simply run
 
 ```sh
-$ pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html
-$ pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html
-$ pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html
-$ pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html
+$ pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html
+$ pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html
+$ pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html
+$ pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.6.0+${CUDA}.html
 $ pip install torch-geometric
 ```
 

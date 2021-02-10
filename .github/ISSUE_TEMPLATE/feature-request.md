@@ -3,6 +3,8 @@ name: "\U0001F680 Feature Request"
 about: Submit a proposal/request for a new PyTorch Geometric feature
 ---
 
+From now on, we recommend using our discussion forum (https://github.com/rusty1s/pytorch_geometric/discussions) for proposing new features.
+
 ## 🚀 Feature
 
 <!-- A clear and concise description of the feature proposal. Please provide a link to the paper and code in case they exist. -->

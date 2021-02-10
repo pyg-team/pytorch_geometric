@@ -7,6 +7,7 @@ from .coauthor import Coauthor
 from .amazon import Amazon
 from .ppi import PPI
 from .reddit import Reddit
+from .reddit2 import Reddit2
 from .flickr import Flickr
 from .yelp import Yelp
 from .qm7 import QM7b
@@ -37,7 +38,7 @@ from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
 from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
-from .word_net import WordNet18
+from .word_net import WordNet18, WordNet18RR
 from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
@@ -55,6 +56,7 @@ __all__ = [
     'Amazon',
     'PPI',
     'Reddit',
+    'Reddit2',
     'Flickr',
     'Yelp',
     'QM7b',
@@ -86,6 +88,7 @@ __all__ = [
     'TrackMLParticleTrackingDataset',
     'AMiner',
     'WordNet18',
+    'WordNet18RR',
     'WikiCS',
     'WebKB',
     'WikipediaNetwork',

@@ -13,7 +13,7 @@ class SAGEConv(MessagePassing):
     Large Graphs" <https://arxiv.org/abs/1706.02216>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i + \mathbf{W_2} \cdot
+        \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i + \mathbf{W}_2 \cdot
         \mathrm{mean}_{j \in \mathcal{N(i)}} \mathbf{x}_j
 
     Args:

@@ -98,8 +98,8 @@ class TemporalData(object):
             self.t.cpu().numpy(),
             [1. - val_ratio - test_ratio, 1. - test_ratio])
 
-        val_idx = int((self.t <= val_time).sum()) + 1
-        test_idx = int((self.t <= test_time).sum()) + 1
+        val_idx = int((self.t <= val_time).sum())
+        test_idx = int((self.t <= test_time).sum())
 
         return self[:val_idx], self[val_idx:test_idx], self[test_idx:]
 

@@ -12,9 +12,9 @@ from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
 from torch_sparse import SparseTensor
 from torch_scatter import segment_csr
 import torch_geometric.transforms as T
+from torch_geometric.nn import GINConv
 from torch_geometric.datasets import TUDataset
 from torch_geometric.data import Batch, DataLoader
-from torch_geometric.nn import GINConv
 
 
 class IMDBBinary(LightningDataModule):
@@ -27,11 +27,11 @@ class IMDBBinary(LightningDataModule):
         ])
 
     @property
-    def num_features(self):
+    def num_features(self) -> int:
         return 136
 
     @property
-    def num_classes(self):
+    def num_classes(self) -> int:
         return 2
 
     def prepare_data(self):
@@ -85,7 +85,7 @@ class GIN(LightningModule):
             Linear(hidden_channels, out_channels),
         )
 
-        self.acc = Accuracy(out_channels)
+        self.acc = Accuracy()
 
     def forward(self, x: Tensor, adj_t: SparseTensor, ptr: Tensor) -> Tensor:
         for conv in self.convs:
@@ -97,23 +97,26 @@ class GIN(LightningModule):
         batch = batch.to(self.device)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         train_loss = F.cross_entropy(y_hat, batch.y)
-        self.log('train_loss', train_loss, prog_bar=True, on_step=False,
+        train_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('train_acc', train_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
-        self.log('train_acc', self.acc(y_hat, batch.y), prog_bar=True,
-                 on_step=False, on_epoch=True)
         return train_loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
         batch = batch.to(self.device)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
-        self.log('val_acc', self.acc(y_hat, batch.y), on_step=False,
-                 on_epoch=True, prog_bar=True, sync_dist=True)
+        val_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('val_acc', val_acc, on_step=False, on_epoch=True,
+                 prog_bar=True, sync_dist=True)
+        return val_acc
 
     def test_step(self, batch: Batch, batch_idx: int):
         batch = batch.to(self.device)
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
-        self.log('test_acc', self.acc(y_hat, batch.y), on_epoch=True,
-                 prog_bar=True, sync_dist=True)
+        test_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('test_acc', test_acc, on_epoch=True, prog_bar=True,
+                 sync_dist=True)
+        return test_acc
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
@@ -121,7 +124,7 @@ class GIN(LightningModule):
 
 def main():
     seed_everything(42)
-    datamodule = IMDBBinary('data/TUUDataset')
+    datamodule = IMDBBinary('data/TUDataset')
     model = GIN(datamodule.num_features, datamodule.num_classes)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
     trainer = Trainer(gpus=1, max_epochs=20, callbacks=[checkpoint_callback])
