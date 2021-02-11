@@ -254,4 +254,9 @@ class Batch(Data):
         """Returns the number of graphs in the batch."""
         if self.__num_graphs__ is not None:
             return self.__num_graphs__
-        return self.ptr.numel() + 1
+        elif self.ptr is not None:
+            return self.ptr.numel() + 1
+        elif self.batch is not None:
+            return int(self.batch.max()) + 1
+        else:
+            raise ValueError
