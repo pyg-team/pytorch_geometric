@@ -18,17 +18,20 @@ from ..inits import glorot, zeros
 
 
 class SuperGATConv(MessagePassing):
-    r"""The self-supervised graph attentional operator from the `'How to Find
-    Your Friendly Neighborhood: Graph Attention Design with Self-Supervision'
+    r"""The self-supervised graph attentional operator from the `"How to Find
+    Your Friendly Neighborhood: Graph Attention Design with Self-Supervision"
     <https://openreview.net/forum?id=Wi5KUNlqWty>`_ paper
 
     .. math::
+
         \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
         \sum_{j \in \mathcal{N}(i)} \alpha_{i,j}\mathbf{\Theta}\mathbf{x}_{j},
+
     where the two types of attention :math:`\alpha_{i,j}^{\mathrm{MX\ or\ SD}}`
-    are computed as
+    are computed as:
 
     .. math::
+
         \alpha_{i,j}^{\mathrm{MX\ or\ SD}} &=
         \frac{
         \exp\left(\mathrm{LeakyReLU}\left(
@@ -37,7 +40,7 @@ class SuperGATConv(MessagePassing):
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathrm{LeakyReLU}\left(
             e_{i,k}^{\mathrm{MX\ or\ SD}}
-        \right)\right)},
+        \right)\right)}
 
         e_{i,j}^{\mathrm{MX}} &= \mathbf{a}^{\top}
             [\mathbf{\Theta}\mathbf{x}_i \, \Vert \,
@@ -50,13 +53,14 @@ class SuperGATConv(MessagePassing):
         e_{i,j}^{\mathrm{SD}} &= \frac{
             \left( \mathbf{\Theta}\mathbf{x}_i \right)^{\top}
             \mathbf{\Theta}\mathbf{x}_j
-        }{ \sqrt{d} }.
+        }{ \sqrt{d} }
 
-    The self-supervised task is a link prediction using the attention value
+    The self-supervised task is a link prediction using the attention values
     as input to predict the likelihood :math:`\phi_{i,j}^{\mathrm{MX\ or\ SD}}`
-    that an edge exists between nodes.
+    that an edge exists between nodes:
 
     .. math::
+
         \phi_{i,j}^{\mathrm{MX}} &= \sigma \left(
             \left( \mathbf{\Theta}\mathbf{x}_i \right)^{\top}
             \mathbf{\Theta}\mathbf{x}_j
@@ -66,8 +70,14 @@ class SuperGATConv(MessagePassing):
             \frac{
                 \left( \mathbf{\Theta}\mathbf{x}_i \right)^{\top}
                 \mathbf{\Theta}\mathbf{x}_j
-            }{ \sqrt{d} }.
-        \right).
+            }{ \sqrt{d} }
+        \right)
+
+    .. note::
+
+        For an example of using SuperGAT, see `examples/super_gat.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        super_gat.py>`_.
 
     Args:
         in_channels (int): Size of each input sample.
