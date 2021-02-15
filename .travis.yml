@@ -24,7 +24,7 @@ install:
   - pip install scikit-image
   - pip install trimesh
   - pip install flake8 codecov
-  - pip install sphinx sphinx_rtd_theme
+  - pip install sphinx<3.5.0 sphinx_rtd_theme
   - pip install pandas==1.1.5
   - python setup.py install
 script:
