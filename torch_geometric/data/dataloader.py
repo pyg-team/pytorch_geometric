@@ -59,6 +59,7 @@ class DataLoader(torch.utils.data.DataLoader):
 
         # Save for Pytorch Lightning...
         self.follow_batch = follow_batch
+        self.exclude_keys = exclude_keys
 
         super(DataLoader,
               self).__init__(dataset, batch_size, shuffle,
