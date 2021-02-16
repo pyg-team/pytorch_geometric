@@ -25,8 +25,8 @@ class Net(torch.nn.Module):
                                   is_undirected=True)
 
     def forward(self, x, edge_index):
-        x = F.dropout(data.x, p=0.6, training=self.training)
-        x = F.elu(self.conv1(x, data.edge_index))
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = F.elu(self.conv1(x, edge_index))
         att_loss = self.conv1.get_attention_loss()
         x = F.dropout(x, p=0.6, training=self.training)
         x = self.conv2(x, data.edge_index)
@@ -44,7 +44,7 @@ def train(data):
     optimizer.zero_grad()
     out, att_loss = model(data.x, data.edge_index)
     loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
-    loss += 2.0 * att_loss
+    loss += 4.0 * att_loss
     loss.backward()
     optimizer.step()
 
