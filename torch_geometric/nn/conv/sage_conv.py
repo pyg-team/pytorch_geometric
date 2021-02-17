@@ -25,6 +25,9 @@ class SAGEConv(MessagePassing):
             :math:`\frac{\mathbf{x}^{\prime}_i}
             {\| \mathbf{x}^{\prime}_i \|_2}`.
             (default: :obj:`False`)
+        root_weight (bool, optional): If set to :obj:`False`, the layer will
+            not add transformed root node features to the output.
+            (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -32,6 +35,7 @@ class SAGEConv(MessagePassing):
     """
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, normalize: bool = False,
+                 root_weight: bool = True,
                  bias: bool = True, **kwargs):  # yapf: disable
         kwargs.setdefault('aggr', 'mean')
         super(SAGEConv, self).__init__(**kwargs)
@@ -39,18 +43,21 @@ class SAGEConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.normalize = normalize
+        self.root_weight = root_weight
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
         self.lin_l = Linear(in_channels[0], out_channels, bias=bias)
-        self.lin_r = Linear(in_channels[1], out_channels, bias=False)
+        if self.root_weight:
+            self.lin_r = Linear(in_channels[1], out_channels, bias=False)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         self.lin_l.reset_parameters()
-        self.lin_r.reset_parameters()
+        if self.root_weight:
+            self.lin_r.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None) -> Tensor:
@@ -63,7 +70,7 @@ class SAGEConv(MessagePassing):
         out = self.lin_l(out)
 
         x_r = x[1]
-        if x_r is not None:
+        if self.root_weight and x_r is not None:
             out += self.lin_r(x_r)
 
         if self.normalize:
