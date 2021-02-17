@@ -57,6 +57,7 @@ class SMPConv(MessagePassing):
         print(x.size())
 
     def message(self, x_j, x_l_i, x_r_j, edge_attr):
+
         pass
 
     def gen_local_context(self, x, batch):
