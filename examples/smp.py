@@ -25,18 +25,23 @@ test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
 class SMP(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
-                 edge_dim, towers):
+                 edge_dim, towers, pre_layers, post_layers):
         super(SMP, self).__init__()
 
-        self.conv = SMPConv(in_channels + 1, hidden_channels, edge_dim,
+        self.lin = Linear(in_channels + 1, hidden_channels)
+
+        self.conv = SMPConv(hidden_channels, hidden_channels, edge_dim,
                             towers=1)
+        print(self.conv)
 
     def forward(self, x, edge_index, edge_attr, batch):
-        self.conv(x, edge_index, edge_attr, batch)
+        x, mask = self.conv.local_context(x, batch)
+        x = self.conv(x, edge_index, edge_attr).relu_()
+        raise NotImplementedError
 
 
 model = SMP(train_dataset.num_features, hidden_channels=32, out_channels=1,
-            num_layers=12, towers=8, edge_dim=3)
+            num_layers=12, towers=8, edge_dim=3, pre_layers=2, post_layers=2)
 
 for data in train_loader:
     model(data.x, data.edge_index, data.edge_attr, data.batch)

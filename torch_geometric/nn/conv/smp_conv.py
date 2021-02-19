@@ -1,66 +1,123 @@
-from typing import Optional
+from typing import Optional, Tuple
+from torch_geometric.typing import Adj, OptTensor
 
 import torch
-from torch.nn import Linear
+from torch import Tensor
+from torch.nn import Linear, ModuleList
 from torch_geometric.nn.conv import MessagePassing
+
+
+class Linear(torch.nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, towers: int = 1,
+                 bias: bool = True):
+        super(Linear, self).__init__()
+
+        assert in_channels % towers == 0
+        assert out_channels % towers == 0
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.towers = towers
+        self.bias = bias
+
+        self.lins = [
+            torch.nn.Linear(in_channels // towers, out_channels // towers,
+                            bias=bias) for _ in range(towers)
+        ]
+
+    def reset_parameters(self):
+        for lin in self.lins:
+            lin.reset_parameters()
+
+    def forward(self, x):
+        size = self.in_channels // self.towers
+        x = [lin(y) for y, lin in zip(x.split(size, dim=-1), self.lins)]
+        return torch.cat(x, dim=-1) if len(x) > 1 else x[0]
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, towers={self.towers}, '
+                f'bias={self.bias})')
 
 
 class SMPConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int,
-                 edge_dim: Optional[int], towers: int = 1, **kwargs):
-        # pass
-
-        # improved: bool = False, cached: bool = False,
-        # add_self_loops: bool = True, normalize: bool = True,
-        # bias: bool = True, **kwargs):
-
-        # self.lin_l = EntryWiseX(out_channels, out_channels, towers)
-
-        # self.lin2 = Linear(out_channels, out_channels)
-        # self.lin3 = Linear(out_channels, out_channels)
-        # self.lin4 = Linear(out_channels, out_channels)
+                 edge_dim: Optional[int], towers: int = 1, pre_layers: int = 1,
+                 post_layers: int = 1, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super(SMPConv, self).__init__(**kwargs, node_dim=-3)
 
-        print(in_channels, towers)
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.towers = towers
+        self.edge_dim = edge_dim
+
         assert in_channels % towers == 0
         assert out_channels % towers == 0
 
-        # self.towers = towers
-        self.F_in = F_in = in_channels // towers
-        self.F_out = F_out = out_channels // towers
+        self.pre_lin1 = Linear(in_channels, out_channels, towers, bias=True)
+        self.pre_lin2 = Linear(in_channels, out_channels, towers, bias=False)
 
-        self.lins = [Linear(F_in, F_out, bias=False) for _ in range(towers)]
-        self.lins_l = [Linear(F_out, F_out, bias=False) for _ in range(towers)]
-        self.lins_r = [Linear(F_out, F_out, bias=False) for _ in range(towers)]
+        if edge_dim:
+            self.edge_lin = torch.nn.Linear(edge_dim, out_channels, bias=False)
 
-        self.in_channels = in_channels
+        self.pre_lins = ModuleList([
+            Linear(out_channels, out_channels, towers, bias=True)
+            for _ in range(pre_layers - 1)
+        ])
 
-    def forward(self, x, edge_index, edge_attr, batch, mask=None):
-        if x.dim() < 3:  # Crete feature matrx for each node.
-            x, mask = self.gen_local_context(x, batch)
-        assert x.size(-1) == self.in_channels
+        self.post_lin1 = Linear(in_channels, out_channels, towers, bias=True)
+        self.post_lin2 = Linear(out_channels, out_channels, towers, bias=False)
 
-        x = [lin(u) for u, lin in zip(x.split(self.F_in, -1), self.lins)]
-        x = torch.cat(x, dim=-1) if len(x) > 1 else x[0]
+        self.post_lins = ModuleList([
+            Linear(out_channels, out_channels, towers, bias=True)
+            for _ in range(post_layers - 1)
+        ])
 
-        x_l = [lin(u) for u, lin in zip(x.split(self.F_out, -1), self.lins_l)]
-        x_l = torch.cat(x_l, dim=-1) if len(x_l) > 1 else x_l[0]
+        self.reset_parameters()
 
-        x_r = [lin(u) for u, lin in zip(x.split(self.F_out, -1), self.lins_l)]
-        x_r = torch.cat(x_r, dim=-1) if len(x_r) > 1 else x_r[0]
+    def reset_parameters(self):
+        self.pre_lin1.reset_parameters()
+        self.pre_lin2.reset_parameters()
+        if self.edge_dim is not None:
+            self.edge_lin.reset_parameters()
+        for lin in self.pre_lins:
+            lin.reset_parameters()
+        self.post_lin1.reset_parameters()
+        self.post_lin2.reset_parameters()
+        for lin in self.post_lins:
+            lin.reset_parameters()
 
-        out = self.propagate(edge_index, x=x, x_l=x_l, x_r=x_r,
-                             edge_attr=edge_attr)
+    def forward(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None,
+                batch: OptTensor = None):
+        assert x.dim() == 3 and x.size(-1) == self.in_channels
 
-        print(x.size())
+        x1, x2 = self.pre_lin1(x), self.pre_lin2(x)
 
-    def message(self, x_j, x_l_i, x_r_j, edge_attr):
+        # propagate_type: (x1: Tensor, x2: Tensor, edge_attr: OptTensor)
+        out = self.propagate(edge_index, x1=x1, x2=x2, edge_attr=edge_attr)
 
-        pass
+        out = self.post_lin1(x) + self.post_lin2(out)
 
-    def gen_local_context(self, x, batch):
+        for i, lin in self.post_lins:
+            out = lin(out.relu_())
+
+        return out
+
+    def message(self, x1_i: Tensor, x2_j: Tensor,
+                edge_attr: OptTensor) -> Tensor:
+
+        out = x1_i + x2_j
+        if edge_attr is not None:
+            out += self.edge_lin(edge_attr).unsqueeze(1)
+
+        for i, lin in self.pre_lins:
+            out = lin(out.relu_())
+
+        return out
+
+    def local_context(self, x: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
         ptr = torch.ops.torch_sparse.ind2ptr(batch, int(batch[-1]) + 1)
         count = ptr[1:] - ptr[:-1]
 
@@ -78,3 +135,8 @@ class SMPConv(MessagePassing):
         )
 
         return torch.cat([out1.unsqueeze(-1), out2], dim=-1), None
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, towers={self.towers}, '
+                f'edge_dim={self.edge_dim})')
