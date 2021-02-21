@@ -19,13 +19,12 @@ install:
   - pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}+${IDX}.html
   - pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}+${IDX}.html
   - pip install cython
-  - pip install llvmlite
   - git clone https://github.com/the-virtual-brain/tvb-geodesic /tmp/gdist
   - cd /tmp/gdist && python setup.py install && cd -
   - pip install scikit-image
   - pip install trimesh
   - pip install flake8 codecov
-  - pip install sphinx sphinx_rtd_theme
+  - pip install sphinx==3.4.3 sphinx_rtd_theme
   - pip install pandas==1.1.5
   - python setup.py install
 script:

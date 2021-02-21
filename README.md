@@ -94,6 +94,7 @@ In detail, the following methods are currently implemented:
 * **[FeaStConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.FeaStConv)** from Verma *et al.*: [FeaStNet: Feature-Steered Graph Convolutions for 3D Shape Analysis](https://arxiv.org/abs/1706.05206) (CVPR 2018)
 * **[HypergraphConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.HypergraphConv)** from Bai *et al.*: [Hypergraph Convolution and Hypergraph Attention](https://arxiv.org/abs/1901.08150) (CoRR 2019)
 * **[GravNetConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GravNetConv)** from Qasim *et al.*: [Learning Representations of Irregular Particle-detector Geometry with Distance-weighted Graph Networks](https://arxiv.org/abs/1902.07987) (European Physics Journal C, 2019)
+* **[SuperGAT](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SuperGATConv)** from Kim and Oh: [How To Find Your Friendly Neighborhood: Graph Attention Design With Self-Supervision](https://openreview.net/forum?id=Wi5KUNlqWty) (ICLR 2021) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/super_gat.py)]
 * A **[MetaLayer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.meta.MetaLayer)** for building any kind of graph network similar to the [TensorFlow Graph Nets library](https://github.com/deepmind/graph_nets) from Battaglia *et al.*: [Relational Inductive Biases, Deep Learning, and Graph Networks](https://arxiv.org/abs/1806.01261) (CoRR 2018)
 * **[GlobalAttention](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.glob.GlobalAttention)** from Li *et al.*: [Gated Graph Sequence Neural Networks](https://arxiv.org/abs/1511.05493) (ICLR 2016) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/global_attention.py)]
 * **[Set2Set](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.glob.Set2Set)** from Vinyals *et al.*: [Order Matters: Sequence to Sequence for Sets](https://arxiv.org/abs/1511.06391) (ICLR 2016) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/benchmark/kernel/set2set.py)]
@@ -142,7 +143,7 @@ Head over to our [documentation](https://pytorch-geometric.readthedocs.io) to fi
 For a quick start, check out our [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in the `examples/` directory.
 
 If you notice anything unexpected, please open an [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
-If you are missing a specific method, feel free to open a [feature request](https://github.com/rusty1s/pytorch_geometric/issues).
+If you have any questions or are missing a specific feature, feel free [to discuss them with us](https://github.com/rusty1s/pytorch_geometric/discussions).
 We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation

@@ -140,7 +140,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
                     if self.log:  # pragma: no cover
                         pbar.update(node_idx.size(0))
-            num_samples += 200
+            num_samples += self.num_steps
 
         if self.log:  # pragma: no cover
             pbar.close()
