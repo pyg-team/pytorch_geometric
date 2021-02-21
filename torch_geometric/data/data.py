@@ -228,7 +228,11 @@ class Data(object):
 
     @property
     def num_edges(self):
-        r"""Returns the number of edges in the graph."""
+        """
+        Returns the number of edges in the graph.
+        Note that for undirected graphs this is the number of entries in the edge index,
+        which is double the number of unique edges.
+        """
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
         for key, item in self('adj', 'adj_t'):
