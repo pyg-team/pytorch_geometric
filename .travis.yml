@@ -17,7 +17,7 @@ install:
   - pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}+${IDX}.html
   - pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}+${IDX}.html
   - pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}+${IDX}.html
-  - pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}+${IDX}.html
+  - pip install --verbose torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH_VERSION}+${IDX}.html
   - pip install cython
   - git clone https://github.com/the-virtual-brain/tvb-geodesic /tmp/gdist
   - cd /tmp/gdist && python setup.py install && cd -
