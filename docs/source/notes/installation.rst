@@ -33,10 +33,10 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
     .. code-block:: none
 
-         pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
-         pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
-         pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
-         pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
          pip install torch-geometric
 
     where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`), respectively.
@@ -44,20 +44,20 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
     .. code-block:: none
 
-         pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
-         pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
-         pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
-         pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
+         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
+         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+cu110.html
          pip install torch-geometric
 
     For PyTorch 1.6.0 and CUDA 10.2, type:
 
     .. code-block:: none
 
-         pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
-         pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
-         pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
-         pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
+         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
+         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.6.0+cu102.html
          pip install torch-geometric
 
 Installation from Source
