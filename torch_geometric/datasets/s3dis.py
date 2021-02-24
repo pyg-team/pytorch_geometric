@@ -65,7 +65,7 @@ class S3DIS(InMemoryDataset):
         extract_zip(path, self.root)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
-        name = self.url.split(os.sep)[-1].split('.')[0]
+        name = self.url.split('/')[-1].split('.')[0]
         os.rename(osp.join(self.root, name), self.raw_dir)
 
     def process(self):
