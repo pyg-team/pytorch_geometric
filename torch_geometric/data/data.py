@@ -230,8 +230,8 @@ class Data(object):
     def num_edges(self):
         """
         Returns the number of edges in the graph.
-        Note that for undirected graphs this is the number of entries in the edge index,
-        which is double the number of unique edges.
+        For undirected graphs, this will return the number of bi-directional
+        edges, which is double the amount of unique edges.
         """
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
