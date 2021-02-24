@@ -26,13 +26,15 @@ class DiffNorm(nn.Module):
         self.U = Linear(self.nd, self.G, bias=False)
         self.bn = BatchNorm1d(self.G * self.nd, momentum=momentum)
 
-    def groupDistanceRatio(self, h: Tensor, c: Tensor) -> float:
+    def groupDistanceRatio(self, h: Tensor, c: Tensor,
+                           eps: float = 1e-9) -> float:
         r"""Measures oversmoothing in h. Assumes nodes of the same class belong
         to a cluster. Then computes ratio of average inter cluster distance to
         intra cluster distance.
         Args:
             h(N*F): node embeddings.
             c(N*1): node class.
+            eps: Small value to avoid division by zero error.
         """
         device = h.device
         if c.dim() == 1:
@@ -43,7 +45,8 @@ class DiffNorm(nn.Module):
         bin_count = torch.bincount(
             torch.cat([
                 c.squeeze(1),
-                torch.range(0, int(max(c)), device=device, dtype=int)
+                torch.arange(0,
+                             int(max(c)) + 1, device=device, dtype=int)
             ])) - 1
         # counts[i]=count(class(node i)) .shape=N
         counts = torch.index_select(bin_count, 0, c.squeeze(1))
@@ -71,7 +74,8 @@ class DiffNorm(nn.Module):
         del same_class
 
         C = len(torch.unique(c))
-        return float((C / (C - 1.0)**2) * (inter_dist / intra_dist))
+        return float(
+            (C / (eps + C - 1.0)**2) * (inter_dist / (eps + intra_dist)))
 
     def forward(self, x: Tensor) -> Tensor:
         r"""
@@ -79,7 +83,7 @@ class DiffNorm(nn.Module):
             x(N*nd): Node embedding.
         """
         N = len(x)
-        S = F.softmax(self.U(x))  # dim=N*G
+        S = F.softmax(self.U(x), dim=1)  # dim=N*G
         S_broad = S.T.reshape(self.G, N, 1).repeat(1, 1, self.nd)  # dim=G*N*nd
 
         xg = (S_broad * x).permute(1, 0, 2).reshape(N, self.G * self.nd)
