@@ -13,7 +13,7 @@ __all__ = [
     'GraphSizeNorm',
     'PairNorm',
     'MessageNorm',
-    'DiffNorm' 
+    'DiffNorm'
 ]
 
 classes = sorted(__all__)
