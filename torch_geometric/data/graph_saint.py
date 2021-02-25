@@ -49,6 +49,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         assert data.edge_index is not None
         assert 'node_norm' not in data
         assert 'edge_norm' not in data
+        assert not data.edge_index.is_cuda
 
         self.num_steps = num_steps
         self.__batch_size__ = batch_size
