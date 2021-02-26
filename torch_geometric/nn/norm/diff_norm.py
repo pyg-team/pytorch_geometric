@@ -9,6 +9,29 @@ class DiffNorm(nn.Module):
     `"Towards Deeper Graph Neural Networks with Differentiable
     Group Normalization"
     <https://arxiv.org/abs/2006.06972>`_paper.
+
+    .. math::
+        S=softmax(H^kU^k)\epsilon R^{n*G}
+
+    A soft cluster assignment is computed for G clusters.
+    k is layer number and n is number of nodes.
+    :math:`U^k` is a learnable weight matrix.
+
+    .. math::
+        \hat{H}^{k}_i=S[;i]oH^k
+
+        \hat{H}^k_i= \gamma_i\frac{\hat{H}^k_i-u_i}{\sigma_i}+\beta_i
+
+    Nodes are clustered. And a batch norm is applied group wise.
+    Symbol 'o' denotes elementwise multiplication. :math:`u_i` and
+    :math:`\sigma_i` denote the ith groups mean and standard deviation.
+
+    Output is a linear combination of the input embedding and
+    normalized embeddings.
+
+    .. math::
+        \hat{H}^k=H^k+\lambda\sum_1^G\hat{H}_i
+
     Args:
         in_channels(int): number of features.
         groups(int): number of groups nodes will be clustered into.
@@ -26,11 +49,22 @@ class DiffNorm(nn.Module):
         self.U = Linear(self.nd, self.G, bias=False)
         self.bn = BatchNorm1d(self.G * self.nd, momentum=momentum)
 
-    def groupDistanceRatio(self, h: Tensor, c: Tensor,
-                           eps: float = 1e-9) -> float:
+    @staticmethod
+    def groupDistanceRatio(h: Tensor, c: Tensor, eps: float = 1e-9) -> float:
         r"""Measures oversmoothing in h. Assumes nodes of the same class belong
         to a cluster. Then computes ratio of average inter cluster distance to
         intra cluster distance.
+        .. math::
+            \frac{\frac{1}{(C-1)^2}\sum_{i!=j}\frac{1}{|L_i||L_j|}\sum_{h_{iv}
+            \epsilon L_i }\sum_{h_{j\hat{v}}\epsilon L_j } \rVert h_{iv} -
+            h_{j\hat{v}} \lVert_2}{\frac{1}{C}\sum_{i}\frac{1}{|L_i|^2}
+            \sum_{h_{i\hat{v}},h_{iv}\epsilon L_i }
+            \rVert h_{iv} - h_{i\hat{v}} \lVert_2}
+
+        Where :math:`L_i` is the set of all nodes that belong to closs i.
+        :math:`h_i` is the embedding of node i.
+        :math:`C` is the total number of classes.
+
         Args:
             h(N*F): node embeddings.
             c(N*1): node class.

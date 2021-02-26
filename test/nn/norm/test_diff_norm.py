@@ -17,6 +17,5 @@ def test_diff_norm():
 def test_groupdist():
     h = torch.tensor([[0, 0], [1, 1], [2, 2], [3.0, 3.0], [4, 4], [3.1, 1]])
     c = torch.tensor([1, 2, 1, 2, 2, 2], dtype=int).reshape(-1, 1)
-    dn = DiffNorm()
 
-    assert dn.groupDistanceRatio(h, c) > 0
+    assert DiffNorm.groupDistanceRatio(h, c) > 0
