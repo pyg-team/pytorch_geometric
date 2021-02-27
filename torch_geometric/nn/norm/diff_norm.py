@@ -99,12 +99,10 @@ class DiffNorm(nn.Module):
         # same_class[i][j]=True if node i and node j belong to same class.
         same_class = c.repeat(1, len(h)) == c.repeat(1, len(h)).T
 
-        inter_dist = torch.sum(
-            torch.where(~same_class, pair_dist,
-                        torch.zeros(pair_dist.shape, device=device)))
         intra_dist = torch.sum(
             torch.where(same_class, pair_dist,
                         torch.zeros(pair_dist.shape, device=device)))
+        inter_dist = torch.sum(pair_dist) - intra_dist
         del same_class
 
         C = len(torch.unique(c))
