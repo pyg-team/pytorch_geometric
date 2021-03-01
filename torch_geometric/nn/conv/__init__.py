@@ -5,6 +5,7 @@ from .sage_conv import SAGEConv
 from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
+from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
 from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
@@ -44,6 +45,7 @@ __all__ = [
     'GraphConv',
     'GravNetConv',
     'GatedGraphConv',
+    'ResGatedGraphConv',
     'GATConv',
     'TransformerConv',
     'AGNNConv',
