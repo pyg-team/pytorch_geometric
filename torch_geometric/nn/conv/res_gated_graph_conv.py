@@ -14,7 +14,7 @@ class ResGatedGraphConv(MessagePassing):
     `"Residual Gated Graph ConvNets" <https://arxiv.org/abs/1711.07553>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{x}_i + \mathbf{W}_1 \mathbf{x}_i +
+        \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i +
         \sum_{j \in \mathcal{N}(i)} \eta_{i,j} \odot \mathbf{W}_2 \mathbf{x}_j
 
     where the gate :math:`\eta_{i,j}` is defined as
@@ -36,8 +36,6 @@ class ResGatedGraphConv(MessagePassing):
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
-        residual (bool, optional): If set to :obj:`False`, the layer will not
-            add the identity to the output. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -47,7 +45,6 @@ class ResGatedGraphConv(MessagePassing):
         out_channels: int,
         act: Optional[Callable] = Sigmoid(),
         root_weight: bool = True,
-        residual: bool = True,
         bias: bool = True,
         **kwargs,
     ):
@@ -59,7 +56,6 @@ class ResGatedGraphConv(MessagePassing):
         self.out_channels = out_channels
         self.act = act
         self.root_weight = root_weight
-        self.residual = residual
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -106,10 +102,6 @@ class ResGatedGraphConv(MessagePassing):
 
         if self.bias is not None:
             out += self.bias
-
-        print('residual', out.size(-1), x[1].size(-1))
-        if self.residual is not None and out.size(-1) == x[1].size(-1):
-            out += x[1]
 
         return out
 
