@@ -76,6 +76,7 @@ def trainer(data, epochs=1000, layers=3, model_path='cora_models',
     Trains a simple gcn on cora dataset. Model is saved every.
     time validation accuracy goes down.
     Returns model, and groupdistanceratio for train and test sets.
+    groupdistanceratio goes down as layers increase.
     Args:
         layers: number of gcn layers.
         model_path: location to save models.
@@ -86,6 +87,7 @@ def trainer(data, epochs=1000, layers=3, model_path='cora_models',
     '''
     assert layers >= 2
     distratio = DiffNorm.groupDistanceRatio
+    # group distance goes down as layers increase.
     gd = 0  # group distance for test set
     gd_train = 0  # group distance for train set
 
