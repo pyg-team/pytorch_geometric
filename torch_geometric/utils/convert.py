@@ -143,7 +143,6 @@ def to_trimesh(data):
         data (torch_geometric.data.Data): The data object.
     """
     import trimesh
-
     return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
                            faces=data.face.detach().t().cpu().numpy(),
                            process=False)
@@ -156,8 +155,6 @@ def from_trimesh(mesh):
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
     """
-    import trimesh
-
     pos = torch.from_numpy(mesh.vertices).to(torch.float)
     face = torch.from_numpy(mesh.faces).t().contiguous()
 
