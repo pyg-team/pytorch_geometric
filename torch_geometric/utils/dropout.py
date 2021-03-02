@@ -32,7 +32,7 @@ def dropout_adj(edge_index, edge_attr=None, p=0.5, force_undirected=False,
         raise ValueError('Dropout probability has to be between 0 and 1, '
                          'but got {}'.format(p))
 
-    if not training:
+    if not training or p == 0.0:
         return edge_index, edge_attr
 
     N = maybe_num_nodes(edge_index, num_nodes)

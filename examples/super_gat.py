@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric.nn import GATConv
+from torch_geometric.nn import SuperGATConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -16,17 +16,22 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6)
-        # On the Pubmed dataset, use heads=8 in conv2.
-        self.conv2 = GATConv(8 * 8, dataset.num_classes, heads=1, concat=False,
-                             dropout=0.6)
+        self.conv1 = SuperGATConv(dataset.num_features, 8, heads=8,
+                                  dropout=0.6, attention_type='MX',
+                                  edge_sample_ratio=0.8, is_undirected=True)
+        self.conv2 = SuperGATConv(8 * 8, dataset.num_classes, heads=8,
+                                  concat=False, dropout=0.6,
+                                  attention_type='MX', edge_sample_ratio=0.8,
+                                  is_undirected=True)
 
     def forward(self, x, edge_index):
         x = F.dropout(x, p=0.6, training=self.training)
         x = F.elu(self.conv1(x, edge_index))
+        att_loss = self.conv1.get_attention_loss()
         x = F.dropout(x, p=0.6, training=self.training)
         x = self.conv2(x, data.edge_index)
-        return F.log_softmax(x, dim=-1)
+        att_loss += self.conv2.get_attention_loss()
+        return F.log_softmax(x, dim=-1), att_loss
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -37,23 +42,24 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 def train(data):
     model.train()
     optimizer.zero_grad()
-    out = model(data.x, data.edge_index)
+    out, att_loss = model(data.x, data.edge_index)
     loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
+    loss += 4.0 * att_loss
     loss.backward()
     optimizer.step()
 
 
 def test(data):
     model.eval()
-    out, accs = model(data.x, data.edge_index), []
+    logits, accs = model(data.x, data.edge_index)[0], []
     for _, mask in data('train_mask', 'val_mask', 'test_mask'):
-        pred = out[mask].max(1)[1]
+        pred = logits[mask].max(1)[1]
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
         accs.append(acc)
     return accs
 
 
-for epoch in range(1, 201):
+for epoch in range(1, 501):
     train(data)
     train_acc, val_acc, test_acc = test(data)
     print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '

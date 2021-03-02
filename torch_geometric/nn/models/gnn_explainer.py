@@ -4,7 +4,6 @@ from typing import Optional
 
 import torch
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 import networkx as nx
 from torch_geometric.nn import MessagePassing
 from torch_geometric.data import Data
@@ -213,7 +212,7 @@ class GNNExplainer(torch.nn.Module):
 
         :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
-
+        import matplotlib.pyplot as plt
         assert edge_mask.size(0) == edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.

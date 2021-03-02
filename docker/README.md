@@ -26,7 +26,7 @@ Note: If your harddisk runs full after multiple builds, this is known and appare
 
 ## Building and Using the Container
 
-To build the container, run 
+To build the container, run
 
 `sudo singularity build geometric.sif singularity`
 
@@ -34,19 +34,19 @@ then wait. Once finished, you can run the GAT example in the folder you built th
 
 ```
 wget https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/examples/gat.py
-``` 
+```
 
 (to download the sample),
 
-then 
+then
 
 ```
 singularity exec geometric.sif python3 gat.py
-``` 
+```
 
 to run on the CPU, or
 
 ```
 singularity exec --nv geometric.sif python3 gat.py
-``` 
+```
 to run on the GPU.

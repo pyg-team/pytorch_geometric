@@ -4,11 +4,6 @@ import networkx as nx
 
 import torch_geometric.data
 
-try:
-    import trimesh
-except ImportError:
-    trimesh = None
-
 from .num_nodes import maybe_num_nodes
 
 
@@ -53,8 +48,8 @@ def from_scipy_sparse_matrix(A):
 def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
                 remove_self_loops=False):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
-    :obj:`networkx.DiGraph` if :attr:`to_undirected` is set to :obj:`True`, or
-    an undirected :obj:`networkx.Graph` otherwise.
+    :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
+    a directed :obj:`networkx.DiGraph` otherwise.
 
     Args:
         data (torch_geometric.data.Data): The data object.
@@ -147,9 +142,7 @@ def to_trimesh(data):
     Args:
         data (torch_geometric.data.Data): The data object.
     """
-
-    if trimesh is None:
-        raise ImportError('Package `trimesh` could not be found.')
+    import trimesh
 
     return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
                            faces=data.face.detach().t().cpu().numpy(),
@@ -163,9 +156,7 @@ def from_trimesh(mesh):
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
     """
-
-    if trimesh is None:
-        raise ImportError('Package `trimesh` could not be found.')
+    import trimesh
 
     pos = torch.from_numpy(mesh.vertices).to(torch.float)
     face = torch.from_numpy(mesh.faces).t().contiguous()
