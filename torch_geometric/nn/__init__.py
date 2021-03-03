@@ -7,7 +7,10 @@ from .glob import *  # noqa
 from .pool import *  # noqa
 from .unpool import *  # noqa
 from .dense import *  # noqa
-from .models import *  # noqa
+
+# Lazy-load models to avoid loading unneeded dependencies
+from torch_geometric.utils.lazy_loader import LazyLoader
+models = LazyLoader("models", globals(), "torch_geometric.nn.models")
 
 __all__ = [
     'MetaLayer',
