@@ -1,5 +1,9 @@
-# File originally from TensorFlow: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/util/lazy_loader.py
+# File originally from TensorFlow:
+# https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/util/lazy_loader.py
+# Modified to match code style of torch_geometric
+# Modified to remove TensorFlow logging dependency
 #
+# ==============================================================================
 # Copyright 2015 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,14 +31,10 @@ import types
 
 class LazyLoader(types.ModuleType):
     """Lazily import a module, mainly to avoid pulling in large dependencies.
-    `contrib`, and `ffmpeg` are examples of modules that are large and not always
-    needed, and this allows them to only be loaded when they are used.
+    `contrib`, and `ffmpeg` are examples of modules that are large and not
+    always needed, and this allows them to only be loaded when they are used.
     """
-
-    # The lint error here is incorrect.
-    def __init__(
-        self, local_name, parent_module_globals, name
-    ):  # pylint: disable=super-on-old-class
+    def __init__(self, local_name, parent_module_globals, name):
         self._local_name = local_name
         self._parent_module_globals = parent_module_globals
 
@@ -47,8 +47,8 @@ class LazyLoader(types.ModuleType):
         self._parent_module_globals[self._local_name] = module
 
         # Update this object's dict so that if someone keeps a reference to the
-        #   LazyLoader, lookups are efficient (__getattr__ is only called on lookups
-        #   that fail).
+        #   LazyLoader, lookups are efficient (__getattr__ is only called on
+        #   lookups that fail).
         self.__dict__.update(module.__dict__)
 
         return module
