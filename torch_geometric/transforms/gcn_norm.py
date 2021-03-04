@@ -1,4 +1,4 @@
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
+import torch_geometric
 
 
 class GCNNorm(object):
@@ -16,6 +16,7 @@ class GCNNorm(object):
         self.add_self_loops = add_self_loops
 
     def __call__(self, data):
+        gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
         assert 'edge_index' in data or 'adj_t' in data
 
         if 'edge_index' in data:
