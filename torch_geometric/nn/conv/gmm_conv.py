@@ -49,6 +49,13 @@ class GMMConv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+    
+    .. note::
+        The edge attribute :math:`\mathbf{e}_{ij}` is usually given by
+        :math:`\mathbf{e}_{ij} = \mathbf{p}_j - \mathbf{p}_i` where 
+        :math:`\mathbf{p}_i` is the Cartesian position of node :math:`i`.
+        See the handy function :class:`torch_geometric.transforms.LocalCartesian`.
+    
     """
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, dim: int, kernel_size: int,
