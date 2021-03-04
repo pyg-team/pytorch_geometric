@@ -1,4 +1,4 @@
-from torch_geometric.nn import knn_graph
+import torch_geometric
 from torch_geometric.utils import to_undirected
 
 
@@ -15,12 +15,9 @@ class KNNGraph(object):
             with message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
     """
-
-    def __init__(self,
-                 k=6,
-                 loop=False,
-                 force_undirected=False,
+    def __init__(self, k=6, loop=False, force_undirected=False,
                  flow='source_to_target'):
+
         self.k = k
         self.loop = loop
         self.force_undirected = force_undirected
@@ -29,8 +26,9 @@ class KNNGraph(object):
     def __call__(self, data):
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
-        edge_index = knn_graph(
-            data.pos, self.k, batch, loop=self.loop, flow=self.flow)
+        edge_index = torch_geometric.nn.knn_graph(data.pos, self.k, batch,
+                                                  loop=self.loop,
+                                                  flow=self.flow)
 
         if self.force_undirected:
             edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)

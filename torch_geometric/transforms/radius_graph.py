@@ -1,4 +1,4 @@
-from torch_geometric.nn import radius_graph
+import torch_geometric
 
 
 class RadiusGraph(object):
@@ -16,11 +16,7 @@ class RadiusGraph(object):
             with message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
     """
-
-    def __init__(self,
-                 r,
-                 loop=False,
-                 max_num_neighbors=32,
+    def __init__(self, r, loop=False, max_num_neighbors=32,
                  flow='source_to_target'):
         self.r = r
         self.loop = loop
@@ -30,8 +26,9 @@ class RadiusGraph(object):
     def __call__(self, data):
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
-        data.edge_index = radius_graph(data.pos, self.r, batch, self.loop,
-                                       self.max_num_neighbors, self.flow)
+        data.edge_index = torch_geometric.nn.radius_graph(
+            data.pos, self.r, batch, self.loop, self.max_num_neighbors,
+            self.flow)
         return data
 
     def __repr__(self):
