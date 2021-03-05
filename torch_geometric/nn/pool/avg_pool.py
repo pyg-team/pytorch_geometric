@@ -1,8 +1,10 @@
 from typing import Optional
 
+from torch import Tensor
 from torch_scatter import scatter
 from torch_geometric.data import Batch
-from torch_geometric.utils import add_self_loops
+from torch_geometric.utils import add_self_loops as utils_add_self_loops
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from .consecutive import consecutive_cluster
 from .pool import pool_edge, pool_batch, pool_pos
@@ -74,18 +76,42 @@ def avg_pool(cluster, data, transform=None):
     return data
 
 
-def avg_pool_neighbor_x(data, flow='source_to_target'):
-    r"""Average pools neighboring node features, where each feature in
-    :obj:`data.x` is replaced by the average feature values from the central
-    node and its neighbors.
-    """
-    x, edge_index = data.x, data.edge_index
+def avg_pool_neighbor_x(x: Tensor, edge_index: Tensor,
+                        num_nodes: Optional[int] = None,
+                        add_self_loops: Optional[bool] = True,
+                        flow: Optional[str] = 'source_to_target'):
+    r"""Average pools neighboring node features.
+    
+    .. math::
+        \overline{\mathbf{x}}_i =
+        \frac{1}{\vert \mathcal{N}(i) \vert}
+        \sum_{j \in \mathcal{N}(i)}{
+        \mathbf{x}_j
+        }
 
-    edge_index, _ = add_self_loops(edge_index, num_nodes=data.num_nodes)
+    Args:
+        x (Tensor): The node feature matrix.
+        edge_index (Tensor): The graph connectivity.
+        num_nodes (int, optional): The number of nodes.
+            If you have a dataset :obj:`data`, you can pass :obj:`data.num_nodes`.
+            (default: :obj:`None`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
+        flow (str, optional): If set to :obj:`source_to_target`, the average
+            at a node is based on the features of its neighbors pointing to it.
+            (default: :obj:`source_to_target`)
+    
+    Return types:
+            * :math:`\overline{\mathbf{x}}` *(Tensor)* - The pooled features (same size as x).
+    """
+    if num_nodes is None:
+        num_nodes = max( maybe_num_nodes(edge_index, num_nodes), list(x.size())[0] )
+    
+    if add_self_loops:
+        edge_index, _ = utils_add_self_loops(edge_index, num_nodes=num_nodes)
 
     row, col = edge_index
     row, col = (row, col) if flow == 'source_to_target' else (col, row)
 
-    data.x = scatter(x[row], col, dim=0, dim_size=data.num_nodes,
-                     reduce='mean')
-    return data
+    pooled_x = scatter(x[row], col, dim=0, dim_size=num_nodes, reduce='mean')
+    return pooled_x
