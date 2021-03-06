@@ -50,3 +50,20 @@ def test_gnn_explainer(model):
     explainer.visualize_subgraph(2, edge_index, edge_mask, threshold=0.5)
     explainer.visualize_subgraph(2, edge_index, edge_mask, y=y, threshold=None)
     explainer.visualize_subgraph(2, edge_index, edge_mask, y=y, threshold=0.5)
+
+
+@pytest.mark.parametrize('model', [GCN(), GAT()])
+def test_to_log_proba(model):
+    raw_to_log = GNNExplainer(model, return_type='raw').to_log_proba
+    proba_to_log = GNNExplainer(model, return_type='proba').to_log_proba
+    log_to_log = GNNExplainer(model).to_log_proba
+
+    raw = torch.tensor([[1, 3.2, 6.1], [9, 9, 0.1]])
+    proba = raw.softmax(dim=-1)
+    log = raw.log_softmax(dim=-1)
+
+    assert torch.allclose(raw_to_log(raw), proba_to_log(proba))
+    assert torch.allclose(proba_to_log(proba), log_to_log(log))
+
+    with pytest.raises(AssertionError):
+        GNNExplainer(model, return_type='dummy')
