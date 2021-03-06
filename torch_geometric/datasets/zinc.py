@@ -10,10 +10,11 @@ from torch_geometric.data import (InMemoryDataset, Data, download_url,
 
 
 class ZINC(InMemoryDataset):
-    r"""The ZINC dataset from the `"Grammar Variational Autoencoder"
-    <https://arxiv.org/abs/1703.01925>`_ paper, containing about 250,000
+    r"""The ZINC dataset from the the `"Automatic Chemical Design Using a
+    Data-driven Continuous Representation of Molecules"
+    <https://arxiv.org/abs/1610.02415>`_ paper, containing about 250,000
     molecular graphs with up to 38 heavy atoms.
-    The task is to regress a molecular property known as the constrained
+    The task is to regress a synthetic computed property dubbed as constrained
     solubility.
 
     Args:
