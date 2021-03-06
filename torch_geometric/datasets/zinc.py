@@ -10,12 +10,12 @@ from torch_geometric.data import (InMemoryDataset, Data, download_url,
 
 
 class ZINC(InMemoryDataset):
-    r"""The ZINC dataset from the the `"Automatic Chemical Design Using a
-    Data-driven Continuous Representation of Molecules"
+    r"""The ZINC dataset from the `"Automatic Chemical Design Using a
+    Data-Driven Continuous Representation of Molecules"
     <https://arxiv.org/abs/1610.02415>`_ paper, containing about 250,000
     molecular graphs with up to 38 heavy atoms.
-    The task is to regress a synthetic computed property dubbed as constrained
-    solubility.
+    The task is to regress a synthetic computed property dubbed as the
+    constrained solubility.
 
     Args:
         root (string): Root directory where the dataset should be saved.
