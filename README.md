@@ -73,6 +73,7 @@ In detail, the following methods are currently implemented:
 * **[SAGEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SAGEConv)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/graph_sage_unsup.py)]
 * **[GraphConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GraphConv)** from, *e.g.*, Morris *et al.*: [Weisfeiler and Leman Go Neural: Higher-order Graph Neural Networks](https://arxiv.org/abs/1810.02244) (AAAI 2019)
 * **[GatedGraphConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GatedGraphConv)** from Li *et al.*: [Gated Graph Sequence Neural Networks](https://arxiv.org/abs/1511.05493) (ICLR 2016)
+* **[ResGatedGraphConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.ResGatedGraphConv)** from Bresson and Laurent: [Residual Gated Graph ConvNets](https://arxiv.org/abs/1711.07553) (CoRR 2017)
 * **[GINConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GINConv)** from Xu *et al.*: [How Powerful are Graph Neural Networks?](https://arxiv.org/abs/1810.00826) (ICLR 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/mutag_gin.py)]
 * **[GINEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GINEConv)** from Hu *et al.*: [Strategies for Pre-training Graph Neural Networks](https://arxiv.org/abs/1905.12265) (ICLR 2020)
 * **[ARMAConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.ARMAConv)** from Bianchi *et al.*: [Graph Neural Networks with Convolutional ARMA Filters](https://arxiv.org/abs/1901.01343) (CoRR 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/arma.py)]
@@ -155,10 +156,10 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](htt
 To install the binaries for PyTorch 1.8.0, simply run
 
 ```sh
-$ pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-$ pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-$ pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-$ pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+$ pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+$ pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+$ pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+$ pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
 $ pip install torch-geometric
 ```
 
@@ -175,11 +176,11 @@ where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111`
 To install the binaries for PyTorch 1.7.0 and 1.7.1, simply run
 
 ```sh
-$ pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-$ pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-$ pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-$ pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-$ pip install torch-geometric
+pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
+pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
+pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
+pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
+pip install torch-geometric
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101`, `cu102`, or `cu110` depending on your PyTorch installation.
@@ -189,7 +190,6 @@ where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101`, `cu102`, or
 | **Linux**   | ✅    | ✅     | ✅      | ✅      | ✅      |
 | **Windows** | ✅    | ❌     | ✅      | ✅      | ✅      |
 | **macOS**   | ✅    |        |         |         |         |
-
 
 **Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0 and PyTorch 1.6.0 (following the same procedure).
 
@@ -226,5 +226,5 @@ Feel free to [email us](mailto:matthias.fey@tu-dortmund.de) if you wish your wor
 ## Running tests
 
 ```
-$ python setup.py test
+python setup.py test
 ```
