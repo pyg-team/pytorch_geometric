@@ -46,7 +46,6 @@ from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 
-
 __all__ = [
     'KarateClub',
     'TUDataset',
@@ -96,7 +95,7 @@ __all__ = [
     'WikipediaNetwork',
     'Actor',
     'JODIEDataset',
-    'MixHopSyntheticDataset'
+    'MixHopSyntheticDataset',
 ]
 
 classes = __all__
