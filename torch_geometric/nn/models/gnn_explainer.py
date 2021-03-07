@@ -37,12 +37,11 @@ class GNNExplainer(torch.nn.Module):
             information based on the number of
             :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
             layers inside :obj:`model`. (default: :obj:`None`)
-        return_type (str, optional): valid inputs are log_proba,raw,and proba.
-            Set to
-            log_proba: if :obj:`model` returns log of probability.
-            raw: if :obj:`model` returns raw scores.
-            proba: if :obj:`model` returns pobability of each class.
-            (default: :obj:`"log_proba"`)
+        return_type (str, optional): Denotes the type of output from
+            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model returns
+            the logarithm of probabilities), :obj:`"prob"` (the model returns
+            probabilities) and :obj:`"raw"` (the model returns raw scores).
+            (default: :obj:`"log_prob"`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
@@ -57,17 +56,15 @@ class GNNExplainer(torch.nn.Module):
     }
 
     def __init__(self, model, epochs: int = 100, lr: float = 0.01,
-                 num_hops: Optional[int] = None,
-                 return_type: str = 'log_proba', log: bool = True):
+                 num_hops: Optional[int] = None, return_type: str = 'log_prob',
+                 log: bool = True):
         super(GNNExplainer, self).__init__()
+        assert return_type in ['log_prob', 'prob', 'raw']
         self.model = model
         self.epochs = epochs
         self.lr = lr
         self.__num_hops__ = num_hops
-
-        assert return_type in ['log_proba', 'raw', 'proba']
         self.return_type = return_type
-
         self.log = log
 
     def __set_masks__(self, x, edge_index, init="normal"):
@@ -143,19 +140,10 @@ class GNNExplainer(torch.nn.Module):
 
         return loss
 
-    def to_log_proba(self, output: torch.Tensor):
-        r"""converts model output from raw scores or probabilities to
-        log of probability
-
-        :rtype: (:class:`Tensor`)
-        """
-        if self.return_type == 'log_proba':
-            return output
-        elif self.return_type == 'raw':
-            # features are assumed to be the last dimension.
-            return output.log_softmax(dim=-1)
-        else:
-            return output.log()
+    def __to_log_prob__(self, x: torch.Tensor) -> torch.Tensor:
+        x = x.log_softmax(dim=-1) if self.return_type == 'raw' else x
+        x = x.log() if self.return_type == 'prob' else x
+        return x
 
     def explain_node(self, node_idx, x, edge_index, **kwargs):
         r"""Learns and returns a node feature mask and an edge mask that play a
@@ -182,8 +170,8 @@ class GNNExplainer(torch.nn.Module):
 
         # Get the initial prediction.
         with torch.no_grad():
-            output = self.model(x=x, edge_index=edge_index, **kwargs)
-            log_logits = self.to_log_proba(output)
+            out = self.model(x=x, edge_index=edge_index, **kwargs)
+            log_logits = self.__to_log_prob__(out)
             pred_label = log_logits.argmax(dim=-1)
 
         self.__set_masks__(x, edge_index)
@@ -199,8 +187,8 @@ class GNNExplainer(torch.nn.Module):
         for epoch in range(1, self.epochs + 1):
             optimizer.zero_grad()
             h = x * self.node_feat_mask.view(1, -1).sigmoid()
-            output = self.model(x=h, edge_index=edge_index, **kwargs)
-            log_logits = self.to_log_proba(output)
+            out = self.model(x=h, edge_index=edge_index, **kwargs)
+            log_logits = self.__to_log_prob__(out)
             loss = self.__loss__(mapping, log_logits, pred_label)
             loss.backward()
             optimizer.step()

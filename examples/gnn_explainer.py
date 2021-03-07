@@ -40,7 +40,7 @@ for epoch in range(1, 201):
     loss.backward()
     optimizer.step()
 
-explainer = GNNExplainer(model, epochs=200)
+explainer = GNNExplainer(model, epochs=200, return_type='log_prob')
 node_idx = 10
 node_feat_mask, edge_mask = explainer.explain_node(node_idx, x, edge_index)
 ax, G = explainer.visualize_subgraph(node_idx, edge_index, edge_mask, y=data.y)
