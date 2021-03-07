@@ -44,6 +44,7 @@ from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
 from .jodie import JODIEDataset
+from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 
 __all__ = [
     'KarateClub',
@@ -94,6 +95,7 @@ __all__ = [
     'WikipediaNetwork',
     'Actor',
     'JODIEDataset',
+    'MixHopSyntheticDataset',
 ]
 
 classes = __all__
