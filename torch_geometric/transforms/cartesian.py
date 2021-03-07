@@ -23,7 +23,7 @@ class Cartesian(object):
     def __call__(self, data):
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
 
-        cart = pos[col] - pos[row]
+        cart = pos[row] - pos[col]
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
         if self.norm and cart.numel() > 0:
