@@ -1,69 +1,139 @@
+import pytest
+
 import torch
-from torch_geometric.transforms import AddTrainValTestMask
 from torch_geometric.data import Data
-from copy import deepcopy
+from torch_geometric.transforms import AddTrainValTestMask
 
 
-def test_add_train_val_test_mask():
-    N, C = 2357, 7
-    original_data = Data(x=torch.randn(N, 8),
-                         y=torch.randint(C, (N,)),
-                         num_nodes=N)
+@pytest.mark.parametrize('num_splits', [1, 2])
+def test_add_train_val_test_mask(num_splits):
+    num_nodes, num_classes = 1000, 4
+    x = torch.randn(num_nodes, 16)
+    y = torch.randint(num_classes, (num_nodes, ), dtype=torch.long)
+    data = Data(x=x, y=y)
 
-    num_train_per_class = 16
-    num_val = 320
-    num_test = 640
+    transform = AddTrainValTestMask(split='train_rest', num_splits=num_splits,
+                                    num_val=100, num_test=200)
+    assert transform.__repr__() == 'AddTrainValTestMask(split=train_rest)'
+    data = transform(data)
+    assert len(data) == 5
 
-    kw = dict(num_train_per_class=num_train_per_class,
-              num_val=num_val, num_test=num_test)
+    train_mask = data.train_mask
+    train_mask = train_mask.unsqueeze(-1) if num_splits == 1 else train_mask
+    assert train_mask.size() == (num_nodes, num_splits)
+    val_mask = data.val_mask
+    val_mask = val_mask.unsqueeze(-1) if num_splits == 1 else val_mask
+    assert val_mask.size() == (num_nodes, num_splits)
+    test_mask = data.test_mask
+    test_mask = test_mask.unsqueeze(-1) if num_splits == 1 else test_mask
+    assert test_mask.size() == (num_nodes, num_splits)
 
-    t = AddTrainValTestMask(split='train-rest', **kw)
-    data = t(deepcopy(original_data))
-    assert t.__repr__() == 'AddTrainValTestMask(split=train-rest)'
-    assert data.train_mask.size(0) == data.val_mask.size(0) \
-           == data.test_mask.size(0) == N
-    assert data.train_mask.sum() == N - num_val - num_test
-    assert data.val_mask.sum() == num_val
-    assert data.test_mask.sum() == num_test
-    assert (data.train_mask & data.val_mask & data.test_mask).sum() == 0
+    for i in range(train_mask.size(-1)):
+        assert train_mask[:, i].sum() == num_nodes - 100 - 200
+        assert val_mask[:, i].sum() == 100
+        assert test_mask[:, i].sum() == 200
+        assert (train_mask[:, i] & val_mask[:, i] & test_mask[:, i]).sum() == 0
+        assert ((train_mask[:, i] | val_mask[:, i]
+                 | test_mask[:, i]).sum() == num_nodes)
 
-    t = AddTrainValTestMask(split='test-rest', **kw)
-    data = t(deepcopy(original_data))
-    assert t.__repr__() == 'AddTrainValTestMask(split=test-rest)'
-    assert data.train_mask.size(0) == data.val_mask.size(0) \
-           == data.test_mask.size(0) == N
-    assert data.train_mask.sum() == num_train_per_class * C
-    assert data.val_mask.sum() == num_val
-    assert data.test_mask.sum() == N - num_train_per_class * C - num_val
-    assert (data.train_mask & data.val_mask & data.test_mask).sum() == 0
+    transform = AddTrainValTestMask(split='train_rest', num_splits=num_splits,
+                                    num_val=0.1, num_test=0.2)
+    data = transform(data)
 
-    t = AddTrainValTestMask(split='random', **kw)
-    data = t(deepcopy(original_data))
-    assert t.__repr__() == 'AddTrainValTestMask(split=random)'
-    assert data.train_mask.size(0) == data.val_mask.size(0) \
-           == data.test_mask.size(0) == N
-    assert data.train_mask.sum() == num_train_per_class * C
-    assert data.val_mask.sum() == num_val
-    assert data.test_mask.sum() == num_test
-    assert (data.train_mask & data.val_mask & data.test_mask).sum() == 0
+    train_mask = data.train_mask
+    train_mask = train_mask.unsqueeze(-1) if num_splits == 1 else train_mask
+    val_mask = data.val_mask
+    val_mask = val_mask.unsqueeze(-1) if num_splits == 1 else val_mask
+    test_mask = data.test_mask
+    test_mask = test_mask.unsqueeze(-1) if num_splits == 1 else test_mask
 
-    t = AddTrainValTestMask(split='train-rest', num_val=0.1, num_test=0.1)
-    data = t(deepcopy(original_data))
-    assert data.train_mask.sum() == N - int(N * 0.1) - int(N * 0.1)
-    assert data.val_mask.sum() == int(N * 0.1)
-    assert data.test_mask.sum() == int(N * 0.1)
-    assert (data.train_mask & data.val_mask & data.test_mask).sum() == 0
+    for i in range(train_mask.size(-1)):
+        assert train_mask[:, i].sum() == num_nodes - 100 - 200
+        assert val_mask[:, i].sum() == 100
+        assert test_mask[:, i].sum() == 200
+        assert (train_mask[:, i] & val_mask[:, i] & test_mask[:, i]).sum() == 0
+        assert ((train_mask[:, i] | val_mask[:, i]
+                 | test_mask[:, i]).sum() == num_nodes)
 
-    M = 5
-    t = AddTrainValTestMask(split='train-rest', num_mask=M, **kw)
-    data = t(deepcopy(original_data))
-    assert data.train_mask.size(0) == data.val_mask.size(0) \
-           == data.test_mask.size(0) == N
-    assert data.train_mask.size(1) == data.val_mask.size(1) \
-           == data.test_mask.size(1) == M
-    for i in range(M):
-        assert data.train_mask[:, i].sum() == N - num_val - num_test
-        assert data.val_mask[:, i].sum() == num_val
-        assert data.test_mask[:, i].sum() == num_test
-        assert (data.train_mask[:, i] & data.val_mask[:, i]
-                & data.test_mask[:, i]).sum() == 0
+    transform = AddTrainValTestMask(split='test_rest', num_splits=num_splits,
+                                    num_train_per_class=10, num_val=100)
+    assert transform.__repr__() == 'AddTrainValTestMask(split=test_rest)'
+    data = transform(data)
+    assert len(data) == 5
+
+    train_mask = data.train_mask
+    train_mask = train_mask.unsqueeze(-1) if num_splits == 1 else train_mask
+    val_mask = data.val_mask
+    val_mask = val_mask.unsqueeze(-1) if num_splits == 1 else val_mask
+    test_mask = data.test_mask
+    test_mask = test_mask.unsqueeze(-1) if num_splits == 1 else test_mask
+
+    for i in range(train_mask.size(-1)):
+        assert train_mask[:, i].sum() == 10 * num_classes
+        assert val_mask[:, i].sum() == 100
+        assert test_mask[:, i].sum() == num_nodes - 10 * num_classes - 100
+        assert (train_mask[:, i] & val_mask[:, i] & test_mask[:, i]).sum() == 0
+        assert ((train_mask[:, i] | val_mask[:, i]
+                 | test_mask[:, i]).sum() == num_nodes)
+
+    transform = AddTrainValTestMask(split='test_rest', num_splits=num_splits,
+                                    num_train_per_class=10, num_val=0.1)
+    data = transform(data)
+
+    train_mask = data.train_mask
+    train_mask = train_mask.unsqueeze(-1) if num_splits == 1 else train_mask
+    val_mask = data.val_mask
+    val_mask = val_mask.unsqueeze(-1) if num_splits == 1 else val_mask
+    test_mask = data.test_mask
+    test_mask = test_mask.unsqueeze(-1) if num_splits == 1 else test_mask
+
+    for i in range(train_mask.size(-1)):
+        assert train_mask[:, i].sum() == 10 * num_classes
+        assert val_mask[:, i].sum() == 100
+        assert test_mask[:, i].sum() == num_nodes - 10 * num_classes - 100
+        assert (train_mask[:, i] & val_mask[:, i] & test_mask[:, i]).sum() == 0
+        assert ((train_mask[:, i] | val_mask[:, i]
+                 | test_mask[:, i]).sum() == num_nodes)
+
+    transform = AddTrainValTestMask(split='random', num_splits=num_splits,
+                                    num_train_per_class=10, num_val=100,
+                                    num_test=200)
+    assert transform.__repr__() == 'AddTrainValTestMask(split=random)'
+    data = transform(data)
+    assert len(data) == 5
+
+    train_mask = data.train_mask
+    train_mask = train_mask.unsqueeze(-1) if num_splits == 1 else train_mask
+    val_mask = data.val_mask
+    val_mask = val_mask.unsqueeze(-1) if num_splits == 1 else val_mask
+    test_mask = data.test_mask
+    test_mask = test_mask.unsqueeze(-1) if num_splits == 1 else test_mask
+
+    for i in range(train_mask.size(-1)):
+        assert train_mask[:, i].sum() == 10 * num_classes
+        assert val_mask[:, i].sum() == 100
+        assert test_mask[:, i].sum() == 200
+        assert (train_mask[:, i] & val_mask[:, i] & test_mask[:, i]).sum() == 0
+        assert ((train_mask[:, i] | val_mask[:, i]
+                 | test_mask[:, i]).sum() == 10 * num_classes + 100 + 200)
+
+    transform = AddTrainValTestMask(split='random', num_splits=num_splits,
+                                    num_train_per_class=10, num_val=0.1,
+                                    num_test=0.2)
+    assert transform.__repr__() == 'AddTrainValTestMask(split=random)'
+    data = transform(data)
+
+    train_mask = data.train_mask
+    train_mask = train_mask.unsqueeze(-1) if num_splits == 1 else train_mask
+    val_mask = data.val_mask
+    val_mask = val_mask.unsqueeze(-1) if num_splits == 1 else val_mask
+    test_mask = data.test_mask
+    test_mask = test_mask.unsqueeze(-1) if num_splits == 1 else test_mask
+
+    for i in range(train_mask.size(-1)):
+        assert train_mask[:, i].sum() == 10 * num_classes
+        assert val_mask[:, i].sum() == 100
+        assert test_mask[:, i].sum() == 200
+        assert (train_mask[:, i] & val_mask[:, i] & test_mask[:, i]).sum() == 0
+        assert ((train_mask[:, i] | val_mask[:, i]
+                 | test_mask[:, i]).sum() == 10 * num_classes + 100 + 200)
