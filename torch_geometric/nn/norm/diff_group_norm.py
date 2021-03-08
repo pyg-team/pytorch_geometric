@@ -52,6 +52,8 @@ class DiffGroupNorm(torch.nn.Module):
         self.norm = BatchNorm1d(groups * in_channels, eps, momentum, affine,
                                 track_running_stats)
 
+        self.reset_parameters()
+
     def reset_parameters(self):
         self.lin.reset_parameters()
         self.norm.reset_parameters()
