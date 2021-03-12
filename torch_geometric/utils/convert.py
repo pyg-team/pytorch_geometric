@@ -18,12 +18,12 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
     """
-    row, col = edge_index.cpu()
+    row, col = edge_index.cpu().numpy()
 
     if edge_attr is None:
-        edge_attr = torch.ones(row.size(0))
+        edge_attr = torch.ones(row.size(0)).numpy()
     else:
-        edge_attr = edge_attr.view(-1).cpu()
+        edge_attr = edge_attr.view(-1).cpu().numpy()
         assert edge_attr.size(0) == row.size(0)
 
     N = maybe_num_nodes(edge_index, num_nodes)
