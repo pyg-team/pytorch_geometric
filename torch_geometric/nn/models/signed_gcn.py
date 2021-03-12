@@ -202,22 +202,30 @@ class SignedGCN(torch.nn.Module):
     def test(self, z, pos_edge_index, neg_edge_index):
         """Evaluates node embeddings :obj:`z` on positive and negative test
         edges by computing AUC and F1 scores.
-
         Args:
             z (Tensor): The node embeddings.
             pos_edge_index (LongTensor): The positive edge indices.
             neg_edge_index (LongTensor): The negative edge indices.
         """
         with torch.no_grad():
-            pos_p = self.discriminate(z, pos_edge_index)[:, :2].max(dim=1)[1]
-            neg_p = self.discriminate(z, neg_edge_index)[:, :2].max(dim=1)[1]
-        pred = (1 - torch.cat([pos_p, neg_p])).cpu()
+            tmp_pos = self.discriminate(z, pos_edge_index)[:, :2]
+            tmp_neg = self.discriminate(z, neg_edge_index)[:, :2]
+            # from log_softmax to softmax, take exp
+            probability_scores = torch.exp(torch.cat([tmp_pos,tmp_neg]))
+            # to normalize probabilities, so that P(+)+P(-)=1
+            pos_prob = probability_scores[:, 0]/probability_scores[:, 0:2].sum(1)
+            # take argmax to obtain binary labels (0,1 swapped for now)
+            pos_p = torch.argmax(tmp_pos,dim=1)
+            neg_p = torch.argmax(tmp_neg,dim=1)
+        # swap 0 and 1, so that 0 indicates a negative link and 1 indicates a positive link
+        pred = (1 - torch.cat([pos_p, neg_p])).cpu() # binary predictions
+        # obtain groud truth labels
         y = torch.cat(
             [pred.new_ones((pos_p.size(0))),
              pred.new_zeros(neg_p.size(0))])
-        pred, y = pred.numpy(), y.numpy()
+        pos_prob, pred, y = pos_prob.numpy(), pred.numpy(), y.numpy()
 
-        auc = roc_auc_score(y, pred)
+        auc = roc_auc_score(y, pos_prob) #  positive link is positive class
         f1 = f1_score(y, pred, average='binary') if pred.sum() > 0 else 0
 
         return auc, f1
