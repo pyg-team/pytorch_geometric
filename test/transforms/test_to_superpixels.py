@@ -1,19 +1,18 @@
 import sys
 import random
 import shutil
-import requests
 import os.path as osp
 
 import torch
 import torchvision.transforms as T
 from torchvision.datasets.mnist import MNIST, read_image_file, read_label_file
-from torch_geometric.data import extract_gz, DataLoader
+from torch_geometric.data import extract_gz, DataLoader, download_url
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.transforms import ToSLIC
 
 resources = [
-    'http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz',
-    'http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz',
+    'https://ossci-datasets.s3.amazonaws.com/mnist/t10k-images-idx3-ubyte.gz',
+    'https://ossci-datasets.s3.amazonaws.com/mnist/t10k-labels-idx1-ubyte.gz',
 ]
 
 
@@ -26,10 +25,7 @@ def test_to_superpixels():
     makedirs(raw_folder)
     makedirs(processed_folder)
     for resource in resources:
-        r = requests.get(resource)
-        path = osp.join(raw_folder, resource.split('/')[-1])
-        with open(path, 'wb') as f:
-            f.write(r.content)
+        path = download_url(resource, raw_folder)
         extract_gz(path, osp.join(root, raw_folder))
 
     test_set = (
