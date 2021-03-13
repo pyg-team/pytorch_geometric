@@ -29,7 +29,7 @@ class MemPool(nn.Module):
         num_keys (int): number of keys(clusters) per head. :math:`K`.
         tau (int): degrees of freedom.
     """
-    def __init__(self, heads=1, num_keys=2, in_channels=2, out_channels=2,
+    def __init__(self, in_channels=2, out_channels=2, heads=1, num_keys=2,
                  tau=1):
         super().__init__()
         self.in_channels = in_channels
@@ -87,8 +87,8 @@ class MemPool(nn.Module):
         x = x.unsqueeze(0) if x.dim() == 2 else x
 
         B = x.shape[0]
-        H = self.k.shape[0]
-        K = self.k.shape[1]
+        H = self.heads
+        K = self.num_keys
         N = x.shape[1]
 
         dist = torch.cdist(self.k.view(H * K, -1), x.view(B * N, -1), 1)
@@ -105,8 +105,6 @@ class MemPool(nn.Module):
         return x, S
 
     def __repr__(self):
-        return '{}({}, {}, heads={}, keys={})'.format(self.__class__.__name__,
-                                                      self.in_channels,
-                                                      self.out_channels,
-                                                      self.heads,
-                                                      self.num_keys)
+        return '{}({}, {}, heads={}, num_keys={})'.format(
+            self.__class__.__name__, self.in_channels, self.out_channels,
+            self.heads, self.num_keys)
