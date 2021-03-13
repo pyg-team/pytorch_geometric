@@ -55,7 +55,7 @@ class MemPool(nn.Module):
         return S
 
     @staticmethod
-    def computeKl(S: Tensor, mask: BoolTensor = None) -> (Tensor, Tensor):
+    def kl_loss(S: Tensor, mask: BoolTensor = None) -> (Tensor, Tensor):
         r"""Additional kl divergence based loss.
         ..math::
             \mathbf{P}{_i}{_j}=\frac{\mathbf{S}{_i}{_j}{^2}/\sum_i
@@ -71,10 +71,8 @@ class MemPool(nn.Module):
             denom[~mask] = 1
         P = P / denom.unsqueeze(2)
 
-        kl_loss = nn.KLDivLoss(reduction='sum')
-        loss = kl_loss(S.log(), P)
-
-        return loss, P
+        loss = nn.KLDivLoss(reduction='sum')
+        return loss(S.log(), P), P
 
     def forward(self, x: Tensor, mask: BoolTensor = None) -> (Tensor, Tensor):
         r"""
