@@ -10,7 +10,7 @@ def test_mem_pool():
     mask = torch.Tensor([[1, 1, 1, 0], [1, 1, 1, 1], [1, 1, 1, 1],
                          [1, 1, 1, 1], [1, 1, 1, 0]]).bool()
     x, S = mpool(x, mask)
-    loss, P = MemPool.computeKl(S, mask)
+    loss, P = MemPool.kl_loss(S, mask)
     assert x.shape == torch.Size([5, 2, 3])
     assert (S[~mask] == 0).all()
     assert P.shape == S.shape
@@ -20,6 +20,6 @@ def test_mem_pool():
     assert mpool.__repr__() == 'MemPool(2, 4, heads=2, keys=2)'
     x = torch.rand((4, 2))
     x, S = mpool(x)
-    loss, P = MemPool.computeKl(S)
+    loss, P = MemPool.kl_loss(S)
     assert x.shape == torch.Size([1, 2, 4])
     assert P.shape == S.shape
