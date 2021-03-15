@@ -1,110 +1,100 @@
+from typing import Optional, Tuple
+
 import torch
-from torch import nn, matmul, Tensor, BoolTensor
-from torch.nn.init import xavier_uniform_
-from torch import nn
+from torch import Tensor
+from torch.nn import Parameter, KLDivLoss, Conv2d, Linear
+
+from torch_geometric.utils import to_dense_batch
 
 
-class MemPool(nn.Module):
-    r"""Memory based pooling layer from `"MEMORY-BASED GRAPH NETWORKS"
-    <https://arxiv.org/abs/2002.09518>`_ paper.
+class MemPooling(torch.nn.Module):
+    r"""Memory based pooling layer from `"Memory-Based Graph Networs"
+    <https://arxiv.org/abs/2002.09518>`_ paper, which learns a coarsened graph
+    representation based on soft cluster assignments
 
     .. math::
-        \mathbf{S}{_i}{_j}=\frac{(1+\lVert {x_i-k_j} \rVert^2/\tau)^{
-        -\frac{1+\tau}{2}}}{\sum_{j^{\prime}}(1
-        +\lVert {x_i-k_{j^{\prime}}} \rVert^2/\tau)^{-\frac{1+\tau}{2}}}
+        S_{i,j}^{(h)} &= \frac{
+        (1+{\| \mathbf{x}_i-\mathbf{k}^{(h)}_j \|}^2 / \tau)^{
+        -\frac{1+\tau}{2}}}{
+        \sum_{k=1}^K (1 + {\| \mathbf{x}_i-\mathbf{k}^{(h)}_k \|}^2 / \tau)^{
+        -\frac{1+\tau}{2}}}
 
-        \mathbf{S}=\text{Softmax}(\Gamma_\phi(\lVert_{k=0}^H \mathbf{S}_i))
+        \mathbf{S} &= \textrm{softmax}(\textrm{Conv2d}
+        (\Vert_{h=1}^H \mathbf{S}^{(h)})) \in \mathbb{R}^{N \times K}
 
-    Where :math:`\mathbf{H}` is the number of heads, with :math:`\mathbf{K}`
-    trainable keys each. :math:`\Gamma_\phi` is a 1*1 convolution operation.
-    Nodes are then pooled via.
+        \mathbf{X}^{\prime} &= \mathbf{S}^{\top} \mathbf{X} \mathbf{W} \in
+        \mathbb{R}^{K \times F^{\prime}}
 
-    ..math::
-        \mathbf{X}^\prime=\text{LeakyRelu}(\mathbf{S}^T\mathbf{XW})
+    Where :math:`H` denotes the number of heads, and :math:`K` denotes the
+    number of clusters.
 
     Args:
-        in_channels (int): size of each input sample. :math:`F`.
-        out_channels (int): size of each output sample. :math:`F\prime`.
-        heads (int): number of heads. :math:`H`.
-        num_keys (int): number of keys(clusters) per head. :math:`K`.
-        tau (int): degrees of freedom.
+        in_channels (int): Size of each input sample :math:`F`.
+        out_channels (int): Size of each output sample :math:`F^{\prime}`.
+        heads (int): The number of heads :math:`H`.
+        num_clusters (int): number of clusters :math:`K` per head.
+        tau (int, optional): The temperature :math:`\tau`. (default: :obj:`1.`)
     """
-    def __init__(self, in_channels=2, out_channels=2, heads=1, num_keys=2,
-                 tau=1):
-        super().__init__()
+    def __init__(self, in_channels: int, out_channels: int, heads: int,
+                 num_clusters: int, tau: float = 1.):
+        super(MemPooling, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
-        self.num_keys = num_keys
+        self.num_clusters = num_clusters
         self.tau = tau
 
-        self.k = nn.Parameter(torch.rand(heads, num_keys, in_channels))
-        self.conv = nn.Conv2d(heads, 1, kernel_size=1, padding=0, bias=False)
-        self.lin = nn.Linear(in_channels, out_channels, bias=False)
-        self.act = nn.LeakyReLU()
+        self.k = Parameter(torch.Tensor(heads, num_clusters, in_channels))
+        self.conv = Conv2d(heads, 1, kernel_size=1, padding=0, bias=False)
+        self.lin = Linear(in_channels, out_channels, bias=False)
+
         self.reset_parameters()
 
     def reset_parameters(self):
+        torch.nn.init.uniform_(self.k.data, -1., 1.)
         self.conv.reset_parameters()
-        xavier_uniform_(self.lin.weight)
+        self.lin.reset_parameters()
 
     @staticmethod
-    def apply_mask(S: Tensor, mask: BoolTensor = None) -> Tensor:
+    def kl_loss(S: Tensor) -> Tensor:
+        r"""The additional KL divergence-based loss
+
+        .. math::
+            P_{i,j} &= \frac{S_{i,j}^2 / \sum_{n=1}^N S_{n,j}}{\sum_{k=1}^K
+            S_{i,k}^2 / \sum_{n=1}^N S_{n,k}}
+
+            \mathcal{L}_{\textrm{KL}} &= \textrm{KLDiv}(\mathbf{P} \Vert
+            \mathbf{S})
+        """
+        S_2 = S**2
+        P = S_2 / S.sum(dim=1, keepdim=True)
+        P = P / (S_2.sum(dim=2, keepdim=True) / S.sum(dim=1, keepdim=True))
+        P[torch.isnan(P)] = 0.
+
+        loss = KLDivLoss(reduction='batchmean', log_target=False)
+        return loss(S.log(), P)
+
+    def forward(self, x: Tensor,
+                batch: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
         """"""
-        S = S if mask is None else S * mask.unsqueeze(2)
-        return S
+        x, mask = to_dense_batch(x, batch)
 
-    @staticmethod
-    def kl_loss(S: Tensor, mask: BoolTensor = None) -> (Tensor, Tensor):
-        r"""Additional kl divergence based loss.
-        ..math::
-            \mathbf{P}{_i}{_j}=\frac{\mathbf{S}{_i}{_j}{^2}/\sum_i
-            \mathbf{S}{_i}{_j}}{\sum{_j\prime}\mathbf{S}{_i}{_j\prime}^2/
-            \sum_i\mathbf{S}{_i}{_j\prime}}
+        (B, N, _), H, K = x.size(), self.heads, self.num_clusters
 
-            \mathcal{L}_{kl}=\text{KLDiv}(\mathbf{P}||\mathbf{S})
-        """
-        S = MemPool.apply_mask(S, mask)  # B*N*K
-        P = S**2 / S.sum(1).unsqueeze(1)
-        denom = P.sum(2)
-        if mask is not None:
-            denom[~mask] = 1
-        P = P / denom.unsqueeze(2)
+        dist = torch.cdist(self.k.view(H * K, -1), x.view(B * N, -1), p=2)**2
+        dist = (1. + dist / self.tau).pow(-(self.tau + 1.0) / 2.0)
 
-        loss = nn.KLDivLoss(reduction='sum')
-        return loss(S.log(), P), P
+        dist = dist.view(H, K, B, N).permute(2, 0, 3, 1)  # [B, H, N, K]
+        S = dist / dist.sum(dim=-1, keepdim=True)
 
-    def forward(self, x: Tensor, mask: BoolTensor = None) -> (Tensor, Tensor):
-        r"""
-        Args:
-            x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
-                \times N \times F}` with batch-size :math:`B`, (maximum)
-                number of nodes :math:`N` for each graph.
-            mask (BoolTensor, optional): Mask matrix
-                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
-                the valid nodes for each graph. (default: :obj:`None`)
-        """
-        x = x.unsqueeze(0) if x.dim() == 2 else x
+        S = self.conv(S).squeeze(dim=1).softmax(dim=-1)  # [B, N, K]
+        S = S * mask.view(B, N, 1)
 
-        B = x.shape[0]
-        H = self.heads
-        K = self.num_keys
-        N = x.shape[1]
-
-        dist = torch.cdist(self.k.view(H * K, -1), x.view(B * N, -1), 1)
-        dist = (1 + (dist**2 / self.tau)).pow(-(self.tau + 1) / 2.0)
-        dist = dist.view(H, K, B, N).permute(2, 0, 3, 1)
-        S = dist / dist.sum(3).unsqueeze(3)  # B*H*N*K
-
-        S = self.conv(S).squeeze(1)
-        S = torch.softmax(S, 2)  # B*N*K
-        S = self.apply_mask(S, mask)
-        x = self.lin(matmul(S.transpose(1, 2), x))  # B*K*F'
-        x = self.act(x)
+        x = self.lin(S.transpose(1, 2) @ x)
 
         return x, S
 
     def __repr__(self):
-        return '{}({}, {}, heads={}, num_keys={})'.format(
+        return '{}({}, {}, heads={}, num_clusters={})'.format(
             self.__class__.__name__, self.in_channels, self.out_channels,
-            self.heads, self.num_keys)
+            self.heads, self.num_clusters)
