@@ -31,7 +31,7 @@ def homophily(edge_index: Adj, y: Tensor, method: str = 'edge'):
 
       .. math::
         \text{homophily} = \frac{| \{ (v,w) : (v,w) \in \mathcal{E} \wedge
-        y_v = y_w \} | } {|\mathcal{V}|}
+        y_v = y_w \} | } {|\mathcal{E}|}
 
       That measure is called the *edge homophily ratio*.
 
