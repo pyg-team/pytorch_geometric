@@ -1,4 +1,8 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
+from torch.utils.dlpack import to_dlpack, from_dlpack
 import scipy.sparse
 import networkx as nx
 
@@ -162,7 +166,8 @@ def from_trimesh(mesh):
     return torch_geometric.data.Data(pos=pos, face=face)
 
 
-def to_cugraph(edge_index, edge_weight=None, relabel_nodes=True):
+def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
+               relabel_nodes: bool = True):
     r"""Converts a graph given by :obj:`edge_index` and optional
     :obj:`edge_weight` into a :obj:`cugraph` graph object.
 
@@ -173,7 +178,6 @@ def to_cugraph(edge_index, edge_weight=None, relabel_nodes=True):
     """
     import cudf
     import cugraph
-    from torch.utils.dlpack import to_dlpack
 
     df = cudf.from_dlpack(to_dlpack(edge_index.t()))
 
@@ -185,3 +189,20 @@ def to_cugraph(edge_index, edge_weight=None, relabel_nodes=True):
         df, source=0, destination=1,
         edge_attr=2 if edge_weight is not None else None,
         renumber=relabel_nodes)
+
+
+def from_cugraph(G) -> Tuple[Tensor, Optional[Tensor]]:
+    r"""Converts a :obj:`cugraph` graph object into :obj:`edge_index` and
+    optional :obj:`edge_weight` tensors.
+    """
+    df = G.edgelist.edgelist_df
+
+    src = from_dlpack(df['src'].to_dlpack()).long()
+    dst = from_dlpack(df['dst'].to_dlpack()).long()
+    edge_index = torch.stack([src, dst], dim=0)
+
+    edge_weight = None
+    if 'weights' in df:
+        edge_weight = from_dlpack(df['weights'].to_dlpack())
+
+    return edge_index, edge_weight
