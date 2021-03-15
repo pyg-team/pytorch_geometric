@@ -6,6 +6,7 @@ from .topk_pool import TopKPooling
 from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
 from .asap import ASAPooling
+from .mem_pool import MemPooling
 
 try:
     import torch_cluster
@@ -252,6 +253,7 @@ __all__ = [
     'SAGPooling',
     'EdgePooling',
     'ASAPooling',
+    'MemPooling',
     'max_pool',
     'avg_pool',
     'max_pool_x',
