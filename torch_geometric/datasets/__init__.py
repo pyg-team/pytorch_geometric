@@ -2,6 +2,7 @@ from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .gnn_benchmark_dataset import GNNBenchmarkDataset
 from .planetoid import Planetoid
+from .nell import NELL
 from .citation_full import CitationFull, CoraFull
 from .coauthor import Coauthor
 from .amazon import Amazon
@@ -51,6 +52,7 @@ __all__ = [
     'TUDataset',
     'GNNBenchmarkDataset',
     'Planetoid',
+    'NELL',
     'CitationFull',
     'CoraFull',
     'Coauthor',

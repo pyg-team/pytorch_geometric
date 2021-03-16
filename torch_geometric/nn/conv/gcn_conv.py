@@ -153,12 +153,13 @@ class GCNConv(MessagePassing):
         """"""
 
         if self.normalize:
+            dtype = x.dtype() if isinstance(x, SparseTensor) else x.dtype
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops, dtype=x.dtype)
+                        self.improved, self.add_self_loops, dtype=dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -169,13 +170,13 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops, dtype=x.dtype)
+                        self.improved, self.add_self_loops, dtype=dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
                     edge_index = cache
 
-        x = torch.matmul(x, self.weight)
+        x = x @ self.weight
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
