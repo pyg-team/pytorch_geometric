@@ -46,6 +46,7 @@ from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
+from .mesh_cnn_datasets import (MeshShrech16Dataset, MeshCubesDataset, MeshHumanSegDataset, MeshCoSegDataset)
 
 __all__ = [
     'KarateClub',
@@ -98,6 +99,10 @@ __all__ = [
     'Actor',
     'JODIEDataset',
     'MixHopSyntheticDataset',
+    'MeshShrech16Dataset',
+    'MeshCubesDataset',
+    'MeshHumanSegDataset',
+    'MeshCoSegDataset',
 ]
 
 classes = __all__
