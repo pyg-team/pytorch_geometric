@@ -11,20 +11,26 @@ def pad(input_arr, target_length, val=0, dim=1):
     shp = input_arr.shape
     npad = [(0, 0) for _ in range(len(shp))]
     npad[dim] = (0, target_length - shp[dim])
-    return np.pad(input_arr, pad_width=npad, mode='constant', constant_values=val)
+    return np.pad(input_arr, pad_width=npad, mode='constant',
+                  constant_values=val)
 
 
 class MeshCnnBaseDataset(Dataset):
-    r"""Base class for MeshCNN datasets: `"MeshCNN: A Network with an Edge" <https://arxiv.org/abs/1809.05910>`_ paper
-    This class is the base class for MeshCnnClassificationDataset and MeshCnnSegmentationDataset (see definitions).
+    r"""Base class for MeshCNN datasets: `"MeshCNN: A Network with an Edge"
+     <https://arxiv.org/abs/1809.05910>`_ paper.
+    This class is the base class for MeshCnnClassificationDataset and
+    MeshCnnSegmentationDataset (see definitions).
     Args:
         root (str): Root folder for dataset.
         dataset_url (str): dataset URL link. Official supported URLs:
-                           https://www.dropbox.com/s/w16st84r6wc57u7/shrec_16.tar.gz?dl=1 - dataset for classification
-                           https://www.dropbox.com/s/2bxs5f9g60wa0wr/cubes.tar.gz?dl=1 - dataset for classification
-                           https://www.dropbox.com/s/34vy4o5fthhz77d/coseg.tar.gz?dl=1 - dataset(s) for segmentation
-                           https://www.dropbox.com/s/s3n05sw0zg27fz3/human_seg.tar.gz?dl=1 - dataset for segmentation
+        dataset for classification:
+        https://www.dropbox.com/s/w16st84r6wc57u7/shrec_16.tar.gz?dl=1
+        https://www.dropbox.com/s/2bxs5f9g60wa0wr/cubes.tar.gz?dl=1
+        dataset(s) for segmentation:
+        https://www.dropbox.com/s/34vy4o5fthhz77d/coseg.tar.gz?dl=1
+        https://www.dropbox.com/s/s3n05sw0zg27fz3/human_seg.tar.gz?dl=1
     """
+
     def __init__(self, root: str, dataset_url: str):
         self.root = root
         self.dataset_url = dataset_url
@@ -42,12 +48,15 @@ class MeshCnnBaseDataset(Dataset):
 
     @property
     def raw_file_names(self):
-        # A list of files in the raw_dir which needs to be found in order to skip the download.
-        return [osp.join(self.raw_dir, osp.basename(self.dataset_url).replace('?dl=1', ''))]
+        # A list of files in the raw_dir which needs to be found in order to
+        # skip the download.
+        return [osp.join(self.raw_dir,
+                         osp.basename(self.dataset_url).replace('?dl=1', ''))]
 
     @property
     def processed_file_names(self):
-        # A list of files in the process_dir which needs to be found in order to skip the process.
+        # A list of files in the process_dir which needs to be found in order
+        # to skip the process.
         return ['abc']  # todo handle this
 
     def get_mean_std(self, sub_name=''):
@@ -59,7 +68,8 @@ class MeshCnnBaseDataset(Dataset):
         n_input_channels: N
         (here N=5)
         """
-        mean_std_cache = osp.join(self.processed_dir, sub_name + 'mean_std_cache.p')
+        mean_std_cache = osp.join(self.processed_dir,
+                                  sub_name + 'mean_std_cache.p')
         if not osp.isfile(mean_std_cache):
             print('computing mean std from train data...')
             # no augmentations during m/std computation
@@ -74,7 +84,8 @@ class MeshCnnBaseDataset(Dataset):
                 std = std + features.std(axis=1)
             mean = mean / (j + 1)
             std = std / (j + 1)
-            transform_dict = {'mean': mean[:, np.newaxis], 'std': std[:, np.newaxis],
+            transform_dict = {'mean': mean[:, np.newaxis],
+                              'std': std[:, np.newaxis],
                               'ninput_channels': len(mean)}
             with open(mean_std_cache, 'wb') as f:
                 pickle.dump(transform_dict, f)
@@ -90,28 +101,41 @@ class MeshCnnBaseDataset(Dataset):
 
 
 class MeshCnnClassificationDataset(MeshCnnBaseDataset):
-    r"""This class creates a classification dataset for MeshCNN networks: `"MeshCNN: A Network with an Edge"
-    <https://arxiv.org/abs/1809.05910>`_ paper
-    The dataset should be organized in folders according to class names. Each class folder should have 'train' and
-    'test' folders, where on these folders it should contain the .obj files. After the first pre-processing the class
-    will create 'cache' folders which contain pre-processed .npz files after data augmentations.
+    r"""This class creates a classification dataset for MeshCNN networks:
+    `"MeshCNN: A Network with an Edge" <https://arxiv.org/abs/1809.05910>`_
+    paper.
+    The dataset should be organized in folders according to class names. Each
+    class folder should have 'train' and 'test' folders, where on these folders
+    it should contain the .obj files. After the first pre-processing the class
+    will create 'cache' folders which contain pre-processed .npz files after
+    data augmentations.
     Args:
         root (str): Root folder for dataset.
-        dataset_url (str): dataset URL link (see supported links in MeshCnnBaseDataset)
-        n_input_edges (int): Number of input edges of mesh. It should be the bigger than or equal to highest number of
-                            input edges in the dataset.
-        phase (str, optional): Train or Test phase - if 'train' it will return the train dataset, if 'test' it will
-                               return the test dataset. Default is 'train'.
-        num_aug (int, optional): Number of augmentations to apply on mesh.  Default is 1 which means no augmentations.
-        slide_verts (float, optional): values between 0.0 to 1.0 - if set above 0 will apply shift along mesh
-                                       surface with percentage of slide_verts value.
-        scale_verts (bool, optional): If set to `False` - do not apply scale vertex augmentation
-                                      If set to `True` - apply non-uniformly scale on the mesh
-        flip_edges (float, optional): values between 0.0 to 1.0 - if set above 0 will apply random flip of edges
+        dataset_url (str): dataset URL link (see supported links in
+                           MeshCnnBaseDataset)
+        n_input_edges (int): Number of input edges of mesh. It should be the
+                             bigger than or equal to highest number of input
+                             edges in the dataset.
+        phase (str, optional): Train or Test phase - if 'train' it will return
+                               the train dataset, if 'test' it will return the
+                               test dataset. Default is 'train'.
+        num_aug (int, optional): Number of augmentations to apply on mesh.
+                                 Default is 1 which means no augmentations.
+        slide_verts (float, optional): values between 0.0 to 1.0 - if set above
+                                       0 will apply shift along mesh surface
+                                       with percentage of slide_verts value.
+        scale_verts (bool, optional): If set to `False` - do not apply scale
+                                      vertex augmentation If set to `True` -
+                                      apply non-uniformly scale on the mesh
+        flip_edges (float, optional): values between 0.0 to 1.0 - if set above
+                                      0 will apply random flip of edges
                                       with percentage of flip_edges value.
     """
-    def __init__(self, root: str, dataset_url: str, n_input_edges: int, phase: str = 'train', num_aug: int = 1,
-                 slide_verts: float = 0.0, scale_verts: bool = False, flip_edges: float = 0.0):
+
+    def __init__(self, root: str, dataset_url: str, n_input_edges: int,
+                 phase: str = 'train', num_aug: int = 1,
+                 slide_verts: float = 0.0, scale_verts: bool = False,
+                 flip_edges: float = 0.0):
         self.n_input_edges = n_input_edges
         self.phase = phase
         self.num_aug = num_aug
@@ -131,7 +155,8 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
 
     @staticmethod
     def find_classes(data_dir):
-        classes = [d for d in os.listdir(data_dir) if osp.isdir(osp.join(data_dir, d))]
+        classes = [d for d in os.listdir(data_dir) if
+                   osp.isdir(osp.join(data_dir, d))]
         classes.sort()
         class_to_idx = {classes[k]: k for k in range(len(classes))}
         return classes, class_to_idx
@@ -153,17 +178,21 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
                 continue
             for root, _, file_names in sorted(os.walk(d)):
                 for file_name in sorted(file_names):
-                    if self.is_mesh_file(file_name) and (osp.basename(root) == phase):
+                    if self.is_mesh_file(file_name) and (
+                            osp.basename(root) == phase):
                         path = osp.join(root, file_name)
                         item = (path, class_to_idx[target])
                         meshes.append(item)
         return meshes
 
     def process(self):
-        self.dir = self.raw_dir + '\\' +\
-                           [d for d in os.listdir(self.raw_dir) if osp.isdir(osp.join(self.raw_dir, d))][0]
+        self.dir = self.raw_dir + '\\' + \
+                   [d for d in os.listdir(self.raw_dir) if
+                    osp.isdir(osp.join(self.raw_dir, d))][0]
         self.classes, self.class_to_idx = self.find_classes(self.dir)
-        self.paths_labels = self.make_dataset_by_class(self.dir, self.class_to_idx, self.phase)
+        self.paths_labels = self.make_dataset_by_class(self.dir,
+                                                       self.class_to_idx,
+                                                       self.phase)
         self.n_classes = len(self.classes)
         self.size = len(self.paths_labels)
         self.get_mean_std()
@@ -176,14 +205,17 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
                 dir_name = osp.dirname(filename)
                 prefix = osp.basename(filename)
                 load_dir = osp.join(dir_name, 'cache')
-                load_file = osp.join(load_dir, '%s_%03d.npz' % (prefix, num_aug))
+                load_file = osp.join(load_dir,
+                                     '%s_%03d.npz' % (prefix, num_aug))
                 if not osp.isdir(load_dir):
                     os.makedirs(load_dir, exist_ok=True)
                 if osp.exists(load_file):
                     continue
                 else:
-                    MeshPrepare(raw_file=path, num_aug=self.num_aug, aug_slide_verts=self.slide_verts,
-                                aug_scale_verts=self.scale_verts, aug_flip_edges=self.flip_edges,
+                    MeshPrepare(raw_file=path, num_aug=self.num_aug,
+                                aug_slide_verts=self.slide_verts,
+                                aug_scale_verts=self.scale_verts,
+                                aug_flip_edges=self.flip_edges,
                                 aug_file=load_file)
 
     def len(self):
@@ -192,8 +224,10 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
     def get(self, idx):
         path = self.paths_labels[idx][0]
         label = self.paths_labels[idx][1]
-        mesh_data = MeshPrepare(raw_file=path, num_aug=self.num_aug, aug_slide_verts=self.slide_verts,
-                                aug_scale_verts=self.scale_verts, aug_flip_edges=self.flip_edges).mesh_data
+        mesh_data = MeshPrepare(raw_file=path, num_aug=self.num_aug,
+                                aug_slide_verts=self.slide_verts,
+                                aug_scale_verts=self.scale_verts,
+                                aug_flip_edges=self.flip_edges).mesh_data
         mesh_data.label = label
         mesh_data.edge_index = torch.tensor(mesh_data.edge_index).long()
         mesh_data.num_nodes = len(mesh_data.vs)
@@ -203,32 +237,46 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
 
 
 class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
-    r"""This class creates a segmentation dataset for MeshCNN networks: `"MeshCNN: A Network with an Edge"
-    <https://arxiv.org/abs/1809.05910>`_ paper
-    The dataset is splitted into 'train' and 'test' folders which contain the .obj files. In addition, 'seg' and 'sseg'
-    folders should be in the dataset folder with .eseg and .seseg files - these files contain the data label and soft-
+    r"""This class creates a segmentation dataset for MeshCNN networks:
+    `"MeshCNN: A Network with an Edge" <https://arxiv.org/abs/1809.05910>`_
+    paper.
+    The dataset is splitted into 'train' and 'test' folders which contain the
+    .obj files. In addition, 'seg' and 'sseg'
+    folders should be in the dataset folder with .eseg and .seseg files - these
+    files contain the data label and soft-
     label of the .obj files.
-    After the first pre-processing the class will create 'cache' folder in the 'train' folder which contain pre-
+    After the first pre-processing the class will create 'cache' folder in the
+    'train' folder which contain pre-
     processed .npz files after data augmentations.
     Args:
         root (str): Root folder for dataset.
-        dataset_url (str): dataset URL link (see supported links in MeshCnnBaseDataset)
-        dataset_name (str): dataset name according to sub-dataset segmentation name
-                           (see segmentation URLs in MeshCnnBaseDataset).
-        n_input_edges (int): Number of input edges of mesh. It should be the bigger than or equal to highest number of
-                            input edges in the dataset.
-        phase (str, optional): Train or Test phase - if 'train' it will return the train dataset, if 'test' it will
-                               return the test dataset. Default is 'train'.
-        num_aug (int, optional): Number of augmentations to apply on mesh.  Default is 1 which means no augmentations.
-        slide_verts (float, optional): values between 0.0 to 1.0 - if set above 0 will apply shift along mesh
-                                       surface with percentage of slide_verts value.
-        scale_verts (bool, optional): If set to `False` - do not apply scale vertex augmentation
-                                      If set to `True` - apply non-uniformly scale on the mesh
-        flip_edges (float, optional): values between 0.0 to 1.0 - if set above 0 will apply random flip of edges
-                                      with percentage of flip_edges value.
+        dataset_url (str): dataset URL link (see supported links in
+                           MeshCnnBaseDataset)
+        dataset_name (str): dataset name according to sub-dataset segmentation
+                            name (see segmentation URLs in MeshCnnBaseDataset).
+        n_input_edges (int): Number of input edges of mesh. It should be the
+                             bigger than or equal to highest number of input
+                             edges in the dataset.
+        phase (str, optional): Train or Test phase - if 'train' it will return
+                               the train dataset, if 'test' it will return the
+                               test dataset. Default is 'train'.
+        num_aug (int, optional): Number of augmentations to apply on mesh.
+                                 Default is 1 which means no augmentations.
+        slide_verts (float, optional): values between 0.0 to 1.0 - if set above
+                                       0 will apply shift along mesh surface
+                                       with percentage of slide_verts value.
+        scale_verts (bool, optional): If set to `False` - do not apply scale
+                                      vertex augmentation If set to `True` -
+                                      apply non-uniformly scale on the mesh
+        flip_edges (float, optional): values between 0.0 to 1.0 - if set above
+                                      0 will apply random flip of edges with
+                                      percentage of flip_edges value.
     """
-    def __init__(self, root: str, dataset_url: str, dataset_name: str, n_input_edges: int, phase: str = 'train',
-                 num_aug: int = 1, slide_verts: float = 0.0, scale_verts: bool = False, flip_edges: float = 0.0):
+
+    def __init__(self, root: str, dataset_url: str, dataset_name: str,
+                 n_input_edges: int, phase: str = 'train',
+                 num_aug: int = 1, slide_verts: float = 0.0,
+                 scale_verts: bool = False, flip_edges: float = 0.0):
         self.dataset_name = dataset_name
         self.n_input_edges = n_input_edges
         self.phase = phase
@@ -274,8 +322,10 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
     def get_seg_files(paths, seg_dir, seg_ext='.seg'):
         segs = []
         for path in paths:
-            segfile = os.path.join(seg_dir, osp.splitext(os.path.basename(path))[0] + seg_ext)
-            assert(os.path.isfile(segfile))
+            segfile = os.path.join(seg_dir,
+                                   osp.splitext(os.path.basename(path))[
+                                       0] + seg_ext)
+            assert (os.path.isfile(segfile))
             segs.append(segfile)
         return segs
 
@@ -304,9 +354,14 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
     def process(self):
         self.dir = osp.join(self.raw_dir, self.dataset_name)
         self.paths = self.make_dataset(osp.join(self.dir, self.phase))
-        self.seg_paths = self.get_seg_files(self.paths, os.path.join(self.dir, 'seg'), seg_ext='.eseg')
-        self.sseg_paths = self.get_seg_files(self.paths, os.path.join(self.dir, 'sseg'), seg_ext='.seseg')
-        self.classes, self.offset = self.get_n_segs(os.path.join(self.dir, 'classes.txt'), self.seg_paths)
+        self.seg_paths = self.get_seg_files(self.paths,
+                                            os.path.join(self.dir, 'seg'),
+                                            seg_ext='.eseg')
+        self.sseg_paths = self.get_seg_files(self.paths,
+                                             os.path.join(self.dir, 'sseg'),
+                                             seg_ext='.seseg')
+        self.classes, self.offset = self.get_n_segs(
+            os.path.join(self.dir, 'classes.txt'), self.seg_paths)
         self.n_classes = len(self.classes)
         self.size = len(self.paths)
         self.get_mean_std(self.dataset_name + '_')
@@ -318,14 +373,17 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
                 dir_name = osp.dirname(filename)
                 prefix = osp.basename(filename)
                 load_dir = osp.join(dir_name, 'cache')
-                load_file = osp.join(load_dir, '%s_%03d.npz' % (prefix, num_aug))
+                load_file = osp.join(load_dir,
+                                     '%s_%03d.npz' % (prefix, num_aug))
                 if not osp.isdir(load_dir):
                     os.makedirs(load_dir, exist_ok=True)
                 if osp.exists(load_file):
                     continue
                 else:
-                    MeshPrepare(raw_file=path, num_aug=self.num_aug, aug_slide_verts=self.slide_verts,
-                                aug_scale_verts=self.scale_verts, aug_flip_edges=self.flip_edges,
+                    MeshPrepare(raw_file=path, num_aug=self.num_aug,
+                                aug_slide_verts=self.slide_verts,
+                                aug_scale_verts=self.scale_verts,
+                                aug_flip_edges=self.flip_edges,
                                 aug_file=load_file)
 
     def len(self):
@@ -337,8 +395,10 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         label = pad(label, self.n_input_edges, val=-1, dim=0)
         soft_label = self.read_sseg(self.sseg_paths[idx])
         soft_label = pad(soft_label, self.n_input_edges, val=-1, dim=0)
-        mesh_data = MeshPrepare(raw_file=path, num_aug=self.num_aug, aug_slide_verts=self.slide_verts,
-                                aug_scale_verts=self.scale_verts, aug_flip_edges=self.flip_edges).mesh_data
+        mesh_data = MeshPrepare(raw_file=path, num_aug=self.num_aug,
+                                aug_slide_verts=self.slide_verts,
+                                aug_scale_verts=self.scale_verts,
+                                aug_flip_edges=self.flip_edges).mesh_data
         mesh_data.label = label
         mesh_data.soft_label = soft_label
 
@@ -347,4 +407,3 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         mesh_data.features = pad(mesh_data.features, self.n_input_edges)
         mesh_data.features = (mesh_data.features - self.mean) / self.std
         return mesh_data
-

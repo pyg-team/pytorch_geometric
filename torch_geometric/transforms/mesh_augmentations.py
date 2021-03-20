@@ -24,11 +24,13 @@ def flip_edges(vs, faces, prct):
             edge_info = edge_faces[edge_key]
             if edge_info[3] == -1:
                 continue
-            new_edge = tuple(sorted(list(set(faces[edge_info[2]]) ^ set(faces[edge_info[3]]))))
+            new_edge = tuple(sorted(
+                list(set(faces[edge_info[2]]) ^ set(faces[edge_info[3]]))))
             if new_edge in edges_dict:
                 continue
             new_faces = np.array(
-                [[edge_info[1], new_edge[0], new_edge[1]], [edge_info[0], new_edge[0], new_edge[1]]])
+                [[edge_info[1], new_edge[0], new_edge[1]],
+                 [edge_info[0], new_edge[0], new_edge[1]]])
             if check_area(vs, new_faces):
                 del edges_dict[(edge_info[0], edge_info[1])]
                 edge_info[:2] = [new_edge[0], new_edge[1]]
@@ -38,11 +40,13 @@ def flip_edges(vs, faces, prct):
                 for i, face_id in enumerate([edge_info[2], edge_info[3]]):
                     cur_face = faces[face_id]
                     for j in range(3):
-                        cur_edge = tuple(sorted((cur_face[j], cur_face[(j + 1) % 3])))
+                        cur_edge = tuple(
+                            sorted((cur_face[j], cur_face[(j + 1) % 3])))
                         if cur_edge != new_edge:
                             cur_edge_key = edges_dict[cur_edge]
                             for idx, face_nb in enumerate(
-                                    [edge_faces[cur_edge_key, 2], edge_faces[cur_edge_key, 3]]):
+                                    [edge_faces[cur_edge_key, 2],
+                                     edge_faces[cur_edge_key, 3]]):
                                 if face_nb == edge_info[2 + (i + 1) % 2]:
                                     edge_faces[cur_edge_key, 2 + idx] = face_id
                 flipped += 1
@@ -71,10 +75,13 @@ def get_edge_faces(faces):
 def angles_from_faces(vs, edge_faces, faces):
     normals = [None, None]
     for i in range(2):
-        edge_a = vs[faces[edge_faces[:, i], 2]] - vs[faces[edge_faces[:, i], 1]]
-        edge_b = vs[faces[edge_faces[:, i], 1]] - vs[faces[edge_faces[:, i], 0]]
+        edge_a = vs[faces[edge_faces[:, i], 2]] - vs[
+            faces[edge_faces[:, i], 1]]
+        edge_b = vs[faces[edge_faces[:, i], 1]] - vs[
+            faces[edge_faces[:, i], 0]]
         normals[i] = np.cross(edge_a, edge_b)
-        div = fixed_division(np.linalg.norm(normals[i], ord=2, axis=1), epsilon=0)
+        div = fixed_division(np.linalg.norm(normals[i], ord=2, axis=1),
+                             epsilon=0)
         normals[i] /= div[:, np.newaxis]
     dot = np.sum(normals[0] * normals[1], axis=1).clip(-1, 1)
     angles = np.pi - np.arccos(dot)

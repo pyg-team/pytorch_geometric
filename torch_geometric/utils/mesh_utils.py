@@ -3,8 +3,10 @@ import numpy as np
 
 def get_edge_points(edges, edge_indexes, edges_count):
     """ returns: edge_points (#E x 4) tensor, with four vertex ids per edge
-        for example: edge_points[edge_id, 0] and edge_points[edge_id, 1] are the two vertices which define edge_id
-        each adjacent face to edge_id has another vertex, which is edge_points[edge_id, 2] or edge_points[edge_id, 3]
+        for example: edge_points[edge_id, 0] and edge_points[edge_id, 1] are
+        the two vertices which define edge_id each adjacent face to edge_id has
+        another vertex, which is edge_points[edge_id, 2] or
+        edge_points[edge_id, 3]
     """
     edge_points = np.zeros([edges_count, 4], dtype=np.int32)
     for edge_id, edge in enumerate(edges):
@@ -14,7 +16,7 @@ def get_edge_points(edges, edge_indexes, edges_count):
 
 def get_side_points(mesh_edges, mesh_edge_indexes, edge_id):
     edge_a = mesh_edges[edge_id]
-    edge_id_pyg = edge_id*5
+    edge_id_pyg = edge_id * 5
 
     if mesh_edge_indexes[0, edge_id_pyg + 1] == -1:
         edge_b = mesh_edges[mesh_edge_indexes[0, edge_id_pyg + 3]]
@@ -38,7 +40,8 @@ def get_side_points(mesh_edges, mesh_edge_indexes, edge_id):
         second_vertex = 1
     if edge_d[1] in edge_e:
         third_vertex = 1
-    return [edge_a[first_vertex], edge_a[1 - first_vertex], edge_b[second_vertex], edge_d[third_vertex]]
+    return [edge_a[first_vertex], edge_a[1 - first_vertex],
+            edge_b[second_vertex], edge_d[third_vertex]]
 
 
 def fixed_division(to_div, epsilon):
@@ -47,5 +50,3 @@ def fixed_division(to_div, epsilon):
     else:
         to_div += epsilon
     return to_div
-
-

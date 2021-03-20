@@ -4,19 +4,25 @@ from torch.nn import ConstantPad2d
 
 class MeshUnion:
     r"""This class is a utility class for Mesh pooling operation from
-    `"MeshCNN: A Network with an Edge" <https://arxiv.org/abs/1809.05910>`_ paper
-    This class implements Mesh Union operation which merges edge features by making an average feature vector:
+    `"MeshCNN: A Network with an Edge" <https://arxiv.org/abs/1809.05910>`_
+    paper.
+    This class implements Mesh Union operation which merges edge features by
+    making an average feature vector:
     :math::
-        `\mathbf{(p)_i} = \mathbf{avg}\left ( \mathbf(a)_i, \mathbf(b)_i, \mathbf(e)_i  \right )`
-    While  math: `\mathbf(a), \mathbf(b), \mathbf(e)` are the three edges which are merged to the
-    new edge math: `\mathbf(p)`. :math:`\mathbf{i}` represents the feature channel index.
+    `\mathbf{(p)_i} = \mathbf{avg}\left ( \mathbf(a)_i, \mathbf(b)_i,
+                                          \mathbf(e)_i  \right )`
+    While  math: `\mathbf(a), \mathbf(b), \mathbf(e)` are the three edges which
+    are merged to the
+    new edge math: `\mathbf(p)`. :math:`\mathbf{i}` represents the feature
+    channel index.
 
     Args:
         n (int): total number of edges in the mesh structure.
-        device (torch.device, optional):  the device on which a torch.Tensor is or will be allocated (default: `cpu`)
+        device (torch.device, optional):  the device on which a torch.Tensor is
+        or will be allocated (default: `cpu`)
     """
 
-    def __init__(self, n : int, device=torch.device('cpu')):
+    def __init__(self, n: int, device=torch.device('cpu')):
         self.__size = n
         self.rebuild_features = self.rebuild_features_average
         self.groups = torch.eye(n, device=device)
@@ -50,7 +56,8 @@ class MeshUnion:
 
     def prepare_groups(self, features, mask):
         tensor_mask = torch.from_numpy(mask)
-        self.groups = torch.clamp(self.groups[tensor_mask, :], 0, 1).transpose_(1, 0)
+        self.groups = torch.clamp(self.groups[tensor_mask, :], 0,
+                                  1).transpose_(1, 0)
         padding_a = features.shape[1] - self.groups.shape[0]
         if padding_a > 0:
             padding_a = ConstantPad2d((0, 0, 0, padding_a), 0)

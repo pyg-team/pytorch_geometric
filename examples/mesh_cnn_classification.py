@@ -3,14 +3,17 @@ from os.path import join
 import argparse
 import torch
 from torch_geometric.datasets.mesh_cnn_dataloader import MeshDataLoader
-from torch_geometric.datasets.mesh_cnn_datasets import (MeshShrech16Dataset, MeshCubesDataset)
-from torch_geometric.nn.models.mesh_models import (define_classifier, define_loss, get_scheduler)
+from torch_geometric.datasets.mesh_cnn_datasets import MeshShrech16Dataset, \
+    MeshCubesDataset
+from torch_geometric.nn.models.mesh_models import define_classifier, \
+    define_loss, get_scheduler
 import time
 
 
 class MeshCNNClassification:
-    r"""This class is an example of MeshCNN use for classification task as described in the paper: `"MeshCNN: A Network
-    with an Edge" <https://arxiv.org/abs/1809.05910>`_ paper
+    r"""This class is an example of MeshCNN use for classification task as
+    described in the paper: `"MeshCNN: A Network with an Edge"
+    <https://arxiv.org/abs/1809.05910>`_ paper
     Args:
         gpu_ids (int, list): GPU IDs to use in the dataloader.
         is_train (bool): `True` if this is a trainig phase, `False` otherwise.
@@ -20,21 +23,28 @@ class MeshCNNClassification:
         input_nc (int): number of channels in the edge features data.
         ncf (list of ints): number of convolution filters list.
         ninput_edges (int): number of input edges.
-        continue_train (bool, optional): If `True` - will continue the training phase from a specific epoch
-                                        ('which_epoch') in 'checkpoints_dir'. Default is `False` - which means train
-                                        from scratch.
-        which_epoch (str, optional): If continue_train set to `True` - it will use saved network weights from this
-                                     epoch. Default is 'latest'.
-        export_folder (str, optional): an export folder to create intermediate results for visualization. Default is an
+        continue_train (bool, optional): If `True` - will continue the training
+                                         phase from a specific epoch ('which_
+                                         epoch') in 'checkpoints_dir'. Default
+                                         is `False` - which means train from
+                                         scratch.
+        which_epoch (str, optional): If continue_train set to `True` - it will
+                                     use saved network weights from this epoch.
+                                     Default is 'latest'.
+        export_folder (str, optional): an export folder to create intermediate
+                                       results for visualization. Default is an
                                        empty path which means no data export.
     """
-    def __init__(self, gpu_ids, is_train, checkpoints_dir, name, nclasses, input_nc, ncf, ninput_edges,
+
+    def __init__(self, gpu_ids, is_train, checkpoints_dir, name, nclasses,
+                 input_nc, ncf, ninput_edges,
                  continue_train=False, which_epoch='latest', export_folder=''):
         super(MeshCNNClassification, self).__init__()
         self.gpu_ids = gpu_ids
         self.is_train = is_train
         self.continue_train = continue_train
-        self.device = torch.device('cuda:{}'.format(self.gpu_ids[0])) if self.gpu_ids else torch.device('cpu')
+        self.device = torch.device('cuda:{}'.format(
+            self.gpu_ids[0])) if self.gpu_ids else torch.device('cpu')
         self.save_dir = join(checkpoints_dir, name)
 
         if not os.path.exists(checkpoints_dir):
@@ -54,16 +64,23 @@ class MeshCNNClassification:
         self.nclasses = nclasses
 
         # load/define network
-        self.net = define_classifier(input_nc, ncf, ninput_edges, nclasses, norm_type='group', num_groups=16,
-                                     resblocks=1, pool_res=[600, 450, 300, 180],
-                                     fc_n=100, gpu_ids=gpu_ids, arch='mconvnet', init_type='normal', init_gain=0.02)
+        self.net = define_classifier(input_nc, ncf, ninput_edges, nclasses,
+                                     norm_type='group', num_groups=16,
+                                     resblocks=1,
+                                     pool_res=[600, 450, 300, 180],
+                                     fc_n=100, gpu_ids=gpu_ids,
+                                     arch='mconvnet', init_type='normal',
+                                     init_gain=0.02)
 
         self.net.train(self.is_train)
-        self.criterion = define_loss(dataset_mode='classification').to(self.device)
+        self.criterion = define_loss(dataset_mode='classification').to(
+            self.device)
 
         if self.is_train:
-            self.optimizer = torch.optim.Adam(self.net.parameters(), lr=0.0002, betas=(0.9, 0.999))
-            self.scheduler = get_scheduler(self.optimizer, lr_policy='lambda', epoch_count=1, niter=100,
+            self.optimizer = torch.optim.Adam(self.net.parameters(), lr=0.0002,
+                                              betas=(0.9, 0.999))
+            self.scheduler = get_scheduler(self.optimizer, lr_policy='lambda',
+                                           epoch_count=1, niter=100,
                                            niter_decay=100)
 
         if not self.is_train or self.continue_train:
@@ -98,8 +115,9 @@ class MeshCNNClassification:
             self.forward_backward(data)
             epoch_iter += dataloader.batch_size
             t = (time.time() - iter_start_time) / dataloader.batch_size
-            message = '(epoch: %d, iters: %d, time: %.3f, data: %.3f) loss: %.3f ' \
-                      % (epoch, epoch_iter, t, t_data, self.loss.item())
+            message = \
+                '(epoch: %d, iters: %d, time: %.3f, data: %.3f) loss: %.3f ' \
+                % (epoch, epoch_iter, t, t_data, self.loss.item())
             print(message)
             iter_data_time = time.time()
 
@@ -154,23 +172,36 @@ class MeshCNNClassification:
 
 
 def make_parser():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--data_root', type=str, required=True, help='path to save data')
-    parser.add_argument('--dataset_name', type=str, required=True, help='dataset name [shrec16|cubes]')
-    parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')
-    parser.add_argument('--num_aug', type=int, default=20, help='# of augmentation files')
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--data_root', type=str, required=True,
+                        help='path to save data')
+    parser.add_argument('--dataset_name', type=str, required=True,
+                        help='dataset name [shrec16|cubes]')
+    parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints',
+                        help='models are saved here')
+    parser.add_argument('--num_aug', type=int, default=20,
+                        help='# of augmentation files')
     parser.add_argument('--scale_verts', type=bool, default=False,
                         help='non-uniformly scale the mesh e.g., in x, y or z')
     parser.add_argument('--slide_verts', type=float, default=0.2,
-                        help='percent vertices which will be shifted along the mesh surface')
-    parser.add_argument('--flip_edges', type=float, default=0.2, help='percent of edges to randomly flip')
-    parser.add_argument('--n_input_edges', type=int, default=750, help='# of input edges (will include dummy edges)')
-    parser.add_argument('--batch_size', type=int, default=16, help='input batch size')
+                        help='percent vertices which will be shifted along the'
+                             ' mesh surface')
+    parser.add_argument('--flip_edges', type=float, default=0.2,
+                        help='percent of edges to randomly flip')
+    parser.add_argument('--n_input_edges', type=int, default=750,
+                        help='# of input edges (will include dummy edges)')
+    parser.add_argument('--batch_size', type=int, default=16,
+                        help='input batch size')
     parser.add_argument('--data_shuffle', type=bool, default=True,
-                        help='if true, takes meshes in order, otherwise takes them randomly')
-    parser.add_argument('--max_epochs', type=int, default=200, help='max number of epochs')
-    parser.add_argument('--gpu_ids', type=int, default=[0], help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
-    parser.add_argument('--export_folder', type=str, default='', help='exports intermediate collapses to this folder')
+                        help='if true, takes meshes in order, otherwise takes '
+                             'them randomly')
+    parser.add_argument('--max_epochs', type=int, default=200,
+                        help='max number of epochs')
+    parser.add_argument('--gpu_ids', type=int, default=[0],
+                        help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
+    parser.add_argument('--export_folder', type=str, default='',
+                        help='exports intermediate collapses to this folder')
     return parser
 
 
@@ -181,40 +212,57 @@ def main():
 
     # load train and test datasets:
     if args.dataset_name == 'shrec16':
-        train_dataset = MeshShrech16Dataset(root=args.data_root, phase='train', num_aug=args.num_aug,
-                                            slide_verts=args.slide_verts, scale_verts=args.scale_verts,
+        train_dataset = MeshShrech16Dataset(root=args.data_root, phase='train',
+                                            num_aug=args.num_aug,
+                                            slide_verts=args.slide_verts,
+                                            scale_verts=args.scale_verts,
                                             flip_edges=args.flip_edges)
 
-        test_dataset = MeshShrech16Dataset(root=args.data_root, phase='test', num_aug=1)
+        test_dataset = MeshShrech16Dataset(root=args.data_root, phase='test',
+                                           num_aug=1)
 
     elif args.dataset_name == 'cubes':
-        train_dataset = MeshCubesDataset(root=args.data_root, phase='train', num_aug=args.num_aug,
-                                         slide_verts=args.slide_verts, scale_verts=args.scale_verts,
+        train_dataset = MeshCubesDataset(root=args.data_root, phase='train',
+                                         num_aug=args.num_aug,
+                                         slide_verts=args.slide_verts,
+                                         scale_verts=args.scale_verts,
                                          flip_edges=args.flip_edges)
 
-        test_dataset = MeshCubesDataset(root=args.data_root, phase='test', num_aug=1)
+        test_dataset = MeshCubesDataset(root=args.data_root, phase='test',
+                                        num_aug=1)
 
     # create mesh dataloader:
-    train_data_loader = MeshDataLoader(mesh_dataset=train_dataset, data_set_type='classification', phase='train',
-                                       gpu_ids=args.gpu_ids, batch_size=args.batch_size, shuffle=args.data_shuffle,
+    train_data_loader = MeshDataLoader(mesh_dataset=train_dataset,
+                                       data_set_type='classification',
+                                       phase='train',
+                                       gpu_ids=args.gpu_ids,
+                                       batch_size=args.batch_size,
+                                       shuffle=args.data_shuffle,
                                        hold_history=False)
-    test_data_loader = MeshDataLoader(mesh_dataset=test_dataset, data_set_type='classification', phase='test',
-                                      gpu_ids=args.gpu_ids, batch_size=args.batch_size, shuffle=False,
+    test_data_loader = MeshDataLoader(mesh_dataset=test_dataset,
+                                      data_set_type='classification',
+                                      phase='test',
+                                      gpu_ids=args.gpu_ids,
+                                      batch_size=args.batch_size,
+                                      shuffle=False,
                                       hold_history=False)
 
-    model = MeshCNNClassification(gpu_ids=args.gpu_ids, is_train=True, checkpoints_dir=args.checkpoints_dir,
-                                  name='MeshCNNClassExample', nclasses=train_data_loader.n_classes,
-                                  input_nc=train_data_loader.n_input_channels, ncf=[64, 128, 256, 256],
+    model = MeshCNNClassification(gpu_ids=args.gpu_ids, is_train=True,
+                                  checkpoints_dir=args.checkpoints_dir,
+                                  name='MeshCNNClassExample',
+                                  nclasses=train_data_loader.n_classes,
+                                  input_nc=train_data_loader.n_input_channels,
+                                  ncf=[64, 128, 256, 256],
                                   ninput_edges=args.n_input_edges)
 
     # train and test model:
-    for epoch in range(1, args.max_epochs+1):
+    for epoch in range(1, args.max_epochs + 1):
         model.train(train_data_loader, epoch, args.max_epochs)
         test_acc = model.test(test_data_loader)
-        message = 'epoch: {}, TEST ACC: [{:.5} %]\n'.format(epoch, test_acc * 100)
+        message = 'epoch: {}, TEST ACC: [{:.5} %]\n'.format(epoch,
+                                                            test_acc * 100)
         print(message)
 
 
 if __name__ == '__main__':
     main()
-

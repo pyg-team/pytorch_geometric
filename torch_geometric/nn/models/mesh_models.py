@@ -19,11 +19,13 @@ def get_norm_layer(norm_type='instance', num_groups=1):
     elif norm_type == 'instance':
         norm_layer = functools.partial(nn.InstanceNorm2d, affine=False)
     elif norm_type == 'group':
-        norm_layer = functools.partial(nn.GroupNorm, affine=True, num_groups=num_groups)
+        norm_layer = functools.partial(nn.GroupNorm, affine=True,
+                                       num_groups=num_groups)
     elif norm_type == 'none':
         norm_layer = NoNorm
     else:
-        raise NotImplementedError('normalization layer [%s] is not found' % norm_type)
+        raise NotImplementedError(
+            'normalization layer [%s] is not found' % norm_type)
     return norm_layer
 
 
@@ -35,7 +37,8 @@ def get_norm_args(norm_layer, nfeats_list):
     elif norm_layer.func.__name__ == 'BatchNorm':
         norm_args = [{'num_features': f} for f in nfeats_list]
     else:
-        raise NotImplementedError('normalization layer [%s] is not found' % norm_layer.func.__name__)
+        raise NotImplementedError(
+            'normalization layer [%s] is not found' % norm_layer.func.__name__)
     return norm_args
 
 
@@ -51,25 +54,34 @@ class NoNorm(nn.Module):
         return self.forward(x)
 
 
-def get_scheduler(optimizer, lr_policy, lr_decay_iters=0, epoch_count=0, niter=0, niter_decay=0):
+def get_scheduler(optimizer, lr_policy, lr_decay_iters=0, epoch_count=0,
+                  niter=0, niter_decay=0):
     if lr_policy == 'lambda':
         def lambda_rule(epoch):
-            lr_l = 1.0 - max(0, epoch + 1 + epoch_count - niter) / float(niter_decay + 1)
+            lr_l = 1.0 - max(0, epoch + 1 + epoch_count - niter) / float(
+                niter_decay + 1)
             return lr_l
+
         scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda_rule)
     elif lr_policy == 'step':
-        scheduler = lr_scheduler.StepLR(optimizer, step_size=lr_decay_iters, gamma=0.1)
+        scheduler = lr_scheduler.StepLR(optimizer, step_size=lr_decay_iters,
+                                        gamma=0.1)
     elif lr_policy == 'plateau':
-        scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.2, threshold=0.01, patience=5)
+        scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, mode='min',
+                                                   factor=0.2, threshold=0.01,
+                                                   patience=5)
     else:
-        return NotImplementedError('learning rate policy [%s] is not implemented', lr_policy)
+        return NotImplementedError(
+            'learning rate policy [%s] is not implemented', lr_policy)
     return scheduler
 
 
 def init_weights(net, init_type, init_gain):
     def init_func(m):
         classname = m.__class__.__name__
-        if hasattr(m, 'weight') and (classname.find('Conv') != -1 or classname.find('Linear') != -1):
+        if hasattr(m, 'weight') and (
+                classname.find('Conv') != -1 or classname.find(
+                'Linear') != -1):
             if init_type == 'normal':
                 init.normal_(m.weight.data, 0.0, init_gain)
             elif init_type == 'xavier':
@@ -79,16 +91,19 @@ def init_weights(net, init_type, init_gain):
             elif init_type == 'orthogonal':
                 init.orthogonal_(m.weight.data, gain=init_gain)
             else:
-                raise NotImplementedError('initialization method [%s] is not implemented' % init_type)
+                raise NotImplementedError(
+                    'initialization method [%s] is not implemented'
+                    % init_type)
         elif classname.find('BatchNorm2d') != -1:
             init.normal_(m.weight.data, 1.0, init_gain)
             init.constant_(m.bias.data, 0.0)
+
     net.apply(init_func)
 
 
 def init_net(net, init_type, init_gain, gpu_ids):
     if len(gpu_ids) > 0:
-        assert(torch.cuda.is_available())
+        assert (torch.cuda.is_available())
         net.cuda(gpu_ids[0])
         net = net.cuda()
         net = torch.nn.DataParallel(net, gpu_ids)
@@ -97,20 +112,24 @@ def init_net(net, init_type, init_gain, gpu_ids):
     return net
 
 
-def define_classifier(input_nc, ncf, ninput_edges, nclasses, norm_type, num_groups, resblocks, pool_res, fc_n, gpu_ids,
+def define_classifier(input_nc, ncf, ninput_edges, nclasses, norm_type,
+                      num_groups, resblocks, pool_res, fc_n, gpu_ids,
                       arch, init_type, init_gain):
     net = None
     norm_layer = get_norm_layer(norm_type=norm_type, num_groups=num_groups)
 
     if arch == 'mconvnet':
-        net = MeshConvNet(norm_layer, input_nc, ncf, nclasses, ninput_edges, pool_res, fc_n, resblocks)
+        net = MeshConvNet(norm_layer, input_nc, ncf, nclasses, ninput_edges,
+                          pool_res, fc_n, resblocks)
     elif arch == 'meshunet':
         down_convs = [input_nc] + ncf
         up_convs = ncf[::-1] + [nclasses]
         pool_res = [ninput_edges] + pool_res
-        net = MeshEncoderDecoder(pool_res, down_convs, up_convs, blocks=resblocks, transfer_data=True)
+        net = MeshEncoderDecoder(pool_res, down_convs, up_convs,
+                                 blocks=resblocks, transfer_data=True)
     else:
-        raise NotImplementedError('Encoder model name [%s] is not recognized' % arch)
+        raise NotImplementedError(
+            'Encoder model name [%s] is not recognized' % arch)
     return init_net(net, init_type, init_gain, gpu_ids)
 
 
@@ -121,6 +140,7 @@ def define_loss(dataset_mode):
         loss = torch.nn.CrossEntropyLoss(ignore_index=-1)
     return loss
 
+
 ##############################################################################
 # Classes For Classification / Segmentation Networks
 ##############################################################################
@@ -129,14 +149,17 @@ def define_loss(dataset_mode):
 class MeshConvNet(nn.Module):
     """Network for learning a global shape descriptor (classification)
     """
-    def __init__(self, norm_layer, nf0, conv_res, nclasses, input_res, pool_res, fc_n, nresblocks=3):
+
+    def __init__(self, norm_layer, nf0, conv_res, nclasses, input_res,
+                 pool_res, fc_n, nresblocks=3):
         super(MeshConvNet, self).__init__()
         self.k = [nf0] + conv_res
         self.res = [input_res] + pool_res
         norm_args = get_norm_args(norm_layer, self.k[1:])
 
         for i, ki in enumerate(self.k[:-1]):
-            setattr(self, 'conv{}'.format(i), MResConv(ki, self.k[i + 1], nresblocks))
+            setattr(self, 'conv{}'.format(i),
+                    MResConv(ki, self.k[i + 1], nresblocks))
             setattr(self, 'norm{}'.format(i), norm_layer(**norm_args[i]))
             setattr(self, 'pool{}'.format(i), MeshPool(self.res[i + 1]))
 
@@ -166,7 +189,8 @@ class MResConv(nn.Module):
         self.skips = skips
         self.conv0 = MeshConv(self.in_channels, self.out_channels, bias=False)
         for i in range(self.skips):
-            setattr(self, 'bn{}'.format(i + 1), nn.BatchNorm2d(self.out_channels))
+            setattr(self, 'bn{}'.format(i + 1),
+                    nn.BatchNorm2d(self.out_channels))
             setattr(self, 'conv{}'.format(i + 1),
                     MeshConv(self.out_channels, self.out_channels, bias=False))
 
@@ -185,13 +209,16 @@ class MResConv(nn.Module):
 class MeshEncoderDecoder(nn.Module):
     """Network for fully-convolutional tasks (segmentation)
     """
-    def __init__(self, pools, down_convs, up_convs, blocks=0, transfer_data=True):
+
+    def __init__(self, pools, down_convs, up_convs, blocks=0,
+                 transfer_data=True):
         super(MeshEncoderDecoder, self).__init__()
         self.transfer_data = transfer_data
         self.encoder = MeshEncoder(pools, down_convs, blocks=blocks)
         unrolls = pools[:-1].copy()
         unrolls.reverse()
-        self.decoder = MeshDecoder(unrolls, up_convs, blocks=blocks, transfer_data=transfer_data)
+        self.decoder = MeshDecoder(unrolls, up_convs, blocks=blocks,
+                                   transfer_data=transfer_data)
 
     def forward(self, edge_features, meshes):
         fe, before_pool, meshes = self.encoder((edge_features, meshes))
@@ -245,7 +272,8 @@ class MeshDownConv(nn.Module):
 
 
 class MeshUpConv(nn.Module):
-    def __init__(self, in_channels, out_channels, blocks=0, unroll=0, residual=True,
+    def __init__(self, in_channels, out_channels, blocks=0, unroll=0,
+                 residual=True,
                  batch_norm=True, transfer_data=True):
         super(MeshUpConv, self).__init__()
         self.residual = residual
@@ -279,7 +307,8 @@ class MeshUpConv(nn.Module):
             x1 = self.unroll(x1, meshes)  # meshes updated as well
         if self.transfer_data:
             x1 = torch.cat((x1, from_down), 1)
-        edge_index = get_meshes_edge_index(meshes)  # get updated edge index from updated meshes
+        edge_index = get_meshes_edge_index(
+            meshes)  # get updated edge index from updated meshes
         x1 = self.conv1(x1, edge_index)
         if self.bn:
             x1 = self.bn[0](x1)
@@ -307,7 +336,8 @@ class MeshEncoder(nn.Module):
                 pool = pools[i + 1]
             else:
                 pool = 0
-            self.convs.append(MeshDownConv(convs[i], convs[i + 1], blocks=blocks, pool=pool))
+            self.convs.append(
+                MeshDownConv(convs[i], convs[i + 1], blocks=blocks, pool=pool))
         self.global_pool = None
         if fcs is not None:
             self.fcs = []
@@ -357,7 +387,8 @@ class MeshEncoder(nn.Module):
 
 
 class MeshDecoder(nn.Module):
-    def __init__(self, unrolls, convs, blocks=0, batch_norm=True, transfer_data=True):
+    def __init__(self, unrolls, convs, blocks=0, batch_norm=True,
+                 transfer_data=True):
         super(MeshDecoder, self).__init__()
         self.up_convs = []
         for i in range(len(convs) - 2):
@@ -365,10 +396,14 @@ class MeshDecoder(nn.Module):
                 unroll = unrolls[i]
             else:
                 unroll = 0
-            self.up_convs.append(MeshUpConv(convs[i], convs[i + 1], blocks=blocks, unroll=unroll,
-                                           batch_norm=batch_norm, transfer_data=transfer_data))
-        self.final_conv = MeshUpConv(convs[-2], convs[-1], blocks=blocks, unroll=False,
-                                    batch_norm=batch_norm, transfer_data=False)
+            self.up_convs.append(
+                MeshUpConv(convs[i], convs[i + 1], blocks=blocks,
+                           unroll=unroll,
+                           batch_norm=batch_norm, transfer_data=transfer_data))
+        self.final_conv = MeshUpConv(convs[-2], convs[-1], blocks=blocks,
+                                     unroll=False,
+                                     batch_norm=batch_norm,
+                                     transfer_data=False)
         self.up_convs = nn.ModuleList(self.up_convs)
         reset_params(self)
 
@@ -377,7 +412,7 @@ class MeshDecoder(nn.Module):
         for i, up_conv in enumerate(self.up_convs):
             before_pool = None
             if encoder_outs is not None:
-                before_pool = encoder_outs[-(i+2)]
+                before_pool = encoder_outs[-(i + 2)]
             fe, meshes = up_conv((fe, meshes), before_pool)
         fe, meshes = self.final_conv((fe, meshes))
         return fe
