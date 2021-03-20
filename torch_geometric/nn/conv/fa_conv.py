@@ -22,7 +22,7 @@ class FAConv(MessagePassing):
         \mathbf{x}_{j})
 
     Where :math:`\mathbf{x}_0` is the initial feature representation. and
-    :math:`\phi` is some activation function.
+    :math:`\phi` is an activation function.
     And the coefficients :math:`\alpha_{i,j}` are computed as.
 
     .. math::
@@ -35,8 +35,8 @@ class FAConv(MessagePassing):
         raw_in_channels (int): Size of initial input sample :math:`x_0`.
         phi (torch.nn.Module, optinal): Activation function :math:`\phi`.
             (default: :obj:`LeakyReLU()`).
-        epsilon (float, optional): Strenth of intial features
-                :math:`\varepsilon`. (default: :obj:`0.1`).
+        epsilon (float, optional): A value between 0-1 which denotes strength
+            of intial features :math:`\varepsilon`. (default: :obj:`0.1`).
         dropout (float, optional): Dropout probability of the normalized
             coefficients which exposes each node to a stochastically
             sampled neighborhood during training. (default: :obj:`0`).
