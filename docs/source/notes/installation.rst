@@ -176,3 +176,9 @@ Frequently Asked Questions
 
 #. On macOS: ``The version of the host compiler ('Apple clang') is not supported``: Downgrade your command line tools (see `this StackOverflow thread <https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116>`_) with the respective version annotated in the `CUDA Installation Guide for Mac <https://developer.download.nvidia.com/compute/cuda/10.1/Prod/docs/sidebar/CUDA_Installation_Guide_Mac.pdf>`_ (Section 1.1) for your specific CUDA version.
    You can download previous command line tool versions `here <https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Fdownload%2Fmore%2F&rv=1>`_.
+
+#. On Linux: ``nvcc fatal   : Path to libdevice library not specified`` appears even if ``LD_LIBRARY_PATH`` and ``CPATH`` are set correctly. The library will be found if ``$CUDA_HOME`` is defined:
+
+    .. code-block:: none
+    
+        $ export CUDA_HOME=/usr/local/cuda
