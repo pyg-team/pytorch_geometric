@@ -43,7 +43,10 @@ class FAConv(MessagePassing):
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add root node features to the output.
             (default: :obj:`True`)
-        normalize (bool, optional): Whether to add self-loops and compute
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
+        normalize (bool, optional): Whether to add self-loops (if
+            :obj:`add_self_loops` is :obj:`True`) and compute
             symmetric normalization coefficients on the fly.
             (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
