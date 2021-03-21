@@ -103,8 +103,10 @@ class NNConv(MessagePassing):
         return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
 
     def __repr__(self):
-        return '{}({}, {}, {}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels, self.aggr, self.nn)
+        return '{}({}, {}, aggr="{}", nn={})'.format(self.__class__.__name__,
+                                                     self.in_channels,
+                                                     self.out_channels,
+                                                     self.aggr, self.nn)
 
 
 ECConv = NNConv
