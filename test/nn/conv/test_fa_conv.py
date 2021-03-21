@@ -1,21 +1,54 @@
 import torch
-from torch.nn import ReLU
+from torch_sparse import SparseTensor
 from torch_geometric.nn import FAConv
 
 
 def test_fa_conv():
-    faconv = FAConv(2, 5, raw_in_channels=4, add_self_loops=False, phi=ReLU())
-    x_0 = torch.rand(3, 4)
-    x = torch.rand(3, 2)
-    edge_index = torch.tensor([[0, 1], [1, 0], [0, 2], [2, 1]]).T
+    x = torch.randn(4, 16)
+    x_0 = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    x = faconv(x, edge_index, x_0=x_0, return_coeff=False)
-    assert x.shape == (3, 5)
-    assert faconv.__repr__(
-    ) == 'FAConv(2, 5 , 4, phi=ReLU(), dropout=0.0, add_self_loops=False)'
+    conv = FAConv(16, eps=1.0)
+    assert conv.__repr__() == 'FAConv(16, eps=1.0)'
+    out = conv(x, x_0, edge_index)
+    assert out.size() == (4, 16)
+    assert torch.allclose(conv(x, x_0, adj.t()), out, atol=1e-6)
 
-    x = torch.rand(3, 2)
-    x, (edge_index_ret, edge_weight) = faconv(x, edge_index, x_0=x_0,
-                                              return_coeff=True)
-    assert edge_index_ret.tolist() == edge_index.tolist()
-    assert torch.logical_and(edge_weight < 1, edge_weight > -1).all()
+    t = '(Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit(x, x_0, edge_index).tolist() == out.tolist()
+
+    t = '(Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert torch.allclose(jit(x, x_0, adj.t()), out, atol=1e-6)
+
+    # Test `return_attention_weights`.
+    result = conv(x, x_0, edge_index, return_attention_weights=True)
+    assert result[0].tolist() == out.tolist()
+    assert result[1][0].size() == (2, 10)
+    assert result[1][1].size() == (10, )
+    assert conv._alpha is None
+
+    result = conv(x, x_0, adj.t(), return_attention_weights=True)
+    assert torch.allclose(result[0], out, atol=1e-6)
+    assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
+    assert conv._alpha is None
+
+    t = ('(Tensor, Tensor, Tensor, OptTensor, bool) '
+         '-> Tuple[Tensor, Tuple[Tensor, Tensor]]')
+    jit = torch.jit.script(conv.jittable(t))
+    result = jit(x, x_0, edge_index, return_attention_weights=True)
+    assert result[0].tolist() == out.tolist()
+    assert result[1][0].size() == (2, 10)
+    assert result[1][1].size() == (10, )
+    assert conv._alpha is None
+
+    t = ('(Tensor, Tensor, SparseTensor, OptTensor, bool) '
+         '-> Tuple[Tensor, SparseTensor]')
+    jit = torch.jit.script(conv.jittable(t))
+    result = jit(x, x_0, adj.t(), return_attention_weights=True)
+    assert torch.allclose(result[0], out, atol=1e-6)
+    assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
+    assert conv._alpha is None
