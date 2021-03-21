@@ -40,8 +40,9 @@ class FAConv(MessagePassing):
             will use the cached version for further executions.
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`True`)
+        root_weight (bool, optional): If set to :obj:`False`, the layer will
+            not add root node features to the output.
+            (default: :obj:`True`)
         normalize (bool, optional): Whether to add self-loops and compute
             symmetric normalization coefficients on the fly.
             (default: :obj:`True`)
@@ -54,7 +55,8 @@ class FAConv(MessagePassing):
 
     def __init__(self, channels: int, eps: float = 0.1, dropout: float = 0.0,
                  cached: bool = False, add_self_loops: bool = True,
-                 normalize: bool = True, **kwargs):
+                 root_weight: bool = True, normalize: bool = True,
+                 **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super(FAConv, self).__init__(**kwargs)
@@ -65,7 +67,8 @@ class FAConv(MessagePassing):
         self.cached = cached
         self.add_self_loops = add_self_loops
         self.normalize = normalize
-
+        self.root_weight = root_weight
+        
         self._cached_edge_index = None
         self._cached_adj_t = None
         self._alpha = None
@@ -121,13 +124,15 @@ class FAConv(MessagePassing):
         alpha_r = self.att_r(x)
 
         # propagate_type: (x: Tensor, alpha: PairTensor, edge_weight: OptTensor)  # noqa
+        
         out = self.propagate(edge_index, x=x, alpha=(alpha_l, alpha_r),
                              edge_weight=edge_weight, size=None)
 
         alpha = self._alpha
         self._alpha = None
-
-        out += self.eps * x_0
+        
+        if self.root_weight:
+            out += self.eps * x_0
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
@@ -140,7 +145,8 @@ class FAConv(MessagePassing):
 
     def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: Tensor,
                 edge_weight: OptTensor) -> Tensor:
-        assert edge_weight is not None
+        if edge_weight is None:
+            edge_weight = 1.
         alpha = (alpha_j + alpha_i).tanh().squeeze(-1)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
