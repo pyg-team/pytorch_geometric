@@ -45,7 +45,7 @@ class FAConv(MessagePassing):
         normalize (bool, optional): Whether to add self-loops (if
             :obj:`add_self_loops` is :obj:`True`) and compute
             symmetric normalization coefficients on the fly.
-            In set to :obj:`False`, :obj:`edge_weight` needs to be provided in
+            If set to :obj:`False`, :obj:`edge_weight` needs to be provided in
             the layer's :meth:`forward` method. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
