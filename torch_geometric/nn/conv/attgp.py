@@ -117,7 +117,7 @@ class GatSuperNode(MessagePassing):
         
         # this is not correct it should be more hs and not x_i there based on the paper supplementary table 3!
         # in the paper it's h_s_ex in the pytorch it's x !
-        cs_i = scatter_add( torch.mul(asv, self.mol_attend(self.dropout(h_s_ex))).transpose(0,1), \
+        cs_i = scatter_add( torch.mul(asv, self.mol_attend(self.dropout(x))).transpose(0,1), \
                            batch, dim_size=superatom_num).transpose(0,1)
         
         cs_i = F.elu(cs_i)
