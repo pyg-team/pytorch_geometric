@@ -20,3 +20,5 @@ External Resources
 * Benedek Rozemberczki: **PyTorch Geometric Temporal** - A temporal GNN library built upon PyTorch Geometric [`GitHub <https://github.com/benedekrozemberczki/pytorch_geometric_temporal>`__, `Documentation <https://pytorch-geometric-temporal.readthedocs.io/en/latest/>`__]
 
 * Amitoz Azad: **torch_pdegraph** - Solving PDEs on graphs with PyTorch Geometric [`Devpost <https://devpost.com/software/gdfgddfd>`__, `GitHub <https://github.com/aGIToz/Pytorch_pdegraph>`__]
+
+* Antonio Longa, Gabriele Santin and Giovanni Pellegrini: **PyTorch Geometric Tutorial** [`Website <https://antoniolonga.github.io/Pytorch_geometric_tutorials>`__, `GitHub <https://github.com/AntonioLonga/PytorchGeometricTutorial>`__]

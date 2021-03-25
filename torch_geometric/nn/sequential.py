@@ -14,8 +14,8 @@ class Sequential(torch.nn.Module):
     r"""An extension of the :class:`torch.nn.Sequential` container in order to
     define a sequential GNN model.
     Since GNN operators take in multiple input arguments,
-    :class:`~torch_geometric.nn.Sequential` additionally expects both input and
-    function definitions.
+    :class:`~torch_geometric.nn.Sequential` additionally expects both input
+    argument and function header definitions.
     If omitted, an intermediate module will operate on the *output* of its
     preceding module:
 
