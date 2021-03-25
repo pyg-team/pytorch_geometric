@@ -14,8 +14,8 @@ class Sequential(torch.nn.Module):
     r"""An extension of the :class:`torch.nn.Sequential` container in order to
     define a sequential GNN model.
     Since GNN operators take in multiple input arguments,
-    :class:`~torch_geometric.nn.Sequential` additionally expects both input
-    argument and function header definitions.
+    :class:`torch_geometric.nn.Sequential` expects both global input
+    arguments and function header definitions of individual operators.
     If omitted, an intermediate module will operate on the *output* of its
     preceding module:
 
@@ -36,7 +36,7 @@ class Sequential(torch.nn.Module):
     and ``'x, edge_index -> x'`` defines the function header, *i.e.* input
     arguments *and* return types, of :class:`~torch_geometric.nn.conv.GCNConv`.
 
-    In particular, this also allows the creation of more sophisticated models,
+    In particular, this also allows to create more sophisticated models,
     such as utilizing :class:`~torch_geometric.nn.models.JumpingKnowledge`:
 
     .. code-block:: python
@@ -58,9 +58,9 @@ class Sequential(torch.nn.Module):
         ])
 
     Args:
-        args (str): Input arguments of the output model.
-        modules ([(str, Callable) or Callable]): A list of modules with
-            optional function header definitions.
+        args (str): Global input arguments of the model.
+        modules ([(str, Callable) or Callable]): A list of modules (with
+            optional function header definitions).
     """
     def __init__(self, args: str, modules: List[Union[Tuple[Callable, str],
                                                       Callable]]):
