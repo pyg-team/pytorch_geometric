@@ -30,10 +30,14 @@ class SIGN(object):
         self.K = K
 
     def __call__(self, data):
-        assert data.edge_index is not None
-        row, col = data.edge_index
-        adj_t = SparseTensor(row=col, col=row,
-                             sparse_sizes=(data.num_nodes, data.num_nodes))
+        assert 'edge_index' in data or 'adj_t' in data
+
+        if data.edge_index is not None:
+            row, col = data.edge_index
+            adj_t = SparseTensor(row=col, col=row,
+                                 sparse_sizes=(data.num_nodes, data.num_nodes))
+        else:
+            adj_t = data.adj_t
 
         deg = adj_t.sum(dim=1).to(torch.float)
         deg_inv_sqrt = deg.pow(-0.5)
