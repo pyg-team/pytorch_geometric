@@ -1,3 +1,9 @@
+# match same input of features
+#from Datas import dataloader
+import pandas as pd
+target_list = ['Result0']
+import pickle
+
 import numpy as np
 import rdkit
 from rdkit import Chem
@@ -139,3 +145,53 @@ def getdataloader(datacollection, batch_size=32, shuffle=False,
     train_loader = DataLoader(datacollection, batch_size=batch_size,
                               shuffle=shuffle, drop_last=drop_last)
     return train_loader
+
+
+df = pd.read_csv('../alpha/esol.csv')
+print(df)
+data = datagenerator(df, target_list)
+
+batch_size = 128
+
+train_loader = getdataloader(data, batch_size, shuffle=True, drop_last=False)
+
+for data in train_loader:
+    print(data)
+    print(data.x.shape)
+    break
+
+from torch_geometric.nn.models.attentive_fp import AttentiveFP
+# generate the model architecture
+model = AttentiveFP(in_channels=40, hidden_channels=200, out_channels=1,
+                    edge_dim=10, num_layers=2, dropout=0.2)
+
+# loop over data in a batch
+import time
+import torch
+
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+loss_func = torch.nn.MSELoss()
+
+# train the network
+for t in range(200):
+    start = time.time()
+    epoch_loss = 0
+    count_train = 0
+    for data in train_loader:
+        y = model(data.x, data.edge_index, data.edge_attr, data.batch)
+
+        loss = loss_func(y.squeeze(),
+                         data.y.squeeze())  # must be (1. nn output, 2. target)
+
+        optimizer.zero_grad()  # clear gradients for next train
+        loss.backward()  # backpropagation, compute gradients
+        optimizer.step()  # apply gradients
+        count_train += data.y.size(0)
+
+        with torch.no_grad():
+            epoch_loss += data.num_graphs * loss.item()
+
+        stop = time.time()
+
+        print('epoch', t + 1, ' - train loss:', epoch_loss / count_train,
+              ' - runtime:', stop - start)
