@@ -1,197 +1,149 @@
-# match same input of features
-#from Datas import dataloader
-import pandas as pd
-target_list = ['Result0']
-import pickle
+import os.path as osp
+from math import sqrt
 
-import numpy as np
-import rdkit
+import torch
+import torch.nn.functional as F
 from rdkit import Chem
-from rdkit.Chem import AllChem
-import torch
-from rdkit.Chem import rdMolTransforms, MolFromSmiles
-from torch_geometric.data import Data
-import random
-import numpy as np
-import os
-from tqdm import tqdm
+
 from torch_geometric.data import DataLoader
-from torch_geometric.data import Data
-import pandas as pd
+from torch_geometric.datasets import MoleculeNet
+from torch_geometric.nn.models import AttentiveFP
 
 
-def one_of_k_encoding(x, allowable_set):
-    if x not in allowable_set:
-        raise Exception("input {0} not in allowable set{1}:".format(
-            x, allowable_set))
-    return [x == s for s in allowable_set]
+class GenFeatures(object):
+    def __init__(self):
+        self.symbols = [
+            'B', 'C', 'N', 'O', 'F', 'Si', 'P', 'S', 'Cl', 'As', 'Se', 'Br',
+            'Te', 'I', 'At', 'other'
+        ]
+
+        self.hybridizations = [
+            Chem.rdchem.HybridizationType.SP,
+            Chem.rdchem.HybridizationType.SP2,
+            Chem.rdchem.HybridizationType.SP3,
+            Chem.rdchem.HybridizationType.SP3D,
+            Chem.rdchem.HybridizationType.SP3D2,
+            'other',
+        ]
+
+        self.stereos = [
+            Chem.rdchem.BondStereo.STEREONONE,
+            Chem.rdchem.BondStereo.STEREOANY,
+            Chem.rdchem.BondStereo.STEREOZ,
+            Chem.rdchem.BondStereo.STEREOE,
+        ]
+
+    def __call__(self, data):
+        # Generate AttentiveFP features according to Table 1.
+        mol = Chem.MolFromSmiles(data.smiles)
+
+        xs = []
+        for atom in mol.GetAtoms():
+            symbol = [0.] * len(self.symbols)
+            symbol[self.symbols.index(atom.GetSymbol())] = 1.
+            degree = [0.] * 7
+            degree[atom.GetDegree()] = 1.
+            formal_charge = atom.GetFormalCharge()
+            radical_electrons = atom.GetNumRadicalElectrons()
+            hybridization = [0.] * len(self.hybridizations)
+            hybridization[self.hybridizations.index(
+                atom.GetHybridization())] = 1.
+            aromaticity = 1. if atom.GetIsAromatic() else 0.
+            hydrogens = [0.] * 5
+            hydrogens[atom.GetTotalNumHs()] = 1.
+            chirality = 1. if atom.HasProp('_ChiralityPossible') else 0.
+            chirality_type = [0.] * 2
+            if atom.HasProp('_CIPCode'):
+                chirality_type[['R', 'S'].index(atom.GetProp('_CIPCode'))] = 1.
+
+            x = torch.tensor(symbol + degree + [formal_charge] +
+                             [radical_electrons] + hybridization +
+                             [aromaticity] + hydrogens + [chirality] +
+                             chirality_type)
+            xs.append(x)
+
+        data.x = torch.stack(xs, dim=0)
+
+        edge_indices = []
+        edge_attrs = []
+        for bond in mol.GetBonds():
+            edge_indices += [[bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()]]
+            edge_indices += [[bond.GetEndAtomIdx(), bond.GetBeginAtomIdx()]]
+
+            bond_type = bond.GetBondType()
+            single = 1. if bond_type == Chem.rdchem.BondType.SINGLE else 0.
+            double = 1. if bond_type == Chem.rdchem.BondType.DOUBLE else 0.
+            triple = 1. if bond_type == Chem.rdchem.BondType.TRIPLE else 0.
+            aromatic = 1. if bond_type == Chem.rdchem.BondType.AROMATIC else 0.
+            conjugation = 1. if bond.GetIsConjugated() else 0.
+            ring = 1. if bond.IsInRing() else 0.
+            stereo = [0.] * 4
+            stereo[self.stereos.index(bond.GetStereo())] = 1.
+
+            edge_attr = torch.tensor(
+                [single, double, triple, aromatic, conjugation, ring] + stereo)
+
+            edge_attrs += [edge_attr, edge_attr]
+
+        if len(edge_attrs) == 0:
+            data.edge_index = torch.zeros((2, 0), dtype=torch.long)
+            data.edge_attr = torch.zeros((0, 10), dtype=torch.float)
+        else:
+            data.edge_index = torch.tensor(edge_indices).t().contiguous()
+            data.edge_attr = torch.stack(edge_attrs, dim=0)
+
+        return data
 
 
-def one_of_k_encoding_unk(x, allowable_set):
-    """Maps inputs not in the allowable set to the last element."""
-    if x not in allowable_set:
-        x = allowable_set[-1]
-    return [x == s for s in allowable_set]
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'AFP_Mol')
+dataset = MoleculeNet(path, name='ESOL', pre_transform=GenFeatures()).shuffle()
 
+N = len(dataset) // 10
+val_dataset = dataset[:N]
+test_dataset = dataset[N:2 * N]
+train_dataset = dataset[2 * N:]
 
-# return 40 atom feature added "6" in atom degree (yeh it can happend!)
-def atom_features(atom, explicit_H=False, use_chirality=True):
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=256)
+test_loader = DataLoader(test_dataset, batch_size=256)
 
-    results = one_of_k_encoding_unk(atom.GetSymbol(),
-      [ 'B', 'C', 'N', 'O','F', 'Si', 'P','S','Cl','As','Se','Br', 'Te','I',  'At','other']) + one_of_k_encoding(atom.GetDegree(), [0, 1, 2, 3, 4, 5, 6]) + \
-          [atom.GetFormalCharge(), atom.GetNumRadicalElectrons()] + \
-          one_of_k_encoding_unk(atom.GetHybridization(), [
-            Chem.rdchem.HybridizationType.SP, Chem.rdchem.HybridizationType.SP2,
-            Chem.rdchem.HybridizationType.SP3, Chem.rdchem.HybridizationType.
-                                SP3D, Chem.rdchem.HybridizationType.SP3D2,'other'
-          ]) + [atom.GetIsAromatic()]
-    # In case of explicit hydrogen(QM8, QM9), avoid calling `GetTotalNumHs`
-    if not explicit_H:
-        results = results + one_of_k_encoding_unk(atom.GetTotalNumHs(),
-                                                  [0, 1, 2, 3, 4])
-    if use_chirality:
-        try:
-            results = results + one_of_k_encoding_unk(
-                atom.GetProp('_CIPCode'),
-                ['R', 'S']) + [atom.HasProp('_ChiralityPossible')]
-        except:
-            results = results + [False, False
-                                 ] + [atom.HasProp('_ChiralityPossible')]
-
-    return np.array(results)
-
-
-def bond_features(bond, use_chirality=True):
-    bt = bond.GetBondType()
-    bond_feats = [
-        bt == Chem.rdchem.BondType.SINGLE, bt == Chem.rdchem.BondType.DOUBLE,
-        bt == Chem.rdchem.BondType.TRIPLE, bt == Chem.rdchem.BondType.AROMATIC,
-        bond.GetIsConjugated(),
-        bond.IsInRing()
-    ]
-    if use_chirality:
-        bond_feats = bond_feats + one_of_k_encoding_unk(
-            str(bond.GetStereo()),
-            ["STEREONONE", "STEREOANY", "STEREOZ", "STEREOE"])
-    return np.array(bond_feats)
-
-
-def get_bond_pair(mol):
-    bonds = mol.GetBonds()
-    res = [[], []]
-    for bond in bonds:
-        res[0] += [bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()]
-        res[1] += [bond.GetEndAtomIdx(), bond.GetBeginAtomIdx()]
-    return res
-
-
-def mol2vec(mol, use_chirality=True):
-    """ Main function that is called to create the features for the dataloader """
-    full_atom_feature_dims = []
-    atoms = mol.GetAtoms()
-    bonds = mol.GetBonds()
-    mydtype = torch.float
-
-    # get atom feature labels
-    node_features = [
-        atom_features(atom, use_chirality=use_chirality) for atom in atoms
-    ]
-
-    # get adjacency matrix to egde_index
-    edge_index = torch.tensor(get_bond_pair(mol), dtype=torch.long)
-
-    # get bond feature labels
-    edge_features = [bond_features(bond) for bond in bonds]
-    # caution: for bigraph molecules (ie undirected graphs) need to inject twice the bond features
-    for bond in bonds:
-        edge_features.append(bond_features(bond))
-
-    # format python vectors to torch vectors
-    edge_attr = torch.tensor(edge_features, dtype=torch.float)
-
-    x = torch.tensor(node_features, dtype=mydtype)
-    # convert to pytorch Data storage
-    return Data(x=x, edge_attr=edge_attr, edge_index=edge_index)
-
-
-def datagenerator(df, target_list, use_chirality=True):
-    # basic single task version for testing
-    # extract the pandas and extract the target_list and smiles column
-    # smiles is converted to rkdit mol object and than
-    # rdkit mol object is converted to mol pytorch graph collection
-    # finally the collection is populate with target per molecule.
-    # output: a Data collecion containing input and output (graph, and Y target)
-    nbtarget = len(target_list)
-    train_list = []
-    smiles = df['smiles']
-
-    for i, smi in enumerate(tqdm(smiles)):
-        y = df[target_list].loc[i]
-
-        mol = Chem.MolFromSmiles(smi)
-
-        train_X = [mol2vec(mol, use_chirality=use_chirality)]
-
-        for data in train_X:
-            data['y'] = torch.tensor([np.array(y)], dtype=torch.float)
-        train_list.extend(train_X)
-
-    return train_list
-
-
-def getdataloader(datacollection, batch_size=32, shuffle=False,
-                  drop_last=False):
-    # convert the molecules Data colection in Batch data
-    train_loader = DataLoader(datacollection, batch_size=batch_size,
-                              shuffle=shuffle, drop_last=drop_last)
-    return train_loader
-
-
-df = pd.read_csv('../alpha/esol.csv')
-print(df)
-data = datagenerator(df, target_list)
-
-batch_size = 128
-
-train_loader = getdataloader(data, batch_size, shuffle=True, drop_last=False)
-
-for data in train_loader:
-    print(data)
-    print(data.x.shape)
-    break
-
-from torch_geometric.nn.models.attentive_fp import AttentiveFP
-# generate the model architecture
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = AttentiveFP(in_channels=40, hidden_channels=200, out_channels=1,
-                    edge_dim=10, num_layers=2, dropout=0.2)
-
-# loop over data in a batch
-import time
-import torch
+                    edge_dim=10, num_layers=2, dropout=0.2).to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 loss_func = torch.nn.MSELoss()
 
-# train the network
-for t in range(200):
-    start = time.time()
-    epoch_loss = 0
-    count_train = 0
+
+def train():
+    total_loss = total_examples = 0
     for data in train_loader:
-        y = model(data.x, data.edge_index, data.edge_attr, data.batch)
+        data = data.to(device)
+        optimizer.zero_grad()
+        out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+        loss = F.mse_loss(out, data.y)
+        loss.backward()
+        optimizer.step()
+        total_loss += float(loss) * data.num_graphs
+        total_examples += data.num_graphs
+    return sqrt(total_loss / total_examples)
 
-        loss = loss_func(y.squeeze(),
-                         data.y.squeeze())  # must be (1. nn output, 2. target)
 
-        optimizer.zero_grad()  # clear gradients for next train
-        loss.backward()  # backpropagation, compute gradients
-        optimizer.step()  # apply gradients
-        count_train += data.y.size(0)
+@torch.no_grad()
+def test(loader):
+    total_loss = total_examples = 0
+    for data in loader:
+        data = data.to(device)
+        out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+        loss = F.mse_loss(out, data.y)
+        total_loss += float(loss) * data.num_graphs
+        total_examples += data.num_graphs
+    return sqrt(total_loss / total_examples)
 
-        with torch.no_grad():
-            epoch_loss += data.num_graphs * loss.item()
 
-        stop = time.time()
-
-        print('epoch', t + 1, ' - train loss:', epoch_loss / count_train,
-              ' - runtime:', stop - start)
+for epoch in range(1, 201):
+    train_rmse = train()
+    val_rmse = test(val_loader)
+    test_rmse = test(test_loader)
+    print(f'Epoch: {epoch:03d}, Train: {train_rmse:.4f} Val: {val_rmse:.4f} '
+          f'Test: {test_rmse:.4f}')

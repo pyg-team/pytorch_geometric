@@ -87,7 +87,20 @@ class AttentiveFP(torch.nn.Module):
 
         self.lin2 = Linear(hidden_channels, out_channels)
 
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.lin1.reset_parameters()
+        for conv, gru in zip(self.atom_convs, self.atom_grus):
+            conv.reset_parameters()
+            gru.reset_parameters()
+        for conv, gru in zip(self.mol_convs, self.mol_grus):
+            conv.reset_parameters()
+            gru.reset_parameters()
+        self.lin2.reset_parameters()
+
     def forward(self, x, edge_index, edge_attr, batch):
+        """"""
         # Atom Embedding:
         xs = [self.lin1(x).relu_()]
 
