@@ -164,9 +164,9 @@ We are motivated to constantly make PyTorch Geometric even better.
 
 We provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
 
-### PyTorch 1.8.0
+### PyTorch 1.8.0/1.8.1
 
-To install the binaries for PyTorch 1.8.0, simply run
+To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
 
 ```sh
 $ pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
