@@ -41,7 +41,7 @@ class GenFeatures(object):
         for atom in mol.GetAtoms():
             symbol = [0.] * len(self.symbols)
             symbol[self.symbols.index(atom.GetSymbol())] = 1.
-            degree = [0.] * 7
+            degree = [0.] * 6
             degree[atom.GetDegree()] = 1.
             formal_charge = atom.GetFormalCharge()
             radical_electrons = atom.GetNumRadicalElectrons()
@@ -103,16 +103,17 @@ val_dataset = dataset[:N]
 test_dataset = dataset[N:2 * N]
 train_dataset = dataset[2 * N:]
 
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=256)
-test_loader = DataLoader(test_dataset, batch_size=256)
+train_loader = DataLoader(train_dataset, batch_size=200, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=200)
+test_loader = DataLoader(test_dataset, batch_size=200)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = AttentiveFP(in_channels=40, hidden_channels=200, out_channels=1,
-                    edge_dim=10, num_layers=2, dropout=0.2).to(device)
+model = AttentiveFP(in_channels=39, hidden_channels=200, out_channels=1,
+                    edge_dim=10, num_layers=2, num_timesteps=2,
+                    dropout=0.2).to(device)
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-loss_func = torch.nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=10**-2.5,
+                             weight_decay=10**-5)
 
 
 def train():
@@ -131,19 +132,17 @@ def train():
 
 @torch.no_grad()
 def test(loader):
-    total_loss = total_examples = 0
+    mse = []
     for data in loader:
         data = data.to(device)
         out = model(data.x, data.edge_index, data.edge_attr, data.batch)
-        loss = F.mse_loss(out, data.y)
-        total_loss += float(loss) * data.num_graphs
-        total_examples += data.num_graphs
-    return sqrt(total_loss / total_examples)
+        mse.append(F.mse_loss(out, data.y, reduction='none').cpu())
+    return float(torch.cat(mse, dim=0).mean().sqrt())
 
 
 for epoch in range(1, 201):
     train_rmse = train()
     val_rmse = test(val_loader)
     test_rmse = test(test_loader)
-    print(f'Epoch: {epoch:03d}, Train: {train_rmse:.4f} Val: {val_rmse:.4f} '
+    print(f'Epoch: {epoch:03d}, Loss: {train_rmse:.4f} Val: {val_rmse:.4f} '
           f'Test: {test_rmse:.4f}')
