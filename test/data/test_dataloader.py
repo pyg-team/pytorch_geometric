@@ -44,4 +44,5 @@ def test_pin_memory():
 
     loader = DataLoader([data] * 4, batch_size=2, pin_memory=True)
     for batch in loader:
-        pass
+        assert batch.x.is_pinned()
+        assert batch.edge_index.is_pinned()
