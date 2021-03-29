@@ -23,4 +23,4 @@ def test_agnn_conv(requires_grad):
 
     t = '(Tensor, SparseTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
+    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)

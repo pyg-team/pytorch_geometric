@@ -14,7 +14,7 @@ def test_cluster_gcn_conv():
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
     assert conv(x, edge_index, size=(4, 4)).tolist() == out.tolist()
-    assert torch.allclose(conv(x, adj.t()), out)
+    assert torch.allclose(conv(x, adj.t()), out, atol=1e-5)
 
     t = '(Tensor, Tensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
@@ -23,4 +23,4 @@ def test_cluster_gcn_conv():
 
     t = '(Tensor, SparseTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out)
+    assert torch.allclose(jit(x, adj.t()), out, atol=1e-5)

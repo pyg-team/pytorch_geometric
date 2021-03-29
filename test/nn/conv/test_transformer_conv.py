@@ -10,7 +10,7 @@ def test_transformer_conv():
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    conv = TransformerConv(8, 32, heads=2)
+    conv = TransformerConv(8, 32, heads=2, beta=True)
     assert conv.__repr__() == 'TransformerConv(8, 32, heads=2)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)
@@ -22,10 +22,10 @@ def test_transformer_conv():
 
     t = '(Tensor, SparseTensor, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
+    assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
 
     adj = adj.sparse_resize((4, 2))
-    conv = TransformerConv((8, 16), 32, heads=2)
+    conv = TransformerConv((8, 16), 32, heads=2, beta=True)
     assert conv.__repr__() == 'TransformerConv((8, 16), 32, heads=2)'
 
     out = conv((x1, x2), edge_index)
@@ -38,4 +38,4 @@ def test_transformer_conv():
 
     t = '(PairTensor, SparseTensor, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(conv((x1, x2), adj.t()), out, atol=1e-6)
+    assert torch.allclose(jit((x1, x2), adj.t()), out, atol=1e-6)

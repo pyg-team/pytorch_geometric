@@ -209,7 +209,10 @@ class Data(object):
         if hasattr(self, '__num_nodes__'):
             return self.__num_nodes__
         for key, item in self('x', 'pos', 'normal', 'batch'):
-            return item.size(self.__cat_dim__(key, item))
+            if isinstance(item, SparseTensor):
+                return item.size(0)
+            else:
+                return item.size(self.__cat_dim__(key, item))
         if hasattr(self, 'adj'):
             return self.adj.size(0)
         if hasattr(self, 'adj_t'):
@@ -228,9 +231,15 @@ class Data(object):
 
     @property
     def num_edges(self):
-        r"""Returns the number of edges in the graph."""
+        """
+        Returns the number of edges in the graph.
+        For undirected graphs, this will return the number of bi-directional
+        edges, which is double the amount of unique edges.
+        """
         for key, item in self('edge_index', 'edge_attr'):
             return item.size(self.__cat_dim__(key, item))
+        for key, item in self('adj', 'adj_t'):
+            return item.nnz()
         return None
 
     @property

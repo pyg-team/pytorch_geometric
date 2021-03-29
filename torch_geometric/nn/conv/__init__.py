@@ -5,6 +5,7 @@ from .sage_conv import SAGEConv
 from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
+from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
 from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
@@ -33,6 +34,10 @@ from .cluster_gcn_conv import ClusterGCNConv
 from .gen_conv import GENConv
 from .gcn2_conv import GCN2Conv
 from .pan_conv import PANConv
+from .wl_conv import WLConv
+from .film_conv import FiLMConv
+from .supergat_conv import SuperGATConv
+from .fa_conv import FAConv
 
 __all__ = [
     'MessagePassing',
@@ -42,6 +47,7 @@ __all__ = [
     'GraphConv',
     'GravNetConv',
     'GatedGraphConv',
+    'ResGatedGraphConv',
     'GATConv',
     'TransformerConv',
     'AGNNConv',
@@ -74,4 +80,10 @@ __all__ = [
     'GENConv',
     'GCN2Conv',
     'PANConv',
+    'WLConv',
+    'FiLMConv',
+    'SuperGATConv',
+    'FAConv',
 ]
+
+classes = __all__

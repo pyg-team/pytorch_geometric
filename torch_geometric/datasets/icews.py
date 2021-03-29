@@ -61,7 +61,7 @@ class ICEWS18(EventDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://github.com/INK-USC/RENet/raw/master/data/ICEWS18'
+    url = 'https://github.com/INK-USC/RE-Net/raw/master/data/ICEWS18'
     splits = [0, 373018, 419013, 468558]  # Train/Val/Test splits.
 
     def __init__(self, root, split='train', transform=None, pre_transform=None,

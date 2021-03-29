@@ -77,6 +77,18 @@ class GCNConv(MessagePassing):
     where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
     adjacency matrix with inserted self-loops and
     :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
+    The adjacency matrix can include other values than :obj:`1` representing
+    edge weights via the optional :obj:`edge_weight` tensor.
+
+    Its node-wise formulation is given by:
+
+    .. math::
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta} \sum_{j \in \mathcal{N}(v) \cup
+        \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j \hat{d}_i}} \mathbf{x}_j
+
+    with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
+    :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
+    node :obj:`i` (default: :obj:`1.0`)
 
     Args:
         in_channels (int): Size of each input sample.
@@ -92,8 +104,9 @@ class GCNConv(MessagePassing):
             learning scenarios. (default: :obj:`False`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
-        normalize (bool, optional): Whether to add self-loops and apply
-            symmetric normalization. (default: :obj:`True`)
+        normalize (bool, optional): Whether to add self-loops and compute
+            symmetric normalization coefficients on the fly.
+            (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -108,7 +121,8 @@ class GCNConv(MessagePassing):
                  add_self_loops: bool = True, normalize: bool = True,
                  bias: bool = True, **kwargs):
 
-        super(GCNConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(GCNConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -145,7 +159,7 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops, dtype=x.dtype)
+                        self.improved, self.add_self_loops)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -156,13 +170,13 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops, dtype=x.dtype)
+                        self.improved, self.add_self_loops)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
                     edge_index = cache
 
-        x = torch.matmul(x, self.weight)
+        x = x @ self.weight
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
@@ -173,8 +187,8 @@ class GCNConv(MessagePassing):
 
         return out
 
-    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
-        return edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return matmul(adj_t, x, reduce=self.aggr)

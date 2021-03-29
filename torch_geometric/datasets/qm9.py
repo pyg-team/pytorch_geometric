@@ -115,7 +115,7 @@ class QM9(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """  # noqa: E501
 
-    raw_url = ('https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/'
+    raw_url = ('https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/'
                'molnet_publish/qm9.zip')
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
     processed_url = 'https://pytorch-geometric.com/datasets/qm9_v2.zip'
@@ -196,7 +196,7 @@ class QM9(InMemoryDataset):
             target = target * conversion.view(1, -1)
 
         with open(self.raw_paths[2], 'r') as f:
-            skip = [int(x.split()[0]) for x in f.read().split('\n')[9:-2]]
+            skip = [int(x.split()[0]) - 1 for x in f.read().split('\n')[9:-2]]
 
         suppl = Chem.SDMolSupplier(self.raw_paths[0], removeHs=False,
                                    sanitize=False)

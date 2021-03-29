@@ -6,11 +6,15 @@ alpha/
 runs/
 .cache/
 .eggs/
+lightning_logs/
 *.egg-info/
 .coverage
 .coverage.*
 .vscode
 .idea
+.venv
+*.out
+*.pt
 
 !torch_geometric/data/
 !test/data/

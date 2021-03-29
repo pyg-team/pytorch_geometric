@@ -37,7 +37,6 @@ def read_ego(files, name):
 
     data_list = []
     for i in range(0, len(files), 5):
-        print(i, len(files), files[i])
         circles_file = files[i]
         edges_file = files[i + 1]
         egofeat_file = files[i + 2]

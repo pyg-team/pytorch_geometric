@@ -6,13 +6,15 @@ from torch._six import container_abcs, string_classes, int_classes
 
 
 class Collater(object):
-    def __init__(self, follow_batch):
+    def __init__(self, follow_batch, exclude_keys):
         self.follow_batch = follow_batch
+        self.exclude_keys = exclude_keys
 
     def collate(self, batch):
         elem = batch[0]
         if isinstance(elem, Data):
-            return Batch.from_data_list(batch, self.follow_batch)
+            return Batch.from_data_list(batch, self.follow_batch,
+                                        self.exclude_keys)
         elif isinstance(elem, torch.Tensor):
             return default_collate(batch)
         elif isinstance(elem, float):
@@ -46,13 +48,23 @@ class DataLoader(torch.utils.data.DataLoader):
             reshuffled at every epoch. (default: :obj:`False`)
         follow_batch (list or tuple, optional): Creates assignment batch
             vectors for each key in the list. (default: :obj:`[]`)
+        exclude_keys (list or tuple, optional): Will exclude each key in the
+            list. (default: :obj:`[]`)
     """
-
     def __init__(self, dataset, batch_size=1, shuffle=False, follow_batch=[],
-                 **kwargs):
+                 exclude_keys=[], **kwargs):
+
+        if "collate_fn" in kwargs:
+            del kwargs["collate_fn"]
+
+        # Save for Pytorch Lightning...
+        self.follow_batch = follow_batch
+        self.exclude_keys = exclude_keys
+
         super(DataLoader,
               self).__init__(dataset, batch_size, shuffle,
-                             collate_fn=Collater(follow_batch), **kwargs)
+                             collate_fn=Collater(follow_batch,
+                                                 exclude_keys), **kwargs)
 
 
 class DataListLoader(torch.utils.data.DataLoader):
@@ -71,11 +83,10 @@ class DataListLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch (default: :obj:`False`)
     """
-
     def __init__(self, dataset, batch_size=1, shuffle=False, **kwargs):
-        super(DataListLoader, self).__init__(
-            dataset, batch_size, shuffle,
-            collate_fn=lambda data_list: data_list, **kwargs)
+        super(DataListLoader,
+              self).__init__(dataset, batch_size, shuffle,
+                             collate_fn=lambda data_list: data_list, **kwargs)
 
 
 class DenseCollater(object):
@@ -107,7 +118,7 @@ class DenseDataLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch (default: :obj:`False`)
     """
-
     def __init__(self, dataset, batch_size=1, shuffle=False, **kwargs):
-        super(DenseDataLoader, self).__init__(
-            dataset, batch_size, shuffle, collate_fn=DenseCollater(), **kwargs)
+        super(DenseDataLoader,
+              self).__init__(dataset, batch_size, shuffle,
+                             collate_fn=DenseCollater(), **kwargs)

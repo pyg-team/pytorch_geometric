@@ -63,7 +63,8 @@ class ChebConv(MessagePassing):
     """
     def __init__(self, in_channels, out_channels, K, normalization='sym',
                  bias=True, **kwargs):
-        super(ChebConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(ChebConv, self).__init__(**kwargs)
 
         assert K > 0
         assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'

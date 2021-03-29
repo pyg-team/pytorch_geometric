@@ -20,44 +20,44 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
     .. code-block:: none
 
         $ python -c "import torch; print(torch.__version__)"
-        >>> 1.6.0
+        >>> 1.8.0
 
 #. Find the CUDA version PyTorch was installed with:
 
     .. code-block:: none
 
         $ python -c "import torch; print(torch.version.cuda)"
-        >>> 10.2
+        >>> 11.1
 
 #. Install the relevant packages:
 
     .. code-block:: none
 
-         pip install torch-scatter==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
-         pip install torch-sparse==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
-         pip install torch-cluster==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
-         pip install torch-spline-conv==latest+${CUDA} -f https://pytorch-geometric.com/whl/torch-${TORCH}.html
+         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
          pip install torch-geometric
 
-    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`), respectively.
-    For example, for PyTorch 1.5.0/1.5.1 and CUDA 10.2, type:
+    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.8.0`), respectively.
+    For example, for PyTorch 1.8.0/1.8.1 and CUDA 11.1, type:
 
     .. code-block:: none
 
-         pip install torch-scatter==latest+cu102 -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-         pip install torch-sparse==latest+cu102 -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-         pip install torch-cluster==latest+cu102 -f https://pytorch-geometric.com/whl/torch-1.5.0.html
-         pip install torch-spline-conv==latest+cu102 -f https://pytorch-geometric.com/whl/torch-1.5.0.html
+         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
+         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
          pip install torch-geometric
 
-    For PyTorch 1.6.0 and CUDA 10.1, type:
+    For PyTorch 1.7.0/1.7.1 and CUDA 10.2, type:
 
     .. code-block:: none
 
-         pip install torch-scatter==latest+cu101 -f https://pytorch-geometric.com/whl/torch-1.6.0.html
-         pip install torch-sparse==latest+cu101 -f https://pytorch-geometric.com/whl/torch-1.6.0.html
-         pip install torch-cluster==latest+cu101 -f https://pytorch-geometric.com/whl/torch-1.6.0.html
-         pip install torch-spline-conv==latest+cu101 -f https://pytorch-geometric.com/whl/torch-1.6.0.html
+         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
          pip install torch-geometric
 
 Installation from Source
@@ -176,3 +176,10 @@ Frequently Asked Questions
 
 #. On macOS: ``The version of the host compiler ('Apple clang') is not supported``: Downgrade your command line tools (see `this StackOverflow thread <https://stackoverflow.com/questions/36250949/revert-apple-clang-version-for-nvcc/46574116>`_) with the respective version annotated in the `CUDA Installation Guide for Mac <https://developer.download.nvidia.com/compute/cuda/10.1/Prod/docs/sidebar/CUDA_Installation_Guide_Mac.pdf>`_ (Section 1.1) for your specific CUDA version.
    You can download previous command line tool versions `here <https://idmsa.apple.com/IDMSWebAuth/signin?appIdKey=891bd3417a7776362562d2197f89480a8547b108fd934911bcbea0110d07f757&path=%2Fdownload%2Fmore%2F&rv=1>`_.
+
+#. On Linux: ``nvcc fatal: Path to libdevice library not specified``: This error may appear even if ``LD_LIBRARY_PATH`` and ``CPATH`` are set up correctly.
+   As recommended by `this post <https://askubuntu.com/a/1298665>`__, the library will be found if ``$CUDA_HOME`` is defined:
+
+    .. code-block:: none
+
+        $ export CUDA_HOME=/usr/local/cuda

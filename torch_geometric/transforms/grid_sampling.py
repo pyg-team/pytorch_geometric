@@ -3,8 +3,7 @@ import re
 import torch
 import torch.nn.functional as F
 from torch_scatter import scatter_add, scatter_mean
-from torch_geometric.nn import voxel_grid
-from torch_geometric.nn.pool.consecutive import consecutive_cluster
+import torch_geometric
 
 
 class GridSampling(object):
@@ -34,8 +33,9 @@ class GridSampling(object):
         else:
             batch = data.batch
 
-        cluster = voxel_grid(data.pos, batch, self.size, self.start, self.end)
-        cluster, perm = consecutive_cluster(cluster)
+        c = torch_geometric.nn.voxel_grid(data.pos, batch, self.size,
+                                          self.start, self.end)
+        c, perm = torch_geometric.nn.pool.consecutive.consecutive_cluster(c)
 
         for key, item in data:
             if bool(re.search('edge', key)):
@@ -45,12 +45,12 @@ class GridSampling(object):
             if torch.is_tensor(item) and item.size(0) == num_nodes:
                 if key == 'y':
                     item = F.one_hot(item)
-                    item = scatter_add(item, cluster, dim=0)
+                    item = scatter_add(item, c, dim=0)
                     data[key] = item.argmax(dim=-1)
                 elif key == 'batch':
                     data[key] = item[perm]
                 else:
-                    data[key] = scatter_mean(item, cluster, dim=0)
+                    data[key] = scatter_mean(item, c, dim=0)
 
         return data
 

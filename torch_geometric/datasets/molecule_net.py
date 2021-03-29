@@ -4,7 +4,7 @@ import re
 
 import torch
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
-                                  extract_zip)
+                                  extract_gz)
 
 try:
     from rdkit import Chem
@@ -90,27 +90,28 @@ class MoleculeNet(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = ('https://s3-us-west-1.amazonaws.com/deepchem.io/datasets/'
-           'molnet_publish/{}.zip')
+    url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/{}'
 
     # Format: name: [display_name, url_name, csv_name, smiles_idx, y_idx]
     names = {
-        'esol': ['ESOL', 'ESOL', 'delaney-processed', -1, -2],
-        'freesolv': ['FreeSolv', 'FreeSolv', 'SAMPL', 1, 2],
-        'lipo': ['Lipophilicity', 'lipophilicity', 'Lipophilicity', 2, 1],
-        'pcba': ['PCBA', 'pcba', 'pcba', -1,
+        'esol': ['ESOL', 'delaney-processed.csv', 'delaney-processed', -1, -2],
+        'freesolv': ['FreeSolv', 'SAMPL.csv', 'SAMPL', 1, 2],
+        'lipo': ['Lipophilicity', 'Lipophilicity.csv', 'Lipophilicity', 2, 1],
+        'pcba': ['PCBA', 'pcba.csv.gz', 'pcba', -1,
                  slice(0, 128)],
-        'muv': ['MUV', 'muv', 'muv', -1, slice(0, 17)],
-        'hiv': ['HIV', 'hiv', 'HIV', 0, -1],
-        'bace': ['BACE', 'bace', 'bace', 0, 2],
-        'bbbp': ['BBPB', 'bbbp', 'BBBP', -1, -2],
-        'tox21': ['Tox21', 'tox21', 'tox21', -1,
+        'muv': ['MUV', 'muv.csv.gz', 'muv', -1,
+                slice(0, 17)],
+        'hiv': ['HIV', 'HIV.csv', 'HIV', 0, -1],
+        'bace': ['BACE', 'bace.csv', 'bace', 0, 2],
+        'bbbp': ['BBPB', 'BBBP.csv', 'BBBP', -1, -2],
+        'tox21': ['Tox21', 'tox21.csv.gz', 'tox21', -1,
                   slice(0, 12)],
-        'toxcast': ['ToxCast', 'toxcast', 'toxcast_data', 0,
-                    slice(1, 618)],
-        'sider': ['SIDER', 'sider', 'sider', 0,
+        'toxcast':
+        ['ToxCast', 'toxcast_data.csv.gz', 'toxcast_data', 0,
+         slice(1, 618)],
+        'sider': ['SIDER', 'sider.csv.gz', 'sider', 0,
                   slice(1, 28)],
-        'clintox': ['ClinTox', 'clintox', 'clintox', 0,
+        'clintox': ['ClinTox', 'clintox.csv.gz', 'clintox', 0,
                     slice(1, 3)],
     }
 
@@ -145,8 +146,9 @@ class MoleculeNet(InMemoryDataset):
     def download(self):
         url = self.url.format(self.names[self.name][1])
         path = download_url(url, self.raw_dir)
-        extract_zip(path, self.raw_dir)
-        os.unlink(path)
+        if self.names[self.name][1][-2:] == 'gz':
+            extract_gz(path, self.raw_dir)
+            os.unlink(path)
 
     def process(self):
         with open(self.raw_paths[0], 'r') as f:

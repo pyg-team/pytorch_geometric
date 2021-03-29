@@ -6,12 +6,25 @@ class ToSparseTensor(object):
     (transposed) :class:`torch_sparse.SparseTensor` type with key
     :obj:`adj_.t`.
 
+    .. note::
+
+        In case of composing multiple transforms, it is best to convert the
+        :obj:`data` object to a :obj:`SparseTensor` as late as possible, since
+        there exist some transforms that are only able to operate on
+        :obj:`data.edge_index` for now.
+
     Args:
         remove_faces (bool, optional): If set to :obj:`False`, the
             :obj:`edge_index` tensor will not be removed.
+            (default: :obj:`True`)
+        fill_cache (bool, optional): If set to :obj:`False`, will not
+            fill the underlying :obj:`SparseTensor` cache.
+            (default: :obj:`True`)
     """
-    def __init__(self, remove_edge_index: bool = True):
+    def __init__(self, remove_edge_index: bool = True,
+                 fill_cache: bool = True):
         self.remove_edge_index = remove_edge_index
+        self.fill_cache = fill_cache
 
     def __call__(self, data):
         assert data.edge_index is not None
@@ -38,9 +51,9 @@ class ToSparseTensor(object):
         data.adj_t = SparseTensor(row=col, col=row, value=value,
                                   sparse_sizes=(N, N), is_sorted=True)
 
-        # Pre-process some important attributes.
-        data.adj_t.storage.rowptr()
-        data.adj_t.storage.csr2csc()
+        if self.fill_cache:  # Pre-process some important attributes.
+            data.adj_t.storage.rowptr()
+            data.adj_t.storage.csr2csc()
 
         return data
 

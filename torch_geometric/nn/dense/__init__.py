@@ -7,9 +7,12 @@ from .mincut_pool import dense_mincut_pool
 
 __all__ = [
     'DenseGCNConv',
-    'DenseSAGEConv',
-    'DenseGraphConv',
     'DenseGINConv',
+    'DenseGraphConv',
+    'DenseSAGEConv',
     'dense_diff_pool',
     'dense_mincut_pool',
 ]
+
+conv_classes = __all__[:4]
+pool_classes = __all__[4:]

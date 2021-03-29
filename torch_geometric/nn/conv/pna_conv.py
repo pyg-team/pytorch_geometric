@@ -76,7 +76,8 @@ class PNAConv(MessagePassing):
                  pre_layers: int = 1, post_layers: int = 1,
                  divide_input: bool = False, **kwargs):
 
-        super(PNAConv, self).__init__(aggr=None, node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', None)
+        super(PNAConv, self).__init__(node_dim=0, **kwargs)
 
         if divide_input:
             assert in_channels % towers == 0
@@ -114,7 +115,7 @@ class PNAConv(MessagePassing):
 
             in_channels = (len(aggregators) * len(scalers) + 1) * self.F_in
             modules = [Linear(in_channels, self.F_out)]
-            for _ in range(pre_layers - 1):
+            for _ in range(post_layers - 1):
                 modules += [ReLU()]
                 modules += [Linear(self.F_out, self.F_out)]
             self.post_nns.append(Sequential(*modules))

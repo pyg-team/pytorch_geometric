@@ -19,6 +19,8 @@ class SGConv(MessagePassing):
     where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
     adjacency matrix with inserted self-loops and
     :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
+    The adjacency matrix can include other values than :obj:`1` representing
+    edge weights via the optional :obj:`edge_weight` tensor.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -44,7 +46,8 @@ class SGConv(MessagePassing):
     def __init__(self, in_channels: int, out_channels: int, K: int = 1,
                  cached: bool = False, add_self_loops: bool = True,
                  bias: bool = True, **kwargs):
-        super(SGConv, self).__init__(aggr='add', **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(SGConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels

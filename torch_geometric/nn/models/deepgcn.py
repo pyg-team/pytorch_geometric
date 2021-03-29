@@ -93,11 +93,13 @@ class DeepGCNLayer(torch.nn.Module):
                 h = self.act(h)
 
             if self.block == 'res':
-                return x + h
+                h = x + h
             elif self.block == 'dense':
-                return torch.cat([x, h], dim=-1)
+                h = torch.cat([x, h], dim=-1)
             elif self.block == 'plain':
-                return h
+                pass
+
+            return F.dropout(h, p=self.dropout, training=self.training)
 
     def __repr__(self):
         return '{}(block={})'.format(self.__class__.__name__, self.block)

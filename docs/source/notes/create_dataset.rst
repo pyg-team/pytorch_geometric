@@ -7,7 +7,7 @@ Implementing datasets by yourself is straightforward and you may want to take a 
 However, we give a brief introduction on what is needed to setup your own dataset.
 
 We provide two abstract classes for datasets: :class:`torch_geometric.data.Dataset` and :class:`torch_geometric.data.InMemoryDataset`.
-:class:`torch_geometric.data.InMemoryDataset` inherits from :class:`torch_geometric.data.Dataset` and should be used if the whole dataset fits into memory.
+:class:`torch_geometric.data.InMemoryDataset` inherits from :class:`torch_geometric.data.Dataset` and should be used if the whole dataset fits into CPU memory.
 
 Following the :obj:`torchvision` convention, each dataset gets passed a root folder which indicates where the dataset should be stored.
 We split up the root folder into two folders: the :obj:`raw_dir`, where the dataset gets downloaded to, and the :obj:`processed_dir`, where the processed dataset is being saved.
@@ -44,7 +44,7 @@ Let's see this process in a simplified example:
 .. code-block:: python
 
     import torch
-    from torch_geometric.data import InMemoryDataset
+    from torch_geometric.data import InMemoryDataset, download_url
 
 
     class MyOwnDataset(InMemoryDataset):
@@ -62,6 +62,8 @@ Let's see this process in a simplified example:
 
         def download(self):
             # Download to `self.raw_dir`.
+            download_url(url, self.raw_dir)
+            ...
 
         def process(self):
             # Read data into huge `Data` list.
@@ -95,7 +97,7 @@ Let's see this process in a simplified example:
     import os.path as osp
 
     import torch
-    from torch_geometric.data import Dataset
+    from torch_geometric.data import Dataset, download_url
 
 
     class MyOwnDataset(Dataset):
@@ -112,6 +114,8 @@ Let's see this process in a simplified example:
 
         def download(self):
             # Download to `self.raw_dir`.
+            path = download_url(url, self.raw_dir)
+            ...
 
         def process(self):
             i = 0

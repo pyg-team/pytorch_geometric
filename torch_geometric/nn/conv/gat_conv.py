@@ -59,9 +59,10 @@ class GATConv(MessagePassing):
 
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, heads: int = 1, concat: bool = True,
-                 negative_slope: float = 0.2, dropout: float = 0.,
+                 negative_slope: float = 0.2, dropout: float = 0.0,
                  add_self_loops: bool = True, bias: bool = True, **kwargs):
-        super(GATConv, self).__init__(aggr='add', node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super(GATConv, self).__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -106,7 +107,6 @@ class GATConv(MessagePassing):
         # type: (Union[Tensor, OptPairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""
-
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple

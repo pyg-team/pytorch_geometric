@@ -8,6 +8,7 @@ from .loop import (contains_self_loops, remove_self_loops,
                    add_remaining_self_loops)
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import subgraph, k_hop_subgraph
+from .homophily import homophily
 from .get_laplacian import get_laplacian
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
@@ -19,6 +20,7 @@ from .tree_decomposition import tree_decomposition
 from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .convert import to_trimesh, from_trimesh
+from .convert import to_cugraph
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
 from .negative_sampling import (negative_sampling,
@@ -45,6 +47,7 @@ __all__ = [
     'remove_isolated_nodes',
     'subgraph',
     'k_hop_subgraph',
+    'homophily',
     'get_laplacian',
     'to_dense_batch',
     'to_dense_adj',
@@ -59,6 +62,7 @@ __all__ = [
     'from_networkx',
     'to_trimesh',
     'from_trimesh',
+    'to_cugraph',
     'erdos_renyi_graph',
     'stochastic_blockmodel_graph',
     'barabasi_albert_graph',
@@ -77,3 +81,5 @@ __all__ = [
     'intersection_and_union',
     'mean_iou',
 ]
+
+classes = __all__
