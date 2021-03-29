@@ -23,7 +23,7 @@ class PANConv(MessagePassing):
 
     .. math::
 
-        \mathbf{W} = \mathbf{Z}^{-1/2} \sum_{n=0}^{L-1} e^{-\frac{E(n)}{T}}
+        \mathbf{M} = \mathbf{Z}^{-1/2} \sum_{n=0}^{L-1} e^{-\frac{E(n)}{T}}
         \mathbf{A}^n \mathbf{Z}^{-1/2}
 
     Args:
@@ -33,8 +33,8 @@ class PANConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 filter_size: int = 4, **kwargs):
+    def __init__(self, in_channels: int, out_channels: int, filter_size: int,
+                 **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super(PANConv, self).__init__(**kwargs)
@@ -67,7 +67,8 @@ class PANConv(MessagePassing):
         deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0.
         M = deg_inv_sqrt.view(1, -1) * adj_t * deg_inv_sqrt.view(-1, 1)
 
-        out = self.propagate(M, x=self.lin(x))
+        out = self.propagate(M, x=x)
+        out = self.lin(out)
         return out, M
 
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
@@ -77,15 +78,12 @@ class PANConv(MessagePassing):
 
         tmp = SparseTensor.eye(adj_t.size(0), adj_t.size(1), has_value=True,
                                dtype=dtype, device=adj_t.device())
+        tmp = tmp.mul_nnz(self.weight[0])
 
-        value = torch.ones(adj_t.nnz(), dtype=dtype, device=adj_t.device())
-        adj_t.set_value_(value, layout='coo')
-
-        outs = [tmp.mul_nnz(self.weight[0])]
+        outs = [tmp]
         for i in range(1, self.filter_size):
             tmp = tmp @ adj_t
             tmp = tmp.mul_nnz(self.weight[i])
-            row, col, value = tmp.coo()
             outs += [tmp]
 
         row = torch.cat([out.storage.row() for out in outs], dim=0)
