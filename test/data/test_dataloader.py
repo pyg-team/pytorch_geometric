@@ -44,5 +44,5 @@ def test_pin_memory():
 
     loader = DataLoader([data] * 4, batch_size=2, pin_memory=True)
     for batch in loader:
-        assert batch.x.is_pinned()
-        assert batch.edge_index.is_pinned()
+        assert batch.x.is_pinned() or not torch.cuda.is_available()
+        assert batch.edge_index.is_pinned() or not torch.cuda.is_available()
