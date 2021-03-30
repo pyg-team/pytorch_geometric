@@ -23,7 +23,7 @@ class PANConv(MessagePassing):
 
     .. math::
 
-        \mathbf{M} = \mathbf{Z}^{-1/2} \sum_{n=0}^{L-1} e^{-\frac{E(n)}{T}}
+        \mathbf{M} = \mathbf{Z}^{-1/2} \sum_{n=0}^L e^{-\frac{E(n)}{T}}
         \mathbf{A}^n \mathbf{Z}^{-1/2}
 
     Args:
@@ -54,6 +54,7 @@ class PANConv(MessagePassing):
 
     def forward(self, x: Tensor,
                 edge_index: Adj) -> Tuple[Tensor, SparseTensor]:
+        """"""
 
         adj_t: Optional[SparseTensor] = None
         if isinstance(edge_index, Tensor):
@@ -88,7 +89,7 @@ class PANConv(MessagePassing):
         tmp = tmp.mul_nnz(self.weight[0])
 
         outs = [tmp]
-        for i in range(1, self.filter_size):
+        for i in range(1, self.filter_size + 1):
             tmp = tmp @ adj_t
             tmp = tmp.mul_nnz(self.weight[i])
             outs += [tmp]
