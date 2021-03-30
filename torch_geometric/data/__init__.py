@@ -8,6 +8,7 @@ from .sampler import NeighborSampler, RandomNodeSampler
 from .cluster import ClusterData, ClusterLoader
 from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
                           GraphSAINTEdgeSampler, GraphSAINTRandomWalkSampler)
+from .shadow import ShaDowKHopSampler
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 
@@ -28,6 +29,7 @@ __all__ = [
     'GraphSAINTNodeSampler',
     'GraphSAINTEdgeSampler',
     'GraphSAINTRandomWalkSampler',
+    'ShaDowKHopSampler',
     'download_url',
     'extract_tar',
     'extract_zip',
