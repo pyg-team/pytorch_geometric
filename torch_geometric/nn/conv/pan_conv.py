@@ -44,7 +44,7 @@ class PANConv(MessagePassing):
         self.filter_size = filter_size
 
         self.lin = Linear(in_channels, out_channels)
-        self.weight = Parameter(torch.Tensor(filter_size))
+        self.weight = Parameter(torch.Tensor(filter_size + 1))
 
         self.reset_parameters()
 
@@ -86,12 +86,12 @@ class PANConv(MessagePassing):
 
         tmp = SparseTensor.eye(adj_t.size(0), adj_t.size(1), has_value=True,
                                dtype=dtype, device=adj_t.device())
-        tmp = tmp.mul_nnz(self.weight[0])
+        tmp = tmp.mul_nnz(self.weight[0], layout='coo')
 
         outs = [tmp]
         for i in range(1, self.filter_size + 1):
             tmp = tmp @ adj_t
-            tmp = tmp.mul_nnz(self.weight[i])
+            tmp = tmp.mul_nnz(self.weight[i], layout='coo')
             outs += [tmp]
 
         row = torch.cat([out.storage.row() for out in outs], dim=0)
