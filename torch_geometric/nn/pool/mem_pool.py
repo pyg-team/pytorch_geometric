@@ -8,7 +8,7 @@ from torch_geometric.utils import to_dense_batch
 
 
 class MemPooling(torch.nn.Module):
-    r"""Memory based pooling layer from `"Memory-Based Graph Networs"
+    r"""Memory based pooling layer from `"Memory-Based Graph Networks"
     <https://arxiv.org/abs/2002.09518>`_ paper, which learns a coarsened graph
     representation based on soft cluster assignments
 
