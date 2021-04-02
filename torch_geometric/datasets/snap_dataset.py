@@ -169,7 +169,7 @@ class SNAPDataset(InMemoryDataset):
         'ego-facebook': ['facebook.tar.gz'],
         'ego-gplus': ['gplus.tar.gz'],
         'ego-twitter': ['twitter.tar.gz'],
-        'soc-ca-astoph': ['ca-AstroPh.txt.gz'],
+        'soc-ca-astroph': ['ca-AstroPh.txt.gz'],
         'soc-ca-grqc': ['ca-GrQc.txt.gz'],
         'soc-epinions1': ['soc-Epinions1.txt.gz'],
         'soc-livejournal1': ['soc-LiveJournal1.txt.gz'],
