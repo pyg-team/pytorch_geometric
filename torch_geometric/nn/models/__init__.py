@@ -13,6 +13,7 @@ from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
+from .attentive_fp import AttentiveFP
 
 __all__ = [
     'JumpingKnowledge',
@@ -34,6 +35,7 @@ __all__ = [
     'TGNMemory',
     'LabelPropagation',
     'CorrectAndSmooth',
+    'AttentiveFP',
 ]
 
 classes = sorted(__all__)

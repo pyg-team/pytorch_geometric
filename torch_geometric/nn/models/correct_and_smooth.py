@@ -8,7 +8,7 @@ from torch_geometric.nn.models import LabelPropagation
 
 
 class CorrectAndSmooth(torch.nn.Module):
-    r"""The correct and mmooth (C&S) post-processing model from the
+    r"""The correct and smooth (C&S) post-processing model from the
     `"Combining Label Propagation And Simple Models Out-performs Graph Neural
     Networks"
     <https://arxiv.org/abs/2010.13993>`_ paper, where soft predictions

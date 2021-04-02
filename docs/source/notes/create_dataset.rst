@@ -44,7 +44,7 @@ Let's see this process in a simplified example:
 .. code-block:: python
 
     import torch
-    from torch_geometric.data import InMemoryDataset
+    from torch_geometric.data import InMemoryDataset, download_url
 
 
     class MyOwnDataset(InMemoryDataset):
@@ -62,6 +62,8 @@ Let's see this process in a simplified example:
 
         def download(self):
             # Download to `self.raw_dir`.
+            download_url(url, self.raw_dir)
+            ...
 
         def process(self):
             # Read data into huge `Data` list.
@@ -95,7 +97,7 @@ Let's see this process in a simplified example:
     import os.path as osp
 
     import torch
-    from torch_geometric.data import Dataset
+    from torch_geometric.data import Dataset, download_url
 
 
     class MyOwnDataset(Dataset):
@@ -112,6 +114,8 @@ Let's see this process in a simplified example:
 
         def download(self):
             # Download to `self.raw_dir`.
+            path = download_url(url, self.raw_dir)
+            ...
 
         def process(self):
             i = 0
