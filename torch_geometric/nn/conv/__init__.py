@@ -36,6 +36,7 @@ from .gcn2_conv import GCN2Conv
 from .wl_conv import WLConv
 from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
+from .mesh_conv import MeshConv
 
 __all__ = [
     'MessagePassing',
@@ -80,6 +81,7 @@ __all__ = [
     'WLConv',
     'FiLMConv',
     'SuperGATConv',
+    'MeshConv',
 ]
 
 classes = __all__

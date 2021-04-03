@@ -7,6 +7,7 @@ from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
 from .asap import ASAPooling
 from .mem_pool import MemPooling
+from .mesh_pool import MeshPool
 
 try:
     import torch_cluster
@@ -268,6 +269,7 @@ __all__ = [
     'radius',
     'radius_graph',
     'nearest',
+    'MeshPool',
 ]
 
 classes = __all__
