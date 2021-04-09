@@ -136,21 +136,30 @@ class GATConv(MessagePassing):
         assert x_l is not None
         assert alpha_l is not None
 
+        num_nodes = x_l.size(0)
+        if x_r is not None:
+            num_nodes = min(num_nodes, x_r.size(0))
+        if size is not None:
+            num_nodes = min(size[0], size[1])
+        
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
-                num_nodes = x_l.size(0)
-                if x_r is not None:
-                    num_nodes = min(num_nodes, x_r.size(0))
-                if size is not None:
-                    num_nodes = min(size[0], size[1])
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
         # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r),
-                             alpha=(alpha_l, alpha_r), size=size)
+        if isinstance(edge_index, SparseTensor):
+            row, col, value = edge_index.coo()
+            alpha = alpha_l[row] if alpha_r is None else alpha_l[row] + alpha_r[col]
+            alpha = F.leaky_relu(alpha, self.negative_slope)
+            alpha = softmax(alpha, col)
+            alpha = F.dropout(alpha, p=self.dropout, training=self.training)
+            alpha_all_heads = [SparseTensor(row=row, col=col, value=alpha[:, i], sparse_sizes=(num_nodes, num_nodes)).t() for i in range(H)]
+            attention_out = self.propagate(edge_index, x=x_l, alpha=alpha_all_heads, size=size)
+        else:
+            attention_out = self.propagate(edge_index, x=(x_l, x_r), alpha=(alpha_l, alpha_r), size=size)
 
         alpha = self._alpha
         self._alpha = None
@@ -181,6 +190,10 @@ class GATConv(MessagePassing):
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
         return x_j * alpha.unsqueeze(-1)
+
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor, alpha: List[SparseTensor]):
+        x_heads = [matmul(a, x[:, i, :], reduce=self.aggr) for i, a in enumerate(alpha)]
+        return torch.cat(x_heads, dim=-1)
 
     def __repr__(self):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
