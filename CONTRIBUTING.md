@@ -82,3 +82,15 @@ Please feel encouraged to provide a test with your submitted code.
 ```
 python setup.py test
 ```
+
+## Building Documentation
+
+To build offline documentation.
+1. Download PyG source code.
+2. Install sphinx `pip install sphinx sphinx_rtd_theme`.
+3. Generate documentation file. The docs are located in `docs/build/html/index.html`
+
+```
+cd pytorch_geometric/docs
+make html
+```
