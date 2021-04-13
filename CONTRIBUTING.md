@@ -86,7 +86,7 @@ python setup.py test
 ## Building Documentation
 
 To build offline documentation.
-1. [Build and install](##-developing-pytorch-geometric) PyTorch Geometric from source. 
+1. [Build and install](#developing-pytorch-geometric) PyTorch Geometric from source. 
 2. Install sphinx `pip install sphinx sphinx_rtd_theme`.
 3. Generate documentation file. The docs are located in `docs/build/html/index.html`
 
