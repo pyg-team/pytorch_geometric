@@ -38,6 +38,7 @@ from .wl_conv import WLConv
 from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
+from .eg_conv import EGConv
 
 __all__ = [
     'MessagePassing',
@@ -84,6 +85,7 @@ __all__ = [
     'FiLMConv',
     'SuperGATConv',
     'FAConv',
+    'EGConv'
 ]
 
 classes = __all__
