@@ -18,8 +18,7 @@ parser.add_argument('--hidden', type=int, default=236)
 parser.add_argument('--layers', type=int, default=4)
 parser.add_argument('--heads', type=int, default=4)
 parser.add_argument('--bases', type=int, default=4)
-parser.add_argument('--use_multi_aggrs',
-                    action="store_true",
+parser.add_argument('--use_multi_aggrs', action="store_true",
                     help="Switch between EGC-S and EGC-M")
 parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--num_workers', type=int, default=4)
@@ -93,10 +92,7 @@ class Net(torch.nn.Module):
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = Net().to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-scheduler = ReduceLROnPlateau(optimizer,
-                              mode="max",
-                              factor=0.5,
-                              patience=20,
+scheduler = ReduceLROnPlateau(optimizer, mode="max", factor=0.5, patience=20,
                               min_lr=1e-5)
 evaluator = Evaluator("ogbg-molhiv")
 
