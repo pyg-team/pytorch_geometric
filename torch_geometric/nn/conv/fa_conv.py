@@ -42,9 +42,11 @@ class FAConv(MessagePassing):
             learning scenarios. (default: :obj:`False`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
-        normalize (bool, optional): Whether to add self-loops and compute
+        normalize (bool, optional): Whether to add self-loops (if
+            :obj:`add_self_loops` is :obj:`True`) and compute
             symmetric normalization coefficients on the fly.
-            (default: :obj:`True`)
+            If set to :obj:`False`, :obj:`edge_weight` needs to be provided in
+            the layer's :meth:`forward` method. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -96,6 +98,7 @@ class FAConv(MessagePassing):
         """
         if self.normalize:
             if isinstance(edge_index, Tensor):
+                assert edge_weight is None
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
@@ -107,6 +110,7 @@ class FAConv(MessagePassing):
                     edge_index, edge_weight = cache[0], cache[1]
 
             elif isinstance(edge_index, SparseTensor):
+                assert not edge_index.has_value()
                 cache = self._cached_adj_t
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
@@ -116,6 +120,11 @@ class FAConv(MessagePassing):
                         self._cached_adj_t = edge_index
                 else:
                     edge_index = cache
+        else:
+            if isinstance(edge_index, Tensor):
+                assert edge_weight is not None
+            elif isinstance(edge_index, SparseTensor):
+                assert edge_index.has_value()
 
         alpha_l = self.att_l(x)
         alpha_r = self.att_r(x)
@@ -127,7 +136,8 @@ class FAConv(MessagePassing):
         alpha = self._alpha
         self._alpha = None
 
-        out += self.eps * x_0
+        if self.eps != 0.0:
+            out += self.eps * x_0
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None

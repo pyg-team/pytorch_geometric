@@ -8,7 +8,7 @@ from torch_geometric.utils import to_dense_batch
 
 
 class MemPooling(torch.nn.Module):
-    r"""Memory based pooling layer from `"Memory-Based Graph Networs"
+    r"""Memory based pooling layer from `"Memory-Based Graph Networks"
     <https://arxiv.org/abs/2002.09518>`_ paper, which learns a coarsened graph
     representation based on soft cluster assignments
 
@@ -68,7 +68,7 @@ class MemPooling(torch.nn.Module):
         """
         S_2 = S**2
         P = S_2 / S.sum(dim=1, keepdim=True)
-        P = P / (S_2.sum(dim=2, keepdim=True) / S.sum(dim=1, keepdim=True))
+        P = P / P.sum(dim=2, keepdim=True)
         P[torch.isnan(P)] = 0.
 
         loss = KLDivLoss(reduction='batchmean', log_target=False)

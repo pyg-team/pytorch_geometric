@@ -54,6 +54,7 @@ def homophily(edge_index: Adj, y: Tensor, method: str = 'edge'):
             (second formula). (default: :obj:`"edge"`)
     """
     assert method in ['edge', 'node']
+    y = y.squeeze(-1) if y.dim() > 1 else y
 
     if isinstance(edge_index, SparseTensor):
         col, row, _ = edge_index.coo()

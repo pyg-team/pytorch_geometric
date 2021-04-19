@@ -39,7 +39,7 @@ from .gdc import GDC
 from .sign import SIGN
 from .grid_sampling import GridSampling
 from .gcn_norm import GCNNorm
-from.add_train_val_test_mask import AddTrainValTestMask
+from .add_train_val_test_mask import AddTrainValTestMask
 
 __all__ = [
     'Compose',
