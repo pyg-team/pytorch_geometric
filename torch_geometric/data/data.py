@@ -353,6 +353,7 @@ class Data(object):
             lambda x: x.cuda(device=device, non_blocking=non_blocking), *keys)
 
     def clone(self):
+        r"""Performs a deep-copy of the data object."""
         return self.__class__.from_dict({
             k: v.clone() if torch.is_tensor(v) else copy.deepcopy(v)
             for k, v in self.__dict__.items()
