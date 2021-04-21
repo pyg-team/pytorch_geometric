@@ -13,7 +13,6 @@ install_requires = [
     'requests',
     'pandas',
     'rdflib',
-    'h5py',
     'googledrivedownloader',
     'ase',
     'jinja2',
