@@ -3,7 +3,8 @@ from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter
+from torch.nn import Parameter, UninitializedParameter
+from torch.nn.modules.lazy import LazyModuleMixin
 from torch_scatter import scatter_add
 from torch_sparse import SparseTensor, matmul, fill_diag, sum, mul
 from torch_geometric.nn.conv import MessagePassing
@@ -65,7 +66,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
 
-class GCNConv(MessagePassing):
+class GCNConv(LazyModuleMixin, MessagePassing):
     r"""The graph convolutional operator from the `"Semi-supervised
     Classification with Graph Convolutional Networks"
     <https://arxiv.org/abs/1609.02907>`_ paper
@@ -92,6 +93,7 @@ class GCNConv(MessagePassing):
 
     Args:
         in_channels (int): Size of each input sample.
+            Will be initialized lazily in case :obj:`-1`.
         out_channels (int): Size of each output sample.
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
@@ -134,7 +136,10 @@ class GCNConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        if self.in_channels >= 0:
+            self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        else:
+            self.weight = UninitializedParameter()
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -143,11 +148,21 @@ class GCNConv(MessagePassing):
 
         self.reset_parameters()
 
+    @torch.no_grad()
     def reset_parameters(self):
-        glorot(self.weight)
-        zeros(self.bias)
         self._cached_edge_index = None
         self._cached_adj_t = None
+        if not self.has_uninitialized_params():
+            glorot(self.weight)
+            zeros(self.bias)
+
+    @torch.no_grad()
+    def initialize_parameters(self, x: Tensor, edge_index: Adj,
+                              edge_weight=None):
+        if self.has_uninitialized_params():
+            self.in_channels = x.size(-1)
+            self.weight.materialize((self.in_channels, self.out_channels))
+            glorot(self.weight)
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:

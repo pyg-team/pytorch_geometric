@@ -54,3 +54,12 @@ def test_static_gcn_conv():
     conv = GCNConv(16, 32)
     out = conv(x, edge_index)
     assert out.size() == (3, 4, 32)
+
+
+def test_lazy_gcn_conv():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+
+    conv = GCNConv(-1, 32)
+    out = conv(x, edge_index)
+    assert out.size() == (4, 32)
