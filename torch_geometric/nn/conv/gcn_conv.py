@@ -154,7 +154,7 @@ class GCNConv(LazyModuleMixin, MessagePassing):
         self._cached_adj_t = None
         if not self.has_uninitialized_params():
             glorot(self.weight)
-            zeros(self.bias)
+        zeros(self.bias)
 
     @torch.no_grad()
     def initialize_parameters(self, x: Tensor, edge_index: Adj,
