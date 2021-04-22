@@ -88,7 +88,11 @@ class DataListLoader(torch.utils.data.DataLoader):
     def __init__(self, dataset, batch_size=1, shuffle=False, **kwargs):
         super(DataListLoader,
               self).__init__(dataset, batch_size, shuffle,
-                             collate_fn=lambda data_list: data_list, **kwargs)
+                             collate_fn=self.collate_fn, **kwargs)
+
+    @staticmethod
+    def collate_fn(data_list):
+        return data_list
 
 
 class DenseCollater(object):
