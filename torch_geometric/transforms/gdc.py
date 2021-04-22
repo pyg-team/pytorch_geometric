@@ -16,10 +16,7 @@ except ImportError:
 def jit(**kwargs):
     def decorator(func):
         if numba is None:
-            warnings.warn(('Efficiency of GDC can be greatly improved by '
-                           'installing numba.'))
             return func
-
         try:
             return numba.jit(cache=True, **kwargs)(func)
         except RuntimeError:
@@ -87,6 +84,11 @@ class GDC(object):
                  diffusion_kwargs=dict(method='ppr', alpha=0.15),
                  sparsification_kwargs=dict(method='threshold',
                                             avg_degree=64), exact=True):
+
+        if numba is None:
+            warnings.warn(('Efficiency of GDC can be greatly improved by '
+                           'installing numba.'))
+
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
