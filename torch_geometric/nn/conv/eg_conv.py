@@ -30,7 +30,7 @@ class EGConv(MessagePassing):
     :math:`\oplus` denoting an aggregator, and :math:`w` denoting per-vertex
     weighting coefficients across different heads, bases and aggregators.
 
-    EGC retains :math:`\mathcal{O}(|\mathcal{V}|)$ memory usage, making it a
+    EGC retains :math:`\mathcal{O}(|\mathcal{V}|)` memory usage, making it a
     sensible alternative to :class:`~torch_geometric.nn.conv.GCNConv`,
     :class:`~torch_geometric.nn.conv.SAGEConv` or
     :class:`~torch_geometric.nn.conv.GINConv`.
@@ -49,10 +49,10 @@ class EGConv(MessagePassing):
             :obj:`"var"`.
             Multiple aggregators can be used to improve the performance.
             (default: :obj:`["symnorm"]`)
-        num_heads (int, optional): Number of heads to use. Must have
+        num_heads (int, optional): Number of heads :math:`H` to use. Must have
             :obj:`out_channels % num_heads == 0`. It is recommended to set
             :obj:`num_heads >= num_bases`. (default: :obj:`8`)
-        num_bases (int, optional): Number of basis weights to use.
+        num_bases (int, optional): Number of basis weights :math:`B` to use.
             (default: :obj:`4`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of the edge index with added self loops on first
