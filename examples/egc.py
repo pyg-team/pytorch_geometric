@@ -1,150 +1,129 @@
-import os.path as osp
 import argparse
+import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import ModuleList, BatchNorm1d
-from torch.nn import Sequential, ReLU, Linear
+from torch.nn import Sequential, ReLU, Linear, BatchNorm1d
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch_geometric.nn import global_mean_pool, EGConv
-from torch_geometric.data import DataLoader
-
-from ogb.graphproppred import PygGraphPropPredDataset
-from ogb.graphproppred.evaluate import Evaluator
 from ogb.graphproppred.mol_encoder import AtomEncoder
+from ogb.graphproppred import PygGraphPropPredDataset as OGBG, Evaluator
+
+from torch_geometric.nn import EGConv, global_mean_pool
+from torch_geometric.data import DataLoader
+import torch_geometric.transforms as T
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--hidden', type=int, default=236)
-parser.add_argument('--layers', type=int, default=4)
-parser.add_argument('--heads', type=int, default=4)
-parser.add_argument('--bases', type=int, default=4)
-parser.add_argument('--use_multi_aggrs', action="store_true",
-                    help="Switch between EGC-S and EGC-M")
-parser.add_argument('--batch_size', type=int, default=32)
-parser.add_argument('--num_workers', type=int, default=4)
-parser.add_argument('--epochs', type=int, default=30)
-parser.add_argument('--lr', type=float, default=1e-4)
+parser.add_argument('--use_multi_aggregators', action='store_true',
+                    help='Switch between EGC-S and EGC-M')
 args = parser.parse_args()
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data",
-                "ogbg-molhiv")
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'OGB')
+dataset = OGBG('ogbg-molhiv', path, pre_transform=T.ToSparseTensor())
+evaluator = Evaluator('ogbg-molhiv')
 
-dataset = PygGraphPropPredDataset(name=f"ogbg-molhiv", root=path)
 split_idx = dataset.get_idx_split()
-loaders = dict()
-for split in ["train", "valid", "test"]:
-    loaders[split] = DataLoader(
-        dataset[split_idx[split]],
-        batch_size=args.batch_size,
-        shuffle=(split == "train"),
-        num_workers=args.num_workers,
-    )
+train_dataset = dataset[split_idx['train']]
+val_dataset = dataset[split_idx['valid']]
+test_dataset = dataset[split_idx['test']]
+
+train_loader = DataLoader(train_dataset, batch_size=32, num_workers=4,
+                          shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=256)
+test_loader = DataLoader(test_dataset, batch_size=256)
 
 
 class Net(torch.nn.Module):
-    def __init__(self, ):
+    def __init__(self, hidden_channels, num_layers, num_heads, num_bases):
         super().__init__()
-        hidden = args.hidden
-        aggs = ["sum", "mean", "max"] if args.use_multi_aggrs else ["symnorm"]
-        self.embedding = AtomEncoder(hidden)
-        self.graph_layers = ModuleList()
+        if args.use_multi_aggregators:
+            aggregators = ['sum', 'mean', 'max']
+        else:
+            aggregators = ['symnorm']
 
-        for _ in range(args.layers):
-            self.graph_layers.append(
-                ModuleList([
-                    EGConv(
-                        hidden,
-                        hidden,
-                        aggrs=aggs,
-                        num_heads=args.heads,
-                        num_bases=args.bases,
-                    ),
-                    BatchNorm1d(hidden),
-                    ReLU(),
-                ]))
+        self.encoder = AtomEncoder(hidden_channels)
 
-        self.pool = global_mean_pool
+        self.convs = torch.nn.ModuleList()
+        self.norms = torch.nn.ModuleList()
+        for _ in range(num_layers):
+            self.convs.append(
+                EGConv(hidden_channels, hidden_channels, aggregators,
+                       num_heads, num_bases))
+            self.norms.append(BatchNorm1d(hidden_channels))
+
         self.mlp = Sequential(
-            Linear(hidden, hidden // 2, bias=False),
-            BatchNorm1d(hidden // 2),
-            ReLU(),
-            Linear(hidden // 2, hidden // 4, bias=False),
-            BatchNorm1d(hidden // 4),
-            ReLU(),
-            Linear(hidden // 4, 1),
+            Linear(hidden_channels, hidden_channels // 2, bias=False),
+            BatchNorm1d(hidden_channels // 2),
+            ReLU(inplace=True),
+            Linear(hidden_channels // 2, hidden_channels // 4, bias=False),
+            BatchNorm1d(hidden_channels // 4),
+            ReLU(inplace=True),
+            Linear(hidden_channels // 4, 1),
         )
 
-    def forward(self, batch):
-        x, edge_index = batch.x, batch.edge_index
-        x = self.embedding(x.squeeze())
+    def forward(self, x, adj_t, batch):
+        adj_t = adj_t.set_value(None)  # EGConv works without any edge features
 
-        for gcn, bn, act in self.graph_layers:
-            identity = x
-            x = gcn(x=x, edge_index=edge_index)
-            x = bn(x)
-            x = act(x)
-            x += identity
+        x = self.encoder(x)
 
-        x = self.pool(x, batch.batch)
+        for conv, norm in zip(self.convs, self.norms):
+            h = conv(x, adj_t)
+            h = norm(h)
+            h = h.relu_()
+            x = x + h
+
+        x = global_mean_pool(x, batch)
+
         return self.mlp(x)
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-scheduler = ReduceLROnPlateau(optimizer, mode="max", factor=0.5, patience=20,
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = Net(hidden_channels=236, num_layers=4, num_heads=4,
+            num_bases=4).to(device)
+
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=20,
                               min_lr=1e-5)
-evaluator = Evaluator("ogbg-molhiv")
 
 
 def train():
     model.train()
-    num_batches = 0
-    loss_total = 0.0
 
-    for batch in loaders["train"]:
-        batch = batch.to(device)
+    total_loss = total_examples = 0
+    for data in train_loader:
+        data = data.to(device)
         optimizer.zero_grad()
 
-        out = model(batch)
-        # nan targets (unlabeled) should be ignored when computing training loss
-        is_labeled = batch.y == batch.y
-        loss = F.binary_cross_entropy_with_logits(
-            out.to(torch.float32)[is_labeled],
-            batch.y.to(torch.float32)[is_labeled])
+        out = model(data.x, data.adj_t, data.batch)
+        loss = F.binary_cross_entropy_with_logits(out, data.y.to(torch.float))
         loss.backward()
         optimizer.step()
 
-        loss_total += loss.item()
-        num_batches += 1
+        total_loss += float(loss) * data.num_graphs
+        total_examples += data.num_graphs
 
-    return loss_total / num_batches
+    return total_loss / total_examples
 
 
 @torch.no_grad()
-def evaluate(split):
+def evaluate(loader):
     model.eval()
 
-    y_true = []
-    y_pred = []
+    y_pred, y_true = [], []
+    for data in loader:
+        data = data.to(device)
+        pred = model(data.x, data.adj_t, data.batch)
+        y_pred.append(pred.cpu())
+        y_true.append(data.y.cpu())
 
-    for batch in loaders[split]:
-        batch = batch.to(device)
-        pred = model(batch)
-        y_true.append(batch.y.view(pred.shape).detach().cpu())
-        y_pred.append(pred.detach().cpu())
-
-    y_true = torch.cat(y_true, dim=0).numpy()
-    y_pred = torch.cat(y_pred, dim=0).numpy()
-    input_dict = {"y_true": y_true, "y_pred": y_pred}
-
-    return evaluator.eval(input_dict)["rocauc"]
+    y_true = torch.cat(y_true, dim=0)
+    y_pred = torch.cat(y_pred, dim=0)
+    return evaluator.eval({'y_true': y_true, 'y_pred': y_pred})['rocauc']
 
 
-for epoch in range(1, args.epochs + 1):
+for epoch in range(1, 31):
     loss = train()
-    val_metric = evaluate("valid")
-    test_metric = evaluate("test")
-    scheduler.step(val_metric)
-    print(f"Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_metric:.4f}, "
-          f"Test: {test_metric:.4f}")
+    val_rocauc = evaluate(val_loader)
+    test_rocauc = evaluate(test_loader)
+    scheduler.step(val_rocauc)
+    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_rocauc:.4f}, '
+          f'Test: {test_rocauc:.4f}')
