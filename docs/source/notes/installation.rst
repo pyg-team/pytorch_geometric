@@ -6,7 +6,7 @@ These packages come with their own CPU and GPU kernel implementations based on `
 
 .. note::
     We do not recommend installation as root user on your system python.
-    Please setup an `Anaconda/Miniconda <https://conda.io/docs/user-guide/install/index.html/>`_ environment or create a `Docker image <https://www.docker.com/>`_.
+    Please setup an `Anaconda/Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ environment or create a `Docker image <https://www.docker.com/>`_.
 
 Please follow the steps below for a successful installation.
 
