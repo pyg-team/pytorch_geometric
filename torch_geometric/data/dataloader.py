@@ -69,8 +69,8 @@ class DataLoader(torch.utils.data.DataLoader):
                                                  exclude_keys), **kwargs)
 
 
- def identity_collate(data_list):
-     return data_list
+def identity_collate(data_list):
+    return data_list
 
 
 class DataListLoader(torch.utils.data.DataLoader):
