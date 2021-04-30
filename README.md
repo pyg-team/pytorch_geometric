@@ -214,7 +214,7 @@ Binaries are provided for Python version `<= 3.8`.
 
 ### From master
 
-In case you want to experiment with the latest PyG features which did not get released yet, you can install PyG from master via
+In case you want to experiment with the latest PyG features which are not fully released yet, you can install PyG from master via
 
 ```
 pip install git+https://github.com/rusty1s/pytorch_geometric.git
