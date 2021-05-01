@@ -4,6 +4,7 @@ from .layer_norm import LayerNorm
 from .graph_size_norm import GraphSizeNorm
 from .pair_norm import PairNorm
 from .msg_norm import MessageNorm
+from .diff_group_norm import DiffGroupNorm
 
 __all__ = [
     'BatchNorm',
@@ -12,6 +13,7 @@ __all__ = [
     'GraphSizeNorm',
     'PairNorm',
     'MessageNorm',
+    'DiffGroupNorm',
 ]
 
-classes = sorted(__all__)
+classes = __all__

@@ -1,13 +1,12 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
+from torch.utils.dlpack import to_dlpack, from_dlpack
 import scipy.sparse
 import networkx as nx
 
 import torch_geometric.data
-
-try:
-    import trimesh
-except ImportError:
-    trimesh = None
 
 from .num_nodes import maybe_num_nodes
 
@@ -32,7 +31,8 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
         assert edge_attr.size(0) == row.size(0)
 
     N = maybe_num_nodes(edge_index, num_nodes)
-    out = scipy.sparse.coo_matrix((edge_attr, (row, col)), (N, N))
+    out = scipy.sparse.coo_matrix(
+        (edge_attr.numpy(), (row.numpy(), col.numpy())), (N, N))
     return out
 
 
@@ -53,8 +53,8 @@ def from_scipy_sparse_matrix(A):
 def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
                 remove_self_loops=False):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
-    :obj:`networkx.DiGraph` if :attr:`to_undirected` is set to :obj:`True`, or
-    an undirected :obj:`networkx.Graph` otherwise.
+    :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
+    a directed :obj:`networkx.DiGraph` otherwise.
 
     Args:
         data (torch_geometric.data.Data): The data object.
@@ -147,10 +147,7 @@ def to_trimesh(data):
     Args:
         data (torch_geometric.data.Data): The data object.
     """
-
-    if trimesh is None:
-        raise ImportError('Package `trimesh` could not be found.')
-
+    import trimesh
     return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
                            faces=data.face.detach().t().cpu().numpy(),
                            process=False)
@@ -163,11 +160,49 @@ def from_trimesh(mesh):
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
     """
-
-    if trimesh is None:
-        raise ImportError('Package `trimesh` could not be found.')
-
     pos = torch.from_numpy(mesh.vertices).to(torch.float)
     face = torch.from_numpy(mesh.faces).t().contiguous()
 
     return torch_geometric.data.Data(pos=pos, face=face)
+
+
+def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
+               relabel_nodes: bool = True):
+    r"""Converts a graph given by :obj:`edge_index` and optional
+    :obj:`edge_weight` into a :obj:`cugraph` graph object.
+
+    Args:
+        relabel_nodes (bool, optional): If set to :obj:`True`,
+            :obj:`cugraph` will remove any isolated nodes, leading to a
+            relabeling of nodes. (default: :obj:`True`)
+    """
+    import cudf
+    import cugraph
+
+    df = cudf.from_dlpack(to_dlpack(edge_index.t()))
+
+    if edge_weight is not None:
+        assert edge_weight.dim() == 1
+        df[2] = cudf.from_dlpack(to_dlpack(edge_weight))
+
+    return cugraph.from_cudf_edgelist(
+        df, source=0, destination=1,
+        edge_attr=2 if edge_weight is not None else None,
+        renumber=relabel_nodes)
+
+
+def from_cugraph(G) -> Tuple[Tensor, Optional[Tensor]]:
+    r"""Converts a :obj:`cugraph` graph object into :obj:`edge_index` and
+    optional :obj:`edge_weight` tensors.
+    """
+    df = G.edgelist.edgelist_df
+
+    src = from_dlpack(df['src'].to_dlpack()).long()
+    dst = from_dlpack(df['dst'].to_dlpack()).long()
+    edge_index = torch.stack([src, dst], dim=0)
+
+    edge_weight = None
+    if 'weights' in df:
+        edge_weight = from_dlpack(df['weights'].to_dlpack())
+
+    return edge_index, edge_weight

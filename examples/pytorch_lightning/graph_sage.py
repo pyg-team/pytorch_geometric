@@ -21,13 +21,6 @@ class Batch(NamedTuple):
     y: Tensor
     adjs_t: List[SparseTensor]
 
-    def to(self, *args, **kwargs):
-        return Batch(
-            x=self.x.to(*args, **kwargs),
-            y=self.y.to(*args, **kwargs),
-            adjs_t=[adj_t.to(*args, **kwargs) for adj_t in self.adjs_t],
-        )
-
 
 class Reddit(LightningDataModule):
     def __init__(self, data_dir):
@@ -94,7 +87,9 @@ class GraphSAGE(LightningModule):
         for _ in range(num_layers - 1):
             self.bns.append(BatchNorm1d(hidden_channels))
 
-        self.acc = Accuracy()
+        self.train_acc = Accuracy()
+        self.val_acc = Accuracy()
+        self.test_acc = Accuracy()
 
     def forward(self, x: Tensor, adjs_t: List[SparseTensor]) -> Tensor:
         for i, adj_t in enumerate(adjs_t):
@@ -105,26 +100,29 @@ class GraphSAGE(LightningModule):
                 x = F.dropout(x, p=self.dropout, training=self.training)
         return x
 
-    def training_step(self, batch, batch_idx: int):
-        y_hat = self(batch.x, batch.adjs_t)
-        train_loss = F.cross_entropy(y_hat, batch.y)
-        train_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
+    def training_step(self, batch: Batch, batch_idx: int):
+        x, y, adjs_t = batch
+        y_hat = self(x, adjs_t)
+        train_loss = F.cross_entropy(y_hat, y)
+        train_acc = self.train_acc(y_hat.softmax(dim=-1), y)
         self.log('train_acc', train_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
         return train_loss
 
-    def validation_step(self, batch, batch_idx: int):
-        y_hat = self(batch.x, batch.adjs_t)
-        val_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
-        self.log('val_acc', val_acc, on_step=False, on_epoch=True,
-                 prog_bar=True, sync_dist=True)
+    def validation_step(self, batch: Batch, batch_idx: int):
+        x, y, adjs_t = batch
+        y_hat = self(x, adjs_t)
+        val_acc = self.val_acc(y_hat.softmax(dim=-1), y)
+        self.log('val_acc', val_acc, prog_bar=True, on_step=False,
+                 on_epoch=True)
         return val_acc
 
-    def test_step(self, batch, batch_idx: int):
-        y_hat = self(batch.x, batch.adjs_t)
-        test_acc = self.acc(y_hat.softmax(dim=-1), batch.y)
-        self.log('test_acc', test_acc, on_step=False, on_epoch=True,
-                 prog_bar=True, sync_dist=True)
+    def test_step(self, batch: Batch, batch_idx: int):
+        x, y, adjs_t = batch
+        y_hat = self(x, adjs_t)
+        test_acc = self.test_acc(y_hat.softmax(dim=-1), y)
+        self.log('test_acc', test_acc, prog_bar=True, on_step=False,
+                 on_epoch=True)
         return test_acc
 
     def configure_optimizers(self):

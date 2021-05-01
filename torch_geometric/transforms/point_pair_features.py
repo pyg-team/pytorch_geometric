@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn.conv.ppf_conv import point_pair_features
+import torch_geometric
 
 
 class PointPairFeatures(object):
@@ -19,11 +19,12 @@ class PointPairFeatures(object):
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
     """
-
     def __init__(self, cat=True):
         self.cat = cat
 
     def __call__(self, data):
+        ppf_func = torch_geometric.nn.conv.ppf_conv.point_pair_features
+
         assert data.edge_index is not None
         assert data.pos is not None and data.norm is not None
         assert data.pos.size(-1) == 3
@@ -32,7 +33,7 @@ class PointPairFeatures(object):
         row, col = data.edge_index
         pos, norm, pseudo = data.pos, data.norm, data.edge_attr
 
-        ppf = point_pair_features(pos[row], pos[col], norm[row], norm[col])
+        ppf = ppf_func(pos[row], pos[col], norm[row], norm[col])
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo

@@ -61,7 +61,7 @@ class DeepGraphInfomax(torch.nn.Module):
         return torch.sigmoid(value) if sigmoid else value
 
     def loss(self, pos_z, neg_z, summary):
-        r"""Computes the mutal information maximization objective."""
+        r"""Computes the mutual information maximization objective."""
         pos_loss = -torch.log(
             self.discriminate(pos_z, summary, sigmoid=True) + EPS).mean()
         neg_loss = -torch.log(

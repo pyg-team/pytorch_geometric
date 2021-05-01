@@ -77,8 +77,8 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
 
         num_nodes = ceil(0.25 * max_nodes)
-        self.gnn1_pool = GNN(3, 64, num_nodes)
-        self.gnn1_embed = GNN(3, 64, 64, lin=False)
+        self.gnn1_pool = GNN(dataset.num_features, 64, num_nodes)
+        self.gnn1_embed = GNN(dataset.num_features, 64, 64, lin=False)
 
         num_nodes = ceil(0.25 * num_nodes)
         self.gnn2_pool = GNN(3 * 64, 64, num_nodes)
@@ -87,7 +87,7 @@ class Net(torch.nn.Module):
         self.gnn3_embed = GNN(3 * 64, 64, 64, lin=False)
 
         self.lin1 = torch.nn.Linear(3 * 64, 64)
-        self.lin2 = torch.nn.Linear(64, 6)
+        self.lin2 = torch.nn.Linear(64, dataset.num_classes)
 
     def forward(self, x, adj, mask=None):
         s = self.gnn1_pool(x, adj, mask)

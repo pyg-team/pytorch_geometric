@@ -18,7 +18,7 @@ try:
 except ImportError:
     rdkit = None
 
-HAR2EV = 27.2113825435
+HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
 
 conversion = torch.tensor([

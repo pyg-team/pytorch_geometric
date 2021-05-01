@@ -1,3 +1,4 @@
+from .sequential import Sequential
 from .meta import MetaLayer
 from .data_parallel import DataParallel
 from .reshape import Reshape
@@ -10,6 +11,7 @@ from .dense import *  # noqa
 from .models import *  # noqa
 
 __all__ = [
+    'Sequential',
     'MetaLayer',
     'DataParallel',
     'Reshape',

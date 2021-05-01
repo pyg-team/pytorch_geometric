@@ -1,4 +1,7 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
 
 
 class MetaLayer(torch.nn.Module):
@@ -44,7 +47,7 @@ class MetaLayer(torch.nn.Module):
                 self.edge_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
 
             def forward(self, src, dest, edge_attr, u, batch):
-                # source, target: [E, F_x], where E is the number of edges.
+                # src, dest: [E, F_x], where E is the number of edges.
                 # edge_attr: [E, F_e]
                 # u: [B, F_u], where B is the number of graphs.
                 # batch: [E] with max entry B - 1.
@@ -100,9 +103,13 @@ class MetaLayer(torch.nn.Module):
             if hasattr(item, 'reset_parameters'):
                 item.reset_parameters()
 
-    def forward(self, x, edge_index, edge_attr=None, u=None, batch=None):
+    def forward(
+            self, x: Tensor, edge_index: Tensor,
+            edge_attr: Optional[Tensor] = None, u: Optional[Tensor] = None,
+            batch: Optional[Tensor] = None) -> Tuple[Tensor, Tensor, Tensor]:
         """"""
-        row, col = edge_index
+        row = edge_index[0]
+        col = edge_index[1]
 
         if self.edge_model is not None:
             edge_attr = self.edge_model(x[row], x[col], edge_attr, u,

@@ -7,15 +7,13 @@ import torch_geometric.transforms as T
 from torch_geometric.nn import SplineConv
 
 dataset = 'Cora'
+transform = T.Compose([
+    T.AddTrainValTestMask('train_rest', num_val=500, num_test=500),
+    T.TargetIndegree(),
+])
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-dataset = Planetoid(path, dataset, transform=T.TargetIndegree())
+dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]
-
-data.train_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-data.train_mask[:data.num_nodes - 1000] = 1
-data.val_mask = None
-data.test_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-data.test_mask[data.num_nodes - 500:] = 1
 
 
 class Net(torch.nn.Module):
