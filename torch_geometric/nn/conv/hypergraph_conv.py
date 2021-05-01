@@ -90,8 +90,8 @@ class HypergraphConv(MessagePassing):
         r"""
         Args:
             x (Tensor): Node feature matrix :math:`\mathbf{X}`
-            hyper_edge_index (LongTensor): Hyperedge indices from
-                :math:`\mathbf{H}`.
+            hyperedge_index (LongTensor): Hyperedge indices from
+                :math:`\mathbf{H}` (the sparse incidence matrix).
             hyperedge_weight (Tensor, optional): Sparse hyperedge weights from
                 :math:`\mathbf{W}`. (default: :obj:`None`)
         """
