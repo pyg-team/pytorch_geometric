@@ -24,6 +24,19 @@ class HypergraphConv(MessagePassing):
     :math:`\mathbf{D}` and :math:`\mathbf{B}` are the corresponding degree
     matrices.
 
+    For example, in the hypergraph scenario
+    :math:`\mathcal{G} = (\mathcal{V}, \mathcal{E})` with
+    :math:`\mathcal{V} = \{ 0, 1, 2, 3 \}` and
+    :math:`\mathcal{E} = \{ \{ 0, 1, 2 \}, \{ 1, 2, 3 \} \}`, the
+    :obj:`hyperedge_index` is represented as:
+
+    .. code-block:: python
+
+        hyperedge_index = torch.tensor([
+            [0, 1, 2, 1, 2, 3],
+            [0, 0, 0, 1, 1, 1],
+        ])
+
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
