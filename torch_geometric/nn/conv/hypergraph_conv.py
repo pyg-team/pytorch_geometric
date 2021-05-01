@@ -20,7 +20,8 @@ class HypergraphConv(MessagePassing):
         \mathbf{B}^{-1} \mathbf{H}^{\top} \mathbf{X} \mathbf{\Theta}
 
     where :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` is the incidence
-    matrix, :math:`\mathbf{W}` is the diagonal hyperedge weight matrix, and
+    matrix, :math:`\mathbf{W} \in \mathbb{R}^M` is the diagonal hyperedge
+    weight matrix, and
     :math:`\mathbf{D}` and :math:`\mathbf{B}` are the corresponding degree
     matrices.
 
@@ -100,12 +101,12 @@ class HypergraphConv(MessagePassing):
         r"""
         Args:
             x (Tensor): Node feature matrix :math:`\mathbf{X}`
-            hyperedge_index (LongTensor): The hyperedge indices, *.i.e.*
+            hyperedge_index (LongTensor): The hyperedge indices, *i.e.*
                 the sparse incidence matrix
-                :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times E}` mapping from
+                :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` mapping from
                 nodes to edges.
             hyperedge_weight (Tensor, optional): Sparse hyperedge weights
-                :math:`\mathbf{W} \in \mathbb{R}^E`. (default: :obj:`None`)
+                :math:`\mathbf{W} \in \mathbb{R}^M`. (default: :obj:`None`)
         """
         num_nodes, num_edges = x.size(0), 0
         if hyperedge_index.numel() > 0:
