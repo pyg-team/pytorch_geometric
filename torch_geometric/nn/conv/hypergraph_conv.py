@@ -97,16 +97,22 @@ class HypergraphConv(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x: Tensor, hyperedge_index: Tensor,
-                hyperedge_weight: Optional[Tensor] = None) -> Tensor:
+                hyperedge_weight: Optional[Tensor] = None,
+                hyperedge_x: Optional[Tensor] = None) -> Tensor:
         r"""
         Args:
-            x (Tensor): Node feature matrix :math:`\mathbf{X}`
+            x (Tensor): Node feature matrix
+                :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
             hyperedge_index (LongTensor): The hyperedge indices, *i.e.*
                 the sparse incidence matrix
                 :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` mapping from
                 nodes to edges.
             hyperedge_weight (Tensor, optional): Sparse hyperedge weights
                 :math:`\mathbf{W} \in \mathbb{R}^M`. (default: :obj:`None`)
+            hyperedge_x (Tensor, optional): Sparse hyperedge feature matrix in
+                :math:`\mathbb{R}^{M \times F}`.
+                These features only need to get passed in case
+                :obj:`use_attention=True`. (default: :obj:`None`)
         """
         num_nodes, num_edges = x.size(0), 0
         if hyperedge_index.numel() > 0:
@@ -119,9 +125,11 @@ class HypergraphConv(MessagePassing):
 
         alpha = None
         if self.use_attention:
-            assert num_edges <= num_edges
+            assert hyperedge_x is not None
             x = x.view(-1, self.heads, self.out_channels)
-            x_i, x_j = x[hyperedge_index[0]], x[hyperedge_index[1]]
+            hyperedge_x = torch.matmul(hyperedge_x, self.weight)
+            hyperedge_x = hyperedge_x.view(-1, self.heads, self.out_channels)
+            x_i, x_j = x[hyperedge_index[0]], hyperedge_x[hyperedge_index[1]]
             alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
             alpha = F.leaky_relu(alpha, self.negative_slope)
             alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
