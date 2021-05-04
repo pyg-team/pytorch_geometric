@@ -10,6 +10,12 @@ from torch_geometric.nn import MessagePassing
 
 Metagraph = Tuple[List[str], List[Tuple[str, str, str]]]
 
+# TODO:
+# * LazyInitialization
+# * What are leaf modules?
+# * Flexible args/kwargs replacement
+# * What happens in ModuleLists and ModuleDicts?
+
 
 def metatype2str(metatype: Union[str, Tuple[str, str, str]]) -> str:
     return '__'.join(metatype) if isinstance(metatype, tuple) else metatype
@@ -31,8 +37,7 @@ def duplicate_submodules(module: Module, metagraph: Metagraph) -> Module:
                 warnings.warn((f"'{name}' will be duplicated, but its "
                                "parameters cannot be reset"))
 
-        assert f'{name}_dict' not in module._modules
-        module.add_module(f'{name}_dict', module_dict)
+        module._modules[name] = module_dict
 
     return module
 
@@ -53,14 +58,18 @@ def transform(module: Module, metagraph: Metagraph, input_map: Dict[str, str],
             unwrap_placeholder(gm.graph, node, metagraph[0])
         elif node.op == 'placeholder' and input_map[node.name] == 'edge':
             unwrap_placeholder(gm.graph, node, metagraph[1])
+        elif node.op == 'get_attr':
+            raise NotImplementedError
         elif node.op == 'call_module':
-            unwrap_node_call_module(gm.graph, node, metagraph[0])
+            unwrap_call_node_module(gm.graph, node, metagraph[0])
         elif node.op == 'call_method':
             unwrap_call_method(gm.graph, node, metagraph[0])
         elif node.op == 'call_function':
             raise NotImplementedError
         elif node.op == 'output':
             unwrap_output(gm.graph, node, metagraph[0])
+        else:
+            raise NotImplementedError
 
     erase_unused_nodes(gm.graph)
 
@@ -96,14 +105,13 @@ def unwrap_placeholder(graph: fx.Graph, node: fx.Node,
     return outs
 
 
-def unwrap_node_call_module(graph: fx.Graph, node: fx.Node,
+def unwrap_call_node_module(graph: fx.Graph, node: fx.Node,
                             metatypes: List[str]) -> List[fx.Node]:
     outs: List[fx.Node] = []
     graph.inserting_after(node)
     for metatype in metatypes:
         input_node = find_node(graph, name=f'{node.args[0].name}__{metatype}')
-        out = graph.create_node('call_module',
-                                f'{node.target}_dict.{metatype}',
+        out = graph.create_node('call_module', f'{node.target}.{metatype}',
                                 args=(input_node, ),
                                 name=f'{node.name}__{metatype}')
         graph.inserting_after(out)

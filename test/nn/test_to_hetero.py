@@ -12,9 +12,11 @@ class Net1(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.lin1 = Linear(16, 16)
+        self.lin2 = Linear(16, 16)
 
     def forward(self, x: Tensor) -> Tensor:
         x = self.lin1(x).relu_()
+        x = self.lin2(x).relu_()
         return x
 
 
@@ -53,6 +55,7 @@ gm = symbolic_trace(model2,
 print(gm.graph.python_code('self'))
 gm.graph.print_tabular()
 print('-------------')
+print(model1)
 duplicate_submodules(model1, (['paper', 'author'], [('paper', 'author')]))
 out_model = transform(model1, metadata, input_map={'x': 'node'})
 out_model({'author': torch.randn(100, 16), 'paper': torch.randn(100, 16)})
