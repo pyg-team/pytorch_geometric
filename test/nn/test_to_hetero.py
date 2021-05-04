@@ -14,7 +14,7 @@ class Net1(torch.nn.Module):
         self.lin1 = Linear(16, 16)
 
     def forward(self, x: Tensor) -> Tensor:
-        x = self.lin1(x)
+        x = self.lin1(x).relu_()
         return x
 
 

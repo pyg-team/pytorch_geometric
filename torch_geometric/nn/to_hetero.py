@@ -31,7 +31,7 @@ def duplicate_submodules(module: Module, metagraph: Metagraph) -> Module:
                 warnings.warn((f"'{name}' will be duplicated, but its "
                                "parameters cannot be reset"))
 
-        assert not hasattr(module, f'{name}_dict')
+        assert f'{name}_dict' not in module._modules
         module.add_module(f'{name}_dict', module_dict)
 
     return module
@@ -40,8 +40,6 @@ def duplicate_submodules(module: Module, metagraph: Metagraph) -> Module:
 def transform(module: Module, metagraph: Metagraph, input_map: Dict[str, str],
               debug: bool = True) -> Module:
     metagraph = metagraph[:1] + ([metatype2str(t) for t in metagraph[1]], )
-
-    print(module.lin1_dict)
 
     gm = fx.symbolic_trace(module)
 
@@ -57,6 +55,10 @@ def transform(module: Module, metagraph: Metagraph, input_map: Dict[str, str],
             unwrap_placeholder(gm.graph, node, metagraph[1])
         elif node.op == 'call_module':
             unwrap_node_call_module(gm.graph, node, metagraph[0])
+        elif node.op == 'call_method':
+            unwrap_call_method(gm.graph, node, metagraph[0])
+        elif node.op == 'call_function':
+            raise NotImplementedError
         elif node.op == 'output':
             unwrap_output(gm.graph, node, metagraph[0])
 
@@ -88,7 +90,7 @@ def unwrap_placeholder(graph: fx.Graph, node: fx.Node,
     graph.inserting_after(node)
     for metatype in metatypes:
         out = graph.create_node('call_method', 'get', args=(node, metatype),
-                                name=f'{node.target}__{metatype}')
+                                name=f'{node.name}__{metatype}')
         graph.inserting_after(out)
         outs.append(out)
     return outs
@@ -103,7 +105,21 @@ def unwrap_node_call_module(graph: fx.Graph, node: fx.Node,
         out = graph.create_node('call_module',
                                 f'{node.target}_dict.{metatype}',
                                 args=(input_node, ),
-                                name=f'{node.target}__{metatype}')
+                                name=f'{node.name}__{metatype}')
+        graph.inserting_after(out)
+        outs.append(out)
+    return outs
+
+
+def unwrap_call_method(graph: fx.Graph, node: fx.Node,
+                       metatypes: List[str]) -> List[fx.Node]:
+    outs: List[fx.Node] = []
+    graph.inserting_after(node)
+    for metatype in metatypes:
+        input_node = find_node(graph, name=f'{node.args[0].name}__{metatype}')
+        out = graph.create_node('call_method', node.target,
+                                args=(input_node, ),
+                                name=f'{node.name}__{metatype}')
         graph.inserting_after(out)
         outs.append(out)
     return outs
@@ -120,7 +136,7 @@ def unwrap_output(graph: fx.Graph, node: fx.Node,
 
 
 def erase_unused_nodes(graph: fx.Graph) -> fx.Graph:
-    for node in list(graph.nodes):
+    for node in list(graph.nodes)[::-1]:  # Iterate in reverse-mode.
         try:
             if node.op not in ['output']:
                 graph.erase_node(node)
