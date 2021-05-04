@@ -107,10 +107,10 @@ class HypergraphConv(MessagePassing):
                 the sparse incidence matrix
                 :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` mapping from
                 nodes to edges.
-            hyperedge_weight (Tensor, optional): Sparse hyperedge weights
+            hyperedge_weight (Tensor, optional): Hyperedge weights
                 :math:`\mathbf{W} \in \mathbb{R}^M`. (default: :obj:`None`)
-            hyperedge_attr (Tensor, optional): Sparse hyperedge feature matrix
-                in :math:`\mathbb{R}^{M \times F}`.
+            hyperedge_attr (Tensor, optional): Hyperedge feature matrix in
+                :math:`\mathbb{R}^{M \times F}`.
                 These features only need to get passed in case
                 :obj:`use_attention=True`. (default: :obj:`None`)
         """
