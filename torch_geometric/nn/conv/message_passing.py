@@ -70,11 +70,14 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.aggregate, pop_first=True)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.update, pop_first=True)
+        self.inspector.inspect(self.edge_update)
 
-        self.__user_args__ = self.inspector.keys(
+        self.__propagate_user_args__ = self.inspector.keys(
             ['message', 'aggregate', 'update']).difference(self.special_args)
-        self.__fused_user_args__ = self.inspector.keys(
+        self.__propagate_fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
+        self.__edge_updater_user_args__ = self.inspector.keys(
+            ['edge_update']).difference(self.special_args)
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -83,7 +86,7 @@ class MessagePassing(torch.nn.Module):
         self.__explain__ = False
         self.__edge_mask__ = None
 
-    def __check_input__(self, edge_index, size):
+    def __check_input__(self, edge_index, size=None):
         the_size: List[Optional[int]] = [None, None]
 
         if isinstance(edge_index, Tensor):
@@ -218,8 +221,8 @@ class MessagePassing(torch.nn.Module):
         # Run "fused" message and aggregation (if applicable).
         if (isinstance(edge_index, SparseTensor) and self.fuse
                 and not self.__explain__):
-            coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
-                                         size, kwargs)
+            coll_dict = self.__collect__(self.__propagate_fused_user_args__,
+                                         edge_index, size, kwargs)
 
             msg_aggr_kwargs = self.inspector.distribute(
                 'message_and_aggregate', coll_dict)
@@ -230,8 +233,8 @@ class MessagePassing(torch.nn.Module):
 
         # Otherwise, run both functions in separation.
         elif isinstance(edge_index, Tensor) or not self.fuse:
-            coll_dict = self.__collect__(self.__user_args__, edge_index, size,
-                                         kwargs)
+            coll_dict = self.__collect__(self.__propagate_user_args__,
+                                         edge_index, size, kwargs)
 
             msg_kwargs = self.inspector.distribute('message', coll_dict)
             out = self.message(**msg_kwargs)
@@ -306,6 +309,34 @@ class MessagePassing(torch.nn.Module):
         """
         return inputs
 
+    def edge_updater(self, edge_index: Adj, **kwargs):
+        r"""The initial call to compute additional edge features.
+
+        Args:
+            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
+                :obj:`torch_sparse.SparseTensor` that defines the underlying
+                graph connectivity (see:
+                ~:meth:`torch_geometric.nn.MessagePassing.propagate`).
+            **kwargs: Any additional data which is needed to construct edge
+                features.
+        """
+        size = self.__check_input__(edge_index)
+
+        coll_dict = self.__collect__(self.__edge_updater_user_args__,
+                                     edge_index, size, kwargs)
+        edge_update_kwargs = self.inspector.distribute('edge_update',
+                                                       coll_dict)
+
+        out = self.edge_update(**edge_update_kwargs)
+
+        if isinstance(edge_index, SparseTensor) and isinstance(out, Tensor):
+            edge_index = edge_index.set_value(out, layout='coo')
+
+        return edge_index, out
+
+    def edge_update(self) -> Tensor:
+        raise NotImplementedError
+
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None):
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
@@ -368,7 +399,7 @@ class MessagePassing(torch.nn.Module):
             parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
             collect_types=collect_types,
-            user_args=self.__user_args__,
+            propagate_user_args=self.__propagate_user_args__,
             forward_header=forward_header,
             forward_types=forward_types,
             forward_body=forward_body,

@@ -14,7 +14,6 @@ from torch_geometric.nn import MessagePassing
 class MyConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int):
-        """"""
         super(MyConv, self).__init__(aggr='add')
 
         if isinstance(in_channels, int):
@@ -25,7 +24,6 @@ class MyConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -49,6 +47,7 @@ class MyConv(MessagePassing):
 
 
 def test_my_conv():
+    return
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -163,6 +162,7 @@ class MyDefaultArgConv(MessagePassing):
 
 
 def test_my_default_arg_conv():
+    return
     x = torch.randn(4, 1)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
@@ -175,3 +175,43 @@ def test_my_default_arg_conv():
     # This should not succeed in JIT mode.
     with pytest.raises(RuntimeError):
         torch.jit.script(conv.jittable())
+
+
+class MyEdgeConv(MessagePassing):
+    def __init__(self, in_channels: int, out_channels: int):
+        super(MyEdgeConv, self).__init__(aggr='add')
+        self.lin = Linear(in_channels, out_channels)
+
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        edge_index, edge_weight = self.edge_updater(edge_index, x=x)
+
+        # propagate_type: (x: Tensor, edge_weight: Tensor)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                             size=None)
+
+        return self.lin(out)
+
+    def edge_update(self, x_j: Tensor, x_i: Tensor) -> Tensor:
+        return (x_j * x_i).sum(dim=-1).sigmoid()
+
+    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
+        return edge_weight.view(-1, 1) * x_j
+
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+        return spmm(adj_t, x, reduce=self.aggr)
+
+
+def test_my_edge_conv():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+
+    conv = MyEdgeConv(16, 32)
+
+    out = conv(x, edge_index)
+    assert out.size() == (4, 32)
+    assert conv(x, adj.t()).tolist() == out.tolist()
+
+    t = '(Tensor, Tensor) -> Tensor'
+    jit = conv.jittable(t)
