@@ -47,6 +47,7 @@ def transform(module: Module, metagraph: Metagraph, input_map: Dict[str, str],
     metagraph = metagraph[:1] + ([metatype2str(t) for t in metagraph[1]], )
 
     gm = fx.symbolic_trace(module)
+    gm = duplicate_submodules(gm, metagraph)
 
     if debug:
         gm.graph.print_tabular()

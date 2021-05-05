@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 from torch.nn import Linear, ModuleDict
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn.to_hetero import duplicate_submodules, transform
+from torch_geometric.nn.to_hetero import transform
 from torch.fx import symbolic_trace
 
 
@@ -55,7 +55,5 @@ gm = symbolic_trace(model2,
 print(gm.graph.python_code('self'))
 gm.graph.print_tabular()
 print('-------------')
-print(model1)
-duplicate_submodules(model1, (['paper', 'author'], [('paper', 'author')]))
 out_model = transform(model1, metadata, input_map={'x': 'node'})
 out_model({'author': torch.randn(100, 16), 'paper': torch.randn(100, 16)})
