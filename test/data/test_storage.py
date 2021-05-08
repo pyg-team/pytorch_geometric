@@ -2,40 +2,33 @@ import copy
 
 import torch
 
-from torch_geometric.data.storage import Storage, Storage2
+from torch_geometric.data.storage import Storage
 
 
 def test_storage():
-    storage = Storage2()
+    storage = Storage()
     storage.x = torch.zeros(1)
     storage.y = torch.ones(1)
     assert len(storage) == 2
     assert storage.x is not None
     assert storage.y is not None
 
-    # keys = storage.keys('x', 'y', 'z')
-    # assert len(keys) == 2
-
-    # values = storage.values('x', 'y', 'z')
-    # assert len(values) == 2
-
-    # items = storage.items('x', 'y', 'z')
-    # assert len(items) == 2
+    assert len(list(storage('x', 'y', 'z'))) == 2
 
     del storage.y
     assert len(storage) == 1
     assert storage.x is not None
     assert storage.y is None
 
-    storage = Storage2({'x': torch.zeros(1)})
+    storage = Storage({'x': torch.zeros(1)})
     assert len(storage) == 1
     assert storage.x is not None
 
-    storage = Storage2(x=torch.zeros(1))
+    storage = Storage(x=torch.zeros(1))
     assert len(storage) == 1
     assert storage.x is not None
 
-    storage = Storage2(key='key', parent={}, x=torch.zeros(1))
+    storage = Storage(key='key', parent={}, x=torch.zeros(1))
 
     copied_storage = copy.copy(storage)
     assert storage == copied_storage
@@ -56,8 +49,6 @@ def test_storage():
     assert int(deepcopied_storage.x) == 0
 
 
-def test_storage_functionality():
-    storage = Storage2(x=1, y=2)
-    bla = storage.items()
-    # print(storage)
-    # print(bla)
+def test_graph_storage():
+    storage = Storage(x=1, y=2)
+    print(storage)
