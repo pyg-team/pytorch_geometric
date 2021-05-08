@@ -171,7 +171,7 @@ class Data(object):
         if bool(re.search('(index|face)', key)):
             return -1
         # By default, concatenate sparse matrices diagonally.
-        elif isinstance(value, SparseTensor):
+        elif key == 'adj_t' and isinstance(value, SparseTensor):
             return (0, 1)
         return 0
 

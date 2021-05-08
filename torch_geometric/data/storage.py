@@ -1,15 +1,25 @@
-from typing import Any, Optional, Iterable, Dict, List
+from typing import Any, Optional, Iterable, Dict, List, Tuple, Callable, Union
 
 import copy
 import warnings
 import collections
 
-from typing import Union, Tuple, Callable, Optional
-
 NodeType = str
 EdgeType = Tuple[str, str, str]
 QueryType = Union[str, NodeType, EdgeType, Tuple[str, str]]
 AttrType = Union[str, Tuple[str, Callable]]
+
+
+def recursive_apply_(item, func):
+    if isinstance(item, (tuple, list)):
+        return [recursive_apply_(v, func) for v in item]
+    if isinstance(item, dict):
+        return {k: recursive_apply_(v, func) for k, v in item.items()}
+
+    try:
+        return func(item)
+    except:  # noqa
+        return item
 
 
 class BaseStorage(collections.abc.MutableMapping):
@@ -20,6 +30,8 @@ class BaseStorage(collections.abc.MutableMapping):
     #    `storage.items('x', 'y')` or `storage.values('x', 'y')
     # 3. It allows for private non-dict attributes, e.g.:
     #    `storage.__dict__['key'] = ...
+    # 4. Adds custom functionality, e.g.:
+    #    `storage.to_dict` or `storage.apply_`
     def __init__(
         self,
         dict: Optional[Dict[str, Any]] = None,
@@ -77,6 +89,14 @@ class BaseStorage(collections.abc.MutableMapping):
         return self.__class__(copy.deepcopy(self._data, memo), self._key,
                               self._parent)
 
+    def to_dict(self) -> Dict[str, Any]:
+        return self._data
+
+    def apply_(self, func: Callable, *keys: List[str]):
+        for key, item in self(*keys):
+            self[key] = recursive_apply_(item, func)
+        return self
+
 
 class Storage(BaseStorage):
     def __init__(
@@ -94,16 +114,16 @@ class Storage(BaseStorage):
     def num_nodes(self) -> Optional[int]:
         for _, item in self('num_nodes'):
             return item
-        for _, item in self('x', 'pos'):
-            return item.size(-2)
+        for key, item in self('x', 'pos', 'batch'):
+            return item.size(self._parent.__cat_dim__(key, item))
         for _, item in self('adj'):
             return item.size(0)
         for _, item in self('adj_t'):
             return item.size(1)
-        warnings.warn((
+        warnings.warn(
             f"Unable to infer 'num_nodes' from attributes {set(self.keys())}. "
             f"Please explicitly set 'num_nodes' as an attribute of "
-            f"'data[{self._key}]'"))
+            f"'data[{self._key}]'")
         for _, item in self('edge_index'):
             return int(max(item)) + 1
         for _, item in self('face'):
@@ -114,15 +134,31 @@ class Storage(BaseStorage):
     def num_edges(self) -> Optional[int]:
         for _, item in self('num_edges'):
             return item
-        for _, item in self('edge_index'):
-            return item.size(-1)
+        for key, item in self('edge_index', 'edge_attr'):
+            return item.size(self._parent.__cat_dim__(key, item))
         for _, item in self('adj', 'adj_t'):
             return item.nnz()
-        warnings.warn((
+        warnings.warn(
             f"Unable to infer 'num_edges' from attributes {set(self.keys())}. "
             f"Please explicitly set 'num_edges' as an attribute of "
-            f"'data[{self._key}]'"))
+            f"'data[{self._key}]'")
         return None
+
+    @property
+    def num_node_features(self) -> int:
+        for _, item in self('x'):
+            return 1 if item.dim() == 1 else item.size(-1)
+        return 0
+
+    @property
+    def num_features(self) -> int:
+        return self.num_node_features
+
+    @property
+    def num_edge_features(self):
+        for _, item in self('edge_attr'):
+            return 1 if item.dim() == 1 else item.size(-1)
+        return 0
 
 
 class NodeStorage(Storage):
@@ -131,9 +167,27 @@ class NodeStorage(Storage):
         raise AttributeError(
             f"'{self.__class__.__name__}' object has no attribute 'num_edges'")
 
+    @property
+    def num_num_edge_features(self) -> int:
+        raise AttributeError(
+            f"'{self.__class__.__name__}' object has no attribute "
+            f"'num_edge_features'")
+
 
 class EdgeStorage(Storage):
     @property
     def num_nodes(self) -> Optional[int]:
         raise AttributeError(
             f"'{self.__class__.__name__}' object has no attribute 'num_nodes'")
+
+    @property
+    def num_node_features(self) -> int:
+        raise AttributeError(
+            f"'{self.__class__.__name__}' object has no attribute "
+            f"'num_node_features'")
+
+    @property
+    def num__features(self) -> int:
+        raise AttributeError(
+            f"'{self.__class__.__name__}' object has no attribute "
+            f"'num_features'")
