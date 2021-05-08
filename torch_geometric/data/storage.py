@@ -72,7 +72,8 @@ class BaseStorage(collections.abc.MutableMapping):
         del self[key]
 
     def __iter__(self) -> Iterable:
-        return iter(self._data)
+        for key in self.keys():
+            yield key, self[key]
 
     def __call__(self, *args: List[str]) -> Iterable:
         keys = self.keys()
