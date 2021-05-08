@@ -102,7 +102,8 @@ class Storage(BaseStorage):
             return item.size(1)
         warnings.warn((
             f"Unable to infer 'num_nodes' from attributes {set(self.keys())}. "
-            f"Please explicitly set 'num_nodes' as an attribute"))
+            f"Please explicitly set 'num_nodes' as an attribute of "
+            f"'data[{self._key}]'"))
         for _, item in self('edge_index'):
             return int(max(item)) + 1
         for _, item in self('face'):
@@ -119,7 +120,8 @@ class Storage(BaseStorage):
             return item.nnz()
         warnings.warn((
             f"Unable to infer 'num_edges' from attributes {set(self.keys())}. "
-            f"Please explicitly set 'num_edges' as an attribute"))
+            f"Please explicitly set 'num_edges' as an attribute of "
+            f"'data[{self._key}]'"))
         return None
 
 
