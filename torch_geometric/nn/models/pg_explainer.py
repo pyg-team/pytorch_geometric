@@ -11,9 +11,10 @@ EPS = 1e-15
 
 
 class PGExplainer(torch.nn.Module):
-    r"""The PGExplainer model from the `"Parameterized Explainer for Graph Neural Network"
-    <https://arxiv.org/abs/2011.04573>`_ paper for identifying compact subgraph
-    structures that play a crucial role in a GNN’s node/graph predictions.
+    r"""The PGExplainer model from the `"Parameterized Explainer for Graph Neural
+    Network" <https://arxiv.org/abs/2011.04573>`_ paper for identifying compact
+    subgraph structures that play a crucial role in a GNN’s node/graph
+    predictions.
 
     .. note::
 
@@ -21,7 +22,8 @@ class PGExplainer(torch.nn.Module):
 
     Args:
         model (torch.nn.Module): The GNN module to explain.
-        out_channels(int): Size of output of last embedding layer in :obj:`model`.
+        out_channels(int): Size of output of last embedding layer in
+            :obj:`model`.
         epochs (int, optional): The number of epochs to train.
             (default: :obj:`30`)
         lr (float, optional): The learning rate to apply.
@@ -32,8 +34,8 @@ class PGExplainer(torch.nn.Module):
             information based on the number of
             :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
             layers inside :obj:`model`. (default: :obj:`None`)
-        task (str): Denotes the type of task that needs explanation. Valid inputs
-            are :obj:`"node"` (for node classification) and :obj:`"graph"` (for 
+        task (str): Denotes type of task that needs explanation. Valid inputs
+            are :obj:`"node"` (for node classification) and :obj:`"graph"` (for
             graph classification). (default: :obj:`"node"`)
         return_type (str, optional): Denotes the type of output from
             :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model returns
@@ -68,7 +70,8 @@ class PGExplainer(torch.nn.Module):
         self.return_type = return_type
         self.log = log
 
-        self.exp_in_channels = 2 * self.out_channels if self.task == 'graph' else 3 * self.out_channels
+        self.exp_in_channels = 2 * out_channels if (task == 
+            'graph') else 3 * out_channels
         self.explainer_model = nn.Sequential(
             nn.Linear(self.exp_in_channels, 64),
             nn.ReLU(),
@@ -101,7 +104,6 @@ class PGExplainer(torch.nn.Module):
 
     def __subgraph__(self, node_idx, x, z, edge_index, **kwargs):
         num_nodes, num_edges = x.size(0), edge_index.size(1)
-
         subset, edge_index, mapping, edge_mask = k_hop_subgraph(
             node_idx, self.num_hops, edge_index, relabel_nodes=True,
             num_nodes=num_nodes, flow=self.__flow__())
@@ -117,10 +119,11 @@ class PGExplainer(torch.nn.Module):
                 item = item[edge_mask]
             kwargs_new[key] = item
 
-        return x, edge_index, mapping, edge_mask, kwargs_new
+        return x, z, edge_index, mapping, kwargs_new
 
     def __create_explainer_input__(self, edge_index, x, node_id=None):
-        r"""Given the embeddign of the sample by the :obj:`model`, this method construct the input to the :obj:`explainer_model`.
+        r"""Given the embeddign of the sample by the :obj:`model`, this method construct
+        the input to the :obj:`explainer_model`.
         """
 
         rows = edge_index[0]
@@ -131,7 +134,6 @@ class PGExplainer(torch.nn.Module):
             x_node = x[node_id].repeat(rows.size(0), 1)
             explainer_input = torch.cat([x_i, x_j, x_node], 1)
         else:
-            # Node id is not used in this case
             explainer_input = torch.cat([x_i, x_j], 1)
         return explainer_input
 
@@ -143,23 +145,23 @@ class PGExplainer(torch.nn.Module):
 
     def __compute_edge_mask__(self, edge_weight, temperature=1.0, bias=0.0,
                               training=True):
-        r"""Compute :obj:`self.edge_mask` (edge probabilities) from :attr:`edge_weight` returned by :obj:`self.explainer_model`
+        r"""Compute :obj:`self.edge_mask` (edge probabilities)
+        from :attr:`edge_weight`.
         """
 
         if training:
-            bias = bias + 0.0001  # If eps is 0, we run into problems
+            bias = bias + 0.0001
             eps = (bias -
                    (1 - bias)) * torch.rand(edge_weight.size()) + (1 - bias)
             eps = eps.to(edge_weight.device)
-            self.edge_mask = (eps.log() -
-                              (1 - eps).log() + edge_weight) / temperature
+            self.edge_mask = (eps.log() - (1 - eps).log() +
+                              edge_weight).squeeze() / temperature
 
         else:
             self.edge_mask = edge_weight.squeeze()
 
     def __loss__(self, log_logits, pred_label, batch=None, edge_index=None):
-        cross_ent_loss = nll_loss(log_logits, pred_label.squeeze(),
-                                  reduction='sum')
+        cross_ent_loss = nll_loss(log_logits, pred_label, reduction='sum')
         mask = self.edge_mask.sigmoid().squeeze()
 
         # Regularization losses
@@ -168,6 +170,7 @@ class PGExplainer(torch.nn.Module):
         mask_ent_loss = mask_ent_reg.mean() if batch is None else scatter_mean(
             mask_ent_reg, batch[edge_index[0]]).sum()
         mask_ent_loss *= self.coeffs['edge_ent']
+
         return cross_ent_loss + size_loss + mask_ent_loss
 
     def __to_log_prob__(self, x: torch.Tensor) -> torch.Tensor:
@@ -176,9 +179,9 @@ class PGExplainer(torch.nn.Module):
         return x
 
     def train_explainer(self, index, x, z, edge_index, batch=None, **kwargs):
-        r"""Trains a fully connected network :obj:`self.explainer_model` to predict an edge mask 
-        that is important to explain the predictions made by :obj:`self.model`. The nodes/graphs in
-        :attr:`index` are used for training.
+        r"""Trains a fully connected network :obj:`self.explainer_model` to predict an
+        edge mask that is important to explain the predictions made by
+        :obj:`self.model`. The nodes/graphs in :attr:`index` are used for training.
 
         Args:
             index (LongTensor): The nodes/graphs used to train explainer.
@@ -186,8 +189,7 @@ class PGExplainer(torch.nn.Module):
             z (Tensor): Node embedding from last :class:`MessagePassing` layer.
             edge_index (LongTensor): The edge indices.
             batch (optional, LongTensor): Tensor denotes the graph each node
-                                        belongs to. Only required if :obj:`task`=
-                                        :obj:`"graph"`.
+                belongs to. Only required if :obj:`task`=:obj:`"graph"`.
             **kwargs (optional): Additional arguments passed to the GNN module.
 
         """
@@ -205,7 +207,10 @@ class PGExplainer(torch.nn.Module):
 
         # Get initial prediction.
         with torch.no_grad():
-            out = self.model(x=x, edge_index=edge_index, batch=batch, **kwargs)
+            out = self.model(x=x, edge_index=edge_index, **
+                             kwargs) if batch is None else self.model(
+                                 x=x, edge_index=edge_index, batch=batch, **
+                                 kwargs)
             log_logits = self.__to_log_prob__(out)
             pred_label = log_logits.argmax(dim=-1)
 
@@ -228,6 +233,8 @@ class PGExplainer(torch.nn.Module):
                 edge_index, kwargs['edge_attr'] = subgraph(
                     train, edge_index, kwargs['edge_attr'], relabel_nodes=True)
             pred_label = pred_label[index]
+
+            # creating new batch tensor, for graphs in training.
             batch = torch.tensor([
                 torch.searchsorted(index, i) for i in batch if i in index
             ]).to(x.device)
@@ -243,7 +250,7 @@ class PGExplainer(torch.nn.Module):
                 out = self.model(x=x, edge_index=edge_index, batch=batch,
                                  **kwargs)
                 log_logits = self.__to_log_prob__(out)
-                self.__loss__(log_logits, pred_label, batch=batch,
+                self.__loss__(log_logits, pred_label.squeeze(1), batch=batch,
                               edge_index=edge_index).backward()
                 optimizer.step()
 
@@ -252,22 +259,22 @@ class PGExplainer(torch.nn.Module):
 
         else:
             for e in range(0, self.epochs):
-                optimizer.zero_grad()
-                loss = torch.FloatTensor([0])
+                loss = torch.tensor([0.0], device=x.device).detach()
                 t = temp_schedule(e)
                 for n in index:
+                    n = int(n)
                     optimizer.zero_grad()
-                    x_n, edge_index_n, mapping, hard_edge_mask, kwargs_n = self.__subgraph__(
+                    x_n, z_n, edge_index_n, mapping, kwargs_n = self.__subgraph__(
                         n, x, z, edge_index, **kwargs)
                     explainer_in = self.__create_explainer_input__(
-                        edge_index_n, z_n, n).detach()
+                        edge_index_n, z_n, mapping).detach()
                     self.__compute_edge_mask__(
                         self.explainer_model(explainer_in), t, bias=self.bias)
                     self.__set_masks__()
                     out = self.model(x=x_n, edge_index=edge_index_n,
                                      **kwargs_n)
                     log_logits = self.__to_log_prob__(out)
-                    loss += self.__loss__(log_logits[mapping], pred_label[n])
+                    loss += self.__loss__(log_logits[mapping], pred_label[[n]])
                 loss.backward()
                 optimizer.step()
 
