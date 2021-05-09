@@ -2,7 +2,7 @@ from typing import Any, Optional, Iterable, Dict, List, Tuple, Callable, Union
 
 import copy
 import warnings
-import collections
+from collections.abc import Sequence, Mapping, MutableMapping
 
 NodeType = str
 EdgeType = Tuple[str, str, str]
@@ -10,28 +10,68 @@ QueryType = Union[str, NodeType, EdgeType, Tuple[str, str]]
 AttrType = Union[str, Tuple[str, Callable]]
 
 
-def recursive_apply_(item, func):
-    if isinstance(item, (tuple, list)):
-        return [recursive_apply_(v, func) for v in item]
-    if isinstance(item, dict):
-        return {k: recursive_apply_(v, func) for k, v in item.items()}
+def recursive_apply_(data: Any, func: Callable) -> Any:
+    if isinstance(data, Sequence) and not isinstance(data, str):
+        return [recursive_apply_(d, func) for d in data]
+    if isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
+        return type(data)(*(recursive_apply_(d) for d in data))
+    if isinstance(data, Mapping):
+        return {key: recursive_apply_(data[key], func) for key in data}
 
     try:
-        return func(item)
+        return func(data)
     except:  # noqa
-        return item
+        return data
 
 
-class BaseStorage(collections.abc.MutableMapping):
-    # This class extends the Python dictionary class by the following:
+class MappingView(object):
+    def __init__(self, mapping: Mapping, *args: List[str]):
+        self._mapping = mapping
+        self._args = set(args)
+
+    def _keys(self) -> Iterable:
+        if len(self._args) == 0:
+            return self._mapping.keys()
+        else:
+            return set(self._mapping.keys()) & self._args
+
+    def __len__(self) -> int:
+        return len(self._keys())
+
+    def __repr__(self) -> str:
+        mapping = {key: self._mapping[key] for key in self._keys()}
+        return f'{self.__class__.__name__}({mapping})'
+
+    __class_getitem__ = classmethod(type([]))
+
+
+class KeysView(MappingView):
+    def __iter__(self) -> Iterable:
+        yield from self._keys()
+
+
+class ValuesView(MappingView):
+    def __iter__(self) -> Iterable:
+        for key in self._keys():
+            yield self._mapping[key]
+
+
+class ItemsView(MappingView):
+    def __iter__(self):
+        for key in self._keys():
+            yield (key, self._mapping[key])
+
+
+class BaseStorage(MutableMapping):
+    # This class wraps a Python dictionary and extends it by the following:
     # 1. It allows attribute assignment:
     #    `storage.x = ...` rather than `storage['x'] = ...`
-    # 2. We can iterate over a subset of keys, e.g.:
-    #    `storage.items('x', 'y')` or `storage.values('x', 'y')
-    # 3. It allows for private non-dict attributes, e.g.:
+    # 2. It allows private non-dictionary attributes, e.g.:
     #    `storage.__dict__['key'] = ...
-    # 4. Adds custom functionality, e.g.:
-    #    `storage.to_dict` or `storage.apply_`
+    # 3. It allows iterating over a subset of keys, e.g.:
+    #    `storage.values('x', 'y')` or `storage.items('x', 'y')
+    # 4. It adds additional functionality, e.g.:
+    #    `storage.to_dict()` or `storage.apply_(...)`
     def __init__(
         self,
         dict: Optional[Dict[str, Any]] = None,
@@ -52,15 +92,17 @@ class BaseStorage(collections.abc.MutableMapping):
     def __getattr__(self, key: str) -> Optional[Any]:
         return self[key]
 
-    def __setitem__(self, key: str, item: Optional[Any]):
-        if item is None:
+    def __setitem__(self, key: str, value: Optional[Any]):
+        if value is None:
             del self[key]
-        self._data[key] = item
+        else:
+            self._data[key] = value
 
-    def __setattr__(self, key: str, item: Optional[Any]):
+    def __setattr__(self, key: str, value: Optional[Any]):
         if key in self.__dict__:
-            self.__dict__[key] = item
-        self[key] = item
+            self.__dict__[key] = value
+        else:
+            self[key] = value
 
     def __delitem__(self, key: str):
         if key in self._data:
@@ -69,33 +111,48 @@ class BaseStorage(collections.abc.MutableMapping):
     def __delattr__(self, key: str):
         if key in self.__dict__:
             del self.__dict__[key]
-        del self[key]
+        else:
+            del self[key]
 
     def __iter__(self) -> Iterable:
-        for key in self.keys():
-            yield key, self[key]
+        return iter(self._data)
 
-    def __call__(self, *args: List[str]) -> Iterable:
-        keys = self.keys()
-        for key in keys if len(args) == 0 else (set(keys) & set(args)):
-            yield key, self[key]
+    def __copy__(self):
+        out = self.__class__()
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        out._data = copy.copy(out._data)
+        return out
+
+    def __deepcopy__(self, memo):
+        out = self.__class__()
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        out._data = copy.deepcopy(out._data, memo)
+        return out
 
     def __repr__(self) -> str:
         return repr(self._data)
 
-    def __copy__(self):
-        return self.__class__(copy.copy(self._data), self._key, self._parent)
+    # Allow iterating over subsets ############################################
 
-    def __deepcopy__(self, memo):
-        return self.__class__(copy.deepcopy(self._data, memo), self._key,
-                              self._parent)
+    def keys(self, *args: List[str]) -> KeysView:
+        return KeysView(self._data, *args)
+
+    def values(self, *args: List[str]) -> ValuesView:
+        return ValuesView(self._data, *args)
+
+    def items(self, *args: List[str]) -> ItemsView:
+        return ItemsView(self._data, *args)
+
+    # Additional functionality ################################################
 
     def to_dict(self) -> Dict[str, Any]:
         return self._data
 
     def apply_(self, func: Callable, *keys: List[str]):
-        for key, item in self(*keys):
-            self[key] = recursive_apply_(item, func)
+        for key, value in self.items(*keys):
+            self[key] = recursive_apply_(value, func)
         return self
 
 
@@ -113,32 +170,32 @@ class Storage(BaseStorage):
 
     @property
     def num_nodes(self) -> Optional[int]:
-        for _, item in self('num_nodes'):
-            return item
-        for key, item in self('x', 'pos', 'batch'):
-            return item.size(self._parent.__cat_dim__(key, item))
-        for _, item in self('adj'):
-            return item.size(0)
-        for _, item in self('adj_t'):
-            return item.size(1)
+        for value in self.values('num_nodes'):
+            return value
+        for key, value in self.items('x', 'pos', 'batch'):
+            return value.size(self._parent.__cat_dim__(key, value))
+        for value in self.values('adj'):
+            return value.size(0)
+        for value in self.values('adj_t'):
+            return value.size(1)
         warnings.warn(
             f"Unable to infer 'num_nodes' from attributes {set(self.keys())}. "
             f"Please explicitly set 'num_nodes' as an attribute of "
             f"'data[{self._key}]'")
-        for _, item in self('edge_index'):
-            return int(max(item)) + 1
-        for _, item in self('face'):
-            return int(max(item)) + 1
+        for value in self.values('edge_index'):
+            return int(max(value)) + 1
+        for value in self.values('face'):
+            return int(max(value)) + 1
         return None
 
     @property
     def num_edges(self) -> Optional[int]:
-        for _, item in self('num_edges'):
-            return item
-        for key, item in self('edge_index', 'edge_attr'):
-            return item.size(self._parent.__cat_dim__(key, item))
-        for _, item in self('adj', 'adj_t'):
-            return item.nnz()
+        for value in self.values('num_edges'):
+            return value
+        for key, value in self.items('edge_index', 'edge_attr'):
+            return value.size(self._parent.__cat_dim__(key, value))
+        for value in self.values('adj', 'adj_t'):
+            return value.nnz()
         warnings.warn(
             f"Unable to infer 'num_edges' from attributes {set(self.keys())}. "
             f"Please explicitly set 'num_edges' as an attribute of "
@@ -147,8 +204,8 @@ class Storage(BaseStorage):
 
     @property
     def num_node_features(self) -> int:
-        for _, item in self('x'):
-            return 1 if item.dim() == 1 else item.size(-1)
+        for value in self.values('x'):
+            return 1 if value.dim() == 1 else value.size(-1)
         return 0
 
     @property
@@ -157,8 +214,8 @@ class Storage(BaseStorage):
 
     @property
     def num_edge_features(self):
-        for _, item in self('edge_attr'):
-            return 1 if item.dim() == 1 else item.size(-1)
+        for value in self.values('edge_attr'):
+            return 1 if value.dim() == 1 else value.size(-1)
         return 0
 
 
