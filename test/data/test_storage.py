@@ -2,7 +2,7 @@ import copy
 
 import torch
 
-from torch_geometric.data.storage import Storage
+from torch_geometric.data.storage import GlobalStorage as Storage
 
 
 def test_storage():

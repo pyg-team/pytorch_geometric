@@ -4,6 +4,8 @@ import copy
 import warnings
 from collections.abc import Sequence, Mapping, MutableMapping
 
+from torch import Tensor
+
 NodeType = str
 EdgeType = Tuple[str, str, str]
 QueryType = Union[str, NodeType, EdgeType, Tuple[str, str]]
@@ -17,7 +19,8 @@ def recursive_apply_(data: Any, func: Callable) -> Any:
         return type(data)(*(recursive_apply_(d) for d in data))
     if isinstance(data, Mapping):
         return {key: recursive_apply_(data[key], func) for key in data}
-
+    if isinstance(data, Tensor):
+        return func(data)
     try:
         return func(data)
     except:  # noqa
@@ -150,13 +153,47 @@ class BaseStorage(MutableMapping):
     def to_dict(self) -> Dict[str, Any]:
         return self._data
 
-    def apply_(self, func: Callable, *keys: List[str]):
-        for key, value in self.items(*keys):
+    def clone(self, *args: List[str]):
+        return copy.deepcopy(self)
+
+    def apply_(self, func: Callable, *args: List[str]):
+        for key, value in self.items(*args):
             self[key] = recursive_apply_(value, func)
         return self
 
+    def contiguous(self, *args: List[str]):
+        return self.apply(lambda x: x.contiguous(), *args)
 
-class Storage(BaseStorage):
+    def to(self, device: Union[int, str], *args: List[str],
+           non_blocking: bool = False):
+        return self.apply(
+            lambda x: x.to(device=device, non_blocking=non_blocking), *args)
+
+    def cpu(self, *args: List[str]):
+        return self.apply(lambda x: x.cpu(), *args)
+
+    def cuda(self, device: Union[int, str], *args: List[str],
+             non_blocking: bool = False):
+        return self.apply(lambda x: x.cuda(non_blocking=non_blocking), *args)
+
+    def pin_memory(self, *args: List[str]):
+        return self.apply(lambda x: x.pin_memory(), *args)
+
+    def share_memory_(self, *args: List[str]):
+        return self.apply(lambda x: x.share_memory_(), *args)
+
+    def detach_(self, *args: List[str]):
+        return self.apply(lambda x: x.detach_(), *args)
+
+    def detach(self, *args: List[str]):
+        return self.apply(lambda x: x.detach(), *args)
+
+    def requires_grad_(self, *args: List[str], requires_grad: bool = True):
+        return self.apply(
+            lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
+
+
+class NodeStorage(BaseStorage):
     def __init__(
         self,
         dict: Optional[Dict[str, Any]] = None,
@@ -189,6 +226,29 @@ class Storage(BaseStorage):
         return None
 
     @property
+    def num_node_features(self) -> int:
+        for value in self.values('x'):
+            return 1 if value.dim() == 1 else value.size(-1)
+        return 0
+
+    @property
+    def num_features(self) -> int:
+        return self.num_node_features
+
+
+class EdgeStorage(BaseStorage):
+    def __init__(
+        self,
+        dict: Optional[Dict[str, Any]] = None,
+        key: Optional[Union[NodeType, EdgeType]] = None,
+        parent: Optional[Any] = None,
+        **kwargs,
+    ):
+        super().__init__(dict, **kwargs)
+        self.__dict__['_key'] = key
+        self.__dict__['_parent'] = parent
+
+    @property
     def num_edges(self) -> Optional[int]:
         for value in self.values('num_edges'):
             return value
@@ -203,49 +263,17 @@ class Storage(BaseStorage):
         return None
 
     @property
-    def num_node_features(self) -> int:
-        for value in self.values('x'):
-            return 1 if value.dim() == 1 else value.size(-1)
-        return 0
-
-    @property
-    def num_features(self) -> int:
-        return self.num_node_features
-
-    @property
     def num_edge_features(self):
         for value in self.values('edge_attr'):
             return 1 if value.dim() == 1 else value.size(-1)
         return 0
 
-
-class NodeStorage(Storage):
     @property
-    def num_edges(self) -> Optional[int]:
-        raise AttributeError(
-            f"'{self.__class__.__name__}' object has no attribute 'num_edges'")
+    def num_features(self) -> int:
+        return self.num_edge_features
 
+
+class GlobalStorage(NodeStorage, EdgeStorage):
     @property
-    def num_num_edge_features(self) -> int:
-        raise AttributeError(
-            f"'{self.__class__.__name__}' object has no attribute "
-            f"'num_edge_features'")
-
-
-class EdgeStorage(Storage):
-    @property
-    def num_nodes(self) -> Optional[int]:
-        raise AttributeError(
-            f"'{self.__class__.__name__}' object has no attribute 'num_nodes'")
-
-    @property
-    def num_node_features(self) -> int:
-        raise AttributeError(
-            f"'{self.__class__.__name__}' object has no attribute "
-            f"'num_node_features'")
-
-    @property
-    def num__features(self) -> int:
-        raise AttributeError(
-            f"'{self.__class__.__name__}' object has no attribute "
-            f"'num_features'")
+    def num_features(self) -> int:
+        return self.num_node_features
