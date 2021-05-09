@@ -278,7 +278,8 @@ class EdgeStorage(BaseStorage):
                 self._parent[self._key[0]].num_nodes,
                 self._parent[self._key[-1]].num_nodes
             ]
-        return [self.num_nodes, self.num_nodes]
+        else:
+            return [self.num_nodes, self.num_nodes]
 
     def contains_isolated_nodes(self) -> bool:
         raise NotImplementedError
