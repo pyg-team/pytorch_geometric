@@ -1,15 +1,11 @@
-from typing import Any, Optional, Iterable, Dict, List, Tuple, Callable, Union
+from typing import Any, Optional, Iterable, Dict, List, Callable, Union
+from torch_geometric.typing import NodeType, EdgeType
 
 import copy
 import warnings
 from collections.abc import Sequence, Mapping, MutableMapping
 
 from torch import Tensor
-
-NodeType = str
-EdgeType = Tuple[str, str, str]
-QueryType = Union[str, NodeType, EdgeType, Tuple[str, str]]
-AttrType = Union[str, Tuple[str, Callable]]
 
 
 def recursive_apply_(data: Any, func: Callable) -> Any:
@@ -197,7 +193,7 @@ class NodeStorage(BaseStorage):
     def __init__(
         self,
         dict: Optional[Dict[str, Any]] = None,
-        key: Optional[Union[NodeType, EdgeType]] = None,
+        key: Optional[NodeType] = None,
         parent: Optional[Any] = None,
         **kwargs,
     ):
@@ -240,7 +236,7 @@ class EdgeStorage(BaseStorage):
     def __init__(
         self,
         dict: Optional[Dict[str, Any]] = None,
-        key: Optional[Union[NodeType, EdgeType]] = None,
+        key: Optional[EdgeType] = None,
         parent: Optional[Any] = None,
         **kwargs,
     ):
@@ -272,8 +268,31 @@ class EdgeStorage(BaseStorage):
     def num_features(self) -> int:
         return self.num_edge_features
 
+    def contains_isolated_nodes(self) -> bool:
+        raise NotImplementedError
+
+    def contains_self_loops(self) -> bool:
+        raise NotImplementedError
+
+    def is_undirected(self) -> bool:
+        raise NotImplementedError
+
+    def is_directed(self) -> bool:
+        return not self.is_undirected
+
 
 class GlobalStorage(NodeStorage, EdgeStorage):
+    def __init__(
+        self,
+        dict: Optional[Dict[str, Any]] = None,
+        key: Optional[Union[NodeType, EdgeType]] = None,
+        parent: Optional[Any] = None,
+        **kwargs,
+    ):
+        super().__init__(dict, **kwargs)
+        self.__dict__['_key'] = key
+        self.__dict__['_parent'] = parent
+
     @property
     def num_features(self) -> int:
         return self.num_node_features
