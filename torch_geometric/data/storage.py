@@ -1,4 +1,4 @@
-from typing import Any, Optional, Iterable, Dict, List, Callable, Union
+from typing import Any, Optional, Iterable, Dict, List, Callable, Union, Tuple
 from torch_geometric.typing import NodeType, EdgeType
 
 import copy
@@ -267,6 +267,18 @@ class EdgeStorage(BaseStorage):
     @property
     def num_features(self) -> int:
         return self.num_edge_features
+
+    def adj_size(self) -> Tuple[Optional[int], Optional[int]]:
+        for value in self.values('adj'):
+            return [value.size(0), value.size(1)]
+        for value in self.values('adj_t'):
+            return [value.size(1), value.size(0)]
+        if isinstance(self._key, tuple):
+            return [
+                self._parent[self._key[0]].num_nodes,
+                self._parent[self._key[-1]].num_nodes
+            ]
+        return [self.num_nodes, self.num_nodes]
 
     def contains_isolated_nodes(self) -> bool:
         raise NotImplementedError
