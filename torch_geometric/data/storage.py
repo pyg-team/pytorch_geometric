@@ -198,6 +198,7 @@ class NodeStorage(BaseStorage):
         **kwargs,
     ):
         super().__init__(dict, **kwargs)
+        assert isinstance(key, str)
         self.__dict__['_key'] = key
         self.__dict__['_parent'] = parent
 
@@ -241,6 +242,7 @@ class EdgeStorage(BaseStorage):
         **kwargs,
     ):
         super().__init__(dict, **kwargs)
+        assert isinstance(key, tuple)
         self.__dict__['_key'] = key
         self.__dict__['_parent'] = parent
 
@@ -268,18 +270,16 @@ class EdgeStorage(BaseStorage):
     def num_features(self) -> int:
         return self.num_edge_features
 
-    def adj_size(self) -> Tuple[Optional[int], Optional[int]]:
+    def size(self) -> Tuple[int, int]:
         for value in self.values('adj'):
             return [value.size(0), value.size(1)]
         for value in self.values('adj_t'):
             return [value.size(1), value.size(0)]
-        if isinstance(self._key, tuple):
-            return [
-                self._parent[self._key[0]].num_nodes,
-                self._parent[self._key[-1]].num_nodes
-            ]
-        else:
-            return [self.num_nodes, self.num_nodes]
+
+        return [
+            self._parent[self._key[0]].num_nodes,
+            self._parent[self._key[-1]].num_nodes
+        ]
 
     def contains_isolated_nodes(self) -> bool:
         raise NotImplementedError
@@ -295,17 +295,12 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-    def __init__(
-        self,
-        dict: Optional[Dict[str, Any]] = None,
-        key: Optional[Union[NodeType, EdgeType]] = None,
-        parent: Optional[Any] = None,
-        **kwargs,
-    ):
+    def __init__(self, dict: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__(dict, **kwargs)
-        self.__dict__['_key'] = key
-        self.__dict__['_parent'] = parent
 
     @property
     def num_features(self) -> int:
         return self.num_node_features
+
+    def size(self) -> Tuple[int, int]:
+        return [self.num_nodes, self.num_nodes]
