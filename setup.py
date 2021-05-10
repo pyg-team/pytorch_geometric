@@ -14,7 +14,6 @@ install_requires = [
     'pandas',
     'rdflib',
     'googledrivedownloader',
-    'ase',
     'jinja2',
 ]
 setup_requires = ['pytest-runner']
