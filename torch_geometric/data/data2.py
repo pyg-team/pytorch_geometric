@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any, Tuple, Union
+from typing import Optional, Dict, Any, Tuple, Union, List
 from torch_geometric.typing import NodeType, EdgeType, QueryType
 
 import copy
@@ -10,12 +10,16 @@ import numpy as np
 
 from .storage import NodeStorage, EdgeStorage, GlobalStorage
 
+# Backward-compatibility issues:
+# * `Data(x, edge_index)` breaks
+
 
 class Data(object):
     def __init__(self, dictionary: Optional[Dict[str, Any]] = None, **kwargs):
         self.__dict__['_global_store'] = GlobalStorage()
         self.__dict__['_hetero_store'] = {}
 
+        dictionary = {} if dictionary is None else dictionary
         for key, value in chain(dictionary.items(), kwargs.items()):
             if '__' in key and isinstance(value, dict):
                 key = tuple(key.split('__'))
@@ -97,9 +101,9 @@ class Data(object):
         self,
         *args: Tuple[QueryType],
     ) -> Union[NodeType, EdgeType]:
-        # Converts a given `QueryType` to its "canonical type", i.e.,
+        # Converts a given `QueryType` to its "canonical type", i.e.
         # "incomplete" edge types `(src_node_type, dst_node_type)` will get
-        # linked to `(src_node_type, _, dst_node_type)`.
+        # mapped to `(src_node_type, '_', dst_node_type)`.
         if len(args) == 1:
             args = args[0]
         if isinstance(args, tuple) and len(args) == 2:
@@ -114,6 +118,14 @@ class Data(object):
     def is_homogeneous(self) -> bool:
         return not self.is_heterogeneous
 
+    @property
+    def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
+        # Returns the heterogeneous meta-data, i.e. its node and edge types.
+        it = self._hetero_store.items()
+        node_types = [k for k, v in it if isinstance(v, NodeStorage)]
+        edge_types = [k for k, v in it if isinstance(v, EdgeStorage)]
+        return node_types, edge_types
+
     def __repr__(self) -> str:
         cls = self.__class__.__name__
 
@@ -127,7 +139,7 @@ class Data(object):
 
 
 def size_repr(key, value, indent=0):
-    indent_str = ' ' * indent
+    pad = ' ' * indent
     if isinstance(value, torch.Tensor) and value.dim() == 0:
         out = value.item()
     elif isinstance(value, torch.Tensor):
@@ -138,11 +150,14 @@ def size_repr(key, value, indent=0):
         out = f"'{value}'"
     elif isinstance(value, Sequence):
         out = str([len(value)])
+    elif isinstance(value, Mapping) and len(value) == 1:
+        lines = [size_repr(k, v, 0) for k, v in value.items()]
+        out = '{ ' + ', '.join(lines) + ' }'
     elif isinstance(value, Mapping):
-        lines = [indent_str + size_repr(k, v, 2) for k, v in value.items()]
-        out = '{\n' + ',\n'.join(lines) + '\n' + indent_str + '}'
+        lines = [pad + size_repr(k, v, indent + 2) for k, v in value.items()]
+        out = '{\n' + ',\n'.join(lines) + '\n' + pad + '}'
     else:
         out = str(value)
 
     key = str(key).replace("'", '')
-    return f'{indent_str}{key}={out}'
+    return f'{pad}{key}={out}'
