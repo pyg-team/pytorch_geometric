@@ -1,6 +1,7 @@
 from typing import Optional, Dict, Any, Tuple, Union
 from torch_geometric.typing import NodeType, EdgeType, QueryType
 
+import copy
 from itertools import chain
 from collections.abc import Sequence, Mapping
 
@@ -76,6 +77,22 @@ class Data(object):
         elif key in self._global_store:
             del self._global_store[key]
 
+    def __copy__(self):
+        out = self.__class__()
+        out._global_store = copy.copy(self._global_store)
+        for key, item in self._hetero_store.items():
+            out._hetero_store[key] = copy.copy(item)
+            out._hetero_store._parent = out
+        return out
+
+    def __deepcopy__(self, memo):
+        out = self.__class__()
+        out._global_store = copy.deepcopy(self._global_store, memo)
+        for key, item in self._hetero_store.items():
+            out._hetero_store[key] = copy.deepcopy(item, memo)
+            out._hetero_store._parent = out
+        return out
+
     def _to_canonical(
         self,
         *args: Tuple[QueryType],
@@ -83,7 +100,8 @@ class Data(object):
         # Converts a given `QueryType` to its "canonical type", i.e.,
         # "incomplete" edge types `(src_node_type, dst_node_type)` will get
         # linked to `(src_node_type, _, dst_node_type)`.
-        args = args[0]
+        if len(args) == 1:
+            args = args[0]
         if isinstance(args, tuple) and len(args) == 2:
             args = (args[0], '_', args[1])
         return args

@@ -15,3 +15,12 @@ def test_data():
     }, author={'y': tmp}, paper__author={'edge_index': tmp}, x=tmp)
     print("DRIN")
     print(data)
+
+    print(data._to_canonical('author', 'paper'))
+    print(data._to_canonical(('author', 'paper')))
+
+    print(data['author'])
+    print(data['paper', 'author'])
+    print(data['paper', '_', 'author'])
+    print(data[('paper', '_', 'author')])
+    print(data[('paper', 'author')])
