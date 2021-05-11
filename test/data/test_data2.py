@@ -16,6 +16,8 @@ def test_data():
     print("DRIN")
     print(data)
 
+    print(data._to_canonical('author'))
+    print(data._to_canonical(('author', )))
     print(data._to_canonical('author', 'paper'))
     print(data._to_canonical(('author', 'paper')))
 
@@ -24,3 +26,5 @@ def test_data():
     print(data['paper', '_', 'author'])
     print(data[('paper', '_', 'author')])
     print(data[('paper', 'author')])
+
+    print(data.metadata)

@@ -131,11 +131,12 @@ class Data(object):
 
         if self.is_homogeneous:
             info = [size_repr(k, v) for k, v in self._global_store.items()]
-            return '{}({})'.format(cls, ', '.join(info))
+            return '{}{}{}({})'.format(BOLD, cls, END, ', '.join(info))
         else:
             info1 = [size_repr(k, v, 2) for k, v in self._global_store.items()]
             info2 = [size_repr(k, v, 2) for k, v in self._hetero_store.items()]
-            return '{}(\n{}\n)'.format(cls, ',\n'.join(info1 + info2))
+            info = info1 + info2
+            return '{}{}{}(\n{}\n)'.format(BOLD, cls, END, ',\n'.join(info))
 
 
 def size_repr(key, value, indent=0):
@@ -160,4 +161,11 @@ def size_repr(key, value, indent=0):
         out = str(value)
 
     key = str(key).replace("'", '')
-    return f'{pad}{key}={out}'
+    if isinstance(value, Mapping):
+        return f'{pad}{BOLD}{key}{END}={out}'
+    else:
+        return f'{pad}{key}={out}'
+
+
+BOLD = '\033[1m'
+END = '\033[0m'
