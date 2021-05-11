@@ -5,7 +5,9 @@ import copy
 import warnings
 from collections.abc import Sequence, Mapping, MutableMapping
 
-from torch import Tensor
+import torch
+
+from .view import KeysView, ValuesView, ItemsView
 
 
 def recursive_apply_(data: Any, func: Callable) -> Any:
@@ -15,7 +17,7 @@ def recursive_apply_(data: Any, func: Callable) -> Any:
         return type(data)(*(recursive_apply_(d) for d in data))
     if isinstance(data, Mapping):
         return {key: recursive_apply_(data[key], func) for key in data}
-    if isinstance(data, Tensor):
+    if isinstance(data, torch.Tensor):
         return func(data)
     try:
         return func(data)
@@ -23,62 +25,24 @@ def recursive_apply_(data: Any, func: Callable) -> Any:
         return data
 
 
-class MappingView(object):
-    def __init__(self, mapping: Mapping, *args: List[str]):
-        self._mapping = mapping
-        self._args = set(args)
-
-    def _keys(self) -> Iterable:
-        if len(self._args) == 0:
-            return self._mapping.keys()
-        else:
-            return set(self._mapping.keys()) & self._args
-
-    def __len__(self) -> int:
-        return len(self._keys())
-
-    def __repr__(self) -> str:
-        mapping = {key: self._mapping[key] for key in self._keys()}
-        return f'{self.__class__.__name__}({mapping})'
-
-    __class_getitem__ = classmethod(type([]))
-
-
-class KeysView(MappingView):
-    def __iter__(self) -> Iterable:
-        yield from self._keys()
-
-
-class ValuesView(MappingView):
-    def __iter__(self) -> Iterable:
-        for key in self._keys():
-            yield self._mapping[key]
-
-
-class ItemsView(MappingView):
-    def __iter__(self):
-        for key in self._keys():
-            yield (key, self._mapping[key])
-
-
 class BaseStorage(MutableMapping):
     # This class wraps a Python dictionary and extends it by the following:
     # 1. It allows attribute assignment:
     #    `storage.x = ...` rather than `storage['x'] = ...`
     # 2. It allows private non-dictionary attributes, e.g.:
-    #    `storage.__dict__['key'] = ...
+    #    `storage.__dict__[{key}] = ...` accesible via `storage.{key}`
     # 3. It allows iterating over a subset of keys, e.g.:
     #    `storage.values('x', 'y')` or `storage.items('x', 'y')
     # 4. It adds additional functionality, e.g.:
     #    `storage.to_dict()` or `storage.apply_(...)`
     def __init__(
         self,
-        dict: Optional[Dict[str, Any]] = None,
+        dictionary: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         self.__dict__['_data'] = {}
-        if dict is not None:
-            self.update(dict)
+        if dictionary is not None:
+            self.update(dictionary)
         if kwargs:
             self.update(kwargs)
 
@@ -192,15 +156,15 @@ class BaseStorage(MutableMapping):
 class NodeStorage(BaseStorage):
     def __init__(
         self,
-        dict: Optional[Dict[str, Any]] = None,
-        key: Optional[NodeType] = None,
-        parent: Optional[Any] = None,
+        dictionary: Optional[Dict[str, Any]] = None,
+        _key: Optional[NodeType] = None,
+        _parent: Optional[Any] = None,
         **kwargs,
     ):
-        super().__init__(dict, **kwargs)
-        assert isinstance(key, str)
-        self.__dict__['_key'] = key
-        self.__dict__['_parent'] = parent
+        super().__init__(dictionary, **kwargs)
+        assert _key is None or isinstance(_key, NodeType)
+        self.__dict__['_key'] = _key
+        self.__dict__['_parent'] = _parent
 
     @property
     def num_nodes(self) -> Optional[int]:
@@ -214,8 +178,8 @@ class NodeStorage(BaseStorage):
             return value.size(1)
         warnings.warn(
             f"Unable to infer 'num_nodes' from attributes {set(self.keys())}. "
-            f"Please explicitly set 'num_nodes' as an attribute of "
-            f"'data[{self._key}]'")
+            f"Please explicitly set 'num_nodes' as an attribute" +
+            f" of 'data[{self._key}]'" if self._key is not None else "")
         for value in self.values('edge_index'):
             return int(max(value)) + 1
         for value in self.values('face'):
@@ -236,15 +200,15 @@ class NodeStorage(BaseStorage):
 class EdgeStorage(BaseStorage):
     def __init__(
         self,
-        dict: Optional[Dict[str, Any]] = None,
-        key: Optional[EdgeType] = None,
-        parent: Optional[Any] = None,
+        dictionary: Optional[Dict[str, Any]] = None,
+        _key: Optional[EdgeType] = None,
+        _parent: Optional[Any] = None,
         **kwargs,
     ):
-        super().__init__(dict, **kwargs)
-        assert isinstance(key, tuple)
-        self.__dict__['_key'] = key
-        self.__dict__['_parent'] = parent
+        super().__init__(dictionary, **kwargs)
+        assert _key is None or (isinstance(_key, tuple) and len(_key) == 3)
+        self.__dict__['_key'] = _key
+        self.__dict__['_parent'] = _parent
 
     @property
     def num_edges(self) -> Optional[int]:
@@ -256,8 +220,8 @@ class EdgeStorage(BaseStorage):
             return value.nnz()
         warnings.warn(
             f"Unable to infer 'num_edges' from attributes {set(self.keys())}. "
-            f"Please explicitly set 'num_edges' as an attribute of "
-            f"'data[{self._key}]'")
+            f"Please explicitly set 'num_edges' as an attribute" +
+            f" of 'data[{self._key}]'" if self._key is not None else "")
         return None
 
     @property
@@ -270,21 +234,25 @@ class EdgeStorage(BaseStorage):
     def num_features(self) -> int:
         return self.num_edge_features
 
-    def size(self) -> Tuple[int, int]:
+    def size(self) -> Tuple[Optional[int], Optional[int]]:
         for value in self.values('adj'):
             return [value.size(0), value.size(1)]
         for value in self.values('adj_t'):
             return [value.size(1), value.size(0)]
+
+        if self._parent is None or self._key is None:
+            raise NameError("Unable to infer 'size' without explicit "
+                            "'_key' and '_parent' assignment")
 
         return [
             self._parent[self._key[0]].num_nodes,
             self._parent[self._key[-1]].num_nodes
         ]
 
-    def contains_isolated_nodes(self) -> bool:
+    def has_isolated_nodes(self) -> bool:
         raise NotImplementedError
 
-    def contains_self_loops(self) -> bool:
+    def has_self_loops(self) -> bool:
         raise NotImplementedError
 
     def is_undirected(self) -> bool:
@@ -295,12 +263,24 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-    def __init__(self, dict: Optional[Dict[str, Any]] = None, **kwargs):
-        super().__init__(dict, **kwargs)
+    def __init__(self, dictionary: Optional[Dict[str, Any]] = None, **kwargs):
+        super().__init__(dictionary, **kwargs)
 
     @property
     def num_features(self) -> int:
         return self.num_node_features
 
-    def size(self) -> Tuple[int, int]:
+    def size(self) -> Tuple[Optional[int], Optional[int]]:
         return [self.num_nodes, self.num_nodes]
+
+    def has_isolated_nodes(self) -> bool:
+        raise NotImplementedError
+
+    def has_self_loops(self) -> bool:
+        raise NotImplementedError
+
+    def is_undirected(self) -> bool:
+        raise NotImplementedError
+
+    def is_directed(self) -> bool:
+        return not self.is_undirected
