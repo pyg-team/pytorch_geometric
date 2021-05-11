@@ -85,7 +85,7 @@ class InstanceNorm(_InstanceNorm):
 
             x = x - mean[batch]
 
-        out = x / (var.sqrt()[batch] + self.eps)
+        out = x / (var + self.eps).sqrt()[batch]
 
         if self.weight is not None and self.bias is not None:
             out = out * self.weight.view(1, -1) + self.bias.view(1, -1)
