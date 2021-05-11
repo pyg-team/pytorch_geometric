@@ -10,13 +10,10 @@ install_requires = [
     'networkx',
     'python-louvain',
     'scikit-learn',
-    'numba',
     'requests',
     'pandas',
     'rdflib',
-    'h5py',
     'googledrivedownloader',
-    'ase',
     'jinja2',
 ]
 setup_requires = ['pytest-runner']

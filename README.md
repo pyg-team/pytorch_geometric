@@ -77,6 +77,7 @@ In detail, the following methods are currently implemented:
 * **[NNConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.NNConv)** from Gilmer *et al.*: [Neural Message Passing for Quantum Chemistry](https://arxiv.org/abs/1704.01212) (ICML 2017) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/qm9_nn_conv.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/mnist_nn_conv.py)]
 * **[CGConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.CGConv)** from Xie and Grossman: [Crystal Graph Convolutional Neural Networks for an Accurate and Interpretable Prediction of Material Properties](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.120.145301) (Physical Review Letters 120, 2018)
 * **[ECConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.ECConv)** from Simonovsky and Komodakis: [Edge-Conditioned Convolution on Graphs](https://arxiv.org/abs/1704.02901) (CVPR 2017)
+* **[EGConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.EGConv)** from Tailor *et al.*: [Adaptive Filters and Aggregator Fusion for Efficient Graph Convolutions](https://arxiv.org/abs/2104.01481) (GNNSys 2021) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/egc.py)]
 * **[GATConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GATConv)** from Veličković *et al.*: [Graph Attention Networks](https://arxiv.org/abs/1710.10903) (ICLR 2018) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gat.py)]
 * **[TransformerConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.TransformerConv)** from Shi *et al.*: [Masked Label Prediction: Unified Message Passing Model for Semi-Supervised Classification](https://arxiv.org/abs/2009.03509) (CoRR 2020)
 * **[SAGEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SAGEConv)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/graph_sage_unsup.py)]
@@ -143,9 +144,10 @@ In detail, the following methods are currently implemented:
 * **[ShaDow](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.data.ShaDowKHopSampler)** from Zeng *et al.*: [Deep Graph Neural Networks with Shallow Subgraph Samplers](https://arxiv.org/abs/2012.01380) (CoRR 2020)
 * **[GDC](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.transforms.GDC)** from Klicpera *et al.*: [Diffusion Improves Graph Learning](https://arxiv.org/abs/1911.05485) (NeurIPS 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gcn.py)]
 * **[SIGN](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.transforms.SIGN)** from Rossi *et al.*: [SIGN: Scalable Inception Graph Neural Networks](https://arxiv.org/abs/2004.11198) (CoRR 2020) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/sign.py)]
-* **[GraphSizeNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.GraphSizeNorm)** from Dwivedi *et al.*: [Benchmarking Graph Neural Networks](https://arxiv.org/abs/2003.00982) (CoRR 2020)
 * **[GNNExplainer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GNNExplainer)** from Ying *et al.*: [GNNExplainer: Generating Explanations for Graph Neural Networks](https://arxiv.org/abs/1903.03894) (NeurIPS 2019) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gnn_explainer.py)]
 * **[DropEdge](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.dropout_adj)** from Rong *et al.*: [DropEdge: Towards Deep Graph Convolutional Networks on Node Classification](https://openreview.net/forum?id=Hkx1qkrKPr) (ICLR 2020)
+* **[GraphNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.GraphNorm)** from Cai *et al.*: [GraphNorm: A Principled Approach to Accelerating Graph Neural Network Training](https://arxiv.org/abs/2009.03294) (CoRR 2020)
+* **[GraphSizeNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.GraphSizeNorm)** from Dwivedi *et al.*: [Benchmarking Graph Neural Networks](https://arxiv.org/abs/2003.00982) (CoRR 2020)
 * **[PairNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.PairNorm)** from Zhao and Akoglu: [PairNorm: Tackling Oversmoothing in GNNs](https://arxiv.org/abs/1909.12223) (ICLR 2020)
 * **[DiffGroupNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.DiffGroupNorm)** from Zhou *et al.*: [Towards Deeper Graph Neural Networks with Differentiable Group Normalization](https://arxiv.org/abs/2006.06972) (NeurIPS 2020)
 * **[Tree Decomposition](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.tree_decomposition)** from Jin *et al.*: [Junction Tree Variational Autoencoder for Molecular Graph Generation](https://arxiv.org/abs/1802.04364) (ICML 2018)
@@ -180,6 +182,7 @@ $ pip install torch-geometric
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation.
+Binaries are provided for Python version `<= 3.8`.
 
 |             | `cpu` | `cu101` | `cu102` | `cu111` |
 |-------------|-------|---------|---------|---------|
@@ -200,6 +203,7 @@ pip install torch-geometric
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101`, `cu102`, or `cu110` depending on your PyTorch installation.
+Binaries are provided for Python version `<= 3.8`.
 
 |             | `cpu` | `cu92` | `cu101` | `cu102` | `cu110` |
 |-------------|-------|--------|---------|---------|---------|
@@ -211,7 +215,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101`, `cu102`, or
 
 ### From master
 
-In case you want to experiment with the latest PyG features which did not get released yet, you can install PyG from master via
+In case you want to experiment with the latest PyG features which are not fully released yet, you can install PyG from master via
 
 ```
 pip install git+https://github.com/rusty1s/pytorch_geometric.git

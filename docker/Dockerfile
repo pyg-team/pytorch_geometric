@@ -144,10 +144,12 @@ RUN CPATH=/usr/local/cuda/include:$CPATH \
  && LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH \
  && DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
 
-RUN pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
- && pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
- && pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
- && pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
+RUN pip install scipy
+
+RUN pip install --no-index torch-scatter -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch-sparse -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch-cluster -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.4.0+cu101.html \
  && pip install torch-geometric
 
 # Set the default command to python3.

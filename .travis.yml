@@ -27,7 +27,8 @@ install:
   - pip install sphinx==3.4.3 sphinx_rtd_theme
   - pip install pandas==1.1.5
   - pip install h5py==3.1.0
-  - python setup.py install
+  - pip install numba
+  - pip install -e .[test]
 script:
   - flake8 .
   - python setup.py test

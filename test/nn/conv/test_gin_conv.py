@@ -105,3 +105,24 @@ def test_gine_conv():
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
     assert jit((x1, None), adj.t()).tolist() == out2.tolist()
+
+
+def test_static_gin_conv():
+    x = torch.randn(3, 4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+
+    nn = Seq(Lin(16, 32), ReLU(), Lin(32, 32))
+    conv = GINConv(nn, train_eps=True)
+    out = conv(x, edge_index)
+    assert out.size() == (3, 4, 32)
+
+
+def test_static_gine_conv():
+    x = torch.randn(3, 4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+    edge_attr = torch.randn(edge_index.size(1), 16)
+
+    nn = Seq(Lin(16, 32), ReLU(), Lin(32, 32))
+    conv = GINEConv(nn, train_eps=True)
+    out = conv(x, edge_index, edge_attr)
+    assert out.size() == (3, 4, 32)

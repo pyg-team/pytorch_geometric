@@ -1,8 +1,11 @@
+from typing import Optional
+
 import torch
+from torch import Tensor
 from torch.nn import Parameter
-from torch.nn import functional as F
+import torch.nn.functional as F
 from torch_scatter import scatter_add
-from torch_geometric.utils import softmax, degree
+from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
 
 from ..inits import glorot, zeros
@@ -17,9 +20,23 @@ class HypergraphConv(MessagePassing):
         \mathbf{B}^{-1} \mathbf{H}^{\top} \mathbf{X} \mathbf{\Theta}
 
     where :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` is the incidence
-    matrix, :math:`\mathbf{W}` is the diagonal hyperedge weight matrix, and
+    matrix, :math:`\mathbf{W} \in \mathbb{R}^M` is the diagonal hyperedge
+    weight matrix, and
     :math:`\mathbf{D}` and :math:`\mathbf{B}` are the corresponding degree
     matrices.
+
+    For example, in the hypergraph scenario
+    :math:`\mathcal{G} = (\mathcal{V}, \mathcal{E})` with
+    :math:`\mathcal{V} = \{ 0, 1, 2, 3 \}` and
+    :math:`\mathcal{E} = \{ \{ 0, 1, 2 \}, \{ 1, 2, 3 \} \}`, the
+    :obj:`hyperedge_index` is represented as:
+
+    .. code-block:: python
+
+        hyperedge_index = torch.tensor([
+            [0, 1, 2, 1, 2, 3],
+            [0, 0, 0, 1, 1, 1],
+        ])
 
     Args:
         in_channels (int): Size of each input sample.
@@ -79,54 +96,63 @@ class HypergraphConv(MessagePassing):
             glorot(self.att)
         zeros(self.bias)
 
-    def message(self, x_j, edge_index_i, norm, alpha):
-        out = norm[edge_index_i].view(-1, 1, 1) * x_j.view(
-            -1, self.heads, self.out_channels)
-        if alpha is not None:
-            out = alpha.view(-1, self.heads, 1) * out
-        return out
-
-    def forward(self, x, hyperedge_index, hyperedge_weight=None):
+    def forward(self, x: Tensor, hyperedge_index: Tensor,
+                hyperedge_weight: Optional[Tensor] = None,
+                hyperedge_attr: Optional[Tensor] = None) -> Tensor:
         r"""
         Args:
-            x (Tensor): Node feature matrix :math:`\mathbf{X}`
-            hyper_edge_index (LongTensor): Hyperedge indices from
-                :math:`\mathbf{H}`.
-            hyperedge_weight (Tensor, optional): Sparse hyperedge weights from
-                :math:`\mathbf{W}`. (default: :obj:`None`)
+            x (Tensor): Node feature matrix
+                :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
+            hyperedge_index (LongTensor): The hyperedge indices, *i.e.*
+                the sparse incidence matrix
+                :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` mapping from
+                nodes to edges.
+            hyperedge_weight (Tensor, optional): Hyperedge weights
+                :math:`\mathbf{W} \in \mathbb{R}^M`. (default: :obj:`None`)
+            hyperedge_attr (Tensor, optional): Hyperedge feature matrix in
+                :math:`\mathbb{R}^{M \times F}`.
+                These features only need to get passed in case
+                :obj:`use_attention=True`. (default: :obj:`None`)
         """
-        x = torch.matmul(x, self.weight)
-        alpha = None
+        num_nodes, num_edges = x.size(0), 0
+        if hyperedge_index.numel() > 0:
+            num_edges = int(hyperedge_index[1].max()) + 1
 
+        if hyperedge_weight is None:
+            hyperedge_weight = x.new_ones(num_edges)
+
+        x = torch.matmul(x, self.weight)
+
+        alpha = None
         if self.use_attention:
+            assert hyperedge_attr is not None
             x = x.view(-1, self.heads, self.out_channels)
-            x_i, x_j = x[hyperedge_index[0]], x[hyperedge_index[1]]
+            hyperedge_attr = torch.matmul(hyperedge_attr, self.weight)
+            hyperedge_attr = hyperedge_attr.view(-1, self.heads,
+                                                 self.out_channels)
+            x_i = x[hyperedge_index[0]]
+            x_j = hyperedge_attr[hyperedge_index[1]]
             alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
             alpha = F.leaky_relu(alpha, self.negative_slope)
             alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
             alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        if hyperedge_weight is None:
-            D = degree(hyperedge_index[0], x.size(0), x.dtype)
-        else:
-            D = scatter_add(hyperedge_weight[hyperedge_index[1]],
-                            hyperedge_index[0], dim=0, dim_size=x.size(0))
+        D = scatter_add(hyperedge_weight[hyperedge_index[1]],
+                        hyperedge_index[0], dim=0, dim_size=num_nodes)
         D = 1.0 / D
         D[D == float("inf")] = 0
 
-        if hyperedge_index.numel() == 0:
-            num_edges = 0
-        else:
-            num_edges = hyperedge_index[1].max().item() + 1
-        B = 1.0 / degree(hyperedge_index[1], num_edges, x.dtype)
+        B = scatter_add(x.new_ones(hyperedge_index.size(1)),
+                        hyperedge_index[1], dim=0, dim_size=num_edges)
+        B = 1.0 / B
         B[B == float("inf")] = 0
-        if hyperedge_weight is not None:
-            B = B * hyperedge_weight
 
         self.flow = 'source_to_target'
-        out = self.propagate(hyperedge_index, x=x, norm=B, alpha=alpha)
+        out = self.propagate(hyperedge_index, x=x, norm=B, alpha=alpha,
+                             size=(num_nodes, num_edges))
         self.flow = 'target_to_source'
-        out = self.propagate(hyperedge_index, x=out, norm=D, alpha=alpha)
+        out = self.propagate(hyperedge_index, x=out, norm=D, alpha=alpha,
+                             size=(num_edges, num_nodes))
 
         if self.concat is True:
             out = out.view(-1, self.heads * self.out_channels)
@@ -135,6 +161,16 @@ class HypergraphConv(MessagePassing):
 
         if self.bias is not None:
             out = out + self.bias
+
+        return out
+
+    def message(self, x_j: Tensor, norm_i: Tensor, alpha: Tensor) -> Tensor:
+        H, F = self.heads, self.out_channels
+
+        out = norm_i.view(-1, 1, 1) * x_j.view(-1, H, F)
+
+        if alpha is not None:
+            out = alpha.view(-1, self.heads, 1) * out
 
         return out
 
