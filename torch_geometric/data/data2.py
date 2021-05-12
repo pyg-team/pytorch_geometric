@@ -17,16 +17,16 @@ from .storage import NodeStorage, EdgeStorage, GlobalStorage
 
 
 class Data(object):
-    def __init__(self, dictionary: Optional[Dict[str, Any]] = None, **kwargs):
-        self.__dict__['_global_store'] = GlobalStorage()
+    def __init__(self, dict: Optional[Dict[str, Any]] = None, **kwargs):
+        self.__dict__['_global_store'] = GlobalStorage(_parent=self)
         self.__dict__['_hetero_store'] = {}
 
-        dictionary = {} if dictionary is None else dictionary
-        for key, value in chain(dictionary.items(), kwargs.items()):
-            if '__' in key and isinstance(value, dict):
+        dict = {} if dict is None else dict
+        for key, value in chain(dict.items(), kwargs.items()):
+            if '__' in key and isinstance(value, Mapping):
                 key = tuple(key.split('__'))
 
-            if isinstance(value, dict):
+            if isinstance(value, Mapping):
                 self[key].update(value)
             else:
                 setattr(self, key, value)
@@ -66,9 +66,9 @@ class Data(object):
             return out
 
         if isinstance(key, tuple):
-            out = EdgeStorage(_key=key, _parent=self)
+            out = EdgeStorage(_parent=self, _key=key)
         else:
-            out = NodeStorage(_key=key, _parent=self)
+            out = NodeStorage(_parent=self, _key=key)
 
         self._hetero_store[key] = out
 
@@ -199,7 +199,7 @@ class Data(object):
         else:
             return 0
 
-    # Begin deprecated ########################################################
+    # Begin deprecated functions ##############################################
 
     def __len__(self) -> int:
         return 2
@@ -208,7 +208,7 @@ class Data(object):
     def keys(self) -> Iterable:
         return ['x', 'edge_index']
 
-    # End deprecated ##########################################################
+    # End deprecated functions ################################################
 
 
 def size_repr(key, value, indent=0):

@@ -166,12 +166,12 @@ class BaseStorage(MutableMapping):
 class NodeStorage(BaseStorage):
     def __init__(
         self,
-        dictionary: Optional[Dict[str, Any]] = None,
+        _parent: Any,
         _key: Optional[NodeType] = None,
-        _parent: Optional[Any] = None,
+        dict: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
-        super().__init__(dictionary, **kwargs)
+        super().__init__(dict, **kwargs)
         assert _key is None or isinstance(_key, NodeType)
         self.__dict__['_key'] = _key
         self.__dict__['_parent'] = _parent
@@ -210,12 +210,12 @@ class NodeStorage(BaseStorage):
 class EdgeStorage(BaseStorage):
     def __init__(
         self,
-        dictionary: Optional[Dict[str, Any]] = None,
+        _parent: Any,
         _key: Optional[EdgeType] = None,
-        _parent: Optional[Any] = None,
+        dict: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
-        super().__init__(dictionary, **kwargs)
+        super().__init__(dict, **kwargs)
         assert _key is None or (isinstance(_key, tuple) and len(_key) == 3)
         self.__dict__['_key'] = _key
         self.__dict__['_parent'] = _parent
@@ -250,9 +250,9 @@ class EdgeStorage(BaseStorage):
         for value in self.values('adj_t'):
             return [value.size(1), value.size(0)]
 
-        if self._parent is None or self._key is None:
-            raise NameError("Unable to infer 'size' without explicit "
-                            "'_key' and '_parent' assignment")
+        if self._key is None:
+            raise NameError(
+                "Unable to infer 'size' without explicit '_key' assignment")
 
         return [
             self._parent[self._key[0]].num_nodes,
@@ -273,8 +273,13 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-    def __init__(self, dictionary: Optional[Dict[str, Any]] = None, **kwargs):
-        super().__init__(dictionary, **kwargs)
+    def __init__(
+        self,
+        _parent: Any,
+        dict: Optional[Dict[str, Any]] = None,
+        **kwargs,
+    ):
+        super().__init__(_parent, dict=dict, **kwargs)
 
     @property
     def num_features(self) -> int:
