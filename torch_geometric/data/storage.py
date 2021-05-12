@@ -1,8 +1,10 @@
-from typing import Any, Optional, Iterable, Dict, List, Callable, Union, Tuple
+from typing import (Any, Optional, Iterable, Dict, List, Callable, Union,
+                    Tuple, NamedTuple)
 from torch_geometric.typing import NodeType, EdgeType
 
 import copy
 import warnings
+from collections import namedtuple
 from collections.abc import Sequence, Mapping, MutableMapping
 
 import torch
@@ -49,8 +51,8 @@ class BaseStorage(MutableMapping):
     def __len__(self):
         return len(self._data)
 
-    def __getitem__(self, key: str) -> Optional[Any]:
-        return self._data.get(key, None)
+    def __getitem__(self, key: str) -> Any:
+        return self._data[key]
 
     def __getattr__(self, key: str) -> Optional[Any]:
         return self[key]
@@ -111,7 +113,15 @@ class BaseStorage(MutableMapping):
     # Additional functionality ################################################
 
     def to_dict(self) -> Dict[str, Any]:
-        return self._data
+        return copy.copy(self._data)
+
+    def to_namedtuple(self) -> NamedTuple:
+        typename = 'NamedTuple'
+        if self._key is not None:
+            typename = '__'.join(self._key)
+        field_names = list(self.keys())
+        DataTuple = namedtuple(typename, field_names)
+        return DataTuple(*[self[key] for key in field_names])
 
     def clone(self, *args: List[str]):
         return copy.deepcopy(self)
@@ -122,34 +132,34 @@ class BaseStorage(MutableMapping):
         return self
 
     def contiguous(self, *args: List[str]):
-        return self.apply(lambda x: x.contiguous(), *args)
+        return self.apply_(lambda x: x.contiguous(), *args)
 
     def to(self, device: Union[int, str], *args: List[str],
            non_blocking: bool = False):
-        return self.apply(
+        return self.apply_(
             lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
     def cpu(self, *args: List[str]):
-        return self.apply(lambda x: x.cpu(), *args)
+        return self.apply_(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Union[int, str], *args: List[str],
              non_blocking: bool = False):
-        return self.apply(lambda x: x.cuda(non_blocking=non_blocking), *args)
+        return self.apply_(lambda x: x.cuda(non_blocking=non_blocking), *args)
 
     def pin_memory(self, *args: List[str]):
-        return self.apply(lambda x: x.pin_memory(), *args)
+        return self.apply_(lambda x: x.pin_memory(), *args)
 
     def share_memory_(self, *args: List[str]):
-        return self.apply(lambda x: x.share_memory_(), *args)
+        return self.apply_(lambda x: x.share_memory_(), *args)
 
     def detach_(self, *args: List[str]):
-        return self.apply(lambda x: x.detach_(), *args)
+        return self.apply_(lambda x: x.detach_(), *args)
 
     def detach(self, *args: List[str]):
-        return self.apply(lambda x: x.detach(), *args)
+        return self.apply_(lambda x: x.detach(), *args)
 
     def requires_grad_(self, *args: List[str], requires_grad: bool = True):
-        return self.apply(
+        return self.apply_(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
 

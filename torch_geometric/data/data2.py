@@ -1,4 +1,5 @@
-from typing import Optional, Dict, Any, Tuple, Union, List
+from typing import (Optional, Dict, Any, Tuple, Union, List, Iterable,
+                    NamedTuple)
 from torch_geometric.typing import NodeType, EdgeType, QueryType
 
 import copy
@@ -7,6 +8,7 @@ from collections.abc import Sequence, Mapping
 
 import torch
 import numpy as np
+from torch_sparse import SparseTensor
 
 from .storage import NodeStorage, EdgeStorage, GlobalStorage
 
@@ -31,7 +33,10 @@ class Data(object):
 
     def __getattr__(self, key: str) -> Any:
         # `data.*` => Link to the `_global_store`.
-        return getattr(self._global_store, key)
+        if key in self._global_store:
+            return getattr(self._global_store, key)
+        raise AttributeError(
+            f"'{self.__class__.__name__}' object has no attribute '{key}'")
 
     def __setattr__(self, key: str, item: Any):
         # `data.* = ...` => Link to the `_global_store`.
@@ -81,6 +86,10 @@ class Data(object):
         elif key in self._global_store:
             del self._global_store[key]
 
+    def __contains__(self, *args: Tuple[QueryType]) -> bool:
+        key = self._to_canonical(*args)
+        return key in self._global_store or key in self._hetero_store
+
     def __copy__(self):
         out = self.__class__()
         out._global_store = copy.copy(self._global_store)
@@ -110,6 +119,15 @@ class Data(object):
             args = (args[0], '_', args[1])
         return args
 
+    def to_dict(self) -> Dict[str, Any]:
+        out = self._global_store.to_dict()
+        for key, value in self._hetero_store.items():
+            out[key] = value.to_dict()
+        return out
+
+    def to_namedtuple(self) -> NamedTuple:
+        return None
+
     @property
     def is_heterogeneous(self) -> bool:
         return len(self._hetero_store) > 0
@@ -119,12 +137,23 @@ class Data(object):
         return not self.is_heterogeneous
 
     @property
+    def node_types(self) -> List[NodeType]:
+        return [
+            k for k, v in self._hetero_store.items()
+            if isinstance(v, NodeStorage)
+        ]
+
+    @property
+    def edge_types(self) -> List[EdgeType]:
+        return [
+            k for k, v in self._hetero_store.items()
+            if isinstance(v, EdgeStorage)
+        ]
+
+    @property
     def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
         # Returns the heterogeneous meta-data, i.e. its node and edge types.
-        it = self._hetero_store.items()
-        node_types = [k for k, v in it if isinstance(v, NodeStorage)]
-        edge_types = [k for k, v in it if isinstance(v, EdgeStorage)]
-        return node_types, edge_types
+        return self.node_types, self.edge_types
 
     def __repr__(self) -> str:
         cls = self.__class__.__name__
@@ -137,6 +166,49 @@ class Data(object):
             info2 = [size_repr(k, v, 2) for k, v in self._hetero_store.items()]
             info = info1 + info2
             return '{}{}{}(\n{}\n)'.format(BOLD, cls, END, ',\n'.join(info))
+
+    def to(self, device: Union[int, str], *args: List[str],
+           non_blocking: bool = False):
+        self._global_store.to(device, *args, non_blocking=non_blocking)
+        for store in self._hetero_store.values():
+            store.to(device, *args, non_blocking=non_blocking)
+        return self
+
+    @property
+    def num_nodes(self) -> Optional[int]:
+        if self.is_homogeneous:
+            return self._global_store.num_nodes
+        else:
+            return sum([
+                self._hetero_store[key].num_nodes for key in self._node_types
+            ])
+
+    def __cat_dim__(self, key: str,
+                    value: Any) -> Optional[Union[int, Tuple[int, int]]]:
+        # TODO: We only want to make use of this in homogeneous scenarios.
+        if 'index' in key or 'face' in key:
+            return -1
+        elif key == 'adj_t' and isinstance(value, SparseTensor):
+            return (0, 1)
+        return 0
+
+    def __inc__(self, key: str, value: Any) -> bool:
+        # TODO: We only want to make use of this in homogeneous scenarios.
+        if 'index' in key or 'face' in key:
+            return self.num_nodes
+        else:
+            return 0
+
+    # Begin deprecated ########################################################
+
+    def __len__(self) -> int:
+        return 2
+
+    @property
+    def keys(self) -> Iterable:
+        return ['x', 'edge_index']
+
+    # End deprecated ##########################################################
 
 
 def size_repr(key, value, indent=0):
