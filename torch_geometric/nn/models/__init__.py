@@ -14,6 +14,7 @@ from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
+from .pg_explainer import PGExplainer
 
 __all__ = [
     'JumpingKnowledge',
@@ -36,6 +37,7 @@ __all__ = [
     'LabelPropagation',
     'CorrectAndSmooth',
     'AttentiveFP',
+    'PGExplainer',
 ]
 
 classes = sorted(__all__)
