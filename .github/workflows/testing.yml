@@ -39,8 +39,6 @@ jobs:
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-py${{ matrix.python-version }}-torch==${{ matrix.torch-version }}
-          restore-keys: |
-            ${{ runner.os }}-pip-py${{ matrix.python-version }}-torch==${{ matrix.torch-version }}
 
       - name: Install PyTorch ${{ matrix.torch-version }}
         run: |
@@ -56,4 +54,5 @@ jobs:
       - name: Run test-suite
         run: |
           pip install pytest
+          pip install pytest-cov
           pytest
