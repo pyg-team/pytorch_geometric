@@ -1,4 +1,4 @@
-name: Run Basic Tests
+name: Testing
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  pytest:
+  test:
 
     runs-on: ${{ matrix.os }}
 
@@ -34,3 +34,7 @@ jobs:
           python --version
           pip --version
           pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
