@@ -71,13 +71,13 @@ jobs:
         run: |
           python setup.py test
 
-      - name: Generate statistics
+      - name: Generate coverage report
         if: success()
         run: |
           pip install coverage
           coverage xml
 
-      - name: Upload coverage to codecov
+      - name: Upload coverage report to codecov
         uses: codecov/codecov-action@v1
         if: success()
         with:
