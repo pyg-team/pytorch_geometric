@@ -7,11 +7,13 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.data import DataLoader, Batch
 from torch_geometric.nn import GINConv, global_add_pool, PGExplainer
 
-dataset = TUDataset(root='./data', name='MUTAG').shuffle()
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TU')
+dataset = TUDataset(path, name='MUTAG').shuffle()
 test_dataset = dataset[:len(dataset) // 10]
 train_dataset = dataset[len(dataset) // 10:]
 test_loader = DataLoader(test_dataset, batch_size=128)
 train_loader = DataLoader(train_dataset, batch_size=128)
+
 
 class Net(torch.nn.Module):
     def __init__(self):
@@ -43,7 +45,7 @@ class Net(torch.nn.Module):
         self.fc1 = Linear(dim, dim)
         self.fc2 = Linear(dim, dataset.num_classes)
 
-    def forward(self, x, edge_index, batch, get_embedding = False):
+    def forward(self, x, edge_index, batch, get_embedding=False):
         x = F.relu(self.conv1(x, edge_index))
         x = self.bn1(x)
         x = F.relu(self.conv2(x, edge_index))
@@ -108,10 +110,13 @@ for epoch in range(1, 101):
                                                        train_acc, test_acc))
 
 train_graphs = Batch.from_data_list(dataset[0:10]).to(device)
-z = model(train_graphs.x,train_graphs.edge_index,train_graphs.batch,get_embedding=True)
-exp = PGExplainer(model,32,task="graph", log= False)
-exp.train_explainer(train_graphs.x,z,train_graphs.edge_index,None,train_graphs.batch)
+z = model(train_graphs.x, train_graphs.edge_index, train_graphs.batch,
+          get_embedding=True)
+exp = PGExplainer(model, 32, task="graph", log=False)
+exp.train_explainer(train_graphs.x, z, train_graphs.edge_index, None,
+                    train_graphs.batch)
 
 test_graphs = Batch.from_data_list(dataset[10:13]).to(device)
-z = model(test_graphs.x,test_graphs.edge_index,batch=test_graphs.batch,get_embedding=True)
-print('edge_mask=', exp.explain(test_graphs.x,z,test_graphs.edge_index))
+z = model(test_graphs.x, test_graphs.edge_index, batch=test_graphs.batch,
+          get_embedding=True)
+print('edge_mask=', exp.explain(test_graphs.x, z, test_graphs.edge_index))
