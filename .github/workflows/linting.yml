@@ -5,7 +5,7 @@ on: [push]
 jobs:
 
   flake8:
-    name: ${{ runner.os }}/Python ${{ matrix.python-version }}
+    name: Linting
     runs-on: ${{ matrix.os }}
 
     strategy:

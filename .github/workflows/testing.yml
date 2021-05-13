@@ -5,7 +5,7 @@ on: [push]
 jobs:
 
   pytest:
-    name: ${{ runner.os }}/Python ${{ matrix.python-version }}/PyTorch ${{ matrix.pytorch-version }}
+    name: Testing
     runs-on: ${{ matrix.os }}
 
     strategy:
