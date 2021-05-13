@@ -62,10 +62,9 @@ jobs:
           pip install numba
           pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
 
-      - name: Install test dependencies
+      - name: Install main package
         run: |
-          pip install pytest
-          pip install pytest-cov
+          pip install -e .[test]
 
       - name: Run test-suite
         run: |
