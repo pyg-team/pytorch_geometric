@@ -8,8 +8,8 @@ on:
 
 jobs:
 
-  test:
-    name: Test on ${{ runner.os }}/Python ${{ matrix.python-version }}/PyTorch ${{ matrix.pytorch-version }}
+  pytest:
+    name: ${{ runner.os }}/Python ${{ matrix.python-version }}/PyTorch ${{ matrix.pytorch-version }}
     runs-on: ${{ matrix.os }}
 
     strategy:
