@@ -1,0 +1,83 @@
+name: Testing
+
+on: [push, pull_request]
+
+jobs:
+
+  pytest:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: [3.6]
+        torch-version: [1.7.0, 1.8.0]
+        include:
+          - torch-version: 1.7.0
+            torchvision-version: 0.8.1
+          - torch-version: 1.8.0
+            torchvision-version: 0.9.0
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Update pip
+        run: |
+          pip install --upgrade pip
+          python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
+
+      - name: Get pip cache
+        id: pip-cache
+        run: |
+          python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: ${{ runner.os }}-pip-py${{ matrix.python-version }}-torch==${{ matrix.torch-version }}
+
+      - name: Install PyTorch ${{ matrix.torch-version }}
+        run: |
+          pip install torch==${{ matrix.torch-version}}+cpu torchvision==${{ matrix.torchvision-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
+      - name: Install internal dependencies
+        run: |
+          pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+
+      - name: Install external dependencies
+        run: |
+          pip install cython
+          pip install scikit-image
+          pip install trimesh
+          pip install pandas
+          pip install h5py
+          pip install numba
+          pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
+
+      - name: Install main package
+        run: |
+          pip install -e .[test]
+
+      - name: Run test-suite
+        run: |
+          python setup.py test
+
+      - name: Generate coverage report
+        if: success()
+        run: |
+          pip install coverage
+          coverage xml
+
+      - name: Upload coverage report to codecov
+        uses: codecov/codecov-action@v1
+        if: success()
+        with:
+          file: coverage.xml
