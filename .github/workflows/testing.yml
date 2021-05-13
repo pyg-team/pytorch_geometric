@@ -2,9 +2,9 @@ name: Testing
 
 on:
   push:
-    brances: [ $default-branch ]
+    branches: [ $default-branch ]
   pull_request:
-    brances: [ $default-branch ]
+    branches: [ $default-branch ]
 
 jobs:
 
@@ -17,12 +17,11 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         python-version: [3.6]
         torch-version: [1.7.0, 1.8.0]
-        torchvision-version: [0.8.1, 0.9.0]
-        exclude:
+        include:
           - torch-version: 1.7.0
-            torchvision-version: 0.9.0
-          - torch-version: 1.8.0
             torchvision-version: 0.8.1
+          - torch-version: 1.8.0
+            torchvision-version: 0.9.0
 
     steps:
       - uses: actions/checkout@v2
@@ -51,23 +50,28 @@ jobs:
         run: |
           pip install torch==${{ matrix.torch-version}}+cpu torchvision==${{ matrix.torchvision-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
-      - name: Install dependencies
+      - name: Install internal dependencies
         run: |
           pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+
+      - name: Install external dependencies
+        run: |
           pip install cython
           pip install scikit-image
           pip install trimesh
           pip install pandas
           pip install h5py
           pip install numba
-          git clone https://github.com/the-virtual-brain/tvb-geodesic /tmp/gdist
-          pip install /tmp/gdist
+          git clone https://github.com/the-virtual-brain/tvb-geodesic /tmp/gdist && pip install /tmp/gdist
 
-      - name: Run test-suite
+      - name: Install test dependencies
         run: |
           pip install pytest
           pip install pytest-cov
+
+      - name: Run test-suite
+        run: |
           python setup.py test
