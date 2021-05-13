@@ -284,16 +284,16 @@ class EdgeStorage(BaseStorage):
         raise NotImplementedError
 
     def has_isolated_nodes(self) -> bool:
-        # No special treatment, just check that nodes appear in target nodes at
-        # least once
+        # TODO: No special treatment, just check that nodes appear in target
+        # nodes at least once
         raise NotImplementedError
 
     def has_self_loops(self) -> bool:
-        # Requires same key or None key
+        # TODO: Requires same key or None key
         raise NotImplementedError
 
     def is_undirected(self) -> bool:
-        # Requires same key or None key
+        # TODO: Requires same key or None key
         raise NotImplementedError
 
     def is_directed(self) -> bool:
