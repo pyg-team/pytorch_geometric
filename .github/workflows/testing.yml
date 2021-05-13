@@ -17,6 +17,12 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         python-version: [3.6]
         torch-version: [1.7.0, 1.8.0]
+        torchvision-version: [0.8.1, 0.9.0]
+        exclude:
+          - torch-version: 1.7.0
+            torchvision-version: 0.9.0
+          - torch-version: 1.8.0
+            torchvision-version: 0.8.1
 
     steps:
       - uses: actions/checkout@v2
@@ -43,7 +49,7 @@ jobs:
 
       - name: Install PyTorch ${{ matrix.torch-version }}
         run: |
-          pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install torch==${{ matrix.torch-version}}+cpu torchvision==${{ matrix.torchvision-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
       - name: Install dependencies
         run: |
@@ -64,4 +70,4 @@ jobs:
         run: |
           pip install pytest
           pip install pytest-cov
-          python setup.py test
+          # python setup.py test
