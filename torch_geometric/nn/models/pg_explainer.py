@@ -22,7 +22,7 @@ class PGExplainer(torch.nn.Module):
 
     Args:
         model (torch.nn.Module): The GNN module to explain.
-        out_channels(int): Size of output of last embedding layer in
+        out_channels(int): Size of output of last last :class:`MessagePassing` layer in 
             :obj:`model`.
         epochs (int, optional): The number of epochs to train.
             (default: :obj:`30`)
@@ -189,13 +189,14 @@ class PGExplainer(torch.nn.Module):
 
         Args:
             x (Tensor): The node feature matrix.
-            z (Tensor): Node embedding from last :class:`MessagePassing` layer.
+            z (Tensor): Node embedding from last :class:`MessagePassing` layer in 
+                :obj:`model`.
             edge_index (LongTensor): The edge indices.
             node_idxs (Optional, LongTensor): The nodes used to train explainer.
-                If :obj:`task`=:obj:`"graph"` this is not required and all
-                graphs in :attr:`batch` are used to train the explainer.
+                Only required for :obj:`task`=:obj:`"node"`.
             batch (optional, LongTensor): Tensor denotes the graph each node
-                belongs to. Only required if :obj:`task`=:obj:`"graph"`.
+                belongs to. Only required if :obj:`task`=:obj:`"graph"`. All
+                graphs in :attr:`batch` are used to train the explainer.
             **kwargs (optional): Additional arguments passed to the GNN module.
 
         """
@@ -268,6 +269,7 @@ class PGExplainer(torch.nn.Module):
                                           pred_label[[n]])
 
                 loss.backward()
+                print(loss)
                 optimizer.step()
 
                 if self.log:  # pragma: no cover
@@ -282,8 +284,7 @@ class PGExplainer(torch.nn.Module):
         for node equals :attr:`node_id` or a graph.
 
         Args:
-            x (Tensor): The node feature matrix. if :obj:`task`=:obj:`"graph"`
-                all nodes must belong to one graph.
+            x (Tensor): The node feature matrix.
             z (Tensor): Node embedding from last :class:`MessagePassing` layer.
             edge_index (LongTensor): The edge indices.
             node_id (Optional, int): The node id to explain.
