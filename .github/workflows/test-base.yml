@@ -33,3 +33,4 @@ jobs:
         run: |
           python --version
           pip --version
+          pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
