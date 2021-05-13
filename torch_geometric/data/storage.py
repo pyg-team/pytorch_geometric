@@ -16,7 +16,7 @@ def recursive_apply(data: Any, func: Callable) -> Any:
     if isinstance(data, Sequence) and not isinstance(data, str):
         return [recursive_apply(d, func) for d in data]
     if isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
-        return type(data)(*(recursive_appl_(d) for d in data))
+        return type(data)(*(recursive_apply(d) for d in data))
     if isinstance(data, Mapping):
         return {key: recursive_apply(data[key], func) for key in data}
     if isinstance(data, torch.Tensor):
@@ -284,12 +284,16 @@ class EdgeStorage(BaseStorage):
         raise NotImplementedError
 
     def has_isolated_nodes(self) -> bool:
+        # No special treatment, just check that nodes appear in target nodes at
+        # least once
         raise NotImplementedError
 
     def has_self_loops(self) -> bool:
+        # Requires same key or None key
         raise NotImplementedError
 
     def is_undirected(self) -> bool:
+        # Requires same key or None key
         raise NotImplementedError
 
     def is_directed(self) -> bool:
