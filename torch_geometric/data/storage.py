@@ -12,13 +12,13 @@ import torch
 from .view import KeysView, ValuesView, ItemsView
 
 
-def recursive_apply_(data: Any, func: Callable) -> Any:
+def recursive_apply(data: Any, func: Callable) -> Any:
     if isinstance(data, Sequence) and not isinstance(data, str):
-        return [recursive_apply_(d, func) for d in data]
+        return [recursive_apply(d, func) for d in data]
     if isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
-        return type(data)(*(recursive_apply_(d) for d in data))
+        return type(data)(*(recursive_appl_(d) for d in data))
     if isinstance(data, Mapping):
-        return {key: recursive_apply_(data[key], func) for key in data}
+        return {key: recursive_apply(data[key], func) for key in data}
     if isinstance(data, torch.Tensor):
         return func(data)
     try:
@@ -36,23 +36,19 @@ class BaseStorage(MutableMapping):
     # 3. It allows iterating over a subset of keys, e.g.:
     #    `storage.values('x', 'y')` or `storage.items('x', 'y')
     # 4. It adds additional functionality, e.g.:
-    #    `storage.to_dict()` or `storage.apply_(...)`
-    def __init__(
-        self,
-        dictionary: Optional[Dict[str, Any]] = None,
-        **kwargs,
-    ):
-        self.__dict__['_data'] = {}
-        if dictionary is not None:
-            self.update(dictionary)
+    #    `storage.to_dict()` or `storage.apply(...)`
+    def __init__(self, mapping: Optional[Dict[str, Any]] = None, **kwargs):
+        self.__dict__['_mapping'] = {}
+        if mapping is not None:
+            self.update(mapping)
         if kwargs:
             self.update(kwargs)
 
     def __len__(self):
-        return len(self._data)
+        return len(self._mapping)
 
     def __getitem__(self, key: str) -> Any:
-        return self._data[key]
+        return self._mapping[key]
 
     def __getattr__(self, key: str) -> Optional[Any]:
         return self[key]
@@ -61,7 +57,7 @@ class BaseStorage(MutableMapping):
         if value is None:
             del self[key]
         else:
-            self._data[key] = value
+            self._mapping[key] = value
 
     def __setattr__(self, key: str, value: Optional[Any]):
         if key in self.__dict__:
@@ -70,8 +66,8 @@ class BaseStorage(MutableMapping):
             self[key] = value
 
     def __delitem__(self, key: str):
-        if key in self._data:
-            del self._data[key]
+        if key in self._mapping:
+            del self._mapping[key]
 
     def __delattr__(self, key: str):
         if key in self.__dict__:
@@ -80,40 +76,40 @@ class BaseStorage(MutableMapping):
             del self[key]
 
     def __iter__(self) -> Iterable:
-        return iter(self._data)
+        return iter(self._mapping)
 
     def __copy__(self):
         out = self.__class__()
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out._data = copy.copy(out._data)
+        out._mapping = copy.copy(out._mapping)
         return out
 
     def __deepcopy__(self, memo):
         out = self.__class__()
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out._data = copy.deepcopy(out._data, memo)
+        out._mapping = copy.deepcopy(out._mapping, memo)
         return out
 
     def __repr__(self) -> str:
-        return repr(self._data)
+        return repr(self._mapping)
 
     # Allow iterating over subsets ############################################
 
     def keys(self, *args: List[str]) -> KeysView:
-        return KeysView(self._data, *args)
+        return KeysView(self._mapping, *args)
 
     def values(self, *args: List[str]) -> ValuesView:
-        return ValuesView(self._data, *args)
+        return ValuesView(self._mapping, *args)
 
     def items(self, *args: List[str]) -> ItemsView:
-        return ItemsView(self._data, *args)
+        return ItemsView(self._mapping, *args)
 
     # Additional functionality ################################################
 
     def to_dict(self) -> Dict[str, Any]:
-        return copy.copy(self._data)
+        return copy.copy(self._mapping)
 
     def to_namedtuple(self) -> NamedTuple:
         typename = 'NamedTuple'
@@ -126,55 +122,64 @@ class BaseStorage(MutableMapping):
     def clone(self, *args: List[str]):
         return copy.deepcopy(self)
 
-    def apply_(self, func: Callable, *args: List[str]):
+    def apply(self, func: Callable, *args: List[str]):
         for key, value in self.items(*args):
-            self[key] = recursive_apply_(value, func)
+            self[key] = recursive_apply(value, func)
         return self
 
     def contiguous(self, *args: List[str]):
-        return self.apply_(lambda x: x.contiguous(), *args)
+        return self.apply(lambda x: x.contiguous(), *args)
 
     def to(self, device: Union[int, str], *args: List[str],
            non_blocking: bool = False):
-        return self.apply_(
+        return self.apply(
             lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
     def cpu(self, *args: List[str]):
-        return self.apply_(lambda x: x.cpu(), *args)
+        return self.apply(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Union[int, str], *args: List[str],
              non_blocking: bool = False):
-        return self.apply_(lambda x: x.cuda(non_blocking=non_blocking), *args)
+        return self.apply(lambda x: x.cuda(non_blocking=non_blocking), *args)
 
     def pin_memory(self, *args: List[str]):
-        return self.apply_(lambda x: x.pin_memory(), *args)
+        return self.apply(lambda x: x.pin_memory(), *args)
 
     def share_memory_(self, *args: List[str]):
-        return self.apply_(lambda x: x.share_memory_(), *args)
+        return self.apply(lambda x: x.share_memory_(), *args)
 
     def detach_(self, *args: List[str]):
-        return self.apply_(lambda x: x.detach_(), *args)
+        return self.apply(lambda x: x.detach_(), *args)
 
     def detach(self, *args: List[str]):
-        return self.apply_(lambda x: x.detach(), *args)
+        return self.apply(lambda x: x.detach(), *args)
 
     def requires_grad_(self, *args: List[str], requires_grad: bool = True):
-        return self.apply_(
+        return self.apply(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
 
 class NodeStorage(BaseStorage):
-    def __init__(
-        self,
-        _parent: Any,
-        _key: Optional[NodeType] = None,
-        dict: Optional[Dict[str, Any]] = None,
-        **kwargs,
-    ):
-        super().__init__(dict, **kwargs)
+    def __init__(self, _parent: Any, _key: Optional[NodeType] = None,
+                 mapping: Optional[Dict[str, Any]] = None, **kwargs):
+        super().__init__(mapping, **kwargs)
         assert _key is None or isinstance(_key, NodeType)
         self.__dict__['_key'] = _key
         self.__dict__['_parent'] = _parent
+
+    def __copy__(self):
+        out = self.__class__(self._parent)
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        out._mapping = copy.copy(out._mapping)
+        return out
+
+    def __deepcopy__(self, memo):
+        out = self.__class__(self._parent)
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        out._mapping = copy.deepcopy(out._mapping, memo)
+        return out
 
     @property
     def num_nodes(self) -> Optional[int]:
@@ -187,13 +192,15 @@ class NodeStorage(BaseStorage):
         for value in self.values('adj_t'):
             return value.size(1)
         warnings.warn(
-            f"Unable to infer 'num_nodes' from attributes {set(self.keys())}. "
-            f"Please explicitly set 'num_nodes' as an attribute" +
-            f" of 'data[{self._key}]'" if self._key is not None else "")
+            f"Unable to accurately infer 'num_nodes' from the attribute set "
+            f"{set(self.keys())}. Please explicitly set 'num_nodes' as an "
+            f"attribute of " +
+            ("'data'" if self._key is None else f"'data[{self._key}]'") +
+            " to suppress this warning")
         for value in self.values('edge_index'):
-            return int(max(value)) + 1
+            return int(value.max()) + 1
         for value in self.values('face'):
-            return int(max(value)) + 1
+            return int(value.max()) + 1
         return None
 
     @property
@@ -208,17 +215,26 @@ class NodeStorage(BaseStorage):
 
 
 class EdgeStorage(BaseStorage):
-    def __init__(
-        self,
-        _parent: Any,
-        _key: Optional[EdgeType] = None,
-        dict: Optional[Dict[str, Any]] = None,
-        **kwargs,
-    ):
-        super().__init__(dict, **kwargs)
+    def __init__(self, _parent: Any, _key: Optional[EdgeType] = None,
+                 mapping: Optional[Dict[str, Any]] = None, **kwargs):
+        super().__init__(mapping, **kwargs)
         assert _key is None or (isinstance(_key, tuple) and len(_key) == 3)
         self.__dict__['_key'] = _key
         self.__dict__['_parent'] = _parent
+
+    def __copy__(self):
+        out = self.__class__(self._parent)
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        out._mapping = copy.copy(out._mapping)
+        return out
+
+    def __deepcopy__(self, memo):
+        out = self.__class__(self._parent)
+        for key, value in self.__dict__.items():
+            out.__dict__[key] = value
+        out._mapping = copy.deepcopy(out._mapping, memo)
+        return out
 
     @property
     def num_edges(self) -> Optional[int]:
@@ -229,9 +245,11 @@ class EdgeStorage(BaseStorage):
         for value in self.values('adj', 'adj_t'):
             return value.nnz()
         warnings.warn(
-            f"Unable to infer 'num_edges' from attributes {set(self.keys())}. "
-            f"Please explicitly set 'num_edges' as an attribute" +
-            f" of 'data[{self._key}]'" if self._key is not None else "")
+            f"Unable to accurately infer 'num_edges' from the attribute set "
+            f"{set(self.keys())}. Please explicitly set 'num_edges' as an "
+            f"attribute of " +
+            ("'data'" if self._key is None else f"'data[{self._key}]'") +
+            " to suppress this warning")
         return None
 
     @property
@@ -259,6 +277,12 @@ class EdgeStorage(BaseStorage):
             self._parent[self._key[-1]].num_nodes
         ]
 
+    def is_coalesced(self) -> bool:
+        raise NotImplementedError
+
+    def coalesce(self):
+        raise NotImplementedError
+
     def has_isolated_nodes(self) -> bool:
         raise NotImplementedError
 
@@ -273,13 +297,9 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-    def __init__(
-        self,
-        _parent: Any,
-        dict: Optional[Dict[str, Any]] = None,
-        **kwargs,
-    ):
-        super().__init__(_parent, dict=dict, **kwargs)
+    def __init__(self, _parent: Any, mapping: Optional[Dict[str, Any]] = None,
+                 **kwargs):
+        super().__init__(_parent=_parent, mapping=mapping, **kwargs)
 
     @property
     def num_features(self) -> int:

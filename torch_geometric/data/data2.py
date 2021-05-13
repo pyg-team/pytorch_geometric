@@ -1,6 +1,7 @@
 from typing import (Optional, Dict, Any, Tuple, Union, List, Iterable,
-                    NamedTuple)
+                    NamedTuple, Callable)
 from torch_geometric.typing import NodeType, EdgeType, QueryType
+from torch_geometric.deprecation import deprecated
 
 import copy
 from itertools import chain
@@ -14,15 +15,26 @@ from .storage import NodeStorage, EdgeStorage, GlobalStorage
 
 # Backward-compatibility issues:
 # * `Data(x, edge_index)` breaks
+# * `data.keys()` in favor of `data.keys`
+
+
+def homogeneous_only(func: Callable) -> Callable:
+    def wrapper(self, *args, **kwargs):
+        if self.is_heterogeneous:
+            raise AttributeError(f"'{func.__name__}' is only supported in a "
+                                 f"homogeneous data setting")
+        return func(self, *args, **kwargs)
+
+    return wrapper
 
 
 class Data(object):
-    def __init__(self, dict: Optional[Dict[str, Any]] = None, **kwargs):
+    def __init__(self, mapping: Optional[Dict[str, Any]] = None, **kwargs):
         self.__dict__['_global_store'] = GlobalStorage(_parent=self)
         self.__dict__['_hetero_store'] = {}
 
-        dict = {} if dict is None else dict
-        for key, value in chain(dict.items(), kwargs.items()):
+        mapping = {} if mapping is None else mapping
+        for key, value in chain(mapping.items(), kwargs.items()):
             if '__' in key and isinstance(value, Mapping):
                 key = tuple(key.split('__'))
 
@@ -88,11 +100,12 @@ class Data(object):
 
     def __contains__(self, *args: Tuple[QueryType]) -> bool:
         key = self._to_canonical(*args)
+        # TODO: Check child keys
         return key in self._global_store or key in self._hetero_store
 
     def __copy__(self):
         out = self.__class__()
-        out._global_store = copy.copy(self._global_store)
+        out.__dict__['_global_store'] = copy.copy(self._global_store)
         for key, item in self._hetero_store.items():
             out._hetero_store[key] = copy.copy(item)
             out._hetero_store._parent = out
@@ -100,11 +113,23 @@ class Data(object):
 
     def __deepcopy__(self, memo):
         out = self.__class__()
-        out._global_store = copy.deepcopy(self._global_store, memo)
+        out.__dict__['_global_store'] = copy.deepcopy(self._global_store, memo)
         for key, item in self._hetero_store.items():
             out._hetero_store[key] = copy.deepcopy(item, memo)
             out._hetero_store._parent = out
         return out
+
+    def __repr__(self) -> str:
+        cls = self.__class__.__name__
+
+        if self.is_homogeneous:
+            info = [size_repr(k, v) for k, v in self._global_store.items()]
+            return '{}({})'.format(cls, ', '.join(info))
+        else:
+            info1 = [size_repr(k, v, 2) for k, v in self._global_store.items()]
+            info2 = [size_repr(k, v, 2) for k, v in self._hetero_store.items()]
+            info = info1 + info2
+            return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
 
     def _to_canonical(
         self,
@@ -119,6 +144,8 @@ class Data(object):
             args = (args[0], '_', args[1])
         return args
 
+    # Additional functionality ################################################
+
     def to_dict(self) -> Dict[str, Any]:
         out = self._global_store.to_dict()
         for key, value in self._hetero_store.items():
@@ -126,6 +153,7 @@ class Data(object):
         return out
 
     def to_namedtuple(self) -> NamedTuple:
+        # TODO
         return None
 
     @property
@@ -137,51 +165,68 @@ class Data(object):
         return not self.is_heterogeneous
 
     @property
-    def node_types(self) -> List[NodeType]:
-        return [
-            k for k, v in self._hetero_store.items()
-            if isinstance(v, NodeStorage)
-        ]
-
-    @property
-    def edge_types(self) -> List[EdgeType]:
-        return [
-            k for k, v in self._hetero_store.items()
-            if isinstance(v, EdgeStorage)
-        ]
-
-    @property
     def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
         # Returns the heterogeneous meta-data, i.e. its node and edge types.
-        return self.node_types, self.edge_types
-
-    def __repr__(self) -> str:
-        cls = self.__class__.__name__
-
-        if self.is_homogeneous:
-            info = [size_repr(k, v) for k, v in self._global_store.items()]
-            return '{}{}{}({})'.format(BOLD, cls, END, ', '.join(info))
-        else:
-            info1 = [size_repr(k, v, 2) for k, v in self._global_store.items()]
-            info2 = [size_repr(k, v, 2) for k, v in self._hetero_store.items()]
-            info = info1 + info2
-            return '{}{}{}(\n{}\n)'.format(BOLD, cls, END, ',\n'.join(info))
-
-    def to(self, device: Union[int, str], *args: List[str],
-           non_blocking: bool = False):
-        self._global_store.to(device, *args, non_blocking=non_blocking)
-        for store in self._hetero_store.values():
-            store.to(device, *args, non_blocking=non_blocking)
-        return self
+        it = self._hetero_store.items()
+        node_types = [k for k, v in it if isinstance(v, NodeStorage)]
+        edge_types = [k for k, v in it if isinstance(v, EdgeStorage)]
+        return node_types, edge_types
 
     @property
     def num_nodes(self) -> Optional[int]:
         if self.is_homogeneous:
             return self._global_store.num_nodes
         else:
-            return sum([
-                self._hetero_store[key].num_nodes for key in self._node_types
-            ])
+            try:
+                it = self._hetero_store.values()
+                outs = [v.num_nodes for v in it if isinstance(v, NodeStorage)]
+                return sum(outs)
+            except TypeError:
+                return None
+
+    @property
+    def num_edges(self) -> Optional[int]:
+        if self.is_homogeneous:
+            return self._global_store.num_edges
+        else:
+            try:
+                it = self._hetero_store.values()
+                outs = [v.num_edges for v in it if isinstance(v, EdgeStorage)]
+                return sum(outs)
+            except TypeError:
+                return None
+
+    @property
+    @homogeneous_only
+    def num_node_features(self) -> int:
+        return self._global_store.num_node_features
+
+    @property
+    def num_features(self):
+        return self.num_node_features
+
+    @property
+    @homogeneous_only
+    def num_edge_features(self) -> int:
+        return self._global_store.num_edge_features
+
+    def is_coalesced(self) -> bool:
+        raise NotImplementedError
+
+    def coalesce(self):
+        raise NotImplementedError
+
+    def has_isolated_nodes(self) -> bool:
+        raise NotImplementedError
+
+    def has_self_loops(self) -> bool:
+        raise NotImplementedError
+
+    def is_undirected(self) -> bool:
+        raise NotImplementedError
+
+    def is_directed(self) -> bool:
+        return not self.is_undirected
 
     def __cat_dim__(self, key: str,
                     value: Any) -> Optional[Union[int, Tuple[int, int]]]:
@@ -199,7 +244,53 @@ class Data(object):
         else:
             return 0
 
-    # Begin deprecated functions ##############################################
+    def clone(self):
+        return copy.deepcopy(self)
+
+    def apply(self, func: Callable, *args: List[str]):
+        raise NotImplementedError
+
+    def contiguous(self, *args: List[str]):
+        raise NotImplementedError
+
+    def to(self, device: Union[int, str], *args: List[str],
+           non_blocking: bool = False):
+        self._global_store.to(device, *args, non_blocking=non_blocking)
+        for store in self._hetero_store.values():
+            store.to(device, *args, non_blocking=non_blocking)
+        return self
+
+    def cpu(self, *args: List[str]):
+        raise NotImplementedError
+
+    def cuda(self, device: Union[int, str], *args: List[str],
+             non_blocking: bool = False):
+        raise NotImplementedError
+
+    def pin_memory(self, *args: List[str]):
+        raise NotImplementedError
+
+    def share_memory_(self, *args: List[str]):
+        raise NotImplementedError
+
+    def detach_(self, *args: List[str]):
+        raise NotImplementedError
+
+    def detach(self, *args: List[str]):
+        raise NotImplementedError
+
+    def requires_grad_(self, *args: List[str], requires_grad: bool = True):
+        raise NotImplementedError
+
+    def debug(self):
+        raise NotImplementedError
+
+    # Deprecated functions ####################################################
+
+    @classmethod
+    @deprecated(details="use 'Data(dict)' instead")
+    def from_dict(cls, dict: Dict[str, Any]):
+        return cls(dict)
 
     def __len__(self) -> int:
         return 2
@@ -207,6 +298,29 @@ class Data(object):
     @property
     def keys(self) -> Iterable:
         return ['x', 'edge_index']
+
+    @property
+    @deprecated(details="use 'data.face.size(-1)' instead")
+    def num_faces(self) -> Optional[int]:
+        if self.face is not None:
+            return self.face.size(self.__cat_dim__('face', self.face))
+        return None
+
+    def __iter__(self):
+        # TODO
+        pass
+
+    def __call__(self, *keys):
+        # TODO
+        pass
+
+    @deprecated(details="use 'has_isolated_nodes' instead")
+    def contains_isolated_nodes(self) -> bool:
+        return self.has_isolated_nodes
+
+    @deprecated(details="use 'has_self_loops' instead")
+    def contains_self_loops(self) -> bool:
+        return self.has_self_loops
 
     # End deprecated functions ################################################
 
@@ -234,10 +348,6 @@ def size_repr(key, value, indent=0):
 
     key = str(key).replace("'", '')
     if isinstance(value, Mapping):
-        return f'{pad}{BOLD}{key}{END}={out}'
+        return f'{pad}\033[1m{key}\033[0m={out}'
     else:
         return f'{pad}{key}={out}'
-
-
-BOLD = '\033[1m'
-END = '\033[0m'
