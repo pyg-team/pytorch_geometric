@@ -29,12 +29,17 @@ jobs:
         run: |
           pip install --upgrade pip
 
+      - name: Install PyTorch ${{ matrix.torch-version }}
+        run: |
+          pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
       - name: Install dependencies
         run: |
-          python --version
-          pip --version
-          pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
           pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+
+      - name: Run test-suite
+        run: |
+          pytest
