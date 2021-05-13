@@ -293,10 +293,12 @@ class Data(object):
         return cls(dict)
 
     def __len__(self) -> int:
+        # TODO
         return 2
 
     @property
     def keys(self) -> Iterable:
+        # TODO
         return ['x', 'edge_index']
 
     @property
@@ -307,12 +309,10 @@ class Data(object):
         return None
 
     def __iter__(self):
-        # TODO
-        pass
+        raise NotImplementedError
 
     def __call__(self, *keys):
-        # TODO
-        pass
+        raise NotImplementedError
 
     @deprecated(details="use 'has_isolated_nodes' instead")
     def contains_isolated_nodes(self) -> bool:
