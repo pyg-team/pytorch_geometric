@@ -70,4 +70,4 @@ jobs:
         run: |
           pip install pytest
           pip install pytest-cov
-          # python setup.py test
+          python setup.py test
