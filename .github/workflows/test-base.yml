@@ -13,9 +13,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      os: [ubuntu-latest, windows-latest]
-      python-version: [3.6]
-      torch-version: [1.7.0, 1.8.0]
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: [3.6]
+        torch-version: [1.7.0, 1.8.0]
 
     steps:
       - uses: actions/checkout@v2
