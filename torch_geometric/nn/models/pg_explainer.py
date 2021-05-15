@@ -18,12 +18,13 @@ class PGExplainer(torch.nn.Module):
 
     .. note::
 
-        For an example of using PGExplainer, see `examples/pg_explainer.py <>`_.
+        For an example of using PGExplainer, see `examples/pg_explainer.py <
+        >`_.
 
     Args:
         model (torch.nn.Module): The GNN module to explain.
-        out_channels(int): Size of output of last :class:`MessagePassing` layer in 
-            :obj:`model`.
+        out_channels(int): Size of output of last :class:`MessagePassing` layer
+            in :obj:`model`.
         epochs (int, optional): The number of epochs to train.
             (default: :obj:`30`)
         lr (float, optional): The learning rate to apply.
@@ -189,11 +190,11 @@ class PGExplainer(torch.nn.Module):
 
         Args:
             x (Tensor): The node feature matrix.
-            z (Tensor): Node embedding from last :class:`MessagePassing` layer in 
-                :obj:`model`.
+            z (Tensor): Node embedding from last :class:`MessagePassing` layer
+                in :obj:`model`.
             edge_index (LongTensor): The edge indices.
-            node_idxs (Optional, LongTensor): The nodes used to train explainer.
-                Only required if :obj:`task` is :obj:`"node"`.
+            node_idxs (Optional, LongTensor): The nodes used to train
+                explainer. Only required if :obj:`task` is :obj:`"node"`.
             batch (optional, LongTensor): Tensor denotes the graph each node
                 belongs to. Only required if :obj:`task` is :obj:`"graph"`. All
                 graphs in :attr:`batch` are used to train the explainer.
@@ -241,7 +242,7 @@ class PGExplainer(torch.nn.Module):
                                  **kwargs)
                 log_logits = self.__to_log_prob__(out)
                 self.__loss__(edge_mask, log_logits, pred_label.squeeze(),
-                                    batch=batch, edge_index=edge_index).backward()
+                              batch=batch, edge_index=edge_index).backward()
                 optimizer.step()
                 if self.log:  # pragma: no cover
                     pbar.update(1)
@@ -254,8 +255,9 @@ class PGExplainer(torch.nn.Module):
                 for n in node_idxs:
                     n = int(n)
                     optimizer.zero_grad()
-                    x_n, z_n, edge_index_n, mapping, _, kwargs_n = self.__subgraph__(
-                        n, x, z, edge_index, **kwargs)
+                    (x_n, z_n, edge_index_n, mapping, _,
+                     kwargs_n) = self.__subgraph__(n, x, z, edge_index,
+                                                   **kwargs)
                     explainer_in = self.__create_explainer_input__(
                         edge_index_n, z_n, mapping).detach()
                     edge_mask = self.__compute_edge_mask__(
