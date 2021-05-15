@@ -12,9 +12,9 @@ EPS = 1e-15
 
 class PGExplainer(torch.nn.Module):
     r"""The PGExplainer model from the `"Parameterized Explainer for Graph Neural
-    Network" <https://arxiv.org/abs/2011.04573>`_ paper for identifying compact
-    subgraph structures that play a crucial role in a GNN’s node/graph
-    predictions.
+    Network" <https://arxiv.org/abs/2011.04573>`_ paper. It uses a neural
+    network :obj:`explainer_model` , to generate subgraphs that are crucial to
+    a GNNs node or graph prediction.
 
     .. note::
 
@@ -185,7 +185,7 @@ class PGExplainer(torch.nn.Module):
     def train_explainer(self, x, z, edge_index, node_idxs=None, batch=None,
                         **kwargs):
         r"""Trains the :obj:`explainer_model` to predict an
-        edge mask that is important to explain the predictions made by
+        edge mask that is crucial to explain the predictions made by
         :obj:`model`.
 
         Args:
@@ -194,9 +194,11 @@ class PGExplainer(torch.nn.Module):
                 in :obj:`model`.
             edge_index (LongTensor): The edge indices.
             node_idxs (Optional, LongTensor): The nodes used to train
-                explainer. Only required if :obj:`task` is :obj:`"node"`.
-            batch (optional, LongTensor): Tensor denotes the graph each node
-                belongs to. Only required if :obj:`task` is :obj:`"graph"`. All
+                :obj:`explainer_model`. Only required if :obj:`task` is
+                :obj:`"node"`.
+            batch (optional, LongTensor): Batch vector :math:`\mathbf{b} \in
+                {\{ 0, \ldots, B-1\}}^N`, which assigns each node to a specific
+                example. Only required if :obj:`task` is :obj:`"graph"`. All
                 graphs in :attr:`batch` are used to train the explainer.
             **kwargs (optional): Additional arguments passed to the GNN module.
 
