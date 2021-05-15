@@ -121,8 +121,8 @@ class PGExplainer(torch.nn.Module):
         return x, z, edge_index, mapping, edge_mask, kwargs_new
 
     def __create_explainer_input__(self, edge_index, x, node_id=None):
-        r"""Given the embeddign of the sample from the :obj:`model`, this method
-        construct the input to :obj:`explainer_model`.
+        r"""
+        Construct the input to :obj:`explainer_model`.
         """
 
         rows = edge_index[0]
@@ -221,7 +221,7 @@ class PGExplainer(torch.nn.Module):
 
         if self.log:  # pragma: no cover
             pbar = tqdm(total=self.epochs)
-            pbar.set_description(f'Explain indicies {node_idxs}')
+            pbar.set_description('Training Explainer')
 
         bias = self.coeffs['bias']
         if self.task == "graph":
@@ -241,11 +241,10 @@ class PGExplainer(torch.nn.Module):
                                  **kwargs)
                 log_logits = self.__to_log_prob__(out)
                 self.__loss__(edge_mask, log_logits, pred_label.squeeze(),
-                              batch=batch, edge_index=edge_index).backward()
+                                    batch=batch, edge_index=edge_index).backward()
                 optimizer.step()
-                print(
-                    self.__loss__(edge_mask, log_logits, pred_label.squeeze(),
-                                  batch=batch, edge_index=edge_index))
+                if self.log:  # pragma: no cover
+                    pbar.update(1)
 
         else:
             assert node_idxs.unique().shape[0] == node_idxs.shape[0]
@@ -269,7 +268,6 @@ class PGExplainer(torch.nn.Module):
                                           pred_label[[n]])
 
                 loss.backward()
-                print(loss)
                 optimizer.step()
 
                 if self.log:  # pragma: no cover

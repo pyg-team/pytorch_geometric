@@ -6,7 +6,7 @@ from torch_geometric.nn import (GCNConv, GATConv, PGExplainer,
                                 MessagePassing, global_add_pool)
 
 
-def assert_edge_mask(model):
+def assert_edgemask_clear(model):
     for layer in model.modules():
         if isinstance(layer, MessagePassing):
             assert ~layer.__explain__
@@ -40,9 +40,10 @@ def test_graph(model):
     batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
     z = model(x, edge_index, batch, get_embedding=True)
 
-    explainer = PGExplainer(model, out_channels=z.shape[1], task='graph')
+    explainer = PGExplainer(model, out_channels=z.shape[1], task='graph',
+                            log=False)
     explainer.train_explainer(x, z, edge_index, batch=batch)
-    assert_edge_mask(model)
+    assert_edgemask_clear(model)
 
     mask = explainer.explain(x, z, edge_index)
     assert mask.shape[0] == edge_index.shape[1]
@@ -87,9 +88,10 @@ def test_node(model):
                                [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]])
     z = model(x, edge_index, get_embedding=True)
 
-    explainer = PGExplainer(model, out_channels=z.shape[1], task='node')
+    explainer = PGExplainer(model, out_channels=z.shape[1], task='node',
+                            log=False)
     explainer.train_explainer(x, z, edge_index, node_idxs=torch.arange(0, 3))
-    assert_edge_mask(model)
+    assert_edgemask_clear(model)
 
     mask = explainer.explain(x, z, edge_index, node_id=1)
     assert mask.shape[0] == edge_index.shape[1]
