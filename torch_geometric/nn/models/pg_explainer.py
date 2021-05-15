@@ -18,11 +18,11 @@ class PGExplainer(torch.nn.Module):
 
     .. note::
 
-        For an example of using PGExplainer, see `<>`_.
+        For an example of using PGExplainer, see `examples/pg_explainer.py <>`_.
 
     Args:
         model (torch.nn.Module): The GNN module to explain.
-        out_channels(int): Size of output of last last :class:`MessagePassing` layer in 
+        out_channels(int): Size of output of last :class:`MessagePassing` layer in 
             :obj:`model`.
         epochs (int, optional): The number of epochs to train.
             (default: :obj:`30`)
@@ -193,9 +193,9 @@ class PGExplainer(torch.nn.Module):
                 :obj:`model`.
             edge_index (LongTensor): The edge indices.
             node_idxs (Optional, LongTensor): The nodes used to train explainer.
-                Only required for :obj:`task`=:obj:`"node"`.
+                Only required if :obj:`task` is :obj:`"node"`.
             batch (optional, LongTensor): Tensor denotes the graph each node
-                belongs to. Only required if :obj:`task`=:obj:`"graph"`. All
+                belongs to. Only required if :obj:`task` is :obj:`"graph"`. All
                 graphs in :attr:`batch` are used to train the explainer.
             **kwargs (optional): Additional arguments passed to the GNN module.
 
@@ -278,15 +278,14 @@ class PGExplainer(torch.nn.Module):
         self.__clear_masks__()
 
     def explain(self, x, z, edge_index, node_id=None, **kwargs):
-        r"""Get :obj:`edge_mask` that explains predictions for
-        for node equals :attr:`node_id` or a graph.
+        r"""Returns an :obj:`edge_mask` that explains :obj:`model` prediction.
 
         Args:
             x (Tensor): The node feature matrix.
             z (Tensor): Node embedding from last :class:`MessagePassing` layer.
             edge_index (LongTensor): The edge indices.
             node_id (Optional, int): The node id to explain.
-                Only required if :obj:`task`=:obj:`"node"`.
+                Only required if :obj:`task` is :obj:`"node"`.
             **kwargs (optional): Additional arguments passed to the GNN module.
         :rtype: :class:`Tensor`
         """
