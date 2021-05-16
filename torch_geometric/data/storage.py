@@ -112,12 +112,12 @@ class BaseStorage(MutableMapping):
         return copy.copy(self._mapping)
 
     def to_namedtuple(self) -> NamedTuple:
-        typename = 'NamedTuple'
+        typename = 'StorageTuple'
         if self._key is not None:
             typename = '__'.join(self._key)
         field_names = list(self.keys())
-        DataTuple = namedtuple(typename, field_names)
-        return DataTuple(*[self[key] for key in field_names])
+        StorageTuple = namedtuple(typename, field_names)
+        return StorageTuple(*[self[key] for key in field_names])
 
     def clone(self, *args: List[str]):
         return copy.deepcopy(self)

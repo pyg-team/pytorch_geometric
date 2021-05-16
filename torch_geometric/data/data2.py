@@ -5,6 +5,7 @@ from torch_geometric.deprecation import deprecated
 
 import copy
 from itertools import chain
+from collections import namedtuple
 from collections.abc import Sequence, Mapping
 
 import torch
@@ -153,8 +154,14 @@ class Data(object):
         return out
 
     def to_namedtuple(self) -> NamedTuple:
-        # TODO
-        return None
+        field_names = list(self._global_store.keys())
+        field_values = list(self._global_store.values())
+        field_names += ['__'.join(key) for key in self._hetero_store.keys()]
+        field_values += [
+            store.to_namedtuple() for store in self._hetero_store.values()
+        ]
+        DataTuple = namedtuple('DataTuple', field_names)
+        return DataTuple(*field_values)
 
     @property
     def is_heterogeneous(self) -> bool:
@@ -248,39 +255,41 @@ class Data(object):
         return copy.deepcopy(self)
 
     def apply(self, func: Callable, *args: List[str]):
-        raise NotImplementedError
+        self._global_store.apply(func, *args)
+        for store in self._hetero_store.values():
+            store.apply(func, *args)
+        return self
 
     def contiguous(self, *args: List[str]):
-        raise NotImplementedError
+        return self.apply(lambda x: x.contiguous(), *args)
 
     def to(self, device: Union[int, str], *args: List[str],
            non_blocking: bool = False):
-        self._global_store.to(device, *args, non_blocking=non_blocking)
-        for store in self._hetero_store.values():
-            store.to(device, *args, non_blocking=non_blocking)
-        return self
+        return self.apply(
+            lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
     def cpu(self, *args: List[str]):
-        raise NotImplementedError
+        return self.apply(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Union[int, str], *args: List[str],
              non_blocking: bool = False):
-        raise NotImplementedError
+        return self.apply(lambda x: x.cuda(non_blocking=non_blocking), *args)
 
     def pin_memory(self, *args: List[str]):
-        raise NotImplementedError
+        return self.apply(lambda x: x.pin_memory(), *args)
 
     def share_memory_(self, *args: List[str]):
-        raise NotImplementedError
+        return self.apply(lambda x: x.share_memory_(), *args)
 
     def detach_(self, *args: List[str]):
-        raise NotImplementedError
+        return self.apply(lambda x: x.detach_(), *args)
 
     def detach(self, *args: List[str]):
-        raise NotImplementedError
+        return self.apply(lambda x: x.detach(), *args)
 
     def requires_grad_(self, *args: List[str], requires_grad: bool = True):
-        raise NotImplementedError
+        return self.apply(
+            lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
     def debug(self):
         raise NotImplementedError
@@ -304,7 +313,7 @@ class Data(object):
     @property
     @deprecated(details="use 'data.face.size(-1)' instead")
     def num_faces(self) -> Optional[int]:
-        if self.face is not None:
+        if 'face' in self._global_store:
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 
