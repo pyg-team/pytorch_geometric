@@ -2,11 +2,11 @@ import copy
 
 import torch
 
-from torch_geometric.data.storage import GlobalStorage as Storage
+from torch_geometric.data.storage import BaseStorage
 
 
-def test_storage():
-    storage = Storage()
+def test_base_storage():
+    storage = BaseStorage()
     storage.x = torch.zeros(1)
     storage.y = torch.ones(1)
     assert len(storage) == 2
@@ -21,23 +21,20 @@ def test_storage():
     del storage.y
     assert len(storage) == 1
     assert storage.x is not None
-    assert storage.y is None
 
-    storage = Storage({'x': torch.zeros(1)})
+    storage = BaseStorage({'x': torch.zeros(1)})
     assert len(storage) == 1
     assert storage.x is not None
 
-    storage = Storage(x=torch.zeros(1))
+    storage = BaseStorage(x=torch.zeros(1))
     assert len(storage) == 1
     assert storage.x is not None
 
-    storage = Storage(key='key', parent={}, x=torch.zeros(1))
+    storage = BaseStorage(key='key', parent={}, x=torch.zeros(1))
 
     copied_storage = copy.copy(storage)
     assert storage == copied_storage
     assert id(storage) != id(copied_storage)
-    assert id(storage._key) == id(copied_storage._key)
-    assert id(storage._parent) == id(copied_storage._parent)
     assert storage.x.data_ptr() == copied_storage.x.data_ptr()
     assert int(storage.x) == 0
     assert int(copied_storage.x) == 0
@@ -45,13 +42,6 @@ def test_storage():
     deepcopied_storage = copy.deepcopy(storage)
     assert storage == deepcopied_storage
     assert id(storage) != id(deepcopied_storage)
-    assert id(storage._key) == id(deepcopied_storage._key)
-    assert id(storage._parent) == id(deepcopied_storage._parent)
     assert storage.x.data_ptr() != deepcopied_storage.x.data_ptr()
     assert int(storage.x) == 0
     assert int(deepcopied_storage.x) == 0
-
-
-def test_graph_storage():
-    storage = Storage(x=1, y=2)
-    # print(storage)
