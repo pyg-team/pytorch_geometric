@@ -1,7 +1,7 @@
 import torch
 import torch_geometric
 from torch_geometric.data.data2 import Data
-from torch_sparse import coalesce
+# from torch_sparse import coalesce
 
 
 def test_data():

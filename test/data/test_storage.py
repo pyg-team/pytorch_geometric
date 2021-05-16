@@ -30,8 +30,7 @@ def test_base_storage():
     assert len(storage) == 1
     assert storage.x is not None
 
-    storage = BaseStorage(key='key', parent={}, x=torch.zeros(1))
-
+    storage = BaseStorage(x=torch.zeros(1))
     copied_storage = copy.copy(storage)
     assert storage == copied_storage
     assert id(storage) != id(copied_storage)
