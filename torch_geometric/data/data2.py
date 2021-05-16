@@ -302,13 +302,14 @@ class Data(object):
         return cls(dict)
 
     def __len__(self) -> int:
-        # TODO
-        return 2
+        return len(self.keys)
 
     @property
     def keys(self) -> Iterable:
-        # TODO
-        return ['x', 'edge_index']
+        out = list(self._global_store.keys())
+        for store in self._hetero_store.values():
+            out.append(list(store.keys()))
+        return list(set(out))
 
     @property
     @deprecated(details="use 'data.face.size(-1)' instead")
