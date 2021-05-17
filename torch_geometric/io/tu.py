@@ -88,11 +88,13 @@ def split(data, batch):
 
     # Edge indices should start at zero for every graph.
     data.edge_index -= node_slice[batch[row]].unsqueeze(0)
-    data.__num_nodes__ = torch.bincount(batch).tolist()
 
     slices = {'edge_index': edge_slice}
     if data.x is not None:
         slices['x'] = node_slice
+    else:
+        data.num_nodes = torch.bincount(batch).tolist()
+        slices['num_nodes'] = torch.arange(len(data.num_nodes) + 1)
     if data.edge_attr is not None:
         slices['edge_attr'] = edge_slice
     if data.y is not None:

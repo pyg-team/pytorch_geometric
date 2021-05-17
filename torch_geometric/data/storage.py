@@ -92,6 +92,13 @@ class BaseStorage(MutableMapping):
         out._mapping = copy.deepcopy(out._mapping, memo)
         return out
 
+    def __getstate__(self) -> Dict[str, Any]:
+        return self.__dict__
+
+    def __setstate__(self, mapping: Dict[str, Any]):
+        for key, value in mapping.items():
+            self.__dict__[key] = value
+
     def __repr__(self) -> str:
         return repr(self._mapping)
 
@@ -297,7 +304,7 @@ class EdgeStorage(BaseStorage):
         raise NotImplementedError
 
     def is_directed(self) -> bool:
-        return not self.is_undirected
+        return not self.is_undirected()
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):

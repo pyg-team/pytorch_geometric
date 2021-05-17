@@ -257,6 +257,7 @@ class RandomNodeSampler(torch.utils.data.DataLoader):
 
         data = self.data.__class__()
         data.num_nodes = node_idx.size(0)
+        data.num_edges = None
         adj, _ = self.adj.saint_subgraph(node_idx)
         row, col, edge_idx = adj.coo()
         data.edge_index = torch.stack([row, col], dim=0)

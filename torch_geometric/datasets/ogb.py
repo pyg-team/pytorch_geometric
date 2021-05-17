@@ -2,7 +2,7 @@ from typing import Optional, Callable
 
 import torch
 
-from torch_geometric.data.data2 import Data
+from torch_geometric.data import Data
 
 
 class OGB_MAG(torch.utils.data.Dataset):
