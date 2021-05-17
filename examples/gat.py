@@ -13,12 +13,12 @@ data = dataset[0]
 
 
 class Net(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, in_channels, out_channels):
         super(Net, self).__init__()
 
-        self.conv1 = GATConv(dataset.num_features, 8, heads=8, dropout=0.6)
+        self.conv1 = GATConv(in_channels, 8, heads=8, dropout=0.6)
         # On the Pubmed dataset, use heads=8 in conv2.
-        self.conv2 = GATConv(8 * 8, dataset.num_classes, heads=1, concat=False,
+        self.conv2 = GATConv(8 * 8, out_channels, heads=1, concat=False,
                              dropout=0.6)
 
     def forward(self, x, edge_index):
@@ -30,7 +30,8 @@ class Net(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model, data = Net().to(device), data.to(device)
+model = Net(dataset.num_features, dataset.num_classes).to(device)
+data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 
@@ -43,6 +44,7 @@ def train(data):
     optimizer.step()
 
 
+@torch.no_grad()
 def test(data):
     model.eval()
     out, accs = model(data.x, data.edge_index), []
