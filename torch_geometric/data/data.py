@@ -3,6 +3,7 @@ from typing import (Optional, Dict, Any, Tuple, Union, List, Iterable,
 from torch_geometric.typing import NodeType, EdgeType, QueryType
 from torch_geometric.deprecation import deprecated
 
+import re
 import copy
 from itertools import chain
 from collections import namedtuple
@@ -22,9 +23,19 @@ from torch_geometric.data.storage import (NodeStorage, EdgeStorage,
 
 def homogeneous_only(func: Callable) -> Callable:
     def wrapper(self, *args, **kwargs):
-        if self.is_heterogeneous:
+        if not self.is_homogeneous:
             raise AttributeError(f"'{func.__name__}' is only supported in a "
                                  f"homogeneous data setting")
+        return func(self, *args, **kwargs)
+
+    return wrapper
+
+
+def heterogeneous_only(func: Callable) -> Callable:
+    def wrapper(self, *args, **kwargs):
+        if not self.is_heterogeneous:
+            raise AttributeError(f"'{func.__name__}' is only supported in a "
+                                 f"heterogeneous data setting")
         return func(self, *args, **kwargs)
 
     return wrapper
@@ -47,8 +58,15 @@ class Data(object):
 
     def __getattr__(self, key: str) -> Any:
         # `data.*` => Link to the `_global_store`.
+        # `data.*_dict` => Link to the `_hetero_store`.
         if key in self._global_store:
             return getattr(self._global_store, key)
+
+        if bool(re.search('_dict$', key)):
+            out = self._collect(key[:-5])
+            if len(out) > 0:
+                return out
+
         raise AttributeError(
             f"'{self.__class__.__name__}' object has no attribute '{key}'")
 
@@ -78,6 +96,11 @@ class Data(object):
         out = self._global_store.get(key, None)
         if out is not None:
             return out
+
+        if isinstance(key, str) and bool(re.search('_dict$', key)):
+            out = self._collect(key[:-5])
+            if len(out) > 0:
+                return out
 
         if isinstance(key, tuple):
             out = EdgeStorage(_parent=self, _key=key)
@@ -167,6 +190,15 @@ class Data(object):
     def _edge_stores(self) -> List[EdgeStorage]:
         it = self._hetero_store.values()
         return [store for store in it if isinstance(store, EdgeStorage)]
+
+    @heterogeneous_only
+    def _collect(self, key: str) -> Dict[Union[NodeType, EdgeType], Any]:
+        # Collects the attribute `key` from all heterogeneous storages.
+        mapping = {}
+        for subtype, store in self._hetero_store.items():
+            if key in store:
+                mapping[subtype] = store[key]
+        return mapping
 
     # Additional functionality ################################################
 

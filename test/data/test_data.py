@@ -110,8 +110,6 @@ def test_hetero_data():
     edge_index12 = edge_index12[:, edge_index12[1] < 5]
     edge_index21 = edge_index21[:, edge_index21[0] < 5]
 
-    print()
-    print('----------------')
     data = Data()
     data['paper'].x = x1
     data['author'].x = x2
@@ -163,6 +161,11 @@ def test_hetero_data():
     assert node_types == ['paper', 'author']
     assert edge_types == [('paper', '_', 'paper'), ('paper', '_', 'author'),
                           ('author', '_', 'paper'), ('author', '_', 'author')]
+
+    x_dict = data.x_dict
+    assert len(x_dict) == 2
+    assert x_dict['paper'].tolist() == x1.tolist()
+    assert x_dict['author'].tolist() == x2.tolist()
 
     data.y = 0
     assert data['y'] == 0 and data.y == 0
