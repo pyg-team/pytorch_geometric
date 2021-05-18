@@ -253,7 +253,6 @@ class EdgeStorage(BaseStorage):
         for key, value in self.items('edge_index', 'edge_attr'):
             num_args = len(signature(self._parent.__cat_dim__).parameters)
             args = (key, value, self)[:num_args]
-            print(len(args))
             return value.size(self._parent.__cat_dim__(*args))
         for value in self.values('adj', 'adj_t'):
             return value.nnz()
@@ -324,12 +323,16 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         return [self.num_nodes, self.num_nodes]
 
     def has_isolated_nodes(self) -> bool:
+        return True
         raise NotImplementedError
 
     def has_self_loops(self) -> bool:
+        return False
         raise NotImplementedError
 
     def is_undirected(self) -> bool:
+        from torch_geometric.utils import is_undirected
+        return is_undirected(self.edge_index)
         raise NotImplementedError
 
     def is_directed(self) -> bool:

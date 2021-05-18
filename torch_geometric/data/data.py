@@ -12,9 +12,8 @@ import torch
 import numpy as np
 from torch_sparse import SparseTensor
 
-from torch_geometric.utils import is_undirected
-from torch_geometric.data.storage import (BaseStorage, NodeStorage,
-                                          EdgeStorage, GlobalStorage)
+from torch_geometric.data.storage import (NodeStorage, EdgeStorage,
+                                          GlobalStorage)
 
 # Backward-compatibility issues:
 # * `Data(x, edge_index)` breaks
@@ -158,6 +157,16 @@ class Data(object):
 
         return args
 
+    @property
+    def _node_stores(self) -> List[NodeStorage]:
+        it = self._hetero_store.values()
+        return [store for store in it if isinstance(store, NodeStorage)]
+
+    @property
+    def _edge_stores(self) -> List[EdgeStorage]:
+        it = self._hetero_store.values()
+        return [store for store in it if isinstance(store, EdgeStorage)]
+
     # Additional functionality ################################################
 
     def to_dict(self) -> Dict[str, Any]:
@@ -195,25 +204,19 @@ class Data(object):
     def num_nodes(self) -> Optional[int]:
         if self.is_homogeneous:
             return self._global_store.num_nodes
-        else:
-            try:
-                it = self._hetero_store.values()
-                outs = [v.num_nodes for v in it if isinstance(v, NodeStorage)]
-                return sum(outs)
-            except TypeError:
-                return None
+        try:
+            return sum([v.num_nodes for v in self._node_stores])
+        except TypeError:
+            return None
 
     @property
     def num_edges(self) -> Optional[int]:
         if self.is_homogeneous:
             return self._global_store.num_edges
-        else:
-            try:
-                it = self._hetero_store.values()
-                outs = [v.num_edges for v in it if isinstance(v, EdgeStorage)]
-                return sum(outs)
-            except TypeError:
-                return None
+        try:
+            return sum([v.num_nodes for v in self._edge_stores])
+        except TypeError:
+            return None
 
     @property
     @homogeneous_only
@@ -230,26 +233,29 @@ class Data(object):
         return self._global_store.num_edge_features
 
     def is_coalesced(self) -> bool:
-        # TODO
-        return True
+        return all([
+            store.is_coalesced()
+            for store in [self._global_store] + self._edge_stores
+        ])
 
     def coalesce(self):
-        raise NotImplementedError
+        for store in [self._global_store] + self._edge_stores:
+            store.coalesce()
 
     def has_isolated_nodes(self) -> bool:
-        # TODO
-        return True
+        if self.is_homogeneous:
+            return self._global_store.has_isolated_nodes()
+        raise NotImplementedError
 
     def has_self_loops(self) -> bool:
-        # TODO
-        return False
+        if self.is_homogeneous:
+            return self._global_store.has_self_loops()
+        return any([store.has_self_loops() for store in self._edge_stores])
 
     def is_undirected(self) -> bool:
-        # TODO
         if self.is_homogeneous:
-            return is_undirected(self.edge_index, self.edge_attr,
-                                 self.num_nodes)
-        return True
+            return self._global_store.is_undirected()
+        raise NotImplementedError
 
     def is_directed(self) -> bool:
         return not self.is_undirected()
@@ -270,7 +276,7 @@ class Data(object):
 
         if isinstance(store, EdgeStorage) and 'index' in key:
             return torch.tensor(store.size()).view(2, 1)
-        if 'index' in key or 'face' in key:
+        elif 'index' in key or 'face' in key:
             return self.num_nodes
         else:
             return 0
@@ -316,8 +322,8 @@ class Data(object):
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
     def debug(self):
-        # TODO
-        pass
+        return
+        raise NotImplementedError
 
     # Deprecated functions ####################################################
 
