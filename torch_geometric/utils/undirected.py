@@ -52,6 +52,7 @@ def to_undirected(edge_index, edge_weight=None, num_nodes=None):
     edge_index = torch.stack([row, col], dim=0)
     if edge_weight is not None:
         edge_weight = torch.cat([edge_weight, edge_weight], dim=0)
-    edge_index, edge_weight = coalesce(edge_index, edge_weight,  num_nodes, num_nodes)
+    edge_index, edge_weight = coalesce(edge_index, edge_weight, 
+    num_nodes, num_nodes)
 
     return edge_index, edge_weight
