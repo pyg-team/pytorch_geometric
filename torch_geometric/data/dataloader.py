@@ -69,6 +69,10 @@ class DataLoader(torch.utils.data.DataLoader):
                                                  exclude_keys), **kwargs)
 
 
+def identity_collate(data_list):
+    return data_list
+
+
 class DataListLoader(torch.utils.data.DataLoader):
     r"""Data loader which merges data objects from a
     :class:`torch_geometric.data.dataset` to a python list.
@@ -88,7 +92,7 @@ class DataListLoader(torch.utils.data.DataLoader):
     def __init__(self, dataset, batch_size=1, shuffle=False, **kwargs):
         super(DataListLoader,
               self).__init__(dataset, batch_size, shuffle,
-                             collate_fn=lambda data_list: data_list, **kwargs)
+                             collate_fn=identity_collate, **kwargs)
 
 
 class DenseCollater(object):

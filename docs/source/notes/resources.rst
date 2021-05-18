@@ -22,3 +22,5 @@ External Resources
 * Amitoz Azad: **torch_pdegraph** - Solving PDEs on graphs with PyTorch Geometric [`Devpost <https://devpost.com/software/gdfgddfd>`__, `GitHub <https://github.com/aGIToz/Pytorch_pdegraph>`__]
 
 * Antonio Longa, Gabriele Santin and Giovanni Pellegrini: **PyTorch Geometric Tutorial** [`Website <https://antoniolonga.github.io/Pytorch_geometric_tutorials>`__, `GitHub <https://github.com/AntonioLonga/PytorchGeometricTutorial>`__]
+
+* Amitoz Azad: **Primal-Dual Algorithm for Total Variation Processing on Graphs** [`Jupyter <https://nbviewer.jupyter.org/github/aGIToz/Graph_Signal_Processing/tree/main>`__]

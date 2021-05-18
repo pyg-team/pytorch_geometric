@@ -76,9 +76,22 @@ flake8 torch_geometric test examples
 
 If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
 
-2. Ensure that the entire test suite passes and that code coverage roughly stays at 100%.
+2. Ensure that the entire test suite passes and that code coverage roughly stays the same.
 Please feel encouraged to provide a test with your submitted code.
 
 ```
 python setup.py test
 ```
+
+## Building Documentation
+
+To build the documentation:
+
+1. [Build and install](#developing-pytorch-geometric) PyTorch Geometric from source.
+2. Install [Sphinx](https://www.sphinx-doc.org/en/master/) via `pip install sphinx sphinx_rtd_theme`.
+3. Generate the documentation file via:
+```
+cd pytorch_geometric/docs
+make html
+```
+The docs are located in `pytorch_geometric/docs/build/html/index.html`.

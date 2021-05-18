@@ -1,8 +1,12 @@
 from itertools import product
 
-import h5py
 import torch
 from torch_geometric.data import InMemoryDataset, Data
+
+try:
+    import h5py
+except ImportError:
+    h5py = None
 
 
 class DynamicFAUST(InMemoryDataset):
@@ -104,6 +108,9 @@ class DynamicFAUST(InMemoryDataset):
             'move it to {}'.format(self.url, self.raw_dir))
 
     def process(self):
+        if h5py is None:
+            raise ImportError('`DynamicFAUST` requires `h5py`.')
+
         fm = h5py.File(self.raw_paths[0], 'r')
         ff = h5py.File(self.raw_paths[1], 'r')
 

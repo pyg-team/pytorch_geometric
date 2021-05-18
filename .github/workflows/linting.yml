@@ -1,0 +1,28 @@
+name: Linting
+
+on: [push, pull_request]
+
+jobs:
+
+  flake8:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.6]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install flake8
+
+      - name: Run linting
+        run: |
+          flake8 .
