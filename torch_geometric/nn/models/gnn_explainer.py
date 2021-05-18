@@ -271,7 +271,8 @@ class GNNExplainer(torch.nn.Module):
         :attr:`edge_mask`.
 
         Args:
-            node_idx (int): The node id to explain. Set :obj:`-1` for graph explanation.
+            node_idx (int): The node id to explain.
+                Set to :obj:`-1` to explain graph.
             edge_index (LongTensor): The edge indices.
             edge_mask (Tensor): The edge mask.
             y (Tensor, optional): The ground-truth node-prediction labels used
@@ -289,9 +290,11 @@ class GNNExplainer(torch.nn.Module):
         assert edge_mask.size(0) == edge_index.size(1)
 
         if node_idx == -1:
-            hard_edge_mask = torch.BoolTensor([True]*edge_index.size(1), device = edge_mask.device)
-            subset = torch.arange(edge_index.max()+1, 
-                                  device=edge_index.device if y is None else y.device)
+            hard_edge_mask = torch.BoolTensor([True] * edge_index.size(1),
+                                              device=edge_mask.device)
+            subset = torch.arange(
+                edge_index.max() + 1,
+                device=edge_index.device if y is None else y.device)
         else:
             # Only operate on a k-hop subgraph around `node_idx`.
             subset, edge_index, _, hard_edge_mask = k_hop_subgraph(
