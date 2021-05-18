@@ -147,6 +147,7 @@ class Data(object):
         if len(args) == 1:
             args = args[0]
 
+        if isinstance(args, str):
             # Try to map to edge type based on relation type:
             edge_types = [key for key in self.metadata()[1] if key[1] == args]
             if len(edge_types) == 1:
@@ -178,7 +179,10 @@ class Data(object):
     def to_namedtuple(self) -> NamedTuple:
         field_names = list(self._global_store.keys())
         field_values = list(self._global_store.values())
-        field_names += ['__'.join(key) for key in self._hetero_store.keys()]
+        field_names += [
+            '__'.join(key) if isinstance(key, tuple) else key
+            for key in self._hetero_store.keys()
+        ]
         field_values += [
             store.to_namedtuple() for store in self._hetero_store.values()
         ]
@@ -214,7 +218,7 @@ class Data(object):
         if self.is_homogeneous:
             return self._global_store.num_edges
         try:
-            return sum([v.num_nodes for v in self._edge_stores])
+            return sum([v.num_edges for v in self._edge_stores])
         except TypeError:
             return None
 
@@ -224,6 +228,7 @@ class Data(object):
         return self._global_store.num_node_features
 
     @property
+    @homogeneous_only
     def num_features(self):
         return self.num_node_features
 
@@ -336,7 +341,7 @@ class Data(object):
     def keys(self) -> Iterable:
         out = list(self._global_store.keys())
         for store in self._hetero_store.values():
-            out.append(list(store.keys()))
+            out += list(store.keys())
         return list(set(out))
 
     def __len__(self) -> int:
