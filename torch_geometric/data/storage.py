@@ -4,6 +4,7 @@ from torch_geometric.typing import NodeType, EdgeType
 
 import copy
 import warnings
+from inspect import signature
 from collections import namedtuple
 from collections.abc import Sequence, Mapping, MutableMapping
 
@@ -50,16 +51,16 @@ class BaseStorage(MutableMapping):
     def __getitem__(self, key: str) -> Any:
         return self._mapping[key]
 
-    def __getattr__(self, key: str) -> Optional[Any]:
+    def __getattr__(self, key: str) -> Any:
         return self[key]
 
-    def __setitem__(self, key: str, value: Optional[Any]):
+    def __setitem__(self, key: str, value: Any):
         if value is None:
             del self[key]
         else:
             self._mapping[key] = value
 
-    def __setattr__(self, key: str, value: Optional[Any]):
+    def __setattr__(self, key: str, value: Any):
         if key in self.__dict__:
             self.__dict__[key] = value
         else:
@@ -193,7 +194,9 @@ class NodeStorage(BaseStorage):
         for value in self.values('num_nodes'):
             return value
         for key, value in self.items('x', 'pos', 'batch'):
-            return value.size(self._parent.__cat_dim__(key, value))
+            num_args = len(signature(self._parent.__cat_dim__).parameters)
+            args = (key, value, self)[:num_args]
+            return value.size(self._parent.__cat_dim__(*args))
         for value in self.values('adj'):
             return value.size(0)
         for value in self.values('adj_t'):
@@ -248,7 +251,10 @@ class EdgeStorage(BaseStorage):
         for value in self.values('num_edges'):
             return value
         for key, value in self.items('edge_index', 'edge_attr'):
-            return value.size(self._parent.__cat_dim__(key, value))
+            num_args = len(signature(self._parent.__cat_dim__).parameters)
+            args = (key, value, self)[:num_args]
+            print(len(args))
+            return value.size(self._parent.__cat_dim__(*args))
         for value in self.values('adj', 'adj_t'):
             return value.nnz()
         warnings.warn(
@@ -271,18 +277,16 @@ class EdgeStorage(BaseStorage):
 
     def size(self) -> Tuple[Optional[int], Optional[int]]:
         for value in self.values('adj'):
-            return [value.size(0), value.size(1)]
+            return value.size(0), value.size(1)
         for value in self.values('adj_t'):
-            return [value.size(1), value.size(0)]
+            return value.size(1), value.size(0)
 
         if self._key is None:
             raise NameError(
                 "Unable to infer 'size' without explicit '_key' assignment")
 
-        return [
-            self._parent[self._key[0]].num_nodes,
-            self._parent[self._key[-1]].num_nodes
-        ]
+        return (self._parent[self._key[0]].num_nodes,
+                self._parent[self._key[-1]].num_nodes)
 
     def is_coalesced(self) -> bool:
         raise NotImplementedError

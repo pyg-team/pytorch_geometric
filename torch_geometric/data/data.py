@@ -13,8 +13,8 @@ import numpy as np
 from torch_sparse import SparseTensor
 
 from torch_geometric.utils import is_undirected
-from torch_geometric.data.storage import (NodeStorage, EdgeStorage,
-                                          GlobalStorage)
+from torch_geometric.data.storage import (BaseStorage, NodeStorage,
+                                          EdgeStorage, GlobalStorage)
 
 # Backward-compatibility issues:
 # * `Data(x, edge_index)` breaks
@@ -101,11 +101,6 @@ class Data(object):
         elif key in self._global_store:
             del self._global_store[key]
 
-    def __contains__(self, *args: Tuple[QueryType]) -> bool:
-        key = self._to_canonical(*args)
-        # TODO: Check child keys
-        return key in self._global_store or key in self._hetero_store
-
     def __copy__(self):
         out = self.__class__()
         out.__dict__['_global_store'] = copy.copy(self._global_store)
@@ -145,13 +140,22 @@ class Data(object):
         self,
         *args: Tuple[QueryType],
     ) -> Union[NodeType, EdgeType]:
-        # Converts a given `QueryType` to its "canonical type", i.e.
-        # "incomplete" edge types `(src_node_type, dst_node_type)` will get
-        # mapped to `(src_node_type, '_', dst_node_type)`.
+        # Converts a given `QueryType` to its "canonical type":
+        # 1. `(src_node_type, dst_node_type)` will get mapped to
+        #    `(src_node_type, '_', dst_node_type)`
+        # 2. `relation_type` will get mapped to
+        #    `(src_node_type, relation_type, dst_node_type)`
         if len(args) == 1:
             args = args[0]
-        if isinstance(args, tuple) and len(args) == 2:
+
+            # Try to map to edge type based on relation type:
+            edge_types = [key for key in self.metadata()[1] if key[1] == args]
+            if len(edge_types) == 1:
+                args = edge_types[0]
+
+        elif len(args) == 2:
             args = (args[0], '_', args[1])
+
         return args
 
     # Additional functionality ################################################
@@ -180,7 +184,6 @@ class Data(object):
     def is_homogeneous(self) -> bool:
         return not self.is_heterogeneous
 
-    @property
     def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
         # Returns the heterogeneous meta-data, i.e. its node and edge types.
         it = self._hetero_store.items()
@@ -251,17 +254,22 @@ class Data(object):
     def is_directed(self) -> bool:
         return not self.is_undirected()
 
-    def __cat_dim__(self, key: str,
-                    value: Any) -> Optional[Union[int, Tuple[int, int]]]:
-        # TODO: We only want to make use of this in homogeneous scenarios.
-        if 'index' in key or 'face' in key:
-            return -1
-        elif key == 'adj_t' and isinstance(value, SparseTensor):
+    def __cat_dim__(
+            self, key: str, value: Any,
+            store: Optional[Union[NodeStorage, EdgeStorage]] = None) -> Any:
+
+        if isinstance(value, SparseTensor):
             return (0, 1)
+        elif 'index' in key or 'face' in key:
+            return -1
         return 0
 
-    def __inc__(self, key: str, value: Any) -> bool:
-        # TODO: We only want to make use of this in homogeneous scenarios.
+    def __inc__(
+            self, key: str, value: Any,
+            store: Optional[Union[NodeStorage, EdgeStorage]] = None) -> Any:
+
+        if isinstance(store, EdgeStorage) and 'index' in key:
+            return torch.tensor(store.size()).view(2, 1)
         if 'index' in key or 'face' in key:
             return self.num_nodes
         else:
@@ -318,9 +326,6 @@ class Data(object):
     def from_dict(cls, dict: Dict[str, Any]):
         return cls(dict)
 
-    def __len__(self) -> int:
-        return len(self.keys)
-
     @property
     def keys(self) -> Iterable:
         out = list(self._global_store.keys())
@@ -328,12 +333,11 @@ class Data(object):
             out.append(list(store.keys()))
         return list(set(out))
 
-    @property
-    @deprecated(details="use 'data.face.size(-1)' instead")
-    def num_faces(self) -> Optional[int]:
-        if 'face' in self._global_store:
-            return self.face.size(self.__cat_dim__('face', self.face))
-        return None
+    def __len__(self) -> int:
+        return len(self.keys)
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.keys
 
     def __iter__(self) -> Iterable:
         for key, value in self._global_store.items():
@@ -342,6 +346,14 @@ class Data(object):
     def __call__(self, *args: List[str]) -> Iterable:
         for key, value in self._global_store.items(*args):
             yield key, value
+
+    @property
+    @homogeneous_only
+    @deprecated(details="use 'data.face.size(-1)' instead")
+    def num_faces(self) -> Optional[int]:
+        if 'face' in self._global_store:
+            return self.face.size(self.__cat_dim__('face', self.face))
+        return None
 
     @deprecated(details="use 'has_isolated_nodes' instead")
     def contains_isolated_nodes(self) -> bool:
@@ -352,37 +364,37 @@ class Data(object):
         return self.has_self_loops()
 
     @property
-    def x(self) -> Optional[Any]:
+    def x(self) -> Any:
         if 'x' in self._global_store:
             return self._global_store['x']
         return None
 
     @property
-    def pos(self) -> Optional[Any]:
+    def pos(self) -> Any:
         if 'pos' in self._global_store:
             return self._global_store['pos']
         return None
 
     @property
-    def y(self) -> Optional[Any]:
+    def y(self) -> Any:
         if 'y' in self._global_store:
             return self._global_store['y']
         return None
 
     @property
-    def edge_index(self) -> Optional[Any]:
+    def edge_index(self) -> Any:
         if 'edge_index' in self._global_store:
             return self._global_store['edge_index']
         return None
 
     @property
-    def adj_t(self) -> Optional[Any]:
+    def adj_t(self) -> Any:
         if 'adj_t' in self._global_store:
             return self._global_store['adj_t']
         return None
 
     @property
-    def edge_attr(self) -> Optional[Any]:
+    def edge_attr(self) -> Any:
         if 'edge_attr' in self._global_store:
             return self._global_store['edge_attr']
         return None
