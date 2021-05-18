@@ -267,11 +267,11 @@ class GNNExplainer(torch.nn.Module):
 
     def visualize_subgraph(self, node_idx, edge_index, edge_mask, y=None,
                            threshold=None, **kwargs):
-        r"""Visualizes the subgraph around :attr:`node_idx` given an edge mask
+        r"""Visualizes the subgraph given an edge mask
         :attr:`edge_mask`.
 
         Args:
-            node_idx (int): The node id to explain.
+            node_idx (int): The node id to explain. Set :obj:`-1` for graph explanation.
             edge_index (LongTensor): The edge indices.
             edge_mask (Tensor): The edge mask.
             y (Tensor, optional): The ground-truth node-prediction labels used
@@ -288,10 +288,15 @@ class GNNExplainer(torch.nn.Module):
         import matplotlib.pyplot as plt
         assert edge_mask.size(0) == edge_index.size(1)
 
-        # Only operate on a k-hop subgraph around `node_idx`.
-        subset, edge_index, _, hard_edge_mask = k_hop_subgraph(
-            node_idx, self.num_hops, edge_index, relabel_nodes=True,
-            num_nodes=None, flow=self.__flow__())
+        if node_idx == -1:
+            hard_edge_mask = torch.BoolTensor([True]*edge_index.size(1), device = edge_mask.device)
+            subset = torch.arange(edge_index.max()+1, 
+                                  device=edge_index.device if y is None else y.device)
+        else:
+            # Only operate on a k-hop subgraph around `node_idx`.
+            subset, edge_index, _, hard_edge_mask = k_hop_subgraph(
+                node_idx, self.num_hops, edge_index, relabel_nodes=True,
+                num_nodes=None, flow=self.__flow__())
 
         edge_mask = edge_mask[hard_edge_mask]
 
