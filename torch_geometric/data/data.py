@@ -63,7 +63,7 @@ class Data(object):
             return getattr(self._global_store, key)
 
         if bool(re.search('_dict$', key)):
-            out = self._collect(key[:-5])
+            out = self.collect(key[:-5])
             if len(out) > 0:
                 return out
 
@@ -98,7 +98,7 @@ class Data(object):
             return out
 
         if isinstance(key, str) and bool(re.search('_dict$', key)):
-            out = self._collect(key[:-5])
+            out = self.collect(key[:-5])
             if len(out) > 0:
                 return out
 
@@ -192,7 +192,7 @@ class Data(object):
         return [store for store in it if isinstance(store, EdgeStorage)]
 
     @heterogeneous_only
-    def _collect(self, key: str) -> Dict[Union[NodeType, EdgeType], Any]:
+    def collect(self, key: str) -> Dict[Union[NodeType, EdgeType], Any]:
         # Collects the attribute `key` from all heterogeneous storages.
         mapping = {}
         for subtype, store in self._hetero_store.items():
