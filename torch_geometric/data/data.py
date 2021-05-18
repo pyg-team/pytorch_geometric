@@ -250,7 +250,7 @@ class Data(object):
     def has_isolated_nodes(self) -> bool:
         if self.is_homogeneous:
             return self._global_store.has_isolated_nodes()
-        raise NotImplementedError
+        return any([store.has_isolated_nodes() for store in self._edge_stores])
 
     def has_self_loops(self) -> bool:
         if self.is_homogeneous:
@@ -260,7 +260,7 @@ class Data(object):
     def is_undirected(self) -> bool:
         if self.is_homogeneous:
             return self._global_store.is_undirected()
-        raise NotImplementedError
+        return all([store.is_undirected() for store in self._edge_stores])
 
     def is_directed(self) -> bool:
         return not self.is_undirected()

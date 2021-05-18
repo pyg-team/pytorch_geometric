@@ -9,6 +9,8 @@ from collections import namedtuple
 from collections.abc import Sequence, Mapping, MutableMapping
 
 import torch
+from torch import Tensor
+from torch_sparse import SparseTensor
 
 from .view import KeysView, ValuesView, ItemsView
 
@@ -20,7 +22,7 @@ def recursive_apply(data: Any, func: Callable) -> Any:
         return type(data)(*(recursive_apply(d) for d in data))
     if isinstance(data, Mapping):
         return {key: recursive_apply(data[key], func) for key in data}
-    if isinstance(data, torch.Tensor):
+    if isinstance(data, Tensor):
         return func(data)
     try:
         return func(data)
@@ -229,6 +231,18 @@ class EdgeStorage(BaseStorage):
         self.__dict__['_key'] = _key
         self.__dict__['_parent'] = _parent
 
+    @property
+    def _edge_index(self) -> Optional[Tensor]:
+        for value in self.values('edge_index'):
+            return value
+        for value in self.values('adj'):
+            if isinstance(value, SparseTensor):
+                return torch.stack(value.coo()[:2], dim=0)
+        for value in self.values('adj_t'):
+            if isinstance(value, SparseTensor):
+                return torch.stack(value.coo()[:2][::-1], dim=0)
+        return None
+
     def __copy__(self):
         out = self.__class__(self._parent)
         for key, value in self.__dict__.items():
@@ -291,17 +305,27 @@ class EdgeStorage(BaseStorage):
         raise NotImplementedError
 
     def has_isolated_nodes(self) -> bool:
-        # TODO: No special treatment, just check that nodes appear in target
-        # nodes at least once
-        raise NotImplementedError
+        edge_index = self._edge_index
+        if edge_index is not None:
+            num_nodes = self.size()[-1]
+            if num_nodes is None:
+                raise NameError("Unable to infer 'num_nodes'")
+            return torch.unique(edge_index[1]).numel() < num_nodes
+        return True
 
     def has_self_loops(self) -> bool:
-        # TODO: Requires same key or None key
-        raise NotImplementedError
+        if self._key is None or self._key[0] == self._key[-1]:
+            edge_index = self._edge_index
+            if edge_index is not None:
+                return int((edge_index[0] == edge_index[1]).sum()) > 0
+        return False
 
     def is_undirected(self) -> bool:
-        # TODO: Requires same key or None key
-        raise NotImplementedError
+        if self._key is None or self._key[0] == self._key[-1]:
+            from torch_geometric.utils import is_undirected
+            return is_undirected(self.edge_index)
+            raise NotImplementedError
+        return False
 
     def is_directed(self) -> bool:
         return not self.is_undirected()
@@ -318,19 +342,3 @@ class GlobalStorage(NodeStorage, EdgeStorage):
 
     def size(self) -> Tuple[Optional[int], Optional[int]]:
         return [self.num_nodes, self.num_nodes]
-
-    def has_isolated_nodes(self) -> bool:
-        return True
-        raise NotImplementedError
-
-    def has_self_loops(self) -> bool:
-        return False
-        raise NotImplementedError
-
-    def is_undirected(self) -> bool:
-        from torch_geometric.utils import is_undirected
-        return is_undirected(self.edge_index)
-        raise NotImplementedError
-
-    def is_directed(self) -> bool:
-        return not self.is_undirected
