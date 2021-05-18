@@ -124,8 +124,10 @@ class GNNExplainer(torch.nn.Module):
         return x, edge_index, mapping, edge_mask, kwargs
 
     def __loss__(self, node_idx, log_logits, pred_label):
-        # node_ids is -1 for explaining graphs
-        loss = -log_logits[node_idx, pred_label[node_idx]] if node_idx==-1 else -log_logits[0, pred_label[0]]
+        # node_idx is -1 for explaining graphs
+        loss = -log_logits[
+            node_idx, pred_label[node_idx]] if node_idx == -1 else -log_logits[
+                0, pred_label[0]]
 
         m = self.edge_mask.sigmoid()
         edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
@@ -161,12 +163,12 @@ class GNNExplainer(torch.nn.Module):
         self.model.eval()
         self.__clear_masks__()
 
-        num_edges = edge_index.size(1)
-        batch = torch.zeros(x.shape[0], dtype = int, device = x.device)
+        # all nodes belong to same graph
+        batch = torch.zeros(x.shape[0], dtype=int, device=x.device)
 
         # Get the initial prediction.
         with torch.no_grad():
-            out = self.model(x=x, edge_index=edge_index, batch = batch, **kwargs)
+            out = self.model(x=x, edge_index=edge_index, batch=batch, **kwargs)
             log_logits = self.__to_log_prob__(out)
             pred_label = log_logits.argmax(dim=-1)
 
@@ -178,7 +180,7 @@ class GNNExplainer(torch.nn.Module):
 
         if self.log:  # pragma: no cover
             pbar = tqdm(total=self.epochs)
-            pbar.set_description(f'Explain graph')
+            pbar.set_description('Explain graph')
 
         for epoch in range(1, self.epochs + 1):
             optimizer.zero_grad()
@@ -200,7 +202,7 @@ class GNNExplainer(torch.nn.Module):
 
         self.__clear_masks__()
         return node_feat_mask, edge_mask
-    
+
     def explain_node(self, node_idx, x, edge_index, **kwargs):
         r"""Learns and returns a node feature mask and an edge mask that play a
         crucial role to explain the prediction made by the GNN for node
