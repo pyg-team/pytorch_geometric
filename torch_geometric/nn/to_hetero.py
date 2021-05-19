@@ -1,4 +1,4 @@
-from typing import Tuple, List, Dict, Union, Optional, Any
+from typing import Tuple, List, Dict, Union, Optional
 
 import re
 import copy
