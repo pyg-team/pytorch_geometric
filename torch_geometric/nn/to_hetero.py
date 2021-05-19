@@ -4,6 +4,7 @@ import re
 import copy
 import inspect
 import warnings
+from itertools import chain
 
 import torch
 from torch.nn import Module
@@ -15,8 +16,8 @@ EdgeType = Tuple[str, str, str]
 Metadata = Tuple[List[NodeType], List[EdgeType]]
 
 # TODO:
-# * Modules with multiple return statements
-# * LazyInitialization
+# * Modules with multiple return statements => how to infer node or edge type
+# * LazyInitialization - Bug: LazyLinear.weight does not support deepcopy yet
 # * What are leaf modules?
 # * Flexible args/kwargs replacement
 # * What happens in ModuleLists and ModuleDicts?
@@ -174,18 +175,22 @@ def unwrap_call_module(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     outs: List[fx.Node] = []
     graph.inserting_after(node)
 
-    if all([state[arg.name] == 'node' for arg in node.args]):
+    it = chain(node.args, node.kwargs.values())
+    if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(
-                find_node(graph, f'{arg.name}__{key}') for arg in node.args)
-            kwargs = {}  # TODO
+                find_node(graph, f'{v.name}__{key}') for v in node.args)
+            kwargs = {
+                k: find_node(graph, f'{v.name}__{key}')
+                for k, v in node.kwargs.items()
+            }
             out = graph.create_node('call_module', f'{node.target}.{key}',
                                     args, kwargs, name=f'{node.name}__{key}')
             state[node.name] = 'node'
             graph.inserting_after(out)
             outs.append(out)
 
-    elif all([state[arg.name] == 'edge' for arg in node.args]):
+    elif all([state[v.name] == 'edge' for v in it]):
         raise NotImplementedError
 
     else:
@@ -200,18 +205,22 @@ def unwrap_call_method(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     outs: List[fx.Node] = []
     graph.inserting_after(node)
 
-    if all([state[arg.name] == 'node' for arg in node.args]):
+    it = chain(node.args, node.kwargs.values())
+    if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(
-                find_node(graph, f'{arg.name}__{key}') for arg in node.args)
-            kwargs = {}  # TODO
+                find_node(graph, f'{v.name}__{key}') for v in node.args)
+            kwargs = {
+                k: find_node(graph, f'{v.name}__{key}')
+                for k, v in node.kwargs.items()
+            }
             out = graph.create_node('call_method', node.target, args, kwargs,
                                     name=f'{node.name}__{key}')
             state[node.name] = 'node'
             graph.inserting_after(out)
             outs.append(out)
 
-    elif all([state[arg.name] == 'edge' for arg in node.args]):
+    elif all([state[v.name] == 'edge' for v in it]):
         raise NotImplementedError
 
     else:
@@ -226,18 +235,22 @@ def unwrap_call_function(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     outs: List[fx.Node] = []
     graph.inserting_after(node)
 
-    if all([state[arg.name] == 'node' for arg in node.args]):
+    it = chain(node.args, node.kwargs.values())
+    if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(
-                find_node(graph, f'{arg.name}__{key}') for arg in node.args)
-            kwargs = {}  # TODO
+                find_node(graph, f'{v.name}__{key}') for v in node.args)
+            kwargs = {
+                k: find_node(graph, f'{v.name}__{key}')
+                for k, v in node.kwargs.items()
+            }
             out = graph.create_node('call_function', node.target, args, kwargs,
                                     name=f'{node.name}__{key}')
             state[node.name] = 'node'
             graph.inserting_after(out)
             outs.append(out)
 
-    elif all([state[arg.name] == 'edge' for arg in node.args]):
+    elif all([state[v.name] == 'edge' for v in it]):
         raise NotImplementedError
 
     else:

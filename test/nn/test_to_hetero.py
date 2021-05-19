@@ -2,7 +2,7 @@ from typing import Dict, Tuple
 
 import torch
 from torch import Tensor
-from torch.nn import Linear, ModuleDict
+from torch.nn import Linear, ModuleDict, LazyLinear
 from torch_geometric.nn import SAGEConv
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn.to_hetero import transform
@@ -13,12 +13,13 @@ class Net1(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.lin1 = Linear(16, 16)
-        # self.conv1 = SAGEConv(16, 16)
+        self.conv1 = SAGEConv(16, 16)
         self.lin2 = Linear(16, 16)
 
     def forward(self, x: Tensor, edge_index: Tensor, y: Tensor) -> Tensor:
-        x = self.lin1(x).relu_()
-        y = self.lin1(y).relu_()
+        x = self.lin1(input=x).relu_()
+        # x = self.conv1(x, edge_index)
+        y = self.lin2(y).relu_()
         x = x + x
         return x, y
 
