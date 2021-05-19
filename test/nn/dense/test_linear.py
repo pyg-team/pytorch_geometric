@@ -4,7 +4,7 @@ from torch_geometric.nn import Linear
 try:
     torch.nn.parameter.UninitializedParameter
     with_uninitialized_parameter = True
-except RuntimeError:
+except AttributeError:
     with_uninitialized_parameter = False
 
 
