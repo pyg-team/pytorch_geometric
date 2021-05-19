@@ -28,9 +28,9 @@ def glorot_orthogonal(tensor, scale):
         tensor.data *= scale.sqrt()
 
 
-def constant(tensor, c):
+def constant(tensor, fill_value):
     if tensor is not None:
-        tensor.data.fill_(c)
+        tensor.data.fill_(fill_value)
 
 
 def zeros(tensor):
