@@ -33,6 +33,7 @@ def test_lazy_linear(weight, bias):
     assert str(lin) == 'Linear(16, 32, bias=True)'
 
 
+@pytest.mark.skipif(not with_lazy_support, reason='No lazy support')
 @pytest.mark.parametrize('lazy', [True, False])
 def test_identical_linear_default_initialization(lazy):
     x = torch.randn(3, 4, 16)
