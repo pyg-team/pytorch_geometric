@@ -14,9 +14,13 @@ class ToUndirected(object):
 
     def __call__(self, data):
         if 'edge_index' in data:
-            data.edge_index, data.edge_attr = to_undirected(
-                data.edge_index, data.edge_attr, num_nodes=data.num_nodes,
-                reduce=self.reduce)
+            if 'edge_attr' in data:
+                data.edge_index, data.edge_attr = to_undirected(
+                    data.edge_index, data.edge_attr, num_nodes=data.num_nodes,
+                    reduce=self.reduce)
+            else:
+                data.edge_index = to_undirected(data.edge_index,
+                                                num_nodes=data.num_nodes)
         if 'adj_t' in data:
             data.adj_t = data.adj_t.to_symmetric(self.reduce)
         return data
