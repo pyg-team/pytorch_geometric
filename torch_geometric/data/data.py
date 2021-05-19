@@ -177,7 +177,15 @@ class Data(object):
                 args = edge_types[0]
 
         elif len(args) == 2:
-            args = (args[0], '_', args[1])
+            # Try to find unique source/destination node tuple:
+            edge_types = [
+                key for key in self.metadata()[1]
+                if key[0] == args[0] and key[-1] == args[-1]
+            ]
+            if len(edge_types) == 1:
+                args = edge_types[0]
+            else:
+                args = (args[0], '_', args[1])
 
         return args
 
