@@ -28,14 +28,17 @@ def glorot_orthogonal(tensor, scale):
         tensor.data *= scale.sqrt()
 
 
-def zeros(tensor):
+def constant(tensor, fill_value):
     if tensor is not None:
-        tensor.data.fill_(0)
+        tensor.data.fill_(fill_value)
+
+
+def zeros(tensor):
+    constant(tensor, 0)
 
 
 def ones(tensor):
-    if tensor is not None:
-        tensor.data.fill_(1)
+    constant(tensor, 1)
 
 
 def normal(tensor, mean, std):

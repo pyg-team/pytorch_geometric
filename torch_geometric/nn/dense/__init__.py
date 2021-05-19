@@ -3,6 +3,7 @@ from .dense_gcn_conv import DenseGCNConv
 from .dense_graph_conv import DenseGraphConv
 from .dense_gin_conv import DenseGINConv
 from .diff_pool import dense_diff_pool
+from .linear import Linear
 from .mincut_pool import dense_mincut_pool
 
 __all__ = [
@@ -12,6 +13,7 @@ __all__ = [
     'DenseSAGEConv',
     'dense_diff_pool',
     'dense_mincut_pool',
+    'Linear',
 ]
 
 conv_classes = __all__[:4]
