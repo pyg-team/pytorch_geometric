@@ -23,7 +23,7 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 # * What happens in ModuleLists and ModuleDicts?
 
 
-def transform(module: Module, metadata: Metadata,
+def to_hetero(module: Module, metadata: Metadata,
               input_map: Optional[Dict[str, str]] = None,
               debug: bool = True) -> Module:
 
@@ -38,7 +38,6 @@ def transform(module: Module, metadata: Metadata,
         print(gm.graph.python_code('self'))
 
     for node in list(gm.graph.nodes):
-        print(node.op)
         if node.op == 'placeholder':
             unwrap_placeholder(gm.graph, node, state, metadata)
         elif node.op == 'output':
