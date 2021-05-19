@@ -46,6 +46,7 @@ from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
+from .upfd import UPFD
 
 __all__ = [
     'KarateClub',
@@ -98,6 +99,7 @@ __all__ = [
     'Actor',
     'JODIEDataset',
     'MixHopSyntheticDataset',
+    'UPFD',
 ]
 
 classes = __all__
