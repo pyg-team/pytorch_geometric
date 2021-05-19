@@ -163,8 +163,9 @@ class Data(object):
         *args: Tuple[QueryType],
     ) -> Union[NodeType, EdgeType]:
         # Converts a given `QueryType` to its "canonical type":
-        # 1. `(src_node_type, dst_node_type)` will get mapped to
-        #    `(src_node_type, '_', dst_node_type)`
+        # 1. `(src_node_type, dst_node_type)` will get mapped to unique
+        #    `(src_node_type, *, dst_node_type)` tuple or
+        #    `(src_node_type, '_', dst_node_type)` otherwise.
         # 2. `relation_type` will get mapped to
         #    `(src_node_type, relation_type, dst_node_type)`
         if len(args) == 1:
