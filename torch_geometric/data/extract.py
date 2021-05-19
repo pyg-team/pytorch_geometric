@@ -43,6 +43,7 @@ def extract_zip(path, folder, log=True):
 
 def extract_bz2(path, folder, log=True):
     maybe_log(path, log)
+    path = osp.abspath(path)
     with bz2.open(path, 'r') as r:
         with open(osp.join(folder, '.'.join(path.split('.')[:-1])), 'wb') as w:
             w.write(r.read())

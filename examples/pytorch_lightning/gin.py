@@ -98,24 +98,22 @@ class GIN(LightningModule):
     def training_step(self, batch: Batch, batch_idx: int):
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
         train_loss = F.cross_entropy(y_hat, batch.y)
-        train_acc = self.train_acc(y_hat.softmax(dim=-1), batch.y)
-        self.log('train_acc', train_acc, prog_bar=True, on_step=False,
+        self.train_acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('train_acc', self.train_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
         return train_loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
-        val_acc = self.val_acc(y_hat.softmax(dim=-1), batch.y)
-        self.log('val_acc', val_acc, prog_bar=True, on_step=False,
+        self.val_acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('val_acc', self.val_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
-        return val_acc
 
     def test_step(self, batch: Batch, batch_idx: int):
         y_hat = self(batch.x, batch.adj_t, batch.ptr)
-        test_acc = self.test_acc(y_hat.softmax(dim=-1), batch.y)
-        self.log('test_acc', test_acc, prog_bar=True, on_step=False,
+        self.test_acc(y_hat.softmax(dim=-1), batch.y)
+        self.log('test_acc', self.test_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
-        return test_acc
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
