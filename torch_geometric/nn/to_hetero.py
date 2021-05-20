@@ -18,9 +18,13 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 # TODO:
 # * Modules with multiple return statements => how to infer node or edge type
 # * LazyInitialization - Bug: LazyLinear.weight does not support deepcopy yet
-# * What are leaf modules?
-# * Flexible args/kwargs replacement
 # * What happens in ModuleLists and ModuleDicts?
+
+
+class Tracer(fx.Tracer):
+    def is_leaf_module(self, module: Module, *args) -> bool:
+        return (isinstance(module, MessagePassing)
+                or super().is_leaf_module(module, *args))
 
 
 def to_hetero(module: Module, metadata: Metadata,
@@ -29,7 +33,7 @@ def to_hetero(module: Module, metadata: Metadata,
 
     state = init_state(module, input_map)
 
-    gm = fx.symbolic_trace(module)
+    gm = fx.GraphModule(module, Tracer().trace(module))
     gm = duplicate_submodules(gm, metadata)
 
     if debug:
@@ -84,13 +88,12 @@ def key2str(metatype: Union[str, Tuple[str, str, str]]) -> str:
 
 def duplicate_submodules(module: Module, metadata: Metadata) -> Module:
     # TODO: Handle `torch.nn.ModuleList` and `torch.nn.ModuleDict`
-    metadata = metadata[:1] + ([key2str(t) for t in metadata[1]], )
-
     for name, submodule in dict(module.named_children()).items():
         module_dict = torch.nn.ModuleDict()
 
         is_message_passing = isinstance(submodule, MessagePassing)
         for metatype in metadata[1] if is_message_passing else metadata[0]:
+            metatype = key2str(metatype)
             module_dict[metatype] = copy.deepcopy(submodule)
             if hasattr(submodule, 'reset_parameters'):
                 module_dict[metatype].reset_parameters()
@@ -174,7 +177,7 @@ def unwrap_call_module(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     outs: List[fx.Node] = []
     graph.inserting_after(node)
 
-    it = chain(node.args, node.kwargs.values())
+    it = list(chain(node.args, node.kwargs.values()))
     if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(
@@ -204,7 +207,7 @@ def unwrap_call_method(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     outs: List[fx.Node] = []
     graph.inserting_after(node)
 
-    it = chain(node.args, node.kwargs.values())
+    it = list(chain(node.args, node.kwargs.values()))
     if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(
@@ -234,7 +237,7 @@ def unwrap_call_function(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     outs: List[fx.Node] = []
     graph.inserting_after(node)
 
-    it = chain(node.args, node.kwargs.values())
+    it = list(chain(node.args, node.kwargs.values()))
     if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(

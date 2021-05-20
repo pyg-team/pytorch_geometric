@@ -12,11 +12,11 @@ class Net1(torch.nn.Module):
         self.conv1 = SAGEConv(16, 16)
         self.lin2 = Linear(16, 16)
 
-    def forward(self, x: Tensor, edge_index: Tensor, y: Tensor) -> Tensor:
-        x = self.lin1(input=x).relu_()
-        # x = self.conv1(x, edge_index)
-        y = self.lin2(y).relu_()
-        x = x + x
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        # x = self.lin1(x).relu_()
+        x = self.conv1(x, edge_index)
+        # x = self.lin2(x).relu_()
+        # x = x + x
         return x
 
 
@@ -33,7 +33,7 @@ def test_to_hetero():
         ('a', '_', 'p'): torch.randint(100, (2, 200), dtype=torch.long),
         ('a', '_', 'a'): torch.randint(100, (2, 200), dtype=torch.long),
     }
-    y_dict = {'p': torch.randn(100, 16), 'a': torch.randn(100, 16)}
+    # y_dict = {'p': torch.randn(100, 16), 'a': torch.randn(100, 16)}
 
     out_model = to_hetero(model, metadata)
-    out_model(x_dict, edge_index_dict, y_dict)
+    out_model(x_dict, edge_index_dict)
