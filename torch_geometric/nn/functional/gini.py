@@ -24,9 +24,9 @@ def gini(w):
     for row in w:
         t = row.repeat(row.shape[0], 1)
         u = (t - t.T).abs().sum() / (
-                2 * (
-                    row.shape[-1] ** 2 - row.shape[-1]
-                ) * row.abs().mean() + torch.finfo().eps
+            2 * (
+                row.shape[-1] ** 2 - row.shape[-1]
+            ) * row.abs().mean() + torch.finfo().eps
         )
         s += u
     s /= w.shape[0]
