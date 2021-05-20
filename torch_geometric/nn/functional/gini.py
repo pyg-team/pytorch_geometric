@@ -1,7 +1,7 @@
 import torch
 
 
-def gini(w):
+def gini(w: torch.Tensor) -> torch.Tensor:
     r"""The Gini coeffeicent from the `"Improving Molecular Graph Neural
     Network Explainability with Orthonormalization and Induced Sparsity"
     <https://arxiv.org/abs/1810.00826>`_ paper

@@ -144,7 +144,7 @@ Functional
 .. py:currentmodule:: torch_geometric.nn.functional
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.dense.pool_classes %}
+   {% for cls in torch_geometric.nn.functional.classes %}
      {{ cls }}
    {% endfor %}
 

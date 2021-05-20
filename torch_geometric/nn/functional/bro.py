@@ -1,7 +1,13 @@
+from typing import Union
+
 import torch
 
 
-def bro(x, batch, p=2):
+def bro(
+    x: torch.Tensor,
+    batch: torch.Tensor,
+    p: Union[int, str] = 2,
+) -> torch.Tensor:
     r"""The Batch Representation Orthogonality penalty from the `"Improving
     Molecular Graph Neural Network Explainability with Orthonormalization
     and Induced Sparsity" <https://arxiv.org/abs/1810.00826>`_ paper
