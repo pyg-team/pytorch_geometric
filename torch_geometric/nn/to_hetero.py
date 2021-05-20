@@ -174,6 +174,7 @@ def unwrap_output(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
 def unwrap_call_module(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
                        metadata: Metadata) -> List[fx.Node]:
 
+    state[node.name] = 'node'
     outs: List[fx.Node] = []
     graph.inserting_after(node)
 
@@ -188,15 +189,57 @@ def unwrap_call_module(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
             }
             out = graph.create_node('call_module', f'{node.target}.{key}',
                                     args, kwargs, name=f'{node.name}__{key}')
-            state[node.name] = 'node'
             graph.inserting_after(out)
             outs.append(out)
 
     elif all([state[v.name] == 'edge' for v in it]):
         raise NotImplementedError
 
-    else:
-        raise NotImplementedError
+    else:  # Message passing.
+        key2name, keys_per_dst = {}, {}
+        for key in metadata[1]:
+            key2name[key] = f'{node.name}__{key2str(key)}'
+            keys_per_dst[key[-1]] = keys_per_dst.get(key[-1], []) + [key]
+
+        for dst, keys in copy.copy(keys_per_dst).items():
+            if len(keys) == 1:
+                # In case there is only a single connection, there is no need
+                # for any destination-wise aggregation, and we set the
+                # resulting variable name to the final value.
+                key2name[keys[0]] = f'{node.name}__{dst}'
+                del keys_per_dst[dst]
+
+        for key in metadata[1]:  # Add message passing call per edge type.
+            args = ()
+            for v in node.args:
+                if state[v.name] == 'node':
+                    args += ((find_node(graph, f'{v.name}__{key[0]}'),
+                              find_node(graph, f'{v.name}__{key[-1]}')), )
+                else:
+                    args += (find_node(graph, f'{v.name}__{key2str(key)}'), )
+
+            kwargs = {}  # TODO
+
+            out = graph.create_node('call_module',
+                                    f'{node.target}.{key2str(key)}', args,
+                                    kwargs, name=key2name[key])
+
+            graph.inserting_after(out)
+            outs.append(out)
+
+        # Perform destination-wise aggregation.
+        for dst, keys in keys_per_dst.items():
+            keys = [f'{node.name}__{key2str(key)}' for key in keys]
+            while len(keys) >= 2:
+                i = len(keys) - 2
+                args = (find_node(graph, keys[-2]), find_node(graph, keys[-1]))
+                out = graph.create_node(
+                    'call_function', torch.add, args,
+                    name=f'{node.name}__{dst}{i if i > 0 else ""}')
+                keys = keys[:-2] + [f'{node.name}__{dst}{i}']
+
+                graph.inserting_after(out)
+                outs.append(out)
 
     return outs
 

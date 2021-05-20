@@ -13,10 +13,9 @@ class Net1(torch.nn.Module):
         self.lin2 = Linear(16, 16)
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        # x = self.lin1(x).relu_()
-        x = self.conv1(x, edge_index)
-        # x = self.lin2(x).relu_()
-        # x = x + x
+        x = self.lin1(x).relu_()
+        x = self.conv1(x, edge_index).relu_()
+        x = self.lin2(x)
         return x
 
 
