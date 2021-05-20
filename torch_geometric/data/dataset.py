@@ -204,7 +204,7 @@ class Dataset(torch.utils.data.Dataset):
             elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
                 return self.index_select(
                     idx.nonzero(as_tuple=False).flatten().tolist())
-        elif isinstance(idx, list) or isinstance(idx, tuple):
+        elif isinstance(idx, (list, tuple, np.ndarray)):
             indices = [indices[i] for i in idx]
         else:
             raise IndexError(
