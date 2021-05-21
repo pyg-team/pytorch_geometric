@@ -1,19 +1,18 @@
-from typing import Tuple, List, Dict, Union, Optional
+from typing import Tuple, List, Dict, Union, Optional, Any
 
 import re
 import copy
 import inspect
 import warnings
-from itertools import chain
 
 import torch
 from torch.nn import Module
 from torch_geometric.nn import MessagePassing
 
 try:
-    from torch import fx
+    from torch.fx import Tracer, GraphModule, Graph, Node
 except ImportError:
-    fx = None
+    Tracer = GraphModule = Graph = Node = None
 
 NodeType = str
 EdgeType = Tuple[str, str, str]
@@ -25,10 +24,15 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 # * What happens in ModuleLists and ModuleDicts?
 
 
-class Tracer(fx.Tracer):
-    def is_leaf_module(self, module: Module, *args) -> bool:
-        return (isinstance(module, MessagePassing)
-                or super().is_leaf_module(module, *args))
+def symbolic_trace(
+        module: Module,
+        concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
+    class MyTracer(Tracer):
+        def is_leaf_module(self, module: Module, *args) -> bool:
+            return (isinstance(module, MessagePassing)
+                    or super().is_leaf_module(module, *args))
+
+    return GraphModule(module, MyTracer().trace(module, concrete_args))
 
 
 def to_hetero(module: Module, metadata: Metadata,
@@ -37,7 +41,7 @@ def to_hetero(module: Module, metadata: Metadata,
 
     state = init_state(module, input_map)
 
-    gm = fx.GraphModule(module, Tracer().trace(module))
+    gm = symbolic_trace(module)
     gm = duplicate_submodules(gm, metadata)
 
     if debug:
@@ -114,15 +118,15 @@ def get_type(name: str, state: Dict[str, str]) -> Union[NodeType, EdgeType]:
     return NodeType if state[name] == 'node' else EdgeType
 
 
-def find_node(graph: fx.Graph, name: str) -> Optional[fx.Node]:
-    out: Optional[fx.Node] = None
+def find_node(graph: Graph, name: str) -> Optional[Node]:
+    out: Optional[Node] = None
     for node in graph.nodes:
         if node.name == name:
             out = node
     return out
 
 
-def erase_unused_nodes(graph: fx.Graph) -> fx.Graph:
+def erase_unused_nodes(graph: Graph) -> Graph:
     for node in list(graph.nodes)[::-1]:  # Iterate in reverse-mode.
         try:
             if node.op not in ['placeholder', 'output']:
@@ -132,10 +136,10 @@ def erase_unused_nodes(graph: fx.Graph) -> fx.Graph:
     return graph
 
 
-def unwrap_placeholder(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
-                       metadata: Metadata) -> List[fx.Node]:
+def unwrap_placeholder(graph: Graph, node: Node, state: Dict[str, str],
+                       metadata: Metadata) -> List[Node]:
 
-    outs: List[fx.Node] = []
+    outs: List[Node] = []
     if node.type is not None:
         node.type = Dict[get_type(node.name, state), node.type]
     graph.inserting_after(node)
@@ -147,7 +151,7 @@ def unwrap_placeholder(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     return outs
 
 
-def unwrap_output(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
+def unwrap_output(graph: Graph, node: Node, state: Dict[str, str],
                   metadata: Metadata):
     def _get_mapping(name):
         return {
@@ -155,7 +159,7 @@ def unwrap_output(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
             for key in (metadata[0] if state[name] == 'node' else metadata[1])
         }
 
-    if isinstance(node.args[0], fx.Node):  # Single output value.
+    if isinstance(node.args[0], Node):  # Single output value.
         if node.type is not None:
             node.type = Dict[get_type(node.args[0].name, state), node.type]
         node.args = (_get_mapping(node.args[0].name), )
@@ -175,14 +179,14 @@ def unwrap_output(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
         raise NotImplementedError
 
 
-def unwrap_call_module(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
-                       metadata: Metadata) -> List[fx.Node]:
+def unwrap_call_module(graph: Graph, node: Node, state: Dict[str, str],
+                       metadata: Metadata) -> List[Node]:
 
     state[node.name] = 'node'
-    outs: List[fx.Node] = []
+    outs: List[Node] = []
     graph.inserting_after(node)
 
-    it = list(chain(node.args, node.kwargs.values()))
+    it = list(node.args) + list(node.kwargs.values())
     if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(
@@ -248,13 +252,13 @@ def unwrap_call_module(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     return outs
 
 
-def unwrap_call_method(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
-                       metadata: Metadata) -> List[fx.Node]:
+def unwrap_call_method(graph: Graph, node: Node, state: Dict[str, str],
+                       metadata: Metadata) -> List[Node]:
 
-    outs: List[fx.Node] = []
+    outs: List[Node] = []
     graph.inserting_after(node)
 
-    it = list(chain(node.args, node.kwargs.values()))
+    it = list(node.args) + list(node.kwargs.values())
     if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(
@@ -278,13 +282,13 @@ def unwrap_call_method(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
     return outs
 
 
-def unwrap_call_function(graph: fx.Graph, node: fx.Node, state: Dict[str, str],
-                         metadata: Metadata) -> List[fx.Node]:
+def unwrap_call_function(graph: Graph, node: Node, state: Dict[str, str],
+                         metadata: Metadata) -> List[Node]:
 
-    outs: List[fx.Node] = []
+    outs: List[Node] = []
     graph.inserting_after(node)
 
-    it = list(chain(node.args, node.kwargs.values()))
+    it = list(node.args) + list(node.kwargs.values())
     if all([state[v.name] == 'node' for v in it]):
         for key in metadata[0]:
             args = tuple(
