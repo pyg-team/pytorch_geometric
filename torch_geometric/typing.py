@@ -8,7 +8,7 @@ from torch_sparse import SparseTensor
 # Node-types are denoted by a single string, e.g.: `data['paper']`
 NodeType = str
 
-# Edge-types are denotes by a tripled of strings, e.g.:
+# Edge-types are denotes by a triplet of strings, e.g.:
 # `data[('author', 'writes', 'paper')]
 EdgeType = Tuple[str, str, str]
 
