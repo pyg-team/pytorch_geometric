@@ -8,8 +8,12 @@ from itertools import chain
 
 import torch
 from torch.nn import Module
-from torch import fx
 from torch_geometric.nn import MessagePassing
+
+try:
+    from torch import fx
+except ImportError:
+    fx = None
 
 NodeType = str
 EdgeType = Tuple[str, str, str]
@@ -29,7 +33,7 @@ class Tracer(fx.Tracer):
 
 def to_hetero(module: Module, metadata: Metadata,
               input_map: Optional[Dict[str, str]] = None,
-              debug: bool = True) -> Module:
+              debug: bool = False) -> Module:
 
     state = init_state(module, input_map)
 
