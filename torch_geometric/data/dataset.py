@@ -1,6 +1,7 @@
 import re
 import copy
 import logging
+import numpy as np
 import os.path as osp
 
 import torch.utils.data
@@ -183,7 +184,7 @@ class Dataset(torch.utils.data.Dataset):
         In case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a list, a
         tuple, a  LongTensor or a BoolTensor, will return a subset of the
         dataset at the specified indices."""
-        if isinstance(idx, int):
+        if isinstance(idx, (int, np.integer)):
             data = self.get(self.indices()[idx])
             data = data if self.transform is None else self.transform(data)
             return data
@@ -203,7 +204,7 @@ class Dataset(torch.utils.data.Dataset):
             elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
                 return self.index_select(
                     idx.nonzero(as_tuple=False).flatten().tolist())
-        elif isinstance(idx, list) or isinstance(idx, tuple):
+        elif isinstance(idx, (list, tuple, np.ndarray)):
             indices = [indices[i] for i in idx]
         else:
             raise IndexError(
