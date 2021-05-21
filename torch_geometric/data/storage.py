@@ -260,6 +260,20 @@ class NodeStorage(BaseStorage):
 
 
 class EdgeStorage(BaseStorage):
+    r"""We support multiple ways to store edge connectivity in a
+    :class:`EdgeStorage` object:
+
+    * :obj:`edge_index`: A :class:`torch.LongTensor` holding edge indices in
+      COO format with shape :obj:`[2, num_edges]` (the default format)
+
+    * :obj:`adj`: A :class:`torch_sparse.SparseTensor` holding edge indices in
+      a sparse format, supporting both COO and CSR format.
+
+    * :obj:`adj_t`: A **transposed** :class:`torch_sparse.SparseTensor` holding
+      edge indices in a sparse format, supporting both COO and CSR format.
+      This is the most efficient one for graph-based deep learning models as
+      indices are sorted based on target nodes.
+    """
     def __init__(self, _parent: Any, _key: Optional[EdgeType] = None,
                  mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__(mapping, **kwargs)
