@@ -45,7 +45,7 @@ def test_to_hetero():
         torch.randint(100, (2, 200), dtype=torch.long),
     }
 
-    model = to_hetero(model, metadata, debug=True)
+    model = to_hetero(model, metadata, debug=False)
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 2
     assert isinstance(out, dict) and len(out) == 2

@@ -1,22 +1,19 @@
-from typing import Tuple, List, Dict, Union, Optional, Any
+from typing import Tuple, Dict, Union, Optional
+from torch_geometric.typing import NodeType, EdgeType, Metadata
 
-import re
 import copy
-import inspect
 import warnings
 
 import torch
 from torch.nn import Module
 from torch_geometric.nn import MessagePassing
+from torch_geometric.nn.fx import (symbolic_trace, set_node_hints_,
+                                   find_node_by_name, erase_unused_nodes)
 
 try:
-    from torch.fx import Tracer, GraphModule, Graph, Node
+    from torch.fx import Graph, Node
 except ImportError:
-    Tracer = GraphModule = Graph = Node = None
-
-NodeType = str
-EdgeType = Tuple[str, str, str]
-Metadata = Tuple[List[NodeType], List[EdgeType]]
+    Graph = Node = None
 
 # TODO:
 # * Modules with multiple return statements => how to infer node or edge type
@@ -24,44 +21,31 @@ Metadata = Tuple[List[NodeType], List[EdgeType]]
 # * What happens in ModuleLists and ModuleDicts?
 
 
-def symbolic_trace(
-        module: Module,
-        concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
-    class MyTracer(Tracer):
-        def is_leaf_module(self, module: Module, *args) -> bool:
-            return (isinstance(module, MessagePassing)
-                    or super().is_leaf_module(module, *args))
-
-    return GraphModule(module, MyTracer().trace(module, concrete_args))
-
-
 def to_hetero(module: Module, metadata: Metadata,
               input_map: Optional[Dict[str, str]] = None,
               debug: bool = False) -> Module:
 
-    state = init_state(module, input_map)
-
     gm = symbolic_trace(module)
-    gm = duplicate_submodules(gm, metadata)
+    set_node_hints_(gm.graph, input_map)
+    duplicate_submodules_(gm, metadata)
 
     if debug:
         gm.graph.print_tabular()
-        print()
         print(gm.graph.python_code('self'))
 
     for node in list(gm.graph.nodes):
         if node.op == 'placeholder':
-            unwrap_placeholder(gm.graph, node, state, metadata)
+            unwrap_placeholder(gm.graph, node, metadata)
         elif node.op == 'output':
-            unwrap_output(gm.graph, node, state, metadata)
+            unwrap_output(gm.graph, node, metadata)
         elif node.op == 'get_attr':
             raise NotImplementedError
         elif node.op == 'call_module':
-            unwrap_call_module(gm.graph, node, state, metadata)
+            unwrap_call_module(gm.graph, node, metadata)
         elif node.op == 'call_method':
-            unwrap_call_method(gm.graph, node, state, metadata)
+            unwrap_call_method(gm.graph, node, metadata)
         elif node.op == 'call_function':
-            unwrap_call_function(gm.graph, node, state, metadata)
+            unwrap_call_function(gm.graph, node, metadata)
         else:
             raise NotImplementedError
 
@@ -69,7 +53,6 @@ def to_hetero(module: Module, metadata: Metadata,
 
     if debug:
         gm.graph.print_tabular()
-        print()
         print(gm.graph.python_code('self'))
 
     gm.graph.lint()
@@ -78,23 +61,15 @@ def to_hetero(module: Module, metadata: Metadata,
     return gm
 
 
-def init_state(module: Module,
-               input_map: Optional[Dict[str, str]] = None) -> Dict[str, str]:
-    out = {}
-    for key in inspect.signature(module.forward).parameters.keys():
-        if input_map is not None and key in input_map:
-            out[key] = input_map[key]
-            assert input_map[key] in ['node', 'edge']
-        else:
-            out[key] = 'edge' if bool(re.search('(edge|adj)', key)) else 'node'
-    return out
-
-
 def key2str(metatype: Union[str, Tuple[str, str, str]]) -> str:
     return '__'.join(metatype) if isinstance(metatype, tuple) else metatype
 
 
-def duplicate_submodules(module: Module, metadata: Metadata) -> Module:
+def get_type_hint(node: Node) -> Union[NodeType, EdgeType]:
+    return NodeType if node.hint == 'node' else EdgeType
+
+
+def duplicate_submodules_(module: Module, metadata: Metadata):
     # TODO: Handle `torch.nn.ModuleList` and `torch.nn.ModuleDict`
     for name, submodule in dict(module.named_children()).items():
         module_dict = torch.nn.ModuleDict()
@@ -111,97 +86,65 @@ def duplicate_submodules(module: Module, metadata: Metadata) -> Module:
 
         module._modules[name] = module_dict
 
-    return module
 
-
-def get_type(name: str, state: Dict[str, str]) -> Union[NodeType, EdgeType]:
-    return NodeType if state[name] == 'node' else EdgeType
-
-
-def find_node(graph: Graph, name: str) -> Optional[Node]:
-    out: Optional[Node] = None
-    for node in graph.nodes:
-        if node.name == name:
-            out = node
-    return out
-
-
-def erase_unused_nodes(graph: Graph) -> Graph:
-    for node in list(graph.nodes)[::-1]:  # Iterate in reverse-mode.
-        try:
-            if node.op not in ['placeholder', 'output']:
-                graph.erase_node(node)
-        except RuntimeError:
-            pass
-    return graph
-
-
-def unwrap_placeholder(graph: Graph, node: Node, state: Dict[str, str],
-                       metadata: Metadata) -> List[Node]:
-
-    outs: List[Node] = []
+def unwrap_placeholder(graph: Graph, node: Node, metadata: Metadata):
     if node.type is not None:
-        node.type = Dict[get_type(node.name, state), node.type]
+        node.type = Dict[get_type_hint(node), node.type]
     graph.inserting_after(node)
-    for key in metadata[0] if state[node.name] == 'node' else metadata[1]:
-        out = graph.create_node('call_method', 'get', args=(node, key),
+    for key in metadata[0] if node.hint == 'node' else metadata[1]:
+        out = graph.create_node('call_method', target='get', args=(node, key),
                                 name=f'{node.name}__{key2str(key)}')
         graph.inserting_after(out)
-        outs.append(out)
-    return outs
 
 
-def unwrap_output(graph: Graph, node: Node, state: Dict[str, str],
-                  metadata: Metadata):
-    def _get_mapping(name):
+def unwrap_output(graph: Graph, node: Node, metadata: Metadata):
+    def _unwrap_output(arg: Node) -> Dict[Union[NodeType, EdgeType], Node]:
         return {
-            key: find_node(graph, f'{name}__{key2str(key)}')
-            for key in (metadata[0] if state[name] == 'node' else metadata[1])
+            key: find_node_by_name(graph, f'{arg.name}__{key2str(key)}')
+            for key in (metadata[0] if arg.hint == 'node' else metadata[1])
         }
 
     if isinstance(node.args[0], Node):  # Single output value.
         if node.type is not None:
-            node.type = Dict[get_type(node.args[0].name, state), node.type]
-        node.args = (_get_mapping(node.args[0].name), )
+            node.type = Dict[get_type_hint(node.args[0]), node.type]
+        node.args = (_unwrap_output(node.args[0]), )
 
     elif isinstance(node.args[0], tuple):  # Multiple output values.
         if node.type is not None:
-            if (node.type.__dict__.get('__origin__', None) is not None
-                    and issubclass(node.type.__dict__['__origin__'], tuple)):
-                node.type.__dict__['__args__'] = tuple(
-                    Dict[get_type(arg.name, state), t] for arg, t in zip(
-                        node.args[0], node.type.__dict__['__args__']))
+            if (hasattr(node.type, '__origin__')
+                    and issubclass(node.type.__origin__, tuple)):
+                node.type.__args__ = tuple(
+                    Dict[get_type_hint(v), t]
+                    for v, t in zip(node.args[0], node.type.__args__))
             else:
                 node.type = None
-        node.args = (tuple(_get_mapping(arg.name) for arg in node.args[0]), )
+        node.args = (tuple(_unwrap_output(v) for v in node.args[0]), )
 
     else:
         raise NotImplementedError
 
 
-def unwrap_call_module(graph: Graph, node: Node, state: Dict[str, str],
-                       metadata: Metadata) -> List[Node]:
-
-    state[node.name] = 'node'
-    outs: List[Node] = []
+def unwrap_call_module(graph: Graph, node: Node, metadata: Metadata):
     graph.inserting_after(node)
 
     it = list(node.args) + list(node.kwargs.values())
-    if all([state[v.name] == 'node' for v in it]):
-        for key in metadata[0]:
+    node_hints = [v.hint == 'node' for v in it if isinstance(v, Node)]
+    edge_hints = [v.hint == 'edge' for v in it if isinstance(v, Node)]
+
+    if all(node_hints) or all(edge_hints):
+        for key in metadata[0] if all(node_hints) else metadata[1]:
             args = tuple(
-                find_node(graph, f'{v.name}__{key}') for v in node.args)
+                find_node_by_name(graph, f'{v.name}__{key2str(key)}')
+                for v in node.args)
             kwargs = {
-                k: find_node(graph, f'{v.name}__{key}')
+                k: find_node_by_name(graph, f'{v.name}__{key2str(key)}')
                 for k, v in node.kwargs.items()
             }
-            out = graph.create_node('call_module', f'{node.target}.{key}',
-                                    args, kwargs, name=f'{node.name}__{key}')
+            out = graph.create_node('call_module',
+                                    target=f'{node.target}.{key2str(key)}',
+                                    args=args, kwargs=kwargs,
+                                    name=f'{node.name}__{key2str(key)}')
             graph.inserting_after(out)
-            outs.append(out)
-
-    elif all([state[v.name] == 'edge' for v in it]):
-        raise NotImplementedError
 
     else:  # Message passing.
         key2name, keys_per_dst = {}, {}
@@ -220,93 +163,87 @@ def unwrap_call_module(graph: Graph, node: Node, state: Dict[str, str],
         for key in metadata[1]:  # Add message passing call per edge type.
             args = ()
             for v in node.args:
-                if state[v.name] == 'node':
-                    args += ((find_node(graph, f'{v.name}__{key[0]}'),
-                              find_node(graph, f'{v.name}__{key[-1]}')), )
+                if v.hint == 'node':
+                    w = (find_node_by_name(graph, f'{v.name}__{key[0]}'),
+                         find_node_by_name(graph, f'{v.name}__{key[-1]}'))
                 else:
-                    args += (find_node(graph, f'{v.name}__{key2str(key)}'), )
+                    w = find_node_by_name(graph, f'{v.name}__{key2str(key)}')
+                args += (w, )
 
-            kwargs = {}  # TODO
+            kwargs = {}
+            for k, v in node.kwargs.items():
+                if v.hint == 'node':
+                    w = (find_node_by_name(graph, f'{v.name}__{key[0]}'),
+                         find_node_by_name(graph, f'{v.name}__{key[-1]}'))
+                else:
+                    w = find_node_by_name(graph, f'{v.name}__{key2str(key)}')
+                kwargs[k] = w
 
             out = graph.create_node('call_module',
-                                    f'{node.target}.{key2str(key)}', args,
-                                    kwargs, name=key2name[key])
-
+                                    target=f'{node.target}.{key2str(key)}',
+                                    args=args, kwargs=kwargs,
+                                    name=key2name[key])
             graph.inserting_after(out)
-            outs.append(out)
 
         # Perform destination-wise aggregation.
         for dst, keys in keys_per_dst.items():
             keys = [f'{node.name}__{key2str(key)}' for key in keys]
             while len(keys) >= 2:
                 i = len(keys) - 2
-                args = (find_node(graph, keys[-2]), find_node(graph, keys[-1]))
+                args = (find_node_by_name(graph, keys[-2]),
+                        find_node_by_name(graph, keys[-1]))
                 out = graph.create_node(
-                    'call_function', torch.add, args,
+                    'call_function', target=torch.add, args=args,
                     name=f'{node.name}__{dst}{i if i > 0 else ""}')
+                graph.inserting_after(out)
                 keys = keys[:-2] + [f'{node.name}__{dst}{i}']
 
-                graph.inserting_after(out)
-                outs.append(out)
 
-    return outs
-
-
-def unwrap_call_method(graph: Graph, node: Node, state: Dict[str, str],
-                       metadata: Metadata) -> List[Node]:
-
-    outs: List[Node] = []
+def unwrap_call_method(graph: Graph, node: Node, metadata: Metadata):
     graph.inserting_after(node)
 
     it = list(node.args) + list(node.kwargs.values())
-    if all([state[v.name] == 'node' for v in it]):
-        for key in metadata[0]:
+    node_hints = [v.hint == 'node' for v in it if isinstance(v, Node)]
+    edge_hints = [v.hint == 'edge' for v in it if isinstance(v, Node)]
+
+    if all(node_hints) or all(edge_hints):
+        for key in metadata[0] if all(node_hints) else metadata[1]:
             args = tuple(
-                find_node(graph, f'{v.name}__{key}') for v in node.args)
+                find_node_by_name(graph, f'{v.name}__{key2str(key)}')
+                for v in node.args)
             kwargs = {
-                k: find_node(graph, f'{v.name}__{key}')
+                k: find_node_by_name(graph, f'{v.name}__{key2str(key)}')
                 for k, v in node.kwargs.items()
             }
-            out = graph.create_node('call_method', node.target, args, kwargs,
-                                    name=f'{node.name}__{key}')
-            state[node.name] = 'node'
+            out = graph.create_node('call_method', target=node.target,
+                                    args=args, kwargs=kwargs,
+                                    name=f'{node.name}__{key2str(key)}')
             graph.inserting_after(out)
-            outs.append(out)
-
-    elif all([state[v.name] == 'edge' for v in it]):
-        raise NotImplementedError
 
     else:
         raise NotImplementedError
 
-    return outs
 
-
-def unwrap_call_function(graph: Graph, node: Node, state: Dict[str, str],
-                         metadata: Metadata) -> List[Node]:
-
-    outs: List[Node] = []
+def unwrap_call_function(graph: Graph, node: Node, metadata: Metadata):
     graph.inserting_after(node)
 
     it = list(node.args) + list(node.kwargs.values())
-    if all([state[v.name] == 'node' for v in it]):
-        for key in metadata[0]:
+    node_hints = [v.hint == 'node' for v in it if isinstance(v, Node)]
+    edge_hints = [v.hint == 'edge' for v in it if isinstance(v, Node)]
+
+    if all(node_hints) or all(edge_hints):
+        for key in metadata[0] if all(node_hints) else metadata[1]:
             args = tuple(
-                find_node(graph, f'{v.name}__{key}') for v in node.args)
+                find_node_by_name(graph, f'{v.name}__{key2str(key)}')
+                for v in node.args)
             kwargs = {
-                k: find_node(graph, f'{v.name}__{key}')
+                k: find_node_by_name(graph, f'{v.name}__{key2str(key)}')
                 for k, v in node.kwargs.items()
             }
-            out = graph.create_node('call_function', node.target, args, kwargs,
-                                    name=f'{node.name}__{key}')
-            state[node.name] = 'node'
+            out = graph.create_node('call_function', target=node.target,
+                                    args=args, kwargs=kwargs,
+                                    name=f'{node.name}__{key2str(key)}')
             graph.inserting_after(out)
-            outs.append(out)
-
-    elif all([state[v.name] == 'edge' for v in it]):
-        raise NotImplementedError
 
     else:
         raise NotImplementedError
-
-    return outs

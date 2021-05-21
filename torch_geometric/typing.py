@@ -1,7 +1,11 @@
-from typing import Tuple, Optional, Union
+from typing import Tuple, Optional, Union, List
 
 from torch import Tensor
 from torch_sparse import SparseTensor
+
+NodeType = str
+EdgeType = Tuple[str, str, str]
+Metadata = Tuple[List[NodeType], List[EdgeType]]
 
 Adj = Union[Tensor, SparseTensor]
 OptTensor = Optional[Tensor]
