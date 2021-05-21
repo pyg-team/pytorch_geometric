@@ -226,32 +226,32 @@ class NodeStorage(BaseStorage):
     def num_nodes(self) -> Optional[int]:
         # We try to access attributes that reveal the number of nodes stored in
         # the storage.
-        for value in self.values('num_nodes'):
-            return value
+        if 'num_nodes' in self:
+            return self['num_nodes']
         for key, value in self.items('x', 'pos', 'batch'):
             num_args = len(signature(self._parent.__cat_dim__).parameters)
             args = (key, value, self)[:num_args]
             return value.size(self._parent.__cat_dim__(*args))
-        for value in self.values('adj'):
-            return value.size(0)
-        for value in self.values('adj_t'):
-            return value.size(1)
+        if 'adj' in self:
+            return self.adj.size(0)
+        if 'adj_t' in self:
+            return self.adj_t.size(1)
         warnings.warn(
             f"Unable to accurately infer 'num_nodes' from the attribute set "
             f"{set(self.keys())}. Please explicitly set 'num_nodes' as an "
             f"attribute of " +
             ("'data'" if self._key is None else f"'data[{self._key}]'") +
             " to suppress this warning")
-        for value in self.values('edge_index'):
-            return int(value.max()) + 1
-        for value in self.values('face'):
-            return int(value.max()) + 1
+        if 'edge_index' in self and self.edge_index.numel() > 0:
+            return int(self.edge_index.max()) + 1
+        if 'face' in self and self.face.numel() > 0:
+            return int(self.face.max()) + 1
         return None
 
     @property
     def num_node_features(self) -> int:
-        for value in self.values('x'):
-            return 1 if value.dim() == 1 else value.size(-1)
+        if 'x' in self:
+            return 1 if self.x.dim() == 1 else self.x.size(-1)
         return 0
 
     @property
@@ -269,14 +269,12 @@ class EdgeStorage(BaseStorage):
 
     @property
     def _edge_index(self) -> Optional[Tensor]:
-        for value in self.values('edge_index'):
-            return value
-        for value in self.values('adj'):
-            if isinstance(value, SparseTensor):
-                return torch.stack(value.coo()[:2], dim=0)
-        for value in self.values('adj_t'):
-            if isinstance(value, SparseTensor):
-                return torch.stack(value.coo()[:2][::-1], dim=0)
+        if 'edge_index' in self:
+            return self.edge_index
+        if 'adj' in self and isinstance(self.adj, SparseTensor):
+            return torch.stack(self.adj.coo()[:2], dim=0)
+        if 'adj_t' in self and isinstance(self.adj_t, SparseTensor):
+            return torch.stack(self.adj_t.coo()[:2][::-1], dim=0)
         return None
 
     def __copy__(self):
@@ -297,8 +295,8 @@ class EdgeStorage(BaseStorage):
     def num_edges(self) -> Optional[int]:
         # We try to access attributes that reveal the number of edges stored in
         # the storage.
-        for value in self.values('num_edges'):
-            return value
+        if 'num_edges' in self:
+            return self['num_edges']
         for key, value in self.items('edge_index', 'edge_attr'):
             num_args = len(signature(self._parent.__cat_dim__).parameters)
             args = (key, value, self)[:num_args]
@@ -315,8 +313,8 @@ class EdgeStorage(BaseStorage):
 
     @property
     def num_edge_features(self):
-        for value in self.values('edge_attr'):
-            return 1 if value.dim() == 1 else value.size(-1)
+        if 'edge_attr' in self:
+            return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(-1)
         return 0
 
     @property
@@ -324,10 +322,10 @@ class EdgeStorage(BaseStorage):
         return self.num_edge_features
 
     def size(self) -> Tuple[Optional[int], Optional[int]]:
-        for value in self.values('adj'):
-            return value.size(0), value.size(1)
-        for value in self.values('adj_t'):
-            return value.size(1), value.size(0)
+        if 'adj' in self:
+            return self.adj.size(0), self.adj.size(1)
+        if 'adj_t' in self:
+            return self.adj_t.size(1), self.adj_t.size(0)
 
         if self._key is None:
             raise NameError(
