@@ -32,14 +32,19 @@ def recursive_apply(data: Any, func: Callable) -> Any:
 
 class BaseStorage(MutableMapping):
     # This class wraps a Python dictionary and extends it by the following:
-    # 1. It allows attribute assignment:
+    # 1. It allows attribute assignment, e.g.:
     #    `storage.x = ...` rather than `storage['x'] = ...`
-    # 2. It allows private non-dictionary attributes, e.g.:
+    # 2. It allows private non-dictionary attributes that are not exposed to
+    #    the user, e.g.:
     #    `storage.__dict__[{key}] = ...` accesible via `storage.{key}`
+    #    We make use of this for saving the parent object.
+    #    Since we override `__setitem__`, we have to assign new private
+    #    attributes via `storage.__dict__[{key}] = ...`.
     # 3. It allows iterating over a subset of keys, e.g.:
     #    `storage.values('x', 'y')` or `storage.items('x', 'y')
-    # 4. It adds additional functionality, e.g.:
-    #    `storage.to_dict()` or `storage.apply(...)`
+    # 4. It adds additional functionality that adds PyTorch tensor
+    #    functionality to the storage layer, e.g.:
+    #    `storage.cpu()`, `storage.cuda()` or `storage.share_memory_()`.
     def __init__(self, mapping: Optional[Dict[str, Any]] = None, **kwargs):
         self.__dict__['_mapping'] = {}
         if mapping is not None:
@@ -107,6 +112,13 @@ class BaseStorage(MutableMapping):
 
     # Allow iterating over subsets ############################################
 
+    # In contrast to standard `keys()`, `values()` and `items()` functions of
+    # Python dictionaries, we allow to only iterate over a subset of items
+    # denoted by a list of keys `args`.
+    # This is especically useful for the tensor functionality of the storage
+    # object, e.g., in case we only want to transfer a subset of keys to the
+    # GPU (the ones that are relevant to the deep learning model).
+
     def keys(self, *args: List[str]) -> KeysView:
         return KeysView(self._mapping, *args)
 
@@ -116,52 +128,74 @@ class BaseStorage(MutableMapping):
     def items(self, *args: List[str]) -> ItemsView:
         return ItemsView(self._mapping, *args)
 
-    # Additional functionality ################################################
-
-    def to_dict(self) -> Dict[str, Any]:
-        return copy.copy(self._mapping)
-
-    def to_namedtuple(self) -> NamedTuple:
-        field_names = list(self.keys())
-        StorageTuple = namedtuple('StorageTuple', field_names)
-        return StorageTuple(*[self[key] for key in field_names])
-
-    def clone(self, *args: List[str]):
-        return copy.deepcopy(self)
-
     def apply(self, func: Callable, *args: List[str]):
         for key, value in self.items(*args):
             self[key] = recursive_apply(value, func)
         return self
 
+    # Additional functionality ################################################
+
+    def to_dict(self) -> Dict[str, Any]:
+        r"""Returns a regular Python dictionary of stored key/value pairs."""
+        return copy.copy(self._mapping)
+
+    def to_namedtuple(self) -> NamedTuple:
+        r"""Returns a regular NamedTuple of stored key/value pairs."""
+        field_names = list(self.keys())
+        StorageTuple = namedtuple('StorageTuple', field_names)
+        return StorageTuple(*[self[key] for key in field_names])
+
+    def clone(self, *args: List[str]):
+        r"""Performs a deep-copy of the storage object."""
+        return copy.deepcopy(self)
+
     def contiguous(self, *args: List[str]):
+        r"""Ensures a contiguous memory layout,, either for all attributes or
+        only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.contiguous(), *args)
 
     def to(self, device: Union[int, str], *args: List[str],
            non_blocking: bool = False):
+        r"""Performs tensor dtype and/or device conversion, either for all
+        attributes or only the ones given in :obj:`*args`."""
         return self.apply(
             lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
     def cpu(self, *args: List[str]):
+        r"""Copies attributes to CPU memory, either for all attributes or only
+        the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Union[int, str], *args: List[str],
              non_blocking: bool = False):
+        r"""Copies attributes to CUDA memory, either for all attributes or only
+        the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cuda(non_blocking=non_blocking), *args)
 
     def pin_memory(self, *args: List[str]):
+        r"""Copies attributes to pinned memory, either for all attributes or
+        only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.pin_memory(), *args)
 
     def share_memory_(self, *args: List[str]):
+        r"""Moves attributes to shared memory, either for all attributes or
+        only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.share_memory_(), *args)
 
     def detach_(self, *args: List[str]):
+        r"""Detaches attributes from the computation graph, either for all
+        attributes or only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.detach_(), *args)
 
     def detach(self, *args: List[str]):
+        r"""Detaches attributes from the computation graph and returns new
+        tensors, either for all attributes or only the ones given in
+        :obj:`*args`."""
         return self.apply(lambda x: x.detach(), *args)
 
     def requires_grad_(self, *args: List[str], requires_grad: bool = True):
+        r"""Tracks gradient computation, either for all attributes or only the
+        ones given in :obj:`*args`."""
         return self.apply(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
@@ -190,6 +224,8 @@ class NodeStorage(BaseStorage):
 
     @property
     def num_nodes(self) -> Optional[int]:
+        # We try to access attributes that reveal the number of nodes stored in
+        # the storage.
         for value in self.values('num_nodes'):
             return value
         for key, value in self.items('x', 'pos', 'batch'):
@@ -259,6 +295,8 @@ class EdgeStorage(BaseStorage):
 
     @property
     def num_edges(self) -> Optional[int]:
+        # We try to access attributes that reveal the number of edges stored in
+        # the storage.
         for value in self.values('num_edges'):
             return value
         for key, value in self.items('edge_index', 'edge_attr'):
