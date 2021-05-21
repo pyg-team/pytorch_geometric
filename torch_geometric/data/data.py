@@ -371,7 +371,7 @@ class Data(object):
         return
         raise NotImplementedError
 
-    # Deprecated functions ####################################################
+    # Old functions that we might want to drop at some point in time ##########
 
     @classmethod
     @deprecated(details="use 'Data(dict)' instead")
