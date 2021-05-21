@@ -14,8 +14,9 @@ EdgeType = Tuple[str, str, str]
 
 # There exist some short-cuts to query edge-types (given that the full triplet
 # can be uniquely reconstructed, e.g.:
-# `data['writes']` or `data[('author', 'paper')]`
-QueryType = Union[str, NodeType, EdgeType, Tuple[str, str]]
+# * via str: `data['writes']`
+# * via Tuple[str, str]: `data[('author', 'paper')]`
+QueryType = Union[NodeType, EdgeType, str, Tuple[str, str]]
 
 # Types for message passing:
 Adj = Union[Tensor, SparseTensor]
