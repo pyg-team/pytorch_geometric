@@ -1,5 +1,6 @@
 from typing import List
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch_sparse import SparseTensor, cat
@@ -174,6 +175,7 @@ class Batch(Data):
 
         for key in self.__slices__.keys():
             item = self[key]
+            idx = idx % self.num_graphs if -self.num_graphs < idx < 0 else idx
             if self.__cat_dims__[key] is None:
                 # The item was concatenated along a new batch dimension,
                 # so just index in that dimension:
@@ -224,12 +226,12 @@ class Batch(Data):
             if idx.dtype == torch.bool:
                 idx = idx.nonzero(as_tuple=False).view(-1)
             idx = idx.tolist()
-        elif isinstance(idx, list) or isinstance(idx, tuple):
+        elif isinstance(idx, (list, tuple, np.ndarray)):
             pass
         else:
             raise IndexError(
-                'Only integers, slices (`:`), list, tuples, and long or bool '
-                'tensors are valid indices (got {}).'.format(
+                'Only integers, slices (`:`), list, tuples, numpy arrays and '
+                'long or bool tensors are valid indices (got {}).'.format(
                     type(idx).__name__))
 
         return [self.get_example(i) for i in idx]
@@ -237,7 +239,7 @@ class Batch(Data):
     def __getitem__(self, idx):
         if isinstance(idx, str):
             return super(Batch, self).__getitem__(idx)
-        elif isinstance(idx, int):
+        elif isinstance(idx, (int, np.integer)):
             return self.get_example(idx)
         else:
             return self.index_select(idx)

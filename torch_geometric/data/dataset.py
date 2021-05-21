@@ -208,8 +208,8 @@ class Dataset(torch.utils.data.Dataset):
             indices = [indices[i] for i in idx]
         else:
             raise IndexError(
-                'Only integers, slices (`:`), list, tuples, and long or bool '
-                'tensors are valid indices (got {}).'.format(
+                'Only integers, slices (`:`), list, tuples, numpy arrays and '
+                'long or bool tensors are valid indices (got {}).'.format(
                     type(idx).__name__))
 
         dataset = copy.copy(self)
