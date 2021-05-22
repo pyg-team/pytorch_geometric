@@ -91,9 +91,9 @@ def unwrap_placeholder(graph: Graph, node: Node, metadata: Metadata,
         input_type = 'edge'
     is_edge_level_placeholder = input_type == 'edge'
 
-    if node.type is not None:
-        Type = EdgeType if is_edge_level_placeholder else NodeType
-        node.type = Dict[Type, node.type]
+    # if node.type is not None:
+    #     Type = EdgeType if is_edge_level_placeholder else NodeType
+    #     node.type = Dict[Type, node.type]
 
     graph.inserting_after(node)
     for key in metadata[int(is_edge_level_placeholder)]:
@@ -189,25 +189,25 @@ def unwrap_output(graph: Graph, node: Node, metadata: Metadata):
         else:
             return v
 
-    if node.type is not None and isinstance(node.args[0], Node):
-        output = node.args[0]
-        is_edge_level_output = is_edge_level_node(graph, output, metadata)
-        Type = EdgeType if is_edge_level_output else NodeType
-        node.type = Dict[Type, node.type]
+    # if node.type is not None and isinstance(node.args[0], Node):
+    #     output = node.args[0]
+    #     is_edge_level_output = is_edge_level_node(graph, output, metadata)
+    #     Type = EdgeType if is_edge_level_output else NodeType
+    #     node.type = Dict[Type, node.type]
 
-    elif (node.type is not None and isinstance(node.args[0], tuple)
-          and hasattr(node.type, '__origin__')
-          and issubclass(node.type.__origin__, tuple)):
+    # elif (node.type is not None and isinstance(node.args[0], tuple)
+    #       and hasattr(node.type, '__origin__')
+    #       and issubclass(node.type.__origin__, tuple)):
 
-        __args__ = []
-        for output, _type in zip(node.args[0], node.type.__args__):
-            is_edge_level_output = is_edge_level_node(graph, output, metadata)
-            Type = EdgeType if is_edge_level_output else NodeType
-            __args__ += [Dict[Type, _type]]
-        node.type.__args__ = tuple(__args__)
+    #     __args__ = []
+    #     for output, _type in zip(node.args[0], node.type.__args__):
+    #         is_edge_level_output = is_edge_level_node(graph, output, metadat)
+    #         Type = EdgeType if is_edge_level_output else NodeType
+    #         __args__ += [Dict[Type, _type]]
+    #     node.type.__args__ = tuple(__args__)
 
-    else:
-        node.type = None
+    # else:
+    #     node.type = None
 
     node.args = (_unwrap_output(node.args[0]), )
 
