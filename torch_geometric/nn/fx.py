@@ -1,7 +1,5 @@
 from typing import Optional, Dict, Any
 
-import re
-
 from torch.nn import Module
 from torch_geometric.nn import MessagePassing
 
@@ -22,28 +20,16 @@ def symbolic_trace(
     return GraphModule(module, MyTracer().trace(module, concrete_args))
 
 
-def set_node_hints_(graph: Graph, input_map: Optional[Dict[str, str]] = None):
-    input_map = input_map or {}
-    for node in graph.nodes:
-        if node.op == 'placeholder':
-            node.hint = input_map.get(node.name, None)
-            if node.hint is None and bool(re.search('(edge|adj)', node.name)):
-                node.hint = 'edge'
-            node.hint = node.hint or 'node'
-            assert node.hint in ['node', 'edge']
-        elif node.op == 'output':
-            pass  # Nothing to do
-        elif node.op == 'get_attr':
-            raise NotImplementedError
-        else:
-            it = list(node.args) + list(node.kwargs.values())
-            node_hints = [v.hint == 'node' for v in it if isinstance(v, Node)]
-            node.hint = 'node' if any(node_hints) else 'edge'
-
-
 def find_node_by_name(graph: Graph, name: str) -> Optional[Node]:
     for node in graph.nodes:
         if node.name == name:
+            return node
+    return None
+
+
+def find_node_by_target(graph: Graph, target: str) -> Optional[Node]:
+    for node in graph.nodes:
+        if node.target == target:
             return node
     return None
 
