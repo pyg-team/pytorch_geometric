@@ -167,12 +167,12 @@ class Data(object):
             if the batch concatenation process is corrupted for a specific data
             attribute.
         """
-        # Concatenate `*index*` and `*face*` attributes in the last dimension.
-        if bool(re.search('(index|face)', key)):
-            return -1
         # By default, concatenate sparse matrices diagonally.
-        elif isinstance(value, SparseTensor):
+        if isinstance(value, SparseTensor):
             return (0, 1)
+        # Concatenate `*index*` and `*face*` attributes in the last dimension.
+        elif bool(re.search('(index|face)', key)):
+            return -1
         return 0
 
     def __inc__(self, key, value):

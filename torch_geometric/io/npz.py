@@ -20,7 +20,7 @@ def parse_npz(f):
                         f['adj_shape']).tocoo()
     edge_index = torch.tensor([adj.row, adj.col], dtype=torch.long)
     edge_index, _ = remove_self_loops(edge_index)
-    edge_index = to_undirected(edge_index, x.size(0))  # Internal coalesce.
+    edge_index = to_undirected(edge_index, num_nodes=x.size(0))
 
     y = torch.from_numpy(f['labels']).to(torch.long)
 

@@ -11,9 +11,8 @@ from ..inits import ones, zeros
 
 class LayerNorm(torch.nn.Module):
     r"""Applies layer normalization over each individual example in a batch
-    of node features as described in the `"Instance Normalization: The Missing
-    Ingredient for Fast Stylization" <https://arxiv.org/abs/1607.08022>`_
-    paper
+    of node features as described in the `"Layer Normalization"
+    <https://arxiv.org/abs/1607.06450>`_ paper
 
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
