@@ -112,7 +112,7 @@ for epoch in range(1, 101):
 train_graphs = Batch.from_data_list(dataset[0:10]).to(device)
 z = model(train_graphs.x, train_graphs.edge_index, train_graphs.batch,
           get_embedding=True)
-exp = PGExplainer(model, 32, task="graph", log=False)
+exp = PGExplainer(model, 32, task="graph", log=True)
 exp.train_explainer(train_graphs.x, z, train_graphs.edge_index, None,
                     train_graphs.batch)
 
