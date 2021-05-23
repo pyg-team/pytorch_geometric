@@ -20,6 +20,13 @@ def symbolic_trace(
     return GraphModule(module, MyTracer().trace(module, concrete_args))
 
 
+def get_submodule(module: Module, target: str) -> Module:
+    out = module
+    for attr in target.split('.'):
+        out = getattr(out, attr)
+    return out
+
+
 def find_node_by_name(graph: Graph, name: str) -> Optional[Node]:
     for node in graph.nodes:
         if node.name == name:

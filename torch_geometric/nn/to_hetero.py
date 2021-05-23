@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Union, Optional, Any
+from typing import Tuple, Dict, Union, Optional, Any, OrderedDict
 from torch_geometric.typing import NodeType, EdgeType, Metadata
 
 import re
@@ -6,10 +6,12 @@ import copy
 import warnings
 
 import torch
-from torch.nn import Module
+from torch.nn import Module, ModuleList, ModuleDict, Sequential
+
 from torch_geometric.nn import MessagePassing
-from torch_geometric.nn.fx import (symbolic_trace, find_node_by_name,
-                                   find_node_by_target, erase_unused_nodes)
+from torch_geometric.nn.fx import (symbolic_trace, get_submodule,
+                                   find_node_by_name, find_node_by_target,
+                                   erase_unused_nodes)
 
 try:
     from torch.fx import GraphModule, Graph, Node
@@ -18,7 +20,6 @@ except ImportError:
 
 # TODO:
 # * LazyInitialization - Bug: LazyLinear.weight does not support deepcopy yet
-# * What happens in ModuleLists and ModuleDicts?
 
 
 def to_hetero(module: Module, metadata: Metadata, aggr: str = 'sum',
@@ -37,8 +38,8 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = 'sum',
             unwrap_placeholder(gm.graph, node, metadata, input_map=input_map)
         elif node.op == 'get_attr':
             raise NotImplementedError
-        elif (node.op == 'call_module'
-              and isinstance(getattr(module, node.target), MessagePassing)):
+        elif (node.op == 'call_module' and isinstance(
+                get_submodule(module, node.target), MessagePassing)):
             unwrap_call_mp_module(gm.graph, node, metadata, aggr)
         elif node.op == 'call_module':
             unwrap_call_module(gm.graph, node, metadata)
@@ -60,27 +61,9 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = 'sum',
 
     gm.graph.lint()
     gm.recompile()
-    duplicate_submodules(gm, metadata)
+    gm._modules = duplicate_submodules(module._modules, gm.graph, metadata)
 
     return gm
-
-
-def duplicate_submodules(gm: GraphModule, metadata: Metadata):
-    for name, submodule in dict(gm.named_children()).items():
-        module_dict = torch.nn.ModuleDict()
-
-        has_edge_level_target = bool(
-            find_node_by_target(gm.graph, f'{name}.{key2str(metadata[1][0])}'))
-
-        for key in metadata[int(has_edge_level_target)]:
-            module_dict[key2str(key)] = copy.deepcopy(submodule)
-            if hasattr(submodule, 'reset_parameters'):
-                module_dict[key2str(key)].reset_parameters()
-            else:
-                warnings.warn((f"'{name}' will be duplicated, but its "
-                               "parameters cannot be reset"))
-
-        gm._modules[name] = module_dict
 
 
 def unwrap_placeholder(graph: Graph, node: Node, metadata: Metadata,
@@ -212,6 +195,39 @@ def unwrap_output(graph: Graph, node: Node, metadata: Metadata):
     node.args = (_unwrap_output(node.args[0]), )
 
 
+def duplicate_submodules(modules: OrderedDict[str, Module], graph: Graph,
+                         metadata: Metadata):
+    def _duplicate_submodule(module: Module, target: str):
+        if isinstance(module, ModuleList) or isinstance(module, Sequential):
+            return ModuleList([
+                _duplicate_submodule(v, f'{target}.{i}')
+                for i, v in enumerate(module)
+            ])
+        elif isinstance(module, ModuleDict):
+            return ModuleDict({
+                k: _duplicate_submodule(v, f'{target}.{k}')
+                for k, v in module.items()
+            })
+        else:
+            has_edge_level_target = bool(
+                find_node_by_target(graph,
+                                    f'{target}.{key2str(metadata[1][0])}'))
+
+            module_dict = torch.nn.ModuleDict()
+            for key in metadata[int(has_edge_level_target)]:
+                module_dict[key2str(key)] = copy.deepcopy(module)
+                if hasattr(module, 'reset_parameters'):
+                    module_dict[key2str(key)].reset_parameters()
+                else:
+                    warnings.warn((f"'{target}' will be duplicated, but its "
+                                   "parameters cannot be reset"))
+            return module_dict
+
+    for target, module in copy.copy(modules).items():
+        modules[target] = _duplicate_submodule(module, target)
+    return modules
+
+
 # Helper function #############################################################
 
 
@@ -242,8 +258,8 @@ def map_args(graph: Graph, node: Node, key: Union[NodeType, EdgeType]):
 
 
 def is_edge_level_node(graph: Graph, node: Node, metadata: Metadata) -> bool:
-    key = metadata[1][0]
-    return bool(find_node_by_name(graph, f'{node.name}__{key2str(key)}'))
+    return bool(
+        find_node_by_name(graph, f'{node.name}__{key2str(metadata[1][0])}'))
 
 
 def has_edge_level_arg(graph: Graph, node: Node, metadata: Metadata) -> bool:
