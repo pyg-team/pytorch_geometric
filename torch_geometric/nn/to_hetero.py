@@ -218,7 +218,7 @@ def duplicate_submodules(modules: OrderedDict[str, Module], graph: Graph,
                 module_dict[key2str(key)] = copy.deepcopy(module)
                 if hasattr(module, 'reset_parameters'):
                     module_dict[key2str(key)].reset_parameters()
-                else:
+                elif sum([p for p in module.parameters()]) > 0:
                     warnings.warn((f"'{target}' will be duplicated, but its "
                                    "parameters cannot be reset"))
             return module_dict

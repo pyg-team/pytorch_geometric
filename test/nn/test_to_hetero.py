@@ -4,7 +4,7 @@ import pytest
 
 import torch
 from torch import Tensor
-from torch.nn import Linear, ModuleList, Sequential, ReLU
+from torch.nn import Linear, Sequential, ReLU
 from torch_geometric.nn import SAGEConv, GINEConv
 from torch_geometric.nn.to_hetero import to_hetero
 
@@ -69,7 +69,6 @@ class Net4(torch.nn.Module):
 class Net5(torch.nn.Module):
     def __init__(self, num_layers):
         super().__init__()
-
         self.lins = torch.nn.ModuleList()
         self.convs = torch.nn.ModuleList()
         for _ in range(num_layers):
@@ -85,7 +84,6 @@ class Net5(torch.nn.Module):
 class Net6(torch.nn.Module):
     def __init__(self, num_layers):
         super().__init__()
-
         self.lins = torch.nn.ModuleDict()
         self.convs = torch.nn.ModuleDict()
         for i in range(num_layers):
@@ -101,7 +99,6 @@ class Net6(torch.nn.Module):
 class Net7(torch.nn.Module):
     def __init__(self):
         super().__init__()
-
         self.mlp1 = Sequential(Linear(16, 16), ReLU(), Linear(16, 16))
         self.conv1 = SAGEConv(16, 32)
 
@@ -109,10 +106,6 @@ class Net7(torch.nn.Module):
         x = self.mlp1(x)
         x = self.conv1(x, edge_index)
         return x
-
-
-# TODO sequential
-# TODO moduledict
 
 
 @pytest.mark.skipif(not with_fx, reason="No 'torch.fx' support")
