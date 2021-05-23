@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Union, Optional, Any, OrderedDict
+from typing import Tuple, Dict, Union, Optional, Any
 from torch_geometric.typing import NodeType, EdgeType, Metadata
 
 import re
@@ -195,7 +195,7 @@ def unwrap_output(graph: Graph, node: Node, metadata: Metadata):
     node.args = (_unwrap_output(node.args[0]), )
 
 
-def duplicate_submodules(modules: OrderedDict[str, Module], graph: Graph,
+def duplicate_submodules(modules: Dict[str, Module], graph: Graph,
                          metadata: Metadata):
     def _duplicate_submodule(module: Module, target: str):
         if isinstance(module, ModuleList) or isinstance(module, Sequential):

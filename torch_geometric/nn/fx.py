@@ -4,20 +4,23 @@ from torch.nn import Module
 from torch_geometric.nn import MessagePassing
 
 try:
-    from torch.fx import Tracer, GraphModule, Graph, Node
+    from torch.fx import GraphModule, Graph, Node, Tracer
 except ImportError:
-    Tracer = GraphModule = Graph = Node = None
+    GraphModule = Graph = Node = None
+    Tracer = object
+
+
+class MPTracer(Tracer):
+    def is_leaf_module(self, module: Module, *args, **kwargs) -> bool:
+        return (isinstance(module, MessagePassing)
+                or super().is_leaf_module(module, *args, **kwargs))
 
 
 def symbolic_trace(
         module: Module,
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
-    class MyTracer(Tracer):
-        def is_leaf_module(self, module: Module, *args, **kwargs) -> bool:
-            return (isinstance(module, MessagePassing)
-                    or super().is_leaf_module(module, *args, **kwargs))
 
-    return GraphModule(module, MyTracer().trace(module, concrete_args))
+    return GraphModule(module, MPTracer().trace(module, concrete_args))
 
 
 def get_submodule(module: Module, target: str) -> Module:
