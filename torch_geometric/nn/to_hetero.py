@@ -19,9 +19,64 @@ except ImportError:
 # * LazyInitialization - Bug: LazyLinear.weight does not support deepcopy yet
 
 
-def to_hetero(module: Module, metadata: Metadata, aggr: str = 'sum',
+def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
               input_map: Optional[Dict[str, str]] = None,
               debug: bool = False) -> GraphModule:
+    r"""Converts a homogeneous GNN model into its heterogeneous equivalent in
+    which node representations are learned for each node type
+    :obj:`metadata[0]`, and messages are exchanged between edge type
+    :obj:`metadata[1]`, as denoted in the `"Modeling Relational Data with Graph
+    Convolutional Networks" <https://arxiv.org/abs/1703.06103>`_ paper.
+
+    .. code-block:: python
+
+        import torch
+        from torch_geometric.nn import SAGEConv, to_hetero
+
+        Net(torch.nn.Module):
+            def __init__(self):
+                self.lin = Linear(16, 16)
+                self.conv = SAGEConv(16, 16)
+
+            def forward(self, x, edge_index):
+                x = self.lin(x)
+                h = self.conv(x, edge_index)
+                return torch.cat([x, h], dim=-1)
+
+        model = Net()
+
+        metadata = (
+            ['paper', 'author'],
+            [('paper' 'written_by', 'author'), ('author', 'writes', 'paper')],
+        )
+
+        model = to_hetero(model, metadata)
+        model(x_dict, edge_index_dict)
+
+    where :obj:`x_dict` and :obj:`edge_index_dict` denote dictionaries that
+    hold node features and edge connectivity information for each node type and
+    edge type, respectively.
+
+    Args:
+        module (torch.nn.Module): The homogeneous model to transform.
+        metadata (Tuple[List[str], List[Tuple[str, str, str]]]): The metadata
+            of the heterogeneous graph, *i.e.* a tuple containing its node and
+            edges types.
+        aggr (string, optional): The aggregation scheme to use for aggregating
+            representations coming from different edge types
+            (:obj:`"sum"` :obj:`"mean"`, :obj:`"max"`, :obj:`"min"`,
+            :obj:`"mul"`). (default: :obj:`"sum"`)
+        input_map (Dict[str, str], optional): A dictionary holding information
+            on the type of input arguments of :obj:`module.forward`.
+            In case :obj:`arg` is a node-level argument, then
+            :obj:`input_map[key] = 'node'`, and :obj:`input_map[key] = 'edge'`
+            otherwise.
+            In case :obj:`input_map` is not further specified, will try to
+            automatically determine the correct type of input arguments.
+            (default: :obj:`None`)
+        debug: (bool, optional): If set to :obj:`True`, will perform
+            transformation in debug mode. (default: :obj:`False`)
+    """
     transformer = ToHeteroTransformer(module, metadata, aggr, input_map, debug)
     return transformer.transform()
 
@@ -169,15 +224,15 @@ class ToHeteroTransformer(Transformer):
             Type = EdgeType if self.is_edge_level(output) else NodeType
             node.type = Dict[Type, node.type]
 
-        elif (node.type is not None and isinstance(node.args[0], tuple)
-              and hasattr(node.type, '__origin__')
-              and issubclass(node.type.__origin__, tuple)):
+        # elif (node.type is not None and isinstance(node.args[0], tuple)
+        #       and hasattr(node.type, '__origin__')
+        #       and issubclass(node.type.__origin__, tuple)):
 
-            __args__ = []
-            for output, _type in zip(node.args[0], node.type.__args__):
-                Type = EdgeType if self.is_edge_level(output) else NodeType
-                __args__ += [Dict[Type, _type]]
-            node.type.__args__ = tuple(__args__)
+        #     __args__ = []
+        #     for output, _type in zip(node.args[0], node.type.__args__):
+        #         Type = EdgeType if self.is_edge_level(output) else NodeType
+        #         __args__ += [Dict[Type, _type]]
+        #     node.type.__args__ = tuple(__args__)
 
         else:
             node.type = None

@@ -5,8 +5,7 @@ import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear, Sequential, ReLU
-from torch_geometric.nn import SAGEConv, GINEConv
-from torch_geometric.nn.to_hetero import to_hetero
+from torch_geometric.nn import SAGEConv, GINEConv, to_hetero
 
 try:
     from torch import fx  # noqa
