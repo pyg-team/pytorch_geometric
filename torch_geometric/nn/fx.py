@@ -1,6 +1,6 @@
-from typing import Optional, Dict, Any, List, Tuple
+from typing import Optional, Dict, Any
 
-from torch.nn import Module
+from torch.nn import Module, ModuleList, ModuleDict, Sequential
 from torch_geometric.nn import MessagePassing
 
 try:
@@ -12,21 +12,16 @@ except ImportError:
 class Transformer(object):
     def __init__(
         self,
-        graph_module: GraphModule,
-        input_map: Optional[Dict[str, str]] = None,
+        module: Module,
         debug: bool = False,
     ):
-        self.graph_module = graph_module
-        self.input_map = input_map
+        self.module = module
+        self.gm = symbolic_trace(module)
         self.debug = debug
 
     @property
     def graph(self) -> Graph:
-        return self.graph_module.graph
-
-    @property
-    def nodes(self) -> List[Node]:
-        return list(self.graph.nodes)
+        return self.gm.graph
 
     def transform(self) -> GraphModule:
         if self.debug:
@@ -34,13 +29,15 @@ class Transformer(object):
             print()
             print(self.graph.python_code('self'))
 
-        for node in self.nodes:
-            if node.op == 'placeholder':
-                pass
+        for node in list(self.graph.nodes):
+            if (node.op == 'call_module' and isinstance(
+                    get_submodule(self.module, node.target), MessagePassing)):
+                self.call_message_passing_module(node, node.target, node.name)
             else:
-                raise NotImplementedError
+                getattr(self, node.op)(node, node.target, node.name)
 
-        for node in reversed(self.nodes):
+        # Remove all unused nodes:
+        for node in reversed(list(self.graph.nodes)):
             try:
                 if node.op not in ['placeholder', 'output']:
                     self.graph.erase_node(node)
@@ -48,18 +45,67 @@ class Transformer(object):
                 pass
 
         if self.debug:
-            self.graph_module.graph.print_tabular()
+            self.gm.graph.print_tabular()
             print()
             print(self.graph.python_code('self'))
 
-        self.graph_module.graph.lint()
-        self.graph_module.recompile()
+        for target, submodule in dict(self.module._modules).items():
+            self.gm._modules[target] = self._init_submodule(submodule, target)
 
-        return self.graph_module
+        self.gm.graph.lint()
+        self.gm.recompile()
 
-    def call_placeholder(self, node: Node, target: Any, args: Tuple,
-                         kwargs: Dict, name: str):
-        raise NotImplementedError
+        return self.gm
+
+    def placeholder(self, node: Node, target: Any, name: str):
+        pass
+
+    def get_attr(self, node: Node, target: Any, name: str):
+        pass
+
+    def call_message_passing_module(self, node: Node, target: Any, name: str):
+        pass
+
+    def call_module(self, node: Node, target: Any, name: str):
+        pass
+
+    def call_method(self, node: Node, target: Any, name: str):
+        pass
+
+    def call_function(self, node: Node, target: Any, name: str):
+        pass
+
+    def output(self, node: Node, target: Any, name: str):
+        pass
+
+    def init_submodule(self, module: Module, target: str) -> Module:
+        return module
+
+    def _init_submodule(self, module: Module, target: str) -> Module:
+        if isinstance(module, ModuleList) or isinstance(module, Sequential):
+            return ModuleList([
+                self._init_submodule(submodule, f'{target}.{i}')
+                for i, submodule in enumerate(module)
+            ])
+        elif isinstance(module, ModuleDict):
+            return ModuleDict({
+                key: self._init_submodule(submodule, f'{target}.{key}')
+                for key, submodule in module.items()
+            })
+        else:
+            return self.init_submodule(module, target)
+
+    def find_by_name(self, name: str) -> Optional[Node]:
+        for node in self.graph.nodes:
+            if node.name == name:
+                return node
+        return None
+
+    def find_by_target(self, target: Any) -> Optional[Node]:
+        for node in self.graph.nodes:
+            if node.target == target:
+                return node
+        return None
 
 
 def symbolic_trace(
@@ -78,27 +124,3 @@ def get_submodule(module: Module, target: str) -> Module:
     for attr in target.split('.'):
         out = getattr(out, attr)
     return out
-
-
-def find_node_by_name(graph: Graph, name: str) -> Optional[Node]:
-    for node in graph.nodes:
-        if node.name == name:
-            return node
-    return None
-
-
-def find_node_by_target(graph: Graph, target: str) -> Optional[Node]:
-    for node in graph.nodes:
-        if node.target == target:
-            return node
-    return None
-
-
-def erase_unused_nodes(graph: Graph) -> Graph:
-    for node in list(graph.nodes)[::-1]:
-        try:
-            if node.op not in ['placeholder', 'output']:
-                graph.erase_node(node)
-        except RuntimeError:
-            pass
-    return graph

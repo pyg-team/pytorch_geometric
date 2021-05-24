@@ -141,12 +141,13 @@ def test_to_hetero():
     assert out[1][('paper', 'written_by', 'author')].size() == (200, 16)
     assert out[1][('author', 'writes', 'paper')].size() == (200, 16)
 
-    model = Net2()
-    model = to_hetero(model, metadata, debug=False)
-    out = model(x_dict, edge_index_dict)
-    assert isinstance(out, dict) and len(out) == 2
-    assert out['paper'].size() == (100, 32)
-    assert out['author'].size() == (100, 32)
+    for aggr in ['add', 'sum', 'mean', 'max', 'min', 'mul']:
+        model = Net2()
+        model = to_hetero(model, metadata, aggr='mean', debug=False)
+        out = model(x_dict, edge_index_dict)
+        assert isinstance(out, dict) and len(out) == 2
+        assert out['paper'].size() == (100, 32)
+        assert out['author'].size() == (100, 32)
 
     model = Net3()
     model = to_hetero(model, metadata, debug=False)
