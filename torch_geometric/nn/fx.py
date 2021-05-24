@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any
 
 from torch.nn import Module, ModuleList, ModuleDict, Sequential
-from torch_geometric.nn import MessagePassing
+from torch_geometric.nn.conv import MessagePassing
 
 try:
     from torch.fx import GraphModule, Graph, Node, Tracer
