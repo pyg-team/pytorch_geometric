@@ -12,7 +12,7 @@ import torch
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-from .view import KeysView, ValuesView, ItemsView
+from torch_geometric.data.view import KeysView, ValuesView, ItemsView
 
 
 def recursive_apply(data: Any, func: Callable) -> Any:
@@ -36,17 +36,15 @@ class BaseStorage(MutableMapping):
     #    `storage.x = ...` rather than `storage['x'] = ...`
     # 2. It allows private non-dictionary attributes that are not exposed to
     #    the user, e.g.:
-    #    `storage.__dict__[{key}] = ...` accesible via `storage.{key}`
+    #    `storage._{key} = ...` accessible via `storage._{key}`
     #    We make use of this for saving the parent object.
-    #    Since we override `__setitem__`, we have to assign new private
-    #    attributes via `storage.__dict__[{key}] = ...`.
     # 3. It allows iterating over a subset of keys, e.g.:
     #    `storage.values('x', 'y')` or `storage.items('x', 'y')
     # 4. It adds additional functionality that adds PyTorch tensor
     #    functionality to the storage layer, e.g.:
     #    `storage.cpu()`, `storage.cuda()` or `storage.share_memory_()`.
     def __init__(self, mapping: Optional[Dict[str, Any]] = None, **kwargs):
-        self.__dict__['_mapping'] = {}
+        self._mapping = {}
         if mapping is not None:
             self.update(mapping)
         if kwargs:
@@ -55,11 +53,23 @@ class BaseStorage(MutableMapping):
     def __len__(self):
         return len(self._mapping)
 
-    def __getitem__(self, key: str) -> Any:
-        return self._mapping[key]
-
     def __getattr__(self, key: str) -> Any:
         return self[key]
+
+    def __setattr__(self, key: str, value: Any):
+        if key in self.__dict__ or key[:1] == '_':
+            self.__dict__[key] = value
+        else:
+            self[key] = value
+
+    def __delattr__(self, key: str):
+        if key in self.__dict__:
+            del self.__dict__[key]
+        else:
+            del self[key]
+
+    def __getitem__(self, key: str) -> Any:
+        return self._mapping[key]
 
     def __setitem__(self, key: str, value: Any):
         if value is None:
@@ -67,21 +77,9 @@ class BaseStorage(MutableMapping):
         else:
             self._mapping[key] = value
 
-    def __setattr__(self, key: str, value: Any):
-        if key in self.__dict__:
-            self.__dict__[key] = value
-        else:
-            self[key] = value
-
     def __delitem__(self, key: str):
         if key in self._mapping:
             del self._mapping[key]
-
-    def __delattr__(self, key: str):
-        if key in self.__dict__:
-            del self.__dict__[key]
-        else:
-            del self[key]
 
     def __iter__(self) -> Iterable:
         return iter(self._mapping)
@@ -205,8 +203,8 @@ class NodeStorage(BaseStorage):
                  mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__(mapping, **kwargs)
         assert _key is None or isinstance(_key, NodeType)
-        self.__dict__['_key'] = _key
-        self.__dict__['_parent'] = _parent
+        self._key = _key
+        self._parent = _parent
 
     def __copy__(self):
         out = self.__class__(self._parent)
@@ -278,8 +276,8 @@ class EdgeStorage(BaseStorage):
                  mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__(mapping, **kwargs)
         assert _key is None or (isinstance(_key, tuple) and len(_key) == 3)
-        self.__dict__['_key'] = _key
-        self.__dict__['_parent'] = _parent
+        self._key = _key
+        self._parent = _parent
 
     @property
     def _edge_index(self) -> Optional[Tensor]:

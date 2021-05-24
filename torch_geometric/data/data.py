@@ -43,8 +43,8 @@ def heterogeneous_only(func: Callable) -> Callable:
 
 class Data(object):
     def __init__(self, mapping: Optional[Dict[str, Any]] = None, **kwargs):
-        self.__dict__['_global_store'] = GlobalStorage(_parent=self)
-        self.__dict__['_hetero_store'] = {}
+        self._global_store = GlobalStorage(_parent=self)
+        self._hetero_store = {}
 
         mapping = {} if mapping is None else mapping
         for key, value in chain(mapping.items(), kwargs.items()):
@@ -61,8 +61,7 @@ class Data(object):
         # `data.*_dict` => Link to the `_hetero_store`.
         if key in self._global_store:
             return getattr(self._global_store, key)
-
-        if bool(re.search('_dict$', key)):
+        elif bool(re.search('_dict$', key)):
             out = self.collect(key[:-5])
             if len(out) > 0:
                 return out
@@ -70,21 +69,28 @@ class Data(object):
         raise AttributeError(
             f"'{self.__class__.__name__}' object has no attribute '{key}'")
 
-    def __setattr__(self, key: str, item: Any):
+    def __setattr__(self, key: str, value: Any):
+        # `data._* = ...` => Link to the private `__dict__` store.
         # `data.* = ...` => Link to the `_global_store`.
         # NOTE: We aim to prevent duplicates in `_hetero_store` keys.
-        if key in self._hetero_store:
-            raise AttributeError(
-                f"'{key}' attribute is already present as a node/edge-type")
-        setattr(self._global_store, key, item)
+        if key in self.__dict__ or key[:1] == '_':
+            self.__dict__[key] = value
+        else:
+            if key in self._hetero_store:
+                raise AttributeError(
+                    f"'{key}' is already present as a node/edge-type")
+            setattr(self._global_store, key, value)
 
     def __delattr__(self, key: str):
         # `del data.*` => Link to the `_global_store`.
-        if key in self._global_store:
+        if key in self.__dict__:
+            del self.__dict__[key]
+        elif key in self._global_store:
             delattr(self._global_store, key)
 
     def __getitem__(self, *args: Tuple[QueryType]) -> Any:
         # `data[*]` => Link to either `_hetero_store` or `_global_store`.
+        # `data['*_dict']` => Link to the `_hetero_store`.
         # If neither is present, we create a new `Storage` object for the given
         # node/edge-type.
         key = self._to_canonical(*args)
@@ -111,9 +117,11 @@ class Data(object):
 
         return out
 
-    def __setitem__(self, key: str, item: Any):
-        # `data[*] = ...` => Link to `data.* = ...` in `_global_store`.
-        setattr(self, key, item)
+    def __setitem__(self, key: str, value: Any):
+        if key in self._hetero_store:
+            raise AttributeError(
+                f"'{key}' is already present as a node/edge-type")
+        self._global_store[key] = value
 
     def __delitem__(self, *args: Tuple[QueryType]):
         # `del data[x]` => Link to either `_hetero_store` or `_global_store`.
@@ -125,7 +133,8 @@ class Data(object):
 
     def __copy__(self):
         out = self.__class__()
-        out.__dict__['_global_store'] = copy.copy(self._global_store)
+        out._global_store = copy.copy(self._global_store)
+        out._global_store._parent = out
         for key, item in self._hetero_store.items():
             out._hetero_store[key] = copy.copy(item)
             out._hetero_store._parent = out
@@ -133,7 +142,8 @@ class Data(object):
 
     def __deepcopy__(self, memo):
         out = self.__class__()
-        out.__dict__['_global_store'] = copy.deepcopy(self._global_store, memo)
+        out._global_store = copy.deepcopy(self._global_store, memo)
+        out._global_store._parent = out
         for key, item in self._hetero_store.items():
             out._hetero_store[key] = copy.deepcopy(item, memo)
             out._hetero_store._parent = out

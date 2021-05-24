@@ -30,8 +30,8 @@ class Batch(Data):
         assert 'batch' not in keys and 'ptr' not in keys
 
         batch = cls()
-        batch.__dict__['_num_graphs'] = len(data_list)
-        batch.__dict__['_data_class'] = data_list[0].__class__
+        batch._num_graphs = len(data_list)
+        batch._data_class = data_list[0].__class__
         for key in keys + ['batch']:
             batch[key] = []
         batch.ptr = [0]
@@ -117,10 +117,10 @@ class Batch(Data):
 
         batch.batch = None if len(batch.batch) == 0 else batch.batch
         batch.ptr = None if len(batch.ptr) == 1 else batch.ptr
-        batch.__dict__['_slices'] = slices
-        batch.__dict__['_cumsum'] = cumsum
-        batch.__dict__['_cat_dims'] = cat_dims
-        batch.__dict__['_num_nodes_list'] = num_nodes_list
+        batch._slices = slices
+        batch._cumsum = cumsum
+        batch._cat_dims = cat_dims
+        batch._num_nodes_list = num_nodes_list
 
         ref_data = data_list[0]
         for key in batch.keys:
@@ -146,7 +146,7 @@ class Batch(Data):
         The batch object must have been created via :meth:`from_data_list` in
         order to be able to reconstruct the initial objects."""
 
-        if '_slices' not in self.__dict__:
+        if not hasattr(self, '_slices'):
             raise RuntimeError(
                 ('Cannot reconstruct data list from batch because the batch '
                  'object was not created using `Batch.from_data_list()`.'))
@@ -233,8 +233,8 @@ class Batch(Data):
     @property
     def num_graphs(self) -> int:
         """Returns the number of graphs in the batch."""
-        if '_num_graphs' in self.__dict__:
-            return self.__dict__['_num_graphs']
+        if hasattr(self, '_num_graphs'):
+            return self._num_graphs
         elif self.ptr is not None:
             return self.ptr.numel() + 1
         elif self.batch is not None:

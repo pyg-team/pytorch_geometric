@@ -3,7 +3,7 @@ from typing import Tuple, Optional, Union
 from torch import Tensor
 from torch_sparse import SparseTensor
 
-# Types for accesing data:
+# Types for accessing data ####################################################
 
 # Node-types are denoted by a single string, e.g.: `data['paper']`
 NodeType = str
@@ -18,7 +18,8 @@ EdgeType = Tuple[str, str, str]
 # * via Tuple[str, str]: `data[('author', 'paper')]`
 QueryType = Union[NodeType, EdgeType, str, Tuple[str, str]]
 
-# Types for message passing:
+# Types for message passing ###################################################
+
 Adj = Union[Tensor, SparseTensor]
 OptTensor = Optional[Tensor]
 PairTensor = Tuple[Tensor, Tensor]
