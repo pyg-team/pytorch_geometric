@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter, Linear
+from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
@@ -10,7 +10,8 @@ from torch_geometric.utils import add_remaining_self_loops
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, matmul, fill_diag
 
-from ..inits import glorot, zeros
+from ..dense import Linear
+from ..inits import zeros
 
 
 class EGConv(MessagePassing):
@@ -93,10 +94,14 @@ class EGConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.aggregators = aggregators
 
-        self.bases_weight = Parameter(
-            torch.Tensor(in_channels, (out_channels // num_heads) * num_bases))
-        self.comb_weight = Linear(in_channels,
-                                  num_heads * num_bases * len(aggregators))
+        self.bases_linear = Linear(
+            in_channels,
+            (out_channels // num_heads) * num_bases,
+            bias=False,
+            weight_initializer="glorot")
+        self.comb_linear = Linear(
+            in_channels,
+            num_heads * num_bases * len(aggregators))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -106,8 +111,8 @@ class EGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.bases_weight)
-        self.comb_weight.reset_parameters()
+        self.bases_linear.reset_parameters()
+        self.comb_linear.reset_parameters()
         zeros(self.bias)
         self._cached_adj_t = None
         self._cached_edge_index = None
@@ -158,9 +163,9 @@ class EGConv(MessagePassing):
                         self._cached_adj_t = edge_index
 
         # [num_nodes, (out_channels // num_heads) * num_bases]
-        bases = torch.matmul(x, self.bases_weight)
+        bases = self.bases_linear(x)
         # [num_nodes, num_heads * num_bases * num_aggrs]
-        weightings = self.comb_weight(x)
+        weightings = self.comb_linear(x)
 
         # [num_nodes, num_aggregators, (out_channels // num_heads) * num_bases]
         # propagate_type: (x: Tensor, symnorm_weight: OptTensor)

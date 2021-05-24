@@ -8,6 +8,7 @@ from torch_scatter import scatter_add
 from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
 
+from ..dense import Linear
 from ..inits import glorot, zeros
 
 
@@ -73,13 +74,14 @@ class HypergraphConv(MessagePassing):
             self.concat = concat
             self.negative_slope = negative_slope
             self.dropout = dropout
-            self.weight = Parameter(
-                torch.Tensor(in_channels, heads * out_channels))
+            self.linear = Linear(in_channels, heads * out_channels,
+                                 bias=False, weight_initializer="glorot")
             self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
         else:
             self.heads = 1
             self.concat = True
-            self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+            self.linear = Linear(in_channels, out_channels,
+                                 bias=False, weight_initializer="glorot")
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -91,7 +93,7 @@ class HypergraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
+        self.linear.reset_parameters()
         if self.use_attention:
             glorot(self.att)
         zeros(self.bias)
@@ -121,13 +123,13 @@ class HypergraphConv(MessagePassing):
         if hyperedge_weight is None:
             hyperedge_weight = x.new_ones(num_edges)
 
-        x = torch.matmul(x, self.weight)
+        x = self.linear(x)
 
         alpha = None
         if self.use_attention:
             assert hyperedge_attr is not None
             x = x.view(-1, self.heads, self.out_channels)
-            hyperedge_attr = torch.matmul(hyperedge_attr, self.weight)
+            hyperedge_attr = self.linear(hyperedge_attr)
             hyperedge_attr = hyperedge_attr.view(-1, self.heads,
                                                  self.out_channels)
             x_i = x[hyperedge_index[0]]

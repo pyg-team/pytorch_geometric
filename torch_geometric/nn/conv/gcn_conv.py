@@ -10,7 +10,8 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
-from ..inits import glorot, zeros
+from ..dense import Linear
+from ..inits import zeros
 
 
 @torch.jit._overload
@@ -134,7 +135,8 @@ class GCNConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.linear = Linear(in_channels, out_channels,
+                             bias=False, weight_initializer="glorot")
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -144,7 +146,7 @@ class GCNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
+        self.linear.reset_parameters()
         zeros(self.bias)
         self._cached_edge_index = None
         self._cached_adj_t = None
@@ -176,7 +178,7 @@ class GCNConv(MessagePassing):
                 else:
                     edge_index = cache
 
-        x = x @ self.weight
+        x = self.linear(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
