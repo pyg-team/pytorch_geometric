@@ -82,6 +82,7 @@ class Data(object):
             setattr(self._global_store, key, value)
 
     def __delattr__(self, key: str):
+        # `del data._*` => Link to the private `__dict__` store.
         # `del data.*` => Link to the `_global_store`.
         if key in self.__dict__:
             del self.__dict__[key]
