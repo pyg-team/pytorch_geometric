@@ -276,7 +276,8 @@ class GNNExplainer(torch.nn.Module):
             edge_index (LongTensor): The edge indices.
             edge_mask (Tensor): The edge mask.
             y (Tensor, optional): The ground-truth node-prediction labels used
-                as node colorings. (default: :obj:`None`)
+                as node colorings. All nodes will have the same color
+                if :attr:`node_idx` is :obj:`-1`.(default: :obj:`None`).
             threshold (float, optional): Sets a threshold for visualizing
                 important edges. If set to :obj:`None`, will visualize all
                 edges with transparancy indicating the importance of edges.
@@ -292,9 +293,10 @@ class GNNExplainer(torch.nn.Module):
         if node_idx == -1:
             hard_edge_mask = torch.BoolTensor([True] * edge_index.size(1),
                                               device=edge_mask.device)
-            subset = torch.arange(
-                edge_index.max() + 1,
-                device=edge_index.device if y is None else y.device)
+            subset = torch.arange(edge_index.max().item() + 1,
+                                  device=edge_index.device)
+            y = None
+
         else:
             # Only operate on a k-hop subgraph around `node_idx`.
             subset, edge_index, _, hard_edge_mask = k_hop_subgraph(

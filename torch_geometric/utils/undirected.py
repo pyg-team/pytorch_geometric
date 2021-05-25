@@ -52,7 +52,7 @@ def to_undirected(edge_index: Tensor, edge_attr: Optional[Tensor] = None,
         reduce (string, optional): The reduce operation to use for merging edge
             features. (default: :obj:`"add"`)
 
-    :rtype: (:class:`LongTensor`, :class:`Tensor`) if :obj:`edge:attr` is not
+    :rtype: (:class:`LongTensor`, :class:`Tensor`) if :obj:`edge_attr` is not
     :obj:`None`, otherwise :class:`LongTensor`
     """
     # Maintain backward compatibility to `to_undirected(edge_index, num_nodes)`
