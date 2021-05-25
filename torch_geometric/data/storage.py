@@ -1,6 +1,6 @@
 from typing import (Any, Optional, Iterable, Dict, List, Callable, Union,
                     Tuple, NamedTuple)
-from torch_geometric.typing import NodeType, EdgeType, Adj
+from torch_geometric.typing import NodeType, EdgeType
 
 import copy
 import warnings
