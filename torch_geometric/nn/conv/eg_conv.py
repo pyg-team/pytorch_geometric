@@ -42,7 +42,8 @@ class EGConv(MessagePassing):
         examples/egc.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or -1 to derive the
+            shape from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         aggregators (List[str], optional): Aggregators to be used.
             Supported aggregators are :obj:`"sum"`, :obj:`"mean"`,
