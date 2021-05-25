@@ -9,7 +9,7 @@ def test_dense_gcn_conv():
     assert dense_conv.__repr__() == 'DenseGCNConv(16, 16)'
 
     # Ensure same weights and bias.
-    dense_conv.linear.weight = sparse_conv.linear.weight
+    dense_conv.lin.weight = sparse_conv.lin.weight
     dense_conv.bias = sparse_conv.bias
 
     x = torch.randn((5, channels))

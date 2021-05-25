@@ -6,10 +6,9 @@ from torch.nn import Parameter
 import torch.nn.functional as F
 from torch_scatter import scatter_add
 from torch_geometric.utils import softmax
+from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv import MessagePassing
-
-from ..dense import Linear
-from ..inits import glorot, zeros
 
 
 class HypergraphConv(MessagePassing):
@@ -40,8 +39,8 @@ class HypergraphConv(MessagePassing):
         ])
 
     Args:
-        in_channels (int): Size of each input sample, or -1 to derive the
-            shape from the first input(s) to the forward method.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         use_attention (bool, optional): If set to :obj:`True`, attention
             will be added to this layer. (default: :obj:`False`)
@@ -75,14 +74,14 @@ class HypergraphConv(MessagePassing):
             self.concat = concat
             self.negative_slope = negative_slope
             self.dropout = dropout
-            self.linear = Linear(in_channels, heads * out_channels,
-                                 bias=False, weight_initializer="glorot")
+            self.lin = Linear(in_channels, heads * out_channels, bias=False,
+                              weight_initializer='glorot')
             self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
         else:
             self.heads = 1
             self.concat = True
-            self.linear = Linear(in_channels, out_channels,
-                                 bias=False, weight_initializer="glorot")
+            self.lin = Linear(in_channels, out_channels, bias=False,
+                              weight_initializer='glorot')
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -94,7 +93,7 @@ class HypergraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.linear.reset_parameters()
+        self.lin.reset_parameters()
         if self.use_attention:
             glorot(self.att)
         zeros(self.bias)
@@ -124,13 +123,13 @@ class HypergraphConv(MessagePassing):
         if hyperedge_weight is None:
             hyperedge_weight = x.new_ones(num_edges)
 
-        x = self.linear(x)
+        x = self.lin(x)
 
         alpha = None
         if self.use_attention:
             assert hyperedge_attr is not None
             x = x.view(-1, self.heads, self.out_channels)
-            hyperedge_attr = self.linear(hyperedge_attr)
+            hyperedge_attr = self.lin(hyperedge_attr)
             hyperedge_attr = hyperedge_attr.view(-1, self.heads,
                                                  self.out_channels)
             x_i = x[hyperedge_index[0]]

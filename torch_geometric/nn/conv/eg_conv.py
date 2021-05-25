@@ -3,15 +3,14 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
+from torch_geometric.nn.inits import zeros
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.utils import add_remaining_self_loops
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, matmul, fill_diag
-
-from ..dense import Linear
-from ..inits import zeros
 
 
 class EGConv(MessagePassing):
@@ -42,8 +41,8 @@ class EGConv(MessagePassing):
         examples/egc.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample, or -1 to derive the
-            shape from the first input(s) to the forward method.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         aggregators (List[str], optional): Aggregators to be used.
             Supported aggregators are :obj:`"sum"`, :obj:`"mean"`,
@@ -95,25 +94,22 @@ class EGConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.aggregators = aggregators
 
-        self.bases_linear = Linear(
-            in_channels,
-            (out_channels // num_heads) * num_bases,
-            bias=False,
-            weight_initializer="glorot")
-        self.comb_linear = Linear(
-            in_channels,
-            num_heads * num_bases * len(aggregators))
+        self.bases_lin = Linear(in_channels,
+                                (out_channels // num_heads) * num_bases,
+                                bias=False, weight_initializer='glorot')
+        self.comb_lin = Linear(in_channels,
+                               num_heads * num_bases * len(aggregators))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
         else:
-            self.register_parameter("bias", None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.bases_linear.reset_parameters()
-        self.comb_linear.reset_parameters()
+        self.bases_lin.reset_parameters()
+        self.comb_lin.reset_parameters()
         zeros(self.bias)
         self._cached_adj_t = None
         self._cached_edge_index = None
@@ -164,9 +160,9 @@ class EGConv(MessagePassing):
                         self._cached_adj_t = edge_index
 
         # [num_nodes, (out_channels // num_heads) * num_bases]
-        bases = self.bases_linear(x)
+        bases = self.bases_lin(x)
         # [num_nodes, num_heads * num_bases * num_aggrs]
-        weightings = self.comb_linear(x)
+        weightings = self.comb_lin(x)
 
         # [num_nodes, num_aggregators, (out_channels // num_heads) * num_bases]
         # propagate_type: (x: Tensor, symnorm_weight: OptTensor)
