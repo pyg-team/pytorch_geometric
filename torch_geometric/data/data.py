@@ -60,14 +60,6 @@ class BaseData(object):
     def to_namedtuple(self) -> NamedTuple:
         raise NotImplementedError
 
-    @property
-    def num_nodes(self) -> Optional[int]:
-        raise NotImplementedError
-
-    @property
-    def num_edges(self) -> Optional[int]:
-        raise NotImplementedError
-
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         raise NotImplementedError
 
@@ -203,16 +195,20 @@ class Data(BaseData):
         return getattr(self._store, key)
 
     def __setattr__(self, key: str, value: Any):
+        # `data._* = ...` => Link to the private `__dict__` store.
+        # `data.* = ...` => Link to the `_store`.
         if key[:1] == '_':
             self.__dict__[key] = value
         else:
             setattr(self._store, key, value)
 
     def __delattr__(self, key: str):
+        # `del data._*` => Link to the private `__dict__` store.
+        # `del data.*` => Link to the `_store`.
         if key[:1] == '_':
             del self.__dict__[key]
         else:
-            del self._store[key]
+            delattr(self._store, key)
 
     def __getitem__(self, key: str) -> Any:
         return self._store[key]
