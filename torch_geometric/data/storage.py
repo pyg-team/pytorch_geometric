@@ -16,54 +16,60 @@ from torch_geometric.data.view import KeysView, ValuesView, ItemsView
 
 
 def recursive_apply(data: Any, func: Callable) -> Any:
-    if isinstance(data, Sequence) and not isinstance(data, str):
-        return [recursive_apply(d, func) for d in data]
-    if isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
-        return type(data)(*(recursive_apply(d) for d in data))
-    if isinstance(data, Mapping):
-        return {key: recursive_apply(data[key], func) for key in data}
     if isinstance(data, Tensor):
         return func(data)
-    try:
-        return func(data)
-    except:  # noqa
-        return data
+    elif isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
+        return type(data)(*(recursive_apply(d) for d in data))
+    elif isinstance(data, Sequence) and not isinstance(data, str):
+        return [recursive_apply(d, func) for d in data]
+    elif isinstance(data, Mapping):
+        return {key: recursive_apply(data[key], func) for key in data}
+    else:
+        try:
+            return func(data)
+        except:  # noqa
+            return data
 
 
 class BaseStorage(MutableMapping):
     # This class wraps a Python dictionary and extends it by the following:
     # 1. It allows attribute assignment, e.g.:
     #    `storage.x = ...` rather than `storage['x'] = ...`
-    # 2. It allows private non-dictionary attributes that are not exposed to
-    #    the user, e.g.:
-    #    `storage._{key} = ...` accessible via `storage._{key}`
-    #    We make use of this for saving the parent object.
-    # 3. It allows iterating over a subset of keys, e.g.:
+    # 2. It allows private attributes that are not exposed to the user, e.g.:
+    #    `storage._{key} = ...` which is accessible via `storage._{key}`
+    #    NOTE: We make use of this for saving the parent object.
+    # 3. It allows iterating over only a subset of keys, e.g.:
     #    `storage.values('x', 'y')` or `storage.items('x', 'y')
-    # 4. It adds additional functionality that adds PyTorch tensor
-    #    functionality to the storage layer, e.g.:
+    # 4. It adds additional PyTorch Tensor functionality, e.g.:
     #    `storage.cpu()`, `storage.cuda()` or `storage.share_memory_()`.
-    def __init__(self, mapping: Optional[Dict[str, Any]] = None, **kwargs):
+    def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
+                 **kwargs):
+        super().__init__()
+        self._parent = _parent
         self._mapping = {}
-        if mapping is not None:
-            self.update(mapping)
-        if kwargs:
-            self.update(kwargs)
+        for key, value in (_mapping or {}).items():
+            setattr(self, key, value)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._mapping)
 
     def __getattr__(self, key: str) -> Any:
-        return self[key]
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(
+                f"'{self.__class__.__name__}' object has no attribute '{key}'")
 
     def __setattr__(self, key: str, value: Any):
-        if key in self.__dict__ or key[:1] == '_':
+        if key[:1] == '_':
             self.__dict__[key] = value
         else:
             self[key] = value
 
     def __delattr__(self, key: str):
-        if key in self.__dict__:
+        if key[:1] == '_':
             del self.__dict__[key]
         else:
             del self[key]
@@ -72,9 +78,9 @@ class BaseStorage(MutableMapping):
         return self._mapping[key]
 
     def __setitem__(self, key: str, value: Any):
-        if value is None:
+        if value is None and key in self:
             del self[key]
-        else:
+        elif value is not None:
             self._mapping[key] = value
 
     def __delitem__(self, key: str):
@@ -85,17 +91,18 @@ class BaseStorage(MutableMapping):
         return iter(self._mapping)
 
     def __copy__(self):
-        out = self.__class__()
+        out = self.__class__(_parent=self._parent)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
         out._mapping = copy.copy(out._mapping)
         return out
 
     def __deepcopy__(self, memo):
-        out = self.__class__()
+        out = self.__class__(_parent=self._parent)
         for key, value in self.__dict__.items():
-            out.__dict__[key] = value
-        out._mapping = copy.deepcopy(out._mapping, memo)
+            # We do not want to deepcopy the `_parent` attribute.
+            if key != '_parent':
+                out.__dict__[key] = copy.deepcopy(value, memo)
         return out
 
     def __getstate__(self) -> Dict[str, Any]:
@@ -113,9 +120,9 @@ class BaseStorage(MutableMapping):
     # In contrast to standard `keys()`, `values()` and `items()` functions of
     # Python dictionaries, we allow to only iterate over a subset of items
     # denoted by a list of keys `args`.
-    # This is especically useful for the tensor functionality of the storage
-    # object, e.g., in case we only want to transfer a subset of keys to the
-    # GPU (the ones that are relevant to the deep learning model).
+    # This is especically useful for adding PyTorch Tensor functionality to the
+    # storage object, e.g., in case we only want to transfer a subset of keys
+    # to the GPU (i.e. the ones that are relevant to the deep learning model).
 
     def keys(self, *args: List[str]) -> KeysView:
         return KeysView(self._mapping, *args)
@@ -134,17 +141,18 @@ class BaseStorage(MutableMapping):
     # Additional functionality ################################################
 
     def to_dict(self) -> Dict[str, Any]:
-        r"""Returns a regular Python dictionary of stored key/value pairs."""
+        r"""Returns a regular :obj:`dict` of stored key/value pairs."""
         return copy.copy(self._mapping)
 
     def to_namedtuple(self) -> NamedTuple:
-        r"""Returns a regular NamedTuple of stored key/value pairs."""
+        r"""Returns a regular :obj:`NamedTuple` of stored key/value pairs."""
         field_names = list(self.keys())
-        StorageTuple = namedtuple('StorageTuple', field_names)
+        typename = f'{self.__class__.__name__}Tuple'
+        StorageTuple = namedtuple(typename, field_names)
         return StorageTuple(*[self[key] for key in field_names])
 
     def clone(self, *args: List[str]):
-        r"""Performs a deep-copy of the storage object."""
+        r"""Performs a deep-copy of the object."""
         return copy.deepcopy(self)
 
     def contiguous(self, *args: List[str]):
@@ -199,31 +207,15 @@ class BaseStorage(MutableMapping):
 
 
 class NodeStorage(BaseStorage):
-    def __init__(self, _parent: Any, _key: Optional[NodeType] = None,
-                 mapping: Optional[Dict[str, Any]] = None, **kwargs):
-        super().__init__(mapping, **kwargs)
+    def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
+                 _key: Optional[NodeType] = None, **kwargs):
+        super().__init__(_parent, _mapping, **kwargs)
         assert _key is None or isinstance(_key, NodeType)
         self._key = _key
-        self._parent = _parent
-
-    def __copy__(self):
-        out = self.__class__(self._parent)
-        for key, value in self.__dict__.items():
-            out.__dict__[key] = value
-        out._mapping = copy.copy(out._mapping)
-        return out
-
-    def __deepcopy__(self, memo):
-        out = self.__class__(self._parent)
-        for key, value in self.__dict__.items():
-            out.__dict__[key] = value
-        out._mapping = copy.deepcopy(out._mapping, memo)
-        return out
 
     @property
     def num_nodes(self) -> Optional[int]:
-        # We try to access attributes that reveal the number of nodes stored in
-        # the storage.
+        # We sequentially access attributes that reveal the number of nodes.
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items('x', 'pos', 'batch'):
@@ -272,41 +264,27 @@ class EdgeStorage(BaseStorage):
       This is the most efficient one for graph-based deep learning models as
       indices are sorted based on target nodes.
     """
-    def __init__(self, _parent: Any, _key: Optional[EdgeType] = None,
-                 mapping: Optional[Dict[str, Any]] = None, **kwargs):
-        super().__init__(mapping, **kwargs)
+    def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
+                 _key: Optional[EdgeType] = None, **kwargs):
+        super().__init__(_parent, _mapping, **kwargs)
         assert _key is None or (isinstance(_key, tuple) and len(_key) == 3)
         self._key = _key
-        self._parent = _parent
 
     @property
-    def _edge_index(self) -> Optional[Tensor]:
+    def edge_index(self) -> Tensor:
         if 'edge_index' in self:
-            return self.edge_index
+            return self['edge_index']
         if 'adj' in self and isinstance(self.adj, SparseTensor):
             return torch.stack(self.adj.coo()[:2], dim=0)
         if 'adj_t' in self and isinstance(self.adj_t, SparseTensor):
             return torch.stack(self.adj_t.coo()[:2][::-1], dim=0)
-        return None
-
-    def __copy__(self):
-        out = self.__class__(self._parent)
-        for key, value in self.__dict__.items():
-            out.__dict__[key] = value
-        out._mapping = copy.copy(out._mapping)
-        return out
-
-    def __deepcopy__(self, memo):
-        out = self.__class__(self._parent)
-        for key, value in self.__dict__.items():
-            out.__dict__[key] = value
-        out._mapping = copy.deepcopy(out._mapping, memo)
-        return out
+        raise AttributeError(
+            f"'{self.__class__.__name__}' object has no attribute "
+            f"'edge_index', 'adj' or 'adj_t'")
 
     @property
     def num_edges(self) -> Optional[int]:
-        # We try to access attributes that reveal the number of edges stored in
-        # the storage.
+        # We sequentially access attributes that reveal the number of edges.
         if 'num_edges' in self:
             return self['num_edges']
         for key, value in self.items('edge_index', 'edge_attr'):
@@ -324,7 +302,7 @@ class EdgeStorage(BaseStorage):
         return None
 
     @property
-    def num_edge_features(self):
+    def num_edge_features(self) -> int:
         if 'edge_attr' in self:
             return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(-1)
         return 0
@@ -353,20 +331,17 @@ class EdgeStorage(BaseStorage):
         raise NotImplementedError
 
     def has_isolated_nodes(self) -> bool:
-        edge_index = self._edge_index
-        if edge_index is not None:
-            num_nodes = self.size()[-1]
-            if num_nodes is None:
-                raise NameError("Unable to infer 'num_nodes'")
-            return torch.unique(edge_index[1]).numel() < num_nodes
-        return True
+        edge_index, num_nodes = self.edge_index, self.size()[-1]
+        if num_nodes is None:
+            raise NameError("Unable to infer 'num_nodes'")
+        return torch.unique(edge_index[1]).numel() < num_nodes
 
     def has_self_loops(self) -> bool:
+        edge_index = self.edge_index
         if self._key is None or self._key[0] == self._key[-1]:
-            edge_index = self._edge_index
-            if edge_index is not None:
-                return int((edge_index[0] == edge_index[1]).sum()) > 0
-        return False
+            return int((edge_index[0] == edge_index[1]).sum()) > 0
+        else:
+            return False
 
     def is_undirected(self) -> bool:
         if self._key is None or self._key[0] == self._key[-1]:
@@ -380,9 +355,9 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-    def __init__(self, _parent: Any, mapping: Optional[Dict[str, Any]] = None,
+    def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
                  **kwargs):
-        super().__init__(_parent=_parent, mapping=mapping, **kwargs)
+        super().__init__(_parent, _mapping, **kwargs)
 
     @property
     def num_features(self) -> int:

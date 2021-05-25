@@ -6,7 +6,7 @@ from torch_geometric.data.storage import BaseStorage
 
 
 def test_base_storage():
-    storage = BaseStorage()
+    storage = BaseStorage(_parent=None)
     storage.x = torch.zeros(1)
     storage.y = torch.ones(1)
     assert len(storage) == 2
@@ -22,15 +22,15 @@ def test_base_storage():
     assert len(storage) == 1
     assert storage.x is not None
 
-    storage = BaseStorage({'x': torch.zeros(1)})
+    storage = BaseStorage(_parent=None, _mapping={'x': torch.zeros(1)})
     assert len(storage) == 1
     assert storage.x is not None
 
-    storage = BaseStorage(x=torch.zeros(1))
+    storage = BaseStorage(_parent=None, x=torch.zeros(1))
     assert len(storage) == 1
     assert storage.x is not None
 
-    storage = BaseStorage(x=torch.zeros(1))
+    storage = BaseStorage(_parent=None, x=torch.zeros(1))
     copied_storage = copy.copy(storage)
     assert storage == copied_storage
     assert id(storage) != id(copied_storage)
