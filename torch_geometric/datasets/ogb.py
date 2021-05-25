@@ -2,7 +2,7 @@ from typing import Optional, Callable
 
 import torch
 
-from torch_geometric.data import Data
+from torch_geometric.data import HeteroData
 
 
 class OGB_MAG(torch.utils.data.Dataset):
@@ -16,7 +16,7 @@ class OGB_MAG(torch.utils.data.Dataset):
         tmp_data = dataset[0]
         split_idx = dataset.get_idx_split()
 
-        data = Data()
+        data = HeteroData()
         data['paper'].x = tmp_data.x_dict['paper']
         data['paper'].year = tmp_data.node_year['paper'].squeeze()
 

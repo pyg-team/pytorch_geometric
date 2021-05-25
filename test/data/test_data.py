@@ -9,7 +9,9 @@ def test_data():
     x = torch.tensor([[1, 3, 5], [2, 4, 6]], dtype=torch.float).t()
     edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
     data = Data(x=x, edge_index=edge_index).to(torch.device('cpu'))
-    assert data.num_nodes == 3
+
+    N = data.num_nodes
+    assert N == 3
 
     assert data.x.tolist() == x.tolist()
     assert data['x'].tolist() == x.tolist()
@@ -35,10 +37,9 @@ def test_data():
     data.contiguous()
     assert data.x.is_contiguous()
 
-    # assert not data.is_coalesced()
-    # data.edge_index, _ = coalesce(data.edge_index, None, N, N)
-    # data = data.coalesce()
-    # assert data.is_coalesced()
+    assert not data.is_coalesced()
+    data = data.coalesce()
+    assert data.is_coalesced()
 
     clone = data.clone()
     assert clone != data
@@ -49,7 +50,7 @@ def test_data():
     data['x'] = x + 1
     assert data.x.tolist() == (x + 1).tolist()
 
-    assert str(data) == 'Data(x=[3, 2], edge_index=[2, 5])'
+    assert str(data) == 'Data(x=[3, 2], edge_index=[2, 4])'
 
     dictionary = {'x': data.x, 'edge_index': data.edge_index}
     data = Data.from_dict(dictionary)
@@ -61,7 +62,7 @@ def test_data():
     assert not data.is_directed()
 
     assert data.num_nodes == 3
-    # assert data.num_edges == 4
+    assert data.num_edges == 4
     assert data.num_faces is None
     assert data.num_node_features == 2
     assert data.num_features == 2

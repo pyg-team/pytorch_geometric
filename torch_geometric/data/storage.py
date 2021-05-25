@@ -1,6 +1,6 @@
 from typing import (Any, Optional, Iterable, Dict, List, Callable, Union,
                     Tuple, NamedTuple)
-from torch_geometric.typing import NodeType, EdgeType
+from torch_geometric.typing import NodeType, EdgeType, Adj
 
 import copy
 import warnings
@@ -10,25 +10,10 @@ from collections.abc import Sequence, Mapping, MutableMapping
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
+from torch_sparse import SparseTensor, coalesce
 
+from torch_geometric.utils import is_undirected
 from torch_geometric.data.view import KeysView, ValuesView, ItemsView
-
-
-def recursive_apply(data: Any, func: Callable) -> Any:
-    if isinstance(data, Tensor):
-        return func(data)
-    elif isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
-        return type(data)(*(recursive_apply(d) for d in data))
-    elif isinstance(data, Sequence) and not isinstance(data, str):
-        return [recursive_apply(d, func) for d in data]
-    elif isinstance(data, Mapping):
-        return {key: recursive_apply(data[key], func) for key in data}
-    else:
-        try:
-            return func(data)
-        except:  # noqa
-            return data
 
 
 class BaseStorage(MutableMapping):
@@ -311,27 +296,47 @@ class EdgeStorage(BaseStorage):
     def num_features(self) -> int:
         return self.num_edge_features
 
-    def size(self) -> Tuple[Optional[int], Optional[int]]:
+    def size(
+        self, dim: Optional[int] = None
+    ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
+
         if 'adj' in self:
-            return self.adj.size(0), self.adj.size(1)
-        if 'adj_t' in self:
-            return self.adj_t.size(1), self.adj_t.size(0)
+            size = (self.adj.size(0), self.adj.size(1))
+        elif 'adj_t' in self:
+            size = (self.adj_t.size(1), self.adj_t.size(0))
+        else:
+            if self._key is None:
+                raise NameError("Unable to infer 'size' without explicit "
+                                "'_key' assignment")
+            size = (self._parent[self._key[0]].num_nodes,
+                    self._parent[self._key[-1]].num_nodes)
 
-        if self._key is None:
-            raise NameError(
-                "Unable to infer 'size' without explicit '_key' assignment")
-
-        return (self._parent[self._key[0]].num_nodes,
-                self._parent[self._key[-1]].num_nodes)
+        return size if dim is None else size[dim]
 
     def is_coalesced(self) -> bool:
-        raise NotImplementedError
+        for value in self.values('adj', 'adj_t'):
+            return value.is_coalesced()
 
-    def coalesce(self):
-        raise NotImplementedError
+        edge_index = self.edge_index
+        new_edge_index, _ = coalesce(edge_index, None, self.size(0),
+                                     self.size(1))
+        return (edge_index.numel() == new_edge_index.numel() and bool(
+            (edge_index == new_edge_index).all()))
+
+    def coalesce(self, reduce: str = 'sum'):
+        for key, value in self.items('adj', 'adj_t'):
+            self[key] = value.coalesce(reduce)
+
+        if 'edge_index' in self:
+            edge_index = self.edge_index
+            edge_attr = self.edge_attr if 'edge_attr' in self else None
+            self.edge_index, self.edge_attr = coalesce(edge_index, edge_attr,
+                                                       *self.size(), op=reduce)
+
+        return self
 
     def has_isolated_nodes(self) -> bool:
-        edge_index, num_nodes = self.edge_index, self.size()[-1]
+        edge_index, num_nodes = self.edge_index, self.size(1)
         if num_nodes is None:
             raise NameError("Unable to infer 'num_nodes'")
         return torch.unique(edge_index[1]).numel() < num_nodes
@@ -344,11 +349,15 @@ class EdgeStorage(BaseStorage):
             return False
 
     def is_undirected(self) -> bool:
-        if self._key is None or self._key[0] == self._key[-1]:
-            from torch_geometric.utils import is_undirected
-            return is_undirected(self.edge_index)
-            raise NotImplementedError
-        return False
+        if self._key is not None and self._key[0] != self._key[-1]:
+            return False
+
+        for value in self.values('adj', 'adj_t'):
+            return value.is_symmetric()
+
+        edge_index = self.edge_index
+        edge_attr = self.edge_attr if 'edge_attr' in self else None
+        return is_undirected(edge_index, edge_attr, num_nodes=self.size(0))
 
     def is_directed(self) -> bool:
         return not self.is_undirected()
@@ -363,5 +372,24 @@ class GlobalStorage(NodeStorage, EdgeStorage):
     def num_features(self) -> int:
         return self.num_node_features
 
-    def size(self) -> Tuple[Optional[int], Optional[int]]:
-        return [self.num_nodes, self.num_nodes]
+    def size(
+        self, dim: Optional[int] = None
+    ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
+        size = (self.num_nodes, self.num_nodes)
+        return size if dim is None else size[dim]
+
+
+def recursive_apply(data: Any, func: Callable) -> Any:
+    if isinstance(data, Tensor):
+        return func(data)
+    elif isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
+        return type(data)(*(recursive_apply(d) for d in data))
+    elif isinstance(data, Sequence) and not isinstance(data, str):
+        return [recursive_apply(d, func) for d in data]
+    elif isinstance(data, Mapping):
+        return {key: recursive_apply(data[key], func) for key in data}
+    else:
+        try:
+            return func(data)
+        except:  # noqa
+            return data

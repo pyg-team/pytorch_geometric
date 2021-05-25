@@ -111,6 +111,7 @@ class BaseData(object):
     def coalesce(self):
         for store in self._edge_stores:
             store.coalesce()
+        return self
 
     def has_isolated_nodes(self) -> bool:
         return any([store.has_isolated_nodes() for store in self._edge_stores])
@@ -266,17 +267,6 @@ class Data(BaseData):
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if 'index' in key or 'face' in key:
-            return self.num_nodes
-        else:
-            return 0
-
-    def __inc__(
-            self, key: str, value: Any,
-            store: Optional[Union[NodeStorage, EdgeStorage]] = None) -> Any:
-
-        if isinstance(store, EdgeStorage) and 'index' in key:
-            return torch.tensor(store.size()).view(2, 1)
-        elif 'index' in key or 'face' in key:
             return self.num_nodes
         else:
             return 0

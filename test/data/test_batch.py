@@ -7,16 +7,13 @@ def test_batch():
     torch_geometric.set_debug(True)
 
     x1 = torch.tensor([1, 2, 3], dtype=torch.float)
-    edge_index1 = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    e1 = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     s1 = '1'
     x2 = torch.tensor([1, 2], dtype=torch.float)
-    edge_index2 = torch.tensor([[0, 1], [1, 0]])
+    e2 = torch.tensor([[0, 1], [1, 0]])
     s2 = '2'
 
-    batch = Batch.from_data_list([
-        Data(x=x1, edge_index=edge_index1, s=s1, num_nodes=3),
-        Data(x=x2, edge_index=edge_index2, s=s2)
-    ])
+    batch = Batch.from_data_list([Data(x1, e1, s=s1), Data(x2, e2, s=s2)])
 
     assert batch.__repr__() == (
         'Batch(edge_index=[2, 6], s=[2], x=[5], batch=[5], ptr=[3])')
@@ -30,7 +27,7 @@ def test_batch():
     assert batch.num_graphs == 2
 
     data = batch[0]
-    assert str(data) == ("Data(edge_index=[2, 4], s='1', x=[3], num_nodes=3)")
+    assert str(data) == ("Data(edge_index=[2, 4], s='1', x=[3])")
     data = batch[1]
     assert str(data) == ("Data(edge_index=[2, 2], s='2', x=[2])")
 
@@ -41,7 +38,7 @@ def test_batch():
 
     data_list = batch.to_data_list()
     assert len(data_list) == 2
-    assert len(data_list[0]) == 4
+    assert len(data_list[0]) == 3
     assert data_list[0].x.tolist() == [1, 2, 3]
     assert data_list[0].edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert data_list[0].s == '1'
