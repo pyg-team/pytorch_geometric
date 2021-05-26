@@ -98,6 +98,8 @@ def test_graph_explainer(model):
 
     node_feat_mask, edge_mask = explainer.explain_graph(x, edge_index)
     assert_edgemask_clear(model)
+    _, _ = explainer.visualize_subgraph(-1, edge_index, edge_mask,
+                                        y=torch.tensor(2), threshold=0.8)
     assert node_feat_mask.size() == (x.size(1), )
     assert node_feat_mask.min() >= 0 and node_feat_mask.max() <= 1
     assert edge_mask.shape[0] == edge_index.shape[1]
