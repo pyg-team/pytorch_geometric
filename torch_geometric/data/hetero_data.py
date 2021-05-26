@@ -107,9 +107,11 @@ class HeteroData(BaseData):
     def __copy__(self):
         out = self.__class__()
         for key, value in self.__dict__.items():
-            out.__dict__[key] = value
-        out._global_store = copy.copy(self._store)
+            if key not in ['_global_store', '_hetero_stores']:
+                out.__dict__[key] = value
+        out._global_store = copy.copy(self._global_store)
         out._global_store._parent = out
+        out._hetero_stores = {}
         for key, store in self._hetero_stores.items():
             out._hetero_stores[key] = copy.copy(store)
             out._hetero_stores[key]._parent = out
@@ -118,10 +120,13 @@ class HeteroData(BaseData):
     def __deepcopy__(self, memo):
         out = self.__class__()
         for key, value in self.__dict__.items():
-            out.__dict__[key] = copy.deepcopy(value, memo)
+            if key not in ['_hetero_stores']:
+                out.__dict__[key] = copy.deepcopy(value, memo)
         out._global_store._parent = out
-        for store in self._hetero_stores.values():
-            store._parent = out
+        out._hetero_stores = {}
+        for key, store in self._hetero_stores.items():
+            out._hetero_stores[key] = copy.deepcopy(store, memo)
+            out._hetero_stores[key]._parent = out
         return out
 
     def __repr__(self) -> str:

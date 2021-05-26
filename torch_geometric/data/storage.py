@@ -194,7 +194,7 @@ class BaseStorage(MutableMapping):
 class NodeStorage(BaseStorage):
     def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
                  _key: Optional[NodeType] = None, **kwargs):
-        super().__init__(_parent, _mapping, **kwargs)
+        super().__init__(_parent=_parent, _mapping=_mapping, **kwargs)
         assert _key is None or isinstance(_key, NodeType)
         self._key = _key
 
@@ -251,7 +251,7 @@ class EdgeStorage(BaseStorage):
     """
     def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
                  _key: Optional[EdgeType] = None, **kwargs):
-        super().__init__(_parent, _mapping, **kwargs)
+        super().__init__(_parent=_parent, _mapping=_mapping, **kwargs)
         assert _key is None or (isinstance(_key, tuple) and len(_key) == 3)
         self._key = _key
 
@@ -358,7 +358,7 @@ class EdgeStorage(BaseStorage):
 class GlobalStorage(NodeStorage, EdgeStorage):
     def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
                  **kwargs):
-        super().__init__(_parent, _mapping, **kwargs)
+        super().__init__(_parent=_parent, _mapping=_mapping, **kwargs)
 
     @property
     def num_features(self) -> int:

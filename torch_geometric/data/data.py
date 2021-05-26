@@ -244,7 +244,8 @@ class Data(BaseData):
     def __copy__(self):
         out = self.__class__()
         for key, value in self.__dict__.items():
-            out.__dict__[key] = value
+            if key not in ['_store']:
+                out.__dict__[key] = value
         out._store = copy.copy(self._store)
         out._store._parent = out
         return out

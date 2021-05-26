@@ -1,3 +1,5 @@
+import copy
+
 import torch
 from torch_geometric.data import HeteroData
 
@@ -12,7 +14,7 @@ edge_index_paper_author = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
 edge_index_author_paper = torch.stack([idx_paper[:30], idx_author[:30]], dim=0)
 
 
-def test_hetero_data_init():
+def test_init_hetero_data():
     data = HeteroData()
     data['paper'].x = x_paper
     data['author'].x = x_author
@@ -87,3 +89,33 @@ def test_hetero_data_functions():
     assert len(data.to_namedtuple()) == 5
     assert data.to_namedtuple().y == 0
     assert len(data.to_namedtuple().paper) == 1
+
+
+def test_copy_hetero_data():
+    data = HeteroData()
+    data['paper'].x = x_paper
+    data['paper', '_', 'paper'].edge_index = edge_index_paper_paper
+
+    out = copy.copy(data)
+    assert id(data) != id(out)
+    for store1, store2 in zip(data._stores, out._stores):
+        assert id(store1) != id(store2)
+        assert id(data) == id(store1._parent)
+        assert id(out) == id(store2._parent)
+    assert out['paper']._key == 'paper'
+    assert data['paper'].x.data_ptr() == out['paper'].x.data_ptr()
+    assert out['_']._key == ('paper', '_', 'paper')
+    assert data['_'].edge_index.data_ptr() == out['_'].edge_index.data_ptr()
+
+    out = copy.deepcopy(data)
+    assert id(data) != id(out)
+    for store1, store2 in zip(data._stores, out._stores):
+        assert id(store1) != id(store2)
+    assert id(out['paper']._parent) == id(out)
+    assert out['paper']._key == 'paper'
+    assert data['paper'].x.data_ptr() != out['paper'].x.data_ptr()
+    assert data['paper'].x.tolist() == out['paper'].x.tolist()
+    assert id(out['_']._parent) == id(out)
+    assert out['_']._key == ('paper', '_', 'paper')
+    assert data['_'].edge_index.data_ptr() != out['_'].edge_index.data_ptr()
+    assert data['_'].edge_index.tolist() == out['_'].edge_index.tolist()
