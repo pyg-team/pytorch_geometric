@@ -226,13 +226,17 @@ class Batch(Data):
             if idx.dtype == torch.bool:
                 idx = idx.nonzero(as_tuple=False).view(-1)
             idx = idx.tolist()
-        elif isinstance(idx, (list, tuple, np.ndarray)):
+        elif isinstance(idx, np.ndarray):
+            if idx.dtype == np.bool:
+                idx = np.stack(idx.nonzero()).transpose().reshape(-1)
+            idx = idx.tolist()
+        elif isinstance(idx, (list, tuple)):
             pass
         else:
             raise IndexError(
-                'Only integers, slices (`:`), list, tuples, numpy arrays and '
-                'long or bool tensors are valid indices (got {}).'.format(
-                    type(idx).__name__))
+                'Only integers, slices (`:`), list, tuples, bool or long or '
+                'int numpy arrays and long or bool tensors are valid indices '
+                '(got {}).'.format(type(idx).__name__))
 
         return [self.get_example(i) for i in idx]
 

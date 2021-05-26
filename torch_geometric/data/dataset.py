@@ -204,13 +204,21 @@ class Dataset(torch.utils.data.Dataset):
             elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
                 return self.index_select(
                     idx.nonzero(as_tuple=False).flatten().tolist())
+        elif isinstance(idx, np.ndarray):
+            if idx.dtype != np.bool:
+                if len(idx.shape) == 0:
+                    idx = np.expand_dims(idx, 0)
+                return self.index_select(idx.tolist())
+            elif idx.dtype == np.bool:
+                return self.index_select(
+                    np.stack(idx.nonzero()).transpose().reshape(-1).tolist())
         elif isinstance(idx, (list, tuple, np.ndarray)):
             indices = [indices[i] for i in idx]
         else:
             raise IndexError(
-                'Only integers, slices (`:`), list, tuples, numpy arrays and '
-                'long or bool tensors are valid indices (got {}).'.format(
-                    type(idx).__name__))
+                'Only integers, slices (`:`), list, tuples, bool or long or '
+                'intnumpy arrays and long or bool tensors are valid indices '
+                '(got {}).'.format(type(idx).__name__))
 
         dataset = copy.copy(self)
         dataset.__indices__ = indices
