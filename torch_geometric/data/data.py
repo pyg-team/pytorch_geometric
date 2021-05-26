@@ -289,7 +289,7 @@ class Data(BaseData):
         return self._store[key]
 
     def __setitem__(self, key: str, value: Any):
-        """Sets the attribute :obj:`key` to :obj:`value`."""
+        r"""Sets the attribute :obj:`key` to :obj:`value`."""
         self._store[key] = value
 
     def __delitem__(self, key: str):
