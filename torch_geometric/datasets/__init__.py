@@ -46,7 +46,6 @@ from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
-from .ogb import OGB_MAG
 
 __all__ = [
     'KarateClub',
@@ -99,7 +98,6 @@ __all__ = [
     'Actor',
     'JODIEDataset',
     'MixHopSyntheticDataset',
-    'OGB_MAG',
 ]
 
 classes = __all__
