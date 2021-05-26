@@ -58,8 +58,8 @@ def test_data():
     data = Data.from_dict(dictionary)
     assert sorted(data.keys) == ['edge_index', 'x']
 
-    assert not data.contains_isolated_nodes()
-    assert not data.contains_self_loops()
+    assert not data.has_isolated_nodes()
+    assert not data.has_self_loops()
     assert data.is_undirected()
     assert not data.is_directed()
 

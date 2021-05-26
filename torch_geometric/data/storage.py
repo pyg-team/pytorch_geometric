@@ -119,6 +119,8 @@ class BaseStorage(MutableMapping):
         return ItemsView(self._mapping, *args)
 
     def apply(self, func: Callable, *args: List[str]):
+        r"""Applies the function :obj:`func`, either to all attributes or only
+        the ones given in :obj:`*args`."""
         for key, value in self.items(*args):
             self[key] = recursive_apply(value, func)
         return self
@@ -126,11 +128,11 @@ class BaseStorage(MutableMapping):
     # Additional functionality ################################################
 
     def to_dict(self) -> Dict[str, Any]:
-        r"""Returns a regular :obj:`dict` of stored key/value pairs."""
+        r"""Returns a dictionary of stored key/value pairs."""
         return copy.copy(self._mapping)
 
     def to_namedtuple(self) -> NamedTuple:
-        r"""Returns a regular :obj:`NamedTuple` of stored key/value pairs."""
+        r"""Returns a :obj:`NamedTuple` of stored key/value pairs."""
         field_names = list(self.keys())
         typename = f'{self.__class__.__name__}Tuple'
         StorageTuple = namedtuple(typename, field_names)
@@ -141,7 +143,7 @@ class BaseStorage(MutableMapping):
         return copy.deepcopy(self)
 
     def contiguous(self, *args: List[str]):
-        r"""Ensures a contiguous memory layout,, either for all attributes or
+        r"""Ensures a contiguous memory layout, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.contiguous(), *args)
 
@@ -179,8 +181,8 @@ class BaseStorage(MutableMapping):
         return self.apply(lambda x: x.detach_(), *args)
 
     def detach(self, *args: List[str]):
-        r"""Detaches attributes from the computation graph and returns new
-        tensors, either for all attributes or only the ones given in
+        r"""Detaches attributes from the computation graph by creating a new
+        tensor, either for all attributes or only the ones given in
         :obj:`*args`."""
         return self.apply(lambda x: x.detach(), *args)
 
