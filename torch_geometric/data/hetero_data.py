@@ -60,7 +60,6 @@ class HeteroData(BaseData):
             del self.__dict__[key]
         else:
             delattr(self._global_store, key)
-        raise NotImplementedError
 
     def __getitem__(self, *args: Tuple[QueryType]) -> Any:
         # `data[*]` => Link to either `_hetero_stores` or `_global_store`.
