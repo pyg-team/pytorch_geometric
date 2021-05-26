@@ -213,7 +213,7 @@ class NodeStorage(BaseStorage):
             return self.adj_t.size(1)
         warnings.warn(
             f"Unable to accurately infer 'num_nodes' from the attribute set "
-            f"{set(self.keys())}. Please explicitly set 'num_nodes' as an "
+            f"'{set(self.keys())}'. Please explicitly set 'num_nodes' as an "
             f"attribute of " +
             ("'data'" if self._key is None else f"'data[{self._key}]'") +
             " to suppress this warning")
@@ -268,23 +268,15 @@ class EdgeStorage(BaseStorage):
             f"'edge_index', 'adj' or 'adj_t'")
 
     @property
-    def num_edges(self) -> Optional[int]:
+    def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
-        if 'num_edges' in self:
-            return self['num_edges']
         for key, value in self.items('edge_index', 'edge_attr'):
             num_args = len(signature(self._parent.__cat_dim__).parameters)
             args = (key, value, self)[:num_args]
             return value.size(self._parent.__cat_dim__(*args))
         for value in self.values('adj', 'adj_t'):
             return value.nnz()
-        warnings.warn(
-            f"Unable to accurately infer 'num_edges' from the attribute set "
-            f"{set(self.keys())}. Please explicitly set 'num_edges' as an "
-            f"attribute of " +
-            ("'data'" if self._key is None else f"'data[{self._key}]'") +
-            " to suppress this warning")
-        return None
+        return 0
 
     @property
     def num_edge_features(self) -> int:

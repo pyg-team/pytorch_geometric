@@ -99,11 +99,8 @@ class BaseData(object):
             return None
 
     @property
-    def num_edges(self) -> Optional[int]:
-        try:
-            return sum([v.num_edges for v in self._edge_stores])
-        except TypeError:
-            return None
+    def num_edges(self) -> int:
+        return sum([v.num_edges for v in self._edge_stores])
 
     def is_coalesced(self) -> bool:
         return all([store.is_coalesced() for store in self._edge_stores])

@@ -81,7 +81,6 @@ class ClusterData(torch.utils.data.Dataset):
         N, E = self.data.num_nodes, self.data.num_edges
         data = copy.copy(self.data)
         del data.num_nodes
-        del data.num_edges
         adj, data.adj = data.adj, None
 
         adj = adj.narrow(0, start, length).narrow(1, start, length)
@@ -152,7 +151,6 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
         data = copy.copy(self.cluster_data.data)
         del data.num_nodes
-        del data.num_edges
         adj, data.adj = self.cluster_data.data.adj, None
         adj = cat([adj.narrow(0, s, e - s) for s, e in zip(start, end)], dim=0)
         adj = adj.index_select(1, node_idx)

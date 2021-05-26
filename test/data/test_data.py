@@ -76,7 +76,7 @@ def test_data():
 
     data.edge_index = None
     assert data.num_nodes is None
-    assert data.num_edges is None
+    assert data.num_edges == 0
 
     data.num_nodes = 4
     assert data.num_nodes == 4
