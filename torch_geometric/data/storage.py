@@ -203,7 +203,7 @@ class NodeStorage(BaseStorage):
     @property
     def num_nodes(self) -> Optional[int]:
         # We sequentially access attributes that reveal the number of nodes.
-        if 'num_nodes' in self:
+        if 'num_nodes' in self and isinstance(self['num_nodes'], int):
             return self['num_nodes']
         for key, value in self.items('x', 'pos', 'batch'):
             num_args = len(signature(self._parent.__cat_dim__).parameters)

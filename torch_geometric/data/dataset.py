@@ -10,7 +10,7 @@ from collections.abc import Sequence
 import torch.utils.data
 from torch import Tensor
 
-from torch_geometric.data.data import Data
+from torch_geometric.data.data import BaseData
 from torch_geometric.data.makedirs import makedirs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
@@ -60,7 +60,7 @@ class Dataset(torch.utils.data.Dataset):
     def len(self) -> int:
         raise NotImplementedError
 
-    def get(self, idx: int) -> Data:
+    def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
@@ -178,7 +178,7 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(
         self,
         idx: Union[int, np.integer, IndexType],
-    ) -> Union['Dataset', Data]:
+    ) -> Union['Dataset', BaseData]:
         r"""In case :obj:`idx` is of type integer, will return the data object
         at index :obj:`idx` (and transforms it in case :obj:`transform` is
         present).
