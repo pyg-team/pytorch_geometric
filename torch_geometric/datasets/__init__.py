@@ -47,6 +47,7 @@ from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
+from .ogb_mag import OGB_MAG
 
 __all__ = [
     'KarateClub',
@@ -100,6 +101,7 @@ __all__ = [
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'UPFD',
+    'OGB_MAG',
 ]
 
 classes = __all__
