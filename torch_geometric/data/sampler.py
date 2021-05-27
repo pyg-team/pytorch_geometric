@@ -262,6 +262,8 @@ class RandomNodeSampler(torch.utils.data.DataLoader):
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in self.data:
+            if key in ['num_nodes']:
+                continue
             if isinstance(item, Tensor) and item.size(0) == self.N:
                 data[key] = item[node_idx]
             elif isinstance(item, Tensor) and item.size(0) == self.E:

@@ -14,24 +14,6 @@ class Batch(Data):
     In addition, single graphs can be reconstructed via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
-    def __init__(self, batch=None, ptr=None, **kwargs):
-        super(Batch, self).__init__(**kwargs)
-
-        for key, item in kwargs.items():
-            if key == 'num_nodes':
-                self.__num_nodes__ = item
-            else:
-                self[key] = item
-
-        self.batch = batch
-        self.ptr = ptr
-        self.__data_class__ = Data
-        self.__slices__ = None
-        self.__cumsum__ = None
-        self.__cat_dims__ = None
-        self.__num_nodes_list__ = None
-        self.__num_graphs__ = None
-
     @classmethod
     def from_data_list(cls, data_list, follow_batch=[], exclude_keys=[]):
         r"""Constructs a batch object from a python list holding
@@ -41,19 +23,18 @@ class Batch(Data):
         :obj:`follow_batch`.
         Will exclude any keys given in :obj:`exclude_keys`."""
 
-        keys = list(set(data_list[0].keys) - set(exclude_keys))
+        keys = set(data_list[0].keys)
+        keys -= {'num_nodes', 'num_edges'}
+        keys -= set(exclude_keys)
+        keys = sorted(list(keys))
         assert 'batch' not in keys and 'ptr' not in keys
 
         batch = cls()
-        for key in data_list[0].__dict__.keys():
-            if key[:2] != '__' and key[-2:] != '__':
-                batch[key] = None
-
         batch.__num_graphs__ = len(data_list)
         batch.__data_class__ = data_list[0].__class__
         for key in keys + ['batch']:
             batch[key] = []
-        batch['ptr'] = [0]
+        batch.ptr = [0]
 
         device = None
         slices = {key: [0] for key in keys}
@@ -122,8 +103,8 @@ class Batch(Data):
                             torch.full((size, ), i, dtype=torch.long,
                                        device=device))
 
-            if hasattr(data, '__num_nodes__'):
-                num_nodes_list.append(data.__num_nodes__)
+            if 'num_nodes' in data:
+                num_nodes_list.append(data.num_nodes)
             else:
                 num_nodes_list.append(None)
 
@@ -157,7 +138,7 @@ class Batch(Data):
         if torch_geometric.is_debug_enabled():
             batch.debug()
 
-        return batch.contiguous()
+        return batch
 
     def get_example(self, idx: int) -> Data:
         r"""Reconstructs the :class:`torch_geometric.data.Data` object at index
@@ -165,7 +146,7 @@ class Batch(Data):
         The batch object must have been created via :meth:`from_data_list` in
         order to be able to reconstruct the initial objects."""
 
-        if self.__slices__ is None:
+        if not hasattr(self, '__slices__'):
             raise RuntimeError(
                 ('Cannot reconstruct data list from batch because the batch '
                  'object was not created using `Batch.from_data_list()`.'))
@@ -252,7 +233,7 @@ class Batch(Data):
     @property
     def num_graphs(self) -> int:
         """Returns the number of graphs in the batch."""
-        if self.__num_graphs__ is not None:
+        if hasattr(self, '__num_graphs__'):
             return self.__num_graphs__
         elif self.ptr is not None:
             return self.ptr.numel() + 1
