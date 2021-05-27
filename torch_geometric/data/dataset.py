@@ -1,28 +1,19 @@
+from typing import List, Optional, Callable, Union, Any, Tuple
+
 import re
 import copy
-import logging
+import warnings
 import numpy as np
 import os.path as osp
+from collections.abc import Sequence
 
 import torch.utils.data
+from torch import Tensor
 
-from .makedirs import makedirs
+from torch_geometric.data.data import Data
+from torch_geometric.data.makedirs import makedirs
 
-
-def to_list(x):
-    if not isinstance(x, (tuple, list)):
-        x = [x]
-    return x
-
-
-def files_exist(files):
-    return len(files) != 0 and all(osp.exists(f) for f in files)
-
-
-def __repr__(obj):
-    if obj is None:
-        return 'None'
-    return re.sub('(<.*?)\\s.*(>)', r'\1\2', obj.__repr__())
+IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
 
 class Dataset(torch.utils.data.Dataset):
@@ -47,13 +38,13 @@ class Dataset(torch.utils.data.Dataset):
             final dataset. (default: :obj:`None`)
     """
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
         order to skip the download."""
         raise NotImplementedError
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files to find in the :obj:`self.processed_dir`
         folder in order to skip the processing."""
         raise NotImplementedError
@@ -66,16 +57,18 @@ class Dataset(torch.utils.data.Dataset):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
-    def len(self):
+    def len(self) -> int:
         raise NotImplementedError
 
-    def get(self, idx):
+    def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
-    def __init__(self, root=None, transform=None, pre_transform=None,
-                 pre_filter=None):
-        super(Dataset, self).__init__()
+    def __init__(self, root: Optional[str] = None,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+        super().__init__()
 
         if isinstance(root, str):
             root = osp.expanduser(osp.normpath(root))
@@ -84,7 +77,7 @@ class Dataset(torch.utils.data.Dataset):
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
-        self.__indices__ = None
+        self._indices: Optional[Sequence] = None
 
         if 'download' in self.__class__.__dict__.keys():
             self._download()
@@ -92,43 +85,48 @@ class Dataset(torch.utils.data.Dataset):
         if 'process' in self.__class__.__dict__.keys():
             self._process()
 
-    def indices(self):
-        if self.__indices__ is not None:
-            return self.__indices__
-        else:
-            return range(len(self))
+    def indices(self) -> Sequence:
+        return range(self.len()) if self._indices is None else self._indices
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, 'processed')
 
     @property
-    def num_node_features(self):
+    def num_node_features(self) -> int:
         r"""Returns the number of features per node in the dataset."""
-        return self[0].num_node_features
+        data = self[0]
+        if hasattr(data, 'num_node_features'):
+            return data.num_node_features
+        raise AttributeError(f"'{data.__class__.__name__}' object has no "
+                             f"attribute 'num_node_features'")
 
     @property
-    def num_features(self):
+    def num_features(self) -> int:
         r"""Alias for :py:attr:`~num_node_features`."""
         return self.num_node_features
 
     @property
-    def num_edge_features(self):
+    def num_edge_features(self) -> int:
         r"""Returns the number of features per edge in the dataset."""
-        return self[0].num_edge_features
+        data = self[0]
+        if hasattr(data, 'num_edge_features'):
+            return data.num_edge_features
+        raise AttributeError(f"'{data.__class__.__name__}' object has no "
+                             f"attribute 'num_edge_features'")
 
     @property
-    def raw_paths(self):
+    def raw_paths(self) -> List[str]:
         r"""The filepaths to find in order to skip the download."""
         files = to_list(self.raw_file_names)
         return [osp.join(self.raw_dir, f) for f in files]
 
     @property
-    def processed_paths(self):
+    def processed_paths(self) -> List[str]:
         r"""The filepaths to find in the :obj:`self.processed_dir`
         folder in order to skip the processing."""
         files = to_list(self.processed_file_names)
@@ -143,19 +141,20 @@ class Dataset(torch.utils.data.Dataset):
 
     def _process(self):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
-        if osp.exists(f) and torch.load(f) != __repr__(self.pre_transform):
-            logging.warning(
-                'The `pre_transform` argument differs from the one used in '
-                'the pre-processed version of this dataset. If you really '
-                'want to make use of another pre-processing technique, make '
-                'sure to delete `{}` first.'.format(self.processed_dir))
+        if osp.exists(f) and torch.load(f) != _repr(self.pre_transform):
+            warnings.warn(
+                f"The `pre_transform` argument differs from the one used in "
+                f"the pre-processed version of this dataset. If you want to "
+                f"make use of another pre-processing technique, make sure to "
+                f"sure to delete '{self.processed_dir}' first")
+
         f = osp.join(self.processed_dir, 'pre_filter.pt')
-        if osp.exists(f) and torch.load(f) != __repr__(self.pre_filter):
-            logging.warning(
-                'The `pre_filter` argument differs from the one used in the '
-                'pre-processed version of this dataset. If you really want to '
-                'make use of another pre-fitering technique, make sure to '
-                'delete `{}` first.'.format(self.processed_dir))
+        if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
+            warnings.warn(
+                "The `pre_filter` argument differs from the one used in the "
+                "pre-processed version of this dataset. If you want to make "
+                "use of another pre-fitering technique, make sure to delete "
+                "'{self.processed_dir}' first")
 
         if files_exist(self.processed_paths):  # pragma: no cover
             return
@@ -166,67 +165,104 @@ class Dataset(torch.utils.data.Dataset):
         self.process()
 
         path = osp.join(self.processed_dir, 'pre_transform.pt')
-        torch.save(__repr__(self.pre_transform), path)
+        torch.save(_repr(self.pre_transform), path)
         path = osp.join(self.processed_dir, 'pre_filter.pt')
-        torch.save(__repr__(self.pre_filter), path)
+        torch.save(_repr(self.pre_filter), path)
 
         print('Done!')
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""The number of examples in the dataset."""
-        if self.__indices__ is not None:
-            return len(self.__indices__)
-        return self.len()
+        return len(self.indices())
 
-    def __getitem__(self, idx):
-        r"""Gets the data object at index :obj:`idx` and transforms it (in case
-        a :obj:`self.transform` is given).
+    def __getitem__(
+        self,
+        idx: Union[int, np.integer, IndexType],
+    ) -> Union['Dataset', Data]:
+        r"""In case :obj:`idx` is of type integer, will return the data object
+        at index :obj:`idx` (and transforms it in case :obj:`transform` is
+        present).
         In case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a list, a
-        tuple, a  LongTensor or a BoolTensor, will return a subset of the
-        dataset at the specified indices."""
-        if isinstance(idx, (int, np.integer)):
+        tuple, a PyTorch :obj:`LongTensor` or a :obj:`BoolTensor`, or a numpy
+        :obj:`np.array`, will return a subset of the dataset at the specified
+        indices."""
+        if (isinstance(idx, (int, np.integer))
+                or (isinstance(idx, Tensor) and idx.dim() == 0)
+                or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
+
             data = self.get(self.indices()[idx])
             data = data if self.transform is None else self.transform(data)
             return data
+
         else:
             return self.index_select(idx)
 
-    def index_select(self, idx):
+    def index_select(self, idx: IndexType) -> 'Dataset':
         indices = self.indices()
 
         if isinstance(idx, slice):
             indices = indices[idx]
-        elif torch.is_tensor(idx):
-            if idx.dtype == torch.long:
-                if len(idx.shape) == 0:
-                    idx = idx.unsqueeze(0)
-                return self.index_select(idx.tolist())
-            elif idx.dtype == torch.bool or idx.dtype == torch.uint8:
-                return self.index_select(
-                    idx.nonzero(as_tuple=False).flatten().tolist())
-        elif isinstance(idx, (list, tuple, np.ndarray)):
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.long:
+            return self.index_select(idx.flatten().tolist())
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
+            idx = idx.flatten().nonzero(as_tuple=False)
+            return self.index_select(idx.flatten().tolist())
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
+            return self.index_select(idx.flatten().tolist())
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+            idx = idx.flatten().nonzero()[0]
+            return self.index_select(idx.flatten().tolist())
+
+        elif isinstance(idx, Sequence) and not isinstance(idx, str):
             indices = [indices[i] for i in idx]
+
         else:
             raise IndexError(
-                'Only integers, slices (`:`), list, tuples, and long or bool '
-                'tensors are valid indices (got {}).'.format(
-                    type(idx).__name__))
+                f"Only integers, slices (':'), list, tuples, long or bool "
+                f"PyTorch tensors and np.ndarrays are valid indices (got "
+                f"'{type(idx).__name__}')")
 
         dataset = copy.copy(self)
-        dataset.__indices__ = indices
+        dataset._indices = indices
         return dataset
 
-    def shuffle(self, return_perm=False):
+    def shuffle(
+        self,
+        return_perm: bool = False,
+    ) -> Union['Dataset', Tuple['Dataset', Tensor]]:
         r"""Randomly shuffles the examples in the dataset.
 
         Args:
-            return_perm (bool, optional): If set to :obj:`True`, will
-                additionally return the random permutation used to shuffle the
-                dataset. (default: :obj:`False`)
+            return_perm (bool, optional): If set to :obj:`True`, will return
+                the random permutation used to shuffle the dataset in addition.
+                (default: :obj:`False`)
         """
         perm = torch.randperm(len(self))
         dataset = self.index_select(perm)
         return (dataset, perm) if return_perm is True else dataset
 
-    def __repr__(self):  # pragma: no cover
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}({len(self)})'
+
+
+def to_list(value: Any) -> Sequence:
+    if isinstance(value, Sequence) and not isinstance(value, str):
+        return value
+    else:
+        return [value]
+
+
+def files_exist(files: List[str]) -> bool:
+    # NOTE: We return `False` in case `files` is empty, leading to a
+    # re-processing of files on every instantiation.
+    return len(files) != 0 and all([osp.exists(f) for f in files])
+
+
+def _repr(obj: Any) -> str:
+    if obj is None:
+        return 'None'
+    return re.sub('(<.*?)\\s.*(>)', r'\1\2', obj.__repr__())

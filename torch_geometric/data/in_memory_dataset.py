@@ -1,9 +1,13 @@
+from typing import Optional, Callable, List, Union, Tuple, Dict
+
 import copy
 from itertools import repeat, product
 
 import torch
 from torch import Tensor
-from torch_geometric.data import Dataset
+
+from torch_geometric.data.data import Data
+from torch_geometric.data.dataset import Dataset, IndexType
 
 
 class InMemoryDataset(Dataset):
@@ -30,13 +34,13 @@ class InMemoryDataset(Dataset):
             final dataset. (default: :obj:`None`)
     """
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
         order to skip the download."""
         raise NotImplementedError
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files to find in the :obj:`self.processed_dir`
         folder in order to skip the processing."""
         raise NotImplementedError
@@ -49,15 +53,17 @@ class InMemoryDataset(Dataset):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
-    def __init__(self, root=None, transform=None, pre_transform=None,
-                 pre_filter=None):
-        super(InMemoryDataset, self).__init__(root, transform, pre_transform,
-                                              pre_filter)
-        self.data, self.slices = None, None
-        self.__data_list__ = None
+    def __init__(self, root: Optional[str] = None,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+        super().__init__(root, transform, pre_transform, pre_filter)
+        self.data = None
+        self.slices = None
+        self._data_list: Optional[List[Data]] = None
 
     @property
-    def num_classes(self):
+    def num_classes(self) -> int:
         r"""The number of classes in the dataset."""
         y = self.data.y
         if y is None:
@@ -69,17 +75,17 @@ class InMemoryDataset(Dataset):
         else:
             return self.data.y.size(-1)
 
-    def len(self):
+    def len(self) -> int:
         for item in self.slices.values():
             return len(item) - 1
         return 0
 
-    def get(self, idx):
-        if hasattr(self, '__data_list__'):
-            if self.__data_list__ is None:
-                self.__data_list__ = self.len() * [None]
+    def get(self, idx: int) -> Data:
+        if hasattr(self, '_data_list'):
+            if self._data_list is None:
+                self._data_list = self.len() * [None]
             else:
-                data = self.__data_list__[idx]
+                data = self._data_list[idx]
                 if data is not None:
                     return copy.copy(data)
 
@@ -99,13 +105,13 @@ class InMemoryDataset(Dataset):
                 s = slice(start, end)
             data[key] = item[s]
 
-        if hasattr(self, '__data_list__'):
-            self.__data_list__[idx] = copy.copy(data)
+        if hasattr(self, '_data_list'):
+            self._data_list[idx] = copy.copy(data)
 
         return data
 
     @staticmethod
-    def collate(data_list):
+    def collate(data_list: List[Data]) -> Tuple[Data, Dict[str, Tensor]]:
         r"""Collates a python list of data objects to the internal storage
         format of :class:`torch_geometric.data.InMemoryDataset`."""
         keys = data_list[0].keys
@@ -143,13 +149,14 @@ class InMemoryDataset(Dataset):
 
         return data, slices
 
-    def copy(self, idx=None):
+    def copy(self, idx: Optional[IndexType] = None):
         if idx is None:
             data_list = [self.get(i) for i in range(len(self))]
         else:
-            data_list = [self.get(i) for i in idx]
+            data_list = [self.get(i) for i in self.index_select(idx).indices()]
+
         dataset = copy.copy(self)
-        dataset.__indices__ = None
-        dataset.__data_list__ = data_list
+        dataset._indices = None
+        dataset._data_list = data_list
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
