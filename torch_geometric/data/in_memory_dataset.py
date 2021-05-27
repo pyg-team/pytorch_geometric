@@ -124,9 +124,9 @@ class InMemoryDataset(Dataset):
 
                     output[key] = value[slice_obj]
 
-        for key, store in data._store_dict.items():
+        for store in data._stores:
             if hasattr(store, '_key') and store._key is not None:
-                _slice(store, self.slices[key], store)
+                _slice(store, self.slices[store._key], store)
             else:
                 _slice(store, self.slices, store)
 
