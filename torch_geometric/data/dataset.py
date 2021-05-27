@@ -1,4 +1,3 @@
-from __future__ import annotations
 from typing import List, Optional, Callable, Union, Any, Tuple
 
 import re
@@ -69,7 +68,7 @@ class Dataset(torch.utils.data.Dataset):
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
-        super(Dataset, self).__init__()
+        super().__init__()
 
         if isinstance(root, str):
             root = osp.expanduser(osp.normpath(root))
@@ -179,7 +178,7 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(
         self,
         idx: Union[int, np.integer, IndexType],
-    ) -> Union[Dataset, Data]:
+    ) -> Union['Dataset', Data]:
         r"""In case :obj:`idx` is of type integer, will return the data object
         at index :obj:`idx` (and transforms it in case :obj:`transform` is
         present).
@@ -198,7 +197,7 @@ class Dataset(torch.utils.data.Dataset):
         else:
             return self.index_select(idx)
 
-    def index_select(self, idx: IndexType) -> Dataset:
+    def index_select(self, idx: IndexType) -> 'Dataset':
         indices = self.indices()
 
         if isinstance(idx, slice):
@@ -218,7 +217,7 @@ class Dataset(torch.utils.data.Dataset):
             idx = idx.flatten().nonzero()[0]
             return self.index_select(idx.flatten().tolist())
 
-        elif isinstance(idx, Sequence):
+        elif isinstance(idx, Sequence) and not isinstance(idx, str):
             indices = [indices[i] for i in idx]
 
         else:
@@ -234,7 +233,7 @@ class Dataset(torch.utils.data.Dataset):
     def shuffle(
         self,
         return_perm: bool = False,
-    ) -> Union[Dataset, Tuple[Dataset, Tensor]]:
+    ) -> Union['Dataset', Tuple['Dataset', Tensor]]:
         r"""Randomly shuffles the examples in the dataset.
 
         Args:
