@@ -246,7 +246,8 @@ class Dataset(torch.utils.data.Dataset):
         return (dataset, perm) if return_perm is True else dataset
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({len(self)})'
+        arg_repr = str(len(self)) if len(self) > 1 else ''
+        return f'{self.__class__.__name__}({arg_repr})'
 
 
 def to_list(value: Any) -> Sequence:
