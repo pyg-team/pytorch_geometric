@@ -38,7 +38,7 @@ class MyDataset(Dataset):
     def _process(self):
         pass
 
-    def __len__(self):
+    def len(self):
         return 10
 
     def get(self, idx):
