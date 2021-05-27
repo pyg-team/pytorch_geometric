@@ -167,7 +167,7 @@ class Batch(Data):
                     end = self.__slices__[key][idx + 1]
                     item = item.narrow(dim, start, end - start)
                 elif isinstance(item, SparseTensor):
-                    for j, dim in enumerate(self._cat_dims[key]):
+                    for j, dim in enumerate(self.__cat_dims__[key]):
                         start = self.__slices__[key][idx][j].item()
                         end = self.__slices__[key][idx + 1][j].item()
                         item = item.narrow(dim, start, end - start)
