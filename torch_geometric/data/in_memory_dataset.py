@@ -1,4 +1,4 @@
-from typing import Optional, Callable, List, Union, Tuple, Dict
+from typing import Optional, Callable, List, Union, Tuple, Dict, Any
 
 import copy
 from itertools import repeat
@@ -10,6 +10,7 @@ import numpy as np
 from torch import Tensor
 
 from torch_geometric.data.data import BaseData
+from torch_geometric.data.storage import BaseStorage
 from torch_geometric.data.dataset import Dataset, IndexType
 
 
@@ -83,11 +84,9 @@ class InMemoryDataset(Dataset):
             return 1
 
         def _recurse(slices):
-            for value in slices.values():
-                if not isinstance(value, Mapping):
-                    return len(value) - 1
-                else:
-                    return _recurse(value)
+            for v in slices.values():
+                return _recurse(v) if isinstance(v, Mapping) else len(v) - 1
+            return 0
 
         return _recurse(self.slices)
 
@@ -100,30 +99,38 @@ class InMemoryDataset(Dataset):
         elif self._data_list[idx] is not None:
             return copy.copy(self._data_list[idx])
 
-        num_args = len(signature(self.data.__cat_dim__).parameters)
+        data = copy.copy(self.data)
+        num_args = len(signature(data.__cat_dim__).parameters)
 
-        def _recursive_slice_(inputs, slices):
-            for key, slice_info in slices.items():
-                if isinstance(slice_info, Mapping):
-                    _recursive_slice_(inputs[key], slice_info)
+        def _slice(output: Mapping, slices, store):
+            for key, value in output.items():
+                if isinstance(value, Mapping):
+                    _slice(value, slices[key], store)
                 else:
-                    value = inputs[key]
-                    start, end = int(slice_info[idx]), int(slice_info[idx + 1])
+                    start = int(slices[key][idx])
+                    end = int(slices[key][idx + 1])
+
                     if isinstance(value, (Tensor, np.ndarray)):
                         slice_obj = list(repeat(slice(None), value.ndim))
-                        # TODO: Inputs might not be a storage
-                        args = (key, value, inputs)[:num_args]
+                        args = (key, value, store)[:num_args]
                         dim = self.data.__cat_dim__(*args)
-                        dim = 0 if dim is None else dim
-                        slice_obj[dim] = slice(start, end)
+                        if dim is not None:
+                            slice_obj[dim] = slice(start, end)
+                        else:
+                            slice_obj[0] = start
                     elif start + 1 == end:
-                        slice_obj = slice_info[start]
+                        slice_obj = start
                     else:
                         slice_obj = slice(start, end)
-                    inputs[key] = value[slice_obj]
 
-        data = copy.copy(self.data)
-        _recursive_slice_(data, self.slices)
+                    output[key] = value[slice_obj]
+
+        for key, store in data._store_dict.items():
+            if hasattr(store, '_key') and store._key is not None:
+                _slice(store, self.slices[key], store)
+            else:
+                _slice(store, self.slices, store)
+
         self._data_list[idx] = copy.copy(data)
 
         return data
@@ -132,50 +139,59 @@ class InMemoryDataset(Dataset):
     def collate(
         data_list: List[BaseData]
     ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
-        r"""Collates a python list of data objects to the internal storage
-        format of :class:`torch_geometric.data.InMemoryDataset`."""
+        r"""Collates a Python list of data objects to the internal storage
+        format of :class:`~torch_geometric.data.InMemoryDataset`."""
         if len(data_list) == 1:
             return data_list[0], None
 
-        data = copy.copy(data_list[0])
         slices = {}
-
+        data = copy.copy(data_list[0])
         num_args = len(signature(data.__cat_dim__).parameters)
 
-        def _recursive_concat_(outputs, inputs, slices):
-            for key, value in outputs.items():
+        def _cat(inputs: List[Mapping], output: Mapping, slices, store):
+            for key, value in output.items():
                 if isinstance(value, Mapping):
                     slices[key] = {}
-                    inputs = [v[key] for v in inputs]
-                    _recursive_concat_(value, inputs, slices[key])
+                    _cat([v[key] for v in inputs], value, slices[key], store)
                 else:
-                    if isinstance(value, Tensor):  # TODO NUMPY
-                        args = (key, value, outputs)[:num_args]
+                    if isinstance(value, (Tensor, np.ndarray)):
+                        args = (key, value, store)[:num_args]
                         dim = data.__cat_dim__(*args)
-                        dim = 0 if dim is None else dim
-                        outputs[key] = [v[key] for v in inputs]
-                        if value.ndim > 0:
+                        output[key] = [v[key] for v in inputs]
+                        if value.ndim > 0 and dim is not None:
                             slices[key] = [0]
-                            slices[key] += [v[key].shape[dim] for v in inputs]
-                            outputs[key] = torch.cat(outputs[key], dim)
+                            slices[key] += [v.shape[dim] for v in output[key]]
+                            if isinstance(value, Tensor):
+                                output[key] = torch.cat(output[key], dim)
+                            else:
+                                output[key] = np.concatenate(output[key], dim)
                         else:
                             slices[key] = range(len(inputs) + 1)
-                            outputs[key] = torch.stack(outputs[key])
+                            if isinstance(value, Tensor):
+                                output[key] = torch.stack(output[key], 0)
+                            else:
+                                output[key] = np.stack(output[key], 0)
                     else:
                         slices[key] = range(len(inputs) + 1)
-                        outputs[key] = [v[key] for v in inputs]
+                        output[key] = [v[key] for v in inputs]
 
                     slices[key] = torch.tensor(slices[key])
 
-        # stores_2d: [num_stores, len(data_list)]
-        # TODO: _stores do not have to be stored in the same order
-        stores_2D = list(zip(*[elem._stores for elem in data_list]))
-        for store, stores in zip(data._stores, stores_2D):
+        # We group all storage objects of every data object in the
+        # `data_list` by key, i.e. `stores_dict: { store_key: [store, ...] }`.
+        stores_dict = {}
+        for elem in data_list:
+            for key, store in elem._store_dict.items():
+                stores_dict[key] = stores_dict.get(key, []) + [store]
+
+        # After which we concatenate all elements of all attributes in
+        # `data_list` together by recursively iterating over each store.
+        for key, store in data._store_dict.items():
             if hasattr(store, '_key') and store._key is not None:
                 slices[store._key] = {}
-                _recursive_concat_(store, stores, slices[store._key])
+                _cat(stores_dict[key], store, slices[store._key], store)
             else:
-                _recursive_concat_(store, stores, slices)
+                _cat(stores_dict[key], store, slices, store)
 
         return data, slices
 

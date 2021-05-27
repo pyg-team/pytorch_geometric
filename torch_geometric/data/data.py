@@ -43,6 +43,10 @@ class BaseData(object):
         raise NotImplementedError
 
     @property
+    def _store_dict(self) -> Dict[str, BaseStorage]:
+        raise NotImplementedError
+
+    @property
     def _stores(self) -> List[BaseStorage]:
         raise NotImplementedError
 
@@ -314,6 +318,10 @@ class Data(BaseData):
     def __repr__(self) -> str:
         info = [size_repr(key, value) for key, value in self._store.items()]
         return '{}({})'.format(self.__class__.__name__, ', '.join(info))
+
+    @property
+    def _store_dict(self) -> Dict[str, BaseStorage]:
+        return {'_store': self._store}
 
     @property
     def _stores(self) -> List[BaseStorage]:

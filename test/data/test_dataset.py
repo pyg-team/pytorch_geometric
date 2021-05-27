@@ -42,6 +42,7 @@ def test_collate_with_new_dimension():
     data = MyData(x=x, foo=foo, y=y)
 
     dataset = TestDataset([data, data])
+    print(dataset.data)
     assert str(dataset) == 'TestDataset(2)'
     assert len(dataset) == 2
 
