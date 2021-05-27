@@ -1,4 +1,4 @@
-from typing import Optional, Callable, List, Union, Tuple, Dict, Any
+from typing import Optional, Callable, List, Union, Tuple, Dict
 
 import copy
 from itertools import repeat
@@ -10,7 +10,6 @@ import numpy as np
 from torch import Tensor
 
 from torch_geometric.data.data import BaseData
-from torch_geometric.data.storage import BaseStorage
 from torch_geometric.data.dataset import Dataset, IndexType
 
 
