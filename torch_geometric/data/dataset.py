@@ -202,6 +202,7 @@ class Dataset(torch.utils.data.Dataset):
 
         if isinstance(idx, slice):
             indices = indices[idx]
+
         elif isinstance(idx, Tensor) and idx.dtype == torch.long:
             return self.index_select(idx.flatten().tolist())
 
