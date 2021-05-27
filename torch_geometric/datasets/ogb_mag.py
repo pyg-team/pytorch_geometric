@@ -109,4 +109,4 @@ class OGB_MAG(InMemoryDataset):
         torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self) -> str:
-        return 'ogbg-mag()'
+        return 'ogbn-mag()'
