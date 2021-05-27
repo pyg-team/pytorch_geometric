@@ -159,7 +159,9 @@ class InMemoryDataset(Dataset):
                         output[key] = [v[key] for v in inputs]
                         if value.ndim > 0 and dim is not None:
                             slices[key] = [0]
-                            slices[key] += [v.shape[dim] for v in output[key]]
+                            for v in output[key]:
+                                size = v.shape[dim]
+                                slices[key].append(slices[key][-1] + size)
                             if isinstance(value, Tensor):
                                 output[key] = torch.cat(output[key], dim)
                             else:
