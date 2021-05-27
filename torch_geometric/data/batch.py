@@ -30,8 +30,8 @@ class Batch(Data):
         assert 'batch' not in keys and 'ptr' not in keys
 
         batch = cls()
-        batch._num_graphs = len(data_list)
-        batch._data_class = data_list[0].__class__
+        batch.__num_graphs__ = len(data_list)
+        batch.__data_class__ = data_list[0].__class__
         for key in keys + ['batch']:
             batch[key] = []
         batch.ptr = [0]
@@ -117,10 +117,10 @@ class Batch(Data):
 
         batch.batch = None if len(batch.batch) == 0 else batch.batch
         batch.ptr = None if len(batch.ptr) == 1 else batch.ptr
-        batch._slices = slices
-        batch._cumsum = cumsum
-        batch._cat_dims = cat_dims
-        batch._num_nodes_list = num_nodes_list
+        batch.__slices__ = slices
+        batch.__cumsum__ = cumsum
+        batch.__cat_dims__ = cat_dims
+        batch.__num_nodes_list__ = num_nodes_list
 
         ref_data = data_list[0]
         for key in batch.keys:
@@ -146,39 +146,39 @@ class Batch(Data):
         The batch object must have been created via :meth:`from_data_list` in
         order to be able to reconstruct the initial objects."""
 
-        if not hasattr(self, '_slices'):
+        if not hasattr(self, '__slices__'):
             raise RuntimeError(
                 ('Cannot reconstruct data list from batch because the batch '
                  'object was not created using `Batch.from_data_list()`.'))
 
-        data = self._data_class()
+        data = self.__data_class__()
 
-        for key in self._slices.keys():
+        for key in self.__slices__.keys():
             item = self[key]
-            if self._cat_dims[key] is None:
+            if self.__cat_dims__[key] is None:
                 # The item was concatenated along a new batch dimension,
                 # so just index in that dimension:
                 item = item[idx]
             else:
                 # Narrow the item based on the values in `__slices__`.
                 if isinstance(item, Tensor):
-                    dim = self._cat_dims[key]
-                    start = self._slices[key][idx]
-                    end = self._slices[key][idx + 1]
+                    dim = self.__cat_dims__[key]
+                    start = self.__slices__[key][idx]
+                    end = self.__slices__[key][idx + 1]
                     item = item.narrow(dim, start, end - start)
                 elif isinstance(item, SparseTensor):
                     for j, dim in enumerate(self._cat_dims[key]):
-                        start = self._slices[key][idx][j].item()
-                        end = self._slices[key][idx + 1][j].item()
+                        start = self.__slices__[key][idx][j].item()
+                        end = self.__slices__[key][idx + 1][j].item()
                         item = item.narrow(dim, start, end - start)
                 else:
-                    start = self._slices[key][idx]
-                    end = self._slices[key][idx + 1]
+                    start = self.__slices__[key][idx]
+                    end = self.__slices__[key][idx + 1]
                     item = item[start:end]
                     item = item[0] if len(item) == 1 else item
 
             # Decrease its value by `cumsum` value:
-            cum = self._cumsum[key][idx]
+            cum = self.__cumsum__[key][idx]
             if isinstance(item, Tensor):
                 if not isinstance(cum, int) or cum != 0:
                     item = item - cum
@@ -193,8 +193,8 @@ class Batch(Data):
 
             data[key] = item
 
-        if self._num_nodes_list[idx] is not None:
-            data.num_nodes = self._num_nodes_list[idx]
+        if self.__num_nodes_list__[idx] is not None:
+            data.num_nodes = self.__num_nodes_list__[idx]
 
         return data
 
@@ -233,8 +233,8 @@ class Batch(Data):
     @property
     def num_graphs(self) -> int:
         """Returns the number of graphs in the batch."""
-        if hasattr(self, '_num_graphs'):
-            return self._num_graphs
+        if hasattr(self, '__num_graphs__'):
+            return self.__num_graphs__
         elif self.ptr is not None:
             return self.ptr.numel() + 1
         elif self.batch is not None:

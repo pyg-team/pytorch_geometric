@@ -411,24 +411,20 @@ class Data(BaseData):
         return self['x'] if 'x' in self._store else None
 
     @property
-    def pos(self) -> Any:
-        return self['pos'] if 'pos' in self._store else None
+    def edge_index(self) -> Any:
+        return self['edge_index'] if 'edge_index' in self._store else None
+
+    @property
+    def edge_attr(self) -> Any:
+        return self['edge_attr'] if 'edge_attr' in self._store else None
 
     @property
     def y(self) -> Any:
         return self['y'] if 'y' in self._store else None
 
     @property
-    def edge_index(self) -> Any:
-        return self['edge_index'] if 'edge_index' in self._store else None
-
-    @property
-    def adj_t(self) -> Any:
-        return self['adj_t'] if 'adj_t' in self._store else None
-
-    @property
-    def edge_attr(self) -> Any:
-        return self['edge_attr'] if 'edge_attr' in self._store else None
+    def pos(self) -> Any:
+        return self['pos'] if 'pos' in self._store else None
 
     # Deprecated functions ####################################################
 
