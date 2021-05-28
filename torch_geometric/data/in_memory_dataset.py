@@ -102,6 +102,14 @@ class InMemoryDataset(Dataset):
         num_args = len(signature(data.__cat_dim__).parameters)
 
         def _slice(output: Mapping, slices, store):
+            # * `output` denotes a mapping holding (child) elements of a copy
+            #   from `self.data` which we want to slice to only contain values
+            #   of the data element at position `idx`.
+            # * `slices` is a dictionary that holds information about how we
+            #   can reconstruct individual elements from a collated
+            #   representation, e.g.: `slices = { 'x': [0, 6, 10] }`
+            # * `store` denotes the parent store to which output elements
+            #   belong to
             for key, value in output.items():
                 if isinstance(value, Mapping):
                     _slice(value, slices[key], store)
@@ -148,6 +156,15 @@ class InMemoryDataset(Dataset):
         num_args = len(signature(data.__cat_dim__).parameters)
 
         def _cat(inputs: List[Mapping], output: Mapping, slices, store):
+            # * `inputs` is a list of dictionaries holding (child) elements of
+            #  `data_list`
+            # * `output` is the corresponding output mapping that stores the
+            #   corresponding elements of `inputs` in a collated representation
+            # * `slices` is a dictionary that holds information about how we
+            #   can reconstruct individual elements from a collated
+            #   representation, e.g.: `slices = { 'x': [0, 6, 10] }`
+            # * `store` denotes the parent store to which inputs and output
+            #   elements belong to
             for key, value in output.items():
                 if isinstance(value, Mapping):
                     slices[key] = {}

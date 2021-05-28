@@ -58,6 +58,7 @@ class Dataset(torch.utils.data.Dataset):
         raise NotImplementedError
 
     def len(self) -> int:
+        r"""Returns the number of graphs stored in the dataset."""
         raise NotImplementedError
 
     def get(self, idx: int) -> BaseData:
