@@ -13,7 +13,7 @@ from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
 
 
 class IMDB(InMemoryDataset):
-    r"""A subset of Internet Movie Database (IMDB), as collected in the
+    r"""A subset of the Internet Movie Database (IMDB), as collected in the
     `"MAGNN: Metapath Aggregated Graph Neural Network for Heterogeneous Graph
     Embedding" <https://arxiv.org/abs/2002.01680>`_ paper.
     IMDB is a heterogeneous graph containing three types of entities - movies
