@@ -114,7 +114,7 @@ class OGB_MAG(InMemoryDataset):
             idx = pd.read_csv(path, compression='gzip', header=None,
                               dtype=np.int64).values.flatten()
             idx = torch.from_numpy(idx)
-            mask = torch.zeros((data['paper'].num_nodes, ), dtype=torch.bool)
+            mask = torch.zeros(data['paper'].num_nodes, dtype=torch.bool)
             mask[idx] = True
             data['paper'][f'{v}_mask'] = mask
 
