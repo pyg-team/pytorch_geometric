@@ -222,8 +222,8 @@ class Dataset(torch.utils.data.Dataset):
 
         else:
             raise IndexError(
-                f"Only integers, slices (':'), list, tuples, long or bool "
-                f"PyTorch tensors and np.ndarrays are valid indices (got "
+                f"Only integers, slices (':'), list, tuples, torch.tensor and "
+                f"np.ndarray of dtype long or bool are valid indices (got "
                 f"'{type(idx).__name__}')")
 
         dataset = copy.copy(self)

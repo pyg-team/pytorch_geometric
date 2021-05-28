@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 import torch_geometric
 from torch_geometric.data import Data, Batch
 
@@ -34,6 +35,8 @@ def test_batch():
     assert len(batch.index_select([1, 0])) == 2
     assert len(batch.index_select(torch.tensor([1, 0]))) == 2
     assert len(batch.index_select(torch.tensor([True, False]))) == 1
+    assert len(batch.index_select(np.array([1, 0]))) == 2
+    assert len(batch.index_select(np.array([True, False]))) == 1
     assert len(batch[:2]) == 2
 
     data_list = batch.to_data_list()
