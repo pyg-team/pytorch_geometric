@@ -157,7 +157,7 @@ class InMemoryDataset(Dataset):
 
         def _cat(inputs: List[Mapping], output: Mapping, slices, store):
             # * `inputs` is a list of dictionaries holding (child) elements of
-            #  `data_list`
+            #   `data_list`
             # * `output` is the corresponding output mapping that stores the
             #   corresponding elements of `inputs` in a collated representation
             # * `slices` is a dictionary that holds information about how we
