@@ -228,13 +228,13 @@ class Batch(Data):
             idx = list(range(self.num_graphs)[idx])
 
         elif isinstance(idx, Tensor) and idx.dtype == torch.long:
-            idx = self.index_select(idx.flatten().tolist())
+            idx = idx.flatten().tolist()
 
         elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
             idx = idx.flatten().nonzero(as_tuple=False).flatten().tolist()
 
         elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
-            idx = self.index_select(idx.flatten().tolist())
+            idx = idx.flatten().tolist()
 
         elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
             idx = idx.flatten().nonzero()[0].flatten().tolist()
