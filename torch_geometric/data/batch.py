@@ -1,11 +1,15 @@
 from typing import List
 
-import numpy as np
+from collections.abc import Sequence
+
 import torch
+import numpy as np
 from torch import Tensor
 from torch_sparse import SparseTensor, cat
+
 import torch_geometric
 from torch_geometric.data import Data
+from torch_geometric.data.dataset import IndexType
 
 
 class Batch(Data):
@@ -172,10 +176,10 @@ class Batch(Data):
                  'object was not created using `Batch.from_data_list()`.'))
 
         data = self.__data_class__()
+        idx = self.num_graphs + idx if idx < 0 else idx
 
         for key in self.__slices__.keys():
             item = self[key]
-            idx = idx % self.num_graphs if -self.num_graphs < idx < 0 else idx
             if self.__cat_dims__[key] is None:
                 # The item was concatenated along a new batch dimension,
                 # so just index in that dimension:
@@ -219,24 +223,32 @@ class Batch(Data):
 
         return data
 
-    def index_select(self, idx: Tensor) -> List[Data]:
+    def index_select(self, idx: IndexType) -> List[Data]:
         if isinstance(idx, slice):
             idx = list(range(self.num_graphs)[idx])
-        elif torch.is_tensor(idx):
-            if idx.dtype == torch.bool:
-                idx = idx.nonzero(as_tuple=False).view(-1)
-            idx = idx.tolist()
-        elif isinstance(idx, np.ndarray):
-            if idx.dtype == np.bool:
-                idx = np.stack(idx.nonzero()).transpose().reshape(-1)
-            idx = idx.tolist()
-        elif isinstance(idx, (list, tuple)):
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.long:
+            return self.index_select(idx.flatten().tolist())
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
+            idx = idx.flatten().nonzero(as_tuple=False)
+            return self.index_select(idx.flatten().tolist())
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
+            return self.index_select(idx.flatten().tolist())
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+            idx = idx.flatten().nonzero()[0]
+            return self.index_select(idx.flatten().tolist())
+
+        elif isinstance(idx, Sequence) and not isinstance(idx, str):
             pass
+
         else:
             raise IndexError(
-                'Only integers, slices (`:`), list, tuples, bool or long or '
-                'int numpy arrays and long or bool tensors are valid indices '
-                '(got {}).'.format(type(idx).__name__))
+                f"Only integers, slices (':'), list, tuples, torch.tensor and "
+                f"np.ndarray of dtype long or bool are valid indices (got "
+                f"'{type(idx).__name__}')")
 
         return [self.get_example(i) for i in idx]
 
