@@ -312,8 +312,15 @@ class Data(BaseData):
         return out
 
     def __repr__(self) -> str:
-        info = [size_repr(key, value) for key, value in self._store.items()]
-        return '{}({})'.format(self.__class__.__name__, ', '.join(info))
+        cls = self.__class__.__name__
+        has_dict = any([isinstance(v, Mapping) for v in self._store.values()])
+
+        if not has_dict:
+            info = [size_repr(k, v) for k, v in self._store.items()]
+            return '{}({})'.format(cls, ', '.join(info))
+        else:
+            info = [size_repr(k, v, indent=2) for k, v in self._store.items()]
+            return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
 
     @property
     def _stores(self) -> List[BaseStorage]:
@@ -454,17 +461,18 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         out = f"'{value}'"
     elif isinstance(value, Sequence):
         out = str([len(value)])
-    elif isinstance(value, Mapping) and len(value) == 1:
+    elif (isinstance(value, Mapping) and len(value) == 1
+          and not isinstance(list(value.values())[0], Mapping)):
         lines = [size_repr(k, v, 0) for k, v in value.items()]
         out = '{ ' + ', '.join(lines) + ' }'
     elif isinstance(value, Mapping):
-        lines = [pad + size_repr(k, v, indent + 2) for k, v in value.items()]
+        lines = [size_repr(k, v, indent + 2) for k, v in value.items()]
         out = '{\n' + ',\n'.join(lines) + '\n' + pad + '}'
     else:
         out = str(value)
 
     key = str(key).replace("'", '')
-    if isinstance(value, (NodeStorage, EdgeStorage)):
+    if isinstance(value, BaseStorage):
         return f'{pad}\033[1m{key}\033[0m={out}'
     else:
         return f'{pad}{key}={out}'
