@@ -222,8 +222,8 @@ class Dataset(torch.utils.data.Dataset):
 
         else:
             raise IndexError(
-                f"Only integers, slices (':'), list, tuples, long or bool "
-                f"PyTorch tensors and np.ndarrays are valid indices (got "
+                f"Only integers, slices (':'), list, tuples, torch.tensor and "
+                f"np.ndarray of dtype long or bool are valid indices (got "
                 f"'{type(idx).__name__}')")
 
         dataset = copy.copy(self)
@@ -246,7 +246,8 @@ class Dataset(torch.utils.data.Dataset):
         return (dataset, perm) if return_perm is True else dataset
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({len(self)})'
+        arg_repr = str(len(self)) if len(self) > 1 else ''
+        return f'{self.__class__.__name__}({arg_repr})'
 
 
 def to_list(value: Any) -> Sequence:
