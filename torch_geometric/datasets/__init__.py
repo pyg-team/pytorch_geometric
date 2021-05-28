@@ -50,6 +50,7 @@ from .upfd import UPFD
 from .ogb_mag import OGB_MAG
 from .dblp import DBLP
 from .imdb import IMDB
+from .last_fm import LastFM
 
 __all__ = [
     'KarateClub',
@@ -106,6 +107,7 @@ __all__ = [
     'OGB_MAG',
     'DBLP',
     'IMDB',
+    'LastFM',
 ]
 
 classes = __all__
