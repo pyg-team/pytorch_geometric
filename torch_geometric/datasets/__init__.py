@@ -47,6 +47,10 @@ from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
+from .ogb_mag import OGB_MAG
+from .dblp import DBLP
+from .imdb import IMDB
+from .last_fm import LastFM
 
 __all__ = [
     'KarateClub',
@@ -100,6 +104,10 @@ __all__ = [
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'UPFD',
+    'OGB_MAG',
+    'DBLP',
+    'IMDB',
+    'LastFM',
 ]
 
 classes = __all__

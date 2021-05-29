@@ -136,6 +136,12 @@ class HeteroData(BaseData):
         return '{}(\n{}\n)'.format(self.__class__.__name__, ',\n'.join(info))
 
     @property
+    def _store_dict(self) -> Dict[str, BaseStorage]:
+        out = copy.copy(self._hetero_stores)
+        out['_global_store'] = self._global_store
+        return out
+
+    @property
     def _stores(self) -> List[BaseStorage]:
         return [self._global_store] + list(self._hetero_stores.values())
 
