@@ -1,4 +1,4 @@
-from typing import Optional, Callable, List, Union, Tuple, Dict
+from typing import Optional, Callable, List, Union, Tuple, Dict, Iterable
 
 import copy
 from itertools import repeat
@@ -81,13 +81,9 @@ class InMemoryDataset(Dataset):
     def len(self) -> int:
         if self.slices is None:
             return 1
-
-        def _recurse(slices):
-            for v in slices.values():
-                return _recurse(v) if isinstance(v, Mapping) else len(v) - 1
-            return 0
-
-        return _recurse(self.slices)
+        for _, value in nested_iter(self.slices):
+            return len(value) - 1
+        return 0
 
     def get(self, idx: int) -> BaseData:
         if self.len() == 1:
@@ -224,3 +220,12 @@ class InMemoryDataset(Dataset):
         dataset._data_list = data_list
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
+
+
+def nested_iter(mapping: Mapping) -> Iterable:
+    for key, value in mapping.items():
+        if isinstance(value, Mapping):
+            for inner_key, inner_value, parent in nested_iter(value):
+                yield inner_key, inner_value
+        else:
+            yield key, value
