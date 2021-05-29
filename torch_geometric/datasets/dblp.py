@@ -103,6 +103,9 @@ class DBLP(InMemoryDataset):
                 col = torch.from_numpy(A_sub.col).to(torch.long)
                 data[src, dst].edge_index = torch.stack([row, col], dim=0)
 
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
+
         torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self) -> str:

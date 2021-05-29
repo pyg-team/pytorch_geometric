@@ -118,6 +118,9 @@ class OGB_MAG(InMemoryDataset):
             mask[idx] = True
             data['paper'][f'{v}_mask'] = mask
 
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
+
         torch.save(self.collate([data]), self.processed_paths[0])
 
     def __repr__(self) -> str:
