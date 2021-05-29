@@ -225,7 +225,7 @@ class InMemoryDataset(Dataset):
 def nested_iter(mapping: Mapping) -> Iterable:
     for key, value in mapping.items():
         if isinstance(value, Mapping):
-            for inner_key, inner_value, parent in nested_iter(value):
+            for inner_key, inner_value in nested_iter(value):
                 yield inner_key, inner_value
         else:
             yield key, value
