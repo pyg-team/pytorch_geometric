@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import os
 import os.path as osp
 import glob
@@ -81,12 +83,13 @@ class GEDDataset(InMemoryDataset):
         'Sb', 'Se', 'Ni', 'Te'
     ]
 
-    def __init__(self, root, name, train=True, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(self, root: str, name: str, train: bool = True,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         self.name = name
         assert self.name in self.datasets.keys()
-        super(GEDDataset, self).__init__(root, transform, pre_transform,
-                                         pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
         path = osp.join(self.processed_dir, '{}_ged.pt'.format(self.name))
@@ -95,12 +98,12 @@ class GEDDataset(InMemoryDataset):
         self.norm_ged = torch.load(path)
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [osp.join(self.name, s) for s in ['train', 'test']]
 
     @property
-    def processed_file_names(self):
-        return ['{}_{}.pt'.format(self.name, s) for s in ['training', 'test']]
+    def processed_file_names(self) -> List[str]:
+        return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
 
     def download(self):
         name = self.datasets[self.name]['id']

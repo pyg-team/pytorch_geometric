@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import os
 import os.path as osp
 import pickle
@@ -47,9 +49,10 @@ class GNNBenchmarkDataset(InMemoryDataset):
     url = 'https://pytorch-geometric.com/datasets/benchmarking-gnns'
     csl_url = 'https://www.dropbox.com/s/rnbkp5ubgk82ocu/CSL.zip?dl=1'
 
-    def __init__(self, root, name, split='train', transform=None,
-                 pre_transform=None, pre_filter=None, use_node_attr=False,
-                 use_edge_attr=False, cleaned=False):
+    def __init__(self, root: str, name: str, split: str = "train",
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         self.name = name
         assert self.name in self.names
 
@@ -60,8 +63,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
                  'Instead, it is recommended to perform 5-fold cross '
                  'validation with stratifed sampling.'))
 
-        super(GNNBenchmarkDataset, self).__init__(root, transform,
-                                                  pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
         if split == 'train':
             path = self.processed_paths[0]
@@ -70,21 +72,21 @@ class GNNBenchmarkDataset(InMemoryDataset):
         elif split == 'test':
             path = self.processed_paths[2]
         else:
-            raise ValueError((f'Split {split} found, but expected either '
-                              'train, val, trainval or test'))
+            raise ValueError(f"Split '{split}' found, but expected either "
+                             f"'train', 'val', or 'test'")
 
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         name = self.name
         if name == 'CSL':
             return [
@@ -95,7 +97,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
             return [f'{name}_train.pt', f'{name}_val.pt', f'{name}_test.pt']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         if self.name == 'CSL':
             return ['data.pt']
         else:
@@ -125,7 +127,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
 
                 torch.save(self.collate(data_list), self.processed_paths[i])
 
-    def process_CSL(self):
+    def process_CSL(self) -> List[Data]:
         path = osp.join(self.raw_dir, 'graphs_Kary_Deterministic_Graphs.pkl')
         with open(path, 'rb') as f:
             adjs = pickle.load(f)
@@ -146,5 +148,5 @@ class GNNBenchmarkDataset(InMemoryDataset):
             data_list.append(data)
         return data_list
 
-    def __repr__(self):
-        return '{}({})'.format(self.name, len(self))
+    def __repr__(self) -> str:
+        return f'{self.name}({len(self)})'

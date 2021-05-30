@@ -1,3 +1,5 @@
+from typing import Optional, Callable
+
 import os
 import datetime
 
@@ -30,25 +32,23 @@ class BitcoinOTC(InMemoryDataset):
 
     url = 'https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz'
 
-    def __init__(self,
-                 root,
-                 edge_window_size=10,
-                 transform=None,
-                 pre_transform=None):
+    def __init__(self, root: str, edge_window_size: int = 10,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         self.edge_window_size = edge_window_size
-        super(BitcoinOTC, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return 'soc-sign-bitcoinotc.csv'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     @property
-    def num_nodes(self):
+    def num_nodes(self) -> int:
         return self.data.edge_index.max().item() + 1
 
     def download(self):
