@@ -1,12 +1,14 @@
-from typing import Union, Dict, Tuple, Optional
-from torch_geometric.typing import Metadata, Adj
+from typing import Union, Dict, Optional
+from torch_geometric.typing import NodeType, EdgeType, Metadata
 
 import math
 from itertools import chain
 
 import torch
 from torch import Tensor
-from torch.nn import ModuleDict, Parameter
+import torch.nn.functional as F
+from torch.nn import Parameter
+from torch_sparse import SparseTensor
 from torch_geometric.nn.dense import Linear
 from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
@@ -18,7 +20,6 @@ class HGTConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Dict[str, int]],
                  out_channels: int, metadata: Metadata, heads: int,
                  dropout: float = 0.0, **kwargs):
-
         super().__init__(aggr='add', node_dim=0, **kwargs)
 
         if not isinstance(in_channels, dict):
@@ -29,87 +30,103 @@ class HGTConv(MessagePassing):
         self.heads = heads
         self.dropout = dropout
 
-        self.k_lins = ModuleDict()
-        self.q_lins = ModuleDict()
-        self.v_lins = ModuleDict()
-        self.a_lins = ModuleDict()
-        self.skips = ModuleDict()
+        self.k_lin = torch.nn.ModuleDict()
+        self.q_lin = torch.nn.ModuleDict()
+        self.v_lin = torch.nn.ModuleDict()
+        self.a_lin = torch.nn.ModuleDict()
+        self.skip = torch.nn.ParameterDict()
         for node_type, in_channels in self.in_channels.items():
-            self.k_lins[node_type] = Linear(in_channels, out_channels)
-            self.q_lins[node_type] = Linear(in_channels, out_channels)
-            self.v_lins[node_type] = Linear(in_channels, out_channels)
-            self.a_lins[node_type] = Linear(out_channels, out_channels)
-            self.skips[node_type] = Parameter(torch.Tensor(1))
+            self.k_lin[node_type] = Linear(in_channels, out_channels)
+            self.q_lin[node_type] = Linear(in_channels, out_channels)
+            self.v_lin[node_type] = Linear(in_channels, out_channels)
+            self.a_lin[node_type] = Linear(out_channels, out_channels)
+            self.skip[node_type] = Parameter(torch.Tensor(1))
 
-        self.pri_rel = ModuleDict()
-        self.att_rel = ModuleDict()
-        self.msg_rel = ModuleDict()
+        self.a_rel = torch.nn.ParameterDict()
+        self.m_rel = torch.nn.ParameterDict()
+        self.p_rel = torch.nn.ParameterDict()
         dim = out_channels // heads
         for edge_type in metadata[1]:
             edge_type = '__'.join(edge_type)
-            self.pri_rel[edge_type] = Parameter(torch.Tensor(heads))
-            self.att_rel[edge_type] = Parameter(torch.Tensor(heads, dim, dim))
-            self.msg_rel[edge_type] = Parameter(torch.Tensor(heads, dim, dim))
+            self.a_rel[edge_type] = Parameter(torch.Tensor(heads, dim, dim))
+            self.m_rel[edge_type] = Parameter(torch.Tensor(heads, dim, dim))
+            self.p_rel[edge_type] = Parameter(torch.Tensor(heads))
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        for lin in chain(self.k_lins.values(), self.q_lins.values(),
-                         self.v_lins.values(), self.a_lins.values()):
+        for lin in chain(self.k_lin.values(), self.q_lin.values(),
+                         self.v_lin.values(), self.a_lin.values()):
             lin.reset_parameters()
-        for param in chain(self.skips.values(), self.pri_rel.values()):
+        for param in chain(self.skip.values(), self.p_rel.values()):
             ones(param)
-        for param in chain(self.att_rel.values(), self.msg_rel.values()):
+        for param in chain(self.a_rel.values(), self.m_rel.values()):
             glorot(param)
 
     def forward(
         self,
-        x_dict: Dict[str, Tensor],
-        edge_index_dict: Dict[Tuple[str, str, str], Adj],
-    ) -> Dict[str, Tensor]:
+        x_dict: Dict[NodeType, Tensor],
+        edge_index_dict: Union[Dict[EdgeType, Tensor],
+                               Dict[EdgeType, SparseTensor]]  # Support both
+    ) -> Dict[NodeType, Tensor]:
+        """"""
 
-        H, F = self.heads, self.out_channels // self.heads
+        H, D = self.heads, self.out_channels // self.heads
 
-        k_dict, q_dict, v_dict, out_dict, count_dict = {}, {}, {}, {}, {}
-        for node_type, x in x_dict.items():
-            k_dict[node_type] = self.k_lins[node_type](x).view(-1, H, F)
-            q_dict[node_type] = self.q_lins[node_type](x).view(-1, H, F)
-            v_dict[node_type] = self.v_lins[node_type](x).view(-1, H, F)
-            out_dict[node_type] = 0.
+        k_dict: Dict[str, Tensor] = {}
+        q_dict: Dict[str, Tensor] = {}
+        v_dict: Dict[str, Tensor] = {}
+        out_dict: Dict[str, Tensor] = {}
+        count_dict: Dict[str, float] = {}
+
+        # Iterate over node-types:
+        it = zip(self.k_lin.items(), self.q_lin.values(), self.v_lin.values())
+        for (node_type, k_lin), q_lin, v_lin in it:
+            x = x_dict[node_type]
+            k_dict[node_type] = k_lin(x).view(-1, H, D)
+            q_dict[node_type] = q_lin(x).view(-1, H, D)
+            v_dict[node_type] = v_lin(x).view(-1, H, D)
             count_dict[node_type] = 0.
 
-        for edge_type, edge_index in edge_index_dict.items():
-            src_type, _, dst_type = edge_type
-            edge_type = '__'.join(edge_type)
+        # Iterate over edge-types:
+        it = zip(self.a_rel.items(), self.m_rel.values(), self.p_rel.values())
+        for (edge_type, a_rel), m_rel, p_rel in it:
+            src_type, rel_type, dst_type = edge_type.split('__')
+            edge_index = edge_index_dict[(src_type, rel_type, dst_type)]
 
-            att_rel = self.att_rel[edge_type]
-            msg_rel = self.msg_rel[edge_type]
-            k = (k_dict[src_type].transpose(0, 1) @ att_rel).transpose(1, 0)
-            v = (k_dict[src_type].transpose(0, 1) @ msg_rel).transpose(1, 0)
+            k = (k_dict[src_type].transpose(0, 1) @ a_rel).transpose(1, 0)
+            v = (v_dict[src_type].transpose(0, 1) @ m_rel).transpose(1, 0)
 
+            # propagate_type: (k: Tensor, q: Tensor, v: Tensor, rel: Tensor)
             out = self.propagate(edge_index, k=k, q=q_dict[dst_type], v=v,
-                                 edge_type=edge_type, size=None)
+                                 rel=p_rel, size=None)
 
-            out_dict[dst_type] = out_dict[dst_type] + out
+            if dst_type in out_dict:
+                out_dict[dst_type] = out_dict[dst_type] + out
+            else:
+                out_dict[dst_type] = out
             count_dict[dst_type] += 1.
 
-        for node_type, out in out_dict.items():
-            out = out / count_dict[node_type]  # Mean type-wise aggregation.
+        # Iterate over node-types:
+        it = zip(self.a_lin.items(), self.skip.values())
+        for (node_type, a_lin), skip in it:
+            out = out_dict[node_type]
+            out = out / max(count_dict[node_type], 1.0)  # Mean aggregation.
             out = F.gelu(out)
-            out = self.q_lins[node_type](out)
+            out = a_lin(out)
             out = F.dropout(out, p=self.dropout, training=self.training)
             if out.size(-1) == x_dict[node_type].size(-1):
-                alpha = self.skip[node_type].sigmoid()
+                alpha = skip.sigmoid()
                 out = out * alpha + x_dict[node_type] * (1 - alpha)
             out_dict[node_type] = out
 
         return out_dict
 
-    def message(self, k_j: Tensor, q_i: Tensor, v_j: Tensor, edge_type: str,
+    def message(self, k_j: Tensor, q_i: Tensor, v_j: Tensor, rel: Tensor,
                 index: Tensor, ptr: Optional[Tensor],
                 size_i: Optional[int]) -> Tensor:
 
-        alpha = (q_i * k_j).sum(dim=-1) * self.pri_rel[edge_type]
+        alpha = (q_i * k_j).sum(dim=-1) * rel
         alpha = alpha / math.sqrt(q_i.size(-1))
         alpha = softmax(alpha, index, ptr, size_i)
         out = v_j * alpha.view(-1, self.heads, 1)
