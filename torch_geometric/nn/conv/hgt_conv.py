@@ -117,7 +117,7 @@ class HGTConv(MessagePassing):
             out = F.dropout(out, p=self.dropout, training=self.training)
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = skip.sigmoid()
-                out = out * alpha + x_dict[node_type] * (1 - alpha)
+                out = alpha * alpha + (1 - alpha) * x_dict[node_type]
             out_dict[node_type] = out
 
         return out_dict
