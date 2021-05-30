@@ -1,4 +1,4 @@
-from typing import Tuple, Optional, Union
+from typing import Tuple, Optional, Union, List
 
 from torch import Tensor
 from torch_sparse import SparseTensor
@@ -17,6 +17,8 @@ EdgeType = Tuple[str, str, str]
 # * via str: `data['writes']`
 # * via Tuple[str, str]: `data[('author', 'paper')]`
 QueryType = Union[NodeType, EdgeType, str, Tuple[str, str]]
+
+Metadata = Tuple[List[NodeType], List[EdgeType]]
 
 # Types for message passing ###################################################
 
