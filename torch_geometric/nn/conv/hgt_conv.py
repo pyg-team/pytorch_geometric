@@ -17,9 +17,30 @@ from ..inits import glorot, ones
 
 
 class HGTConv(MessagePassing):
-    def __init__(self, in_channels: Union[int, Dict[str, int]],
-                 out_channels: int, metadata: Metadata, heads: int,
-                 dropout: float = 0.0, **kwargs):
+    r"""The heterogeneous graph transformer operator from the `"Heterogeneous
+    Graph Transformer" <https://arxiv.org/abs/2003.01332>`_ paper
+
+    Args:
+        in_channels (int or Dict[str, int]): Size of each input sample of every
+            node type, or :obj:`-1` to derive the size from the first input(s)
+            to the forward method.
+        out_channels (int): Size of each output sample.
+        metadata (Tuple[List[str], List[Tuple[str, str, str]]]): The metadata
+            of the heterogeneous graph, *i.e.* its node and edge types given
+            by a list of strings and a list of string triplets, respectively.
+        heads (int, optional): Number of multi-head-attentions.
+            (default: :obj:`1`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
+    """
+    def __init__(
+        self,
+        in_channels: Union[int, Dict[str, int]],
+        out_channels: int,
+        metadata: Metadata,
+        heads: int = 1,
+        **kwargs,
+    ):
         super().__init__(aggr='add', node_dim=0, **kwargs)
 
         if not isinstance(in_channels, dict):
@@ -28,7 +49,6 @@ class HGTConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
-        self.dropout = dropout
 
         self.k_lin = torch.nn.ModuleDict()
         self.q_lin = torch.nn.ModuleDict()
@@ -114,7 +134,6 @@ class HGTConv(MessagePassing):
             out = out / max(count_dict[node_type], 1.0)  # Mean aggregation.
             out = F.gelu(out)
             out = a_lin(out)
-            out = F.dropout(out, p=self.dropout, training=self.training)
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = skip.sigmoid()
                 out = alpha * alpha + (1 - alpha) * x_dict[node_type]
