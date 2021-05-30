@@ -1,12 +1,9 @@
+from typing import Optional, Callable, List
+
 from itertools import product
 
 import torch
 from torch_geometric.data import InMemoryDataset, Data
-
-try:
-    import h5py
-except ImportError:
-    h5py = None
 
 
 class DynamicFAUST(InMemoryDataset):
@@ -69,8 +66,11 @@ class DynamicFAUST(InMemoryDataset):
         'running_on_spot_bugfix', 'shake_arms', 'shake_hips', 'shake_shoulders'
     ]
 
-    def __init__(self, root, subjects=None, categories=None, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(self, root: str, subjects: Optional[List[str]] = None,
+                 categories: Optional[List[str]] = None,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
 
         subjects = self.subjects if subjects is None else subjects
         subjects = [sid.lower() for sid in subjects]
@@ -84,32 +84,30 @@ class DynamicFAUST(InMemoryDataset):
             assert cat in self.categories
         self.categories = categories
 
-        super(DynamicFAUST, self).__init__(root, transform, pre_transform,
-                                           pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['registrations_m.hdf5', 'registrations_f.hdf5']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         sids = '_'.join([sid[-2:] for sid in self.subjects])
         cats = '_'.join([
             ''.join([w[0] for w in cat.split('_')]) for cat in self.categories
         ])
-        return '{}_{}.pt'.format(sids, cats)
+        return f'{sids}_{cats}.pt'
 
     def download(self):
         raise RuntimeError(
-            'Dataset not found. Please download male registrations '
-            '(registrations_m.hdf5) and female registrations '
-            '(registrations_f.hdf5) from {} and '
-            'move it to {}'.format(self.url, self.raw_dir))
+            f"Dataset not found. Please download male registrations "
+            f"'registrations_m.hdf5' and female registrations "
+            f"'registrations_f.hdf5' from '{self.url}' and move it to "
+            f"'{self.raw_dir}'")
 
     def process(self):
-        if h5py is None:
-            raise ImportError('`DynamicFAUST` requires `h5py`.')
+        import h5py
 
         fm = h5py.File(self.raw_paths[0], 'r')
         ff = h5py.File(self.raw_paths[1], 'r')
