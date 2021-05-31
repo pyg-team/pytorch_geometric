@@ -13,7 +13,7 @@ from torch_geometric.nn.dense import Linear
 from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
 
-from ..inits import glorot, ones
+from ..inits import glorot, ones, reset
 
 
 class HGTConv(MessagePassing):
@@ -75,13 +75,14 @@ class HGTConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        for lin in chain(self.k_lin.values(), self.q_lin.values(),
-                         self.v_lin.values(), self.a_lin.values()):
-            lin.reset_parameters()
-        for param in chain(self.skip.values(), self.p_rel.values()):
-            ones(param)
-        for param in chain(self.a_rel.values(), self.m_rel.values()):
-            glorot(param)
+        reset(self.k_lin)
+        reset(self.q_lin)
+        reset(self.v_lin)
+        reset(self.a_lin)
+        ones(self.skip)
+        ones(self.p_rel)
+        glorot(self.a_rel)
+        glorot(self.m_rel)
 
     def forward(
         self,
