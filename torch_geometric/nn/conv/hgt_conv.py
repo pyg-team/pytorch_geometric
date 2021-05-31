@@ -11,8 +11,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn.dense import Linear
 from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
-
-from ..inits import glorot, ones, reset
+from torch_geometric.nn.inits import glorot, ones, reset
 
 
 def rel_aggr(xs: List[Tensor], aggr: str) -> Optional[Tensor]:
