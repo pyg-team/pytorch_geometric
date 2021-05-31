@@ -10,6 +10,7 @@ lightning_logs/
 *.egg-info/
 .coverage
 .coverage.*
+coverage.xml
 .vscode
 .idea
 .venv

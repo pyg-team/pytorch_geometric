@@ -1,14 +1,22 @@
+import warnings
+
 import torch
-import numba
 import numpy as np
 from scipy.linalg import expm
 from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 from torch_sparse import coalesce
 from torch_scatter import scatter_add
 
+try:
+    import numba
+except ImportError:
+    numba = None
+
 
 def jit(**kwargs):
     def decorator(func):
+        if numba is None:
+            return func
         try:
             return numba.jit(cache=True, **kwargs)(func)
         except RuntimeError:
@@ -76,6 +84,11 @@ class GDC(object):
                  diffusion_kwargs=dict(method='ppr', alpha=0.15),
                  sparsification_kwargs=dict(method='threshold',
                                             avg_degree=64), exact=True):
+
+        if numba is None:
+            warnings.warn(('Efficiency of GDC can be greatly improved by '
+                           'installing numba.'))
+
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -513,6 +526,9 @@ class GDC(object):
 
         :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
         """
+        if numba is None:
+            raise ImportError('`GDC.ppr` requires `numba`.')
+
         alpha_eps = alpha * eps
         js = [[0]] * len(out_degree)
         vals = [[0.]] * len(out_degree)

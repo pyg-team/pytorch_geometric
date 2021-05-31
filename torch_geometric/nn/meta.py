@@ -47,7 +47,7 @@ class MetaLayer(torch.nn.Module):
                 self.edge_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
 
             def forward(self, src, dest, edge_attr, u, batch):
-                # source, target: [E, F_x], where E is the number of edges.
+                # src, dest: [E, F_x], where E is the number of edges.
                 # edge_attr: [E, F_e]
                 # u: [B, F_u], where B is the number of graphs.
                 # batch: [E] with max entry B - 1.

@@ -138,19 +138,16 @@ class XConv(torch.nn.Module):
 
         pos = pos[col] - pos[row]
 
-        x_star = self.mlp1(pos.view(N * K, D))
+        x_star = self.mlp1(pos)
         if x is not None:
             x = x.unsqueeze(-1) if x.dim() == 1 else x
             x = x[col].view(N, K, self.in_channels)
             x_star = torch.cat([x_star, x], dim=-1)
         x_star = x_star.transpose(1, 2).contiguous()
-        x_star = x_star.view(N, self.in_channels + self.hidden_channels, K, 1)
 
         transform_matrix = self.mlp2(pos.view(N, K * D))
-        transform_matrix = transform_matrix.view(N, 1, K, K)
 
-        x_transformed = torch.matmul(transform_matrix, x_star)
-        x_transformed = x_transformed.view(N, -1, K)
+        x_transformed = torch.matmul(x_star, transform_matrix)
 
         out = self.conv(x_transformed)
 

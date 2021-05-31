@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import torch
 from torch_geometric.data import download_url
 from torch_geometric.io import read_txt_array
@@ -33,34 +35,36 @@ class GDELT(EventDataset):
     url = 'https://github.com/INK-USC/RENet/raw/master/data/GDELT'
     splits = [0, 1734399, 1973164, 2278405]  # Train/Val/Test splits.
 
-    def __init__(self, root, split='train', transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(self, root: str, split: str = "train",
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         assert split in ['train', 'val', 'test']
-        super(GDELT, self).__init__(root, transform, pre_transform, pre_filter)
-        idx = self.processed_file_names.index('{}.pt'.format(split))
+        super().__init__(root, transform, pre_transform, pre_filter)
+        idx = self.processed_file_names.index(f'{split}.pt')
         self.data, self.slices = torch.load(self.processed_paths[idx])
 
     @property
-    def num_nodes(self):
+    def num_nodes(self) -> int:
         return 7691
 
     @property
-    def num_rels(self):
+    def num_rels(self) -> int:
         return 240
 
     @property
-    def raw_file_names(self):
-        return ['{}.txt'.format(name) for name in ['train', 'valid', 'test']]
+    def raw_file_names(self) -> List[str]:
+        return [f'{name}.txt' for name in ['train', 'valid', 'test']]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
         for filename in self.raw_file_names:
-            download_url('{}/{}'.format(self.url, filename), self.raw_dir)
+            download_url(f'{self.url}/{filename}', self.raw_dir)
 
-    def process_events(self):
+    def process_events(self) -> torch.Tensor:
         events = []
         for path in self.raw_paths:
             data = read_txt_array(path, sep='\t', end=4, dtype=torch.long)
