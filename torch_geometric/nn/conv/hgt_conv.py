@@ -2,7 +2,6 @@ from typing import Union, Dict, Optional
 from torch_geometric.typing import NodeType, EdgeType, Metadata
 
 import math
-from itertools import chain
 
 import torch
 from torch import Tensor
@@ -88,7 +87,7 @@ class HGTConv(MessagePassing):
         self,
         x_dict: Dict[NodeType, Tensor],
         edge_index_dict: Union[Dict[EdgeType, Tensor],
-                               Dict[EdgeType, SparseTensor]]  # Support both
+                               Dict[EdgeType, SparseTensor]]  # Support both.
     ) -> Dict[NodeType, Tensor]:
         """"""
 
@@ -101,26 +100,25 @@ class HGTConv(MessagePassing):
         count_dict: Dict[str, float] = {}
 
         # Iterate over node-types:
-        it = zip(self.k_lin.items(), self.q_lin.values(), self.v_lin.values())
-        for (node_type, k_lin), q_lin, v_lin in it:
-            x = x_dict[node_type]
-            k_dict[node_type] = k_lin(x).view(-1, H, D)
-            q_dict[node_type] = q_lin(x).view(-1, H, D)
-            v_dict[node_type] = v_lin(x).view(-1, H, D)
+        for node_type, x in x_dict.items():
+            k_dict[node_type] = self.k_lin[node_type](x).view(-1, H, D)
+            q_dict[node_type] = self.q_lin[node_type](x).view(-1, H, D)
+            v_dict[node_type] = self.v_lin[node_type](x).view(-1, H, D)
             count_dict[node_type] = 0.
 
-        # Iterate over edge-types:
-        it = zip(self.a_rel.items(), self.m_rel.values(), self.p_rel.values())
-        for (edge_type, a_rel), m_rel, p_rel in it:
-            src_type, rel_type, dst_type = edge_type.split('__')
-            edge_index = edge_index_dict[(src_type, rel_type, dst_type)]
+        for edge_type, edge_index in edge_index_dict.items():
+            src_type, _, dst_type = edge_type
+            edge_type = '__'.join(edge_type)
 
+            a_rel = self.a_rel[edge_type]
             k = (k_dict[src_type].transpose(0, 1) @ a_rel).transpose(1, 0)
+
+            m_rel = self.m_rel[edge_type]
             v = (v_dict[src_type].transpose(0, 1) @ m_rel).transpose(1, 0)
 
             # propagate_type: (k: Tensor, q: Tensor, v: Tensor, rel: Tensor)
             out = self.propagate(edge_index, k=k, q=q_dict[dst_type], v=v,
-                                 rel=p_rel, size=None)
+                                 rel=self.p_rel[edge_type], size=None)
 
             if dst_type in out_dict:
                 out_dict[dst_type] = out_dict[dst_type] + out
@@ -129,14 +127,12 @@ class HGTConv(MessagePassing):
             count_dict[dst_type] += 1.
 
         # Iterate over node-types:
-        it = zip(self.a_lin.items(), self.skip.values())
-        for (node_type, a_lin), skip in it:
-            out = out_dict[node_type]
+        for node_type, out in out_dict.items():
             out = out / max(count_dict[node_type], 1.0)  # Mean aggregation.
             out = F.gelu(out)
-            out = a_lin(out)
+            out = self.a_lin[node_type](out)
             if out.size(-1) == x_dict[node_type].size(-1):
-                alpha = skip.sigmoid()
+                alpha = self.skip[node_type].sigmoid()
                 out = alpha * alpha + (1 - alpha) * x_dict[node_type]
             out_dict[node_type] = out
 
