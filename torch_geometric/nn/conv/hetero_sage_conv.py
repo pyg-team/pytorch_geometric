@@ -11,6 +11,7 @@ from typing import (
     Dict,
 )
 
+
 class HeteroSAGEConv(pyg_nn.MessagePassing):
     r"""The heterogeneous compitable GraphSAGE operator is derived from the `"Inductive Representation
     Learning on Large Graphs" <https://arxiv.org/abs/1706.02216>`_, `"Modeling polypharmacy side
@@ -28,7 +29,8 @@ class HeteroSAGEConv(pyg_nn.MessagePassing):
         remove_self_loop (bool): Whether to remove self loops using :class:`torch_geometric.utils.remove_self_loops`.
             Default is `True`.
     """
-    def __init__(self, in_channels_neighbor, out_channels, in_channels_self=None, remove_self_loop=True):
+    def __init__(self, in_channels_neighbor, out_channels,
+                 in_channels_self=None, remove_self_loop=True):
         super(HeteroSAGEConv, self).__init__(aggr="add")
         self.remove_self_loop = remove_self_loop
         self.in_channels_neigh = in_channels_neighbor
@@ -54,12 +56,10 @@ class HeteroSAGEConv(pyg_nn.MessagePassing):
         """
         if self.remove_self_loop:
             edge_index, _ = pyg_utils.remove_self_loops(edge_index)
-        return self.propagate(
-            edge_index, size=size,
-            node_feature_neigh=node_feature_neigh,
-            node_feature_self=node_feature_self,
-            edge_weight=edge_weight, res_n_id=res_n_id
-        )
+        return self.propagate(edge_index, size=size,
+                              node_feature_neigh=node_feature_neigh,
+                              node_feature_self=node_feature_self,
+                              edge_weight=edge_weight, res_n_id=res_n_id)
 
     def message(self, node_feature_neigh_j, node_feature_self_i, edge_weight):
         r"""
@@ -91,5 +91,4 @@ class HeteroSAGEConv(pyg_nn.MessagePassing):
         return (
             f"{self.__class__.__name__}"
             f"(neigh: {self.in_channels_neigh}, self: {self.in_channels_self}, "
-            f"out: {self.out_channels})"
-        )
+            f"out: {self.out_channels})")

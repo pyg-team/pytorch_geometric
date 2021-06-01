@@ -11,6 +11,7 @@ from typing import (
     Dict,
 )
 
+
 class HeteroConv(torch.nn.Module):
     r"""A "wrapper" layer designed for heterogeneous graph layers. It takes a
     heterogeneous graph layer, such as :class:`torch_geometric.conv.hetero_sage_conv.HeteroSAGEConv`, 
@@ -18,7 +19,7 @@ class HeteroConv(torch.nn.Module):
     .. note::
         For more detailed use of :class:`HeteroConv`, TODO: example
     """
-    def __init__(self, convs, aggr="add", parallelize=False):
+    def __init__(self, convs, aggr="add"):
         super(HeteroConv, self).__init__()
 
         assert isinstance(convs, container_abcs.Mapping)
@@ -27,11 +28,6 @@ class HeteroConv(torch.nn.Module):
 
         assert aggr in ["add", "mean", "max", "mul", "concat", None]
         self.aggr = aggr
-
-        if parallelize and torch.cuda.is_available():
-            self.streams = {key: torch.cuda.Stream() for key in convs.keys()}
-        else:
-            self.streams = None
 
     def reset_parameters(self):
         r"""
@@ -49,10 +45,7 @@ class HeteroConv(torch.nn.Module):
             edge_features (Dict[str, Tensor]): A dictionary each key is edge type and the corresponding
                 value is an edge feature tensor. The default value is `None`.
         """
-        # TODO: graph is not defined
-        if self.streams is not None and graph.not_in_gpu():
-            raise RuntimeError("Cannot parallelize on non-gpu graphs")
-
+        
         # node embedding computed from each message type
         message_type_emb = {}
         for message_key, message_type in edge_indices.items():
@@ -66,27 +59,11 @@ class HeteroConv(torch.nn.Module):
                 edge_feature = edge_features[edge_type]
             edge_index = edge_indices[message_key]
 
-            # Perform message passing.
-            if self.streams is not None:
-                with torch.cuda.stream(self.streams[message_key]):
-                    message_type_emb[message_key] = (
-                        self.convs[message_key](
-                            node_feature_neigh,
-                            node_feature_self,
-                            edge_index,
-                        )
-                    )
-            else:
-                message_type_emb[message_key] = (
-                    self.convs[message_key](
-                        node_feature_neigh,
-                        node_feature_self,
-                        edge_index,
-                    )
-                )
-
-        if self.streams is not None:
-            torch.cuda.synchronize()
+            message_type_emb[message_key] = self.convs[message_key](
+                node_feature_neigh,
+                node_feature_self,
+                edge_index,
+            )
 
         # aggregate node embeddings from different message types into 1 node
         # embedding for each node
@@ -165,4 +142,3 @@ def loss_op(pred, y, index, loss_func):
         idx = index[node_type]
         loss += loss_func(pred[node_type][idx], y[node_type])
     return loss
-
