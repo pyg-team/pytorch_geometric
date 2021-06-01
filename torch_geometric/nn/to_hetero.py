@@ -161,6 +161,8 @@ class ToHeteroTransformer(Transformer):
             self.graph.inserting_after(out)
 
         # Perform destination-wise aggregation.
+        # Here, we aggregate in pairs, popping the first two elements of
+        # `keys_per_dst` and append the result to the list.
         for dst, keys in keys_per_dst.items():
             queue = deque([key_name[key] for key in keys])
             i = len(queue) + 1
