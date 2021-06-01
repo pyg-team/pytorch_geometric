@@ -49,11 +49,7 @@ class Transformer(object):
         debug: (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
-    def __init__(
-        self,
-        module: Module,
-        debug: bool = False,
-    ):
+    def __init__(self, module: Module, debug: bool = False):
         self.module = module
         self.gm = symbolic_trace(module)
         self.debug = debug
@@ -91,6 +87,9 @@ class Transformer(object):
         return self.gm.graph
 
     def transform(self) -> GraphModule:
+        r"""Transforms :obj:`self.module` and returns a tranfromed
+        :class:`torch.fx.GraphModule`."""
+
         if self.debug:
             self.graph.print_tabular()
             print()
