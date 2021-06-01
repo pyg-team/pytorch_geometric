@@ -252,7 +252,7 @@ class Batch(Data):
         if hasattr(self, '__num_graphs__'):
             return self.__num_graphs__
         elif self.ptr is not None:
-            return self.ptr.numel() + 1
+            return self.ptr.numel() - 1
         elif self.batch is not None:
             return int(self.batch.max()) + 1
         else:
