@@ -1,9 +1,16 @@
+from typing import Optional, Callable, List, Union, Tuple, Dict, Iterable
+
 import copy
-from itertools import repeat, product
+from itertools import repeat
+from inspect import signature
+from collections.abc import Mapping
 
 import torch
+import numpy as np
 from torch import Tensor
-from torch_geometric.data import Dataset
+
+from torch_geometric.data.data import BaseData
+from torch_geometric.data.dataset import Dataset, IndexType
 
 
 class InMemoryDataset(Dataset):
@@ -30,13 +37,13 @@ class InMemoryDataset(Dataset):
             final dataset. (default: :obj:`None`)
     """
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files to find in the :obj:`self.raw_dir` folder in
         order to skip the download."""
         raise NotImplementedError
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> Union[str, List[str], Tuple]:
         r"""The name of the files to find in the :obj:`self.processed_dir`
         folder in order to skip the processing."""
         raise NotImplementedError
@@ -49,15 +56,17 @@ class InMemoryDataset(Dataset):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
-    def __init__(self, root=None, transform=None, pre_transform=None,
-                 pre_filter=None):
-        super(InMemoryDataset, self).__init__(root, transform, pre_transform,
-                                              pre_filter)
-        self.data, self.slices = None, None
-        self.__data_list__ = None
+    def __init__(self, root: Optional[str] = None,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+        super().__init__(root, transform, pre_transform, pre_filter)
+        self.data = None
+        self.slices = None
+        self._data_list: Optional[List[BaseData]] = None
 
     @property
-    def num_classes(self):
+    def num_classes(self) -> int:
         r"""The number of classes in the dataset."""
         y = self.data.y
         if y is None:
@@ -69,95 +78,154 @@ class InMemoryDataset(Dataset):
         else:
             return self.data.y.size(-1)
 
-    def len(self):
-        for item in self.slices.values():
-            return len(item) - 1
+    def len(self) -> int:
+        if self.slices is None:
+            return 1
+        for _, value in nested_iter(self.slices):
+            return len(value) - 1
         return 0
 
-    def get(self, idx):
-        if hasattr(self, '__data_list__'):
-            if self.__data_list__ is None:
-                self.__data_list__ = self.len() * [None]
+    def get(self, idx: int) -> BaseData:
+        if self.len() == 1:
+            return copy.copy(self.data)
+
+        if not hasattr(self, '_data_list') or self._data_list is None:
+            self._data_list = self.len() * [None]
+        elif self._data_list[idx] is not None:
+            return copy.copy(self._data_list[idx])
+
+        data = copy.copy(self.data)
+        num_args = len(signature(data.__cat_dim__).parameters)
+
+        def _slice(output: Mapping, slices, store):
+            # * `output` denotes a mapping holding (child) elements of a copy
+            #   from `self.data` which we want to slice to only contain values
+            #   of the data element at position `idx`.
+            # * `slices` is a dictionary that holds information about how we
+            #   can reconstruct individual elements from a collated
+            #   representation, e.g.: `slices = { 'x': [0, 6, 10] }`
+            # * `store` denotes the parent store to which output elements
+            #   belong to
+            for key, value in output.items():
+                if isinstance(value, Mapping):
+                    _slice(value, slices[key], store)
+                else:
+                    start = int(slices[key][idx])
+                    end = int(slices[key][idx + 1])
+
+                    if isinstance(value, (Tensor, np.ndarray)):
+                        slice_obj = list(repeat(slice(None), value.ndim))
+                        args = (key, value, store)[:num_args]
+                        dim = self.data.__cat_dim__(*args)
+                        if dim is not None:
+                            slice_obj[dim] = slice(start, end)
+                        else:
+                            slice_obj[0] = start
+                    elif start + 1 == end:
+                        slice_obj = start
+                    else:
+                        slice_obj = slice(start, end)
+
+                    output[key] = value[slice_obj]
+
+        for store in data._stores:
+            if hasattr(store, '_key') and store._key is not None:
+                _slice(store, self.slices[store._key], store)
             else:
-                data = self.__data_list__[idx]
-                if data is not None:
-                    return copy.copy(data)
+                _slice(store, self.slices, store)
 
-        data = self.data.__class__()
-        if hasattr(self.data, '__num_nodes__'):
-            data.num_nodes = self.data.__num_nodes__[idx]
-
-        for key in self.data.keys:
-            item, slices = self.data[key], self.slices[key]
-            start, end = slices[idx].item(), slices[idx + 1].item()
-            if torch.is_tensor(item):
-                s = list(repeat(slice(None), item.dim()))
-                cat_dim = self.data.__cat_dim__(key, item)
-                if cat_dim is None:
-                    cat_dim = 0
-                s[cat_dim] = slice(start, end)
-            elif start + 1 == end:
-                s = slices[start]
-            else:
-                s = slice(start, end)
-            data[key] = item[s]
-
-        if hasattr(self, '__data_list__'):
-            self.__data_list__[idx] = copy.copy(data)
+        self._data_list[idx] = copy.copy(data)
 
         return data
 
     @staticmethod
-    def collate(data_list):
-        r"""Collates a python list of data objects to the internal storage
-        format of :class:`torch_geometric.data.InMemoryDataset`."""
-        keys = data_list[0].keys
-        data = data_list[0].__class__()
+    def collate(
+        data_list: List[BaseData]
+    ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
+        r"""Collates a Python list of data objects to the internal storage
+        format of :class:`~torch_geometric.data.InMemoryDataset`."""
+        if len(data_list) == 1:
+            return data_list[0], None
 
-        for key in keys:
-            data[key] = []
-        slices = {key: [0] for key in keys}
+        slices = {}
+        data = copy.copy(data_list[0])
+        num_args = len(signature(data.__cat_dim__).parameters)
 
-        for item, key in product(data_list, keys):
-            data[key].append(item[key])
-            if isinstance(item[key], Tensor) and item[key].dim() > 0:
-                cat_dim = item.__cat_dim__(key, item[key])
-                cat_dim = 0 if cat_dim is None else cat_dim
-                s = slices[key][-1] + item[key].size(cat_dim)
-            else:
-                s = slices[key][-1] + 1
-            slices[key].append(s)
-
-        if hasattr(data_list[0], '__num_nodes__'):
-            data.__num_nodes__ = []
-            for item in data_list:
-                data.__num_nodes__.append(item.num_nodes)
-
-        for key in keys:
-            item = data_list[0][key]
-            if isinstance(item, Tensor) and len(data_list) > 1:
-                if item.dim() > 0:
-                    cat_dim = data.__cat_dim__(key, item)
-                    cat_dim = 0 if cat_dim is None else cat_dim
-                    data[key] = torch.cat(data[key], dim=cat_dim)
+        def _cat(inputs: List[Mapping], output: Mapping, slices, store):
+            # * `inputs` is a list of dictionaries holding (child) elements of
+            #   `data_list`
+            # * `output` is the corresponding output mapping that stores the
+            #   corresponding elements of `inputs` in a collated representation
+            # * `slices` is a dictionary that holds information about how we
+            #   can reconstruct individual elements from a collated
+            #   representation, e.g.: `slices = { 'x': [0, 6, 10] }`
+            # * `store` denotes the parent store to which inputs and output
+            #   elements belong to
+            for key, value in output.items():
+                if isinstance(value, Mapping):
+                    slices[key] = {}
+                    _cat([v[key] for v in inputs], value, slices[key], store)
                 else:
-                    data[key] = torch.stack(data[key])
-            elif isinstance(item, Tensor):  # Don't duplicate attributes...
-                data[key] = data[key][0]
-            elif isinstance(item, int) or isinstance(item, float):
-                data[key] = torch.tensor(data[key])
+                    if isinstance(value, (Tensor, np.ndarray)):
+                        args = (key, value, store)[:num_args]
+                        dim = data.__cat_dim__(*args)
+                        output[key] = [v[key] for v in inputs]
+                        if value.ndim > 0 and dim is not None:
+                            slices[key] = [0]
+                            for v in output[key]:
+                                size = v.shape[dim]
+                                slices[key].append(slices[key][-1] + size)
+                            if isinstance(value, Tensor):
+                                output[key] = torch.cat(output[key], dim)
+                            else:
+                                output[key] = np.concatenate(output[key], dim)
+                        else:
+                            slices[key] = range(len(inputs) + 1)
+                            if isinstance(value, Tensor):
+                                output[key] = torch.stack(output[key], 0)
+                            else:
+                                output[key] = np.stack(output[key], 0)
+                    else:
+                        slices[key] = range(len(inputs) + 1)
+                        output[key] = [v[key] for v in inputs]
 
-            slices[key] = torch.tensor(slices[key], dtype=torch.long)
+                    slices[key] = torch.tensor(slices[key])
+
+        # We group all storage objects of every data object in the
+        # `data_list` by key, i.e. `stores_dict: { store_key: [store, ...] }`.
+        stores_dict = {}
+        for elem in data_list:
+            for key, store in elem._store_dict.items():
+                stores_dict[key] = stores_dict.get(key, []) + [store]
+
+        # After which we concatenate all elements of all attributes in
+        # `data_list` together by recursively iterating over each store.
+        for key, store in data._store_dict.items():
+            if hasattr(store, '_key') and store._key is not None:
+                slices[store._key] = {}
+                _cat(stores_dict[key], store, slices[store._key], store)
+            else:
+                _cat(stores_dict[key], store, slices, store)
 
         return data, slices
 
-    def copy(self, idx=None):
+    def copy(self, idx: Optional[IndexType] = None):
         if idx is None:
             data_list = [self.get(i) for i in range(len(self))]
         else:
-            data_list = [self.get(i) for i in idx]
+            data_list = [self.get(i) for i in self.index_select(idx).indices()]
+
         dataset = copy.copy(self)
-        dataset.__indices__ = None
-        dataset.__data_list__ = data_list
+        dataset._indices = None
+        dataset._data_list = data_list
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
+
+
+def nested_iter(mapping: Mapping) -> Iterable:
+    for key, value in mapping.items():
+        if isinstance(value, Mapping):
+            for inner_key, inner_value in nested_iter(value):
+                yield inner_key, inner_value
+        else:
+            yield key, value

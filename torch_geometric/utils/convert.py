@@ -135,7 +135,8 @@ def from_networkx(G):
 
     data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)
-    data.num_nodes = G.number_of_nodes()
+    if data.x is None:
+        data.num_nodes = G.number_of_nodes()
 
     return data
 

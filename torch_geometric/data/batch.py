@@ -1,10 +1,15 @@
 from typing import List
 
+from collections.abc import Sequence
+
 import torch
+import numpy as np
 from torch import Tensor
 from torch_sparse import SparseTensor, cat
+
 import torch_geometric
 from torch_geometric.data import Data
+from torch_geometric.data.dataset import IndexType
 
 
 class Batch(Data):
@@ -14,24 +19,6 @@ class Batch(Data):
     In addition, single graphs can be reconstructed via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
-    def __init__(self, batch=None, ptr=None, **kwargs):
-        super(Batch, self).__init__(**kwargs)
-
-        for key, item in kwargs.items():
-            if key == 'num_nodes':
-                self.__num_nodes__ = item
-            else:
-                self[key] = item
-
-        self.batch = batch
-        self.ptr = ptr
-        self.__data_class__ = Data
-        self.__slices__ = None
-        self.__cumsum__ = None
-        self.__cat_dims__ = None
-        self.__num_nodes_list__ = None
-        self.__num_graphs__ = None
-
     @classmethod
     def from_data_list(cls, data_list, follow_batch=[], exclude_keys=[]):
         r"""Constructs a batch object from a python list holding
@@ -41,19 +28,18 @@ class Batch(Data):
         :obj:`follow_batch`.
         Will exclude any keys given in :obj:`exclude_keys`."""
 
-        keys = list(set(data_list[0].keys) - set(exclude_keys))
+        keys = set(data_list[0].keys)
+        keys -= {'num_nodes', 'num_edges'}
+        keys -= set(exclude_keys)
+        keys = sorted(list(keys))
         assert 'batch' not in keys and 'ptr' not in keys
 
         batch = cls()
-        for key in data_list[0].__dict__.keys():
-            if key[:2] != '__' and key[-2:] != '__':
-                batch[key] = None
-
         batch.__num_graphs__ = len(data_list)
         batch.__data_class__ = data_list[0].__class__
         for key in keys + ['batch']:
             batch[key] = []
-        batch['ptr'] = [0]
+        batch.ptr = [0]
 
         device = None
         slices = {key: [0] for key in keys}
@@ -122,8 +108,8 @@ class Batch(Data):
                             torch.full((size, ), i, dtype=torch.long,
                                        device=device))
 
-            if hasattr(data, '__num_nodes__'):
-                num_nodes_list.append(data.__num_nodes__)
+            if 'num_nodes' in data:
+                num_nodes_list.append(data.num_nodes)
             else:
                 num_nodes_list.append(None)
 
@@ -157,7 +143,7 @@ class Batch(Data):
         if torch_geometric.is_debug_enabled():
             batch.debug()
 
-        return batch.contiguous()
+        return batch
 
     def get_example(self, idx: int) -> Data:
         r"""Reconstructs the :class:`torch_geometric.data.Data` object at index
@@ -165,12 +151,13 @@ class Batch(Data):
         The batch object must have been created via :meth:`from_data_list` in
         order to be able to reconstruct the initial objects."""
 
-        if self.__slices__ is None:
+        if not hasattr(self, '__slices__'):
             raise RuntimeError(
                 ('Cannot reconstruct data list from batch because the batch '
                  'object was not created using `Batch.from_data_list()`.'))
 
         data = self.__data_class__()
+        idx = self.num_graphs + idx if idx < 0 else idx
 
         for key in self.__slices__.keys():
             item = self[key]
@@ -217,27 +204,37 @@ class Batch(Data):
 
         return data
 
-    def index_select(self, idx: Tensor) -> List[Data]:
+    def index_select(self, idx: IndexType) -> List[Data]:
         if isinstance(idx, slice):
             idx = list(range(self.num_graphs)[idx])
-        elif torch.is_tensor(idx):
-            if idx.dtype == torch.bool:
-                idx = idx.nonzero(as_tuple=False).view(-1)
-            idx = idx.tolist()
-        elif isinstance(idx, list) or isinstance(idx, tuple):
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.long:
+            idx = idx.flatten().tolist()
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
+            idx = idx.flatten().nonzero(as_tuple=False).flatten().tolist()
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
+            idx = idx.flatten().tolist()
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+            idx = idx.flatten().nonzero()[0].flatten().tolist()
+
+        elif isinstance(idx, Sequence) and not isinstance(idx, str):
             pass
+
         else:
             raise IndexError(
-                'Only integers, slices (`:`), list, tuples, and long or bool '
-                'tensors are valid indices (got {}).'.format(
-                    type(idx).__name__))
+                f"Only integers, slices (':'), list, tuples, torch.tensor and "
+                f"np.ndarray of dtype long or bool are valid indices (got "
+                f"'{type(idx).__name__}')")
 
         return [self.get_example(i) for i in idx]
 
     def __getitem__(self, idx):
         if isinstance(idx, str):
             return super(Batch, self).__getitem__(idx)
-        elif isinstance(idx, int):
+        elif isinstance(idx, (int, np.integer)):
             return self.get_example(idx)
         else:
             return self.index_select(idx)
@@ -252,7 +249,7 @@ class Batch(Data):
     @property
     def num_graphs(self) -> int:
         """Returns the number of graphs in the batch."""
-        if self.__num_graphs__ is not None:
+        if hasattr(self, '__num_graphs__'):
             return self.__num_graphs__
         elif self.ptr is not None:
             return self.ptr.numel() + 1

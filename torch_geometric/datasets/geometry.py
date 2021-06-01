@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import os
 import os.path as osp
 import glob
@@ -41,19 +43,20 @@ class GeometricShapes(InMemoryDataset):
 
     url = 'https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip'
 
-    def __init__(self, root, train=True, transform=None, pre_transform=None,
-                 pre_filter=None):
-        super(GeometricShapes, self).__init__(root, transform, pre_transform,
-                                              pre_filter)
+    def __init__(self, root: str, train: bool = True,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+        super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_file_names(self):
-        return ['2d_circle']
+    def raw_file_names(self) -> str:
+        return '2d_circle'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         return ['training.pt', 'test.pt']
 
     def download(self):
@@ -65,7 +68,7 @@ class GeometricShapes(InMemoryDataset):
         torch.save(self.process_set('train'), self.processed_paths[0])
         torch.save(self.process_set('test'), self.processed_paths[1])
 
-    def process_set(self, dataset):
+    def process_set(self, dataset: str):
         categories = glob.glob(osp.join(self.raw_dir, '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
