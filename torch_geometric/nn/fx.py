@@ -30,6 +30,8 @@ class Transformer(object):
                 +-- call_module()
                 +-- call_message_passing_module()
                 +-- output()
+            +-- Erase unused nodes in the graph
+            +-- Iterate over each children module
                 +-- init_submodule()
 
     In contrast to the :class:`torch.fx.Transformer` class, the
