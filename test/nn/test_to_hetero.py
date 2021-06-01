@@ -140,7 +140,7 @@ def test_to_hetero():
     assert out[1][('paper', 'written_by', 'author')].size() == (200, 16)
     assert out[1][('author', 'writes', 'paper')].size() == (200, 16)
 
-    for aggr in ['add', 'sum', 'mean', 'max', 'min', 'mul']:
+    for aggr in ['sum', 'mean', 'min', 'max', 'mul']:
         model = Net2()
         model = to_hetero(model, metadata, aggr='mean', debug=False)
         out = model(x_dict, edge_index_dict)
