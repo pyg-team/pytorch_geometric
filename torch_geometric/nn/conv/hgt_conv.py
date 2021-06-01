@@ -106,8 +106,23 @@ class HGTConv(MessagePassing):
         x_dict: Dict[NodeType, Tensor],
         edge_index_dict: Union[Dict[EdgeType, Tensor],
                                Dict[EdgeType, SparseTensor]]  # Support both.
-    ) -> Dict[NodeType, Tensor]:
-        """"""
+    ) -> Dict[NodeType, Optional[Tensor]]:
+        r"""
+        Args:
+            x_dict (Dict[str, Tensor]): A dictionary holding input node
+                features  for each individual node type.
+            edge_index_dict: (Dict[str, Union[Tensor, SparseTensor]]): A
+                dictionary holding graph connectivity information for each
+                individual edge type, either as a :obj:`torch.LongTensor` of
+                shape :obj:`[2, num_edges]` or a
+                :obj:`torch_sparse.SparseTensor`.
+
+        Returns:
+            Dict[str, Optional[Tensor]]: The ouput node embeddings for each
+                node type.
+                In case a node type does not receive messages, its output will
+                be set to :obj:`None`.
+        """
 
         H, D = self.heads, self.out_channels // self.heads
 
