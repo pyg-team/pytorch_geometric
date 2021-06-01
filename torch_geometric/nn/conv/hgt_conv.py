@@ -39,6 +39,8 @@ class HGTConv(MessagePassing):
         metadata (Tuple[List[str], List[Tuple[str, str, str]]]): The metadata
             of the heterogeneous graph, *i.e.* its node and edge types given
             by a list of strings and a list of string triplets, respectively.
+            See :meth:`torch_geometric.data.HeteroData.metadata` for more
+            information.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
         group (string, optional): The aggregation scheme to use for grouping
