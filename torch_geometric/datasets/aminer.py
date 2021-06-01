@@ -7,7 +7,7 @@ import shutil
 import torch
 import pandas
 from torch_sparse import coalesce, transpose
-from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
+from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
 
 
@@ -23,11 +23,11 @@ class AMiner(InMemoryDataset):
     Args:
         root (string): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.HeteroData` object and returns a
-            transformed version. The data object will be transformed before
-            every access. (default: :obj:`None`)
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
         pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.HeteroData` object and returns a
+            an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
@@ -62,8 +62,6 @@ class AMiner(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        data = HeteroData()
-
         # Get author labels.
         path = osp.join(self.raw_dir, 'id_author.txt')
         author = pandas.read_csv(path, sep='\t', names=['idx', 'name'],
@@ -74,8 +72,8 @@ class AMiner(InMemoryDataset):
         df = pandas.read_csv(path, sep=' ', names=['name', 'y'])
         df = df.join(author, on='name')
 
-        data['author'].y = torch.from_numpy(df['y'].values) - 1
-        data['author'].y_index = torch.from_numpy(df['idx'].values)
+        author_y = torch.from_numpy(df['y'].values) - 1
+        author_y_index = torch.from_numpy(df['idx'].values)
 
         # Get venue labels.
         path = osp.join(self.raw_dir, 'id_conf.txt')
@@ -87,8 +85,8 @@ class AMiner(InMemoryDataset):
         df = pandas.read_csv(path, sep=' ', names=['name', 'y'])
         df = df.join(venue, on='name')
 
-        data['venue'].y = torch.from_numpy(df['y'].values) - 1
-        data['venue'].y_index = torch.from_numpy(df['idx'].values)
+        venue_y = torch.from_numpy(df['y'].values) - 1
+        venue_y_index = torch.from_numpy(df['idx'].values)
 
         # Get paper<->author connectivity.
         path = osp.join(self.raw_dir, 'paper_author.txt')
@@ -98,10 +96,6 @@ class AMiner(InMemoryDataset):
         M, N = int(paper_author[0].max() + 1), int(paper_author[1].max() + 1)
         paper_author, _ = coalesce(paper_author, None, M, N)
         author_paper, _ = transpose(paper_author, None, M, N)
-        data['paper'].num_nodes = M
-        data['author'].num_nodes = N
-        data['paper', 'written_by', 'author'].edge_index = paper_author
-        data['author', 'writes', 'paper'].edge_index = author_paper
 
         # Get paper<->venue connectivity.
         path = osp.join(self.raw_dir, 'paper_conf.txt')
@@ -111,9 +105,28 @@ class AMiner(InMemoryDataset):
         M, N = int(paper_venue[0].max() + 1), int(paper_venue[1].max() + 1)
         paper_venue, _ = coalesce(paper_venue, None, M, N)
         venue_paper, _ = transpose(paper_venue, None, M, N)
-        data['venue'].num_nodes = N
-        data['paper', 'published_in', 'venue'].edge_index = paper_venue
-        data['venue', 'publishes', 'paper'].edge_index = venue_paper
+
+        data = Data(
+            edge_index_dict={
+                ('paper', 'written by', 'author'): paper_author,
+                ('author', 'wrote', 'paper'): author_paper,
+                ('paper', 'published in', 'venue'): paper_venue,
+                ('venue', 'published', 'paper'): venue_paper,
+            },
+            y_dict={
+                'author': author_y,
+                'venue': venue_y,
+            },
+            y_index_dict={
+                'author': author_y_index,
+                'venue': venue_y_index,
+            },
+            num_nodes_dict={
+                'paper': int(paper_author[0].max()) + 1,
+                'author': author.shape[0],
+                'venue': venue.shape[0],
+            },
+        )
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
