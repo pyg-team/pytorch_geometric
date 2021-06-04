@@ -77,7 +77,9 @@ class MemPooling(torch.nn.Module):
     def forward(self, x: Tensor,
                 batch: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
         """"""
-        x, mask = to_dense_batch(x, batch)
+        x, mask = (to_dense_batch(x, batch) if x.dim() <= 2
+                   else (x, torch.ones((x.shape[0], x.shape[1]), dtype=bool,
+                         device=x.device)))
 
         (B, N, _), H, K = x.size(), self.heads, self.num_clusters
 
