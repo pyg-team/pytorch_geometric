@@ -129,12 +129,12 @@ class XConv(torch.nn.Module):
 
         if self.dilation > 1:
             dil = self.dilation
-            index = torch.randint(K * dil, (N, K), dtype=torch.long,
-                                  device=row.device)
-            arange = torch.arange(N, dtype=torch.long, device=row.device)
-            arange = arange * (K * dil)
-            index = (index + arange.view(-1, 1)).view(-1)
-            row, col = row[index], col[index]
+            randnum = torch.randperm(K * dil)[:K].long()
+            edge_index = edge_index.view(2, -1, K * dil)
+            edge_index = edge_index[:, :, randnum]
+            edge_index = edge_index.view(2, -1)
+            row = edge_index[0]
+            col = edge_index[1]
 
         pos = pos[col] - pos[row]
 
