@@ -43,19 +43,19 @@ class BaseData(object):
         raise NotImplementedError
 
     @property
-    def _store_dict(self) -> Dict[str, BaseStorage]:
+    def store_dict(self) -> Dict[str, BaseStorage]:
         raise NotImplementedError
 
     @property
-    def _stores(self) -> List[BaseStorage]:
+    def stores(self) -> List[BaseStorage]:
         raise NotImplementedError
 
     @property
-    def _node_stores(self) -> List[NodeStorage]:
+    def node_stores(self) -> List[NodeStorage]:
         raise NotImplementedError
 
     @property
-    def _edge_stores(self) -> List[EdgeStorage]:
+    def edge_stores(self) -> List[EdgeStorage]:
         raise NotImplementedError
 
     def to_dict(self) -> Dict[str, Any]:
@@ -79,7 +79,7 @@ class BaseData(object):
     def keys(self) -> List[str]:
         r"""Returns a list of graph attribute names."""
         out = []
-        for store in self._stores:
+        for store in self.stores:
             out += list(store.keys())
         return list(set(out))
 
@@ -117,7 +117,7 @@ class BaseData(object):
             You will be given a warning that requests you to do so.
         """
         try:
-            return sum([v.num_nodes for v in self._node_stores])
+            return sum([v.num_nodes for v in self.node_stores])
         except TypeError:
             return None
 
@@ -126,31 +126,31 @@ class BaseData(object):
         r"""Returns the number of edges in the graph.
         For undirected graphs, this will return the number of bi-directional
         edges, which is double the amount of unique edges."""
-        return sum([v.num_edges for v in self._edge_stores])
+        return sum([v.num_edges for v in self.edge_stores])
 
     def is_coalesced(self) -> bool:
         r"""Returns :obj:`True`, if edge indices :obj:`edge_index` are sorted
         and do not contain duplicate entries."""
-        return all([store.is_coalesced() for store in self._edge_stores])
+        return all([store.is_coalesced() for store in self.edge_stores])
 
     def coalesce(self):
         r""""Sorts and removes duplicated entries from edge indices
         :obj:`edge_index`."""
-        for store in self._edge_stores:
+        for store in self.edge_stores:
             store.coalesce()
         return self
 
     def has_isolated_nodes(self) -> bool:
         r"""Returns :obj:`True`, if the graph contains isolated nodes."""
-        return any([store.has_isolated_nodes() for store in self._edge_stores])
+        return any([store.has_isolated_nodes() for store in self.edge_stores])
 
     def has_self_loops(self) -> bool:
         """Returns :obj:`True`, if the graph contains self-loops."""
-        return any([store.has_self_loops() for store in self._edge_stores])
+        return any([store.has_self_loops() for store in self.edge_stores])
 
     def is_undirected(self) -> bool:
         r"""Returns :obj:`True`, if graph edges are undirected."""
-        return all([store.is_undirected() for store in self._edge_stores])
+        return all([store.is_undirected() for store in self.edge_stores])
 
     def is_directed(self) -> bool:
         r"""Returns :obj:`True`, if graph edges are directed."""
@@ -163,7 +163,7 @@ class BaseData(object):
     def apply(self, func: Callable, *args: List[str]):
         r"""Applies the function :obj:`func`, either to all attributes or only
         the ones given in :obj:`*args`."""
-        for store in self._stores:
+        for store in self.stores:
             store.apply(func, *args)
         return self
 
@@ -327,19 +327,19 @@ class Data(BaseData):
             return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
 
     @property
-    def _store_dict(self) -> Dict[str, BaseStorage]:
+    def store_dict(self) -> Dict[str, BaseStorage]:
         return {'_store': self._store}
 
     @property
-    def _stores(self) -> List[BaseStorage]:
+    def stores(self) -> List[BaseStorage]:
         return [self._store]
 
     @property
-    def _node_stores(self) -> List[NodeStorage]:
+    def node_stores(self) -> List[NodeStorage]:
         return [self._store]
 
     @property
-    def _edge_stores(self) -> List[EdgeStorage]:
+    def edge_stores(self) -> List[EdgeStorage]:
         return [self._store]
 
     def to_dict(self) -> Dict[str, Any]:

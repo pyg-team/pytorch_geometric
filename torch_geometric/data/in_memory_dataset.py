@@ -128,7 +128,7 @@ class InMemoryDataset(Dataset):
 
                     output[key] = value[slice_obj]
 
-        for store in data._stores:
+        for store in data.stores:
             if hasattr(store, '_key') and store._key is not None:
                 _slice(store, self.slices[store._key], store)
             else:
@@ -195,12 +195,12 @@ class InMemoryDataset(Dataset):
         # `data_list` by key, i.e. `stores_dict: { store_key: [store, ...] }`.
         stores_dict = {}
         for elem in data_list:
-            for key, store in elem._store_dict.items():
+            for key, store in elem.store_dict.items():
                 stores_dict[key] = stores_dict.get(key, []) + [store]
 
         # After which we concatenate all elements of all attributes in
         # `data_list` together by recursively iterating over each store.
-        for key, store in data._store_dict.items():
+        for key, store in data.store_dict.items():
             if hasattr(store, '_key') and store._key is not None:
                 slices[store._key] = {}
                 _cat(stores_dict[key], store, slices[store._key], store)

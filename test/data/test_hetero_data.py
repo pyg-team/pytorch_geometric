@@ -67,8 +67,10 @@ def test_hetero_data_functions():
 
     node_types, edge_types = data.metadata()
     assert node_types == ['paper', 'author']
-    assert edge_types == [('paper', '_', 'paper'), ('paper', '_', 'author'),
-                          ('author', '_', 'paper')]
+    assert edge_types == [
+        ('paper', '_', 'paper'),
+        ('paper', '_', 'author'),
+        ('author', '_', 'paper')]
 
     x_dict = data.x_dict
     assert len(x_dict) == 2
@@ -83,7 +85,8 @@ def test_hetero_data_functions():
     del data['paper', 'author']
     node_types, edge_types = data.metadata()
     assert node_types == ['paper', 'author']
-    assert edge_types == [('paper', '_', 'paper'), ('author', '_', 'paper')]
+    assert edge_types == [
+        ('paper', '_', 'paper'), ('author', '_', 'paper')]
 
     assert len(data.to_dict()) == 5
     assert len(data.to_namedtuple()) == 5
@@ -98,7 +101,7 @@ def test_copy_hetero_data():
 
     out = copy.copy(data)
     assert id(data) != id(out)
-    for store1, store2 in zip(data._stores, out._stores):
+    for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
         assert id(data) == id(store1._parent)
         assert id(out) == id(store2._parent)
@@ -109,7 +112,7 @@ def test_copy_hetero_data():
 
     out = copy.deepcopy(data)
     assert id(data) != id(out)
-    for store1, store2 in zip(data._stores, out._stores):
+    for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
     assert id(out['paper']._parent) == id(out)
     assert out['paper']._key == 'paper'
