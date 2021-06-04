@@ -43,17 +43,17 @@ class MeshPrepare:
             load_path = self.get_mesh_path(raw_file)
         if os.path.exists(load_path):
             data = np.load(load_path, encoding='latin1', allow_pickle=True)
-            self.mesh_data.vs = data.__getitem__('vs')
-            self.mesh_data.edges = data.__getitem__('edges')
-            self.mesh_data.edges_count = int(data.__getitem__('edges_count'))
-            self.mesh_data.ve = data.__getitem__('ve')
-            self.mesh_data.v_mask = data.__getitem__('v_mask')
-            self.mesh_data.filename = str(data.__getitem__('filename'))
-            self.mesh_data.edge_lengths = data.__getitem__('edge_lengths')
-            self.mesh_data.edge_areas = data.__getitem__('edge_areas')
-            self.mesh_data.features = data.__getitem__('features')
-            self.mesh_data.sides = data.__getitem__('sides')
-            self.mesh_data.edge_index = data.__getitem__('edge_index')
+            self.mesh_data.vs = data['vs']
+            self.mesh_data.edges = data['edges']
+            self.mesh_data.edges_count = int(data['edges_count'])
+            self.mesh_data.ve = data['ve']
+            self.mesh_data.v_mask = data['v_mask']
+            self.mesh_data.filename = str(data['filename'])
+            self.mesh_data.edge_lengths = data['edge_lengths']
+            self.mesh_data.edge_areas = data['edge_areas']
+            self.mesh_data.features = data['features']
+            self.mesh_data.sides = data['sides']
+            self.mesh_data.edge_index = data['edge_index']
         else:
             self.mesh_data = self.from_scratch()
             np.savez_compressed(load_path, vs=self.mesh_data.vs,
