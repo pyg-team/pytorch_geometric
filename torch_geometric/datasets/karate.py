@@ -9,7 +9,7 @@ class KarateClub(InMemoryDataset):
     r"""Zachary's karate club network from the `"An Information Flow Model for
     Conflict and Fission in Small Groups"
     <http://www1.ind.ku.dk/complexLearning/zachary1977.pdf>`_ paper, containing
-    34 nodes, connected by 154 (undirected and unweighted) edges.
+    34 nodes, connected by 156 (undirected and unweighted) edges.
     Every node is labeled by one of four classes obtained via modularity-based
     clustering, following the `"Semi-supervised Classification with Graph
     Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_ paper.
