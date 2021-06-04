@@ -23,8 +23,8 @@ class HeteroData(BaseData):
     """
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         self._global_store = BaseStorage(_parent=self)
-        self._node_stores_dict = dict()
-        self._edge_stores_dict = dict()
+        self._node_stores_dict = {}
+        self._edge_stores_dict = {}
 
         for key, value in chain((_mapping or {}).items(), kwargs.items()):
             if '__' in key and isinstance(value, Mapping):
@@ -36,7 +36,7 @@ class HeteroData(BaseData):
                 setattr(self, key, value)
 
     def __getattr__(self, key: str) -> Any:
-        # `data.*_dict` => Link to the `_node_stores` and `_edge_stores`.
+        # `data.*_dict` => Link to node and edge stores.
         # `data.*` => Link to the `_global_store`.
         if bool(re.search('_dict$', key)):
             out = self.collect(key[:-5])
@@ -68,9 +68,8 @@ class HeteroData(BaseData):
             delattr(self._global_store, key)
 
     def __getitem__(self, *args: Tuple[QueryType]) -> Any:
-        # `data[*]` => Link to either `_node_stores`, `_edge_stores` or
-        # `_global_store`.
-        # `data['*_dict']` => Link to the `_hetero_store`.
+        # `data[*]` => Link to either `_global_store`, _node_stores_dict` or
+        # `_edge_stores_dict`.
         # If neither is present, we create a new `Storage` object for the given
         # node/edge-type.
         key = self._to_canonical(*args)
@@ -91,19 +90,17 @@ class HeteroData(BaseData):
         self._global_store[key] = value
 
     def __delitem__(self, *args: Tuple[QueryType]):
-        # `del data[x]` => Link to one of `_node_stores`, `_edge_stores`, or
-        # `_global_store`.
+        # `del data[*]` => Link to `_node_stores_dict` or `_edge_stores_dict`.
         key = self._to_canonical(*args)
-        if key in self.node_types:
-            del self._node_stores_dict[key]
-        elif key in self.edge_types:
+        if isinstance(key, tuple) and key in self.edge_types:
             del self._edge_stores_dict[key]
+        elif key in self.node_types:
+            del self._node_stores_dict[key]
 
     def __copy__(self):
         out = self.__class__()
         for key, value in self.__dict__.items():
-            if key not in ['_global_store', '_node_stores', '_edge_stores']:
-                out.__dict__[key] = value
+            out.__dict__[key] = value
         out._global_store = copy.copy(self._global_store)
         out._global_store._parent = out
         out._node_stores_dict = {}
@@ -119,7 +116,7 @@ class HeteroData(BaseData):
     def __deepcopy__(self, memo):
         out = self.__class__()
         for key, value in self.__dict__.items():
-            if key not in ['_node_stores', '_edge_stores']:
+            if key not in ['_node_stores_dict', '_edge_stores_dict']:
                 out.__dict__[key] = copy.deepcopy(value, memo)
         out._global_store._parent = out
         out._node_stores_dict = {}
@@ -153,8 +150,8 @@ class HeteroData(BaseData):
 
     @property
     def stores(self) -> List[BaseStorage]:
-        return [self._global_store] + \
-            list(self.node_stores) + list(self.edge_stores)
+        return ([self._global_store] + list(self.node_stores) +
+                list(self.edge_stores))
 
     @property
     def node_types(self) -> List[NodeType]:
@@ -162,7 +159,7 @@ class HeteroData(BaseData):
 
     @property
     def node_stores(self) -> List[NodeStorage]:
-        return self._node_stores_dict.values()
+        return list(self._node_stores_dict.values())
 
     @property
     def edge_types(self) -> List[EdgeType]:
@@ -170,7 +167,7 @@ class HeteroData(BaseData):
 
     @property
     def edge_stores(self) -> List[EdgeStorage]:
-        return self._edge_stores_dict.values()
+        return list(self._edge_stores_dict.values())
 
     def to_dict(self) -> Dict[str, Any]:
         out = self._global_store.to_dict()
@@ -183,10 +180,11 @@ class HeteroData(BaseData):
         field_values = list(self._global_store.values())
         field_names += [
             '__'.join(key) if isinstance(key, tuple) else key
-            for key, _ in self._all_nodes_and_edges()
+            for key in self.node_types + self.edge_types
         ]
         field_values += [
-            store.to_namedtuple() for _, store in self._all_nodes_and_edges()
+            store.to_namedtuple()
+            for store in self.node_stores + self.edge_stores
         ]
         DataTuple = namedtuple('DataTuple', field_names)
         return DataTuple(*field_values)
@@ -245,8 +243,8 @@ class HeteroData(BaseData):
         return self.node_types, self.edge_types
 
     def collect(self, key: str) -> Dict[NodeOrEdgeType, Any]:
-        # Collects the attribute `key` from all `_node_stores` and
-        # `_edge_stores`.
+        # Collects the attribute `key` from `_node_stores_dict` and
+        # `_edge_stores_dict`.
         mapping = {}
         for subtype, store in self._all_nodes_and_edges():
             if key in store:
@@ -258,7 +256,6 @@ class HeteroData(BaseData):
         if out is None:
             out = NodeStorage(_parent=self, _key=key)
             self._node_stores_dict[key] = out
-
         return out
 
     def get_edges(self, key: EdgeType) -> EdgeStorage:
@@ -266,5 +263,4 @@ class HeteroData(BaseData):
         if out is None:
             out = EdgeStorage(_parent=self, _key=key)
             self._edge_stores_dict[key] = out
-
         return out
