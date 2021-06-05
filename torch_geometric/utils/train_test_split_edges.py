@@ -1,17 +1,18 @@
 import math
+
 import torch
-from torch_geometric.data import Data
+
 from torch_geometric.utils import to_undirected
 
 
-def train_test_split_edges(data: Data, val_ratio: float = 0.05,
-                           test_ratio: float = 0.1) -> Data:
+def train_test_split_edges(data, val_ratio: float = 0.05,
+                           test_ratio: float = 0.1):
     r"""Splits the edges of a :class:`torch_geometric.data.Data` object
     into positive and negative train/val/test edges.
     As such, it will replace the :obj:`edge_index` attribute with
     :obj:`train_pos_edge_index`, :obj:`train_pos_neg_adj_mask`,
     :obj:`val_pos_edge_index`, :obj:`val_neg_edge_index` and
-    :obj:`test_pos_edge_index`.
+    :obj:`test_pos_edge_index` attributes.
     If :obj:`data` has edge features named :obj:`edge_attr`, then
     :obj:`train_pos_edge_attr`, :obj:`val_pos_edge_attr` and
     :obj:`test_pos_edge_attr` will be added as well.
@@ -22,9 +23,6 @@ def train_test_split_edges(data: Data, val_ratio: float = 0.05,
             (default: :obj:`0.05`)
         test_ratio (float, optional): The ratio of positive test edges.
             (default: :obj:`0.1`)
-        add_train_neg_mask (bool, optional): If set to :obj:`True`, will add a
-            :obj:`train_neg_adj_mask` attribute to the :obj:`data` object that
-            can be used for negative sampling. (default: :obj:`True`)
 
     :rtype: :class:`torch_geometric.data.Data`
     """
@@ -34,7 +32,7 @@ def train_test_split_edges(data: Data, val_ratio: float = 0.05,
     num_nodes = data.num_nodes
     row, col = data.edge_index
     edge_attr = data.edge_attr
-    data.edge_index, data.edge_attr = None
+    data.edge_index = data.edge_attr = None
 
     # Return upper triangular portion.
     mask = row < col
