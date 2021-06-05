@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 
 import torch
-from torch import Tensor
+from torch import Tensor, BoolTensor
 from torch.nn import Parameter, KLDivLoss, Conv2d, Linear
 
 from torch_geometric.utils import to_dense_batch
@@ -74,12 +74,25 @@ class MemPooling(torch.nn.Module):
         loss = KLDivLoss(reduction='batchmean', log_target=False)
         return loss(S.log(), P)
 
-    def forward(self, x: Tensor,
-                batch: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
-        """"""
-        x, mask = (to_dense_batch(x, batch) if x.dim() <= 2
-                   else (x, torch.ones((x.shape[0], x.shape[1]), dtype=bool,
-                         device=x.device)))
+    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
+                mask: Optional[BoolTensor] = None) -> Tuple[Tensor, Tensor]:
+        r"""
+        Args:
+            x (Tensor): Dense or sparse Node feature tensor :math:`\mathbf{X}
+                \in \mathbb{R}^{B \times N \times F}` or
+                :math:`\mathbb{R}^{N \times F}`.
+            batch (LongTensor, optional): Batch vector :math:`\mathbf{b} \in
+                {\{ 0, \ldots, B-1\}}^N`, which assigns each node to a
+                specific example. (default: :obj:`None`).
+            mask (BoolTensor, optional): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+                the valid nodes for each graph. (default: :obj:`None`).
+        """
+        if x.dim() <= 2:
+            x, mask = to_dense_batch(x, batch)
+        else:
+            mask = torch.ones((x.shape[0], x.shape[1]), dtype=bool,
+                              device=x.device) if mask is None else mask
 
         (B, N, _), H, K = x.size(), self.heads, self.num_clusters
 
