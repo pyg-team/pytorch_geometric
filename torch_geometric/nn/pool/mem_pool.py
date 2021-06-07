@@ -74,10 +74,28 @@ class MemPooling(torch.nn.Module):
         loss = KLDivLoss(reduction='batchmean', log_target=False)
         return loss(S.log(), P)
 
-    def forward(self, x: Tensor,
-                batch: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
-        """"""
-        x, mask = to_dense_batch(x, batch)
+    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
+                mask: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
+        r"""
+        Args:
+            x (Tensor): Dense or sparse node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{N \times F}` or
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`,
+                respectively.
+            batch (LongTensor, optional): Batch vector :math:`\mathbf{b} \in
+                {\{ 0, \ldots, B-1\}}^N`, which assigns each node to a
+                specific example.
+                This argument should be just to separate graphs when using
+                sparse node features. (default: :obj:`None`)
+            mask (BoolTensor, optional): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}`, which
+                indicates valid nodes for each graph when using dense node
+                features. (default: :obj:`None`)
+        """
+        if x.dim() <= 2:
+            x, mask = to_dense_batch(x, batch)
+        elif mask is None:
+            mask = x.new_ones((x.size(0), x.size(1)), dtype=torch.bool)
 
         (B, N, _), H, K = x.size(), self.heads, self.num_clusters
 
