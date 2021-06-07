@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 
 import torch
-from torch import Tensor, BoolTensor
+from torch import Tensor
 from torch.nn import Parameter, KLDivLoss, Conv2d, Linear
 
 from torch_geometric.utils import to_dense_batch
@@ -75,24 +75,27 @@ class MemPooling(torch.nn.Module):
         return loss(S.log(), P)
 
     def forward(self, x: Tensor, batch: Optional[Tensor] = None,
-                mask: Optional[BoolTensor] = None) -> Tuple[Tensor, Tensor]:
+                mask: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
         r"""
         Args:
-            x (Tensor): Dense or sparse Node feature tensor :math:`\mathbf{X}
-                \in \mathbb{R}^{B \times N \times F}` or
-                :math:`\mathbb{R}^{N \times F}`.
+            x (Tensor): Dense or sparse node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{N \times F}` or
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`,
+                respectively.
             batch (LongTensor, optional): Batch vector :math:`\mathbf{b} \in
                 {\{ 0, \ldots, B-1\}}^N`, which assigns each node to a
-                specific example. (default: :obj:`None`).
+                specific example.
+                This argument should be just to separate graphs when using
+                sparse node features. (default: :obj:`None`)
             mask (BoolTensor, optional): Mask matrix
-                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
-                the valid nodes for each graph. (default: :obj:`None`).
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}`, which
+                indicates valid nodes for each graph when using dense node
+                features. (default: :obj:`None`)
         """
         if x.dim() <= 2:
             x, mask = to_dense_batch(x, batch)
-        else:
-            mask = torch.ones((x.shape[0], x.shape[1]), dtype=bool,
-                              device=x.device) if mask is None else mask
+        elif mask is None:
+            mask = x.new_ones((x.size(0), x.size(1)), dtype=torch.bool)
 
         (B, N, _), H, K = x.size(), self.heads, self.num_clusters
 
