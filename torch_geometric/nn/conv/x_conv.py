@@ -125,16 +125,11 @@ class XConv(torch.nn.Module):
         edge_index = knn_graph(pos, K * self.dilation, batch, loop=True,
                                flow='target_to_source',
                                num_workers=self.num_workers)
-        row, col = edge_index[0], edge_index[1]
 
         if self.dilation > 1:
-            dil = self.dilation
-            index = torch.randint(K * dil, (N, K), dtype=torch.long,
-                                  device=row.device)
-            arange = torch.arange(N, dtype=torch.long, device=row.device)
-            arange = arange * (K * dil)
-            index = (index + arange.view(-1, 1)).view(-1)
-            row, col = row[index], col[index]
+            edge_index = edge_index[:, ::K]
+
+        row, col = edge_index[0], edge_index[1]
 
         pos = pos[col] - pos[row]
 
