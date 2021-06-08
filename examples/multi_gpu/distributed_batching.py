@@ -54,13 +54,11 @@ class GIN(torch.nn.Module):
         return x
 
 
-def run(rank, world_size):
+def run(rank, world_size, dataset):
     os.environ['MASTER_ADDR'] = 'localhost'
     os.environ['MASTER_PORT'] = '12355'
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
-    dataset = PygGraphPropPredDataset('ogbg-molhiv', '../../data/OGB',
-                                      pre_transform=T.ToSparseTensor())
     split_idx = dataset.get_idx_split()
     evaluator = Evaluator('ogbg-molhiv')
 
@@ -130,6 +128,9 @@ def run(rank, world_size):
 
 
 if __name__ == '__main__':
+    dataset = PygGraphPropPredDataset('ogbg-molhiv', '../../data/OGB',
+                                      pre_transform=T.ToSparseTensor())
+
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
-    mp.spawn(run, args=(world_size, ), nprocs=world_size, join=True)
+    mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
