@@ -14,7 +14,8 @@ def test_mem_pool():
 
     out1, S = mpool1(x, batch)
     loss = MemPooling.kl_loss(S)
-    loss.backward()
+    with torch.autograd.set_detect_anomaly(True):
+        loss.backward()
     out2, _ = mpool2(out1)
 
     assert out1.size() == (5, 2, 8)
