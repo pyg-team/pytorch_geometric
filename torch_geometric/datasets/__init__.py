@@ -11,6 +11,7 @@ from .reddit import Reddit
 from .reddit2 import Reddit2
 from .flickr import Flickr
 from .yelp import Yelp
+from .amazon_products import AmazonProducts
 from .qm7 import QM7b
 from .qm9 import QM9
 from .zinc import ZINC
@@ -63,6 +64,7 @@ __all__ = [
     'Reddit2',
     'Flickr',
     'Yelp',
+    'AmazonProducts',
     'QM7b',
     'QM9',
     'ZINC',
