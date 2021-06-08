@@ -4,7 +4,7 @@ import torch
 def gini(w: torch.Tensor) -> torch.Tensor:
     r"""The Gini coeffeicent from the `"Improving Molecular Graph Neural
     Network Explainability with Orthonormalization and Induced Sparsity"
-    <https://arxiv.org/abs/1810.00826>`_ paper
+    <https://arxiv.org/abs/2105.04854>`_ paper
 
     Computes a regularization penalty for each row of a matrix according to:
 
