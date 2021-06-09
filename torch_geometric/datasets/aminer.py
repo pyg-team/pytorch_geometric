@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import os
 import os.path as osp
 import shutil
@@ -33,20 +35,20 @@ class AMiner(InMemoryDataset):
     url = 'https://www.dropbox.com/s/1bnz8r7mofx0osf/net_aminer.zip?dl=1'
     y_url = 'https://www.dropbox.com/s/nkocx16rpl4ydde/label.zip?dl=1'
 
-    def __init__(self, root, transform=None, pre_transform=None):
-
-        super(AMiner, self).__init__(root, transform, pre_transform)
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [
             'id_author.txt', 'id_conf.txt', 'paper.txt', 'paper_author.txt',
             'paper_conf.txt', 'label'
         ]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -130,6 +132,3 @@ class AMiner(InMemoryDataset):
             data = self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

@@ -1,3 +1,5 @@
+from typing import Optional, Callable
+
 import os.path as osp
 
 import torch
@@ -28,26 +30,28 @@ class CitationFull(InMemoryDataset):
 
     url = 'https://github.com/abojchevski/graph2gauss/raw/master/data/{}.npz'
 
-    def __init__(self, root, name, transform=None, pre_transform=None):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         self.name = name.lower()
         assert self.name in ['cora', 'cora_ml', 'citeseer', 'dblp', 'pubmed']
-        super(CitationFull, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
-        return '{}.npz'.format(self.name)
+    def raw_file_names(self) -> str:
+        return f'{self.name}.npz'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -59,15 +63,16 @@ class CitationFull(InMemoryDataset):
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}Full()'.format(self.name.capitalize())
+    def __repr__(self) -> str:
+        return f'{self.name.capitalize()}Full()'
 
 
 class CoraFull(CitationFull):
     r"""Alias for :class:`torch_geometric.dataset.CitationFull` with
     :obj:`name="cora"`."""
-    def __init__(self, root, transform=None, pre_transform=None):
-        super(CoraFull, self).__init__(root, 'cora', transform, pre_transform)
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
+        super().__init__(root, 'cora', transform, pre_transform)
 
     def download(self):
         super(CoraFull, self).download()
