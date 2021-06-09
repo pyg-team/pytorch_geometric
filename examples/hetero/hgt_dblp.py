@@ -71,7 +71,6 @@ def test():
         mask = data['author'][split]
         acc = (pred[mask] == data['author'].y[mask]).sum() / mask.sum()
         accs.append(float(acc))
-
     return accs
 
 
