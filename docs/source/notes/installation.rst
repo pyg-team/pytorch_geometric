@@ -13,6 +13,7 @@ Please follow the steps below for a successful installation.
 Installation via Binaries
 -------------------------
 
+Binaries are provided for Python version <= 3.8.
 We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
 #. Ensure that at least PyTorch 1.4.0 is installed:
