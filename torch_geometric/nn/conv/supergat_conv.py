@@ -188,8 +188,8 @@ class SuperGATConv(MessagePassing):
 
             pos_att = self.get_attention(
                 edge_index_i=pos_edge_index[1],
-                x_i=x[edge_index[1]],
-                x_j=x[edge_index[0]],
+                x_i=x[pos_edge_index[1]],
+                x_j=x[pos_edge_index[0]],
                 num_nodes=x.size(0),
                 return_logits=True,
             )
