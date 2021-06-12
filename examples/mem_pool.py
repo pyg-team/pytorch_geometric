@@ -1,4 +1,4 @@
-from torch_geometric.datasets import TUDataset
+import os.path as osp
 
 import torch
 from torch import nn
@@ -8,7 +8,9 @@ from torch_geometric.data import DataLoader
 from torch_geometric.nn import GATConv, MemPooling, DeepGCNLayer
 from torch import optim
 
-dataset = TUDataset(root='data', name="PROTEINS_full", use_node_attr=True)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                'PROTEINS_full')
+dataset = TUDataset(path, name="PROTEINS_full", use_node_attr=True)
 dataset.data.x = dataset.data.x[:, :-3]
 dataset = dataset.shuffle()
 n = (len(dataset)) // 10
@@ -30,7 +32,7 @@ class Net(torch.nn.Module):
         self.dropout = dropout
         self.node_embed = nn.Linear(in_channels, hidden_channels)
         self.query_net = nn.ModuleList()
-        for i in range(3):
+        for i in range(2):
             conv = GATConv(hidden_channels, hidden_channels, dropout=dropout)
             norm = nn.BatchNorm1d(hidden_channels)
             act = nn.LeakyReLU()
@@ -54,7 +56,7 @@ class Net(torch.nn.Module):
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = Net(dataset.num_features, dataset.num_classes).to(device)
-optimizer = optim.Adam(model.parameters(), lr=2e-3, weight_decay=1e-4)
+optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=4e-5)
 
 
 def train(model, optimizer, loader):
@@ -96,7 +98,7 @@ def evaluate(model, loader):
 
 
 epochs = 2000
-patience = start_patience = 200
+patience = start_patience = 250
 test_acc = best_val_acc = 0.0
 
 for e in range(epochs):
