@@ -142,13 +142,6 @@ class HeteroData(BaseData):
                      self._edge_stores_dict.items())
 
     @property
-    def store_dict(self) -> Dict[str, BaseStorage]:
-        out = copy.copy(self._node_stores_dict)
-        out.update(self._edge_stores_dict)
-        out['_global_store'] = self._global_store
-        return out
-
-    @property
     def stores(self) -> List[BaseStorage]:
         return ([self._global_store] + list(self.node_stores) +
                 list(self.edge_stores))
