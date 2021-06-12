@@ -5,11 +5,11 @@ from torch import nn
 import torch.nn.functional as F
 from torch_geometric.datasets import TUDataset
 from torch_geometric.data import DataLoader
-from torch_geometric.nn import GATConv, MemPooling
+from torch_geometric.nn import GATConv, MemPooling, DeepGCNLayer
 from torch import optim
 
 dataset = TUDataset(root='data', name="PROTEINS_full", use_node_attr=True)
-dataset.data.x = dataset.data.x[:,:-3]
+dataset.data.x = dataset.data.x[:, :-3]
 dataset = dataset.shuffle()
 n = (len(dataset)) // 10
 
@@ -29,23 +29,24 @@ class Net(torch.nn.Module):
 
         self.dropout = dropout
         self.out_channels = out_channels
-        self.node_embed = Linear(in_channels, hidden_channels)
+        self.node_embed = nn.Linear(in_channels, hidden_channels)
         self.query_net = nn.ModuleList()
         for i in range(3):
             conv = GATConv(hidden_channels, hidden_channels)
             norm = nn.BatchNorm1d(hidden_channels)
             act = nn.LeakyReLU()
             block = "res+"
-            self.query_net.append(DeepGCNLayer(conv, norm, act, block, dropout))
+            self.query_net.append(DeepGCNLayer(conv, norm, act, block,
+                                               dropout))
         self.mem1 = MemPooling(hidden_channels, 80, 5, 10)
         self.mem2 = MemPooling(80, out_channels, 5, 1)
 
     def forward(self, x, edge_index, batch):
-        x=self.node_embed(x)
+        x = self.node_embed(x)
         for lyrs in self.query_net:
             x = lyrs(x, edge_index)
         x, S = self.mem1(x, batch)
-        x = F.dropout(x, p = self.dropout)
+        x = F.dropout(x, p=self.dropout)
         x, S1 = self.mem2(F.leaky_relu(x))
         return F.log_softmax(
             F.leaky_relu(x).squeeze(1),
@@ -71,17 +72,18 @@ def train(model, optimizer, loader):
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-    
+
     model.mem1.k.requires_grad = True
     model.mem2.k.requires_grad = True
     for d in loader:
         d = d.to(device)
         _, kl = model(d.x, d.edge_index, d.batch)
-        kl_loss +=kl
-    (kl_loss/len(loader.dataset)).backward()
+        kl_loss += kl
+    (kl_loss / len(loader.dataset)).backward()
     optimizer.step()
     optimizer.zero_grad()
-    
+
+
 def evaluate(model, loader):
     model.eval()
     accu = 0.0
@@ -101,8 +103,8 @@ test_acc = best_val_acc = 0.0
 for e in range(epochs):
     train(model, optimizer, train_loader)
     val_acc = evaluate(model, val_loader)
-    if (e+1)%500 ==0:
-        optimizer.param_groups[0]['lr'] *= 0.5    
+    if (e + 1) % 500 == 0:
+        optimizer.param_groups[0]['lr'] *= 0.5
     if best_val_acc < val_acc:
         patience = start_patience
         best_val_acc = val_acc
@@ -110,7 +112,8 @@ for e in range(epochs):
     else:
         patience -= 1
     if patience <= 0:
-        print(f'Early stopping')
+        print('Early stopping')
         break
-    print('Epoch {}: Validation accuracy = {:.3f}, Test accuracy= {:.3f}'.
-          format(e,val_acc,test_acc))
+    print(
+        'Epoch {}: Validation accuracy = {:.3f}, Test accuracy= {:.3f}'.format(
+            e, val_acc, test_acc))
