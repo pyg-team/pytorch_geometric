@@ -8,10 +8,10 @@ from torch_geometric.data import DataLoader
 from torch_geometric.nn import GATConv, MemPooling
 from torch import optim
 
-dataset = TUDataset(root='data', name="PROTEINS")
+dataset = TUDataset(root='data', name="PROTEINS_full", use_node_attr=True)
+dataset.data.x = dataset.data.x[:,:-3]
 dataset = dataset.shuffle()
-average_nodes = dataset.data.x.shape[0] // len(dataset)
-n = (len(dataset) + 9) // 10
+n = (len(dataset)) // 10
 
 test_dataset = dataset[:n]
 val_dataset = dataset[n:2 * n]
@@ -23,27 +23,29 @@ train_loader = DataLoader(train_dataset, batch_size=20)
 
 
 class Net(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, hidden_channels=64,
+    def __init__(self, in_channels, out_channels, hidden_channels=80,
                  dropout=0.1):
         super(Net, self).__init__()
 
         self.dropout = dropout
         self.out_channels = out_channels
-        self.query_net = nn.ModuleList([
-            GATConv(in_channels, hidden_channels, 3, dropout=dropout),
-            GATConv(hidden_channels * 3, hidden_channels, 3, dropout=dropout),
-            GATConv(hidden_channels * 3, hidden_channels, 3, dropout=dropout,
-                    concat=False)
-        ])
-
+        self.node_embed = Linear(in_channels, hidden_channels)
+        self.query_net = nn.ModuleList()
+        for i in range(3):
+            conv = GATConv(hidden_channels, hidden_channels)
+            norm = nn.BatchNorm1d(hidden_channels)
+            act = nn.LeakyReLU()
+            block = "res+"
+            self.query_net.append(DeepGCNLayer(conv, norm, act, block, dropout))
         self.mem1 = MemPooling(hidden_channels, 80, 5, 10)
         self.mem2 = MemPooling(80, out_channels, 5, 1)
 
     def forward(self, x, edge_index, batch):
+        x=self.node_embed(x)
         for lyrs in self.query_net:
-            x = F.leaky_relu(lyrs(x, edge_index))
+            x = lyrs(x, edge_index)
         x, S = self.mem1(x, batch)
-        x = F.dropout(x, p=self.dropout)
+        x = F.dropout(x, p = self.dropout)
         x, S1 = self.mem2(F.leaky_relu(x))
         return F.log_softmax(
             F.leaky_relu(x).squeeze(1),
@@ -51,11 +53,11 @@ class Net(torch.nn.Module):
 
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-model = Net(3, 2).to(device)
-opt = optim.Adam(model.parameters(), lr=0.002, weight_decay=0.0)
+model = Net(29, 2).to(device)
+optimizer = optim.Adam(model.parameters(), lr=0.004, weight_decay=0.0)
 
 
-def train(model, optim, loader):
+def train(model, optimizer, loader):
     model.train()
     kl_loss = 0.0
     loss = 0.0
@@ -67,20 +69,19 @@ def train(model, optim, loader):
         out, _ = model(d.x, d.edge_index, d.batch)
         loss = F.nll_loss(out, d.y)
         loss.backward()
-        optim.step()
-        optim.zero_grad()
-
+        optimizer.step()
+        optimizer.zero_grad()
+    
     model.mem1.k.requires_grad = True
     model.mem2.k.requires_grad = True
     for d in loader:
         d = d.to(device)
         _, kl = model(d.x, d.edge_index, d.batch)
-        kl_loss += kl
-    (kl_loss / len(loader.dataset)).backward()
-    optim.step()
-    optim.zero_grad()
-
-
+        kl_loss +=kl
+    (kl_loss/len(loader.dataset)).backward()
+    optimizer.step()
+    optimizer.zero_grad()
+    
 def evaluate(model, loader):
     model.eval()
     accu = 0.0
@@ -94,21 +95,22 @@ def evaluate(model, loader):
 
 
 epochs = 2000
-patience = 200
-curr_patience = 200
-best_accu = 0.0
+patience = start_patience = 200
+test_acc = best_val_acc = 0.0
+
 for e in range(epochs):
-    train(model, opt, train_loader)
-    val_accu = evaluate(model, val_loader)
-    if best_accu < val_accu:
-        curr_patience = patience
-        best_accu = val_accu
+    train(model, optimizer, train_loader)
+    val_acc = evaluate(model, val_loader)
+    if (e+1)%500 ==0:
+        optimizer.param_groups[0]['lr'] *= 0.5    
+    if best_val_acc < val_acc:
+        patience = start_patience
+        best_val_acc = val_acc
+        test_acc = evaluate(model, test_loader)
     else:
-        curr_patience -= 1
-
-    if curr_patience <= 0:
-        print('Early stopping')
+        patience -= 1
+    if patience <= 0:
+        print(f'Early stopping')
         break
-    print(f'Epoch {e}: Validation accuracy = {val_accu}')
-
-print(f'Test accuracy= {evaluate(model, test_loader)}')
+    print('Epoch {}: Validation accuracy = {:.3f}, Test accuracy= {:.3f}'.
+          format(e,val_acc,test_acc))
