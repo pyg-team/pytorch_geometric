@@ -23,16 +23,15 @@ train_loader = DataLoader(train_dataset, batch_size=20)
 
 
 class Net(torch.nn.Module):
-    def __init__(self, in_channels, out_channels, hidden_channels=80,
+    def __init__(self, in_channels, out_channels, hidden_channels=32,
                  dropout=0.1):
         super(Net, self).__init__()
 
         self.dropout = dropout
-        self.out_channels = out_channels
         self.node_embed = nn.Linear(in_channels, hidden_channels)
         self.query_net = nn.ModuleList()
         for i in range(3):
-            conv = GATConv(hidden_channels, hidden_channels)
+            conv = GATConv(hidden_channels, hidden_channels, dropout=dropout)
             norm = nn.BatchNorm1d(hidden_channels)
             act = nn.LeakyReLU()
             block = "res+"
@@ -54,8 +53,8 @@ class Net(torch.nn.Module):
 
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-model = Net(29, 2).to(device)
-optimizer = optim.Adam(model.parameters(), lr=0.004, weight_decay=0.0)
+model = Net(dataset.num_features, dataset.num_classes).to(device)
+optimizer = optim.Adam(model.parameters(), lr=2e-3, weight_decay=1e-4)
 
 
 def train(model, optimizer, loader):
