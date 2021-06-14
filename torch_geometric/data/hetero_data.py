@@ -19,7 +19,27 @@ NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
 class HeteroData(BaseData):
-    r"""A plain old Python object modeling a single heterogeneous graph object.
+    r"""A Python object modeling a single heterogeneous graph object inherits
+    from :class:`torch_geometric.data.BaseData` type.
+
+    There are a few ways to create a heterogeneous graph data.
+    * To initialize a node of type `paper` with a feature Tensor `x_paper`
+    named `x`:
+    .. code-block:: python
+      data = HeteroData()
+      data['paper'].x = x_paper
+      data = HeteroData(paper={'x': x_paper})
+      data = HeteroData({'paper': {'x': x_paper}})
+    * To initialize an edge from a node type `author` to another node type
+    `paper` with edge index Tensor:
+    .. code-block:: python
+      data = HeteroData()
+      data['author', 'writes', 'paper'].edge_index = edge_index_author_paper
+      data = HeteroData(
+        author_writes_paper={'edge_index': edge_index_author_paper)
+      data = HeteroData({
+        ('author', 'writes', 'paper'):
+        {'edge_index': edge_index_author_paper}})
     """
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         self._global_store = BaseStorage(_parent=self)
@@ -38,6 +58,8 @@ class HeteroData(BaseData):
     def __getattr__(self, key: str) -> Any:
         # `data.*_dict` => Link to node and edge stores.
         # `data.*` => Link to the `_global_store`.
+        # It is the same as using `collect` to collect nodes and edges features
+        # and use `attribute` to get graph attribute.
         if bool(re.search('_dict$', key)):
             out = self.collect(key[:-5])
             if len(out) > 0:
@@ -143,23 +165,28 @@ class HeteroData(BaseData):
 
     @property
     def stores(self) -> List[BaseStorage]:
+        # Return a list of all storages of the graph.
         return ([self._global_store] + list(self.node_stores) +
                 list(self.edge_stores))
 
     @property
     def node_types(self) -> List[NodeType]:
+        # Return a list of all node types of the graph.
         return list(self._node_stores_dict.keys())
 
     @property
     def node_stores(self) -> List[NodeStorage]:
+        # Return a list of all node storages of the graph.
         return list(self._node_stores_dict.values())
 
     @property
     def edge_types(self) -> List[EdgeType]:
+        # Return a list of all edge types of the graph.
         return list(self._edge_stores_dict.keys())
 
     @property
     def edge_stores(self) -> List[EdgeStorage]:
+        # Return a list of all edge storages of the graph.
         return list(self._edge_stores_dict.values())
 
     def to_dict(self) -> Dict[str, Any]:
@@ -236,15 +263,27 @@ class HeteroData(BaseData):
         return self.node_types, self.edge_types
 
     def collect(self, key: str) -> Dict[NodeOrEdgeType, Any]:
-        # Collects the attribute `key` from `_node_stores_dict` and
-        # `_edge_stores_dict`.
+        r'''Collects the attribute `key` from `_node_stores_dict` and
+        `_edge_stores_dict`.
+        '''
         mapping = {}
         for subtype, store in self._all_nodes_and_edges():
             if key in store:
                 mapping[subtype] = store[key]
         return mapping
 
+    def attribute(self, key: str) -> Any:
+        # Get the attribute `key` from `_global_store`.
+        return getattr(self._global_store, key)
+
     def get_nodes(self, key: NodeType) -> NodeStorage:
+        r'''Get the storage of a particular node type. If it is not present, we
+        create a new `Storage` object for the given node.
+        Examples:
+        ..code - block:: python
+          data = HeteroData()
+          paper = data.get_nodes('paper')
+        '''
         out = self._node_stores_dict.get(key, None)
         if out is None:
             out = NodeStorage(_parent=self, _key=key)
@@ -252,6 +291,13 @@ class HeteroData(BaseData):
         return out
 
     def get_edges(self, key: EdgeType) -> EdgeStorage:
+        r'''Get the storage of a particular edge type. If it is not present, we
+        create a new `Storage` object for the given edge.
+        Examples:
+        ..code - block:: python
+          data = HeteroData()
+          author_paper_edge = data.get_edges(('author', '_', 'paper'))
+        '''
         out = self._edge_stores_dict.get(key, None)
         if out is None:
             out = EdgeStorage(_parent=self, _key=key)
