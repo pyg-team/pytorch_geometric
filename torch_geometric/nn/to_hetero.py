@@ -16,9 +16,6 @@ try:
 except ImportError:
     GraphModule = Graph = Node = None
 
-# TODO:
-# * LazyInitialization - Bug: LazyLinear.weight does not support deepcopy yet
-
 
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
               input_map: Optional[Dict[str, str]] = None,
