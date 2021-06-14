@@ -10,7 +10,7 @@ def bro(
 ) -> torch.Tensor:
     r"""The Batch Representation Orthogonality penalty from the `"Improving
     Molecular Graph Neural Network Explainability with Orthonormalization
-    and Induced Sparsity" <https://arxiv.org/abs/1810.00826>`_ paper
+    and Induced Sparsity" <https://arxiv.org/abs/2105.04854>`_ paper
 
     Computes a regularization for each graph representation in a minibatch
     according to:

@@ -7,6 +7,9 @@ from torch.nn import Parameter, KLDivLoss, Conv2d, Linear
 from torch_geometric.utils import to_dense_batch
 
 
+EPS = 1e-15
+
+
 class MemPooling(torch.nn.Module):
     r"""Memory based pooling layer from `"Memory-Based Graph Networks"
     <https://arxiv.org/abs/2002.09518>`_ paper, which learns a coarsened graph
@@ -68,11 +71,12 @@ class MemPooling(torch.nn.Module):
         """
         S_2 = S**2
         P = S_2 / S.sum(dim=1, keepdim=True)
-        P = P / P.sum(dim=2, keepdim=True)
-        P[torch.isnan(P)] = 0.
+        denom = P.sum(dim=2, keepdim=True)
+        denom[S.sum(dim=2, keepdim=True) == 0.0] = 1.0
+        P /= denom
 
         loss = KLDivLoss(reduction='batchmean', log_target=False)
-        return loss(S.log(), P)
+        return loss(S.clamp(EPS).log(), P.clamp(EPS))
 
     def forward(self, x: Tensor, batch: Optional[Tensor] = None,
                 mask: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
