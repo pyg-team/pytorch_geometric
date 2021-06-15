@@ -17,7 +17,6 @@ import torch
 from torch.nn import Linear
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-from torch_geometric.data import TemporalDataset, TemporalDataLoader
 from torch_geometric.datasets import JODIEDataset
 from torch_geometric.nn import TGNMemory, TransformerConv
 from torch_geometric.nn.models.tgn import (LastNeighborLoader, IdentityMessage,
@@ -27,23 +26,13 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'JODIE')
 dataset = JODIEDataset(path, name='wikipedia')
-data = dataset[0]
+data = dataset[0].to(device)
 
 # Ensure to only sample actual destination nodes as negatives.
 min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
 
 train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
-
-train_dataset = TemporalDataset(train_data)
-val_dataset = TemporalDataset(val_data)
-test_dataset = TemporalDataset(test_data)
-
-train_loader = TemporalDataLoader(train_dataset, batch_size=200, shuffle=False)
-val_loader = TemporalDataLoader(val_dataset, batch_size=200, shuffle=False)
-test_loader = TemporalDataLoader(test_dataset, batch_size=200, shuffle=False)
-
-data = data.to(device)
 
 neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
@@ -114,8 +103,7 @@ def train():
     neighbor_loader.reset_state()  # Start with an empty graph.
 
     total_loss = 0
-    for batch in train_loader:
-        batch = batch.to(device)
+    for batch in train_data.seq_batches(batch_size=200):
         optimizer.zero_grad()
 
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
@@ -151,7 +139,7 @@ def train():
 
 
 @torch.no_grad()
-def test(inference_loader):
+def test(inference_data):
     memory.eval()
     gnn.eval()
     link_pred.eval()
@@ -159,8 +147,7 @@ def test(inference_loader):
     torch.manual_seed(12345)  # Ensure deterministic sampling across epochs.
 
     aps, aucs = [], []
-    for batch in inference_loader:
-        batch = batch.to(device)
+    for batch in inference_data.seq_batches(batch_size=200):
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
 
         neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
@@ -193,7 +180,7 @@ def test(inference_loader):
 for epoch in range(1, 51):
     loss = train()
     print(f'  Epoch: {epoch:02d}, Loss: {loss:.4f}')
-    val_ap, val_auc = test(val_loader)
-    test_ap, test_auc = test(test_loader)
+    val_ap, val_auc = test(val_data)
+    test_ap, test_auc = test(test_data)
     print(f' Val AP: {val_ap:.4f},  Val AUC: {val_auc:.4f}')
     print(f'Test AP: {test_ap:.4f}, Test AUC: {test_auc:.4f}')
