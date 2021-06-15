@@ -21,8 +21,8 @@ class ClusterGCNConv(MessagePassing):
     + \mathbf{I})`.
 
     Args:
-        in_channels (int or tuple): Size of each input sample or -1 for lazy
-            initialization.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         diag_lambda: (float, optional): Diagonal enhancement value
             :math:`\lambda`. (default: :obj:`0.`)

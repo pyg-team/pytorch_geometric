@@ -34,9 +34,10 @@ class FiLMConv(MessagePassing):
         film.py>`_.
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities. The
-            size can be -1 for lazy initialization.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         num_relations (int, optional): Number of relations. (default: :obj:`1`)
         nn (torch.nn.Module, optional): The neural network :math:`g` that

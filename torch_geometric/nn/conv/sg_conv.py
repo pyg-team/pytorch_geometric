@@ -23,8 +23,8 @@ class SGConv(MessagePassing):
     edge weights via the optional :obj:`edge_weight` tensor.
 
     Args:
-        in_channels (int): Size of each input sample or -1 for lazy
-            initialization.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         K (int, optional): Number of hops :math:`K`. (default: :obj:`1`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache

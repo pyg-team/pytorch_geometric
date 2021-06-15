@@ -59,8 +59,10 @@ class GENConv(MessagePassing):
         ogbn_proteins_deepgcn.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample or -1 for lazy
-            initialization.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
             :obj:`"softmax_sg"`, :obj:`"power"`, :obj:`"add"`, :obj:`"mean"`,

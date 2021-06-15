@@ -28,8 +28,8 @@ class PANConv(MessagePassing):
         \mathbf{A}^n \mathbf{Z}^{-1/2}
 
     Args:
-        in_channels (int): Size of each input sample or -1 for lazy
-            initialization.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         filter_size (int): The filter size :math:`L`.
         **kwargs (optional): Additional arguments of

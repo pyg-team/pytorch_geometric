@@ -23,9 +23,10 @@ class MFConv(MessagePassing):
     which trains a distinct weight matrix for each possible vertex degree.
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities. The
-            size can be -1 for lazy initialization.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         max_degree (int, optional): The maximum node degree to consider when
             updating weights (default: :obj:`10`)
