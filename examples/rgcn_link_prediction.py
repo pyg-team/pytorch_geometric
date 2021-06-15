@@ -51,7 +51,7 @@ def negative_sampling(edge_index, edge_type, num_nodes, num_edges, omega=1.0, co
     permutation = np.random.choice(np.arange(edge_type.size(0)), negative_samples_count)
     s = edge_index[0][permutation]
     r = edge_type[permutation]
-    o = edge_index[0][permutation]
+    o = edge_index[1][permutation]
 
     permutation_variants = np.random.choice(np.array([0, 1, 2])[[corrupt_subject, corrupt_predicate, corrupt_object]],
                                             negative_samples_count)
