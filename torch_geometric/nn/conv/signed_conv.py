@@ -3,7 +3,7 @@ from torch_geometric.typing import PairTensor, Adj
 
 import torch
 from torch import Tensor
-from torch.nn import Linear
+from torch_geometric.nn.dense.linear import Linear
 from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 
@@ -43,7 +43,8 @@ class SignedConv(MessagePassing):
     the negative node features :math:`\mathbf{X}^{(\textrm{neg})}`.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample or -1 for lazy
+            initialization.
         out_channels (int): Size of each output sample.
         first_aggr (bool): Denotes which aggregation formula to use.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn

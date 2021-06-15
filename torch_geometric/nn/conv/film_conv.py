@@ -3,9 +3,10 @@ from typing import Union, Tuple, Optional, Callable
 from torch_geometric.typing import PairTensor, Adj, OptTensor
 
 from torch import Tensor
-from torch.nn import ModuleList, Linear, ReLU
+from torch.nn import ModuleList, ReLU
 from torch_sparse import SparseTensor, masked_select_nnz
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 
 from ..inits import reset
 
@@ -34,7 +35,8 @@ class FiLMConv(MessagePassing):
 
     Args:
         in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+            corresponds to the sizes of source and target dimensionalities. The
+            size can be -1 for lazy initialization.
         out_channels (int): Size of each output sample.
         num_relations (int, optional): Number of relations. (default: :obj:`1`)
         nn (torch.nn.Module, optional): The neural network :math:`g` that

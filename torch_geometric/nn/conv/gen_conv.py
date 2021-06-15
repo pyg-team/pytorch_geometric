@@ -5,11 +5,12 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 import torch.nn.functional as F
-from torch.nn import Sequential, Linear, ReLU, Dropout
+from torch.nn import Sequential, ReLU, Dropout
 from torch.nn import BatchNorm1d, LayerNorm, InstanceNorm1d
 from torch_sparse import SparseTensor
 from torch_scatter import scatter, scatter_softmax
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.norm import MessageNorm
 
 from ..inits import reset
@@ -20,7 +21,7 @@ class MLP(Sequential):
                  bias: bool = True, dropout: float = 0.):
         m = []
         for i in range(1, len(channels)):
-            m.append(Linear(channels[i - 1], channels[i], bias))
+            m.append(Linear(channels[i - 1], channels[i], bias=bias))
 
             if i < len(channels) - 1:
                 if norm and norm == 'batch':
@@ -58,7 +59,8 @@ class GENConv(MessagePassing):
         ogbn_proteins_deepgcn.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample or -1 for lazy
+            initialization.
         out_channels (int): Size of each output sample.
         aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
             :obj:`"softmax_sg"`, :obj:`"power"`, :obj:`"add"`, :obj:`"mean"`,
