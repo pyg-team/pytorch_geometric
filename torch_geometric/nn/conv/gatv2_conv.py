@@ -117,7 +117,7 @@ class GATv2Conv(MessagePassing):
         x_l = None
         x_r = None
         if isinstance(x, Tensor):
-            assert x.dim() == 2, 'Static graphs not supported in `GATv2Conv`.'
+            assert x.dim() == 2
             x_l = self.lin_l(x).view(-1, H, C)
             if self.share_weights:
                 x_r = x_l
@@ -125,7 +125,7 @@ class GATv2Conv(MessagePassing):
                 x_r = self.lin_r(x).view(-1, H, C)
         else:
             x_l, x_r = x[0], x[1]
-            assert x[0].dim() == 2, 'Static graphs not supported in `GATv2Conv`.'
+            assert x[0].dim() == 2
             x_l = self.lin_l(x_l).view(-1, H, C)
             if x_r is not None:
                 x_r = self.lin_r(x_r).view(-1, H, C)
