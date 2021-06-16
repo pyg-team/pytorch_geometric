@@ -1,5 +1,5 @@
 from typing import Union, Tuple, Optional
-from torch_geometric.typing import (Adj, Size, NoneType)
+from torch_geometric.typing import (Adj, Size, OptTensor)
 
 import torch
 from torch import Tensor
@@ -13,7 +13,7 @@ from torch_geometric.nn.inits import glorot, zeros
 
 
 class GATv2Conv(MessagePassing):
-    r"""The graph attentional v2 operator from the 
+    r"""The graph attentional v2 operator from the
     `"How Attentive are Graph Attention Networks?"
     <https://arxiv.org/abs/2105.14491>`_ paper
 
@@ -51,7 +51,7 @@ class GATv2Conv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        share_weights (bool, optional): If set to :obj:`True`, the layer will 
+        share_weights (bool, optional): If set to :obj:`True`, the layer will
             share weights.
         (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
