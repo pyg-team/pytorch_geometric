@@ -1,6 +1,5 @@
 from typing import Union, Tuple, Optional
-from torch_geometric.typing import (OptPairTensor, Adj, Size, NoneType,
-                                    OptTensor)
+from torch_geometric.typing import (Adj, Size, NoneType)
 
 import torch
 from torch import Tensor
@@ -14,7 +13,8 @@ from torch_geometric.nn.inits import glorot, zeros
 
 
 class GATv2Conv(MessagePassing):
-    r"""The graph attentional v2 operator from the `"How Attentive are Graph Attention Networks?"
+    r"""The graph attentional v2 operator from the 
+    `"How Attentive are Graph Attention Networks?"
     <https://arxiv.org/abs/2105.14491>`_ paper
 
     .. math::
@@ -51,7 +51,8 @@ class GATv2Conv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        share_weights (bool, optional): If set to :obj:`True`, the layer will share weights.
+        share_weights (bool, optional): If set to :obj:`True`, the layer will 
+            share weights.
         (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -61,7 +62,9 @@ class GATv2Conv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, heads: int = 1, concat: bool = True,
                  negative_slope: float = 0.2, dropout: float = 0.,
-                 add_self_loops: bool = True, bias: bool = True, **kwargs):
+                 add_self_loops: bool = True, bias: bool = True,
+                 share_weights: bool = False,
+                 **kwargs):
         kwargs.setdefault('aggr', 'add')
         super(GATv2Conv, self).__init__(node_dim=0, **kwargs)
 
