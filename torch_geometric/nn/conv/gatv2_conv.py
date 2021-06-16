@@ -1,6 +1,5 @@
 from typing import Union, Tuple, Optional
-from torch_geometric.typing import (OptPairTensor, Adj, Size, NoneType,
-                                    OptTensor)
+from torch_geometric.typing import (Adj, Size, OptTensor)
 
 import torch
 from torch import Tensor
@@ -16,7 +15,7 @@ from torch_geometric.nn.inits import glorot, zeros
 class GATv2Conv(MessagePassing):
     r"""The GATv2 operator from the `"How Attentive are Graph Attention Networks?"
     <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static attention problem
-    of the standard GAT: since the linear layers in the standard GAT are 
+    of the standard GAT: since the linear layers in the standard GAT are
     applied right after each other, the ranking of attended nodes is unconditioned
     on the query node. In contrast, in GATv2, every node can attend to any other node.
 
@@ -54,7 +53,7 @@ class GATv2Conv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        share_weights (bool, optional): If set to :obj:`True`, the same matrix 
+        share_weights (bool, optional): If set to :obj:`True`, the same matrix
             will be applied to the source and the target node of every edge.
         (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
@@ -65,8 +64,9 @@ class GATv2Conv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, heads: int = 1, concat: bool = True,
                  negative_slope: float = 0.2, dropout: float = 0.,
-                 add_self_loops: bool = True, bias: bool = True, **kwargs):
-        kwargs.setdefault('aggr', 'add')
+                 add_self_loops: bool = True, bias: bool = True,
+                 share_weights: bool = False,
+                 **kwargs):
         super(GATv2Conv, self).__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
@@ -118,7 +118,7 @@ class GATv2Conv(MessagePassing):
         x_l = None
         x_r = None
         if isinstance(x, Tensor):
-            assert x.dim() == 2, 'Static graphs not supported in `GATv2Conv`.'
+            assert x.dim() == 2
             x_l = self.lin_l(x).view(-1, H, C)
             if self.share_weights:
                 x_r = x_l
@@ -126,7 +126,7 @@ class GATv2Conv(MessagePassing):
                 x_r = self.lin_r(x).view(-1, H, C)
         else:
             x_l, x_r = x[0], x[1]
-            assert x[0].dim() == 2, 'Static graphs not supported in `GATv2Conv`.'
+            assert x[0].dim() == 2
             x_l = self.lin_l(x_l).view(-1, H, C)
             if x_r is not None:
                 x_r = self.lin_r(x_r).view(-1, H, C)
