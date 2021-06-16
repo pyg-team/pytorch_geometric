@@ -1,5 +1,5 @@
 from typing import Union, Tuple, Optional
-from torch_geometric.typing import (Adj, Size, OptTensor, OptPairTensor)
+from torch_geometric.typing import (Adj, Size, OptTensor, PairTensor)
 
 import torch
 from torch import Tensor
