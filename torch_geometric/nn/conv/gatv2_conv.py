@@ -14,10 +14,11 @@ from torch_geometric.nn.inits import glorot, zeros
 
 class GATv2Conv(MessagePassing):
     r"""The GATv2 operator from the `"How Attentive are Graph Attention Networks?"
-    <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static attention problem
-    of the standard GAT: since the linear layers in the standard GAT are
-    applied right after each other, the ranking of attended nodes is unconditioned
-    on the query node. In contrast, in GATv2, every node can attend to any other node.
+    <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static
+    attention problem of the standard GAT: since the linear layers in
+    the standard GAT are applied right after each other, the ranking
+    of attended nodes is unconditioned on the query node.
+    In contrast, in GATv2, every node can attend to any other node.
 
     .. math::
         \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
