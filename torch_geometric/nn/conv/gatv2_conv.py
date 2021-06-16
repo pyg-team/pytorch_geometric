@@ -149,6 +149,7 @@ class GATv2Conv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
+        # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=(x_l, x_r), size=size)
 
         alpha = self._alpha
