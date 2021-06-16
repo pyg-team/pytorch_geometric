@@ -119,8 +119,8 @@ class GATv2Conv(MessagePassing):
         """
         H, C = self.heads, self.out_channels
 
-        x_l: Tensor = None
-        x_r: Tensor = None
+        x_l: OptTensor = None
+        x_r: OptTensor = None
         if isinstance(x, Tensor):
             assert x.dim() == 2
             x_l = self.lin_l(x).view(-1, H, C)
