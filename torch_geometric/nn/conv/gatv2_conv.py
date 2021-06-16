@@ -13,9 +13,12 @@ from torch_geometric.nn.inits import glorot, zeros
 
 
 class GATv2Conv(MessagePassing):
-    r"""The graph attentional v2 operator from the
-    `"How Attentive are Graph Attention Networks?"
-    <https://arxiv.org/abs/2105.14491>`_ paper
+    r"""The GATv2 operator from the `"How Attentive are Graph Attention Networks?"
+    <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static
+    attention problem of the standard GAT: since the linear layers in
+    the standard GAT are applied right after each other, the ranking
+    of attended nodes is unconditioned on the query node.
+    In contrast, in GATv2, every node can attend to any other node.
 
     .. math::
         \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
@@ -51,8 +54,8 @@ class GATv2Conv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        share_weights (bool, optional): If set to :obj:`True`, the layer will
-            share weights.
+        share_weights (bool, optional): If set to :obj:`True`, the same matrix
+            will be applied to the source and the target node of every edge.
         (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -65,7 +68,6 @@ class GATv2Conv(MessagePassing):
                  add_self_loops: bool = True, bias: bool = True,
                  share_weights: bool = False,
                  **kwargs):
-        kwargs.setdefault('aggr', 'add')
         super(GATv2Conv, self).__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
