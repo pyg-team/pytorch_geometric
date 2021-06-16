@@ -17,8 +17,8 @@ class GATv2Conv(MessagePassing):
     <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static
     attention problem of the standard :class:`~torch_geometric.conv.GATConv`
     layer: since the linear layers in the standard GAT are applied right after
-    each other, the ranking of attended nodes is unconditioned on the query node.
-    In contrast, in GATv2, every node can attend to any other node.
+    each other, the ranking of attended nodes is unconditioned on the query
+    node. In contrast, in GATv2, every node can attend to any other node.
 
     .. math::
         \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
