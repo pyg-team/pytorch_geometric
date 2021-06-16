@@ -104,12 +104,12 @@ class GATv2Conv(MessagePassing):
         glorot(self.att)
         zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 size: Size = None, return_attention_weights: bool = None):
-        # type: (Union[Tensor, OptPairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, OptPairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
@@ -119,8 +119,8 @@ class GATv2Conv(MessagePassing):
         """
         H, C = self.heads, self.out_channels
 
-        x_l: OptTensor = None
-        x_r: OptTensor = None
+        x_l: Tensor = None
+        x_r: Tensor = None
         if isinstance(x, Tensor):
             assert x.dim() == 2
             x_l = self.lin_l(x).view(-1, H, C)
@@ -136,6 +136,7 @@ class GATv2Conv(MessagePassing):
                 x_r = self.lin_r(x_r).view(-1, H, C)
 
         assert x_l is not None
+        assert x_r is not None
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
