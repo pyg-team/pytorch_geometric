@@ -55,26 +55,3 @@ def test_gatv2_conv():
     assert torch.allclose(result[0], out, atol=1e-6)
     assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
     assert conv._alpha is None
-
-    adj = adj.sparse_resize((4, 2))
-    conv = GATv2Conv((8, 16), 32, heads=2)
-    assert conv.__repr__() == 'GATv2Conv((8, 16), 32, heads=2)'
-
-    out1 = conv((x1, x2), edge_index)
-    out2 = conv((x1, None), edge_index, (4, 2))
-    assert out1.size() == (2, 64)
-    assert out2.size() == (2, 64)
-    assert conv((x1, x2), edge_index, (4, 2)).tolist() == out1.tolist()
-    assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-6)
-    assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e-6)
-
-    t = '(OptPairTensor, Tensor, Size, NoneType) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index).tolist() == out1.tolist()
-    assert jit((x1, x2), edge_index, size=(4, 2)).tolist() == out1.tolist()
-    assert jit((x1, None), edge_index, size=(4, 2)).tolist() == out2.tolist()
-
-    t = '(OptPairTensor, SparseTensor, Size, NoneType) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
-    assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
