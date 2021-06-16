@@ -15,9 +15,9 @@ from torch_geometric.nn.inits import glorot, zeros
 class GATv2Conv(MessagePassing):
     r"""The GATv2 operator from the `"How Attentive are Graph Attention Networks?"
     <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static
-    attention problem of the standard GAT: since the linear layers in
-    the standard GAT are applied right after each other, the ranking
-    of attended nodes is unconditioned on the query node.
+    attention problem of the standard :class:`~torch_geometric.conv.GATConv` layer:
+    since the linear layers in the standard GAT are applied right after each other,
+    the ranking of attended nodes is unconditioned on the query node.
     In contrast, in GATv2, every node can attend to any other node.
 
     .. math::
@@ -56,13 +56,13 @@ class GATv2Conv(MessagePassing):
             an additive bias. (default: :obj:`True`)
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
             will be applied to the source and the target node of every edge.
-        (default: :obj:`False`)
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     _alpha: OptTensor
 
-    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+    def __init__(self, in_channels: int,
                  out_channels: int, heads: int = 1, concat: bool = True,
                  negative_slope: float = 0.2, dropout: float = 0.,
                  add_self_loops: bool = True, bias: bool = True,
