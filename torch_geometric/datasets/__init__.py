@@ -48,6 +48,7 @@ from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
+from .github import GitHub
 
 __all__ = [
     'KarateClub',
@@ -102,6 +103,7 @@ __all__ = [
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'UPFD',
+    'GitHub',
 ]
 
 classes = __all__
