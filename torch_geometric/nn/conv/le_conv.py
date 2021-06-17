@@ -1,5 +1,5 @@
-from torch.nn import Linear
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 
 
 class LEConv(MessagePassing):
@@ -18,7 +18,8 @@ class LEConv(MessagePassing):
     target node :obj:`i` (default: :obj:`1`)
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         bias (bool, optional): If set to :obj:`False`, the layer will
             not learn an additive bias. (default: :obj:`True`).
