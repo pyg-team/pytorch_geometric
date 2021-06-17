@@ -52,6 +52,7 @@ from .ogb_mag import OGB_MAG
 from .dblp import DBLP
 from .imdb import IMDB
 from .last_fm import LastFM
+from .github import GitHub
 
 __all__ = [
     'KarateClub',
