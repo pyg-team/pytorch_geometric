@@ -5,8 +5,8 @@ from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
 class GitHub(InMemoryDataset):
-    r"""The GitHub Web and ML Developers dataset introduced
-     in the `"Multi-scale Attributed Node Embedding"
+    r"""The GitHub Web and ML Developers dataset introduced in the
+    `"Multi-scale Attributed Node Embedding"
     <https://arxiv.org/abs/1909.13021>`_ paper.
     Nodes represent developers on GitHub and edges are mutual follower
     relationships.
