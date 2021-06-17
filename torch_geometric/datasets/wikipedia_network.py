@@ -7,9 +7,9 @@ from torch_geometric.data import InMemoryDataset, download_url, Data
 
 
 class WikipediaNetwork(InMemoryDataset):
-    r"""The Wikipedia networks used in the
-    `"Geom-GCN: Geometric Graph Convolutional Networks"
-    <https://openreview.net/forum?id=S1e2agrFvS>`_ paper.
+    r"""The Wikipedia networks introduced in the
+    `"Multi-scale Attributed Node Embedding"
+    <https://arxiv.org/abs/1909.13021>`_ paper.
     Nodes represent web pages and edges represent hyperlinks between them.
     Node features represent several informative nouns in the Wikipedia pages.
     The task is to classify the nodes into five categories in term of the
