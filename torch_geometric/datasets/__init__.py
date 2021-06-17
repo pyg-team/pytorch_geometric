@@ -111,7 +111,7 @@ __all__ = [
     'DBLP',
     'IMDB',
     'LastFM',
-    'GitHub',    
+    'GitHub',
 ]
 
 classes = __all__
