@@ -1,7 +1,7 @@
 from torch_geometric.typing import Adj, Size, OptTensor
 
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul, set_diag, sum
+from torch_sparse import SparseTensor, matmul, set_diag, sum as sparsesum
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.utils import remove_self_loops, add_self_loops, degree
@@ -75,7 +75,7 @@ class ClusterGCNConv(MessagePassing):
                 edge_index = set_diag(edge_index)
 
             col, row, _ = edge_index.coo()  # Transposed.
-            deg_inv = 1. / sum(edge_index, dim=1).clamp_(1.)
+            deg_inv = 1. / sparsesum(edge_index, dim=1).clamp_(1.)
 
             edge_weight = deg_inv[col]
             edge_weight[row == col] += self.diag_lambda * deg_inv

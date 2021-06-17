@@ -13,7 +13,7 @@ Please follow the steps below for a successful installation.
 Installation via Binaries
 -------------------------
 
-Binaries are provided for Python version <= 3.8.
+Binaries are provided for Python version <= 3.9.
 We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
 #. Ensure that at least PyTorch 1.4.0 is installed:
@@ -21,7 +21,7 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
     .. code-block:: none
 
         $ python -c "import torch; print(torch.__version__)"
-        >>> 1.8.0
+        >>> 1.9.0
 
 #. Find the CUDA version PyTorch was installed with:
 
@@ -40,25 +40,25 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
          pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
          pip install torch-geometric
 
-    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.8.0`), respectively.
-    For example, for PyTorch 1.8.0/1.8.1 and CUDA 11.1, type:
+    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.7.1`, :obj:`1.8.0`, :obj:`1.8.1`, :obj:`1.9.0`), respectively.
+    For example, for PyTorch 1.9.0 and CUDA 11.1, type:
 
     .. code-block:: none
 
-         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
-         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+cu111.html
+         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html
+         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html
          pip install torch-geometric
 
-    For PyTorch 1.7.0/1.7.1 and CUDA 10.2, type:
+    For PyTorch 1.8.0/1.8.1 and CUDA 10.2, type:
 
     .. code-block:: none
 
-         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+         pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
+         pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
          pip install torch-geometric
 
 Installation from Source
