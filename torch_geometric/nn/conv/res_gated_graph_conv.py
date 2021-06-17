@@ -3,9 +3,8 @@ from torch_geometric.typing import PairTensor, Adj
 
 from torch import Tensor
 from torch.nn import Parameter
-from torch.nn import Sigmoid
+from torch.nn import Linear, Sigmoid
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
 
 from ..inits import zeros
 
@@ -27,10 +26,8 @@ class ResGatedGraphConv(MessagePassing):
     with :math:`\sigma` denoting the sigmoid function.
 
     Args:
-        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
-            derive the size from the first input(s) to the forward method.
-            A tuple corresponds to the sizes of source and target
-            dimensionalities.
+        in_channels (int or tuple): Size of each input sample. A tuple
+            corresponds to the sizes of source and target dimensionalities.
         out_channels (int): Size of each output sample.
         act (callable, optional): Gating function :math:`\sigma`.
             (default: :meth:`torch.nn.Sigmoid()`)

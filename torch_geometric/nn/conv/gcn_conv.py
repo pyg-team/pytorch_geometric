@@ -6,11 +6,11 @@ from torch import Tensor
 from torch.nn import Parameter
 from torch_scatter import scatter_add
 from torch_sparse import SparseTensor, matmul, fill_diag, sum as sparsesum, mul
-from torch_geometric.nn.inits import zeros
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import add_remaining_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
+
+from ..inits import glorot, zeros
 
 
 @torch.jit._overload
@@ -91,8 +91,7 @@ class GCNConv(MessagePassing):
     node :obj:`i` (default: :obj:`1.0`)
 
     Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to derive
-            the size from the first input(s) to the forward method.
+        in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
@@ -135,8 +134,7 @@ class GCNConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.lin = Linear(in_channels, out_channels, bias=False,
-                          weight_initializer='glorot')
+        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -146,7 +144,7 @@ class GCNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin.reset_parameters()
+        glorot(self.weight)
         zeros(self.bias)
         self._cached_edge_index = None
         self._cached_adj_t = None
@@ -178,7 +176,7 @@ class GCNConv(MessagePassing):
                 else:
                     edge_index = cache
 
-        x = self.lin(x)
+        x = x @ self.weight
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
