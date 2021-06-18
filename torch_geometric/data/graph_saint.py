@@ -108,7 +108,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in self.data:
-            if key in ['edge_index', 'num_nodes']:
+            if key == 'edge_index':
                 continue
             if isinstance(item, torch.Tensor) and item.size(0) == self.N:
                 data[key] = item[node_idx]

@@ -2,10 +2,10 @@ from typing import Optional
 from torch_geometric.typing import Adj, OptTensor
 
 from torch import Tensor
+from torch.nn import Linear
 from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.nn.dense.linear import Linear
 
 
 class SGConv(MessagePassing):
@@ -23,8 +23,7 @@ class SGConv(MessagePassing):
     edge weights via the optional :obj:`edge_weight` tensor.
 
     Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to derive
-            the size from the first input(s) to the forward method.
+        in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         K (int, optional): Number of hops :math:`K`. (default: :obj:`1`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
