@@ -63,7 +63,7 @@ class ClusterData(torch.utils.data.Dataset):
         N = data.num_nodes
 
         for key, item in data:
-            if isinstance(item, torch.Tensor) and item.size(0) == N:
+            if item.size(0) == N:
                 data[key] = item[node_idx]
 
         data.edge_index = None
@@ -80,7 +80,8 @@ class ClusterData(torch.utils.data.Dataset):
 
         N, E = self.data.num_nodes, self.data.num_edges
         data = copy.copy(self.data)
-        del data.num_nodes
+        if hasattr(data, '__num_nodes__'):
+            del data.__num_nodes__
         adj, data.adj = data.adj, None
 
         adj = adj.narrow(0, start, length).narrow(1, start, length)
@@ -150,7 +151,8 @@ class ClusterLoader(torch.utils.data.DataLoader):
         node_idx = torch.cat([torch.arange(s, e) for s, e in zip(start, end)])
 
         data = copy.copy(self.cluster_data.data)
-        del data.num_nodes
+        if hasattr(data, '__num_nodes__'):
+            del data.__num_nodes__
         adj, data.adj = self.cluster_data.data.adj, None
         adj = cat([adj.narrow(0, s, e - s) for s, e in zip(start, end)], dim=0)
         adj = adj.index_select(1, node_idx)

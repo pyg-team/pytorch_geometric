@@ -1,5 +1,4 @@
 from .data import Data
-from .hetero_data import HeteroData
 from .temporal import TemporalData
 from .batch import Batch
 from .dataset import Dataset
@@ -15,7 +14,6 @@ from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 
 __all__ = [
     'Data',
-    'HeteroData',
     'TemporalData',
     'Batch',
     'Dataset',

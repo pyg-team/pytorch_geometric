@@ -5,8 +5,8 @@ from torch_geometric.typing import PairTensor, Adj, OptTensor
 import torch
 from torch import Tensor
 import torch.nn.functional as F
+from torch.nn import Linear
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.utils import softmax
 
 
@@ -28,10 +28,8 @@ class TransformerConv(MessagePassing):
         {\sqrt{d}} \right)
 
     Args:
-        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
-            derive the size from the first input(s) to the forward method.
-            A tuple corresponds to the sizes of source and target
-            dimensionalities.
+        in_channels (int or tuple): Size of each input sample. A tuple
+            corresponds to the sizes of source and target dimensionalities.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)

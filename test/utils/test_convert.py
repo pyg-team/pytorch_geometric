@@ -137,9 +137,8 @@ def test_from_networkx_inverse():
     graph.add_edge(1, 0)
 
     data = from_networkx(graph)
-    assert len(data) == 2
+    assert len(data) == 1
     assert data.edge_index.tolist() == [[0, 1, 2, 2, 2, 3], [2, 2, 0, 1, 3, 2]]
-    assert data.num_nodes == 4
 
 
 def test_from_networkx_non_numeric_labels():
@@ -160,9 +159,8 @@ def test_from_networkx_without_edges():
     graph.add_node(1)
     graph.add_node(2)
     data = from_networkx(graph)
-    assert len(data) == 2
+    assert len(data) == 1
     assert data.edge_index.size() == (2, 0)
-    assert data.num_nodes == 2
 
 
 def test_subgraph_convert():
