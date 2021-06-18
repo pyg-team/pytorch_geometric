@@ -39,8 +39,8 @@ def is_undirected(edge_index: Tensor, edge_attr: Optional[Tensor] = None,
 def to_undirected(edge_index: Tensor, edge_attr: Optional[Tensor] = None,
                   num_nodes: Optional[int] = None,
                   reduce: str = "add") -> Union[Tensor, Tuple[Tensor, Tensor]]:
-    r"""Converts the graph given by :attr:`edge_index` to an undirected graph,
-    so that :math:`(j,i) \in \mathcal{E}` for every edge :math:`(i,j) \in
+    r"""Converts the graph given by :attr:`edge_index` to an undirected graph
+    such that :math:`(j,i) \in \mathcal{E}` for every edge :math:`(i,j) \in
     \mathcal{E}`.
 
     Args:
@@ -52,8 +52,8 @@ def to_undirected(edge_index: Tensor, edge_attr: Optional[Tensor] = None,
         reduce (string, optional): The reduce operation to use for merging edge
             features. (default: :obj:`"add"`)
 
-    :rtype: (:class:`LongTensor`, :class:`Tensor`) if :obj:`edge_attr` is not
-    :obj:`None`, otherwise :class:`LongTensor`
+    :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
+        (:class:`LongTensor`, :class:`Tensor`)
     """
     # Maintain backward compatibility to `to_undirected(edge_index, num_nodes)`
     if isinstance(edge_attr, int):
