@@ -53,7 +53,7 @@ def to_undirected(edge_index: Tensor, edge_attr: Optional[Tensor] = None,
             features. (default: :obj:`"add"`)
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
-        (:class:`LongTensor`, :class:`Tensor`)
+    (:class:`LongTensor`, :class:`Tensor`)
     """
     # Maintain backward compatibility to `to_undirected(edge_index, num_nodes)`
     if isinstance(edge_attr, int):
