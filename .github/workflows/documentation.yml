@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.9]
+        python-version: [3.8]
         torch-version: [1.9.0]
 
     steps:
@@ -43,6 +43,8 @@ jobs:
         run: |
           pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install sphinx
+          pip install sphinx_rtd_theme
 
       - name: Install main package
         run: |
