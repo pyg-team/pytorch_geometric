@@ -1,3 +1,5 @@
+from typing import Optional, Callable
+
 import torch
 import numpy as np
 
@@ -5,7 +7,7 @@ from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
 class FacebookPagePage(InMemoryDataset):
-    r"""The Facebook Page-Page Network dataset introduced in the
+    r"""The Facebook Page-Page network dataset introduced in the
     `"Multi-scale Attributed Node Embedding"
     <https://arxiv.org/abs/1909.13021>`_ paper.
     Nodes represent verified pages on Facebook and edges are mutual likes.
@@ -25,16 +27,17 @@ class FacebookPagePage(InMemoryDataset):
 
     url = 'https://graphmining.ai/datasets/ptg/facebook.npz'
 
-    def __init__(self, root, transform=None, pre_transform=None):
-        super(FacebookPagePage, self).__init__(root, transform, pre_transform)
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return 'facebook.npz'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
