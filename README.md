@@ -37,15 +37,6 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
 
 --------------------------------------------------------------------------------
 
-<p align="center">
-  <img width="80%" src="https://ogb.stanford.edu/assets/img/kddlsc_logo.png" />
-</p>
-
-**OGB** is hosting a **[large-scale graph machine learning challenge (OGB-LSC)](https://ogb.stanford.edu/kddcup2021)** at **KDD Cup 2021** from **March 15th to June 8th** in order to discover innovative solutions for large-scale node classification, link prediction and graph regression.
-We are looking forward to your participation!
-
---------------------------------------------------------------------------------
-
 PyTorch Geometric makes implementing Graph Neural Networks a breeze (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html) for the accompanying tutorial).
 For example, this is all it takes to implement the [edge convolutional layer](https://arxiv.org/abs/1801.07829):
 
