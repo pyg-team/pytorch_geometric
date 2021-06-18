@@ -51,7 +51,7 @@ jobs:
           pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
 
-      - name: Install external dependencies
+      - name: Install optional dependencies
         run: |
           pip install cython
           pip install scikit-image
