@@ -4,8 +4,9 @@ from torch_geometric.typing import Adj, OptTensor
 import torch
 from torch import Tensor
 from torch_scatter import scatter
-from torch.nn import ModuleList, Sequential, Linear, ReLU
+from torch.nn import ModuleList, Sequential, ReLU
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.utils import degree
 
 from ..inits import reset
@@ -47,7 +48,8 @@ class PNAConv(MessagePassing):
         examples/pna.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         aggregators (list of str): Set of aggregation function identifiers,
             namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,

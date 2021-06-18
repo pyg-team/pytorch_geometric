@@ -99,10 +99,10 @@ Besides of being a plain old python object, :class:`~torch_geometric.data.Data` 
     data.num_node_features
     >>> 1
 
-    data.contains_isolated_nodes()
+    data.has_isolated_nodes()
     >>> False
 
-    data.contains_self_loops()
+    data.has_self_loops()
     >>> False
 
     data.is_directed()

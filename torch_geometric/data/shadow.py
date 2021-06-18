@@ -70,7 +70,8 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
                              sparse_sizes=(n_id.numel(), n_id.numel()),
                              is_sorted=True)
 
-        batch = Batch(torch.ops.torch_sparse.ptr2ind(ptr, n_id.numel()), ptr)
+        batch = Batch(batch=torch.ops.torch_sparse.ptr2ind(ptr, n_id.numel()),
+                      ptr=ptr)
         batch.root_n_id = root_n_id
 
         if self.is_sparse_tensor:
@@ -80,7 +81,7 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
             batch.edge_index = torch.stack([row, col], dim=0)
 
         for k, v in self.data:
-            if k in ['edge_index', 'adj_t']:
+            if k in ['edge_index', 'adj_t', 'num_nodes']:
                 continue
             if k == 'y' and v.size(0) == self.data.num_nodes:
                 batch[k] = v[n_id][root_n_id]
