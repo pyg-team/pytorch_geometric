@@ -6,8 +6,7 @@ from torch_geometric.data import InMemoryDataset, Data, download_url
 
 class LastFMAsia(InMemoryDataset):
     r"""The LastFM Asia Network dataset introduced in the
-    `"Characteristic Functions on Graphs: Birds of a Feather,
-     from Statistical Descriptors to Parametric Models"
+    `"Characteristic Functions on Graphs"
     <https://arxiv.org/abs/2005.07959>`_ paper.
     Nodes represent LastFM users from Asia and edges are friendships.
     It contains 7,624 nodes, 55,612 edges, 128 node features and 18 classes.
