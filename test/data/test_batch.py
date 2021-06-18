@@ -17,7 +17,7 @@ def test_batch():
     batch = Batch.from_data_list([Data(x1, e1, s=s1), Data(x2, e2, s=s2)])
 
     assert batch.__repr__() == (
-        'Batch(edge_index=[2, 6], s=[2], x=[5], batch=[5], ptr=[3])')
+        'Batch(batch=[5], edge_index=[2, 6], ptr=[3], s=[2], x=[5])')
     assert len(batch) == 5
     assert batch.x.tolist() == [1, 2, 3, 1, 2]
     assert batch.edge_index.tolist() == [[0, 1, 1, 2, 3, 4],
@@ -28,9 +28,9 @@ def test_batch():
     assert batch.num_graphs == 2
 
     data = batch[0]
-    assert str(data) == ("Data(edge_index=[2, 4], s='1', x=[3])")
+    assert data.__repr__() == ('Data(edge_index=[2, 4], s="1", x=[3])')
     data = batch[1]
-    assert str(data) == ("Data(edge_index=[2, 2], s='2', x=[2])")
+    assert data.__repr__() == ('Data(edge_index=[2, 2], s="2", x=[2])')
 
     assert len(batch.index_select([1, 0])) == 2
     assert len(batch.index_select(torch.tensor([1, 0]))) == 2
@@ -73,7 +73,7 @@ def test_batching_with_new_dimension():
          MyData(x=x2, foo=foo2, y=y2)])
 
     assert batch.__repr__() == (
-        'Batch(foo=[2, 4], x=[5], y=[2], batch=[5], ptr=[3])')
+        'Batch(batch=[5], foo=[2, 4], ptr=[3], x=[5], y=[2])')
     assert len(batch) == 5
     assert batch.x.tolist() == [1, 2, 3, 1, 2]
     assert batch.foo.size() == (2, 4)
@@ -85,8 +85,8 @@ def test_batching_with_new_dimension():
     assert batch.num_graphs == 2
 
     data = batch[0]
-    assert str(data) == ('MyData(foo=[4], x=[3], y=1)')
+    assert data.__repr__() == ('MyData(foo=[4], x=[3], y=1)')
     data = batch[1]
-    assert str(data) == ('MyData(foo=[4], x=[2], y=2)')
+    assert data.__repr__() == ('MyData(foo=[4], x=[2], y=2)')
 
     torch_geometric.set_debug(True)

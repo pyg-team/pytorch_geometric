@@ -1,8 +1,7 @@
 import torch
 from torch.nn import Parameter
 
-from torch_geometric.nn.inits import zeros
-from torch_geometric.nn.dense.linear import Linear
+from ..inits import glorot, zeros
 
 
 class DenseGCNConv(torch.nn.Module):
@@ -15,8 +14,7 @@ class DenseGCNConv(torch.nn.Module):
         self.out_channels = out_channels
         self.improved = improved
 
-        self.lin = Linear(in_channels, out_channels, bias=False,
-                          weight_initializer='glorot')
+        self.weight = Parameter(torch.Tensor(self.in_channels, out_channels))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -26,7 +24,7 @@ class DenseGCNConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin.reset_parameters()
+        glorot(self.weight)
         zeros(self.bias)
 
     def forward(self, x, adj, mask=None, add_loop=True):
@@ -56,7 +54,7 @@ class DenseGCNConv(torch.nn.Module):
             idx = torch.arange(N, dtype=torch.long, device=adj.device)
             adj[:, idx, idx] = 1 if not self.improved else 2
 
-        out = self.lin(x)
+        out = torch.matmul(x, self.weight)
         deg_inv_sqrt = adj.sum(dim=-1).clamp(min=1).pow(-0.5)
 
         adj = deg_inv_sqrt.unsqueeze(-1) * adj * deg_inv_sqrt.unsqueeze(-2)
