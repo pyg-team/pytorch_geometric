@@ -6,13 +6,12 @@ import numpy as np
 from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
-class GitHub(InMemoryDataset):
-    r"""The GitHub Web and ML Developers dataset introduced in the
+class FacebookPagePage(InMemoryDataset):
+    r"""The Facebook Page-Page network dataset introduced in the
     `"Multi-scale Attributed Node Embedding"
     <https://arxiv.org/abs/1909.13021>`_ paper.
-    Nodes represent developers on GitHub and edges are mutual follower
-    relationships.
-    It contains 37,300 nodes, 578,006 edges, 128 node features and 2 classes.
+    Nodes represent verified pages on Facebook and edges are mutual likes.
+    It contains 22,470 nodes, 342,004 edges, 128 node features and 4 classes.
 
     Args:
         root (string): Root directory where the dataset should be saved.
@@ -26,16 +25,16 @@ class GitHub(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = 'https://graphmining.ai/datasets/ptg/github.npz'
+    url = 'https://graphmining.ai/datasets/ptg/facebook.npz'
 
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
-        super(GitHub, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
     def raw_file_names(self) -> str:
-        return 'github.npz'
+        return 'facebook.npz'
 
     @property
     def processed_file_names(self) -> str:

@@ -49,6 +49,7 @@ from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
 from .github import GitHub
+from .facebook import FacebookPagePage
 
 __all__ = [
     'KarateClub',
@@ -104,6 +105,7 @@ __all__ = [
     'MixHopSyntheticDataset',
     'UPFD',
     'GitHub',
+    'FacebookPagePage',
 ]
 
 classes = __all__
