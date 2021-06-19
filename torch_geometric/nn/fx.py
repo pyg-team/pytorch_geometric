@@ -87,7 +87,7 @@ class Transformer(object):
         return self.gm.graph
 
     def transform(self) -> GraphModule:
-        r"""Transforms :obj:`self.module` and returns a tranfromed
+        r"""Transforms :obj:`self.module` and returns a transformed
         :class:`torch.fx.GraphModule`."""
 
         if self.debug:

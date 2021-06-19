@@ -19,27 +19,39 @@ NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
 class HeteroData(BaseData):
-    r"""A Python object modeling a single heterogeneous graph object inherits
-    from :class:`torch_geometric.data.BaseData` type.
+    r"""A Python object modeling a single heterogeneous graph.
+    There exists a few ways to create a heterogeneous graph data, *e.g.*:
 
-    There are a few ways to create a heterogeneous graph data.
-    * To initialize a node of type `paper` with a feature Tensor `x_paper`
-    named `x`:
-    .. code-block:: python
-      data = HeteroData()
-      data['paper'].x = x_paper
-      data = HeteroData(paper={'x': x_paper})
-      data = HeteroData({'paper': {'x': x_paper}})
-    * To initialize an edge from a node type `author` to another node type
-    `paper` with edge index Tensor:
-    .. code-block:: python
-      data = HeteroData()
-      data['author', 'writes', 'paper'].edge_index = edge_index_author_paper
-      data = HeteroData(
-        author_writes_paper={'edge_index': edge_index_author_paper)
-      data = HeteroData({
-        ('author', 'writes', 'paper'):
-        {'edge_index': edge_index_author_paper}})
+    * To initialize a node of type :obj:`"paper"` holding a node feature
+      matrix :obj:`x_paper` named :obj:`x`:
+
+      .. code-block:: python
+
+        data = HeteroData()
+        data['paper'].x = x_paper
+
+        data = HeteroData(paper={ 'x': x_paper })
+
+        data = HeteroData({'paper': { 'x': x_paper }})
+
+    * To initialize an edge from source node type :obj:`"author"` to
+      destination node type :obj:`"paper"` with relation type :obj:`"writes"`
+      holding a graph representation :obj:`edge_index_author_paper` named
+      :obj:`edge_index`:
+
+      .. code-block:: python
+
+        data = HeteroData()
+        data['author', 'writes', 'paper'].edge_index = edge_index_author_paper
+
+        data = HeteroData(author__writes__paper={
+            'edge_index': edge_index_author_paper
+        })
+
+        data = HeteroData({
+            ('author', 'writes', 'paper'):
+            { 'edge_index': edge_index_author_paper }
+        })
     """
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         self._global_store = BaseStorage(_parent=self)
@@ -67,6 +79,7 @@ class HeteroData(BaseData):
         return getattr(self._global_store, key)
 
     def __setattr__(self, key: str, value: Any):
+        """"""
         # `data._* = ...` => Link to the private `__dict__` store.
         # `data.* = ...` => Link to the `_global_store`.
         # NOTE: We aim to prevent duplicates in node or edge keys.
@@ -82,6 +95,7 @@ class HeteroData(BaseData):
             setattr(self._global_store, key, value)
 
     def __delattr__(self, key: str):
+        """"""
         # `del data._*` => Link to the private `__dict__` store.
         # `del data.*` => Link to the `_global_store`.
         if key[:1] == '_':
@@ -263,9 +277,7 @@ class HeteroData(BaseData):
         return self.node_types, self.edge_types
 
     def collect(self, key: str) -> Dict[NodeOrEdgeType, Any]:
-        r'''Collects the attribute `key` from `_node_stores_dict` and
-        `_edge_stores_dict`.
-        '''
+        r"""Collects the attribute :attr:`key` from all node and edge types."""
         mapping = {}
         for subtype, store in self._all_nodes_and_edges():
             if key in store:
@@ -277,13 +289,17 @@ class HeteroData(BaseData):
         return getattr(self._global_store, key)
 
     def get_nodes(self, key: NodeType) -> NodeStorage:
-        r'''Get the storage of a particular node type. If it is not present, we
-        create a new `Storage` object for the given node.
-        Examples:
-        ..code - block:: python
-          data = HeteroData()
-          paper = data.get_nodes('paper')
-        '''
+        r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
+        of a particular node type attr:`key`.
+        If it is not present, will create a new
+        :class:`~torch_geometric.data.storage.NodeStorage` object for the given
+        node type.
+
+        .. code-block:: python
+
+            data = HeteroData()
+            node_storage = data.get_nodes('paper')
+        """
         out = self._node_stores_dict.get(key, None)
         if out is None:
             out = NodeStorage(_parent=self, _key=key)
@@ -291,13 +307,17 @@ class HeteroData(BaseData):
         return out
 
     def get_edges(self, key: EdgeType) -> EdgeStorage:
-        r'''Get the storage of a particular edge type. If it is not present, we
-        create a new `Storage` object for the given edge.
-        Examples:
-        ..code - block:: python
-          data = HeteroData()
-          author_paper_edge = data.get_edges(('author', '_', 'paper'))
-        '''
+        r"""Gets the :class:`~torch_geometric.data.storage.EdgeStorage` object
+        of a particular edge type attr:`key`.
+        If it is not present, will create a new
+        :class:`~torch_geometric.data.storage.EdgeStorage` object for the given
+        edge type.
+
+        .. code-block:: python
+
+            data = HeteroData()
+            edge_storage = data.get_edges(('author', 'writes', 'paper'))
+        """
         out = self._edge_stores_dict.get(key, None)
         if out is None:
             out = EdgeStorage(_parent=self, _key=key)

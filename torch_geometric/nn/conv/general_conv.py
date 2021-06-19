@@ -13,29 +13,32 @@ from torch_geometric.utils import softmax
 
 class GeneralConv(MessagePassing):
     r"""A general GNN layer adapted from the `"Design Space for Graph Neural
-    Networks" <https://arxiv.org/abs/2011.08843>`_ paper
+    Networks" <https://arxiv.org/abs/2011.08843>`_ paper.
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
-        in_edge_channels (int): Size of each input edge.
+        in_edge_channels (int, optional): Size of each input edge.
             (default: :obj:`None`)
-        aggr (str): Aggregation function: mean, add, max
-            (default: :obj:`mean`)
-        skip_linear (bool): Whether apply linear function in skip connection
-            (default: :obj:`False`)
-        directed_msg (bool): If message passing is directed; otherwise, message
-            passing is bi-directed.
-            (default: :obj:`True`)
-        heads (int): Number of message passing ensembles.
-            When heads > 1, GNN layer will output ensemble of multiple messages
-            When attention is used, it corresponds to multi-head attention.
-            (default: :obj:`1`)
-        attention (bool): Whether add attention to message computation
-            (default: :obj:`False`)
-        attention_type (str): Type of attention: additive, dot_product
-            (default: :obj:`additive`)
+        aggr (string, optional): The aggregation scheme to use
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
+            (default: :obj:`"mean"`)
+        skip_linear (bool, optional): Whether apply linear function in skip
+            connection. (default: :obj:`False`)
+        directed_msg (bool, optional): If message passing is directed;
+            otherwise, message passing is bi-directed. (default: :obj:`True`)
+        heads (int, optional): Number of message passing ensembles.
+            If :obj:`heads > 1`, the GNN layer will output an ensemble of
+            multiple messages.
+            If attention is used (:obj:`attention=True`), this corresponds to
+            multi-head attention. (default: :obj:`1`)
+        attention (bool, optional): Whether to add attention to message
+            computation. (default: :obj:`False`)
+        attention_type (str, optional): Type of attention: :obj:`"additive"`,
+            :obj:`"dot_product"`. (default: :obj:`"additive"`)
         l2_normalize (bool, optional): If set to :obj:`True`, output features
             will be :math:`\ell_2`-normalized, *i.e.*,
             :math:`\frac{\mathbf{x}^{\prime}_i}
@@ -116,6 +119,7 @@ class GeneralConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None, edge_feature: Tensor = None) -> Tensor:
+        """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
         x_self = x[1]

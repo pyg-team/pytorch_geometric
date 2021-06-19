@@ -119,11 +119,10 @@ class HGTConv(MessagePassing):
                 shape :obj:`[2, num_edges]` or a
                 :obj:`torch_sparse.SparseTensor`.
 
-        Returns:
-            Dict[str, Optional[Tensor]]: The ouput node embeddings for each
-                node type.
-                In case a node type does not receive messages, its output will
-                be set to :obj:`None`.
+        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The ouput node embeddings
+            for each node type.
+            In case a node type does not receive any message, its output will
+            be set to :obj:`None`.
         """
 
         H, D = self.heads, self.out_channels // self.heads
