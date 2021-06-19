@@ -61,7 +61,7 @@ class WikipediaNetwork(InMemoryDataset):
     def process(self):
         data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
         y = torch.from_numpy(data['target']).to(torch.float)
-        x = torch.from_numpy(data['features']).to(torch.float)        
+        x = torch.from_numpy(data['features']).to(torch.float)
         edge_index = torch.from_numpy(data['edges']).to(torch.long)
         edge_index = edge_index.t().contiguous()
 
