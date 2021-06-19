@@ -1,14 +1,6 @@
-import pytest
-
 import torch
 from torch_sparse import SparseTensor
 from torch_geometric.nn import HGTConv
-
-try:
-    from torch.nn.parameter import UninitializedParameter  # noqa
-    with_lazy_support = True
-except ImportError:
-    with_lazy_support = False  # Skip error for PyTorch <= 1.7.
 
 
 def test_hgt_conv_same_dimensions():
@@ -87,7 +79,6 @@ def test_hgt_conv_different_dimensions():
         assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@pytest.mark.skipif(not with_lazy_support, reason='No lazy support')
 def test_hgt_conv_lazy():
     x_dict = {
         'author': torch.randn(4, 16),

@@ -9,11 +9,6 @@ from torch.nn.parameter import Parameter
 
 from torch_geometric.nn import inits
 
-try:
-    from torch.nn.parameter import UninitializedParameter
-except ImportError:
-    pass  # Skip error for PyTorch <= 1.7.
-
 
 class Linear(torch.nn.Module):
     r"""Applies a linear tranformation to the incoming data
@@ -52,7 +47,7 @@ class Linear(torch.nn.Module):
         if in_channels > 0:
             self.weight = Parameter(torch.Tensor(out_channels, in_channels))
         else:
-            self.weight = UninitializedParameter()
+            self.weight = torch.nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
                 self.initialize_parameters)
 
@@ -91,7 +86,7 @@ class Linear(torch.nn.Module):
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
-        if isinstance(self.weight, UninitializedParameter):
+        if isinstance(self.weight, torch.nn.parameter.UninitializedParameter):
             self.in_channels = input[0].size(-1)
             self.weight.materialize((self.out_channels, self.in_channels))
             self.reset_parameters()

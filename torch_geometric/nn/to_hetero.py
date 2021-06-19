@@ -14,7 +14,7 @@ from torch_geometric.nn.fx import Transformer
 try:
     from torch.fx import GraphModule, Graph, Node
 except ImportError:
-    GraphModule = Graph = Node = None
+    GraphModule = Graph = Node = 'GraphModule', 'Graph', 'Node'
 
 # TODO:
 # * LazyInitialization - Bug: LazyLinear.weight does not support deepcopy yet

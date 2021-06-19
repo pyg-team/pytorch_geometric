@@ -1,12 +1,13 @@
 from typing import Optional, Dict, Any
 
+import torch
 from torch.nn import Module, ModuleList, ModuleDict, Sequential
 from torch_geometric.nn.conv import MessagePassing
 
 try:
-    from torch.fx import GraphModule, Graph, Node, Tracer
+    from torch.fx import GraphModule, Graph, Node
 except ImportError:
-    GraphModule = Graph = Node = Target = Tracer = None
+    GraphModule = Graph = Node = 'GraphModule', 'Graph', 'Node'
 
 
 class Transformer(object):
@@ -162,14 +163,14 @@ class Transformer(object):
 def symbolic_trace(
         module: Module,
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
-    class MyTracer(Tracer):
+    class Tracer(torch.fx.Tracer):
         def is_leaf_module(self, module: Module, *args, **kwargs) -> bool:
             # We don't want to trace inside `MessagePassing` modules, so we
             # mark them as leaf modules.
             return (isinstance(module, MessagePassing)
                     or super().is_leaf_module(module, *args, **kwargs))
 
-    return GraphModule(module, MyTracer().trace(module, concrete_args))
+    return GraphModule(module, Tracer().trace(module, concrete_args))
 
 
 def get_submodule(module: Module, target: str) -> Module:

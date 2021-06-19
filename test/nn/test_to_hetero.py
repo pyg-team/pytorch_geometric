@@ -1,17 +1,9 @@
 from typing import Tuple
 
-import pytest
-
 import torch
 from torch import Tensor
 from torch.nn import Linear, Sequential, ReLU
 from torch_geometric.nn import SAGEConv, GINEConv, to_hetero
-
-try:
-    from torch import fx  # noqa
-    with_fx = True
-except ImportError:
-    with_fx = False  # Skip error for PyTorch <= 1.7.
 
 
 class Net1(torch.nn.Module):
@@ -107,7 +99,6 @@ class Net7(torch.nn.Module):
         return x
 
 
-@pytest.mark.skipif(not with_fx, reason="No 'torch.fx' support")
 def test_to_hetero():
     metadata = (['paper', 'author'], [('paper', 'cites', 'paper'),
                                       ('paper', 'written_by', 'author'),
