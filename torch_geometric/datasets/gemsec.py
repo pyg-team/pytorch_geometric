@@ -3,21 +3,22 @@ from typing import Optional, Callable
 
 import torch
 import numpy as np
-from torch_geometric.data import InMemoryDataset, download_url, Data
+
+from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
-class WikipediaNetwork(InMemoryDataset):
-    r"""The Wikipedia networks introduced in the
-    `"Multi-scale Attributed Node Embedding"
-    <https://arxiv.org/abs/1909.13021>`_ paper.
-    Nodes represent web pages and edges represent hyperlinks between them.
-    Node features represent several informative nouns in the Wikipedia pages.
-    The task is to predict the average daily traffic of the web page.
+class GemsecDeezer(InMemoryDataset):
+    r"""The Deezer User Network datasets introduced in the
+    `"GEMSEC: Graph Embedding with Self Clustering"
+    <https://arxiv.org/abs/1802.03997>`_ paper.
+    Nodes represent Deezer user and edges are mutual friendships.
+    The task is multi-label multi-class node classification about
+    the genres liked by the users.
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"chameleon"`,
-            :obj:`"crocodile"`, :obj:`"squirrel"`).
+        name (string): The name of the dataset (:obj:`"HU"`, :obj:`"HR"`,
+            :obj:`"RO"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -28,15 +29,15 @@ class WikipediaNetwork(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
 
-    url = 'https://graphmining.ai/datasets/ptg/wiki'
+    url = 'https://graphmining.ai/datasets/ptg/gemsec'
 
     def __init__(self, root: str, name: str,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         self.name = name
-        assert self.name in ['chameleon', 'crocodile', 'squirrel']
+        assert self.name in ['HU', 'HR', 'RO']
 
-        super(WikipediaNetwork, self).__init__(root, transform, pre_transform)
+        super(GemsecDeezer, self).__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -60,12 +61,11 @@ class WikipediaNetwork(InMemoryDataset):
 
     def process(self):
         data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
-        y = torch.from_numpy(data['target']).to(torch.float)
-        x = torch.from_numpy(data['features']).to(torch.float)        
+        y = torch.from_numpy(data['target']).to(torch.long)
         edge_index = torch.from_numpy(data['edges']).to(torch.long)
         edge_index = edge_index.t().contiguous()
 
-        data = Data(x=x, y=y, edge_index=edge_index)
+        data = Data(y=y, edge_index=edge_index)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
