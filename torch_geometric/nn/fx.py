@@ -2,6 +2,7 @@ from typing import Optional, Dict, Any
 
 import torch
 from torch.nn import Module, ModuleList, ModuleDict, Sequential
+from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.conv import MessagePassing
 
 try:
@@ -165,9 +166,10 @@ def symbolic_trace(
         concrete_args: Optional[Dict[str, Any]] = None) -> GraphModule:
     class Tracer(torch.fx.Tracer):
         def is_leaf_module(self, module: Module, *args, **kwargs) -> bool:
-            # We don't want to trace inside `MessagePassing` modules, so we
-            # mark them as leaf modules.
+            # We don't want to trace inside `MessagePassing` and lazy `Linear`
+            # modules, so we mark them as leaf modules.
             return (isinstance(module, MessagePassing)
+                    or isinstance(module, Linear)
                     or super().is_leaf_module(module, *args, **kwargs))
 
     return GraphModule(module, Tracer().trace(module, concrete_args))

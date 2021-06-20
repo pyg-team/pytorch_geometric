@@ -3,6 +3,7 @@ from typing import Tuple
 import torch
 from torch import Tensor
 from torch.nn import Linear, Sequential, ReLU
+from torch_geometric.nn import Linear as LazyLinear
 from torch_geometric.nn import SAGEConv, GINEConv, to_hetero
 
 
@@ -99,6 +100,16 @@ class Net7(torch.nn.Module):
         return x
 
 
+class Net8(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.lin1 = LazyLinear(-1, 32)
+
+    def forward(self, x: Tensor) -> Tensor:
+        x = self.lin1(x)
+        return x
+
+
 def test_to_hetero():
     metadata = (['paper', 'author'], [('paper', 'cites', 'paper'),
                                       ('paper', 'written_by', 'author'),
@@ -173,3 +184,10 @@ def test_to_hetero():
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (100, 32)
     assert out['author'].size() == (100, 32)
+
+    model = Net8()
+    model = to_hetero(model, metadata, debug=False)
+    out = model({'paper': torch.randn(4, 8), 'author': torch.randn(8, 16)})
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (4, 32)
+    assert out['author'].size() == (8, 32)

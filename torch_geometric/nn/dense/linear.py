@@ -1,5 +1,6 @@
 from typing import Optional
 
+import copy
 import math
 
 import torch
@@ -57,6 +58,16 @@ class Linear(torch.nn.Module):
             self.register_parameter('bias', None)
 
         self.reset_parameters()
+
+    def __deepcopy__(self, memo):
+        out = Linear(self.in_channels, self.out_channels, self.bias
+                     is not None, self.weight_initializer,
+                     self.bias_initializer)
+        if self.in_channels > 0:
+            out.weight = copy.deepcopy(self.weight, memo)
+        if self.bias is not None:
+            out.bias = copy.deepcopy(self.bias, memo)
+        return out
 
     def reset_parameters(self):
         if self.in_channels > 0:
