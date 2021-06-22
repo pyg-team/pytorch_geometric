@@ -92,9 +92,9 @@ class GEDDataset(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
-        path = osp.join(self.processed_dir, '{}_ged.pt'.format(self.name))
+        path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
         self.ged = torch.load(path)
-        path = osp.join(self.processed_dir, '{}_norm_ged.pt'.format(self.name))
+        path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
         self.norm_ged = torch.load(path)
 
     @property
@@ -105,7 +105,8 @@ class GEDDataset(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
 
-    def download(self):
+  # Downloading the Dataset 
+  def download(self):
         name = self.datasets[self.name]['id']
         path = download_url(self.url.format(name), self.raw_dir)
         self.datasets[self.name]['extract'](path, self.raw_dir)
@@ -115,6 +116,7 @@ class GEDDataset(InMemoryDataset):
         path = download_url(self.url.format(name), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
 
+    # Processing the Dataset to convert Graphs from .gexf format to NetworkX format
     def process(self):
         ids, Ns = [], []
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
@@ -166,14 +168,14 @@ class GEDDataset(InMemoryDataset):
             g = torch.tensor(gs, dtype=torch.float)
             mat[x, y], mat[y, x] = g, g
 
-        path = osp.join(self.processed_dir, '{}_ged.pt'.format(self.name))
+        path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
         torch.save(mat, path)
 
         N = torch.tensor(Ns, dtype=torch.float)
         norm_mat = mat / (0.5 * (N.view(-1, 1) + N.view(1, -1)))
 
-        path = osp.join(self.processed_dir, '{}_norm_ged.pt'.format(self.name))
+        path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
         torch.save(norm_mat, path)
 
     def __repr__(self):
-        return '{}({})'.format(self.name, len(self))
+        return f'{self.name}({len(self)})'
