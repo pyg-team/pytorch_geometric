@@ -1,3 +1,5 @@
+from typing import Optional, Callable
+
 import torch
 import numpy as np
 
@@ -5,9 +7,9 @@ from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
 class LastFMAsia(InMemoryDataset):
-    r"""The LastFM Asia Network dataset introduced in the
-    `"Characteristic Functions on Graphs"
-    <https://arxiv.org/abs/2005.07959>`_ paper.
+    r"""The LastFM Asia Network dataset introduced in the `"Characteristic
+    Functions on Graphs: Birds of a Feather, from Statistical Descriptors to
+    Parametric Models" <https://arxiv.org/abs/2005.07959>`_ paper.
     Nodes represent LastFM users from Asia and edges are friendships.
     It contains 7,624 nodes, 55,612 edges, 128 node features and 18 classes.
 
@@ -25,16 +27,17 @@ class LastFMAsia(InMemoryDataset):
 
     url = 'https://graphmining.ai/datasets/ptg/lastfm_asia.npz'
 
-    def __init__(self, root, transform=None, pre_transform=None):
-        super(LastFMAsia, self).__init__(root, transform, pre_transform)
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return 'lastfm_asia.npz'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
