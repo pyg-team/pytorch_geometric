@@ -7,10 +7,11 @@ from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
 class DeezerEurope(InMemoryDataset):
-    r"""The Deezer Europe dataset introduced in the
-    `"Characteristic Functions on Graphs"
-    <https://arxiv.org/abs/2005.07959>`_ paper. Nodes represent European
-    users of Deezer and edges are mutual follower relationships.
+    r"""The Deezer Europe dataset introduced in the `"Characteristic Functions
+    on Graphs: Birds of a Feather, from Statistical Descriptors to Parametric
+    Models" <https://arxiv.org/abs/2005.07959>`_ paper.
+    Nodes represent European users of Deezer and edges are mutual follower
+    relationships.
     It contains 28,281 nodes, 185,504 edges, 128 node features and 2 classes.
 
     Args:
