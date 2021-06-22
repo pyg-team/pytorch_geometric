@@ -18,6 +18,8 @@ class WikipediaNetwork(InMemoryDataset):
         root (string): Root directory where the dataset should be saved.
         name (string): The name of the dataset (:obj:`"chameleon"`,
             :obj:`"crocodile"`, :obj:`"squirrel"`).
+        geom_gcn_preprocess (bool): A flag which allows the pre-processing
+             introduced in the Geom-GCN paper (default: :obj:`True`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -26,14 +28,16 @@ class WikipediaNetwork(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
     """
 
     url = 'https://graphmining.ai/datasets/ptg/wiki'
 
-    def __init__(self, root: str, name: str,
+    def __init__(self, root: str, name: str, geom_gcn_preprocess: bool = False,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         self.name = name
+        self.geom_gcn_preprocess = geom_gcn_preprocess
         assert self.name in ['chameleon', 'crocodile', 'squirrel']
 
         super(WikipediaNetwork, self).__init__(root, transform, pre_transform)
@@ -60,12 +64,21 @@ class WikipediaNetwork(InMemoryDataset):
 
     def process(self):
         data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
-        y = torch.from_numpy(data['target']).to(torch.float)
         x = torch.from_numpy(data['features']).to(torch.float)
         edge_index = torch.from_numpy(data['edges']).to(torch.long)
         edge_index = edge_index.t().contiguous()
 
-        data = Data(x=x, y=y, edge_index=edge_index)
+        if self.geom_gcn_preprocess:
+            y = torch.from_numpy(data['label']).to(torch.long)
+            train_mask = torch.from_numpy(data['train_mask']).to(torch.bool)
+            test_mask = torch.from_numpy(data['test_mask']).to(torch.bool)
+            val_mask = torch.from_numpy(data['val_mask']).to(torch.bool)
+
+            data = Data(x=x, edge_index=edge_index, y=y, train_mask=train_mask,
+                        val_mask=val_mask, test_mask=test_mask)
+        else:
+            y = torch.from_numpy(data['target']).to(torch.float)
+            data = Data(x=x, y=y, edge_index=edge_index)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
