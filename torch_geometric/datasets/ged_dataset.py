@@ -105,7 +105,6 @@ class GEDDataset(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
 
-  # Downloading the Dataset 
   def download(self):
         name = self.datasets[self.name]['id']
         path = download_url(self.url.format(name), self.raw_dir)
@@ -116,7 +115,6 @@ class GEDDataset(InMemoryDataset):
         path = download_url(self.url.format(name), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
 
-    # Processing the Dataset to convert Graphs from .gexf format to NetworkX format
     def process(self):
         ids, Ns = [], []
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
@@ -124,9 +122,10 @@ class GEDDataset(InMemoryDataset):
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 
             data_list = []
+            # Read graphs in .gexf format to NetworkX:
             for i, idx in enumerate(ids[-1]):
                 i = i if len(ids) == 1 else i + len(ids[0])
-                G = nx.read_gexf(osp.join(r_path, '{}.gexf'.format(idx)))
+                G = nx.read_gexf(osp.join(r_path, f'{idx}.gexf'))
                 mapping = {name: j for j, name in enumerate(G.nodes())}
                 G = nx.relabel_nodes(G, mapping)
                 Ns.append(G.number_of_nodes())
@@ -177,5 +176,5 @@ class GEDDataset(InMemoryDataset):
         path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
         torch.save(norm_mat, path)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.name}({len(self)})'
