@@ -31,6 +31,7 @@ class BaseStorage(MutableMapping):
                  **kwargs):
         super().__init__()
         self._parent = _parent
+        self._key = None
         self._mapping = {}
         for key, value in (_mapping or {}).items():
             setattr(self, key, value)

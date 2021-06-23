@@ -72,13 +72,14 @@ def test_hetero_data_functions():
         ('paper', '_', 'author'),
         ('author', '_', 'paper')]
 
-    x_dict = data.x_dict
+    x_dict = data.collect('x')
     assert len(x_dict) == 2
     assert x_dict['paper'].tolist() == x_paper.tolist()
     assert x_dict['author'].tolist() == x_author.tolist()
 
     data.y = 0
     assert data['y'] == 0 and data.y == 0
+    assert data.attribute('y') == 0
     assert len(data) == 3
     assert sorted(data.keys) == ['edge_index', 'x', 'y']
 

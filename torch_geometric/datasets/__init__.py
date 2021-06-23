@@ -11,6 +11,7 @@ from .reddit import Reddit
 from .reddit2 import Reddit2
 from .flickr import Flickr
 from .yelp import Yelp
+from .amazon_products import AmazonProducts
 from .qm7 import QM7b
 from .qm9 import QM9
 from .zinc import ZINC
@@ -47,6 +48,8 @@ from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
+from .github import GitHub
+from .facebook import FacebookPagePage
 from .ogb_mag import OGB_MAG
 from .dblp import DBLP
 from .imdb import IMDB
@@ -67,6 +70,7 @@ __all__ = [
     'Reddit2',
     'Flickr',
     'Yelp',
+    'AmazonProducts',
     'QM7b',
     'QM9',
     'ZINC',
@@ -104,6 +108,8 @@ __all__ = [
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'UPFD',
+    'GitHub',
+    'FacebookPagePage',
     'OGB_MAG',
     'DBLP',
     'IMDB',

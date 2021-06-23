@@ -3,6 +3,7 @@ from typing import Optional, Callable, List, Union, Tuple, Dict, Iterable
 import copy
 from itertools import repeat
 from inspect import signature
+from collections import defaultdict
 from collections.abc import Mapping
 
 import torch
@@ -129,10 +130,9 @@ class InMemoryDataset(Dataset):
                     output[key] = value[slice_obj]
 
         for store in data.stores:
-            if hasattr(store, '_key') and store._key is not None:
-                _slice(store, self.slices[store._key], store)
-            else:
-                _slice(store, self.slices, store)
+            key = store._key
+            slices = self.slices if key is None else self.slices[key]
+            _slice(store, slices, store)
 
         self._data_list[idx] = copy.copy(data)
 
@@ -192,20 +192,20 @@ class InMemoryDataset(Dataset):
                     slices[key] = torch.tensor(slices[key])
 
         # We group all storage objects of every data object in the
-        # `data_list` by key, i.e. `stores_dict: { store_key: [store, ...] }`.
-        stores_dict = {}
+        # `data_list` by key, i.e. `store_dict: { store_key: [store, ...] }`.
+        store_dict = defaultdict(list)
         for elem in data_list:
-            for key, store in elem.store_dict.items():
-                stores_dict[key] = stores_dict.get(key, []) + [store]
+            for store in elem.stores:
+                store_dict[store._key].append(store)
 
         # After which we concatenate all elements of all attributes in
         # `data_list` together by recursively iterating over each store.
-        for key, store in data.store_dict.items():
-            if hasattr(store, '_key') and store._key is not None:
+        for store in data.stores:
+            if store._key is not None:
                 slices[store._key] = {}
-                _cat(stores_dict[key], store, slices[store._key], store)
+                _cat(store_dict[store._key], store, slices[store._key], store)
             else:
-                _cat(stores_dict[key], store, slices, store)
+                _cat(store_dict[store._key], store, slices, store)
 
         return data, slices
 

@@ -14,18 +14,15 @@ from torch_geometric.nn.fx import Transformer
 try:
     from torch.fx import GraphModule, Graph, Node
 except ImportError:
-    GraphModule = Graph = Node = None
-
-# TODO:
-# * LazyInitialization - Bug: LazyLinear.weight does not support deepcopy yet
+    GraphModule = Graph = Node = 'GraphModule', 'Graph', 'Node'
 
 
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
               input_map: Optional[Dict[str, str]] = None,
               debug: bool = False) -> GraphModule:
     r"""Converts a homogeneous GNN model into its heterogeneous equivalent in
-    which node representations are learned for each node type
-    :obj:`metadata[0]`, and messages are exchanged between edge type
+    which node representations are learned for each node type in
+    :obj:`metadata[0]`, and messages are exchanged between edge type in
     :obj:`metadata[1]`, as denoted in the `"Modeling Relational Data with Graph
     Convolutional Networks" <https://arxiv.org/abs/1703.06103>`_ paper:
 
@@ -70,10 +67,10 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"sum"`)
         input_map (Dict[str, str], optional): A dictionary holding information
-            on the type of input arguments of :obj:`module.forward`.
-            In case :obj:`arg` is a node-level argument, then
-            :obj:`input_map[key] = 'node'`, and :obj:`input_map[key] = 'edge'`
-            otherwise.
+            about the type of input arguments of :obj:`module.forward`.
+            For example, in case :obj:`arg` is a node-level argument, then
+            :obj:`input_map['arg'] = 'node'`, and
+            :obj:`input_map['arg'] = 'edge'` otherwise.
             In case :obj:`input_map` is not further specified, will try to
             automatically determine the correct type of input arguments.
             (default: :obj:`None`)

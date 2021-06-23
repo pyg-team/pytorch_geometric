@@ -1,5 +1,6 @@
 from typing import Optional
 
+import copy
 import math
 
 import torch
@@ -8,11 +9,6 @@ import torch.nn.functional as F
 from torch.nn.parameter import Parameter
 
 from torch_geometric.nn import inits
-
-try:
-    from torch.nn.parameter import UninitializedParameter
-except ImportError:
-    pass  # Skip error for PyTorch <= 1.7.
 
 
 class Linear(torch.nn.Module):
@@ -52,7 +48,7 @@ class Linear(torch.nn.Module):
         if in_channels > 0:
             self.weight = Parameter(torch.Tensor(out_channels, in_channels))
         else:
-            self.weight = UninitializedParameter()
+            self.weight = torch.nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
                 self.initialize_parameters)
 
@@ -62,6 +58,16 @@ class Linear(torch.nn.Module):
             self.register_parameter('bias', None)
 
         self.reset_parameters()
+
+    def __deepcopy__(self, memo):
+        out = Linear(self.in_channels, self.out_channels, self.bias
+                     is not None, self.weight_initializer,
+                     self.bias_initializer)
+        if self.in_channels > 0:
+            out.weight = copy.deepcopy(self.weight, memo)
+        if self.bias is not None:
+            out.bias = copy.deepcopy(self.bias, memo)
+        return out
 
     def reset_parameters(self):
         if self.in_channels > 0:
@@ -91,7 +97,7 @@ class Linear(torch.nn.Module):
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
-        if isinstance(self.weight, UninitializedParameter):
+        if isinstance(self.weight, torch.nn.parameter.UninitializedParameter):
             self.in_channels = input[0].size(-1)
             self.weight.materialize((self.out_channels, self.in_channels))
             self.reset_parameters()

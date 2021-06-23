@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-__version__ = '1.7.0'
+__version__ = '1.7.1'
 url = 'https://github.com/rusty1s/pytorch_geometric'
 
 install_requires = [

@@ -1,15 +1,11 @@
+import copy
 import pytest
 from itertools import product
 
 import torch
 from torch_geometric.nn import Linear
 from torch.nn import Linear as PTLinear
-
-try:
-    from torch.nn.parameter import UninitializedParameter  # noqa
-    with_lazy_support = True
-except ImportError:
-    with_lazy_support = False  # Skip error for PyTorch <= 1.7.
+from torch.nn.parameter import UninitializedParameter
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -23,7 +19,6 @@ def test_linear(weight, bias):
     assert lin(x).size() == (3, 4, 32)
 
 
-@pytest.mark.skipif(not with_lazy_support, reason='No lazy support')
 @pytest.mark.parametrize('weight,bias', product(weight_inits, bias_inits))
 def test_lazy_linear(weight, bias):
     x = torch.randn(3, 4, 16)
@@ -33,7 +28,6 @@ def test_lazy_linear(weight, bias):
     assert str(lin) == 'Linear(16, 32, bias=True)'
 
 
-@pytest.mark.skipif(not with_lazy_support, reason='No lazy support')
 @pytest.mark.parametrize('lazy', [True, False])
 def test_identical_linear_default_initialization(lazy):
     x = torch.randn(3, 4, 16)
@@ -48,3 +42,32 @@ def test_identical_linear_default_initialization(lazy):
     assert lin1.weight.tolist() == lin2.weight.tolist()
     assert lin1.bias.tolist() == lin2.bias.tolist()
     assert lin1(x).tolist() == lin2(x).tolist()
+
+
+def test_copy_unintialized_parameter():
+    weight = UninitializedParameter()
+    with pytest.raises(Exception):
+        copy.deepcopy(weight)
+
+
+@pytest.mark.parametrize('lazy', [True, False])
+def test_copy_linear(lazy):
+    lin = Linear(-1 if lazy else 16, 32)
+
+    copied_lin = copy.copy(lin)
+    assert id(copied_lin) != id(lin)
+    assert id(copied_lin.weight) == id(lin.weight)
+    if not isinstance(copied_lin.weight, UninitializedParameter):
+        assert copied_lin.weight.data_ptr() == lin.weight.data_ptr()
+    assert id(copied_lin.bias) == id(lin.bias)
+    assert copied_lin.bias.data_ptr() == lin.bias.data_ptr()
+
+    copied_lin = copy.deepcopy(lin)
+    assert id(copied_lin) != id(lin)
+    assert id(copied_lin.weight) != id(lin.weight)
+    if not isinstance(copied_lin.weight, UninitializedParameter):
+        assert copied_lin.weight.data_ptr() != lin.weight.data_ptr()
+        assert copied_lin.weight.tolist() == lin.weight.tolist()
+    assert id(copied_lin.bias) != id(lin.bias)
+    assert copied_lin.bias.data_ptr() != lin.bias.data_ptr()
+    assert copied_lin.bias.tolist() == lin.bias.tolist()
