@@ -105,7 +105,7 @@ class GEDDataset(InMemoryDataset):
     def processed_file_names(self) -> List[str]:
         return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
 
-  def download(self):
+    def download(self):
         name = self.datasets[self.name]['id']
         path = download_url(self.url.format(name), self.raw_dir)
         self.datasets[self.name]['extract'](path, self.raw_dir)
