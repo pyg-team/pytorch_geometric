@@ -53,6 +53,7 @@ from .facebook import FacebookPagePage
 from .lastfm_asia import LastFMAsia
 from .deezer_europe import DeezerEurope
 from .gemsec import GemsecDeezer
+from .twitch import Twitch
 
 __all__ = [
     'KarateClub',
@@ -112,6 +113,7 @@ __all__ = [
     'LastFMAsia',
     'DeezerEurope',
     'GemsecDeezer',
+    'Twitch',
 ]
 
 classes = __all__
