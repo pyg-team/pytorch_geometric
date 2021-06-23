@@ -19,8 +19,11 @@ class WikipediaNetwork(InMemoryDataset):
         root (string): Root directory where the dataset should be saved.
         name (string): The name of the dataset (:obj:`"chameleon"`,
             :obj:`"crocodile"`, :obj:`"squirrel"`).
-        geom_gcn_preprocess (bool): A flag which allows the pre-processing
-             introduced in the Geom-GCN paper (default: :obj:`True`).
+        geom_gcn_preprocess (bool): If set to :obj:`True`, will apply the
+            pre-processing technique introduced in the `"Geom-GCN: Geometric
+            Graph Convolutional Networks" <https://arxiv.org/abs/2002.05287>_`,
+            in which the average monthly traffic of the web page is converted
+            into five categories to predict.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -34,7 +37,7 @@ class WikipediaNetwork(InMemoryDataset):
 
     url = 'https://graphmining.ai/datasets/ptg/wiki'
 
-    def __init__(self, root: str, name: str, geom_gcn_preprocess: bool = False,
+    def __init__(self, root: str, name: str, geom_gcn_preprocess: bool = True,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         self.name = name
