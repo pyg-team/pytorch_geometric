@@ -174,7 +174,7 @@ pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA
 pip install torch-geometric
 ```
 
-where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu111` depending on your PyTorch installation.
+where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
 Binaries are provided for Python version `<= 3.9`.
 
 |             | `cpu` | `cu102` | `cu111` |
@@ -200,7 +200,7 @@ pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA
 pip install torch-geometric
 ```
 
-where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation.
+where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
 Binaries are provided for Python version `<= 3.9`.
 
 |             | `cpu` | `cu101` | `cu102` | `cu111` |
