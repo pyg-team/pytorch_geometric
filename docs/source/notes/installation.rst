@@ -36,8 +36,6 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
          pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
          pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
          pip install torch-geometric
 
     where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by your specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.7.1`, :obj:`1.8.0`, :obj:`1.8.1`, :obj:`1.9.0`), respectively.
@@ -47,8 +45,6 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
          pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html
          pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.9.0+cu111.html
          pip install torch-geometric
 
     For PyTorch 1.8.0/1.8.1 and CUDA 10.2, type:
@@ -60,6 +56,15 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
          pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
          pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
          pip install torch-geometric
+
+#. Install additional packages *(optional)*: To add additional functionality to PyTorch Geometric, such as k-NN and radius graph generation or :class:`~torch_geometric.nn.conv.SplineConv` support, run
+
+    .. code-block:: none
+
+         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+
+    following the same procedure as mentioned above.
 
 Installation from Source
 ------------------------
@@ -116,15 +121,20 @@ In case a specific version is not supported by `our wheels <https://pytorch-geom
             $ nvcc --version
             >>> 10.2
 
-#. Install all needed packages:
+#. Install the relevant packages:
 
     .. code-block:: none
 
       pip install torch-scatter
       pip install torch-sparse
+      pip install torch-geometric
+
+#. Install additional packages *(optional)*:
+
+    .. code-block:: none
+
       pip install torch-cluster
       pip install torch-spline-conv
-      pip install torch-geometric
 
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
