@@ -16,8 +16,8 @@ install_requires = [
     'googledrivedownloader',
     'jinja2',
 ]
-setup_requires = ['pytest-runner']
-tests_require = ['pytest', 'pytest-cov', 'mock']
+setup_requires = []
+tests_require = ['pytest', 'pytest-runner', 'pytest-cov', 'mock']
 
 setup(
     name='torch_geometric',
