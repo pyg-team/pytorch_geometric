@@ -1,0 +1,35 @@
+package:
+  name: pytorch-geometric
+  version: 1.7.2
+
+source:
+  path: ../..
+
+requirements:
+  host:
+    - python
+
+  run:
+    - python
+    - pytorch
+    - pytorch-scatter
+    - pytorch-sparse
+    - pytorch-cluster
+    - pytorch-spline-conv
+
+test:
+  imports:
+    - torch_scatter
+    - torch_sparse
+    - torch_cluster
+    - torch_spline_conv
+    - torch_geometric
+
+build:
+  noarch: python
+  script: pyton setup.py install
+
+about:
+  home: https://github.com/rusty1s/pytorch_geometric
+  license: MIT
+  summary: Geometric Deep Learning Extension Library for PyTorch
