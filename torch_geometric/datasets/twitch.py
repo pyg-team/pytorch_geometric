@@ -7,23 +7,18 @@ import numpy as np
 from torch_geometric.data import InMemoryDataset, download_url, Data
 
 
-class WikipediaNetwork(InMemoryDataset):
-    r"""The Wikipedia networks introduced in the
+class Twitch(InMemoryDataset):
+    r"""The Twitch Gamer networks introduced in the
     `"Multi-scale Attributed Node Embedding"
     <https://arxiv.org/abs/1909.13021>`_ paper.
-    Nodes represent web pages and edges represent hyperlinks between them.
-    Node features represent several informative nouns in the Wikipedia pages.
-    The task is to predict the average daily traffic of the web page.
+    Nodes represent gamers on Twitch and edges are followerships between them.
+    Node features represent embeddings of games played by the Twitch users.
+    The task is to predict whether a user streams mature content.
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"chameleon"`,
-            :obj:`"crocodile"`, :obj:`"squirrel"`).
-        geom_gcn_preprocess (bool): If set to :obj:`True`, will apply the
-            pre-processing technique introduced in the `"Geom-GCN: Geometric
-            Graph Convolutional Networks" <https://arxiv.org/abs/2002.05287>_`,
-            in which the average monthly traffic of the web page is converted
-            into five categories to predict.
+        name (string): The name of the dataset (:obj:`"DE"`, :obj:`"EN"`,
+            :obj:`"ES"`, :obj:`"FR"`, :obj:`"PT"`, :obj:`"RU"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -35,14 +30,13 @@ class WikipediaNetwork(InMemoryDataset):
 
     """
 
-    url = 'https://graphmining.ai/datasets/ptg/wiki'
+    url = 'https://graphmining.ai/datasets/ptg/twitch'
 
-    def __init__(self, root: str, name: str, geom_gcn_preprocess: bool = True,
+    def __init__(self, root: str, name: str,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         self.name = name
-        self.geom_gcn_preprocess = geom_gcn_preprocess
-        assert self.name in ['chameleon', 'crocodile', 'squirrel']
+        assert self.name in ['DE', 'EN', 'ES', 'FR', 'PT', 'RU']
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
@@ -68,20 +62,12 @@ class WikipediaNetwork(InMemoryDataset):
     def process(self):
         data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
         x = torch.from_numpy(data['features']).to(torch.float)
+        y = torch.from_numpy(data['target']).to(torch.long)
+
         edge_index = torch.from_numpy(data['edges']).to(torch.long)
         edge_index = edge_index.t().contiguous()
 
-        if self.geom_gcn_preprocess:
-            y = torch.from_numpy(data['label']).to(torch.long)
-            train_mask = torch.from_numpy(data['train_mask']).to(torch.bool)
-            test_mask = torch.from_numpy(data['test_mask']).to(torch.bool)
-            val_mask = torch.from_numpy(data['val_mask']).to(torch.bool)
-
-            data = Data(x=x, edge_index=edge_index, y=y, train_mask=train_mask,
-                        val_mask=val_mask, test_mask=test_mask)
-        else:
-            y = torch.from_numpy(data['target']).to(torch.float)
-            data = Data(x=x, y=y, edge_index=edge_index)
+        data = Data(x=x, y=y, edge_index=edge_index)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)

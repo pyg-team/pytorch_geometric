@@ -1,0 +1,3 @@
+```
+conda-build . -c pytorch
+```

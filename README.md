@@ -168,15 +168,13 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](htt
 
 To install the binaries for PyTorch 1.9.0, simply run
 
-```sh
+```
 pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
 pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
-pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
-pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
 pip install torch-geometric
 ```
 
-where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu111` depending on your PyTorch installation.
+where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
 Binaries are provided for Python version `<= 3.9`.
 
 |             | `cpu` | `cu102` | `cu111` |
@@ -185,6 +183,13 @@ Binaries are provided for Python version `<= 3.9`.
 | **Windows** | ✅    | ✅      | ✅      |
 | **macOS**   | ✅    |         |         |
 
+For additional but optional functionality, run:
+
+```
+pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
+pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
+```
+
 ### PyTorch 1.8.0/1.8.1
 
 To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
@@ -192,12 +197,10 @@ To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
 ```sh
 pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
 pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
 pip install torch-geometric
 ```
 
-where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation.
+where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
 Binaries are provided for Python version `<= 3.9`.
 
 |             | `cpu` | `cu101` | `cu102` | `cu111` |
@@ -205,6 +208,13 @@ Binaries are provided for Python version `<= 3.9`.
 | **Linux**   | ✅    | ✅      | ✅      | ✅      |
 | **Windows** | ✅    | ❌      | ✅      | ✅      |
 | **macOS**   | ✅    |         |         |         |
+
+For additional but optional functionality, run:
+
+```
+pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+```
 
 **Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0 and PyTorch 1.7.0/1.7.1 (following the same procedure).
 
