@@ -172,7 +172,7 @@ Given that you have [`pytorch >= 1.8.0` installed](https://pytorch.org/get-start
 conda install pytorch-geometric -c rusty1s -c conda-forge
 ```
 
-### Binaries
+### Pip Wheels
 
 We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
 
@@ -187,7 +187,6 @@ pip install torch-geometric
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
-Binaries are provided for Python version `<= 3.9`.
 
 |             | `cpu` | `cu102` | `cu111` |
 |-------------|-------|---------|---------|
@@ -213,7 +212,6 @@ pip install torch-geometric
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
-Binaries are provided for Python version `<= 3.9`.
 
 |             | `cpu` | `cu101` | `cu102` | `cu111` |
 |-------------|-------|---------|---------|---------|

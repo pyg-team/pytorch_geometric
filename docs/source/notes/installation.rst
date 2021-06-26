@@ -20,10 +20,9 @@ Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started
 
     conda install pytorch-geometric -c rusty1s -c conda-forge
 
-Installation via Binaries
--------------------------
+Installation via Pip Wheels
+---------------------------
 
-Binaries are provided for Python version <= 3.9.
 We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
 #. Ensure that at least PyTorch 1.4.0 is installed:
@@ -63,8 +62,6 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
          pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
          pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
          pip install torch-geometric
 
 #. Install additional packages *(optional)*:
