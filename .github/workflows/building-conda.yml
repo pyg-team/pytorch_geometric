@@ -10,10 +10,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-16.04] #, macos-10.15, windows-latest]
-        python-version: [3.6] #, 3.7, 3.8, 3.9]
-        torch-version: [1.8.0] #, 1.9.0]
-        cuda-version: ['cpu'] #, 'cu101', 'cu102', 'cu111']
+        os: [ubuntu-16.04, macos-10.15, windows-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        torch-version: [1.8.0, 1.9.0]
+        cuda-version: ['cpu', 'cu101', 'cu102', 'cu111']
         exclude:
           - torch-version: 1.9.0
             cuda-version: 'cu101'
@@ -48,9 +48,8 @@ jobs:
       - name: Publish Conda package
         run: |
           conda install anaconda-client --yes
-          ls $HOME/conda-bld
-          # anaconda upload --force --label main $HOME/conda-bld/*/*.tar.bz2
-        # env:
-        #   ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
+          anaconda upload --force --label main $HOME/conda-bld/*/*.tar.bz2
+        env:
+          ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
         shell:
           bash -l {0}
