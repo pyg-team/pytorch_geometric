@@ -151,6 +151,7 @@ In detail, the following methods are currently implemented:
 * **[Label Propagation](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.LabelPropagation)** from Zhu and Ghahramani: [Learning from Labeled and Unlabeled Data with Label Propagation](http://mlg.eng.cam.ac.uk/zoubin/papers/CMU-CALD-02-107.pdf) (CMU-CALD 2002) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/label_prop.py)]
 * **[CorrectAndSmooth](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.CorrectAndSmooth)** from Huang *et al.*: [Combining Label Propagation And Simple Models Out-performs Graph Neural Networks](https://arxiv.org/abs/2010.13993) (CoRR 2020) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/correct_and_smooth.py)]
 * **[Gini](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.functional.gini)** and **[BRO](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.functional.bro)** regularization from Henderson *et al.*: [Improving Molecular Graph Neural Network Explainability with Orthonormalization and Induced Sparsity](https://arxiv.org/abs/2105.04854) (ICML 2021)
+
 --------------------------------------------------------------------------------
 
 Head over to our [documentation](https://pytorch-geometric.readthedocs.io) to find out more about installation, data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
@@ -162,9 +163,20 @@ We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation
 
-We provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
+### Anaconda
 
-### PyTorch 1.9.0
+**Update:** You can now install PyTorch Geometric via [Anaconda](https://anaconda.org/rusty1s/pytorch-geometric) for all major OS/PyTorch/CUDA combinations 🤗
+Given that you have [`pytorch >= 1.8.0` installed](https://pytorch.org/get-started/locally/), simply run
+
+```
+conda install pytorch-geometric -c rusty1s
+```
+
+### Binaries
+
+We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
+
+#### PyTorch 1.9.0
 
 To install the binaries for PyTorch 1.9.0, simply run
 
@@ -190,7 +202,7 @@ pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUD
 pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
 ```
 
-### PyTorch 1.8.0/1.8.1
+#### PyTorch 1.8.0/1.8.1
 
 To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
 
