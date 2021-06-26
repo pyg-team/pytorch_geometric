@@ -169,7 +169,7 @@ We are motivated to constantly make PyTorch Geometric even better.
 Given that you have [`pytorch >= 1.8.0` installed](https://pytorch.org/get-started/locally/), simply run
 
 ```
-conda install pytorch-geometric -c rusty1s
+conda install pytorch-geometric -c rusty1s -c conda-forge
 ```
 
 ### Binaries

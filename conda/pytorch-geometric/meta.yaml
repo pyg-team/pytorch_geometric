@@ -19,7 +19,7 @@ requirements:
     - pytorch-sparse
     - pytorch-cluster
     - pytorch-spline-conv
-    - networkx
+    - networkx>=2.4
     - tqdm
     - jinja2
     - pyparsing
