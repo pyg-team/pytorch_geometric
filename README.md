@@ -194,7 +194,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu111` dependin
 | **Windows** | ✅    | ✅      | ✅      |
 | **macOS**   | ✅    |         |         |
 
-For additional but optional functionality, run:
+For additional but optional functionality, run
 
 ```
 pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
@@ -219,7 +219,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111`
 | **Windows** | ✅    | ❌      | ✅      | ✅      |
 | **macOS**   | ✅    |         |         |         |
 
-For additional but optional functionality, run:
+For additional but optional functionality, run
 
 ```
 pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
