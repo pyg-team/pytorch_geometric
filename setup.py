@@ -15,6 +15,7 @@ install_requires = [
     'rdflib',
     'googledrivedownloader',
     'jinja2',
+    'pyparsing',
 ]
 setup_requires = []
 tests_require = ['pytest', 'pytest-runner', 'pytest-cov', 'mock']

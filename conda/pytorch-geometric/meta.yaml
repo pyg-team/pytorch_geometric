@@ -3,7 +3,7 @@ package:
   version: 1.7.2
 
 source:
-  path: ../..
+  git_url: https://github.com/rusty1s/pytorch_geometric.git
 
 requirements:
   host:
@@ -17,6 +17,16 @@ requirements:
     - pytorch-sparse
     - pytorch-cluster
     - pytorch-spline-conv
+    - networkx
+    - tqdm
+    - jinja2
+    - pyparsing
+    - scikit-learn
+    - python-louvain
+    - googledrivedownloader
+    - pandas
+    - requests
+    - numpy
 
 test:
   imports:
@@ -25,10 +35,15 @@ test:
     - torch_cluster
     - torch_spline_conv
     - torch_geometric
+    - torch_geometric.nn
+    - torch_geometric.data
+    - torch_geometric.utils
+    - torch_geometric.datasets
+    - torch_geometric.transforms
 
 build:
   noarch: python
-  script: python setup.py install
+  script: pip install .
 
 about:
   home: https://github.com/rusty1s/pytorch_geometric
