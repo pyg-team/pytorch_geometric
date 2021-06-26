@@ -26,6 +26,10 @@ class GEDDataset(InMemoryDataset):
         data1, data2 = dataset[0], dataset[1]
         ged = dataset.ged[data1.i, data2.i]  # GED between `data1` and `data2`.
 
+    Note that GEDs are not available if both graphs are from the test set.
+    For evaluation, it is recommended to pair up each graph from the test set
+    with each graph in the training set.
+
     .. note::
 
         :obj:`ALKANE` is missing GEDs for train/test graph pairs since they are
@@ -50,13 +54,6 @@ class GEDDataset(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
-    """
-    
-    """ADDITIONAL COMMENTS ON THE DATASET
-    1) The Dataset has been extracted form the pickle files provided by the original Author.
-    2) Feature Matrix for each Node is only provided for the 'AIDS700nef' dataset - Check https://github.com/gospodima/Extended-SimGNN/blob/master/src/simgnn.py
-    3) G.E.D Similarity is not available if Both Graphs are from the TEST set.
-    4) To create Test Set for Similarity Computation, pair up each graph from Test Set with each graph in the Train Set
     """
 
     url = 'https://drive.google.com/uc?export=download&id={}'
@@ -83,8 +80,8 @@ class GEDDataset(InMemoryDataset):
             'pickle': '1wy9VbZvZodkixxVIOuRllC-Lp-0zdoYZ',
         },
     }
-    
-    # List of Atoms the nodes can represent in case of the AIDS700nef Dataset
+
+    # List of atoms contained in the AIDS700nef dataset:
     types = [
         'O', 'S', 'C', 'N', 'Cl', 'Br', 'B', 'Si', 'Hg', 'I', 'Bi', 'P', 'F',
         'Cu', 'Ho', 'Pd', 'Ru', 'Pt', 'Sn', 'Li', 'Ga', 'Tb', 'As', 'Co', 'Pb',
@@ -127,7 +124,7 @@ class GEDDataset(InMemoryDataset):
         ids, Ns = [], []
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
             names = glob.glob(osp.join(r_path, '*.gexf'))
-            # Get the Graph Pair IDs
+            # Get the graph IDs given by the file name:
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 
             data_list = []
@@ -138,9 +135,7 @@ class GEDDataset(InMemoryDataset):
                 mapping = {name: j for j, name in enumerate(G.nodes())}
                 G = nx.relabel_nodes(G, mapping)
                 Ns.append(G.number_of_nodes())
-                
-                # Edge Index Tensor check out the meaning of contiguous here 
-                # - https://stackoverflow.com/questions/48915810/pytorch-what-does-contiguous-do
+
                 edge_index = torch.tensor(list(G.edges)).t().contiguous()
                 if edge_index.numel() == 0:
                     edge_index = torch.empty((2, 0), dtype=torch.long)
@@ -148,8 +143,9 @@ class GEDDataset(InMemoryDataset):
 
                 data = Data(edge_index=edge_index, i=i)
                 data.num_nodes = Ns[-1]
-                
-                # If the dataset is AIDS700nef then, create a One Hot Encoded Feature Matrix for the Nodes depending upon the Atom
+
+                # Create a one-hot encoded feature matrix denoting the atom
+                # type for the  AIDS700nef dataset:
                 if self.name == 'AIDS700nef':
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
@@ -159,11 +155,12 @@ class GEDDataset(InMemoryDataset):
 
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
-                
-                # Apply A Pre-Transform before saving the Data to the user's Local Disk
+
                 if self.pre_transform is not None:
                     data = self.pre_transform(data)
+
                 data_list.append(data)
+
             torch.save(self.collate(data_list), p_path)
 
         assoc = {idx: i for i, idx in enumerate(ids[0])}
@@ -185,7 +182,7 @@ class GEDDataset(InMemoryDataset):
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
         torch.save(mat, path)
 
-        # Calculate the Normalized G.E.D b/w 2 graphs
+        # Calculate the normalized GEDs:
         N = torch.tensor(Ns, dtype=torch.float)
         norm_mat = mat / (0.5 * (N.view(-1, 1) + N.view(1, -1)))
 
