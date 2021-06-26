@@ -18,7 +18,7 @@ Given that you have [:obj:`pytorch >= 1.8.0` installed](https://pytorch.org/get-
 
 .. code-block:: none
 
-    conda install pytorch-geometric -y rusty1s
+    conda install pytorch-geometric -c rusty1s -c conda-forge
 
 Installation via Binaries
 -------------------------
