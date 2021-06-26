@@ -3,16 +3,18 @@ package:
   version: 1.7.2
 
 source:
-  git_url: https://github.com/rusty1s/pytorch_geometric.git
+  path: ../..
 
 requirements:
   host:
     - pip
-    - python
+    - python {{ environ.get('PYTHON_VERSION') }}
 
   run:
-    - python
-    - pytorch
+  run:
+    - python {{ environ.get('PYTHON_VERSION') }}
+    - {{ environ.get('CONDA_PYTORCH_CONSTRAINT') }}
+    - {{ environ.get('CONDA_CUDATOOLKIT_CONSTRAINT') }}
     - pytorch-scatter
     - pytorch-sparse
     - pytorch-cluster
@@ -28,6 +30,10 @@ requirements:
     - requests
     - numpy
 
+build:
+  string: py{{ environ.get('PYTHON_VERSION').replace('.', '') }}_torch_{{ environ['TORCH_VERSION'] }}_{{ environ['CUDA_VERSION'] }}
+  script: pip install .
+
 test:
   imports:
     - torch_scatter
@@ -40,10 +46,6 @@ test:
     - torch_geometric.utils
     - torch_geometric.datasets
     - torch_geometric.transforms
-
-build:
-  noarch: python
-  script: pip install .
 
 about:
   home: https://github.com/rusty1s/pytorch_geometric
