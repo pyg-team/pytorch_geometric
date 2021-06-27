@@ -10,24 +10,33 @@ These packages come with their own CPU and GPU kernel implementations based on `
 
 Please follow the steps below for a successful installation.
 
-Installation via Binaries
+Installation via Anaconda
 -------------------------
 
-Binaries are provided for Python version <= 3.9.
+**Update:** You can now install PyTorch Geometric via `Anaconda <https://anaconda.org/rusty1s/pytorch-geometric>`_ for all major OS/PyTorch/CUDA combinations 🤗
+Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started/locally/>`_, simply run
+
+.. code-block:: none
+
+    conda install pytorch-geometric -c rusty1s -c conda-forge
+
+Installation via Pip Wheels
+---------------------------
+
 We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
 #. Ensure that at least PyTorch 1.4.0 is installed:
 
     .. code-block:: none
 
-        $ python -c "import torch; print(torch.__version__)"
+        python -c "import torch; print(torch.__version__)"
         >>> 1.9.0
 
 #. Find the CUDA version PyTorch was installed with:
 
     .. code-block:: none
 
-        $ python -c "import torch; print(torch.version.cuda)"
+        python -c "import torch; print(torch.version.cuda)"
         >>> 11.1
 
 #. Install the relevant packages:
@@ -53,8 +62,6 @@ We provide pip wheels for all major OS/PyTorch/CUDA combinations:
 
          pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
          pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
-         pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
-         pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+cu102.html
          pip install torch-geometric
 
 #. Install additional packages *(optional)*:
@@ -79,48 +86,48 @@ In case a specific version is not supported by `our wheels <https://pytorch-geom
 
         .. code-block:: none
 
-            $ python -c "import torch; print(torch.cuda.is_available())"
+            python -c "import torch; print(torch.cuda.is_available())"
             >>> True
 
     #. Add CUDA to :obj:`$PATH` and :obj:`$CPATH` (note that your actual CUDA path may vary from :obj:`/usr/local/cuda`):
 
         .. code-block:: none
 
-            $ export PATH=/usr/local/cuda/bin:$PATH
-            $ echo $PATH
+            export PATH=/usr/local/cuda/bin:$PATH
+            echo $PATH
             >>> /usr/local/cuda/bin:...
 
-            $ export CPATH=/usr/local/cuda/include:$CPATH
-            $ echo $CPATH
+            export CPATH=/usr/local/cuda/include:$CPATH
+            echo $CPATH
             >>> /usr/local/cuda/include:...
 
     #. Add CUDA to :obj:`$LD_LIBRARY_PATH` on Linux and to :obj:`$DYLD_LIBRARY_PATH` on macOS (note that your actual CUDA path may vary from :obj:`/usr/local/cuda`):
 
         .. code-block:: none
 
-            $ export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-            $ echo $LD_LIBRARY_PATH
+            export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+            echo $LD_LIBRARY_PATH
             >>> /usr/local/cuda/lib64:...
 
-            $ export DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
-            $ echo $DYLD_LIBRARY_PATH
+            export DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
+            echo $DYLD_LIBRARY_PATH
             >>> /usr/local/cuda/lib:...
 
     #. Verify that :obj:`nvcc` is accessible from terminal:
 
         .. code-block:: none
 
-            $ nvcc --version
+            nvcc --version
             >>> 10.2
 
     #. Ensure that PyTorch and system CUDA versions match:
 
         .. code-block:: none
 
-            $ python -c "import torch; print(torch.version.cuda)"
+            python -c "import torch; print(torch.version.cuda)"
             >>> 10.2
 
-            $ nvcc --version
+            nvcc --version
             >>> 10.2
 
 #. Install the relevant packages:
