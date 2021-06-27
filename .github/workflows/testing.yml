@@ -25,10 +25,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Update pip
-        run: |
-          pip install --upgrade pip
-
       - name: Get pip cache
         id: pip-cache
         run: |

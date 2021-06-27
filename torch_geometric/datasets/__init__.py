@@ -54,6 +54,10 @@ from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
 from .github import GitHub
 from .facebook import FacebookPagePage
+from .lastfm_asia import LastFMAsia
+from .deezer_europe import DeezerEurope
+from .gemsec import GemsecDeezer
+from .twitch import Twitch
 
 __all__ = [
     'KarateClub',
@@ -114,6 +118,10 @@ __all__ = [
     'UPFD',
     'GitHub',
     'FacebookPagePage',
+    'LastFMAsia',
+    'DeezerEurope',
+    'GemsecDeezer',
+    'Twitch',
 ]
 
 classes = __all__
