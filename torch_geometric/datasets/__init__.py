@@ -50,6 +50,10 @@ from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
 from .github import GitHub
 from .facebook import FacebookPagePage
+from .lastfm_asia import LastFMAsia
+from .deezer_europe import DeezerEurope
+from .gemsec import GemsecDeezer
+from .twitch import Twitch
 from .ogb_mag import OGB_MAG
 from .dblp import DBLP
 from .imdb import IMDB
@@ -110,6 +114,10 @@ __all__ = [
     'UPFD',
     'GitHub',
     'FacebookPagePage',
+    'LastFMAsia',
+    'DeezerEurope',
+    'GemsecDeezer',
+    'Twitch',
     'OGB_MAG',
     'DBLP',
     'IMDB',
