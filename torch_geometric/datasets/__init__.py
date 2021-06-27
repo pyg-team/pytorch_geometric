@@ -45,19 +45,15 @@ from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
+from .ogb_mag import OGB_MAG
+from .dblp import DBLP
+from .imdb import IMDB
+from .last_fm import LastFM
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
 from .github import GitHub
 from .facebook import FacebookPagePage
-from .lastfm_asia import LastFMAsia
-from .deezer_europe import DeezerEurope
-from .gemsec import GemsecDeezer
-from .twitch import Twitch
-from .ogb_mag import OGB_MAG
-from .dblp import DBLP
-from .imdb import IMDB
-from .last_fm import LastFM
 
 __all__ = [
     'KarateClub',
@@ -109,19 +105,15 @@ __all__ = [
     'WebKB',
     'WikipediaNetwork',
     'Actor',
+    'OGB_MAG',
+    'DBLP',
+    'IMDB',
+    'LastFM',
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'UPFD',
     'GitHub',
     'FacebookPagePage',
-    'LastFMAsia',
-    'DeezerEurope',
-    'GemsecDeezer',
-    'Twitch',
-    'OGB_MAG',
-    'DBLP',
-    'IMDB',
-    'LastFM',
 ]
 
 classes = __all__
