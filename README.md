@@ -166,7 +166,7 @@ We are motivated to constantly make PyTorch Geometric even better.
 ### Anaconda
 
 **Update:** You can now install PyTorch Geometric via [Anaconda](https://anaconda.org/rusty1s/pytorch-geometric) for all major OS/PyTorch/CUDA combinations 🤗
-Given that you have [`pytorch >= 1.8.0` installed](https://pytorch.org/get-started/locally/), simply run
+Given that you have [PyTorch >= 1.8.0 installed](https://pytorch.org/get-started/locally/), simply run
 
 ```
 conda install pytorch-geometric -c rusty1s -c conda-forge
