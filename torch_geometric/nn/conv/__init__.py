@@ -21,7 +21,7 @@ from .signed_conv import SignedConv
 from .dna_conv import DNAConv
 from .point_conv import PointConv
 from .gmm_conv import GMMConv
-from .spline_conv import SplineConv
+#from .spline_conv import SplineConv
 from .nn_conv import NNConv, ECConv
 from .cg_conv import CGConv
 from .edge_conv import EdgeConv, DynamicEdgeConv
@@ -40,9 +40,10 @@ from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
 from .eg_conv import EGConv
+from .hetero_conv import HeteroConv
 from .hgt_conv import HGTConv
+from .hetero_conv import HeteroConv
 from .general_conv import GeneralConv
-
 
 __all__ = [
     'MessagePassing',
@@ -70,7 +71,7 @@ __all__ = [
     'DNAConv',
     'PointConv',
     'GMMConv',
-    'SplineConv',
+#    'SplineConv',
     'NNConv',
     'ECConv',
     'CGConv',
@@ -91,7 +92,9 @@ __all__ = [
     'SuperGATConv',
     'FAConv',
     'EGConv',
+    'HeteroConv',
     'HGTConv',
+    'HeteroConv',
     'GeneralConv'
 ]
 
