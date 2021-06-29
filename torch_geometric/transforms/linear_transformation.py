@@ -6,10 +6,9 @@ class LinearTransformation(object):
     offline.
 
     Args:
-        matrix (Tensor): tensor with shape :math:`[D, D]` where :math:`D`
+        matrix (Tensor): tensor with shape :obj:`[D, D]` where :obj:`D`
             corresponds to the dimensionality of node positions.
     """
-
     def __init__(self, matrix):
         assert matrix.dim() == 2, (
             'Transformation matrix should be two-dimensional.')
@@ -17,9 +16,9 @@ class LinearTransformation(object):
             'Transformation matrix should be square. Got [{} x {}] rectangular'
             'matrix.'.format(*matrix.size()))
 
-        # Store the matrix as its transpose. We do this to enable the 
-        # postmultiplication in  __call__.
-        self.matrix = matrix.transpose(0, 1)
+        # Store the matrix as its transpose.
+        # We do this to enable post-multiplication in `__call__`.
+        self.matrix = matrix.t()
 
     def __call__(self, data):
         pos = data.pos.view(-1, 1) if data.pos.dim() == 1 else data.pos
@@ -28,8 +27,8 @@ class LinearTransformation(object):
             'Node position matrix and transformation matrix have incompatible '
             'shape.')
 
-        # We postmultiply the points by the transformation matrix of shape [D, D]
-        # instead of premultiplying because data.pos has shape [N, D], and we want
+        # We post-multiply the points by the transformation matrix instead of
+        # pre-multiplying, because `data.pos` has shape `[N, D]`, and we want
         # to preserve this shape.
         data.pos = torch.matmul(pos, self.matrix.to(pos.dtype).to(pos.device))
 
