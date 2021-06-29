@@ -70,12 +70,14 @@ def test_hetero_data_functions():
     assert edge_types == [
         ('paper', '_', 'paper'),
         ('paper', '_', 'author'),
-        ('author', '_', 'paper')]
+        ('author', '_', 'paper'),
+    ]
 
     x_dict = data.collect('x')
     assert len(x_dict) == 2
     assert x_dict['paper'].tolist() == x_paper.tolist()
     assert x_dict['author'].tolist() == x_author.tolist()
+    assert x_dict == data.x_dict
 
     data.y = 0
     assert data['y'] == 0 and data.y == 0
@@ -86,8 +88,7 @@ def test_hetero_data_functions():
     del data['paper', 'author']
     node_types, edge_types = data.metadata()
     assert node_types == ['paper', 'author']
-    assert edge_types == [
-        ('paper', '_', 'paper'), ('author', '_', 'paper')]
+    assert edge_types == [('paper', '_', 'paper'), ('author', '_', 'paper')]
 
     assert len(data.to_dict()) == 5
     assert len(data.to_namedtuple()) == 5

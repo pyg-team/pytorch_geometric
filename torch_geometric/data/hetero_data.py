@@ -115,9 +115,9 @@ class HeteroData(BaseData):
             return out
 
         if isinstance(key, tuple):
-            return self.get_edges(key)
+            return self.get_edge_store(*key)
         else:
-            return self.get_nodes(key)
+            return self.get_node_store(key)
 
     def __setitem__(self, key: str, value: Any):
         if key in chain(self.node_types, self.edge_types):
@@ -288,17 +288,17 @@ class HeteroData(BaseData):
         # Get the attribute `key` from `_global_store`.
         return getattr(self._global_store, key)
 
-    def get_nodes(self, key: NodeType) -> NodeStorage:
+    def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
-        of a particular node type attr:`key`.
-        If it is not present, will create a new
+        of a particular node type :attr:`key`.
+        If the storage is not present yet, will create a new
         :class:`~torch_geometric.data.storage.NodeStorage` object for the given
         node type.
 
         .. code-block:: python
 
             data = HeteroData()
-            node_storage = data.get_nodes('paper')
+            node_storage = data.get_node_store('paper')
         """
         out = self._node_stores_dict.get(key, None)
         if out is None:
@@ -306,18 +306,19 @@ class HeteroData(BaseData):
             self._node_stores_dict[key] = out
         return out
 
-    def get_edges(self, key: EdgeType) -> EdgeStorage:
+    def get_edge_store(self, src: str, rel: str, dst: str) -> EdgeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.EdgeStorage` object
-        of a particular edge type attr:`key`.
-        If it is not present, will create a new
+        of a particular edge type given by the tuple :obj:`(src, rel, dst)`.
+        If the storage is not present yet, will create a new
         :class:`~torch_geometric.data.storage.EdgeStorage` object for the given
         edge type.
 
         .. code-block:: python
 
             data = HeteroData()
-            edge_storage = data.get_edges(('author', 'writes', 'paper'))
+            edge_storage = data.get_edge_store('author', 'writes', 'paper')
         """
+        key = (src, rel, dst)
         out = self._edge_stores_dict.get(key, None)
         if out is None:
             out = EdgeStorage(_parent=self, _key=key)
