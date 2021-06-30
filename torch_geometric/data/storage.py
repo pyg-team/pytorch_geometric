@@ -337,14 +337,13 @@ class EdgeStorage(BaseStorage):
         return torch.unique(edge_index[1]).numel() < num_nodes
 
     def has_self_loops(self) -> bool:
-        edge_index = self.edge_index
-        if self._key is None or self._key[0] == self._key[-1]:
-            return int((edge_index[0] == edge_index[1]).sum()) > 0
-        else:
+        if self.is_bipartite():
             return False
+        edge_index = self.edge_index
+        return int((edge_index[0] == edge_index[1]).sum()) > 0
 
     def is_undirected(self) -> bool:
-        if self._key is not None and self._key[0] != self._key[-1]:
+        if self.is_bipartite():  # TODO check for inverse storage.
             return False
 
         for value in self.values('adj', 'adj_t'):
@@ -356,6 +355,9 @@ class EdgeStorage(BaseStorage):
 
     def is_directed(self) -> bool:
         return not self.is_undirected()
+
+    def is_bipartite(self) -> bool:
+        return self._key is not None and self._key[0] != self._key[-1]
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
