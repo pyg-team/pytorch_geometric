@@ -32,7 +32,7 @@ class GDELT(EventDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://github.com/INK-USC/RENet/raw/master/data/GDELT'
+    url = 'https://github.com/INK-USC/RE-Net/raw/master/data/GDELT'
     splits = [0, 1734399, 1973164, 2278405]  # Train/Val/Test splits.
 
     def __init__(self, root: str, split: str = "train",
