@@ -19,7 +19,7 @@ from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
-from .point_conv import PointConv
+from .point_conv import PointNetConv, PointConv
 from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
 from .nn_conv import NNConv, ECConv
@@ -66,6 +66,7 @@ __all__ = [
     'FastRGCNConv',
     'SignedConv',
     'DNAConv',
+    'PointNetConv',
     'PointConv',
     'GMMConv',
     'SplineConv',
