@@ -85,7 +85,7 @@ class EquivariantConv(MessagePassing):
     def forward(self, x: Union[OptTensor,
                                PairOptTensor], pos: Union[Tensor, PairTensor],
                 edge_index: Adj, vel: OptTensor = None,
-                edge_attr: OptTensor = None) -> (Tensor, Tensor, OptTensor):
+                edge_attr: OptTensor = None) -> Tuple[Tensor, Tuple[Tensor, OptTensor]]:
         """"""
         if not isinstance(x, Tuple):
             x: PairTensor = (x, x)
@@ -101,12 +101,9 @@ class EquivariantConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
-        """
-        propagate_type: (x: PairOptTensor, pos: PairTensor,
-        edge_attr: OptTensor)
-        """
-        out_x, out_pos = self.propagate(edge_index, x=x, pos=pos, size=None,
-                                        edge_attr=edge_attr)
+        # propagate_type: (x: PairOptTensor, pos: PairTensor, edge_attr: OptTensor)-> Tuple[Tensor,Tensor]
+        out_x, out_pos = self.propagate(edge_index, x=x, pos=pos, edge_attr=edge_attr,
+                                        size=None)
 
         out_x = out_x if x[1] is None else torch.cat([x[1], out_x], dim=1)
         if self.global_nn is not None:
@@ -122,10 +119,10 @@ class EquivariantConv(MessagePassing):
                        vel[1] * self.vel_nn(x[1])) + out_pos
             out_pos = pos[1] + out_vel
 
-        return out_x, out_pos, out_vel
+        return (out_x, (out_pos, out_vel))
 
-    def message(self, x_i: Tensor, x_j: Tensor, pos_i: Tensor, pos_j: Tensor,
-                edge_attr: OptTensor = None) -> Tensor:
+    def message(self, x_i: OptTensor, x_j: OptTensor, pos_i: Tensor, pos_j: Tensor,
+                edge_attr: OptTensor = None) -> Tuple[Tensor,Tensor]:
 
         msg = torch.sum((pos_i - pos_j).square(), dim=1, keepdim=True)
         msg = msg if x_j is None else torch.cat([x_j, msg], dim=1)
@@ -137,12 +134,17 @@ class EquivariantConv(MessagePassing):
                    (pos_i - pos_j) * self.pos_nn(msg))
         return (msg, pos_msg)
 
-    def aggregate(self, inputs: Tuple, index: Tensor):
+    def aggregate(self, inputs: Tuple[Tensor,Tensor], index: Tensor)-> Tuple[Tensor, Tensor]:
         return (scatter(inputs[0], index, 0, reduce=self.aggr),
                 scatter(inputs[1], index, 0, reduce="mean"))
 
+    def update(self, inputs: Tuple[Tensor, Tensor])-> Tuple[Tensor, Tensor]:
+        return inputs
+
     def __repr__(self):
-        return "{}({}, {}, {}, {})".format(self.__class__.__name__,
+        return ("{}(pos_nn={}, vel_nn={},"
+                " local_nn={},"
+                " global_nn={})").format(self.__class__.__name__,
                                            self.pos_nn, self.vel_nn,
                                            self.local_nn,
                                            self.global_nn)
