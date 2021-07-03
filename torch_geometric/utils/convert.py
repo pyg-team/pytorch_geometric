@@ -246,3 +246,32 @@ def from_cugraph(G) -> Tuple[Tensor, Optional[Tensor]]:
         edge_weight = from_dlpack(df['weights'].to_dlpack())
 
     return edge_index, edge_weight
+
+
+def to_meshio(data):
+    r"""Converts a :class:`torch_geometric.data.Data` instance to a
+    :obj:`.msh format`.
+
+    Args:
+        data (torch_geometric.data.Data): The data object.
+    """
+    import meshio
+    points = data.pos.detach().cpu().numpy()
+    tetra = data.tetra.detach().t().cpu().numpy()
+
+    cells = [("tetra", tetra)]
+
+    return meshio.Mesh(points, cells)
+
+def from_meshio(mesh):
+    r"""Converts a :.msh file to a
+    :class:`torch_geometric.data.Data` instance.
+
+    Args:
+        mesh (meshio.read): A :obj:`meshio` mesh.
+    """
+
+    pos = torch.from_numpy(mesh.points).to(torch.float)
+    tetra = torch.from_numpy(mesh.cells[0].data).to(torch.long).t().contiguous()
+
+    return torch_geometric.data.Data(pos=pos, tetra=tetra)

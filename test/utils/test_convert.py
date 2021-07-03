@@ -7,6 +7,7 @@ from torch_geometric.utils import (to_scipy_sparse_matrix,
                                    from_scipy_sparse_matrix)
 from torch_geometric.utils import to_networkx, from_networkx
 from torch_geometric.utils import to_trimesh, from_trimesh
+from torch_geometric.utils import to_meshio, from_meshio
 from torch_geometric.utils import subgraph
 
 
@@ -208,3 +209,16 @@ def test_trimesh():
 
     assert pos.tolist() == data.pos.tolist()
     assert face.tolist() == data.face.tolist()
+
+
+def test_meshio():
+    pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [1, 1, 1]],
+                       dtype=torch.float)
+    tetra = torch.tensor([[0, 1, 2, 3], [0, 2, 3, 4]]).t()
+
+    data = Data(pos=pos, tetra=tetra)
+    mesh = to_meshio(data)
+    data = from_meshio(mesh)
+
+    assert pos.tolist() == data.pos.tolist()
+    assert tetra.tolist() == data.tetra.tolist()
