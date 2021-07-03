@@ -18,12 +18,12 @@ def test_point_conv():
     local_nn = Linear(2 * 16 + 1, 32)
     global_nn = Linear(16 + 32, 16)
 
-    conv = EquivariantConv(pos_nn, vel_nn, local_nn, global_nn)
+    conv = EquivariantConv(local_nn, pos_nn, vel_nn, global_nn)
     assert conv.__repr__() == (
         'EquivariantConv('
-        'pos_nn=Linear(in_features=32, out_features=1, bias=True),'
+        'local_nn=Linear(in_features=33, out_features=32, bias=True),'
+        ' pos_nn=Linear(in_features=32, out_features=1, bias=True),'
         ' vel_nn=Linear(in_features=16, out_features=1, bias=True),'
-        ' local_nn=Linear(in_features=33, out_features=32, bias=True),'
         ' global_nn=Linear(in_features=48, out_features=16, bias=True))')
     out = conv(x1, pos1, edge_index, vel)
     assert out[0].size() == (4, 16)

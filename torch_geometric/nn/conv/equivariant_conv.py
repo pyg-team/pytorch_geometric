@@ -13,12 +13,13 @@ class EquivariantConv(MessagePassing):
     r"""The Equivariant graph neural network operator form the
     `"E(n) Equivariant Graph Neural Networks"
     <https://arxiv.org/pdf/2102.09844.pdf>`_ paper
-    ..math::
+
+    .. math::
         \mathbf{m}_{ij}=h_{\mathbf{\Theta}}(\mathbf{x}_i,\mathbf{x}_j,\|
         {\mathbf{pos}_i-\mathbf{pos}_j}\|^2_2,\mathbf{e}_{ij})
 
-        \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
-        \sum_{j \in\mathcal{N}(i)} \mathbf{m}_{ij} \right)
+        \mathbf{x}^{\prime}_i = \gamma_{\mathbf{\Theta}}(\mathbf{x}_i,
+        \sum_{j \in \mathcal{N}(i)} \mathbf{m}_{ij})
 
         \mathbf{vel}^{\prime}_i = \phi_{\mathbf{\Theta}}(\mathbf{x}_i)\mathbf
         {vel}_i + \frac{1}{|\mathcal{N}(i)|}\sum_{j \in\mathcal{N}(i)}
@@ -28,27 +29,30 @@ class EquivariantConv(MessagePassing):
         \mathbf{pos}^{\prime}_i = \mathbf{pos}_i + \mathbf{vel}_i
 
     where :math:`\gamma_{\mathbf{\Theta}}`,
-    :math:`h_{\mathbf{\Theta}}`, :math:\rho_{\mathbf{\Theta}}
-    and :math:\phi_{\mathbf{\Theta}} denote neural
+    :math:`h_{\mathbf{\Theta}}`, :math:`\rho_{\mathbf{\Theta}}`
+    and :math:`\phi_{\mathbf{\Theta}}` denote neural
     networks, *.i.e.* MLPs. :math:`\mathbf{P} \in \mathbb{R}^{N \times D}`
     :math:`\mathbf{V} \in \mathbb{R}^{N \times D}`
     defines the position and velocity of each point respectively.
 
     Args:
-        pos_nn (torch.nn.Module,optinal): A neural network that
-            maps message :obj:`` of shape :obj:`[-1, hidden_channels],
-            to shape :obj:`[-1, 1]`, *e.g.*, defined by
-            :class:`torch.nn.Sequential`. (default: :obj:`None`)
-        vel_nn (torch.nn.Module,optional): A neural network that
-            maps node featues :obj:`x` of shape :obj:`[-1, in_channels],
-            to shape :obj:`[-1, 1]`, *e.g.*, defined by
-            :class:`torch.nn.Sequential`. (default: :obj:`None`)
         local_nn (torch.nn.Module, optional): A neural network
             :math:`h_{\mathbf{\Theta}}` that maps node features :obj:`x`,
-            sqaured distance :obj:`pos_j - pos_i` and
-            edge_features :obj:`edge_attr`
+            sqaured distance :math:`\|{\mathbf{pos}_i-\mathbf{pos}_j}\|^2_2`
+            and edge_features :obj:`edge_attr`
             of shape :obj:`[-1, 2*in_channels + 1 +edge_dim]`
             to shape :obj:`[-1, hidden_channels]`, *e.g.*, defined by
+            :class:`torch.nn.Sequential`. (default: :obj:`None`)
+        pos_nn (torch.nn.Module,optinal): A neural network
+            :math:`\rho_{\mathbf{\Theta}}` that
+            maps message :math:`\mathbf{m}_{ij}` of shape
+            :obj:`[-1, hidden_channels]`,
+            to shape :obj:`[-1, 1]`, *e.g.*, defined by
+            :class:`torch.nn.Sequential`. (default: :obj:`None`)
+        vel_nn (torch.nn.Module,optional): A neural network
+            :math:`\phi_{\mathbf{\Theta}}` that
+            maps node featues :obj:`x` of shape :obj:`[-1, in_channels]`,
+            to shape :obj:`[-1, 1]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
         global_nn (torch.nn.Module, optional): A neural network
             :math:`\gamma_{\mathbf{\Theta}}` that maps aggregated node features
@@ -61,16 +65,16 @@ class EquivariantConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, pos_nn: Optional[Callable] = None,
+    def __init__(self, local_nn: Optional[Callable] = None,
+                 pos_nn: Optional[Callable] = None,
                  vel_nn: Optional[Callable] = None,
-                 local_nn: Optional[Callable] = None,
                  global_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, aggr="mean", **kwargs):
         super(EquivariantConv, self).__init__(**kwargs)
 
+        self.local_nn = local_nn
         self.pos_nn = pos_nn
         self.vel_nn = vel_nn
-        self.local_nn = local_nn
         self.global_nn = global_nn
         self.add_self_loops = add_self_loops
 
@@ -82,10 +86,11 @@ class EquivariantConv(MessagePassing):
         if self.global_nn is not None:
             pass
 
-    def forward(self, x: Union[OptTensor,
-                               PairOptTensor], pos: Union[Tensor, PairTensor],
-                edge_index: Adj, vel: OptTensor = None,
-                edge_attr: OptTensor = None) -> Tuple[Tensor, Tuple[Tensor, OptTensor]]:
+    def forward(
+        self, x: Union[OptTensor, PairOptTensor], pos: Union[Tensor,
+                                                             PairTensor],
+        edge_index: Adj, vel: OptTensor = None, edge_attr: OptTensor = None
+    ) -> Tuple[Tensor, Tuple[Tensor, OptTensor]]:
         """"""
         if not isinstance(x, Tuple):
             x: PairTensor = (x, x)
@@ -101,9 +106,9 @@ class EquivariantConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
-        # propagate_type: (x: PairOptTensor, pos: PairTensor, edge_attr: OptTensor)-> Tuple[Tensor,Tensor]
-        out_x, out_pos = self.propagate(edge_index, x=x, pos=pos, edge_attr=edge_attr,
-                                        size=None)
+        # propagate_type: (x: PairOptTensor, pos: PairTensor, edge_attr: OptTensor)-> Tuple[Tensor,Tensor] # noqa
+        out_x, out_pos = self.propagate(edge_index, x=x, pos=pos,
+                                        edge_attr=edge_attr, size=None)
 
         out_x = out_x if x[1] is None else torch.cat([x[1], out_x], dim=1)
         if self.global_nn is not None:
@@ -121,8 +126,9 @@ class EquivariantConv(MessagePassing):
 
         return (out_x, (out_pos, out_vel))
 
-    def message(self, x_i: OptTensor, x_j: OptTensor, pos_i: Tensor, pos_j: Tensor,
-                edge_attr: OptTensor = None) -> Tuple[Tensor,Tensor]:
+    def message(self, x_i: OptTensor, x_j: OptTensor, pos_i: Tensor,
+                pos_j: Tensor,
+                edge_attr: OptTensor = None) -> Tuple[Tensor, Tensor]:
 
         msg = torch.sum((pos_i - pos_j).square(), dim=1, keepdim=True)
         msg = msg if x_j is None else torch.cat([x_j, msg], dim=1)
@@ -134,17 +140,17 @@ class EquivariantConv(MessagePassing):
                    (pos_i - pos_j) * self.pos_nn(msg))
         return (msg, pos_msg)
 
-    def aggregate(self, inputs: Tuple[Tensor,Tensor], index: Tensor)-> Tuple[Tensor, Tensor]:
+    def aggregate(self, inputs: Tuple[Tensor, Tensor],
+                  index: Tensor) -> Tuple[Tensor, Tensor]:
         return (scatter(inputs[0], index, 0, reduce=self.aggr),
                 scatter(inputs[1], index, 0, reduce="mean"))
 
-    def update(self, inputs: Tuple[Tensor, Tensor])-> Tuple[Tensor, Tensor]:
+    def update(self, inputs: Tuple[Tensor, Tensor]) -> Tuple[Tensor, Tensor]:
         return inputs
 
     def __repr__(self):
-        return ("{}(pos_nn={}, vel_nn={},"
-                " local_nn={},"
+        return ("{}(local_nn={}, pos_nn={},"
+                " vel_nn={},"
                 " global_nn={})").format(self.__class__.__name__,
-                                           self.pos_nn, self.vel_nn,
-                                           self.local_nn,
-                                           self.global_nn)
+                                         self.local_nn, self.pos_nn,
+                                         self.vel_nn, self.global_nn)
