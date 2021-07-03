@@ -38,6 +38,7 @@ jobs:
 
       - name: Install PyTorch ${{ matrix.torch-version }}+cpu
         run: |
+          pip install pillow==8.2.0
           pip install torch==${{ matrix.torch-version}}+cpu torchvision==${{ matrix.torchvision-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
       - name: Install internal dependencies
