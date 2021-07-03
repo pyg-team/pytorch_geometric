@@ -90,7 +90,7 @@ __all__ = [
     'SuperGATConv',
     'FAConv',
     'EGConv',
-    'EquivariantConv', 
+    'EquivariantConv',
 ]
 
 classes = __all__
