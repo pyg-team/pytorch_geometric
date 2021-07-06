@@ -22,6 +22,8 @@ class Collater(object):
             return torch.tensor(batch, dtype=torch.float)
         elif isinstance(elem, int):
             return torch.tensor(batch)
+        elif isinstance(elem, str):
+            return batch
         elif isinstance(elem, Mapping):
             return {key: self.collate([d[key] for d in batch]) for key in elem}
         elif isinstance(elem, tuple) and hasattr(elem, '_fields'):
