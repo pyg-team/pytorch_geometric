@@ -1,14 +1,15 @@
 Installation
 ============
 
-We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be additionally installed.
-These packages come with their own CPU and GPU kernel implementations based on `C++/CUDA extensions <https://github.com/pytorch/extension-cpp/>`_.
-
 .. note::
-    We do not recommend installation as root user on your system python.
-    Please setup an `Anaconda/Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ environment or create a `Docker image <https://www.docker.com/>`_.
+    We do not recommend installation as a root user on your system Python.
+    Please setup a `Anaconda or Miniconda <https://conda.io/projects/conda/en/latest/user-guide/install/index.html>`_ environment or create a `Docker image <https://www.docker.com/>`_.
 
-Please follow the steps below for a successful installation.
+Quick Start
+-----------
+
+.. raw:: html
+   :file: quick-start.html
 
 Installation via Anaconda
 -------------------------
@@ -23,7 +24,9 @@ Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started
 Installation via Pip Wheels
 ---------------------------
 
-We provide pip wheels for all major OS/PyTorch/CUDA combinations:
+We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be installed in advance.
+These packages come with their own CPU and GPU kernel implementations based on the `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
+We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinations:
 
 #. Ensure that at least PyTorch 1.4.0 is installed:
 
