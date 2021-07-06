@@ -30,6 +30,7 @@ def test_point_conv():
     assert out[1][0].size() == (4, 3)
     assert out[1][1].size() == (4, 3)
     assert torch.allclose(conv(x1, pos1, edge_index)[0], out[0], atol=1e-6)
+    assert conv(x1, pos1, edge_index)[1][1] is None
     assert torch.allclose(conv(x1, pos1, adj.t(), vel)[0], out[0], atol=1e-6)
 
     """

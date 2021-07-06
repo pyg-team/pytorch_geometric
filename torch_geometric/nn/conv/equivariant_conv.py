@@ -106,7 +106,7 @@ class EquivariantConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
-        # propagate_type: (x: PairOptTensor, pos: PairTensor, edge_attr: OptTensor)-> Tuple[Tensor,Tensor] # noqa
+        # propagate_type: (x: PairOptTensor, pos: PairTensor, edge_attr: OptTensor) -> Tuple[Tensor,Tensor] # noqa
         out_x, out_pos = self.propagate(edge_index, x=x, pos=pos,
                                         edge_attr=edge_attr, size=None)
 
