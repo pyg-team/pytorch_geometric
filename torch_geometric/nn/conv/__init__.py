@@ -91,9 +91,6 @@ __all__ = [
     'SuperGATConv',
     'FAConv',
     'EGConv',
-    'HGTConv',
-    'HeteroConv',
-    'GeneralConv'
 ]
 
 classes = __all__
