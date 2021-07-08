@@ -9,8 +9,9 @@ def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None):
     dense node feature tensor
     :math:`\mathbf{X} \in \mathbb{R}^{B \times N_{\max} \times F}` (with
     :math:`N_{\max} = \max_i^B N_i`).
-    In addition, a second tensor holding
-    :math:`[N_1, \ldots, N_B] \in \mathbb{N}^B` is returned.
+    In addition, a mask of shape :math:`\mathbf{M} \in \{ 0, 1 \}^{B \times
+    N_{\max}}` is returned, holding information about the existence of
+    fake-nodes in the dense representation.
 
     Args:
         x (Tensor): Node feature matrix
