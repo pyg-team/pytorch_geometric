@@ -171,6 +171,8 @@ Model Transformations
 
 .. autofunction:: torch_geometric.nn.to_hetero.to_hetero
 
+.. autofunction:: torch_geometric.nn.to_hetero_with_bases_transformer.to_hetero_with_bases
+
 DataParallel Layers
 -------------------
 

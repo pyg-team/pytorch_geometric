@@ -1,7 +1,6 @@
 from typing import Tuple, Dict, Union, Optional, Any
 from torch_geometric.typing import NodeType, EdgeType, Metadata
 
-import re
 import copy
 import warnings
 from collections import defaultdict, deque
@@ -14,7 +13,7 @@ from torch_geometric.nn.fx import Transformer
 try:
     from torch.fx import GraphModule, Graph, Node
 except ImportError:
-    GraphModule = Graph = Node = 'GraphModule', 'Graph', 'Node'
+    GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
 def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
@@ -43,11 +42,11 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
 
         model = Net()
 
-        node_types = ['paper', 'author'],
+        node_types = ['paper', 'author']
         edge_types = [
             ('paper', 'cites', 'paper'),
             ('paper' 'written_by', 'author'),
-            ('author', 'writes', 'paper')
+            ('author', 'writes', 'paper'),
         ]
         metadata = (node_types, edge_types)
 
@@ -69,7 +68,7 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
       Transforming a model via :func:`to_hetero`.
 
     Here, each :class:`~torch_geometric.nn.conv.MessagePassing` instance
-    :math:`f_{\theta}^{(\ell)}` is duplicated and converted to a set
+    :math:`f_{\theta}^{(\ell)}` is duplicated and stored in a set
     :math:`\{ f_{\theta}^{(\ell, r)} : r \in \mathcal{R} \}` (one instance for
     each relation in :math:`\mathcal{R}`), and message passing in layer
     :math:`\ell` is performed via
@@ -130,29 +129,23 @@ class ToHeteroTransformer(Transformer):
         input_map: Optional[Dict[str, str]] = None,
         debug: bool = False,
     ):
-        super().__init__(module, debug)
+        super().__init__(module, input_map, debug)
         self.metadata = metadata
         self.aggr = aggr
-        self.input_map = input_map or {}
         assert len(metadata) == 2
-        assert len(metadata[0]) > 1 and len(metadata[1]) > 1
+        assert len(metadata[0]) > 0 and len(metadata[1]) > 0
         assert aggr in self.aggrs.keys()
 
     def placeholder(self, node: Node, target: Any, name: str):
-        # Add a `get` call to the input dictionary for every node-type or
+        # Adds a `get` call to the input dictionary for every node-type or
         # edge-type.
 
-        input_type = self.input_map.get(name, None)
-        if input_type is None and bool(re.search('(edge|adj)', name)):
-            input_type = 'edge'
-        is_edge_level_placeholder = input_type == 'edge'
-
         if node.type is not None:
-            Type = EdgeType if is_edge_level_placeholder else NodeType
+            Type = EdgeType if self.is_edge_level(node) else NodeType
             node.type = Dict[Type, node.type]
 
         self.graph.inserting_after(node)
-        for key in self.metadata[int(is_edge_level_placeholder)]:
+        for key in self.metadata[int(self.is_edge_level(node))]:
             out = self.graph.create_node('call_method', target='get',
                                          args=(node, key),
                                          name=f'{name}__{key2str(key)}')
@@ -220,7 +213,7 @@ class ToHeteroTransformer(Transformer):
     def call_module(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise modules.
         self.graph.inserting_after(node)
-        for key in self.metadata[int(self.has_edge_level_arg_kwarg(node))]:
+        for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
             out = self.graph.create_node('call_module',
                                          target=f'{target}.{key2str(key)}',
@@ -231,7 +224,7 @@ class ToHeteroTransformer(Transformer):
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
         self.graph.inserting_after(node)
-        for key in self.metadata[int(self.has_edge_level_arg_kwarg(node))]:
+        for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
             out = self.graph.create_node('call_method', target=target,
                                          args=args, kwargs=kwargs,
@@ -241,7 +234,7 @@ class ToHeteroTransformer(Transformer):
     def call_function(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise functions.
         self.graph.inserting_after(node)
-        for key in self.metadata[int(self.has_edge_level_arg_kwarg(node))]:
+        for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
             out = self.graph.create_node('call_function', target=target,
                                          args=args, kwargs=kwargs,
@@ -285,7 +278,7 @@ class ToHeteroTransformer(Transformer):
             module_dict[key2str(key)] = copy.deepcopy(module)
             if hasattr(module, 'reset_parameters'):
                 module_dict[key2str(key)].reset_parameters()
-            elif sum([p for p in module.parameters()]) > 0:
+            elif sum([p.numel() for p in module.parameters()]) > 0:
                 warnings.warn((f"'{target}' will be duplicated, but its "
                                f"parameters cannot be reset"))
         return module_dict
@@ -313,25 +306,6 @@ class ToHeteroTransformer(Transformer):
         args = tuple(_recurse(v) for v in node.args)
         kwargs = {k: _recurse(v) for k, v in node.kwargs.items()}
         return args, kwargs
-
-    def is_edge_level(self, node: Node) -> bool:
-        key = self.metadata[1][0]
-        return bool(self.find_by_name(f'{node.name}__{key2str(key)}'))
-
-    def has_edge_level_arg_kwarg(self, node: Node) -> bool:
-        def _recurse(value: Any) -> bool:
-            if isinstance(value, Node):
-                return self.is_edge_level(value)
-            elif isinstance(value, dict):
-                return any([_recurse(v) for v in value.values()])
-            elif isinstance(value, (list, tuple)):
-                return any([_recurse(v) for v in value])
-            else:
-                return False
-
-        has_edge_level_arg = any([_recurse(value) for value in node.args])
-        has_edge_level_kwarg = any([_recurse(v) for v in node.kwargs.values()])
-        return has_edge_level_arg or has_edge_level_kwarg
 
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:

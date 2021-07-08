@@ -1,5 +1,7 @@
 from typing import Optional, Dict, Any
 
+import copy
+
 import torch
 from torch.nn import Module, ModuleList, ModuleDict, Sequential
 from torch_geometric.nn.dense import Linear
@@ -8,7 +10,7 @@ from torch_geometric.nn.conv import MessagePassing
 try:
     from torch.fx import GraphModule, Graph, Node
 except ImportError:
-    GraphModule = Graph = Node = 'GraphModule', 'Graph', 'Node'
+    GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
 class Transformer(object):
@@ -40,20 +42,37 @@ class Transformer(object):
     :class:`Transformer` exposes additional functionality:
 
     #. It subdivides :func:`call_module` into nodes that call a regular
-       :class:`torch.nn.Module` (:func:`call_module`) and
-       :class:`MessagePassing` modules (:func:`call_message_passing_module`).
+       :class:`torch.nn.Module` (:func:`call_module`) or a
+       :class:`MessagePassing` module (:func:`call_message_passing_module`).
 
     #. It allows to customize or initialize new children modules via
        :func:`init_submodule`
 
+    #. It allows to infer whether a node returns node-level or edge-level
+       information via :meth:`is_edge_level`.
+
     Args:
         module (torch.nn.Module): The module to be transformed.
+        input_map (Dict[str, str], optional): A dictionary holding information
+            about the type of input arguments of :obj:`module.forward`.
+            For example, in case :obj:`arg` is a node-level argument, then
+            :obj:`input_map['arg'] = 'node'`, and
+            :obj:`input_map['arg'] = 'edge'` otherwise.
+            In case :obj:`input_map` is not further specified, will try to
+            automatically determine the correct type of input arguments.
+            (default: :obj:`None`)
         debug: (bool, optional): If set to :obj:`True`, will perform
             transformation in debug mode. (default: :obj:`False`)
     """
-    def __init__(self, module: Module, debug: bool = False):
+    def __init__(
+        self,
+        module: Module,
+        input_map: Optional[Dict[str, str]] = None,
+        debug: bool = False,
+    ):
         self.module = module
         self.gm = symbolic_trace(module)
+        self.input_map = input_map
         self.debug = debug
 
     # Methods to override #####################################################
@@ -95,18 +114,39 @@ class Transformer(object):
         if self.debug:
             self.graph.print_tabular()
             print()
-            print(self.graph.python_code('self'))
+            code = self.graph.python_code('self')
+            print(code.src if hasattr(code, 'src') else code)
 
-        # We iterate over each node and replace it by either node type-wise or
-        # edge type-wise variants.
+        # We create a private dictionary `self._state` which holds information
+        # about whether a node returns node-level or edge-level information:
+        # `self._state[node.name] in { 'node', 'edge' }`
+        self._state = copy.copy(self.input_map or {})
+
+        # We iterate over each node and determine its output level
+        # (node-level, edge-level) by filling `self._state`:
         for node in list(self.graph.nodes):
-            # Call the corresponding `Transformer` methods for each `node.op`,
+            if node.op == 'placeholder':
+                if node.name not in self._state:
+                    if 'edge' in node.name or 'adj' in node.name:
+                        self._state[node.name] = 'edge'
+                    else:
+                        self._state[node.name] = 'node'
+            elif is_message_passing_op(self.module, node.op, node.target):
+                self._state[node.name] = 'node'
+            elif node.op in ['call_module', 'call_method', 'call_function']:
+                if self.has_edge_level_arg(node):
+                    self._state[node.name] = 'edge'
+                else:
+                    self._state[node.name] = 'node'
+
+        # We iterate over each node and may transform it:
+        for node in list(self.graph.nodes):
+            # Call the corresponding `Transformer` method for each `node.op`,
             # e.g.: `call_module(...)`, `call_function(...)`, ...
-            if (node.op == 'call_module' and isinstance(
-                    get_submodule(self.module, node.target), MessagePassing)):
-                self.call_message_passing_module(node, node.target, node.name)
-            else:
-                getattr(self, node.op)(node, node.target, node.name)
+            op = node.op
+            if is_message_passing_op(self.module, op, node.target):
+                op = 'call_message_passing_module'
+            getattr(self, op)(node, node.target, node.name)
 
         # Remove all unused nodes in the computation graph, i.e., all nodes
         # which have been replaced by node type-wise or edge type-wise variants
@@ -121,13 +161,16 @@ class Transformer(object):
             except RuntimeError:
                 pass
 
+        for target, submodule in dict(self.module._modules).items():
+            self.gm._modules[target] = self._init_submodule(submodule, target)
+
+        del self._state
+
         if self.debug:
             self.gm.graph.print_tabular()
             print()
-            print(self.graph.python_code('self'))
-
-        for target, submodule in dict(self.module._modules).items():
-            self.gm._modules[target] = self._init_submodule(submodule, target)
+            code = self.graph.python_code('self')
+            print(code.src if hasattr(code, 'src') else code)
 
         self.gm.graph.lint()
         self.gm.recompile()
@@ -148,6 +191,23 @@ class Transformer(object):
         else:
             return self.init_submodule(module, target)
 
+    def is_edge_level(self, node: Node) -> bool:
+        return self._state[node.name] == 'edge'
+
+    def has_edge_level_arg(self, node: Node) -> bool:
+        def _recurse(value: Any) -> bool:
+            if isinstance(value, Node):
+                return self.is_edge_level(value)
+            elif isinstance(value, dict):
+                return any([_recurse(v) for v in value.values()])
+            elif isinstance(value, (list, tuple)):
+                return any([_recurse(v) for v in value])
+            else:
+                return False
+
+        return (any([_recurse(value) for value in node.args])
+                or any([_recurse(value) for value in node.kwargs.values()]))
+
     def find_by_name(self, name: str) -> Optional[Node]:
         for node in self.graph.nodes:
             if node.name == name:
@@ -159,6 +219,16 @@ class Transformer(object):
             if node.target == target:
                 return node
         return None
+
+    def replace_all_uses_with(self, to_replace: Node, replace_with: Node):
+        def maybe_replace_node(n: Node) -> Node:
+            return replace_with if n == to_replace else n
+
+        node = replace_with.next
+        while node.op != 'root':
+            node.args = torch.fx.map_arg(node.args, maybe_replace_node)
+            node.kwargs = torch.fx.map_arg(node.kwargs, maybe_replace_node)
+            node = node.next
 
 
 def symbolic_trace(
@@ -180,3 +250,10 @@ def get_submodule(module: Module, target: str) -> Module:
     for attr in target.split('.'):
         out = getattr(out, attr)
     return out
+
+
+def is_message_passing_op(module: Module, op: str, target: str) -> bool:
+    if op == 'call_module':
+        if isinstance(get_submodule(module, target), MessagePassing):
+            return True
+    return False
