@@ -2,7 +2,7 @@ import torch
 from torch_scatter import scatter_add
 
 
-def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None):
+def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None, batch_size=None):
     r"""Given a sparse batch of node features
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}` (with
     :math:`N_i` indicating the number of nodes in graph :math:`i`), creates a
@@ -18,11 +18,14 @@ def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None):
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
         batch (LongTensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. Must be ordered. (default: :obj:`None`)
         fill_value (float, optional): The value for invalid entries in the
             resulting dense output tensor. (default: :obj:`0`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
+        batch_size (int, optional) Number of batches that should be output.
+            Provide this if the input batch dimension may be missing the last
+            batch (if batches may have 0 elements).
 
     :rtype: (:class:`Tensor`, :class:`BoolTensor`)
     """
@@ -33,7 +36,10 @@ def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None):
     if batch is None:
         batch = x.new_zeros(x.size(0), dtype=torch.long)
 
-    batch_size = batch[-1].item() + 1
+    if num_batches is None:
+        batch_size = batch[-1].item() + 1
+    else:
+        batch_size = num_batches
     num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
                             dim_size=batch_size)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
