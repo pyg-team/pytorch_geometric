@@ -36,10 +36,8 @@ def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None, batch_size=N
     if batch is None:
         batch = x.new_zeros(x.size(0), dtype=torch.long)
 
-    if num_batches is None:
+    if batch_size is None:
         batch_size = batch[-1].item() + 1
-    else:
-        batch_size = num_batches
     num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
                             dim_size=batch_size)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
