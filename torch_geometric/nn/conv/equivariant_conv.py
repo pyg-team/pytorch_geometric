@@ -8,6 +8,8 @@ from torch_scatter import scatter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
+from ..inits import reset
+
 
 class EquivariantConv(MessagePassing):
     r"""The Equivariant graph neural network operator form the
@@ -45,7 +47,7 @@ class EquivariantConv(MessagePassing):
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
         pos_nn (torch.nn.Module,optinal): A neural network
             :math:`\rho_{\mathbf{\Theta}}` that
-            maps message :math:`\mathbf{m}_{ij}` of shape
+            maps message :math:`\mathbf{m}` of shape
             :obj:`[-1, hidden_channels]`,
             to shape :obj:`[-1, 1]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
@@ -55,8 +57,9 @@ class EquivariantConv(MessagePassing):
             to shape :obj:`[-1, 1]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
         global_nn (torch.nn.Module, optional): A neural network
-            :math:`\gamma_{\mathbf{\Theta}}` that maps aggregated node features
-            of shape and node features
+            :math:`\gamma_{\mathbf{\Theta}}` that maps aggregated
+            message :math:`\mathbf{m}`
+            and node features :obj:`x` of shape
             :obj:`[-1, hidden_channels + in_channels]`
             to shape :obj:`[-1, out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
@@ -81,10 +84,11 @@ class EquivariantConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        if self.local_nn is not None:
-            pass
-        if self.global_nn is not None:
-            pass
+
+        reset(self.local_nn)
+        reset(self.pos_nn)
+        reset(self.vel_nn)
+        reset(self.global_nn)
 
     def forward(
         self, x: Union[OptTensor, PairOptTensor], pos: Union[Tensor,
