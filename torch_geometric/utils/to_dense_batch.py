@@ -1,8 +1,13 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
 from torch_scatter import scatter_add
 
 
-def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None, batch_size=None):
+def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
+                   fill_value: float = 0., max_num_nodes: Optional[int] = None,
+                   batch_size: Optional[int] = None) -> Tuple[Tensor, Tensor]:
     r"""Given a sparse batch of node features
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}` (with
     :math:`N_i` indicating the number of nodes in graph :math:`i`), creates a
@@ -23,9 +28,7 @@ def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None, batch_size=N
             resulting dense output tensor. (default: :obj:`0`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
-        batch_size (int, optional) Number of batches that should be output.
-            Provide this if the input batch dimension may be missing the last
-            batch (if batches may have 0 elements).
+        batch_size (int, optional) The batch size. (default: :obj:`None`)
 
     :rtype: (:class:`Tensor`, :class:`BoolTensor`)
     """
@@ -37,13 +40,14 @@ def to_dense_batch(x, batch=None, fill_value=0, max_num_nodes=None, batch_size=N
         batch = x.new_zeros(x.size(0), dtype=torch.long)
 
     if batch_size is None:
-        batch_size = batch[-1].item() + 1
+        batch_size = int(batch.max()) + 1
+
     num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
                             dim_size=batch_size)
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
 
     if max_num_nodes is None:
-        max_num_nodes = num_nodes.max().item()
+        max_num_nodes = int(num_nodes.max())
 
     idx = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
     idx = (idx - cum_nodes[batch]) + (batch * max_num_nodes)
