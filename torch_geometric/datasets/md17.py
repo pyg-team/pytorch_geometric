@@ -70,15 +70,21 @@ class MD17(InMemoryDataset):
     and the forces (kcal/mol/Angstrom) on each atom.
     The latter two are the regression targets for this collection.
 
+    .. note::
+
+        Data object contains no edge indices as these are most commonly
+        constructed from a :obj:`torch_geometric.nn.pool.radius_graph`
+        where the cut off is a hyperparameter.
+
     Some of the trajectories were computed at different levels of theory and for
     most there are two versions: generally a long trajectory on DFT level of theory
     and a short trajectory on coupled cluster level of theory.
     Check the table below for detailed information on the molecule,
     level of theory and number of data points contained in each dataset.
     For the coupled cluster trajectories the dataset comes with pre-defined
-    training and testing splits which can be loaded with the train variable.
+    training and testing splits which can be loaded with the :obj:`train` variable.
     For the other datasets, this variable does nothing..
-    Which trajectory is loaded is determined by the name variable.
+    Which trajectory is loaded is determined by the :obj:`name` variable.
 
     When using these datasets, make sure to cite the following publications:
     `"Machine Learning of Accurate Energy-conserving Molecular Force Fields"
@@ -92,7 +98,7 @@ class MD17(InMemoryDataset):
     Coupled Cluster Forces" <https://doi.org/10.1016/j.cpc.2019.02.007>`_
 
     +----------------+-----------------+-----------------------+--------------+
-    | Molecule       | Level of Theory | name                  | #data points |
+    | Molecule       | Level of Theory | :obj:`name`           | #data points |
     +================+=================+=======================+==============+
     +----------------+-----------------+-----------------------+--------------+
     | Benzene        | DFT             | benzene               | 49 863       |
@@ -125,9 +131,28 @@ class MD17(InMemoryDataset):
     +----------------+-----------------+-----------------------+--------------+
     | Azobenzene     | DFT             | azobenzene            | 99 999       |
     +----------------+-----------------+-----------------------+--------------+
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        name (string): Keyword of the trajectory that should be loaded.
+        train (bool, optional): Determines whether the train or test split
+            gets loaded for the coupled cluster trajectories. For the DFT
+            trajectories this variable can be ignored. (default: :obj:`True`)
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
     """
 
-    def __init__(self, root: str, name: str, train: bool = True,
+    def __init__(self, root: str, name: str, train: Optional[bool] = True,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
@@ -186,9 +211,6 @@ class MD17(InMemoryDataset):
 
             data_list.append(data)
 
-            if ii >= 10:
-                # quit()
-                break
         return data_list
 
     def process(self):
