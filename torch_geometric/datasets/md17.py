@@ -61,7 +61,7 @@ dataset_dict = {"benzene FHI-aims"      : benzene_url,
 
 class MD17(InMemoryDataset):
     r"""A variety of ab-initio molecular dynamics trajectories
-    from the authors of sGDML. This class provides access
+    from the authors of `sGDML <http://quantum-machine.org/gdml/>`_. This class provides access
     to the original MD17 datasets as well as all other datsets
     released by sGDML since then (16 in total).
 
@@ -74,7 +74,7 @@ class MD17(InMemoryDataset):
 
         Data object contains no edge indices as these are most commonly
         constructed from a :obj:`torch_geometric.nn.pool.radius_graph`
-        where the cut off is a hyperparameter.
+        where the cut-off is a hyperparameter.
 
     Some of the trajectories were computed at different levels of theory and for
     most there are two versions: generally a long trajectory on DFT level of theory
@@ -86,51 +86,42 @@ class MD17(InMemoryDataset):
     For the other datasets, this variable does nothing..
     Which trajectory is loaded is determined by the :obj:`name` variable.
 
-    When using these datasets, make sure to cite the following publications:
-    `"Machine Learning of Accurate Energy-conserving Molecular Force Fields"
-    <http://advances.sciencemag.org/content/3/5/e1603015>`_
-    `"Towards Exact Molecular Dynamics Simulations with Machine-Learned
-    Force Fields" <https://www.nature.com/articles/s41467-018-06169-2>`_
-    `"sGDML: Constructing Accurate and Data Efficient Molecular Force Fields
-    Using Machine Learning" <https://doi.org/10.1016/j.cpc.2019.02.007>`_
-    `"Molecular Force Fields with Gradient-Domain Machine Learning:
-    Construction and Application to Dynamics of Small Molecules with
-    Coupled Cluster Forces" <https://doi.org/10.1016/j.cpc.2019.02.007>`_
+    When using these datasets, make sure to cite the appropriate publications
+    listed on the `sGDML <http://quantum-machine.org/gdml/>`_ website.
 
-    +----------------+-----------------+-----------------------+--------------+
-    | Molecule       | Level of Theory | :obj:`name`           | #data points |
-    +================+=================+=======================+==============+
-    +----------------+-----------------+-----------------------+--------------+
-    | Benzene        | DFT             | benzene               | 49 863       |
-    +----------------+-----------------+-----------------------+--------------+
-    | Benzene        | DFT FHI-aims    | benzene FHI-aims      | 627 983      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Uracil         | DFT             | uracil                | 133 770      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Naphthalene    | DFT             | naphthalene           | 326 250      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Aspirin        | DFT             | aspirin               | 627 983      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Aspirin        | CCSD            | aspirin CCSD          | 1 500        |
-    +----------------+-----------------+-----------------------+--------------+
-    | Salicylic acid | DFT             | salicylic acid        | 320 231      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Malonaldehyde  | DFT             | malonaldehyde         | 993 237      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Malonaldehyde  | CCSD(T)         | malonaldehyde CCSD(T) | 1 500        |
-    +----------------+-----------------+-----------------------+--------------+
-    | Ethanol        | DFT             | ethanol               | 555 092      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Ethanol        | CCSD(T)         | ethanol CCSD(T)       | 2 000        |
-    +----------------+-----------------+-----------------------+--------------+
-    | Toluene        | DFT             | toluene               | 442 790      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Toluene        | CCSD(T)         | toluene CCSD(T)       | 1 500        |
-    +----------------+-----------------+-----------------------+--------------+
-    | Paracetamol    | DFT             | paracetamol           | 106 490      |
-    +----------------+-----------------+-----------------------+--------------+
-    | Azobenzene     | DFT             | azobenzene            | 99 999       |
-    +----------------+-----------------+-----------------------+--------------+
+    +----------------+-----------------+------------------------------+--------------+
+    | Molecule       | Level of Theory | :obj:`name`                  | #data points |
+    +================+=================+==============================+==============+
+    | Benzene        | DFT             | :obj:`benzene`               | 49 863       |
+    +----------------+-----------------+------------------------------+--------------+
+    | Benzene        | DFT FHI-aims    | :obj:`benzene FHI-aims`      | 627 983      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Uracil         | DFT             | :obj:`uracil`                | 133 770      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Naphthalene    | DFT             | :obj:`naphthalene`           | 326 250      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Aspirin        | DFT             | :obj:`aspirin`               | 627 983      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Aspirin        | CCSD            | :obj:`aspirin CCSD`          | 1 500        |
+    +----------------+-----------------+------------------------------+--------------+
+    | Salicylic acid | DFT             | :obj:`salicylic acid`        | 320 231      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Malonaldehyde  | DFT             | :obj:`malonaldehyde`         | 993 237      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Malonaldehyde  | CCSD(T)         | :obj:`malonaldehyde CCSD(T)` | 1 500        |
+    +----------------+-----------------+------------------------------+--------------+
+    | Ethanol        | DFT             | :obj:`ethanol`               | 555 092      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Ethanol        | CCSD(T)         | :obj:`ethanol CCSD(T)`       | 2 000        |
+    +----------------+-----------------+------------------------------+--------------+
+    | Toluene        | DFT             | :obj:`toluene`               | 442 790      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Toluene        | CCSD(T)         | :obj:`toluene CCSD(T)`       | 1 500        |
+    +----------------+-----------------+------------------------------+--------------+
+    | Paracetamol    | DFT             | :obj:`paracetamol`           | 106 490      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Azobenzene     | DFT             | :obj:`azobenzene`            | 99 999       |
+    +----------------+-----------------+------------------------------+--------------+
 
     Args:
         root (string): Root directory where the dataset should be saved.
