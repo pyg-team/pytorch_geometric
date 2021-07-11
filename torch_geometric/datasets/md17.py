@@ -62,8 +62,8 @@ dataset_dict = {"benzene FHI-aims"      : benzene_url,
 class MD17(InMemoryDataset):
     r"""A variety of ab-initio molecular dynamics trajectories
     from the authors of `sGDML <http://quantum-machine.org/gdml/>`_. This class provides access
-    to the original MD17 datasets as well as all other datsets
-    released by sGDML since then (16 in total).
+    to the original MD17 datasets as well as all other datasets
+    released by sGDML since then (15 in total).
 
     For every trajectory, the dataset contains the cartesian positions
     of the atoms (Angstrom), their atomic numbers, the total energy (kcal/mol)
@@ -77,13 +77,13 @@ class MD17(InMemoryDataset):
         where the cut-off is a hyperparameter.
 
     Some of the trajectories were computed at different levels of theory and for
-    most there are two versions: generally a long trajectory on DFT level of theory
+    most molecules there are two versions: a long trajectory on DFT level of theory
     and a short trajectory on coupled cluster level of theory.
     Check the table below for detailed information on the molecule,
     level of theory and number of data points contained in each dataset.
     For the coupled cluster trajectories the dataset comes with pre-defined
-    training and testing splits which can be loaded with the :obj:`train` variable.
-    For the other datasets, this variable does nothing..
+    training and testing splits which are loaded separately with the :obj:`train` variable.
+    For the other datasets, this variable does nothing.
     Which trajectory is loaded is determined by the :obj:`name` variable.
 
     When using these datasets, make sure to cite the appropriate publications
