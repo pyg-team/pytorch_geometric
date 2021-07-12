@@ -1,134 +1,86 @@
-from typing import Optional, Callable
+from typing import Optional, Callable, List
 
 import os
+import os.path as osp
 
-from tqdm import tqdm
-
-import numpy as np
 import torch
-from torch_geometric.data import (InMemoryDataset,
-                                  download_url,
-                                  extract_zip,
+import numpy as np
+from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
                                   Data)
-
-base_url = "http://quantum-machine.org/gdml/data/npz/"
-
-# FHI-aims
-benzene_aims_url = base_url + "benzene_dft.npz"
-
-# Original MD17 (DFT)
-benzene_url = base_url + "benzene_old_dft.npz"
-uracil_url = base_url + "uracil_dft.npz"
-naphtalene_url = base_url + "naphthalene_dft.npz"
-aspirin_url = base_url + "aspirin_dft.npz"
-salicylic_url = base_url + "salicylic_dft.npz"
-malonaldehyde_url = base_url + "malonaldehyde_dft.npz"
-ethanol_url = base_url + "ethanol_dft.npz"
-toluene_url = base_url + "toluene_dft.npz"
-
-# Other DFT trajectories
-paracetamol_url = base_url + "paracetamol_dft.npz"
-azobenzene_url = base_url + "azobenzene_dft.npz"
-
-# CCSD
-aspirin_ccsd_url = base_url + "aspirin_ccsd.zip"
-
-# CCSD(T)
-benzene_ccsdt_url = base_url + "benzene_ccsd_t.zip"
-malonaldehyde_ccsdt_url = base_url + "malonaldehyde_ccsd_t.zip"
-toluene_ccsdt_url = base_url + "toluene_ccsd_t.zip"
-ethanol_ccsdt_url = base_url + "ethanol_ccsd_t.zip"
-
-
-dataset_dict = {"benzene FHI-aims"      : benzene_url,
-                "benzene"               : benzene_url,
-                "uracil"                : uracil_url,
-                "napthalene"            : naphtalene_url,
-                "aspirin"               : aspirin_url,
-                "salicylic acid"        : salicylic_url,
-                "malonaldehyde"         : malonaldehyde_url,
-                "ethanol"               : ethanol_url,
-                "toluene"               : toluene_url,
-                "paracetamol"           : paracetamol_url,
-                "azobenzene"            : azobenzene_url,
-                "aspirin CCSD"          : aspirin_ccsd_url,
-                "benzene CCSD(T)"       : benzene_ccsdt_url,
-                "malonaldehyde CCSD(T)" : malonaldehyde_ccsdt_url,
-                "toluene CCSD(T)"       : toluene_ccsdt_url,
-                "ethanol CCSD(T)"       : ethanol_ccsdt_url,
-                }
 
 
 class MD17(InMemoryDataset):
-    r"""A variety of ab-initio molecular dynamics trajectories
-    from the authors of `sGDML <http://quantum-machine.org/gdml/>`_. This class provides access
-    to the original MD17 datasets as well as all other datasets
-    released by sGDML since then (15 in total).
+    r"""A variety of ab-initio molecular dynamics trajectories from the
+    authors of `sGDML <http://quantum-machine.org/gdml>`_.
+    This class provides access to the original MD17 datasets as well as all
+    other datasets released by sGDML since then (15 in total).
 
-    For every trajectory, the dataset contains the cartesian positions
-    of the atoms (Angstrom), their atomic numbers, the total energy (kcal/mol)
-    and the forces (kcal/mol/Angstrom) on each atom.
+    For every trajectory, the dataset contains the Cartesian positions of atoms
+    (in Angstrom), their atomic numbers, as well as the total energy
+    (in kcal/mol) and forces (kcal/mol/Angstrom) on each atom.
     The latter two are the regression targets for this collection.
 
     .. note::
 
-        Data object contains no edge indices as these are most commonly
-        constructed from a :obj:`torch_geometric.nn.pool.radius_graph`
-        where the cut-off is a hyperparameter.
+        Data objects contain no edge indices as these are most commonly
+        constructed via the :obj:`torch_geometric.transforms.RadiusGraph`
+        transform, with its cut-off being a hyperparameter.
 
-    Some of the trajectories were computed at different levels of theory and for
-    most molecules there are two versions: a long trajectory on DFT level of theory
-    and a short trajectory on coupled cluster level of theory.
+    Some of the trajectories were computed at different levels of theory, and
+    for most molecules there exists two versions: a long trajectory on DFT
+    level of theory and a short trajectory on coupled cluster level of theory.
     Check the table below for detailed information on the molecule,
     level of theory and number of data points contained in each dataset.
-    For the coupled cluster trajectories the dataset comes with pre-defined
-    training and testing splits which are loaded separately with the :obj:`train` variable.
-    For the other datasets, this variable does nothing.
-    Which trajectory is loaded is determined by the :obj:`name` variable.
+    Which trajectory is loaded is determined by the :attr:`name` argument.
+    For the coupled cluster trajectories, the dataset comes with pre-defined
+    training and testing splits which are loaded separately via the
+    :attr:`train` argument.
 
     When using these datasets, make sure to cite the appropriate publications
     listed on the `sGDML <http://quantum-machine.org/gdml/>`_ website.
 
     +----------------+-----------------+------------------------------+--------------+
-    | Molecule       | Level of Theory | :obj:`name`                  | #data points |
+    | Molecule       | Level of Theory | :obj:`name`                  | #Data Points |
     +================+=================+==============================+==============+
-    | Benzene        | DFT             | :obj:`benzene`               | 49 863       |
+    | Benzene        | DFT             | :obj:`benzene`               | 49,863       |
     +----------------+-----------------+------------------------------+--------------+
-    | Benzene        | DFT FHI-aims    | :obj:`benzene FHI-aims`      | 627 983      |
+    | Benzene        | DFT FHI-aims    | :obj:`benzene FHI-aims`      | 627,983      |
     +----------------+-----------------+------------------------------+--------------+
-    | Uracil         | DFT             | :obj:`uracil`                | 133 770      |
+    | Benzene        | CCSD(T)         | :obj:`benzene CCSD(T)`       | 1,500        |
     +----------------+-----------------+------------------------------+--------------+
-    | Naphthalene    | DFT             | :obj:`naphthalene`           | 326 250      |
+    | Uracil         | DFT             | :obj:`uracil`                | 133,770      |
     +----------------+-----------------+------------------------------+--------------+
-    | Aspirin        | DFT             | :obj:`aspirin`               | 627 983      |
+    | Naphthalene    | DFT             | :obj:`naphthalene`           | 326,250      |
     +----------------+-----------------+------------------------------+--------------+
-    | Aspirin        | CCSD            | :obj:`aspirin CCSD`          | 1 500        |
+    | Aspirin        | DFT             | :obj:`aspirin`               | 627,983      |
     +----------------+-----------------+------------------------------+--------------+
-    | Salicylic acid | DFT             | :obj:`salicylic acid`        | 320 231      |
+    | Aspirin        | CCSD            | :obj:`aspirin CCSD`          | 1,500        |
     +----------------+-----------------+------------------------------+--------------+
-    | Malonaldehyde  | DFT             | :obj:`malonaldehyde`         | 993 237      |
+    | Salicylic acid | DFT             | :obj:`salicylic acid`        | 320,231      |
     +----------------+-----------------+------------------------------+--------------+
-    | Malonaldehyde  | CCSD(T)         | :obj:`malonaldehyde CCSD(T)` | 1 500        |
+    | Malonaldehyde  | DFT             | :obj:`malonaldehyde`         | 993,237      |
     +----------------+-----------------+------------------------------+--------------+
-    | Ethanol        | DFT             | :obj:`ethanol`               | 555 092      |
+    | Malonaldehyde  | CCSD(T)         | :obj:`malonaldehyde CCSD(T)` | 1,500        |
     +----------------+-----------------+------------------------------+--------------+
-    | Ethanol        | CCSD(T)         | :obj:`ethanol CCSD(T)`       | 2 000        |
+    | Ethanol        | DFT             | :obj:`ethanol`               | 555,092      |
     +----------------+-----------------+------------------------------+--------------+
-    | Toluene        | DFT             | :obj:`toluene`               | 442 790      |
+    | Ethanol        | CCSD(T)         | :obj:`ethanol CCSD(T)`       | 2,000        |
     +----------------+-----------------+------------------------------+--------------+
-    | Toluene        | CCSD(T)         | :obj:`toluene CCSD(T)`       | 1 500        |
+    | Toluene        | DFT             | :obj:`toluene`               | 442,790      |
     +----------------+-----------------+------------------------------+--------------+
-    | Paracetamol    | DFT             | :obj:`paracetamol`           | 106 490      |
+    | Toluene        | CCSD(T)         | :obj:`toluene CCSD(T)`       | 1,501        |
     +----------------+-----------------+------------------------------+--------------+
-    | Azobenzene     | DFT             | :obj:`azobenzene`            | 99 999       |
+    | Paracetamol    | DFT             | :obj:`paracetamol`           | 106,490      |
+    +----------------+-----------------+------------------------------+--------------+
+    | Azobenzene     | DFT             | :obj:`azobenzene`            | 99,999       |
     +----------------+-----------------+------------------------------+--------------+
 
     Args:
         root (string): Root directory where the dataset should be saved.
         name (string): Keyword of the trajectory that should be loaded.
         train (bool, optional): Determines whether the train or test split
-            gets loaded for the coupled cluster trajectories. For the DFT
-            trajectories this variable can be ignored. (default: :obj:`True`)
+            gets loaded for the coupled cluster trajectories.
+            (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -142,81 +94,99 @@ class MD17(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
     """
+    url = 'http://quantum-machine.org/gdml/data/npz'
 
-    def __init__(self, root: str, name: str, train: Optional[bool] = True,
+    file_names = {
+        'benzene FHI-aims': 'benzene_dft.npz',
+        'benzene': 'benzene_old_dft.npz',
+        'benzene CCSD(T)': 'benzene_ccsd_t.zip',
+        'uracil': 'uracil_dft.npz',
+        'napthalene': 'naphthalene_dft.npz',
+        'aspirin': 'aspirin_dft.npz',
+        'aspirin CCSD': 'aspirin_ccsd.zip',
+        'salicylic acid': 'salicylic_dft.npz',
+        'malonaldehyde': 'malonaldehyde_dft.npz',
+        'malonaldehyde CCSD(T)': 'malonaldehyde_ccsd_t.zip',
+        'ethanol': 'ethanol_dft.npz',
+        'ethanol CCSD(T)': 'ethanol_ccsd_t.zip',
+        'toluene': 'toluene_dft.npz',
+        'toluene CCSD(T)': 'toluene_ccsd_t.zip',
+        'paracetamol': 'paracetamol_dft.npz',
+        'azobenzene': 'azobenzene_dft.npz',
+    }
+
+    def __init__(self, root: str, name: str, train: Optional[bool] = None,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
         self.name = name
-        self.url = dataset_dict[name]
-        self.train = train
-
-        self.file_name, self.file_type = self.url.split("/")[-1].split(".")
-
-        self.raw_file_name = self.file_name + "." + self.file_type
-        self.processed_file_name = self.file_name + ".pt"
-
+        assert name in self.file_names
         super().__init__(root, transform, pre_transform, pre_filter)
 
-        path = self.processed_paths[0] if train else self.processed_paths[1]
-        self.data, self.slices = torch.load(path)
+        if len(self.processed_file_names) == 1 and train is not None:
+            raise ValueError(
+                f"'{self.name}' dataset does not provide pre-defined splits "
+                f"but 'train' argument is set to '{train}'")
+        elif len(self.processed_file_names) == 2 and train is None:
+            raise ValueError(
+                f"'{self.name}' dataset does provide pre-defined splits but "
+                f"'train' argument was not specified")
+
+        idx = 0 if train is None or train else 1
+        self.data, self.slices = torch.load(self.processed_paths[idx])
 
     def mean(self) -> float:
-        E_tot = torch.cat([self.get(i).E for i in range(len(self))], dim=0)
-        return float(E_tot.mean())
+        return float(self.data.energy.mean())
 
     @property
-    def raw_file_names(self) -> list:
-        if self.file_type == "zip":
-            return [self.file_name + "-train.npz", self.file_name + "-test.npz"]
-        else:
-            return [self.raw_file_name]
+    def raw_dir(self) -> str:
+        name = self.file_names[self.name].split('.')[0]
+        return osp.join(self.root, name, 'raw')
 
     @property
-    def processed_file_names(self) -> list:
-        if self.file_type == "zip":
-            return [self.file_name + "-train.pt", self.file_name + "-test.pt"]
+    def processed_dir(self) -> str:
+        name = self.file_names[self.name].split('.')[0]
+        return osp.join(self.root, name, 'processed')
+
+    @property
+    def raw_file_names(self) -> List[str]:
+        name = self.file_names[self.name]
+        if name[-4:] == '.zip':
+            return [name[:-4] + '-train.npz', name[:-4] + '-test.npz']
         else:
-            return [self.processed_file_name]
+            return [name]
+
+    @property
+    def processed_file_names(self) -> List[str]:
+        name = self.file_names[self.name]
+        return ['train.pt', 'test.pt'] if name[-4:] == '.zip' else ['data.pt']
 
     def download(self):
-        path = download_url(self.url, self.raw_dir)
-        if self.file_type == "zip":
+        url = f'{self.url}/{self.file_names[self.name]}'
+        path = download_url(url, self.raw_dir)
+        if url[-4:] == '.zip':
             extract_zip(path, self.raw_dir)
             os.unlink(path)
 
-    def process_npz(self, raw_data) -> list:
-        data_list = []
-        z = torch.tensor(raw_data["z"], dtype=torch.int64)
-        pos = torch.tensor(raw_data["R"], dtype=torch.float32)
-        energy = torch.tensor(raw_data["E"], dtype=torch.float32)
-        force = torch.tensor(raw_data["F"], dtype=torch.float32)
-
-        for ii in tqdm(range(len(raw_data["E"]))):
-            data = Data(z=z, pos=pos[ii], E=energy[ii], F=force[ii], idx=ii)
-
-            if self.pre_filter is not None and not self.pre_filter(data):
-                continue
-            if self.pre_transform is not None:
-                data = self.pre_transform(data)
-
-            data_list.append(data)
-
-        return data_list
-
     def process(self):
+        it = zip(self.raw_paths, self.processed_paths)
+        for raw_path, processed_path in it:
+            raw_data = np.load(raw_path)
+            z = torch.from_numpy(raw_data['z']).to(torch.long)
+            pos = torch.from_numpy(raw_data['R']).to(torch.float)
+            energy = torch.from_numpy(raw_data['E']).to(torch.float)
+            force = torch.from_numpy(raw_data['F']).to(torch.float)
 
-        # Training data
-        raw_data = np.load(self.raw_paths[0])
+            data_list = []
+            for i in range(pos.size(0)):
+                data = Data(z=z, pos=pos[i], energy=energy[i], force=force[i])
+                if self.pre_filter is not None and not self.pre_filter(data):
+                    continue
+                if self.pre_transform is not None:
+                    data = self.pre_transform(data)
+                data_list.append(data)
 
-        data_list = self.process_npz(raw_data)
-        data, slices = self.collate(data_list)
-        torch.save((data, slices), self.processed_paths[0])
+            torch.save(self.collate(data_list), processed_path)
 
-        # Testing data
-        if len(self.raw_paths) > 1:
-            raw_data = np.load(self.raw_paths[1])
-
-            data_list = self.process_npz(raw_data)
-            data, slices = self.collate(data_list)
-            torch.save((data, slices), self.processed_paths[1])
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({len(self)}, name='{self.name}')"
