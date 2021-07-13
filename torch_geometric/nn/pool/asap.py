@@ -80,6 +80,7 @@ class ASAPooling(torch.nn.Module):
             self.gnn_intra_cluster.reset_parameters()
 
     def forward(self, x, edge_index, edge_weight=None, batch=None):
+        """"""
         N = x.size(0)
 
         edge_index, edge_weight = add_remaining_self_loops(
