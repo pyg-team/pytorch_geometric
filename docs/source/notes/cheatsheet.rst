@@ -7,7 +7,7 @@ GNN Cheatsheet
 
 * :obj:`edge_attr`: If checked (✓), supports message passing with multi-dimensional edge feature information, *e.g.*, :obj:`GINEConv(...).forward(x, edge_index, edge_attr)`
 
-* **bipartite**: If checked (✓), supports message passing in bipartite graphs with potentially different feature dimensionality for source and destination nodes, *e.g.*, :obj:`SAGEConv(in_channels=(16, 32), out_channels=64)`
+* **bipartite**: If checked (✓), supports message passing in bipartite graphs with potentially different feature dimensionalities for source and destination nodes, *e.g.*, :obj:`SAGEConv(in_channels=(16, 32), out_channels=64)`
 
 Graph Neural Network Operators
 ------------------------------
