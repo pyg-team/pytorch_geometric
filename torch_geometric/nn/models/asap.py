@@ -14,7 +14,6 @@ class ASAP(torch.nn.Module):
     Args:
         in_channels (int): Size of each input sample.
         hidden_channels (int): Hidden node feature dimensionality.
-        out_channels (int): Size of each output sample.
         edge_dim (int): Edge feature dimensionality.
         num_layers (int): Number of GNN layers.
         ratio (float or int): Graph pooling ratio, which is used to compute

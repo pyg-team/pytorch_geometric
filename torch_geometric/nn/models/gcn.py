@@ -29,7 +29,6 @@ class GCNWithJK(Basic_GNN_model_WithJK):
     Args:
         in_channels (int): Size of each input sample.
         hidden_channels (int): Hidden node feature dimensionality.
-        out_channels (int): Size of each output sample.
         num_layers (int): Number of GNN layers.
         mode (str): The aggregation mode for the :class:`torch_geometric.nn.conv.JumpingKnowledge` layer
             (default: :obj:`cat`). If mode = 'cat' the output feature has size num_layers * hidden_channels,

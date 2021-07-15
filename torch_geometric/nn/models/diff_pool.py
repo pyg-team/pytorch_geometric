@@ -44,7 +44,7 @@ class DiffPool(torch.nn.Module):
         ratio (float, optional): Controls the size of the pooling. (default: :obj:`0.25`)
     """
 
-    def __init__(self, in_channels, hidden_channels, out_channels, num_nodes, num_layers, ratio=0.25):
+    def __init__(self, in_channels, hidden_channels, num_nodes, num_layers, ratio=0.25):
         super(DiffPool, self).__init__()
 
         num_nodes = ceil(ratio * num_nodes)
