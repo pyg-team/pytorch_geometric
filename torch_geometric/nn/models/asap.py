@@ -23,7 +23,7 @@ class ASAP(torch.nn.Module):
             is :obj:`float` or :obj:`int`. (default: :obj:`0.8`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
     """
-    def __init__(self, in_channels, hidden_channels, out_channels, num_layers, ratio=0.8, dropout=0):
+    def __init__(self, in_channels, hidden_channels, num_layers, ratio=0.8, dropout=0):
         super(ASAP, self).__init__()
         self.conv1 = GraphConv(in_channels, hidden_channels, aggr='mean')
         self.convs = torch.nn.ModuleList()
@@ -37,8 +37,6 @@ class ASAP(torch.nn.Module):
             for i in range((num_layers) // 2)
         ])
         self.jump = JumpingKnowledge(mode='cat')
-        self.lin1 = Linear(num_layers * hidden_channels, hidden_channels)
-        self.lin2 = Linear(hidden_channels, out_channels)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -46,8 +44,6 @@ class ASAP(torch.nn.Module):
             conv.reset_parameters()
         for pool in self.pools:
             pool.reset_parameters()
-        self.lin1.reset_parameters()
-        self.lin2.reset_parameters()
 
     def forward(self, data):
         x, edge_index, batch = data.x, data.edge_index, data.batch
@@ -64,10 +60,7 @@ class ASAP(torch.nn.Module):
                     x=x, edge_index=edge_index, edge_weight=edge_weight,
                     batch=batch)
         x = self.jump(xs)
-        x = F.relu(self.lin1(x))
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.lin2(x)
-        return F.log_softmax(x, dim=-1)
+        return x
 
     def __repr__(self):
         return self.__class__.__name__
