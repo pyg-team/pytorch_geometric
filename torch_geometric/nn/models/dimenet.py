@@ -42,9 +42,14 @@ qm9_target_dict = {
 
 
 class Envelope(torch.nn.Module):
-    def __init__(self, exponent):
+    def __init__(self, exponent, fix=True):
         super(Envelope, self).__init__()
-        self.p = exponent + 1
+        self.fix = fix
+        if self.fix:
+            # +2 instead of +1 to self.p fix partially the "Envelope+BesselBasisLayer" => issue reported in Dimenet gitub page.
+            self.p = exponent + 2
+        else:
+            self.p = exponent + 1
         self.a = -(self.p + 1) * (self.p + 2) / 2
         self.b = self.p * (self.p + 2)
         self.c = -self.p * (self.p + 1) / 2
@@ -54,14 +59,19 @@ class Envelope(torch.nn.Module):
         x_pow_p0 = x.pow(p - 1)
         x_pow_p1 = x_pow_p0 * x
         x_pow_p2 = x_pow_p1 * x
-        return 1. / x + a * x_pow_p0 + b * x_pow_p1 + c * x_pow_p2
-
+        env_val = 1. / x + a * x_pow_p0 + b * x_pow_p1 + c * x_pow_p2
+        if self.fix:
+            # added in tensorflow code and not in original PyG (guess: to avoid gradient explosion)
+            return torch.where(x < 1, env_val, torch.zeros_like(x))
+        else:
+            return env_val
 
 class BesselBasisLayer(torch.nn.Module):
-    def __init__(self, num_radial, cutoff=5.0, envelope_exponent=5):
+    def __init__(self, num_radial, cutoff=5.0, envelope_exponent=5, fix = True):
         super(BesselBasisLayer, self).__init__()
         self.cutoff = cutoff
-        self.envelope = Envelope(envelope_exponent)
+        self.fix = fix
+        self.envelope = Envelope(envelope_exponent, fix)
 
         self.freq = torch.nn.Parameter(torch.Tensor(num_radial))
 
@@ -72,18 +82,23 @@ class BesselBasisLayer(torch.nn.Module):
 
     def forward(self, dist):
         dist = dist.unsqueeze(-1) / self.cutoff
-        return self.envelope(dist) * (self.freq * dist).sin()
+        if self.fix:
+            # divide by dist fix partially the "Envelope+BesselBasisLayer" => issue reported in Dimenet gitub page.
+            return (self.envelope(dist) / dist) * (self.freq * dist).sin()
+        else:
+            return self.envelope(dist) * (self.freq * dist).sin()
 
 
 class SphericalBasisLayer(torch.nn.Module):
     def __init__(self, num_spherical, num_radial, cutoff=5.0,
-                 envelope_exponent=5):
+                 envelope_exponent=5, fix=True):
         super(SphericalBasisLayer, self).__init__()
         assert num_radial <= 64
         self.num_spherical = num_spherical
         self.num_radial = num_radial
         self.cutoff = cutoff
-        self.envelope = Envelope(envelope_exponent)
+        self.fix = fix
+        self.envelope = Envelope(envelope_exponent, fix)
 
         bessel_forms = bessel_basis(num_spherical, num_radial)
         sph_harm_forms = real_sph_harm(num_spherical)
@@ -128,6 +143,9 @@ class EmbeddingBlock(torch.nn.Module):
 
     def reset_parameters(self):
         self.emb.weight.data.uniform_(-sqrt(3), sqrt(3))
+        # added not sure is important but ... logical compare to all the other inits
+        glorot_orthogonal(self.lin_rbf.weight, scale=2.)
+        glorot_orthogonal(self.lin.weight, scale=2.)
         self.lin_rbf.reset_parameters()
         self.lin.reset_parameters()
 
@@ -288,7 +306,7 @@ class DimeNet(torch.nn.Module):
     def __init__(self, hidden_channels, out_channels, num_blocks, num_bilinear,
                  num_spherical, num_radial, cutoff=5.0, envelope_exponent=5,
                  num_before_skip=1, num_after_skip=2, num_output_layers=3,
-                 act=swish):
+                 act=swish, fix=False):
         super(DimeNet, self).__init__()
 
         self.cutoff = cutoff
@@ -298,9 +316,9 @@ class DimeNet(torch.nn.Module):
 
         self.num_blocks = num_blocks
 
-        self.rbf = BesselBasisLayer(num_radial, cutoff, envelope_exponent)
+        self.rbf = BesselBasisLayer(num_radial, cutoff, envelope_exponent, fix)
         self.sbf = SphericalBasisLayer(num_spherical, num_radial, cutoff,
-                                       envelope_exponent)
+                                       envelope_exponent, fix)
 
         self.emb = EmbeddingBlock(num_radial, hidden_channels, act)
 
@@ -326,11 +344,13 @@ class DimeNet(torch.nn.Module):
             interaction.reset_parameters()
 
     @staticmethod
-    def from_qm9_pretrained(root, dataset, target):
+    def from_qm9_pretrained(root, dataset, target, fix=False):
         if tf is None:
             raise ImportError(
                 '`DimeNet.from_qm9_pretrained` requires `tensorflow`.')
-
+        if fix==True:
+            raise ImportError(
+                '`DimeNet.from_qm9_pretrained` requires not compatible to fixed version')
         assert target >= 0 and target <= 12 and not target == 4
 
         root = osp.expanduser(osp.normpath(root))
@@ -349,7 +369,7 @@ class DimeNet(torch.nn.Module):
         model = DimeNet(hidden_channels=128, out_channels=1, num_blocks=6,
                         num_bilinear=8, num_spherical=7, num_radial=6,
                         cutoff=5.0, envelope_exponent=5, num_before_skip=1,
-                        num_after_skip=2, num_output_layers=3)
+                        num_after_skip=2, num_output_layers=3, fix = fix)
 
         def copy_(src, name, transpose=False):
             init = reader.get_tensor(f'{name}/.ATTRIBUTES/VARIABLE_VALUE')
@@ -462,4 +482,265 @@ class DimeNet(torch.nn.Module):
             x = interaction_block(x, rbf, sbf, idx_kj, idx_ji)
             P += output_block(x, rbf, i)
 
+        return P.sum(dim=0) if batch is None else scatter(P, batch, dim=0)
+
+# new code PP 
+class InteractionBlockPP(torch.nn.Module):
+    def __init__(self, hidden_channels, int_emb_size, basis_emb_size, num_spherical,
+                 num_radial, num_before_skip, num_after_skip, act=swish):
+        super(InteractionBlockPP, self).__init__()
+        self.act = act
+        self.basis_emb_size = basis_emb_size
+        self.hidden_channels = hidden_channels
+        self.num_spherical = num_spherical
+        self.num_radial = num_radial
+        
+        # Transformations of Bessel and spherical basis representations
+        self.lin_rbf = Seq(Linear(num_radial, basis_emb_size, bias=False), Linear(basis_emb_size, hidden_channels, bias=False))
+        
+        self.lin_sbf = Seq(Linear(num_spherical * num_radial, basis_emb_size ,bias=False),Linear(basis_emb_size, int_emb_size,bias=False)) 
+
+        # Dense transformations of input messages
+        self.lin_kj =  Linear(hidden_channels, hidden_channels)
+        self.lin_ji =  Linear(hidden_channels, hidden_channels)
+
+        # Embedding projections for interaction triplets (with ot without biais)
+        self.xdownproj =  Linear(hidden_channels, int_emb_size, bias = False)
+        self.xupproj =  Linear(int_emb_size, hidden_channels, bias = False)
+        
+        # Residual layers before skip connection
+        self.layers_before_skip = torch.nn.ModuleList([
+            ResidualLayer(hidden_channels, act) for _ in range(num_before_skip)
+        ])
+        # final before skip
+        self.lin = Linear(hidden_channels, hidden_channels)
+        
+        # Residual layers after skip connection
+        self.layers_after_skip = torch.nn.ModuleList([
+            ResidualLayer(hidden_channels, act) for _ in range(num_after_skip)
+        ])
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        for lb, ls  in zip(self.lin_rbf,self.lin_sbf):
+            glorot_orthogonal(lb.weight, scale=2.0)
+            glorot_orthogonal(ls.weight, scale=2.0)
+       
+        glorot_orthogonal(self.xdownproj.weight, scale=2.)
+        glorot_orthogonal(self.xupproj.weight, scale=2.)
+       
+        glorot_orthogonal(self.lin_kj.weight, scale=2.)
+        self.lin_kj.bias.data.fill_(0)
+        glorot_orthogonal(self.lin_ji.weight, scale=2.)
+        self.lin_ji.bias.data.fill_(0)
+        
+        for res_layer in self.layers_before_skip:
+            res_layer.reset_parameters()
+        glorot_orthogonal(self.lin.weight, scale=2.)
+        self.lin.bias.data.fill_(0)
+        for res_layer in self.layers_after_skip:
+            res_layer.reset_parameters()
+
+    def forward(self, x, rbf, sbf, idx_kj, idx_ji):
+
+        # Initial transformation
+        x_ji = self.act(self.lin_ji(x))
+        x_kj = self.act(self.lin_kj(x))
+        
+        # Transform via Bessel basis
+        rbf = self.lin_rbf(rbf)
+        x_kj = x_kj * rbf # hadamard product
+
+        # Down-project embeddings and generate interaction triplet embeddings
+        x_kj = self.act(self.xdownproj(x_kj)) # downproject to 32 as suggested, not sure if needed for scatter (instead they have tensorflow with gather)
+        
+        # Transform via 2D spherical basis
+        sbf = self.lin_sbf(sbf)
+        x_kj = x_kj[idx_kj] * sbf # hadamard product on gather kj
+
+        # aggregate interactions and up-project embeddings
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0)) #  same as this one x = tf.math.unsorted_segment_sum(x, idnb_i, n_atoms)
+        x_kj = self.act(self.xupproj(x_kj))
+        
+        # transformations before skip connection            
+        x2 = x_ji + x_kj
+        for layer in self.layers_before_skip:
+            x2 = layer(x2)
+            
+        # skip connection
+        x = x + self.act(self.lin(x2))
+        
+        # transformation after skip connection
+        for layer in self.layers_after_skip:
+            x = layer(x)
+
+        return x
+
+class OutputBlockPP(torch.nn.Module):
+    def __init__(self, num_radial, hidden_channels, out_emb_size, out_channels, num_layers, act=swish):
+        super(OutputBlockPP, self).__init__()
+        self.act = act
+
+        self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
+        self.xupproj = Linear(hidden_channels, out_emb_size, bias=False)
+
+        self.lins = torch.nn.ModuleList()
+        for _ in range(num_layers):
+            self.lins.append(Linear(out_emb_size, out_emb_size))
+        self.final_lin = Linear(out_emb_size, out_channels, bias=False)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        glorot_orthogonal(self.lin_rbf.weight, scale = 2.0)
+        glorot_orthogonal(self.xupproj.weight, scale=2.0)
+        for lin in self.lins:
+            glorot_orthogonal(lin.weight, scale = 2.0)
+            lin.bias.data.fill_(0)
+        self.final_lin.weight.data.fill_(0)
+
+    def forward(self, x, rbf, i, num_nodes=None):
+        x = self.lin_rbf(rbf) * x 
+        x = scatter(x, i, dim=0, dim_size=num_nodes) # x = tf.math.unsorted_segment_sum(x, idnb_i, n_atoms)
+        x = self.xupproj(x)
+        # this imply that the lin have to change to
+        for lin in self.lins:
+            x = self.act(lin(x)) 
+        # return final dense layer done
+        return self.final_lin(x)
+
+# new DimeNetpp class
+class DimeNetpp(torch.nn.Module):
+    r"""The directional message passing neural network (DimeNet2) from the
+    `"Directional Message Passing for Molecular Graphs"
+    <https://arxiv.org/abs/2003.03123>`_ paper.
+    DimeNet transforms messages based on the angle between them in a
+    rotation-equivariant fashion.
+    .. note::
+        For an example of using DimeNet, see `examples/qm9_dimenet.py
+        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        qm9_dimenet.py>`_.
+    Args:
+        in_channels (int): Size of each input sample.
+        hidden_channels (int): Hidden embedding size.
+        out_channels (int): Size of each output sample.
+        num_blocks (int): Number of building blocks.
+        num_spherical (int): Number of spherical harmonics.
+        num_radial (int): Number of radial basis functions.
+        cutoff: (float, optional): Cutoff distance for interatomic
+            interactions. (default: :obj:`5.0`)
+        envelope_exponent (int, optional): Shape of the smooth cutoff.
+            (default: :obj:`5`)
+        num_before_skip: (int, optional): Number of residual layers in the
+            interaction blocks before the skip connection. (default: :obj:`1`)
+        num_after_skip: (int, optional): Number of residual layers in the
+            interaction blocks after the skip connection. (default: :obj:`2`)
+        num_output_layers: (int, optional): Number of linear layers for the
+            output blocks. (default: :obj:`3`)
+        act: (function, optional): The activation funtion.
+            (default: :obj:`swish`)
+    """
+    # remove the in_channels in EmbeddingBlock also in the initialization
+    def __init__(self, hidden_channels, out_channels, num_blocks,
+                 basis_emb_size, num_spherical, num_radial, int_emb_size, out_emb_size, cutoff=5.0,
+                 envelope_exponent=5, num_before_skip=1, num_after_skip=2,
+                 num_output_layers=3, act=swish, fix=True):
+        super(DimeNetpp, self).__init__()
+        
+        if sym is None:
+            raise ImportError('Package `sympy` could not be found.')
+
+        self.num_blocks = num_blocks
+
+        self.rbf = BesselBasisLayer(num_radial, cutoff, envelope_exponent, fix=fix)
+        
+        self.sbf = SphericalBasisLayer(num_spherical, num_radial, cutoff,
+                                       envelope_exponent, fix=fix)
+
+        # new version remove in_channels!
+        self.emb = EmbeddingBlock( num_radial, hidden_channels,
+                                  act)
+        
+        # output block
+        self.output_blocks = nn.ModuleList([
+            OutputBlockPP(num_radial, hidden_channels, out_emb_size, out_channels,
+                        num_output_layers, act) for _ in range(num_blocks + 1)
+        ])
+
+        # interaction block
+        self.interaction_blocks = nn.ModuleList([
+            InteractionBlockPP(hidden_channels,  int_emb_size, basis_emb_size, num_spherical,
+                             num_radial, num_before_skip, num_after_skip, act)
+            for _ in range(num_blocks)
+        ])
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.rbf.reset_parameters()
+        self.emb.reset_parameters()
+        for out in self.output_blocks:
+            out.reset_parameters()
+        for interaction in self.interaction_blocks:
+            interaction.reset_parameters()
+
+    def triplets(self, edge_index, num_nodes):
+        # dimenet ok code
+        row, col = edge_index  # j->i
+
+        value = torch.arange(row.size(0), device=row.device)      
+        adj_t = SparseTensor(row=col, col=row, value=value,
+                             sparse_sizes=(num_nodes, num_nodes))
+            
+        adj_t_row = adj_t[row]
+        num_triplets = adj_t_row.set_value(None).sum(dim=1).to(torch.long)
+
+        # Node indices (k->j->i) for triplets.
+        idx_i = col.repeat_interleave(num_triplets)
+        idx_j = row.repeat_interleave(num_triplets)
+        idx_k = adj_t_row.storage.col()
+        mask = idx_i != idx_k  # Remove i == k triplets.
+        idx_i, idx_j, idx_k = idx_i[mask], idx_j[mask], idx_k[mask]
+
+        # Edge indices (k-j, j->i) for triplets.
+        idx_kj = adj_t_row.storage.value()[mask]
+        idx_ji = adj_t_row.storage.row()[mask]
+
+        return idx_i, idx_j, idx_k, idx_kj, idx_ji
+
+    def forward(self, data):
+        """"""
+        x, pos, edge_index, batch = data.x, data.pos, data.edge_index, data.batch
+        j, i = edge_index
+        idx_i, idx_j, idx_k, idx_kj, idx_ji = self.triplets(
+            edge_index, num_nodes=x.size(0))
+
+        # Calculate distances.
+        dist = (pos[i] - pos[j]).pow(2).sum(dim=-1).sqrt()
+
+        # Calculate angles rigde "values" 
+        # there is a bug in the original code reported but not commited! 
+        # (thanks to Klicpera Johannes to provide solution)
+        pos_i = pos[idx_i]
+        pos_j = pos[idx_j]
+        pos_ji = pos_j - pos_i
+        pos_kj = pos[idx_k] - pos_j # before ki, 
+        a = (pos_ji * pos_kj).sum(dim=-1)
+        b = torch.cross(pos_ji, pos_kj).norm(dim=-1)
+        angle = torch.atan2(b, a)
+
+        rbf = self.rbf(dist)
+        sbf = self.sbf(dist, angle, idx_ji) # this idx_kj wrong must be change by idx_ji 
+        # (thanks to Klicpera Johannes to provide solution)
+        # Embedding block.
+        x = self.emb(x, rbf, i, j)
+        P = self.output_blocks[0](x, rbf, i, num_nodes=pos.size(0))
+        
+        # Interaction blocks.
+        for interaction_block, output_block in zip(self.interaction_blocks,
+                                                   self.output_blocks[1:]):
+            x = interaction_block(x, rbf, sbf, idx_kj, idx_ji)
+            P += output_block(x, rbf, i)
+            
         return P.sum(dim=0) if batch is None else scatter(P, batch, dim=0)
