@@ -1,10 +1,10 @@
 import torch
-from torch_geometric.nn.models.gcn import GCN, GCNWithJK
+from torch_geometric.nn.models.graph_sage import GraphSAGE, GraphSAGEWithJK
 
 
-def test_gcn():
-    model = GCN(in_channels=8, hidden_channels=16, num_layers=3)
-    out = 'GCN(16, 8, num_layers=3)'
+def test_graph_sage():
+    model = GraphSAGE(in_channels=8, hidden_channels=16, num_layers=3)
+    out = 'GraphSAGE(16, 8, num_layers=3)'
     assert model.__repr__() == out
 
     x = torch.randn(3, 8)
@@ -14,8 +14,8 @@ def test_gcn():
     assert out.size() == (3, 16)
 
 def test_graph_sagewithjk():
-    model = GCNWithJK(in_channels=8, hidden_channels=16, num_layers=3)
-    out = 'GCNWithJK(16, 8, num_layers=3)'
+    model = GraphSAGEWithJK(in_channels=8, hidden_channels=16, num_layers=3)
+    out = 'GraphSAGEWithJK(16, 8, num_layers=3)'
     assert model.__repr__() == out
 
     x = torch.randn(3, 8)
