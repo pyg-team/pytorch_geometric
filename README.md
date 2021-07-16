@@ -37,15 +37,6 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
 
 --------------------------------------------------------------------------------
 
-<p align="center">
-  <img width="80%" src="https://ogb.stanford.edu/assets/img/kddlsc_logo.png" />
-</p>
-
-**OGB** is hosting a **[large-scale graph machine learning challenge (OGB-LSC)](https://ogb.stanford.edu/kddcup2021)** at **KDD Cup 2021** from **March 15th to June 8th** in order to discover innovative solutions for large-scale node classification, link prediction and graph regression.
-We are looking forward to your participation!
-
---------------------------------------------------------------------------------
-
 PyTorch Geometric makes implementing Graph Neural Networks a breeze (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html) for the accompanying tutorial).
 For example, this is all it takes to implement the [edge convolutional layer](https://arxiv.org/abs/1801.07829):
 
@@ -82,6 +73,7 @@ In detail, the following methods are currently implemented:
 * **[ECConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.ECConv)** from Simonovsky and Komodakis: [Edge-Conditioned Convolution on Graphs](https://arxiv.org/abs/1704.02901) (CVPR 2017)
 * **[EGConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.EGConv)** from Tailor *et al.*: [Adaptive Filters and Aggregator Fusion for Efficient Graph Convolutions](https://arxiv.org/abs/2104.01481) (GNNSys 2021) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/egc.py)]
 * **[GATConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GATConv)** from Veličković *et al.*: [Graph Attention Networks](https://arxiv.org/abs/1710.10903) (ICLR 2018) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gat.py)]
+* **[GATv2Conv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GATv2Conv)** from Brody *et al.*: [How Attentive are Graph Attention Networks?](https://arxiv.org/abs/2105.14491) (CoRR 2021)
 * **[TransformerConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.TransformerConv)** from Shi *et al.*: [Masked Label Prediction: Unified Message Passing Model for Semi-Supervised Classification](https://arxiv.org/abs/2009.03509) (CoRR 2020)
 * **[SAGEConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SAGEConv)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/graph_sage_unsup.py)]
 * **[GraphConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GraphConv)** from, *e.g.*, Morris *et al.*: [Weisfeiler and Leman Go Neural: Higher-order Graph Neural Networks](https://arxiv.org/abs/1810.02244) (AAAI 2019)
@@ -158,6 +150,7 @@ In detail, the following methods are currently implemented:
 * **[Weisfeiler Lehman Algorithm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.WLConv)** from Weisfeiler and Lehman: [A Reduction of a Graph to a Canonical Form and an Algebra Arising During this Reduction](https://www.iti.zcu.cz/wl2018/pdf/wl_paper_translation.pdf) (Nauchno-Technicheskaya Informatsia 1968) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/wl_kernel.py)]
 * **[Label Propagation](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.LabelPropagation)** from Zhu and Ghahramani: [Learning from Labeled and Unlabeled Data with Label Propagation](http://mlg.eng.cam.ac.uk/zoubin/papers/CMU-CALD-02-107.pdf) (CMU-CALD 2002) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/label_prop.py)]
 * **[CorrectAndSmooth](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.CorrectAndSmooth)** from Huang *et al.*: [Combining Label Propagation And Simple Models Out-performs Graph Neural Networks](https://arxiv.org/abs/2010.13993) (CoRR 2020) [[**Example**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/correct_and_smooth.py)]
+* **[Gini](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.functional.gini)** and **[BRO](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.functional.bro)** regularization from Henderson *et al.*: [Improving Molecular Graph Neural Network Explainability with Orthonormalization and Induced Sparsity](https://arxiv.org/abs/2105.04854) (ICML 2021)
 
 --------------------------------------------------------------------------------
 
@@ -170,51 +163,70 @@ We are motivated to constantly make PyTorch Geometric even better.
 
 ## Installation
 
-We provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
+### Anaconda
 
-### PyTorch 1.8.0/1.8.1
+**Update:** You can now install PyTorch Geometric via [Anaconda](https://anaconda.org/rusty1s/pytorch-geometric) for all major OS/PyTorch/CUDA combinations 🤗
+Given that you have [PyTorch >= 1.8.0 installed](https://pytorch.org/get-started/locally/), simply run
+
+```
+conda install pytorch-geometric -c rusty1s -c conda-forge
+```
+
+### Pip Wheels
+
+We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
+
+#### PyTorch 1.9.0
+
+To install the binaries for PyTorch 1.9.0, simply run
+
+```
+pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
+pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
+pip install torch-geometric
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
+
+|             | `cpu` | `cu102` | `cu111` |
+|-------------|-------|---------|---------|
+| **Linux**   | ✅    | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |
+
+For additional but optional functionality, run
+
+```
+pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
+pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
+```
+
+#### PyTorch 1.8.0/1.8.1
 
 To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
 
 ```sh
-$ pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-$ pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-$ pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-$ pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-$ pip install torch-geometric
+pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+pip install torch-geometric
 ```
 
-where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation.
-Binaries are provided for Python version `<= 3.8`.
+where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
 
 |             | `cpu` | `cu101` | `cu102` | `cu111` |
 |-------------|-------|---------|---------|---------|
 | **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ✅      | ✅      | ✅      |
+| **Windows** | ✅    | ❌      | ✅      | ✅      |
 | **macOS**   | ✅    |         |         |         |
 
-### PyTorch 1.7.0/1.7.1
+For additional but optional functionality, run
 
-To install the binaries for PyTorch 1.7.0 and 1.7.1, simply run
-
-```sh
-pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+${CUDA}.html
-pip install torch-geometric
+```
+pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
 ```
 
-where `${CUDA}` should be replaced by either `cpu`, `cu92`, `cu101`, `cu102`, or `cu110` depending on your PyTorch installation.
-Binaries are provided for Python version `<= 3.8`.
-
-|             | `cpu` | `cu92` | `cu101` | `cu102` | `cu110` |
-|-------------|-------|--------|---------|---------|---------|
-| **Linux**   | ✅    | ✅     | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ❌     | ✅      | ✅      | ✅      |
-| **macOS**   | ✅    |        |         |         |         |
-
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0 and PyTorch 1.6.0 (following the same procedure).
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0 and PyTorch 1.7.0/1.7.1 (following the same procedure).
 
 ### From master
 

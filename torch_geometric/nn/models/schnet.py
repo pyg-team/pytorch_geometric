@@ -15,9 +15,12 @@ from torch_geometric.nn import radius_graph, MessagePassing
 
 try:
     import ase
-    import schnetpack as spk
 except ImportError:
     ase = None
+
+try:
+    import schnetpack as spk
+except ImportError:
     spk = None
 
 qm9_target_dict = {

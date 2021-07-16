@@ -9,7 +9,7 @@ class KarateClub(InMemoryDataset):
     r"""Zachary's karate club network from the `"An Information Flow Model for
     Conflict and Fission in Small Groups"
     <http://www1.ind.ku.dk/complexLearning/zachary1977.pdf>`_ paper, containing
-    34 nodes, connected by 154 (undirected and unweighted) edges.
+    34 nodes, connected by 156 (undirected and unweighted) edges.
     Every node is labeled by one of four classes obtained via modularity-based
     clustering, following the `"Semi-supervised Classification with Graph
     Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_ paper.
@@ -35,7 +35,7 @@ class KarateClub(InMemoryDataset):
         edge_index = torch.stack([row, col], dim=0)
 
         # Compute communities.
-        partition = community_louvain.best_partition(G)
+        partition = community_louvain.best_partition(G, randomize=False)
         y = torch.tensor([partition[i] for i in range(G.number_of_nodes())])
 
         # Select a single training node for each community

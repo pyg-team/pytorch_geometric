@@ -30,7 +30,7 @@ def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
         col = idx % num_nodes
         edge_index = torch.stack([row, col], dim=0)
     else:
-        edge_index = to_undirected(idx.t(), num_nodes)
+        edge_index = to_undirected(idx.t(), num_nodes=num_nodes)
 
     return edge_index
 
@@ -77,7 +77,7 @@ def stochastic_blockmodel_graph(block_sizes, edge_probs, directed=False):
     edge_index = torch.stack([row[mask], col[mask]], dim=0)
 
     if not directed:
-        edge_index = to_undirected(edge_index, num_nodes)
+        edge_index = to_undirected(edge_index, num_nodes=num_nodes)
 
     return edge_index
 
@@ -104,6 +104,6 @@ def barabasi_albert_graph(num_nodes, num_edges):
 
     edge_index = torch.stack([row, col], dim=0)
     edge_index, _ = remove_self_loops(edge_index)
-    edge_index = to_undirected(edge_index, num_nodes)
+    edge_index = to_undirected(edge_index, num_nodes=num_nodes)
 
     return edge_index

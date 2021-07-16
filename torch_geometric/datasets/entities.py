@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import os
 import os.path as osp
 from collections import Counter
@@ -33,49 +35,47 @@ class Entities(InMemoryDataset):
 
     url = 'https://data.dgl.ai/dataset/{}.tgz'
 
-    def __init__(self, root, name, transform=None, pre_transform=None):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         assert name in ['AIFB', 'AM', 'MUTAG', 'BGS']
         self.name = name.lower()
-        super(Entities, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def num_relations(self):
+    def num_relations(self) -> str:
         return self.data.edge_type.max().item() + 1
 
     @property
-    def num_classes(self):
+    def num_classes(self) -> str:
         return self.data.train_y.max().item() + 1
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [
-            '{}_stripped.nt.gz'.format(self.name),
+            f'{self.name}_stripped.nt.gz',
             'completeDataset.tsv',
             'trainingSet.tsv',
             'testSet.tsv',
         ]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
         path = download_url(self.url.format(self.name), self.root)
         extract_tar(path, self.raw_dir)
         os.unlink(path)
-
-    def triples(self, graph, relation=None):
-        for s, p, o in graph.triples((None, relation, None)):
-            yield s, p, o
 
     def process(self):
         import rdflib as rdf
@@ -158,5 +158,5 @@ class Entities(InMemoryDataset):
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}{}()'.format(self.name.upper(), self.__class__.__name__)
+    def __repr__(self) -> str:
+        return f'{self.name.upper()}{self.__class__.__name__}()'

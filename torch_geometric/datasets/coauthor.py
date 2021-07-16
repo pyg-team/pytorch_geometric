@@ -1,3 +1,5 @@
+from typing import Optional, Callable
+
 import os.path as osp
 
 import torch
@@ -30,26 +32,28 @@ class Coauthor(InMemoryDataset):
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'
 
-    def __init__(self, root, name, transform=None, pre_transform=None):
+    def __init__(self, root: str, name: str,
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         assert name.lower() in ['cs', 'physics']
         self.name = 'CS' if name.lower() == 'cs' else 'Physics'
-        super(Coauthor, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
-        return 'ms_academic_{}.npz'.format(self.name[:3].lower())
+    def raw_file_names(self) -> str:
+        return f'ms_academic_{self.name[:3].lower()}.npz'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -61,5 +65,5 @@ class Coauthor(InMemoryDataset):
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}{}()'.format(self.__class__.__name__, self.name)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}{self.name}()'
