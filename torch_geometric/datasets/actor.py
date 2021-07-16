@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import torch
 import numpy as np
 from torch_sparse import SparseTensor, coalesce
@@ -29,17 +31,18 @@ class Actor(InMemoryDataset):
 
     url = 'https://raw.githubusercontent.com/graphdml-uiuc-jlu/geom-gcn/master'
 
-    def __init__(self, root, transform=None, pre_transform=None):
-        super(Actor, self).__init__(root, transform, pre_transform)
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['out1_node_feature_label.txt', 'out1_graph_edges.txt'
-                ] + ['film_split_0.6_0.2_{}.npz'.format(i) for i in range(10)]
+                ] + [f'film_split_0.6_0.2_{i}.npz' for i in range(10)]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -85,6 +88,3 @@ class Actor(InMemoryDataset):
                     val_mask=val_mask, test_mask=test_mask)
         data = data if self.pre_transform is None else self.pre_transform(data)
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)

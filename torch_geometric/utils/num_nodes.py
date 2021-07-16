@@ -22,7 +22,7 @@ def maybe_num_nodes(edge_index, num_nodes=None):
     if num_nodes is not None:
         return num_nodes
     elif isinstance(edge_index, Tensor):
-        return int(edge_index.max()) + 1
+        return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
     else:
         return max(edge_index.size(0), edge_index.size(1))
 

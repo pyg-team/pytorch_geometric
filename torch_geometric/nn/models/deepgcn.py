@@ -70,8 +70,9 @@ class DeepGCNLayer(torch.nn.Module):
         x = args.pop(0)
 
         if self.block == 'res+':
+            h = x
             if self.norm is not None:
-                h = self.norm(x)
+                h = self.norm(h)
             if self.act is not None:
                 h = self.act(h)
             h = F.dropout(h, p=self.dropout, training=self.training)

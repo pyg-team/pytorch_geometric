@@ -1,10 +1,10 @@
 import torch
 from torch.nn import Sequential as Seq, Linear as Lin, ReLU
 from torch_sparse import SparseTensor
-from torch_geometric.nn import PointConv
+from torch_geometric.nn import PointNetConv
 
 
-def test_point_conv():
+def test_point_net_conv():
     x1 = torch.randn(4, 16)
     pos1 = torch.randn(4, 3)
     pos2 = torch.randn(2, 3)
@@ -14,9 +14,9 @@ def test_point_conv():
 
     local_nn = Seq(Lin(16 + 3, 32), ReLU(), Lin(32, 32))
     global_nn = Seq(Lin(32, 32))
-    conv = PointConv(local_nn, global_nn)
+    conv = PointNetConv(local_nn, global_nn)
     assert conv.__repr__() == (
-        'PointConv(local_nn=Sequential(\n'
+        'PointNetConv(local_nn=Sequential(\n'
         '  (0): Linear(in_features=19, out_features=32, bias=True)\n'
         '  (1): ReLU()\n'
         '  (2): Linear(in_features=32, out_features=32, bias=True)\n'

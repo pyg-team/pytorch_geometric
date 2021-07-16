@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import os
 import os.path as osp
 
@@ -125,20 +127,21 @@ class QM9(InMemoryDataset):
         symbols = {'H': 1, 'C': 6, 'N': 7, 'O': 8, 'F': 9}
         bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
-    def __init__(self, root, transform=None, pre_transform=None,
-                 pre_filter=None):
-        super(QM9, self).__init__(root, transform, pre_transform, pre_filter)
+    def __init__(self, root: str, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
+        super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
-    def mean(self, target):
+    def mean(self, target: int) -> float:
         y = torch.cat([self.get(i).y for i in range(len(self))], dim=0)
-        return y[:, target].mean().item()
+        return float(y[:, target].mean())
 
-    def std(self, target):
+    def std(self, target: int) -> float:
         y = torch.cat([self.get(i).y for i in range(len(self))], dim=0)
-        return y[:, target].std().item()
+        return float(y[:, target].std())
 
-    def atomref(self, target):
+    def atomref(self, target) -> Optional[torch.Tensor]:
         if target in atomrefs:
             out = torch.zeros(100)
             out[torch.tensor([1, 6, 7, 8, 9])] = torch.tensor(atomrefs[target])
@@ -146,14 +149,14 @@ class QM9(InMemoryDataset):
         return None
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         if rdkit is None:
-            return 'qm9_v2.pt'
+            return ['qm9_v2.pt']
         else:
             return ['gdb9.sdf', 'gdb9.sdf.csv', 'uncharacterized.txt']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data_v2.pt'
 
     def download(self):
