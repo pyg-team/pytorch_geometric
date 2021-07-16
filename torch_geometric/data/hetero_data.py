@@ -53,6 +53,9 @@ class HeteroData(BaseData):
             { 'edge_index': edge_index_author_paper }
         })
     """
+
+    DEFAULT_REL = 'to'
+
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         self._global_store = BaseStorage(_parent=self)
         self._node_stores_dict = {}
@@ -249,7 +252,7 @@ class HeteroData(BaseData):
         #    `(src_node_type, relation_type, dst_node_type)` tuple.
         # 2. `(src_node_type, dst_node_type)` will get mapped to the unique
         #    `(src_node_type, *, dst_node_type)` tuple, and
-        #    `(src_node_type, '_', dst_node_type)` otherwise.
+        #    `(src_node_type, 'to', dst_node_type)` otherwise.
         if len(args) == 1:
             args = args[0]
 
@@ -268,7 +271,7 @@ class HeteroData(BaseData):
             if len(edge_types) == 1:
                 args = edge_types[0]
             else:
-                args = (args[0], '_', args[1])
+                args = (args[0], self.DEFAULT_REL, args[1])
 
         return args
 

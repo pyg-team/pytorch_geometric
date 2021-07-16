@@ -68,9 +68,9 @@ def test_hetero_data_functions():
     node_types, edge_types = data.metadata()
     assert node_types == ['paper', 'author']
     assert edge_types == [
-        ('paper', '_', 'paper'),
-        ('paper', '_', 'author'),
-        ('author', '_', 'paper'),
+        ('paper', 'to', 'paper'),
+        ('paper', 'to', 'author'),
+        ('author', 'to', 'paper'),
     ]
 
     x_dict = data.collect('x')
@@ -88,7 +88,7 @@ def test_hetero_data_functions():
     del data['paper', 'author']
     node_types, edge_types = data.metadata()
     assert node_types == ['paper', 'author']
-    assert edge_types == [('paper', '_', 'paper'), ('author', '_', 'paper')]
+    assert edge_types == [('paper', 'to', 'paper'), ('author', 'to', 'paper')]
 
     assert len(data.to_dict()) == 5
     assert len(data.to_namedtuple()) == 5
@@ -99,7 +99,7 @@ def test_hetero_data_functions():
 def test_copy_hetero_data():
     data = HeteroData()
     data['paper'].x = x_paper
-    data['paper', '_', 'paper'].edge_index = edge_index_paper_paper
+    data['paper', 'to', 'paper'].edge_index = edge_index_paper_paper
 
     out = copy.copy(data)
     assert id(data) != id(out)
@@ -109,8 +109,8 @@ def test_copy_hetero_data():
         assert id(out) == id(store2._parent)
     assert out['paper']._key == 'paper'
     assert data['paper'].x.data_ptr() == out['paper'].x.data_ptr()
-    assert out['_']._key == ('paper', '_', 'paper')
-    assert data['_'].edge_index.data_ptr() == out['_'].edge_index.data_ptr()
+    assert out['to']._key == ('paper', 'to', 'paper')
+    assert data['to'].edge_index.data_ptr() == out['to'].edge_index.data_ptr()
 
     out = copy.deepcopy(data)
     assert id(data) != id(out)
@@ -120,7 +120,7 @@ def test_copy_hetero_data():
     assert out['paper']._key == 'paper'
     assert data['paper'].x.data_ptr() != out['paper'].x.data_ptr()
     assert data['paper'].x.tolist() == out['paper'].x.tolist()
-    assert id(out['_']._parent) == id(out)
-    assert out['_']._key == ('paper', '_', 'paper')
-    assert data['_'].edge_index.data_ptr() != out['_'].edge_index.data_ptr()
-    assert data['_'].edge_index.tolist() == out['_'].edge_index.tolist()
+    assert id(out['to']._parent) == id(out)
+    assert out['to']._key == ('paper', 'to', 'paper')
+    assert data['to'].edge_index.data_ptr() != out['to'].edge_index.data_ptr()
+    assert data['to'].edge_index.tolist() == out['to'].edge_index.tolist()
