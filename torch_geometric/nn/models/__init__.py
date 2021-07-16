@@ -14,18 +14,10 @@ from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
-from .asap import ASAP
-from .diff_pool import DiffPool
-from .edge_pool import EdgePool
 from .gat import GAT, GATv2, GATWithJK, GATv2WithJK
 from .gcn import GCN, GCNWithJK
 from .gin import GIN, GINWithJK, GINE, GINEWithJK
 from .graph_sage import GraphSAGE, GraphSAGEWithJK
-from .sag_pool import SAGPool
-from .sort_pool import SortPool
-from .set2set import Set2Set
-from .graclus import Graclus
-from .global_attention import GlobalAttention
 
 __all__ = [
     'JumpingKnowledge',
