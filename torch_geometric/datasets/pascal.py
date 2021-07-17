@@ -11,15 +11,6 @@ import numpy as np
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_tar)
 
-try:
-    import torchvision.models as models
-    import torchvision.transforms as T
-    from PIL import Image
-except ImportError:
-    models = None
-    T = None
-    Image = None
-
 
 class PascalVOCKeypoints(InMemoryDataset):
     r"""The Pascal VOC 2011 dataset with Berkely annotations of keypoints from
@@ -115,8 +106,9 @@ class PascalVOCKeypoints(InMemoryDataset):
         os.rename(path, osp.join(self.raw_dir, 'splits.npz'))
 
     def process(self):
-        if models is None or T is None or Image is None:
-            raise ImportError('Package `torchvision` could not be found.')
+        from PIL import Image
+        import torchvision.transforms as T
+        import torchvision.models as models
 
         splits = np.load(osp.join(self.raw_dir, 'splits.npz'),
                          allow_pickle=True)

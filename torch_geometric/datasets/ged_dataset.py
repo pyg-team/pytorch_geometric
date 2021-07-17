@@ -7,7 +7,6 @@ import pickle
 
 import torch
 import torch.nn.functional as F
-import networkx as nx
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip, extract_tar)
 from torch_geometric.utils import to_undirected
@@ -121,6 +120,8 @@ class GEDDataset(InMemoryDataset):
         os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
 
     def process(self):
+        import networkx as nx
+
         ids, Ns = [], []
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
             names = glob.glob(osp.join(r_path, '*.gexf'))

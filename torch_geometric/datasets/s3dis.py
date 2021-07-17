@@ -6,11 +6,6 @@ import torch
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
 
-try:
-    import h5py
-except ImportError:
-    h5py = None
-
 
 class S3DIS(InMemoryDataset):
     r"""The (pre-processed) Stanford Large-Scale 3D Indoor Spaces dataset from
@@ -68,8 +63,7 @@ class S3DIS(InMemoryDataset):
         os.rename(osp.join(self.root, name), self.raw_dir)
 
     def process(self):
-        if h5py is None:
-            raise ImportError('`S3DIS` requires `h5py`.')
+        import h5py
 
         with open(self.raw_paths[0], 'r') as f:
             filenames = [x.split('/')[-1] for x in f.read().split('\n')[:-1]]

@@ -5,7 +5,6 @@ import os.path as osp
 import shutil
 
 import torch
-import pandas
 from torch_sparse import coalesce, transpose
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
@@ -62,14 +61,16 @@ class AMiner(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
+        import pandas as pd
+
         # Get author labels.
         path = osp.join(self.raw_dir, 'id_author.txt')
-        author = pandas.read_csv(path, sep='\t', names=['idx', 'name'],
-                                 index_col=1)
+        author = pd.read_csv(path, sep='\t', names=['idx', 'name'],
+                             index_col=1)
 
         path = osp.join(self.raw_dir, 'label',
                         'googlescholar.8area.author.label.txt')
-        df = pandas.read_csv(path, sep=' ', names=['name', 'y'])
+        df = pd.read_csv(path, sep=' ', names=['name', 'y'])
         df = df.join(author, on='name')
 
         author_y = torch.from_numpy(df['y'].values) - 1
@@ -77,12 +78,11 @@ class AMiner(InMemoryDataset):
 
         # Get venue labels.
         path = osp.join(self.raw_dir, 'id_conf.txt')
-        venue = pandas.read_csv(path, sep='\t', names=['idx', 'name'],
-                                index_col=1)
+        venue = pd.read_csv(path, sep='\t', names=['idx', 'name'], index_col=1)
 
         path = osp.join(self.raw_dir, 'label',
                         'googlescholar.8area.venue.label.txt')
-        df = pandas.read_csv(path, sep=' ', names=['name', 'y'])
+        df = pd.read_csv(path, sep=' ', names=['name', 'y'])
         df = df.join(venue, on='name')
 
         venue_y = torch.from_numpy(df['y'].values) - 1
@@ -90,7 +90,7 @@ class AMiner(InMemoryDataset):
 
         # Get paper<->author connectivity.
         path = osp.join(self.raw_dir, 'paper_author.txt')
-        paper_author = pandas.read_csv(path, sep='\t', header=None)
+        paper_author = pd.read_csv(path, sep='\t', header=None)
         paper_author = torch.from_numpy(paper_author.values)
         paper_author = paper_author.t().contiguous()
         M, N = int(paper_author[0].max() + 1), int(paper_author[1].max() + 1)
@@ -99,7 +99,7 @@ class AMiner(InMemoryDataset):
 
         # Get paper<->venue connectivity.
         path = osp.join(self.raw_dir, 'paper_conf.txt')
-        paper_venue = pandas.read_csv(path, sep='\t', header=None)
+        paper_venue = pd.read_csv(path, sep='\t', header=None)
         paper_venue = torch.from_numpy(paper_venue.values)
         paper_venue = paper_venue.t().contiguous()
         M, N = int(paper_venue[0].max() + 1), int(paper_venue[1].max() + 1)

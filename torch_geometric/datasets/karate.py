@@ -1,7 +1,5 @@
 import torch
 import numpy as np
-import networkx as nx
-import community as community_louvain
 from torch_geometric.data import InMemoryDataset, Data
 
 
@@ -24,6 +22,9 @@ class KarateClub(InMemoryDataset):
     """
     def __init__(self, transform=None):
         super(KarateClub, self).__init__('.', transform, None, None)
+
+        import networkx as nx
+        import community as community_louvain
 
         G = nx.karate_club_graph()
 
