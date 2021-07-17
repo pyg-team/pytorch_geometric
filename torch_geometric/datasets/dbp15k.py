@@ -6,7 +6,6 @@ import shutil
 
 import torch
 from torch import Tensor
-from google_drive_downloader import GoogleDriveDownloader as gdd
 from torch_geometric.data import Data, InMemoryDataset, extract_zip
 from torch_geometric.io import read_txt_array
 from torch_geometric.utils import sort_edge_index
@@ -54,6 +53,8 @@ class DBP15K(InMemoryDataset):
         return f'{self.pair}.pt'
 
     def download(self):
+        from google_drive_downloader import GoogleDriveDownloader as gdd
+
         path = osp.join(self.root, 'raw.zip')
         gdd.download_file_from_google_drive(self.file_id, path)
         extract_zip(path, self.root)

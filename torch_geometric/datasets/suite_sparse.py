@@ -1,7 +1,6 @@
 import os.path as osp
 
 import torch
-from scipy.io import loadmat
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
@@ -54,6 +53,8 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
         download_url(url, self.raw_dir)
 
     def process(self):
+        from scipy.io import loadmat
+
         mat = loadmat(self.raw_paths[0])['Problem'][0][0][2].tocsr().tocoo()
 
         row = torch.from_numpy(mat.row).to(torch.long)

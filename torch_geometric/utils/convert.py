@@ -1,10 +1,9 @@
 from typing import Optional, Tuple
 
 import torch
+import scipy.sparse
 from torch import Tensor
 from torch.utils.dlpack import to_dlpack, from_dlpack
-import scipy.sparse
-import networkx as nx
 
 import torch_geometric.data
 
@@ -69,6 +68,7 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self loops in the resulting graph. (default: :obj:`False`)
     """
+    import networkx as nx
 
     if to_undirected:
         G = nx.Graph()
@@ -112,6 +112,7 @@ def from_networkx(G):
     Args:
         G (networkx.Graph or networkx.DiGraph): A networkx graph.
     """
+    import networkx as nx
 
     G = nx.convert_node_labels_to_integers(G)
     G = G.to_directed() if not nx.is_directed(G) else G
