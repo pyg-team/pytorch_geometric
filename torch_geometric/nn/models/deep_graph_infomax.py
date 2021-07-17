@@ -1,6 +1,5 @@
 import torch
 from torch.nn import Parameter
-from sklearn.linear_model import LogisticRegression
 
 from ..inits import reset, uniform
 
@@ -20,7 +19,6 @@ class DeepGraphInfomax(torch.nn.Module):
         summary (callable): The readout function :math:`\mathcal{R}`.
         corruption (callable): The corruption function :math:`\mathcal{C}`.
     """
-
     def __init__(self, hidden_channels, encoder, summary, corruption):
         super(DeepGraphInfomax, self).__init__()
         self.hidden_channels = hidden_channels
@@ -64,8 +62,9 @@ class DeepGraphInfomax(torch.nn.Module):
         r"""Computes the mutual information maximization objective."""
         pos_loss = -torch.log(
             self.discriminate(pos_z, summary, sigmoid=True) + EPS).mean()
-        neg_loss = -torch.log(
-            1 - self.discriminate(neg_z, summary, sigmoid=True) + EPS).mean()
+        neg_loss = -torch.log(1 -
+                              self.discriminate(neg_z, summary, sigmoid=True) +
+                              EPS).mean()
 
         return pos_loss + neg_loss
 
@@ -73,6 +72,8 @@ class DeepGraphInfomax(torch.nn.Module):
              multi_class='auto', *args, **kwargs):
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
+        from sklearn.linear_model import LogisticRegression
+
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())

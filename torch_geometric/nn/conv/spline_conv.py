@@ -69,7 +69,7 @@ class SplineConv(MessagePassing):
         super(SplineConv, self).__init__(aggr=aggr, **kwargs)
 
         if spline_basis is None:
-            raise ImportError('`SplineConv` requires `torch-spline-conv`.')
+            raise ImportError("'SplineConv' requires 'torch-spline-conv'")
 
         self.in_channels = in_channels
         self.out_channels = out_channels
