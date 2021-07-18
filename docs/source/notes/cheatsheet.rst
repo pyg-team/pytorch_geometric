@@ -7,7 +7,7 @@ GNN Cheatsheet
 
 * :obj:`edge_attr`: If checked (✓), supports message passing with multi-dimensional edge feature information, *e.g.*, :obj:`GINEConv(...).forward(x, edge_index, edge_attr)`
 
-* **bipartite**: If checked (✓), supports message passing in bipartite graphs with potentially different feature dimensionality for source and destination nodes, *e.g.*, :obj:`SAGEConv(in_channels=(16, 32), out_channels=64)`
+* **bipartite**: If checked (✓), supports message passing in bipartite graphs with potentially different feature dimensionalities for source and destination nodes, *e.g.*, :obj:`SAGEConv(in_channels=(16, 32), out_channels=64)`
 
 * **static**: If checked (✓), supports message passing in static graphs, *e.g.*, :obj:`GCNConv(...).forward(x, edge_index)` with :obj:`x` having shape :obj:`[batch_size, num_nodes, in_channels]`
 
@@ -94,7 +94,6 @@ Point Cloud Neural Network Operators
 
     * - Name
       - bipartite
-      - lazy
 {% for cls in torch_geometric.nn.conv.classes[1:] %}
 {% if torch_geometric.nn.conv.utils.processes_point_clouds(cls) %}
     * - :class:`~torch_geometric.nn.conv.{{ cls }}` (`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__)
