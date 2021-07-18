@@ -39,6 +39,11 @@ def supports_bipartite_graphs(cls: str) -> bool:
     return 'Union[torch.Tensor, Tuple[torch.Tensor' in str(signature)
 
 
+def supports_static_graphs(cls: str) -> bool:
+    cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
+    return 'node_dim=' not in inspect.getsource(cls.__init__)
+
+
 def supports_lazy_initialization(cls: str) -> bool:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
     match = re.search('in_channels.*-1', inspect.getdoc(cls))
