@@ -5,8 +5,6 @@ import json
 
 import torch
 import numpy as np
-import networkx as nx
-from networkx.readwrite import json_graph
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_zip)
 from torch_geometric.utils import remove_self_loops
@@ -70,6 +68,9 @@ class PPI(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
+        import networkx as nx
+        from networkx.readwrite import json_graph
+
         for s, split in enumerate(['train', 'valid', 'test']):
             path = osp.join(self.raw_dir, '{}_graph.json').format(split)
             with open(path, 'r') as f:

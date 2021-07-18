@@ -4,7 +4,6 @@ import shutil
 import glob
 
 import torch
-from scipy.io import loadmat
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_zip)
 
@@ -73,6 +72,8 @@ class PascalPF(InMemoryDataset):
         os.rename(osp.join(self.root, 'PF-dataset-PASCAL'), self.raw_dir)
 
     def process(self):
+        from scipy.io import loadmat
+
         path = osp.join(self.raw_dir, 'Annotations', self.category, '*.mat')
         filenames = glob.glob(path)
 
