@@ -76,7 +76,7 @@ def train():
         loss.backward()
         optimizer.step()
 
-    kl_loss = 0.0
+    kl_loss = 0.
     model.mem1.k.requires_grad = True
     model.mem2.k.requires_grad = True
     optimizer.zero_grad()
@@ -91,7 +91,7 @@ def train():
 @torch.no_grad()
 def test(loader):
     model.eval()
-    total_correct = 0.0
+    total_correct = 0
     for data in loader:
         data = data.to(device)
         out = model(data.x, data.edge_index, data.batch)[0]
@@ -100,7 +100,7 @@ def test(loader):
 
 
 patience = start_patience = 250
-test_acc = best_val_acc = 0.0
+test_acc = best_val_acc = 0.
 for epoch in range(1, 2001):
     train()
     val_acc = test(val_loader)
@@ -112,6 +112,6 @@ for epoch in range(1, 2001):
         test_acc = test(test_loader)
     else:
         patience -= 1
+    print(f'Epoch {epoch:02d}, Val: {val_acc:.3f}, Test: {test_acc:.3f}')
     if patience <= 0:
         break
-    print(f'Epoch {epoch:02d}, Val: {val_acc:.3f}, Test: {test_acc:.3f}')
