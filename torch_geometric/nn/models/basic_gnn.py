@@ -21,7 +21,7 @@ class BasicGNN(torch.nn.Module):
         num_layers (int): Number of message passing layers.
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.relu_`)
+            (default: :meth:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -29,7 +29,8 @@ class BasicGNN(torch.nn.Module):
             (default: :obj:`"last"`)
     """
     def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 dropout: float = 0.0, act: Optional[Callable] = torch.relu_,
+                 dropout: float = 0.0,
+                 act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last'):
         super().__init__()
         self.in_channels = in_channels
@@ -64,16 +65,16 @@ class BasicGNN(torch.nn.Module):
         xs: List[Tensor] = []
         for i in range(self.num_layers):
             x = self.convs[i](x, edge_index, *args, **kwargs)
-            if self.act is not None:
-                x = self.act(x)
             if self.norms is not None:
                 x = self.norms[i](x)
+            if self.act is not None:
+                x = self.act(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
             if self.jk is not None:
                 xs.append(x)
         return x if self.jk is None else self.jk(xs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, num_layers={self.num_layers})')
 
@@ -90,7 +91,7 @@ class GCN(BasicGNN):
         num_layers (int): Number of GNN layers.
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.relu_`)
+            (default: :meth:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -100,7 +101,8 @@ class GCN(BasicGNN):
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
     def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 dropout: float = 0.0, act: Optional[Callable] = torch.relu_,
+                 dropout: float = 0.0,
+                 act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last',
                  **kwargs):
         super().__init__(in_channels, hidden_channels, num_layers, dropout,
@@ -123,7 +125,7 @@ class GraphSAGE(BasicGNN):
         num_layers (int): Number of GNN layers.
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.relu_`)
+            (default: :meth:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -133,7 +135,8 @@ class GraphSAGE(BasicGNN):
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
     def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 dropout: float = 0.0, act: Optional[Callable] = torch.relu_,
+                 dropout: float = 0.0,
+                 act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last',
                  **kwargs):
         super().__init__(in_channels, hidden_channels, num_layers, dropout,
@@ -156,7 +159,7 @@ class GIN(BasicGNN):
         num_layers (int): Number of GNN layers.
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.relu_`)
+            (default: :meth:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -166,7 +169,8 @@ class GIN(BasicGNN):
             :class:`torch_geometric.nn.conv.GINConv`.
     """
     def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 dropout: float = 0.0, act: Optional[Callable] = torch.relu_,
+                 dropout: float = 0.0,
+                 act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last',
                  **kwargs):
         super().__init__(in_channels, hidden_channels, num_layers, dropout,
@@ -183,7 +187,7 @@ class GIN(BasicGNN):
         return Sequential(
             Linear(in_channels, out_channels),
             BatchNorm1d(out_channels),
-            ReLU(),
+            ReLU(inplace=True),
             Linear(out_channels, out_channels),
         )
 
@@ -199,7 +203,7 @@ class GAT(BasicGNN):
         num_layers (int): Number of GNN layers.
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
-            (default: :meth:`torch.relu_`)
+            (default: :meth:`torch.nn.ReLU(inplace=True)`)
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
@@ -209,7 +213,8 @@ class GAT(BasicGNN):
             :class:`torch_geometric.nn.conv.GATConv`.
     """
     def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
-                 dropout: float = 0.0, act: Optional[Callable] = torch.relu_,
+                 dropout: float = 0.0,
+                 act: Optional[Callable] = ReLU(inplace=True),
                  norm: Optional[torch.nn.Module] = None, jk: str = 'last',
                  **kwargs):
         super().__init__(in_channels, hidden_channels, num_layers, dropout,
