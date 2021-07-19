@@ -1,3 +1,4 @@
+from .basic_gnn import GCN, GraphSAGE, GIN, GAT
 from .jumping_knowledge import JumpingKnowledge
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -14,12 +15,12 @@ from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
-from .gat import GAT, GATv2, GATWithJK, GATv2WithJK
-from .gcn import GCN, GCNWithJK
-from .gin import GIN, GINWithJK, GINE, GINEWithJK
-from .graph_sage import GraphSAGE, GraphSAGEWithJK
 
 __all__ = [
+    'GCN',
+    'GraphSAGE',
+    'GIN',
+    'GAT',
     'JumpingKnowledge',
     'Node2Vec',
     'DeepGraphInfomax',
@@ -42,4 +43,4 @@ __all__ = [
     'AttentiveFP',
 ]
 
-classes = sorted(__all__)
+classes = __all__
