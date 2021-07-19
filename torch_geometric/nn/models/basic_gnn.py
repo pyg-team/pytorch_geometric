@@ -96,11 +96,6 @@ class GCN(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
             (default: :obj:`"last"`)
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`True`)
-        normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
-            (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
@@ -134,11 +129,6 @@ class GraphSAGE(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
             (default: :obj:`"last"`)
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`True`)
-        normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
-            (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
@@ -172,11 +162,6 @@ class GIN(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
             (default: :obj:`"last"`)
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`True`)
-        normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
-            (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
@@ -220,11 +205,6 @@ class GAT(BasicGNN):
         jk (str, optional): The Jumping Knowledge mode
             (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
             (default: :obj:`"last"`)
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
-            self-loops to the input graph. (default: :obj:`True`)
-        normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
-            (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GATConv`.
     """
