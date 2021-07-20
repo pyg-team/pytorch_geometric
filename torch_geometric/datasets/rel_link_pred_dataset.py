@@ -11,7 +11,7 @@ class RelLinkPredDataset(InMemoryDataset):
     r"""The relational link prediction datasets from the
     `"Modeling Relational Data with Graph Convolutional Networks"
     <https://arxiv.org/abs/1703.06103>`_ paper.
-    Training and test splits are given by sets of triples.
+    Training and test splits are given by sets of triplets.
 
     Args:
         root (string): Root directory where the dataset should be saved.
@@ -41,7 +41,7 @@ class RelLinkPredDataset(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return int(self.data.train_edge_type.max()) + 1
+        return int(self.data.edge_type.max()) + 1
 
     @property
     def raw_dir(self) -> str:
@@ -85,7 +85,15 @@ class RelLinkPredDataset(InMemoryDataset):
                 kwargs[f'{split}_edge_index'] = torch.tensor([src, dst])
                 kwargs[f'{split}_edge_type'] = torch.tensor(rel)
 
-        data = Data(num_nodes=len(entities_dict), **kwargs)
+        # For message passing, we add reverse edges and types to the graph:
+        row, col = kwargs['train_edge_index']
+        edge_type = kwargs['train_edge_type']
+        row, col = torch.cat([row, col], dim=0), torch.cat([col, row], dim=0)
+        edge_index = torch.stack([row, col], dim=0)
+        edge_type = torch.cat([edge_type, edge_type + len(relations_dict)])
+
+        data = Data(num_nodes=len(entities_dict), edge_index=edge_index,
+                    edge_type=edge_type, **kwargs)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
