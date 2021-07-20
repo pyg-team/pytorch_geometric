@@ -5,7 +5,7 @@ import torch
 
 def evaluate_relational_link_prediction(latent_node_features, latent_edge_features, test_triplets,
                                         all_triplets) -> dict:
-    r""" Evaluates relational link prediction according to Borders et al. "Translating Embeddings for
+    r""" Evaluates DistMult relational link prediction according to Borders et al. "Translating Embeddings for
     Modeling Multi-relational Data" (2013) by computing the scores: MRR, Hits@1, Hits@3, Hits@10
 
         Args:

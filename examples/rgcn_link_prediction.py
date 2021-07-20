@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
-from torch_geometric.datasets.link_prediction import LinkPrediction
+from torch_geometric.datasets.relational_link_prediction import RelationalLinkPredictionDatasets
 from torch_geometric.nn import GAE, RGCNConv
 from torch_geometric.utils.evaluate_relational_link_prediction import evaluate_relational_link_prediction
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     writer = SummaryWriter()
 
     # load data and add node features
-    dataset = LinkPrediction('../data', 'FB15k-237')
+    dataset = RelationalLinkPredictionDatasets('../data', 'FB15k-237')
     data = dataset[0]
     print(data)
     print('num nodes:', data.num_nodes)
