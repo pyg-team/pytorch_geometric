@@ -1,4 +1,5 @@
-from .basic_gnn import GCN, GraphSAGE, GIN, GAT
+from .basic_gnn import GCN, GraphSAGE, GIN, GINE, GAT, GATv2
+from .basic_pools import ASAPool, EdgePool, Graclus, SAGPool
 from .jumping_knowledge import JumpingKnowledge
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -17,10 +18,15 @@ from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 
 __all__ = [
+    'ASAPool',
+    'EdgePool',
     'GCN',
     'GraphSAGE',
     'GIN',
+    'GINE',
     'GAT',
+    'GATv2',
+    'Graclus'
     'JumpingKnowledge',
     'Node2Vec',
     'DeepGraphInfomax',
@@ -29,6 +35,7 @@ __all__ = [
     'VGAE',
     'ARGA',
     'ARGVA',
+    'SAGPool',
     'SignedGCN',
     'RENet',
     'GraphUNet',
