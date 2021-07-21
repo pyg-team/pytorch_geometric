@@ -4,9 +4,8 @@ from typing import Optional
 
 import torch
 from tqdm import tqdm
-import networkx as nx
-from torch_geometric.nn import MessagePassing
 from torch_geometric.data import Data
+from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import k_hop_subgraph, to_networkx
 
 EPS = 1e-15
@@ -287,7 +286,9 @@ class GNNExplainer(torch.nn.Module):
 
         :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
+        import networkx as nx
         import matplotlib.pyplot as plt
+
         assert edge_mask.size(0) == edge_index.size(1)
 
         if node_idx == -1:

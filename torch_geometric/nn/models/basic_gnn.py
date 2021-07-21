@@ -191,6 +191,7 @@ class GIN(BasicGNN):
             Linear(out_channels, out_channels),
         )
 
+
 class GINE(BasicGNN):
     r"""The Graph Neural Network from the `"How Powerful are Graph Neural
     Networks?" <https://arxiv.org/abs/1810.00826>`_ paper, using the
@@ -274,6 +275,7 @@ class GAT(BasicGNN):
             GATConv(in_channels, out_channels, dropout=dropout, **kwargs))
         for _ in range(1, num_layers):
             self.convs.append(GATConv(hidden_channels, out_channels, **kwargs))
+
 
 class GATv2(BasicGNN):
     r"""The Graph Neural Network from the `"Graph Attention Networks"

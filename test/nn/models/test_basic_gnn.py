@@ -51,6 +51,7 @@ def test_gin(dropout, act, norm, jk):
     assert str(model) == f'GIN(8, {out_channels}, num_layers=2)'
     assert model(x, edge_index).size() == (3, out_channels)
 
+
 @pytest.mark.parametrize('dropout,act,norm,jk',
                          product(dropouts, acts, norms, jks))
 def test_gine(dropout, act, norm, jk):
@@ -80,6 +81,7 @@ def test_gat(dropout, act, norm, jk):
                 dropout=dropout, act=act, norm=norm, jk=jk, heads=4)
     assert str(model) == f'GAT(8, {out_channels}, num_layers=2)'
     assert model(x, edge_index).size() == (3, out_channels)
+
 
 @pytest.mark.parametrize('dropout,act,norm,jk',
                          product(dropouts, acts, norms, jks))

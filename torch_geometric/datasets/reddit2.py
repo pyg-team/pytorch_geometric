@@ -4,7 +4,6 @@ import os.path as osp
 import torch
 import numpy as np
 import scipy.sparse as sp
-from google_drive_downloader import GoogleDriveDownloader as gdd
 from torch_geometric.data import InMemoryDataset, Data
 
 
@@ -51,6 +50,8 @@ class Reddit2(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
+        from google_drive_downloader import GoogleDriveDownloader as gdd
+
         path = osp.join(self.raw_dir, 'adj_full.npz')
         gdd.download_file_from_google_drive(self.adj_full_id, path)
 

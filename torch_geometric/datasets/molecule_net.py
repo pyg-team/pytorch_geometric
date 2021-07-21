@@ -6,11 +6,6 @@ import torch
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_gz)
 
-try:
-    from rdkit import Chem
-except ImportError:
-    Chem = None
-
 x_map = {
     'atomic_num':
     list(range(0, 119)),
@@ -117,10 +112,6 @@ class MoleculeNet(InMemoryDataset):
 
     def __init__(self, root, name, transform=None, pre_transform=None,
                  pre_filter=None):
-
-        if Chem is None:
-            raise ImportError('`MoleculeNet` requires `rdkit`.')
-
         self.name = name.lower()
         assert self.name in self.names.keys()
         super(MoleculeNet, self).__init__(root, transform, pre_transform,
@@ -151,6 +142,8 @@ class MoleculeNet(InMemoryDataset):
             os.unlink(path)
 
     def process(self):
+        from rdkit import Chem
+
         with open(self.raw_paths[0], 'r') as f:
             dataset = f.read().split('\n')[1:-1]
             dataset = [x for x in dataset if len(x) > 0]  # Filter empty lines.

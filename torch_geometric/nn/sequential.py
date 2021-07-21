@@ -1,16 +1,19 @@
 from typing import List, Union, Tuple, Callable
+
+import os
+import os.path as osp
+from uuid import uuid1
+
 import torch
+from jinja2 import Template
+
+from torch_geometric.nn.conv.utils.jit import class_from_module_repr
 
 
-def parse_desc(desc: str) -> Tuple[List[str], List[str]]:
-    assert '->' in desc
-    in_desc, out_desc = desc.split('->')
-    in_desc = [x.strip() for x in in_desc.split(',') if len(x.strip()) > 0]
-    out_desc = [x.strip() for x in out_desc.split(',') if len(x.strip()) > 0]
-    return in_desc, out_desc
-
-
-class Sequential(torch.nn.Module):
+def Sequential(
+    input_args: str,
+    modules: List[Union[Tuple[Callable, str], Callable]],
+) -> torch.nn.Module:
     r"""An extension of the :class:`torch.nn.Sequential` container in order to
     define a sequential GNN model.
     Since GNN operators take in multiple input arguments,
@@ -58,62 +61,51 @@ class Sequential(torch.nn.Module):
         ])
 
     Args:
-        args (str): Global input arguments of the model.
+        input_args (str): The input arguments of the model.
         modules ([(str, Callable) or Callable]): A list of modules (with
             optional function header definitions).
     """
-    def __init__(self, args: str, modules: List[Union[Tuple[Callable, str],
-                                                      Callable]]):
-        super(Sequential, self).__init__()
 
-        self.args = [x.strip() for x in args.split(',') if len(x.strip()) > 0]
+    input_args = [x.strip() for x in input_args.split(',')]
 
-        assert len(modules) > 0
-        assert isinstance(modules[0], (tuple, list))
+    # We require the first entry of the input list to define arguments:
+    assert len(modules) > 0 and isinstance(modules[0], (tuple, list))
 
-        self.nns, self.fns, self.descs = torch.nn.ModuleList(), [], []
-        for i, module in enumerate(modules):
-            if isinstance(module, (tuple, list)) and len(module) >= 2:
-                assert len(module) == 2
-                module, desc = module
-                in_desc, out_desc = parse_desc(desc)
-            elif isinstance(module, (tuple, list)):
-                module = module[0]
-                in_desc = out_desc = self.descs[i - 1][1]
-            else:
-                in_desc = out_desc = self.descs[i - 1][1]
-            if isinstance(module, torch.nn.Module):
-                self.nns.append(module)
-                self.fns.append(None)
-            else:
-                self.nns.append(None)
-                self.fns.append(module)
-            self.descs.append((in_desc, out_desc))
+    # A list holding the callable function and the input and output names:
+    calls: List[Tuple[Callable, List[str], List[str]]] = []
 
-    def reset_parameters(self):
-        for nn in self.nns:
-            if hasattr(nn, 'reset_parameters'):
-                nn.reset_parameters()
+    for module in modules:
+        if isinstance(module, (tuple, list)) and len(module) >= 2:
+            module, desc = module[:2]
+            in_desc, out_desc = parse_desc(desc)
+        elif isinstance(module, (tuple, list)):
+            module = module[0]
+            in_desc = out_desc = calls[-1][2]
+        else:
+            in_desc = out_desc = calls[-1][2]
 
-    # We can't really type check due to the dynamic behaviour of `Sequential`:
-    def forward(self, *args):
-        """"""
-        assert len(args) == len(self.args)
-        state = {key: arg for key, arg in zip(self.args, args)}
+        calls.append((module, in_desc, out_desc))
 
-        for nn, fn, (in_desc, out_desc) in zip(self.nns, self.fns, self.descs):
-            fn = nn if fn is None else fn
-            out = fn(*[state[key] for key in in_desc])
-            out = (out, ) if not isinstance(out, tuple) else out
-            assert len(out) == len(out_desc)
-            state.update({key: item for key, item in zip(out_desc, out)})
+    root = os.path.dirname(osp.realpath(__file__))
+    with open(osp.join(root, 'sequential.jinja'), 'r') as f:
+        template = Template(f.read())
 
-        return out[0] if len(out) == 1 else out
+    cls_name = f'Sequential_{uuid1().hex[:6]}'
+    module_repr = template.render(
+        cls_name=cls_name,
+        input_args=input_args,
+        calls=calls,
+    )
 
-    def __repr__(self):
-        fns = [
-            nn if fn is None else fn.__name__
-            for nn, fn in zip(self.nns, self.fns)
-        ]
-        return (self.__class__.__name__ + '(\n{}\n)').format('\n'.join(
-            [f'  ({i}): {fn}' for i, fn in enumerate(fns)]))
+    # Instantiate a class from the rendered module representation.
+    module = class_from_module_repr(cls_name, module_repr)()
+    for i, (submodule, _, _) in enumerate(calls):
+        setattr(module, f'module_{i}', submodule)
+    return module
+
+
+def parse_desc(desc: str) -> Tuple[List[str], List[str]]:
+    in_desc, out_desc = desc.split('->')
+    in_desc = [x.strip() for x in in_desc.split(',')]
+    out_desc = [x.strip() for x in out_desc.split(',')]
+    return in_desc, out_desc
