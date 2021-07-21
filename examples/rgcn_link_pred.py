@@ -102,14 +102,14 @@ def test():
     model.eval()
     z = model.encode(data.edge_index, data.edge_type)
 
-    valid_mrr = test_split(z, data.valid_edge_index, data.valid_edge_type)
-    test_mrr = test_split(z, data.valid_edge_index, data.valid_edge_type)
+    valid_mrr = test_scores(z, data.valid_edge_index, data.valid_edge_type)
+    test_mrr = test_scores(z, data.valid_edge_index, data.valid_edge_type)
 
     return valid_mrr, test_mrr
 
 
 @torch.no_grad()
-def test_split(z, edge_index, edge_type):
+def test_scores(z, edge_index, edge_type):
     ranks = []
     for i in tqdm(range(edge_type.numel())):
         (src, dst), rel = edge_index[:, i], edge_type[i]
