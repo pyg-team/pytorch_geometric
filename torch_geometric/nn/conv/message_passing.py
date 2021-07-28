@@ -1,3 +1,6 @@
+from typing import List, Optional, Set, get_type_hints
+from torch_geometric.typing import Adj, Size
+
 import os
 import re
 import inspect
@@ -5,8 +8,6 @@ import os.path as osp
 from uuid import uuid1
 from itertools import chain
 from inspect import Parameter
-from typing import List, Optional, Set
-from torch_geometric.typing import Adj, Size
 
 import torch
 from torch import Tensor
@@ -336,6 +337,11 @@ class MessagePassing(torch.nn.Module):
             prop_types = split_types_repr(match.group(1))
             prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
+        type_hints = get_type_hints(self.__class__.update)
+        prop_return_type = type_hints.get('return', 'Tensor')
+        if hasattr(prop_return_type, '__name__'):
+            prop_return_type = prop_return_type.__name__
+
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.types(
             ['message', 'aggregate', 'update'])
@@ -367,6 +373,8 @@ class MessagePassing(torch.nn.Module):
             cls_name=cls_name,
             parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
+            prop_return_type=prop_return_type,
+            fuse=self.fuse,
             collect_types=collect_types,
             user_args=self.__user_args__,
             forward_header=forward_header,
