@@ -339,7 +339,7 @@ class MessagePassing(torch.nn.Module):
 
         type_hints = get_type_hints(self.__class__.update)
         prop_return_type = type_hints.get('return', 'Tensor')
-        if hasattr(prop_return_type, '__name__'):
+        if str(prop_return_type)[:6] == '<class':
             prop_return_type = prop_return_type.__name__
 
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
