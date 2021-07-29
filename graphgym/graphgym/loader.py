@@ -33,7 +33,7 @@ def load_pyg(name, dataset_dir):
     load pyg format dataset
     :param name: dataset name
     :param dataset_dir: data directory
-    :return: a list of networkx/deepsnap graphs
+    :return: PyG dataset
     '''
     dataset_dir = '{}/{}'.format(dataset_dir, name)
     if name in ['Cora', 'CiteSeer', 'PubMed']:
@@ -141,7 +141,7 @@ def load_ogb(name, dataset_dir):
 def load_dataset():
     '''
     load raw datasets.
-    :return: a list of networkx/deepsnap graphs, plus additional info if needed
+    :return: PyG dataset
     '''
     format = cfg.dataset.format
     name = cfg.dataset.name

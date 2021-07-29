@@ -177,25 +177,6 @@ def set_cfg(cfg):
     # Whether resample negative edges at training time (link prediction only)
     cfg.dataset.resample_negative = False
 
-    # ==============
-
-    # feature augmentation
-    # naming is consistent with DeepSNAP graph:
-    # node_xxx is feature on nodes; edge_xxx is feature on edge; graph_xxx is
-    # feature on graph.
-    # a list of tuples (feature, feature_dim)
-    cfg.dataset.augment_feature = []
-    cfg.dataset.augment_feature_dims = []
-    # 'balanced', 'equal_width', 'bounded', 'original', 'position'
-    cfg.dataset.augment_feature_repr = 'original'
-
-    # If non-empty, this replaces the label with structural features
-    # For example, setting label = 'node_degree' causes the model to 
-    # replace the node labels with node degrees (overwriting previous node
-    # labels)
-    # Note: currently only support 1 label
-    cfg.dataset.augment_label = ''
-    cfg.dataset.augment_label_dims = 0
 
     # What transformation function is applied to the dataset
     cfg.dataset.transform = 'none'
