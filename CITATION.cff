@@ -7,7 +7,7 @@ authors:
   given-names: "Matthias"
 - family-names: "Lenssen"
   given-names: "Jan Eric"
-date-released: 2019-05-06
+date-released: 2019
 version: 1.7.2
 license: MIT
 url: "https://github.com/rusty1s/pytorch_geometric"
