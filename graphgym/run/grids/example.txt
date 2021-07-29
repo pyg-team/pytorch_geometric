@@ -1,0 +1,20 @@
+# Format for each row: name in config.py; alias; range to search
+# No spaces, except between these 3 fields
+# Line breaks are used to union different grid search spaces
+# Feel free to add '#' to add comments
+
+
+# (1) dataset configurations
+dataset.format format ['PyG']
+dataset.name dataset ['TU_ENZYMES','TU_PROTEINS']
+dataset.task task ['graph']
+dataset.transductive trans [False]
+dataset.augment_feature feature [[]]
+dataset.augment_label label ['']
+# (2) The recommended GNN design space, 96 models in total
+gnn.layers_pre_mp l_pre [1,2]
+gnn.layers_mp l_mp [2,4,6,8]
+gnn.layers_post_mp l_post [2,3]
+gnn.stage_type stage ['skipsum','skipconcat']
+gnn.agg agg ['add','mean','max']
+

@@ -1,0 +1,13 @@
+yacs
+tensorboardx
+torch
+torch-geometric
+ogb
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+seaborn
+notebook
+PyYAML>=5.1
