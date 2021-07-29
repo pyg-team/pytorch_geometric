@@ -7,7 +7,7 @@ import logging
 from graphgym.cmd_args import parse_args
 from graphgym.config import (cfg, assert_cfg, dump_cfg, update_out_dir,
                              get_parent_dir)
-from graphgym.loader import create_dataset, create_loader
+from graphgym.loader import create_loader
 from graphgym.logger import setup_printing, create_logger
 from graphgym.optimizer import create_optimizer, create_scheduler
 from graphgym.model_builder import create_model
@@ -15,7 +15,7 @@ from graphgym.train import train
 from graphgym.utils.agg_runs import agg_runs
 from graphgym.utils.comp_budget import params_count
 from graphgym.utils.device import auto_select_device
-from graphgym.contrib.train import *
+from graphgym.contrib.train import * # noqa
 from graphgym.register import train_dict
 
 if __name__ == '__main__':

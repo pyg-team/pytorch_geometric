@@ -9,7 +9,7 @@ from graphgym.config import cfg
 from graphgym.models.layer import MLP
 from graphgym.models.pooling import pooling_dict
 
-from graphgym.contrib.head import *
+from graphgym.contrib.head import * # noqa
 import graphgym.register as register
 
 

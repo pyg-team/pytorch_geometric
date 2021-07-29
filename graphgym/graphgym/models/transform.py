@@ -1,4 +1,3 @@
-import networkx as nx
 import torch
 from torch_geometric.utils import negative_sampling
 

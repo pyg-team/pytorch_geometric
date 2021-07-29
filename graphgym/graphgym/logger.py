@@ -5,9 +5,10 @@ import sys
 import logging
 from graphgym.config import cfg
 from graphgym.utils.io import dict_to_json, dict_to_tb
-import pdb
 
-from sklearn.metrics import *
+from sklearn.metrics import accuracy_score, precision_score, recall_score, \
+    f1_score, roc_auc_score, mean_absolute_error, mean_squared_error
+
 from tensorboardX import SummaryWriter
 from graphgym.utils.device import get_current_gpu_usage
 
@@ -105,11 +106,12 @@ class Logger(object):
 
     def regression(self):
         true, pred = torch.cat(self._true), torch.cat(self._pred)
-        return {'mae': float(round(mean_absolute_error(true, pred), cfg.round)),
-                'mse': float(round(mean_squared_error(true, pred), cfg.round)),
-                'rmse': float(
-                    round(math.sqrt(mean_squared_error(true, pred)), cfg.round))
-                }
+        return {
+            'mae': float(round(mean_absolute_error(true, pred), cfg.round)),
+            'mse': float(round(mean_squared_error(true, pred), cfg.round)),
+            'rmse': float(
+                round(math.sqrt(mean_squared_error(true, pred)), cfg.round))
+        }
 
     def time_iter(self):
         return self._time_used / self._iter
@@ -160,7 +162,8 @@ class Logger(object):
             stats = {**epoch_stats, **eta_stats, **basic_stats, **task_stats,
                      **custom_stats}
         else:
-            stats = {**epoch_stats, **basic_stats, **task_stats, **custom_stats}
+            stats = {**epoch_stats, **basic_stats, **task_stats,
+                     **custom_stats}
 
         # print
         logging.info('{}: {}'.format(self.name, stats))

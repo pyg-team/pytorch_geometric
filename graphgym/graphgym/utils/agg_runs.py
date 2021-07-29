@@ -1,8 +1,5 @@
 import os
-import json
 import numpy as np
-import shutil
-import ast
 import pandas as pd
 import logging
 
@@ -11,14 +8,12 @@ from graphgym.utils.io import dict_list_to_json, dict_list_to_tb, \
     json_to_dict_list, makedirs_rm_exist, string_to_python, dict_to_json
 from tensorboardX import SummaryWriter
 
-import pdb
-
 
 def is_seed(s):
     try:
         int(s)
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -54,7 +49,7 @@ def name_to_dict(run):
     for col in cols:
         try:
             key, val = col.split('=')
-        except:
+        except Exception:
             print(col)
         keys.append(key)
         vals.append(string_to_python(val))
@@ -83,7 +78,7 @@ def agg_runs(dir, metric_best='auto'):
                     metric = 'auc' if 'auc' in stats_list[0] else 'accuracy'
                 else:
                     metric = metric_best
-                performance_np = np.array(
+                performance_np = np.array(  # noqa
                     [stats[metric] for stats in stats_list])
                 best_epoch = \
                     stats_list[
@@ -198,10 +193,11 @@ def agg_batch(dir, metric_best='auto'):
                     dict_stats = json_to_dict_list(
                         fname_stats)  # get best epoch
                     if metric_best == 'auto':
-                        metric = 'auc' if 'auc' in dict_stats[0] else 'accuracy'
+                        metric = 'auc' if 'auc' in dict_stats[0] \
+                            else 'accuracy'
                     else:
                         metric = metric_best
-                    performance_np = np.array(
+                    performance_np = np.array(  # noqa
                         [stats[metric] for stats in dict_stats])
                     dict_stats = dict_stats[
                         eval("performance_np.{}()".format(cfg.metric_agg))]
@@ -219,7 +215,3 @@ def agg_batch(dir, metric_best='auto'):
             results[key].to_csv(fname, index=False)
 
     print('Results aggregated across models saved in {}'.format(dir_out))
-
-## test
-# dir = 'results/nc_example'
-# agg_runs(dir)

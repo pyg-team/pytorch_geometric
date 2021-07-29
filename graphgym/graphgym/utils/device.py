@@ -1,10 +1,10 @@
 import torch
 import subprocess
 import numpy as np
-import pdb
 from graphgym.config import cfg
 import logging
 import os
+
 
 def get_gpu_memory_map():
     '''Get the current gpu usage.'''

@@ -13,14 +13,11 @@ from graphgym.register import register_train
 def train_epoch(logger, loader, model, optimizer, scheduler):
     if cfg.benchmark:
         from graphgym.benchmark import global_line_profiler, torchprof, \
-            layer_trace, \
-            get_memory_status, count_parameters, get_max_cuda, \
-            get_gpu_memory_nvdia, \
-            get_model_size, get_summary
+            get_memory_status, count_parameters, get_gpu_memory_nvdia, \
+            get_model_size
     model.train()
     time_start = time.time()
-    with torchprof.Profile(model, use_cuda=True,
-                           profile_memory=True) as prof:
+    with torchprof.Profile(model, use_cuda=True, profile_memory=True):
         for batch in loader:
             batch.split = 'train'
             optimizer.zero_grad()

@@ -4,7 +4,7 @@ from yacs.config import CfgNode as CN
 
 from graphgym.utils.io import makedirs_rm_exist
 
-from graphgym.contrib.config import *
+from graphgym.contrib.config import *  # noqa
 import graphgym.register as register
 
 # Global config object
@@ -22,9 +22,9 @@ def set_cfg(cfg):
     :return: configuration use by the experiment.
     '''
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Basic options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
 
     # Set print destination: stdout / file / both
     cfg.print = 'both'
@@ -71,11 +71,11 @@ def set_cfg(cfg):
     # If do benchmark analysis
     cfg.benchmark = False
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Globally shared variables:
     # These variables will be set dynamically based on the input dataset
     # Do not directly set them here or in .yaml files
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
 
     cfg.share = CN()
 
@@ -88,9 +88,9 @@ def set_cfg(cfg):
     # Number of dataset splits: train/val/test
     cfg.share.num_splits = 1
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Dataset options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.dataset = CN()
 
     # Name of the dataset
@@ -177,7 +177,6 @@ def set_cfg(cfg):
     # Whether resample negative edges at training time (link prediction only)
     cfg.dataset.resample_negative = False
 
-
     # What transformation function is applied to the dataset
     cfg.dataset.transform = 'none'
 
@@ -207,7 +206,7 @@ def set_cfg(cfg):
 
     # ----------------------------------------------------------------------- #
     # Snowflake options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.snowflake = CN()
 
     # Account name
@@ -225,9 +224,9 @@ def set_cfg(cfg):
     # Database name
     cfg.snowflake.database = 'Vrtex'
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Training options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.train = CN()
 
     # Training (and validation) pipeline mode
@@ -272,9 +271,9 @@ def set_cfg(cfg):
     # NeighborSampler: number of sampled nodes per layer
     cfg.train.neighbor_sizes = [20, 15, 10, 5]
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Validation options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.val = CN()
 
     # Minibatch node
@@ -289,9 +288,9 @@ def set_cfg(cfg):
     # Radius: same, extend. same: same as cfg.gnn.layers_mp, extend: layers+1
     cfg.val.radius = 'extend'
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Model options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.model = CN()
 
     # Model type to use
@@ -327,9 +326,9 @@ def set_cfg(cfg):
     cfg.model.graph_pooling = 'add'
     # ===================================
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # GNN options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.gnn = CN()
 
     # Prediction head. Use cfg.dataset.task by default
@@ -397,9 +396,9 @@ def set_cfg(cfg):
     # clear cached feature_new
     cfg.gnn.clear_feature = True
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Optimizer options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.optim = CN()
 
     # optimizer: sgd, adam
@@ -426,9 +425,9 @@ def set_cfg(cfg):
     # Maximal number of epochs
     cfg.optim.max_epoch = 200
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Batch norm options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.bn = CN()
 
     # BN epsilon
@@ -437,15 +436,15 @@ def set_cfg(cfg):
     # BN momentum (BN momentum in PyTorch = 1 - BN momentum in Caffe2)
     cfg.bn.mom = 0.1
 
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     # Memory options
-    # ------------------------------------------------------------------------ #
+    # ----------------------------------------------------------------------- #
     cfg.mem = CN()
 
     # Perform ReLU inplace
     cfg.mem.inplace = False
 
-    #### Set user customized cfgs
+    # Set user customized cfgs
     for func in register.config_dict.values():
         func(cfg)
 
@@ -453,9 +452,8 @@ def set_cfg(cfg):
 def assert_cfg(cfg):
     """Checks config values, do certain post processing"""
     if cfg.dataset.task not in ['node', 'edge', 'graph', 'link_pred']:
-        raise ValueError('Task {} not supported, must be one of'
-                         'node, edge, graph, link_pred'.format(
-            cfg.dataset.task))
+        raise ValueError('Task {} not supported, must be one of node, '
+                         'edge, graph, link_pred'.format(cfg.dataset.task))
     if 'classification' in cfg.dataset.task_type and cfg.model.loss_fun == \
             'mse':
         cfg.model.loss_fun = 'cross_entropy'
@@ -467,7 +465,8 @@ def assert_cfg(cfg):
         logging.warning('model.loss_fun changed to mse for regression.')
     if cfg.dataset.task == 'graph' and cfg.dataset.transductive:
         cfg.dataset.transductive = False
-        logging.warning('dataset.transductive changed to False for graph task.')
+        logging.warning('dataset.transductive changed '
+                        'to False for graph task.')
     if cfg.gnn.layers_post_mp < 1:
         cfg.gnn.layers_post_mp = 1
         logging.warning('Layers after message passing should be >=1')

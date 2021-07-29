@@ -7,7 +7,7 @@ import ast
 def string_to_python(string):
     try:
         return ast.literal_eval(string)
-    except:
+    except Exception:
         return string
 
 

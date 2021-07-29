@@ -2,7 +2,7 @@ from graphgym.config import cfg
 
 import torch.optim as optim
 
-from graphgym.contrib.optimizer import *
+from graphgym.contrib.optimizer import *  # noqa
 import graphgym.register as register
 
 
@@ -34,15 +34,17 @@ def create_scheduler(optimizer):
         if scheduler is not None:
             return scheduler
     if cfg.optim.scheduler == 'none':
-        scheduler = optim.lr_scheduler.StepLR(optimizer,
-                                              step_size=cfg.optim.max_epoch + 1)
+        scheduler = \
+            optim.lr_scheduler.StepLR(optimizer,
+                                      step_size=cfg.optim.max_epoch + 1)
     elif cfg.optim.scheduler == 'step':
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
                                                    milestones=cfg.optim.steps,
                                                    gamma=cfg.optim.lr_decay)
     elif cfg.optim.scheduler == 'cos':
-        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer,
-                                                    T_max=cfg.optim.max_epoch)
+        scheduler = \
+            optim.lr_scheduler.CosineAnnealingLR(optimizer,
+                                                 T_max=cfg.optim.max_epoch)
     else:
         raise ValueError('Scheduler {} not supported'.format(
             cfg.optim.scheduler))

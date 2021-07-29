@@ -1,17 +1,12 @@
-import networkx as nx
-import time
-import logging
-import pickle
-import copy
-
 import torch
 from torch_geometric.data import DataLoader
 
-from torch_geometric.datasets import *
+from torch_geometric.datasets import Planetoid, TUDataset, KarateClub, \
+    Coauthor, Amazon, MNISTSuperpixels, PPI, QM7b
 import torch_geometric.transforms as T
 
 from graphgym.config import cfg
-from graphgym.contrib.loader import *
+from graphgym.contrib.loader import *  # noqa
 import graphgym.register as register
 from graphgym.models.transform import get_link_label, neg_sampling_transform
 
@@ -31,6 +26,7 @@ from torch_geometric.utils import negative_sampling
 def load_pyg(name, dataset_dir):
     '''
     load pyg format dataset
+    todo: support more pyg datasets. Ideally we write an API for conversion
     :param name: dataset name
     :param dataset_dir: data directory
     :return: PyG dataset
@@ -90,7 +86,8 @@ def load_ogb(name, dataset_dir):
             mask = index2mask(splits[key], size=dataset.data.y.shape[0])
             set_dataset_attr(dataset, split_names[i], mask, len(mask))
         edge_index = to_undirected(dataset.data.edge_index)
-        set_dataset_attr(dataset, 'edge_index', edge_index, edge_index.shape[1])
+        set_dataset_attr(dataset, 'edge_index', edge_index,
+                         edge_index.shape[1])
 
     elif name[:4] == 'ogbg':
         dataset = PygGraphPropPredDataset(name=name, root=dataset_dir)
@@ -169,14 +166,14 @@ def set_dataset_info(dataset):
     # get dim_in and dim_out
     try:
         cfg.share.dim_in = dataset.data.x.shape[1]
-    except:
+    except Exception:
         cfg.share.dim_in = 1
     try:
         if cfg.dataset.task_type == 'classification':
             cfg.share.dim_out = torch.unique(dataset.data.y).shape[0]
         else:
             cfg.share.dim_out = dataset.data.y.shape[1]
-    except:
+    except Exception:
         cfg.share.dim_out = 1
 
     # count number of dataset splits
@@ -192,8 +189,8 @@ def set_dataset_info(dataset):
 
 
 def create_dataset():
-    ## todo: add new PyG dataset split functionality
-    ## Load dataset
+    # todo: add new PyG dataset split functionality
+    # Load dataset
     dataset = load_dataset()
 
     set_dataset_info(dataset)
@@ -209,7 +206,7 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
     elif sampler == "neighbor":
         loader_train = NeighborSampler(dataset[0],
                                        sizes=cfg.train.neighbor_sizes[
-                                             :cfg.gnn.layers_mp],
+                                       :cfg.gnn.layers_mp],
                                        batch_size=batch_size, shuffle=shuffle,
                                        num_workers=cfg.num_workers,
                                        pin_memory=True)
@@ -220,35 +217,39 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
                                          num_workers=cfg.num_workers,
                                          pin_memory=True)
     elif sampler == "saint_rw":
-        loader_train = GraphSAINTRandomWalkSampler(dataset[0],
-                                                   batch_size=batch_size,
-                                                   walk_length=cfg.train.walk_length,
-                                                   num_steps=cfg.train.iter_per_epoch,
-                                                   sample_coverage=0,
-                                                   shuffle=shuffle,
-                                                   num_workers=cfg.num_workers,
-                                                   pin_memory=True)
+        loader_train = \
+            GraphSAINTRandomWalkSampler(dataset[0],
+                                        batch_size=batch_size,
+                                        walk_length=cfg.train.walk_length,
+                                        num_steps=cfg.train.iter_per_epoch,
+                                        sample_coverage=0,
+                                        shuffle=shuffle,
+                                        num_workers=cfg.num_workers,
+                                        pin_memory=True)
     elif sampler == "saint_node":
-        loader_train = GraphSAINTNodeSampler(dataset[0], batch_size=batch_size,
-                                             num_steps=cfg.train.iter_per_epoch,
-                                             sample_coverage=0, shuffle=shuffle,
-                                             num_workers=cfg.num_workers,
-                                             pin_memory=True)
+        loader_train = \
+            GraphSAINTNodeSampler(dataset[0], batch_size=batch_size,
+                                  num_steps=cfg.train.iter_per_epoch,
+                                  sample_coverage=0, shuffle=shuffle,
+                                  num_workers=cfg.num_workers,
+                                  pin_memory=True)
     elif sampler == "saint_edge":
-        loader_train = GraphSAINTEdgeSampler(dataset[0], batch_size=batch_size,
-                                             num_steps=cfg.train.iter_per_epoch,
-                                             sample_coverage=0, shuffle=shuffle,
-                                             num_workers=cfg.num_workers,
-                                             pin_memory=True)
+        loader_train = \
+            GraphSAINTEdgeSampler(dataset[0], batch_size=batch_size,
+                                  num_steps=cfg.train.iter_per_epoch,
+                                  sample_coverage=0, shuffle=shuffle,
+                                  num_workers=cfg.num_workers,
+                                  pin_memory=True)
     elif sampler == "cluster":
-        loader_train = ClusterLoader(dataset[0],
-                                     num_parts=cfg.train.train_parts,
-                                     save_dir="{}/{}".format(cfg.dataset.dir,
-                                                             cfg.dataset.name.replace(
-                                                                 "-", "_")),
-                                     batch_size=batch_size, shuffle=shuffle,
-                                     num_workers=cfg.num_workers,
-                                     pin_memory=True)
+        loader_train = \
+            ClusterLoader(dataset[0],
+                          num_parts=cfg.train.train_parts,
+                          save_dir="{}/{}".format(cfg.dataset.dir,
+                                                  cfg.dataset.name.replace(
+                                                      "-", "_")),
+                          batch_size=batch_size, shuffle=shuffle,
+                          num_workers=cfg.num_workers,
+                          pin_memory=True)
 
     else:
         raise NotImplementedError("%s sampler is not implemented!" % sampler)

@@ -8,7 +8,8 @@ setuptools.setup(
     version="0.3.1",
     author="Jiaxuan You",
     author_email="jiaxuan@cs.stanford.edu",
-    description="GraphGym: platform for designing and evaluating Graph Neural Networks (GNN)",
+    description="GraphGym: platform for designing and "
+                "evaluating Graph Neural Networks (GNN)",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/snap-stanford/graphgym",

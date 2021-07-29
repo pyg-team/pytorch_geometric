@@ -168,7 +168,8 @@ def gen_grid(args, config, config_budget={}):
                     if vars_label[id][0] in config_out:  # if key1 exist
                         config_out[vars_label[id][0]][vars_label[id][1]] = var
                     else:
-                        config_out[vars_label[id][0]] = {vars_label[id][1]: var}
+                        config_out[vars_label[id][0]] = {
+                            vars_label[id][1]: var}
                 else:
                     raise ValueError('Only 2-level config files are supported')
                 fname_out += '-{}={}'.format(vars_alias[id],

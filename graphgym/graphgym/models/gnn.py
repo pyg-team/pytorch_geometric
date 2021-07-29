@@ -6,12 +6,11 @@ from graphgym.config import cfg
 from graphgym.models.head import head_dict
 from graphgym.models.layer import (GeneralLayer, GeneralMultiLayer,
                                    BatchNorm1dNode, BatchNorm1dEdge)
-from graphgym.models.act import act_dict
 from graphgym.init import init_weights
 from graphgym.models.encoder import node_encoder_dict, \
     edge_encoder_dict
 
-from graphgym.contrib.stage import *
+from graphgym.contrib.stage import * # noqa
 import graphgym.register as register
 
 

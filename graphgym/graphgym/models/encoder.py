@@ -1,7 +1,7 @@
 import torch
 from ogb.utils.features import get_atom_feature_dims, get_bond_feature_dims
 
-from graphgym.contrib.encoder import *
+from graphgym.contrib.encoder import * # noqa
 import graphgym.register as register
 
 # Used for the OGB Encoders

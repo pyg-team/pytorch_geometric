@@ -2,9 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from graphgym.contrib.loss import *
+from graphgym.contrib.loss import * # noqa
 import graphgym.register as register
 from graphgym.config import cfg
+
 
 def compute_loss(pred, true):
     '''
@@ -23,7 +24,6 @@ def compute_loss(pred, true):
     true = true.squeeze(-1) if true.ndim > 1 else true
     if true.ndim > 1 and cfg.dataset.task_type == 'classification':
         pred, true = torch.flatten(pred), torch.flatten(true)
-
 
     # Try to load customized loss
     for func in register.loss_dict.values():
@@ -46,4 +46,3 @@ def compute_loss(pred, true):
     else:
         raise ValueError('Loss func {} not supported'.
                          format(cfg.model.loss_fun))
-
