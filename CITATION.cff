@@ -10,4 +10,4 @@ authors:
 date-released: 2019-05-06
 license: "MIT"
 doi: PENDING
-repository-code: "https://github.com/rusty1s/pytorch_geometric"
+url: "https://github.com/rusty1s/pytorch_geometric"
