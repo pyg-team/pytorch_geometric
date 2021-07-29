@@ -8,6 +8,7 @@ authors:
 - family-names: "Lenssen"
   given-names: "Jan Eric"
 date-released: 2019-05-06
-license: "MIT"
+version: 1.7.2
+license: MIT
 doi: 10.5281/zenodo.1234
 url: "https://github.com/rusty1s/pytorch_geometric"
