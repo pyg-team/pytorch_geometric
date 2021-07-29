@@ -1,6 +1,6 @@
-cff-version: 1.1.0
+cff-version: 1.2.0
 message: "Please cite our paper if you use this code in your own work."
 title: "Fast Graph Representation Learning with PyTorch Geometric"
-repository-code: "https://github.com/rusty1s/pytorch_geometric"
-date-released: 2019-05-06
 license: MIT
+date-released: 2019-05-06
+url: "https://github.com/rusty1s/pytorch_geometric"
