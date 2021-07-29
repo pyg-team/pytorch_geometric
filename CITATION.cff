@@ -1,13 +1,11 @@
 ---
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "Please cite our paper if you use this code in your own work."
 authors:
 - family-names: "Fey"
   given-names: "Matthias"
 - family-names: "Lenssen"
   given-names: "Jan Eric"
-title: "My Research Software"
-version: 2.0.4
-doi: 10.5281/zenodo.1234
+title: "Fast Graph Representation Learning with PyTorch Geometric"
 date-released: 2019
 url: "https://github.com/rusty1s/pytorch_geometric"
