@@ -1,3 +1,4 @@
-cff-version: 1.2.0
+---
+cff-version: "1.2.0"
 message: "Please cite our paper if you use this code in your own work."
 title: "Fast Graph Representation Learning with PyTorch Geometric"
