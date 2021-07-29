@@ -10,7 +10,6 @@ from graphgym.checkpoint import load_ckpt, save_ckpt, clean_ckpt
 from graphgym.register import register_train
 
 
-
 def train_epoch(logger, loader, model, optimizer, scheduler):
     if cfg.benchmark:
         from graphgym.benchmark import global_line_profiler, torchprof, \
@@ -96,5 +95,6 @@ def train(loggers, loaders, model, optimizer, scheduler):
         clean_ckpt()
 
     logging.info('Task done, results saved in {}'.format(cfg.out_dir))
+
 
 register_train('bench', train)

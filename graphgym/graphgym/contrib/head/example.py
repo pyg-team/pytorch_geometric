@@ -15,7 +15,7 @@ class ExampleNodeHead(nn.Module):
             return batch.node_feature[batch.node_label_index], batch.node_label
         else:
             return batch.node_feature[batch.node_label_index], \
-                   batch.node_label[batch.node_label_index]
+                batch.node_label[batch.node_label_index]
 
     def forward(self, batch):
         batch = self.layer_post_mp(batch)

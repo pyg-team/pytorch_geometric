@@ -12,7 +12,7 @@ from graphgym.contrib.layer import *
 import graphgym.register as register
 
 
-## General classes
+# General classes
 class GeneralLayer(nn.Module):
     '''General wrapper for layers'''
 
@@ -67,7 +67,7 @@ class GeneralMultiLayer(nn.Module):
         return batch
 
 
-## Core basic layers
+# Core basic layers
 # Input: batch; Output: batch
 class Linear(nn.Module):
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
@@ -182,7 +182,7 @@ class SplineConv(nn.Module):
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index,
-                                        batch.edge_attr)
+                             batch.edge_attr)
         return batch
 
 
@@ -203,7 +203,7 @@ class GeneralEdgeConv(nn.Module):
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index,
-                                        edge_feature=batch.edge_attr)
+                             edge_feature=batch.edge_attr)
         return batch
 
 
@@ -217,7 +217,7 @@ class GeneralSampleEdgeConv(nn.Module):
         edge_index = batch.edge_index[:, edge_mask]
         edge_feature = batch.edge_attr[edge_mask, :]
         batch.x = self.model(batch.x, edge_index,
-                                        edge_feature=edge_feature)
+                             edge_feature=edge_feature)
         return batch
 
 

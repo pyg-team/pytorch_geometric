@@ -15,18 +15,14 @@ from graphgym.contrib.stage import *
 import graphgym.register as register
 
 
-
-########### Layer ############
 def GNNLayer(dim_in, dim_out, has_act=True):
     return GeneralLayer(cfg.gnn.layer_type, dim_in, dim_out, has_act)
 
 
 def GNNPreMP(dim_in, dim_out):
-    return GeneralMultiLayer('linear', cfg.gnn.layers_pre_mp,
-                             dim_in, dim_out, dim_inner=dim_out, final_act=True)
+    return GeneralMultiLayer('linear', cfg.gnn.layers_pre_mp, dim_in,
+                             dim_out, dim_inner=dim_out, final_act=True)
 
-
-########### Stage: NN except start and head ############
 
 class GNNStackStage(nn.Module):
     '''Simple Stage that stack GNN layers'''
@@ -65,8 +61,6 @@ stage_dict = {
 stage_dict = {**register.stage_dict, **stage_dict}
 
 
-########### Feature encoder ############
-
 class FeatureEncoder(nn.Module):
     '''Encoding node/edge features'''
 
@@ -94,10 +88,8 @@ class FeatureEncoder(nn.Module):
         return batch
 
 
-########### Model: start + stage + head ############
-
 class GNN(nn.Module):
-    '''General GNN model'''
+    '''General GNN model: encoder + stage + head'''
 
     def __init__(self, dim_in, dim_out, **kwargs):
         super(GNN, self).__init__()

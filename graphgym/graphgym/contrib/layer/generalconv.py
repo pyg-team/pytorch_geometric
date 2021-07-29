@@ -25,7 +25,8 @@ class GeneralConvLayer(MessagePassing):
 
         self.weight = Parameter(torch.Tensor(in_channels, out_channels))
         if cfg.gnn.self_msg == 'concat':
-            self.weight_self = Parameter(torch.Tensor(in_channels, out_channels))
+            self.weight_self = Parameter(
+                torch.Tensor(in_channels, out_channels))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -86,7 +87,7 @@ class GeneralConvLayer(MessagePassing):
 
         edge_index, norm = self.cached_result
         x_msg = self.propagate(edge_index, x=x, norm=norm,
-                              edge_feature=edge_feature)
+                               edge_feature=edge_feature)
         if cfg.gnn.self_msg == 'none':
             return x_msg
         elif cfg.gnn.self_msg == 'add':
@@ -94,15 +95,16 @@ class GeneralConvLayer(MessagePassing):
         elif cfg.gnn.self_msg == 'concat':
             return x_msg + x_self
         else:
-            raise ValueError('self_msg {} not defined'.format(cfg.gnn.self_msg))
+            raise ValueError(
+                'self_msg {} not defined'.format(cfg.gnn.self_msg))
 
     def message(self, x_j, norm, edge_feature):
         if edge_feature is None:
             return norm.view(-1, 1) * x_j if norm is not None else x_j
         else:
             return norm.view(-1, 1) * (
-                    x_j + edge_feature) if norm is not None else (
-                    x_j + edge_feature)
+                x_j + edge_feature) if norm is not None else (
+                x_j + edge_feature)
 
     def update(self, aggr_out):
         if self.bias is not None:
@@ -190,7 +192,7 @@ class GeneralEdgeConvLayer(MessagePassing):
         edge_index, norm = self.cached_result
 
         x_msg = self.propagate(edge_index, x=x, norm=norm,
-                              edge_feature=edge_feature)
+                               edge_feature=edge_feature)
 
         if cfg.gnn.self_msg == 'concat':
             x_self = self.linear_self(x)

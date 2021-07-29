@@ -9,7 +9,6 @@ full_atom_feature_dims = get_atom_feature_dims()
 full_bond_feature_dims = get_bond_feature_dims()
 
 
-######## Feature Encoders #########
 class IntegerFeatureEncoder(torch.nn.Module):
     """
         Provides an encoder for integer node features

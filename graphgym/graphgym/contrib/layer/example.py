@@ -39,10 +39,10 @@ class ExampleConv1(MessagePassing):
 
     def forward(self, batch):
         """"""
-        x, edge_index = batch.node_feature, batch.edge_index
+        x, edge_index = batch.x, batch.edge_index
         x = torch.matmul(x, self.weight)
 
-        batch.node_feature = self.propagate(edge_index, x=x)
+        batch.x = self.propagate(edge_index, x=x)
 
         return batch
 
@@ -114,7 +114,7 @@ class ExampleConv2(nn.Module):
         self.model = ExampleConv2Layer(dim_in, dim_out, bias=bias)
 
     def forward(self, batch):
-        batch.node_feature = self.model(batch.node_feature, batch.edge_index)
+        batch.x = self.model(batch.x, batch.edge_index)
         return batch
 
 

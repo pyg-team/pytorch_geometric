@@ -1,5 +1,4 @@
 """ GNN heads are the last layer of a GNN right before loss computation.
-
 They are constructed in the init function of the gnn.GNN.
 """
 
@@ -14,8 +13,6 @@ from graphgym.contrib.head import *
 import graphgym.register as register
 
 
-########### Head ############
-
 class GNNNodeHead(nn.Module):
     '''Head of GNN, node prediction'''
 
@@ -27,7 +24,7 @@ class GNNNodeHead(nn.Module):
     def _apply_index(self, batch):
         mask = '{}_mask'.format(batch.split)
         return batch.x[batch[mask]], \
-               batch.y[batch[mask]]
+            batch.y[batch[mask]]
 
     def forward(self, batch):
         batch = self.layer_post_mp(batch)
@@ -78,7 +75,7 @@ class GNNEdgeHead(nn.Module):
         index = '{}_edge_index'.format(batch.split)
         label = '{}_edge_label'.format(batch.split)
         return batch.x[batch[index]], \
-               batch[label]
+            batch[label]
 
     def forward(self, batch):
         if cfg.model.edge_decoding != 'concat':
