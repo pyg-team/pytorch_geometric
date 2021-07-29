@@ -11,15 +11,3 @@ date-released: 2019-05-06
 license: "MIT"
 doi: PENDING
 repository-code: "https://github.com/rusty1s/pytorch_geometric"
-references:
-  - type: article
-    title: "Fast Graph Representation Learning with PyTorch Geometric"
-    authors:
-    - family-names: "Fey"
-      given-names: "Matthias"
-    - family-names: "Lenssen"
-      given-names: "Jan Eric"
-    year: 2019
-    journal: arXiv.org
-    arxiv: arXiv:1903.02428
-    url: https://arxiv.org/abs/1903.02428
