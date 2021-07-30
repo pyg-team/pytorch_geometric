@@ -86,13 +86,15 @@ def test_to_networkx_undirected():
 
 def test_from_networkx():
     x = torch.Tensor([[1, 2], [3, 4]])
+    new_x = torch.Tensor([[0, 3], [3, 4]])
     pos = torch.Tensor([[0, 0], [1, 1]])
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
     edge_attr = torch.Tensor([1, 2, 3])
+    new_edge_attr = torch.Tensor([0, 3, 4])
     data = Data(x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr)
-    G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['edge_attr'])
+    G = to_networkx(data, node_attrs=['x', 'pos', 'new_x'], edge_attrs=['edge_attr', 'new_edge_attr'])
 
-    data = from_networkx(G)
+    data = from_networkx(G, group_node_attrs=['new_x'], group_edge_attrs= all)
     assert len(data) == 4
     assert data.x.tolist() == x.tolist()
     assert data.pos.tolist() == pos.tolist()
