@@ -1,7 +1,7 @@
 import torch
 from ogb.utils.features import get_atom_feature_dims, get_bond_feature_dims
 
-from graphgym.contrib.encoder import * # noqa
+from graphgym.contrib.encoder import *  # noqa
 import graphgym.register as register
 
 # Used for the OGB Encoders
@@ -16,7 +16,6 @@ class IntegerFeatureEncoder(torch.nn.Module):
         Parameters:
         num_classes - the number of classes for the embedding mapping to learn
     """
-
     def __init__(self, emb_dim, num_classes=None):
         super(IntegerFeatureEncoder, self).__init__()
 
@@ -38,7 +37,6 @@ class SingleAtomEncoder(torch.nn.Module):
         Parameters:
         num_classes: Not used!
     """
-
     def __init__(self, emb_dim, num_classes=None):
         super(SingleAtomEncoder, self).__init__()
 
@@ -59,7 +57,6 @@ class AtomEncoder(torch.nn.Module):
         Parameters:
         num_classes: Not used!
     """
-
     def __init__(self, emb_dim, num_classes=None):
         super(AtomEncoder, self).__init__()
 
@@ -73,15 +70,13 @@ class AtomEncoder(torch.nn.Module):
     def forward(self, batch):
         encoded_features = 0
         for i in range(batch.x.shape[1]):
-            encoded_features += self.atom_embedding_list[i](
-                batch.x[:, i])
+            encoded_features += self.atom_embedding_list[i](batch.x[:, i])
 
         batch.x = encoded_features
         return batch
 
 
 class BondEncoder(torch.nn.Module):
-
     def __init__(self, emb_dim):
         super(BondEncoder, self).__init__()
 
@@ -110,8 +105,6 @@ node_encoder_dict = {
 
 node_encoder_dict = {**register.node_encoder_dict, **node_encoder_dict}
 
-edge_encoder_dict = {
-    'Bond': BondEncoder
-}
+edge_encoder_dict = {'Bond': BondEncoder}
 
 edge_encoder_dict = {**register.edge_encoder_dict, **edge_encoder_dict}

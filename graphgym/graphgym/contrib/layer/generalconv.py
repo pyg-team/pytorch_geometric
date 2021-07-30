@@ -12,7 +12,6 @@ from graphgym.config import cfg
 class GeneralConvLayer(MessagePassing):
     r"""General GNN layer
     """
-
     def __init__(self, in_channels, out_channels, improved=False, cached=False,
                  bias=True, **kwargs):
         super(GeneralConvLayer, self).__init__(aggr=cfg.gnn.agg, **kwargs)
@@ -47,7 +46,7 @@ class GeneralConvLayer(MessagePassing):
     def norm(edge_index, num_nodes, edge_weight=None, improved=False,
              dtype=None):
         if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1),), dtype=dtype,
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
         fill_value = 1 if not improved else 2
@@ -95,16 +94,16 @@ class GeneralConvLayer(MessagePassing):
         elif cfg.gnn.self_msg == 'concat':
             return x_msg + x_self
         else:
-            raise ValueError(
-                'self_msg {} not defined'.format(cfg.gnn.self_msg))
+            raise ValueError('self_msg {} not defined'.format(
+                cfg.gnn.self_msg))
 
     def message(self, x_j, norm, edge_feature):
         if edge_feature is None:
             return norm.view(-1, 1) * x_j if norm is not None else x_j
         else:
             return norm.view(-1, 1) * (
-                x_j + edge_feature) if norm is not None else (
-                x_j + edge_feature)
+                x_j + edge_feature) if norm is not None else (x_j +
+                                                              edge_feature)
 
     def update(self, aggr_out):
         if self.bias is not None:
@@ -119,7 +118,6 @@ class GeneralConvLayer(MessagePassing):
 class GeneralEdgeConvLayer(MessagePassing):
     r"""General GNN layer, with edge features
     """
-
     def __init__(self, in_channels, out_channels, improved=False, cached=False,
                  bias=True, **kwargs):
         super(GeneralEdgeConvLayer, self).__init__(aggr=cfg.gnn.agg, **kwargs)
@@ -156,7 +154,7 @@ class GeneralEdgeConvLayer(MessagePassing):
     def norm(edge_index, num_nodes, edge_weight=None, improved=False,
              dtype=None):
         if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1),), dtype=dtype,
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
         fill_value = 1 if not improved else 2

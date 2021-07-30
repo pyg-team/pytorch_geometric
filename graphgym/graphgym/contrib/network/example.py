@@ -29,8 +29,7 @@ class ExampleGNN(torch.nn.Module):
         elif model_type == "GraphSage":
             return pyg_nn.SAGEConv
         else:
-            raise ValueError(
-                "Model {} unavailable".format(model_type))
+            raise ValueError("Model {} unavailable".format(model_type))
 
     def forward(self, batch):
         x, edge_index, x_batch = \

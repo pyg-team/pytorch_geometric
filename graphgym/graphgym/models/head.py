@@ -9,13 +9,12 @@ from graphgym.config import cfg
 from graphgym.models.layer import MLP
 from graphgym.models.pooling import pooling_dict
 
-from graphgym.contrib.head import * # noqa
+from graphgym.contrib.head import *  # noqa
 import graphgym.register as register
 
 
 class GNNNodeHead(nn.Module):
     '''Head of GNN, node prediction'''
-
     def __init__(self, dim_in, dim_out):
         super(GNNNodeHead, self).__init__()
         self.layer_post_mp = MLP(dim_in, dim_out,
@@ -34,7 +33,6 @@ class GNNNodeHead(nn.Module):
 
 class GNNEdgeHead(nn.Module):
     '''Head of GNN, edge prediction'''
-
     def __init__(self, dim_in, dim_out):
         ''' Head of Edge and link prediction models.
 
@@ -93,7 +91,6 @@ class GNNGraphHead(nn.Module):
     The optional post_mp layer (specified by cfg.gnn.post_mp) is used
     to transform the pooled embedding using an MLP.
     '''
-
     def __init__(self, dim_in, dim_out):
         super(GNNGraphHead, self).__init__()
         # todo: PostMP before or after global pooling

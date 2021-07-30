@@ -7,9 +7,9 @@ from torch_geometric.nn.inits import glorot, zeros
 from graphgym.config import cfg
 from graphgym.register import register_layer
 
-
 # Note: A registered GNN layer should take 'batch' as input
 # and 'batch' as output
+
 
 # Example 1: Directly define a GraphGym format Conv
 # take 'batch' as input and 'batch' as output
@@ -17,7 +17,6 @@ class ExampleConv1(MessagePassing):
     r"""Example GNN layer
 
     """
-
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
         super(ExampleConv1, self).__init__(aggr=cfg.gnn.agg, **kwargs)
 
@@ -69,7 +68,6 @@ class ExampleConv2Layer(MessagePassing):
     r"""Example GNN layer
 
     """
-
     def __init__(self, in_channels, out_channels, bias=True, **kwargs):
         super(ExampleConv2Layer, self).__init__(aggr=cfg.gnn.agg, **kwargs)
 

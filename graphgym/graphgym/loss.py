@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from graphgym.contrib.loss import * # noqa
+from graphgym.contrib.loss import *  # noqa
 import graphgym.register as register
 from graphgym.config import cfg
 
@@ -44,5 +44,5 @@ def compute_loss(pred, true):
         true = true.float()
         return mse_loss(pred, true), pred
     else:
-        raise ValueError('Loss func {} not supported'.
-                         format(cfg.model.loss_fun))
+        raise ValueError('Loss func {} not supported'.format(
+            cfg.model.loss_fun))

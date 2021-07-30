@@ -1,4 +1,4 @@
-from torch_geometric.datasets import * # noqa
+from torch_geometric.datasets import *  # noqa
 from torch_geometric.datasets import QM7b
 
 from graphgym.register import register_loader

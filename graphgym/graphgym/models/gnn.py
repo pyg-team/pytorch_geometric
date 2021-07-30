@@ -10,7 +10,7 @@ from graphgym.init import init_weights
 from graphgym.models.encoder import node_encoder_dict, \
     edge_encoder_dict
 
-from graphgym.contrib.stage import * # noqa
+from graphgym.contrib.stage import *  # noqa
 import graphgym.register as register
 
 
@@ -19,13 +19,12 @@ def GNNLayer(dim_in, dim_out, has_act=True):
 
 
 def GNNPreMP(dim_in, dim_out):
-    return GeneralMultiLayer('linear', cfg.gnn.layers_pre_mp, dim_in,
-                             dim_out, dim_inner=dim_out, final_act=True)
+    return GeneralMultiLayer('linear', cfg.gnn.layers_pre_mp, dim_in, dim_out,
+                             dim_inner=dim_out, final_act=True)
 
 
 class GNNStackStage(nn.Module):
     '''Simple Stage that stack GNN layers'''
-
     def __init__(self, dim_in, dim_out, num_layers):
         super(GNNStackStage, self).__init__()
         self.num_layers = num_layers
@@ -62,7 +61,6 @@ stage_dict = {**register.stage_dict, **stage_dict}
 
 class FeatureEncoder(nn.Module):
     '''Encoding node/edge features'''
-
     def __init__(self, dim_in):
         super(FeatureEncoder, self).__init__()
         self.dim_in = dim_in
@@ -89,7 +87,6 @@ class FeatureEncoder(nn.Module):
 
 class GNN(nn.Module):
     '''General GNN model: encoder + stage + head'''
-
     def __init__(self, dim_in, dim_out, **kwargs):
         super(GNN, self).__init__()
         GNNStage = stage_dict[cfg.gnn.stage_type]
@@ -102,8 +99,7 @@ class GNN(nn.Module):
             self.pre_mp = GNNPreMP(dim_in, cfg.gnn.dim_inner)
             dim_in = cfg.gnn.dim_inner
         if cfg.gnn.layers_mp > 0:
-            self.mp = GNNStage(dim_in=dim_in,
-                               dim_out=cfg.gnn.dim_inner,
+            self.mp = GNNStage(dim_in=dim_in, dim_out=cfg.gnn.dim_inner,
                                num_layers=cfg.gnn.layers_mp)
         self.post_mp = GNNHead(dim_in=cfg.gnn.dim_inner, dim_out=dim_out)
 

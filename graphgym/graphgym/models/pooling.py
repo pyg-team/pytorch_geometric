@@ -2,7 +2,7 @@ import torch
 from torch_scatter import scatter
 from graphgym.config import cfg
 
-from graphgym.contrib.pooling import * # noqa
+from graphgym.contrib.pooling import *  # noqa
 import graphgym.register as register
 
 

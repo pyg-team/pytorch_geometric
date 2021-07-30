@@ -91,8 +91,10 @@ def agg_runs(dir, metric_best='auto'):
                     dir_split = os.path.join(dir_seed, split)
                     fname_stats = os.path.join(dir_split, 'stats.json')
                     stats_list = json_to_dict_list(fname_stats)
-                    stats_best = [stats for stats in stats_list if
-                                  stats['epoch'] == best_epoch][0]
+                    stats_best = [
+                        stats for stats in stats_list
+                        if stats['epoch'] == best_epoch
+                    ][0]
                     print(stats_best)
                     stats_list = [[stats] for stats in stats_list]
                     if results[split] is None:
@@ -104,8 +106,9 @@ def agg_runs(dir, metric_best='auto'):
                     else:
                         results_best[split] += [stats_best]
     results = {k: v for k, v in results.items() if v is not None}  # rm None
-    results_best = {k: v for k, v in results_best.items() if
-                    v is not None}  # rm None
+    results_best = {k: v
+                    for k, v in results_best.items()
+                    if v is not None}  # rm None
     for key in results:
         for i in range(len(results[key])):
             results[key][i] = agg_dict_list(results[key][i])
@@ -151,9 +154,8 @@ def agg_batch(dir, metric_best='auto'):
     for key in results:
         if len(results[key]) > 0:
             results[key] = pd.DataFrame(results[key])
-            results[key] = results[key].sort_values(list(dict_name.keys()),
-                                                    ascending=[True] * len(
-                                                        dict_name))
+            results[key] = results[key].sort_values(
+                list(dict_name.keys()), ascending=[True] * len(dict_name))
             fname = os.path.join(dir_out, '{}_best.csv'.format(key))
             results[key].to_csv(fname, index=False)
 
@@ -175,9 +177,8 @@ def agg_batch(dir, metric_best='auto'):
     for key in results:
         if len(results[key]) > 0:
             results[key] = pd.DataFrame(results[key])
-            results[key] = results[key].sort_values(list(dict_name.keys()),
-                                                    ascending=[True] * len(
-                                                        dict_name))
+            results[key] = results[key].sort_values(
+                list(dict_name.keys()), ascending=[True] * len(dict_name))
             fname = os.path.join(dir_out, '{}.csv'.format(key))
             results[key].to_csv(fname, index=False)
 
@@ -199,8 +200,8 @@ def agg_batch(dir, metric_best='auto'):
                         metric = metric_best
                     performance_np = np.array(  # noqa
                         [stats[metric] for stats in dict_stats])
-                    dict_stats = dict_stats[
-                        eval("performance_np.{}()".format(cfg.metric_agg))]
+                    dict_stats = dict_stats[eval("performance_np.{}()".format(
+                        cfg.metric_agg))]
                     rm_keys(dict_stats,
                             ['lr', 'lr_std', 'eta', 'eta_std', 'params_std'])
                     results[split].append({**dict_name, **dict_stats})
@@ -208,9 +209,8 @@ def agg_batch(dir, metric_best='auto'):
     for key in results:
         if len(results[key]) > 0:
             results[key] = pd.DataFrame(results[key])
-            results[key] = results[key].sort_values(list(dict_name.keys()),
-                                                    ascending=[True] * len(
-                                                        dict_name))
+            results[key] = results[key].sort_values(
+                list(dict_name.keys()), ascending=[True] * len(dict_name))
             fname = os.path.join(dir_out, '{}_bestepoch.csv'.format(key))
             results[key].to_csv(fname, index=False)
 

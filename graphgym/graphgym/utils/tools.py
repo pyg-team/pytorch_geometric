@@ -1,5 +1,4 @@
 class dummy_context():
-
     def __enter__(self):
         return None
 

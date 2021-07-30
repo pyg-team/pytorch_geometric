@@ -92,8 +92,9 @@ def load_ogb(name, dataset_dir):
     elif name[:4] == 'ogbg':
         dataset = PygGraphPropPredDataset(name=name, root=dataset_dir)
         splits = dataset.get_idx_split()
-        split_names = ['train_graph_index', 'val_graph_index',
-                       'test_graph_index']
+        split_names = [
+            'train_graph_index', 'val_graph_index', 'test_graph_index'
+        ]
         for i, key in enumerate(splits.keys()):
             id = splits[key]
             set_dataset_attr(dataset, split_names[i], id, len(id))
@@ -204,12 +205,10 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
                                   shuffle=shuffle, num_workers=cfg.num_workers,
                                   pin_memory=True)
     elif sampler == "neighbor":
-        loader_train = NeighborSampler(dataset[0],
-                                       sizes=cfg.train.neighbor_sizes[
-                                       :cfg.gnn.layers_mp],
-                                       batch_size=batch_size, shuffle=shuffle,
-                                       num_workers=cfg.num_workers,
-                                       pin_memory=True)
+        loader_train = NeighborSampler(
+            dataset[0], sizes=cfg.train.neighbor_sizes[:cfg.gnn.layers_mp],
+            batch_size=batch_size, shuffle=shuffle,
+            num_workers=cfg.num_workers, pin_memory=True)
     elif sampler == "random_node":
         loader_train = RandomNodeSampler(dataset[0],
                                          num_parts=cfg.train.train_parts,
@@ -263,11 +262,14 @@ def create_loader():
         id = dataset.data['train_graph_index']
         loaders = [
             get_loader(dataset[id], cfg.train.sampler, cfg.train.batch_size,
-                       shuffle=True)]
+                       shuffle=True)
+        ]
         delattr(dataset.data, 'train_graph_index')
     else:
-        loaders = [get_loader(dataset, cfg.train.sampler, cfg.train.batch_size,
-                              shuffle=True)]
+        loaders = [
+            get_loader(dataset, cfg.train.sampler, cfg.train.batch_size,
+                       shuffle=True)
+        ]
 
     # val and test loaders
     for i in range(cfg.share.num_splits - 1):

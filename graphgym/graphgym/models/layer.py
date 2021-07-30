@@ -8,28 +8,27 @@ from graphgym.models.act import act_dict
 from graphgym.contrib.layer.generalconv import (GeneralConvLayer,
                                                 GeneralEdgeConvLayer)
 
-from graphgym.contrib.layer import * # noqa
+from graphgym.contrib.layer import *  # noqa
 import graphgym.register as register
 
 
 # General classes
 class GeneralLayer(nn.Module):
     '''General wrapper for layers'''
-
     def __init__(self, name, dim_in, dim_out, has_act=True, has_bn=True,
                  has_l2norm=False, **kwargs):
         super(GeneralLayer, self).__init__()
         self.has_l2norm = has_l2norm
         has_bn = has_bn and cfg.gnn.batchnorm
-        self.layer = layer_dict[name](dim_in, dim_out,
-                                      bias=not has_bn, **kwargs)
+        self.layer = layer_dict[name](dim_in, dim_out, bias=not has_bn,
+                                      **kwargs)
         layer_wrapper = []
         if has_bn:
-            layer_wrapper.append(nn.BatchNorm1d(
-                dim_out, eps=cfg.bn.eps, momentum=cfg.bn.mom))
+            layer_wrapper.append(
+                nn.BatchNorm1d(dim_out, eps=cfg.bn.eps, momentum=cfg.bn.mom))
         if cfg.gnn.dropout > 0:
-            layer_wrapper.append(nn.Dropout(
-                p=cfg.gnn.dropout, inplace=cfg.mem.inplace))
+            layer_wrapper.append(
+                nn.Dropout(p=cfg.gnn.dropout, inplace=cfg.mem.inplace))
         if has_act:
             layer_wrapper.append(act_dict[cfg.gnn.act])
         self.post_layer = nn.Sequential(*layer_wrapper)
@@ -49,7 +48,6 @@ class GeneralLayer(nn.Module):
 
 class GeneralMultiLayer(nn.Module):
     '''General wrapper for stack of layers'''
-
     def __init__(self, name, num_layers, dim_in, dim_out, dim_inner=None,
                  final_act=True, **kwargs):
         super(GeneralMultiLayer, self).__init__()
@@ -84,7 +82,6 @@ class Linear(nn.Module):
 
 class BatchNorm1dNode(nn.Module):
     '''General wrapper for layers'''
-
     def __init__(self, dim_in):
         super(BatchNorm1dNode, self).__init__()
         self.bn = nn.BatchNorm1d(dim_in, eps=cfg.bn.eps, momentum=cfg.bn.mom)
@@ -96,7 +93,6 @@ class BatchNorm1dNode(nn.Module):
 
 class BatchNorm1dEdge(nn.Module):
     '''General wrapper for layers'''
-
     def __init__(self, dim_in):
         super(BatchNorm1dEdge, self).__init__()
         self.bn = nn.BatchNorm1d(dim_in, eps=cfg.bn.eps, momentum=cfg.bn.mom)
@@ -177,12 +173,11 @@ class GINConv(nn.Module):
 class SplineConv(nn.Module):
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(SplineConv, self).__init__()
-        self.model = pyg.nn.SplineConv(dim_in, dim_out,
-                                       dim=1, kernel_size=2, bias=bias)
+        self.model = pyg.nn.SplineConv(dim_in, dim_out, dim=1, kernel_size=2,
+                                       bias=bias)
 
     def forward(self, batch):
-        batch.x = self.model(batch.x, batch.edge_index,
-                             batch.edge_attr)
+        batch.x = self.model(batch.x, batch.edge_index, batch.edge_attr)
         return batch
 
 
@@ -216,8 +211,7 @@ class GeneralSampleEdgeConv(nn.Module):
         edge_mask = torch.rand(batch.edge_index.shape[1]) < cfg.gnn.keep_edge
         edge_index = batch.edge_index[:, edge_mask]
         edge_feature = batch.edge_attr[edge_mask, :]
-        batch.x = self.model(batch.x, edge_index,
-                             edge_feature=edge_feature)
+        batch.x = self.model(batch.x, edge_index, edge_feature=edge_feature)
         return batch
 
 

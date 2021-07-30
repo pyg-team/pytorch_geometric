@@ -1,6 +1,5 @@
 import torch
-from graphgym.register import (register_node_encoder,
-                               register_edge_encoder)
+from graphgym.register import (register_node_encoder, register_edge_encoder)
 
 from ogb.utils.features import get_bond_feature_dims
 
@@ -12,7 +11,6 @@ class ExampleNodeEncoder(torch.nn.Module):
         Parameters:
         num_classes - the number of classes for the embedding mapping to learn
     """
-
     def __init__(self, emb_dim, num_classes=None):
         super(ExampleNodeEncoder, self).__init__()
 
@@ -30,7 +28,6 @@ register_node_encoder('example', ExampleNodeEncoder)
 
 
 class ExampleEdgeEncoder(torch.nn.Module):
-
     def __init__(self, emb_dim):
         super(ExampleEdgeEncoder, self).__init__()
 

@@ -63,11 +63,12 @@ class Logger(object):
 
     # basic properties
     def basic(self):
-        stats = {'loss': round(self._loss / self._size_current, cfg.round),
-                 'lr': round(self._lr, cfg.round),
-                 'params': self._params,
-                 'time_iter': round(self.time_iter(), cfg.round),
-                 }
+        stats = {
+            'loss': round(self._loss / self._size_current, cfg.round),
+            'lr': round(self._lr, cfg.round),
+            'params': self._params,
+            'time_iter': round(self.time_iter(), cfg.round),
+        }
         gpu_memory = get_current_gpu_usage()
         if gpu_memory > 0:
             stats['gpu_memory'] = gpu_memory
@@ -92,12 +93,13 @@ class Logger(object):
     def classification_binary(self):
         true, pred_score = torch.cat(self._true), torch.cat(self._pred)
         pred_int = self._get_pred_int(pred_score)
-        return {'accuracy': round(accuracy_score(true, pred_int), cfg.round),
-                'precision': round(precision_score(true, pred_int), cfg.round),
-                'recall': round(recall_score(true, pred_int), cfg.round),
-                'f1': round(f1_score(true, pred_int), cfg.round),
-                'auc': round(roc_auc_score(true, pred_score), cfg.round),
-                }
+        return {
+            'accuracy': round(accuracy_score(true, pred_int), cfg.round),
+            'precision': round(precision_score(true, pred_int), cfg.round),
+            'recall': round(recall_score(true, pred_int), cfg.round),
+            'f1': round(f1_score(true, pred_int), cfg.round),
+            'auc': round(roc_auc_score(true, pred_score), cfg.round),
+        }
 
     def classification_multi(self):
         true, pred_score = torch.cat(self._true), torch.cat(self._pred)
@@ -107,10 +109,12 @@ class Logger(object):
     def regression(self):
         true, pred = torch.cat(self._true), torch.cat(self._pred)
         return {
-            'mae': float(round(mean_absolute_error(true, pred), cfg.round)),
-            'mse': float(round(mean_squared_error(true, pred), cfg.round)),
-            'rmse': float(
-                round(math.sqrt(mean_squared_error(true, pred)), cfg.round))
+            'mae':
+            float(round(mean_absolute_error(true, pred), cfg.round)),
+            'mse':
+            float(round(mean_squared_error(true, pred), cfg.round)),
+            'rmse':
+            float(round(math.sqrt(mean_squared_error(true, pred)), cfg.round))
         }
 
     def time_iter(self):
@@ -159,11 +163,20 @@ class Logger(object):
         custom_stats = self.custom()
 
         if self.name == 'train':
-            stats = {**epoch_stats, **eta_stats, **basic_stats, **task_stats,
-                     **custom_stats}
+            stats = {
+                **epoch_stats,
+                **eta_stats,
+                **basic_stats,
+                **task_stats,
+                **custom_stats
+            }
         else:
-            stats = {**epoch_stats, **basic_stats, **task_stats,
-                     **custom_stats}
+            stats = {
+                **epoch_stats,
+                **basic_stats,
+                **task_stats,
+                **custom_stats
+            }
 
         # print
         logging.info('{}: {}'.format(self.name, stats))
