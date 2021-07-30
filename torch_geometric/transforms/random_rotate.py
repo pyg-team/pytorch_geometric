@@ -4,9 +4,10 @@ import math
 
 import torch
 from torch_geometric.transforms import LinearTransformation
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class RandomRotate(object):
+class RandomRotate(BaseTransform):
     r"""Rotates node positions around a specific axis by a randomly sampled
     factor within a given interval.
 

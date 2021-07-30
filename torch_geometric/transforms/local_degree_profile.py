@@ -1,9 +1,10 @@
 import torch
 from torch_scatter import scatter_min, scatter_max, scatter_mean, scatter_std
 from torch_geometric.utils import degree
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class LocalDegreeProfile(object):
+class LocalDegreeProfile(BaseTransform):
     r"""Appends the Local Degree Profile (LDP) from the `"A Simple yet
     Effective Baseline for Non-attribute Graph Classification"
     <https://arxiv.org/abs/1811.03508>`_ paper

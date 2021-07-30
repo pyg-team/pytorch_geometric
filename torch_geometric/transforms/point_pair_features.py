@@ -1,8 +1,9 @@
 import torch
 import torch_geometric
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class PointPairFeatures(object):
+class PointPairFeatures(BaseTransform):
     r"""Computes the rotation-invariant Point Pair Features
 
     .. math::

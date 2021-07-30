@@ -1,7 +1,8 @@
 from typing import List, Callable
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class Compose(object):
+class Compose(BaseTransform):
     """Composes several transforms together.
 
     Args:

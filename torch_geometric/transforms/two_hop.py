@@ -2,9 +2,10 @@ import torch
 from torch_sparse import spspmm, coalesce
 
 from torch_geometric.utils import remove_self_loops
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class TwoHop(object):
+class TwoHop(BaseTransform):
     r"""Adds the two hop edges to the edge indices."""
     def __call__(self, data):
         edge_index, edge_attr = data.edge_index, data.edge_attr

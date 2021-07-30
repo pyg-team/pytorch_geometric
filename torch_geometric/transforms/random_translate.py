@@ -2,9 +2,10 @@ import numbers
 from itertools import repeat
 
 import torch
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class RandomTranslate(object):
+class RandomTranslate(BaseTransform):
     r"""Translates node positions by randomly sampled translation values
     within a given interval. In contrast to other random transformations,
     translation is applied separately at each position.

@@ -1,8 +1,9 @@
 import torch
 import torch.nn.functional as F
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class NormalizeRotation(object):
+class NormalizeRotation(BaseTransform):
     r"""Rotates all points according to the eigenvectors of the point cloud.
     If the data additionally holds normals saved in :obj:`data.normal`, these
     will be rotated accordingly.

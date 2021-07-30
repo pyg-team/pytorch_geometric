@@ -1,7 +1,8 @@
 from torch_sparse import SparseTensor
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class ToSparseTensor(object):
+class ToSparseTensor(BaseTransform):
     r"""Converts the :obj:`edge_index` attribute of a data object into a
     (transposed) :class:`torch_sparse.SparseTensor` type with key
     :obj:`adj_.t`.

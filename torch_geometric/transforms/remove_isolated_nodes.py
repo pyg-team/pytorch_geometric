@@ -2,9 +2,10 @@ import re
 
 import torch
 from torch_geometric.utils import remove_isolated_nodes
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class RemoveIsolatedNodes(object):
+class RemoveIsolatedNodes(BaseTransform):
     r"""Removes isolated nodes from the graph."""
     def __call__(self, data):
         num_nodes = data.num_nodes

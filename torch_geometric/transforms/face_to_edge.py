@@ -1,8 +1,9 @@
 import torch
 from torch_geometric.utils import to_undirected
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class FaceToEdge(object):
+class FaceToEdge(BaseTransform):
     r"""Converts mesh faces :obj:`[3, num_faces]` to edge indices
     :obj:`[2, num_edges]`.
 

@@ -1,8 +1,9 @@
 import torch_geometric
 from torch_geometric.utils import to_undirected
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class KNNGraph(object):
+class KNNGraph(BaseTransform):
     r"""Creates a k-NN graph based on node positions :obj:`pos`.
 
     Args:
