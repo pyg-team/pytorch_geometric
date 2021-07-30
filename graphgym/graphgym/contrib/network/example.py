@@ -15,7 +15,7 @@ class ExampleGNN(torch.nn.Module):
         self.convs = nn.ModuleList()
         self.convs.append(conv_model(dim_in, dim_in))
 
-        for l in range(num_layers - 1):
+        for _ in range(num_layers - 1):
             self.convs.append(conv_model(dim_in, dim_in))
 
         GNNHead = head_dict[cfg.dataset.task]
