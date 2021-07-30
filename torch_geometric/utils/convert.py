@@ -123,8 +123,7 @@ def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: 
     edge_index = torch.LongTensor(list(G.edges)).t().contiguous()
 
     data = {}
-
-    _, feat_dict = G.nodes(data=True)[0]
+    _, feat_dict = list(G.nodes(data=True))[0]
     node_attributes = feat_dict.keys()
     if group_node_attrs is all:
         group_node_attrs = node_attributes
@@ -134,7 +133,7 @@ def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: 
         for key, value in feat_dict.items():
             data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
 
-    _, _, feat_dict = G.edges(data=True)[0]
+    _, _, feat_dict = list(G.edges(data=True))[0]
     edge_attributes = feat_dict.keys()
     if group_edge_attrs is all:
         group_edge_attrs = edge_attributes
@@ -150,23 +149,24 @@ def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: 
         except ValueError:
             pass
     
-    if not group_node_attrs:
-        if not data['x']:
-            data['x'] = torch.cat([data[key] for key in group_node_attrs], dim=-1)
-        else:
+    if group_node_attrs:
+        if data['x'] is not None:
             data['x'] = torch.cat([data['x']] + [data[key] for key in group_node_attrs], dim=-1)
-
-    if not group_edge_attrs:
-        if not data['edge_attr']:
-            data['edge_attr'] = torch.cat([data[key] for key in group_node_attrs], dim=-1)
         else:
-            data['edge_attr'] = torch.cat([data['edge_attr']] + [data[key] for key in group_edge_attrs], dim=-1)
+            data['x'] = torch.cat([data[key] for key in group_node_attrs], dim=-1)
 
+    if group_edge_attrs:
+        if data['edge_attr'] is not None:
+            data['edge_attr'] = torch.cat([data['edge_attr']] + [data[key] for key in group_edge_attrs], dim=-1)
+        else:
+            data['edge_attr'] = torch.cat([data[key] for key in group_node_attrs], dim=-1)
+    
     data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)
     data.num_nodes = G.number_of_nodes()
 
     return data
+
 
 
 def to_trimesh(data):

@@ -93,14 +93,12 @@ def test_from_networkx():
     new_edge_attr = torch.Tensor([0, 3, 4])
     data = Data(x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr, new_x=new_x, new_edge_attr=new_edge_attr)
     G = to_networkx(data, node_attrs=['x', 'pos', 'new_x'], edge_attrs=['edge_attr', 'new_edge_attr'])
-
-    data = from_networkx(G, None, None)
-    assert len(data) == 4
-    assert data.x.tolist() == x.tolist()
+    data = from_networkx(G, group_node_attrs=['new_x'], group_edge_attrs=all)
+    assert len(data) == 6
+    assert data.x.tolist() == torch.cat([x,new_x],dim=-1).tolist()
     assert data.pos.tolist() == pos.tolist()
-    edge_index, edge_attr = coalesce(data.edge_index, data.edge_attr, 2, 2)
-    assert edge_index.tolist() == [[0, 0, 1], [0, 1, 0]]
-    assert edge_attr.tolist() == [3, 1, 2]
+    assert data.edge_index.tolist() == [[0, 0, 1], [1, 0, 0]]
+    assert data.edge_attr.tolist() == [[3, 1, 2], [0, 4, 3]]
 
 
 def test_networkx_vice_versa_convert():
@@ -188,3 +186,8 @@ def test_trimesh():
 
     assert pos.tolist() == data.pos.tolist()
     assert face.tolist() == data.face.tolist()
+
+def __main__():
+    test_from_networkx()
+
+__main__()
