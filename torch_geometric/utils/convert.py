@@ -158,9 +158,12 @@ def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: 
 
     if group_edge_attrs:
         if data['edge_attr'] is not None:
-            data['edge_attr'] = torch.cat([data['edge_attr']] + [data[key] for key in group_edge_attrs], dim=-1)
+            for key in group_edge_attrs: #adding a new dimension to each edge attribute used in edge_attr
+                if len(data[key].size()) == 1:
+                    data[key] = data[key].view(1, -1)
+            data['edge_attr'] = torch.cat([data['edge_attr']] + [data[key] for key in group_edge_attrs if key is not 'edge_attr'], dim=0)
         else:
-            data['edge_attr'] = torch.cat([data[key] for key in group_node_attrs], dim=-1)
+            data['edge_attr'] = torch.cat([data[key] for key in group_node_attrs], dim=0)
     
     data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)

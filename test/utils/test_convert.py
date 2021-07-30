@@ -98,7 +98,8 @@ def test_from_networkx():
     assert data.x.tolist() == torch.cat([x,new_x],dim=-1).tolist()
     assert data.pos.tolist() == pos.tolist()
     assert data.edge_index.tolist() == [[0, 0, 1], [1, 0, 0]]
-    assert data.edge_attr.tolist() == [[3, 1, 2], [0, 4, 3]]
+    print(data.edge_attr.tolist())
+    assert data.edge_attr.tolist() == [[1, 3, 2], [0, 4, 3]]
 
 
 def test_networkx_vice_versa_convert():
