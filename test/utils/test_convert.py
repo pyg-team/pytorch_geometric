@@ -186,8 +186,3 @@ def test_trimesh():
 
     assert pos.tolist() == data.pos.tolist()
     assert face.tolist() == data.face.tolist()
-
-def __main__():
-    test_from_networkx()
-
-__main__()
