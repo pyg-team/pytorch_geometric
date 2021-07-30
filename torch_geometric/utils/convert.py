@@ -1,5 +1,4 @@
 from typing import Optional, Tuple, List
-from numbers import Number
 
 import torch
 import scipy.sparse
@@ -106,16 +105,16 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
     return G
 
 
-def from_networkx(G, group_node_attrs: List[Number] or all=None, group_edge_attrs: List[Number] or all=None):
+def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: List[str] or all=None):
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
     Args:
         G (networkx.Graph or networkx.DiGraph): A networkx graph.
-        group_node_attrs (List[int or float or complex] or all, optional): The node attributes to be appended to data.x
-        group_edge_attrs (List[int or float or complex] or all, optional): The edge attributes to be appended to data.edge_attr
+        group_node_attrs (List[str] or all, optional): The node attributes to be appended to data.x
+        group_edge_attrs (List[str] or all, optional): The edge attributes to be appended to data.edge_attr
     
-    Note: all group_node_attrs and group_edge_attrs must be numeric if passed as a list.
+    Note: all group_node_attrs and group_edge_attrs values must be numeric if passed as a list.
     """
     import networkx as nx
 
