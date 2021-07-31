@@ -1,5 +1,5 @@
-from typing import Optional, Callable, Union, Tuple
-from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor, Adj
+from typing import Optional, Callable, Tuple
+from torch_geometric.typing import OptTensor, Adj
 
 import torch
 from torch import Tensor
@@ -93,43 +93,35 @@ class EquivariantConv(MessagePassing):
         reset(self.vel_nn)
         reset(self.global_nn)
 
-    def forward(
-        self, x: Union[OptTensor, PairOptTensor], pos: Union[Tensor,
-                                                             PairTensor],
-        edge_index: Adj, vel: OptTensor = None, edge_attr: OptTensor = None
-    ) -> Tuple[Tensor, Tuple[Tensor, OptTensor]]:
+    def forward(self, x: OptTensor,
+                pos: Tensor,
+                edge_index: Adj, vel: OptTensor = None,
+                edge_attr: OptTensor = None
+                ) -> Tuple[Tensor, Tuple[Tensor, OptTensor]]:
         """"""
-        if not isinstance(x, Tuple):
-            x: PairTensor = (x, x)
-
-        if isinstance(pos, Tensor):
-            pos: PairTensor = (pos, pos)
-
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index,
-                                               num_nodes=pos[1].size(0))
+                                               num_nodes=pos.size(0))
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
-        # propagate_type: (x: PairOptTensor, pos: PairTensor, edge_attr: OptTensor) -> Tuple[Tensor,Tensor] # noqa
+        # propagate_type: (x: OptTensor, pos: Tensor, edge_attr: OptTensor) -> Tuple[Tensor,Tensor] # noqa
         out_x, out_pos = self.propagate(edge_index, x=x, pos=pos,
                                         edge_attr=edge_attr, size=None)
 
-        out_x = out_x if x[1] is None else torch.cat([x[1], out_x], dim=1)
+        out_x = out_x if x is None else torch.cat([x, out_x], dim=1)
         if self.global_nn is not None:
             out_x = self.global_nn(out_x)
 
         if vel is None:
-            out_pos += pos[1]
+            out_pos += pos
             out_vel = None
         else:
-            if isinstance(vel, Tensor):
-                vel: PairTensor = (vel, vel)
-            out_vel = (vel[1] if self.vel_nn is None or x[1] is None else
-                       vel[1] * self.vel_nn(x[1])) + out_pos
-            out_pos = pos[1] + out_vel
+            out_vel = (vel if self.vel_nn is None or x is None else
+                       self.vel_nn(x) * vel) + out_pos
+            out_pos = pos + out_vel
 
         return (out_x, (out_pos, out_vel))
 
