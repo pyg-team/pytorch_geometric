@@ -14,7 +14,7 @@ from ..inits import reset
 class EquivariantConv(MessagePassing):
     r"""The Equivariant graph neural network operator form the
     `"E(n) Equivariant Graph Neural Networks"
-    <https://arxiv.org/pdf/2102.09844.pdf>`_ paper
+    <https://arxiv.org/pdf/2102.09844.pdf>`_ paper.
 
     .. math::
         \mathbf{m}_{ij}=h_{\mathbf{\Theta}}(\mathbf{x}_i,\mathbf{x}_j,\|
