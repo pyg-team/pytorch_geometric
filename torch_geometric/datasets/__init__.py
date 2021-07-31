@@ -14,9 +14,11 @@ from .yelp import Yelp
 from .amazon_products import AmazonProducts
 from .qm7 import QM7b
 from .qm9 import QM9
+from .md17 import MD17
 from .zinc import ZINC
 from .molecule_net import MoleculeNet
 from .entities import Entities
+from .rel_link_pred_dataset import RelLinkPredDataset
 from .ged_dataset import GEDDataset
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
@@ -73,9 +75,11 @@ __all__ = [
     'AmazonProducts',
     'QM7b',
     'QM9',
+    'MD17',
     'ZINC',
     'MoleculeNet',
     'Entities',
+    'RelLinkPredDataset',
     'GEDDataset',
     'MNISTSuperpixels',
     'FAUST',

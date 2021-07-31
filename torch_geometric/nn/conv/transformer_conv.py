@@ -6,6 +6,7 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Linear
+from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import softmax
 
@@ -137,14 +138,27 @@ class TransformerConv(MessagePassing):
             self.lin_beta.reset_parameters()
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                edge_attr: OptTensor = None):
-        """"""
+                edge_attr: OptTensor = None, return_attention_weights=None):
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+        r"""
+        Args:
+            return_attention_weights (bool, optional): If set to :obj:`True`,
+                will additionally return the tuple
+                :obj:`(edge_index, attention_weights)`, holding the computed
+                attention weights for each edge. (default: :obj:`None`)
+        """
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
+
+        alpha = self._alpha
+        self._alpha = None
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -160,7 +174,14 @@ class TransformerConv(MessagePassing):
             else:
                 out += x_r
 
-        return out
+        if isinstance(return_attention_weights, bool):
+            assert alpha is not None
+            if isinstance(edge_index, Tensor):
+                return out, (edge_index, alpha)
+            elif isinstance(edge_index, SparseTensor):
+                return out, edge_index.set_value(alpha, layout='coo')
+        else:
+            return out
 
     def message(self, x_i: Tensor, x_j: Tensor, edge_attr: OptTensor,
                 index: Tensor, ptr: OptTensor,
@@ -177,6 +198,7 @@ class TransformerConv(MessagePassing):
 
         alpha = (query * key).sum(dim=-1) / math.sqrt(self.out_channels)
         alpha = softmax(alpha, index, ptr, size_i)
+        self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
         out = self.lin_value(x_j).view(-1, self.heads, self.out_channels)

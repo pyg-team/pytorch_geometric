@@ -1,6 +1,4 @@
 import scipy.sparse
-from sklearn.decomposition import TruncatedSVD
-from sklearn.metrics import roc_auc_score, f1_score
 import torch
 import torch.nn.functional as F
 from torch_sparse import coalesce
@@ -25,7 +23,6 @@ class SignedGCN(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
-
     def __init__(self, in_channels, hidden_channels, num_layers, lamb=5,
                  bias=True):
         super(SignedGCN, self).__init__()
@@ -81,6 +78,7 @@ class SignedGCN(torch.nn.Module):
                 :obj:`max_val + 1` of :attr:`pos_edge_index` and
                 :attr:`neg_edge_index`. (default: :obj:`None`)
         """
+        from sklearn.decomposition import TruncatedSVD
 
         edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=1)
         N = edge_index.max().item() + 1 if num_nodes is None else num_nodes
@@ -208,6 +206,8 @@ class SignedGCN(torch.nn.Module):
             pos_edge_index (LongTensor): The positive edge indices.
             neg_edge_index (LongTensor): The negative edge indices.
         """
+        from sklearn.metrics import roc_auc_score, f1_score
+
         with torch.no_grad():
             pos_p = self.discriminate(z, pos_edge_index)[:, :2].max(dim=1)[1]
             neg_p = self.discriminate(z, neg_edge_index)[:, :2].max(dim=1)[1]

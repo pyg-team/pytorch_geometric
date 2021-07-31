@@ -4,10 +4,8 @@ import os
 import os.path as osp
 from collections import Counter
 
-import gzip
-import pandas as pd
-import numpy as np
 import torch
+import numpy as np
 
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
                                   extract_tar)
@@ -78,6 +76,8 @@ class Entities(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
+        import gzip
+        import pandas as pd
         import rdflib as rdf
 
         graph_file, task_file, train_file, test_file = self.raw_paths

@@ -1,12 +1,12 @@
-from copy import copy
-from math import sqrt
 from typing import Optional
+
+from math import sqrt
+from inspect import signature
 
 import torch
 from tqdm import tqdm
-import networkx as nx
-from torch_geometric.nn import MessagePassing
 from torch_geometric.data import Data
+from torch_geometric.nn import MessagePassing
 from torch_geometric.utils import k_hop_subgraph, to_networkx
 
 EPS = 1e-15
@@ -287,7 +287,9 @@ class GNNExplainer(torch.nn.Module):
 
         :rtype: :class:`matplotlib.axes.Axes`, :class:`networkx.DiGraph`
         """
+        import networkx as nx
         import matplotlib.pyplot as plt
+
         assert edge_mask.size(0) == edge_index.size(1)
 
         if node_idx == -1:
@@ -320,11 +322,13 @@ class GNNExplainer(torch.nn.Module):
         mapping = {k: i for k, i in enumerate(subset.tolist())}
         G = nx.relabel_nodes(G, mapping)
 
-        node_kwargs = copy(kwargs)
+        node_args = set(signature(nx.draw_networkx_nodes).parameters.keys())
+        node_kwargs = {k: v for k, v in kwargs.items() if k in node_args}
         node_kwargs['node_size'] = kwargs.get('node_size') or 800
         node_kwargs['cmap'] = kwargs.get('cmap') or 'cool'
 
-        label_kwargs = copy(kwargs)
+        label_args = set(signature(nx.draw_networkx_labels).parameters.keys())
+        label_kwargs = {k: v for k, v in kwargs.items() if k in label_args}
         label_kwargs['font_size'] = kwargs.get('font_size') or 10
 
         pos = nx.spring_layout(G)

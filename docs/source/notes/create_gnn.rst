@@ -25,8 +25,8 @@ This is done with the help of the following methods:
 * :obj:`MessagePassing.propagate(edge_index, size=None, **kwargs)`:
   The initial call to start propagating messages.
   Takes in the edge indices and all additional data which is needed to construct messages and to update node embeddings.
-  Note that :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate` is not limited to exchange messages in symmetric adjacency matrices of shape :obj:`[N, N]` only, but can also exchange messages in general sparse assignment matrices, *.e.g.*, bipartite graphs, of shape :obj:`[N, M]` by passing :obj:`size=(N, M)` as an additional argument.
-  If set to :obj:`None`, the assignment matrix is assumed to be symmetric.
+  Note that :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.propagate` is not limited to exchange messages in square adjacency matrices of shape :obj:`[N, N]` only, but can also exchange messages in general sparse assignment matrices, *.e.g.*, bipartite graphs, of shape :obj:`[N, M]` by passing :obj:`size=(N, M)` as an additional argument.
+  If set to :obj:`None`, the assignment matrix is assumed to be a square matrix.
   For bipartite graphs with two independent sets of nodes and indices, and each set holding its own information, this split can be marked by passing the information as a tuple, *e.g.* :obj:`x=(x_N, x_M)`.
 * :obj:`MessagePassing.message(...)`: Constructs messages to node :math:`i` in analogy to :math:`\phi` for each edge in :math:`(j,i) \in \mathcal{E}` if :obj:`flow="source_to_target"` and :math:`(i,j) \in \mathcal{E}` if :obj:`flow="target_to_source"`.
   Can take any argument which was initially passed to :meth:`propagate`.
