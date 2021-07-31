@@ -4,7 +4,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn import EquivariantConv
 
 
-def test_point_conv():
+def test_equivariant_conv():
     x1 = torch.randn(4, 16)
     pos1 = torch.randn(4, 3)
     # pos2 = torch.randn(2, 3)

@@ -34,7 +34,7 @@ class EquivariantConv(MessagePassing):
     :math:`h_{\mathbf{\Theta}}`, :math:`\rho_{\mathbf{\Theta}}`
     and :math:`\phi_{\mathbf{\Theta}}` denote neural
     networks, *.i.e.* MLPs. :math:`\mathbf{P} \in \mathbb{R}^{N \times D}`
-    :math:`\mathbf{V} \in \mathbb{R}^{N \times D}`
+    and :math:`\mathbf{V} \in \mathbb{R}^{N \times D}`
     defines the position and velocity of each point respectively.
 
     Args:
@@ -47,7 +47,7 @@ class EquivariantConv(MessagePassing):
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
         pos_nn (torch.nn.Module,optinal): A neural network
             :math:`\rho_{\mathbf{\Theta}}` that
-            maps message :math:`\mathbf{m}` of shape
+            maps message :obj:`m` of shape
             :obj:`[-1, hidden_channels]`,
             to shape :obj:`[-1, 1]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
@@ -57,14 +57,17 @@ class EquivariantConv(MessagePassing):
             to shape :obj:`[-1, 1]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
         global_nn (torch.nn.Module, optional): A neural network
-            :math:`\gamma_{\mathbf{\Theta}}` that maps aggregated
-            message :math:`\mathbf{m}`
+            :math:`\gamma_{\mathbf{\Theta}}` that maps
+            message :obj:`m` after aggregation
             and node features :obj:`x` of shape
             :obj:`[-1, hidden_channels + in_channels]`
             to shape :obj:`[-1, out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`. (default: :obj:`None`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
+        aggr (string, optional): The operator used to aggregate message
+            :obj:`m` (:obj:`"add"`, :obj:`"mean"`).
+            (default: :obj:`"mean"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -73,7 +76,7 @@ class EquivariantConv(MessagePassing):
                  vel_nn: Optional[Callable] = None,
                  global_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, aggr="mean", **kwargs):
-        super(EquivariantConv, self).__init__(**kwargs)
+        super(EquivariantConv, self).__init__(aggr=aggr, **kwargs)
 
         self.local_nn = local_nn
         self.pos_nn = pos_nn
