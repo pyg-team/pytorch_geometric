@@ -8,6 +8,7 @@ runs/
 .eggs/
 lightning_logs/
 *.egg-info/
+.ipynb_checkpoints
 .coverage
 .coverage.*
 coverage.xml
