@@ -8,6 +8,7 @@ runs/
 .eggs/
 lightning_logs/
 *.egg-info/
+.ipynb_checkpoints
 .coverage
 .coverage.*
 coverage.xml
@@ -19,5 +20,3 @@ coverage.xml
 
 !torch_geometric/data/
 !test/data/
-
-**/.ipynb_checkpoints
