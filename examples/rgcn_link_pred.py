@@ -73,8 +73,8 @@ def negative_sampling(edge_index, num_nodes):
     mask_2 = ~mask_1
 
     neg_edge_index = edge_index.clone()
-    neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(), ))
-    neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(), ))
+    neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(),))
+    neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(),))
     return neg_edge_index
 
 
@@ -85,33 +85,41 @@ def train():
     z = model.encode(data.edge_index, data.edge_type)
 
     pos_out = model.decode(z, data.train_edge_index, data.train_edge_type)
-    pos_loss = -torch.log(pos_out.sigmoid() + 1e-8).mean()
 
     neg_edge_index = negative_sampling(data.train_edge_index, data.num_nodes)
     neg_out = model.decode(z, neg_edge_index, data.train_edge_type)
-    neg_loss = -torch.log(1 - neg_out.sigmoid() + 1e-8).mean()
 
-    loss = pos_loss + neg_loss + 1e-2 * z.pow(2).mean()
+    cross_entropy_loss = F.binary_cross_entropy_with_logits(
+        torch.cat((pos_out, neg_out), dim=0),
+        torch.cat((torch.ones(pos_out.size(0)), torch.zeros(neg_out.size(0))), dim=0)
+    )
+
+    loss = cross_entropy_loss + 1e-2 * (z.pow(2).mean() + model.decoder.rel_emb.pow(2).mean())
+
     loss.backward()
+    torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
     optimizer.step()
+
+    torch.save({'z': z, 'edge_emb': model.decoder.rel_emb}, 'tpg_rgcn.pt')
+
     return float(loss)
 
 
 @torch.no_grad()
-def test():
+def validate():
     model.eval()
     z = model.encode(data.edge_index, data.edge_type)
 
-    valid_mrr = test_scores(z, data.valid_edge_index, data.valid_edge_type)
-    test_mrr = test_scores(z, data.valid_edge_index, data.valid_edge_type)
+    valid_mrr = comp_mrr(z, data.valid_edge_index, data.valid_edge_type)
+    test_mrr = comp_mrr(z, data.test_edge_index, data.test_edge_type)
 
     return valid_mrr, test_mrr
 
 
 @torch.no_grad()
-def test_scores(z, edge_index, edge_type):
+def comp_mrr(z, edge_index, edge_type):
     ranks = []
-    for i in tqdm(range(edge_type.numel())):
+    for i in range(edge_type.numel()):
         (src, dst), rel = edge_index[:, i], edge_type[i]
 
         # Try all nodes as tails, but delete true triplets:
@@ -157,8 +165,9 @@ def test_scores(z, edge_index, edge_type):
     return (1. / torch.tensor(ranks, dtype=torch.float)).mean()
 
 
-for epoch in range(1, 51):
+for epoch in range(0, 10000):
     loss = train()
-    valid_mrr, test_mrr = test()
-    print((f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val MRR: {valid_mrr:.4f}, '
-           f'Test MRR: {test_mrr:.4f}'))
+    if (epoch % 100) == 0:
+        valid_mrr, test_mrr = validate()
+        print((f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val MRR: {valid_mrr:.4f}, '
+               f'Test MRR: {test_mrr:.4f}'))
