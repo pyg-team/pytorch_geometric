@@ -8,7 +8,8 @@ import torch_geometric.transforms as T
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.contrib.loader import *  # noqa
 import torch_geometric.graphgym.register as register
-from torch_geometric.graphgym.models.transform import get_link_label, neg_sampling_transform
+from torch_geometric.graphgym.models.transform import get_link_label, \
+    neg_sampling_transform
 
 from ogb.nodeproppred import PygNodePropPredDataset
 from ogb.linkproppred import PygLinkPropPredDataset

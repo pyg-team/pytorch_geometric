@@ -4,17 +4,19 @@ import logging
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.loss import compute_loss
-from torch_geometric.graphgym.utils.epoch import is_eval_epoch, is_ckpt_epoch
-from torch_geometric.graphgym.checkpoint import load_ckpt, save_ckpt, clean_ckpt
+from torch_geometric.graphgym.utils.epoch import is_eval_epoch, \
+    is_ckpt_epoch
+from torch_geometric.graphgym.checkpoint import load_ckpt, save_ckpt, \
+    clean_ckpt
 
 from torch_geometric.graphgym.register import register_train
 
 
 def train_epoch(logger, loader, model, optimizer, scheduler):
     if cfg.benchmark:
-        from torch_geometric.graphgym.benchmark import global_line_profiler, torchprof, \
-            get_memory_status, count_parameters, get_gpu_memory_nvdia, \
-            get_model_size
+        from torch_geometric.graphgym.benchmark import global_line_profiler, \
+            torchprof, get_memory_status, count_parameters, \
+            get_gpu_memory_nvdia, get_model_size
     model.train()
     time_start = time.time()
     with torchprof.Profile(model, use_cuda=True, profile_memory=True):
