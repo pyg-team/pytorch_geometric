@@ -20,5 +20,3 @@ coverage.xml
 
 !torch_geometric/data/
 !test/data/
-
-**/.ipynb_checkpoints
