@@ -16,6 +16,13 @@ install_requires = [
     'googledrivedownloader',
     'jinja2',
     'pyparsing',
+    'yacs',
+    'tensorboardx',
+    'ogb',
+    'matplotlib',
+    'seaborn',
+    'notebook',
+    'PyYAML'
 ]
 setup_requires = []
 tests_require = ['pytest', 'pytest-runner', 'pytest-cov', 'mock']
