@@ -15,19 +15,16 @@ def gini(w: torch.Tensor) -> torch.Tensor:
     And returns an average over all rows.
 
     Args:
-        w (torch.Tensor): a two-dimensional tensor
+        w (torch.Tensor): A two-dimensional tensor.
 
     Returns:
-        the value of the Gini coefficient for this tensor [0, 1]
+        The value of the Gini coefficient for this tensor [0, 1]
     """
     s = 0
     for row in w:
-        t = row.repeat(row.shape[0], 1)
-        u = (t - t.T).abs().sum() / (
-            2 * (
-                row.shape[-1] ** 2 - row.shape[-1]
-            ) * row.abs().mean() + torch.finfo().eps
-        )
+        t = row.repeat(row.size(0), 1)
+        u = (t - t.T).abs().sum() / (2 * (row.size(-1)**2 - row.size(-1)) *
+                                     row.abs().mean() + torch.finfo().eps)
         s += u
     s /= w.shape[0]
     return s
