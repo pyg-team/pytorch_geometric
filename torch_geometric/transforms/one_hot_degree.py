@@ -1,9 +1,10 @@
 import torch
 import torch.nn.functional as F
 from torch_geometric.utils import degree
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class OneHotDegree(object):
+class OneHotDegree(BaseTransform):
     r"""Adds the node degree as one hot encodings to the node features.
 
     Args:

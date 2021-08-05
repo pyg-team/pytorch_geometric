@@ -1,7 +1,8 @@
 from torch_geometric.utils import to_undirected
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class ToUndirected(object):
+class ToUndirected(BaseTransform):
     r"""Converts the graph to an undirected graph, so that
     :math:`(j,i) \in \mathcal{E}` for every edge :math:`(i,j) \in \mathcal{E}`.
 

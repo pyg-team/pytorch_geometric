@@ -1,9 +1,10 @@
 from math import pi as PI
 
 import torch
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class Polar(object):
+class Polar(BaseTransform):
     r"""Saves the polar coordinates of linked nodes in its edge attributes.
 
     Args:

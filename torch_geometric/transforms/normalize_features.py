@@ -1,4 +1,7 @@
-class NormalizeFeatures(object):
+from torch_geometric.transforms.base_transform import BaseTransform
+
+
+class NormalizeFeatures(BaseTransform):
     r"""Row-normalizes node features to sum-up to one."""
 
     def __call__(self, data):

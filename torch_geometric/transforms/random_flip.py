@@ -1,7 +1,8 @@
 import random
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class RandomFlip(object):
+class RandomFlip(BaseTransform):
     """Flips node positions along a given axis randomly with a given
     probability.
 

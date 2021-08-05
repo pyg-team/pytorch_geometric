@@ -3,9 +3,10 @@ import math
 
 import torch
 import numpy as np
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class FixedPoints(object):
+class FixedPoints(BaseTransform):
     r"""Samples a fixed number of :obj:`num` points and features from a point
     cloud.
 

@@ -1,8 +1,9 @@
 from scipy.sparse.linalg import eigs, eigsh
 from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class LaplacianLambdaMax(object):
+class LaplacianLambdaMax(BaseTransform):
     r"""Computes the highest eigenvalue of the graph Laplacian given by
     :meth:`torch_geometric.utils.get_laplacian`.
 

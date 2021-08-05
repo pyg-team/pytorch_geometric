@@ -1,9 +1,10 @@
 from typing import Union
 
 import torch
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class AddTrainValTestMask(object):
+class AddTrainValTestMask(BaseTransform):
     r"""Adds a node-level random split via :obj:`train_mask`, :obj:`val_mask`
     and :obj:`test_mask` attributes to the :obj:`data` object.
 

@@ -1,7 +1,8 @@
 import torch
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class Constant(object):
+class Constant(BaseTransform):
     r"""Adds a constant value to each node feature.
 
     Args:

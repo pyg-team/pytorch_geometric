@@ -1,9 +1,10 @@
 import torch
 from torch_scatter import scatter_mean
 from torch_geometric.data import Data
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class ToSLIC(object):
+class ToSLIC(BaseTransform):
     r"""Converts an image to a superpixel representation using the
     :meth:`skimage.segmentation.slic` algorithm, resulting in a
     :obj:`torch_geometric.data.Data` object holding the centroids of

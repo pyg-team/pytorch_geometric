@@ -1,8 +1,9 @@
 import torch
 from torch_geometric.utils import degree
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class TargetIndegree(object):
+class TargetIndegree(BaseTransform):
     r"""Saves the globally normalized degree of target nodes
 
     .. math::

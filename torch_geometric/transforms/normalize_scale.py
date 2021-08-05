@@ -1,7 +1,8 @@
 from torch_geometric.transforms import Center
+from torch_geometric.transforms.base_transform import BaseTransform
 
 
-class NormalizeScale(object):
+class NormalizeScale(BaseTransform):
     r"""Centers and normalizes node positions to the interval :math:`(-1, 1)`.
     """
 
