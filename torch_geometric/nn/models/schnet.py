@@ -226,6 +226,7 @@ class SchNet(torch.nn.Module):
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
     def forward(self, z, pos, batch=None):
+        """"""
         assert z.dim() == 1 and z.dtype == torch.long
         batch = torch.zeros_like(z) if batch is None else batch
 
