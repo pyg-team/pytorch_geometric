@@ -18,7 +18,7 @@ def gini(w: torch.Tensor) -> torch.Tensor:
         w (torch.Tensor): A two-dimensional tensor.
 
     Returns:
-        The value of the Gini coefficient for this tensor [0, 1]
+        The value of the Gini coefficient for this tensor :math:`\in [0, 1]`
     """
     s = 0
     for row in w:
