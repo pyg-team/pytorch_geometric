@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, List
+from typing import Optional, Union, Tuple, List
 
 import torch
 import scipy.sparse
@@ -105,8 +105,8 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
     return G
 
 
-def from_networkx(G, group_node_attrs: Optional[List[str]] = None,
-                  group_edge_attrs: Optional[List[str]] = None):
+def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
+                  group_edge_attrs: Optional[Union[List[str], all]] = None):
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
