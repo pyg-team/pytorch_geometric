@@ -10,7 +10,7 @@ def gini(w: torch.Tensor) -> torch.Tensor:
 
     .. math::
         \mathcal{L}_\textrm{Gini}^i = \sum_j^n \sum_{j'}^n \frac{|w_{ij}
-         - w_{ij'}|}{(2 n^2 - n)\bar{w_i}}
+         - w_{ij'}|}{2 (n^2 - n)\bar{w_i}}
 
     And returns an average over all rows.
 
