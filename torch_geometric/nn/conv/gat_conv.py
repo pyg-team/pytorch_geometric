@@ -156,8 +156,9 @@ class GATConv(MessagePassing):
         # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
         out = self.propagate(edge_index, x=x, alpha=alpha, size=size)
 
-        alpha, self._alpha = self._alpha, None
+        alpha = self._alpha
         assert alpha is not None
+        self._alpha = None
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
