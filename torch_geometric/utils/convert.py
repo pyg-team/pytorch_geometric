@@ -132,23 +132,23 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
     data = {}
 
     if G.number_of_nodes() > 0:
-        node_attrs = set(next(iter(G.nodes(data=True)))[-1].keys())
+        node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
     else:
         node_attrs = {}
 
     if G.number_of_edges() > 0:
-        edge_attrs = set(next(iter(G.edges(data=True)))[-1].keys())
+        edge_attrs = list(next(iter(G.edges(data=True)))[-1].keys())
     else:
         edge_attrs = {}
 
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
-        if set(feat_dict.keys()) != node_attrs:
+        if set(feat_dict.keys()) != set(node_attrs):
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
 
     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
-        if set(feat_dict.keys()) != edge_attrs:
+        if set(feat_dict.keys()) != set(edge_attrs):
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
             data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
