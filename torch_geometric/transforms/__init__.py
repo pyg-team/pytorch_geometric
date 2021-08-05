@@ -1,3 +1,4 @@
+from .base_transform import BaseTransform
 from .compose import Compose
 from .to_sparse_tensor import ToSparseTensor
 from .to_undirected import ToUndirected
@@ -42,6 +43,7 @@ from .gcn_norm import GCNNorm
 from .add_train_val_test_mask import AddTrainValTestMask
 
 __all__ = [
+    'BaseTransform',
     'Compose',
     'ToSparseTensor',
     'ToUndirected',

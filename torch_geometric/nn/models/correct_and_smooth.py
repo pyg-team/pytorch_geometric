@@ -18,7 +18,7 @@ class CorrectAndSmooth(torch.nn.Module):
 
     .. math::
         \mathbf{e}^{(0)}_i &= \begin{cases}
-            \mathbf{z}_i - \mathbf{y}_i, & \text{if }i
+            \mathbf{y}_i - \mathbf{z}_i, & \text{if }i
             \text{ is training node,}\\
             \mathbf{0}, & \text{else}
         \end{cases}

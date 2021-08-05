@@ -7,6 +7,7 @@ from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
+from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
 from .tag_conv import TAGConv
@@ -18,7 +19,7 @@ from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
-from .point_conv import PointConv
+from .point_conv import PointNetConv, PointConv
 from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
 from .nn_conv import NNConv, ECConv
@@ -50,6 +51,7 @@ __all__ = [
     'GatedGraphConv',
     'ResGatedGraphConv',
     'GATConv',
+    'GATv2Conv',
     'TransformerConv',
     'AGNNConv',
     'TAGConv',
@@ -63,6 +65,7 @@ __all__ = [
     'FastRGCNConv',
     'SignedConv',
     'DNAConv',
+    'PointNetConv',
     'PointConv',
     'GMMConv',
     'SplineConv',
@@ -85,7 +88,7 @@ __all__ = [
     'FiLMConv',
     'SuperGATConv',
     'FAConv',
-    'EGConv'
+    'EGConv',
 ]
 
 classes = __all__

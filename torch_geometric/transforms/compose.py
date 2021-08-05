@@ -1,19 +1,22 @@
-class Compose(object):
+from typing import List, Callable
+
+from torch_geometric.transforms import BaseTransform
+
+
+class Compose(BaseTransform):
     """Composes several transforms together.
 
     Args:
-        transforms (list of :obj:`transform` objects): List of transforms to
-            compose.
+        transforms (List[Callable]): List of transforms to compose.
     """
-
-    def __init__(self, transforms):
+    def __init__(self, transforms: List[Callable]):
         self.transforms = transforms
 
     def __call__(self, data):
-        for t in self.transforms:
-            data = t(data)
+        for transform in self.transforms:
+            data = transform(data)
         return data
 
     def __repr__(self):
-        args = ['    {},'.format(t) for t in self.transforms]
+        args = ['    {},'.format(transform) for transform in self.transforms]
         return '{}([\n{}\n])'.format(self.__class__.__name__, '\n'.join(args))

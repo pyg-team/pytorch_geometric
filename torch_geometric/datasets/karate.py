@@ -1,7 +1,5 @@
 import torch
 import numpy as np
-import networkx as nx
-import community as community_louvain
 from torch_geometric.data import InMemoryDataset, Data
 
 
@@ -25,6 +23,8 @@ class KarateClub(InMemoryDataset):
     def __init__(self, transform=None):
         super(KarateClub, self).__init__('.', transform, None, None)
 
+        import networkx as nx
+
         G = nx.karate_club_graph()
 
         x = torch.eye(G.number_of_nodes(), dtype=torch.float)
@@ -34,9 +34,11 @@ class KarateClub(InMemoryDataset):
         col = torch.from_numpy(adj.col.astype(np.int64)).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
 
-        # Compute communities.
-        partition = community_louvain.best_partition(G)
-        y = torch.tensor([partition[i] for i in range(G.number_of_nodes())])
+        # Create communities.
+        y = torch.tensor([
+            1, 1, 1, 1, 3, 3, 3, 1, 0, 1, 3, 1, 1, 1, 0, 0, 3, 1, 0, 1, 0, 1,
+            0, 0, 2, 2, 0, 0, 2, 0, 0, 2, 0, 0
+        ], dtype=torch.long)
 
         # Select a single training node for each community
         # (we just use the first one).

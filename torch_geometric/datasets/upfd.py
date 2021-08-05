@@ -4,7 +4,6 @@ import os.path as osp
 import torch
 import numpy as np
 import scipy.sparse as sp
-from google_drive_downloader import GoogleDriveDownloader as gdd
 
 from torch_sparse import coalesce
 from torch_geometric.io import read_txt_array
@@ -106,6 +105,8 @@ class UPFD(InMemoryDataset):
         return ['train.pt', 'val.pt', 'test.pt']
 
     def download(self):
+        from google_drive_downloader import GoogleDriveDownloader as gdd
+
         gdd.download_file_from_google_drive(
             self.ids[self.name], osp.join(self.raw_dir, f'{self.name}.zip'),
             unzip=True)

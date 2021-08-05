@@ -70,7 +70,7 @@ class LayerNorm(torch.nn.Module):
                           reduce='add').sum(dim=-1, keepdim=True)
             var = var / norm
 
-            out = x / (var.sqrt()[batch] + self.eps)
+            out = x / (var + self.eps).sqrt()[batch]
 
         if self.weight is not None and self.bias is not None:
             out = out * self.weight + self.bias

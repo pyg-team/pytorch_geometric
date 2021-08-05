@@ -73,8 +73,10 @@ def negative_sampling(edge_index, num_nodes):
     mask_2 = ~mask_1
 
     neg_edge_index = edge_index.clone()
+
     neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(),))
     neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(),))
+
     return neg_edge_index
 
 
@@ -99,8 +101,6 @@ def train():
     loss.backward()
     torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
     optimizer.step()
-
-    torch.save({'z': z, 'edge_emb': model.decoder.rel_emb}, 'tpg_rgcn.pt')
 
     return float(loss)
 

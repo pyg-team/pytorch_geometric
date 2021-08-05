@@ -180,5 +180,15 @@ em.sig-param span.default_value {
 .wy-table th,
 .rst-content table.docutils th,
 .rst-content table.field-list th {
-  padding: 16px;
+  padding: 14px;
+}
+
+table.colwidths-given tr td p,
+table.colwidths-given tr th p {
+  text-align: center;
+}
+
+table.colwidths-given tr td:first-child p,
+table.colwidths-given tr th:first-child p {
+  text-align: left;
 }

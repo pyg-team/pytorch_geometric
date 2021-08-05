@@ -5,12 +5,10 @@ torch_geometric.nn
     :local:
 
 .. autoclass:: torch_geometric.nn.sequential.Sequential
-   :members:
-   :undoc-members:
-   :exclude-members: training
 
 Convolutional Layers
 --------------------
+
 .. currentmodule:: torch_geometric.nn.conv
 .. autosummary::
    :nosignatures:
@@ -34,6 +32,7 @@ Convolutional Layers
 
 Dense Convolutional Layers
 --------------------------
+
 .. currentmodule:: torch_geometric.nn.dense
 .. autosummary::
    :nosignatures:
@@ -50,6 +49,7 @@ Dense Convolutional Layers
 
 Normalization Layers
 --------------------
+
 .. currentmodule:: torch_geometric.nn.norm
 .. autosummary::
    :nosignatures:
@@ -64,6 +64,7 @@ Normalization Layers
 
 Global Pooling Layers
 ---------------------
+
 .. currentmodule:: torch_geometric.nn.glob
 .. autosummary::
    :nosignatures:
@@ -78,6 +79,7 @@ Global Pooling Layers
 
 Pooling Layers
 --------------
+
 .. currentmodule:: torch_geometric.nn.pool
 .. autosummary::
    :nosignatures:
@@ -92,6 +94,7 @@ Pooling Layers
 
 Dense Pooling Layers
 --------------------
+
 .. currentmodule:: torch_geometric.nn.dense
 .. autosummary::
    :nosignatures:
@@ -111,6 +114,7 @@ Dense Pooling Layers
 
 Unpooling Layers
 ----------------
+
 .. currentmodule:: torch_geometric.nn.unpool
 .. autosummary::
    :nosignatures:
@@ -126,6 +130,7 @@ Unpooling Layers
 
 Models
 ------
+
 .. currentmodule:: torch_geometric.nn.models
 .. autosummary::
    :nosignatures:
@@ -141,6 +146,7 @@ Models
 
 Functional
 ----------
+
 .. py:currentmodule:: torch_geometric.nn.functional
 .. autosummary::
    :nosignatures:

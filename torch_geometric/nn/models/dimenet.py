@@ -13,18 +13,6 @@ from torch_geometric.data.makedirs import makedirs
 
 from ..acts import swish
 from ..inits import glorot_orthogonal
-from .dimenet_utils import bessel_basis, real_sph_harm
-
-try:
-    import sympy as sym
-except ImportError:
-    sym = None
-
-try:
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-    import tensorflow as tf
-except ImportError:
-    tf = None
 
 qm9_target_dict = {
     0: 'mu',
@@ -79,6 +67,10 @@ class SphericalBasisLayer(torch.nn.Module):
     def __init__(self, num_spherical, num_radial, cutoff=5.0,
                  envelope_exponent=5):
         super(SphericalBasisLayer, self).__init__()
+        import sympy as sym
+        from torch_geometric.nn.models.dimenet_utils import (bessel_basis,
+                                                             real_sph_harm)
+
         assert num_radial <= 64
         self.num_spherical = num_spherical
         self.num_radial = num_radial
@@ -292,10 +284,6 @@ class DimeNet(torch.nn.Module):
         super(DimeNet, self).__init__()
 
         self.cutoff = cutoff
-
-        if sym is None:
-            raise ImportError('Package `sympy` could not be found.')
-
         self.num_blocks = num_blocks
 
         self.rbf = BesselBasisLayer(num_radial, cutoff, envelope_exponent)
@@ -327,9 +315,8 @@ class DimeNet(torch.nn.Module):
 
     @staticmethod
     def from_qm9_pretrained(root, dataset, target):
-        if tf is None:
-            raise ImportError(
-                '`DimeNet.from_qm9_pretrained` requires `tensorflow`.')
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+        import tensorflow as tf
 
         assert target >= 0 and target <= 12 and not target == 4
 

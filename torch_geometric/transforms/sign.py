@@ -1,8 +1,10 @@
 import torch
 from torch_sparse import SparseTensor
 
+from torch_geometric.transforms import BaseTransform
 
-class SIGN(object):
+
+class SIGN(BaseTransform):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
     <https://arxiv.org/abs/2004.11198>`_ paper, which precomputes the fixed

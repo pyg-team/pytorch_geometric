@@ -13,16 +13,6 @@ from torch_geometric.data.makedirs import makedirs
 from torch_geometric.data import download_url, extract_zip
 from torch_geometric.nn import radius_graph, MessagePassing
 
-try:
-    import ase
-except ImportError:
-    ase = None
-
-try:
-    import schnetpack as spk
-except ImportError:
-    spk = None
-
 qm9_target_dict = {
     0: 'dipole_moment',
     1: 'isotropic_polarizability',
@@ -93,10 +83,7 @@ class SchNet(torch.nn.Module):
                  atomref=None):
         super(SchNet, self).__init__()
 
-        if ase is None:
-            raise ImportError('Package `ase` could not be found.')
-
-        assert readout in ['add', 'sum', 'mean']
+        import ase
 
         self.hidden_channels = hidden_channels
         self.num_filters = num_filters
@@ -147,11 +134,8 @@ class SchNet(torch.nn.Module):
 
     @staticmethod
     def from_qm9_pretrained(root, dataset, target):
-        if ase is None:
-            raise ImportError('Package `ase` could not be found.')
-        if spk is None:
-            raise ImportError(
-                '`SchNet.from_qm9_pretrained` requires `schnetpack`.')
+        import ase
+        import schnetpack as spk  # noqa
 
         assert target >= 0 and target <= 12
 

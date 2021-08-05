@@ -14,6 +14,7 @@ from .yelp import Yelp
 from .amazon_products import AmazonProducts
 from .qm7 import QM7b
 from .qm9 import QM9
+from .md17 import MD17
 from .zinc import ZINC
 from .molecule_net import MoleculeNet
 from .entities import Entities
@@ -49,6 +50,12 @@ from .actor import Actor
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
+from .github import GitHub
+from .facebook import FacebookPagePage
+from .lastfm_asia import LastFMAsia
+from .deezer_europe import DeezerEurope
+from .gemsec import GemsecDeezer
+from .twitch import Twitch
 
 __all__ = [
     'KarateClub',
@@ -68,6 +75,7 @@ __all__ = [
     'AmazonProducts',
     'QM7b',
     'QM9',
+    'MD17',
     'ZINC',
     'MoleculeNet',
     'Entities',
@@ -104,6 +112,12 @@ __all__ = [
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'UPFD',
+    'GitHub',
+    'FacebookPagePage',
+    'LastFMAsia',
+    'DeezerEurope',
+    'GemsecDeezer',
+    'Twitch',
 ]
 
 classes = __all__

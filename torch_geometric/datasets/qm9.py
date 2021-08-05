@@ -2,23 +2,13 @@ from typing import Optional, Callable, List
 
 import os
 import os.path as osp
-
 from tqdm import tqdm
+
 import torch
 import torch.nn.functional as F
 from torch_scatter import scatter
 from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
                                   Data)
-
-try:
-    import rdkit
-    from rdkit import Chem
-    from rdkit.Chem.rdchem import HybridizationType
-    from rdkit.Chem.rdchem import BondType as BT
-    from rdkit import RDLogger
-    RDLogger.DisableLog('rdApp.*')
-except ImportError:
-    rdkit = None
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
@@ -122,11 +112,6 @@ class QM9(InMemoryDataset):
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
     processed_url = 'https://pytorch-geometric.com/datasets/qm9_v2.zip'
 
-    if rdkit is not None:
-        types = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
-        symbols = {'H': 1, 'C': 6, 'N': 7, 'O': 8, 'F': 9}
-        bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
-
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
@@ -150,21 +135,19 @@ class QM9(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        if rdkit is None:
-            return ['qm9_v2.pt']
-        else:
+        try:
+            import rdkit  # noqa
             return ['gdb9.sdf', 'gdb9.sdf.csv', 'uncharacterized.txt']
+        except ImportError:
+            return ['qm9_v2.pt']
 
     @property
     def processed_file_names(self) -> str:
         return 'data_v2.pt'
 
     def download(self):
-        if rdkit is None:
-            path = download_url(self.processed_url, self.raw_dir)
-            extract_zip(path, self.raw_dir)
-            os.unlink(path)
-        else:
+        try:
+            import rdkit  # noqa
             file_path = download_url(self.raw_url, self.raw_dir)
             extract_zip(file_path, self.raw_dir)
             os.unlink(file_path)
@@ -172,11 +155,26 @@ class QM9(InMemoryDataset):
             file_path = download_url(self.raw_url2, self.raw_dir)
             os.rename(osp.join(self.raw_dir, '3195404'),
                       osp.join(self.raw_dir, 'uncharacterized.txt'))
+        except ImportError:
+            path = download_url(self.processed_url, self.raw_dir)
+            extract_zip(path, self.raw_dir)
+            os.unlink(path)
 
     def process(self):
+        try:
+            import rdkit
+            from rdkit import Chem
+            from rdkit.Chem.rdchem import HybridizationType
+            from rdkit.Chem.rdchem import BondType as BT
+            from rdkit import RDLogger
+            RDLogger.DisableLog('rdApp.*')
+
+        except ImportError:
+            rdkit = None
+
         if rdkit is None:
-            print('Using a pre-processed version of the dataset. Please '
-                  'install `rdkit` to alternatively process the raw data.')
+            print("Using a pre-processed version of the dataset. Please "
+                  "install 'rdkit' to alternatively process the raw data.")
 
             self.data, self.slices = torch.load(self.raw_paths[0])
             data_list = [self.get(i) for i in range(len(self))]
@@ -189,6 +187,9 @@ class QM9(InMemoryDataset):
 
             torch.save(self.collate(data_list), self.processed_paths[0])
             return
+
+        types = {'H': 0, 'C': 1, 'N': 2, 'O': 3, 'F': 4}
+        bonds = {BT.SINGLE: 0, BT.DOUBLE: 1, BT.TRIPLE: 2, BT.AROMATIC: 3}
 
         with open(self.raw_paths[1], 'r') as f:
             target = f.read().split('\n')[1:-1]
@@ -223,7 +224,7 @@ class QM9(InMemoryDataset):
             sp3 = []
             num_hs = []
             for atom in mol.GetAtoms():
-                type_idx.append(self.types[atom.GetSymbol()])
+                type_idx.append(types[atom.GetSymbol()])
                 atomic_number.append(atom.GetAtomicNum())
                 aromatic.append(1 if atom.GetIsAromatic() else 0)
                 hybridization = atom.GetHybridization()
@@ -238,12 +239,12 @@ class QM9(InMemoryDataset):
                 start, end = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
                 row += [start, end]
                 col += [end, start]
-                edge_type += 2 * [self.bonds[bond.GetBondType()]]
+                edge_type += 2 * [bonds[bond.GetBondType()]]
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
             edge_type = torch.tensor(edge_type, dtype=torch.long)
             edge_attr = F.one_hot(edge_type,
-                                  num_classes=len(self.bonds)).to(torch.float)
+                                  num_classes=len(bonds)).to(torch.float)
 
             perm = (edge_index[0] * N + edge_index[1]).argsort()
             edge_index = edge_index[:, perm]
@@ -254,7 +255,7 @@ class QM9(InMemoryDataset):
             hs = (z == 1).to(torch.float)
             num_hs = scatter(hs[row], col, dim_size=N).tolist()
 
-            x1 = F.one_hot(torch.tensor(type_idx), num_classes=len(self.types))
+            x1 = F.one_hot(torch.tensor(type_idx), num_classes=len(types))
             x2 = torch.tensor([atomic_number, aromatic, sp, sp2, sp3, num_hs],
                               dtype=torch.float).t().contiguous()
             x = torch.cat([x1.to(torch.float), x2], dim=-1)
