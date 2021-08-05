@@ -83,6 +83,7 @@ class MessagePassing(torch.nn.Module):
         # Support for GNNExplainer.
         self.__explain__ = False
         self.__edge_mask__ = None
+        self.__loop_mask__ = None
 
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
@@ -245,6 +246,7 @@ class MessagePassing(torch.nn.Module):
                 # Some ops add self-loops to `edge_index`. We need to do the
                 # same for `edge_mask` (but do not train those).
                 if out.size(self.node_dim) != edge_mask.size(0):
+                    edge_mask = edge_mask[self.__loop_mask__]
                     loop = edge_mask.new_ones(size[0])
                     edge_mask = torch.cat([edge_mask, loop], dim=0)
                 assert out.size(self.node_dim) == edge_mask.size(0)

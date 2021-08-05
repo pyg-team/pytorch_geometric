@@ -75,19 +75,23 @@ class GNNExplainer(torch.nn.Module):
 
         std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
         self.edge_mask = torch.nn.Parameter(torch.randn(E) * std)
+        self.loop_mask = edge_index[0] != edge_index[1]
 
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = True
                 module.__edge_mask__ = self.edge_mask
+                module.__loop_mask__ = self.loop_mask
 
     def __clear_masks__(self):
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = False
                 module.__edge_mask__ = None
+                module.__loop_mask__ = None
         self.node_feat_masks = None
         self.edge_mask = None
+        module.loop_mask = None
 
     @property
     def num_hops(self):
