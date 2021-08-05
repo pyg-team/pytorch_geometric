@@ -7,7 +7,10 @@ from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.utils.io import dict_list_to_json, \
     dict_list_to_tb, json_to_dict_list, makedirs_rm_exist, string_to_python, \
     dict_to_json
-from tensorboardX import SummaryWriter
+try:
+    from tensorboardX import SummaryWriter
+except ImportError:
+    SummaryWriter = None
 
 
 def is_seed(s):
@@ -123,6 +126,9 @@ def agg_runs(dir, metric_best='auto'):
         dict_list_to_json(value, fname)
 
         if cfg.tensorboard_agg:
+            if SummaryWriter is None:
+                raise ImportError(
+                    'Tensorboard support requires `tensorboardX`.')
             writer = SummaryWriter(dir_out)
             dict_list_to_tb(value, writer)
             writer.close()

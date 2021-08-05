@@ -9,8 +9,12 @@ from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
     f1_score, roc_auc_score, mean_absolute_error, mean_squared_error
 
-from tensorboardX import SummaryWriter
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
+
+try:
+    from tensorboardX import SummaryWriter
+except ImportError:
+    SummaryWriter = None
 
 
 def setup_printing():
@@ -40,6 +44,9 @@ class Logger(object):
         self.out_dir = '{}/{}'.format(cfg.out_dir, name)
         os.makedirs(self.out_dir, exist_ok=True)
         if cfg.tensorboard_each_run:
+            if SummaryWriter is None:
+                raise ImportError(
+                    'Tensorboard support requires `tensorboardX`.')
             self.tb_writer = SummaryWriter(self.out_dir)
 
         self.reset()

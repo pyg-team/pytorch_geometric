@@ -17,11 +17,6 @@ install_requires = [
     'jinja2',
     'pyparsing',
     'yacs',
-    'tensorboardx',
-    'ogb',
-    'matplotlib',
-    'seaborn',
-    'notebook',
     'PyYAML'
 ]
 setup_requires = []
