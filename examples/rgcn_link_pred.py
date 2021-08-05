@@ -85,15 +85,20 @@ def train():
     z = model.encode(data.edge_index, data.edge_type)
 
     pos_out = model.decode(z, data.train_edge_index, data.train_edge_type)
-    pos_loss = -torch.log(pos_out.sigmoid() + 1e-8).mean()
 
     neg_edge_index = negative_sampling(data.train_edge_index, data.num_nodes)
     neg_out = model.decode(z, neg_edge_index, data.train_edge_type)
-    neg_loss = -torch.log(1 - neg_out.sigmoid() + 1e-8).mean()
 
-    loss = pos_loss + neg_loss + 1e-2 * z.pow(2).mean()
+    out = torch.cat([pos_out, neg_out])
+    gt = torch.cat([torch.ones_like(pos_out), torch.ones_like(neg_out)])
+    cross_entropy_loss = F.binary_cross_entropy_with_logits(out, gt)
+    reg_loss = z.pow(2).mean() + model.decoder.rel_emb.pow(2).mean()
+    loss = cross_entropy_loss + 1e-2 * reg_loss
+
     loss.backward()
+    torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
     optimizer.step()
+
     return float(loss)
 
 
@@ -102,14 +107,14 @@ def test():
     model.eval()
     z = model.encode(data.edge_index, data.edge_type)
 
-    valid_mrr = test_scores(z, data.valid_edge_index, data.valid_edge_type)
-    test_mrr = test_scores(z, data.valid_edge_index, data.valid_edge_type)
+    valid_mrr = compute_mrr(z, data.valid_edge_index, data.valid_edge_type)
+    test_mrr = compute_mrr(z, data.valid_edge_index, data.valid_edge_type)
 
     return valid_mrr, test_mrr
 
 
 @torch.no_grad()
-def test_scores(z, edge_index, edge_type):
+def compute_mrr(z, edge_index, edge_type):
     ranks = []
     for i in tqdm(range(edge_type.numel())):
         (src, dst), rel = edge_index[:, i], edge_type[i]
@@ -157,8 +162,9 @@ def test_scores(z, edge_index, edge_type):
     return (1. / torch.tensor(ranks, dtype=torch.float)).mean()
 
 
-for epoch in range(1, 51):
+for epoch in range(1, 10001):
     loss = train()
-    valid_mrr, test_mrr = test()
-    print((f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val MRR: {valid_mrr:.4f}, '
-           f'Test MRR: {test_mrr:.4f}'))
+    print(f'Epoch: {epoch:05d}, Loss: {loss:.4f}')
+    if (epoch % 100) == 0:
+        valid_mrr, test_mrr = test()
+        print(f'Val MRR: {valid_mrr:.4f}, Test MRR: {test_mrr:.4f}')
