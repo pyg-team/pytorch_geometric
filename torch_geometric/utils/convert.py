@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Union, Tuple, List
 
 import torch
 import scipy.sparse
@@ -105,12 +105,23 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
     return G
 
 
-def from_networkx(G):
+def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
+                  group_edge_attrs: Optional[Union[List[str], all]] = None):
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
     Args:
         G (networkx.Graph or networkx.DiGraph): A networkx graph.
+        group_node_attrs (List[str] or all, optional): The node attributes to
+            be concatenated and added to :obj:`data.x`. (default: :obj:`None`)
+        group_edge_attrs (List[str] or all, optional): The edge attributes to
+            be concatenated and added to :obj:`data.edge_attr`.
+            (default: :obj:`None`)
+
+    .. note::
+
+        All :attr:`group_node_attrs` and :attr:`group_edge_attrs` values must
+        be numeric.
     """
     import networkx as nx
 
@@ -120,11 +131,25 @@ def from_networkx(G):
 
     data = {}
 
+    if G.number_of_nodes() > 0:
+        node_attrs = set(next(iter(G.nodes(data=True)))[-1].keys())
+    else:
+        node_attrs = {}
+
+    if G.number_of_edges() > 0:
+        edge_attrs = set(next(iter(G.edges(data=True)))[-1].keys())
+    else:
+        edge_attrs = {}
+
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
+        if set(feat_dict.keys()) != node_attrs:
+            raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
 
     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
+        if set(feat_dict.keys()) != edge_attrs:
+            raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
             data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
 
@@ -137,6 +162,20 @@ def from_networkx(G):
     data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)
     data.num_nodes = G.number_of_nodes()
+
+    if group_node_attrs is all:
+        group_node_attrs = list(node_attrs)
+    if group_node_attrs is not None:
+        xs = [data[key] for key in group_node_attrs]
+        xs = [x.view(-1, 1) if x.dim() <= 1 else x for x in xs]
+        data.x = torch.cat(xs, dim=-1)
+
+    if group_edge_attrs is all:
+        group_edge_attrs = list(edge_attrs)
+    if group_edge_attrs is not None:
+        edge_attrs = [data[key] for key in group_edge_attrs]
+        edge_attrs = [x.view(-1, 1) if x.dim() <= 1 else x for x in edge_attrs]
+        data.edge_attr = torch.cat(edge_attrs, dim=-1)
 
     return data
 
