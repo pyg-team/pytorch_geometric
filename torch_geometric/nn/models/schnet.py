@@ -1,3 +1,5 @@
+from typing import Optional
+
 import os
 import warnings
 import os.path as osp
@@ -10,7 +12,7 @@ import numpy as np
 
 from torch_scatter import scatter
 from torch_geometric.data.makedirs import makedirs
-from torch_geometric.data import download_url, extract_zip
+from torch_geometric.data import download_url, extract_zip, Dataset
 from torch_geometric.nn import radius_graph, MessagePassing
 
 qm9_target_dict = {
@@ -60,6 +62,9 @@ class SchNet(torch.nn.Module):
             (default: :obj:`50`)
         cutoff (float, optional): Cutoff distance for interatomic interactions.
             (default: :obj:`10.0`)
+        max_num_neighbors (int, optional): The maximum number of neighbors to
+            collect for each node within the :attr:`cutoff` distance.
+            (default: :obj:`32`)
         readout (string, optional): Whether to apply :obj:`"add"` or
             :obj:`"mean"` global aggregation. (default: :obj:`"add"`)
         dipole (bool, optional): If set to :obj:`True`, will use the magnitude
@@ -77,10 +82,12 @@ class SchNet(torch.nn.Module):
 
     url = 'http://www.quantum-machine.org/datasets/trained_schnet_models.zip'
 
-    def __init__(self, hidden_channels=128, num_filters=128,
-                 num_interactions=6, num_gaussians=50, cutoff=10.0,
-                 readout='add', dipole=False, mean=None, std=None,
-                 atomref=None):
+    def __init__(self, hidden_channels: int = 128, num_filters: int = 128,
+                 num_interactions: int = 6, num_gaussians: int = 50,
+                 cutoff: float = 10.0, max_num_neighbors: int = 32,
+                 readout: str = 'add', dipole: bool = False,
+                 mean: Optional[float] = None, std: Optional[float] = None,
+                 atomref: Optional[torch.Tensor] = None):
         super(SchNet, self).__init__()
 
         import ase
@@ -90,6 +97,7 @@ class SchNet(torch.nn.Module):
         self.num_interactions = num_interactions
         self.num_gaussians = num_gaussians
         self.cutoff = cutoff
+        self.max_num_neighbors = max_num_neighbors
         self.readout = readout
         self.dipole = dipole
         self.readout = 'add' if self.dipole else self.readout
@@ -133,7 +141,7 @@ class SchNet(torch.nn.Module):
             self.atomref.weight.data.copy_(self.initial_atomref)
 
     @staticmethod
-    def from_qm9_pretrained(root, dataset, target):
+    def from_qm9_pretrained(root: str, dataset: Dataset, target: int):
         import ase
         import schnetpack as spk  # noqa
 
@@ -223,7 +231,8 @@ class SchNet(torch.nn.Module):
 
         h = self.embedding(z)
 
-        edge_index = radius_graph(pos, r=self.cutoff, batch=batch)
+        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
+                                  max_num_neighbors=self.max_num_neighbors)
         row, col = edge_index
         edge_weight = (pos[row] - pos[col]).norm(dim=-1)
         edge_attr = self.distance_expansion(edge_weight)
