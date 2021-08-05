@@ -105,16 +105,23 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
     return G
 
 
-def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: List[str] or all=None):
+def from_networkx(G, group_node_attrs: Optional[List[str]] = None,
+                  group_edge_attrs: Optional[List[str]] = None):
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
     Args:
         G (networkx.Graph or networkx.DiGraph): A networkx graph.
-        group_node_attrs (List[str] or all, optional): The node attributes to be appended to data.x
-        group_edge_attrs (List[str] or all, optional): The edge attributes to be appended to data.edge_attr
-    
-    Note: all group_node_attrs and group_edge_attrs values must be numeric if passed as a list.
+        group_node_attrs (List[str] or all, optional): The node attributes to
+            be concatenated and added to :obj:`data.x`. (default: :obj:`None`)
+        group_edge_attrs (List[str] or all, optional): The edge attributes to
+            be concatenated and added to :obj:`data.edge_attr`.
+            (default: :obj:`None`)
+
+    .. note::
+
+        All :attr:`group_node_attrs` and :attr:`group_edge_attrs` values must
+        be numeric.
     """
     import networkx as nx
 
@@ -123,13 +130,20 @@ def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: 
     edge_index = torch.LongTensor(list(G.edges)).t().contiguous()
 
     data = {}
-    _, feat_dict = list(G.nodes(data=True))[0]
-    node_attributes = feat_dict.keys()
-    if group_node_attrs is all:
-        group_node_attrs = node_attributes
+
+    if G.number_of_nodes() > 0:
+        node_attrs = set(next(iter(G.nodes(data=True)))[-1].keys())
+    else:
+        node_attrs = {}
+
+    if G.number_of_edges() > 0:
+        edge_attrs = set(next(iter(G.edges(data=True)))[-1].keys())
+    else:
+        edge_attrs = {}
 
     for i, (_, feat_dict) in enumerate(G.nodes(data=True)):
-        if set(feat_dict.keys()) != set(node_attributes): raise ValueError(f'Not all nodes contain the same attributes')
+        if set(feat_dict.keys()) != node_attrs:
+            raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
 
@@ -140,7 +154,8 @@ def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: 
             group_edge_attrs = edge_attributes
 
     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
-        if set(feat_dict.keys()) != set(edge_attributes): raise ValueError(f'Not all edges contain the same attributes')
+        if set(feat_dict.keys()) != edge_attrs:
+            raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
             data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
 
@@ -149,28 +164,26 @@ def from_networkx(G, group_node_attrs: List[str] or all=None, group_edge_attrs: 
             data[key] = torch.tensor(item)
         except ValueError:
             pass
-    
-    if group_node_attrs:
-        if data['x'] is not None:
-            data['x'] = torch.cat([data['x']] + [data[key] for key in group_node_attrs], dim=-1)
-        else:
-            data['x'] = torch.cat([data[key] for key in group_node_attrs], dim=-1)
 
-    if group_edge_attrs:
-        if data['edge_attr'] is not None:
-            for key in group_edge_attrs: #adding a new dimension to each edge attribute used in edge_attr
-                if len(data[key].size()) == 1:
-                    data[key] = data[key].view(1, -1)
-            data['edge_attr'] = torch.cat([data['edge_attr']] + [data[key] for key in group_edge_attrs if key is not 'edge_attr'], dim=0)
-        else:
-            data['edge_attr'] = torch.cat([data[key] for key in group_node_attrs], dim=0)
-    
     data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)
     data.num_nodes = G.number_of_nodes()
 
-    return data
+    if group_node_attrs is all:
+        group_node_attrs = list(node_attrs)
+    if group_node_attrs is not None:
+        xs = [data[key] for key in group_node_attrs]
+        xs = [x.view(-1, 1) if x.dim() <= 1 else x for x in xs]
+        data.x = torch.cat(xs, dim=-1)
 
+    if group_edge_attrs is all:
+        group_edge_attrs = list(edge_attrs)
+    if group_edge_attrs is not None:
+        edge_attrs = [data[key] for key in group_edge_attrs]
+        edge_attrs = [x.view(-1, 1) if x.dim() <= 1 else x for x in edge_attrs]
+        data.edge_attr = torch.cat(edge_attrs, dim=-1)
+
+    return data
 
 
 def to_trimesh(data):
