@@ -250,7 +250,7 @@ def from_cugraph(G) -> Tuple[Tensor, Optional[Tensor]]:
 
 def to_meshio(data):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
-    :obj:`.msh format`.
+    :obj:`tetrahedral .msh/.vtk format`.
 
     Args:
         data (torch_geometric.data.Data): The data object.
@@ -264,7 +264,7 @@ def to_meshio(data):
     return meshio.Mesh(points, cells)
 
 def from_meshio(mesh):
-    r"""Converts a :.msh file to a
+    r"""Converts a :tetrahedral .msh/.vtk file to a
     :class:`torch_geometric.data.Data` instance.
 
     Args:
