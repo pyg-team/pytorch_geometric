@@ -1,8 +1,9 @@
 import torch
 from torch_sparse import coalesce
 from torch_scatter import scatter_add
+
 from torch_geometric.utils import remove_self_loops
-from torch_geometric.transforms.base_transform import BaseTransform
+from torch_geometric.transforms import BaseTransform
 
 
 class LineGraph(BaseTransform):

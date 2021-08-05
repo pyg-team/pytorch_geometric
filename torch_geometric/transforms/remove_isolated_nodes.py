@@ -1,8 +1,9 @@
 import re
 
 import torch
+
+from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import remove_isolated_nodes
-from torch_geometric.transforms.base_transform import BaseTransform
 
 
 class RemoveIsolatedNodes(BaseTransform):

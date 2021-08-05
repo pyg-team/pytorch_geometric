@@ -1,10 +1,11 @@
 import torch
 import numpy as np
 from scipy.linalg import expm
-from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 from torch_sparse import coalesce
 from torch_scatter import scatter_add
-from torch_geometric.transforms.base_transform import BaseTransform
+
+from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 
 
 class GDC(BaseTransform):

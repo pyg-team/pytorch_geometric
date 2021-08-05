@@ -2,7 +2,8 @@ import numbers
 from itertools import repeat
 
 import torch
-from torch_geometric.transforms.base_transform import BaseTransform
+
+from torch_geometric.transforms import BaseTransform
 
 
 class RandomTranslate(BaseTransform):
@@ -17,7 +18,6 @@ class RandomTranslate(BaseTransform):
             If :obj:`translate` is a number instead of a sequence, the same
             range is used for each dimension.
     """
-
     def __init__(self, translate):
         self.translate = translate
 

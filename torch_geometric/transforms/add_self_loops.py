@@ -1,11 +1,11 @@
 from torch_sparse import coalesce
+
 from torch_geometric.utils import add_self_loops
-from torch_geometric.transforms.base_transform import BaseTransform
+from torch_geometric.transforms import BaseTransform
 
 
 class AddSelfLoops(BaseTransform):
     r"""Adds self-loops to edge indices."""
-
     def __call__(self, data):
         N = data.num_nodes
         edge_index = data.edge_index

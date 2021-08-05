@@ -3,8 +3,9 @@ import re
 import torch
 import torch.nn.functional as F
 from torch_scatter import scatter_add, scatter_mean
+
 import torch_geometric
-from torch_geometric.transforms.base_transform import BaseTransform
+from torch_geometric.transforms import BaseTransform
 
 
 class GridSampling(BaseTransform):

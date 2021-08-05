@@ -1,6 +1,7 @@
 import torch
 from torch_scatter import scatter_max
-from torch_geometric.transforms.base_transform import BaseTransform
+
+from torch_geometric.transforms import BaseTransform
 
 
 class LocalCartesian(BaseTransform):

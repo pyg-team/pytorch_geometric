@@ -1,5 +1,6 @@
 import random
-from torch_geometric.transforms.base_transform import BaseTransform
+
+from torch_geometric.transforms import BaseTransform
 
 
 class RandomScale(BaseTransform):
@@ -20,7 +21,6 @@ class RandomScale(BaseTransform):
             is randomly sampled from the range
             :math:`a \leq \mathrm{scale} \leq b`.
     """
-
     def __init__(self, scales):
         assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales

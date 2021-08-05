@@ -1,6 +1,7 @@
 import torch
 import scipy.spatial
-from torch_geometric.transforms.base_transform import BaseTransform
+
+from torch_geometric.transforms import BaseTransform
 
 
 class Delaunay(BaseTransform):

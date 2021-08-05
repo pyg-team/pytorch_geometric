@@ -3,7 +3,8 @@ import math
 
 import torch
 import numpy as np
-from torch_geometric.transforms.base_transform import BaseTransform
+
+from torch_geometric.transforms import BaseTransform
 
 
 class FixedPoints(BaseTransform):

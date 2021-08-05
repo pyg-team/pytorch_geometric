@@ -1,6 +1,6 @@
 import torch_geometric
 from torch_geometric.utils import to_undirected
-from torch_geometric.transforms.base_transform import BaseTransform
+from torch_geometric.transforms import BaseTransform
 
 
 class KNNGraph(BaseTransform):

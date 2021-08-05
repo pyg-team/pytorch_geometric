@@ -1,6 +1,6 @@
 import torch
-from torch_geometric.transforms import LinearTransformation
-from torch_geometric.transforms.base_transform import BaseTransform
+
+from torch_geometric.transforms import BaseTransform, LinearTransformation
 
 
 class RandomShear(BaseTransform):
@@ -20,7 +20,6 @@ class RandomShear(BaseTransform):
         shear (float or int): maximum shearing factor defining the range
             :math:`(-\mathrm{shear}, +\mathrm{shear})` to sample from.
     """
-
     def __init__(self, shear):
         self.shear = abs(shear)
 

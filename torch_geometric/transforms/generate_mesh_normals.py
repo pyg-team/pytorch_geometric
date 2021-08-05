@@ -1,13 +1,13 @@
 import torch
 import torch.nn.functional as F
 from torch_scatter import scatter_add
-from torch_geometric.transforms.base_transform import BaseTransform
+
+from torch_geometric.transforms import BaseTransform
 
 
 class GenerateMeshNormals(BaseTransform):
     r"""Generate normal vectors for each mesh node based on neighboring
     faces."""
-
     def __call__(self, data):
         assert 'face' in data
         pos, face = data.pos, data.face

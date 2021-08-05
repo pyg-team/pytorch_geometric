@@ -1,7 +1,8 @@
 import torch
 from torch_scatter import scatter_min, scatter_max, scatter_mean, scatter_std
+
 from torch_geometric.utils import degree
-from torch_geometric.transforms.base_transform import BaseTransform
+from torch_geometric.transforms import BaseTransform
 
 
 class LocalDegreeProfile(BaseTransform):
@@ -16,7 +17,6 @@ class LocalDegreeProfile(BaseTransform):
     to the node features, where :math:`DN(i) = \{ \deg(j) \mid j \in
     \mathcal{N}(i) \}`.
     """
-
     def __call__(self, data):
         row, col = data.edge_index
         N = data.num_nodes

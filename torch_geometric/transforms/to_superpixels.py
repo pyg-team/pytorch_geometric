@@ -1,7 +1,8 @@
 import torch
 from torch_scatter import scatter_mean
+
 from torch_geometric.data import Data
-from torch_geometric.transforms.base_transform import BaseTransform
+from torch_geometric.transforms import BaseTransform
 
 
 class ToSLIC(BaseTransform):
