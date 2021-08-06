@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch.nn import ReLU
 import torch_geometric.transforms as T
 from torch_geometric.nn import Linear, Sequential, SAGEConv, to_hetero
-from torch_geometric.data import HGSampler
+from torch_geometric.data import HGTSampler
 from torch_geometric.datasets import OGB_MAG
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/OGB')
@@ -19,12 +19,12 @@ for src, rel, dst in [('paper', 'inv_writes', 'author'),
                       ('author', 'affiliated_with', 'institution')]:
     data[dst].x = data[rel].adj_t.matmul(data[src].x, 'mean')
 
-train_loader = HGSampler(data, num_samples=[1024] * 4, batch_size=1024,
-                         num_workers=6, persistent_workers=True, shuffle=True,
-                         input_nodes=('paper', data['paper'].train_mask))
-val_loader = HGSampler(data, num_samples=[1024] * 4, batch_size=1024,
-                       num_workers=6, persistent_workers=True,
-                       input_nodes=('paper', data['paper'].val_mask))
+train_loader = HGTSampler(data, num_samples=[1024] * 4, batch_size=1024,
+                          num_workers=6, persistent_workers=True, shuffle=True,
+                          input_nodes=('paper', data['paper'].train_mask))
+val_loader = HGTSampler(data, num_samples=[1024] * 4, batch_size=1024,
+                        num_workers=6, persistent_workers=True,
+                        input_nodes=('paper', data['paper'].val_mask))
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Sequential('x, adj', [

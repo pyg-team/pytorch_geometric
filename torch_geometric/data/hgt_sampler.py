@@ -9,40 +9,40 @@ from torch_geometric.data import HeteroData
 from torch_geometric.typing import NodeType
 
 
-class HGSampler(torch.utils.data.DataLoader):
+class HGTSampler(torch.utils.data.DataLoader):
     r"""The Heterogeneous Graph Sampler from the `"Heterogeneous Graph
     Transformer" <https://arxiv.org/abs/2003.01332>`_ paper, which allows for
     mini-batch training of heterogeneous GNNs on large-scale graphs where
     full-batch training is not feasible.
 
-    :class:`~torch_geometric.data.HGSampler` tries to (1) keep a similar number
+    :class:`~torch_geometric.data.HGTSampler` tries to (1) keep a similar number
     of nodes and edges for each type and (2) keep the sampled sub-graph dense
     to minimize the information loss and reduce the sample variance.
 
-    Methodically, :class:`~torch_geometric.data.HGSampler` keeps track of a
+    Methodically, :class:`~torch_geometric.data.HGTSampler` keeps track of a
     node budget for each node type, which is then used to determine the
     sampling probability of a node.
     In particular, the probability of sampling a node is determined by the
     number of connections to already sampled nodes and their node degrees.
-    With this, :class:`~torch_geometric.data.HGSampler` will sample a fixed
+    With this, :class:`~torch_geometric.data.HGTSampler` will sample a fixed
     amount of neighbors for each node type in each iteration, as given by the
     :obj:`num_samples` argument.
 
     .. note::
 
-        For an example of using :class:`~torch_geometric.data.HGSampler`, see
+        For an example of using :class:`~torch_geometric.data.HGTSampler`, see
         `examples/hetero/to_hetero_mag.py
         <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
         hetero/to_hetero_mag.py>`_.
 
     .. code-block:: python
 
-        from torch_geometric.data import HGSampler
+        from torch_geometric.data import HGTSampler
         from torch_geometric.datasets import OGB_MAG
 
         hetero_data = OGB_MAG(path)[0]
 
-        loader = HGSampler(
+        loader = HGTSampler(
             hetero_data,
             # Sample 512 nodes per type and per iteration for 4 iterations
             num_samples=[512] * 4,
@@ -171,7 +171,7 @@ class HGSampler(torch.utils.data.DataLoader):
 def _convert_input(
     data: HeteroData,
 ) -> Tuple[Dict[str, Tensor], Dict[str, Tensor], Dict[str, Tensor]]:
-    # The HGSampler expects a heterogeneous graph to be stored in CSC
+    # The HGTSampler expects a heterogeneous graph to be stored in CSC
     # representation. We therefore iterate over each edge type and convert the
     # `edge_index`/`adj_t` tensor into `(colptr, row, perm)` tuples, where
     # `perm` denotes the re-ordering/permutation of original edge values to CSC

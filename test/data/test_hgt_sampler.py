@@ -9,7 +9,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.datasets import Planetoid
 from torch_geometric.utils import k_hop_subgraph
 from torch_geometric.nn import SAGEConv, to_hetero
-from torch_geometric.data import HeteroData, HGSampler
+from torch_geometric.data import HeteroData, HGTSampler
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -18,7 +18,7 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     return torch.stack([row, col], dim=0)
 
 
-def test_hg_sampler():
+def test_hgt_sampler():
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -41,9 +41,9 @@ def test_hg_sampler():
     )
 
     split_idx = torch.randperm(data['paper'].num_nodes)
-    loader = HGSampler(data, num_samples=[5] * 4, batch_size=20,
-                       input_nodes=('paper', split_idx))
-    assert str(loader) == 'HGSampler()'
+    loader = HGTSampler(data, num_samples=[5] * 4, batch_size=20,
+                        input_nodes=('paper', split_idx))
+    assert str(loader) == 'HGTSampler()'
     assert len(loader) == 5
 
     for batch in loader:
@@ -108,7 +108,7 @@ def test_hg_sampler():
         assert torch.cat([row, col]).unique().numel() == 60
 
 
-def test_hg_sampler_on_cora():
+def test_hgt_sampler_on_cora():
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dataset = Planetoid(root, 'Cora')
     homo_data = dataset[0]
@@ -120,9 +120,9 @@ def test_hg_sampler_on_cora():
     split_idx = torch.arange(5, 10)
 
     # Sample the complete two-hop neighborhood:
-    loader = HGSampler(hetero_data, num_samples=[homo_data.num_nodes] * 2,
-                       batch_size=split_idx.numel(),
-                       input_nodes=('paper', split_idx))
+    loader = HGTSampler(hetero_data, num_samples=[homo_data.num_nodes] * 2,
+                        batch_size=split_idx.numel(),
+                        input_nodes=('paper', split_idx))
     assert len(loader) == 1
 
     sub_hetero_data = next(iter(loader))
