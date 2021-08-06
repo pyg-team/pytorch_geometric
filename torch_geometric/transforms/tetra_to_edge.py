@@ -18,7 +18,8 @@ class TetraToEdge(object):
         if data.tetra is not None:
             tetra = data.tetra
             edge_index = torch.cat([tetra[:2], tetra[1:3, :], tetra[-2:],
-                                    tetra[::2], tetra[::3], tetra[1::2]], dim=1)
+                                    tetra[::2], tetra[::3], tetra[1::2]],
+                                   dim=1)
             edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)
 
             data.edge_index = edge_index

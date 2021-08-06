@@ -274,6 +274,6 @@ def from_meshio(mesh):
 
     pos = torch.from_numpy(mesh.points).to(torch.float)
     tetra = torch.from_numpy(mesh.cells_dict['tetra']).to(
-            torch.long).t().contiguous()
+        torch.long).t().contiguous()
 
     return torch_geometric.data.Data(pos=pos, tetra=tetra)
