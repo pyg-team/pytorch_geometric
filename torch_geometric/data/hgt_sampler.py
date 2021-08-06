@@ -15,9 +15,9 @@ class HGTSampler(torch.utils.data.DataLoader):
     mini-batch training of heterogeneous GNNs on large-scale graphs where
     full-batch training is not feasible.
 
-    :class:`~torch_geometric.data.HGTSampler` tries to (1) keep a similar number
-    of nodes and edges for each type and (2) keep the sampled sub-graph dense
-    to minimize the information loss and reduce the sample variance.
+    :class:`~torch_geometric.data.HGTSampler` tries to (1) keep a similar
+    number of nodes and edges for each type and (2) keep the sampled sub-graph
+    dense to minimize the information loss and reduce the sample variance.
 
     Methodically, :class:`~torch_geometric.data.HGTSampler` keeps track of a
     node budget for each node type, which is then used to determine the
