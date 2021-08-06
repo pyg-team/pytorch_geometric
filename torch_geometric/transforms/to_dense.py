@@ -1,7 +1,9 @@
 import torch
 
+from torch_geometric.transforms import BaseTransform
 
-class ToDense(object):
+
+class ToDense(BaseTransform):
     r"""Converts a sparse adjacency matrix to a dense adjacency matrix with
     shape :obj:`[num_nodes, num_nodes, *]`.
 

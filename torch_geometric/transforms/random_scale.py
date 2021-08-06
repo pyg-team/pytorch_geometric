@@ -1,7 +1,9 @@
 import random
 
+from torch_geometric.transforms import BaseTransform
 
-class RandomScale(object):
+
+class RandomScale(BaseTransform):
     r"""Scales node positions by a randomly sampled factor :math:`s` within a
     given interval, *e.g.*, resulting in the transformation matrix
 
@@ -19,7 +21,6 @@ class RandomScale(object):
             is randomly sampled from the range
             :math:`a \leq \mathrm{scale} \leq b`.
     """
-
     def __init__(self, scales):
         assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales

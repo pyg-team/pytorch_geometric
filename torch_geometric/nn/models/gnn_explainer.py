@@ -1,6 +1,7 @@
-from copy import copy
-from math import sqrt
 from typing import Optional
+
+from math import sqrt
+from inspect import signature
 
 import torch
 from tqdm import tqdm
@@ -74,19 +75,23 @@ class GNNExplainer(torch.nn.Module):
 
         std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
         self.edge_mask = torch.nn.Parameter(torch.randn(E) * std)
+        self.loop_mask = edge_index[0] != edge_index[1]
 
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = True
                 module.__edge_mask__ = self.edge_mask
+                module.__loop_mask__ = self.loop_mask
 
     def __clear_masks__(self):
         for module in self.model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = False
                 module.__edge_mask__ = None
+                module.__loop_mask__ = None
         self.node_feat_masks = None
         self.edge_mask = None
+        module.loop_mask = None
 
     @property
     def num_hops(self):
@@ -321,11 +326,13 @@ class GNNExplainer(torch.nn.Module):
         mapping = {k: i for k, i in enumerate(subset.tolist())}
         G = nx.relabel_nodes(G, mapping)
 
-        node_kwargs = copy(kwargs)
+        node_args = set(signature(nx.draw_networkx_nodes).parameters.keys())
+        node_kwargs = {k: v for k, v in kwargs.items() if k in node_args}
         node_kwargs['node_size'] = kwargs.get('node_size') or 800
         node_kwargs['cmap'] = kwargs.get('cmap') or 'cool'
 
-        label_kwargs = copy(kwargs)
+        label_args = set(signature(nx.draw_networkx_labels).parameters.keys())
+        label_kwargs = {k: v for k, v in kwargs.items() if k in label_args}
         label_kwargs['font_size'] = kwargs.get('font_size') or 10
 
         pos = nx.spring_layout(G)

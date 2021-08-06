@@ -8,7 +8,6 @@ install_requires = [
     'tqdm',
     'scipy',
     'networkx',
-    'python-louvain',
     'scikit-learn',
     'requests',
     'pandas',

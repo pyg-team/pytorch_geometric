@@ -1,12 +1,13 @@
-import numbers
-import random
 import math
+import random
+import numbers
 
 import torch
-from torch_geometric.transforms import LinearTransformation
+
+from torch_geometric.transforms import BaseTransform, LinearTransformation
 
 
-class RandomRotate(object):
+class RandomRotate(BaseTransform):
     r"""Rotates node positions around a specific axis by a randomly sampled
     factor within a given interval.
 
@@ -17,7 +18,6 @@ class RandomRotate(object):
             \mathrm{degrees}]`.
         axis (int, optional): The rotation axis. (default: :obj:`0`)
     """
-
     def __init__(self, degrees, axis=0):
         if isinstance(degrees, numbers.Number):
             degrees = (-abs(degrees), abs(degrees))

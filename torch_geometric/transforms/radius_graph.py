@@ -1,7 +1,8 @@
 import torch_geometric
+from torch_geometric.transforms import BaseTransform
 
 
-class RadiusGraph(object):
+class RadiusGraph(BaseTransform):
     r"""Creates edges based on node positions :obj:`pos` to all points within a
     given distance.
 

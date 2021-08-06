@@ -1,7 +1,9 @@
 import torch
 
+from torch_geometric.transforms import BaseTransform
 
-class LinearTransformation(object):
+
+class LinearTransformation(BaseTransform):
     r"""Transforms node positions with a square transformation matrix computed
     offline.
 
