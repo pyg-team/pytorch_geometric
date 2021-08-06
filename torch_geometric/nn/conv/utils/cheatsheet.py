@@ -44,12 +44,6 @@ def supports_static_graphs(cls: str) -> bool:
     return 'node_dim=' not in inspect.getsource(cls.__init__)
 
 
-def supports_lazy_initialization(cls: str) -> bool:
-    cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
-    match = re.search('in_channels.*-1', inspect.getdoc(cls))
-    return match is not None
-
-
 def processes_heterogeneous_graphs(cls: str) -> bool:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
     signature = inspect.signature(cls.forward)
