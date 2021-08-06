@@ -263,6 +263,7 @@ def to_meshio(data):
 
     return meshio.Mesh(points, cells)
 
+
 def from_meshio(mesh):
     r"""Converts a :tetrahedral .msh/.vtk file to a
     :class:`torch_geometric.data.Data` instance.
@@ -272,6 +273,7 @@ def from_meshio(mesh):
     """
 
     pos = torch.from_numpy(mesh.points).to(torch.float)
-    tetra = torch.from_numpy(mesh.cells_dict['tetra']).to(torch.long).t().contiguous()
+    tetra = torch.from_numpy(mesh.cells_dict['tetra']).to(
+            torch.long).t().contiguous()
 
     return torch_geometric.data.Data(pos=pos, tetra=tetra)
