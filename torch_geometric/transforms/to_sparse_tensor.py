@@ -27,9 +27,8 @@ class ToSparseTensor(BaseTransform):
         remove_edge_index (bool, optional): If set to :obj:`False`, the
             :obj:`edge_index` tensor will not be removed.
             (default: :obj:`True`)
-        fill_cache (bool, optional): If set to :obj:`False`, will not
-            fill the underlying :obj:`SparseTensor` cache.
-            (default: :obj:`True`)
+        fill_cache (bool, optional): If set to :obj:`False`, will not fill the
+            underlying :obj:`SparseTensor` cache. (default: :obj:`True`)
     """
     def __init__(self, attr: Optional[str] = 'edge_weight',
                  remove_edge_index: bool = True, fill_cache: bool = True):
@@ -60,7 +59,8 @@ class ToSparseTensor(BaseTransform):
             store.adj_t = SparseTensor(
                 row=store.edge_index[1], col=store.edge_index[0],
                 value=None if self.attr is None or self.attr not in store else
-                store[self.attr], sparse_sizes=store.size(), is_sorted=True)
+                store[self.attr], sparse_sizes=store.size()[::-1],
+                is_sorted=True)
 
             if self.remove_edge_index:
                 del store['edge_index']

@@ -192,7 +192,7 @@ class ToHeteroTransformer(Transformer):
                 args = (self.find_by_name(key1), self.find_by_name(key2))
 
                 new_name = f'{name}__{dst}'
-                if self.aggr == 'mean' or len(queue) > 2:
+                if self.aggr == 'mean' or len(queue) > 0:
                     new_name += f'{i}'
 
                 out = self.graph.create_node('call_function',
@@ -276,11 +276,15 @@ class ToHeteroTransformer(Transformer):
         module_dict = torch.nn.ModuleDict()
         for key in self.metadata[int(has_edge_level_target)]:
             module_dict[key2str(key)] = copy.deepcopy(module)
+            if len(self.metadata[int(has_edge_level_target)]) <= 1:
+                continue
             if hasattr(module, 'reset_parameters'):
                 module_dict[key2str(key)].reset_parameters()
             elif sum([p.numel() for p in module.parameters()]) > 0:
-                warnings.warn((f"'{target}' will be duplicated, but its "
-                               f"parameters cannot be reset"))
+                warnings.warn(
+                    f"'{target}' will be duplicated, but its parameters "
+                    f"cannot be reset. To suppress this warning, add a "
+                    f"'reset_parameters()' method to '{target}'")
         return module_dict
 
     # Helper methods ##########################################################

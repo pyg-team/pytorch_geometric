@@ -328,15 +328,18 @@ class HeteroBasisConv(torch.nn.Module):
             conv.register_message_forward_hook(hook)
             self.convs.append(conv)
 
-        self.reset_parameters()
+        if self.num_bases > 1:
+            self.reset_parameters()
 
     def reset_parameters(self):
         for conv in self.convs:
             if hasattr(conv, 'reset_parameters'):
                 conv.reset_parameters()
             elif sum([p.numel() for p in conv.parameters()]) > 0:
-                warnings.warn((f"'{conv}' will be duplicated, but its "
-                               f"parameters cannot be reset"))
+                warnings.warn(
+                    f"'{conv}' will be duplicated, but its parameters cannot "
+                    f"be reset. To suppress this warning, add a "
+                    f"'reset_parameters()' method to '{conv}'")
             torch.nn.init.xavier_uniform_(conv.edge_type_weight)
 
     def forward(self, edge_type: Tensor, *args, **kwargs) -> Tensor:
