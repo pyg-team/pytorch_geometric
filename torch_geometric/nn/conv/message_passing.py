@@ -1,4 +1,4 @@
-from typing import List, Optional, Set, Callable
+from typing import List, Optional, Set, get_type_hints
 from torch_geometric.typing import Adj, Size
 
 import os
@@ -8,7 +8,6 @@ import os.path as osp
 from uuid import uuid1
 from itertools import chain
 from inspect import Parameter
-from collections import OrderedDict
 
 import torch
 from torch import Tensor

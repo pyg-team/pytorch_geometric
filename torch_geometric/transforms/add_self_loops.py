@@ -1,10 +1,11 @@
 from typing import Union
 
-from torch_geometric.data import Data, HeteroData
 from torch_geometric.utils import add_self_loops
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.transforms import BaseTransform
 
 
-class AddSelfLoops(object):
+class AddSelfLoops(BaseTransform):
     r"""Adds self-loops to the given homogeneous or heterogeneous graph."""
     def __call__(self, data: Union[Data, HeteroData]):
         for store in data.edge_stores:

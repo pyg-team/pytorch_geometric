@@ -2,11 +2,13 @@ from typing import Union, Optional
 
 from torch import Tensor
 from torch_sparse import SparseTensor
+
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.utils import sort_edge_index
+from torch_geometric.transforms import BaseTransform
 
 
-class ToSparseTensor(object):
+class ToSparseTensor(BaseTransform):
     r"""Converts the :obj:`edge_index` attributes of a homogeneous or
     heterogeneous data object into a (transposed)
     :class:`torch_sparse.SparseTensor` type with key :obj:`adj_.t`.

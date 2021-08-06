@@ -133,7 +133,7 @@ class SchNet(torch.nn.Module):
             self.atomref.weight.data.copy_(self.initial_atomref)
 
     @staticmethod
-    def from_qm9_pretrained(root, dataset, target):
+    def from_qm9_pretrained(root: str, dataset: Dataset, target: int):
         import ase
         import schnetpack as spk  # noqa
 

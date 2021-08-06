@@ -284,6 +284,7 @@ class DimeNet(torch.nn.Module):
         super(DimeNet, self).__init__()
 
         self.cutoff = cutoff
+        self.max_num_neighbors = max_num_neighbors
         self.num_blocks = num_blocks
 
         self.rbf = BesselBasisLayer(num_radial, cutoff, envelope_exponent)
@@ -314,7 +315,7 @@ class DimeNet(torch.nn.Module):
             interaction.reset_parameters()
 
     @staticmethod
-    def from_qm9_pretrained(root, dataset, target):
+    def from_qm9_pretrained(root: str, dataset: Dataset, target: int):
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
