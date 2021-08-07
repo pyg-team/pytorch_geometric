@@ -22,8 +22,8 @@ class PDNConv(MessagePassing):
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(v) \cup
         \{ i \}} f_{\Theta}(\textbf{z}_{(i,j)}) \cdot f_{\Omega}(\mathbf{x}_{j})
 
-    where :math:`z_{i,j}` denotes the edge feature vector from source node
-    :obj:`j` to target node :obj:`i` and :math:`x_{j}` is the node
+    where :math:`z_{i,j}` denotes the edge feature vector from source
+    node :obj:`j` to target node :obj:`i` and :math:`x_{j}` is the node
     feature vector of the source node :obj:`j`.
 
     Args:
