@@ -1,17 +1,15 @@
 from typing import Optional, Tuple
-from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.typing import Adj
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add
-from torch_sparse import SparseTensor, matmul, fill_diag, sum as sparsesum, mul
+from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.utils import add_remaining_self_loops
-from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from ..inits import glorot, zeros
+
 
 class PDNConv(MessagePassing):
     r"""The pathfinder discovery network convolutional operator from the
@@ -22,10 +20,11 @@ class PDNConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(v) \cup
-        \{ i \}} f_{Theta}(\textbf{z}_{(i,j)}) \cdot f_{\Theta^{'}}(\mathbf{x}_{j})
+        \{ i \}} f_{Theta}(\textbf{z}_{(i,j)}) \cdot f_{\Omega}(\mathbf{x}_{j})
 
-    , where :math:`z_{i,j}` denotes the edge feature vector from source node :obj:`j` to target
-    node :obj:`i` and :math:`x_{j}` is the node feature vector of the source node :obj:`j`.
+    , where :math:`z_{i,j}` denotes the edge feature vector from source node
+    :obj:`j` to target node :obj:`i` and :math:`x_{j}` is the node
+    feature vector of the source node :obj:`j`.
 
     Args:
         in_channels_node (int): Size of each input node feature sample.
@@ -49,12 +48,20 @@ class PDNConv(MessagePassing):
     _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, in_channels_node: int, out_channels_node: int,
-    		  in_channels_edge: int, out_channels_edge: int,
-                 improved: bool = False, add_self_loops: bool = True,
-                 normalize: bool = True, bias: bool = True, **kwargs):
+    def __init__(
+        self,
+        in_channels_node: int,
+        out_channels_node: int,
+        in_channels_edge: int,
+        out_channels_edge: int,
+        improved: bool = False,
+        add_self_loops: bool = True,
+        normalize: bool = True,
+        bias: bool = True,
+        **kwargs
+    ):
 
-        kwargs.setdefault('aggr', 'add')
+        kwargs.setdefault("aggr", "add")
         super(PDNConv, self).__init__(**kwargs)
 
         self.in_channels_node = in_channels_node
@@ -65,17 +72,18 @@ class PDNConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.normalize = normalize
 
-        self.weight = Parameter(torch.Tensor(in_channels_node, out_channels_node))
-        self.weight_e_0 = Parameter(torch.Tensor(in_channels_edge, out_channels_edge))
+        self.weight = Parameter(torch.Tensor(in_channels_node,
+                                             out_channels_node))
+        self.weight_e_0 = Parameter(torch.Tensor(in_channels_edge,
+                                                 out_channels_edge))
         self.weight_e_1 = Parameter(torch.Tensor(out_channels_edge, 1))
         self.bias_e_0 = Parameter(torch.Tensor(out_channels_edge))
         self.bias_e_1 = Parameter(torch.Tensor(1))
 
-
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels_node))
         else:
-            self.register_parameter('bias', None)
+            self.register_parameter("bias", None)
 
         self.reset_parameters()
 
@@ -90,25 +98,28 @@ class PDNConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: Tensor) -> Tensor:
         """"""
-        
+
         edge_weight = edge_weight @ self.weight_e_0
         edge_weight = edge_weight + self.bias_e_0
         edge_weight = torch.relu(edge_weight)
         edge_weight = edge_weight @ self.weight_e_1
         edge_weight = edge_weight + self.bias_e_1
         edge_weight = torch.sigmoid(edge_weight)
-        edge_weight = edge_weight.squeeze()   
+        edge_weight = edge_weight.squeeze()
 
         if self.normalize:
             edge_index, edge_weight = gcn_norm(
-                edge_index, edge_weight, x.size(self.node_dim),
-                self.improved, self.add_self_loops)
- 
+                edge_index,
+                edge_weight,
+                x.size(self.node_dim),
+                self.improved,
+                self.add_self_loops,
+            )
 
         x = x @ self.weight
 
-        out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
-                             size=None)
+        out = self.propagate(edge_index, x=x,
+                             edge_weight=edge_weight, size=None)
 
         if self.bias is not None:
             out += self.bias
@@ -122,6 +133,10 @@ class PDNConv(MessagePassing):
         return matmul(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
-        return '{}({}, {}, {}, {})'.format(self.__class__.__name__, self.in_channels_node,
-                                   self.out_channels_node, self.in_channels_edge,
-                                   self.out_channels_edge)
+        return "{}({}, {}, {}, {})".format(
+            self.__class__.__name__,
+            self.in_channels_node,
+            self.out_channels_node,
+            self.in_channels_edge,
+            self.out_channels_edge,
+        )
