@@ -53,7 +53,7 @@ def test_pdn_conv_with_sparse_node_and_edge_input_feature():
 
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
-    conv = PDNConv(16, 32, 8, 128)
+    conv = PDNConv(16, 32, 8, 128, bias=False)
 
     out = conv(x, edge_index, edge_weight)
     assert out.size() == (4, 32)
