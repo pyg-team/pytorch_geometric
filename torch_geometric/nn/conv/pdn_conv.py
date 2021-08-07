@@ -72,10 +72,8 @@ class PDNConv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.normalize = normalize
 
-        self.weight = Parameter(torch.Tensor(in_channels_node,
-                                             out_channels_node))
-        self.weight_e_0 = Parameter(torch.Tensor(in_channels_edge,
-                                                 out_channels_edge))
+        self.weight = Parameter(torch.Tensor(in_channels_node, out_channels_node))
+        self.weight_e_0 = Parameter(torch.Tensor(in_channels_edge, out_channels_edge))
         self.weight_e_1 = Parameter(torch.Tensor(out_channels_edge, 1))
         self.bias_e_0 = Parameter(torch.Tensor(out_channels_edge))
         self.bias_e_1 = Parameter(torch.Tensor(1))
@@ -95,8 +93,7 @@ class PDNConv(MessagePassing):
         zeros(self.bias_e_0)
         zeros(self.bias_e_1)
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: Tensor) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj, edge_weight: Tensor) -> Tensor:
         """"""
 
         edge_weight = edge_weight @ self.weight_e_0
@@ -118,8 +115,7 @@ class PDNConv(MessagePassing):
 
         x = x @ self.weight
 
-        out = self.propagate(edge_index, x=x,
-                             edge_weight=edge_weight, size=None)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_weight, size=None)
 
         if self.bias is not None:
             out += self.bias
