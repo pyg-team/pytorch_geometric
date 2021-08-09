@@ -1,7 +1,9 @@
 import torch_geometric
 
+from torch_geometric.transforms import BaseTransform
 
-class GCNNorm(object):
+
+class GCNNorm(BaseTransform):
     r"""Applies the GCN normalization from the `"Semi-supervised Classification
     with Graph Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_
     paper.

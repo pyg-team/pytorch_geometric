@@ -18,6 +18,7 @@ from .md17 import MD17
 from .zinc import ZINC
 from .molecule_net import MoleculeNet
 from .entities import Entities
+from .rel_link_pred_dataset import RelLinkPredDataset
 from .ged_dataset import GEDDataset
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
@@ -78,6 +79,7 @@ __all__ = [
     'ZINC',
     'MoleculeNet',
     'Entities',
+    'RelLinkPredDataset',
     'GEDDataset',
     'MNISTSuperpixels',
     'FAUST',

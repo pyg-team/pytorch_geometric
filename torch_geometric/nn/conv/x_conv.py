@@ -127,7 +127,7 @@ class XConv(torch.nn.Module):
                                num_workers=self.num_workers)
 
         if self.dilation > 1:
-            edge_index = edge_index[:, ::K]
+            edge_index = edge_index[:, ::self.dilation]
 
         row, col = edge_index[0], edge_index[1]
 

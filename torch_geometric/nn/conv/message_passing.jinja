@@ -1,3 +1,4 @@
+import typing
 from typing import *
 from torch_geometric.typing import *
 
@@ -119,22 +120,23 @@ class {{cls_name}}({{parent_cls_name}}):
 
     @torch.jit._overload_method
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
-        # type: (Tensor, {{ prop_types.values()|join(', ') }}, Size) -> Tensor
+        # type: (Tensor, {{ prop_types.values()|join(', ') }}, Size) -> {{ prop_return_type }}
         pass
 
     @torch.jit._overload_method
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
-        # type: (SparseTensor, {{ prop_types.values()|join(', ') }}, Size) -> Tensor
+        # type: (SparseTensor, {{ prop_types.values()|join(', ') }}, Size) -> {{ prop_return_type }}
         pass
 
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
         the_size = self.__check_input__(edge_index, size)
         in_kwargs = Propagate_{{uid}}({% for k in prop_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
-        if self.fuse:
-            if isinstance(edge_index, SparseTensor):
-                out = self.message_and_aggregate(edge_index{% for k in msg_and_aggr_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
-                return self.update(out{% for k in update_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
+        {% if fuse %}
+        if isinstance(edge_index, SparseTensor):
+            out = self.message_and_aggregate(edge_index{% for k in msg_and_aggr_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
+            return self.update(out{% for k in update_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
+        {% endif %}
 
         kwargs = self.__collect__(edge_index, the_size, in_kwargs)
         out = self.message({% for k in msg_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
