@@ -1,13 +1,13 @@
 from __future__ import print_function
 
+import logging
 import ssl
 import os.path as osp
 from six.moves import urllib
-import logging
-logger = logging.getLogger(__name__)
 
 from .makedirs import makedirs
 
+logger = logging.getLogger(__name__)
 
 def download_url(url, folder, log=True):
     r"""Downloads the content of an URL to a specific folder.
