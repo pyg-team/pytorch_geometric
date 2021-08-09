@@ -3,6 +3,8 @@ from __future__ import print_function
 import ssl
 import os.path as osp
 from six.moves import urllib
+import logging
+logger = logging.getLogger(__name__)
 
 from .makedirs import makedirs
 
@@ -22,11 +24,11 @@ def download_url(url, folder, log=True):
 
     if osp.exists(path):  # pragma: no cover
         if log:
-            print('Using exist file', filename)
+            logger.info(f'Using existing file {filename}')
         return path
 
     if log:
-        print('Downloading', url)
+        logger.info(f'Downloading {url}')
 
     makedirs(folder)
 
