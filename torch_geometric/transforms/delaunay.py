@@ -1,8 +1,10 @@
 import torch
 import scipy.spatial
 
+from torch_geometric.transforms import BaseTransform
 
-class Delaunay(object):
+
+class Delaunay(BaseTransform):
     r"""Computes the delaunay triangulation of a set of points."""
     def __call__(self, data):
         if data.pos.size(0) < 2:

@@ -57,7 +57,7 @@ def coalesce(
     mask = idx[1:] > idx[:-1]
 
     # Only perform expensive merging in case there exists duplicates:
-    if all(mask):
+    if mask.all():
         return edge_index if edge_attr is None else (edge_index, edge_attr)
 
     edge_index = edge_index[:, mask]

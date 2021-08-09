@@ -1,4 +1,4 @@
-from typing import List, Optional, Set, Callable
+from typing import List, Optional, Set, Callable, get_type_hints
 from torch_geometric.typing import Adj, Size
 
 import os
@@ -85,6 +85,7 @@ class MessagePassing(torch.nn.Module):
         # Support for GNNExplainer.
         self.__explain__ = False
         self.__edge_mask__ = None
+        self.__loop_mask__ = None
 
         # Hooks:
         self._propagate_forward_pre_hooks = OrderedDict()
@@ -279,6 +280,7 @@ class MessagePassing(torch.nn.Module):
                 # Some ops add self-loops to `edge_index`. We need to do the
                 # same for `edge_mask` (but do not train those).
                 if out.size(self.node_dim) != edge_mask.size(0):
+                    edge_mask = edge_mask[self.__loop_mask__]
                     loop = edge_mask.new_ones(size[0])
                     edge_mask = torch.cat([edge_mask, loop], dim=0)
                 assert out.size(self.node_dim) == edge_mask.size(0)
@@ -492,6 +494,11 @@ class MessagePassing(torch.nn.Module):
             prop_types = split_types_repr(match.group(1))
             prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
 
+        type_hints = get_type_hints(self.__class__.update)
+        prop_return_type = type_hints.get('return', 'Tensor')
+        if str(prop_return_type)[:6] == '<class':
+            prop_return_type = prop_return_type.__name__
+
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.types(
             ['message', 'aggregate', 'update'])
@@ -523,6 +530,8 @@ class MessagePassing(torch.nn.Module):
             cls_name=cls_name,
             parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
+            prop_return_type=prop_return_type,
+            fuse=self.fuse,
             collect_types=collect_types,
             user_args=self.__user_args__,
             forward_header=forward_header,

@@ -1,9 +1,10 @@
 from typing import List, Union
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.transforms import BaseTransform
 
 
-class NormalizeFeatures(object):
+class NormalizeFeatures(BaseTransform):
     r"""Row-normalizes the attributes given in :obj:`attrs` to sum-up to one.
 
     Args:

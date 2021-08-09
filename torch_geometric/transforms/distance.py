@@ -1,7 +1,9 @@
 import torch
 
+from torch_geometric.transforms import BaseTransform
 
-class Distance(object):
+
+class Distance(BaseTransform):
     r"""Saves the Euclidean distance of linked nodes in its edge attributes.
 
     Args:

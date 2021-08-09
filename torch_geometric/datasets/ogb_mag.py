@@ -47,6 +47,10 @@ class OGB_MAG(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
+    def num_classes(self) -> int:
+        return int(self.data['paper'].y.max()) + 1
+
+    @property
     def raw_dir(self) -> str:
         return osp.join(self.root, 'mag', 'raw')
 
