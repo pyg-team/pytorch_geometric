@@ -168,4 +168,3 @@ for epoch in range(1, 10001):
     if (epoch % 500) == 0:
         valid_mrr, test_mrr = test()
         print(f'Val MRR: {valid_mrr:.4f}, Test MRR: {test_mrr:.4f}')
-
