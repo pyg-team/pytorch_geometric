@@ -5,13 +5,11 @@ import tarfile
 import zipfile
 import bz2
 import gzip
-import logging
-logger = logging.getLogger(__name__)
 
 
 def maybe_log(path, log=True):
     if log:
-        logger.info(f"Extracting {path}")
+        print('Extracting', path)
 
 
 def extract_tar(path, folder, mode='r:gz', log=True):
