@@ -452,3 +452,13 @@ class Data(object):
         else:
             info = [size_repr(key, item, indent=2) for key, item in self]
             return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
+
+    def record_stream(self, stream: torch.cuda.Stream):
+        r"""Ensures that the tensor memory is not reused for another tensor until all
+         current work queued on stream are complete
+        """
+
+        for key, value in self:
+            if isinstance(value, Tensor):
+                value.record_stream(stream)
+
