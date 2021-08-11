@@ -1,5 +1,6 @@
 from typing import Optional, Callable, List
 
+import sys
 import os
 import os.path as osp
 from tqdm import tqdm
@@ -174,7 +175,9 @@ class QM9(InMemoryDataset):
 
         if rdkit is None:
             print("Using a pre-processed version of the dataset. Please "
-                  "install 'rdkit' to alternatively process the raw data.")
+                  "install 'rdkit' to alternatively process the raw data.",
+                  file=sys.stderr
+            )
 
             self.data, self.slices = torch.load(self.raw_paths[0])
             data_list = [self.get(i) for i in range(len(self))]

@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import sys
 import os.path as osp
 import tarfile
 import zipfile
@@ -9,7 +10,7 @@ import gzip
 
 def maybe_log(path, log=True):
     if log:
-        print('Extracting', path)
+        print('Extracting', path, file=sys.stderr)
 
 
 def extract_tar(path, folder, mode='r:gz', log=True):
