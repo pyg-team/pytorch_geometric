@@ -1,5 +1,6 @@
 from typing import List, Optional, Callable, Union, Any, Tuple
 
+import sys
 import re
 import copy
 import warnings
@@ -12,9 +13,6 @@ from torch import Tensor
 
 from torch_geometric.data.data import Data
 from torch_geometric.data.makedirs import makedirs
-
-import logging
-logger = logging.getLogger(__name__)
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
@@ -162,7 +160,7 @@ class Dataset(torch.utils.data.Dataset):
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
-        logger.info('Processing dataset...')
+        print('Processing...', file=sys.stderr)
 
         makedirs(self.processed_dir)
         self.process()
@@ -172,7 +170,7 @@ class Dataset(torch.utils.data.Dataset):
         path = osp.join(self.processed_dir, 'pre_filter.pt')
         torch.save(_repr(self.pre_filter), path)
 
-        logger.info('Done!')
+        print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:
         r"""The number of examples in the dataset."""
