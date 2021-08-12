@@ -7,9 +7,10 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.utils import negative_sampling
+from torch_geometric.transforms import BaseTransform
 
 
-class RandomLinkSplit(object):
+class RandomLinkSplit(BaseTransform):
     r"""Performs an edge-level random split into training, validation and test
     sets.
     The split is performed such that the training split does not include edges
