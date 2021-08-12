@@ -1,3 +1,4 @@
+
 [pypi-image]: https://badge.fury.io/py/torch-geometric.svg
 [pypi-url]: https://pypi.python.org/pypi/torch-geometric
 [testing-image]: https://github.com/rusty1s/pytorch_geometric/actions/workflows/testing.yml/badge.svg
@@ -37,7 +38,65 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
 
 --------------------------------------------------------------------------------
 
-PyTorch Geometric makes implementing Graph Neural Networks a breeze (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html) for the accompanying tutorial).
+### Library Highlights
+*PyTorch Geometric* is a library that allows users to easily write graph neural networks (GNNs) for a wide range of applications related to structured data. Whether you are machine learning researchers or first-time users of machine learning toolkits, here are some reasons to try out PyTorch for machine learning on graph-structured data.
+
+* PyTorch Geometric is **easy-to-use and friendly for first-time users** of graph neural networks. All it takes is a few lines of code to get started with training a GNN model (see the next section on a [quick tour](#quick-tour-for-new-users).
+* PyTorch Geometric is **fast-growing and actively maintained**. Most of the state-of-the-art graph neural network architectures have been implemented either by library developers or authors of research papers themselves. 
+* The PyTorch Geometric  framework is **flexible** and can be easily extended for building your own GNNs as researchers.   Making modifications to existing models or creating a new architecture is very easy thanks to its easy-to-use message passing API, and a variety of utility functions.
+* We focus on the need of GNN applications in challenging real-world scenarios, and support **creation of GNN models with a variety of capabilities**, including but not limited to: scalable GNNs that can train on billions of nodes; dynamic GNNs for graph prediction over time; heterogeneous GNNs for tackling multiple node types and edge types in the same graph. 
+
+
+--------------------------------------------------------------------------------
+### Quick Tour for New Users
+In this quick tour, we highlight the ease of creating and training a GNN models with only a few lines of code.
+
+#### Simple example of GNN training
+In the first glimpse of PyG, we use a few lines of code to implement training of a GCN for node classification task on the standard benchmark Cora.
+
+The example requires the following imports:
+```python
+import torch
+import torch.nn.functional as F
+from torch_geometric.datasets import Planetoid
+from torch_geometric.nn import GCNConv
+```
+
+We first load the Cora dataset (More information can be found for [benchmark datasets](https://pytorch-geometric.readthedocs.io/en/latest/notes/introduction.html#common-benchmark-datasets) and [creating your own datasets](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_dataset.html), and then create a simple 2-layer GCN model using the already implemented GCN layer (GCNConv).
+```python
+dataset  =  Planetoid(dataset='Cora', transform=T.NormalizeFeatures())
+
+# creating a GCN model using the GCN layer (GCNConv)
+class Net(torch.nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.conv1 = GCNConv(dataset.num_features, 16)
+        self.conv2 = GCNConv(16, dataset.num_classes)
+
+    def forward(self):
+        x, edge_index, edge_weight = data.x, data.edge_index, data.edge_attr
+        x = F.relu(self.conv1(x, edge_index, edge_weight))
+        x = F.dropout(x, training=self.training)
+        x = self.conv2(x, edge_index, edge_weight)
+        return F.log_softmax(x, dim=1)
+```
+In the next step, we instantiate the model and optimize it in a training loop, similar to standard PyTorch training procedure:
+```python
+model = Net()
+optimizer = torch.optim.Adam(model.parameters(), weight_decay=0, lr=0.01)
+
+best_val_acc = test_acc = 0
+for epoch in range(200):
+    optimizer.zero_grad()
+    loss = F.nll_loss(model()[data.train_mask], data.y[data.train_mask])
+    loss.backward()
+    optimizer.step()
+    print('Epoch: {:03d}, Loss:{:.4f}'.format(epoch, loss))
+```
+More information about evaluating the training, validation and test accuracy can be found in the [example](*https://github.com/vrtex-team/pytorch_geometric/blob/master/examples/gcn.py).
+
+#### Creating your own GNNs
+In addition to using an existing GNN, PyTorch Geometric also makes implementing Graph Neural Networks a breeze (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html) for the accompanying tutorial).
 For example, this is all it takes to implement the [edge convolutional layer](https://arxiv.org/abs/1801.07829):
 
 ```python
@@ -61,7 +120,10 @@ class EdgeConv(MessagePassing):
         edge_features = torch.cat([x_i, x_j - x_i], dim=1)  # shape [E, 2 * F_in]
         return self.mlp(edge_features)  # shape [E, F_out]
 ```
+Users are highly encouraged to check out the [documentation](https://pytorch-geometric.readthedocs.io/en/latest/), which contains a longer 60-minute tutorial on the essential functionalities of PyTorch Geometric. In addition, users can find in documentations the advanced functionalities, such as heterogeneous GNNs, scalable GNNs, minibatch sampling etc.
 
+--------------------------------------------------------------------------------
+### Implemented GNN models
 In detail, the following methods are currently implemented:
 
 * **[SplineConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SplineConv)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/cora.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/faust.py)]
