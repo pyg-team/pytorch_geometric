@@ -26,7 +26,7 @@ class RandomLinkSplit(BaseTransform):
 
     Args:
         num_val (int or float, optional): The number of validation edges.
-            If set to a floating-point value in :math:` [0, 1]`, it represents
+            If set to a floating-point value in :math:`[0, 1]`, it represents
             the ratio of edges to include in the validation set.
             (default: :obj:`0.1`)
         num_test (int or float, optional): The number of test edges.
