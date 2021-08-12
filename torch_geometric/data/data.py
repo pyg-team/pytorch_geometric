@@ -365,6 +365,17 @@ class Data(object):
         attributes."""
         return self.apply(lambda x: x.pin_memory(), *keys)
 
+    def record_stream(self, stream: torch.cuda.Stream, *keys):
+        r"""Ensures that the tensor memory is not reused for another tensor
+        until all current work queued on :obj:`stream` has been completed.
+        If :obj:`*keys` is not given, this will be ensured for all present
+        attributes."""
+        def _record_stream(x):
+            x.record_stream(stream)
+            return x
+
+        return self.apply(_record_stream, *keys)
+
     def debug(self):
         if self.edge_index is not None:
             if self.edge_index.dtype != torch.long:
