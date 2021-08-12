@@ -44,7 +44,7 @@ class RandomLinkSplit(BaseTransform):
             :obj:`0` to :obj:`num_classes - 1`.
             After negative sampling, label :obj:`0` represents negative edges,
             and labels :obj:`1` to :obj:`num_classes` represent the labels of
-            postive edges. (default: :obj:`"edge_label"`)
+            positive edges. (default: :obj:`"edge_label"`)
         add_negative_train_samples (bool, optional): Whether to add negative
             training samples for link prediction.
             If the model already performs negative sampling, then the option
