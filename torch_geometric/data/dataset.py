@@ -101,6 +101,7 @@ class Dataset(torch.utils.data.Dataset):
     def num_node_features(self) -> int:
         r"""Returns the number of features per node in the dataset."""
         data = self[0]
+        data = data[0] if isinstance(data, tuple) else data
         if hasattr(data, 'num_node_features'):
             return data.num_node_features
         raise AttributeError(f"'{data.__class__.__name__}' object has no "
@@ -115,6 +116,7 @@ class Dataset(torch.utils.data.Dataset):
     def num_edge_features(self) -> int:
         r"""Returns the number of features per edge in the dataset."""
         data = self[0]
+        data = data[0] if isinstance(data, tuple) else data
         if hasattr(data, 'num_edge_features'):
             return data.num_edge_features
         raise AttributeError(f"'{data.__class__.__name__}' object has no "
