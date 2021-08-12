@@ -126,6 +126,10 @@ class Data(object):
         """Sets the attribute :obj:`key` to :obj:`value`."""
         setattr(self, key, value)
 
+    def __delitem__(self, key):
+        r"""Delete the data of the attribute :obj:`key`."""
+        return delattr(self, key)
+
     @property
     def keys(self):
         r"""Returns all names of graph attributes."""
