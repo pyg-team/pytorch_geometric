@@ -174,10 +174,9 @@ class QM9(InMemoryDataset):
             rdkit = None
 
         if rdkit is None:
-            print("Using a pre-processed version of the dataset. Please "
-                  "install 'rdkit' to alternatively process the raw data.",
-                  file=sys.stderr
-            )
+            print(("Using a pre-processed version of the dataset. Please "
+                   "install 'rdkit' to alternatively process the raw data."),
+                  file=sys.stderr)
 
             self.data, self.slices = torch.load(self.raw_paths[0])
             data_list = [self.get(i) for i in range(len(self))]

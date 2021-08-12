@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import sys
 import ssl
 import os.path as osp
@@ -23,11 +21,11 @@ def download_url(url, folder, log=True):
 
     if osp.exists(path):  # pragma: no cover
         if log:
-            print('Using exist file', filename, file=sys.stderr)
+            print(f'Using existing file {filename}', file=sys.stderr)
         return path
 
     if log:
-        print('Downloading', url, file=sys.stderr)
+        print(f'Downloading {url}', file=sys.stderr)
 
     makedirs(folder)
 

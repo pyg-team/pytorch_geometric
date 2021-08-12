@@ -214,7 +214,6 @@ class SNAPDataset(InMemoryDataset):
     def download(self):
         for name in self.available_datasets[self.name]:
             path = download_url('{}/{}'.format(self.url, name), self.raw_dir)
-            print("Downloaded SNAP dataset to ", path, file=sys.stderr)
             if name.endswith('.tar.gz'):
                 extract_tar(path, self.raw_dir)
             elif name.endswith('.gz'):
