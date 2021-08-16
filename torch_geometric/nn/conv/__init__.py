@@ -40,6 +40,7 @@ from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
 from .eg_conv import EGConv
+from .equivariant_conv import EquivariantConv
 
 __all__ = [
     'MessagePassing',
@@ -89,6 +90,7 @@ __all__ = [
     'SuperGATConv',
     'FAConv',
     'EGConv',
+    'EquivariantConv',
 ]
 
 classes = __all__
