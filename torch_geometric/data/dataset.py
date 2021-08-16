@@ -1,5 +1,6 @@
 from typing import List, Optional, Callable, Union, Any, Tuple
 
+import sys
 import re
 import copy
 import warnings
@@ -159,7 +160,7 @@ class Dataset(torch.utils.data.Dataset):
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
-        print('Processing...')
+        print('Processing...', file=sys.stderr)
 
         makedirs(self.processed_dir)
         self.process()
@@ -169,7 +170,7 @@ class Dataset(torch.utils.data.Dataset):
         path = osp.join(self.processed_dir, 'pre_filter.pt')
         torch.save(_repr(self.pre_filter), path)
 
-        print('Done!')
+        print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:
         r"""The number of examples in the dataset."""

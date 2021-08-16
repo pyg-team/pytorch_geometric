@@ -126,6 +126,10 @@ class Data(object):
         """Sets the attribute :obj:`key` to :obj:`value`."""
         setattr(self, key, value)
 
+    def __delitem__(self, key):
+        r"""Delete the data of the attribute :obj:`key`."""
+        return delattr(self, key)
+
     @property
     def keys(self):
         r"""Returns all names of graph attributes."""
@@ -364,6 +368,17 @@ class Data(object):
         If :obj:`*keys` is not given, the conversion is applied to all present
         attributes."""
         return self.apply(lambda x: x.pin_memory(), *keys)
+
+    def record_stream(self, stream: torch.cuda.Stream, *keys):
+        r"""Ensures that the tensor memory is not reused for another tensor
+        until all current work queued on :obj:`stream` has been completed.
+        If :obj:`*keys` is not given, this will be ensured for all present
+        attributes."""
+        def _record_stream(x):
+            x.record_stream(stream)
+            return x
+
+        return self.apply(_record_stream, *keys)
 
     def debug(self):
         if self.edge_index is not None:
