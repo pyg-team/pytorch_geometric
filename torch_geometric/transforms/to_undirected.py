@@ -45,7 +45,7 @@ class ToUndirected(BaseTransform):
                 edge_index = torch.stack([col, row], dim=0)
 
                 if rel != HeteroData.DEFAULT_REL:
-                    rel = f'inv_{rel}'
+                    rel = f'rev_{rel}'
                 inv_store = data[dst, rel, src]
                 inv_store.edge_index = edge_index
                 for key, value in store.items():
