@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from torch_geometric.graphgym.contrib.loss import *  # noqa
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.config import cfg
 

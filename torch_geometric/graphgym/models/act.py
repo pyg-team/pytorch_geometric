@@ -1,6 +1,5 @@
 import torch.nn as nn
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.contrib.act import *  # noqa
 import torch_geometric.graphgym.register as register
 
 act_dict = {

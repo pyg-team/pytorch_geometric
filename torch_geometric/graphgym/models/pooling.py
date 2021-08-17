@@ -2,7 +2,6 @@ import torch
 from torch_scatter import scatter
 from torch_geometric.graphgym.config import cfg
 
-from torch_geometric.graphgym.contrib.pooling import *  # noqa
 import torch_geometric.graphgym.register as register
 
 

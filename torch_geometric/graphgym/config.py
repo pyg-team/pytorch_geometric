@@ -4,7 +4,6 @@ from yacs.config import CfgNode as CN
 
 from torch_geometric.graphgym.utils.io import makedirs_rm_exist
 
-from torch_geometric.graphgym.contrib.config import *  # noqa
 import torch_geometric.graphgym.register as register
 
 # Global config object

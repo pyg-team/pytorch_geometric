@@ -6,7 +6,6 @@ from torch_geometric.datasets import Planetoid, TUDataset, KarateClub, \
 import torch_geometric.transforms as T
 
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.contrib.loader import *  # noqa
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.models.transform import get_link_label, \
     neg_sampling_transform
@@ -75,7 +74,8 @@ def index2mask(index, size):
 def set_dataset_attr(dataset, name, value, size):
     dataset._data_list = None
     dataset.data[name] = value
-    dataset.slices[name] = torch.tensor([0, size], dtype=torch.long)
+    if dataset.slices is not None:
+        dataset.slices[name] = torch.tensor([0, size], dtype=torch.long)
 
 
 def load_ogb(name, dataset_dir):
@@ -103,15 +103,13 @@ def load_ogb(name, dataset_dir):
     elif name[:4] == "ogbl":
         dataset = PygLinkPropPredDataset(name=name, root=dataset_dir)
         splits = dataset.get_edge_split()
-
         id = splits['train']['edge'].T
         if cfg.dataset.resample_negative:
             set_dataset_attr(dataset, 'train_pos_edge_index', id, id.shape[1])
-            # todo: applying transform for negative sampling is very slow
             dataset.transform = neg_sampling_transform
         else:
             id_neg = negative_sampling(edge_index=id,
-                                       num_nodes=dataset.data.num_nodes[0],
+                                       num_nodes=dataset.data.num_nodes,
                                        num_neg_samples=id.shape[1])
             id_all = torch.cat([id, id_neg], dim=-1)
             label = get_link_label(id, id_neg)
@@ -133,7 +131,6 @@ def load_ogb(name, dataset_dir):
 
     else:
         raise ValueError('OGB dataset: {} non-exist')
-
     return dataset
 
 

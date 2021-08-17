@@ -2,7 +2,6 @@ from torch_geometric.graphgym.config import cfg
 
 import torch.optim as optim
 
-from torch_geometric.graphgym.contrib.optimizer import *  # noqa
 import torch_geometric.graphgym.register as register
 
 
