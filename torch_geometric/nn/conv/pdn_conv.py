@@ -1,9 +1,8 @@
-from typing import Optional, Tuple
-from torch_geometric.typing import Adj
+from torch_geometric.typing import Adj, OptTensor
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter
+from torch.nn import Sequential, Linear, ReLU, Sigmoid, Parameter
 from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
@@ -16,24 +15,19 @@ class PDNConv(MessagePassing):
     `"Pathfinder Discovery Networks for Neural Message Passing"
     <https://arxiv.org/pdf/2010.12878.pdf>`_ paper
 
-    Its node-wise formulation is given by:
-
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(v) \cup
-        \{i\}}f_{\Theta}(\textbf{z}_{(i,j)})\cdot f_{\Omega}(\mathbf{x}_{j})
+        \{i\}}f_{\Theta}(\textbf{e}_{(j,i)}) \cdot f_{\Omega}(\mathbf{x}_{j})
 
-    where :math:`z_{i,j}` denotes the edge feature vector from source
-    node :obj:`j` to target node :obj:`i` and :math:`x_{j}` is the node
-    feature vector of the source node :obj:`j`.
+    where :math:`z_{i,j}` denotes the edge feature vector from source node
+    :math:`j` to target node :math:`i`, and :math:`\mathbf{x}_{j}` denotes the
+    node feature vector of node :math:`j`.
 
     Args:
-        in_channels_node (int): Size of each input node feature sample.
-        out_channels_node (int): Size of each output node feature sample.
-        in_channels_edge (int): Size of each input edge feature sample.
-        out_channels_edge (int): Size of each output edge feature sample.
-        improved (bool, optional): If set to :obj:`True`, the layer computes
-            :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
-            (default: :obj:`False`)
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        edge_dim (int): Edge feature dimensionality.
+        hidden_channels (int): Hidden edge feature dimensionality.
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
         normalize (bool, optional): Whether to add self-loops and compute
@@ -44,82 +38,70 @@ class PDNConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
-    _cached_adj_t: Optional[SparseTensor]
-
-    def __init__(
-        self,
-        in_channels_node: int,
-        out_channels_node: int,
-        in_channels_edge: int,
-        out_channels_edge: int,
-        improved: bool = False,
-        add_self_loops: bool = True,
-        normalize: bool = True,
-        bias: bool = True,
-        **kwargs
-    ):
+    def __init__(self, in_channels: int, out_channels: int, edge_dim: int,
+                 hidden_channels: int, add_self_loops: bool = True,
+                 normalize: bool = True, bias: bool = True, **kwargs):
 
         kwargs.setdefault("aggr", "add")
-        super(PDNConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
-        self.in_channels_node = in_channels_node
-        self.out_channels_node = out_channels_node
-        self.in_channels_edge = in_channels_edge
-        self.out_channels_edge = out_channels_edge
-        self.improved = improved
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.edge_dim = edge_dim
+        self.hidden_channels = hidden_channels
         self.add_self_loops = add_self_loops
         self.normalize = normalize
 
-        self.weight = Parameter(torch.Tensor(in_channels_node,
-                                             out_channels_node))
-        self.weight_e_0 = Parameter(torch.Tensor(in_channels_edge,
-                                                 out_channels_edge))
-        self.weight_e_1 = Parameter(torch.Tensor(out_channels_edge, 1))
-        self.bias_e_0 = Parameter(torch.Tensor(out_channels_edge))
-        self.bias_e_1 = Parameter(torch.Tensor(1))
+        self.lin = Linear(in_channels, out_channels, bias=False)
+
+        self.mlp = Sequential(
+            Linear(edge_dim, hidden_channels),
+            ReLU(inplace=True),
+            Linear(hidden_channels, 1),
+            Sigmoid(),
+        )
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels_node))
+            self.bias = Parameter(torch.Tensor(out_channels))
         else:
             self.register_parameter("bias", None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
-        glorot(self.weight_e_0)
-        glorot(self.weight_e_1)
+        glorot(self.lin.weight)
+        glorot(self.mlp[0].weight)
+        glorot(self.mlp[2].weight)
+        zeros(self.mlp[0].bias)
+        zeros(self.mlp[2].bias)
         zeros(self.bias)
-        zeros(self.bias_e_0)
-        zeros(self.bias_e_1)
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: Tensor) -> Tensor:
+                edge_attr: OptTensor = None) -> Tensor:
         """"""
 
-        edge_weight = edge_weight @ self.weight_e_0
-        edge_weight = edge_weight + self.bias_e_0
-        edge_weight = torch.relu(edge_weight)
-        edge_weight = edge_weight @ self.weight_e_1
-        edge_weight = edge_weight + self.bias_e_1
-        edge_weight = torch.sigmoid(edge_weight)
-        edge_weight = edge_weight.squeeze()
+        if isinstance(edge_index, SparseTensor):
+            edge_attr = edge_index.storage.value()
+
+        if edge_attr is not None:
+            edge_attr = self.mlp(edge_attr).squeeze(-1)
+
+        if isinstance(edge_index, SparseTensor):
+            edge_index = edge_index.set_value(edge_attr, layout='coo')
 
         if self.normalize:
-            edge_index, edge_weight = gcn_norm(
-                edge_index,
-                edge_weight,
-                x.size(self.node_dim),
-                self.improved,
-                self.add_self_loops,
-            )
+            if isinstance(edge_index, Tensor):
+                edge_index, edge_attr = gcn_norm(edge_index, edge_attr,
+                                                 x.size(self.node_dim), False,
+                                                 self.add_self_loops)
+            elif isinstance(edge_index, SparseTensor):
+                edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
+                                      False, self.add_self_loops)
 
-        x = x @ self.weight
+        x = self.lin(x)
 
-        out = self.propagate(edge_index, x=x,
-                             edge_weight=edge_weight, size=None)
+        # propagate_type: (x: Tensor, edge_weight: OptTensor)
+        out = self.propagate(edge_index, x=x, edge_weight=edge_attr, size=None)
 
         if self.bias is not None:
             out += self.bias
@@ -133,10 +115,5 @@ class PDNConv(MessagePassing):
         return matmul(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
-        return "{}({}, {}, {}, {})".format(
-            self.__class__.__name__,
-            self.in_channels_node,
-            self.out_channels_node,
-            self.in_channels_edge,
-            self.out_channels_edge,
-        )
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')
