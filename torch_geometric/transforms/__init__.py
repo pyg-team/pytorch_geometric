@@ -41,6 +41,7 @@ from .sign import SIGN
 from .grid_sampling import GridSampling
 from .gcn_norm import GCNNorm
 from .add_train_val_test_mask import AddTrainValTestMask
+from .random_link_split import RandomLinkSplit
 
 __all__ = [
     'BaseTransform',
@@ -86,6 +87,7 @@ __all__ = [
     'GridSampling',
     'GCNNorm',
     'AddTrainValTestMask',
+    'RandomLinkSplit',
 ]
 
 classes = __all__
