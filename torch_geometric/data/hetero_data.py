@@ -205,8 +205,9 @@ class HeteroData(BaseData):
         info1 = [size_repr(k, v, 2) for k, v in self._global_store.items()]
         info2 = [size_repr(k, v, 2) for k, v in self._node_stores_dict.items()]
         info3 = [size_repr(k, v, 2) for k, v in self._edge_stores_dict.items()]
-        info = info1 + info2 + info3
-        return '{}(\n{}\n)'.format(self.__class__.__name__, ',\n'.join(info))
+        info = ',\n'.join(info1 + info2 + info3)
+        info = f'\n{info}\n' if len(info) > 0 else info
+        return f'{self.__class__.__name__}({info})'
 
     @property
     def stores(self) -> List[BaseStorage]:

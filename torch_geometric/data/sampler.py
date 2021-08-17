@@ -98,7 +98,7 @@ class NeighborSampler(torch.utils.data.DataLoader):
             when operating on graphs without edge features to save memory.
             (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in
-            an a sampled mini-batch and returns a transformed version.
+            a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,

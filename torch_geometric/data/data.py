@@ -1,5 +1,5 @@
-from typing import (Optional, Dict, Any, Union, List, Iterable, NamedTuple,
-                    Callable)
+from typing import (Optional, Dict, Any, Union, List, Iterable, Tuple,
+                    NamedTuple, Callable)
 from torch_geometric.typing import OptTensor
 from torch_geometric.deprecation import deprecated
 
@@ -139,6 +139,13 @@ class BaseData(object):
         except TypeError:
             return None
 
+    def size(
+        self, dim: Optional[int] = None
+    ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
+        r"""Returns the size of the adjacency matrix induced by the graph."""
+        size = (self.num_nodes, self.num_nodes)
+        return size if dim is None else size[dim]
+
     @property
     def num_edges(self) -> int:
         r"""Returns the number of edges in the graph.
@@ -178,6 +185,13 @@ class BaseData(object):
         r"""Performs a deep-copy of the data object."""
         return copy.deepcopy(self)
 
+    def apply_(self, func: Callable, *args: List[str]):
+        r"""Applies the in-place function :obj:`func`, either to all attributes
+        or only the ones given in :obj:`*args`."""
+        for store in self.stores:
+            store.apply_(func, *args)
+        return self
+
     def apply(self, func: Callable, *args: List[str]):
         r"""Applies the function :obj:`func`, either to all attributes or only
         the ones given in :obj:`*args`."""
@@ -202,11 +216,12 @@ class BaseData(object):
         the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cpu(), *args)
 
-    def cuda(self, device: Union[int, str], *args: List[str],
+    def cuda(self, device: Optional[Union[int, str]] = None, *args: List[str],
              non_blocking: bool = False):
         r"""Copies attributes to CUDA memory, either for all attributes or only
         the ones given in :obj:`*args`."""
-        return self.apply(lambda x: x.cuda(non_blocking=non_blocking), *args)
+        return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
+                          *args)
 
     def pin_memory(self, *args: List[str]):
         r"""Copies attributes to pinned memory, either for all attributes or
@@ -216,12 +231,12 @@ class BaseData(object):
     def share_memory_(self, *args: List[str]):
         r"""Moves attributes to shared memory, either for all attributes or
         only the ones given in :obj:`*args`."""
-        return self.apply(lambda x: x.share_memory_(), *args)
+        return self.apply_(lambda x: x.share_memory_(), *args)
 
     def detach_(self, *args: List[str]):
         r"""Detaches attributes from the computation graph, either for all
         attributes or only the ones given in :obj:`*args`."""
-        return self.apply(lambda x: x.detach_(), *args)
+        return self.apply_(lambda x: x.detach_(), *args)
 
     def detach(self, *args: List[str]):
         r"""Detaches attributes from the computation graph by creating a new
@@ -232,7 +247,7 @@ class BaseData(object):
     def requires_grad_(self, *args: List[str], requires_grad: bool = True):
         r"""Tracks gradient computation, either for all attributes or only the
         ones given in :obj:`*args`."""
-        return self.apply(
+        return self.apply_(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
     def record_stream(self, stream: torch.cuda.Stream, *args: List[str]):
@@ -490,6 +505,8 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         out = f"'{value}'"
     elif isinstance(value, Sequence):
         out = str([len(value)])
+    elif isinstance(value, Mapping) and len(value) == 0:
+        out = '{}'
     elif (isinstance(value, Mapping) and len(value) == 1
           and not isinstance(list(value.values())[0], Mapping)):
         lines = [size_repr(k, v, 0) for k, v in value.items()]

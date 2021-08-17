@@ -119,6 +119,13 @@ class BaseStorage(MutableMapping):
     def items(self, *args: List[str]) -> ItemsView:
         return ItemsView(self._mapping, *args)
 
+    def apply_(self, func: Callable, *args: List[str]):
+        r"""Applies the in-place function :obj:`func`, either to all attributes
+        or only the ones given in :obj:`*args`."""
+        for value in self.values(*args):
+            recursive_apply_(value, func)
+        return self
+
     def apply(self, func: Callable, *args: List[str]):
         r"""Applies the function :obj:`func`, either to all attributes or only
         the ones given in :obj:`*args`."""
@@ -160,11 +167,12 @@ class BaseStorage(MutableMapping):
         the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cpu(), *args)
 
-    def cuda(self, device: Union[int, str], *args: List[str],
+    def cuda(self, device: Optional[Union[int, str]] = None, *args: List[str],
              non_blocking: bool = False):
         r"""Copies attributes to CUDA memory, either for all attributes or only
         the ones given in :obj:`*args`."""
-        return self.apply(lambda x: x.cuda(non_blocking=non_blocking), *args)
+        return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
+                          *args)
 
     def pin_memory(self, *args: List[str]):
         r"""Copies attributes to pinned memory, either for all attributes or
@@ -301,16 +309,11 @@ class EdgeStorage(BaseStorage):
         self, dim: Optional[int] = None
     ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
 
-        if 'adj' in self:
-            size = (self.adj.size(0), self.adj.size(1))
-        elif 'adj_t' in self:
-            size = (self.adj_t.size(1), self.adj_t.size(0))
-        else:
-            if self._key is None:
-                raise NameError("Unable to infer 'size' without explicit "
-                                "'_key' assignment")
-            size = (self._parent[self._key[0]].num_nodes,
-                    self._parent[self._key[-1]].num_nodes)
+        if self._key is None:
+            raise NameError("Unable to infer 'size' without explicit "
+                            "'_key' assignment")
+        size = (self._parent[self._key[0]].num_nodes,
+                self._parent[self._key[-1]].num_nodes)
 
         return size if dim is None else size[dim]
 
@@ -380,6 +383,25 @@ class GlobalStorage(NodeStorage, EdgeStorage):
     ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
         size = (self.num_nodes, self.num_nodes)
         return size if dim is None else size[dim]
+
+
+def recursive_apply_(data: Any, func: Callable):
+    if isinstance(data, Tensor):
+        func(data)
+    elif isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
+        for value in data:
+            recursive_apply_(value)
+    elif isinstance(data, Sequence) and not isinstance(data, str):
+        for value in data:
+            recursive_apply_(value)
+    elif isinstance(data, Mapping):
+        for value in data.values():
+            recursive_apply_(value)
+    else:
+        try:
+            func(data)
+        except:  # noqa
+            pass
 
 
 def recursive_apply(data: Any, func: Callable) -> Any:
