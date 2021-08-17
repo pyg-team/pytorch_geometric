@@ -3,6 +3,7 @@ from typing import (Any, Optional, Iterable, Dict, List, Callable, Union,
 from torch_geometric.typing import NodeType, EdgeType
 
 import copy
+import weakref
 import warnings
 from inspect import signature
 from collections import namedtuple
@@ -17,26 +18,28 @@ from torch_geometric.data.view import KeysView, ValuesView, ItemsView
 
 
 class BaseStorage(MutableMapping):
-    # This class wraps a Python dictionary and extends it by the following:
-    # 1. It allows attribute assignment, e.g.:
-    #    `storage.x = ...` rather than `storage['x'] = ...`
+    # This class wraps a Python dictionary and extends it as follows:
+    # 1. It allows attribute assignments, e.g.:
+    #    `storage.x = ...` in addition to `storage['x'] = ...`
     # 2. It allows private attributes that are not exposed to the user, e.g.:
-    #    `storage._{key} = ...` which is accessible via `storage._{key}`
-    #    NOTE: We make use of this for saving the parent object.
-    # 3. It allows iterating over only a subset of keys, e.g.:
+    #    `storage._{key} = ...` and accessible via `storage._{key}`
+    # 3. It holds an (optional) weak reference to its parent object, e.g.:
+    #    `storage._parent = weakref.ref(parent)`
+    # 4. It allows iterating over only a subset of keys, e.g.:
     #    `storage.values('x', 'y')` or `storage.items('x', 'y')
-    # 4. It adds additional PyTorch Tensor functionality, e.g.:
+    # 5. It adds additional PyTorch Tensor functionality, e.g.:
     #    `storage.cpu()`, `storage.cuda()` or `storage.share_memory_()`.
-    def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
-                 **kwargs):
+    def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__()
-        self._parent = _parent
-        self._key = None
         self._mapping = {}
         for key, value in (_mapping or {}).items():
             setattr(self, key, value)
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    @property
+    def _key(self) -> Any:
+        return None
 
     def __len__(self) -> int:
         return len(self._mapping)
@@ -49,7 +52,9 @@ class BaseStorage(MutableMapping):
                 f"'{self.__class__.__name__}' object has no attribute '{key}'")
 
     def __setattr__(self, key: str, value: Any):
-        if key[:1] == '_':
+        if key == '_parent':
+            self.__dict__[key] = weakref.ref(value)
+        elif key[:1] == '_':
             self.__dict__[key] = value
         else:
             self[key] = value
@@ -77,26 +82,35 @@ class BaseStorage(MutableMapping):
         return iter(self._mapping)
 
     def __copy__(self):
-        out = self.__class__(_parent=self._parent)
+        out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
         out._mapping = copy.copy(out._mapping)
         return out
 
     def __deepcopy__(self, memo):
-        out = self.__class__(_parent=self._parent)
+        out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
-            # We do not want to deepcopy the `_parent` attribute.
-            if key != '_parent':
-                out.__dict__[key] = copy.deepcopy(value, memo)
+            out.__dict__[key] = value
+        out._mapping = copy.deepcopy(out._mapping, memo)
         return out
 
     def __getstate__(self) -> Dict[str, Any]:
-        return self.__dict__
+        out = self.__dict__
+
+        _parent = out.get('_parent', None)
+        if _parent is not None:
+            out['_parent'] = _parent()
+
+        return out
 
     def __setstate__(self, mapping: Dict[str, Any]):
         for key, value in mapping.items():
             self.__dict__[key] = value
+
+        _parent = self.__dict__.get('_parent', None)
+        if _parent is not None:
+            self.__dict__['_parent'] = weakref.ref(_parent)
 
     def __repr__(self) -> str:
         return repr(self._mapping)
@@ -209,11 +223,12 @@ class BaseStorage(MutableMapping):
 
 
 class NodeStorage(BaseStorage):
-    def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
-                 _key: Optional[NodeType] = None, **kwargs):
-        super().__init__(_parent=_parent, _mapping=_mapping, **kwargs)
-        assert _key is None or isinstance(_key, NodeType)
-        self._key = _key
+    @property
+    def _key(self) -> NodeType:
+        key = self.__dict__.get('_key', None)
+        if key is None or not isinstance(key, str):
+            raise ValueError("'_key' does not denote a valid node type")
+        return key
 
     @property
     def num_nodes(self) -> Optional[int]:
@@ -221,9 +236,9 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items('x', 'pos', 'batch'):
-            num_args = len(signature(self._parent.__cat_dim__).parameters)
+            num_args = len(signature(self._parent().__cat_dim__).parameters)
             args = (key, value, self)[:num_args]
-            return value.size(self._parent.__cat_dim__(*args))
+            return value.size(self._parent().__cat_dim__(*args))
         if 'adj' in self:
             return self.adj.size(0)
         if 'adj_t' in self:
@@ -266,11 +281,12 @@ class EdgeStorage(BaseStorage):
       This is the most efficient one for graph-based deep learning models as
       indices are sorted based on target nodes.
     """
-    def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
-                 _key: Optional[EdgeType] = None, **kwargs):
-        super().__init__(_parent=_parent, _mapping=_mapping, **kwargs)
-        assert _key is None or (isinstance(_key, tuple) and len(_key) == 3)
-        self._key = _key
+    @property
+    def _key(self) -> EdgeType:
+        key = self.__dict__.get('_key', None)
+        if key is None or not isinstance(key, tuple) or not len(key) == 3:
+            raise ValueError("'_key' does not denote a valid edge type")
+        return key
 
     @property
     def edge_index(self) -> Tensor:
@@ -288,9 +304,9 @@ class EdgeStorage(BaseStorage):
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
         for key, value in self.items('edge_index', 'edge_attr'):
-            num_args = len(signature(self._parent.__cat_dim__).parameters)
+            num_args = len(signature(self._parent().__cat_dim__).parameters)
             args = (key, value, self)[:num_args]
-            return value.size(self._parent.__cat_dim__(*args))
+            return value.size(self._parent().__cat_dim__(*args))
         for value in self.values('adj', 'adj_t'):
             return value.nnz()
         return 0
@@ -313,8 +329,8 @@ class EdgeStorage(BaseStorage):
             raise NameError("Unable to infer 'size' without explicit "
                             "'_key' assignment")
 
-        size = (self._parent[self._key[0]].num_nodes,
-                self._parent[self._key[-1]].num_nodes)
+        size = (self._parent()[self._key[0]].num_nodes,
+                self._parent()[self._key[-1]].num_nodes)
 
         return size if dim is None else size[dim]
 
@@ -371,9 +387,9 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-    def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,
-                 **kwargs):
-        super().__init__(_parent=_parent, _mapping=_mapping, **kwargs)
+    @property
+    def _key(self) -> Any:
+        return None
 
     @property
     def num_features(self) -> int:

@@ -320,11 +320,13 @@ class Data(BaseData):
                  pos: OptTensor = None, **kwargs):
         super().__init__()
         self._store = GlobalStorage(_parent=self)
+
         self.x = x
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.y = y
         self.pos = pos
+
         for key, value in kwargs.items():
             setattr(self, key, value)
 
@@ -359,16 +361,15 @@ class Data(BaseData):
         del self.store[key]
 
     def __copy__(self):
-        out = self.__class__()
+        out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
-            if key not in ['_store']:
-                out.__dict__[key] = value
+            out.__dict__[key] = value
         out._store = copy.copy(self._store)
         out._store._parent = out
         return out
 
     def __deepcopy__(self, memo):
-        out = self.__class__()
+        out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = copy.deepcopy(value, memo)
         out._store._parent = out

@@ -170,7 +170,7 @@ class HeteroData(BaseData):
             del self._node_stores_dict[key]
 
     def __copy__(self):
-        out = self.__class__()
+        out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
         out._global_store = copy.copy(self._global_store)
@@ -186,7 +186,7 @@ class HeteroData(BaseData):
         return out
 
     def __deepcopy__(self, memo):
-        out = self.__class__()
+        out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             if key not in ['_node_stores_dict', '_edge_stores_dict']:
                 out.__dict__[key] = copy.deepcopy(value, memo)
