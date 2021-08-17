@@ -117,7 +117,6 @@ h2,
   background: rgb(243,244,247);
 }
 
-.rst-content dl:not(.docutils) dt.field-odd,
 .rst-content dl:not(.docutils) dt.field-odd {
   text-transform: uppercase;
   background: inherit;
@@ -125,10 +124,9 @@ h2,
   padding: 6px 0;
 }
 
-.rst-content dl:not(.docutils) .property {
+.rst-content dl:not(.docutils) .property:first-child .pre {
   text-transform: uppercase;
   font-style: normal;
-  padding-right: 12px;
 }
 
 em.sig-param span.n:first-child, em.sig-param span.n:nth-child(2) {

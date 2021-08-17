@@ -10,13 +10,14 @@ import torch
 import numpy as np
 from torch import Tensor
 
-from torch_geometric.data.data import BaseData
+from torch_geometric.data import Data
 from torch_geometric.data.dataset import Dataset, IndexType
 
 
 class InMemoryDataset(Dataset):
-    r"""Dataset base class for creating graph datasets which fit completely
+    r"""Dataset base class for creating graph datasets which easily fit
     into CPU memory.
+    Inherits from :class:`torch_geometric.data.Dataset`.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_dataset.html#creating-in-memory-datasets>`__ for the accompanying
     tutorial.
@@ -39,22 +40,16 @@ class InMemoryDataset(Dataset):
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
-        r"""The name of the files to find in the :obj:`self.raw_dir` folder in
-        order to skip the download."""
         raise NotImplementedError
 
     @property
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
-        r"""The name of the files to find in the :obj:`self.processed_dir`
-        folder in order to skip the processing."""
         raise NotImplementedError
 
     def download(self):
-        r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         raise NotImplementedError
 
     def process(self):
-        r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
     def __init__(self, root: Optional[str] = None,
@@ -64,11 +59,11 @@ class InMemoryDataset(Dataset):
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data = None
         self.slices = None
-        self._data_list: Optional[List[BaseData]] = None
+        self._data_list: Optional[List[Data]] = None
 
     @property
     def num_classes(self) -> int:
-        r"""The number of classes in the dataset."""
+        r"""Returns the number of classes in the dataset."""
         y = self.data.y
         if y is None:
             return 0
@@ -86,7 +81,7 @@ class InMemoryDataset(Dataset):
             return len(value) - 1
         return 0
 
-    def get(self, idx: int) -> BaseData:
+    def get(self, idx: int) -> Data:
         if self.len() == 1:
             return copy.copy(self.data)
 
@@ -140,10 +135,10 @@ class InMemoryDataset(Dataset):
 
     @staticmethod
     def collate(
-        data_list: List[BaseData]
-    ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
-        r"""Collates a Python list of data objects to the internal storage
-        format of :class:`~torch_geometric.data.InMemoryDataset`."""
+            data_list: List[Data]) -> Tuple[Data, Optional[Dict[str, Tensor]]]:
+        r"""Collates a Python list of :obj:`torch_geometric.data.Data` objects
+        to the internal storage format of
+        :class:`~torch_geometric.data.InMemoryDataset`."""
         if len(data_list) == 1:
             return data_list[0], None
 
@@ -209,7 +204,13 @@ class InMemoryDataset(Dataset):
 
         return data, slices
 
-    def copy(self, idx: Optional[IndexType] = None):
+    def copy(self, idx: Optional[IndexType] = None) -> 'InMemoryDataset':
+        r"""Performs a deep-copy of the dataset. If :obj:`idx` is not given,
+        will clone the full dataset. Otherwise, will only clone a subset of the
+        dataset from indices :obj:`idx`.
+        Indices can be slices, lists, tuples, and a :obj:`torch.Tensor` or
+        :obj:`np.ndarray` of type long or bool.
+        """
         if idx is None:
             data_list = [self.get(i) for i in range(len(self))]
         else:

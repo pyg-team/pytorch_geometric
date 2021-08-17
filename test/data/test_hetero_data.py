@@ -81,7 +81,6 @@ def test_hetero_data_functions():
 
     data.y = 0
     assert data['y'] == 0 and data.y == 0
-    assert data.attribute('y') == 0
     assert len(data) == 3
     assert sorted(data.keys) == ['edge_index', 'x', 'y']
 

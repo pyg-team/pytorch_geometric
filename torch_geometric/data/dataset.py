@@ -10,7 +10,7 @@ from collections.abc import Sequence
 import torch.utils.data
 from torch import Tensor
 
-from torch_geometric.data.data import BaseData
+from torch_geometric.data import Data
 from torch_geometric.data.makedirs import makedirs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
@@ -39,14 +39,14 @@ class Dataset(torch.utils.data.Dataset):
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
-        r"""The name of the files to find in the :obj:`self.raw_dir` folder in
-        order to skip the download."""
+        r"""The name of the files in the :obj:`self.raw_dir` folder that must
+        be present in order to skip downloading."""
         raise NotImplementedError
 
     @property
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
-        r"""The name of the files to find in the :obj:`self.processed_dir`
-        folder in order to skip the processing."""
+        r"""The name of the files in the :obj:`self.processed_dir` folder that
+        must be present in order to skip processing."""
         raise NotImplementedError
 
     def download(self):
@@ -61,7 +61,7 @@ class Dataset(torch.utils.data.Dataset):
         r"""Returns the number of graphs stored in the dataset."""
         raise NotImplementedError
 
-    def get(self, idx: int) -> BaseData:
+    def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
@@ -109,7 +109,8 @@ class Dataset(torch.utils.data.Dataset):
 
     @property
     def num_features(self) -> int:
-        r"""Alias for :py:attr:`~num_node_features`."""
+        r"""Returns the number of features per node in the dataset.
+        Alias for :py:attr:`~num_node_features`."""
         return self.num_node_features
 
     @property
@@ -124,14 +125,15 @@ class Dataset(torch.utils.data.Dataset):
 
     @property
     def raw_paths(self) -> List[str]:
-        r"""The filepaths to find in order to skip the download."""
+        r"""The absolute filepaths that must be present in order to skip
+        downloading."""
         files = to_list(self.raw_file_names)
         return [osp.join(self.raw_dir, f) for f in files]
 
     @property
     def processed_paths(self) -> List[str]:
-        r"""The filepaths to find in the :obj:`self.processed_dir`
-        folder in order to skip the processing."""
+        r"""The absolute filepaths that must be present in order to skip
+        processing."""
         files = to_list(self.processed_file_names)
         return [osp.join(self.processed_dir, f) for f in files]
 
@@ -181,7 +183,7 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(
         self,
         idx: Union[int, np.integer, IndexType],
-    ) -> Union['Dataset', BaseData]:
+    ) -> Union['Dataset', Data]:
         r"""In case :obj:`idx` is of type integer, will return the data object
         at index :obj:`idx` (and transforms it in case :obj:`transform` is
         present).
@@ -201,6 +203,10 @@ class Dataset(torch.utils.data.Dataset):
             return self.index_select(idx)
 
     def index_select(self, idx: IndexType) -> 'Dataset':
+        r"""Creates a subset of the dataset from specified indices :obj:`idx`.
+        Indices can be slices, lists, tuples, and a :obj:`torch.Tensor` or
+        :obj:`np.ndarray` of type long or bool.
+        """
         indices = self.indices()
 
         if isinstance(idx, slice):
@@ -225,7 +231,7 @@ class Dataset(torch.utils.data.Dataset):
 
         else:
             raise IndexError(
-                f"Only integers, slices (':'), list, tuples, torch.tensor and "
+                f"Only slices (':'), list, tuples, torch.tensor and "
                 f"np.ndarray of dtype long or bool are valid indices (got "
                 f"'{type(idx).__name__}')")
 
@@ -240,8 +246,8 @@ class Dataset(torch.utils.data.Dataset):
         r"""Randomly shuffles the examples in the dataset.
 
         Args:
-            return_perm (bool, optional): If set to :obj:`True`, will return
-                the random permutation used to shuffle the dataset in addition.
+            return_perm (bool, optional): If set to :obj:`True`, will also
+                return the random permutation used to shuffle the dataset.
                 (default: :obj:`False`)
         """
         perm = torch.randperm(len(self))

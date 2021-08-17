@@ -193,6 +193,12 @@ class BaseStorage(MutableMapping):
         return self.apply(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
+    def record_stream(self, stream: torch.cuda.Stream, *args: List[str]):
+        r"""Ensures that the tensor memory is not reused for another tensor
+        until all current work queued on :obj:`stream` has been completed,
+        either for all attributes or only the ones given in :obj:`*args`."""
+        return self.apply_(lambda x: x.record_stream(stream), *args)
+
 
 class NodeStorage(BaseStorage):
     def __init__(self, _parent: Any, _mapping: Optional[Dict[str, Any]] = None,

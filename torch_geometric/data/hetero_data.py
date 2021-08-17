@@ -19,13 +19,48 @@ NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
 class HeteroData(BaseData):
-    r"""A Python object modeling a single heterogeneous graph.
-    There exists a few ways to create a heterogeneous graph data, *e.g.*:
+    r"""A data object describing a heterogeneous graph, holding multiple node
+    and/or edge types in disjunct storage objects.
+    Storage objects can hold either node-level, link-level or graph-level
+    attributes.
+    In general, :class:`~torch_geometric.data.HeteroData` tries to mimic the
+    behaviour of a regular **nested** Python dictionary.
+    In addition, it provides useful functionality for analyzing graph
+    structures, and provides basic PyTorch tensor functionalities.
+
+    .. code-block::
+
+        from torch_geometric.data import HeteroData
+
+        data = HeteroData()
+
+        # Create two node types "paper" and "author" holding a feature matrix:
+        data['paper'].x = torch.randn(num_papers, num_paper_features)
+        data['author'].x = torch.randn(num_authors, num_authors_features)
+
+        # Create an edge type "(author, writes, paper)" and building the
+        # graph connectivity:
+        data['author', 'writes', 'paper'].edge_index = ...  # [2, num_edges]
+
+        data['paper'].num_nodes
+        >>> 23
+
+        data['author', 'writes', 'paper'].num_edges
+        >>> 52
+
+        # PyTorch tensor functionality:
+        data = data.pin_memory()
+        data = data.to('cuda:0', non_blocking=True)
+
+    Note that there exists multiple ways to create a heterogeneous graph data,
+    *e.g.*:
 
     * To initialize a node of type :obj:`"paper"` holding a node feature
       matrix :obj:`x_paper` named :obj:`x`:
 
       .. code-block:: python
+
+        from torch_geometric.data import HeteroData
 
         data = HeteroData()
         data['paper'].x = x_paper
@@ -36,7 +71,7 @@ class HeteroData(BaseData):
 
     * To initialize an edge from source node type :obj:`"author"` to
       destination node type :obj:`"paper"` with relation type :obj:`"writes"`
-      holding a graph representation :obj:`edge_index_author_paper` named
+      holding a graph connectivity matrix :obj:`edge_index_author_paper` named
       :obj:`edge_index`:
 
       .. code-block:: python
@@ -82,7 +117,6 @@ class HeteroData(BaseData):
         return getattr(self._global_store, key)
 
     def __setattr__(self, key: str, value: Any):
-        """"""
         # `data._* = ...` => Link to the private `__dict__` store.
         # `data.* = ...` => Link to the `_global_store`.
         # NOTE: We aim to prevent duplicates in node or edge keys.
@@ -98,7 +132,6 @@ class HeteroData(BaseData):
             setattr(self._global_store, key, value)
 
     def __delattr__(self, key: str):
-        """"""
         # `del data._*` => Link to the private `__dict__` store.
         # `del data.*` => Link to the `_global_store`.
         if key[:1] == '_':
@@ -175,40 +208,36 @@ class HeteroData(BaseData):
         info = info1 + info2 + info3
         return '{}(\n{}\n)'.format(self.__class__.__name__, ',\n'.join(info))
 
-    def _all_nodes_and_edges(self):
-        # Returns all node storage items and edge storage items.
-        return chain(self._node_stores_dict.items(),
-                     self._edge_stores_dict.items())
-
     @property
     def stores(self) -> List[BaseStorage]:
-        # Return a list of all storages of the graph.
+        r"""Returns a list of all storages of the graph."""
         return ([self._global_store] + list(self.node_stores) +
                 list(self.edge_stores))
 
     @property
     def node_types(self) -> List[NodeType]:
-        # Return a list of all node types of the graph.
+        r"""Returns a list of all node types of the graph."""
         return list(self._node_stores_dict.keys())
 
     @property
     def node_stores(self) -> List[NodeStorage]:
-        # Return a list of all node storages of the graph.
+        r"""Returns a list of all node storages of the graph."""
         return list(self._node_stores_dict.values())
 
     @property
     def edge_types(self) -> List[EdgeType]:
-        # Return a list of all edge types of the graph.
+        r"""Returns a list of all edge types of the graph."""
         return list(self._edge_stores_dict.keys())
 
     @property
     def edge_stores(self) -> List[EdgeStorage]:
-        # Return a list of all edge storages of the graph.
+        r"""Returns a list of all edge storages of the graph."""
         return list(self._edge_stores_dict.values())
 
     def to_dict(self) -> Dict[str, Any]:
         out = self._global_store.to_dict()
-        for key, store in self._all_nodes_and_edges():
+        for key, store in chain(self._node_stores_dict.items(),
+                                self._edge_stores_dict.items()):
             out[key] = store.to_dict()
         return out
 
@@ -240,6 +269,11 @@ class HeteroData(BaseData):
             return torch.tensor(store.size()).view(2, 1)
         else:
             return 0
+
+    @property
+    def num_nodes(self) -> Optional[int]:
+        r"""Returns the number of nodes in the graph."""
+        return super().num_nodes
 
     def debug(self):
         pass  # TODO
@@ -276,26 +310,49 @@ class HeteroData(BaseData):
         return args
 
     def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
-        # Returns the heterogeneous meta-data, i.e. its node and edge types.
+        r"""Returns the heterogeneous meta-data, *i.e.* its node and edge
+        types.
+
+        .. code-block:: python
+
+            data = HeteroData()
+            data['paper'].x = ...
+            data['author'].x = ...
+            data['author', 'writes', 'paper'].edge_index = ...
+
+            print(data.metadata())
+            >>> (['paper', 'author'], [('author', 'writes', 'paper')])
+        """
         return self.node_types, self.edge_types
 
     def collect(self, key: str) -> Dict[NodeOrEdgeType, Any]:
-        r"""Collects the attribute :attr:`key` from all node and edge types."""
+        r"""Collects the attribute :attr:`key` from all node and edge types.
+
+        .. code-block:: python
+
+            data = HeteroData()
+            data['paper'].x = ...
+            data['author'].x = ...
+
+            print(data.collect('x'))
+            >>> { 'paper': ..., 'author': ...}
+
+        .. note::
+
+            This is equivalent to writing :obj:`data.x_dict`.
+        """
         mapping = {}
-        for subtype, store in self._all_nodes_and_edges():
+        for subtype, store in chain(self._node_stores_dict.items(),
+                                    self._edge_stores_dict.items()):
             if key in store:
                 mapping[subtype] = store[key]
         return mapping
-
-    def attribute(self, key: str) -> Any:
-        # Get the attribute `key` from `_global_store`.
-        return getattr(self._global_store, key)
 
     def get_node_store(self, key: NodeType) -> NodeStorage:
         r"""Gets the :class:`~torch_geometric.data.storage.NodeStorage` object
         of a particular node type :attr:`key`.
         If the storage is not present yet, will create a new
-        :class:`~torch_geometric.data.storage.NodeStorage` object for the given
+        :class:`torch_geometric.data.storage.NodeStorage` object for the given
         node type.
 
         .. code-block:: python
@@ -313,7 +370,7 @@ class HeteroData(BaseData):
         r"""Gets the :class:`~torch_geometric.data.storage.EdgeStorage` object
         of a particular edge type given by the tuple :obj:`(src, rel, dst)`.
         If the storage is not present yet, will create a new
-        :class:`~torch_geometric.data.storage.EdgeStorage` object for the given
+        :class:`torch_geometric.data.storage.EdgeStorage` object for the given
         edge type.
 
         .. code-block:: python

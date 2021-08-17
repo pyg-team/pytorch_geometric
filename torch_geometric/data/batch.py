@@ -13,18 +13,20 @@ from torch_geometric.data.dataset import IndexType
 
 
 class Batch(Data):
-    r"""A plain old python object modeling a batch of graphs as one big
-    (disconnected) graph. With :class:`torch_geometric.data.Data` being the
-    base class, all its methods can also be used here.
-    In addition, single graphs can be reconstructed via the assignment vector
+    r"""A data object describing a batch of graphs as one big (disconnected)
+    graph.
+    Inherits from :class:`torch_geometric.data.Data`.
+    In addition, single graphs can be identified via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
     """
     @classmethod
-    def from_data_list(cls, data_list, follow_batch=[], exclude_keys=[]):
-        r"""Constructs a batch object from a python list holding
-        :class:`torch_geometric.data.Data` objects.
+    def from_data_list(cls, data_list: List[Data],
+                       follow_batch: List[str] = [],
+                       exclude_keys: List[str] = []):
+        r"""Constructs a :class:`torch_geometric.data.Batch` object from a
+        Python list of :class:`torch_geometric.data.Data` objects.
         The assignment vector :obj:`batch` is created on the fly.
-        Additionally, creates assignment batch vectors for each key in
+        In addition, creates assignment batch vectors for each key in
         :obj:`follow_batch`.
         Will exclude any keys given in :obj:`exclude_keys`."""
 
@@ -205,6 +207,12 @@ class Batch(Data):
         return data
 
     def index_select(self, idx: IndexType) -> List[Data]:
+        r"""Returns a list of :class:`torch_geometric.data.Data` objects
+        from specified indices :obj:`idx`.
+        Indices can be slices, lists, tuples, and a :obj:`torch.Tensor` or
+        :obj:`np.ndarray` of type long or bool.
+        The batch object must have been created via :meth:`from_data_list` in
+        order to be able to reconstruct the initial objects."""
         if isinstance(idx, slice):
             idx = list(range(self.num_graphs)[idx])
 
@@ -225,7 +233,7 @@ class Batch(Data):
 
         else:
             raise IndexError(
-                f"Only integers, slices (':'), list, tuples, torch.tensor and "
+                f"Only slices (':'), list, tuples, torch.tensor and "
                 f"np.ndarray of dtype long or bool are valid indices (got "
                 f"'{type(idx).__name__}')")
 
