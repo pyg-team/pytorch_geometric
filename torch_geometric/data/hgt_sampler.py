@@ -60,12 +60,6 @@ class HGTSampler(torch.utils.data.DataLoader):
             sample in each iteration and for each node type.
             If given as a list, will sample the same amount of nodes for each
             node type.
-        input_nodes (Tuple[str, torch.Tensor]): The nodes of a specific node
-            type that should be considered for creating mini-batches.
-            Needs to be either given as a :obj:`torch.LongTensor` or
-            :obj:`torch.BoolTensor`.
-            If node indices are set to :obj:`None`, all nodes will be
-            considered.
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
             indices of nodes for which neighbors are sampled to create
             mini-batches.
@@ -73,6 +67,8 @@ class HGTSampler(torch.utils.data.DataLoader):
             corresponding node indices.
             Node indices need to be either given as a :obj:`torch.LongTensor`
             or :obj:`torch.BoolTensor`.
+            If node indices are set to :obj:`None`, all nodes of this specific
+            type will be considered.
         transform (Callable, optional): A function/transform that takes in
             an a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -101,7 +97,7 @@ class HGTSampler(torch.utils.data.DataLoader):
         assert len(input_nodes) == 2
         assert isinstance(input_nodes[0], str)
         if input_nodes[1] is None:
-            index = torch.arange(data[self.input_nodes[0]].num_nodes)
+            index = torch.arange(data[input_nodes[0]].num_nodes)
             input_nodes = (input_nodes[0], index)
         elif input_nodes[1].dtype == torch.bool:
             index = input_nodes[1].nonzero(as_tuple=False).view(-1)
