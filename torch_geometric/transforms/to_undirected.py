@@ -12,42 +12,43 @@ class ToUndirected(BaseTransform):
     r"""Converts a homogeneous or heterogeneous graph to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge
     :math:`(i,j) \in \mathcal{E}`.
-    For bipartite connections in heterogeneous graphs, will only add "inverse"
-    connections between two different node types in case there does not yet
-    exist a single connection between these two node types.
+    In heterogeneous graphs, will add "reverse" connections for *all* existing
+    edge types.
 
     Args:
         reduce (string, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"add"`)
+        merge (bool, optional): If set to :obj:`False`, will create reverse
+            edge types for connections pointing to the same source and target
+            node type.
+            If set to :obj:`True`, reverse edges will be merged into the
+            original relation.
+            This option only has effects in
+            :class:`~torch_geometric.data.HeteroData` graph data.
+            (default: :obj:`True`)
     """
-    def __init__(self, reduce: str = "add"):
+    def __init__(self, reduce: str = "add", merge: bool = True):
         self.reduce = reduce
+        self.merge = merge
 
     def __call__(self, data: Union[Data, HeteroData]):
-        pairs = set()
-        if isinstance(data, HeteroData):  # Collect all connected node pairs:
-            pairs = {(src, dst) for src, _, dst in data.edge_types}
-
         for store in data.edge_stores:
             if 'edge_index' not in store:
                 continue
 
             nnz = store.edge_index.size(1)
 
-            if store.is_bipartite():
+            if isinstance(data, HeteroData) and (store.is_bipartite()
+                                                 or not self.merge):
                 src, rel, dst = store._key
-                if (dst, src) in pairs:
-                    continue
 
-                # Just inverse the connectivity and add edge attributes:
+                # Just reverse the connectivity and add edge attributes:
                 row, col = store.edge_index
-                edge_index = torch.stack([col, row], dim=0)
+                rev_edge_index = torch.stack([col, row], dim=0)
 
-                if rel != HeteroData.DEFAULT_REL:
-                    rel = f'rev_{rel}'
-                inv_store = data[dst, rel, src]
-                inv_store.edge_index = edge_index
+                inv_store = data[dst, f'rev_{rel}', src]
+                inv_store.edge_index = rev_edge_index
                 for key, value in store.items():
                     if isinstance(value, Tensor) and value.size(0) == nnz:
                         inv_store[key] = value

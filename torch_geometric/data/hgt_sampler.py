@@ -1,4 +1,4 @@
-from typing import Union, Dict, List, Tuple, Callable
+from typing import Union, Dict, List, Tuple, Callable, Optional
 
 import copy
 
@@ -45,7 +45,7 @@ class HGTSampler(torch.utils.data.DataLoader):
         loader = HGTSampler(
             hetero_data,
             # Sample 512 nodes per type and per iteration for 4 iterations
-            num_samples=[512] * 4,
+            num_samples={key: [512] * 4 for key in hetero_data.node_types},
             # Use a batch size of 128 for sampling training nodes of type paper
             batch_size=128,
             input_nodes: ('paper': hetero_data['paper'].train_mask),
@@ -64,6 +64,15 @@ class HGTSampler(torch.utils.data.DataLoader):
             type that should be considered for creating mini-batches.
             Needs to be either given as a :obj:`torch.LongTensor` or
             :obj:`torch.BoolTensor`.
+            If node indices are set to :obj:`None`, all nodes will be
+            considered.
+        input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
+            indices of nodes for which neighbors are sampled to create
+            mini-batches.
+            Needs to be passed as a tuple that holds the node type and
+            corresponding node indices.
+            Node indices need to be either given as a :obj:`torch.LongTensor`
+            or :obj:`torch.BoolTensor`.
         transform (Callable, optional): A function/transform that takes in
             an a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -75,11 +84,12 @@ class HGTSampler(torch.utils.data.DataLoader):
         self,
         data: HeteroData,
         num_samples: Union[List[int], Dict[NodeType, List[int]]],
-        input_nodes: Tuple[NodeType, Tensor],
+        input_nodes: Tuple[NodeType, Optional[Tensor]],
         transform: Callable = None,
         **kwargs,
     ):
-        self.hgt_sample = torch.ops.torch_sparse.hgt_sample
+        if kwargs.get('num_workers', 0) > 0:
+            torch.multiprocessing.set_sharing_strategy('file_system')
 
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
@@ -87,15 +97,22 @@ class HGTSampler(torch.utils.data.DataLoader):
         if isinstance(num_samples, (list, tuple)):
             num_samples = {key: num_samples for key in data.node_types}
 
-        if input_nodes[1].dtype == torch.bool:
-            value = input_nodes[1].nonzero(as_tuple=False).view(-1)
-            input_nodes = (input_nodes[0], value)
+        assert isinstance(input_nodes, (list, tuple))
+        assert len(input_nodes) == 2
+        assert isinstance(input_nodes[0], str)
+        if input_nodes[1] is None:
+            index = torch.arange(data[self.input_nodes[0]].num_nodes)
+            input_nodes = (input_nodes[0], index)
+        elif input_nodes[1].dtype == torch.bool:
+            index = input_nodes[1].nonzero(as_tuple=False).view(-1)
+            input_nodes = (input_nodes[0], index)
 
         self.data = data
         self.num_samples = num_samples
         self.input_nodes = input_nodes
         self.num_hops = max([len(v) for v in num_samples.values()])
         self.transform = transform
+        self.hgt_sample = torch.ops.torch_sparse.hgt_sample
 
         self.colptr_dict, self.row_dict, self.perm_dict = _convert_input(data)
 

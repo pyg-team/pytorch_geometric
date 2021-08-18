@@ -29,6 +29,9 @@ class OGB_MAG(InMemoryDataset):
 
     Args:
         root (string): Root directory where the dataset should be saved.
+        preprocess (string, optional): Pre-processes the original
+            dataset by adding structural features (:obj:`"metapath2vec",
+            :obj:`"TransE") to featureless nodes. (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
@@ -40,9 +43,18 @@ class OGB_MAG(InMemoryDataset):
     """
 
     url = 'http://snap.stanford.edu/ogb/data/nodeproppred/mag.zip'
+    urls = {
+        'metapath2vec': ('https://pytorch-geometric.com/datasets/'
+                         'mag_metapath2vec_emb.zip'),
+        'transe': ('https://pytorch-geometric.com/datasets/'
+                   'mag_transe_emb.zip'),
+    }
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
+    def __init__(self, root: str, preprocess: Optional[str] = None,
+                 transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
+        self.preprocess = preprocess.lower()
+        assert self.preprocess in [None, 'metapath2vec', 'transe']
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
@@ -60,26 +72,40 @@ class OGB_MAG(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [
+        file_names = [
             'node-feat', 'node-label', 'relations', 'split',
             'num-node-dict.csv.gz'
         ]
 
+        if self.preprocess is not None:
+            file_names += [f'mag_{self.preprocess}_emb.pt']
+
+        return file_names
+
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        if self.preprocess is not None:
+            return f'data_{self.preprocess}.pt'
+        else:
+            return 'data.pt'
 
     def download(self):
-        path = download_url(self.url, self.raw_dir)
-        extract_zip(path, self.raw_dir)
-        for f in ['node-feat', 'node-label', 'relations']:
-            shutil.move(osp.join(self.raw_dir, 'mag', 'raw', f), self.raw_dir)
-        shutil.move(osp.join(self.raw_dir, 'mag', 'split'), self.raw_dir)
-        shutil.move(
-            osp.join(self.raw_dir, 'mag', 'raw', 'num-node-dict.csv.gz'),
-            self.raw_dir)
-        shutil.rmtree(osp.join(self.raw_dir, 'mag'))
-        os.remove(osp.join(self.raw_dir, 'mag.zip'))
+        if not all([osp.exists(f) for f in self.raw_paths[:5]]):
+            path = download_url(self.url, self.raw_dir)
+            extract_zip(path, self.raw_dir)
+            for file_name in ['node-feat', 'node-label', 'relations']:
+                path = osp.join(self.raw_dir, 'mag', 'raw', file_name)
+                shutil.move(file_name, self.raw_dir)
+            path = osp.join(self.raw_dir, 'mag', 'split')
+            shutil.move(path, self.raw_dir)
+            path = osp.join(self.raw_dir, 'mag', 'raw', 'num-node-dict.csv.gz')
+            shutil.move(path, self.raw_dir)
+            shutil.rmtree(osp.join(self.raw_dir, 'mag'))
+            os.remove(osp.join(self.raw_dir, 'mag.zip'))
+        if self.preprocess is not None:
+            path = download_url(self.urls[self.preprocess], self.raw_dir)
+            extract_zip(path, self.raw_dir)
+            os.remove(path)
 
     def process(self):
         data = HeteroData()
@@ -95,10 +121,18 @@ class OGB_MAG(InMemoryDataset):
                               dtype=np.int64).values.flatten()
         data['paper'].y = torch.from_numpy(y_paper)
 
-        path = osp.join(self.raw_dir, 'num-node-dict.csv.gz')
-        num_nodes_df = pd.read_csv(path, compression='gzip')
-        for node_type in ['author', 'institution', 'field_of_study']:
-            data[node_type].num_nodes = num_nodes_df[node_type].tolist()[0]
+        if self.preprocess is None:
+            path = osp.join(self.raw_dir, 'num-node-dict.csv.gz')
+            num_nodes_df = pd.read_csv(path, compression='gzip')
+            for node_type in ['author', 'institution', 'field_of_study']:
+                data[node_type].num_nodes = num_nodes_df[node_type].tolist()[0]
+        else:
+            emb_dict = torch.load(self.raw_paths[-1])
+            for key, value in emb_dict.items():
+                if key == 'paper':
+                    data[key].x = torch.cat([data[key].x, value], dim=-1)
+                else:
+                    data[key].x = value
 
         for edge_type in [('author', 'affiliated_with', 'institution'),
                           ('author', 'writes', 'paper'),

@@ -1,51 +1,69 @@
+import argparse
 import os.path as osp
+from tqdm import tqdm
 
 import torch
 import torch.nn.functional as F
 from torch.nn import ReLU
 import torch_geometric.transforms as T
-from torch_geometric.nn import Linear, Sequential, SAGEConv, to_hetero
+from torch_geometric.nn import Sequential, SAGEConv, Linear, to_hetero
 from torch_geometric.data import HGTSampler
 from torch_geometric.datasets import OGB_MAG
+from torch_geometric.loader import NeighborLoader
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--use_hgt_sampler', action='store_true')
+args = parser.parse_args()
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/OGB')
-transform = T.Compose([T.ToUndirected(), T.ToSparseTensor()])
-dataset = OGB_MAG(path, pre_transform=transform)
+transform = T.ToUndirected(merge=True)
+dataset = OGB_MAG(path, preprocess='metapath2vec', transform=transform)
 data = dataset[0]
 
-# Pre-fill missing node features:
-for src, rel, dst in [('paper', 'inv_writes', 'author'),
-                      ('paper', 'has_topic', 'field_of_study'),
-                      ('author', 'affiliated_with', 'institution')]:
-    data[dst].x = data[rel].adj_t.matmul(data[src].x, 'mean')
+train_input_nodes = ('paper', data['paper'].train_mask)
+val_input_nodes = ('paper', data['paper'].val_mask)
+kwargs = {'batch_size': 1024, 'num_workers': 6, 'persistent_workers': True}
 
-train_loader = HGTSampler(data, num_samples=[1024] * 4, batch_size=1024,
-                          num_workers=6, persistent_workers=True, shuffle=True,
-                          input_nodes=('paper', data['paper'].train_mask))
-val_loader = HGTSampler(data, num_samples=[1024] * 4, batch_size=1024,
-                        num_workers=6, persistent_workers=True,
-                        input_nodes=('paper', data['paper'].val_mask))
+if not args.use_hgt_sampler:
+    train_loader = NeighborLoader(data, num_neighbors=[10] * 2, shuffle=True,
+                                  input_nodes=train_input_nodes, **kwargs)
+    val_loader = NeighborLoader(data, num_neighbors=[10] * 2,
+                                input_nodes=val_input_nodes, **kwargs)
+else:
+    train_loader = HGTSampler(data, num_samples=[1024] * 4, shuffle=True,
+                              input_nodes=train_input_nodes, **kwargs)
+    val_loader = HGTSampler(data, num_samples=[1024] * 4,
+                            input_nodes=val_input_nodes, **kwargs)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Sequential('x, adj', [
-    (SAGEConv((-1, -1), 64), 'x, adj -> x'),
+
+model = Sequential('x, edge_index', [
+    (SAGEConv((-1, -1), 64), 'x, edge_index -> x'),
     ReLU(inplace=True),
-    (SAGEConv((-1, -1), 64), 'x, adj -> x'),
+    (SAGEConv((-1, -1), 64), 'x, edge_index -> x'),
     ReLU(inplace=True),
     (Linear(-1, dataset.num_classes), 'x -> x'),
 ])
 model = to_hetero(model, data.metadata(), aggr='sum').to(device)
 
 
+@torch.no_grad()
+def init_params():
+    # Initialize lazy parameters via forwarding a single batch to the model:
+    batch = next(iter(train_loader))
+    batch = batch.to(device)
+    model(batch.x_dict, batch.edge_index_dict)
+
+
 def train():
     model.train()
 
     total_examples = total_loss = 0
-    for batch in train_loader:
+    for batch in tqdm(train_loader):
         optimizer.zero_grad()
         batch = batch.to(device)
         batch_size = batch['paper'].batch_size
-        out = model(batch.x_dict, batch.adj_t_dict)['paper'][:batch_size]
+        out = model(batch.x_dict, batch.edge_index_dict)['paper'][:batch_size]
         loss = F.cross_entropy(out, batch['paper'].y[:batch_size])
         loss.backward()
         optimizer.step()
@@ -61,10 +79,10 @@ def test(loader):
     model.eval()
 
     total_examples = total_correct = 0
-    for batch in val_loader:
+    for batch in tqdm(loader):
         batch = batch.to(device)
         batch_size = batch['paper'].batch_size
-        out = model(batch.x_dict, batch.adj_t_dict)['paper'][:batch_size]
+        out = model(batch.x_dict, batch.edge_index_dict)['paper'][:batch_size]
         pred = out.argmax(dim=-1)
 
         total_examples += batch_size
@@ -73,14 +91,10 @@ def test(loader):
     return total_correct / total_examples
 
 
-val_acc = test(val_loader)  # Initialize parameters.
-print('#Params:', sum([p.numel() for p in model.parameters()]))  # Ensure.
-print(f'Epoch: 00, Val: {val_acc:.4f}')
+init_params()  # Initialize parameters.
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 for epoch in range(1, 21):
     loss = train()
-    train_acc = test(train_loader)
     val_acc = test(val_loader)
-    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
-          f'Val: {val_acc:.4f}')
+    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_acc:.4f}')
