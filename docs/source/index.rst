@@ -35,7 +35,6 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    modules/datasets
    modules/transforms
    modules/utils
-   modules/io
 
 Indices and Tables
 ==================

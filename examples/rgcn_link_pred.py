@@ -90,7 +90,7 @@ def train():
     neg_out = model.decode(z, neg_edge_index, data.train_edge_type)
 
     out = torch.cat([pos_out, neg_out])
-    gt = torch.cat([torch.ones_like(pos_out), torch.ones_like(neg_out)])
+    gt = torch.cat([torch.ones_like(pos_out), torch.zeros_like(neg_out)])
     cross_entropy_loss = F.binary_cross_entropy_with_logits(out, gt)
     reg_loss = z.pow(2).mean() + model.decoder.rel_emb.pow(2).mean()
     loss = cross_entropy_loss + 1e-2 * reg_loss
@@ -121,12 +121,12 @@ def compute_mrr(z, edge_index, edge_type):
 
         # Try all nodes as tails, but delete true triplets:
         tail_mask = torch.ones(data.num_nodes, dtype=torch.bool)
-        for (head, tail), edge_type in [
+        for (heads, tails), types in [
             (data.train_edge_index, data.train_edge_type),
             (data.valid_edge_index, data.valid_edge_type),
             (data.test_edge_index, data.test_edge_type),
         ]:
-            tail_mask[tail[(head == src) & (edge_type == rel)]] = False
+            tail_mask[tails[(heads == src) & (types == rel)]] = False
 
         tail = torch.arange(data.num_nodes)[tail_mask]
         tail = torch.cat([torch.tensor([dst]), tail])
@@ -141,12 +141,12 @@ def compute_mrr(z, edge_index, edge_type):
 
         # Try all nodes as heads, but delete true triplets:
         head_mask = torch.ones(data.num_nodes, dtype=torch.bool)
-        for (head, tail), edge_type in [
+        for (heads, tails), types in [
             (data.train_edge_index, data.train_edge_type),
             (data.valid_edge_index, data.valid_edge_type),
             (data.test_edge_index, data.test_edge_type),
         ]:
-            head_mask[head[(tail == dst) & (edge_type == rel)]] = False
+            head_mask[heads[(tails == dst) & (types == rel)]] = False
 
         head = torch.arange(data.num_nodes)[head_mask]
         head = torch.cat([torch.tensor([src]), head])
@@ -165,6 +165,6 @@ def compute_mrr(z, edge_index, edge_type):
 for epoch in range(1, 10001):
     loss = train()
     print(f'Epoch: {epoch:05d}, Loss: {loss:.4f}')
-    if (epoch % 100) == 0:
+    if (epoch % 500) == 0:
         valid_mrr, test_mrr = test()
         print(f'Val MRR: {valid_mrr:.4f}, Test MRR: {test_mrr:.4f}')
