@@ -12,9 +12,12 @@ class KNNGraph(BaseTransform):
             self-loops. (default: :obj:`False`)
         force_undirected (bool, optional): If set to :obj:`True`, new edges
             will be undirected. (default: :obj:`False`)
-        flow (string, optional): The flow direction when using in combination
+        flow (string, optional): The flow direction when used in combination
             with message passing (:obj:`"source_to_target"` or
-            :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
+            :obj:`"target_to_source"`).
+            In set to :obj:`"source_to_target"`, every target node will have
+            exactly :math:`k` source nodes pointing to it.
+            (default: :obj:`"source_to_target"`)
     """
     def __init__(self, k=6, loop=False, force_undirected=False,
                  flow='source_to_target'):
