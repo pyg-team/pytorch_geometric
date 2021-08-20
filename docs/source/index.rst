@@ -32,10 +32,12 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    modules/root
    modules/nn
    modules/data
+   modules/loader
    modules/datasets
    modules/transforms
    modules/utils
    modules/io
+   modules/profile
 
 Indices and Tables
 ==================

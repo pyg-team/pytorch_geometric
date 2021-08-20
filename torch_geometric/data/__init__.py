@@ -10,7 +10,6 @@ from .cluster import ClusterData, ClusterLoader
 from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
                           GraphSAINTEdgeSampler, GraphSAINTRandomWalkSampler)
 from .shadow import ShaDowKHopSampler
-from .hgt_sampler import HGTSampler
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 
@@ -33,10 +32,11 @@ __all__ = [
     'GraphSAINTEdgeSampler',
     'GraphSAINTRandomWalkSampler',
     'ShaDowKHopSampler',
-    'HGTSampler',
     'download_url',
     'extract_tar',
     'extract_zip',
     'extract_bz2',
     'extract_gz',
 ]
+
+classes = __all__[:6] + __all__[-5:]  # TODO: Move loaders to `*.loader`.

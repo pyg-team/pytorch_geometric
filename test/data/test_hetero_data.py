@@ -81,7 +81,6 @@ def test_hetero_data_functions():
 
     data.y = 0
     assert data['y'] == 0 and data.y == 0
-    assert data.attribute('y') == 0
     assert len(data) == 3
     assert sorted(data.keys) == ['edge_index', 'x', 'y']
 
@@ -105,8 +104,8 @@ def test_copy_hetero_data():
     assert id(data) != id(out)
     for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
-        assert id(data) == id(store1._parent)
-        assert id(out) == id(store2._parent)
+        assert id(data) == id(store1._parent())
+        assert id(out) == id(store2._parent())
     assert out['paper']._key == 'paper'
     assert data['paper'].x.data_ptr() == out['paper'].x.data_ptr()
     assert out['to']._key == ('paper', 'to', 'paper')
@@ -116,11 +115,11 @@ def test_copy_hetero_data():
     assert id(data) != id(out)
     for store1, store2 in zip(data.stores, out.stores):
         assert id(store1) != id(store2)
-    assert id(out['paper']._parent) == id(out)
+    assert id(out) == id(out['paper']._parent())
     assert out['paper']._key == 'paper'
     assert data['paper'].x.data_ptr() != out['paper'].x.data_ptr()
     assert data['paper'].x.tolist() == out['paper'].x.tolist()
-    assert id(out['to']._parent) == id(out)
+    assert id(out) == id(out['to']._parent())
     assert out['to']._key == ('paper', 'to', 'paper')
     assert data['to'].edge_index.data_ptr() != out['to'].edge_index.data_ptr()
     assert data['to'].edge_index.tolist() == out['to'].edge_index.tolist()
