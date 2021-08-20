@@ -23,8 +23,6 @@ from torch_geometric.graphgym.register import train_dict
 if __name__ == '__main__':
     # Load cmd line args
     args = parse_args()
-    print(train_dict)
-    breakpoint()
     # Repeat for different random seeds
     for i in range(args.repeat):
         # Load config file
