@@ -6,10 +6,11 @@ import os.path as osp
 import torch
 from torch_sparse import SparseTensor
 
+from torch_geometric.data import HeteroData
+from torch_geometric.loader import HGTLoader
 from torch_geometric.datasets import Planetoid
 from torch_geometric.utils import k_hop_subgraph
-from torch_geometric.nn import SAGEConv, to_hetero
-from torch_geometric.data import HeteroData, HGTSampler
+from torch_geometric.nn import GraphConv, to_hetero
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -18,7 +19,9 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     return torch.stack([row, col], dim=0)
 
 
-def test_hgt_sampler():
+def test_hgt_loader():
+    torch.manual_seed(12345)
+
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -41,9 +44,9 @@ def test_hgt_sampler():
     )
 
     split_idx = torch.randperm(data['paper'].num_nodes)
-    loader = HGTSampler(data, num_samples=[5] * 4, batch_size=20,
-                        input_nodes=('paper', split_idx))
-    assert str(loader) == 'HGTSampler()'
+    loader = HGTLoader(data, num_samples=[5] * 4, batch_size=20,
+                       input_nodes=('paper', split_idx))
+    assert str(loader) == 'HGTLoader()'
     assert len(loader) == 5
 
     for batch in loader:
@@ -108,51 +111,54 @@ def test_hgt_sampler():
         assert torch.cat([row, col]).unique().numel() == 60
 
 
-def test_hgt_sampler_on_cora():
+def test_hgt_loader_on_cora():
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dataset = Planetoid(root, 'Cora')
-    homo_data = dataset[0]
+    data = dataset[0]
+    data.edge_weight = torch.rand(data.num_edges)
 
     hetero_data = HeteroData()
-    hetero_data['paper'].x = homo_data.x
-    hetero_data['paper', 'paper'].edge_index = homo_data.edge_index
+    hetero_data['paper'].x = data.x
+    hetero_data['paper'].n_id = torch.arange(data.num_nodes)
+    hetero_data['paper', 'paper'].edge_index = data.edge_index
+    hetero_data['paper', 'paper'].edge_weight = data.edge_weight
 
-    split_idx = torch.arange(5, 10)
+    split_idx = torch.arange(5, 8)
 
     # Sample the complete two-hop neighborhood:
-    loader = HGTSampler(hetero_data, num_samples=[homo_data.num_nodes] * 2,
-                        batch_size=split_idx.numel(),
-                        input_nodes=('paper', split_idx))
+    loader = HGTLoader(hetero_data, num_samples=[data.num_nodes] * 2,
+                       batch_size=split_idx.numel(),
+                       input_nodes=('paper', split_idx))
     assert len(loader) == 1
 
-    sub_hetero_data = next(iter(loader))
+    hetero_batch = next(iter(loader))
+    batch_size = hetero_batch['paper'].batch_size
 
     n_id, _, _, e_mask = k_hop_subgraph(split_idx, num_hops=2,
-                                        edge_index=homo_data.edge_index,
-                                        num_nodes=homo_data.num_nodes)
+                                        edge_index=data.edge_index,
+                                        num_nodes=data.num_nodes)
 
-    assert sub_hetero_data['paper'].num_nodes == n_id.numel()
-    assert sub_hetero_data['paper', 'paper'].num_edges == int(e_mask.sum())
+    n_id = n_id.sort()[0]
+    assert n_id.tolist() == hetero_batch['paper'].n_id.sort()[0].tolist()
+    assert hetero_batch['paper', 'paper'].num_edges == int(e_mask.sum())
 
-    class SAGE(torch.nn.Module):
-        def __init__(self, in_channels, out_channels):
+    class GNN(torch.nn.Module):
+        def __init__(self, in_channels, hidden_channels, out_channels):
             super().__init__()
+            self.conv1 = GraphConv(in_channels, hidden_channels)
+            self.conv2 = GraphConv(hidden_channels, out_channels)
 
-            self.conv1 = SAGEConv(in_channels, 16)
-            self.conv2 = SAGEConv(16, out_channels)
-
-        def forward(self, x, edge_index):
-            x = self.conv1(x, edge_index).relu()
-            x = self.conv2(x, edge_index)
+        def forward(self, x, edge_index, edge_weight):
+            x = self.conv1(x, edge_index, edge_weight).relu()
+            x = self.conv2(x, edge_index, edge_weight).relu()
             return x
 
-    homo_model = SAGE(dataset.num_features, dataset.num_classes)
-    hetero_model = to_hetero(homo_model, hetero_data.metadata())
+    model = GNN(dataset.num_features, 16, dataset.num_classes)
+    hetero_model = to_hetero(model, hetero_data.metadata())
 
-    homo_out = homo_model(homo_data.x, homo_data.edge_index)[split_idx]
-    hetero_out = hetero_model(sub_hetero_data.x_dict,
-                              sub_hetero_data.edge_index_dict)
-    hetero_out = hetero_out['paper'][:sub_hetero_data['paper'].batch_size]
-    assert torch.allclose(homo_out, hetero_out)
+    out1 = model(data.x, data.edge_index, data.edge_weight)[split_idx]
+    out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
+                        hetero_batch.edge_weight_dict)['paper'][:batch_size]
+    assert torch.allclose(out1, out2, atol=1e-6)
 
     shutil.rmtree(root)

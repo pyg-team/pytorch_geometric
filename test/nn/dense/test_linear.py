@@ -67,7 +67,7 @@ def test_copy_linear(lazy):
     assert id(copied_lin.weight) != id(lin.weight)
     if not isinstance(copied_lin.weight, UninitializedParameter):
         assert copied_lin.weight.data_ptr() != lin.weight.data_ptr()
-        assert copied_lin.weight.tolist() == lin.weight.tolist()
+        assert torch.allclose(copied_lin.weight, lin.weight)
     assert id(copied_lin.bias) != id(lin.bias)
     assert copied_lin.bias.data_ptr() != lin.bias.data_ptr()
-    assert copied_lin.bias.tolist() == lin.bias.tolist()
+    assert torch.allclose(copied_lin.bias, lin.bias)

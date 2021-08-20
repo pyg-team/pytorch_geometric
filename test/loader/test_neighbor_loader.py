@@ -30,6 +30,8 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
 @pytest.mark.skipif(not with_neighbor_sampler, reason='No neighbor sampler')
 @pytest.mark.parametrize('directed', [True, False])
 def test_homogeneous_neighbor_loader(directed):
+    torch.manual_seed(12345)
+
     data = Data()
 
     data.x = torch.arange(100)
@@ -61,6 +63,8 @@ def test_homogeneous_neighbor_loader(directed):
 @pytest.mark.skipif(not with_neighbor_sampler, reason='No neighbor sampler')
 @pytest.mark.parametrize('directed', [True, False])
 def test_heterogeneous_neighbor_loader(directed):
+    torch.manual_seed(12345)
+
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -158,9 +162,10 @@ def test_homogeneous_neighbor_loader_on_cora(directed):
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dataset = Planetoid(root, 'Cora')
     data = dataset[0]
+    data.n_id = torch.arange(data.num_nodes)
     data.edge_weight = torch.rand(data.num_edges)
 
-    split_idx = torch.arange(5, 10)
+    split_idx = torch.arange(5, 8)
 
     loader = NeighborLoader(data, num_neighbors=[-1, -1],
                             batch_size=split_idx.numel(),
@@ -174,7 +179,8 @@ def test_homogeneous_neighbor_loader_on_cora(directed):
         n_id, _, _, e_mask = k_hop_subgraph(split_idx, num_hops=2,
                                             edge_index=data.edge_index,
                                             num_nodes=data.num_nodes)
-        assert batch.num_nodes == n_id.numel()
+
+        assert n_id.sort()[0].tolist() == batch.n_id.sort()[0].tolist()
         assert batch.num_edges == int(e_mask.sum())
 
     class GNN(torch.nn.Module):
@@ -207,10 +213,11 @@ def test_heterogeneous_neighbor_loader_on_cora(directed):
 
     hetero_data = HeteroData()
     hetero_data['paper'].x = data.x
+    hetero_data['paper'].n_id = torch.arange(data.num_nodes)
     hetero_data['paper', 'paper'].edge_index = data.edge_index
     hetero_data['paper', 'paper'].edge_weight = data.edge_weight
 
-    split_idx = torch.arange(5, 10)
+    split_idx = torch.arange(5, 8)
 
     loader = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
                             batch_size=split_idx.numel(),
@@ -218,15 +225,17 @@ def test_heterogeneous_neighbor_loader_on_cora(directed):
                             directed=directed)
     assert len(loader) == 1
 
-    batch = next(iter(loader))
-    batch_size = batch['paper'].batch_size
+    hetero_batch = next(iter(loader))
+    batch_size = hetero_batch['paper'].batch_size
 
     if not directed:
         n_id, _, _, e_mask = k_hop_subgraph(split_idx, num_hops=2,
                                             edge_index=data.edge_index,
                                             num_nodes=data.num_nodes)
-        assert batch['paper'].num_nodes == n_id.numel()
-        assert batch['paper', 'paper'].num_edges == int(e_mask.sum())
+
+        n_id = n_id.sort()[0]
+        assert n_id.tolist() == hetero_batch['paper'].n_id.sort()[0].tolist()
+        assert hetero_batch['paper', 'paper'].num_edges == int(e_mask.sum())
 
     class GNN(torch.nn.Module):
         def __init__(self, in_channels, hidden_channels, out_channels):
@@ -243,8 +252,8 @@ def test_heterogeneous_neighbor_loader_on_cora(directed):
     hetero_model = to_hetero(model, hetero_data.metadata())
 
     out1 = model(data.x, data.edge_index, data.edge_weight)[split_idx]
-    out2 = hetero_model(batch.x_dict, batch.edge_index_dict,
-                        batch.edge_weight_dict)['paper'][:batch_size]
+    out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
+                        hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
 
     shutil.rmtree(root)
