@@ -187,7 +187,8 @@ class GENConv(MessagePassing):
             return torch.pow(out, 1 / self.p)
 
         else:
-            return super().aggregate(inputs, index, None, dim_size)
+            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
+                           reduce=self.aggr)
 
     def __repr__(self):
         return '{}({}, {}, aggr={})'.format(self.__class__.__name__,
