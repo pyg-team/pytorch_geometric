@@ -15,7 +15,7 @@ class KNNGraph(BaseTransform):
         flow (string, optional): The flow direction when used in combination
             with message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`).
-            In set to :obj:`"source_to_target"`, every target node will have
+            If set to :obj:`"source_to_target"`, every target node will have
             exactly :math:`k` source nodes pointing to it.
             (default: :obj:`"source_to_target"`)
     """
