@@ -100,7 +100,7 @@ class GENConv(MessagePassing):
         self.aggr = aggr
         self.eps = eps
 
-        assert aggr in ['softmax', 'softmax_sg', 'power']
+        assert aggr in ['softmax', 'softmax_sg', 'power', 'add', 'mean', 'max']
 
         channels = [in_channels]
         for i in range(num_layers - 1):
@@ -178,13 +178,16 @@ class GENConv(MessagePassing):
             return scatter(inputs * out, index, dim=self.node_dim,
                            dim_size=dim_size, reduce='sum')
 
-        else:
+        elif self.aggr == 'power':
             min_value, max_value = 1e-7, 1e1
             torch.clamp_(inputs, min_value, max_value)
             out = scatter(torch.pow(inputs, self.p), index, dim=self.node_dim,
                           dim_size=dim_size, reduce='mean')
             torch.clamp_(out, min_value, max_value)
             return torch.pow(out, 1 / self.p)
+
+        else:
+            return super().aggregate(inputs, index, None, dim_size)
 
     def __repr__(self):
         return '{}({}, {}, aggr={})'.format(self.__class__.__name__,
