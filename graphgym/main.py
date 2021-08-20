@@ -4,7 +4,6 @@ import numpy as np
 import torch
 import logging
 
-import torch_geometric.graphgym.contrib # noqa, register contrib modules
 import custom_graphgym # noqa, register custom modules
 
 from torch_geometric.graphgym.cmd_args import parse_args
@@ -24,6 +23,8 @@ from torch_geometric.graphgym.register import train_dict
 if __name__ == '__main__':
     # Load cmd line args
     args = parse_args()
+    print(train_dict)
+    breakpoint()
     # Repeat for different random seeds
     for i in range(args.repeat):
         # Load config file
