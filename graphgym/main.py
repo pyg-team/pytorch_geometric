@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import logging
 
-import custom_graphgym # noqa, register custom modules
+import custom_graphgym  # noqa, register custom modules
 
 from torch_geometric.graphgym.cmd_args import parse_args
 from torch_geometric.graphgym.config import (cfg, assert_cfg, dump_cfg,
