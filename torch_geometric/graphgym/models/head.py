@@ -9,7 +9,6 @@ from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.layer import MLP
 from torch_geometric.graphgym.models.pooling import pooling_dict
 
-from torch_geometric.graphgym.contrib.head import *  # noqa
 import torch_geometric.graphgym.register as register
 
 

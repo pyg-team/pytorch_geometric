@@ -12,7 +12,6 @@ from torch_geometric.graphgym.init import init_weights
 from torch_geometric.graphgym.models.encoder import node_encoder_dict, \
     edge_encoder_dict
 
-from torch_geometric.graphgym.contrib.stage import *  # noqa
 import torch_geometric.graphgym.register as register
 
 

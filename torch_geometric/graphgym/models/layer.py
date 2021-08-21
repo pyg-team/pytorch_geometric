@@ -8,7 +8,6 @@ from torch_geometric.graphgym.models.act import act_dict
 from torch_geometric.graphgym.contrib.layer.generalconv import (
     GeneralConvLayer, GeneralEdgeConvLayer)
 
-from torch_geometric.graphgym.contrib.layer import *  # noqa
 import torch_geometric.graphgym.register as register
 
 

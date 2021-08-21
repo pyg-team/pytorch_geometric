@@ -3,7 +3,6 @@ import torch
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.gnn import GNN
 
-from torch_geometric.graphgym.contrib.network import *  # noqa
 import torch_geometric.graphgym.register as register
 
 network_dict = {

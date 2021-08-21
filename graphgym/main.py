@@ -4,6 +4,9 @@ import numpy as np
 import torch
 import logging
 
+import torch_geometric.graphgym.contrib # noqa, register contrib modules
+import custom_graphgym # noqa, register custom modules
+
 from torch_geometric.graphgym.cmd_args import parse_args
 from torch_geometric.graphgym.config import (cfg, assert_cfg, dump_cfg,
                                              update_out_dir, get_parent_dir)
@@ -16,7 +19,6 @@ from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils.agg_runs import agg_runs
 from torch_geometric.graphgym.utils.comp_budget import params_count
 from torch_geometric.graphgym.utils.device import auto_select_device
-from torch_geometric.graphgym.contrib.train import *  # noqa
 from torch_geometric.graphgym.register import train_dict
 
 if __name__ == '__main__':
