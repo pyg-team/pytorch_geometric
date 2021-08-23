@@ -8,7 +8,7 @@ from torch_geometric.nn import SplineConv
 
 dataset = 'Cora'
 transform = T.Compose([
-    T.AddTrainValTestMask('train_rest', num_val=500, num_test=500),
+    T.RandomNodeSplit(num_val=500, num_test=500),
     T.TargetIndegree(),
 ])
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -43,6 +43,7 @@ def train():
     optimizer.step()
 
 
+@torch.no_grad()
 def test():
     model.eval()
     log_probs, accs = model(), []
