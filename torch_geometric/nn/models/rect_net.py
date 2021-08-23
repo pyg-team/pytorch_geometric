@@ -86,8 +86,7 @@ def get_labeled_nodes_label_attribute(train_mask_zs, labels, features):
     # 2. replace original labels by their class centers (semantic knowledge)
     y_semantic = np.zeros([len(nodeids), features.shape[1]])
     for i, label in enumerate(labellist):
-        y_semantic[i, :] = label_attribute[int(label)]
-        
+        y_semantic[i, :] = label_attribute[int(label)]    
     return torch.FloatTensor(y_semantic)
 
 def svd_feature(features, d=200):
