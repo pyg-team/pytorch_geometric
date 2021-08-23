@@ -34,7 +34,7 @@ def set_cfg(cfg):
     # Output directory
     cfg.out_dir = 'results'
 
-    # Config destination (in OUT_DIR)
+    # Config name (in out_dir)
     cfg.cfg_dest = 'config.yaml'
 
     # Random seed
@@ -471,6 +471,7 @@ def assert_cfg(cfg):
         logging.warning('Layers after message passing should be >=1')
     if cfg.gnn.head == 'default':
         cfg.gnn.head = cfg.dataset.task
+    cfg.run_dir = cfg.out_dir
 
 
 def dump_cfg(cfg):
@@ -480,24 +481,29 @@ def dump_cfg(cfg):
         cfg.dump(stream=f)
 
 
-def update_out_dir(out_dir, fname):
-    fname = fname.split('/')[-1][:-5]
-    cfg.out_dir = os.path.join(out_dir, fname, str(cfg.seed))
+def load_cfg(cfg, args):
+    cfg.merge_from_file(args.cfg_file)
+    cfg.merge_from_list(args.opts)
+    assert_cfg(cfg)
+
+
+def set_run_dir(out_dir, fname):
+    fname = fname.split('/')[-1]
+    if fname.endswith('.yaml'):
+        fname = fname[:-5]
+    cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
-        os.makedirs(cfg.out_dir, exist_ok=True)
+        os.makedirs(cfg.run_dir, exist_ok=True)
     else:
-        makedirs_rm_exist(cfg.out_dir)
+        makedirs_rm_exist(cfg.run_dir)
 
 
-def get_parent_dir(out_dir, fname):
-    fname = fname.split('/')[-1][:-5]
+def set_agg_dir(out_dir, fname):
+    fname = fname.split('/')[-1]
+    if fname.endswith('.yaml'):
+        fname = fname[:-5]
     return os.path.join(out_dir, fname)
-
-
-def rm_parent_dir(out_dir, fname):
-    fname = fname.split('/')[-1][:-5]
-    makedirs_rm_exist(os.path.join(out_dir, fname))
 
 
 set_cfg(cfg)

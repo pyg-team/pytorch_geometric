@@ -17,10 +17,10 @@ except ImportError:
     SummaryWriter = None
 
 
-def setup_printing():
+def set_printing():
     logging.root.handlers = []
     logging_cfg = {'level': logging.INFO, 'format': '%(message)s'}
-    h_file = logging.FileHandler('{}/logging.log'.format(cfg.out_dir))
+    h_file = logging.FileHandler('{}/logging.log'.format(cfg.run_dir))
     h_stdout = logging.StreamHandler(sys.stdout)
     if cfg.print == 'file':
         logging_cfg['handlers'] = [h_file]
@@ -41,7 +41,7 @@ class Logger(object):
         self._epoch_total = cfg.optim.max_epoch
         self._time_total = 0  # won't be reset
 
-        self.out_dir = '{}/{}'.format(cfg.out_dir, name)
+        self.out_dir = '{}/{}'.format(cfg.run_dir, name)
         os.makedirs(self.out_dir, exist_ok=True)
         if cfg.tensorboard_each_run:
             if SummaryWriter is None:

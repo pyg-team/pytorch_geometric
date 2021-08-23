@@ -48,9 +48,7 @@ def auto_select_device(memory_max=8000, memory_bias=200, strategy='random'):
                 memory = 1 / (memory_raw + memory_bias)
                 memory[memory_raw > memory_max] = 0
                 gpu_prob = memory / memory.sum()
-                np.random.seed()
                 cuda = np.random.choice(len(gpu_prob), p=gpu_prob)
-                np.random.seed(cfg.seed)
                 logging.info('GPU Mem: {}'.format(memory_raw))
                 logging.info('GPU Prob: {}'.format(gpu_prob.round(2)))
                 logging.info(
