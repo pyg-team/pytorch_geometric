@@ -15,6 +15,7 @@ from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
+from .rect_net import RECT_L
 
 __all__ = [
     'GCN',
@@ -41,6 +42,7 @@ __all__ = [
     'LabelPropagation',
     'CorrectAndSmooth',
     'AttentiveFP',
+    'RECT_L', 
 ]
 
 classes = __all__
