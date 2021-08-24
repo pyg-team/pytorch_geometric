@@ -18,9 +18,9 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
     .. note::
 
-        See :class:`torch_geometric.data.GraphSAINTNodeSampler`,
-        :class:`torch_geometric.data.GraphSAINTEdgeSampler` and
-        :class:`torch_geometric.data.GraphSAINTRandomWalkSampler` for
+        See :class:`~torch_geometric.loader.GraphSAINTNodeSampler`,
+        :class:`~torch_geometric.loader.GraphSAINTEdgeSampler` and
+        :class:`~torch_geometric.loader.GraphSAINTRandomWalkSampler` for
         currently supported samplers.
         For an example of using GraphSAINT sampling, see
         `examples/graph_saint.py <https://github.com/rusty1s/pytorch_geometric/
@@ -164,7 +164,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
 class GraphSAINTNodeSampler(GraphSAINTSampler):
     r"""The GraphSAINT node sampler class (see
-    :class:`torch_geometric.data.GraphSAINTSampler`).
+    :class:`~torch_geometric.loader.GraphSAINTSampler`).
     """
     def __sample_nodes__(self, batch_size):
         edge_sample = torch.randint(0, self.E, (batch_size, self.batch_size),
@@ -175,7 +175,7 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
 
 class GraphSAINTEdgeSampler(GraphSAINTSampler):
     r"""The GraphSAINT edge sampler class (see
-    :class:`torch_geometric.data.GraphSAINTSampler`).
+    :class:`~torch_geometric.loader.GraphSAINTSampler`).
     """
     def __sample_nodes__(self, batch_size):
         row, col, _ = self.adj.coo()
@@ -197,7 +197,7 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
 
 class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
     r"""The GraphSAINT random walk sampler class (see
-    :class:`torch_geometric.data.GraphSAINTSampler`).
+    :class:`~torch_geometric.loader.GraphSAINTSampler`).
 
     Args:
         walk_length (int): The length of each random walk.
