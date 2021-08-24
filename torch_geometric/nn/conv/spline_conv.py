@@ -3,10 +3,12 @@ from typing import Union, Tuple, List
 from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
 import torch
+from torch import nn
 from torch import Tensor
 from torch.nn import Parameter
-from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils.repeat import repeat
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 
 from ..inits import uniform, zeros
 
@@ -36,8 +38,10 @@ class SplineConv(MessagePassing):
         this method to work as intended.
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int or [int]): Size of the convolving kernel.
@@ -75,6 +79,7 @@ class SplineConv(MessagePassing):
         self.out_channels = out_channels
         self.dim = dim
         self.degree = degree
+        self.root_weight = root_weight
 
         kernel_size = torch.tensor(repeat(kernel_size, dim), dtype=torch.long)
         self.register_buffer('kernel_size', kernel_size)
@@ -86,13 +91,19 @@ class SplineConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        K = kernel_size.prod().item()
-        self.weight = Parameter(torch.Tensor(K, in_channels[0], out_channels))
+        self.K = kernel_size.prod().item()
+
+        if in_channels[0] > 0:
+            self.weight = Parameter(
+                torch.Tensor(self.K, in_channels[0], out_channels))
+        else:
+            self.weight = torch.nn.parameter.UninitializedParameter()
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
 
         if root_weight:
-            self.root = Parameter(torch.Tensor(in_channels[1], out_channels))
-        else:
-            self.register_parameter('root', None)
+            self.lin = Linear(in_channels[1], out_channels, bias=False,
+                              weight_initializer='uniform')
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -102,9 +113,11 @@ class SplineConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.weight.size(0) * self.weight.size(1)
-        uniform(size, self.weight)
-        uniform(size, self.root)
+        if not isinstance(self.weight, nn.UninitializedParameter):
+            size = self.weight.size(0) * self.weight.size(1)
+            uniform(size, self.weight)
+        if self.root_weight:
+            self.lin.reset_parameters()
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
@@ -122,8 +135,8 @@ class SplineConv(MessagePassing):
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
         x_r = x[1]
-        if x_r is not None and self.root is not None:
-            out += torch.matmul(x_r, self.root)
+        if x_r is not None and self.root_weight:
+            out += self.lin(x_r)
 
         if self.bias is not None:
             out += self.bias
@@ -134,6 +147,17 @@ class SplineConv(MessagePassing):
         data = spline_basis(edge_attr, self.kernel_size, self.is_open_spline,
                             self.degree)
         return spline_weighting(x_j, self.weight, *data)
+
+    @torch.no_grad()
+    def initialize_parameters(self, module, input):
+        if isinstance(self.weight, torch.nn.parameter.UninitializedParameter):
+            x = input[0][0] if isinstance(input, tuple) else input[0]
+            in_channels = x.size(-1)
+            self.weight.materialize((self.K, in_channels, self.out_channels))
+            size = self.weight.size(0) * self.weight.size(1)
+            uniform(size, self.weight)
+        module._hook.remove()
+        delattr(module, '_hook')
 
     def __repr__(self):
         return '{}({}, {}, dim={})'.format(self.__class__.__name__,
