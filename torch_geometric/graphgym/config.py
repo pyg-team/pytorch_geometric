@@ -449,7 +449,7 @@ def set_cfg(cfg):
 
 
 def assert_cfg(cfg):
-    """Checks config values, do certain post processing"""
+    r"""Checks config values, do necessary post processing to the configs"""
     if cfg.dataset.task not in ['node', 'edge', 'graph', 'link_pred']:
         raise ValueError('Task {} not supported, must be one of node, '
                          'edge, graph, link_pred'.format(cfg.dataset.task))
@@ -475,19 +475,42 @@ def assert_cfg(cfg):
 
 
 def dump_cfg(cfg):
-    """Dumps the config to the output directory."""
+    r"""
+    Dumps the config to the output directory specified in
+    :obj:`cfg.out_dir`
+
+    Args:
+        cfg (CfgNode): Configuration node
+
+    """
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
 
 def load_cfg(cfg, args):
+    r"""
+    Load configurations from file system and command line
+
+    Args:
+        cfg (CfgNode): Configuration node
+        args (ArgumentParser): Command argument parser
+
+    """
     cfg.merge_from_file(args.cfg_file)
     cfg.merge_from_list(args.opts)
     assert_cfg(cfg)
 
 
 def set_run_dir(out_dir, fname):
+    r"""
+    Create the directory for each random seed experiment run
+
+    Args:
+        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (string): Filename for the yaml format configuration file
+
+    """
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
         fname = fname[:-5]
@@ -500,6 +523,15 @@ def set_run_dir(out_dir, fname):
 
 
 def set_agg_dir(out_dir, fname):
+    r"""
+    Create the directory for aggregated results over
+    all the random seeds
+
+    Args:
+        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (string): Filename for the yaml format configuration file
+
+    """
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
         fname = fname[:-5]
