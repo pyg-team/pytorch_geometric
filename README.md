@@ -109,7 +109,7 @@ In addition to the easy application of existing GNNs, PyTorch Geometric makes it
 For example, this is all it takes to implement the [edge convolutional layer](https://arxiv.org/abs/1801.07829) from Wang *et al.*:
 
 <p align="center">
-  <img height="40" src="https://raw.githubusercontent.com/vrtex-team/pytorch_geometric/readme/docs/source/_figures/edge_conv.svg?sanitize=true" />
+  <img height="40" src="https://raw.githubusercontent.com/vrtex-team/pytorch_geometric/master/docs/source/_figures/edge_conv.svg?sanitize=true" />
 </p>
 
 ```python
@@ -153,7 +153,7 @@ It comprises of the following components:
 * Finally, PyG provides an abundant set of **GNN models**, and examples that showcases GNN models on standard graph benchmarks. Thanks to its flexibility, users can easily build and modify custom GNN models to fit their specific needs.
 
 <p align="center">
-  <img width="100%" src="https://raw.githubusercontent.com/vrtex-team/pytorch_geometric/readme/docs/source/_static/img/architecture.svg?sanitize=true" />
+  <img width="100%" src="https://raw.githubusercontent.com/vrtex-team/pytorch_geometric/master/docs/source/_static/img/architecture.svg?sanitize=true" />
 </p>
 
 ## Implemented GNN Models
