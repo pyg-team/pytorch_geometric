@@ -25,7 +25,7 @@ __all__ = [
     'extract_gz',
 ]
 
-classes = __all__[:6] + __all__[-5:]  # TODO: Move loaders to `*.loader`.
+classes = __all__
 
 from torch_geometric.deprecation import deprecated  # noqa
 from torch_geometric.loader import ClusterData  # noqa
