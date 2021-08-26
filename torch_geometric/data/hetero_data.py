@@ -345,8 +345,8 @@ class HeteroData(BaseData):
         mapping = {}
         for subtype, store in chain(self._node_store_dict.items(),
                                     self._edge_store_dict.items()):
-            if key in store:
-                mapping[subtype] = store[key]
+            if hasattr(store, key):
+                mapping[subtype] = getattr(store, key)
         return mapping
 
     def get_node_store(self, key: NodeType) -> NodeStorage:
