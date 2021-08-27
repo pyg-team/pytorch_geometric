@@ -11,15 +11,18 @@ def homophily(adj_t, y, batch, method):
     # type: (SparseTensor, Tensor) -> float
     pass
 
+
 @torch.jit._overload
 def homophily(adj_t, y, batch, method):
     # type: (SparseTensor, Tensor, OptTensor) -> Tensor
     pass
 
+
 @torch.jit._overload
 def homophily(edge_index, y, batch, method):
     # type: (Tensor, Tensor) -> float
     pass
+
 
 @torch.jit._overload
 def homophily(edge_index, y, batch, method):
@@ -27,7 +30,7 @@ def homophily(edge_index, y, batch, method):
     pass
 
 
-def homophily(edge_index: Adj, y: Tensor, batch:OptTensor = None, 
+def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
               method: str = 'edge'):
     r"""The homophily of a graph characterizes how likely nodes with the same
     label are near each other in a graph.
@@ -59,9 +62,9 @@ def homophily(edge_index: Adj, y: Tensor, batch:OptTensor = None,
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
         y (Tensor): The labels.
-        batch (LongTensor, optional): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
-            B-1\}}^N`, which assigns each node to a specific example.
-            (default: :obj:`None`)
+        batch (LongTensor, optional): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots,B-1\}}^N`, which assigns
+            each node to a specific example. (default: :obj:`None`)
         method (str, optional): The method used to calculate the homophily,
             either :obj:`"edge"` (first formula) or :obj:`"node"`
             (second formula). (default: :obj:`"edge"`)
@@ -78,11 +81,11 @@ def homophily(edge_index: Adj, y: Tensor, batch:OptTensor = None,
     if method == 'edge':
         out = torch.zeros_like(row, dtype=float)
         out[y[row] == y[col]] = 1.
-        return (out.mean() if batch is None else 
-                scatter_mean(out, batch[col], 0, dim_size= batch_size))
+        return (out.mean() if batch is None else scatter_mean(
+            out, batch[col], 0, dim_size=batch_size))
     else:
         out = torch.zeros_like(row, dtype=float)
         out[y[row] == y[col]] = 1.
         out = scatter_mean(out, col, 0, dim_size=y.size(0))
-        return (out.mean() if batch is None else 
-                scatter_mean(out, batch, 0, dim_size= batch_size))
+        return (out.mean() if batch is None else scatter_mean(
+            out, batch, 0, dim_size=batch_size))
