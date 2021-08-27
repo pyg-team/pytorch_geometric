@@ -81,11 +81,11 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
     if method == 'edge':
         out = torch.zeros_like(row, dtype=float)
         out[y[row] == y[col]] = 1.
-        return (out.mean() if batch is None else scatter_mean(
+        return (float(out.mean()) if batch is None else scatter_mean(
             out, batch[col], 0, dim_size=batch_size))
     else:
         out = torch.zeros_like(row, dtype=float)
         out[y[row] == y[col]] = 1.
         out = scatter_mean(out, col, 0, dim_size=y.size(0))
-        return (out.mean() if batch is None else scatter_mean(
+        return (float(out.mean()) if batch is None else scatter_mean(
             out, batch, 0, dim_size=batch_size))
