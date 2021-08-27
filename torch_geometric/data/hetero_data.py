@@ -430,7 +430,7 @@ class HeteroData(BaseData):
 
         # Iterate over all node stores and record the slice information:
         node_slices, cumsum = {}, 0
-        for node_type, store in self._node_stores_dict.items():
+        for node_type, store in self._node_store_dict.items():
             num_nodes = store.num_nodes
             node_slices[node_type] = (cumsum, cumsum + num_nodes)
             cumsum += num_nodes
@@ -451,7 +451,7 @@ class HeteroData(BaseData):
         # Iterate over all edge stores and record the slice information:
         edge_slices, edge_type_dict, cumsum = {}, {}, 0
         edge_indices, edge_types = [], []
-        for i, (edge_type, store) in enumerate(self._edge_stores_dict.items()):
+        for i, (edge_type, store) in enumerate(self._edge_store_dict.items()):
             src, _, dst = edge_type
             num_edges = store.num_edges
             edge_slices[edge_type] = (cumsum, cumsum + num_edges)
