@@ -68,6 +68,7 @@ def homophily(edge_index: Adj, y: Tensor, batch:OptTensor = None,
     """
     assert method in ['edge', 'node']
     y = y.squeeze(-1) if y.dim() > 1 else y
+    batch_size = 1 if batch is None else batch.unique().size(0)
 
     if isinstance(edge_index, SparseTensor):
         col, row, _ = edge_index.coo()
@@ -78,9 +79,10 @@ def homophily(edge_index: Adj, y: Tensor, batch:OptTensor = None,
         out = torch.zeros_like(row, dtype=float)
         out[y[row] == y[col]] = 1.
         return (out.mean() if batch is None else 
-                scatter_mean(out, batch[col], 0, dim_size= batch.unique().size(0)))
+                scatter_mean(out, batch[col], 0, dim_size= batch_size))
     else:
         out = torch.zeros_like(row, dtype=float)
         out[y[row] == y[col]] = 1.
         out = scatter_mean(out, col, 0, dim_size=y.size(0))
-        return float(out.mean())
+        return (out.mean() if batch is None else 
+                scatter_mean(out, batch, 0, dim_size= batch_size))

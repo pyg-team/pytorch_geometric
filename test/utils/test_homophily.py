@@ -9,3 +9,4 @@ def test_homophily():
     assert homophily(edge_index, y, method='edge') == 0.75
     assert homophily(edge_index, y, batch, method='edge').tolist() == [1.,0.]
     assert homophily(edge_index, y.unsqueeze(1), method='node') == 0.6
+    assert homophily(edge_index, y.unsqueeze(1), batch, method='node').tolist() == [1.,0.]
