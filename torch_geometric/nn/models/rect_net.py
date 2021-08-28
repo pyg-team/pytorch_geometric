@@ -16,6 +16,7 @@ class RECT_L(torch.nn.Module):
         `examples/rect.py
         <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
         rect.py>`_.
+
     Args:
         in_feats (int): Size of each input sample.
         n_hidden (int): Size of each output sample.
