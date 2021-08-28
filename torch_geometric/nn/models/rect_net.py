@@ -23,6 +23,7 @@ class RECT_L(torch.nn.Module):
     """
     def __init__(self, in_feats, n_hidden, dropout):
         super(RECT_L, self).__init__()
+        self.in_feats = in_feats
         self.gcn = GCNConv(in_feats, n_hidden, cached=True, normalize=False)
         self.fc = torch.nn.Linear(n_hidden, in_feats)
         self.dropout = dropout
