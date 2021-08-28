@@ -4,7 +4,8 @@ from sklearn.linear_model import LogisticRegression
 import torch
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric_test.nn.models.rect_net import RECT_L, get_semantic_labels
+from torch_geometric_test.nn.models import RECT_L
+from torch_geometric_test.nn.models.rect_net import get_semantic_labels
 
 
 def evaluate_embeds(embeddings, labels, train_mask, test_mask):
