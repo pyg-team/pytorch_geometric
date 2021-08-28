@@ -42,7 +42,7 @@ __all__ = [
     'LabelPropagation',
     'CorrectAndSmooth',
     'AttentiveFP',
-    'RECT_L', 
+    'RECT_L',
 ]
 
 classes = __all__
