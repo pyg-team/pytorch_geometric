@@ -1,5 +1,5 @@
 import torch
-from torch_geometric_test.transforms import FeatureReduction
+from torch_geometric.transforms import FeatureReduction
 from torch_geometric.data import Data
 
 
