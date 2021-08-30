@@ -84,13 +84,15 @@ def get_semantic_labels(train_mask_zs, labels, features):
     for i in labels[train_mask_zs].cpu().numpy().tolist():
         labellist.append(str(i))
 
-    """1. get the semantic knowledge (class centers) of all seen classes"""
+    """1. get the semantic knowledge (class centers) of all seen classes
+    """
     label_attribute = get_class_centers(train_mask_zs=train_mask_zs,
                                         nodeids=nodeids,
                                         labellist=labellist,
                                         features=features.cpu().numpy())
 
-    """2. replace original labels by their class centers (semantic knowledge)"""
+    """2. replace original labels by their class centers (semantic knowledge)
+    """
     y_semantic = np.zeros([len(nodeids), features.shape[1]])
     for i, label in enumerate(labellist):
         y_semantic[i, :] = label_attribute[int(label)]
