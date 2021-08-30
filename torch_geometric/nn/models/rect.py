@@ -45,6 +45,7 @@ class RECT_L(torch.nn.Module):
     def reset_parameters(self):
         self.conv.reset_parameters()
         self.lin.reset_parameters()
+        torch.nn.init.xavier_uniform_(self.lin.weight.data)
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:

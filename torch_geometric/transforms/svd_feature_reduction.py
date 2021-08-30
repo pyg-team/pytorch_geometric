@@ -8,8 +8,8 @@ class SVDFeatureReduction(BaseTransform):
     r"""Dimensionality reduction of node features via Singular Value
     Decomposition (SVD).
 
-     Args:
-         out_channels (int): The dimensionlity of node features after
+    Args:
+        out_channels (int): The dimensionlity of node features after
             reduction.
     """
     def __init__(self, out_channels):
