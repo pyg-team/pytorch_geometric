@@ -9,9 +9,12 @@ class RECT_L(torch.nn.Module):
     r"""The GNN model RECT (or more specifically its supervised part RECT-L)
     from the TKDE20 paper
     `"Network Embedding with Completely-imbalanced Labels"
-    <https://arxiv.org/abs/2007.03545>`.
+    <https://arxiv.org/abs/2007.03545>`_ paper.
     The model has three simple steps: 1) calculate class semantic knowledge; 2)
     train a gnn model; 3) detach to get embedding results
+
+    .. note::
+
         For an example of using the RECT model, see
         `examples/rect.py
         <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
@@ -37,7 +40,7 @@ class RECT_L(torch.nn.Module):
         preds = self.fc(h_1)
         return preds
 
-    # Detach the return variables
+    """Detach the return variables"""
     def embed(self, inputs):
         h_1 = self.gcn(inputs, self.edge_index, self.edge_weight)
         return h_1.detach()
@@ -48,14 +51,14 @@ class RECT_L(torch.nn.Module):
 
 
 def get_class_centers(train_mask_zs, nodeids, labellist, features):
-    ''' Get the class-center (semanic knowledge) of each seen class.
-        Suppose a node i is labeled as c,
-        then attribute[c] += node_i_attribute,
-        finally mean(attribute[c])
-        Input: train_mask_zs, nodeids, labellist, features
-        Output: label_attribute{}: label ->
-        average_labeled_node_features (class centers)
-    '''
+    """Get the class-center (semanic knowledge) of each seen class.
+       Suppose a node i is labeled as c,
+       then attribute[c] += node_i_attribute,
+       finally mean(attribute[c])
+       Input: train_mask_zs, nodeids, labellist, features
+       Output: label_attribute{}: label ->
+       average_labeled_node_features (class centers)
+    """
     label_attribute_nodes = defaultdict(list)
     for nodeid, label in zip(nodeids, labellist):
         label_attribute_nodes[int(label)].append(int(nodeid))
@@ -67,12 +70,12 @@ def get_class_centers(train_mask_zs, nodeids, labellist, features):
 
 
 def get_semantic_labels(train_mask_zs, labels, features):
-    ''' Replace the original labels by their class-centers.
-        For each label c in the training set, we first get label's attribute,
-        then set res[i, :] = label_attribute[c]
-        Input: train_mask_zs, labels, features
-        Output: y_{semantic} [l, ft]: tensor
-    '''
+    """Replace the original labels by their class-centers.
+       For each label c in the training set, we first get label's attribute,
+       then set res[i, :] = label_attribute[c]
+       Input: train_mask_zs, labels, features
+       Output: y_{semantic} [l, ft]: tensor
+    """
     X = torch.LongTensor(range(features.shape[0]))
     nodeids = []
     labellist = []
@@ -81,13 +84,13 @@ def get_semantic_labels(train_mask_zs, labels, features):
     for i in labels[train_mask_zs].cpu().numpy().tolist():
         labellist.append(str(i))
 
-    # 1. get the semantic knowledge (class centers) of all seen classes
+    """1. get the semantic knowledge (class centers) of all seen classes"""
     label_attribute = get_class_centers(train_mask_zs=train_mask_zs,
                                         nodeids=nodeids,
                                         labellist=labellist,
                                         features=features.cpu().numpy())
 
-    # 2. replace original labels by their class centers (semantic knowledge)
+    """2. replace original labels by their class centers (semantic knowledge)"""
     y_semantic = np.zeros([len(nodeids), features.shape[1]])
     for i, label in enumerate(labellist):
         y_semantic[i, :] = label_attribute[int(label)]
