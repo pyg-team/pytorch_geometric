@@ -41,6 +41,8 @@ from .sign import SIGN
 from .grid_sampling import GridSampling
 from .gcn_norm import GCNNorm
 from .add_train_val_test_mask import AddTrainValTestMask
+from .svd_feature_reduction import SVDFeatureReduction
+from .remove_training_classes import RemoveTrainingClasses
 
 __all__ = [
     'BaseTransform',
@@ -86,6 +88,8 @@ __all__ = [
     'GridSampling',
     'GCNNorm',
     'AddTrainValTestMask',
+    'SVDFeatureReduction',
+    'RemoveTrainingClasses',
 ]
 
 classes = __all__
