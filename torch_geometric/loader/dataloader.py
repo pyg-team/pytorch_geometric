@@ -39,7 +39,7 @@ class Collater(object):
 
 class DataLoader(torch.utils.data.DataLoader):
     r"""Data loader which merges data objects from a
-    :class:`torch_geometric.data.dataset` to a mini-batch.
+    :class:`torch_geometric.data.Dataset` to a mini-batch.
 
     Args:
         dataset (Dataset): The dataset from which to load the data.

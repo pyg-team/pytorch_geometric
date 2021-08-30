@@ -4,7 +4,6 @@ from .temporal import TemporalData
 from .batch import Batch
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
-from .dataloader import DataLoader
 from .sampler import NeighborSampler
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
@@ -16,7 +15,6 @@ __all__ = [
     'Batch',
     'Dataset',
     'InMemoryDataset',
-    'DataLoader',
     'NeighborSampler',
     'download_url',
     'extract_tar',
@@ -36,6 +34,7 @@ from torch_geometric.loader import GraphSAINTEdgeSampler  # noqa
 from torch_geometric.loader import GraphSAINTRandomWalkSampler  # noqa
 from torch_geometric.loader import ShaDowKHopSampler  # noqa
 from torch_geometric.loader import RandomNodeSampler  # noqa
+from torch_geometric.loader import DataLoader  # noqa
 from torch_geometric.loader import DataListLoader  # noqa
 from torch_geometric.loader import DenseDataLoader  # noqa
 
@@ -58,6 +57,8 @@ ShaDowKHopSampler = deprecated("use 'loader.ShaDowKHopSampler' instead",
                                'data.ShaDowKHopSampler')(ShaDowKHopSampler)
 RandomNodeSampler = deprecated("use 'loader.RandomNodeSampler' instead",
                                'data.RandomNodeSampler')(RandomNodeSampler)
+DataLoader = deprecated("use 'loader.DataLoader' instead",
+                        'data.DataLoader')(DataLoader)
 DataListLoader = deprecated("use 'loader.DataListLoader' instead",
                             'data.DataListLoader')(DataListLoader)
 DenseDataLoader = deprecated("use 'loader.DenseDataLoader' instead",

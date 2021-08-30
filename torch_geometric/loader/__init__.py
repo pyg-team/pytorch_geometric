@@ -1,3 +1,4 @@
+from .dataloader import DataLoader
 from .neighbor_loader import NeighborLoader
 from .hgt_loader import HGTLoader
 from .cluster import ClusterData, ClusterLoader
@@ -9,6 +10,7 @@ from .data_list_loader import DataListLoader
 from .dense_data_loader import DenseDataLoader
 
 __all__ = [
+    'DataLoader',
     'NeighborLoader',
     'HGTLoader',
     'ClusterData',
