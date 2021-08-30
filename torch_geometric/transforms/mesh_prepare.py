@@ -4,9 +4,10 @@ import ntpath
 from .mesh_augmentations import (scale_verts, flip_edges, slide_verts)
 from ..utils.mesh_features import mesh_extract_features
 from ..transforms.mesh import MeshData
+from torch_geometric.io import read_ply
 
 
-class MeshPrepare:
+class MeshCNNPrepare:
     r"""This class is a utility class to read and create Mesh structure for the
     MeshCNN: `"MeshCNN: A Network with an Edge"
     <https://arxiv.org/abs/1809.05910>`_ paper.
@@ -27,62 +28,114 @@ class MeshPrepare:
                                           aug_flip_edges value.
     """
 
-    def __init__(self, raw_file: str, num_aug: int = 0,
+    def __init__(self, num_aug: int = 1,
                  aug_slide_verts: float = 0.0,
                  aug_scale_verts: bool = False, aug_flip_edges: float = 0.0,
                  aug_file: str = ''):
-        self.file = raw_file
+
         self.num_aug = num_aug
         self.aug_slide_verts = aug_slide_verts
         self.aug_scale_verts = aug_scale_verts
         self.aug_flip_edges = aug_flip_edges
+        self.aug_file = aug_file
         self.mesh_data = MeshData()
 
-        load_path = aug_file
-        if load_path == '':
-            load_path = self.get_mesh_path(raw_file)
+    def __call__(self, data):
+        load_path = self.aug_file
+        # if load_path == '':
+        #     load_path = self.get_mesh_path(raw_file)
         if os.path.exists(load_path):
-            data = np.load(load_path, encoding='latin1', allow_pickle=True)
-            self.mesh_data.vs = data.__getitem__('vs')
-            self.mesh_data.edges = data.__getitem__('edges')
-            self.mesh_data.edges_count = int(data.__getitem__('edges_count'))
-            self.mesh_data.ve = data.__getitem__('ve')
-            self.mesh_data.v_mask = data.__getitem__('v_mask')
-            self.mesh_data.filename = str(data.__getitem__('filename'))
-            self.mesh_data.edge_lengths = data.__getitem__('edge_lengths')
-            self.mesh_data.edge_areas = data.__getitem__('edge_areas')
-            self.mesh_data.features = data.__getitem__('features')
-            self.mesh_data.sides = data.__getitem__('sides')
-            self.mesh_data.edge_index = data.__getitem__('edge_index')
+            loaded_data = np.load(load_path, encoding='latin1', allow_pickle=True)
+            self.mesh_data.pos = loaded_data['pos']
+            self.mesh_data.edges = loaded_data['edges']
+            self.mesh_data.edges_count = int(loaded_data['edges_count'])
+            self.mesh_data.ve = loaded_data['ve']
+            self.mesh_data.v_mask = loaded_data['v_mask']
+            self.mesh_data.filename = str(loaded_data['filename'])
+            self.mesh_data.edge_lengths = loaded_data['edge_lengths']
+            self.mesh_data.edge_areas = loaded_data['edge_areas']
+            self.mesh_data.edge_attr = loaded_data['edge_attr']
+            self.mesh_data.sides = loaded_data['sides']
+            self.mesh_data.edge_index = loaded_data['edge_index']
         else:
-            self.mesh_data = self.from_scratch()
-            np.savez_compressed(load_path, vs=self.mesh_data.vs,
-                                edges=self.mesh_data.edges,
-                                edges_count=int(self.mesh_data.edges_count),
-                                ve=self.mesh_data.ve,
-                                v_mask=self.mesh_data.v_mask,
-                                filename=str(self.mesh_data.filename),
-                                sides=self.mesh_data.sides,
-                                edge_lengths=self.mesh_data.edge_lengths,
-                                edge_areas=self.mesh_data.edge_areas,
-                                features=self.mesh_data.features,
-                                edge_index=self.mesh_data.edge_index)
+            self.mesh_data = self.from_scratch(data)
+            # np.savez_compressed(load_path, pos=self.mesh_data.pos,
+            #                     edges=self.mesh_data.edges,
+            #                     edges_count=int(self.mesh_data.edges_count),
+            #                     ve=self.mesh_data.ve,
+            #                     v_mask=self.mesh_data.v_mask,
+            #                     filename=str(self.mesh_data.filename),
+            #                     sides=self.mesh_data.sides,
+            #                     edge_lengths=self.mesh_data.edge_lengths,
+            #                     edge_areas=self.mesh_data.edge_areas,
+            #                     edge_attr=self.mesh_data.edge_attr,
+            #                     edge_index=self.mesh_data.edge_index)
+
+        return self.mesh_data
+
+    # def __call__(self, raw_file):
+    #     self.file = raw_file
+    #     load_path = self.aug_file
+    #     if load_path == '':
+    #         load_path = self.get_mesh_path(raw_file)
+    #     if os.path.exists(load_path):
+    #         data = np.load(load_path, encoding='latin1', allow_pickle=True)
+    #         self.mesh_data.pos = data['pos']
+    #         self.mesh_data.edges = data['edges']
+    #         self.mesh_data.edges_count = int(data['edges_count'])
+    #         self.mesh_data.ve = data['ve']
+    #         self.mesh_data.v_mask = data['v_mask']
+    #         self.mesh_data.filename = str(data['filename'])
+    #         self.mesh_data.edge_lengths = data['edge_lengths']
+    #         self.mesh_data.edge_areas = data['edge_areas']
+    #         self.mesh_data.edge_attr = data['edge_attr']
+    #         self.mesh_data.sides = data['sides']
+    #         self.mesh_data.edge_index = data['edge_index']
+    #     else:
+    #         self.mesh_data = self.from_scratch()
+    #         np.savez_compressed(load_path, pos=self.mesh_data.pos,
+    #                             edges=self.mesh_data.edges,
+    #                             edges_count=int(self.mesh_data.edges_count),
+    #                             ve=self.mesh_data.ve,
+    #                             v_mask=self.mesh_data.v_mask,
+    #                             filename=str(self.mesh_data.filename),
+    #                             sides=self.mesh_data.sides,
+    #                             edge_lengths=self.mesh_data.edge_lengths,
+    #                             edge_areas=self.mesh_data.edge_areas,
+    #                             edge_attr=self.mesh_data.edge_attr,
+    #                             edge_index=self.mesh_data.edge_index)
+    #
+    #     return self.mesh_data
 
     def get_mesh_path(self, file):
-        filename, _ = os.path.splitext(file)
+        filename, suffix = os.path.splitext(file)
         dir_name = os.path.dirname(filename)
         prefix = os.path.basename(filename)
         load_dir = os.path.join(dir_name, 'cache')
-        load_file = os.path.join(load_dir, '%s_%03d.npz' %
-                                 (prefix, np.random.randint(0, self.num_aug)))
+        load_file = os.path.join(load_dir, '%s_%03d' %
+                                 (prefix, np.random.randint(0, self.num_aug))
+                                 + suffix)
         if not os.path.isdir(load_dir):
             os.makedirs(load_dir, exist_ok=True)
         return load_file
 
-    def from_scratch(self):
+    def from_scratch(self, data):
         mesh_data = MeshData()
-        mesh_data.vs, faces = self.fill_from_file(mesh_data)
-        mesh_data.v_mask = np.ones(len(mesh_data.vs), dtype=bool)
+        if data is None:
+            mesh_data.pos, faces = self.fill_from_file(mesh_data)
+        else:
+            keys = data.keys
+            assert(('pos' in keys and 'face' in keys)
+                   or
+                   ('pos' in keys and 'faces' in keys))
+            if 'face' in keys:
+                mesh_data.pos = np.asarray(data.pos)
+                faces = np.asarray(data.face.transpose(0, 1), dtype=int)
+            elif 'faces':
+                mesh_data.pos = data.pos
+                faces = data.faces
+
+        mesh_data.v_mask = np.ones(len(mesh_data.pos), dtype=bool)
 
         faces, face_areas = self.remove_non_manifolds(mesh_data, faces)
         if self.num_aug > 1:
@@ -90,49 +143,56 @@ class MeshPrepare:
         self.build_edge_indexes(mesh_data, faces, face_areas)
         if self.num_aug > 1:
             self.mesh_post_augmentations(mesh_data)
-        mesh_data.features = mesh_extract_features(mesh_data)
+        mesh_data.edge_attr = mesh_extract_features(mesh_data)
         return mesh_data
 
     def mesh_augmentations(self, mesh, faces):
         if self.aug_scale_verts:
-            scale_verts(mesh.vs)
+            scale_verts(mesh.pos)
         if self.aug_flip_edges > 0.0:
-            faces = flip_edges(mesh.vs, faces, self.aug_flip_edges)
+            faces = flip_edges(mesh.pos, faces, self.aug_flip_edges)
         return faces
 
     def mesh_post_augmentations(self, mesh):
         if self.aug_slide_verts > 0.0:
             mesh.shifted = slide_verts(mesh.edges, mesh.edge_index,
                                        mesh.edges_count,
-                                       mesh.ve, mesh.vs, self.aug_slide_verts)
+                                       mesh.ve, mesh.pos, self.aug_slide_verts)
 
     def fill_from_file(self, mesh):
         mesh.filename = ntpath.split(self.file)[1]
         mesh.fullfilename = self.file
-        vs, faces = [], []
-        f = open(self.file)
-        for line in f:
-            line = line.strip()
-            splitted_line = line.split()
-            if not splitted_line:
-                continue
-            elif splitted_line[0] == 'v':
-                vs.append([float(v) for v in splitted_line[1:4]])
-            elif splitted_line[0] == 'f':
-                face_vertex_ids = [int(c.split('/')[0]) for c in
-                                   splitted_line[1:]]
-                assert len(face_vertex_ids) == 3
-                face_vertex_ids = [(ind - 1) if (ind >= 0) else (len(vs) + ind)
-                                   for ind in face_vertex_ids]
-                faces.append(face_vertex_ids)
-        f.close()
-        vs = np.asarray(vs)
-        faces = np.asarray(faces, dtype=int)
-        assert np.logical_and(faces >= 0, faces < len(vs)).all()
-        return vs, faces
+        _, suffix = os.path.splitext(self.file)
+
+        if suffix == '.ply':
+            data = read_ply(self.file)
+            pos = np.asarray(data.pos)
+            faces = np.asarray(data.face.transpose(0, 1), dtype=int)
+        elif suffix == '.obj':
+            pos, faces = [], []
+            f = open(self.file)
+            for line in f:
+                line = line.strip()
+                splitted_line = line.split()
+                if not splitted_line:
+                    continue
+                elif splitted_line[0] == 'v':
+                    pos.append([float(v) for v in splitted_line[1:4]])
+                elif splitted_line[0] == 'f':
+                    face_vertex_ids = [int(c.split('/')[0]) for c in
+                                       splitted_line[1:]]
+                    assert len(face_vertex_ids) == 3
+                    face_vertex_ids = [(ind - 1) if (ind >= 0) else (len(pos) + ind)
+                                       for ind in face_vertex_ids]
+                    faces.append(face_vertex_ids)
+            f.close()
+            pos = np.asarray(pos)
+            faces = np.asarray(faces, dtype=int)
+        assert np.logical_and(faces >= 0, faces < len(pos)).all()
+        return pos, faces
 
     def remove_non_manifolds(self, mesh, faces):
-        mesh.ve = [[] for _ in mesh.vs]
+        mesh.ve = [[] for _ in mesh.pos]
         edges_set = set()
         mask = np.ones(len(faces), dtype=bool)
         _, face_areas = self.compute_face_normals_and_areas(mesh=mesh,
@@ -178,7 +238,7 @@ class MeshPrepare:
         for example edge i -> gemm_edges[gemm_edges[i], sides[i]] ==
                                                                 [i, i, i, i]
         """
-        mesh.ve = [[] for _ in mesh.vs]
+        mesh.ve = [[] for _ in mesh.pos]
         edge_nb = []
         sides = []
         edge2key = dict()
@@ -228,8 +288,8 @@ class MeshPrepare:
 
     @staticmethod
     def compute_face_normals_and_areas(mesh, faces):
-        face_normals = np.cross(mesh.vs[faces[:, 1]] - mesh.vs[faces[:, 0]],
-                                mesh.vs[faces[:, 2]] - mesh.vs[faces[:, 1]])
+        face_normals = np.cross(mesh.pos[faces[:, 1]] - mesh.pos[faces[:, 0]],
+                                mesh.pos[faces[:, 2]] - mesh.pos[faces[:, 1]])
         face_areas = np.sqrt((face_normals ** 2).sum(axis=1))
         face_normals /= face_areas[:, np.newaxis]
         assert (not np.any(face_areas[:,

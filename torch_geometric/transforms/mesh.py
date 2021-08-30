@@ -14,7 +14,7 @@ class MeshData(torch_geometric.data.Data):
 
     Attributes:
         filename (str): obj file name
-        vs (np.array(Num_vertices, 3, dtype=float64)): vertices positions
+        pos (np.array(Num_vertices, 3, dtype=float64)): vertices positions
         edges (np.array(Num_edges, 2, dtype=int32)): pairs of vertices indexes
                                                      which construct an edge
         sides (np.array(Num_edges, 4, dtype=int32): values of: 0,1,2,3 -
@@ -42,17 +42,17 @@ class MeshData(torch_geometric.data.Data):
                                    segmentation accuracy.
         edge_index (np.array(2, Num_edges x 5,
                    dtype=int64)): pairs of edge indexes which are neighbours.
-        features (np.array(Feature_dim, Num_edges,
+        edge_attr (np.array(Feature_dim, Num_edges,
                  dtype=float64)): edge features. Initial features dimension is
                                   5 and consists of geometric features as state
-                                   in the paper.
+                                  in the paper.
         label (int): mesh label number.
         """
 
     def __init__(self):
         super(MeshData, self).__init__()
         self.filename = 'unknown'
-        self.vs = None
+        self.pos = None
         self.edges = None
         self.sides = None
         self.edges_count = 0
@@ -61,7 +61,7 @@ class MeshData(torch_geometric.data.Data):
         self.edge_lengths = None
         self.edge_areas = []
         self.edge_index = None
-        self.features = None
+        self.edge_attr = None
         self.label = None
 
 
@@ -93,13 +93,13 @@ class Mesh:
         self.export()
 
     def extract_features(self):
-        return self.mesh_data.features
+        return self.mesh_data.edge_attr
 
     def merge_vertices(self, edge_id):
         self.remove_edge(edge_id)
         edge = self.mesh_data.edges[edge_id]
-        v_a = self.mesh_data.vs[edge[0]]
-        v_b = self.mesh_data.vs[edge[1]]
+        v_a = self.mesh_data.pos[edge[0]]
+        v_b = self.mesh_data.pos[edge[1]]
         # update pA
         v_a.__iadd__(v_b)
         v_a.__itruediv__(2)
@@ -123,7 +123,7 @@ class Mesh:
         edges_mask = edges_mask.astype(bool)
         torch_mask = torch.from_numpy(edges_mask.copy())
 
-        index_mask = np.array(np.where(edges_mask is True)).flatten()
+        index_mask = np.array(np.where(edges_mask == True)).flatten()
         index_pyg_mask = [5 * ind_mask + i for ind_mask in index_mask for i in
                           range(5)]
         self.mesh_data.edge_index = self.mesh_data.edge_index[:,
@@ -163,7 +163,7 @@ class Mesh:
             else:
                 return
         faces = []
-        vs = self.mesh_data.vs[self.mesh_data.v_mask]
+        vs = self.mesh_data.pos[self.mesh_data.v_mask]
         edge_indexes = np.array(self.mesh_data.edge_index)
         new_indices = np.zeros(self.mesh_data.v_mask.shape[0], dtype=np.int32)
         new_indices[self.mesh_data.v_mask] = np.arange(0, np.ma.where(

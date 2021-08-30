@@ -41,7 +41,7 @@ from .grid_sampling import GridSampling
 from .gcn_norm import GCNNorm
 from.add_train_val_test_mask import AddTrainValTestMask
 from .mesh import Mesh, MeshData
-from .mesh_prepare import MeshPrepare
+from .mesh_prepare import MeshCNNPrepare
 
 __all__ = [
     'Compose',
@@ -88,7 +88,7 @@ __all__ = [
     'AddTrainValTestMask',
     'Mesh',
     'MeshData',
-    'MeshPrepare',
+    'MeshCNNPrepare',
 ]
 
 classes = __all__
