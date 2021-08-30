@@ -1,4 +1,5 @@
-from torch_geometric.typing import Adj
+from typing import Union
+from torch_geometric.typing import Adj, OptTensor
 
 import torch
 from torch import Tensor
@@ -6,19 +7,8 @@ from torch_sparse import SparseTensor
 from torch_scatter import scatter_mean
 
 
-@torch.jit._overload
-def homophily(adj_t, y, method):
-    # type: (SparseTensor, Tensor) -> float
-    pass
-
-
-@torch.jit._overload
-def homophily(edge_index, y, method):
-    # type: (Tensor, Tensor) -> float
-    pass
-
-
-def homophily(edge_index: Adj, y: Tensor, method: str = 'edge'):
+def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
+              method: str = 'edge') -> Union[float, Tensor]:
     r"""The homophily of a graph characterizes how likely nodes with the same
     label are near each other in a graph.
     There are many measures of homophily that fits this definition.
@@ -49,6 +39,9 @@ def homophily(edge_index: Adj, y: Tensor, method: str = 'edge'):
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
         y (Tensor): The labels.
+        batch (LongTensor, optional): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots,B-1\}}^N`, which assigns
+            each node to a specific example. (default: :obj:`None`)
         method (str, optional): The method used to calculate the homophily,
             either :obj:`"edge"` (first formula) or :obj:`"node"`
             (second formula). (default: :obj:`"edge"`)
@@ -62,9 +55,18 @@ def homophily(edge_index: Adj, y: Tensor, method: str = 'edge'):
         row, col = edge_index
 
     if method == 'edge':
-        return int((y[row] == y[col]).sum()) / row.size(0)
+        out = torch.zeros(row.size(0), device=row.device)
+        out[y[row] == y[col]] = 1.
+        if batch is None:
+            return float(out.mean())
+        else:
+            return scatter_mean(out, batch[col], dim=0)
+
     else:
-        out = torch.zeros_like(row, dtype=float)
+        out = torch.zeros(row.size(0), device=row.device)
         out[y[row] == y[col]] = 1.
         out = scatter_mean(out, col, 0, dim_size=y.size(0))
-        return float(out.mean())
+        if batch is None:
+            return float(out.mean())
+        else:
+            return scatter_mean(out, batch, dim=0)
