@@ -59,6 +59,12 @@ class NeighborSampler(torch.utils.data.DataLoader):
     of the list of source nodes so that one can easily apply skip-connections
     or add self-loops.
 
+    .. warning::
+
+        :class:`~torch_geometric.loader.NeighborSampler` is deprecated and will
+        be removed in a future release.
+        Use :class:`torch_geometric.loader.NeighborLoader` instead.
+
     .. note::
 
         For an example of using :obj:`NeighborSampler`, see

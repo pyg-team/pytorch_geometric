@@ -7,6 +7,7 @@ from .shadow import ShaDowKHopSampler
 from .random_node_sampler import RandomNodeSampler
 from .data_list_loader import DataListLoader
 from .dense_data_loader import DenseDataLoader
+from .neighbor_sampler import NeighborSampler
 
 __all__ = [
     'NeighborLoader',
@@ -21,6 +22,7 @@ __all__ = [
     'RandomNodeSampler',
     'DataListLoader',
     'DenseDataLoader',
+    'NeighborSampler',
 ]
 
 classes = __all__

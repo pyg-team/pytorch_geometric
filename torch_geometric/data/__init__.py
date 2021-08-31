@@ -5,7 +5,6 @@ from .batch import Batch
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
 from .dataloader import DataLoader
-from .sampler import NeighborSampler
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 
@@ -17,7 +16,6 @@ __all__ = [
     'Dataset',
     'InMemoryDataset',
     'DataLoader',
-    'NeighborSampler',
     'download_url',
     'extract_tar',
     'extract_zip',
@@ -28,6 +26,7 @@ __all__ = [
 classes = __all__
 
 from torch_geometric.deprecation import deprecated  # noqa
+from torch_geometric.loader import NeighborSampler  # noqa
 from torch_geometric.loader import ClusterData  # noqa
 from torch_geometric.loader import ClusterLoader  # noqa
 from torch_geometric.loader import GraphSAINTSampler  # noqa
@@ -39,6 +38,8 @@ from torch_geometric.loader import RandomNodeSampler  # noqa
 from torch_geometric.loader import DataListLoader  # noqa
 from torch_geometric.loader import DenseDataLoader  # noqa
 
+NeighborSampler = deprecated("use 'loader.NeighborSampler' instead",
+                             'data.NeighborSampler')(NeighborSampler)
 ClusterData = deprecated("use 'loader.ClusterData' instead",
                          'data.ClusterData')(ClusterData)
 ClusterLoader = deprecated("use 'loader.ClusterLoader' instead",

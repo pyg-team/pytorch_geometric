@@ -20,7 +20,7 @@ from torch_geometric.loader import (GraphSAINTNodeSampler,
                                     GraphSAINTRandomWalkSampler)
 from torch_geometric.loader import ClusterLoader
 from torch_geometric.loader import RandomNodeSampler
-from torch_geometric.data.sampler import NeighborSampler
+from torch_geometric.loader import NeighborSampler
 from torch_geometric.utils import negative_sampling
 
 
