@@ -18,6 +18,10 @@ except ImportError:
 
 
 def set_printing():
+    """
+    Set up printing options
+
+    """
     logging.root.handlers = []
     logging_cfg = {'level': logging.INFO, 'format': '%(message)s'}
     h_file = logging.FileHandler('{}/logging.log'.format(cfg.run_dir))
@@ -212,6 +216,12 @@ def infer_task():
 
 
 def create_logger():
+    """
+    Create logger for the experiment
+
+    Returns: List of logger objects
+
+    """
     loggers = []
     names = ['train', 'val', 'test']
     for i, dataset in enumerate(range(cfg.share.num_splits)):

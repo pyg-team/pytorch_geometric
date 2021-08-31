@@ -2,7 +2,13 @@ import torch.nn as nn
 
 
 def init_weights(m):
-    """Performs weight initialization."""
+    r"""
+    Performs weight initialization
+
+    Args:
+        m (nn.Module): PyTorch module
+
+    """
     if isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.BatchNorm1d):
         m.weight.data.fill_(1.0)
         m.bias.data.zero_()

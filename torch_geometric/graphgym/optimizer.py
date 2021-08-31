@@ -6,6 +6,15 @@ import torch_geometric.graphgym.register as register
 
 
 def create_optimizer(params):
+    r"""
+    Create optimizer for the model
+
+    Args:
+        params: PyTorch model parameters
+
+    Returns: PyTorch optimizer
+
+    """
     params = filter(lambda p: p.requires_grad, params)
     # Try to load customized optimizer
     for func in register.optimizer_dict.values():
@@ -27,6 +36,15 @@ def create_optimizer(params):
 
 
 def create_scheduler(optimizer):
+    r"""
+    Create learning rate scheduler for the optimizer
+
+    Args:
+        optimizer: PyTorch optimizer
+
+    Returns: PyTorch scheduler
+
+    """
     # Try to load customized scheduler
     for func in register.scheduler_dict.values():
         scheduler = func(optimizer)

@@ -37,7 +37,12 @@ def join_list(l1, l2):
 
 
 def agg_dict_list(dict_list):
-    '''default agg: mean + std'''
+    """
+    Aggregate a list of dictionaries: mean + std
+    Args:
+        dict_list: list of dictionaries
+
+    """
     dict_agg = {'epoch': dict_list[0]['epoch']}
     for key in dict_list[0]:
         if key != 'epoch':
@@ -140,8 +145,17 @@ def agg_runs(dir, metric_best='auto'):
         os.path.join(dir, 'agg')))
 
 
-# agg across grid search
 def agg_batch(dir, metric_best='auto'):
+    '''
+    Aggregate across results from grid search
+
+    Args:
+        dir:
+        metric_best:
+
+    Returns:
+
+    '''
     results = {'train': [], 'val': [], 'test': []}
     for run in os.listdir(dir):
         if run != 'agg':
