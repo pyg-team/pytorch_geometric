@@ -8,8 +8,7 @@ import shutil
 import pytest
 import torch
 from torch_geometric.datasets import TUDataset
-from torch_geometric.data import DataLoader
-from torch_geometric.loader import DenseDataLoader, DataListLoader
+from torch_geometric.loader import DataLoader, DenseDataLoader, DataListLoader
 from torch_geometric.transforms import ToDense
 
 

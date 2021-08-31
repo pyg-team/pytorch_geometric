@@ -65,7 +65,7 @@ class BaseData(object):
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         r"""Returns the dimension for which the value :obj:`value` of the
         attribute :obj:`key` will get concatenated when creating mini-batches
-        using :class:`torch_geometric.data.DataLoader`.
+        using :class:`torch_geometric.loader.DataLoader`.
 
         .. note::
 
@@ -78,7 +78,7 @@ class BaseData(object):
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         r"""Returns the incremental count to cumulatively increase the value
         :obj:`value` of the attribute :obj:`key` when creating mini-batches
-        using :class:`torch_geometric.data.DataLoader`.
+        using :class:`torch_geometric.loader.DataLoader`.
 
         .. note::
 

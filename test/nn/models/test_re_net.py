@@ -6,13 +6,12 @@ import shutil
 import torch
 from torch_geometric.nn import RENet
 from torch_geometric.datasets.icews import EventDataset
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 
 
 class MyTestEventDataset(EventDataset):
     def __init__(self, root, seq_len):
-        super(MyTestEventDataset, self).__init__(
-            root, pre_transform=RENet.pre_transform(seq_len))
+        super().__init__(root, pre_transform=RENet.pre_transform(seq_len))
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -38,7 +37,7 @@ class MyTestEventDataset(EventDataset):
         return torch.stack([sub, rel, obj, t], dim=1)
 
     def process(self):
-        data_list = super(MyTestEventDataset, self).process()
+        data_list = super().process()
         torch.save(self.collate(data_list), self.processed_paths[0])
 
 
@@ -47,8 +46,8 @@ def test_re_net():
     dataset = MyTestEventDataset(root, seq_len=4)
     loader = DataLoader(dataset, 2, follow_batch=['h_sub', 'h_obj'])
 
-    model = RENet(
-        dataset.num_nodes, dataset.num_rels, hidden_channels=16, seq_len=4)
+    model = RENet(dataset.num_nodes, dataset.num_rels, hidden_channels=16,
+                  seq_len=4)
 
     logits = torch.randn(6, 6)
     y = torch.tensor([0, 1, 2, 3, 4, 5])
