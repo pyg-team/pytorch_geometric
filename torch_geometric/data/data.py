@@ -405,7 +405,7 @@ class Data(BaseData):
         return self._store.to_namedtuple()
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if isinstance(value, SparseTensor):
+        if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
         elif 'index' in key or 'face' in key:
             return -1

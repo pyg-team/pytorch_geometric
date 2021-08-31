@@ -259,7 +259,7 @@ class HeteroData(BaseData):
 
     def __cat_dim__(self, key: str, value: Any,
                     store: Optional[NodeOrEdgeStorage] = None) -> Any:
-        if isinstance(value, SparseTensor):
+        if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
         elif 'index' in key or 'face' in key:
             return -1
