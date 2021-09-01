@@ -1,5 +1,3 @@
-"""Benchmarking various models for graph classification
-"""
 import argparse
 from itertools import product
 
@@ -12,7 +10,6 @@ from torch_geometric.profile import profileit, timeit, get_stats_summary
 from datasets import get_dataset
 from train_eval import train, eval_acc
 
-# TODO: add GAT for kernel
 from gcn import GCN
 from graph_sage import GraphSAGE
 from gin import GIN
