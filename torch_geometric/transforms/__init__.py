@@ -1,5 +1,6 @@
 from .base_transform import BaseTransform
 from .compose import Compose
+from .to_device import ToDevice
 from .to_sparse_tensor import ToSparseTensor
 from .to_undirected import ToUndirected
 from .constant import Constant
@@ -46,6 +47,7 @@ from .random_link_split import RandomLinkSplit
 __all__ = [
     'BaseTransform',
     'Compose',
+    'ToDevice',
     'ToSparseTensor',
     'ToUndirected',
     'Constant',

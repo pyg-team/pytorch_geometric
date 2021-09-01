@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
-from torch_geometric.utils import negative_sampling
+from torch_geometric.utils import add_self_loops, negative_sampling
 from torch_geometric.transforms import BaseTransform
 
 
@@ -34,7 +34,9 @@ class RandomLinkSplit(BaseTransform):
             the ratio of edges to include in the test set.
             (default: :obj:`0.2`)
         is_undirected (bool): If set to :obj:`True`, the graph is assumed to be
-            undirected. (default: :obj:`False`)
+            undirected, and positive and negative samples will not leak
+            (reverse) edge connectivity across different splits.
+            (default: :obj:`False`)
         key (str, optional): The name of the attribute holding
             ground-truth labels.
             If :obj:`data[key]` does not exist, it will be automatically
@@ -45,6 +47,10 @@ class RandomLinkSplit(BaseTransform):
             After negative sampling, label :obj:`0` represents negative edges,
             and labels :obj:`1` to :obj:`num_classes` represent the labels of
             positive edges. (default: :obj:`"edge_label"`)
+        split_labels (bool, optional): If set to :obj:`True`, will split
+            positive and negative labels and save them in distinct attributes
+            :obj:`"pos_edge_label"` and :obj:`"neg_edge_label"`, respectively.
+            (default: :obj:`False`)
         add_negative_train_samples (bool, optional): Whether to add negative
             training samples for link prediction.
             If the model already performs negative sampling, then the option
@@ -61,6 +67,7 @@ class RandomLinkSplit(BaseTransform):
         num_test: Union[int, float] = 0.2,
         is_undirected: bool = False,
         key: str = 'edge_label',
+        split_labels: bool = False,
         add_negative_train_samples: bool = True,
         neg_sampling_ratio: float = 1.0,
     ):
@@ -68,11 +75,12 @@ class RandomLinkSplit(BaseTransform):
         self.num_test = num_test
         self.is_undirected = is_undirected
         self.key = key
+        self.split_labels = split_labels
         self.add_negative_train_samples = add_negative_train_samples
         self.neg_sampling_ratio = neg_sampling_ratio
 
     def __call__(self, data: Data) -> Tuple[Data, Data, Data]:
-        perm = torch.randperm(data.num_edges)
+        perm = torch.randperm(data.num_edges, device=data.edge_index.device)
         if self.is_undirected:
             perm = perm[data.edge_index[0] <= data.edge_index[1]]
 
@@ -104,23 +112,29 @@ class RandomLinkSplit(BaseTransform):
         num_neg_test = int(num_test * self.neg_sampling_ratio)
 
         num_neg = num_neg_train + num_neg_val + num_neg_test
-        neg_edge_index = negative_sampling(data.edge_index,
-                                           num_nodes=data.num_nodes,
-                                           num_neg_samples=num_neg,
-                                           method='sparse')
+        neg_edge_index = negative_sampling(
+            add_self_loops(data.edge_index)[0], num_nodes=data.num_nodes,
+            num_neg_samples=num_neg, method='sparse')
 
         # Create labels:
-        key_index = f'{self.key}_index'
-        assert not hasattr(data, key_index)
-        train_data[key_index], train_data[self.key] = self._create_label(
-            data, train_edges, self.key,
-            neg_edge_index[:, num_neg_val + num_neg_test:])
-        val_data[key_index], val_data[self.key] = self._create_label(
-            data, val_edges, self.key,
-            neg_edge_index=neg_edge_index[:, :num_neg_val])
-        test_data[key_index], test_data[self.key] = self._create_label(
-            data, test_edges, self.key,
-            neg_edge_index[:, num_neg_val:num_neg_val + num_neg_test])
+        self._create_label(
+            data,
+            train_edges,
+            neg_edge_index[:, num_neg_val + num_neg_test:],
+            out=train_data,
+        )
+        self._create_label(
+            data,
+            val_edges,
+            neg_edge_index[:, :num_neg_val],
+            out=val_data,
+        )
+        self._create_label(
+            data,
+            test_edges,
+            neg_edge_index[:, num_neg_val:num_neg_val + num_neg_test],
+            out=test_data,
+        )
 
         return train_data, val_data, test_data
 
@@ -147,25 +161,37 @@ class RandomLinkSplit(BaseTransform):
 
         return data
 
-    def _create_label(self, data: Data, index: Tensor, key: str,
-                      neg_edge_index: Tensor) -> Tuple[Tensor, Tensor]:
+    def _create_label(self, data: Data, index: Tensor, neg_edge_index: Tensor,
+                      out: Data):
 
         edge_index = data.edge_index[:, index]
 
-        if hasattr(data, key):
-            edge_label = data[key]
+        if hasattr(data, self.key):
+            edge_label = data[self.key]
             assert edge_label.dtype == torch.long and edge_label.dim() == 1
-            edge_label = edge_label[index] + 1
+            edge_label = edge_label[index].add_(1)
+            delattr(data, self.key)
         else:
-            edge_label = torch.ones(index.numel())
+            edge_label = torch.ones(index.numel(), device=index.device)
 
-        if neg_edge_index is not None and neg_edge_index.numel() > 0:
-            edge_index = torch.cat([edge_index, neg_edge_index], dim=-1)
-            neg_edge_label = torch.zeros(neg_edge_index.size(1),
-                                         dtype=edge_label.dtype)
-            edge_label = torch.cat([edge_label, neg_edge_label], dim=0)
+        if neg_edge_index.numel() > 0:
+            neg_edge_label = edge_label.new_zeros(neg_edge_index.size(1))
 
-        return edge_index, edge_label
+        if self.split_labels:
+            out[f'pos_{self.key}'] = edge_label
+            out[f'pos_{self.key}_index'] = edge_index
+            if neg_edge_index.numel() > 0:
+                out[f'neg_{self.key}'] = neg_edge_label
+                out[f'neg_{self.key}_index'] = neg_edge_index
+
+        else:
+            if neg_edge_index.numel() > 0:
+                edge_label = torch.cat([edge_label, neg_edge_label], dim=0)
+                edge_index = torch.cat([edge_index, neg_edge_index], dim=-1)
+            out[self.key] = edge_label
+            out[f'{self.key}_index'] = edge_index
+
+        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(num_val={self.num_val}, '
