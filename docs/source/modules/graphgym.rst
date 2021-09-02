@@ -5,7 +5,7 @@ torch_geometric.graphgym
     :local:
 
 
-GraphGym workflow modules
+GraphGym Workflow Modules
 -------------------------
 
 .. currentmodule:: torch_geometric.graphgym
@@ -21,7 +21,7 @@ GraphGym workflow modules
     :exclude-members:
 
 
-GraphGym model modules
+GraphGym Model Modules
 ----------------------
 
 .. currentmodule:: torch_geometric.graphgym.models
@@ -37,7 +37,7 @@ GraphGym model modules
 
 
 
-GraphGym register modules
+GraphGym Register Modules
 -------------------------
 
 .. currentmodule:: torch_geometric.graphgym
@@ -52,8 +52,8 @@ GraphGym register modules
    {% endfor %}
 
 
-GraphGym utils modules
--------------------------
+GraphGym Utils Modules
+----------------------
 
 .. currentmodule:: torch_geometric.graphgym.utils
 .. autosummary::
