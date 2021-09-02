@@ -382,7 +382,6 @@ class Data(BaseData):
     def __repr__(self) -> str:
         cls = self.__class__.__name__
         has_dict = any([isinstance(v, Mapping) for v in self._store.values()])
->>>>>>> 00e2e2eb1b8539ce4be03329647405a386a47996
 
         if not has_dict:
             info = [size_repr(k, v) for k, v in self._store.items()]
