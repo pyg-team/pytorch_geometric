@@ -8,7 +8,7 @@ import shutil
 import pytest
 import torch
 from torch_geometric.datasets import TUDataset
-from torch_geometric.data import DataLoader, DenseDataLoader, DataListLoader
+from torch_geometric.loader import DataLoader, DenseDataLoader, DataListLoader
 from torch_geometric.transforms import ToDense
 
 
@@ -47,8 +47,8 @@ def test_enzymes():
         assert list(data.batch.size()) == [data.num_nodes]
         assert data.ptr.numel() == data.num_graphs + 1
 
-        assert data.contains_isolated_nodes()
-        assert not data.contains_self_loops()
+        assert data.has_isolated_nodes()
+        assert not data.has_self_loops()
         assert data.is_undirected()
 
     loader = DataListLoader(dataset, batch_size=len(dataset))

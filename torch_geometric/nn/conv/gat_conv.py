@@ -5,8 +5,9 @@ from torch_geometric.typing import (OptPairTensor, Adj, Size, NoneType,
 import torch
 from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Parameter, Linear
+from torch.nn import Parameter
 from torch_sparse import SparseTensor, set_diag
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
@@ -35,8 +36,10 @@ class GATConv(MessagePassing):
         \right)\right)}.
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -75,10 +78,13 @@ class GATConv(MessagePassing):
         # In case we are operating in bipartite graphs, we apply separate
         # transformations 'lin_src' and 'lin_dst' to source and target nodes:
         if isinstance(in_channels, int):
-            self.lin = Linear(in_channels, heads * out_channels, False)
+            self.lin = Linear(in_channels, heads * out_channels, bias=False,
+                              weight_initializer='glorot')
         else:
-            self.lin_src = Linear(in_channels[0], heads * out_channels, False)
-            self.lin_dst = Linear(in_channels[1], heads * out_channels, False)
+            self.lin_src = Linear(in_channels[0], heads * out_channels, False,
+                                  weight_initializer='glorot')
+            self.lin_dst = Linear(in_channels[1], heads * out_channels, False,
+                                  weight_initializer='glorot')
 
         # The learnable parameters to compute attention coefficients:
         self.att_src = Parameter(torch.Tensor(1, heads, out_channels))
@@ -97,10 +103,10 @@ class GATConv(MessagePassing):
 
     def reset_parameters(self):
         if hasattr(self, 'lin'):
-            glorot(self.lin.weight)
+            self.lin.reset_parameters()
         else:
-            glorot(self.lin_src.weight)
-            glorot(self.lin_dst.weight)
+            self.lin_src.reset_parameters()
+            self.lin_dst.reset_parameters()
         glorot(self.att_src)
         glorot(self.att_dst)
         zeros(self.bias)

@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch.nn import Sequential as Seq, Linear as Lin, ReLU
 from torch_geometric.datasets import TUDataset
 import torch_geometric.transforms as T
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINConv, GCNConv, SAGPooling
 from torch_geometric.nn import global_max_pool
 from torch_scatter import scatter_mean
@@ -55,8 +55,8 @@ class Net(torch.nn.Module):
         x = global_max_pool(x, batch)
         x = self.lin(x).view(-1)
 
-        attn_loss = F.kl_div(
-            torch.log(score + 1e-14), data.attn[perm], reduction='none')
+        attn_loss = F.kl_div(torch.log(score + 1e-14), data.attn[perm],
+                             reduction='none')
         attn_loss = scatter_mean(attn_loss, batch)
 
         return x, attn_loss, ratio

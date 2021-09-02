@@ -11,7 +11,7 @@ from collections.abc import Sequence
 import torch.utils.data
 from torch import Tensor
 
-from torch_geometric.data.data import Data
+from torch_geometric.data import Data
 from torch_geometric.data.makedirs import makedirs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
@@ -40,14 +40,14 @@ class Dataset(torch.utils.data.Dataset):
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
-        r"""The name of the files to find in the :obj:`self.raw_dir` folder in
-        order to skip the download."""
+        r"""The name of the files in the :obj:`self.raw_dir` folder that must
+        be present in order to skip downloading."""
         raise NotImplementedError
 
     @property
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
-        r"""The name of the files to find in the :obj:`self.processed_dir`
-        folder in order to skip the processing."""
+        r"""The name of the files in the :obj:`self.processed_dir` folder that
+        must be present in order to skip processing."""
         raise NotImplementedError
 
     def download(self):
@@ -59,6 +59,7 @@ class Dataset(torch.utils.data.Dataset):
         raise NotImplementedError
 
     def len(self) -> int:
+        r"""Returns the number of graphs stored in the dataset."""
         raise NotImplementedError
 
     def get(self, idx: int) -> Data:
@@ -101,6 +102,7 @@ class Dataset(torch.utils.data.Dataset):
     def num_node_features(self) -> int:
         r"""Returns the number of features per node in the dataset."""
         data = self[0]
+        data = data[0] if isinstance(data, tuple) else data
         if hasattr(data, 'num_node_features'):
             return data.num_node_features
         raise AttributeError(f"'{data.__class__.__name__}' object has no "
@@ -108,13 +110,15 @@ class Dataset(torch.utils.data.Dataset):
 
     @property
     def num_features(self) -> int:
-        r"""Alias for :py:attr:`~num_node_features`."""
+        r"""Returns the number of features per node in the dataset.
+        Alias for :py:attr:`~num_node_features`."""
         return self.num_node_features
 
     @property
     def num_edge_features(self) -> int:
         r"""Returns the number of features per edge in the dataset."""
         data = self[0]
+        data = data[0] if isinstance(data, tuple) else data
         if hasattr(data, 'num_edge_features'):
             return data.num_edge_features
         raise AttributeError(f"'{data.__class__.__name__}' object has no "
@@ -122,14 +126,15 @@ class Dataset(torch.utils.data.Dataset):
 
     @property
     def raw_paths(self) -> List[str]:
-        r"""The filepaths to find in order to skip the download."""
+        r"""The absolute filepaths that must be present in order to skip
+        downloading."""
         files = to_list(self.raw_file_names)
         return [osp.join(self.raw_dir, f) for f in files]
 
     @property
     def processed_paths(self) -> List[str]:
-        r"""The filepaths to find in the :obj:`self.processed_dir`
-        folder in order to skip the processing."""
+        r"""The absolute filepaths that must be present in order to skip
+        processing."""
         files = to_list(self.processed_file_names)
         return [osp.join(self.processed_dir, f) for f in files]
 
@@ -184,9 +189,8 @@ class Dataset(torch.utils.data.Dataset):
         at index :obj:`idx` (and transforms it in case :obj:`transform` is
         present).
         In case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a list, a
-        tuple, a PyTorch :obj:`LongTensor` or a :obj:`BoolTensor`, or a numpy
-        :obj:`np.array`, will return a subset of the dataset at the specified
-        indices."""
+        tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type long or
+        bool, will return a subset of the dataset at the specified indices."""
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
@@ -199,6 +203,10 @@ class Dataset(torch.utils.data.Dataset):
             return self.index_select(idx)
 
     def index_select(self, idx: IndexType) -> 'Dataset':
+        r"""Creates a subset of the dataset from specified indices :obj:`idx`.
+        Indices :obj:`idx` can be a slicing object, *e.g.*, :obj:`[2:5]`, a
+        list, a tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type
+        long or bool."""
         indices = self.indices()
 
         if isinstance(idx, slice):
@@ -223,7 +231,7 @@ class Dataset(torch.utils.data.Dataset):
 
         else:
             raise IndexError(
-                f"Only integers, slices (':'), list, tuples, torch.tensor and "
+                f"Only slices (':'), list, tuples, torch.tensor and "
                 f"np.ndarray of dtype long or bool are valid indices (got "
                 f"'{type(idx).__name__}')")
 
@@ -238,8 +246,8 @@ class Dataset(torch.utils.data.Dataset):
         r"""Randomly shuffles the examples in the dataset.
 
         Args:
-            return_perm (bool, optional): If set to :obj:`True`, will return
-                the random permutation used to shuffle the dataset in addition.
+            return_perm (bool, optional): If set to :obj:`True`, will also
+                return the random permutation used to shuffle the dataset.
                 (default: :obj:`False`)
         """
         perm = torch.randperm(len(self))

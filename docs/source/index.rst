@@ -17,6 +17,8 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    notes/introduction
    notes/create_gnn
    notes/create_dataset
+   notes/heterogeneous
+   notes/load_csv
    notes/batching
    notes/sparse_tensor
    notes/jit
@@ -32,9 +34,11 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    modules/root
    modules/nn
    modules/data
+   modules/loader
    modules/datasets
    modules/transforms
    modules/utils
+   modules/profile
 
 Indices and Tables
 ==================

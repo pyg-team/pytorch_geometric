@@ -12,7 +12,7 @@ from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
 from torch_sparse import SparseTensor
 import torch_geometric.transforms as T
 from torch_geometric.nn import SAGEConv
-from torch_geometric.data import NeighborSampler
+from torch_geometric.loader import NeighborSampler
 from torch_geometric.datasets import Reddit as PyGReddit
 
 

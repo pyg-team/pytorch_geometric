@@ -55,7 +55,9 @@ jobs:
           pip install pandas
           pip install h5py
           pip install numba
+          pip install tabulate
           pip install git+https://github.com/the-virtual-brain/tvb-geodesic.git
+          pip install pytorch-memlab
 
       - name: Install main package
         run: |

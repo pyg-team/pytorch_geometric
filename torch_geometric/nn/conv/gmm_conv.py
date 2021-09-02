@@ -5,6 +5,7 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 
 from ..inits import zeros, glorot
 
@@ -38,8 +39,10 @@ class GMMConv(MessagePassing):
         :class:`torch_geometric.transform.Cartesian`).
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         dim (int): Pseudo-coordinate dimensionality.
         kernel_size (int): Number of kernels :math:`K`.
@@ -68,27 +71,34 @@ class GMMConv(MessagePassing):
         self.dim = dim
         self.kernel_size = kernel_size
         self.separate_gaussians = separate_gaussians
+        self.root_weight = root_weight
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
         self.rel_in_channels = in_channels[0]
 
-        self.g = Parameter(
-            torch.Tensor(in_channels[0], out_channels * kernel_size))
+        if in_channels[0] > 0:
+            self.g = Parameter(
+                Tensor(in_channels[0], out_channels * kernel_size))
 
-        if not self.separate_gaussians:
-            self.mu = Parameter(torch.Tensor(kernel_size, dim))
-            self.sigma = Parameter(torch.Tensor(kernel_size, dim))
+            if not self.separate_gaussians:
+                self.mu = Parameter(Tensor(kernel_size, dim))
+                self.sigma = Parameter(Tensor(kernel_size, dim))
+            if self.separate_gaussians:
+                self.mu = Parameter(
+                    Tensor(in_channels[0], out_channels, kernel_size, dim))
+                self.sigma = Parameter(
+                    Tensor(in_channels[0], out_channels, kernel_size, dim))
         else:
-            self.mu = Parameter(
-                torch.Tensor(in_channels[0], out_channels, kernel_size, dim))
-            self.sigma = Parameter(
-                torch.Tensor(in_channels[0], out_channels, kernel_size, dim))
+            self.g = torch.nn.parameter.UninitializedParameter()
+            self.mu = torch.nn.parameter.UninitializedParameter()
+            self.sigma = torch.nn.parameter.UninitializedParameter()
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
 
         if root_weight:
-            self.root = Parameter(torch.Tensor(in_channels[1], out_channels))
-        else:
-            self.register_parameter('root', None)
+            self.root = Linear(in_channels[1], out_channels, bias=False,
+                               weight_initializer='glorot')
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -98,10 +108,12 @@ class GMMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.g)
-        glorot(self.mu)
-        glorot(self.sigma)
-        glorot(self.root)
+        if not isinstance(self.g, torch.nn.UninitializedParameter):
+            glorot(self.g)
+            glorot(self.mu)
+            glorot(self.sigma)
+        if self.root_weight:
+            self.root.reset_parameters()
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
@@ -121,7 +133,7 @@ class GMMConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None and self.root is not None:
-            out += torch.matmul(x_r, self.root)
+            out += self.root(x_r)
 
         if self.bias is not None:
             out += self.bias
@@ -152,7 +164,29 @@ class GMMConv(MessagePassing):
 
             return (x_j.view(E, F, 1) * gaussian).sum(dim=-2)  # [E, M]
 
-    def __repr__(self):
+    @torch.no_grad()
+    def initialize_parameters(self, module, input):
+        if isinstance(self.g, torch.nn.parameter.UninitializedParameter):
+            x = input[0][0] if isinstance(input, tuple) else input[0]
+            in_channels = x.size(-1)
+            out_channels, kernel_size = self.out_channels, self.kernel_size
+            self.g.materialize((in_channels, out_channels * kernel_size))
+            if not self.separate_gaussians:
+                self.mu.materialize((kernel_size, self.dim))
+                self.sigma.materialize((kernel_size, self.dim))
+            else:
+                self.mu.materialize(
+                    (in_channels, out_channels, kernel_size, self.dim))
+                self.sigma.materialize(
+                    (in_channels, out_channels, kernel_size, self.dim))
+            glorot(self.g)
+            glorot(self.mu)
+            glorot(self.sigma)
+
+        module._hook.remove()
+        delattr(module, '_hook')
+
+    def __repr__(self) -> str:
         return '{}({}, {}, dim={})'.format(self.__class__.__name__,
                                            self.in_channels, self.out_channels,
                                            self.dim)

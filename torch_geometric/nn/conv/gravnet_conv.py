@@ -3,9 +3,9 @@ from torch_geometric.typing import OptTensor, PairTensor, PairOptTensor
 
 import torch
 from torch import Tensor
-from torch.nn import Linear
 from torch_scatter import scatter
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 
 try:
     from torch_cluster import knn
@@ -25,7 +25,8 @@ class GravNetConv(MessagePassing):
     applying a Gaussian function to the distances.
 
     Args:
-        in_channels (int): The number of input channels.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): The number of output channels.
         space_dimensions (int): The dimensionality of the space used to
            construct the neighbors; referred to as :math:`S` in the paper.
@@ -54,14 +55,17 @@ class GravNetConv(MessagePassing):
 
         self.lin_s = Linear(in_channels, space_dimensions)
         self.lin_h = Linear(in_channels, propagate_dimensions)
-        self.lin = Linear(in_channels + 2 * propagate_dimensions, out_channels)
+
+        self.lin_out1 = Linear(in_channels, out_channels, bias=False)
+        self.lin_out2 = Linear(2 * propagate_dimensions, out_channels)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         self.lin_s.reset_parameters()
         self.lin_h.reset_parameters()
-        self.lin.reset_parameters()
+        self.lin_out1.reset_parameters()
+        self.lin_out2.reset_parameters()
 
     def forward(
             self, x: Union[Tensor, PairTensor],
@@ -97,7 +101,7 @@ class GravNetConv(MessagePassing):
                              edge_weight=edge_weight,
                              size=(s_l.size(0), s_r.size(0)))
 
-        return self.lin(torch.cat([out, x[1]], dim=-1))
+        return self.lin_out1(x[1]) + self.lin_out2(out)
 
     def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
         return x_j * edge_weight.unsqueeze(1)

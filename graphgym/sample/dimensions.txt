@@ -1,0 +1,1 @@
+act bn drop agg l_mp l_pre l_post stage batch lr optim epoch
