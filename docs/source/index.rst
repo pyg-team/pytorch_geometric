@@ -18,13 +18,13 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    notes/create_gnn
    notes/create_dataset
    notes/heterogeneous
+   notes/graphgym
    notes/batching
    notes/sparse_tensor
    notes/jit
    notes/cheatsheet
    notes/colabs
    notes/resources
-   notes/graphgym
 
 .. toctree::
    :glob:
@@ -38,9 +38,9 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    modules/datasets
    modules/transforms
    modules/utils
+   modules/graphgym
    modules/io
    modules/profile
-   modules/graphgym
 
 Indices and Tables
 ==================
