@@ -2,8 +2,6 @@ import logging
 import os
 from yacs.config import CfgNode as CN
 
-from torch_geometric.graphgym.utils.io import makedirs_rm_exist
-
 import torch_geometric.graphgym.register as register
 
 # Global config object
@@ -500,6 +498,12 @@ def load_cfg(cfg, args):
     cfg.merge_from_file(args.cfg_file)
     cfg.merge_from_list(args.opts)
     assert_cfg(cfg)
+
+
+def makedirs_rm_exist(dir):
+    if os.path.isdir(dir):
+        shutil.rmtree(dir)
+    os.makedirs(dir, exist_ok=True)
 
 
 def set_run_dir(out_dir, fname):

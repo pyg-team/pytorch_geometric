@@ -23,6 +23,7 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    notes/cheatsheet
    notes/colabs
    notes/resources
+   notes/graphgym
 
 .. toctree::
    :glob:

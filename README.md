@@ -244,6 +244,13 @@ cd examples
 python gcn.py
 ```
 
+## GraphGym support
+```
+cd graphgym
+bash run_single.sh  # run a single experiment
+bash run_batch.sh  # run a batch of experiments
+```
+
 ## Cite
 
 Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective papers of the methods used) if you use this code in your own work:

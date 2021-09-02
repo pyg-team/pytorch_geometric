@@ -18,7 +18,7 @@ from torch_geometric.graphgym.utils.agg_runs import agg_runs
 from torch_geometric.graphgym.utils.comp_budget import params_count
 from torch_geometric.graphgym.utils.device import auto_select_device
 from torch_geometric.graphgym.register import train_dict
-from torch_geometric.graphgym.utils.tools import set_seed
+from torch_geometric.graphgym.seed import seed_everything
 
 if __name__ == '__main__':
     # Load cmd line args
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # Repeat for different random seeds
     for i in range(args.repeat):
         # Set configurations for each run
-        set_seed(cfg.seed + i)
+        seed_everything(cfg.seed + i)
         auto_select_device()
         set_run_dir(cfg.out_dir, args.cfg_file)
         # Set machine learning pipeline

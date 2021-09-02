@@ -50,3 +50,18 @@ GraphGym register modules
    {% for cls in torch_geometric.graphgym.classes_reg %}
 .. autofunction:: {{ cls }}
    {% endfor %}
+
+
+GraphGym utils modules
+-------------------------
+
+.. currentmodule:: torch_geometric.graphgym.utils
+.. autosummary::
+   :nosignatures:
+    {% for cls in torch_geometric.graphgym.utils.classes %}
+     {{ cls }}
+    {% endfor %}
+
+.. automodule:: torch_geometric.graphgym.utils
+    :members:
+    :exclude-members:
