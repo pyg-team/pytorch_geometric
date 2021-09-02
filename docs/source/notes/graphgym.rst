@@ -41,9 +41,7 @@ You probably have read many exciting papers on GNN, and try to write your own GN
 Using existing packages for GNN, you still have to code up the essential pipeline on your own.
 GraphGym is a perfect place for your to start learning *standardized GNN implementation and evaluation*.
 
-
 **Scenario 2:** You want to apply GNN to your exciting applications.
-
 
 You probably know that there are hundreds of possible GNN models, and selecting the best model is notoriously hard.
 Even worse, we have shown in our `paper <https://arxiv.org/abs/2011.08843>`__ that the best GNN designs for different tasks differ drastically.
@@ -58,7 +56,6 @@ when randomly sample from 10 million possible model-task combinations, how often
 when everything else is fixed (including the computational cost).
 Moreover, GraphGym can help you easily do hyper-parameter search, and *visualize* what design choices are better.
 In sum, GraphGym can greatly facilitate your GNN research.
-
 
 Basic Usage
 -----------
@@ -99,9 +96,6 @@ GraphGym supports cpu backend as well -- you only need to add one line :obj:`dev
 .. code-block:: bash
 
     bash run_single_cpu.sh # run a single experiment using CPU backend
-
-
-
 
 GraphGym In-depth Usage
 -----------------------
@@ -164,7 +158,6 @@ For example, the base file could specify an experiment of 3-layer GCN for Cora n
 Then, the grid file specifies how to perturb the experiment along different dimension, such as number of layers,
 model architecture, dataset, level of task, etc.
 
-
 **2.4 Generate config files for the batch of experiments,** based on the information specified above.
 For example, in :obj:`run_batch.sh`:
 
@@ -197,13 +190,9 @@ When test set split is provided, :obj:`test.csv` represents test accuracy for ea
 :obj:`test_best.csv` represents the test set results at the epoch with the highest average validation error;
 :obj:`test_best_epoch.csv` represents the test set results at the epoch with the highest validation error, averaged over different random seeds.
 
-
-
-
-
-
 Customize your GraphGym
 -----------------------
+
 A highlight of GraphGym is that it allows you to easily register your customized modules.
 For each project, you could have a unique GraphGym copy with different customized modules.
 For example, `Design Space for Graph Neural Networks <https://arxiv.org/abs/2011.08843>`__ and `Identity-aware Graph Neural Networks <https://arxiv.org/abs/2101.10320>`__
