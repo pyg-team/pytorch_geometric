@@ -2,9 +2,9 @@ from torch_geometric.typing import Adj, OptTensor
 
 import torch
 from torch import Tensor
-from torch.nn import Linear
 from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 
@@ -23,7 +23,8 @@ class TAGConv(MessagePassing):
     edge weights via the optional :obj:`edge_weight` tensor.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         K (int, optional): Number of hops :math:`K`. (default: :obj:`3`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
@@ -43,12 +44,14 @@ class TAGConv(MessagePassing):
         self.K = K
         self.normalize = normalize
 
-        self.lin = Linear(in_channels * (self.K + 1), out_channels, bias=bias)
+        self.lins = torch.nn.ModuleList(
+            [Linear(in_channels, out_channels) for _ in range(K + 1)])
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin.reset_parameters()
+        for lin in self.lins:
+            lin.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
@@ -64,13 +67,13 @@ class TAGConv(MessagePassing):
                     edge_index, edge_weight, x.size(self.node_dim),
                     add_self_loops=False, dtype=x.dtype)
 
-        xs = [x]
-        for k in range(self.K):
+        out = self.lins[0](x)
+        for lin in self.lins[1:]:
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
-            out = self.propagate(edge_index, x=xs[-1], edge_weight=edge_weight,
-                                 size=None)
-            xs.append(out)
-        return self.lin(torch.cat(xs, dim=-1))
+            x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
+                               size=None)
+            out += lin.forward(x)
+        return out
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j

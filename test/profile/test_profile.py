@@ -18,10 +18,10 @@ def test_profile():
 
     dataset = Planetoid(root, 'PubMed')
     data = dataset[0].cuda()
-    model = GraphSAGE(dataset.num_features, 64, dataset.num_classes).cuda()
+    model = GraphSAGE(dataset.num_features, 64, num_layers=3).cuda()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-    @profileit(print_layer_stats=False)
+    @profileit()
     def train(model, x, edge_index, y):
         model.train()
         optimizer.zero_grad()
@@ -40,7 +40,6 @@ def test_profile():
     stats_list = []
     for epoch in range(5):
         _, stats = train(model, data.x, data.edge_index, data.y)
-        stats_list.append(stats)
         assert len(stats) == 6
         assert stats.time > 0
         assert stats.max_allocated_cuda > 0
@@ -51,6 +50,9 @@ def test_profile():
 
         _, time = test(model, data.x, data.edge_index, data.y)
         assert time > 0
+
+        if epoch >= 2:  # Warm-up
+            stats_list.append(stats)
 
     stats_summary = get_stats_summary(stats_list)
     assert len(stats_summary) == 7

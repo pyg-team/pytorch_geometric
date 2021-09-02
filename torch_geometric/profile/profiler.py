@@ -16,8 +16,6 @@ Measure = namedtuple("Measure", [
     "occurrences"
 ])
 
-# define the benchmark statistics
-
 
 class Profiler(object):
     r"""Layer by layer profiling of PyTorch models, using the PyTorch profiler

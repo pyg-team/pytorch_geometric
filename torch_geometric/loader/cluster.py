@@ -115,8 +115,8 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
     .. note::
 
-        Use :class:`torch_geometric.data.ClusterData` and
-        :class:`torch_geometric.data.ClusterLoader` in conjunction to
+        Use :class:`~torch_geometric.loader.ClusterData` and
+        :class:`~torch_geometric.loader.ClusterLoader` in conjunction to
         form mini-batches of clusters.
         For an example of using Cluster-GCN, see
         `examples/cluster_gcn_reddit.py <https://github.com/rusty1s/
@@ -125,7 +125,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
         pytorch_geometric/blob/master/examples/cluster_gcn_ppi.py>`_.
 
     Args:
-        cluster_data (torch_geometric.data.ClusterData): The already
+        cluster_data (torch_geometric.loader.ClusterData): The already
             partioned data object.
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
@@ -134,9 +134,8 @@ class ClusterLoader(torch.utils.data.DataLoader):
     def __init__(self, cluster_data, **kwargs):
         self.cluster_data = cluster_data
 
-        super(ClusterLoader,
-              self).__init__(range(len(cluster_data)),
-                             collate_fn=self.__collate__, **kwargs)
+        super().__init__(range(len(cluster_data)), collate_fn=self.__collate__,
+                         **kwargs)
 
     def __collate__(self, batch):
         if not isinstance(batch, torch.Tensor):

@@ -6,7 +6,8 @@ import os.path as osp
 import torch
 import torchvision.transforms as T
 from torchvision.datasets.mnist import MNIST, read_image_file, read_label_file
-from torch_geometric.data import extract_gz, DataLoader, download_url
+from torch_geometric.data import extract_gz, download_url
+from torch_geometric.loader import DataLoader
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.transforms import ToSLIC
 

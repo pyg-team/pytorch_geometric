@@ -4,9 +4,9 @@ from torch_geometric.typing import OptTensor, OptPairTensor, Adj, Size
 import torch
 from torch import Tensor
 from torch.nn import Parameter
+from torch_geometric.nn.inits import reset, zeros
 from torch_geometric.nn.conv import MessagePassing
-
-from ..inits import reset, uniform, zeros
+from torch_geometric.nn.dense.linear import Linear
 
 
 class NNConv(MessagePassing):
@@ -27,8 +27,10 @@ class NNConv(MessagePassing):
     a MLP.
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         nn (torch.nn.Module): A neural network :math:`h_{\mathbf{\Theta}}` that
             maps edge features :obj:`edge_attr` of shape :obj:`[-1,
@@ -54,7 +56,7 @@ class NNConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.nn = nn
-        self.aggr = aggr
+        self.root_weight = root_weight
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -62,9 +64,8 @@ class NNConv(MessagePassing):
         self.in_channels_l = in_channels[0]
 
         if root_weight:
-            self.root = Parameter(torch.Tensor(in_channels[1], out_channels))
-        else:
-            self.register_parameter('root', None)
+            self.lin = Linear(in_channels[1], out_channels, bias=False,
+                              weight_initializer='uniform')
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -75,8 +76,8 @@ class NNConv(MessagePassing):
 
     def reset_parameters(self):
         reset(self.nn)
-        if self.root is not None:
-            uniform(self.root.size(0), self.root)
+        if self.root_weight:
+            self.lin.reset_parameters()
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
@@ -89,8 +90,8 @@ class NNConv(MessagePassing):
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
 
         x_r = x[1]
-        if x_r is not None and self.root is not None:
-            out += torch.matmul(x_r, self.root)
+        if x_r is not None and self.root_weight:
+            out += self.lin(x_r)
 
         if self.bias is not None:
             out += self.bias

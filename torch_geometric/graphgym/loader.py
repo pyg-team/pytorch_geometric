@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 
 from torch_geometric.datasets import Planetoid, TUDataset, KarateClub, \
     Coauthor, Amazon, MNISTSuperpixels, PPI, QM7b
@@ -15,11 +15,12 @@ from ogb.linkproppred import PygLinkPropPredDataset
 from ogb.graphproppred import PygGraphPropPredDataset
 
 from torch_geometric.utils import to_undirected
-from torch_geometric.data.graph_saint import (GraphSAINTNodeSampler,
-                                              GraphSAINTEdgeSampler,
-                                              GraphSAINTRandomWalkSampler)
-from torch_geometric.data.cluster import ClusterLoader
-from torch_geometric.data.sampler import RandomNodeSampler, NeighborSampler
+from torch_geometric.loader import (GraphSAINTNodeSampler,
+                                    GraphSAINTEdgeSampler,
+                                    GraphSAINTRandomWalkSampler)
+from torch_geometric.loader import ClusterLoader
+from torch_geometric.loader import RandomNodeSampler
+from torch_geometric.loader import NeighborSampler
 from torch_geometric.utils import negative_sampling
 
 

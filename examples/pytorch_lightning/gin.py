@@ -14,7 +14,8 @@ from torch_scatter import segment_csr
 import torch_geometric.transforms as T
 from torch_geometric.nn import GINConv
 from torch_geometric.datasets import TUDataset
-from torch_geometric.data import Batch, DataLoader
+from torch_geometric.data import Batch
+from torch_geometric.loader import DataLoader
 
 
 class IMDBBinary(LightningDataModule):

@@ -1,5 +1,6 @@
 import torch
-from torch_geometric.data import Data, DataLoader
+from torch_geometric.data import Data
+from torch_geometric.loader import DataLoader
 
 
 def test_dataloader():

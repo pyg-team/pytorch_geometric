@@ -6,15 +6,15 @@ import torch
 from torch_geometric.datasets import AMiner
 from torch_geometric.nn import MetaPath2Vec
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'AMiner')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/AMiner')
 dataset = AMiner(path)
 data = dataset[0]
 
 metapath = [
-    ('author', 'wrote', 'paper'),
-    ('paper', 'published in', 'venue'),
-    ('venue', 'published', 'paper'),
-    ('paper', 'written by', 'author'),
+    ('author', 'writes', 'paper'),
+    ('paper', 'published_in', 'venue'),
+    ('venue', 'publishes', 'paper'),
+    ('paper', 'written_by', 'author'),
 ]
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -23,7 +23,7 @@ model = MetaPath2Vec(data.edge_index_dict, embedding_dim=128,
                      walks_per_node=5, num_negative_samples=5,
                      sparse=True).to(device)
 
-loader = model.loader(batch_size=128, shuffle=True, num_workers=12)
+loader = model.loader(batch_size=128, shuffle=True, num_workers=6)
 optimizer = torch.optim.SparseAdam(list(model.parameters()), lr=0.01)
 
 
@@ -53,8 +53,8 @@ def train(epoch, log_steps=100, eval_steps=2000):
 def test(train_ratio=0.1):
     model.eval()
 
-    z = model('author', batch=data.y_index_dict['author'])
-    y = data.y_dict['author']
+    z = model('author', batch=data['author'].y_index)
+    y = data['author'].y
 
     perm = torch.randperm(z.size(0))
     train_perm = perm[:int(z.size(0) * train_ratio)]

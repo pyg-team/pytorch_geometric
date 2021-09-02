@@ -1,13 +1,15 @@
-from typing import Union
+from typing import Union, Tuple
 
 import torch
+from torch import Tensor
 
+from torch_geometric.data import Data
 from torch_geometric.transforms import BaseTransform
 
 
-class AddTrainValTestMask(BaseTransform):
-    r"""Adds a node-level random split via :obj:`train_mask`, :obj:`val_mask`
-    and :obj:`test_mask` attributes to the :obj:`data` object.
+class RandomNodeSplit(BaseTransform):
+    r"""Performs a node-level random split by adding :obj:`train_mask`,
+    :obj:`val_mask` and :obj:`test_mask` attributes to the :obj:`data` object.
 
     Args:
         split (string): The type of dataset split (:obj:`"train_rest"`,
@@ -25,6 +27,7 @@ class AddTrainValTestMask(BaseTransform):
             :obj:`num_val` and :obj:`num_test` (as in the `"Semi-supervised
             Classification with Graph Convolutional Networks"
             <https://arxiv.org/abs/1609.02907>`_ paper).
+            (default: :obj:`"train_rest"`)
         num_splits (int, optional): The number of splits to add. If bigger
             than :obj:`1`, the shape of masks will be
             :obj:`[num_nodes, num_splits]`, and :obj:`[num_nodes]` otherwise.
@@ -42,7 +45,7 @@ class AddTrainValTestMask(BaseTransform):
     """
     def __init__(
         self,
-        split: str,
+        split: str = "train_rest",
         num_splits: int = 1,
         num_train_per_class: int = 20,
         num_val: Union[int, float] = 500,
@@ -55,10 +58,10 @@ class AddTrainValTestMask(BaseTransform):
         self.num_val = num_val
         self.num_test = num_test
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         train_masks, val_masks, test_masks = [], [], []
         for _ in range(self.num_splits):
-            train_mask, val_mask, test_mask = self.__sample_split__(data)
+            train_mask, val_mask, test_mask = self._sample_split(data)
             train_masks.append(train_mask)
             val_masks.append(val_mask)
             test_masks.append(test_mask)
@@ -69,7 +72,7 @@ class AddTrainValTestMask(BaseTransform):
 
         return data
 
-    def __sample_split__(self, data):
+    def _sample_split(self, data: Data) -> Tuple[Tensor, Tensor, Tensor]:
         train_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
         val_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
         test_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
@@ -110,5 +113,5 @@ class AddTrainValTestMask(BaseTransform):
 
         return train_mask, val_mask, test_mask
 
-    def __repr__(self):
-        return '{}(split={})'.format(self.__class__.__name__, self.split)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(split={self.split})'

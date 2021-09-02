@@ -7,7 +7,7 @@ from torch.nn import Sequential, ReLU, Linear
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch_geometric.utils import degree
 from torch_geometric.datasets import ZINC
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 from torch_geometric.nn import PNAConv, BatchNorm, global_add_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ZINC')
