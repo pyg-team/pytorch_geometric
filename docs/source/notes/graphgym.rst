@@ -212,11 +212,8 @@ Eventually, every GraphGym-powered project will be unique :)
 
 There are two ways for customizing GraphGym:
 
-- Use :obj:`graphgym/custom_graphgym` directory which is outside the PyG package.
-You may register your customized modules here, without touching PyG package.
-This use case will be great for your own customized project.
-- Use :obj:`torch_geometric/graphgym/contrib`. If you have come up with a nice customized module, you can directly copy your file into :obj:`torch_geometric/graphgym/contrib`, and **create a pull request** to PyG.
-This way, your idea can ship with PyG installations, and will have a much higher visibility and impact.
+- Use :obj:`graphgym/custom_graphgym` directory which is outside the PyG package. You may register your customized modules here, without touching PyG package. This use case will be great for your own customized project.
+- Use :obj:`torch_geometric/graphgym/contrib`. If you have come up with a nice customized module, you can directly copy your file into :obj:`torch_geometric/graphgym/contrib`, and **create a pull request** to PyG. This way, your idea can ship with PyG installations, and will have a much higher visibility and impact.
 
 Concretely, the supported customized modules includes
 
@@ -244,5 +241,3 @@ As we have mentioned earlier, we welcome you to move your customized module into
 **Note: Applying to your own datasets.**
 A common use case will be applying GraphGym to your favorite datasets. To do so, you may follow our example in
 :obj:`custom_graphgym/loader/example.py` to register your favorite loaders.
-
-
