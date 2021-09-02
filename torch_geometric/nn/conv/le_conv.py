@@ -1,3 +1,7 @@
+from typing import Union, Tuple
+from torch_geometric.typing import Adj, OptTensor, PairTensor
+
+from torch import Tensor
 from torch.nn import Linear
 from torch_geometric.nn.conv import MessagePassing
 
@@ -18,23 +22,28 @@ class LEConv(MessagePassing):
     target node :obj:`i` (default: :obj:`1`)
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or tuple): Size of each input sample. A tuple
+            corresponds to the sizes of source and target dimensionalities.
         out_channels (int): Size of each output sample.
         bias (bool, optional): If set to :obj:`False`, the layer will
             not learn an additive bias. (default: :obj:`True`).
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels, out_channels, bias=True, **kwargs):
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int, bias: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'add')
         super(LEConv, self).__init__(**kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        self.lin1 = Linear(in_channels, out_channels, bias=bias)
-        self.lin2 = Linear(in_channels, out_channels, bias=False)
-        self.lin3 = Linear(in_channels, out_channels, bias=bias)
+        if isinstance(in_channels, int):
+            in_channels = (in_channels, in_channels)
+
+        self.lin1 = Linear(in_channels[0], out_channels, bias=bias)
+        self.lin2 = Linear(in_channels[1], out_channels, bias=False)
+        self.lin3 = Linear(in_channels[1], out_channels, bias=bias)
 
         self.reset_parameters()
 
@@ -43,18 +52,26 @@ class LEConv(MessagePassing):
         self.lin2.reset_parameters()
         self.lin3.reset_parameters()
 
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
+                edge_weight: OptTensor = None) -> Tensor:
         """"""
-        a = self.lin1(x)
-        b = self.lin2(x)
+        if isinstance(x, Tensor):
+            x = (x, x)
 
-        out = self.propagate(edge_index, a=a, b=b, edge_weight=edge_weight)
-        return out + self.lin3(x)
+        a = self.lin1(x[0])
+        b = self.lin2(x[1])
 
-    def message(self, a_i, b_j, edge_weight):
-        out = a_i - b_j
+        # propagate_type: (a: Tensor, b: Tensor, edge_weight: OptTensor)
+        out = self.propagate(edge_index, a=a, b=b, edge_weight=edge_weight,
+                             size=None)
+
+        return out + self.lin3(x[1])
+
+    def message(self, a_j: Tensor, b_i: Tensor,
+                edge_weight: OptTensor) -> Tensor:
+        out = a_j - b_i
         return out if edge_weight is None else out * edge_weight.view(-1, 1)
 
-    def __repr__(self):
-        return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
-                                   self.out_channels)
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')
