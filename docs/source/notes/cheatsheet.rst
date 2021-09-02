@@ -81,7 +81,6 @@ Hypergraph Neural Network Operators
       - bipartite
       - static
       - lazy
->>>>>>> 00e2e2eb1b8539ce4be03329647405a386a47996
 {% for cls in torch_geometric.nn.conv.classes[1:] %}
 {% if torch_geometric.nn.conv.utils.processes_hypergraphs(cls) %}
     * - :class:`~torch_geometric.nn.conv.{{ cls }}` (`Paper <{{ torch_geometric.nn.conv.utils.paper_link(cls) }}>`__)
