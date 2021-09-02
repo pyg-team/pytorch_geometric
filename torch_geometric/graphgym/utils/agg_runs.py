@@ -70,7 +70,6 @@ def rm_keys(dict, keys):
         dict.pop(key, None)
 
 
-
 def agg_runs(dir, metric_best='auto'):
     r'''
     Aggregate over different random seeds of a single experiment

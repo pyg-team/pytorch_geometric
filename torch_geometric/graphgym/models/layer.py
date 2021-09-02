@@ -86,7 +86,7 @@ class GeneralMultiLayer(nn.Module):
         return batch
 
 
-#---------- Core basic layers. Input: batch; Output: batch ------------------#
+# ---------- Core basic layers. Input: batch; Output: batch ----------------- #
 
 
 class Linear(nn.Module):
