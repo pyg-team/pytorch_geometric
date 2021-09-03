@@ -1,6 +1,6 @@
 # Contributing to PyG
 
-If you are interested in contributing to PyG, your contributions will fall into two categories:
+If you are interested in contributing to PyG, your contributions will likely fall into one of the following two categories:
 
 1. You want to implement a new feature:
     - In general, we accept any features as long as they fit the scope of this package. If you are unsure about this or need help on the design/implementation of your feature, post about it in an issue.
@@ -13,7 +13,7 @@ Once you finish implementing a feature or bug-fix, please send a Pull Request to
 
 To develop PyG on your machine, here are some tips:
 
-1. Uninstall all existing PyG installs:
+1. Uninstall all existing PyG installations:
 
 ```
 pip uninstall torch-geometric
