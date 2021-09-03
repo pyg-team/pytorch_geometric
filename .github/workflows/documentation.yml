@@ -46,7 +46,6 @@ jobs:
           pip install sphinx
           pip install sphinx_rtd_theme
           pip install ogb
-          pip install matplotlib
 
       - name: Install main package
         run: |
