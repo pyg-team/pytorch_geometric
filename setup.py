@@ -16,7 +16,7 @@ install_requires = [
     'jinja2',
     'pyparsing',
     'yacs',
-    'PyYAML'
+    'PyYAML',
 ]
 setup_requires = []
 tests_require = ['pytest', 'pytest-runner', 'pytest-cov', 'mock']
