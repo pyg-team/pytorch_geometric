@@ -315,18 +315,25 @@ class Data(object):
             except AttributeError:
                 return item
         elif isinstance(item, tuple) and hasattr(item, '_asdict') and hasattr(item, '_fields'):
-            # Some tensor like objects are actually namedtuple, such as torch.nn.utils.rnn.PackedSequence.
-            # A related discussion is here, https://github.com/pytorch/pytorch/issues/44009 .
+            # Some tensor like objects are actually namedtuple,
+            # such as torch.nn.utils.rnn.PackedSequence.
+            # A related discussion is here,
+            # https://github.com/pytorch/pytorch/issues/44009 .
             # The solution of this is similar to SparseTensor's.
-            # It is not easy to check if the item is an instance of a namedtuple directly, so we check
+            # It is not easy to check if the item is an instance of
+            # a namedtuple directly, so we check
             # attribute '_asdict' and '_fields'.
             #
-            # Note that, we modify this function first to support PackedSequence, and then we also hope to be compatible
+            # Note that, we modify this function first to support
+            # PackedSequence, and then we also hope to be compatible
             # with other namedtuple types.
             #
-            # However, parameter 'device' in PackedSequence.cuda function in torch.nn.utils.rnn.py has a default value, which is 'cuda'.
-            # It can be seen since https://github.com/pytorch/pytorch/commit/527b10c2d1b605828df3b4844436ef0636d2c5e6#
-            # Therefore, we also modify .cuda function for supporting PackedSequence. See .cuda function for details.
+            # However, parameter 'device' in PackedSequence.cuda function
+            # in torch.nn.utils.rnn.py has a default value, which is 'cuda'.
+            # It can be seen since https://github.com/pytorch/pytorch/
+            # commit/527b10c2d1b605828df3b4844436ef0636d2c5e6#
+            # Therefore, we also modify .cuda function for supporting
+            # PackedSequence. See .cuda function for details.
             try:
                 return func(item)
             except AttributeError:
@@ -371,10 +378,14 @@ class Data(object):
         If :obj:`*keys` is not given, the conversion is applied to all present
         attributes."""
 
-        # We add the following two lines for supporting torch.nn.utils.rnn.PackedSequence. See .__apply__ function for details.
-        # Parameter 'device' in PackedSequence.cuda function in torch.nn.utils.rnn.py, line 85, has a default value, which is 'cuda'.
-        # It can be seen since https://github.com/pytorch/pytorch/commit/527b10c2d1b605828df3b4844436ef0636d2c5e6
-        # If 'device=None' here, it will cause TypeError: multiple values for keyword argument 'device'.
+        # We add the following two lines for supporting
+        # torch.nn.utils.rnn.PackedSequence.
+        # See .__apply__ function for details.
+        # Parameter 'device' in PackedSequence.cuda function
+        # in torch.nn.utils.rnn.py, line 85, has a default value 'cuda'.
+        # It can be seen since https://github.com/pytorch/
+        # pytorch/commit/527b10c2d1b605828df3b4844436ef0636d2c5e6
+        # If 'device=None' here, it will cause TypeError.
         if device is None:
             device = 'cuda'
 
