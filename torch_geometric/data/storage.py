@@ -407,13 +407,13 @@ def recursive_apply_(data: Any, func: Callable):
         func(data)
     elif isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
         for value in data:
-            recursive_apply_(value)
+            recursive_apply_(value, func)
     elif isinstance(data, Sequence) and not isinstance(data, str):
         for value in data:
-            recursive_apply_(value)
+            recursive_apply_(value, func)
     elif isinstance(data, Mapping):
         for value in data.values():
-            recursive_apply_(value)
+            recursive_apply_(value, func)
     else:
         try:
             func(data)
@@ -424,8 +424,10 @@ def recursive_apply_(data: Any, func: Callable):
 def recursive_apply(data: Any, func: Callable) -> Any:
     if isinstance(data, Tensor):
         return func(data)
+    elif isinstance(data, torch.nn.utils.rnn.PackedSequence):
+        return func(data)
     elif isinstance(data, tuple) and hasattr(data, '_fields'):  # namedtuple
-        return type(data)(*(recursive_apply(d) for d in data))
+        return type(data)(*(recursive_apply(d, func) for d in data))
     elif isinstance(data, Sequence) and not isinstance(data, str):
         return [recursive_apply(d, func) for d in data]
     elif isinstance(data, Mapping):

@@ -184,7 +184,7 @@ class BaseData(object):
     def is_directed(self) -> bool:
         r"""Returns :obj:`True` if graph edges are directed."""
         return not self.is_undirected()
-      
+
     def clone(self):
         r"""Performs a deep-copy of the data object."""
         return copy.deepcopy(self)
@@ -199,25 +199,6 @@ class BaseData(object):
     def apply(self, func: Callable, *args: List[str]):
         r"""Applies the function :obj:`func`, either to all attributes or only
         the ones given in :obj:`*args`."""
-      
-        # Some tensor like objects are actually namedtuple,
-        # such as torch.nn.utils.rnn.PackedSequence.
-        # A related discussion is here,
-        # https://github.com/pytorch/pytorch/issues/44009 .
-        # The solution of this is similar to SparseTensor's.
-        # It is not easy to check if the item is an instance of
-        # a namedtuple directly, so we check
-        # attribute '_asdict' and '_fields'.
-        # Note that, we modify this function first to support
-        # PackedSequence, and then we also hope to be compatible
-        # with other namedtuple types.
-        # However, parameter 'device' in PackedSequence.cuda function
-        # in torch.nn.utils.rnn.py has a default value, which is 'cuda'.
-        # It can be seen since https://github.com/pytorch/pytorch/
-        # commit/527b10c2d1b605828df3b4844436ef0636d2c5e6#
-        # Therefore, we also modify .cuda function for supporting
-        # PackedSequence. See .cuda function for details.
-      
         for store in self.stores:
             store.apply(func, *args)
         return self
@@ -243,18 +224,8 @@ class BaseData(object):
              non_blocking: bool = False):
         r"""Copies attributes to CUDA memory, either for all attributes or only
         the ones given in :obj:`*args`."""
-        
-        # We add the following two lines for supporting
-        # torch.nn.utils.rnn.PackedSequence.
-        # See .__apply__ function for details.
-        # Parameter 'device' in PackedSequence.cuda function
-        # in torch.nn.utils.rnn.py, line 85, has a default value 'cuda'.
-        # It can be seen since https://github.com/pytorch/
-        # pytorch/commit/527b10c2d1b605828df3b4844436ef0636d2c5e6
-        # If 'device=None' here, it will cause TypeError.
-        if device is None:
-            device = 'cuda'
-        
+        # Some PyTorch tensor like objects require a default value for `cuda`:
+        device = 'cuda' if device is None else device
         return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
                           *args)
 
