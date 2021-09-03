@@ -23,7 +23,7 @@ class DataParallel(torch.nn.DataParallel):
 
     .. note::
 
-        You need to use the :class:`torch_geometric.data.DataListLoader` for
+        You need to use the :class:`torch_geometric.loader.DataListLoader` for
         this module.
 
     Args:

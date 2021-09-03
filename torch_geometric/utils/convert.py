@@ -1,5 +1,7 @@
 from typing import Optional, Union, Tuple, List
 
+from collections import defaultdict
+
 import torch
 import scipy.sparse
 from torch import Tensor
@@ -132,7 +134,7 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
     G = G.to_directed() if not nx.is_directed(G) else G
     edge_index = torch.LongTensor(list(G.edges)).t().contiguous()
 
-    data = {}
+    data = defaultdict(list)
 
     if G.number_of_nodes() > 0:
         node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
@@ -148,23 +150,24 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         if set(feat_dict.keys()) != set(node_attrs):
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
-            data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
+            data[str(key)].append(value)
 
     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
         if set(feat_dict.keys()) != set(edge_attrs):
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
-            data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
+            data[str(key)].append(value)
 
-    for key, item in data.items():
+    for key, value in data.items():
         try:
-            data[key] = torch.tensor(item)
+            data[key] = torch.tensor(value)
         except ValueError:
             pass
 
     data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)
-    data.num_nodes = G.number_of_nodes()
+    if data.x is None:
+        data.num_nodes = G.number_of_nodes()
 
     if group_node_attrs is all:
         group_node_attrs = list(node_attrs)

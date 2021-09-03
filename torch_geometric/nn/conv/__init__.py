@@ -41,6 +41,9 @@ from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
 from .eg_conv import EGConv
 from .pdn_conv import PDNConv
+from .general_conv import GeneralConv
+from .hgt_conv import HGTConv
+from .hetero_conv import HeteroConv
 
 __all__ = [
     'MessagePassing',
@@ -91,6 +94,9 @@ __all__ = [
     'FAConv',
     'EGConv',
     'PDNConv',
+    'GeneralConv',
+    'HGTConv',
+    'HeteroConv',
 ]
 
 classes = __all__

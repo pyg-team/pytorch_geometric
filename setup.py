@@ -15,6 +15,8 @@ install_requires = [
     'googledrivedownloader',
     'jinja2',
     'pyparsing',
+    'yacs',
+    'PyYAML'
 ]
 setup_requires = []
 tests_require = ['pytest', 'pytest-runner', 'pytest-cov', 'mock']

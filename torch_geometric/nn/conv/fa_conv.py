@@ -2,10 +2,10 @@ from typing import Optional, Tuple
 from torch_geometric.typing import OptTensor, Adj
 
 from torch import Tensor
-from torch.nn import Linear
 import torch.nn.functional as F
 from torch_sparse import SparseTensor
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 
@@ -30,7 +30,8 @@ class FAConv(MessagePassing):
     based on the trainable parameter vector :math:`\mathbf{a}`.
 
     Args:
-        channels (int or tuple): Size of each input sample.
+        channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         eps (float, optional): :math:`\epsilon`-value. (default: :obj:`0.1`)
         dropout (float, optional): Dropout probability of the normalized
             coefficients which exposes each node to a stochastically
