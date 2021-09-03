@@ -28,7 +28,7 @@
 
 **[Documentation](https://pytorch-geometric.readthedocs.io)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/notes/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/notes/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
 
-*PyTorch Geometric* (PyG) is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
+**PyG** *(PyTorch Geometric)* is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
 In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, [multi GPU-support](https://github.com/rusty1s/pytorch_geometric/tree/master/examples/multi_gpu), a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
@@ -297,7 +297,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ### Anaconda
 
-**Update:** You can now install PyTorch Geometric via [Anaconda](https://anaconda.org/rusty1s/pytorch-geometric) for all major OS/PyTorch/CUDA combinations 🤗
+**Update:** You can now install PyG via [Anaconda](https://anaconda.org/rusty1s/pytorch-geometric) for all major OS/PyTorch/CUDA combinations 🤗
 Given that you have [PyTorch >= 1.8.0 installed](https://pytorch.org/get-started/locally/), simply run
 
 ```

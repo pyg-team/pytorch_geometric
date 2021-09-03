@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates && \
     rm -rf /var/lib/apt/lists/*
-    
+
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils gnupg2 curl && \
     curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub | apt-key add - && \
     echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
@@ -139,7 +139,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 RUN conda install -y -c menpo opencv3=3.1.0 \
  && conda clean -ya
 
-# Install PyTorch Geometric.
+# Install PyG.
 RUN CPATH=/usr/local/cuda/include:$CPATH \
  && LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH \
  && DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
