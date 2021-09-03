@@ -314,7 +314,9 @@ class Data(object):
                 return func(item)
             except AttributeError:
                 return item
-        elif isinstance(item, tuple) and hasattr(item, '_asdict') and hasattr(item, '_fields'):
+        elif isinstance(item, tuple) \
+                and hasattr(item, '_asdict') \
+                and hasattr(item, '_fields'):
             # Some tensor like objects are actually namedtuple,
             # such as torch.nn.utils.rnn.PackedSequence.
             # A related discussion is here,
