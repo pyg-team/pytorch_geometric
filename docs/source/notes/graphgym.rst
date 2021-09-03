@@ -6,6 +6,8 @@ GraphGym - Manager for experiments
 GraphGym is a platform for **designing and evaluating Graph Neural Networks (GNNs)**.
 GraphGym is originally proposed in `Design Space for Graph Neural Networks, NeurIPS 2020 Spotlight <https://arxiv.org/abs/2011.08843>`__ and hosted in `Github repository <https://github.com/snap-stanford/GraphGym>`__.
 GraphGym has teamed up with PyTorch Geometric to provide an easy-to-use workflow for GNN development.
+GraphGym API may change in the future as we are continuously working on better and deeper integration with PyG;
+in the meantime, the current version has many nice functionalities and has shown to be successful in many applications.
 
 Highlights
 ----------
@@ -35,11 +37,18 @@ Why GraphGym?
 
 **TL;DR:** GraphGym is great for GNN beginners, domain experts and GNN researchers.
 
-**Scenario 1:** You are a beginner to GNN, who wants to understand how GNN works.
+**Scenario 1:** You are a beginner to GNNs, who wants to understand how GNNs work.
 
-You probably have read many exciting papers on GNN, and try to write your own GNN implementation.
-Using existing packages for GNN, you still have to code up the essential pipeline on your own.
+You probably have read many exciting papers on GNNs, and try to write your own GNN implementation.
+Even if using raw PyTorch Geometric, you still have to code up the essential pipeline on your own.
 GraphGym is a perfect place for your to start learning *standardized GNN implementation and evaluation*.
+
+
+.. figure:: ../_figures/graphgym_design_space.png
+  :align: center
+  :width: 400px
+
+  Figure 1: Modularized GNN implementation
 
 
 **Scenario 2:** You want to apply GNN to your exciting applications.
@@ -50,6 +59,15 @@ Even worse, we have shown in our `paper <https://arxiv.org/abs/2011.08843>`__ th
 GraphGym provides a *simple interface to try out thousands of GNNs in parallel* and understand the best designs for your specific task.
 GraphGym also recommends a "go-to" GNN design space, after investigating 10 million GNN model-task combinations.
 
+
+.. figure:: ../_figures/graphgym_results.png
+  :align: center
+  :width: 700px
+
+  Figure 2: A guideline for desirable GNN design choices
+  (Sampling from 10 million GNN model-task combinations)
+
+
 **Scenario 3:** You are a GNN researcher, who wants to innovate GNN models / propose new GNN tasks.
 
 Say you have proposed a new GNN layer :obj:`ExampleConv`.
@@ -58,6 +76,13 @@ when randomly sample from 10 million possible model-task combinations, how often
 when everything else is fixed (including the computational cost).
 Moreover, GraphGym can help you easily do hyper-parameter search, and *visualize* what design choices are better.
 In sum, GraphGym can greatly facilitate your GNN research.
+
+.. figure:: ../_figures/graphgym_evalutaion.png
+  :align: center
+  :width: 700px
+
+  Figure 3: Evaluation of a given GNN design dimension
+  (BatchNorm here)
 
 
 Basic Usage
