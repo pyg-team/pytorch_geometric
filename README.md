@@ -23,7 +23,6 @@
 [![Testing Status][testing-image]][testing-url]
 [![Linting Status][linting-image]][linting-url]
 [![Docs Status][docs-image]][docs-url]
-[![Code Coverage][coverage-image]][coverage-url]
 [![Contributing][contributing-image]][contributing-url]
 [![Slack][slack-image]][slack-url]
 
