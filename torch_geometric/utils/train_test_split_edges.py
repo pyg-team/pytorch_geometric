@@ -3,8 +3,10 @@ import math
 import torch
 
 from torch_geometric.utils import to_undirected
+from torch_geometric.deprecation import deprecated
 
 
+@deprecated("use 'transforms.RandomLinkSplit' instead")
 def train_test_split_edges(data, val_ratio: float = 0.05,
                            test_ratio: float = 0.1):
     r"""Splits the edges of a :class:`torch_geometric.data.Data` object
@@ -16,6 +18,12 @@ def train_test_split_edges(data, val_ratio: float = 0.05,
     If :obj:`data` has edge features named :obj:`edge_attr`, then
     :obj:`train_pos_edge_attr`, :obj:`val_pos_edge_attr` and
     :obj:`test_pos_edge_attr` will be added as well.
+
+    .. warning::
+
+        :meth:`~torch_geometric.utils.train_test_split_edges` is deprecated and
+        will be removed in a future release.
+        Use :class:`torch_geometric.transforms.RandomLinkSplit` instead.
 
     Args:
         data (Data): The data object.

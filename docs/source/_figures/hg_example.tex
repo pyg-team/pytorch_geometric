@@ -1,0 +1,19 @@
+\documentclass{standalone}
+
+\usepackage{tikz}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \node[draw,rectangle, align=center] (0) at (0, 0) {\textbf{Author}\\ $1,134,649$ nodes};
+  \node[draw,rectangle, align=center] (1) at (4, 2) {\textbf{Paper}\\ $736,389$ nodes};
+  \node[draw,rectangle, align=center] (2) at (8, 0) {\textbf{Institution}\\ $8,740$ nodes};
+  \node[draw,rectangle, align=center] (3) at (4, 4) {\textbf{Field of Study}\\ $59,965$ nodes};
+
+  \path[->,>=stealth] (0) edge [above left] node[align=center] {\textbf{writes}\\$7,145,660$ edges} (1.south);
+  \path[->,>=stealth] (0) edge [below] node[align=center] {\textbf{affiliated with}\\$1,043,998$ edges} (2);
+  \path[->,>=stealth,every loop/.style={looseness=3}] (1) edge [out=350, in=10, loop, right] node[align=center] {\textbf{cites}\\$5,416,271$ edges} (1);
+  \path[->,>=stealth] (1) edge [left] node[align=center] {\textbf{has topic}\\$7,505,078$ edges} (3);
+\end{tikzpicture}
+
+\end{document}

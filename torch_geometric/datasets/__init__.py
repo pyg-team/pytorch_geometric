@@ -47,6 +47,10 @@ from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
+from .ogb_mag import OGB_MAG
+from .dblp import DBLP
+from .imdb import IMDB
+from .last_fm import LastFM
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
@@ -109,6 +113,10 @@ __all__ = [
     'WebKB',
     'WikipediaNetwork',
     'Actor',
+    'OGB_MAG',
+    'DBLP',
+    'IMDB',
+    'LastFM',
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'UPFD',

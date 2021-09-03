@@ -1,6 +1,6 @@
-# Contributing to PyTorch Geometric
+# Contributing to PyG
 
-If you are interested in contributing to PyTorch Geometric, your contributions will fall into two categories:
+If you are interested in contributing to PyG, your contributions will likely fall into one of the following two categories:
 
 1. You want to implement a new feature:
     - In general, we accept any features as long as they fit the scope of this package. If you are unsure about this or need help on the design/implementation of your feature, post about it in an issue.
@@ -9,40 +9,40 @@ If you are interested in contributing to PyTorch Geometric, your contributions w
 
 Once you finish implementing a feature or bug-fix, please send a Pull Request to https://github.com/rusty1s/pytorch_geometric.
 
-## Developing PyTorch Geometric
+## Developing PyG
 
-To develop PyTorch Geometric on your machine, here are some tips:
+To develop PyG on your machine, here are some tips:
 
-1. Uninstall all existing PyTorch Geometric installs:
+1. Uninstall all existing PyG installations:
 
 ```
 pip uninstall torch-geometric
 pip uninstall torch-geometric  # run this command twice
 ```
 
-2. Clone a copy of PyTorch Geometric from source:
+2. Clone a copy of PyG from source:
 
 ```
 git clone https://github.com/rusty1s/pytorch_geometric
 cd pytorch_geometric
 ```
 
-3. If you already have a PyTorch Geometric from source, update it:
+3. If you already cloned PyG from source, update it:
 
 ```
 git pull
 ```
 
-4. Install PyTorch Geometric in `develop` mode:
+4. Install PyG in `develop` mode:
 
 ```
 python setup.py develop
 ```
 
 This mode will symlink the Python files from the current local source tree into the Python install.
-Hence, if you modify a Python file, you do not need to reinstall PyTorch Geometric again and again.
+Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
 
-5. Ensure that you have a working PyTorch Geometric installation by running the entire test suite with
+5. Ensure that you have a working PyG installation by running the entire test suite with
 
 ```
 python setup.py test
@@ -52,7 +52,7 @@ In case an error occurs, please first check if all sub-packages ([`torch-scatter
 
 ## Unit Testing
 
-PyTorch Geometric's testing is located under `test/`.
+The PyG testing suite is located under `test/`.
 Run the entire test suite with
 
 ```
@@ -63,9 +63,9 @@ or run individual test files, like `pytest --no-cov test/utils/test_convert.py`,
 
 ## Continuous Integration
 
-PyTorch Geometric uses [Travis CI](https://travis-ci.org/rusty1s/pytorch_geometric) in combination with [CodeCov](https://codecov.io/github/rusty1s/pytorch_geometric?branch=master) for continuous integration.
+PyG uses [GitHub Actions](https://github.com/rusty1s/pytorch_geometric/actions) in combination with [CodeCov](https://codecov.io/github/rusty1s/pytorch_geometric?branch=master) for continuous integration.
 
-Everytime you send a Pull Request, your commit will be built and checked against the PyTorch Geometric guidelines:
+Everytime you send a Pull Request, your commit will be built and checked against the PyG guidelines:
 
 1. Ensure that your code is formatted correctly by testing against the styleguides of [`flake8`](https://github.com/PyCQA/flake8) and [`pycodestyle`](https://github.com/PyCQA/pycodestyle):
 
@@ -76,8 +76,7 @@ flake8 torch_geometric test examples
 
 If you do not want to format your code manually, we recommend to use [`yapf`](https://github.com/google/yapf).
 
-2. Ensure that the entire test suite passes and that code coverage roughly stays the same.
-Please feel encouraged to provide a test with your submitted code.
+2. Ensure that the entire test suite passes and that code coverage roughly stays the same. Please feel encouraged to provide a test with your submitted code.
 
 ```
 python setup.py test
@@ -87,11 +86,13 @@ python setup.py test
 
 To build the documentation:
 
-1. [Build and install](#developing-pytorch-geometric) PyTorch Geometric from source.
+1. [Build and install](#developing-pytorch-geometric) PyG from source.
 2. Install [Sphinx](https://www.sphinx-doc.org/en/master/) via `pip install sphinx sphinx_rtd_theme`.
-3. Generate the documentation file via:
+3. Generate the documentation via:
+
 ```
-cd pytorch_geometric/docs
+cd docs
 make html
 ```
-The docs are located in `pytorch_geometric/docs/build/html/index.html`.
+
+The documentation is now available to view by opening `docs/build/html/index.html`.

@@ -31,6 +31,7 @@ html_theme = 'sphinx_rtd_theme'
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 doctest_default_flags = doctest.NORMALIZE_WHITESPACE
+autodoc_member_order = 'bysource'
 intersphinx_mapping = {'python': ('https://docs.python.org/', None)}
 
 html_theme_options = {
@@ -40,7 +41,7 @@ html_theme_options = {
     'navigation_depth': 2,
 }
 
-html_logo = '_static/img/pyg_logo_text.svg'
+html_logo = '_static/img/pyg2.png'
 html_static_path = ['_static']
 html_context = {'css_files': ['_static/css/custom.css']}
 rst_context = {'torch_geometric': torch_geometric}

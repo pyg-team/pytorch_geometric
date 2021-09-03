@@ -1,5 +1,6 @@
 from .base_transform import BaseTransform
 from .compose import Compose
+from .to_device import ToDevice
 from .to_sparse_tensor import ToSparseTensor
 from .to_undirected import ToUndirected
 from .constant import Constant
@@ -40,13 +41,15 @@ from .gdc import GDC
 from .sign import SIGN
 from .grid_sampling import GridSampling
 from .gcn_norm import GCNNorm
-from .add_train_val_test_mask import AddTrainValTestMask
 from .svd_feature_reduction import SVDFeatureReduction
 from .remove_training_classes import RemoveTrainingClasses
+from .random_node_split import RandomNodeSplit
+from .random_link_split import RandomLinkSplit
 
 __all__ = [
     'BaseTransform',
     'Compose',
+    'ToDevice',
     'ToSparseTensor',
     'ToUndirected',
     'Constant',
@@ -87,9 +90,10 @@ __all__ = [
     'SIGN',
     'GridSampling',
     'GCNNorm',
-    'AddTrainValTestMask',
     'SVDFeatureReduction',
     'RemoveTrainingClasses',
+    'RandomNodeSplit',
+    'RandomLinkSplit',
 ]
 
 classes = __all__

@@ -22,7 +22,7 @@ class WikipediaNetwork(InMemoryDataset):
         name (string): The name of the dataset (:obj:`"chameleon"`,
             :obj:`"crocodile"`, :obj:`"squirrel"`).
         geom_gcn_preprocess (bool): If set to :obj:`True`, will load the
-            pre-processing data as introduced in the `"Geom-GCN: Geometric
+            pre-processed data as introduced in the `"Geom-GCN: Geometric
             Graph Convolutional Networks" <https://arxiv.org/abs/2002.05287>_`,
             in which the average monthly traffic of the web page is converted
             into five categories to predict.
