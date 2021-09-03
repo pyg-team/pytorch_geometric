@@ -1,6 +1,6 @@
 # Docker
 
-You can run PyTorch Geometric with CUDA 10.1 inside a docker image.
+You can run PyG with CUDA 10.1 inside a docker image.
 The creation of [our dockerfile](https://github.com/rusty1s/pytorch_geometric/blob/master/docker/Dockerfile) refers to the dockerfiles provided by [NVIDIA](https://gitlab.com/nvidia/cuda/tree/ubuntu18.04) and [PyTorch](https://github.com/anibali/docker-pytorch).
 
 1. Download the dockerfile to your host server.
@@ -12,7 +12,7 @@ If you encounter any problems, please feel free to contact <liangshengwen@ict.ac
 
 # Singularity
 
-You can run PyTorch Geometric inside a singularity image. An example singularity file can be found in this folder.
+You can run PyG inside a singularity image. An example singularity file can be found in this folder.
 
 You might have to modify the script; depending on your needs, modify the following:
 
