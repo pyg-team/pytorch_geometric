@@ -45,9 +45,9 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
 
 ## Library Highlights
 
-Whether you are a machine learning researcher or first-time user of machine learning toolkits, here are some reasons to try out PyTorch Geometric for machine learning on graph-structured data.
+Whether you are a machine learning researcher or first-time user of machine learning toolkits, here are some reasons to try out PyG for machine learning on graph-structured data.
 
-* **Easy-to-use and unified API**: All it takes is 10-20 lines of code to get started with training a GNN model (see the next section for a [quick tour](#quick-tour-for-new-users)). PyTorch Geometric is *PyTorch-on-the-rocks*: It utilizes a tensor-centric API and keeps design principles close to vanilla PyTorch.
+* **Easy-to-use and unified API**: All it takes is 10-20 lines of code to get started with training a GNN model (see the next section for a [quick tour](#quick-tour-for-new-users)). PyG is *PyTorch-on-the-rocks*: It utilizes a tensor-centric API and keeps design principles close to vanilla PyTorch.
 * **Comprehensive and well-maintained GNN models**: Most of the state-of-the-art Graph Neural Network architectures have been implemented by library developers or authors of research papers and are ready to be applied.
 * **Great flexibility**: Existing PyG models can easily be extended for conducting your own research with GNNs. Making modifications to existing models or creating new architectures is simple, thanks to its easy-to-use message passing API, and a variety of operators and utility functions.
 * **Large-scale real-world GNN models**: We focus on the need of GNN applications in challenging real-world scenarios, and support learning on diverse types of graphs, including but not limited to: scalable GNNs for graphs with millions of nodes; dynamic GNNs for node predictions over time; heterogeneous GNNs with multiple node types and edge types.
@@ -56,7 +56,7 @@ Whether you are a machine learning researcher or first-time user of machine lear
 
 In this quick tour, we highlight the ease of creating and training a GNN model with only a few lines of code.
 
-### Training your own GNNs
+### Train your own GNN
 
 In the first glimpse of PyG, we implement the training of a GNN for classifying papers in a citation graph.
 For this, we load the [Cora](https://pytorch-geometric.readthedocs.io/en/latest/modules/datasets.html#torch_geometric.datasets.Planetoid) dataset, and create a simple 2-layer GCN model using the pre-defined [`GCNConv`](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GCNConv):
@@ -103,9 +103,9 @@ for epoch in range(200):
 
 More information about evaluating final model performance can be found in the corresponding [example](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/gcn.py).
 
-### Creating your own GNN layers
+### Create your own GNN layer
 
-In addition to the easy application of existing GNNs, PyTorch Geometric makes it simple to implement custom Graph Neural Networks (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html) for the accompanying tutorial).
+In addition to the easy application of existing GNNs, PyG makes it simple to implement custom Graph Neural Networks (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html) for the accompanying tutorial).
 For example, this is all it takes to implement the [edge convolutional layer](https://arxiv.org/abs/1801.07829) from Wang *et al.*:
 
 <p align="center">
@@ -139,12 +139,12 @@ class EdgeConv(MessagePassing):
         return self.mlp(edge_features)  # shape [num_edges, out_channels]
 ```
 
-Users are highly encouraged to check out the [documentation](https://pytorch-geometric.readthedocs.io/en/latest), which contains additional tutorials on the essential functionalities of PyTorch Geometric, including data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
+Users are highly encouraged to check out the [documentation](https://pytorch-geometric.readthedocs.io/en/latest), which contains additional tutorials on the essential functionalities of PyG, including data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
 For a quick start, check out our [examples](https://github.com/rusty1s/pytorch_geometric/tree/master/examples) in `examples/`.
 
 ## Architecture Overview
 
-PyTorch Geometric provides a multi-layer framework that enables users to build Graph Neural Network solutions on both low and high levels.
+PyG provides a multi-layer framework that enables users to build Graph Neural Network solutions on both low and high levels.
 It comprises of the following components:
 
 * The PyG **engine** utilizes the powerful PyTorch deep learning framework, as well as additions of efficient CUDA libraries for operating on sparse data ([`torch_scatter`](https://github.com/rusty1s/pytorch_scatter) and [`torch_sparse`](https://github.com/rusty1s/pytorch_sparse)).
@@ -259,7 +259,7 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 
 <details>
 <summary><b>GNN operators and utilities:</b>
-PyTorch Geometric comes with a rich set of neural network operators that are commonly used in many GNN models.
+PyG comes with a rich set of neural network operators that are commonly used in many GNN models.
 They follow an extensible design: It is easy to apply these operators and graph utilities to existing GNN layers and models to further enhance model performance.
 </summary>
 
@@ -283,7 +283,7 @@ They follow an extensible design: It is easy to apply these operators and graph 
 PyG supports the implementation of Graph Neural Networks that can scale to large-scale graphs.
 Such application is challenging since the entire graph, its associated features and the GNN parameters cannot fit into GPU memory.
 Many state-of-the-art scalability approaches tackle this challenge by sampling neighborhoods for mini-batch training, graph clustering and partitioning, or by using simplified GNN models.
-These approaches have been implemented in PyTorch Geometric, and can benefit from the above GNN layers, operators and models.
+These approaches have been implemented in PyG, and can benefit from the above GNN layers, operators and models.
 </summary>
 
 * **[NeighborSampler](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.NeighborSampler)** and **[NeighborLoader](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.NeighborLoader)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/ogbn_products_gat.py), [**Exampl4**](https://github.com/rusty1s/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py)]
@@ -385,4 +385,4 @@ Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective pa
 Feel free to [email us](mailto:matthias.fey@tu-dortmund.de) if you wish your work to be listed in the [external resources](https://pytorch-geometric.readthedocs.io/en/latest/notes/resources.html).
 If you notice anything unexpected, please open an [issue](https://github.com/rusty1s/pytorch_geometric/issues) and let us know.
 If you have any questions or are missing a specific feature, feel free [to discuss them with us](https://github.com/rusty1s/pytorch_geometric/discussions).
-We are motivated to constantly make PyTorch Geometric even better.
+We are motivated to constantly make PyG even better.
