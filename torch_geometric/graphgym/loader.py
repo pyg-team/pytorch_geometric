@@ -7,7 +7,7 @@ import torch_geometric.transforms as T
 
 from torch_geometric.graphgym.config import cfg
 import torch_geometric.graphgym.register as register
-from torch_geometric.graphgym.models.transform import get_link_label, \
+from torch_geometric.graphgym.models.transform import create_link_label, \
     neg_sampling_transform
 
 from ogb.nodeproppred import PygNodePropPredDataset
@@ -25,13 +25,16 @@ from torch_geometric.utils import negative_sampling
 
 
 def load_pyg(name, dataset_dir):
-    '''
-    load pyg format dataset
-    todo: support more pyg datasets. Ideally we write an API for conversion
-    :param name: dataset name
-    :param dataset_dir: data directory
-    :return: PyG dataset
-    '''
+    """
+    Load PyG dataset objects. (More PyG datasets will be supported)
+
+    Args:
+        name (string): dataset name
+        dataset_dir (string): data directory
+
+    Returns: PyG dataset object
+
+    """
     dataset_dir = '{}/{}'.format(dataset_dir, name)
     if name in ['Cora', 'CiteSeer', 'PubMed']:
         dataset = Planetoid(dataset_dir, name)
@@ -80,6 +83,18 @@ def set_dataset_attr(dataset, name, value, size):
 
 
 def load_ogb(name, dataset_dir):
+    r"""
+
+    Load OGB dataset objects.
+
+
+    Args:
+        name (string): dataset name
+        dataset_dir (string): data directory
+
+    Returns: PyG dataset object
+
+    """
     if name[:4] == 'ogbn':
         dataset = PygNodePropPredDataset(name=name, root=dataset_dir)
         splits = dataset.get_idx_split()
@@ -113,20 +128,20 @@ def load_ogb(name, dataset_dir):
                                        num_nodes=dataset.data.num_nodes,
                                        num_neg_samples=id.shape[1])
             id_all = torch.cat([id, id_neg], dim=-1)
-            label = get_link_label(id, id_neg)
+            label = create_link_label(id, id_neg)
             set_dataset_attr(dataset, 'train_edge_index', id_all,
                              id_all.shape[1])
             set_dataset_attr(dataset, 'train_edge_label', label, len(label))
 
         id, id_neg = splits['valid']['edge'].T, splits['valid']['edge_neg'].T
         id_all = torch.cat([id, id_neg], dim=-1)
-        label = get_link_label(id, id_neg)
+        label = create_link_label(id, id_neg)
         set_dataset_attr(dataset, 'val_edge_index', id_all, id_all.shape[1])
         set_dataset_attr(dataset, 'val_edge_label', label, len(label))
 
         id, id_neg = splits['test']['edge'].T, splits['test']['edge_neg'].T
         id_all = torch.cat([id, id_neg], dim=-1)
-        label = get_link_label(id, id_neg)
+        label = create_link_label(id, id_neg)
         set_dataset_attr(dataset, 'test_edge_index', id_all, id_all.shape[1])
         set_dataset_attr(dataset, 'test_edge_label', label, len(label))
 
@@ -136,10 +151,13 @@ def load_ogb(name, dataset_dir):
 
 
 def load_dataset():
-    '''
-    load raw datasets.
-    :return: PyG dataset
-    '''
+    r"""
+
+    Load dataset objects.
+
+    Returns: PyG dataset object
+
+    """
     format = cfg.dataset.format
     name = cfg.dataset.name
     dataset_dir = cfg.dataset.dir
@@ -160,8 +178,13 @@ def load_dataset():
 
 
 def set_dataset_info(dataset):
-    # set shared variables
-    # todo: verify edge cases
+    r"""
+    Set global dataset information
+
+    Args:
+        dataset: PyG dataset object
+
+    """
 
     # get dim_in and dim_out
     try:
@@ -189,10 +212,13 @@ def set_dataset_info(dataset):
 
 
 def create_dataset():
-    # todo: add new PyG dataset split functionality
-    # Load dataset
-    dataset = load_dataset()
+    r"""
+    Create dataset object
 
+    Returns: PyG dataset object
+
+    """
+    dataset = load_dataset()
     set_dataset_info(dataset)
 
     return dataset
@@ -255,6 +281,12 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
 
 
 def create_loader():
+    """
+    Create data loader object
+
+    Returns: List of PyTorch data loaders
+
+    """
     dataset = create_dataset()
     # train loader
     if cfg.dataset.task == 'graph':

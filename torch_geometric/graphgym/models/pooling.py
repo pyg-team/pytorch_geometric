@@ -1,34 +1,62 @@
-import torch
 from torch_scatter import scatter
-from torch_geometric.graphgym.config import cfg
 
 import torch_geometric.graphgym.register as register
 
 
-# Pooling options (pool nodes into graph representations)
-# pooling function takes in node embedding [num_nodes x emb_dim] and
-# batch (indices) and outputs graph embedding [num_graphs x emb_dim].
-def global_add_pool(x, batch, id=None, size=None):
+def global_add_pool(x, batch, size=None):
+    """
+    Globally pool node embeddings into graph embeddings, via elementwise sum.
+    Pooling function takes in node embedding [num_nodes x emb_dim] and
+    batch (indices) and outputs graph embedding [num_graphs x emb_dim].
+
+    Args:
+        x (torch.tensor): Input node embeddings
+        batch (torch.tensor): Batch tensor that indicates which node
+        belongs to which graph
+        size (optional): Total number of graphs. Can be auto-inferred.
+
+    Returns: Pooled graph embeddings
+
+    """
     size = batch.max().item() + 1 if size is None else size
-    if cfg.dataset.transform == 'ego':
-        x = torch.index_select(x, dim=0, index=id)
-        batch = torch.index_select(batch, dim=0, index=id)
     return scatter(x, batch, dim=0, dim_size=size, reduce='add')
 
 
-def global_mean_pool(x, batch, id=None, size=None):
+def global_mean_pool(x, batch, size=None):
+    """
+    Globally pool node embeddings into graph embeddings, via elementwise mean.
+    Pooling function takes in node embedding [num_nodes x emb_dim] and
+    batch (indices) and outputs graph embedding [num_graphs x emb_dim].
+
+    Args:
+        x (torch.tensor): Input node embeddings
+        batch (torch.tensor): Batch tensor that indicates which node
+        belongs to which graph
+        size (optional): Total number of graphs. Can be auto-inferred.
+
+    Returns: Pooled graph embeddings
+
+    """
     size = batch.max().item() + 1 if size is None else size
-    if cfg.dataset.transform == 'ego':
-        x = torch.index_select(x, dim=0, index=id)
-        batch = torch.index_select(batch, dim=0, index=id)
     return scatter(x, batch, dim=0, dim_size=size, reduce='mean')
 
 
-def global_max_pool(x, batch, id=None, size=None):
+def global_max_pool(x, batch, size=None):
+    """
+    Globally pool node embeddings into graph embeddings, via elementwise max.
+    Pooling function takes in node embedding [num_nodes x emb_dim] and
+    batch (indices) and outputs graph embedding [num_graphs x emb_dim].
+
+    Args:
+        x (torch.tensor): Input node embeddings
+        batch (torch.tensor): Batch tensor that indicates which node
+        belongs to which graph
+        size (optional): Total number of graphs. Can be auto-inferred.
+
+    Returns: Pooled graph embeddings
+
+    """
     size = batch.max().item() + 1 if size is None else size
-    if cfg.dataset.transform == 'ego':
-        x = torch.index_select(x, dim=0, index=id)
-        batch = torch.index_select(batch, dim=0, index=id)
     return scatter(x, batch, dim=0, dim_size=size, reduce='max')
 
 

@@ -12,6 +12,16 @@ network_dict = {**register.network_dict, **network_dict}
 
 
 def create_model(to_device=True, dim_in=None, dim_out=None):
+    r"""
+    Create model for graph machine learning
+
+    Args:
+        to_device (string): The devide that the model will be transferred to
+        dim_in (int, optional): Input dimension to the model
+        dim_out (int, optional): Output dimension to the model
+
+
+    """
     dim_in = cfg.share.dim_in if dim_in is None else dim_in
     dim_out = cfg.share.dim_out if dim_out is None else dim_out
     # binary classification, output dim = 1

@@ -19,6 +19,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    notes/create_dataset
    notes/heterogeneous
    notes/load_csv
+   notes/graphgym
    notes/batching
    notes/sparse_tensor
    notes/jit
@@ -38,6 +39,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    modules/datasets
    modules/transforms
    modules/utils
+   modules/graphgym
    modules/profile
 
 Indices and Tables

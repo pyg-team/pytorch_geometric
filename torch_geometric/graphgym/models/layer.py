@@ -13,7 +13,18 @@ import torch_geometric.graphgym.register as register
 
 # General classes
 class GeneralLayer(nn.Module):
-    '''General wrapper for layers'''
+    """
+    General wrapper for layers
+
+    Args:
+        name (string): Name of the layer in registered :obj:`layer_dict`
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        has_act (bool): Whether has activation after the layer
+        has_bn (bool):  Whether has BatchNorm in the layer
+        has_l2norm (bool): Wheter has L2 normalization after the layer
+        **kwargs (optional): Additional args
+    """
     def __init__(self, name, dim_in, dim_out, has_act=True, has_bn=True,
                  has_l2norm=False, **kwargs):
         super(GeneralLayer, self).__init__()
@@ -46,7 +57,18 @@ class GeneralLayer(nn.Module):
 
 
 class GeneralMultiLayer(nn.Module):
-    '''General wrapper for stack of layers'''
+    """
+    General wrapper for a stack of multiple layers
+
+    Args:
+        name (string): Name of the layer in registered :obj:`layer_dict`
+        num_layers (int): Number of layers in the stack
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        dim_inner (int): The dimension for the inner layers
+        final_act (bool): Whether has activation after the layer stack
+        **kwargs (optional): Additional args
+    """
     def __init__(self, name, num_layers, dim_in, dim_out, dim_inner=None,
                  final_act=True, **kwargs):
         super(GeneralMultiLayer, self).__init__()
@@ -64,9 +86,19 @@ class GeneralMultiLayer(nn.Module):
         return batch
 
 
-# Core basic layers
-# Input: batch; Output: batch
+# ---------- Core basic layers. Input: batch; Output: batch ----------------- #
+
+
 class Linear(nn.Module):
+    """
+    Basic Linear layer.
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        bias (bool): Whether has bias term
+        **kwargs (optional): Additional args
+    """
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(Linear, self).__init__()
         self.model = nn.Linear(dim_in, dim_out, bias=bias)
@@ -80,7 +112,12 @@ class Linear(nn.Module):
 
 
 class BatchNorm1dNode(nn.Module):
-    '''General wrapper for layers'''
+    """
+    BatchNorm for node feature.
+
+    Args:
+        dim_in (int): Input dimension
+    """
     def __init__(self, dim_in):
         super(BatchNorm1dNode, self).__init__()
         self.bn = nn.BatchNorm1d(dim_in, eps=cfg.bn.eps, momentum=cfg.bn.mom)
@@ -91,7 +128,12 @@ class BatchNorm1dNode(nn.Module):
 
 
 class BatchNorm1dEdge(nn.Module):
-    '''General wrapper for layers'''
+    """
+    BatchNorm for edge feature.
+
+    Args:
+        dim_in (int): Input dimension
+    """
     def __init__(self, dim_in):
         super(BatchNorm1dEdge, self).__init__()
         self.bn = nn.BatchNorm1d(dim_in, eps=cfg.bn.eps, momentum=cfg.bn.mom)
@@ -102,11 +144,20 @@ class BatchNorm1dEdge(nn.Module):
 
 
 class MLP(nn.Module):
+    """
+    Basic MLP model.
+    Here 1-layer MLP is equivalent to a Liner layer.
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        bias (bool): Whether has bias term
+        dim_inner (int): The dimension for the inner layers
+        num_layers (int): Number of layers in the stack
+        **kwargs (optional): Additional args
+    """
     def __init__(self, dim_in, dim_out, bias=True, dim_inner=None,
                  num_layers=2, **kwargs):
-        '''
-        Note: MLP works for 0 layers
-        '''
         super(MLP, self).__init__()
         dim_inner = dim_in if dim_inner is None else dim_inner
         layers = []
@@ -128,6 +179,9 @@ class MLP(nn.Module):
 
 
 class GCNConv(nn.Module):
+    """
+    Graph Convolutional Network (GCN) layer
+    """
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(GCNConv, self).__init__()
         self.model = pyg.nn.GCNConv(dim_in, dim_out, bias=bias)
@@ -138,6 +192,9 @@ class GCNConv(nn.Module):
 
 
 class SAGEConv(nn.Module):
+    """
+    GraphSAGE Conv layer
+    """
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(SAGEConv, self).__init__()
         self.model = pyg.nn.SAGEConv(dim_in, dim_out, bias=bias)
@@ -148,6 +205,9 @@ class SAGEConv(nn.Module):
 
 
 class GATConv(nn.Module):
+    """
+    Graph Attention Network (GAT) layer
+    """
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(GATConv, self).__init__()
         self.model = pyg.nn.GATConv(dim_in, dim_out, bias=bias)
@@ -158,6 +218,9 @@ class GATConv(nn.Module):
 
 
 class GINConv(nn.Module):
+    """
+    Graph Isomorphism Network (GIN) layer
+    """
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(GINConv, self).__init__()
         gin_nn = nn.Sequential(nn.Linear(dim_in, dim_out), nn.ReLU(),
@@ -170,6 +233,9 @@ class GINConv(nn.Module):
 
 
 class SplineConv(nn.Module):
+    """
+    SplineCNN layer
+    """
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(SplineConv, self).__init__()
         self.model = pyg.nn.SplineConv(dim_in, dim_out, dim=1, kernel_size=2,
@@ -181,6 +247,7 @@ class SplineConv(nn.Module):
 
 
 class GeneralConv(nn.Module):
+    """A general GNN layer"""
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(GeneralConv, self).__init__()
         self.model = GeneralConvLayer(dim_in, dim_out, bias=bias)
@@ -191,6 +258,7 @@ class GeneralConv(nn.Module):
 
 
 class GeneralEdgeConv(nn.Module):
+    """A general GNN layer that supports edge features as well"""
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(GeneralEdgeConv, self).__init__()
         self.model = GeneralEdgeConvLayer(dim_in, dim_out, bias=bias)
@@ -202,6 +270,7 @@ class GeneralEdgeConv(nn.Module):
 
 
 class GeneralSampleEdgeConv(nn.Module):
+    """A general GNN layer that supports edge features and edge sampling"""
     def __init__(self, dim_in, dim_out, bias=False, **kwargs):
         super(GeneralSampleEdgeConv, self).__init__()
         self.model = GeneralEdgeConvLayer(dim_in, dim_out, bias=bias)
