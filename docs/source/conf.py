@@ -41,7 +41,7 @@ html_theme_options = {
     'navigation_depth': 2,
 }
 
-html_logo = '_static/img/pyg_logo_text.svg'
+html_logo = '_static/img/pyg2.png'
 html_static_path = ['_static']
 html_context = {'css_files': ['_static/css/custom.css']}
 rst_context = {'torch_geometric': torch_geometric}

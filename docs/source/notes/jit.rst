@@ -8,7 +8,7 @@ If you are unfamilar with TorchScript, we recommend to read the official "`Intro
 Converting GNN Models
 ---------------------
 
-Converting your PyTorch Geometric model to a TorchScript program is straightforward and requires only a few code changes.
+Converting your PyG model to a TorchScript program is straightforward and requires only a few code changes.
 
 As always, it is best understood by an example, so let's consider the following model for now:
 
@@ -67,7 +67,7 @@ Under the hood, the :func:`~torch_geometric.nn.conv.message_passing.MessagePassi
 
 This technique is, *e.g.*, applied in the :class:`~torch_geometric.nn.conv.SAGEConv` class, which can operate on both single node feature matrices and tuples of node feature matrices at the same time.
 
-And that is all you need to know on how to convert your PyTorch Geometric models to TorchScript programs.
+And that is all you need to know on how to convert your PyG models to TorchScript programs.
 You can have a further look at our JIT examples that show-case how to obtain TorchScript programs for `node <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/jit/gat.py>`_ and `graph classification <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/jit/gin.py>`_ models.
 
 .. note::
@@ -77,7 +77,7 @@ You can have a further look at our JIT examples that show-case how to obtain Tor
 Creating Jittable GNN Operators
 --------------------------------
 
-All PyTorch Geometric :class:`~torch_geometric.nn.conv.MessagePassing` operators are tested to be convertible to a TorchScript program.
+All PyG :class:`~torch_geometric.nn.conv.MessagePassing` operators are tested to be convertible to a TorchScript program.
 However, if you want your own GNN module to be jittable, you need to account for the following two things:
 
 1. As one would expect, your :meth:`forward` code may need to be adjusted so that it passes the TorchScript compiler requirements, *e.g.*, by adding type notations.

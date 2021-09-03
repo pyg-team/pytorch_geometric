@@ -1,3 +1,4 @@
+import sys
 import copy
 import os.path as osp
 from typing import Optional
@@ -39,7 +40,7 @@ class ClusterData(torch.utils.data.Dataset):
             adj, partptr, perm = torch.load(path)
         else:
             if log:  # pragma: no cover
-                print('Computing METIS partitioning...')
+                print('Computing METIS partitioning...', file=sys.stderr)
 
             N, E = data.num_nodes, data.num_edges
             adj = SparseTensor(
@@ -52,7 +53,7 @@ class ClusterData(torch.utils.data.Dataset):
                 torch.save((adj, partptr, perm), path)
 
             if log:  # pragma: no cover
-                print('Done!')
+                print('Done!', file=sys.stderr)
 
         self.data = self.__permute_data__(data, perm, adj)
         self.partptr = partptr

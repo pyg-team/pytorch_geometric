@@ -58,10 +58,7 @@ class GeneralConv(MessagePassing):
                  l2_normalize: bool = False, bias: bool = True,
                  **kwargs):  # yapf: disable
         kwargs.setdefault('aggr', aggr)
-        super(GeneralConv, self).__init__(node_dim=0, **kwargs)
-        # todo: a better way to connecting different layers together
-        #  in a GNN layer without implementing a new GNN layer
-        # https://github.com/vrtex-team/pytorch_geometric/pull/30#discussion_r649692299
+        super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -159,6 +156,6 @@ class GeneralConv(MessagePassing):
         else:
             return x_j_out
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '{}({}, {})'.format(self.__class__.__name__, self.in_channels,
                                    self.out_channels)

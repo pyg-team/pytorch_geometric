@@ -88,7 +88,7 @@ We can make use of those two columns to define a feature representation that can
 The :obj:`ratings.csv` data connects users (as given by :obj:`userId`) and movies (as given by :obj:`movieId`), and defines how a given user has rated a specific movie (:obj:`rating`).
 Due to simplicity, we do not make use of the additional :obj:`timestamp` information.
 
-For representing this data in the PyTorch Geometric data format, we first define a method :meth:`load_node_csv` that reads in a :obj:`*.csv` file and returns a node-level feature representation :obj:`x` of shape :obj:`[num_nodes, num_features]`:
+For representing this data in the PyG data format, we first define a method :meth:`load_node_csv` that reads in a :obj:`*.csv` file and returns a node-level feature representation :obj:`x` of shape :obj:`[num_nodes, num_features]`:
 
 .. code-block:: python
 
@@ -251,7 +251,7 @@ With this, we are ready to finalize our :class:`~torch_geometric.data.HeteroData
       }
     )
 
-This :class:`~torch_geometric.data.HeteroData` object is the native format of heterogenous graphs in PyTorch Geometric and can be used as input for :ref:`heterogenous graph models <hgtutorial>`.
+This :class:`~torch_geometric.data.HeteroData` object is the native format of heterogenous graphs in PyG and can be used as input for :ref:`heterogenous graph models <hgtutorial>`.
 
 .. note::
 

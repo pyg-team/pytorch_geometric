@@ -125,7 +125,7 @@ class DynamicFAUST(InMemoryDataset):
             else:
                 continue
             pos = pos.permute(2, 0, 1).contiguous()
-            data_list.append(Data(pos=pos, face=face))
+            data_list.append(Data(pos=pos, face=face, num_nodes=pos.size(1)))
 
         if self.pre_filter is not None:
             data_list = [d for d in data_list if self.pre_filter(d)]

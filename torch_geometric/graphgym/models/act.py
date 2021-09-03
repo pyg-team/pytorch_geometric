@@ -11,6 +11,5 @@ act_dict = {
     'lrelu_025': nn.LeakyReLU(negative_slope=0.25, inplace=cfg.mem.inplace),
     'lrelu_05': nn.LeakyReLU(negative_slope=0.5, inplace=cfg.mem.inplace),
 }
-"""Docstring"""
 
 act_dict = {**register.act_dict, **act_dict}
