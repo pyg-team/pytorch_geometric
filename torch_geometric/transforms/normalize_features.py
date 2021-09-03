@@ -20,5 +20,5 @@ class NormalizeFeatures(BaseTransform):
                 value.div_(value.sum(dim=-1, keepdim=True).clamp_(min=1.))
         return data
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

@@ -77,12 +77,10 @@ def create_scheduler(optimizer, scheduler_config: SchedulerConfig):
             return scheduler
     if scheduler_config.scheduler == 'none':
         scheduler = optim.lr_scheduler.StepLR(
-            optimizer,
-            step_size=scheduler_config.max_epoch + 1)
+            optimizer, step_size=scheduler_config.max_epoch + 1)
     elif scheduler_config.scheduler == 'step':
         scheduler = optim.lr_scheduler.MultiStepLR(
-            optimizer,
-            milestones=scheduler_config.steps,
+            optimizer, milestones=scheduler_config.steps,
             gamma=scheduler_config.lr_decay)
     elif scheduler_config.scheduler == 'cos':
         scheduler = \

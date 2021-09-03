@@ -258,7 +258,8 @@ class HeteroData(BaseData):
         return DataTuple(*field_values)
 
     def __cat_dim__(self, key: str, value: Any,
-                    store: Optional[NodeOrEdgeStorage] = None) -> Any:
+                    store: Optional[NodeOrEdgeStorage] = None, *args,
+                    **kwargs) -> Any:
         if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
         elif 'index' in key or 'face' in key:
@@ -266,7 +267,8 @@ class HeteroData(BaseData):
         return 0
 
     def __inc__(self, key: str, value: Any,
-                store: Optional[NodeOrEdgeStorage] = None) -> Any:
+                store: Optional[NodeOrEdgeStorage] = None, *args,
+                **kwargs) -> Any:
         if isinstance(store, EdgeStorage) and 'index' in key:
             return torch.tensor(store.size()).view(2, 1)
         else:

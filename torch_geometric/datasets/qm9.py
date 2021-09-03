@@ -1,5 +1,6 @@
 from typing import Optional, Callable, List
 
+import sys
 import os
 import os.path as osp
 from tqdm import tqdm
@@ -110,7 +111,7 @@ class QM9(InMemoryDataset):
     raw_url = ('https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/'
                'molnet_publish/qm9.zip')
     raw_url2 = 'https://ndownloader.figshare.com/files/3195404'
-    processed_url = 'https://pytorch-geometric.com/datasets/qm9_v2.zip'
+    processed_url = 'https://pytorch-geometric.com/datasets/qm9_v3.zip'
 
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
@@ -139,11 +140,11 @@ class QM9(InMemoryDataset):
             import rdkit  # noqa
             return ['gdb9.sdf', 'gdb9.sdf.csv', 'uncharacterized.txt']
         except ImportError:
-            return ['qm9_v2.pt']
+            return ['qm9_v3.pt']
 
     @property
     def processed_file_names(self) -> str:
-        return 'data_v2.pt'
+        return 'data_v3.pt'
 
     def download(self):
         try:
@@ -173,11 +174,12 @@ class QM9(InMemoryDataset):
             rdkit = None
 
         if rdkit is None:
-            print("Using a pre-processed version of the dataset. Please "
-                  "install 'rdkit' to alternatively process the raw data.")
+            print(("Using a pre-processed version of the dataset. Please "
+                   "install 'rdkit' to alternatively process the raw data."),
+                  file=sys.stderr)
 
-            self.data, self.slices = torch.load(self.raw_paths[0])
-            data_list = [self.get(i) for i in range(len(self))]
+            data_list = torch.load(self.raw_paths[0])
+            data_list = [Data(**data_dict) for data_dict in data_list]
 
             if self.pre_filter is not None:
                 data_list = [d for d in data_list if self.pre_filter(d)]

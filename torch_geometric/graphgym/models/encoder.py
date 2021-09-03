@@ -80,8 +80,8 @@ class BondEncoder(torch.nn.Module):
         """"""
         bond_embedding = 0
         for i in range(batch.edge_attr.shape[1]):
-            bond_embedding += self.bond_embedding_list[i](
-                batch.edge_attr[:, i])
+            edge_attr = batch.edge_attr
+            bond_embedding += self.bond_embedding_list[i](edge_attr[:, i])
 
         batch.edge_attr = bond_embedding
         return batch

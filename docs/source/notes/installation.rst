@@ -14,7 +14,7 @@ Quick Start
 Installation via Anaconda
 -------------------------
 
-**Update:** You can now install PyTorch Geometric via `Anaconda <https://anaconda.org/rusty1s/pytorch-geometric>`_ for all major OS/PyTorch/CUDA combinations 🤗
+**Update:** You can now install PyG via `Anaconda <https://anaconda.org/rusty1s/pytorch-geometric>`_ for all major OS/PyTorch/CUDA combinations 🤗
 Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started/locally/>`_, simply run
 
 .. code-block:: none
@@ -24,7 +24,7 @@ Given that you have `PyTorch >= 1.8.0 installed <https://pytorch.org/get-started
 Installation via Pip Wheels
 ---------------------------
 
-We have outsourced a lot of functionality of PyTorch Geometric to other packages, which needs to be installed in advance.
+We have outsourced a lot of functionality of PyG to other packages, which needs to be installed in advance.
 These packages come with their own CPU and GPU kernel implementations based on the `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
 We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinations:
 
@@ -69,7 +69,7 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 
 #. Install additional packages *(optional)*:
 
-    To add additional functionality to PyTorch Geometric, such as k-NN and radius graph generation or :class:`~torch_geometric.nn.conv.SplineConv` support, run
+    To add additional functionality to PyG, such as k-NN and radius graph generation or :class:`~torch_geometric.nn.conv.SplineConv` support, run
 
     .. code-block:: none
 
@@ -81,7 +81,7 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 Installation from Source
 ------------------------
 
-In case a specific version is not supported by `our wheels <https://pytorch-geometric.com/whl/>`_, you can alternatively install PyTorch Geometric from source:
+In case a specific version is not supported by `our wheels <https://pytorch-geometric.com/whl/>`_, you can alternatively install PyG from source:
 
 #. Ensure that your CUDA is setup correctly (optional):
 

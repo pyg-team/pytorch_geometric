@@ -1,5 +1,7 @@
 from typing import Optional, Union, Tuple, List
 
+from collections import defaultdict
+
 import torch
 import scipy.sparse
 from torch import Tensor
@@ -77,8 +79,10 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
 
     G.add_nodes_from(range(data.num_nodes))
 
+    node_attrs, edge_attrs = node_attrs or [], edge_attrs or []
+
     values = {}
-    for key, item in data:
+    for key, item in data(*(node_attrs + edge_attrs)):
         if torch.is_tensor(item):
             values[key] = item.squeeze().tolist()
         else:
@@ -95,10 +99,11 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, to_undirected=False,
             continue
 
         G.add_edge(u, v)
-        for key in edge_attrs if edge_attrs is not None else []:
+
+        for key in edge_attrs:
             G[u][v][key] = values[key][i]
 
-    for key in node_attrs if node_attrs is not None else []:
+    for key in node_attrs:
         for i, feat_dict in G.nodes(data=True):
             feat_dict.update({key: values[key][i]})
 
@@ -129,7 +134,17 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
     G = G.to_directed() if not nx.is_directed(G) else G
     edge_index = torch.LongTensor(list(G.edges)).t().contiguous()
 
-    data = {}
+    data = defaultdict(list)
+
+    if G.number_of_nodes() > 0:
+        node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
+    else:
+        node_attrs = {}
+
+    if G.number_of_edges() > 0:
+        edge_attrs = list(next(iter(G.edges(data=True)))[-1].keys())
+    else:
+        edge_attrs = {}
 
     if G.number_of_nodes() > 0:
         node_attrs = list(next(iter(G.nodes(data=True)))[-1].keys())
@@ -145,17 +160,17 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         if set(feat_dict.keys()) != set(node_attrs):
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
-            data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
+            data[str(key)].append(value)
 
     for i, (_, _, feat_dict) in enumerate(G.edges(data=True)):
         if set(feat_dict.keys()) != set(edge_attrs):
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
-            data[str(key)] = [value] if i == 0 else data[str(key)] + [value]
+            data[str(key)].append(value)
 
-    for key, item in data.items():
+    for key, value in data.items():
         try:
-            data[key] = torch.tensor(item)
+            data[key] = torch.tensor(value)
         except ValueError:
             pass
 
