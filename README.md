@@ -14,7 +14,7 @@
 [slack-url]: https://join.slack.com/t/torchgeometricco/shared_invite/zt-p6br3yuo-BxRoe36OHHLF6jYU8xHtBA
 
 <p align="center">
-  <img height="110" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/pyg_logo_text.svg?sanitize=true" />
+  <img height="150" src="https://raw.githubusercontent.com/rusty1s/pytorch_geometric/master/docs/source/_static/img/pyg1.svg?sanitize=true" />
 </p>
 
 --------------------------------------------------------------------------------
