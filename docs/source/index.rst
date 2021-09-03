@@ -19,6 +19,7 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    notes/create_dataset
    notes/heterogeneous
    notes/graphgym
+   notes/load_csv
    notes/batching
    notes/sparse_tensor
    notes/jit

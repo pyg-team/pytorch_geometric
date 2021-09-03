@@ -1,3 +1,5 @@
+.. _hgtutorial:
+
 Heterogeneous Graph Learning
 ============================
 
