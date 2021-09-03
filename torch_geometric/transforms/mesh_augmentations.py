@@ -6,14 +6,14 @@ from ..utils.mesh_features import dihedral_angle
 #########################
 # Mesh Augmentations
 #########################
-def scale_verts(vs, mean=1, var=0.1):
-    for i in range(vs.shape[1]):
-        vs[:, i] = vs[:, i] * np.random.normal(mean, var)
+def scale_verts(pos, mean=1, var=0.1):
+    pos = pos * np.random.normal(mean, var, size=(1, pos.shape[1]))
+    return pos
 
 
-def flip_edges(vs, faces, prct):
+def flip_edges(pos, faces, prct):
     edge_count, edge_faces, edges_dict = get_edge_faces(faces)
-    dihedral = angles_from_faces(vs, edge_faces[:, 2:], faces)
+    dihedral = angles_from_faces(pos, edge_faces[:, 2:], faces)
     edges2flip = np.random.permutation(edge_count)
     target = int(prct * edge_count)
     flipped = 0
@@ -31,7 +31,7 @@ def flip_edges(vs, faces, prct):
             new_faces = np.array(
                 [[edge_info[1], new_edge[0], new_edge[1]],
                  [edge_info[0], new_edge[0], new_edge[1]]])
-            if check_area(vs, new_faces):
+            if check_area(pos, new_faces):
                 del edges_dict[(edge_info[0], edge_info[1])]
                 edge_info[:2] = [new_edge[0], new_edge[1]]
                 edges_dict[new_edge] = edge_key
@@ -72,12 +72,12 @@ def get_edge_faces(faces):
     return edge_count, np.array(edge_faces), edge2keys
 
 
-def angles_from_faces(vs, edge_faces, faces):
+def angles_from_faces(pos, edge_faces, faces):
     normals = [None, None]
     for i in range(2):
-        edge_a = vs[faces[edge_faces[:, i], 2]] - vs[
+        edge_a = pos[faces[edge_faces[:, i], 2]] - pos[
             faces[edge_faces[:, i], 1]]
-        edge_b = vs[faces[edge_faces[:, i], 1]] - vs[
+        edge_b = pos[faces[edge_faces[:, i], 1]] - pos[
             faces[edge_faces[:, i], 0]]
         normals[i] = np.cross(edge_a, edge_b)
         div = fixed_division(np.linalg.norm(normals[i], ord=2, axis=1),
@@ -97,17 +97,17 @@ def rebuild_face(face, new_face):
     return face
 
 
-def check_area(vs, faces):
-    face_normals = np.cross(vs[faces[:, 1]] - vs[faces[:, 0]],
-                            vs[faces[:, 2]] - vs[faces[:, 1]])
+def check_area(pos, faces):
+    face_normals = np.cross(pos[faces[:, 1]] - pos[faces[:, 0]],
+                            pos[faces[:, 2]] - pos[faces[:, 1]])
     face_areas = np.sqrt((face_normals ** 2).sum(axis=1))
     face_areas *= 0.5
     return face_areas[0] > 0 and face_areas[1] > 0
 
 
-def slide_verts(mesh_edges, edge_indexes, edges_count, ve, vs, prct):
+def slide_verts(mesh_edges, edge_indexes, edges_count, ve, pos, prct):
     edge_points = get_edge_points(mesh_edges, edge_indexes, edges_count)
-    dihedral = dihedral_angle(vs, edge_points).squeeze()
+    dihedral = dihedral_angle(pos, edge_points).squeeze()
     vids = np.random.permutation(len(ve))
     target = int(prct * len(vids))
     shifted = 0
@@ -117,8 +117,8 @@ def slide_verts(mesh_edges, edge_indexes, edges_count, ve, vs, prct):
             if min(dihedral[edges]) > 2.65:
                 edge = mesh_edges[np.random.choice(edges)]
                 vi_t = edge[1] if vi == edge[0] else edge[0]
-                nv = vs[vi] + np.random.uniform(0.2, 0.5) * (vs[vi_t] - vs[vi])
-                vs[vi] = nv
+                nv = pos[vi] + np.random.uniform(0.2, 0.5) * (pos[vi_t] - pos[vi])
+                pos[vi] = nv
                 shifted += 1
         else:
             break

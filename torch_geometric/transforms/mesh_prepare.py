@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 import os
 import ntpath
 from .mesh_augmentations import (scale_verts, flip_edges, slide_verts)
@@ -40,7 +41,7 @@ class MeshCNNPrepare:
         self.aug_file = aug_file
         self.mesh_data = MeshData()
 
-    def __call__(self, data):
+    def __call__(self, data=None):
         load_path = self.aug_file
         # if load_path == '':
         #     load_path = self.get_mesh_path(raw_file)
@@ -129,13 +130,13 @@ class MeshCNNPrepare:
                    or
                    ('pos' in keys and 'faces' in keys))
             if 'face' in keys:
-                mesh_data.pos = np.asarray(data.pos)
-                faces = np.asarray(data.face.transpose(0, 1), dtype=int)
+                mesh_data.pos = data.pos
+                faces = np.array(data.face.transpose(0, 1))
             elif 'faces':
                 mesh_data.pos = data.pos
                 faces = data.faces
 
-        mesh_data.v_mask = np.ones(len(mesh_data.pos), dtype=bool)
+        mesh_data.v_mask = torch.ones(len(mesh_data.pos), dtype=bool)
 
         faces, face_areas = self.remove_non_manifolds(mesh_data, faces)
         if self.num_aug > 1:
@@ -143,12 +144,12 @@ class MeshCNNPrepare:
         self.build_edge_indexes(mesh_data, faces, face_areas)
         if self.num_aug > 1:
             self.mesh_post_augmentations(mesh_data)
-        mesh_data.edge_attr = mesh_extract_features(mesh_data)
+        mesh_data.edge_attr = torch.tensor(mesh_extract_features(mesh_data))
         return mesh_data
 
     def mesh_augmentations(self, mesh, faces):
         if self.aug_scale_verts:
-            scale_verts(mesh.pos)
+            mesh.pos = scale_verts(mesh.pos)
         if self.aug_flip_edges > 0.0:
             faces = flip_edges(mesh.pos, faces, self.aug_flip_edges)
         return faces
@@ -194,7 +195,7 @@ class MeshCNNPrepare:
     def remove_non_manifolds(self, mesh, faces):
         mesh.ve = [[] for _ in mesh.pos]
         edges_set = set()
-        mask = np.ones(len(faces), dtype=bool)
+        mask = torch.ones(len(faces), dtype=bool)
         _, face_areas = self.compute_face_normals_and_areas(mesh=mesh,
                                                             faces=faces)
         for face_id, face in enumerate(faces):
@@ -278,12 +279,12 @@ class MeshCNNPrepare:
                 sides[edge_key][nb_count[edge_key] - 1] = nb_count[edge2key[
                     faces_edges[(idx + 2) % 3]]] - 2
 
-        mesh.edges = np.array(edges, dtype=np.int32)
-        edge_nb = np.array(edge_nb, dtype=np.int64)
-        mesh.edge_index = self.build_edge_pairs(edge_nb, edges_count)
-        mesh.sides = np.array(sides, dtype=np.int64)
+        mesh.edges = torch.tensor(edges, dtype=torch.int32)
+        edge_nb = torch.tensor(edge_nb, dtype=torch.int64)
+        mesh.edge_index = torch.tensor(self.build_edge_pairs(edge_nb, edges_count))
+        mesh.sides = torch.tensor(sides, dtype=torch.int64)
         mesh.edges_count = edges_count
-        mesh.edge_areas = np.array(mesh.edge_areas, dtype=np.float32) / np.sum(
+        mesh.edge_areas = torch.tensor(mesh.edge_areas, dtype=torch.float32) / np.sum(
             face_areas)
 
     @staticmethod

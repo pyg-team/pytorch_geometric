@@ -14,35 +14,37 @@ class MeshData(torch_geometric.data.Data):
 
     Attributes:
         filename (str): obj file name
-        pos (np.array(Num_vertices, 3, dtype=float64)): vertices positions
-        edges (np.array(Num_edges, 2, dtype=int32)): pairs of vertices indexes
-                                                     which construct an edge
-        sides (np.array(Num_edges, 4, dtype=int32): values of: 0,1,2,3 -
+        pos (Tensor [Num_vertices, num_dimensions=3], dtype=float64): vertices
+                                                                      positions
+        edges (Tensor [Num_edges, 2], dtype=int32): pairs of vertices indexes
+                                                    which construct an edge
+        sides (Tensor [Num_edges, 4], dtype=int32): values of: 0,1,2,3 -
                                                     sides[E][N] indicates the
                                                     index of edge E for the N
                                                     neighbour.
-        edges_count (int): number of edges in the mesh obj.
-        ve (np.array(Num_vertices,
-        Num_connections, dtype=int32)): array of all edge id connections of
-                                        vertex i e.g., ve[i,:] = [edge_ind_j,
-                                        edge_ind_k] means vertex i have 2
-                                        connections with vertices according to
-                                        edges[edge_ind_j, :] and
-                                        edges[edge_ind_k, :]
-        v_mask (np.array(Num_vetices, dtype=bool): indicates if a vertex
+        edges_count (int): number of edges in the mesh structure.
+        ve (Tensor [Num_vertices,
+                    Num_connections],
+                    dtype=int32 ): array of all edge id connections of
+                                   vertex i e.g., ve[i,:] = [edge_ind_j,
+                                   edge_ind_k] means vertex i have 2
+                                   connections with vertices according to
+                                   edges[edge_ind_j, :] and
+                                   edges[edge_ind_k, :]
+        v_mask (Tensor [Num_vetices], dtype=bool): indicates if a vertex
                                                    still in the mesh obj
                                                    (True - exists,
                                                    False - removed)
-        edge_lengths (np.array(Num_edges, dtype=float64): edges L2 norm
-        edge_areas (np.array(Num_edges,
+        edge_lengths (Tensor [Num_edges], dtype=float64): edges L2 norm
+        edge_areas (Tensor [Num_edges],
                    dtype=float64): for each edge it is the sum of 1/3
                                    face(s) area the edge constructs
                                    (maximum 2 faces), normalized by the total
                                    area of all the faces. Used for
                                    segmentation accuracy.
-        edge_index (np.array(2, Num_edges x 5,
+        edge_index (Tensor [2, Num_edges x 5],
                    dtype=int64)): pairs of edge indexes which are neighbours.
-        edge_attr (np.array(Feature_dim, Num_edges,
+        edge_attr (Tensor [Feature_dim, Num_edges],
                  dtype=float64)): edge features. Initial features dimension is
                                   5 and consists of geometric features as state
                                   in the paper.

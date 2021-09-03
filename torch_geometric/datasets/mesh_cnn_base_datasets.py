@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 import torch
 from torch_geometric.data import (download_url, extract_tar, Dataset)
-from torch_geometric.transforms.mesh_prepare import MeshPrepare
+from torch_geometric.transforms.mesh_prepare import MeshCNNPrepare
 
 
 def pad(input_arr, target_length, val=0, dim=1):
@@ -212,11 +212,18 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
                 if osp.exists(load_file):
                     continue
                 else:
-                    MeshPrepare(raw_file=path, num_aug=self.num_aug,
+                    # MeshCNNPrepare(raw_file=path, num_aug=self.num_aug,
+                    #             aug_slide_verts=self.slide_verts,
+                    #             aug_scale_verts=self.scale_verts,
+                    #             aug_flip_edges=self.flip_edges,
+                    #             aug_file=load_file)
+                    mesh_prepare = MeshCNNPrepare(num_aug=self.num_aug,
                                 aug_slide_verts=self.slide_verts,
                                 aug_scale_verts=self.scale_verts,
                                 aug_flip_edges=self.flip_edges,
                                 aug_file=load_file)
+                    mesh_data = mesh_prepare()
+
 
     def len(self):
         return len(self.paths_labels)
@@ -224,10 +231,15 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
     def get(self, idx):
         path = self.paths_labels[idx][0]
         label = self.paths_labels[idx][1]
-        mesh_data = MeshPrepare(raw_file=path, num_aug=self.num_aug,
+        # mesh_data = MeshCNNPrepare(raw_file=path, num_aug=self.num_aug,
+        #                         aug_slide_verts=self.slide_verts,
+        #                         aug_scale_verts=self.scale_verts,
+        #                         aug_flip_edges=self.flip_edges).mesh_data
+        mesh_prepare = MeshCNNPrepare(num_aug=self.num_aug,
                                 aug_slide_verts=self.slide_verts,
                                 aug_scale_verts=self.scale_verts,
-                                aug_flip_edges=self.flip_edges).mesh_data
+                                aug_flip_edges=self.flip_edges)
+        mesh_data = mesh_prepare()
         mesh_data.label = label
         mesh_data.edge_index = torch.tensor(mesh_data.edge_index).long()
         mesh_data.num_nodes = len(mesh_data.vs)
@@ -380,11 +392,17 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
                 if osp.exists(load_file):
                     continue
                 else:
-                    MeshPrepare(raw_file=path, num_aug=self.num_aug,
+                    # MeshCNNPrepare(raw_file=path, num_aug=self.num_aug,
+                    #             aug_slide_verts=self.slide_verts,
+                    #             aug_scale_verts=self.scale_verts,
+                    #             aug_flip_edges=self.flip_edges,
+                    #             aug_file=load_file)
+                    mesh_prepare = MeshCNNPrepare(num_aug=self.num_aug,
                                 aug_slide_verts=self.slide_verts,
                                 aug_scale_verts=self.scale_verts,
                                 aug_flip_edges=self.flip_edges,
                                 aug_file=load_file)
+                    mesh_data = mesh_prepare()
 
     def len(self):
         return len(self.paths)
@@ -395,10 +413,15 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         label = pad(label, self.n_input_edges, val=-1, dim=0)
         soft_label = self.read_sseg(self.sseg_paths[idx])
         soft_label = pad(soft_label, self.n_input_edges, val=-1, dim=0)
-        mesh_data = MeshPrepare(raw_file=path, num_aug=self.num_aug,
+        # mesh_data = MeshCNNPrepare(raw_file=path, num_aug=self.num_aug,
+        #                         aug_slide_verts=self.slide_verts,
+        #                         aug_scale_verts=self.scale_verts,
+        #                         aug_flip_edges=self.flip_edges).mesh_data
+        mesh_prepare = MeshCNNPrepare(num_aug=self.num_aug,
                                 aug_slide_verts=self.slide_verts,
                                 aug_scale_verts=self.scale_verts,
-                                aug_flip_edges=self.flip_edges).mesh_data
+                                aug_flip_edges=self.flip_edges)
+        mesh_data = mesh_prepare()
         mesh_data.label = label
         mesh_data.soft_label = soft_label
 
