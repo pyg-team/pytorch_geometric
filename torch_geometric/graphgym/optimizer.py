@@ -17,6 +17,16 @@ class OptimizerConfig:
 
 
 def create_optimizer(params, optimizer_config: OptimizerConfig):
+    r"""
+    Create optimizer for the model
+
+    Args:
+        params: PyTorch model parameters
+
+    Returns: PyTorch optimizer
+
+    """
+
     params = filter(lambda p: p.requires_grad, params)
     # Try to load customized optimizer
     for func in register.optimizer_dict.values():
@@ -50,6 +60,16 @@ class SchedulerConfig:
 
 
 def create_scheduler(optimizer, scheduler_config: SchedulerConfig):
+    r"""
+    Create learning rate scheduler for the optimizer
+
+    Args:
+        optimizer: PyTorch optimizer
+
+    Returns: PyTorch scheduler
+
+    """
+
     # Try to load customized scheduler
     for func in register.scheduler_dict.values():
         scheduler = func(optimizer, scheduler_config)

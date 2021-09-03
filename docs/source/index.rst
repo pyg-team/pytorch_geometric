@@ -18,6 +18,7 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    notes/create_gnn
    notes/create_dataset
    notes/heterogeneous
+   notes/graphgym
    notes/load_csv
    notes/batching
    notes/sparse_tensor
@@ -38,6 +39,7 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    modules/datasets
    modules/transforms
    modules/utils
+   modules/graphgym
    modules/io
    modules/profile
 

@@ -68,7 +68,7 @@ def train_example(loggers, loaders, model, optimizer, scheduler):
     if cfg.train.ckpt_clean:
         clean_ckpt()
 
-    logging.info('Task done, results saved in {}'.format(cfg.out_dir))
+    logging.info('Task done, results saved in {}'.format(cfg.run_dir))
 
 
 register_train('example', train_example)

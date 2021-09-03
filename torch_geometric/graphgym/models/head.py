@@ -13,7 +13,13 @@ import torch_geometric.graphgym.register as register
 
 
 class GNNNodeHead(nn.Module):
-    '''Head of GNN, node prediction'''
+    """
+    GNN prediction head for node prediction tasks.
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+    """
     def __init__(self, dim_in, dim_out):
         super(GNNNodeHead, self).__init__()
         self.layer_post_mp = MLP(dim_in, dim_out,
@@ -31,20 +37,16 @@ class GNNNodeHead(nn.Module):
 
 
 class GNNEdgeHead(nn.Module):
-    '''Head of GNN, edge prediction'''
-    def __init__(self, dim_in, dim_out):
-        ''' Head of Edge and link prediction models.
+    """
+    GNN prediction head for edge/link prediction tasks.
 
-        Args:
-            dim_out: output dimension. For binary prediction, dim_out=1.
-        '''
-        # Use dim_in for graph conv, since link prediction dim_out could be
-        # binary
-        # E.g. if decoder='dot', link probability is dot product between
-        # node embeddings, of dimension dim_in
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+    """
+    def __init__(self, dim_in, dim_out):
         super(GNNEdgeHead, self).__init__()
         # module to decode edges from node embeddings
-
         if cfg.model.edge_decoding == 'concat':
             self.layer_post_mp = MLP(dim_in * 2, dim_out,
                                      num_layers=cfg.gnn.layers_post_mp,
@@ -85,14 +87,17 @@ class GNNEdgeHead(nn.Module):
 
 
 class GNNGraphHead(nn.Module):
-    '''Head of GNN, graph prediction
-
+    """
+    GNN prediction head for graph prediction tasks.
     The optional post_mp layer (specified by cfg.gnn.post_mp) is used
     to transform the pooled embedding using an MLP.
-    '''
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+    """
     def __init__(self, dim_in, dim_out):
         super(GNNGraphHead, self).__init__()
-        # todo: PostMP before or after global pooling
         self.layer_post_mp = MLP(dim_in, dim_out,
                                  num_layers=cfg.gnn.layers_post_mp, bias=True)
         self.pooling_fun = pooling_dict[cfg.model.graph_pooling]

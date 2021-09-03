@@ -24,3 +24,5 @@ External Resources
 * Antonio Longa, Gabriele Santin and Giovanni Pellegrini: **PyTorch Geometric Tutorial** [`Website <https://antoniolonga.github.io/Pytorch_geometric_tutorials>`__, `GitHub <https://github.com/AntonioLonga/PytorchGeometricTutorial>`__]
 
 * Amitoz Azad: **Primal-Dual Algorithm for Total Variation Processing on Graphs** [`Jupyter <https://nbviewer.jupyter.org/github/aGIToz/Graph_Signal_Processing/tree/main>`__]
+
+* Jiaxuan You *et al.*: **GraphGym: Design Space for Graph Neural Networks** - [`Paper <https://arxiv.org/abs/2011.08843>`__, `Website <http://snap.stanford.edu/gnn-design/>`__, `GitHub <https://github.com/snap-stanford/graphgym>`__]

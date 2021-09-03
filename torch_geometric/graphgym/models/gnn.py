@@ -16,16 +16,40 @@ import torch_geometric.graphgym.register as register
 
 
 def GNNLayer(dim_in, dim_out, has_act=True):
+    """
+    Wrapper for a GNN layer
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        has_act (bool): Whether has activation function after the layer
+
+    """
     return GeneralLayer(cfg.gnn.layer_type, dim_in, dim_out, has_act)
 
 
 def GNNPreMP(dim_in, dim_out):
+    """
+    Wrapper for NN layer before GNN message passing
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+
+    """
     return GeneralMultiLayer('linear', cfg.gnn.layers_pre_mp, dim_in, dim_out,
                              dim_inner=dim_out, final_act=True)
 
 
 class GNNStackStage(nn.Module):
-    '''Simple Stage that stack GNN layers'''
+    """
+    Simple Stage that stack GNN layers
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        num_layers (int): Number of GNN layers
+    """
     def __init__(self, dim_in, dim_out, num_layers):
         super(GNNStackStage, self).__init__()
         self.num_layers = num_layers
@@ -38,6 +62,7 @@ class GNNStackStage(nn.Module):
             self.add_module('layer{}'.format(i), layer)
 
     def forward(self, batch):
+        """"""
         for i, layer in enumerate(self.children()):
             x = batch.x
             batch = layer(batch)
@@ -61,7 +86,12 @@ stage_dict = {**register.stage_dict, **stage_dict}
 
 
 class FeatureEncoder(nn.Module):
-    '''Encoding node/edge features'''
+    """
+    Encoding node and edge features
+
+    Args:
+        dim_in (int): Input feature dimension
+    """
     def __init__(self, dim_in):
         super(FeatureEncoder, self).__init__()
         self.dim_in = dim_in
@@ -81,13 +111,21 @@ class FeatureEncoder(nn.Module):
                 self.edge_encoder_bn = BatchNorm1dEdge(cfg.gnn.dim_inner)
 
     def forward(self, batch):
+        """"""
         for module in self.children():
             batch = module(batch)
         return batch
 
 
 class GNN(nn.Module):
-    '''General GNN model: encoder + stage + head'''
+    """
+    General GNN model: encoder + stage + head
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        **kwargs (optional): Optional additional args
+    """
     def __init__(self, dim_in, dim_out, **kwargs):
         super(GNN, self).__init__()
         GNNStage = stage_dict[cfg.gnn.stage_type]
@@ -107,6 +145,7 @@ class GNN(nn.Module):
         self.apply(init_weights)
 
     def forward(self, batch):
+        """"""
         for module in self.children():
             batch = module(batch)
         return batch
