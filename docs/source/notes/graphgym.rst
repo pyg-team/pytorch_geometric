@@ -77,7 +77,7 @@ when everything else is fixed (including the computational cost).
 Moreover, GraphGym can help you easily do hyper-parameter search, and *visualize* what design choices are better.
 In sum, GraphGym can greatly facilitate your GNN research.
 
-.. figure:: ../_figures/graphgym_evalutaion.png
+.. figure:: ../_figures/graphgym_evaluation.png
   :align: center
   :width: 700px
 
@@ -237,11 +237,8 @@ Eventually, every GraphGym-powered project will be unique :)
 
 There are two ways for customizing GraphGym:
 
-- Use :obj:`graphgym/custom_graphgym` directory which is outside the PyG package.
-You may register your customized modules here, without touching PyG package.
-This use case will be great for your own customized project.
-- Use :obj:`torch_geometric/graphgym/contrib`. If you have come up with a nice customized module, you can directly copy your file into :obj:`torch_geometric/graphgym/contrib`, and **create a pull request** to PyG.
-This way, your idea can ship with PyG installations, and will have a much higher visibility and impact.
+- Use :obj:`graphgym/custom_graphgym` directory which is outside the PyG package. You may register your customized modules here, without touching PyG package. This use case will be great for your own customized project.
+- Use :obj:`torch_geometric/graphgym/contrib`. If you have come up with a nice customized module, you can directly copy your file into :obj:`torch_geometric/graphgym/contrib`, and **create a pull request** to PyG. This way, your idea can ship with PyG installations, and will have a much higher visibility and impact.
 
 Concretely, the supported customized modules includes
 
