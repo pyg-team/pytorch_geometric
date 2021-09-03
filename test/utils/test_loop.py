@@ -46,9 +46,21 @@ def test_add_self_loops():
     assert add_self_loops(edge_index)[0].tolist() == expected
 
     edge_weight = torch.tensor([0.5, 0.5, 0.5])
-    edge_index, edge_weight = add_self_loops(edge_index, edge_weight)
-    assert edge_index.tolist() == expected
+    out, edge_weight = add_self_loops(edge_index, edge_weight)
+    assert out.tolist() == expected
     assert edge_weight.tolist() == [0.5, 0.5, 0.5, 1, 1]
+
+    edge_weight = torch.tensor([0.5, 0.5, 0.5])
+    out, edge_weight = add_self_loops(edge_index, edge_weight,
+                                      fill_or_reduce='add')
+    assert out.tolist() == expected
+    assert edge_weight.tolist() == [0.5, 0.5, 0.5, 1, 0.5]
+
+    edge_attr = torch.eye(3).float()
+    out, edge_attr = add_self_loops(edge_index, edge_attr,
+                                    fill_or_reduce='sum')
+    assert out.tolist() == expected
+    assert edge_attr[3:, :].tolist() == [[1, 0, 1], [0, 1, 0]]
 
 
 def test_add_remaining_self_loops():

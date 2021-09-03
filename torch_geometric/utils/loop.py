@@ -97,14 +97,13 @@ def add_self_loops(edge_index, edge_attr: Optional[torch.Tensor] = None,
 
     if edge_attr is not None:
         assert edge_attr.size(0) == E
-        edge_attr = edge_attr.view(E, -1)
         if fill_or_reduce != 'fill':
             loop_attr = scatter(edge_attr, edge_index[0], dim=0, dim_size=N,
                                 reduce=fill_or_reduce)
         else:
+            num_features = edge_attr.numel() // E
             loop_attr = edge_attr.new_full(
-                (N, edge_attr.size(1)), fill_value)
-        loop_attr = loop_attr.squeeze()
+                (N, num_features), fill_value).squeeze()
         edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
