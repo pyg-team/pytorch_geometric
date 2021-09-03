@@ -24,7 +24,7 @@ tests_require = ['pytest', 'pytest-runner', 'pytest-cov', 'mock']
 setup(
     name='torch_geometric',
     version=__version__,
-    description='Geometric Deep Learning Extension Library for PyTorch',
+    description='Graph Neural Network Library for PyTorch',
     author='Matthias Fey',
     author_email='matthias.fey@tu-dortmund.de',
     url=url,
