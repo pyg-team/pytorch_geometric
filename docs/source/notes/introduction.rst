@@ -1,7 +1,7 @@
 Introduction by Example
 =======================
 
-We shortly introduce the fundamental concepts of PyTorch Geometric (PyG) through self-contained examples.
+We shortly introduce the fundamental concepts of PyG through self-contained examples.
 At its core, PyG provides the following main features:
 
 .. contents::
