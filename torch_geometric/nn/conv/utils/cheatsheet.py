@@ -46,7 +46,8 @@ def supports_static_graphs(cls: str) -> bool:
 
 def supports_lazy_initialization(cls: str) -> bool:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
-    match = re.search('in_channels.*-1', inspect.getdoc(cls))
+    doc = re.sub(' +', ' ', inspect.getdoc(cls).replace('\n', ' '))
+    match = re.search('or :obj:`-1` to derive the size from the first', doc)
     return match is not None
 
 

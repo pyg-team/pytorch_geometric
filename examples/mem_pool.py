@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear, LeakyReLU, BatchNorm1d
 
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import TUDataset
 from torch_geometric.nn import GATConv, MemPooling, DeepGCNLayer
 

@@ -188,9 +188,8 @@ class Dataset(torch.utils.data.Dataset):
         at index :obj:`idx` (and transforms it in case :obj:`transform` is
         present).
         In case :obj:`idx` is a slicing object, *e.g.*, :obj:`[2:5]`, a list, a
-        tuple, a PyTorch :obj:`LongTensor` or a :obj:`BoolTensor`, or a numpy
-        :obj:`np.array`, will return a subset of the dataset at the specified
-        indices."""
+        tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type long or
+        bool, will return a subset of the dataset at the specified indices."""
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
@@ -204,9 +203,9 @@ class Dataset(torch.utils.data.Dataset):
 
     def index_select(self, idx: IndexType) -> 'Dataset':
         r"""Creates a subset of the dataset from specified indices :obj:`idx`.
-        Indices can be slices, lists, tuples, and a :obj:`torch.Tensor` or
-        :obj:`np.ndarray` of type long or bool.
-        """
+        Indices :obj:`idx` can be a slicing object, *e.g.*, :obj:`[2:5]`, a
+        list, a tuple, or a :obj:`torch.Tensor` or :obj:`np.ndarray` of type
+        long or bool."""
         indices = self.indices()
 
         if isinstance(idx, slice):

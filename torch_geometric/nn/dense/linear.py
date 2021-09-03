@@ -28,7 +28,8 @@ class Linear(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         weight_initializer (str, optional): The initializer for the weight
-            matrix (:obj:`"glorot"`, :obj:`"kaiming_uniform"` or :obj:`None`).
+            matrix (:obj:`"glorot"`, :obj:`"uniform"`, :obj:`"kaiming_uniform"`
+            or :obj:`None`).
             If set to :obj:`None`, will match default weight initialization of
             :class:`torch.nn.Linear`. (default: :obj:`None`)
         bias_initializer (str, optional): The initializer for the bias
@@ -73,8 +74,13 @@ class Linear(torch.nn.Module):
         if self.in_channels > 0:
             if self.weight_initializer == 'glorot':
                 inits.glorot(self.weight)
-            elif (self.weight_initializer == 'kaiming_uniform'
-                  or self.weight_initializer is None):
+            elif self.weight_initializer == 'uniform':
+                bound = 1.0 / math.sqrt(self.weight.size(-1))
+                torch.nn.init.uniform_(self.weight.data, -bound, bound)
+            elif self.weight_initializer == 'kaiming_uniform':
+                inits.kaiming_uniform(self.weight, fan=self.in_channels,
+                                      a=math.sqrt(5))
+            elif self.weight_initializer is None:
                 inits.kaiming_uniform(self.weight, fan=self.in_channels,
                                       a=math.sqrt(5))
             else:

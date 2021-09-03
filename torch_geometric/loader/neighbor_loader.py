@@ -59,7 +59,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
     **homogeneous** graphs stored via :class:`~torch_geometric.data.Data` as
     well as **heterogeneous** graphs stored via
     :class:`~torch_geometric.data.HeteroData`.
-    When operating in heterogeneous graphs, more fine-grained control of
+    When operating in heterogeneous graphs, more fine-grained control over
     the amount of sampled neighbors of individual edge types is possible, but
     not necessary:
 

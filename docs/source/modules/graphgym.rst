@@ -4,8 +4,7 @@ torch_geometric.graphgym
 .. contents:: Contents
     :local:
 
-
-GraphGym workflow modules
+GraphGym Workflow Modules
 -------------------------
 
 .. currentmodule:: torch_geometric.graphgym
@@ -15,13 +14,11 @@ GraphGym workflow modules
      {{ cls }}
     {% endfor %}
 
-
 .. automodule:: torch_geometric.graphgym
     :members:
     :exclude-members:
 
-
-GraphGym model modules
+GraphGym Model Modules
 ----------------------
 
 .. currentmodule:: torch_geometric.graphgym.models
@@ -35,9 +32,7 @@ GraphGym model modules
     :members:
     :exclude-members: forward
 
-
-
-GraphGym register modules
+GraphGym Register Modules
 -------------------------
 
 .. currentmodule:: torch_geometric.graphgym
@@ -51,9 +46,8 @@ GraphGym register modules
 .. autofunction:: {{ cls }}
    {% endfor %}
 
-
-GraphGym utils modules
--------------------------
+GraphGym Utils Modules
+----------------------
 
 .. currentmodule:: torch_geometric.graphgym.utils
 .. autosummary::

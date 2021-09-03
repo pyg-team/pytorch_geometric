@@ -4,9 +4,10 @@ from torch_geometric.typing import (Adj, Size, OptTensor, PairTensor)
 import torch
 from torch import Tensor
 import torch.nn.functional as F
-from torch.nn import Parameter, Linear
+from torch.nn import Parameter
 from torch_sparse import SparseTensor, set_diag
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
 
 from torch_geometric.nn.inits import glorot, zeros
@@ -38,7 +39,8 @@ class GATv2Conv(MessagePassing):
         \right)\right)}.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -62,12 +64,10 @@ class GATv2Conv(MessagePassing):
     """
     _alpha: OptTensor
 
-    def __init__(self, in_channels: int,
-                 out_channels: int, heads: int = 1, concat: bool = True,
-                 negative_slope: float = 0.2, dropout: float = 0.,
-                 add_self_loops: bool = True, bias: bool = True,
-                 share_weights: bool = False,
-                 **kwargs):
+    def __init__(self, in_channels: int, out_channels: int, heads: int = 1,
+                 concat: bool = True, negative_slope: float = 0.2,
+                 dropout: float = 0., add_self_loops: bool = True,
+                 bias: bool = True, share_weights: bool = False, **kwargs):
         super(GATv2Conv, self).__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
@@ -79,11 +79,13 @@ class GATv2Conv(MessagePassing):
         self.add_self_loops = add_self_loops
         self.share_weights = share_weights
 
-        self.lin_l = Linear(in_channels, heads * out_channels, bias=bias)
+        self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
+                            weight_initializer='glorot')
         if share_weights:
             self.lin_r = self.lin_l
         else:
-            self.lin_r = Linear(in_channels, heads * out_channels, bias=bias)
+            self.lin_r = Linear(in_channels, heads * out_channels, bias=bias,
+                                weight_initializer='glorot')
 
         self.att = Parameter(torch.Tensor(1, heads, out_channels))
 
@@ -99,8 +101,8 @@ class GATv2Conv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.lin_l.weight)
-        glorot(self.lin_r.weight)
+        self.lin_l.reset_parameters()
+        self.lin_r.reset_parameters()
         glorot(self.att)
         zeros(self.bias)
 
@@ -173,8 +175,7 @@ class GATv2Conv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, x_i: Tensor,
-                index: Tensor, ptr: OptTensor,
+    def message(self, x_j: Tensor, x_i: Tensor, index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
         x = x_i + x_j
         x = F.leaky_relu(x, self.negative_slope)

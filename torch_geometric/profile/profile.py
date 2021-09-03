@@ -2,7 +2,6 @@ from typing import Any, Tuple, List, NamedTuple
 
 import torch
 
-from torch_geometric.profile.profiler import Profiler, layer_trace
 from torch_geometric.profile.utils import (get_gpu_memory_from_nvidia_smi,
                                            byte_to_megabyte)
 
@@ -26,7 +25,7 @@ class StatsSummary(NamedTuple):
     max_nvidia_smi_used_cuda: float
 
 
-def profileit(print_layer_stats: bool = False):
+def profileit():
     r"""A decorator to facilitate profiling a function, *e.g.*, obtaining
     training runtime and memory statistics a specific model on a specific
     dataset.
@@ -34,13 +33,9 @@ def profileit(print_layer_stats: bool = False):
     :obj:`max_active_cuda`, :obj:`max_reserved_cuda`, :obj:`max_active_cuda`,
     :obj:`nvidia_smi_free_cuda`, :obj:`nvidia_smi_used_cuda`.
 
-    Args:
-        print_layer_stats (bool, optional): If set to :obj:`True`, will print
-            additional layer statistics. (default: :obj:`False`)
-
     .. code-block:: python
 
-        @profileit(print_layer_stats=False)
+        @profileit()
         def train(model, optimizer, x, edge_index, y):
             optimizer.zero_grad()
             out = model(x, edge_index)
@@ -65,39 +60,15 @@ def profileit(print_layer_stats: bool = False):
             line_profiler.enable()
             line_profiler.add_function(args[0].forward)
 
-            if not print_layer_stats:
-                start = torch.cuda.Event(enable_timing=True)
-                end = torch.cuda.Event(enable_timing=True)
-                start.record()
+            start = torch.cuda.Event(enable_timing=True)
+            end = torch.cuda.Event(enable_timing=True)
+            start.record()
 
-                out = func(*args, **kwargs)
+            out = func(*args, **kwargs)
 
-                end.record()
-                torch.cuda.synchronize()
-                time = start.elapsed_time(end) / 1000
-
-            else:
-                with Profiler(model, use_cuda=True,
-                              profile_memory=True) as prof:
-                    start = torch.cuda.Event(enable_timing=True)
-                    end = torch.cuda.Event(enable_timing=True)
-                    start.record()
-
-                    out = func(*args, **kwargs)
-
-                    end.record()
-                    torch.cuda.synchronize()
-                    time = start.elapsed_time(end) / 1000
-
-                    full_table, heading, raw_info, layer_names, layer_stats = \
-                        layer_trace(prof.traces,
-                                    prof.trace_profile_events,
-                                    show_events=True,
-                                    paths=prof.paths,
-                                    use_cuda=True,
-                                    profile_memory=True, )
-
-                    print(full_table)
+            end.record()
+            torch.cuda.synchronize()
+            time = start.elapsed_time(end) / 1000
 
             # Get the global memory statistics collected by `pytorch_memlab`:
             memlab = read_from_memlab(line_profiler)
@@ -107,8 +78,10 @@ def profileit(print_layer_stats: bool = False):
             # Get additional information from `nvidia-smi`:
             free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi()
 
-            return out, Stats(time, max_allocated_cuda, max_reserved_cuda,
-                              max_active_cuda, free_cuda, used_cuda)
+            stats = Stats(time, max_allocated_cuda, max_reserved_cuda,
+                          max_active_cuda, free_cuda, used_cuda)
+
+            return out, stats
 
         return wrapper
 

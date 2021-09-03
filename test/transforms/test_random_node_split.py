@@ -2,19 +2,19 @@ import pytest
 
 import torch
 from torch_geometric.data import Data
-from torch_geometric.transforms import AddTrainValTestMask
+from torch_geometric.transforms import RandomNodeSplit
 
 
 @pytest.mark.parametrize('num_splits', [1, 2])
-def test_add_train_val_test_mask(num_splits):
+def test_random_node_split(num_splits):
     num_nodes, num_classes = 1000, 4
     x = torch.randn(num_nodes, 16)
     y = torch.randint(num_classes, (num_nodes, ), dtype=torch.long)
     data = Data(x=x, y=y)
 
-    transform = AddTrainValTestMask(split='train_rest', num_splits=num_splits,
-                                    num_val=100, num_test=200)
-    assert transform.__repr__() == 'AddTrainValTestMask(split=train_rest)'
+    transform = RandomNodeSplit(split='train_rest', num_splits=num_splits,
+                                num_val=100, num_test=200)
+    assert str(transform) == 'RandomNodeSplit(split=train_rest)'
     data = transform(data)
     assert len(data) == 5
 
@@ -36,8 +36,8 @@ def test_add_train_val_test_mask(num_splits):
         assert ((train_mask[:, i] | val_mask[:, i]
                  | test_mask[:, i]).sum() == num_nodes)
 
-    transform = AddTrainValTestMask(split='train_rest', num_splits=num_splits,
-                                    num_val=0.1, num_test=0.2)
+    transform = RandomNodeSplit(split='train_rest', num_splits=num_splits,
+                                num_val=0.1, num_test=0.2)
     data = transform(data)
 
     train_mask = data.train_mask
@@ -55,9 +55,9 @@ def test_add_train_val_test_mask(num_splits):
         assert ((train_mask[:, i] | val_mask[:, i]
                  | test_mask[:, i]).sum() == num_nodes)
 
-    transform = AddTrainValTestMask(split='test_rest', num_splits=num_splits,
-                                    num_train_per_class=10, num_val=100)
-    assert transform.__repr__() == 'AddTrainValTestMask(split=test_rest)'
+    transform = RandomNodeSplit(split='test_rest', num_splits=num_splits,
+                                num_train_per_class=10, num_val=100)
+    assert str(transform) == 'RandomNodeSplit(split=test_rest)'
     data = transform(data)
     assert len(data) == 5
 
@@ -76,8 +76,8 @@ def test_add_train_val_test_mask(num_splits):
         assert ((train_mask[:, i] | val_mask[:, i]
                  | test_mask[:, i]).sum() == num_nodes)
 
-    transform = AddTrainValTestMask(split='test_rest', num_splits=num_splits,
-                                    num_train_per_class=10, num_val=0.1)
+    transform = RandomNodeSplit(split='test_rest', num_splits=num_splits,
+                                num_train_per_class=10, num_val=0.1)
     data = transform(data)
 
     train_mask = data.train_mask
@@ -95,10 +95,10 @@ def test_add_train_val_test_mask(num_splits):
         assert ((train_mask[:, i] | val_mask[:, i]
                  | test_mask[:, i]).sum() == num_nodes)
 
-    transform = AddTrainValTestMask(split='random', num_splits=num_splits,
-                                    num_train_per_class=10, num_val=100,
-                                    num_test=200)
-    assert transform.__repr__() == 'AddTrainValTestMask(split=random)'
+    transform = RandomNodeSplit(split='random', num_splits=num_splits,
+                                num_train_per_class=10, num_val=100,
+                                num_test=200)
+    assert str(transform) == 'RandomNodeSplit(split=random)'
     data = transform(data)
     assert len(data) == 5
 
@@ -117,10 +117,10 @@ def test_add_train_val_test_mask(num_splits):
         assert ((train_mask[:, i] | val_mask[:, i]
                  | test_mask[:, i]).sum() == 10 * num_classes + 100 + 200)
 
-    transform = AddTrainValTestMask(split='random', num_splits=num_splits,
-                                    num_train_per_class=10, num_val=0.1,
-                                    num_test=0.2)
-    assert transform.__repr__() == 'AddTrainValTestMask(split=random)'
+    transform = RandomNodeSplit(split='random', num_splits=num_splits,
+                                num_train_per_class=10, num_val=0.1,
+                                num_test=0.2)
+    assert str(transform) == 'RandomNodeSplit(split=random)'
     data = transform(data)
 
     train_mask = data.train_mask

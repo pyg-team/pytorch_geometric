@@ -2,8 +2,8 @@ from typing import Union, Tuple
 from torch_geometric.typing import OptTensor, OptPairTensor, Adj, Size
 
 from torch import Tensor
-from torch.nn import Linear
 from torch_sparse import SparseTensor, matmul
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv import MessagePassing
 
 
@@ -21,8 +21,10 @@ class GraphConv(MessagePassing):
     target node :obj:`i` (default: :obj:`1`)
 
     Args:
-        in_channels (int or tuple): Size of each input sample. A tuple
-            corresponds to the sizes of source and target dimensionalities.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         aggr (string, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
@@ -32,9 +34,14 @@ class GraphConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels: Union[int, Tuple[int,
-                                                     int]], out_channels: int,
-                 aggr: str = 'add', bias: bool = True, **kwargs):
+    def __init__(
+        self,
+        in_channels: Union[int, Tuple[int, int]],
+        out_channels: int,
+        aggr: str = 'add',
+        bias: bool = True,
+        **kwargs,
+    ):
         super(GraphConv, self).__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels

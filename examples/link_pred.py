@@ -8,20 +8,24 @@ from torch_geometric.nn import GCNConv
 from torch_geometric.datasets import Planetoid
 from torch_geometric.utils import negative_sampling
 
-dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 transform = T.Compose([
     T.NormalizeFeatures(),
+    T.ToDevice(device),
     T.RandomLinkSplit(num_val=0.05, num_test=0.1, is_undirected=True,
-                      add_negative_train_samples=False)
+                      add_negative_train_samples=False),
 ])
-dataset = Planetoid(path, dataset, transform=transform)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+dataset = Planetoid(path, name='Cora', transform=transform)
+# After applying the `RandomLinkSplit` transform, the data is transformed from
+# a data object to a list of tuples (train_data, val_data, test_data), with
+# each element representing the corresponding split.
 train_data, val_data, test_data = dataset[0]
 
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels)
         self.conv2 = GCNConv(hidden_channels, out_channels)
 
@@ -37,11 +41,7 @@ class Net(torch.nn.Module):
         return (prob_adj > 0).nonzero(as_tuple=False).t()
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net(dataset.num_features, 128, 64).to(device)
-train_data = train_data.to(device)
-val_data = val_data.to(device)
-test_data = test_data.to(device)
 optimizer = torch.optim.Adam(params=model.parameters(), lr=0.01)
 criterion = torch.nn.BCEWithLogitsLoss()
 

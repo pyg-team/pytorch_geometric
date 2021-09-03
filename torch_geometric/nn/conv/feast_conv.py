@@ -6,10 +6,10 @@ from torch import Tensor
 from torch.nn import Parameter
 import torch.nn.functional as F
 from torch_sparse import SparseTensor, set_diag
+from torch_geometric.nn.inits import normal
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.utils import remove_self_loops, add_self_loops
-
-from ..inits import normal
 
 
 class FeaStConv(MessagePassing):
@@ -28,7 +28,8 @@ class FeaStConv(MessagePassing):
     :math:`\mathbf{u}_h` and :math:`c_h` are trainable parameters.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of attention heads :math:`H`.
             (default: :obj:`1`)
@@ -49,9 +50,10 @@ class FeaStConv(MessagePassing):
         self.heads = heads
         self.add_self_loops = add_self_loops
 
-        self.weight = Parameter(torch.Tensor(in_channels,
-                                             heads * out_channels))
-        self.u = Parameter(torch.Tensor(in_channels, heads))
+        self.lin = Linear(in_channels, heads * out_channels, bias=False,
+                          weight_initializer='uniform')
+        self.u = Linear(in_channels, heads, bias=False,
+                        weight_initializer='uniform')
         self.c = Parameter(torch.Tensor(heads))
 
         if bias:
@@ -62,8 +64,8 @@ class FeaStConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        normal(self.weight, mean=0, std=0.1)
-        normal(self.u, mean=0, std=0.1)
+        self.lin.reset_parameters()
+        self.u.reset_parameters()
         normal(self.c, mean=0, std=0.1)
         normal(self.bias, mean=0, std=0.1)
 
@@ -89,9 +91,9 @@ class FeaStConv(MessagePassing):
         return out
 
     def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
-        q = torch.mm((x_j - x_i), self.u) + self.c  # Translation invariance.
+        q = self.u(x_j - x_i) + self.c  # Translation invariance.
         q = F.softmax(q, dim=1)
-        x_j = torch.mm(x_j, self.weight).view(x_j.size(0), self.heads, -1)
+        x_j = self.lin(x_j).view(x_j.size(0), self.heads, -1)
         return (x_j * q.view(-1, self.heads, 1)).sum(dim=1)
 
     def __repr__(self):
