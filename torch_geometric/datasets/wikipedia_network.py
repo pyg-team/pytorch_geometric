@@ -5,7 +5,7 @@ import os.path as osp
 import torch
 import numpy as np
 
-from torch_geometric.utils import to_undirected
+from torch_sparse import coalesce
 from torch_geometric.data import InMemoryDataset, download_url, Data
 
 
@@ -105,7 +105,7 @@ class WikipediaNetwork(InMemoryDataset):
                 data = f.read().split('\n')[1:-1]
                 data = [[int(v) for v in r.split('\t')] for r in data]
             edge_index = torch.tensor(data, dtype=torch.long).t().contiguous()
-            edge_index = to_undirected(edge_index, num_nodes=x.size(0))
+            edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
 
             train_masks, val_masks, test_masks = [], [], []
             for filepath in self.raw_paths[2:]:
@@ -125,7 +125,7 @@ class WikipediaNetwork(InMemoryDataset):
             x = torch.from_numpy(data['features']).to(torch.float)
             edge_index = torch.from_numpy(data['edges']).to(torch.long)
             edge_index = edge_index.t().contiguous()
-            edge_index = to_undirected(edge_index, num_nodes=x.size(0))
+            edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
             y = torch.from_numpy(data['target']).to(torch.float)
 
             data = Data(x=x, edge_index=edge_index, y=y)
