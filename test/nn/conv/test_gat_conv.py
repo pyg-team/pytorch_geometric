@@ -18,12 +18,12 @@ def test_gat_conv():
     assert conv(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor, Size, NoneType) -> Tensor'
+    t = '(Tensor, Tensor, Size, NoneType, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit(x1, edge_index).tolist() == out.tolist()
     assert jit(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
 
-    t = '(Tensor, SparseTensor, Size, NoneType) -> Tensor'
+    t = '(Tensor, SparseTensor, Size, NoneType, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
 
@@ -40,7 +40,7 @@ def test_gat_conv():
     assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
     assert conv._alpha is None
 
-    t = '(Tensor, Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]'
+    t = '(Tensor, Tensor, Size, NoneType, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]'
     jit = torch.jit.script(conv.jittable(t))
     result = jit(x1, edge_index, return_attention_weights=True)
     assert result[0].tolist() == out.tolist()
@@ -49,7 +49,7 @@ def test_gat_conv():
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
     assert conv._alpha is None
 
-    t = '(Tensor, SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]'
+    t = '(Tensor, SparseTensor, Size, NoneType, bool) -> Tuple[Tensor, SparseTensor]'
     jit = torch.jit.script(conv.jittable(t))
     result = jit(x1, adj.t(), return_attention_weights=True)
     assert torch.allclose(result[0], out, atol=1e-6)
@@ -68,13 +68,13 @@ def test_gat_conv():
     assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-6)
     assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e-6)
 
-    t = '(OptPairTensor, Tensor, Size, NoneType) -> Tensor'
+    t = '(OptPairTensor, Tensor, Size, NoneType, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert jit((x1, x2), edge_index).tolist() == out1.tolist()
     assert jit((x1, x2), edge_index, size=(4, 2)).tolist() == out1.tolist()
     assert jit((x1, None), edge_index, size=(4, 2)).tolist() == out2.tolist()
 
-    t = '(OptPairTensor, SparseTensor, Size, NoneType) -> Tensor'
+    t = '(OptPairTensor, SparseTensor, Size, NoneType, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
     assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)

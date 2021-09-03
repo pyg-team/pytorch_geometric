@@ -63,7 +63,9 @@ class GATConv(MessagePassing):
     def __init__(self, in_channels: Union[int, Tuple[int, int]],
                  out_channels: int, heads: int = 1, concat: bool = True,
                  negative_slope: float = 0.2, dropout: float = 0.0,
-                 add_self_loops: bool = True, bias: bool = True, **kwargs):
+                 add_self_loops: bool = True, bias: bool = True,
+                 edge_dim: int = None, edge_attr_for_self_loops: str = 'mean',
+                 edge_attr_fill_value: float = 1., **kwargs):
         kwargs.setdefault('aggr', 'add')
         super(GATConv, self).__init__(node_dim=0, **kwargs)
 
@@ -74,6 +76,9 @@ class GATConv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
         self.add_self_loops = add_self_loops
+        self.edge_dim = edge_dim
+        self.edge_attr_for_self_loops = edge_attr_for_self_loops
+        self.edge_attr_fill_value = edge_attr_fill_value
 
         # In case we are operating in bipartite graphs, we apply separate
         # transformations 'lin_src' and 'lin_dst' to source and target nodes:
@@ -89,6 +94,14 @@ class GATConv(MessagePassing):
         # The learnable parameters to compute attention coefficients:
         self.att_src = Parameter(torch.Tensor(1, heads, out_channels))
         self.att_dst = Parameter(torch.Tensor(1, heads, out_channels))
+
+        if self.edge_dim is not None:
+            self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
+                                   weight_initializer='glorot')
+            self.att_edge = Parameter(torch.Tensor(1, heads, out_channels))
+        else:
+            self.lin_edge = None
+            self.register_parameter('att_edge', None)
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -110,13 +123,17 @@ class GATConv(MessagePassing):
         glorot(self.att_src)
         glorot(self.att_dst)
         zeros(self.bias)
+        if self.edge_dim is not None:
+            self.lin_edge.reset_parameters()
+            glorot(self.att_edge)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
-                size: Size = None, return_attention_weights=None):
-        # type: (Union[Tensor, OptPairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, OptPairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+                size: Size = None, edge_attr: OptTensor = None,
+                return_attention_weights=None):
+        # type: (Union[Tensor, OptPairTensor], Tensor, Size, OptTensor, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, OptTensor, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, OptPairTensor], Tensor, Size, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, OptPairTensor], SparseTensor, Size, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
@@ -154,13 +171,29 @@ class GATConv(MessagePassing):
                 if x_dst is not None:
                     num_nodes = min(num_nodes, x_dst.size(0))
                 num_nodes = min(size) if size is not None else num_nodes
-                edge_index, _ = remove_self_loops(edge_index)
-                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+                edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
+                edge_index, edge_attr = add_self_loops(
+                    edge_index, edge_attr=edge_attr,
+                    fill_or_reduce=self.edge_attr_for_self_loops,
+                    fill_value=self.edge_attr_fill_value,
+                    num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
+                assert edge_attr is None, \
+                    "Using `edge_attr` not supported for SparseTensor `edge_index`."
                 edge_index = set_diag(edge_index)
 
-        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor)
-        out = self.propagate(edge_index, x=x, alpha=alpha, size=size)
+        # If edge features are given, compute attention coefficients using them.
+        if edge_attr is not None:
+            assert self.lin_edge is not None
+            edge_attr = edge_attr.view(edge_index.size(1), -1)
+            edge_attr = self.lin_edge(edge_attr).view(-1, H, C)
+            alpha_edge = (edge_attr * self.att_edge).sum(dim=-1)
+        else:
+            alpha_edge = None
+
+        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor, alpha_edge: OptTensor)
+        out = self.propagate(edge_index, x=x, alpha=alpha,
+                             alpha_edge=alpha_edge, size=size)
 
         alpha = self._alpha
         assert alpha is not None
@@ -183,11 +216,13 @@ class GATConv(MessagePassing):
             return out
 
     def message(self, x_j: Tensor, alpha_j: Tensor, alpha_i: OptTensor,
-                index: Tensor, ptr: OptTensor,
+                alpha_edge: OptTensor, index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
-        # Given egel-level attention coefficients for source and target nodes,
-        # we simply need to sum them up to "emulate" concatenation:
+        # Given edge-level attention coefficients for source and target nodes
+        # (and edges if given), we simply need to sum them up to "emulate"
+        # concatenation:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
+        alpha = alpha if alpha_edge is None else alpha + alpha_edge
 
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
