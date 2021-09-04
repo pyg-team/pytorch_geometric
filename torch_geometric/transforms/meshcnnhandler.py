@@ -7,8 +7,8 @@ from ..nn.mesh.mesh_union import MeshUnion
 import torch_geometric.data
 
 
-class MeshData(torch_geometric.data.Data):
-    r"""MeshData class which holds a mesh data for implementing `"MeshCNN: A
+class MeshCNNData(torch_geometric.data.Data):
+    r"""MeshCNNData class which holds a mesh data for implementing `"MeshCNN: A
     Network with an Edge" <https://arxiv.org/abs/1809.05910>`_ paper
     This class is a torch geometric Data extension.
 
@@ -52,7 +52,7 @@ class MeshData(torch_geometric.data.Data):
         """
 
     def __init__(self):
-        super(MeshData, self).__init__()
+        super(MeshCNNData, self).__init__()
         self.filename = 'unknown'
         self.pos = None
         self.edges = None
@@ -67,14 +67,14 @@ class MeshData(torch_geometric.data.Data):
         self.label = None
 
 
-class Mesh:
+class MeshCNNHandler:
     r"""The Mesh class structure from the `"MeshCNN: A Network with an Edge"
     <https://arxiv.org/abs/1809.05910>`_ paper
-    This class implements holds MeshData structure along with operations on the
-    Mesh structure.
+    This class implements holds MeshCNNData structure along with operations on
+    the Mesh structure.
 
     Args:
-        mesh_data (MeshData): MeshData structure with input data.
+        mesh_data (MeshCNNData): MeshCNNData structure with input data.
         hold_history (bool): if True - mesh class will hold mesh history on
                              different resolutions (used in un-pooling
                              operator). Default - False.
@@ -82,7 +82,7 @@ class Mesh:
                              means no export.
     """
 
-    def __init__(self, mesh_data: MeshData, hold_history: bool = False,
+    def __init__(self, mesh_data: MeshCNNData, hold_history: bool = False,
                  export_folder: str = ''):
 
         self.mesh_data = mesh_data

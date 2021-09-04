@@ -40,7 +40,7 @@ from .sign import SIGN
 from .grid_sampling import GridSampling
 from .gcn_norm import GCNNorm
 from.add_train_val_test_mask import AddTrainValTestMask
-from .mesh import Mesh, MeshData
+from .meshcnnhandler import MeshCNNHandler, MeshCNNData
 from .mesh_prepare import MeshCNNPrepare
 
 __all__ = [
@@ -86,8 +86,8 @@ __all__ = [
     'GridSampling',
     'GCNNorm',
     'AddTrainValTestMask',
-    'Mesh',
-    'MeshData',
+    'MeshCNNHandler',
+    'MeshCNNData',
     'MeshCNNPrepare',
 ]
 

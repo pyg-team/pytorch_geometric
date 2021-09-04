@@ -4,16 +4,15 @@ import os
 import ntpath
 from .mesh_augmentations import (scale_verts, flip_edges, slide_verts)
 from ..utils.mesh_features import mesh_extract_features
-from ..transforms.mesh import MeshData
+from ..transforms.meshcnnhandler import MeshCNNData
 from torch_geometric.io import read_ply
 
 
 class MeshCNNPrepare:
-    r"""This class is a utility class to read and create Mesh structure for the
-    MeshCNN: `"MeshCNN: A Network with an Edge"
+    r"""This class is a utility class to read and create MeshCNN structure for
+    the MeshCNN paper: `"MeshCNN: A Network with an Edge"
     <https://arxiv.org/abs/1809.05910>`_ paper.
     Args:
-        file (str): Number of input channels of edge features.
         num_aug (int): Number of augmentations to apply on mesh.
         aug_slide_verts (float, optional): values between 0.0 to 1.0 - if set
                                            above 0 will apply shift along mesh
@@ -39,12 +38,21 @@ class MeshCNNPrepare:
         self.aug_scale_verts = aug_scale_verts
         self.aug_flip_edges = aug_flip_edges
         self.aug_file = aug_file
-        self.mesh_data = MeshData()
+        self.mesh_data = MeshCNNData()
 
-    def __call__(self, data=None):
+    def __call__(self, data):
+        """
+        This function will fill MeshCNNData with data input.
+        Args:
+            data (torch_geometric.data.Data) - if exists must have keys of
+            'pos' and 'faces' or 'pos' and 'face'. Holds the mesh data.
+
+        Returns:
+            mesh_data (torch_geometric.transforms.mesh.MeshCNNData) -
+            MeshCNNData structure.
+
+        """
         load_path = self.aug_file
-        # if load_path == '':
-        #     load_path = self.get_mesh_path(raw_file)
         if os.path.exists(load_path):
             loaded_data = np.load(load_path, encoding='latin1',
                                   allow_pickle=True)
@@ -62,17 +70,18 @@ class MeshCNNPrepare:
                                                      dtype=torch.long)
         else:
             self.mesh_data = self.from_scratch(data)
-            np.savez_compressed(load_path, pos=self.mesh_data.pos,
-                                edges=self.mesh_data.edges,
-                                edges_count=int(self.mesh_data.edges_count),
-                                ve=self.mesh_data.ve,
-                                v_mask=self.mesh_data.v_mask,
-                                filename=str(self.mesh_data.filename),
-                                sides=self.mesh_data.sides,
-                                edge_lengths=self.mesh_data.edge_lengths,
-                                edge_areas=self.mesh_data.edge_areas,
-                                edge_attr=self.mesh_data.edge_attr,
-                                edge_index=self.mesh_data.edge_index)
+            if load_path is not '':
+                np.savez_compressed(load_path, pos=self.mesh_data.pos,
+                                    edges=self.mesh_data.edges,
+                                    edges_count=int(self.mesh_data.edges_count),
+                                    ve=self.mesh_data.ve,
+                                    v_mask=self.mesh_data.v_mask,
+                                    filename=str(self.mesh_data.filename),
+                                    sides=self.mesh_data.sides,
+                                    edge_lengths=self.mesh_data.edge_lengths,
+                                    edge_areas=self.mesh_data.edge_areas,
+                                    edge_attr=self.mesh_data.edge_attr,
+                                    edge_index=self.mesh_data.edge_index)
 
         return self.mesh_data
 
@@ -89,20 +98,20 @@ class MeshCNNPrepare:
         return load_file
 
     def from_scratch(self, data):
-        mesh_data = MeshData()
-        if data is None:
-            mesh_data.pos, faces = self.fill_from_file(mesh_data)
-        else:
-            keys = data.keys
-            assert (('pos' in keys and 'face' in keys)
-                    or
-                    ('pos' in keys and 'faces' in keys))
-            if 'face' in keys:
-                mesh_data.pos = data.pos
-                faces = np.array(data.face.transpose(0, 1))
-            elif 'faces':
-                mesh_data.pos = torch.tensor(data.pos)
-                faces = data.faces
+        keys = data.keys
+        assert (('pos' in keys and 'face' in keys)
+                or
+                ('pos' in keys and 'faces' in keys))
+
+        mesh_data = MeshCNNData()
+        if 'face' in keys:
+            mesh_data.pos = data.pos
+            faces = np.array(data.face.transpose(0, 1))
+        elif 'faces':
+            mesh_data.pos = torch.tensor(data.pos)
+            faces = data.faces
+        if 'y' in keys:
+            mesh_data.y = data.y
 
         mesh_data.v_mask = torch.ones(len(mesh_data.pos), dtype=bool)
 
@@ -136,7 +145,7 @@ class MeshCNNPrepare:
         if suffix == '.ply':
             data = read_ply(self.file)
             pos = np.array(data.pos, dtype=float)
-            faces = np.array(data.face.transpose(0, 1), dtype=int32)
+            faces = np.array(data.face.transpose(0, 1), dtype=int)
         elif suffix == '.obj':
             pos, faces = [], []
             f = open(self.file)

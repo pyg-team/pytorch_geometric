@@ -3,7 +3,7 @@ from os import mkdir
 import os.path as osp
 from torch_geometric.data.dataloader import DataLoader
 from torch_geometric.datasets.mesh_cnn_base_datasets import MeshCnnBaseDataset
-from torch_geometric.transforms.mesh import Mesh
+from torch_geometric.transforms.meshcnnhandler import MeshCNNHandler
 
 
 class MeshDataLoader:
@@ -76,8 +76,8 @@ class MeshDataLoader:
                 for idx in range(0, data.num_graphs):
                     d = data.get_example(idx)
                     meshes.append(
-                        Mesh(mesh_data=d, hold_history=self.hold_history,
-                             export_folder=self.export_folder))
+                        MeshCNNHandler(mesh_data=d, hold_history=self.hold_history,
+                                       export_folder=self.export_folder))
                     if self.data_set_type == 'classification':
                         labels[idx] = d.label.item()
                     if self.data_set_type == 'segmentation':
