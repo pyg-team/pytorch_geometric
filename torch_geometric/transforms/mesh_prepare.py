@@ -46,7 +46,8 @@ class MeshCNNPrepare:
         # if load_path == '':
         #     load_path = self.get_mesh_path(raw_file)
         if os.path.exists(load_path):
-            loaded_data = np.load(load_path, encoding='latin1', allow_pickle=True)
+            loaded_data = np.load(load_path, encoding='latin1',
+                                  allow_pickle=True)
             self.mesh_data.pos = torch.tensor(loaded_data['pos'])
             self.mesh_data.edges = torch.tensor(loaded_data['edges'])
             self.mesh_data.edges_count = int(loaded_data['edges_count'])
@@ -57,7 +58,8 @@ class MeshCNNPrepare:
             self.mesh_data.edge_areas = torch.tensor(loaded_data['edge_areas'])
             self.mesh_data.edge_attr = torch.tensor(loaded_data['edge_attr'])
             self.mesh_data.sides = torch.tensor(loaded_data['sides'])
-            self.mesh_data.edge_index = torch.tensor(loaded_data['edge_index'])
+            self.mesh_data.edge_index = torch.tensor(loaded_data['edge_index'],
+                                                     dtype=torch.long)
         else:
             self.mesh_data = self.from_scratch(data)
             np.savez_compressed(load_path, pos=self.mesh_data.pos,
@@ -92,9 +94,9 @@ class MeshCNNPrepare:
             mesh_data.pos, faces = self.fill_from_file(mesh_data)
         else:
             keys = data.keys
-            assert(('pos' in keys and 'face' in keys)
-                   or
-                   ('pos' in keys and 'faces' in keys))
+            assert (('pos' in keys and 'face' in keys)
+                    or
+                    ('pos' in keys and 'faces' in keys))
             if 'face' in keys:
                 mesh_data.pos = data.pos
                 faces = np.array(data.face.transpose(0, 1))
@@ -133,8 +135,8 @@ class MeshCNNPrepare:
 
         if suffix == '.ply':
             data = read_ply(self.file)
-            pos = np.asarray(data.pos)
-            faces = np.asarray(data.face.transpose(0, 1), dtype=int)
+            pos = np.array(data.pos, dtype=float)
+            faces = np.array(data.face.transpose(0, 1), dtype=int32)
         elif suffix == '.obj':
             pos, faces = [], []
             f = open(self.file)
@@ -149,12 +151,13 @@ class MeshCNNPrepare:
                     face_vertex_ids = [int(c.split('/')[0]) for c in
                                        splitted_line[1:]]
                     assert len(face_vertex_ids) == 3
-                    face_vertex_ids = [(ind - 1) if (ind >= 0) else (len(pos) + ind)
-                                       for ind in face_vertex_ids]
+                    face_vertex_ids = [
+                        (ind - 1) if (ind >= 0) else (len(pos) + ind)
+                        for ind in face_vertex_ids]
                     faces.append(face_vertex_ids)
             f.close()
-            pos = np.asarray(pos)
-            faces = np.asarray(faces, dtype=int)
+            pos = np.array(pos, dtype=float)
+            faces = np.array(faces, dtype=int)
         assert np.logical_and(faces >= 0, faces < len(pos)).all()
         return pos, faces
 
@@ -192,8 +195,8 @@ class MeshCNNPrepare:
             (np.expand_dims(np.arange(edges_count), axis=1),
              edge_nb), axis=1).flatten()
         edge_index[1, :] = (
-                    np.linspace(0, num_edge_pairs - 1, num_edge_pairs) // (
-                        edge_nb.shape[1] + 1))
+                np.linspace(0, num_edge_pairs - 1, num_edge_pairs) // (
+                edge_nb.shape[1] + 1))
         return edge_index
 
     def build_edge_indexes(self, mesh, faces, face_areas):
@@ -247,10 +250,12 @@ class MeshCNNPrepare:
 
         mesh.edges = torch.tensor(edges, dtype=torch.int32)
         edge_nb = torch.tensor(edge_nb, dtype=torch.int64)
-        mesh.edge_index = torch.tensor(self.build_edge_pairs(edge_nb, edges_count))
+        mesh.edge_index = torch.tensor(
+            self.build_edge_pairs(edge_nb, edges_count), dtype=torch.long)
         mesh.sides = torch.tensor(sides, dtype=torch.int64)
         mesh.edges_count = edges_count
-        mesh.edge_areas = torch.tensor(mesh.edge_areas, dtype=torch.float32) / np.sum(
+        mesh.edge_areas = torch.tensor(mesh.edge_areas,
+                                       dtype=torch.float32) / np.sum(
             face_areas)
 
     @staticmethod

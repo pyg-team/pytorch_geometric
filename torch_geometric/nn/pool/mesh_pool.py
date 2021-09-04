@@ -131,13 +131,11 @@ class MeshPool(nn.Module):
 
     @staticmethod
     def __is_one_ring_valid(mesh_data, edge_id):
-        v_a = set(
-            mesh_data.edges[mesh_data.ve[mesh_data.edges[edge_id, 0]]].reshape(
-                -1))
-        v_b = set(
-            mesh_data.edges[mesh_data.ve[mesh_data.edges[edge_id, 1]]].reshape(
-                -1))
-        shared = v_a & v_b - set(mesh_data.edges[edge_id])
+        v_a = set(np.array(mesh_data.edges[np.array(
+            mesh_data.ve[np.array(mesh_data.edges[edge_id, 0])])].reshape(-1)))
+        v_b = set(np.array(mesh_data.edges[np.array(
+            mesh_data.ve[np.array(mesh_data.edges[edge_id, 1])])].reshape(-1)))
+        shared = v_a & v_b - set(np.array(mesh_data.edges[edge_id]))
         return len(shared) == 2
 
     def __pool_side(self, mesh, edge_id, mask, edge_groups, side):
@@ -161,7 +159,7 @@ class MeshPool(nn.Module):
     def __get_invalids(mesh, edge_id, edge_groups, side):
         info = MeshPool.__get_face_info(mesh.mesh_data, edge_id, side)
         key_a, key_b, side_a, side_b, other_side_a, other_side_b, \
-            other_keys_a, other_keys_b = info
+        other_keys_a, other_keys_b = info
         shared_items = MeshPool.__get_shared_items(other_keys_a, other_keys_b)
         if len(shared_items) == 0:
             return []
@@ -231,13 +229,13 @@ class MeshPool(nn.Module):
             mesh_data.edge_index[0, key_b_pyg + 1 + other_side_b + 1].item()]
 
         return key_a, key_b, side_a, side_b, other_side_a, other_side_b, \
-            other_keys_a, other_keys_b
+               other_keys_a, other_keys_b
 
     @staticmethod
     def __remove_triplete(mesh, mask, edge_groups, invalid_edges):
-        vertex = set(mesh.mesh_data.edges[invalid_edges[0]])
+        vertex = set(np.array(mesh.mesh_data.edges[invalid_edges[0]]))
         for edge_key in invalid_edges:
-            vertex &= set(mesh.mesh_data.edges[edge_key])
+            vertex &= set(np.array(mesh.mesh_data.edges[edge_key]))
             mask[edge_key] = False
             MeshPool.__remove_group(mesh, edge_groups, edge_key)
         mesh.mesh_data.edges_count -= 3

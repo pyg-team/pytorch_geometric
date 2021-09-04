@@ -62,6 +62,39 @@ class MeshCnnBaseDataset(Dataset):
         # to skip the process.
         return ['abc']  # todo handle this
 
+    @staticmethod
+    def get_data_from_file(file_path):
+        filename = ntpath.split(file_path)[1]
+        fullfilename = file_path
+        _, suffix = os.path.splitext(file_path)
+
+        if suffix == '.ply':
+            data = read_ply(file_path)
+            pos = data.pos
+            faces = np.array(data.face.transpose(0, 1), dtype=int)
+        elif suffix == '.obj':
+            pos, faces = [], []
+            f = open(file_path)
+            for line in f:
+                line = line.strip()
+                splitted_line = line.split()
+                if not splitted_line:
+                    continue
+                elif splitted_line[0] == 'v':
+                    pos.append([float(v) for v in splitted_line[1:4]])
+                elif splitted_line[0] == 'f':
+                    face_vertex_ids = [int(c.split('/')[0]) for c in
+                                       splitted_line[1:]]
+                    assert len(face_vertex_ids) == 3
+                    face_vertex_ids = [
+                        (ind - 1) if (ind >= 0) else (len(pos) + ind)
+                        for ind in face_vertex_ids]
+                    faces.append(face_vertex_ids)
+            f.close()
+            faces = np.array(faces, dtype=int)
+        assert np.logical_and(faces >= 0, faces < len(pos)).all()
+        return Data(pos=pos, faces=faces)
+
     def get_mean_std(self, sub_name=''):
         """ Computes Mean and Standard Deviation from Training Data.
         If mean/std file doesn't exist, will compute one
@@ -226,40 +259,6 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
     def len(self):
         return len(self.paths_labels)
 
-    @staticmethod
-    def get_data_from_file(file_path):
-
-        filename = ntpath.split(file_path)[1]
-        fullfilename = file_path
-        _, suffix = os.path.splitext(file_path)
-
-        if suffix == '.ply':
-            data = read_ply(file_path)
-            pos = data.pos
-            faces = np.asarray(data.face.transpose(0, 1), dtype=int)
-        elif suffix == '.obj':
-            pos, faces = [], []
-            f = open(file_path)
-            for line in f:
-                line = line.strip()
-                splitted_line = line.split()
-                if not splitted_line:
-                    continue
-                elif splitted_line[0] == 'v':
-                    pos.append([float(v) for v in splitted_line[1:4]])
-                elif splitted_line[0] == 'f':
-                    face_vertex_ids = [int(c.split('/')[0]) for c in
-                                       splitted_line[1:]]
-                    assert len(face_vertex_ids) == 3
-                    face_vertex_ids = [
-                        (ind - 1) if (ind >= 0) else (len(pos) + ind)
-                        for ind in face_vertex_ids]
-                    faces.append(face_vertex_ids)
-            f.close()
-            faces = np.asarray(faces, dtype=int)
-        assert np.logical_and(faces >= 0, faces < len(pos)).all()
-        return Data(pos=pos, faces=faces)
-
     def get(self, idx):
         path = self.paths_labels[idx][0]
         label = self.paths_labels[idx][1]
@@ -270,7 +269,6 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
         data = self.get_data_from_file(path)
         mesh_data = mesh_prepare(data)
         mesh_data.label = label
-        mesh_data.edge_index = torch.tensor(mesh_data.edge_index).long()
         mesh_data.num_nodes = len(mesh_data.pos)
         mesh_data.edge_attr = pad(mesh_data.edge_attr, self.n_input_edges)
         mesh_data.edge_attr = (mesh_data.edge_attr - self.mean) / self.std
@@ -377,7 +375,7 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
 
     def read_sseg(self, sseg_file):
         sseg_labels = self.read_seg(sseg_file)
-        sseg_labels = np.array(sseg_labels > 0, dtype=np.int32)
+        sseg_labels = np.array(sseg_labels > 0, dtype=int)
         return sseg_labels
 
     def get_n_segs(self, classes_file, seg_files):
@@ -446,8 +444,6 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         mesh_data = mesh_prepare(data)
         mesh_data.label = label
         mesh_data.soft_label = soft_label
-
-        mesh_data.edge_index = torch.tensor(mesh_data.edge_index).long()
         mesh_data.num_nodes = len(mesh_data.pos)
         mesh_data.edge_attr = pad(mesh_data.edge_attr, self.n_input_edges)
         mesh_data.edge_attr = (mesh_data.edge_attr - self.mean) / self.std

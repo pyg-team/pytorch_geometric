@@ -108,7 +108,10 @@ class Mesh:
         self.mesh_data.v_mask[edge[1]] = False
         mask = self.mesh_data.edges == edge[1]
         self.mesh_data.ve[edge[0]].extend(self.mesh_data.ve[edge[1]])
-        self.mesh_data.edges[mask] = edge[0]
+        mask_ij = torch.where(mask == True)
+        mask_ij = [(j, mask_ij[1][i]) for i, j in enumerate(mask_ij[0])]
+        for ij in mask_ij:
+            self.mesh_data.edges[ij[0], ij[1]] = edge[0]
 
     def remove_vertex(self, v):
         self.mesh_data.v_mask[v] = False
