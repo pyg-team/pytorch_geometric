@@ -9,8 +9,8 @@ def test_group_norm(affine):
     batch = torch.zeros(100, dtype=torch.long)
 
     norm = GroupNorm(16, 4, affine=affine)
-    assert norm.__repr__(
-    ) == f'GroupNorm(in_channels=16, groups=4, affine={affine})'
+    assert norm.__repr__() == ('GroupNorm(in_channels=16,'
+                               f' groups=4, affine={affine})')
     torch.jit.script(norm)
     out1 = norm(x)
     assert out1.size() == (100, 16)

@@ -11,16 +11,19 @@ from ..inits import zeros, ones
 class GroupNorm(torch.nn.Module):
     r"""Applies group normalization over each group of features and individual
     example in a batch of node features as described in the
-    `"Group Normalization"<https://arxiv.org/abs/1803.08494>`_ paper.
+    `"Group Normalization" <https://arxiv.org/abs/1803.08494>`_ paper
+
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
         \textrm{E}[\mathbf{x}]}{\sqrt{\textrm{Var}[\mathbf{x}] + \epsilon}}
         \odot \gamma + \beta
+
     The mean and standard-deviation are calculated across all nodes separately
-    for each object and group of features in a mini-batch.
+    for each group of node channels in an object in a mini-batch.
+
     Args:
         in_channels (int): Size of each input sample.
-        groups (int): Number of groups to seperate :args:`in_channels` into.
+        groups (int): Number of groups to seperate :obj:`in_channels` into.
             (default: :obj:`2`)
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
@@ -56,7 +59,7 @@ class GroupNorm(torch.nn.Module):
             batch = torch.zeros(x.size(0), device=x.device, dtype=torch.long)
 
         batch_size = int(batch.max()) + 1
-        group_size = int(x.size(-1) / self.groups)
+        group_size = int(self.in_channels / self.groups)
         group_id = torch.cat([
             torch.tensor([i] * group_size, device=x.device)
             for i in torch.arange(self.groups)
