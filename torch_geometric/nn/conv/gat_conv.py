@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, set_diag
+from torch_sparse import SparseTensor, set_diag, fill_diag
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops, softmax
@@ -206,15 +206,25 @@ class GATConv(MessagePassing):
                     fill_value=self.edge_attr_fill_value,
                     num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
-                assert edge_attr is None, \
-                    ("Using `edge_attr` not supported for "
-                     "`edge_index` in SparseTensor form.")
-                edge_index = set_diag(edge_index)
+                if self.edge_dim is None:
+                    edge_index = set_diag(edge_index)
+                else:
+                    assert self.edge_attr_for_self_loops == 'fill', \
+                        ('Using `edge_attr` and `add_self_loops` '
+                         'simultaneously with "{}" method is not '
+                         'supported for `edge_index` in a SparseTensor '
+                         'form.'.format(self.edge_attr_for_self_loops))
+                    if edge_attr is not None:
+                        edge_index.set_value(edge_attr, layout='coo')
+                    edge_index = fill_diag(
+                        edge_index, fill_value=self.edge_attr_fill_value)
+                    _, _, edge_attr = edge_index.coo()
 
         # If edge features are given, compute attention using them.
         if edge_attr is not None:
             assert self.lin_edge is not None
-            edge_attr = edge_attr.view(edge_index.size(1), -1)
+            if edge_attr.dim() == 1:
+                edge_attr = edge_attr.unsqueeze(-1)
             edge_attr = self.lin_edge(edge_attr).view(-1, H, C)
             alpha_edge = (edge_attr * self.att_edge).sum(dim=-1)
         else:
