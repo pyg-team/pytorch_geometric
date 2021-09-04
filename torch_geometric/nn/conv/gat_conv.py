@@ -219,6 +219,11 @@ class GATConv(MessagePassing):
                     edge_index = fill_diag(
                         edge_index, fill_value=self.edge_attr_fill_value)
                     _, _, edge_attr = edge_index.coo()
+        else:
+            if isinstance(edge_index, SparseTensor):
+                if edge_attr is not None:
+                    edge_index.set_value(edge_attr, layout='coo')
+                _, _, edge_attr = edge_index.coo()
 
         # If edge features are given, compute attention using them.
         if edge_attr is not None:
