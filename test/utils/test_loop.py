@@ -62,6 +62,22 @@ def test_add_self_loops():
     assert out.tolist() == expected
     assert edge_attr[3:, :].tolist() == [[1, 0, 1], [0, 1, 0]]
 
+    empty_edge_index = torch.tensor([]).view(2, 0)
+    out, _ = add_self_loops(empty_edge_index, num_nodes=1)
+    assert out.tolist() == [[0], [0]]
+
+    empty_edge_weight = torch.tensor([])
+    out, empty_edge_weight = add_self_loops(
+        empty_edge_index, empty_edge_weight, num_nodes=1)
+    assert out.tolist() == [[0], [0]]
+    assert empty_edge_weight.tolist() == [1]
+
+    empty_edge_attr = torch.tensor([]).view(0, 3)
+    out, empty_edge_attr = add_self_loops(
+        empty_edge_index, empty_edge_attr, num_nodes=1)
+    assert out.tolist() == [[0], [0]]
+    assert empty_edge_attr.tolist() == [[1, 1, 1]]
+
 
 def test_add_remaining_self_loops():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])

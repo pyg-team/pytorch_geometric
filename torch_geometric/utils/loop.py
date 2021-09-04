@@ -101,9 +101,9 @@ def add_self_loops(edge_index, edge_attr: Optional[torch.Tensor] = None,
             loop_attr = scatter(edge_attr, edge_index[0], dim=0, dim_size=N,
                                 reduce=fill_or_reduce)
         else:
-            num_features = edge_attr.numel() // E
+            num_features = 1 if edge_attr.dim() == 1 else edge_attr.size(-1)
             loop_attr = edge_attr.new_full(
-                (N, num_features), fill_value).squeeze()
+                (N, num_features), fill_value).squeeze(-1)
         edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
