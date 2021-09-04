@@ -6,6 +6,7 @@ from .graph_size_norm import GraphSizeNorm
 from .pair_norm import PairNorm
 from .msg_norm import MessageNorm
 from .diff_group_norm import DiffGroupNorm
+from .group_norm import GroupNorm
 
 __all__ = [
     'BatchNorm',
@@ -16,6 +17,7 @@ __all__ = [
     'PairNorm',
     'MessageNorm',
     'DiffGroupNorm',
+    'GroupNorm',
 ]
 
 classes = __all__
