@@ -1,13 +1,12 @@
 import os.path as osp
 
 import torch
-import torch.nn.functional as F
 from torch_geometric.datasets import FAUST
 import torch_geometric.transforms as T
 from torch_geometric.data import DataLoader
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FAUST')
-pre_transform = T.Compose([T.MeshCNNPrepare()])
+pre_transform = T.Compose([T.MeshCNNPrepare(num_aug=2)])
 train_dataset = FAUST(path, True, T.Cartesian(), pre_transform)
 test_dataset = FAUST(path, False, T.Cartesian(), pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)

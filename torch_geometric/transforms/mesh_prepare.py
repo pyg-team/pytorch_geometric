@@ -47,66 +47,32 @@ class MeshCNNPrepare:
         #     load_path = self.get_mesh_path(raw_file)
         if os.path.exists(load_path):
             loaded_data = np.load(load_path, encoding='latin1', allow_pickle=True)
-            self.mesh_data.pos = loaded_data['pos']
-            self.mesh_data.edges = loaded_data['edges']
+            self.mesh_data.pos = torch.tensor(loaded_data['pos'])
+            self.mesh_data.edges = torch.tensor(loaded_data['edges'])
             self.mesh_data.edges_count = int(loaded_data['edges_count'])
-            self.mesh_data.ve = loaded_data['ve']
-            self.mesh_data.v_mask = loaded_data['v_mask']
+            self.mesh_data.ve = loaded_data['ve'].tolist()
+            self.mesh_data.v_mask = torch.tensor(loaded_data['v_mask'])
             self.mesh_data.filename = str(loaded_data['filename'])
             self.mesh_data.edge_lengths = loaded_data['edge_lengths']
-            self.mesh_data.edge_areas = loaded_data['edge_areas']
-            self.mesh_data.edge_attr = loaded_data['edge_attr']
-            self.mesh_data.sides = loaded_data['sides']
-            self.mesh_data.edge_index = loaded_data['edge_index']
+            self.mesh_data.edge_areas = torch.tensor(loaded_data['edge_areas'])
+            self.mesh_data.edge_attr = torch.tensor(loaded_data['edge_attr'])
+            self.mesh_data.sides = torch.tensor(loaded_data['sides'])
+            self.mesh_data.edge_index = torch.tensor(loaded_data['edge_index'])
         else:
             self.mesh_data = self.from_scratch(data)
-            # np.savez_compressed(load_path, pos=self.mesh_data.pos,
-            #                     edges=self.mesh_data.edges,
-            #                     edges_count=int(self.mesh_data.edges_count),
-            #                     ve=self.mesh_data.ve,
-            #                     v_mask=self.mesh_data.v_mask,
-            #                     filename=str(self.mesh_data.filename),
-            #                     sides=self.mesh_data.sides,
-            #                     edge_lengths=self.mesh_data.edge_lengths,
-            #                     edge_areas=self.mesh_data.edge_areas,
-            #                     edge_attr=self.mesh_data.edge_attr,
-            #                     edge_index=self.mesh_data.edge_index)
+            np.savez_compressed(load_path, pos=self.mesh_data.pos,
+                                edges=self.mesh_data.edges,
+                                edges_count=int(self.mesh_data.edges_count),
+                                ve=self.mesh_data.ve,
+                                v_mask=self.mesh_data.v_mask,
+                                filename=str(self.mesh_data.filename),
+                                sides=self.mesh_data.sides,
+                                edge_lengths=self.mesh_data.edge_lengths,
+                                edge_areas=self.mesh_data.edge_areas,
+                                edge_attr=self.mesh_data.edge_attr,
+                                edge_index=self.mesh_data.edge_index)
 
         return self.mesh_data
-
-    # def __call__(self, raw_file):
-    #     self.file = raw_file
-    #     load_path = self.aug_file
-    #     if load_path == '':
-    #         load_path = self.get_mesh_path(raw_file)
-    #     if os.path.exists(load_path):
-    #         data = np.load(load_path, encoding='latin1', allow_pickle=True)
-    #         self.mesh_data.pos = data['pos']
-    #         self.mesh_data.edges = data['edges']
-    #         self.mesh_data.edges_count = int(data['edges_count'])
-    #         self.mesh_data.ve = data['ve']
-    #         self.mesh_data.v_mask = data['v_mask']
-    #         self.mesh_data.filename = str(data['filename'])
-    #         self.mesh_data.edge_lengths = data['edge_lengths']
-    #         self.mesh_data.edge_areas = data['edge_areas']
-    #         self.mesh_data.edge_attr = data['edge_attr']
-    #         self.mesh_data.sides = data['sides']
-    #         self.mesh_data.edge_index = data['edge_index']
-    #     else:
-    #         self.mesh_data = self.from_scratch()
-    #         np.savez_compressed(load_path, pos=self.mesh_data.pos,
-    #                             edges=self.mesh_data.edges,
-    #                             edges_count=int(self.mesh_data.edges_count),
-    #                             ve=self.mesh_data.ve,
-    #                             v_mask=self.mesh_data.v_mask,
-    #                             filename=str(self.mesh_data.filename),
-    #                             sides=self.mesh_data.sides,
-    #                             edge_lengths=self.mesh_data.edge_lengths,
-    #                             edge_areas=self.mesh_data.edge_areas,
-    #                             edge_attr=self.mesh_data.edge_attr,
-    #                             edge_index=self.mesh_data.edge_index)
-    #
-    #     return self.mesh_data
 
     def get_mesh_path(self, file):
         filename, suffix = os.path.splitext(file)
@@ -133,7 +99,7 @@ class MeshCNNPrepare:
                 mesh_data.pos = data.pos
                 faces = np.array(data.face.transpose(0, 1))
             elif 'faces':
-                mesh_data.pos = data.pos
+                mesh_data.pos = torch.tensor(data.pos)
                 faces = data.faces
 
         mesh_data.v_mask = torch.ones(len(mesh_data.pos), dtype=bool)

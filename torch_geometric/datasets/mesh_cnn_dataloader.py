@@ -83,7 +83,7 @@ class MeshDataLoader:
                     if self.data_set_type == 'segmentation':
                         labels.append(d.label)
                         soft_label.append(d.soft_label)
-                    input_edge_features.append(d.features)
+                    input_edge_features.append(d.edge_attr)
 
                 input_edge_features = torch.tensor(input_edge_features).float()
                 labels = torch.as_tensor(labels).long()
