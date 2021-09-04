@@ -40,7 +40,8 @@ def test_gat_conv():
     assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
     assert conv._alpha is None
 
-    t = '(Tensor, Tensor, Size, NoneType, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]'
+    t = ('(Tensor, Tensor, Size, NoneType, bool) -> '
+         'Tuple[Tensor, Tuple[Tensor, Tensor]]')
     jit = torch.jit.script(conv.jittable(t))
     result = jit(x1, edge_index, return_attention_weights=True)
     assert result[0].tolist() == out.tolist()
@@ -49,7 +50,8 @@ def test_gat_conv():
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
     assert conv._alpha is None
 
-    t = '(Tensor, SparseTensor, Size, NoneType, bool) -> Tuple[Tensor, SparseTensor]'
+    t = ('(Tensor, SparseTensor, Size, NoneType, bool) -> '
+         'Tuple[Tensor, SparseTensor]')
     jit = torch.jit.script(conv.jittable(t))
     result = jit(x1, adj.t(), return_attention_weights=True)
     assert torch.allclose(result[0], out, atol=1e-6)
@@ -78,3 +80,34 @@ def test_gat_conv():
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
     assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
+
+    # Test handling edge weight or multi-dimensional features.
+    edge_weight = torch.ones((edge_index.size(1)), dtype=torch.float)
+    edge_attr = torch.ones((edge_index.size(1), 7), dtype=torch.float)
+
+    conv = GATConv(8, 32, heads=2, edge_dim=1, edge_attr_for_self_loops='fill',
+                   edge_attr_fill_value=0.5)
+    out = conv(x1, edge_index, edge_attr=edge_weight)
+    assert out.size() == (4, 64)
+    assert conv(x1, edge_index, size=(4, 4),
+                edge_attr=edge_weight).tolist() == out.tolist()
+
+    conv = GATConv(8, 32, heads=2, edge_dim=7, edge_attr_for_self_loops='fill',
+                   edge_attr_fill_value=0.5)
+    out = conv(x1, edge_index, edge_attr=edge_attr)
+    assert out.size() == (4, 64)
+    assert conv(x1, edge_index, size=(4, 4),
+                edge_attr=edge_attr).tolist() == out.tolist()
+
+    edge_attr = torch.ones((edge_index.size(1), 7), dtype=torch.float)
+    conv = GATConv(8, 32, heads=2, edge_dim=7, edge_attr_for_self_loops='mean')
+    out = conv(x1, edge_index, edge_attr=edge_attr)
+    assert out.size() == (4, 64)
+    assert conv(x1, edge_index, size=(4, 4),
+                edge_attr=edge_attr).tolist() == out.tolist()
+
+    t = '(Tensor, Tensor, Size, OptTensor, NoneType) -> Tensor'
+    jit = torch.jit.script(conv.jittable(t))
+    assert jit(x1, edge_index, edge_attr=edge_attr).tolist() == out.tolist()
+    assert jit(x1, edge_index, size=(4, 4),
+               edge_attr=edge_attr).tolist() == out.tolist()

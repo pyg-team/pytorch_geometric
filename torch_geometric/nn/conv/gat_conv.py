@@ -35,6 +35,20 @@ class GATConv(MessagePassing):
         [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_k]
         \right)\right)}.
 
+    If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
+    the attention coefficients :math:`\alpha_{i,j}` are computed as
+
+    .. math::
+        \alpha_{i,j} =
+        \frac{
+        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}
+        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_j
+        \, \Vert \, \mathbf{\Theta}_{e} \mathbf{e}_{i,j}]\right)\right)}
+        {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
+        \exp\left(\mathrm{LeakyReLU}\left(\mathbf{a}^{\top}
+        [\mathbf{\Theta}\mathbf{x}_i \, \Vert \, \mathbf{\Theta}\mathbf{x}_k
+        \, \Vert \, \mathbf{\Theta}_{e} \mathbf{e}_{i,k}]\right)\right)}.
+
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
@@ -55,6 +69,19 @@ class GATConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+        edge_dim (int, optional): Edge feature dimensionality (in case
+            there are any).
+        edge_attr_for_self_loops (string, optional): The way to generate
+            `edge_attr` of self-loops in computing attention coefficients.
+            If :obj:`"fill"` is given, `edge_attr` denoted by :obj:`fill_value`
+            will be added. If the reduce operation is given, the features of
+            edges that include the node of the self-loop are merged.
+            (:obj:`"fill"`, :obj:`"add"`, :obj:`"mean"`, :obj:`"min"`,
+            :obj:`"max"`, :obj:`"mul"`). (default: :obj:`"mean"`)
+        edge_attr_fill_value (float, optional): If :obj:`edge_attr` is not
+            :obj:`None` and :obj:`edge_attr_for_self_loops` is `"fill"`, will
+            add self-loops with edge features of :obj:`fill_value` to the
+            graph. (default: :obj:`1.`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -171,7 +198,8 @@ class GATConv(MessagePassing):
                 if x_dst is not None:
                     num_nodes = min(num_nodes, x_dst.size(0))
                 num_nodes = min(size) if size is not None else num_nodes
-                edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
+                edge_index, edge_attr = remove_self_loops(
+                    edge_index, edge_attr)
                 edge_index, edge_attr = add_self_loops(
                     edge_index, edge_attr=edge_attr,
                     fill_or_reduce=self.edge_attr_for_self_loops,
@@ -179,10 +207,11 @@ class GATConv(MessagePassing):
                     num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 assert edge_attr is None, \
-                    "Using `edge_attr` not supported for SparseTensor `edge_index`."
+                    ("Using `edge_attr` not supported for "
+                     "`edge_index` in SparseTensor form.")
                 edge_index = set_diag(edge_index)
 
-        # If edge features are given, compute attention coefficients using them.
+        # If edge features are given, compute attention using them.
         if edge_attr is not None:
             assert self.lin_edge is not None
             edge_attr = edge_attr.view(edge_index.size(1), -1)
@@ -191,7 +220,7 @@ class GATConv(MessagePassing):
         else:
             alpha_edge = None
 
-        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor, alpha_edge: OptTensor)
+        # propagate_type: (x: OptPairTensor, alpha: OptPairTensor, alpha_edge: OptTensor)  # noqa
         out = self.propagate(edge_index, x=x, alpha=alpha,
                              alpha_edge=alpha_edge, size=size)
 
