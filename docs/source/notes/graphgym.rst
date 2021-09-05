@@ -205,7 +205,7 @@ Customizing GraphGym
 
 A highlight of GraphGym is that it allows you to easily register customized modules.
 For each project, you can have a unique GraphGym copy with different customized modules.
-For example, the `Design Space for Graph Neural Networks <https://arxiv.org/abs/2011.08843>`__ and `Identity-aware Graph Neural Networks <https://arxiv.org/abs/2101.10320>`__ papers represent two successful projects using customized GraphGym, and you may find more details about them `here <https://github.com/snap-stanford/GraphGym#use-case-design-space-for-graph-neural-networks-neurips-2020-spotlight>`__.
+For example, the `"Design Space for Graph Neural Networks" <https://arxiv.org/abs/2011.08843>`__ and `"Identity-aware Graph Neural Networks" <https://arxiv.org/abs/2101.10320>`__ papers represent two successful projects using customized GraphGym, and you may find more details about them `here <https://github.com/snap-stanford/GraphGym#use-case-design-space-for-graph-neural-networks-neurips-2020-spotlight>`__.
 Eventually, every GraphGym-powered project will be unique.
 
 There are two ways for customizing GraphGym:
