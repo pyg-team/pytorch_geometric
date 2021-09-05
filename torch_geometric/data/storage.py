@@ -5,7 +5,6 @@ from torch_geometric.typing import NodeType, EdgeType
 import copy
 import weakref
 import warnings
-from inspect import signature
 from collections import namedtuple
 from collections.abc import Sequence, Mapping, MutableMapping
 
