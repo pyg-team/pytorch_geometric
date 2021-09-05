@@ -8,7 +8,7 @@ import numpy as np
 
 from torch_geometric.graphgym.utils.io import makedirs_rm_exist, \
     string_to_python
-from torch_geometric.graphgym.utils.comp_budget import dict_match_baseline
+from torch_geometric.graphgym.utils.comp_budget import match_baseline_cfg
 
 random.seed(123)
 
@@ -153,7 +153,7 @@ def gen_grid(args, config, config_budget={}):
                 fname_out += '-{}={}'.format(vars_alias[id],
                                              str(var).strip("[]").strip("''"))
             if len(config_budget) > 0:
-                config_out = dict_match_baseline(config_out, config_budget)
+                config_out = match_baseline_cfg(config_out, config_budget)
             with open('{}/{}.yaml'.format(out_dir, fname_out), "w") as f:
                 yaml.dump(config_out, f, default_flow_style=False)
         print('{} configurations saved to: {}'.format(len(vars_value),
@@ -226,8 +226,8 @@ def gen_grid_sample(args, config, config_budget={}, compare_alias_list=[]):
                         vars_alias[id],
                         str(var).strip("[]").strip("''"))
                 if len(config_budget) > 0:
-                    config_out = dict_match_baseline(config_out, config_budget,
-                                                     verbose=False)
+                    config_out = match_baseline_cfg(config_out, config_budget,
+                                                    verbose=False)
                 with open('{}/{}.yaml'.format(out_dir, fname_out), "w") as f:
                     yaml.dump(config_out, f, default_flow_style=False)
             print('Chunk {}/{}: Perturbing design dimension {}, '

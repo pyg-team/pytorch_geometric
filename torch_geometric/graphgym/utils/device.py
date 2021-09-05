@@ -17,6 +17,9 @@ def get_gpu_memory_map():
 
 
 def get_current_gpu_usage():
+    '''
+    Get the current GPU memory usage.
+    '''
     if cfg.gpu_mem and cfg.device != 'cpu' and torch.cuda.is_available():
         result = subprocess.check_output([
             'nvidia-smi', '--query-compute-apps=pid,used_memory',
@@ -34,7 +37,18 @@ def get_current_gpu_usage():
 
 
 def auto_select_device(memory_max=8000, memory_bias=200, strategy='random'):
-    '''Auto select GPU device'''
+    r'''
+    Auto select device for the experiment. Useful when having multiple GPUs.
+
+    Args:
+        memory_max (int): Threshold of existing GPU memory usage. GPUs with
+        memory usage beyond this threshold will be deprioritized.
+        memory_bias (int): A bias GPU memory usage added to all the GPUs.
+        Avoild dvided by zero error.
+        strategy (str, optional): 'random' (random select GPU) or 'greedy'
+        (greedily select GPU)
+
+    '''
     if cfg.device != 'cpu' and torch.cuda.is_available():
         if cfg.device == 'auto':
             memory_raw = get_gpu_memory_map()
@@ -48,9 +62,7 @@ def auto_select_device(memory_max=8000, memory_bias=200, strategy='random'):
                 memory = 1 / (memory_raw + memory_bias)
                 memory[memory_raw > memory_max] = 0
                 gpu_prob = memory / memory.sum()
-                np.random.seed()
                 cuda = np.random.choice(len(gpu_prob), p=gpu_prob)
-                np.random.seed(cfg.seed)
                 logging.info('GPU Mem: {}'.format(memory_raw))
                 logging.info('GPU Prob: {}'.format(gpu_prob.round(2)))
                 logging.info(

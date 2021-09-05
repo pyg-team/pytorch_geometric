@@ -3,7 +3,10 @@ import sys
 
 
 def parse_args():
-    """Parses the arguments."""
+    r"""
+    Parses the command line arguments.
+
+    """
     parser = argparse.ArgumentParser(
         description='Train a classification model')
     parser.add_argument('--cfg', dest='cfg_file', help='Config file path',

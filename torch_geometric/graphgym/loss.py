@@ -7,12 +7,16 @@ from torch_geometric.graphgym.config import cfg
 
 
 def compute_loss(pred, true):
-    '''
+    """
+    Compute loss and prediction score
 
-    :param pred: unnormalized prediction
-    :param true: label
-    :return: loss, normalized prediction score
-    '''
+    Args:
+        pred (torch.tensor): Unnormalized prediction
+        true (torch.tensor): Grou
+
+    Returns: Loss, normalized prediction score
+
+    """
     bce_loss = nn.BCEWithLogitsLoss(reduction=cfg.model.size_average)
     mse_loss = nn.MSELoss(reduction=cfg.model.size_average)
 
