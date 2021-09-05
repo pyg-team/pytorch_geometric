@@ -182,9 +182,9 @@ class HeteroData(BaseData):
         for key, value in self.__dict__.items():
             out.__dict__[key] = copy.deepcopy(value, memo)
         out._global_store._parent = out
-        for key, store in out._node_store_dict.items():
+        for key in self._node_store_dict.keys():
             out._node_store_dict[key]._parent = out
-        for key, store in out._edge_store_dict.items():
+        for key in out._edge_store_dict.keys():
             out._edge_store_dict[key]._parent = out
         return out
 
