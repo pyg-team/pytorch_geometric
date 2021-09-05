@@ -474,6 +474,10 @@ class Data(BaseData):
     def pos(self) -> Any:
         return self['pos'] if 'pos' in self._store else None
 
+    @property
+    def batch(self) -> Any:
+        return self['batch'] if 'batch' in self._store else None
+
     # Deprecated functions ####################################################
 
     @property

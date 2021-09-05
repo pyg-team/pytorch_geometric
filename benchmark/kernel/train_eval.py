@@ -98,7 +98,7 @@ def k_fold(dataset, folds):
 
 
 def num_graphs(data):
-    if data.batch is not None:
+    if hasattr(data, 'num_graphs'):
         return data.num_graphs
     else:
         return data.x.size(0)
