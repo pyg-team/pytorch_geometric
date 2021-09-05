@@ -107,10 +107,10 @@ class TemporalData(object):
         for start in range(0, self.num_events, batch_size):
             yield self[start:start + batch_size]
 
-    def __cat_dim__(self, key, value):
+    def __cat_dim__(self, key, value, *args, **kwargs):
         return 0
 
-    def __inc__(self, key, value):
+    def __inc__(self, key, value, *args, **kwargs):
         return 0
 
     def __repr__(self):
