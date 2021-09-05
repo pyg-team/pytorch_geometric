@@ -45,7 +45,6 @@ jobs:
           pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
           pip install sphinx
           pip install sphinx_rtd_theme
-          pip install ogb
 
       - name: Install main package
         run: |

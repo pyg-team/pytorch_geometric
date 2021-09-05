@@ -10,10 +10,6 @@ import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.models.transform import create_link_label, \
     neg_sampling_transform
 
-from ogb.nodeproppred import PygNodePropPredDataset
-from ogb.linkproppred import PygLinkPropPredDataset
-from ogb.graphproppred import PygGraphPropPredDataset
-
 from torch_geometric.utils import to_undirected
 from torch_geometric.loader import (GraphSAINTNodeSampler,
                                     GraphSAINTEdgeSampler,
@@ -95,6 +91,10 @@ def load_ogb(name, dataset_dir):
     Returns: PyG dataset object
 
     """
+    from ogb.nodeproppred import PygNodePropPredDataset
+    from ogb.linkproppred import PygLinkPropPredDataset
+    from ogb.graphproppred import PygGraphPropPredDataset
+
     if name[:4] == 'ogbn':
         dataset = PygNodePropPredDataset(name=name, root=dataset_dir)
         splits = dataset.get_idx_split()
