@@ -93,9 +93,9 @@ class HeteroData(BaseData):
     DEFAULT_REL = 'to'
 
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
-        self._global_store = BaseStorage(_parent=self)
-        self._node_store_dict = {}
-        self._edge_store_dict = {}
+        self.__dict__['_global_store'] = BaseStorage(_parent=self)
+        self.__dict__['_node_store_dict'] = {}
+        self.__dict__['_edge_store_dict'] = {}
 
         for key, value in chain((_mapping or {}).items(), kwargs.items()):
             if '__' in key and isinstance(value, Mapping):
@@ -109,8 +109,8 @@ class HeteroData(BaseData):
     def __getattr__(self, key: str) -> Any:
         # `data.*_dict` => Link to node and edge stores.
         # `data.*` => Link to the `_global_store`.
-        # It is the same as using `collect` to collect nodes and edges features
-        # and use `attribute` to get graph attribute.
+        # Using `data.*_dict` is the same as using `collect()` for collecting
+        # nodes and edges features.
         if bool(re.search('_dict$', key)):
             out = self.collect(key[:-5])
             if len(out) > 0:
@@ -118,27 +118,15 @@ class HeteroData(BaseData):
         return getattr(self._global_store, key)
 
     def __setattr__(self, key: str, value: Any):
-        # `data._* = ...` => Link to the private `__dict__` store.
-        # `data.* = ...` => Link to the `_global_store`.
-        # NOTE: We aim to prevent duplicates in node or edge keys.
-        if key[:1] == '_':
-            self.__dict__[key] = value
-        else:
-            if key in self.node_types:
-                raise AttributeError(
-                    f"'{key}' is already present as a node type")
-            elif key in self.edge_types:
-                raise AttributeError(
-                    f"'{key}' is already present as an edge type")
-            setattr(self._global_store, key, value)
+        # NOTE: We aim to prevent duplicates in node or edge types.
+        if key in self.node_types:
+            raise AttributeError(f"'{key}' is already present as a node type")
+        elif key in self.edge_types:
+            raise AttributeError(f"'{key}' is already present as an edge type")
+        setattr(self._global_store, key, value)
 
     def __delattr__(self, key: str):
-        # `del data._*` => Link to the private `__dict__` store.
-        # `del data.*` => Link to the `_global_store`.
-        if key[:1] == '_':
-            del self.__dict__[key]
-        else:
-            delattr(self._global_store, key)
+        delattr(self._global_store, key)
 
     def __getitem__(self, *args: Tuple[QueryType]) -> Any:
         # `data[*]` => Link to either `_global_store`, _node_store_dict` or
@@ -157,30 +145,33 @@ class HeteroData(BaseData):
             return self.get_node_store(key)
 
     def __setitem__(self, key: str, value: Any):
-        if key in chain(self.node_types, self.edge_types):
-            raise AttributeError(
-                f"'{key}' is already present as a node/edge-type")
+        if key in self.node_types:
+            raise AttributeError(f"'{key}' is already present as a node type")
+        elif key in self.edge_types:
+            raise AttributeError(f"'{key}' is already present as an edge type")
         self._global_store[key] = value
 
     def __delitem__(self, *args: Tuple[QueryType]):
         # `del data[*]` => Link to `_node_store_dict` or `_edge_store_dict`.
         key = self._to_canonical(*args)
-        if isinstance(key, tuple) and key in self.edge_types:
+        if key in self.edge_types:
             del self._edge_store_dict[key]
         elif key in self.node_types:
             del self._node_store_dict[key]
+        else:
+            del self._global_store[key]
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out._global_store = copy.copy(self._global_store)
+        out.__dict__['_global_store'] = copy.copy(self._global_store)
         out._global_store._parent = out
-        out._node_store_dict = {}
+        out.__dict__['_node_store_dict'] = {}
         for key, store in self._node_store_dict.items():
             out._node_store_dict[key] = copy.copy(store)
             out._node_store_dict[key]._parent = out
-        out._edge_store_dict = {}
+        out.__dict__['_edge_store_dict'] = {}
         for key, store in self._edge_store_dict.items():
             out._edge_store_dict[key] = copy.copy(store)
             out._edge_store_dict[key]._parent = out
@@ -189,16 +180,11 @@ class HeteroData(BaseData):
     def __deepcopy__(self, memo):
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
-            if key not in ['_node_store_dict', '_edge_store_dict']:
-                out.__dict__[key] = copy.deepcopy(value, memo)
+            out.__dict__[key] = copy.deepcopy(value, memo)
         out._global_store._parent = out
-        out._node_store_dict = {}
-        for key, store in self._node_store_dict.items():
-            out._node_store_dict[key] = copy.deepcopy(store, memo)
+        for key in self._node_store_dict.keys():
             out._node_store_dict[key]._parent = out
-        out._edge_store_dict = {}
-        for key, store in self._edge_store_dict.items():
-            out._edge_store_dict[key] = copy.deepcopy(store, memo)
+        for key in out._edge_store_dict.keys():
             out._edge_store_dict[key]._parent = out
         return out
 
@@ -209,6 +195,13 @@ class HeteroData(BaseData):
         info = ',\n'.join(info1 + info2 + info3)
         info = f'\n{info}\n' if len(info) > 0 else info
         return f'{self.__class__.__name__}({info})'
+
+    def stores_as(self, data: 'HeteroData'):
+        for node_type in data.node_types:
+            self.get_node_store(node_type)
+        for edge_type in data.edge_types:
+            self.get_edge_store(*edge_type)
+        return self
 
     @property
     def stores(self) -> List[BaseStorage]:
