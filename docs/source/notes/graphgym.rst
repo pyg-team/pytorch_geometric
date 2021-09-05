@@ -13,9 +13,9 @@ Highlights
 
 #. **Highly modularized pipeline for GNN:**
 
-   - **Data:** Data loading, data splitting
-   - **Model:** Modularized GNN implementation
-   - **Tasks:** Node / edge / graph level GNN tasks
+   - **Data:** Data loading and data splitting
+   - **Model:** Modularized GNN implementations
+   - **Tasks:** Node-level, edge-level and graph-level tasks
    - **Evaluation:** Accuracy, ROC AUC, ...
 
 #. **Reproducible experiment configuration:**
