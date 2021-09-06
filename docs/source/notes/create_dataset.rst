@@ -1,7 +1,7 @@
 Creating Your Own Datasets
 ==========================
 
-Although PyTorch Geometric already contains a lot of useful datasets, you may wish to create your own dataset with self-recorded or non-publicly available data.
+Although PyG already contains a lot of useful datasets, you may wish to create your own dataset with self-recorded or non-publicly available data.
 
 Implementing datasets by yourself is straightforward and you may want to take a look at the source code to find out how the various datasets are implemented.
 However, we give a brief introduction on what is needed to setup your own dataset.
@@ -49,7 +49,7 @@ Let's see this process in a simplified example:
 
     class MyOwnDataset(InMemoryDataset):
         def __init__(self, root, transform=None, pre_transform=None):
-            super(MyOwnDataset, self).__init__(root, transform, pre_transform)
+            super().__init__(root, transform, pre_transform)
             self.data, self.slices = torch.load(self.processed_paths[0])
 
         @property
@@ -102,7 +102,7 @@ Let's see this process in a simplified example:
 
     class MyOwnDataset(Dataset):
         def __init__(self, root, transform=None, pre_transform=None):
-            super(MyOwnDataset, self).__init__(root, transform, pre_transform)
+            super().__init__(root, transform, pre_transform)
 
         @property
         def raw_file_names(self):
@@ -152,16 +152,17 @@ Frequently Asked Questions
 
         class MyOwnDataset(Dataset):
             def __init__(self, transform=None, pre_transform=None):
-                super(MyOwnDataset, self).__init__(None, transform, pre_transform)
+                super().__init__(None, transform, pre_transform)
 
 #. **Do I really need to use these dataset interfaces?**
 
     No! Just as in regular PyTorch, you do not have to use datasets, *e.g.*, when you want to create synthetic data on the fly without saving them explicitly to disk.
-    In this case, simply pass a regular python list holding :class:`torch_geometric.data.Data` objects and pass them to :class:`torch_geometric.data.DataLoader`:
+    In this case, simply pass a regular python list holding :class:`torch_geometric.data.Data` objects and pass them to :class:`torch_geometric.loader.DataLoader`:
 
     .. code-block:: python
 
-        from torch_geometric.data import Data, DataLoader
+        from torch_geometric.data import Data
+        from torch_geometric.loader import DataLoader
 
         data_list = [Data(...), ..., Data(...)]
         loader = DataLoader(data_list, batch_size=32)

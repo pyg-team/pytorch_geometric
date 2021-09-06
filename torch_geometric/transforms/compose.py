@@ -14,7 +14,10 @@ class Compose(BaseTransform):
 
     def __call__(self, data):
         for transform in self.transforms:
-            data = transform(data)
+            if isinstance(data, (list, tuple)):
+                data = [transform(d) for d in data]
+            else:
+                data = transform(data)
         return data
 
     def __repr__(self):

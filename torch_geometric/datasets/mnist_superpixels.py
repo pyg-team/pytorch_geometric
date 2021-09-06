@@ -30,7 +30,7 @@ class MNISTSuperpixels(InMemoryDataset):
             final dataset. (default: :obj:`None`)
     """
 
-    url = 'https://pytorch-geometric.com/datasets/MNISTSuperpixels.zip'
+    url = 'https://data.pyg.org/datasets/MNISTSuperpixels.zip'
 
     def __init__(self, root, train=True, transform=None, pre_transform=None,
                  pre_filter=None):

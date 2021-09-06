@@ -46,7 +46,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
 
     names = ['PATTERN', 'CLUSTER', 'MNIST', 'CIFAR10', 'TSP', 'CSL']
 
-    root_url = 'https://pytorch-geometric.com/datasets/benchmarking-gnns'
+    root_url = 'https://data.pyg.org/datasets/benchmarking-gnns'
     urls = {
         'PATTERN': f'{root_url}/PATTERN_v2.zip',
         'CLUSTER': f'{root_url}/CLUSTER_v2.zip',

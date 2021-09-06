@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
 from sklearn.model_selection import StratifiedKFold
-from torch_geometric.data import DataLoader, DenseDataLoader as DenseLoader
+from torch_geometric.loader import DataLoader, DenseDataLoader as DenseLoader
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -98,7 +98,7 @@ def k_fold(dataset, folds):
 
 
 def num_graphs(data):
-    if data.batch is not None:
+    if hasattr(data, 'num_graphs'):
         return data.num_graphs
     else:
         return data.x.size(0)

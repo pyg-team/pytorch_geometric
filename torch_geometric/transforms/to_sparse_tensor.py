@@ -1,12 +1,17 @@
+from typing import Union, Optional
+
+from torch import Tensor
 from torch_sparse import SparseTensor
 
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.utils import sort_edge_index
 from torch_geometric.transforms import BaseTransform
 
 
 class ToSparseTensor(BaseTransform):
-    r"""Converts the :obj:`edge_index` attribute of a data object into a
-    (transposed) :class:`torch_sparse.SparseTensor` type with key
-    :obj:`adj_.t`.
+    r"""Converts the :obj:`edge_index` attributes of a homogeneous or
+    heterogeneous data object into a (transposed)
+    :class:`torch_sparse.SparseTensor` type with key :obj:`adj_.t`.
 
     .. note::
 
@@ -16,48 +21,57 @@ class ToSparseTensor(BaseTransform):
         :obj:`data.edge_index` for now.
 
     Args:
-        remove_faces (bool, optional): If set to :obj:`False`, the
+        attr: (str, optional): The name of the attribute to add as a value to
+            the :class:`~torch_sparse.SparseTensor` object (if present).
+            (default: :obj:`edge_weight`)
+        remove_edge_index (bool, optional): If set to :obj:`False`, the
             :obj:`edge_index` tensor will not be removed.
             (default: :obj:`True`)
-        fill_cache (bool, optional): If set to :obj:`False`, will not
-            fill the underlying :obj:`SparseTensor` cache.
-            (default: :obj:`True`)
+        fill_cache (bool, optional): If set to :obj:`False`, will not fill the
+            underlying :obj:`SparseTensor` cache. (default: :obj:`True`)
     """
-    def __init__(self, remove_edge_index: bool = True,
-                 fill_cache: bool = True):
+    def __init__(self, attr: Optional[str] = 'edge_weight',
+                 remove_edge_index: bool = True, fill_cache: bool = True):
+        self.attr = attr
         self.remove_edge_index = remove_edge_index
         self.fill_cache = fill_cache
 
-    def __call__(self, data):
-        assert data.edge_index is not None
+    def __call__(self, data: Union[Data, HeteroData]):
+        for store in data.edge_stores:
+            if 'edge_index' not in store:
+                continue
 
-        (row, col), N, E = data.edge_index, data.num_nodes, data.num_edges
-        perm = (col * N + row).argsort()
-        row, col = row[perm], col[perm]
+            nnz = store.edge_index.size(1)
 
-        if self.remove_edge_index:
-            data.edge_index = None
+            keys, values = [], []
+            for key, value in store.items():
+                if isinstance(value, Tensor) and value.size(0) == nnz:
+                    keys.append(key)
+                    values.append(value)
 
-        value = None
-        for key in ['edge_weight', 'edge_attr', 'edge_type']:
-            if data[key] is not None:
-                value = data[key][perm]
-                if self.remove_edge_index:
-                    data[key] = None
-                break
+            store.edge_index, values = sort_edge_index(store.edge_index,
+                                                       values,
+                                                       sort_by_row=False)
 
-        for key, item in data:
-            if item.size(0) == E:
-                data[key] = item[perm]
+            for key, value in zip(keys, values):
+                store[key] = value
 
-        data.adj_t = SparseTensor(row=col, col=row, value=value,
-                                  sparse_sizes=(N, N), is_sorted=True)
+            store.adj_t = SparseTensor(
+                row=store.edge_index[1], col=store.edge_index[0],
+                value=None if self.attr is None or self.attr not in store else
+                store[self.attr], sparse_sizes=store.size()[::-1],
+                is_sorted=True)
 
-        if self.fill_cache:  # Pre-process some important attributes.
-            data.adj_t.storage.rowptr()
-            data.adj_t.storage.csr2csc()
+            if self.remove_edge_index:
+                del store['edge_index']
+                if self.attr is not None and self.attr in store:
+                    del store[self.attr]
+
+            if self.fill_cache:  # Pre-process some important attributes.
+                store.adj_t.storage.rowptr()
+                store.adj_t.storage.csr2csc()
 
         return data
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

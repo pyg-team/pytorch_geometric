@@ -6,7 +6,7 @@ from six.moves import urllib
 from .makedirs import makedirs
 
 
-def download_url(url, folder, log=True):
+def download_url(url: str, folder: str, log: bool = True):
     r"""Downloads the content of an URL to a specific folder.
 
     Args:

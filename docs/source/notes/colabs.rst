@@ -1,7 +1,7 @@
 Colab Notebooks
 ===============
 
-We have prepared a list of colab notebooks that practically introduces you to the world of **Graph Neural Networks** with **PyTorch Geometric**:
+We have prepared a list of colab notebooks that practically introduces you to the world of **Graph Neural Networks** with **PyG**:
 
 1. `Introduction: Hands-on Graph Neural Networks <https://colab.research.google.com/drive/1h3-vJGRVloF5zStxL5I0rSy4ZUPNsjy8?usp=sharing>`__
 2. `Node Classification with Graph Neural Networks <https://colab.research.google.com/drive/14OvFnAXggxB8vM4e8vSURUp1TaKnovzX?usp=sharing>`__

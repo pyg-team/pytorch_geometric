@@ -1,12 +1,12 @@
 :github_url: https://github.com/rusty1s/pytorch_geometric
 
-PyTorch Geometric Documentation
-===============================
+PyG Documentation
+=================
 
-PyTorch Geometric is a geometric deep learning extension library for `PyTorch <https://pytorch.org/>`_.
+**PyG** *(PyTorch Geometric)* is a library built upon `PyTorch <https://pytorch.org/>`_ to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as `geometric deep learning <http://geometricdeeplearning.com/>`_, from a variety of published papers.
-In addition, it consists of an easy-to-use mini-batch loader for many small and single giant graphs, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
+In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, multi GPU-support, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
 
 .. toctree::
    :glob:
@@ -17,6 +17,9 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    notes/introduction
    notes/create_gnn
    notes/create_dataset
+   notes/heterogeneous
+   notes/load_csv
+   notes/graphgym
    notes/batching
    notes/sparse_tensor
    notes/jit
@@ -32,9 +35,12 @@ In addition, it consists of an easy-to-use mini-batch loader for many small and 
    modules/root
    modules/nn
    modules/data
+   modules/loader
    modules/datasets
    modules/transforms
    modules/utils
+   modules/graphgym
+   modules/profile
 
 Indices and Tables
 ==================

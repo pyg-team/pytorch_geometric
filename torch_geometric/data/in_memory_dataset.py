@@ -1,18 +1,21 @@
-from typing import Optional, Callable, List, Union, Tuple, Dict
+from typing import Optional, Callable, List, Union, Tuple, Dict, Iterable
 
 import copy
-from itertools import repeat, product
+from collections.abc import Mapping
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data.data import Data
+from torch_geometric.data import Data
+from torch_geometric.data.collate import collate
+from torch_geometric.data.separate import separate
 from torch_geometric.data.dataset import Dataset, IndexType
 
 
 class InMemoryDataset(Dataset):
-    r"""Dataset base class for creating graph datasets which fit completely
+    r"""Dataset base class for creating graph datasets which easily fit
     into CPU memory.
+    Inherits from :class:`torch_geometric.data.Dataset`.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
     create_dataset.html#creating-in-memory-datasets>`__ for the accompanying
     tutorial.
@@ -35,22 +38,16 @@ class InMemoryDataset(Dataset):
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
-        r"""The name of the files to find in the :obj:`self.raw_dir` folder in
-        order to skip the download."""
         raise NotImplementedError
 
     @property
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
-        r"""The name of the files to find in the :obj:`self.processed_dir`
-        folder in order to skip the processing."""
         raise NotImplementedError
 
     def download(self):
-        r"""Downloads the dataset to the :obj:`self.raw_dir` folder."""
         raise NotImplementedError
 
     def process(self):
-        r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
     def __init__(self, root: Optional[str] = None,
@@ -64,7 +61,7 @@ class InMemoryDataset(Dataset):
 
     @property
     def num_classes(self) -> int:
-        r"""The number of classes in the dataset."""
+        r"""Returns the number of classes in the dataset."""
         y = self.data.y
         if y is None:
             return 0
@@ -76,88 +73,58 @@ class InMemoryDataset(Dataset):
             return self.data.y.size(-1)
 
     def len(self) -> int:
-        for item in self.slices.values():
-            return len(item) - 1
+        if self.slices is None:
+            return 1
+        for _, value in nested_iter(self.slices):
+            return len(value) - 1
         return 0
 
     def get(self, idx: int) -> Data:
-        if hasattr(self, '_data_list'):
-            if self._data_list is None:
-                self._data_list = self.len() * [None]
-            else:
-                data = self._data_list[idx]
-                if data is not None:
-                    return copy.copy(data)
+        if self.len() == 1:
+            return copy.copy(self.data)
 
-        data = self.data.__class__()
-        if hasattr(self.data, '__num_nodes__'):
-            data.num_nodes = self.data.__num_nodes__[idx]
+        if not hasattr(self, '_data_list') or self._data_list is None:
+            self._data_list = self.len() * [None]
+        elif self._data_list[idx] is not None:
+            return copy.copy(self._data_list[idx])
 
-        for key in self.data.keys:
-            item, slices = self.data[key], self.slices[key]
-            start, end = slices[idx].item(), slices[idx + 1].item()
-            if torch.is_tensor(item):
-                s = list(repeat(slice(None), item.dim()))
-                cat_dim = self.data.__cat_dim__(key, item)
-                if cat_dim is None:
-                    cat_dim = 0
-                s[cat_dim] = slice(start, end)
-            elif start + 1 == end:
-                s = slices[start]
-            else:
-                s = slice(start, end)
-            data[key] = item[s]
+        data = separate(
+            cls=self.data.__class__,
+            batch=self.data,
+            idx=idx,
+            slice_dict=self.slices,
+            decrement=False,
+        )
 
-        if hasattr(self, '_data_list'):
-            self._data_list[idx] = copy.copy(data)
+        self._data_list[idx] = copy.copy(data)
 
         return data
 
     @staticmethod
-    def collate(data_list: List[Data]) -> Tuple[Data, Dict[str, Tensor]]:
-        r"""Collates a python list of data objects to the internal storage
-        format of :class:`torch_geometric.data.InMemoryDataset`."""
-        keys = data_list[0].keys
-        data = data_list[0].__class__()
+    def collate(
+            data_list: List[Data]) -> Tuple[Data, Optional[Dict[str, Tensor]]]:
+        r"""Collates a Python list of :obj:`torch_geometric.data.Data` objects
+        to the internal storage format of
+        :class:`~torch_geometric.data.InMemoryDataset`."""
+        if len(data_list) == 1:
+            return data_list[0], None
 
-        for key in keys:
-            data[key] = []
-        slices = {key: [0] for key in keys}
-
-        for item, key in product(data_list, keys):
-            data[key].append(item[key])
-            if isinstance(item[key], Tensor) and item[key].dim() > 0:
-                cat_dim = item.__cat_dim__(key, item[key])
-                cat_dim = 0 if cat_dim is None else cat_dim
-                s = slices[key][-1] + item[key].size(cat_dim)
-            else:
-                s = slices[key][-1] + 1
-            slices[key].append(s)
-
-        if hasattr(data_list[0], '__num_nodes__'):
-            data.__num_nodes__ = []
-            for item in data_list:
-                data.__num_nodes__.append(item.num_nodes)
-
-        for key in keys:
-            item = data_list[0][key]
-            if isinstance(item, Tensor) and len(data_list) > 1:
-                if item.dim() > 0:
-                    cat_dim = data.__cat_dim__(key, item)
-                    cat_dim = 0 if cat_dim is None else cat_dim
-                    data[key] = torch.cat(data[key], dim=cat_dim)
-                else:
-                    data[key] = torch.stack(data[key])
-            elif isinstance(item, Tensor):  # Don't duplicate attributes...
-                data[key] = data[key][0]
-            elif isinstance(item, int) or isinstance(item, float):
-                data[key] = torch.tensor(data[key])
-
-            slices[key] = torch.tensor(slices[key], dtype=torch.long)
+        data, slices, _ = collate(
+            data_list[0].__class__,
+            data_list=data_list,
+            increment=False,
+            add_batch=False,
+        )
 
         return data, slices
 
-    def copy(self, idx: Optional[IndexType] = None):
+    def copy(self, idx: Optional[IndexType] = None) -> 'InMemoryDataset':
+        r"""Performs a deep-copy of the dataset. If :obj:`idx` is not given,
+        will clone the full dataset. Otherwise, will only clone a subset of the
+        dataset from indices :obj:`idx`.
+        Indices can be slices, lists, tuples, and a :obj:`torch.Tensor` or
+        :obj:`np.ndarray` of type long or bool.
+        """
         if idx is None:
             data_list = [self.get(i) for i in range(len(self))]
         else:
@@ -168,3 +135,12 @@ class InMemoryDataset(Dataset):
         dataset._data_list = data_list
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
+
+
+def nested_iter(mapping: Mapping) -> Iterable:
+    for key, value in mapping.items():
+        if isinstance(value, Mapping):
+            for inner_key, inner_value in nested_iter(value):
+                yield inner_key, inner_value
+        else:
+            yield key, value

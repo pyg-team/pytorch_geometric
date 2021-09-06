@@ -1,20 +1,23 @@
-from torch_sparse import coalesce
+from typing import Union
 
 from torch_geometric.utils import add_self_loops
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import BaseTransform
 
 
 class AddSelfLoops(BaseTransform):
-    r"""Adds self-loops to edge indices."""
-    def __call__(self, data):
-        N = data.num_nodes
-        edge_index = data.edge_index
-        assert data.edge_attr is None
+    r"""Adds self-loops to the given homogeneous or heterogeneous graph."""
+    def __call__(self, data: Union[Data, HeteroData]):
+        for store in data.edge_stores:
+            if store.is_bipartite() or 'edge_index' not in store:
+                continue
 
-        edge_index, _ = add_self_loops(edge_index, num_nodes=N)
-        edge_index, _ = coalesce(edge_index, None, N, N)
-        data.edge_index = edge_index
+            store.edge_index, store.edge_weight = add_self_loops(
+                store.edge_index,
+                store.edge_weight if 'edge_weight' in store else None,
+                num_nodes=store.size(0))
+
         return data
 
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'

@@ -93,7 +93,9 @@ def split(data, batch):
     if data.x is not None:
         slices['x'] = node_slice
     else:
-        data.__num_nodes__ = torch.bincount(batch).tolist()
+        # Imitate `collate` functionality:
+        data._num_nodes = torch.bincount(batch).tolist()
+        data.num_nodes = batch.numel()
     if data.edge_attr is not None:
         slices['edge_attr'] = edge_slice
     if data.y is not None:

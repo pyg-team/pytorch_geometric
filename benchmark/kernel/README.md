@@ -21,3 +21,9 @@ Run (or modify) the whole test suite via
 ```
 $ python main.py
 ```
+
+For more comprehensive time-measurement and memory usage information, you may use 
+
+```
+$ python main_performance.py
+```
