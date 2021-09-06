@@ -67,7 +67,7 @@ The full layer implementation is shown below:
 
     class GCNConv(MessagePassing):
         def __init__(self, in_channels, out_channels):
-            super(GCNConv, self).__init__(aggr='add')  # "Add" aggregation (Step 5).
+            super().__init__(aggr='add')  # "Add" aggregation (Step 5).
             self.lin = torch.nn.Linear(in_channels, out_channels)
 
         def forward(self, x, edge_index):
@@ -140,7 +140,7 @@ In analogy to the GCN layer, we can use the :class:`~torch_geometric.nn.conv.mes
 
     class EdgeConv(MessagePassing):
         def __init__(self, in_channels, out_channels):
-            super(EdgeConv, self).__init__(aggr='max') #  "Max" aggregation.
+            super().__init__(aggr='max') #  "Max" aggregation.
             self.mlp = Seq(Linear(2 * in_channels, out_channels),
                            ReLU(),
                            Linear(out_channels, out_channels))
@@ -169,12 +169,12 @@ Luckily, PyG comes with a GPU accelerated batch-wise k-NN graph generation metho
 
     class DynamicEdgeConv(EdgeConv):
         def __init__(self, in_channels, out_channels, k=6):
-            super(DynamicEdgeConv, self).__init__(in_channels, out_channels)
+            super().__init__(in_channels, out_channels)
             self.k = k
 
         def forward(self, x, batch=None):
             edge_index = knn_graph(x, self.k, batch, loop=False, flow=self.flow)
-            return super(DynamicEdgeConv, self).forward(x, edge_index)
+            return super().forward(x, edge_index)
 
 Here, :meth:`~torch_geometric.nn.pool.knn_graph` computes a nearest neighbor graph, which is further used to call the :meth:`forward` method of :class:`~torch_geometric.nn.conv.EdgeConv`.
 

@@ -365,7 +365,7 @@ Now let's implement a two-layer GCN:
 
     class GCN(torch.nn.Module):
         def __init__(self):
-            super(GCN, self).__init__()
+            super().__init__()
             self.conv1 = GCNConv(dataset.num_node_features, 16)
             self.conv2 = GCNConv(16, dataset.num_classes)
 
