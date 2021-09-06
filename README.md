@@ -46,10 +46,17 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
 
 Whether you are a machine learning researcher or first-time user of machine learning toolkits, here are some reasons to try out PyG for machine learning on graph-structured data.
 
-* **Easy-to-use and unified API**: All it takes is 10-20 lines of code to get started with training a GNN model (see the next section for a [quick tour](#quick-tour-for-new-users)). PyG is *PyTorch-on-the-rocks*: It utilizes a tensor-centric API and keeps design principles close to vanilla PyTorch.
-* **Comprehensive and well-maintained GNN models**: Most of the state-of-the-art Graph Neural Network architectures have been implemented by library developers or authors of research papers and are ready to be applied.
-* **Great flexibility**: Existing PyG models can easily be extended for conducting your own research with GNNs. Making modifications to existing models or creating new architectures is simple, thanks to its easy-to-use message passing API, and a variety of operators and utility functions.
-* **Large-scale real-world GNN models**: We focus on the need of GNN applications in challenging real-world scenarios, and support learning on diverse types of graphs, including but not limited to: scalable GNNs for graphs with millions of nodes; dynamic GNNs for node predictions over time; heterogeneous GNNs with multiple node types and edge types.
+* **Easy-to-use and unified API**:
+  All it takes is 10-20 lines of code to get started with training a GNN model (see the next section for a [quick tour](#quick-tour-for-new-users)).
+  PyG is *PyTorch-on-the-rocks*: It utilizes a tensor-centric API and keeps design principles close to vanilla PyTorch.
+  If you are already familar with PyTorch, utilizing PyG is straightforward.
+* **Comprehensive and well-maintained GNN models**:
+  Most of the state-of-the-art Graph Neural Network architectures have been implemented by library developers or authors of research papers and are ready to be applied.
+* **Great flexibility**:
+  Existing PyG models can easily be extended for conducting your own research with GNNs.
+  Making modifications to existing models or creating new architectures is simple, thanks to its easy-to-use message passing API, and a variety of operators and utility functions.
+* **Large-scale real-world GNN models**:
+  We focus on the need of GNN applications in challenging real-world scenarios, and support learning on diverse types of graphs, including but not limited to: scalable GNNs for graphs with millions of nodes; dynamic GNNs for node predictions over time; heterogeneous GNNs with multiple node types and edge types.
 
 ## Quick Tour for New Users
 
@@ -146,8 +153,8 @@ For a quick start, check out our [examples](https://github.com/rusty1s/pytorch_g
 PyG provides a multi-layer framework that enables users to build Graph Neural Network solutions on both low and high levels.
 It comprises of the following components:
 
-* The PyG **engine** utilizes the powerful PyTorch deep learning framework, as well as additions of efficient CUDA libraries for operating on sparse data ([`torch_scatter`](https://github.com/rusty1s/pytorch_scatter) and [`torch_sparse`](https://github.com/rusty1s/pytorch_sparse)).
-* The PyG **storage** handles data processing, transformation and loading pipelines. It is capable of handling and processing large-scale graph datasets, and provide effective solutions for heterogeneous graphs. It further provides a variety of sampling solutions, which enable training of GNNs on large-scale graphs.
+* The PyG **engine** utilizes the powerful PyTorch deep learning framework, as well as additions of efficient CUDA libraries for operating on sparse data, *e.g.*, [`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse) and [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster).
+* The PyG **storage** handles data processing, transformation and loading pipelines. It is capable of handling and processing large-scale graph datasets, and provides effective solutions for heterogeneous graphs. It further provides a variety of sampling solutions, which enable training of GNNs on large-scale graphs.
 * The PyG **operators** bundle essential functionalities for implementing Graph Neural Networks. It contains important components that can be combined and applied to various parts of a GNN model, ensuring rich flexibility of GNN design.
 * Finally, PyG provides an abundant set of GNN **models**, and examples that showcases GNN models on standard graph benchmarks. Thanks to its flexibility, users can easily build and modify custom GNN models to fit their specific needs.
 
