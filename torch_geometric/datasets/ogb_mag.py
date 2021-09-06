@@ -95,7 +95,7 @@ class OGB_MAG(InMemoryDataset):
             extract_zip(path, self.raw_dir)
             for file_name in ['node-feat', 'node-label', 'relations']:
                 path = osp.join(self.raw_dir, 'mag', 'raw', file_name)
-                shutil.move(file_name, self.raw_dir)
+                shutil.move(path, self.raw_dir)
             path = osp.join(self.raw_dir, 'mag', 'split')
             shutil.move(path, self.raw_dir)
             path = osp.join(self.raw_dir, 'mag', 'raw', 'num-node-dict.csv.gz')

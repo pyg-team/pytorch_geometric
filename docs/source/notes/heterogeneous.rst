@@ -58,8 +58,8 @@ First, we can create a data object of type :class:`torch_geometric.data.HeteroDa
    data['paper', 'has_topic', 'field_of_study'].edge_attr = ... # [num_edges_topic, num_features_topic]
 
 Node or edge tensors will be automatically created upon first access and indexed by string keys.
-Node types are identified by a single string while edge types are identified by using a triplet :obj:`(source_node_type, edge_type, destination_node_type)` of strings, the edge type identifier and the two node types, between which the edge type can exist.
-The data object allows different feature dimensionalities for each type.
+Node types are identified by a single string while edge types are identified by using a triplet :obj:`(source_node_type, edge_type, destination_node_type)` of strings: the edge type identifier and the two node types, between which the edge type can exist.
+As such, the data object allows different feature dimensionalities for each type.
 
 Dictionaries containing the heterogeneous information grouped by attribute names rather than by node or edge type can directly be accessed via :obj:`data.{attribute_name}_dict` and serve as input to GNN models later:
 
@@ -138,11 +138,11 @@ We can access the meta-data of the :obj:`data` object, holding information of al
 
    node_types, edge_types = data.metadata()
    print(node_types)
-   >>> ['paper', 'author', 'institution']
+   ['paper', 'author', 'institution']
    print(edge_types)
-   >>> [('paper', 'cites', 'paper'),
-        ('author', 'writes', 'paper'),
-        ('author', 'affiliated_with', 'institution')]
+   [('paper', 'cites', 'paper'),
+    ('author', 'writes', 'paper'),
+    ('author', 'affiliated_with', 'institution')]
 
 The :obj:`data` object can be transferred between devices as usual:
 
@@ -151,13 +151,23 @@ The :obj:`data` object can be transferred between devices as usual:
    data = data.to('cuda:0')
    data = data.cpu()
 
-We further have access to additional helper functions to analyze the given graph:
+We further have access to additional helper functions to analyze the given graph
 
 .. code-block:: python
 
    data.has_isolated_nodes()
    data.has_self_loops()
    data.is_undirected()
+
+and can convert it to a homogeneous "typed" graph via :meth:`~torch_geometric.data.HeteroData.to_homogeneous` which is able to maintain features in case their dimensionalities match across different types:
+
+.. code-block:: python
+
+   homogeneous_data = data.to_homogeneous()
+   print(homogeneous_data)
+   Data(num_nodes=1879778, edge_index=[2, 13605929], edge_type=[13605929])
+
+Here, :obj:`homogeneous_data.edge_type` represents an edge-level vector that holds the edge type of each edge as an integer.
 
 Heterogeneous Graph Transformations
 -----------------------------------
@@ -228,6 +238,7 @@ The process takes an existing GNN model and duplicates the message functions to 
    :width: 90%
 
 As a result, the model now expects dictionaries with node and edge types as keys as input arguments, rather than single tensors utilized in homogeneous graphs.
+Both :meth:`~torch_geometric.nn.to_hetero` and :meth:`~torch_geometric.nn.to_hetero_with_bases` are very flexible with respect to the homogeneous architectures that can be automatically converted to heterogeneous ones, *e.g.*, applying skip-connections, jumping knowledge or other techniques are supported out-of-the-box.
 
 .. _lazyinit:
 
@@ -311,7 +322,7 @@ These operators can be directly used to build heterogeneous GNN models as can be
 
 .. code-block:: python
 
-   from torch_geometric.nn import HGTConv
+   from torch_geometric.nn import HGTConv, Linear
 
    class HGT(torch.nn.Module):
        def __init__(self, hidden_channels, out_channels, num_heads, num_layers):
@@ -350,9 +361,10 @@ and run the standard training procedure as outlined :ref:`here<trainfunc>`.
 Heterogeneous Graph Samplers
 ----------------------------
 
-PyG provides various functionalities for sampling heterogeneous graphs, *i.e.* in the standard :class:`torch_geometric.loader.NeighborLoader` class as well as in other samplers such as :class:`torch_geometric.loader.ClusterLoader`, :class:`torch_geometric.loader.GraphSAINTLoader`, or in dedicated heterogeneous graph samplers such as :class:`torch_geometric.loader.HGTLoader`.
+PyG provides various functionalities for sampling heterogeneous graphs, *i.e.* in the standard :class:`torch_geometric.loader.NeighborLoader` class  or in dedicated heterogeneous graph samplers such as :class:`torch_geometric.loader.HGTLoader`.
 This is especially useful for efficient representation learning on large heterogeneous graphs, where processing the full number of neighbors is too computationally expensive.
-Overall, all heterogeneous graph loaders will produce a :class:`~torch_geometric.data.HeteroData` object as output, holding a subset of the original data, and mainly differ in their sampling procedures.
+Heterogeneous graph support for other samplers such as :class:`torch_geometric.loader.ClusterLoader` or :class:`torch_geometric.loader.GraphSAINTLoader` will be added soon.
+Overall, all heterogeneous graph loaders will produce a :class:`~torch_geometric.data.HeteroData` object as output, holding a subset of the original data, and mainly differ in the way their sampling procedures works.
 As such, only minimal code changes are required to convert the training procedure from :ref:`full-batch training<trainfunc>` to mini-batch training.
 
 Performing neighbor sampling using :class:`~torch_geometric.loader.NeighborLoader` works as outlined in the following `example <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`__:

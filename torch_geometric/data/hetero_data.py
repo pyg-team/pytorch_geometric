@@ -410,7 +410,7 @@ class HeteroData(BaseData):
                 (default: :obj:`True`)
         """
         def _consistent_size(stores: List[BaseStorage]) -> List[str]:
-            sizes_dict = defaultdict(set)
+            sizes_dict = defaultdict(list)
             for store in stores:
                 for key, value in store.items():
                     if key in ['edge_index', 'adj_t']:
@@ -418,8 +418,11 @@ class HeteroData(BaseData):
                     if isinstance(value, Tensor):
                         dim = self.__cat_dim__(key, value, store)
                         size = value.size()[:dim] + value.size()[dim + 1:]
-                        sizes_dict[key].add(tuple(size))
-            return [k for k, sizes in sizes_dict.items() if len(sizes) == 1]
+                        sizes_dict[key].append(tuple(size))
+            return [
+                k for k, sizes in sizes_dict.items()
+                if len(sizes) == len(stores) and len(set(sizes)) == 1
+            ]
 
         data = Data(**self._global_store.to_dict())
 
