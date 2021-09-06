@@ -313,7 +313,7 @@ conda install pytorch-geometric -c rusty1s -c conda-forge
 
 ### Pip Wheels
 
-We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl/index.html).
+We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
 #### PyTorch 1.9.0
 
