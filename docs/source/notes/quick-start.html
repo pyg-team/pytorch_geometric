@@ -125,7 +125,7 @@
     }
 
     else {
-      $("#command pre").text(`pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://pytorch-geometric.com/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+      $("#command pre").text(`pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
   }
 
