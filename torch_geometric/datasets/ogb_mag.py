@@ -44,9 +44,9 @@ class OGB_MAG(InMemoryDataset):
 
     url = 'http://snap.stanford.edu/ogb/data/nodeproppred/mag.zip'
     urls = {
-        'metapath2vec': ('https://pytorch-geometric.com/datasets/'
+        'metapath2vec': ('https://data.pyg.org/datasets/'
                          'mag_metapath2vec_emb.zip'),
-        'transe': ('https://pytorch-geometric.com/datasets/'
+        'transe': ('https://data.pyg.org/datasets/'
                    'mag_transe_emb.zip'),
     }
 

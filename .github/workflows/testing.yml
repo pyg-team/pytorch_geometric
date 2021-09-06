@@ -42,10 +42,10 @@ jobs:
 
       - name: Install internal dependencies
         run: |
-          pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-scatter -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-cluster -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+          pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
 
       - name: Install optional dependencies
         run: |

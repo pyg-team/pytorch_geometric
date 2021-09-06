@@ -313,15 +313,15 @@ conda install pytorch-geometric -c rusty1s -c conda-forge
 
 ### Pip Wheels
 
-We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://pytorch-geometric.com/whl).
+We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
 #### PyTorch 1.9.0
 
 To install the binaries for PyTorch 1.9.0, simply run
 
 ```
-pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
-pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
+pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html
+pip install torch-sparse -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html
 pip install torch-geometric
 ```
 
@@ -336,8 +336,8 @@ where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu111` dependin
 For additional but optional functionality, run
 
 ```
-pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
-pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.9.0+${CUDA}.html
+pip install torch-cluster -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html
+pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html
 ```
 
 #### PyTorch 1.8.0/1.8.1
@@ -345,8 +345,8 @@ pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.9.0+$
 To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
 
 ```sh
-pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+pip install torch-scatter -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
+pip install torch-sparse -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
 pip install torch-geometric
 ```
 
@@ -361,8 +361,8 @@ where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111`
 For additional but optional functionality, run
 
 ```
-pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
-pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.8.0+${CUDA}.html
+pip install torch-cluster -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
+pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
 ```
 
 **Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0 and PyTorch 1.7.0/1.7.1 (following the same procedure).
