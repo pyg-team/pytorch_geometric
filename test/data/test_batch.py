@@ -22,9 +22,14 @@ def test_batch():
     e2 = torch.tensor([[0, 1], [1, 0]])
     adj2 = SparseTensor.from_edge_index(e2)
     s2 = '2'
+    x3 = torch.tensor([1, 2, 3, 4], dtype=torch.float)
+    e3 = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
+    adj3 = SparseTensor.from_edge_index(e3)
+    s3 = '3'
 
     data1 = Data(x=x1, edge_index=e1, adj=adj1, s=s1, num_nodes=3)
     data2 = Data(x=x2, edge_index=e2, adj=adj2, s=s2, num_nodes=2)
+    data3 = Data(x=x3, edge_index=e3, adj=adj3, s=s3, num_nodes=4)
 
     batch = Batch.from_data_list([data1])
     assert str(batch) == ('Batch(x=[3], edge_index=[2, 4], adj=[3, 3, nnz=4], '
@@ -40,23 +45,23 @@ def test_batch():
     assert batch.batch.tolist() == [0, 0, 0]
     assert batch.ptr.tolist() == [0, 3]
 
-    batch = Batch.from_data_list([data1, data2], follow_batch=['s'])
+    batch = Batch.from_data_list([data1, data2, data3], follow_batch=['s'])
 
     assert str(batch) == (
-        'Batch(x=[5], edge_index=[2, 6], adj=[5, 5, nnz=6], '
-        's=[2], s_batch=[2], num_nodes=5, batch=[5], ptr=[3])')
-    assert batch.num_graphs == 2
+        'Batch(x=[9], edge_index=[2, 12], adj=[9, 9, nnz=12], '
+        's=[3], s_batch=[3], num_nodes=9, batch=[9], ptr=[4])')
+    assert batch.num_graphs == 3
     assert len(batch) == 8
-    assert batch.x.tolist() == [1, 2, 3, 1, 2]
-    assert batch.edge_index.tolist() == [[0, 1, 1, 2, 3, 4],
-                                         [1, 0, 2, 1, 4, 3]]
+    assert batch.x.tolist() == [1, 2, 3, 1, 2, 1, 2, 3, 4]
+    assert batch.edge_index.tolist() == [[0, 1, 1, 2, 3, 4, 5, 6, 6, 7, 7, 8],
+                                         [1, 0, 2, 1, 4, 3, 6, 5, 7, 6, 8, 7]]
     edge_index = torch.stack(batch.adj.coo()[:2], dim=0)
     assert edge_index.tolist() == batch.edge_index.tolist()
-    assert batch.s == ['1', '2']
-    assert batch.s_batch.tolist() == [0, 1]
-    assert batch.num_nodes == 5
-    assert batch.batch.tolist() == [0, 0, 0, 1, 1]
-    assert batch.ptr.tolist() == [0, 3, 5]
+    assert batch.s == ['1', '2', '3']
+    assert batch.s_batch.tolist() == [0, 1, 2]
+    assert batch.num_nodes == 9
+    assert batch.batch.tolist() == [0, 0, 0, 1, 1, 2, 2, 2, 2]
+    assert batch.ptr.tolist() == [0, 3, 5, 9]
 
     data = batch[0]
     assert str(data) == ("Data(x=[3], edge_index=[2, 4], adj=[3, 3, nnz=4], "
@@ -73,7 +78,8 @@ def test_batch():
     assert len(batch[:2]) == 2
 
     data_list = batch.to_data_list()
-    assert len(data_list) == 2
+    assert len(data_list) == 3
+
     assert len(data_list[0]) == 5
     assert data_list[0].x.tolist() == [1, 2, 3]
     assert data_list[0].edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
@@ -89,6 +95,15 @@ def test_batch():
     assert edge_index.tolist() == data_list[1].edge_index.tolist()
     assert data_list[1].s == '2'
     assert data_list[1].num_nodes == 2
+
+    assert len(data_list[2]) == 5
+    assert data_list[2].x.tolist() == [1, 2, 3, 4]
+    assert data_list[2].edge_index.tolist() == [[0, 1, 1, 2, 2, 3],
+                                                [1, 0, 2, 1, 3, 2]]
+    edge_index = torch.stack(data_list[2].adj.coo()[:2], dim=0)
+    assert edge_index.tolist() == data_list[2].edge_index.tolist()
+    assert data_list[2].s == '3'
+    assert data_list[2].num_nodes == 4
 
     torch_geometric.set_debug(True)
 
