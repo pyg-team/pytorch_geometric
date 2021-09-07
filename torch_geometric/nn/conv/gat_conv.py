@@ -78,8 +78,9 @@ class GATConv(MessagePassing):
         # In case we are operating in bipartite graphs, we apply separate
         # transformations 'lin_src' and 'lin_dst' to source and target nodes:
         if isinstance(in_channels, int):
-            self.lin = Linear(in_channels, heads * out_channels, bias=False,
-                              weight_initializer='glorot')
+            self.lin_src = Linear(in_channels, heads * out_channels,
+                                  bias=False, weight_initializer='glorot')
+            self.lin_dst = self.lin_src
         else:
             self.lin_src = Linear(in_channels[0], heads * out_channels, False,
                                   weight_initializer='glorot')
@@ -102,11 +103,8 @@ class GATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        if hasattr(self, 'lin'):
-            self.lin.reset_parameters()
-        else:
-            self.lin_src.reset_parameters()
-            self.lin_dst.reset_parameters()
+        self.lin_src.reset_parameters()
+        self.lin_dst.reset_parameters()
         glorot(self.att_src)
         glorot(self.att_dst)
         zeros(self.bias)
@@ -130,7 +128,7 @@ class GATConv(MessagePassing):
         # transform source and target node features via separate weights:
         if isinstance(x, Tensor):
             assert x.dim() == 2, "Static graphs not supported in 'GATConv'"
-            x_src = x_dst = self.lin(x).view(-1, H, C)
+            x_src = x_dst = self.lin_src(x).view(-1, H, C)
         else:  # Tuple of source and target node features:
             x_src, x_dst = x
             assert x_src.dim() == 2, "Static graphs not supported in 'GATConv'"
