@@ -258,7 +258,7 @@ For example, this is all it takes to implement a heterogeneous graph attention n
 
 .. code-block:: python
 
-   from torch_geometric.nn import SAGEConv, Linear, to_hetero
+   from torch_geometric.nn import GATConv, Linear, to_hetero
 
    class GAT(torch.nn.Module):
        def __init__(self, hidden_channels, out_channels):
