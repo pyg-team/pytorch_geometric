@@ -13,7 +13,6 @@ class MeshCNNPrepare:
     the MeshCNN paper: `"MeshCNN: A Network with an Edge"
     <https://arxiv.org/abs/1809.05910>`_ paper.
     Args:
-        num_aug (int): Number of augmentations to apply on mesh.
         aug_slide_verts (float, optional): values between 0.0 to 1.0 - if set
                                            above 0 will apply shift along mesh
                                            surface with percentage of
@@ -28,12 +27,11 @@ class MeshCNNPrepare:
                                           aug_flip_edges value.
     """
 
-    def __init__(self, num_aug: int = 1,
-                 aug_slide_verts: float = 0.0,
-                 aug_scale_verts: bool = False, aug_flip_edges: float = 0.0,
+    def __init__(self, aug_slide_verts: float = 0.0,
+                 aug_scale_verts: bool = False,
+                 aug_flip_edges: float = 0.0,
                  aug_file: str = ''):
 
-        self.num_aug = num_aug
         self.aug_slide_verts = aug_slide_verts
         self.aug_scale_verts = aug_scale_verts
         self.aug_flip_edges = aug_flip_edges
@@ -85,18 +83,6 @@ class MeshCNNPrepare:
 
         return self.mesh_data
 
-    def get_mesh_path(self, file):
-        filename, suffix = os.path.splitext(file)
-        dir_name = os.path.dirname(filename)
-        prefix = os.path.basename(filename)
-        load_dir = os.path.join(dir_name, 'cache')
-        load_file = os.path.join(load_dir, '%s_%03d' %
-                                 (prefix, np.random.randint(0, self.num_aug))
-                                 + suffix)
-        if not os.path.isdir(load_dir):
-            os.makedirs(load_dir, exist_ok=True)
-        return load_file
-
     def from_scratch(self, data):
         keys = data.keys
         assert (('pos' in keys and 'face' in keys)
@@ -116,11 +102,9 @@ class MeshCNNPrepare:
         mesh_data.v_mask = torch.ones(len(mesh_data.pos), dtype=bool)
 
         faces, face_areas = self.remove_non_manifolds(mesh_data, faces)
-        if self.num_aug > 1:
-            faces = self.mesh_augmentations(mesh_data, faces)
+        faces = self.mesh_augmentations(mesh_data, faces)
         self.build_edge_indexes(mesh_data, faces, face_areas)
-        if self.num_aug > 1:
-            self.mesh_post_augmentations(mesh_data)
+        self.mesh_post_augmentations(mesh_data)
         mesh_data.edge_attr = torch.tensor(mesh_extract_features(mesh_data))
         return mesh_data
 

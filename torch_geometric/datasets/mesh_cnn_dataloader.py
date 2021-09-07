@@ -35,6 +35,7 @@ class MeshDataLoader:
                                        results for visualization. Default is an
                                        empty path which means no data export.
     """
+
     def __init__(self, mesh_dataset: MeshCnnBaseDataset, data_set_type: str,
                  gpu_ids=[], phase: str = 'train', batch_size: int = 1,
                  shuffle: bool = True, hold_history: bool = False,
@@ -76,7 +77,8 @@ class MeshDataLoader:
                 for idx in range(0, data.num_graphs):
                     d = data.get_example(idx)
                     meshes.append(
-                        MeshCNNHandler(mesh_data=d, hold_history=self.hold_history,
+                        MeshCNNHandler(mesh_data=d,
+                                       hold_history=self.hold_history,
                                        export_folder=self.export_folder))
                     if self.data_set_type == 'classification':
                         labels[idx] = d.label.item()

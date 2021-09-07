@@ -248,11 +248,14 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
                 if osp.exists(load_file):
                     continue
                 else:
-                    mesh_prepare = MeshCNNPrepare(num_aug=self.num_aug,
-                                                  aug_slide_verts=self.slide_verts,
-                                                  aug_scale_verts=self.scale_verts,
-                                                  aug_flip_edges=self.flip_edges,
-                                                  aug_file=load_file)
+                    if self.num_aug > 1:
+                        mesh_prepare = MeshCNNPrepare(
+                            aug_slide_verts=self.slide_verts,
+                            aug_scale_verts=self.scale_verts,
+                            aug_flip_edges=self.flip_edges,
+                            aug_file=load_file)
+                    else:
+                        mesh_prepare = MeshCNNPrepare(aug_file=load_file)
                     data = self.get_data_from_file(path)
                     mesh_data = mesh_prepare(data)
 
@@ -262,10 +265,22 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
     def get(self, idx):
         path = self.paths_labels[idx][0]
         label = self.paths_labels[idx][1]
-        mesh_prepare = MeshCNNPrepare(num_aug=self.num_aug,
-                                      aug_slide_verts=self.slide_verts,
-                                      aug_scale_verts=self.scale_verts,
-                                      aug_flip_edges=self.flip_edges)
+        filename, _ = osp.splitext(path)
+        dir_name = osp.dirname(filename)
+        prefix = osp.basename(filename)
+        load_dir = osp.join(dir_name, 'cache')
+        load_file = osp.join(load_dir,
+                             '%s_%03d.npz' % (
+                                 prefix, np.random.randint(0, self.num_aug)))
+
+        if self.num_aug > 1:
+            mesh_prepare = MeshCNNPrepare(aug_slide_verts=self.slide_verts,
+                                          aug_scale_verts=self.scale_verts,
+                                          aug_flip_edges=self.flip_edges,
+                                          aug_file=load_file)
+        else:
+            mesh_prepare = MeshCNNPrepare(aug_file=load_file)
+
         data = self.get_data_from_file(path)
         mesh_data = mesh_prepare(data)
         mesh_data.label = label
@@ -419,11 +434,14 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
                 if osp.exists(load_file):
                     continue
                 else:
-                    mesh_prepare = MeshCNNPrepare(num_aug=self.num_aug,
-                                                  aug_slide_verts=self.slide_verts,
-                                                  aug_scale_verts=self.scale_verts,
-                                                  aug_flip_edges=self.flip_edges,
-                                                  aug_file=load_file)
+                    if self.num_aug > 1:
+                        mesh_prepare = MeshCNNPrepare(
+                            aug_slide_verts=self.slide_verts,
+                            aug_scale_verts=self.scale_verts,
+                            aug_flip_edges=self.flip_edges,
+                            aug_file=load_file)
+                    else:
+                        mesh_prepare = MeshCNNPrepare(aug_file=load_file)
                     data = self.get_data_from_file(path)
                     mesh_data = mesh_prepare(data)
 
@@ -436,10 +454,22 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         label = pad(label, self.n_input_edges, val=-1, dim=0)
         soft_label = self.read_sseg(self.sseg_paths[idx])
         soft_label = pad(soft_label, self.n_input_edges, val=-1, dim=0)
-        mesh_prepare = MeshCNNPrepare(num_aug=self.num_aug,
-                                      aug_slide_verts=self.slide_verts,
-                                      aug_scale_verts=self.scale_verts,
-                                      aug_flip_edges=self.flip_edges)
+
+        filename, _ = osp.splitext(path)
+        dir_name = osp.dirname(filename)
+        prefix = osp.basename(filename)
+        load_dir = osp.join(dir_name, 'cache')
+        load_file = osp.join(load_dir,
+                             '%s_%03d.npz' % (
+                                 prefix, np.random.randint(0, self.num_aug)))
+
+        if self.num_aug > 1:
+            mesh_prepare = MeshCNNPrepare(aug_slide_verts=self.slide_verts,
+                                          aug_scale_verts=self.scale_verts,
+                                          aug_flip_edges=self.flip_edges,
+                                          aug_file=load_file)
+        else:
+            mesh_prepare = MeshCNNPrepare(aug_file=load_file)
         data = self.get_data_from_file(path)
         mesh_data = mesh_prepare(data)
         mesh_data.label = label
