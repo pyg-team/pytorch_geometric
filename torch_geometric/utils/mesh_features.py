@@ -26,7 +26,8 @@ def set_edge_lengths(mesh, edge_points=None):
         edge_points = get_edge_points(mesh.edges, mesh.edge_index,
                                       mesh.edges_count)
     edge_lengths = np.linalg.norm(
-        mesh.pos[edge_points[:, 0]] - mesh.pos[edge_points[:, 1]], ord=2, axis=1)
+        mesh.pos[edge_points[:, 0]] - mesh.pos[edge_points[:, 1]], ord=2,
+        axis=1)
     mesh.edge_lengths = edge_lengths
 
 
@@ -52,8 +53,10 @@ def symmetric_opposite_angles(mesh, edge_points):
 
 
 def get_normals(pos, edge_points, side):
-    edge_a = pos[edge_points[:, side // 2 + 2]] - pos[edge_points[:, side // 2]]
-    edge_b = pos[edge_points[:, 1 - side // 2]] - pos[edge_points[:, side // 2]]
+    edge_a = pos[edge_points[:, side // 2 + 2]] - pos[
+        edge_points[:, side // 2]]
+    edge_b = pos[edge_points[:, 1 - side // 2]] - pos[
+        edge_points[:, side // 2]]
     normals = np.cross(edge_a, edge_b)
     div = fixed_division(np.linalg.norm(normals, ord=2, axis=1), epsilon=0.1)
     normals /= div[:, np.newaxis]

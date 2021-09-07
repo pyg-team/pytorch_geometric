@@ -145,7 +145,8 @@ class MeshCNNSegmentation:
                 for mesh_id, mesh in enumerate(self.mesh):
                     correct_vec = \
                         correct_mat[mesh_id, :mesh.mesh_data.edges_count, 0]
-                    correct += (correct_vec.float() * mesh.get_edge_areas()).sum()
+                    correct += (
+                            correct_vec.float() * mesh.get_edge_areas()).sum()
 
                 num_correct_counter += correct
                 num_examples_counter += len(label_class)

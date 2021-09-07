@@ -71,7 +71,8 @@ class MeshCNNPrepare:
             if load_path is not '':
                 np.savez_compressed(load_path, pos=self.mesh_data.pos,
                                     edges=self.mesh_data.edges,
-                                    edges_count=int(self.mesh_data.edges_count),
+                                    edges_count=int(
+                                        self.mesh_data.edges_count),
                                     ve=self.mesh_data.ve,
                                     v_mask=self.mesh_data.v_mask,
                                     filename=str(self.mesh_data.filename),

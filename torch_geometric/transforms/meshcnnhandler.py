@@ -132,7 +132,7 @@ class MeshCNNHandler:
         index_pyg_mask = [5 * ind_mask + i for ind_mask in index_mask for i in
                           range(5)]
         self.mesh_data.edge_index = self.mesh_data.edge_index[:,
-                                                              index_pyg_mask]
+                                    index_pyg_mask]
 
         self.mesh_data.edges = self.mesh_data.edges[edges_mask]
         self.mesh_data.sides = self.mesh_data.sides[edges_mask]

@@ -117,7 +117,8 @@ def slide_verts(mesh_edges, edge_indexes, edges_count, ve, pos, prct):
             if min(dihedral[edges]) > 2.65:
                 edge = mesh_edges[np.random.choice(edges)]
                 vi_t = edge[1] if vi == edge[0] else edge[0]
-                nv = pos[vi] + np.random.uniform(0.2, 0.5) * (pos[vi_t] - pos[vi])
+                nv = pos[vi] + np.random.uniform(0.2, 0.5) * (
+                            pos[vi_t] - pos[vi])
                 pos[vi] = nv
                 shifted += 1
         else:

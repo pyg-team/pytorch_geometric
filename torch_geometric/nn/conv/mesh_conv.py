@@ -121,9 +121,9 @@ class MeshConv(MessagePassing):
         if self.neighborhood_size == 5:
             e0 = x_j[0::self.neighborhood_size]
             e1 = x_j[1::self.neighborhood_size] + x_j[3::self.neighborhood_size
-                                                      ]
+                                                  ]
             e2 = x_j[2::self.neighborhood_size] + x_j[4::self.neighborhood_size
-                                                      ]
+                                                  ]
             e3 = torch.abs(x_j[3::self.neighborhood_size] -
                            x_j[1::self.neighborhood_size])
             e4 = torch.abs(x_j[4::self.neighborhood_size] -
