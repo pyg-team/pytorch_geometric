@@ -85,7 +85,7 @@ The :obj:`data` object can be printed for verification.
 
    HeteroData(
       paper={
-         x=[736389, 256],
+         x=[736389, 128],
          y=[736389],
          train_mask=[736389],
          val_mask=[736389],
@@ -165,7 +165,7 @@ and can convert it to a homogeneous "typed" graph via :meth:`~torch_geometric.da
 
    homogeneous_data = data.to_homogeneous()
    print(homogeneous_data)
-   Data(num_nodes=1879778, edge_index=[2, 13605929], edge_type=[13605929])
+   Data(x=[1879778, 128], edge_index=[2, 13605929], edge_type=[13605929])
 
 Here, :obj:`homogeneous_data.edge_type` represents an edge-level vector that holds the edge type of each edge as an integer.
 

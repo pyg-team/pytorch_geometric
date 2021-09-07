@@ -129,9 +129,7 @@ class OGB_MAG(InMemoryDataset):
         else:
             emb_dict = torch.load(self.raw_paths[-1])
             for key, value in emb_dict.items():
-                if key == 'paper':
-                    data[key].x = torch.cat([data[key].x, value], dim=-1)
-                else:
+                if key != 'paper':
                     data[key].x = value
 
         for edge_type in [('author', 'affiliated_with', 'institution'),
