@@ -139,14 +139,13 @@ class MeshCNNSegmentation:
                 label_class = self.labels
                 # seg_accuracy
                 correct = 0
-                ssegs = self.soft_label.squeeze(-1)
+                ssegs = self.soft_label.squeeze(-1).cpu()
                 correct_mat = ssegs.gather(2,
                                            pred_class.cpu().unsqueeze(dim=2))
                 for mesh_id, mesh in enumerate(self.mesh):
                     correct_vec = \
                         correct_mat[mesh_id, :mesh.mesh_data.edges_count, 0]
-                    edge_areas = torch.from_numpy(mesh.get_edge_areas())
-                    correct += (correct_vec.float() * edge_areas).sum()
+                    correct += (correct_vec.float() * mesh.get_edge_areas()).sum()
 
                 num_correct_counter += correct
                 num_examples_counter += len(label_class)
