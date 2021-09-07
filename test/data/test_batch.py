@@ -23,24 +23,40 @@ def test_batch():
     adj2 = SparseTensor.from_edge_index(e2)
     s2 = '2'
 
-    batch = Batch.from_data_list([
-        Data(x=x1, edge_index=e1, adj=adj1, s=s1, num_nodes=3),
-        Data(x=x2, edge_index=e2, adj=adj2, s=s2, num_nodes=2)
-    ])
+    data1 = Data(x=x1, edge_index=e1, adj=adj1, s=s1, num_nodes=3)
+    data2 = Data(x=x2, edge_index=e2, adj=adj2, s=s2, num_nodes=2)
 
-    assert str(batch) == ('Batch(x=[5], edge_index=[2, 6], adj=[5, 5, nnz=6], '
-                          's=[2], num_nodes=5, batch=[5], ptr=[3])')
+    batch = Batch.from_data_list([data1])
+    assert str(batch) == ('Batch(x=[3], edge_index=[2, 4], adj=[3, 3, nnz=4], '
+                          's=[1], num_nodes=3, batch=[3], ptr=[2])')
+    assert batch.num_graphs == 1
     assert len(batch) == 7
+    assert batch.x.tolist() == [1, 2, 3]
+    assert batch.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    edge_index = torch.stack(batch.adj.coo()[:2], dim=0)
+    assert edge_index.tolist() == batch.edge_index.tolist()
+    assert batch.s == ['1']
+    assert batch.num_nodes == 3
+    assert batch.batch.tolist() == [0, 0, 0]
+    assert batch.ptr.tolist() == [0, 3]
+
+    batch = Batch.from_data_list([data1, data2], follow_batch=['s'])
+
+    assert str(batch) == (
+        'Batch(x=[5], edge_index=[2, 6], adj=[5, 5, nnz=6], '
+        's=[2], s_batch=[2], num_nodes=5, batch=[5], ptr=[3])')
+    assert batch.num_graphs == 2
+    assert len(batch) == 8
     assert batch.x.tolist() == [1, 2, 3, 1, 2]
     assert batch.edge_index.tolist() == [[0, 1, 1, 2, 3, 4],
                                          [1, 0, 2, 1, 4, 3]]
     edge_index = torch.stack(batch.adj.coo()[:2], dim=0)
     assert edge_index.tolist() == batch.edge_index.tolist()
     assert batch.s == ['1', '2']
+    assert batch.s_batch.tolist() == [0, 1]
     assert batch.num_nodes == 5
     assert batch.batch.tolist() == [0, 0, 0, 1, 1]
     assert batch.ptr.tolist() == [0, 3, 5]
-    assert batch.num_graphs == 2
 
     data = batch[0]
     assert str(data) == ("Data(x=[3], edge_index=[2, 4], adj=[3, 3, nnz=4], "
@@ -170,18 +186,23 @@ def test_recursive_batch():
 
 
 def test_hetero_batch():
-    e = ('p', 'a')
+    e1 = ('p', 'a')
+    e2 = ('a', 'p')
     data1 = HeteroData()
     data1['p'].x = torch.randn(100, 128)
     data1['a'].x = torch.randn(200, 128)
-    data1[e].edge_index = get_edge_index(100, 200, 500)
-    data1[e].edge_attr = torch.randn(500, 32)
+    data1[e1].edge_index = get_edge_index(100, 200, 500)
+    data1[e1].edge_attr = torch.randn(500, 32)
+    data1[e2].edge_index = get_edge_index(200, 100, 400)
+    data1[e2].edge_attr = torch.randn(400, 32)
 
     data2 = HeteroData()
     data2['p'].x = torch.randn(50, 128)
     data2['a'].x = torch.randn(100, 128)
-    data2[e].edge_index = get_edge_index(50, 10, 300)
-    data2[e].edge_attr = torch.randn(300, 32)
+    data2[e1].edge_index = get_edge_index(50, 100, 300)
+    data2[e1].edge_attr = torch.randn(300, 32)
+    data2[e2].edge_index = get_edge_index(100, 50, 200)
+    data2[e2].edge_attr = torch.randn(200, 32)
 
     batch = Batch.from_data_list([data1, data2])
 
@@ -193,12 +214,20 @@ def test_hetero_batch():
     assert torch.allclose(batch['a'].x[:200], data1['a'].x)
     assert torch.allclose(batch['p'].x[100:], data2['p'].x)
     assert torch.allclose(batch['a'].x[200:], data2['a'].x)
-    assert (batch[e].edge_index.tolist() == torch.cat([
-        data1[e].edge_index, data2[e].edge_index + torch.tensor([[100], [200]])
+    assert (batch[e1].edge_index.tolist() == torch.cat([
+        data1[e1].edge_index,
+        data2[e1].edge_index + torch.tensor([[100], [200]])
     ], 1).tolist())
     assert torch.allclose(
-        batch[e].edge_attr,
-        torch.cat([data1[e].edge_attr, data2[e].edge_attr], 0))
+        batch[e1].edge_attr,
+        torch.cat([data1[e1].edge_attr, data2[e1].edge_attr], 0))
+    assert (batch[e2].edge_index.tolist() == torch.cat([
+        data1[e2].edge_index,
+        data2[e2].edge_index + torch.tensor([[200], [100]])
+    ], 1).tolist())
+    assert torch.allclose(
+        batch[e2].edge_attr,
+        torch.cat([data1[e2].edge_attr, data2[e2].edge_attr], 0))
     assert batch['p'].batch.size() == (150, )
     assert batch['p'].ptr.size() == (3, )
     assert batch['a'].batch.size() == (300, )
@@ -209,13 +238,17 @@ def test_hetero_batch():
     assert out1.num_nodes == 300
     assert torch.allclose(out1['p'].x, data1['p'].x)
     assert torch.allclose(out1['a'].x, data1['a'].x)
-    assert out1[e].edge_index.tolist() == data1[e].edge_index.tolist()
-    assert torch.allclose(out1[e].edge_attr, data1[e].edge_attr)
+    assert out1[e1].edge_index.tolist() == data1[e1].edge_index.tolist()
+    assert torch.allclose(out1[e1].edge_attr, data1[e1].edge_attr)
+    assert out1[e2].edge_index.tolist() == data1[e2].edge_index.tolist()
+    assert torch.allclose(out1[e2].edge_attr, data1[e2].edge_attr)
 
     out2 = batch[1]
     assert len(out2) == 3
     assert out2.num_nodes == 150
     assert torch.allclose(out2['p'].x, data2['p'].x)
     assert torch.allclose(out2['a'].x, data2['a'].x)
-    assert out2[e].edge_index.tolist() == data2[e].edge_index.tolist()
-    assert torch.allclose(out2[e].edge_attr, data2[e].edge_attr)
+    assert out2[e1].edge_index.tolist() == data2[e1].edge_index.tolist()
+    assert torch.allclose(out2[e1].edge_attr, data2[e1].edge_attr)
+    assert out2[e2].edge_index.tolist() == data2[e2].edge_index.tolist()
+    assert torch.allclose(out2[e2].edge_attr, data2[e2].edge_attr)
