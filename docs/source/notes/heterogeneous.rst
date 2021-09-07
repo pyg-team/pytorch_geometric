@@ -217,10 +217,10 @@ The following `example <https://github.com/rusty1s/pytorch_geometric/blob/master
    from torch_geometric.nn import SAGEConv, to_hetero
 
    class GNN(torch.nn.Module):
-       def __init__(in_channels, hidden_channels, out_channels):
+       def __init__(self, hidden_channels, out_channels):
            super().__init__()
-           self.conv1 = SAGEConv(in_channels, hidden_channels)
-           self.conv2 = SAGEConv(hidden_channels, out_channels)
+           self.conv1 = SAGEConv((-1, -1), hidden_channels)
+           self.conv2 = SAGEConv((-1, -1), out_channels)
 
        def forward(self, x, edge_index):
            x = self.conv1(x, edge_index).relu()
@@ -228,7 +228,7 @@ The following `example <https://github.com/rusty1s/pytorch_geometric/blob/master
            return x
 
 
-   model = GNN(in_channels=-1, hidden_channels=64, out_channels=dataset.num_classes)
+   model = GNN(hidden_channels=64, out_channels=dataset.num_classes)
    model = to_hetero(model, data.metadata(), aggr='sum')
 
 The process takes an existing GNN model and duplicates the message functions to work on each edge type individually, as detailed in the following figure.
@@ -238,6 +238,7 @@ The process takes an existing GNN model and duplicates the message functions to 
    :width: 90%
 
 As a result, the model now expects dictionaries with node and edge types as keys as input arguments, rather than single tensors utilized in homogeneous graphs.
+Note that we pass in a tuple of :obj:`in_channels` to :class:`~torch_geometric.nn.conv.SAGEConv` in order to allow for message passing in bipartite graphs.
 Both :meth:`~torch_geometric.nn.to_hetero` and :meth:`~torch_geometric.nn.to_hetero_with_bases` are very flexible with respect to the homogeneous architectures that can be automatically converted to heterogeneous ones, *e.g.*, applying skip-connections, jumping knowledge or other techniques are supported out-of-the-box.
 
 .. _lazyinit:
