@@ -5,9 +5,7 @@ import torch
 from torch_geometric.data import Data, HeteroData, Dataset
 
 
-def collate_fn(
-    data_list: Union[List[Data], List[HeteroData]]
-) -> Union[List[Data], List[HeteroData]]:
+def collate_fn(data_list):
     return data_list
 
 
