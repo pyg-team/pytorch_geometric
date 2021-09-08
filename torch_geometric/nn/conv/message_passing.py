@@ -197,7 +197,7 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def propagate(self, edge_index: Adj, size: Size = None, decomposed_layer=1, **kwargs):
+    def propagate(self, edge_index: Adj, size: Size = None, decomposed_layer = 1, **kwargs):
         r"""The initial call to start propagating messages.
 
         Args:
