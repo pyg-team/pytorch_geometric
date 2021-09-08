@@ -19,8 +19,8 @@ from torch_geometric.nn import GATConv, Linear, to_hetero
 class DataModule(LightningDataModule):
     def __init__(self, root: str):
         super().__init__()
-        self.root = root
-        self.transform = T.ToUndirected(merge=False)
+        self.data = OGB_MAG(root, preprocess='metapath2vec',
+                            transform=T.ToUndirected(merge=False))[0]
 
     @property
     def num_classes(self) -> int:
@@ -37,13 +37,6 @@ class DataModule(LightningDataModule):
                       ('paper', 'rev_cites', 'paper'),
                       ('field_of_study', 'rev_has_topic', 'paper')]
         return node_types, edge_types
-
-    def prepare_data(self):
-        OGB_MAG(self.root, preprocess='metapath2vec')
-
-    def setup(self, stage: Optional[str] = None):
-        self.data = OGB_MAG(self.root, preprocess='metapath2vec',
-                            transform=self.transform)[0]
 
     def train_dataloader(self):
         return NeighborLoader(
@@ -82,7 +75,7 @@ class GAT(torch.nn.Module):
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         x = self.conv1(x, edge_index) + self.lin1(x)
-        x = x.relu()
+        x = x.relu_()
         x = F.dropout(x, p=self.dropout, training=self.training)
         x = self.conv2(x, edge_index) + self.lin2(x)
         return x
@@ -138,6 +131,10 @@ def main():
     seed_everything(42)
     datamodule = DataModule('../../data/OGB')
     model = RelationalGAT(64, datamodule.num_classes, datamodule.metadata())
+    with torch.no_grad():  # Initialize parameters.
+        for batch in datamodule.val_dataloader():
+            model(batch.x_dict, batch.edge_index_dict)
+            break
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
     trainer = Trainer(gpus=1, max_epochs=20, callbacks=[checkpoint_callback])
 
