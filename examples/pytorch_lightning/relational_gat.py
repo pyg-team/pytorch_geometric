@@ -120,26 +120,29 @@ class RelationalGAT(LightningModule):
         batch = next(iter(self.trainer.datamodule.val_dataloader()))
         self(batch.x_dict, batch.edge_index_dict)
 
-    def training_step(self, batch: Batch, batch_idx: int) -> Tensor:
+    def common_step(self, batch: Batch) -> Tuple[Tensor, Tensor]:
         batch_size = batch['paper'].batch_size
         y_hat = self(batch.x_dict, batch.edge_index_dict)['paper'][:batch_size]
-        loss = F.cross_entropy(y_hat, batch['paper'].y[:batch_size])
-        self.train_acc(y_hat.softmax(dim=-1), batch['paper'].y[:batch_size])
+        y = batch['paper'].y[:batch_size]
+        return y_hat, y
+
+    def training_step(self, batch: Batch, batch_idx: int) -> Tensor:
+        y_hat, y = self.common_step(batch)
+        loss = F.cross_entropy(y_hat, y)
+        self.train_acc(y_hat.softmax(dim=-1), y)
         self.log('train_acc', self.train_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
         return loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
-        batch_size = batch['paper'].batch_size
-        y_hat = self(batch.x_dict, batch.edge_index_dict)['paper'][:batch_size]
-        self.val_acc(y_hat.softmax(dim=-1), batch['paper'].y[:batch_size])
+        y_hat, y = self.common_step(batch)
+        self.val_acc(y_hat.softmax(dim=-1), y)
         self.log('val_acc', self.val_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
 
     def test_step(self, batch: Batch, batch_idx: int):
-        batch_size = batch['paper'].batch_size
-        y_hat = self(batch.x_dict, batch.edge_index_dict)['paper'][:batch_size]
-        self.test_acc(y_hat.softmax(dim=-1), batch['paper'].y[:batch_size])
+        y_hat, y = self.common_step(batch)
+        self.test_acc(y_hat.softmax(dim=-1), y)
         self.log('test_acc', self.test_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
 
