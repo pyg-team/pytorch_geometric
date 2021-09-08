@@ -45,23 +45,20 @@ class DataModule(LightningDataModule):
                       ('field_of_study', 'rev_has_topic', 'paper')]
         return node_types, edge_types
 
+    def dataloader(self, mask: Tensor, shuffle: bool, num_workers: int = 6):
+        return NeighborLoader(self.data, num_neighbors=[10] * 2,
+                              batch_size=1024, input_nodes=('paper', mask),
+                              shuffle=shuffle, num_workers=num_workers,
+                              persistent_workers=num_workers > 0)
+
     def train_dataloader(self):
-        return NeighborLoader(
-            self.data, num_neighbors=[10] * 2, shuffle=True, batch_size=1024,
-            input_nodes=('paper', self.data['paper'].train_mask),
-            num_workers=6, persistent_workers=True)
+        return self.dataloader(self.data['paper'].train_mask, shuffle=True)
 
     def val_dataloader(self):
-        return NeighborLoader(
-            self.data, num_neighbors=[10] * 2, shuffle=False, batch_size=1024,
-            input_nodes=('paper', self.data['paper'].val_mask), num_workers=6,
-            persistent_workers=True)
+        return self.dataloader(self.data['paper'].val_mask, shuffle=False)
 
     def test_dataloader(self):
-        return NeighborLoader(
-            self.data, num_neighbors=[10] * 2, shuffle=False, batch_size=1024,
-            input_nodes=('paper', self.data['paper'].test_mask), num_workers=6,
-            persistent_workers=True)
+        return self.dataloader(self.data['paper'].test_mask, shuffle=False)
 
 
 class GAT(torch.nn.Module):
@@ -117,7 +114,9 @@ class RelationalGAT(LightningModule):
 
     @torch.no_grad()
     def setup(self, stage: Optional[str] = None):  # Initialize parameters.
-        batch = next(iter(self.trainer.datamodule.val_dataloader()))
+        data = self.trainer.datamodule
+        loader = data.dataloader(torch.arange(1), shuffle=False, num_workers=0)
+        batch = next(iter(loader))
         self(batch.x_dict, batch.edge_index_dict)
 
     def common_step(self, batch: Batch) -> Tuple[Tensor, Tensor]:
