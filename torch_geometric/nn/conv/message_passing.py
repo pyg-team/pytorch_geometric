@@ -197,10 +197,11 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def propagate(self, edge_index: Adj, size: Size = None, **kwargs):
+    def propagate(self, edge_index: Adj, size: Size = None, decomposed_layer=2, **kwargs):
         r"""The initial call to start propagating messages.
 
         Args:
+
             edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
                 :obj:`torch_sparse.SparseTensor` that defines the underlying
                 graph connectivity/message passing flow.
@@ -224,6 +225,12 @@ class MessagePassing(torch.nn.Module):
                 and assumed to be quadratic.
                 This argument is ignored in case :obj:`edge_index` is a
                 :obj:`torch_sparse.SparseTensor`. (default: :obj:`None`)
+            decomposed_layer (integer, optional): The number of feature decomposition layers,
+                the default value is 1 (that is, the feature decomposition method is not used).
+                For the gather-scatter mode calculated on the CPU side, the feature decomposition
+                method can effectively reduce the peak memory usage and increase the calculation speed.
+                When the average node degree is higher, it is more effective to use this method
+                (for example, Reddit dataset). More details in this paper: https://arxiv.org/abs/2104.03058 .
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
@@ -258,54 +265,68 @@ class MessagePassing(torch.nn.Module):
 
         # Otherwise, run both functions in separation.
         elif isinstance(edge_index, Tensor) or not self.fuse:
-            coll_dict = self.__collect__(self.__user_args__, edge_index, size,
-                                         kwargs)
 
-            msg_kwargs = self.inspector.distribute('message', coll_dict)
-            for hook in self._message_forward_pre_hooks.values():
-                res = hook(self, (msg_kwargs, ))
-                if res is not None:
-                    msg_kwargs = res[0] if isinstance(res, tuple) else res
-            out = self.message(**msg_kwargs)
-            for hook in self._message_forward_hooks.values():
-                res = hook(self, (msg_kwargs, ), out)
+            if decomposed_layer > 1:
+                x = kwargs['x']
+                split_x = torch.chunk(x, decomposed_layer, -1)
+                decomposed_out = []
+            for i in range(0, decomposed_layer):
+                if decomposed_layer > 1:
+                    kwargs['x'] = split_x[i]
+                coll_dict = self.__collect__(self.__user_args__, edge_index, size,
+                                             kwargs)
+
+                msg_kwargs = self.inspector.distribute('message', coll_dict)
+                for hook in self._message_forward_pre_hooks.values():
+                    res = hook(self, (msg_kwargs,))
+                    if res is not None:
+                        msg_kwargs = res[0] if isinstance(res, tuple) else res
+                out = self.message(**msg_kwargs)
+                for hook in self._message_forward_hooks.values():
+                    res = hook(self, (msg_kwargs,), out)
+                    if res is not None:
+                        out = res
+
+                # For `GNNExplainer`, we require a separate message and aggregate
+                # procedure since this allows us to inject the `edge_mask` into the
+                # message passing computation scheme.
+                if self.__explain__:
+                    edge_mask = self.__edge_mask__.sigmoid()
+                    # Some ops add self-loops to `edge_index`. We need to do the
+                    # same for `edge_mask` (but do not train those).
+                    if out.size(self.node_dim) != edge_mask.size(0):
+                        edge_mask = edge_mask[self.__loop_mask__]
+                        loop = edge_mask.new_ones(size[0])
+                        edge_mask = torch.cat([edge_mask, loop], dim=0)
+                    assert out.size(self.node_dim) == edge_mask.size(0)
+                    out = out * edge_mask.view([-1] + [1] * (out.dim() - 1))
+
+                aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
+                for hook in self._aggregate_forward_pre_hooks.values():
+                    res = hook(self, (aggr_kwargs,))
+                    if res is not None:
+                        aggr_kwargs = res[0] if isinstance(res, tuple) else res
+                out = self.aggregate(out, **aggr_kwargs)
+                for hook in self._aggregate_forward_hooks.values():
+                    res = hook(self, (aggr_kwargs,), out)
+                    if res is not None:
+                        out = res
+
+                update_kwargs = self.inspector.distribute('update', coll_dict)
+                out = self.update(out, **update_kwargs)
+
+                if decomposed_layer > 1:
+                    decomposed_out.append(out)
+
+            if decomposed_layer > 1:
+                out = torch.cat(decomposed_out, dim=-1)
+
+            for hook in self._propagate_forward_hooks.values():
+                res = hook(self, (edge_index, size, kwargs), out)
                 if res is not None:
                     out = res
 
-            # For `GNNExplainer`, we require a separate message and aggregate
-            # procedure since this allows us to inject the `edge_mask` into the
-            # message passing computation scheme.
-            if self.__explain__:
-                edge_mask = self.__edge_mask__.sigmoid()
-                # Some ops add self-loops to `edge_index`. We need to do the
-                # same for `edge_mask` (but do not train those).
-                if out.size(self.node_dim) != edge_mask.size(0):
-                    edge_mask = edge_mask[self.__loop_mask__]
-                    loop = edge_mask.new_ones(size[0])
-                    edge_mask = torch.cat([edge_mask, loop], dim=0)
-                assert out.size(self.node_dim) == edge_mask.size(0)
-                out = out * edge_mask.view([-1] + [1] * (out.dim() - 1))
-
-            aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
-            for hook in self._aggregate_forward_pre_hooks.values():
-                res = hook(self, (aggr_kwargs, ))
-                if res is not None:
-                    aggr_kwargs = res[0] if isinstance(res, tuple) else res
-            out = self.aggregate(out, **aggr_kwargs)
-            for hook in self._aggregate_forward_hooks.values():
-                res = hook(self, (aggr_kwargs, ), out)
-                if res is not None:
-                    out = res
-
-            update_kwargs = self.inspector.distribute('update', coll_dict)
-            out = self.update(out, **update_kwargs)
-
-        for hook in self._propagate_forward_hooks.values():
-            res = hook(self, (edge_index, size, kwargs), out)
-            if res is not None:
-                out = res
-
-        return out
+            return out
 
     def message(self, x_j: Tensor) -> Tensor:
         r"""Constructs messages from node :math:`j` to node :math:`i`
