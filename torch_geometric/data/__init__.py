@@ -10,6 +10,7 @@ from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
                           GraphSAINTEdgeSampler, GraphSAINTRandomWalkSampler)
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
+from .meshcnnhandler import MeshCNNHandler, MeshCNNData
 
 __all__ = [
     'Data',
@@ -33,4 +34,6 @@ __all__ = [
     'extract_zip',
     'extract_bz2',
     'extract_gz',
+    'MeshCNNHandler',
+    'MeshCNNData',
 ]

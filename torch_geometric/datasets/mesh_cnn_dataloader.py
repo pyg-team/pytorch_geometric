@@ -3,7 +3,7 @@ from os import mkdir
 import os.path as osp
 from torch_geometric.data.dataloader import DataLoader
 from torch_geometric.datasets.mesh_cnn_base_datasets import MeshCnnBaseDataset
-from torch_geometric.transforms.meshcnnhandler import MeshCNNHandler
+from torch_geometric.data.meshcnnhandler import MeshCNNHandler
 
 
 class MeshDataLoader:

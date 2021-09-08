@@ -4,15 +4,15 @@ import torch
 import numpy as np
 import os
 from ..nn.mesh.mesh_union import MeshUnion
-import torch_geometric.data
+from torch_geometric.data import Data
 
 
-class MeshCNNData(torch_geometric.data.Data):
+class MeshCNNData(Data):
     r"""MeshCNNData class which holds a mesh data for implementing `"MeshCNN: A
     Network with an Edge" <https://arxiv.org/abs/1809.05910>`_ paper
     This class is a torch geometric Data extension.
 
-    Attributes:
+    Args:
         filename (str): obj file name
         pos (Tensor [Num_vertices, num_dimensions=3], dtype=float64): vertices
                                                                       positions
@@ -51,20 +51,22 @@ class MeshCNNData(torch_geometric.data.Data):
         label (int): mesh label number.
         """
 
-    def __init__(self):
+    def __init__(self, filename='unknown', pos=None, edges=None, sides=None,
+                 edges_count=0, ve=None, v_mask=None, edge_lengths=None,
+                 edge_areas=[], edge_index=None, edge_attr=None, label=None):
         super(MeshCNNData, self).__init__()
-        self.filename = 'unknown'
-        self.pos = None
-        self.edges = None
-        self.sides = None
-        self.edges_count = 0
-        self.ve = None
-        self.v_mask = None
-        self.edge_lengths = None
-        self.edge_areas = []
-        self.edge_index = None
-        self.edge_attr = None
-        self.label = None
+        self.filename = filename
+        self.pos = pos
+        self.edges = edges
+        self.sides = sides
+        self.edges_count = edges_count
+        self.ve = ve
+        self.v_mask = v_mask
+        self.edge_lengths = edge_lengths
+        self.edge_areas = edge_areas
+        self.edge_index = edge_index
+        self.edge_attr = edge_attr
+        self.label = label
 
 
 class MeshCNNHandler:

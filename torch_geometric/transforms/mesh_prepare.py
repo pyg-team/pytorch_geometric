@@ -4,7 +4,7 @@ import os
 import ntpath
 from .mesh_augmentations import (scale_verts, flip_edges, slide_verts)
 from ..utils.mesh_features import mesh_extract_features
-from ..transforms.meshcnnhandler import MeshCNNData
+from ..data.meshcnnhandler import MeshCNNData
 from torch_geometric.io import read_ply
 
 
