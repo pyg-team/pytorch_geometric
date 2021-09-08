@@ -230,7 +230,7 @@ class MessagePassing(torch.nn.Module):
                 For the gather-scatter mode calculated on the CPU side, the feature decomposition
                 method can effectively reduce the peak memory usage and increase the calculation speed.
                 When the average node degree is higher, it is more effective to use this method
-                (for example, Reddit dataset). More details in this paper: https://arxiv.org/abs/2104.03058 .
+                (for example, Reddit dataset, achieves 2x - 3x speedup). More details in this paper: https://arxiv.org/abs/2104.03058 .
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
