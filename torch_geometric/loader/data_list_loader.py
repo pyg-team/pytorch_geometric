@@ -2,16 +2,20 @@ from typing import Union, List
 
 import torch
 
-from torch_geometric.data import Data, Dataset
+from torch_geometric.data import Data, HeteroData, Dataset
 
 
-def collate_fn(data_list: List[Data]) -> List[Data]:
+def collate_fn(
+    data_list: Union[List[Data], List[HeteroData]]
+) -> Union[List[Data], List[HeteroData]]:
     return data_list
 
 
 class DataListLoader(torch.utils.data.DataLoader):
     r"""A data loader which batches data objects from a
     :class:`torch_geometric.data.dataset` to a Python list.
+    Data objects can be either of type :class:`~torch_geometric.data.Data` or
+    :class:`~torch_geometric.data.HeteroData`.
 
     .. note::
 
@@ -28,7 +32,7 @@ class DataListLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`, such as :obj:`drop_last` or
             :obj:`num_workers`.
     """
-    def __init__(self, dataset: Union[Dataset, List[Data]],
+    def __init__(self, dataset: Union[Dataset, List[Data], List[HeteroData]],
                  batch_size: int = 1, shuffle: bool = False, **kwargs):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
