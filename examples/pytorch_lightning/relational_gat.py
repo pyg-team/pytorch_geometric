@@ -46,8 +46,8 @@ class DataModule(LightningDataModule):
         return node_types, edge_types
 
     def dataloader(self, mask: Tensor, shuffle: bool, num_workers: int = 6):
-        return NeighborLoader(self.data, num_neighbors=[10] * 2,
-                              batch_size=1024, input_nodes=('paper', mask),
+        return NeighborLoader(self.data, num_neighbors=[10, 10],
+                              input_nodes=('paper', mask), batch_size=1024,
                               shuffle=shuffle, num_workers=num_workers,
                               persistent_workers=num_workers > 0)
 
@@ -62,27 +62,28 @@ class DataModule(LightningDataModule):
 
 
 class GAT(torch.nn.Module):
-    def __init__(
-        self,
-        hidden_channels: int,
-        out_channels: int,
-        dropout: float = 0.5,
-    ):
+    def __init__(self, hidden_channels: int, out_channels: int, heads: int,
+                 num_layers: int = 2, dropout: float = 0.5):
         super().__init__()
         self.dropout = dropout
 
-        self.conv1 = GATConv((-1, -1), hidden_channels, add_self_loops=False)
-        self.conv2 = GATConv((-1, -1), out_channels, add_self_loops=False)
+        self.lins = torch.nn.ModuleList()
+        self.convs = torch.nn.ModuleList()
+        for _ in range(num_layers):
+            lin = Linear(-1, hidden_channels)
+            conv = GATConv((-1, -1), hidden_channels // heads, heads,
+                           add_self_loops=False, dropout=dropout)
+            self.lins.append(lin)
+            self.convs.append(conv)
 
-        self.lin1 = Linear(-1, hidden_channels)
-        self.lin2 = Linear(-1, out_channels)
+        self.lin = Linear(-1, out_channels)
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        x = self.conv1(x, edge_index) + self.lin1(x)
-        x = x.relu_()
-        x = F.dropout(x, p=self.dropout, training=self.training)
-        x = self.conv2(x, edge_index) + self.lin2(x)
-        return x
+        for lin, conv in zip(self.lins, self.convs):
+            x = lin(x) + conv(x, edge_index)
+            x = F.elu(x)
+            x = F.dropout(x, p=self.dropout, training=self.training)
+        return self.lin(x)
 
 
 class RelationalGAT(LightningModule):
@@ -90,13 +91,16 @@ class RelationalGAT(LightningModule):
         self,
         hidden_channels: int,
         out_channels: int,
+        heads: int,
+        num_layers: int,
         metadata: Tuple[List[NodeType], List[EdgeType]],
         dropout: float = 0.5,
     ):
         super().__init__()
         self.save_hyperparameters()
 
-        self.model = GAT(hidden_channels, out_channels, dropout)
+        self.model = GAT(hidden_channels, out_channels, heads, num_layers,
+                         dropout)
         # Convert the homogeneous GAT model to a heterogeneous variant in
         # which distinct parameters are learned for each node and edge type.
         self.model = to_hetero(self.model, metadata, aggr='sum')
@@ -129,30 +133,28 @@ class RelationalGAT(LightningModule):
         y_hat, y = self.common_step(batch)
         loss = F.cross_entropy(y_hat, y)
         self.train_acc(y_hat.softmax(dim=-1), y)
-        self.log('train_acc', self.train_acc, prog_bar=True, on_step=False,
-                 on_epoch=True)
+        self.log('train_acc', self.train_acc, prog_bar=True, on_step=True)
         return loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
         y_hat, y = self.common_step(batch)
         self.val_acc(y_hat.softmax(dim=-1), y)
-        self.log('val_acc', self.val_acc, prog_bar=True, on_step=False,
-                 on_epoch=True)
+        self.log('val_acc', self.val_acc, prog_bar=True, on_epoch=True)
 
     def test_step(self, batch: Batch, batch_idx: int):
         y_hat, y = self.common_step(batch)
         self.test_acc(y_hat.softmax(dim=-1), y)
-        self.log('test_acc', self.test_acc, prog_bar=True, on_step=False,
-                 on_epoch=True)
+        self.log('test_acc', self.test_acc, prog_bar=True, on_epoch=True)
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.01)
+        return torch.optim.Adam(self.parameters(), lr=0.001)
 
 
 def main():
     seed_everything(42)
     datamodule = DataModule('../../data/OGB')
-    model = RelationalGAT(64, datamodule.num_classes, datamodule.metadata())
+    model = RelationalGAT(128, datamodule.num_classes, heads=4, num_layers=2,
+                          metadata=datamodule.metadata())
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
     trainer = Trainer(gpus=1, max_epochs=20, callbacks=[checkpoint_callback])
 
