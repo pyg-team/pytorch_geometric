@@ -13,7 +13,7 @@ from torch_geometric.data import Batch
 from torch_geometric import seed_everything
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import GATConv, Linear, to_hetero
+from torch_geometric.nn import SAGEConv, Linear, to_hetero
 
 
 class DataModule(LightningDataModule):
@@ -28,10 +28,6 @@ class DataModule(LightningDataModule):
     def setup(self, stage: Optional[str] = None):
         self.data = OGB_MAG(self.root, preprocess='metapath2vec',
                             transform=self.transform)[0]
-
-    @property
-    def num_classes(self) -> int:
-        return 349
 
     def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
         node_types = ['paper', 'author', 'institution', 'field_of_study']
@@ -61,49 +57,39 @@ class DataModule(LightningDataModule):
         return self.dataloader(self.data['paper'].test_mask, shuffle=False)
 
 
-class GAT(torch.nn.Module):
-    def __init__(self, hidden_channels: int, out_channels: int, heads: int,
-                 num_layers: int = 2, dropout: float = 0.5):
+class GNN(torch.nn.Module):
+    def __init__(self, hidden_channels: int, out_channels: int,
+                 dropout: float):
         super().__init__()
         self.dropout = dropout
 
-        self.lins = torch.nn.ModuleList()
-        self.convs = torch.nn.ModuleList()
-        for _ in range(num_layers):
-            lin = Linear(-1, hidden_channels)
-            conv = GATConv((-1, -1), hidden_channels // heads, heads,
-                           add_self_loops=False, dropout=dropout)
-            self.lins.append(lin)
-            self.convs.append(conv)
-
+        self.conv1 = SAGEConv((-1, -1), hidden_channels)
+        self.conv2 = SAGEConv((-1, -1), hidden_channels)
         self.lin = Linear(-1, out_channels)
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        for lin, conv in zip(self.lins, self.convs):
-            x = lin(x) + conv(x, edge_index)
-            x = F.elu(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
+        x = self.conv1(x, edge_index).relu()
+        x = F.dropout(x, p=self.dropout, training=self.training)
+        x = self.conv2(x, edge_index).relu()
+        x = F.dropout(x, p=self.dropout, training=self.training)
         return self.lin(x)
 
 
-class RelationalGAT(LightningModule):
+class RelationalGNN(LightningModule):
     def __init__(
         self,
+        metadata: Tuple[List[NodeType], List[EdgeType]],
         hidden_channels: int,
         out_channels: int,
-        heads: int,
-        num_layers: int,
-        metadata: Tuple[List[NodeType], List[EdgeType]],
-        dropout: float = 0.5,
+        dropout: float,
     ):
         super().__init__()
         self.save_hyperparameters()
 
-        self.model = GAT(hidden_channels, out_channels, heads, num_layers,
-                         dropout)
-        # Convert the homogeneous GAT model to a heterogeneous variant in
+        model = GNN(hidden_channels, out_channels, dropout)
+        # Convert the homogeneous GNN model to a heterogeneous variant in
         # which distinct parameters are learned for each node and edge type.
-        self.model = to_hetero(self.model, metadata, aggr='sum')
+        self.model = to_hetero(model, metadata, aggr='sum')
 
         self.train_acc = Accuracy()
         self.val_acc = Accuracy()
@@ -147,14 +133,14 @@ class RelationalGAT(LightningModule):
         self.log('test_acc', self.test_acc, prog_bar=True, on_epoch=True)
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.001)
+        return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
 def main():
     seed_everything(42)
     datamodule = DataModule('../../data/OGB')
-    model = RelationalGAT(128, datamodule.num_classes, heads=4, num_layers=2,
-                          metadata=datamodule.metadata())
+    model = RelationalGNN(datamodule.metadata(), hidden_channels=64,
+                          out_channels=349, dropout=0.0)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
     trainer = Trainer(gpus=1, max_epochs=20, callbacks=[checkpoint_callback])
 
