@@ -65,8 +65,8 @@ class HGTLoader(torch.utils.data.DataLoader):
             sample in each iteration and for each node type.
             If given as a list, will sample the same amount of nodes for each
             node type.
-        input_nodes (Tuple[str, torch.Tensor]): The indices of nodes for which
-            neighbors are sampled to create mini-batches.
+        input_nodes (str or Tuple[str, torch.Tensor]): The indices of nodes for
+            which neighbors are sampled to create mini-batches.
             Needs to be passed as a tuple that holds the node type and
             corresponding node indices.
             Node indices need to be either given as a :obj:`torch.LongTensor`
@@ -84,7 +84,7 @@ class HGTLoader(torch.utils.data.DataLoader):
         self,
         data: HeteroData,
         num_samples: Union[List[int], Dict[NodeType, List[int]]],
-        input_nodes: Tuple[NodeType, Optional[Tensor]],
+        input_nodes: Union[NodeType, Tuple[NodeType, Optional[Tensor]]],
         transform: Callable = None,
         **kwargs,
     ):
@@ -97,6 +97,8 @@ class HGTLoader(torch.utils.data.DataLoader):
         if isinstance(num_samples, (list, tuple)):
             num_samples = {key: num_samples for key in data.node_types}
 
+        if isinstance(input_nodes, str):
+            input_nodes = (input_nodes, None)
         assert isinstance(input_nodes, (list, tuple))
         assert len(input_nodes) == 2
         assert isinstance(input_nodes[0], str)
