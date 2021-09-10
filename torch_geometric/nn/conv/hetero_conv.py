@@ -82,7 +82,7 @@ class HeteroConv(Module):
             kwargs = {}
             if edge_weight_dict is not None and key in edge_weight_dict:
                 kwargs['edge_weight'] = edge_weight_dict[key]
-            if edge_weight_dict is not None and key in edge_attr_dict:
+            if edge_attr_dict is not None and key in edge_attr_dict:
                 kwargs['edge_attr'] = edge_attr_dict[key]
 
             if src == dst:
