@@ -17,11 +17,11 @@ class BasicGNN(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        hidden_channels (int): Size of each hidden and output sample.
+        hidden_channels (int): Size of each hidden sample.
         num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
-            final linear transformation to convert latent node embeddings to
-            size :obj:`out_channels`. (default: :obj:`None`)
+            final linear transformation to convert hidden node embeddings to
+            output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
             (default: :meth:`torch.nn.ReLU(inplace=True)`)
@@ -103,11 +103,11 @@ class GCN(BasicGNN):
 
     Args:
         in_channels (int): Size of each input sample.
-        hidden_channels (int): Hidden node feature dimensionality.
-        num_layers (int): Number of GNN layers.
+        hidden_channels (int): Size of each hidden sample.
+        num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
-            final linear transformation to convert latent node embeddings to
-            size :obj:`out_channels`. (default: :obj:`None`)
+            final linear transformation to convert hidden node embeddings to
+            output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
             (default: :meth:`torch.nn.ReLU(inplace=True)`)
@@ -140,11 +140,11 @@ class GraphSAGE(BasicGNN):
 
     Args:
         in_channels (int): Size of each input sample.
-        hidden_channels (int): Hidden node feature dimensionality.
-        num_layers (int): Number of GNN layers.
+        hidden_channels (int): Size of each hidden sample.
+        num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
-            final linear transformation to convert latent node embeddings to
-            size :obj:`out_channels`. (default: :obj:`None`)
+            final linear transformation to convert hidden node embeddings to
+            output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
             (default: :meth:`torch.nn.ReLU(inplace=True)`)
@@ -177,11 +177,11 @@ class GIN(BasicGNN):
 
     Args:
         in_channels (int): Size of each input sample.
-        hidden_channels (int): Hidden node feature dimensionality.
-        num_layers (int): Number of GNN layers.
+        hidden_channels (int): Size of each hidden sample.
+        num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
-            final linear transformation to convert latent node embeddings to
-            size :obj:`out_channels`. (default: :obj:`None`)
+            final linear transformation to convert hidden node embeddings to
+            output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
             (default: :meth:`torch.nn.ReLU(inplace=True)`)
@@ -224,11 +224,11 @@ class GAT(BasicGNN):
 
     Args:
         in_channels (int): Size of each input sample.
-        hidden_channels (int): Hidden node feature dimensionality.
-        num_layers (int): Number of GNN layers.
+        hidden_channels (int): Size of each hidden sample.
+        num_layers (int): Number of message passing layers.
         out_channels (int, optional): If not set to :obj:`None`, will apply a
-            final linear transformation to convert latent node embeddings to
-            size :obj:`out_channels`. (default: :obj:`None`)
+            final linear transformation to convert hidden node embeddings to
+            output size :obj:`out_channels`. (default: :obj:`None`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.`)
         act (Callable, optional): The non-linear activation function to use.
             (default: :meth:`torch.nn.ReLU(inplace=True)`)
