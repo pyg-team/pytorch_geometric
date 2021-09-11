@@ -1,5 +1,5 @@
-from typing import Dict, Union, Optional
-from torch_geometric.typing import NodeType, EdgeType
+from typing import Dict
+from torch_geometric.typing import NodeType, EdgeType, Adj
 
 from collections import defaultdict
 
@@ -23,8 +23,8 @@ class HeteroConv(Module):
 
         hetero_conv = HeteroConv({
             ('paper', 'cites', 'paper'): GCNConv(-1, 64),
-            ('author', 'writes', 'paper'): SAGEConv(-1, 64),
-            ('paper', 'written_by', 'author'): GATConv(-1, 64),
+            ('author', 'writes', 'paper'): SAGEConv((-1, -1), 64),
+            ('paper', 'written_by', 'author'): GATConv((-1, -1), 64),
         }, aggr='sum')
 
         out_dict = hetero_conv(x_dict, edge_index_dict)
@@ -44,7 +44,6 @@ class HeteroConv(Module):
     """
     def __init__(self, convs: Dict[EdgeType, Module], aggr: str = "sum"):
         super().__init__()
-        self.keys = list(convs.keys())
         self.convs = ModuleDict({'__'.join(k): v for k, v in convs.items()})
         self.aggr = aggr
 
@@ -55,9 +54,8 @@ class HeteroConv(Module):
     def forward(
         self,
         x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Union[Dict[EdgeType, Tensor], Dict[EdgeType, Tensor]],
-        edge_weight_dict: Optional[Dict[EdgeType, Tensor]] = None,
-        edge_attr_dict: Optional[Dict[EdgeType, Tensor]] = None,
+        edge_index_dict: Dict[EdgeType, Adj],
+        **kwargs_dict,
     ) -> Dict[NodeType, Tensor]:
         r"""
         Args:
@@ -66,36 +64,40 @@ class HeteroConv(Module):
             edge_index_dict (Dict[Tuple[str, str, str], Tensor]): A dictionary
                 holding graph connectivity information for each individual
                 edge type.
-            edge_weight_dict (Dict[Tuple[str, str, str], Tensor], optional): A
-                dictionary holding one-dimensional edge weight information
-                for individual edge types. (default: :obj:`None`)
-            edge_attr_dict (Dict[Tuple[str, str, str], Tensor], optional): A
-                dictionary holding multi-dimensional edge feature information
-                for individual edge types. (default: :obj:`None`)
+            **kwargs_dict (optional): Additional forward arguments
+                of individual :class:`torch_geometric.nn.conv.MessagePassing`
+                layers.
+                For example, if a specific GNN layer at edge type
+                :obj:`edge_type` expects edge attributes :obj:`edge_attr` as a
+                forward argument, then you can pass them to
+                :meth:`~torch_geometric.nn.conv.HeteroConv.forward` via
+                :obj:`edge_attr_dict = { edge_type: edge_attr }`.
         """
-
         out_dict = defaultdict(list)
-        for key in self.keys:
-            src, _, dst = key
-            conv = self.convs['__'.join(key)]
+        for edge_type, edge_index in edge_index_dict.items():
+            src, rel, dst = edge_type
 
-            kwargs = {}
-            if edge_weight_dict is not None and key in edge_weight_dict:
-                kwargs['edge_weight'] = edge_weight_dict[key]
-            if edge_attr_dict is not None and key in edge_attr_dict:
-                kwargs['edge_attr'] = edge_attr_dict[key]
+            str_edge_type = '__'.join(edge_type)
+            if str_edge_type not in self.convs:
+                continue
+
+            kwargs = {
+                arg[:-5]: value[edge_type]  # `{*}_dict`
+                for arg, value in kwargs_dict.items() if edge_type in value
+            }
+
+            conv = self.convs[str_edge_type]
 
             if src == dst:
-                out = conv(x=x_dict[src], edge_index=edge_index_dict[key],
-                           **kwargs)
+                out = conv(x=x_dict[src], edge_index=edge_index, **kwargs)
             else:
-                out = conv(x=(x_dict[src], x_dict[dst]),
-                           edge_index=edge_index_dict[key], **kwargs)
+                out = conv(x=(x_dict[src], x_dict[dst]), edge_index=edge_index,
+                           **kwargs)
 
             out_dict[dst].append(out)
 
-        for key, values in out_dict.items():
-            out_dict[key] = group(values, self.aggr)
+        for key, value in out_dict.items():
+            out_dict[key] = group(value, self.aggr)
 
         return out_dict
 
