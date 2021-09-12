@@ -23,8 +23,8 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         :class:`~torch_geometric.loader.GraphSAINTRandomWalkSampler` for
         currently supported samplers.
         For an example of using GraphSAINT sampling, see
-        `examples/graph_saint.py <https://github.com/rusty1s/pytorch_geometric/
-        blob/master/examples/graph_saint.py>`_.
+        `examples/graph_saint.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/graph_saint.py>`_.
 
     Args:
         data (torch_geometric.data.Data): The graph data object.

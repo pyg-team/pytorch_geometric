@@ -22,7 +22,7 @@ class MetaPath2Vec(torch.nn.Module):
 
         For an example of using MetaPath2Vec, see
         `examples/hetero/metapath2vec.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         hetero/metapath2vec.py>`_.
 
     Args:

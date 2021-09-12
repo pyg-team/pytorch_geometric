@@ -29,7 +29,7 @@ class DeepGCNLayer(torch.nn.Module):
 
         For an example of using :obj:`GENConv`, see
         `examples/ogbn_proteins_deepgcn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         ogbn_proteins_deepgcn.py>`_.
 
     Args:
