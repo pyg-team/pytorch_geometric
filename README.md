@@ -99,8 +99,8 @@ import torch.nn.functional as F
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 for epoch in range(200):
-    out = model(data.x, data.edge_index)
-    loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
+    pred = model(data.x, data.edge_index)
+    loss = F.cross_entropy(pred[data.train_mask], data.y[data.train_mask])
 
     # Backpropagation
     optimizer.zero_grad()
