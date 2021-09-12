@@ -87,7 +87,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         For an example of using
         :class:`~torch_geometric.loader.NeighborLoader`, see
-        `examples/hetero/to_hetero_mag.py <https://github.com/rusty1s/
+        `examples/hetero/to_hetero_mag.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`_.
 
     Args:

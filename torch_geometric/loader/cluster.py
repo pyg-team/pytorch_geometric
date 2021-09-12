@@ -120,9 +120,9 @@ class ClusterLoader(torch.utils.data.DataLoader):
         :class:`~torch_geometric.loader.ClusterLoader` in conjunction to
         form mini-batches of clusters.
         For an example of using Cluster-GCN, see
-        `examples/cluster_gcn_reddit.py <https://github.com/rusty1s/
+        `examples/cluster_gcn_reddit.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/cluster_gcn_reddit.py>`_ or
-        `examples/cluster_gcn_ppi.py <https://github.com/rusty1s/
+        `examples/cluster_gcn_ppi.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/cluster_gcn_ppi.py>`_.
 
     Args:
