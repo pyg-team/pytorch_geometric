@@ -48,6 +48,6 @@ test:
     - torch_geometric.transforms
 
 about:
-  home: https://github.com/rusty1s/pytorch_geometric
+  home: https://github.com/pyg-team/pytorch_geometric
   license: MIT
   summary: Geometric Deep Learning Extension Library for PyTorch
