@@ -152,15 +152,15 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
 In rare cases, CUDA or Python path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but runtime errors complain about missing modules, *.e.g.*, :obj:`No module named 'torch_*.*_cuda'`, or execution simply crashes with :obj:`Segmentation fault (core dumped)`.
 We collected a lot of common installation errors in the `Frequently Asked Questions <https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#frequently-asked-questions>`_ subsection.
-In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/rusty1s/pytorch_geometric/issues>`_.
+In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/pyg-team/pytorch_geometric/issues>`_.
 You should additionally verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda>`_, and that the `official extension example <https://github.com/pytorch/extension-cpp>`_ runs on your machine.
 
 Frequently Asked Questions
 --------------------------
 
-#. ``ImportError: ***: cannot open shared object file: No such file or directory``: Add CUDA to your ``$LD_LIBRARY_PATH`` (see `Issue#43 <https://github.com/rusty1s/pytorch_geometric/issues/43>`_).
+#. ``ImportError: ***: cannot open shared object file: No such file or directory``: Add CUDA to your ``$LD_LIBRARY_PATH`` (see `Issue#43 <https://github.com/pyg-team/pytorch_geometric/issues/43>`_).
 
-#. ``undefined symbol:``, *e.g.* ``_ZN2at6detail20DynamicCUDAInterface10set_deviceE``: Clear the pip cache and reinstall the respective package (see `Issue#7 <https://github.com/rusty1s/pytorch_scatter/issues/7>`_). On macOS, it may help to install clang compilers via conda (see `Issue#18 <https://github.com/rusty1s/pytorch_geometric/issues/18>`_):
+#. ``undefined symbol:``, *e.g.* ``_ZN2at6detail20DynamicCUDAInterface10set_deviceE``: Clear the pip cache and reinstall the respective package (see `Issue#7 <https://github.com/rusty1s/pytorch_scatter/issues/7>`_). On macOS, it may help to install clang compilers via conda (see `Issue#18 <https://github.com/pyg-team/pytorch_geometric/issues/18>`_):
 
    .. code-block:: none
 
@@ -168,7 +168,7 @@ Frequently Asked Questions
 
 #. Unable to import ``*_cuda``: You need to ``import torch`` first before importing any of the extension packages (see `Issue#6 <https://github.com/rusty1s/pytorch_scatter/issues/6>`_).
 
-#. ``error: command '/usr/bin/nvcc' failed with exit status 2``: Ensure that at least CUDA >= 8 is installed (see `Issue#25a <https://github.com/rusty1s/pytorch_geometric/issues/25>`_ and `Issue#106 <https://github.com/rusty1s/pytorch_geometric/issues/106>`_).
+#. ``error: command '/usr/bin/nvcc' failed with exit status 2``: Ensure that at least CUDA >= 8 is installed (see `Issue#25a <https://github.com/pyg-team/pytorch_geometric/issues/25>`_ and `Issue#106 <https://github.com/pyg-team/pytorch_geometric/issues/106>`_).
 
 #. ``return __and_<is_constructible<_Elements, _UElements&&>...>::value``: Ensure that your ``gcc`` version is at least 4.9 (and below 6) (see `Issue#25b <https://github.com/rusty1s/pytorch_scatter/issues/25>`_).
    You will also need to reinstall PyTorch because ``gcc`` versions must be consistent across all PyTorch packages.
@@ -191,7 +191,7 @@ Frequently Asked Questions
 
        $ MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py install
 
-#. On macOS: ``ld: warning: directory not found for option '-L/usr/local/cuda/lib64'`` and ``ld: library not found for -lcudart``: Symlink ``cuda/lib`` to ``cuda/lib64`` (see `Issue#116 <https://github.com/rusty1s/pytorch_geometric/issues/116>`_):
+#. On macOS: ``ld: warning: directory not found for option '-L/usr/local/cuda/lib64'`` and ``ld: library not found for -lcudart``: Symlink ``cuda/lib`` to ``cuda/lib64`` (see `Issue#116 <https://github.com/pyg-team/pytorch_geometric/issues/116>`_):
 
    .. code-block:: none
 
