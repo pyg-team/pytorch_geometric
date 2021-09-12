@@ -35,7 +35,7 @@ class HGTLoader(torch.utils.data.DataLoader):
 
         For an example of using :class:`~torch_geometric.data.HGTLoader`, see
         `examples/hetero/to_hetero_mag.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         hetero/to_hetero_mag.py>`_.
 
     .. code-block:: python

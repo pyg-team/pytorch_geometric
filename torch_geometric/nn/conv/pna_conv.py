@@ -44,7 +44,7 @@ class PNAConv(MessagePassing):
     .. note::
 
         For an example of using :obj:`PNAConv`, see `examples/pna.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/
         examples/pna.py>`_.
 
     Args:

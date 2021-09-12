@@ -43,7 +43,7 @@ git clone https://github.com/rusty1s/pytorch_cluster.git && \
     python3 ./setup.py install && \
     cd ..
 
-git clone https://github.com/rusty1s/pytorch_geometric.git && \
+git clone https://github.com/pyg-team/pytorch_geometric.git && \
     cd ./pytorch_geometric && \
     git checkout 1.3.2 && \
     python3 ./setup.py install && \

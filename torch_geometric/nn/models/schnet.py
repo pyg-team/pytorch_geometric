@@ -48,7 +48,7 @@ class SchNet(torch.nn.Module):
 
         For an example of using a pretrained SchNet variant, see
         `examples/qm9_pretrained_schnet.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         qm9_pretrained_schnet.py>`_.
 
     Args:

@@ -210,7 +210,7 @@ Automatically Converting GNN Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Pytorch Geometric allows to automatically convert any PyG GNN model to a model for heterogeneous input graphs, using the built in functions :meth:`torch_geometric.nn.to_hetero` or :meth:`torch_geometric.nn.to_hetero_with_bases`.
-The following `example <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`__ shows how to apply it:
+The following `example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`__ shows how to apply it:
 
 .. code-block:: python
 
@@ -300,7 +300,7 @@ Using the Heterogenous Convolution Wrapper
 The heterogenous convolution wrapper :class:`torch_geometric.nn.conv.HeteroConv` allows to define custom heterogenous message and update functions to build arbitrary MP-GNNs for heterogeneous graphs from scratch.
 While the automatic converter :meth:`~torch_geometric.nn.to_hetero` uses the same operator for all edge types, the wrapper allows to define different operators for different edge types.
 Here, :class:`~torch_geometric.nn.conv.HeteroConv` takes a dictionary of submodules as input, one for each edge type in the graph data.
-The following `example <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/hetero/hetero_conv_dblp.py>`__ shows how to apply it.
+The following `example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/hetero_conv_dblp.py>`__ shows how to apply it.
 
 .. code-block:: python
 
@@ -343,7 +343,7 @@ Deploy Existing Heterogenous Operators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PyG provides operators (*e.g.*, :class:`torch_geometric.nn.conv.HGTConv`), which are specifically designed for heterogeneous graphs.
-These operators can be directly used to build heterogeneous GNN models as can be seen in the following `example <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/hetero/hgt_dblp.py>`__:
+These operators can be directly used to build heterogeneous GNN models as can be seen in the following `example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/hgt_dblp.py>`__:
 
 .. code-block:: python
 
@@ -392,7 +392,7 @@ Heterogeneous graph support for other samplers such as :class:`torch_geometric.l
 Overall, all heterogeneous graph loaders will produce a :class:`~torch_geometric.data.HeteroData` object as output, holding a subset of the original data, and mainly differ in the way their sampling procedures works.
 As such, only minimal code changes are required to convert the training procedure from :ref:`full-batch training<trainfunc>` to mini-batch training.
 
-Performing neighbor sampling using :class:`~torch_geometric.loader.NeighborLoader` works as outlined in the following `example <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`__:
+Performing neighbor sampling using :class:`~torch_geometric.loader.NeighborLoader` works as outlined in the following `example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`__:
 
 .. code-block:: python
 
