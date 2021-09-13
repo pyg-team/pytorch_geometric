@@ -50,11 +50,11 @@ class Entities(InMemoryDataset):
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def num_relations(self) -> str:
+    def num_relations(self) -> int:
         return self.data.edge_type.max().item() + 1
 
     @property
-    def num_classes(self) -> str:
+    def num_classes(self) -> int:
         return self.data.train_y.max().item() + 1
 
     @property

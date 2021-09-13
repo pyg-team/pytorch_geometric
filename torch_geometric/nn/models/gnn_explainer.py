@@ -22,7 +22,7 @@ class GNNExplainer(torch.nn.Module):
     .. note::
 
         For an example of using GNN-Explainer, see `examples/gnn_explainer.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         gnn_explainer.py>`_.
 
     Args:

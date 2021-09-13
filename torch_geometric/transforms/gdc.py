@@ -18,7 +18,7 @@ class GDC(BaseTransform):
         The paper offers additional advice on how to choose the
         hyperparameters.
         For an example of using GCN with GDC, see `examples/gcn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         gcn.py>`_.
 
     Args:

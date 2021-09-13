@@ -82,7 +82,7 @@ To use GraphGym, you need to clone PyG from Github, then change to the :obj:`gra
 
 .. code-block:: bash
 
-    git clone https://github.com/rusty1s/pytorch_geometric.git
+    git clone https://github.com/pyg-team/pytorch_geometric.git
     cd pytorch_geometric/graphgym
 
 #. **Run a single experiment:**
@@ -121,7 +121,7 @@ To use GraphGym, you need to clone PyG from Github, then change to the :obj:`gra
 
 .. code-block:: bash
 
-    git clone https://github.com/rusty1s/pytorch_geometric.git
+    git clone https://github.com/pyg-team/pytorch_geometric.git
     cd pytorch_geometric/graphgym
 
 #. **Run a single experiment:**

@@ -5,7 +5,7 @@ from collections.abc import Mapping, Sequence
 import torch.utils.data
 from torch.utils.data.dataloader import default_collate
 
-from torch_geometric.data import Data, Dataset, Batch
+from torch_geometric.data import Data, HeteroData, Dataset, Batch
 
 
 class Collater(object):
@@ -15,7 +15,7 @@ class Collater(object):
 
     def collate(self, batch):
         elem = batch[0]
-        if isinstance(elem, Data):
+        if isinstance(elem, Data) or isinstance(elem, HeteroData):
             return Batch.from_data_list(batch, self.follow_batch,
                                         self.exclude_keys)
         elif isinstance(elem, torch.Tensor):
@@ -42,6 +42,8 @@ class Collater(object):
 class DataLoader(torch.utils.data.DataLoader):
     r"""A data loader which merges data objects from a
     :class:`torch_geometric.data.Dataset` to a mini-batch.
+    Data objects can be either of type :class:`~torch_geometric.data.Data` or
+    :class:`~torch_geometric.data.HeteroData`.
 
     Args:
         dataset (Dataset): The dataset from which to load the data.
@@ -58,7 +60,7 @@ class DataLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        dataset: Union[Dataset, List[Data]],
+        dataset: Union[Dataset, List[Data], List[HeteroData]],
         batch_size: int = 1,
         shuffle: bool = False,
         follow_batch: List[str] = [],

@@ -51,7 +51,7 @@ class CorrectAndSmooth(torch.nn.Module):
 
         For an example of using the C&S model, see
         `examples/correct_and_smooth.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         correct_and_smooth.py>`_.
 
     Args:

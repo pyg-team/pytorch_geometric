@@ -1,4 +1,4 @@
-name: Building Conda
+name: Building PyG Conda
 
 on: [workflow_dispatch]
 
@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-16.04, macos-10.15, windows-latest]
+        os: [ubuntu-18.04, macos-10.15, windows-latest]
         python-version: [3.6, 3.7, 3.8, 3.9]
         torch-version: [1.8.0, 1.9.0]
         cuda-version: ['cpu', 'cu101', 'cu102', 'cu111']
@@ -33,6 +33,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Free up disk space
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo rm -rf /usr/share/dotnet
+
       - name: Install Conda packages
         run: |
           conda install conda-build conda-verify --yes
@@ -41,7 +46,7 @@ jobs:
 
       - name: Build Conda package
         run: |
-          ./conda/pytorch-geometric/build_conda.sh ${{ matrix.python-version }} ${{ matrix.torch-version }} ${{ matrix.cuda-version }}
+          ./conda/pyg/build_conda.sh ${{ matrix.python-version }} ${{ matrix.torch-version }} ${{ matrix.cuda-version }}
         shell:
           bash -l {0}
 
@@ -50,6 +55,6 @@ jobs:
           conda install anaconda-client --yes
           anaconda upload --force --label main $HOME/conda-bld/*/*.tar.bz2
         env:
-          ANACONDA_API_TOKEN: ${{ secrets.CONDA_TOKEN }}
+          ANACONDA_API_TOKEN: ${{ secrets.PYG_ANACONDA_TOKEN }}
         shell:
           bash -l {0}
