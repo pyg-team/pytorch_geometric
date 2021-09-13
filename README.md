@@ -305,11 +305,11 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ### Anaconda
 
-**Update:** You can now install PyG via [Anaconda](https://anaconda.org/rusty1s/pytorch-geometric) for all major OS/PyTorch/CUDA combinations 🤗
+**Update:** You can now install PyG via [Anaconda](https://anaconda.org/pyg/pyg) for all major OS/PyTorch/CUDA combinations 🤗
 Given that you have [PyTorch >= 1.8.0 installed](https://pytorch.org/get-started/locally/), simply run
 
 ```
-conda install pytorch-geometric -c rusty1s -c conda-forge
+conda install pyg -c pyg -c conda-forge
 ```
 
 ### Pip Wheels
