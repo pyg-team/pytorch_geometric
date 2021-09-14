@@ -53,7 +53,8 @@ class OGB_MAG(InMemoryDataset):
     def __init__(self, root: str, preprocess: Optional[str] = None,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
-        self.preprocess = preprocess.lower()
+        preprocess = None if preprocess is None else preprocess.lower()
+        self.preprocess = preprocess
         assert self.preprocess in [None, 'metapath2vec', 'transe']
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
