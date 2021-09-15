@@ -1,5 +1,6 @@
 from typing import Optional, List, Union, Any
 
+import inspect
 from collections.abc import Sequence
 
 import torch
@@ -18,6 +19,15 @@ class DynamicInheritance(type):
     # * `Batch(HeteroData)` in case `HeteroData` objects are batched together
     def __call__(cls, *args, **kwargs):
         base_cls = kwargs.pop('_base_cls', Data)
+
+        params = list(inspect.signature(base_cls.__init__).parameters.items())
+        for i, (k, v) in enumerate(params[1:]):
+            if i < len(args) or k in kwargs:
+                continue
+            if v.default is not inspect.Parameter.empty:
+                continue
+            kwargs[k] = None
+
         new_cls = type(cls.__name__, (cls, base_cls), {})
         return super(DynamicInheritance, new_cls).__call__(*args, **kwargs)
 

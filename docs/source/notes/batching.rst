@@ -64,7 +64,7 @@ For example, consider storing two graphs, a source graph :math:`\mathcal{G}_s` a
    from torch_geometric.data import Data
 
    class PairData(Data):
-       def __init__(self, edge_index_s, x_s, edge_index_t, x_t):
+       def __init__(self, edge_index_s=None, x_s=None, edge_index_t=None, x_t=None):
            super().__init__()
            self.edge_index_s = edge_index_s
            self.x_s = x_s
@@ -153,7 +153,7 @@ To achieve this, consider a bipartite graph between two node types with correspo
    from torch_geometric.data import Data
 
    class BipartiteData(Data):
-       def __init__(self, edge_index, x_s, x_t):
+       def __init__(self, edge_index=None, x_s=None, x_t=None):
            super().__init__()
            self.edge_index = edge_index
            self.x_s = x_s
