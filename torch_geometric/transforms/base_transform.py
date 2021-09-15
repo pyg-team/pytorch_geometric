@@ -1,8 +1,24 @@
-from abc import ABC, abstractmethod
+class BaseTransform(object):
+    r"""An abstract base class for writing transforms.
 
+    Transforms are a general way to modify and customize
+    :class:`~torch_geometric.data.Data` objects, either by implicitely passing
+    them as an argument to a :class:`~torch_geometric.data.Dataset`, or by
+    applying them explicitely to individual :class:`~torch_geometric.data.Data`
+    objects.
 
-class BaseTransform(ABC):
-    r"""An abstract base class for writing transforms."""
-    @abstractmethod
+    .. code-block:: python
+
+        import torch_geometric.transforms as T
+        from torch_geometric.datasets import TUDataset
+
+        transform = T.Compose([T.ToUndirected(), T.AddSelfLoops()])
+
+        dataset = TUDataset(path, name='MUTAG', transform=transform)
+        data = dataset[0]  # Implicitely transform data on every access.
+
+        data = TUDataset(path, name='MUTAG')[0]
+        data = transform(data)  # Explicitely transform data.
+    """
     def __call__(self, data):
-        pass
+        raise NotImplementedError
