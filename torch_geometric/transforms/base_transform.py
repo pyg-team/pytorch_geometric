@@ -2,9 +2,9 @@ class BaseTransform(object):
     r"""An abstract base class for writing transforms.
 
     Transforms are a general way to modify and customize
-    :class:`~torch_geometric.data.Data` objects, either by implicitely passing
+    :class:`~torch_geometric.data.Data` objects, either by implicitly passing
     them as an argument to a :class:`~torch_geometric.data.Dataset`, or by
-    applying them explicitely to individual :class:`~torch_geometric.data.Data`
+    applying them explicitly to individual :class:`~torch_geometric.data.Data`
     objects.
 
     .. code-block:: python
@@ -15,10 +15,10 @@ class BaseTransform(object):
         transform = T.Compose([T.ToUndirected(), T.AddSelfLoops()])
 
         dataset = TUDataset(path, name='MUTAG', transform=transform)
-        data = dataset[0]  # Implicitely transform data on every access.
+        data = dataset[0]  # Implicitly transform data on every access.
 
         data = TUDataset(path, name='MUTAG')[0]
-        data = transform(data)  # Explicitely transform data.
+        data = transform(data)  # Explicitly transform data.
     """
     def __call__(self, data):
         raise NotImplementedError
