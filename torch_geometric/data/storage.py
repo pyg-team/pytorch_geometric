@@ -68,10 +68,7 @@ class BaseStorage(MutableMapping):
         return self._mapping[key]
 
     def __setitem__(self, key: str, value: Any):
-        if value is None and key in self:
-            del self[key]
-        elif value is not None:
-            self._mapping[key] = value
+        self._mapping[key] = value
 
     def __delitem__(self, key: str):
         if key in self._mapping:
