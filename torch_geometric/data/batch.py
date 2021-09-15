@@ -22,6 +22,8 @@ class DynamicInheritance(type):
 
         params = list(inspect.signature(base_cls.__init__).parameters.items())
         for i, (k, v) in enumerate(params[1:]):
+            if k == 'args' or k == 'kwargs':
+                continue
             if i < len(args) or k in kwargs:
                 continue
             if v.default is not inspect.Parameter.empty:
