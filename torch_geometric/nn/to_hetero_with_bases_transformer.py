@@ -41,17 +41,17 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
         import torch
         from torch_geometric.nn import SAGEConv, to_hetero_with_bases
 
-        Net(torch.nn.Module):
+        class GNN(torch.nn.Module):
             def __init__(self):
-                self.conv1 = SAGEConv(16, 16)
-                self.conv2 = SAGEConv(16, 16)
+                self.conv1 = SAGEConv((16, 16), 32)
+                self.conv2 = SAGEConv((32, 32), 32)
 
             def forward(self, x, edge_index):
                 x = self.conv1(x, edge_index).relu()
                 x = self.conv2(x, edge_index).relu()
                 return x
 
-        model = Net()
+        model = GNN()
 
         node_types = ['paper', 'author']
         edge_types = [

@@ -18,9 +18,9 @@ As always, it is best understood by an example, so let's consider the following 
     import torch.nn.functional as F
     from torch_geometric.nn import GCNConv
 
-    class Net(torch.nn.Module):
+    class GNN(torch.nn.Module):
         def __init__(self, in_channels, out_channels):
-            super(Net, self).__init__()
+            super().__init__()
             self.conv1 = GCNConv(in_channels, 64)
             self.conv2 = GCNConv(64, out_channels)
 
@@ -30,7 +30,7 @@ As always, it is best understood by an example, so let's consider the following 
             x = self.conv2(x, edge_index)
             return F.log_softmax(x, dim=1)
 
-    model = Net(dataset.num_features, dataset.num_classes)
+    model = GNN(dataset.num_features, dataset.num_classes)
 
 For TorchScript support, we need to convert our GNN operators into "jittable" instances.
 This is done by calling the :func:`~torch_geometric.nn.conv.message_passing.MessagePassing.jittable` function provided by the underlying :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` interface:
@@ -38,7 +38,7 @@ This is done by calling the :func:`~torch_geometric.nn.conv.message_passing.Mess
 .. code-block:: python
 
     def __init__(self, in_channels, out_channels):
-        super(Net, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(in_channels, 64).jittable()
         self.conv2 = GCNConv(64, out_channels).jittable()
 
@@ -68,11 +68,11 @@ Under the hood, the :func:`~torch_geometric.nn.conv.message_passing.MessagePassi
 This technique is, *e.g.*, applied in the :class:`~torch_geometric.nn.conv.SAGEConv` class, which can operate on both single node feature matrices and tuples of node feature matrices at the same time.
 
 And that is all you need to know on how to convert your PyG models to TorchScript programs.
-You can have a further look at our JIT examples that show-case how to obtain TorchScript programs for `node <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/jit/gat.py>`_ and `graph classification <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/jit/gin.py>`_ models.
+You can have a further look at our JIT examples that show-case how to obtain TorchScript programs for `node <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/jit/gat.py>`_ and `graph classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/jit/gin.py>`_ models.
 
 .. note::
     TorchScript support is still experimental.
-    If you have problems converting your model to a TorchScript program, *e.g.*, because an internal function does not support TorchScript yet, please `let us know <https://github.com/rusty1s/pytorch_geometric/issues/new/choose>`_.
+    If you have problems converting your model to a TorchScript program, *e.g.*, because an internal function does not support TorchScript yet, please `let us know <https://github.com/pyg-team/pytorch_geometric/issues/new/choose>`_.
 
 Creating Jittable GNN Operators
 --------------------------------

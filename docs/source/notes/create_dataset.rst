@@ -49,7 +49,7 @@ Let's see this process in a simplified example:
 
     class MyOwnDataset(InMemoryDataset):
         def __init__(self, root, transform=None, pre_transform=None):
-            super(MyOwnDataset, self).__init__(root, transform, pre_transform)
+            super().__init__(root, transform, pre_transform)
             self.data, self.slices = torch.load(self.processed_paths[0])
 
         @property
@@ -102,7 +102,7 @@ Let's see this process in a simplified example:
 
     class MyOwnDataset(Dataset):
         def __init__(self, root, transform=None, pre_transform=None):
-            super(MyOwnDataset, self).__init__(root, transform, pre_transform)
+            super().__init__(root, transform, pre_transform)
 
         @property
         def raw_file_names(self):
@@ -152,7 +152,7 @@ Frequently Asked Questions
 
         class MyOwnDataset(Dataset):
             def __init__(self, transform=None, pre_transform=None):
-                super(MyOwnDataset, self).__init__(None, transform, pre_transform)
+                super().__init__(None, transform, pre_transform)
 
 #. **Do I really need to use these dataset interfaces?**
 

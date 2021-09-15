@@ -44,16 +44,17 @@ class OGB_MAG(InMemoryDataset):
 
     url = 'http://snap.stanford.edu/ogb/data/nodeproppred/mag.zip'
     urls = {
-        'metapath2vec': ('https://pytorch-geometric.com/datasets/'
+        'metapath2vec': ('https://data.pyg.org/datasets/'
                          'mag_metapath2vec_emb.zip'),
-        'transe': ('https://pytorch-geometric.com/datasets/'
+        'transe': ('https://data.pyg.org/datasets/'
                    'mag_transe_emb.zip'),
     }
 
     def __init__(self, root: str, preprocess: Optional[str] = None,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
-        self.preprocess = preprocess.lower()
+        preprocess = None if preprocess is None else preprocess.lower()
+        self.preprocess = preprocess
         assert self.preprocess in [None, 'metapath2vec', 'transe']
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -95,7 +96,7 @@ class OGB_MAG(InMemoryDataset):
             extract_zip(path, self.raw_dir)
             for file_name in ['node-feat', 'node-label', 'relations']:
                 path = osp.join(self.raw_dir, 'mag', 'raw', file_name)
-                shutil.move(file_name, self.raw_dir)
+                shutil.move(path, self.raw_dir)
             path = osp.join(self.raw_dir, 'mag', 'split')
             shutil.move(path, self.raw_dir)
             path = osp.join(self.raw_dir, 'mag', 'raw', 'num-node-dict.csv.gz')
@@ -129,9 +130,7 @@ class OGB_MAG(InMemoryDataset):
         else:
             emb_dict = torch.load(self.raw_paths[-1])
             for key, value in emb_dict.items():
-                if key == 'paper':
-                    data[key].x = torch.cat([data[key].x, value], dim=-1)
-                else:
+                if key != 'paper':
                     data[key].x = value
 
         for edge_type in [('author', 'affiliated_with', 'institution'),

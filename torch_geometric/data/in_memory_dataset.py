@@ -1,16 +1,14 @@
 from typing import Optional, Callable, List, Union, Tuple, Dict, Iterable
 
 import copy
-from itertools import repeat
-from inspect import signature
-from collections import defaultdict
 from collections.abc import Mapping
 
 import torch
-import numpy as np
 from torch import Tensor
 
 from torch_geometric.data import Data
+from torch_geometric.data.collate import collate
+from torch_geometric.data.separate import separate
 from torch_geometric.data.dataset import Dataset, IndexType
 
 
@@ -90,44 +88,13 @@ class InMemoryDataset(Dataset):
         elif self._data_list[idx] is not None:
             return copy.copy(self._data_list[idx])
 
-        data = copy.copy(self.data)
-        num_args = len(signature(data.__cat_dim__).parameters)
-
-        def _slice(output: Mapping, slices, store):
-            # * `output` denotes a mapping holding (child) elements of a copy
-            #   from `self.data` which we want to slice to only contain values
-            #   of the data element at position `idx`.
-            # * `slices` is a dictionary that holds information about how we
-            #   can reconstruct individual elements from a collated
-            #   representation, e.g.: `slices = { 'x': [0, 6, 10] }`
-            # * `store` denotes the parent store to which output elements
-            #   belong to
-            for key, value in output.items():
-                if isinstance(value, Mapping):
-                    _slice(value, slices[key], store)
-                else:
-                    start = int(slices[key][idx])
-                    end = int(slices[key][idx + 1])
-
-                    if isinstance(value, (Tensor, np.ndarray)):
-                        slice_obj = list(repeat(slice(None), value.ndim))
-                        args = (key, value, store)[:num_args]
-                        dim = self.data.__cat_dim__(*args)
-                        if dim is not None:
-                            slice_obj[dim] = slice(start, end)
-                        else:
-                            slice_obj[0] = start
-                    elif start + 1 == end:
-                        slice_obj = start
-                    else:
-                        slice_obj = slice(start, end)
-
-                    output[key] = value[slice_obj]
-
-        for store in data.stores:
-            key = store._key
-            slices = self.slices if key is None else self.slices[key]
-            _slice(store, slices, store)
+        data = separate(
+            cls=self.data.__class__,
+            batch=self.data,
+            idx=idx,
+            slice_dict=self.slices,
+            decrement=False,
+        )
 
         self._data_list[idx] = copy.copy(data)
 
@@ -142,65 +109,12 @@ class InMemoryDataset(Dataset):
         if len(data_list) == 1:
             return data_list[0], None
 
-        slices = {}
-        data = copy.copy(data_list[0])
-        num_args = len(signature(data.__cat_dim__).parameters)
-
-        def _cat(inputs: List[Mapping], output: Mapping, slices, store):
-            # * `inputs` is a list of dictionaries holding (child) elements of
-            #   `data_list`
-            # * `output` is the corresponding output mapping that stores the
-            #   corresponding elements of `inputs` in a collated representation
-            # * `slices` is a dictionary that holds information about how we
-            #   can reconstruct individual elements from a collated
-            #   representation, e.g.: `slices = { 'x': [0, 6, 10] }`
-            # * `store` denotes the parent store to which inputs and output
-            #   elements belong to
-            for key, value in output.items():
-                if isinstance(value, Mapping):
-                    slices[key] = {}
-                    _cat([v[key] for v in inputs], value, slices[key], store)
-                else:
-                    if isinstance(value, (Tensor, np.ndarray)):
-                        args = (key, value, store)[:num_args]
-                        dim = data.__cat_dim__(*args)
-                        output[key] = [v[key] for v in inputs]
-                        if value.ndim > 0 and dim is not None:
-                            slices[key] = [0]
-                            for v in output[key]:
-                                size = v.shape[dim]
-                                slices[key].append(slices[key][-1] + size)
-                            if isinstance(value, Tensor):
-                                output[key] = torch.cat(output[key], dim)
-                            else:
-                                output[key] = np.concatenate(output[key], dim)
-                        else:
-                            slices[key] = range(len(inputs) + 1)
-                            if isinstance(value, Tensor):
-                                output[key] = torch.stack(output[key], 0)
-                            else:
-                                output[key] = np.stack(output[key], 0)
-                    else:
-                        slices[key] = range(len(inputs) + 1)
-                        output[key] = [v[key] for v in inputs]
-
-                    slices[key] = torch.tensor(slices[key])
-
-        # We group all storage objects of every data object in the
-        # `data_list` by key, i.e. `store_dict: { store_key: [store, ...] }`.
-        store_dict = defaultdict(list)
-        for elem in data_list:
-            for store in elem.stores:
-                store_dict[store._key].append(store)
-
-        # After which we concatenate all elements of all attributes in
-        # `data_list` together by recursively iterating over each store.
-        for store in data.stores:
-            if store._key is not None:
-                slices[store._key] = {}
-                _cat(store_dict[store._key], store, slices[store._key], store)
-            else:
-                _cat(store_dict[store._key], store, slices, store)
+        data, slices, _ = collate(
+            data_list[0].__class__,
+            data_list=data_list,
+            increment=False,
+            add_batch=False,
+        )
 
         return data, slices
 

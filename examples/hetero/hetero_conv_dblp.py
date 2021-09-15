@@ -21,7 +21,7 @@ class HeteroGNN(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         for _ in range(num_layers):
             conv = HeteroConv({
-                edge_type: SAGEConv(-1, hidden_channels)
+                edge_type: SAGEConv((-1, -1), hidden_channels)
                 for edge_type in metadata[1]
             })
             self.convs.append(conv)

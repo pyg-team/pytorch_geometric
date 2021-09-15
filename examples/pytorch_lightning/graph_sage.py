@@ -4,16 +4,16 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import ModuleList, BatchNorm1d
+from torch_sparse import SparseTensor
 from pytorch_lightning.metrics import Accuracy
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
-                               seed_everything)
+from pytorch_lightning import LightningDataModule, LightningModule, Trainer
 
-from torch_sparse import SparseTensor
 import torch_geometric.transforms as T
 from torch_geometric.nn import SAGEConv
+from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborSampler
-from torch_geometric.datasets import Reddit as PyGReddit
+from torch_geometric.datasets import Reddit
 
 
 class Batch(NamedTuple):
@@ -22,7 +22,7 @@ class Batch(NamedTuple):
     adjs_t: List[SparseTensor]
 
 
-class Reddit(LightningDataModule):
+class RedditDataModule(LightningDataModule):
     def __init__(self, data_dir):
         super().__init__()
         self.data_dir = data_dir
@@ -37,10 +37,10 @@ class Reddit(LightningDataModule):
         return 41
 
     def prepare_data(self):
-        PyGReddit(self.data_dir, pre_transform=self.transform)
+        Reddit(self.data_dir, pre_transform=self.transform)
 
     def setup(self, stage: Optional[str] = None):
-        self.data = PyGReddit(self.data_dir, pre_transform=self.transform)[0]
+        self.data = Reddit(self.data_dir, pre_transform=self.transform)[0]
 
     def train_dataloader(self):
         return NeighborSampler(self.data.adj_t, node_idx=self.data.train_mask,
@@ -129,7 +129,7 @@ class GraphSAGE(LightningModule):
 
 def main():
     seed_everything(42)
-    datamodule = Reddit('data/Reddit')
+    datamodule = RedditDataModule('data/Reddit')
     model = GraphSAGE(datamodule.num_features, datamodule.num_classes)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
     trainer = Trainer(gpus=1, max_epochs=10, callbacks=[checkpoint_callback])

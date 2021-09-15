@@ -252,7 +252,7 @@ class DimeNet(torch.nn.Module):
 
         For an example of using a pretrained DimeNet variant, see
         `examples/qm9_pretrained_dimenet.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         qm9_pretrained_dimenet.py>`_.
 
     Args:

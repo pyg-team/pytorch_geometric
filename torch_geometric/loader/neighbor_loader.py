@@ -1,5 +1,5 @@
-from typing import Union, List, Dict, Tuple, Callable
-from torch_geometric.typing import NodeType, EdgeType, OptTensor
+from typing import Union, List, Dict, Tuple, Callable, Optional
+from torch_geometric.typing import NodeType, EdgeType
 
 import torch
 from torch import Tensor
@@ -87,7 +87,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         For an example of using
         :class:`~torch_geometric.loader.NeighborLoader`, see
-        `examples/hetero/to_hetero_mag.py <https://github.com/rusty1s/
+        `examples/hetero/to_hetero_mag.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`_.
 
     Args:
@@ -121,8 +121,8 @@ class NeighborLoader(torch.utils.data.DataLoader):
         self,
         data: Union[Data, HeteroData],
         num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
-        input_nodes: Union[OptTensor, NodeType, Tuple[NodeType,
-                                                      OptTensor]] = None,
+        input_nodes: Union[Optional[Tensor], NodeType,
+                           Tuple[NodeType, Optional[Tensor]]] = None,
         replace: bool = False,
         directed: bool = True,
         transform: Callable = None,

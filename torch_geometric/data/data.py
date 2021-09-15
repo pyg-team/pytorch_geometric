@@ -42,6 +42,9 @@ class BaseData(object):
     def __repr__(self) -> str:
         raise NotImplementedError
 
+    def stores_as(self, data: 'BaseData'):
+        raise NotImplementedError
+
     @property
     def stores(self) -> List[BaseStorage]:
         raise NotImplementedError
@@ -49,10 +52,6 @@ class BaseData(object):
     @property
     def node_stores(self) -> List[NodeStorage]:
         raise NotImplementedError
-
-    def __delitem__(self, key):
-        r"""Delete the data of the attribute :obj:`key`."""
-        return delattr(self, key)
 
     @property
     def edge_stores(self) -> List[EdgeStorage]:
@@ -325,7 +324,7 @@ class Data(BaseData):
                  edge_attr: OptTensor = None, y: OptTensor = None,
                  pos: OptTensor = None, **kwargs):
         super().__init__()
-        self._store = GlobalStorage(_parent=self)
+        self.__dict__['_store'] = GlobalStorage(_parent=self)
 
         self.x = x
         self.edge_index = edge_index
@@ -337,30 +336,24 @@ class Data(BaseData):
             setattr(self, key, value)
 
     def __getattr__(self, key: str) -> Any:
+        if '_store' not in self.__dict__:
+            raise RuntimeError(
+                "The 'data' object was created by an older version of PyG. "
+                "If this error occurred while loading an already existing "
+                "dataset, remove the 'processed/' directory in the dataset's "
+                "root folder and try again.")
         return getattr(self._store, key)
 
     def __setattr__(self, key: str, value: Any):
-        # `data._* = ...` => Link to the private `__dict__` store.
-        # `data.* = ...` => Link to the `_store`.
-        if key[:1] == '_':
-            self.__dict__[key] = value
-        else:
-            setattr(self._store, key, value)
+        setattr(self._store, key, value)
 
     def __delattr__(self, key: str):
-        # `del data._*` => Link to the private `__dict__` store.
-        # `del data.*` => Link to the `_store`.
-        if key[:1] == '_':
-            del self.__dict__[key]
-        else:
-            delattr(self._store, key)
+        delattr(self._store, key)
 
     def __getitem__(self, key: str) -> Any:
-        # Gets the data of the attribute :obj:`key`.
         return self._store[key]
 
     def __setitem__(self, key: str, value: Any):
-        # Sets the attribute :obj:`key` to :obj:`value`.
         self._store[key] = value
 
     def __delitem__(self, key: str):
@@ -370,7 +363,7 @@ class Data(BaseData):
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out._store = copy.copy(self._store)
+        out.__dict__['_store'] = copy.copy(self._store)
         out._store._parent = out
         return out
 
@@ -391,6 +384,9 @@ class Data(BaseData):
         else:
             info = [size_repr(k, v, indent=2) for k, v in self._store.items()]
             return '{}(\n{}\n)'.format(cls, ',\n'.join(info))
+
+    def stores_as(self, data: 'Data'):
+        return self
 
     @property
     def stores(self) -> List[BaseStorage]:
@@ -484,13 +480,17 @@ class Data(BaseData):
     def pos(self) -> Any:
         return self['pos'] if 'pos' in self._store else None
 
+    @property
+    def batch(self) -> Any:
+        return self['batch'] if 'batch' in self._store else None
+
     # Deprecated functions ####################################################
 
     @property
     @deprecated(details="use 'data.face.size(-1)' instead")
     def num_faces(self) -> Optional[int]:
         r"""Returns the number of faces in the mesh."""
-        if 'face' in self._store:
+        if 'face' in self._store and isinstance(self.face, torch.Tensor):
             return self.face.size(self.__cat_dim__('face', self.face))
         return None
 

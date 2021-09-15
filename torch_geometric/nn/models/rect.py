@@ -18,7 +18,7 @@ class RECT_L(torch.nn.Module):
     .. note::
 
         For an example of using RECT, see `examples/rect.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         rect.py>`_.
 
     Args:
