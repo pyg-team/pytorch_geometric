@@ -293,7 +293,7 @@ Afterwards, the created model can be trained as usual:
        optimizer.zero_grad()
        out = model(data.x_dict, data.edge_index_dict)
        mask = data['paper'].train_mask
-       loss = F.cross_entropy(out[mask], data['paper'].y[mask])
+       loss = F.cross_entropy(out['paper'][mask], data['paper'].y[mask])
        loss.backward()
        optimizer.step()
        return float(loss)
