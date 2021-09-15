@@ -1,8 +1,11 @@
+import sys
 import pytest
 
 import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import DataLoader
+
+num_workers_list = [0] if sys.platform in ['win32', 'darwin'] else [0, 2]
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -11,7 +14,7 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     return torch.stack([row, col], dim=0)
 
 
-@pytest.mark.parametrize('num_workers', [0, 2])
+@pytest.mark.parametrize('num_workers', num_workers_list)
 def test_dataloader(num_workers):
     x = torch.Tensor([[1], [1], [1]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -64,7 +67,7 @@ def test_pin_memory():
         assert batch.edge_index.is_pinned() or not torch.cuda.is_available()
 
 
-@pytest.mark.parametrize('num_workers', [0, 2])
+@pytest.mark.parametrize('num_workers', num_workers_list)
 def test_heterogeneous_dataloader(num_workers):
     data = HeteroData()
     data['p'].x = torch.randn(100, 128)

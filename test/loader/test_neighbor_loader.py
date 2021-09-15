@@ -14,13 +14,6 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
 
-try:
-    torch.ops.torch_sparse.neighbor_sample
-    torch.ops.torch_sparse.hetero_neighbor_sample
-    with_neighbor_sampler = True
-except RuntimeError:
-    with_neighbor_sampler = False
-
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
@@ -36,7 +29,6 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
     return int(mask.sum()) == mask.numel()
 
 
-@pytest.mark.skipif(not with_neighbor_sampler, reason='No neighbor sampler')
 @pytest.mark.parametrize('directed', [True, False])
 def test_homogeneous_neighbor_loader(directed):
     torch.manual_seed(12345)
@@ -71,7 +63,6 @@ def test_homogeneous_neighbor_loader(directed):
         assert data.edge_index.view(-1).unique().numel() == data.num_nodes
 
 
-@pytest.mark.skipif(not with_neighbor_sampler, reason='No neighbor sampler')
 @pytest.mark.parametrize('directed', [True, False])
 def test_heterogeneous_neighbor_loader(directed):
     torch.manual_seed(12345)
@@ -180,7 +171,6 @@ def test_heterogeneous_neighbor_loader(directed):
         assert torch.cat([row, col]).unique().numel() == n_id.numel()
 
 
-@pytest.mark.skipif(not with_neighbor_sampler, reason='No neighbor sampler')
 @pytest.mark.parametrize('directed', [True, False])
 def test_homogeneous_neighbor_loader_on_cora(directed):
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
@@ -227,7 +217,6 @@ def test_homogeneous_neighbor_loader_on_cora(directed):
     shutil.rmtree(root)
 
 
-@pytest.mark.skipif(not with_neighbor_sampler, reason='No neighbor sampler')
 @pytest.mark.parametrize('directed', [True, False])
 def test_heterogeneous_neighbor_loader_on_cora(directed):
     root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
