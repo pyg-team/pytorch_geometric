@@ -57,7 +57,7 @@ Whether you are a machine learning researcher or first-time user of machine lear
   Making modifications to existing models or creating new architectures is simple, thanks to its easy-to-use message passing API, and a variety of operators and utility functions.
 * **Large-scale real-world GNN models**:
   We focus on the need of GNN applications in challenging real-world scenarios, and support learning on diverse types of graphs, including but not limited to: scalable GNNs for graphs with millions of nodes; dynamic GNNs for node predictions over time; heterogeneous GNNs with multiple node types and edge types.
-* **GraphGym integration**: GraphGym lets users users easily reproduce GNN experiments, is able to launch and analyze thousands of different GNN configurations, and is customizable by registering new modules to the GNN learning pipeline.
+* **GraphGym integration**: GraphGym lets users easily reproduce GNN experiments, is able to launch and analyze thousands of different GNN configurations, and is customizable by registering new modules to a GNN learning pipeline.
 
 ## Quick Tour for New Users
 
