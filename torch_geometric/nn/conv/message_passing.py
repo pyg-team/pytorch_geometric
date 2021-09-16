@@ -55,11 +55,12 @@ class MessagePassing(torch.nn.Module):
             works well with accelerating GNN executions on CPU platforms, and can obtain
             better results when operating on denser graphs (e.g. 2-3x speedup on Reddit dataset).
             It can provide acceleration for common GNN models such as GCN, GIN, GraphSAGE, etc.
-            However, this method is not applicable to GNNs with attention mechanism. The selection
-            of the optimal decomposed_layer value depends on the specific graph datasets and
-            hardware resources. The decomposed_layer value of 2 is suitable in most cases. And
-            although the peak memory usage is directly associated with the granularity of feature
-            decomposition, the same can not be said for the execution speedup.
+            However, this method is not applicable to GNNs where things like attention are
+            computed based on x_i or x_j in the message function. The selection of the optimal
+            decomposed_layer value depends on the specific graph datasets and hardware resources.
+            The decomposed_layer value of 2 is suitable in most cases. And although the peak
+            memory usage is directly associated with the granularity of feature decomposition,
+            the same can not be said for the execution speedup.
             More details are in this paper: https://arxiv.org/abs/2104.03058.
     """
 
