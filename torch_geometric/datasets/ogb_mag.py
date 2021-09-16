@@ -116,6 +116,11 @@ class OGB_MAG(InMemoryDataset):
                               dtype=np.float32).values
         data['paper'].x = torch.from_numpy(x_paper)
 
+        path = osp.join(self.raw_dir, 'node-feat', 'paper', 'node_year.csv.gz')
+        year_paper = pd.read_csv(path, compression='gzip', header=None,
+                                 dtype=np.int64).values
+        data['paper'].year = torch.from_numpy(year_paper).view(-1)
+
         path = osp.join(self.raw_dir, 'node-label', 'paper',
                         'node-label.csv.gz')
         y_paper = pd.read_csv(path, compression='gzip', header=None,
