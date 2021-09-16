@@ -2,6 +2,7 @@ from .glob import global_add_pool, global_mean_pool, global_max_pool
 from .sort import global_sort_pool
 from .attention import GlobalAttention
 from .set2set import Set2Set
+from .gmt import GraphMultisetTransformer
 
 __all__ = [
     'global_add_pool',
@@ -10,6 +11,7 @@ __all__ = [
     'global_sort_pool',
     'GlobalAttention',
     'Set2Set',
+    'GraphMultisetTransformer',
 ]
 
 classes = __all__
