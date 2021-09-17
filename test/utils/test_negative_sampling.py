@@ -1,11 +1,10 @@
 import torch
-from torch_geometric.utils import (negative_sampling,
-                                   structured_negative_sampling,
-                                   batched_negative_sampling, to_undirected,
-                                   is_undirected)
-
+from torch_geometric.utils import to_undirected, is_undirected
 from torch_geometric.utils.negative_sampling import edge_index_to_vector
 from torch_geometric.utils.negative_sampling import vector_to_edge_index
+from torch_geometric.utils import (negative_sampling,
+                                   structured_negative_sampling,
+                                   batched_negative_sampling)
 
 
 def test_edge_index_to_vector_and_vice_versa():
