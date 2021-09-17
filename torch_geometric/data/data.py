@@ -424,7 +424,7 @@ class Data(BaseData):
         pass  # TODO
 
     def is_node_attr(self, key: str) -> bool:
-        r"""Returns :obj:`True` if they object at key :obj:`key` denotes a
+        r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
         node-level attribute."""
         value = self[key]
         cat_dim = self.__cat_dim__(key, value, self._store)
@@ -439,7 +439,7 @@ class Data(BaseData):
         return 'edge' not in key
 
     def is_edge_attr(self, key: str) -> bool:
-        r"""Returns :obj:`True` if they object at key :obj:`key` denotes an
+        r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
         edge-level attribute."""
         value = self[key]
         cat_dim = self.__cat_dim__(key, value, self._store)
