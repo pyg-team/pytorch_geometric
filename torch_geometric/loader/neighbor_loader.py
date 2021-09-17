@@ -165,9 +165,13 @@ class NeighborLoader(torch.utils.data.DataLoader):
             self.colptr_dict, self.row_dict, self.perm_dict = out
             if isinstance(num_neighbors, (list, tuple)):
                 self.num_neighbors = {
-                    edge_type_to_str(edge_type): num_neighbors
-                    for edge_type in self.edge_types
+                    key: num_neighbors
+                    for key in self.edge_types
                 }
+            self.num_neighbors = {
+                edge_type_to_str(key): value
+                for key, value in self.num_neighbors.items()
+            }
             self.num_hops = max([len(v) for v in self.num_neighbors.values()])
             if isinstance(input_nodes, str):
                 self.input_nodes = (input_nodes, None)
