@@ -1,4 +1,3 @@
-import pytest
 import torch
 from torch_geometric.utils import (negative_sampling,
                                    structured_negative_sampling,
@@ -10,7 +9,7 @@ from torch_geometric.utils.negative_sampling import vector_to_edge_index
 
 
 def test_edge_index_to_vector_and_vice_versa():
-    N = 5
+    N = 10
     row = torch.arange(N).view(-1, 1).repeat(1, N).view(-1)
     col = torch.arange(N).view(1, -1).repeat(N, 1).view(-1)
     edge_index = torch.stack([row, col], dim=0)
