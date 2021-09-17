@@ -5,7 +5,7 @@ import random
 import torch
 import numpy as np
 from torch import Tensor
-from torch_geometric.utils import degree, to_undirected
+from torch_geometric.utils import degree
 
 from .num_nodes import maybe_num_nodes
 
