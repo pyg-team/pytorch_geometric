@@ -48,7 +48,7 @@ class MessagePassing(torch.nn.Module):
             (default: :obj:`"source_to_target"`)
         node_dim (int, optional): The axis along which to propagate.
             (default: :obj:`-2`)
-        decomposed_layer (integer, optional): The number of feature decomposition layers.
+        decomposed_layers (integer, optional): The number of feature decomposition layers.
             (default:: int: 1). The feature decomposition method reduces the peak memory
             usage by slicing the feature dimensions into separated feature decomposition
             layers during GNN Aggregation. This method is disabled by default.This method
@@ -57,8 +57,8 @@ class MessagePassing(torch.nn.Module):
             It can provide acceleration for common GNN models such as GCN, GIN, GraphSAGE, etc.
             However, this method is not applicable to GNNs where things like attention are
             computed based on x_i or x_j in the message function. The selection of the optimal
-            decomposed_layer value depends on the specific graph datasets and hardware resources.
-            The decomposed_layer value of 2 is suitable in most cases. And although the peak
+            decomposed_layers value depends on the specific graph datasets and hardware resources.
+            The decomposed_layers value of 2 is suitable in most cases. And although the peak
             memory usage is directly associated with the granularity of feature decomposition,
             the same can not be said for the execution speedup.
             More details are in this paper: https://arxiv.org/abs/2104.03058.
@@ -70,7 +70,7 @@ class MessagePassing(torch.nn.Module):
     }
 
     def __init__(self, aggr: Optional[str] = "add",
-                 flow: str = "source_to_target", node_dim: int = -2, decomposed_layer: int = 1):
+                 flow: str = "source_to_target", node_dim: int = -2, decomposed_layers: int = 1):
 
         super(MessagePassing, self).__init__()
 
@@ -81,7 +81,7 @@ class MessagePassing(torch.nn.Module):
         assert self.flow in ['source_to_target', 'target_to_source']
 
         self.node_dim = node_dim
-        self.decomposed_layers = decomposed_layer
+        self.decomposed_layers = decomposed_layers
         self.inspector = Inspector(self)
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.aggregate, pop_first=True)

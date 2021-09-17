@@ -1,3 +1,4 @@
+import copy
 import torch
 from torch_sparse import SparseTensor
 from torch_geometric.nn import GCNConv
@@ -35,6 +36,16 @@ def test_gcn_conv():
     assert conv(x, edge_index).tolist() == out1.tolist()
     conv(x, adj1.t())
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
+
+    conv = GCNConv(16, 32)
+    conv2 = copy.deepcopy(conv)
+    conv2.decomposed_layers = 2
+    out1 = conv(x, edge_index)
+    assert torch.allclose(conv2(x, edge_index), out1, atol=1e-6)  # output is same with and without decomposition.
+
+    t = '(Tensor, Tensor, OptTensor) -> Tensor'
+    jit = torch.jit.script(conv2.jittable(t))  # jittable works with decmoposition.
+    assert jit(x, edge_index).tolist() == out1.tolist()
 
 
 def test_gcn_conv_with_sparse_input_feature():
