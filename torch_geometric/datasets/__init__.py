@@ -51,6 +51,7 @@ from .ogb_mag import OGB_MAG
 from .dblp import DBLP
 from .imdb import IMDB
 from .last_fm import LastFM
+from .hgb_dataset import HGBDataset
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
@@ -117,6 +118,7 @@ __all__ = [
     'DBLP',
     'IMDB',
     'LastFM',
+    'HGBDataset',
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'UPFD',
