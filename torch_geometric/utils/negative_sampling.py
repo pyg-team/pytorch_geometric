@@ -59,36 +59,33 @@ def negative_sampling(edge_index: Tensor,
     prob = (idx.numel() / population)  # Probability to sample a negative.
     sample_size = (1.2 * num_neg_samples / prob)  # (Over)-sample size.
 
+    neg_idx = None
     if method == 'dense':
-        mask = idx.new_ones(size, dtype=torch.bool)
+        mask = idx.new_ones(population, dtype=torch.bool)
         mask[idx] = False
         for _ in range(3):  # Number of tries to sample negative indices.
-            pass
+            rnd = sample(population, sample_size, idx.device)
+            rnd = rnd[mask[rnd]]  # Filter true negatives.
+            neg_idx = rnd if neg_idx is None else torch.cat([neg_idx, rnd])
+            if neg_idx.numel() >= num_neg_samples:
+                neg_idx = neg_idx[:num_neg_samples]
+                break
+            mask[neg_idx] = False
 
-        mask = mask.view(-1)
+    else:  # 'sparse'
+        for _ in range(3):  # Number of tries to sample negative indices.
+            rnd = sample(population, sample_size, device='cpu')
+            mask = np.isin(rnd, idx.to('cpu'))
+            if neg_idx is not None:
+                mask |= np.isin(rnd, neg_idx.to('cpu'))
+            mask = torch.from_numpy(mask).to(torch.bool)
+            rnd = rnd[~mask]
+            neg_idx = rnd if neg_idx is None else torch.cat([neg_idx, rnd])
+            if neg_idx.numel() >= num_neg_samples:
+                neg_idx = neg_idx[:num_neg_samples]
+                break
 
-        perm = sample(size, int(alpha * num_neg_samples),
-                      device=edge_index.device)
-        perm = perm[mask[perm]][:num_neg_samples]
-
-    else:
-        perm = sample(size, int(alpha * num_neg_samples))
-        mask = torch.from_numpy(np.isin(perm, idx.to('cpu'))).to(torch.bool)
-        perm = perm[~mask][:num_neg_samples].to(edge_index.device)
-
-    if force_undirected:
-        # (-sqrt((2 * N + 1)^2 - 8 * perm) + 2 * N + 1) / 2
-        row = torch.floor((-torch.sqrt((2. * num_nodes + 1.)**2 - 8. * perm) +
-                           2 * num_nodes + 1) / 2)
-        col = perm - row * (2 * num_nodes - row - 1) // 2
-        neg_edge_index = torch.stack([row, col], dim=0).long()
-        neg_edge_index = to_undirected(neg_edge_index)
-    else:
-        row = perm // num_nodes
-        col = perm % num_nodes
-        neg_edge_index = torch.stack([row, col], dim=0).long()
-
-    return neg_edge_index
+    return vector_to_edge_index(neg_idx, size, bipartite, force_undirected)
 
 
 def structured_negative_sampling(edge_index, num_nodes=None):
