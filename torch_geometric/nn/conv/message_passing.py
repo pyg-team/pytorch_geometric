@@ -242,8 +242,8 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
-        if self.__explain__:
-            self.decomposed_layers = 1  # assuming decomposed layers is passed to init
+
+        decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
 
         for hook in self._propagate_forward_pre_hooks.values():
             res = hook(self, (edge_index, size, kwargs))
@@ -276,12 +276,12 @@ class MessagePassing(torch.nn.Module):
         # Otherwise, run both functions in separation.
         elif isinstance(edge_index, Tensor) or not self.fuse:
 
-            if self.decomposed_layers > 1:
+            if decomposed_layers > 1:
                 x = kwargs['x']
-                split_x = torch.chunk(x, self.decomposed_layers, -1)
+                split_x = torch.chunk(x, decomposed_layers, -1)
                 decomposed_out = []
-            for i in range(0, self.decomposed_layers):
-                if self.decomposed_layers > 1:
+            for i in range(0, decomposed_layers):
+                if decomposed_layers > 1:
                     kwargs['x'] = split_x[i]
                 coll_dict = self.__collect__(self.__user_args__, edge_index, size,
                                              kwargs)
@@ -325,10 +325,10 @@ class MessagePassing(torch.nn.Module):
                 update_kwargs = self.inspector.distribute('update', coll_dict)
                 out = self.update(out, **update_kwargs)
 
-                if self.decomposed_layers > 1:
+                if decomposed_layers > 1:
                     decomposed_out.append(out)
 
-            if self.decomposed_layers > 1:
+            if decomposed_layers > 1:
                 out = torch.cat(decomposed_out, dim=-1)
 
             for hook in self._propagate_forward_hooks.values():
