@@ -1,28 +1,57 @@
+from typing import Optional, Union, Tuple
+
 import random
 
 import torch
 import numpy as np
+from torch import Tensor
 from torch_geometric.utils import degree, to_undirected
 
 from .num_nodes import maybe_num_nodes
 
 
-def sample(high: int, size: int, device=None):
-    size = min(high, size)
-    return torch.tensor(random.sample(range(high), size), device=device)
+def sample(population: int, k: int, device=None) -> Tensor:
+    if population <= k:
+        return torch.arange(population, device=device)
+    else:
+        return torch.tensor(random.sample(range(population), k), device=device)
 
 
-def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None,
-                      method="sparse", force_undirected=False):
+def edge_index_to_vector(edge_index: Tensor, size: Tuple[int, int],
+                         bipartite: bool) -> Tuple[Tensor, int]:
+
+    if bipartite:  # No need to account for self-loops.
+        idx = (edge_index[0] * size[1]).add_(edge_index[1])
+        population = size[0] * size[1]
+        return idx, population
+
+    else:
+        assert size[0] == size[1]
+        col = edge_index[1].clone()
+        col[edge_index[0] <= edge_index[1]] -= 1
+        idx = (edge_index[0] * (size[1] - 1)).add_(col)
+        population = size[0] * size[1] - size[0]
+        return idx, population
+
+
+def negative_sampling(edge_index: Tensor,
+                      num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+                      num_neg_samples: Optional[int] = None,
+                      method: str = "sparse",
+                      force_undirected: bool = False) -> Tensor:
     r"""Samples random negative edges of a graph given by :attr:`edge_index`.
 
     Args:
         edge_index (LongTensor): The edge indices.
-        num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        num_nodes (int or Tuple[int, int], optional): The number of nodes,
+            *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
+            If given as a tuple, then :obj:`edge_index` is interpreted as a
+            bipartite graph with shape :obj:`(num_src_nodes, num_dst_nodes)`.
+            (default: :obj:`None`)
         num_neg_samples (int, optional): The (approximate) number of negative
-            samples to return. If set to :obj:`None`, will try to return a
-            negative edge for every positive edge. (default: :obj:`None`)
+            samples to return.
+            If set to :obj:`None`, will try to return a negative edge for every
+            positive edge. (default: :obj:`None`)
         method (string, optional): The method to use for negative sampling,
             *i.e.*, :obj:`"sparse"` or :obj:`"dense"`.
             This is a memory/runtime trade-off.
@@ -34,13 +63,19 @@ def negative_sampling(edge_index, num_nodes=None, num_neg_samples=None,
 
     :rtype: LongTensor
     """
+    assert method in ['sparse', 'dense']
 
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    size = num_nodes
+    bipartite = isinstance(size, tuple)
+    if size is None:
+        size = int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
+    if isinstance(size, int):
+        size = (size, size)
+    force_undirected = False if bipartite else force_undirected
+
     num_neg_samples = num_neg_samples or edge_index.size(1)
 
-    # Handle '|V|^2 - |E| < |E|'.
-    size = num_nodes * num_nodes
-    num_neg_samples = min(num_neg_samples, size - edge_index.size(1))
+    idx, population = edge_index_to_vector(edge_index, size, bipartite)
 
     row, col = edge_index
 
