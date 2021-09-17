@@ -147,19 +147,19 @@ class RandomLinkSplit(BaseTransform):
         return edge_index
 
     def _split_data(self, data: Data, index: Tensor) -> Data:
-        num_edges = data.num_edges
-
-        data = copy.copy(data)
-        data.edge_index = self._split(data.edge_index, index)
+        splitted_data = copy.copy(data)
+        splitted_data.edge_index = self._split(data.edge_index, index)
 
         for key, value in data.items():
-            if isinstance(value, Tensor) and value.size(0) == num_edges:
+            if key == 'edge_index':
+                continue
+            if isinstance(value, Tensor) and data.is_edge_attr(key):
                 value = value[index]
                 if self.is_undirected:
                     value = torch.cat([value, value], dim=0)
-                data[key] = value
+                splitted_data[key] = value
 
-        return data
+        return splitted_data
 
     def _create_label(self, data: Data, index: Tensor, neg_edge_index: Tensor,
                       out: Data):
