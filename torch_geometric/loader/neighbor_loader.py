@@ -40,7 +40,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             num_neighbors=[30] * 2,
             # Use a batch size of 128 for sampling training nodes
             batch_size=128,
-            input_nodes: data.train_mask),
+            input_nodes=data.train_mask),
         )
 
         sampled_data = next(iter(loader))
@@ -76,7 +76,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             num_neighbors={key: [30] * 2 for key in hetero_data.edge_types},
             # Use a batch size of 128 for sampling training nodes of type paper
             batch_size=128,
-            input_nodes: ('paper', data['paper'].train_mask),
+            input_nodes=('paper', hetero_data['paper'].train_mask),
         )
 
         sampled_hetero_data = next(iter(loader))
