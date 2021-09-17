@@ -98,6 +98,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             number of neighbors to sample for each node in each iteration.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
             indices of nodes for which neighbors are sampled to create
             mini-batches.
