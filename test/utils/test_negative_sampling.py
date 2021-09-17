@@ -38,7 +38,6 @@ def test_edge_index_to_vector_and_vice_versa():
 
 
 def test_negative_sampling():
-    return
     edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
 
     neg_edge_index = negative_sampling(edge_index)
@@ -68,7 +67,6 @@ def test_negative_sampling():
 
 
 def test_structured_negative_sampling():
-    return
     edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
 
     i, j, k = structured_negative_sampling(edge_index)
@@ -85,7 +83,6 @@ def test_structured_negative_sampling():
 
 
 def test_batched_negative_sampling():
-    return
     edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
     edge_index = torch.cat([edge_index, edge_index + 4], dim=1)
     batch = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
