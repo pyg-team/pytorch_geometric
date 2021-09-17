@@ -423,6 +423,36 @@ class Data(BaseData):
     def debug(self):
         pass  # TODO
 
+    def is_node_attr(self, key: str) -> bool:
+        r"""Returns :obj:`True` if they object at key :obj:`key` denotes a
+        node-level attribute."""
+        value = self[key]
+        cat_dim = self.__cat_dim__(key, value, self._store)
+
+        num_nodes, num_edges = self.num_nodes, self.num_edges
+        if not isinstance(value, torch.Tensor):
+            return False
+        if value.size(cat_dim) != num_nodes:
+            return False
+        if num_nodes != num_edges:
+            return True
+        return 'edge' not in key
+
+    def is_edge_attr(self, key: str) -> bool:
+        r"""Returns :obj:`True` if they object at key :obj:`key` denotes an
+        edge-level attribute."""
+        value = self[key]
+        cat_dim = self.__cat_dim__(key, value, self._store)
+
+        num_nodes, num_edges = self.num_nodes, self.num_edges
+        if not isinstance(value, torch.Tensor):
+            return False
+        if value.size(cat_dim) != num_edges:
+            return False
+        if num_nodes != num_edges:
+            return True
+        return 'edge' in key
+
     ###########################################################################
 
     @classmethod
