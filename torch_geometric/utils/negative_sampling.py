@@ -49,36 +49,22 @@ def negative_sampling(edge_index: Tensor,
         size = (size, size)
     force_undirected = False if bipartite else force_undirected
 
-    # If not bipartite, remove self-loops
+    idx, population = edge_index_to_vector(edge_index, size, bipartite,
+                                           force_undirected)
 
     num_neg_samples = num_neg_samples or edge_index.size(1)
-
-    idx, population = edge_index_to_vector(edge_index, size, bipartite)
-
-    row, col = edge_index
-
     if force_undirected:
         num_neg_samples = num_neg_samples // 2
 
-        # Upper triangle indices: N + ... + 1 = N (N + 1) / 2
-        size = (num_nodes * (num_nodes + 1)) // 2
-
-        # Remove edges in the lower triangle matrix.
-        mask = row <= col
-        row, col = row[mask], col[mask]
-
-        # idx = N * i + j - i * (i+1) / 2
-        idx = row * num_nodes + col - row * (row + 1) // 2
-    else:
-        idx = row * num_nodes + col
-
-    # Percentage of edges to oversample so that we are save to only sample once
-    # (in most cases).
-    alpha = abs(1 / (1 - 1.2 * (edge_index.size(1) / size)))
+    prob = (idx.numel() / population)  # Probability to sample a negative.
+    sample_size = (1.2 * num_neg_samples / prob)  # (Over)-sample size.
 
     if method == 'dense':
-        mask = edge_index.new_ones(size, dtype=torch.bool)
+        mask = idx.new_ones(size, dtype=torch.bool)
         mask[idx] = False
+        for _ in range(3):  # Number of tries to sample negative indices.
+            pass
+
         mask = mask.view(-1)
 
         perm = sample(size, int(alpha * num_neg_samples),
@@ -236,9 +222,10 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         num_nodes = size[0]
 
         offset = torch.arange(1, num_nodes, device=idx.device).cumsum(0)
-        end = torch.arange(num_nodes, num_nodes * num_nodes, num_nodes)
+        end = torch.arange(num_nodes, num_nodes * num_nodes, num_nodes,
+                           device=idx.device)
         row = torch.bucketize(idx, end.sub_(offset), right=True)
-        col = (idx + offset[row]) % num_nodes
+        col = offset[row].add_(idx) % num_nodes
         return torch.stack([torch.cat([row, col]), torch.cat([col, row])], 0)
 
     else:
