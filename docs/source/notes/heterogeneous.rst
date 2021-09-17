@@ -405,7 +405,7 @@ Performing neighbor sampling using :class:`~torch_geometric.loader.NeighborLoade
    from torch_geometric.loader import NeighborLoader
 
    transform = T.ToUndirected()  # Add reverse edge types.
-   dataset = OGB_MAG(root='./data', preprocess='metapath2vec', transform=transform)
+   data = OGB_MAG(root='./data', preprocess='metapath2vec', transform=transform)[0]
 
    train_loader = NeighborLoader(
        data,
