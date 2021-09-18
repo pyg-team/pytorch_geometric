@@ -92,7 +92,7 @@ class GraphMultisetTransformer(torch.nn.Module):
     from the `"Accurate Learning of Graph Representations
     with Graph Multiset Pooling" <https://arxiv.org/abs/2102.11533>`_ paper.
 
-    In short, nodes of the entire graph is clustered with attention-based
+    In short, nodes of the entire graph are clustered via attention-based
     pooling operations (GMPool_G or GMPool_I), and self-attention (SelfAtt)
     could be used to calculate the inter-relationships among nodes.
 
