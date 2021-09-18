@@ -42,11 +42,9 @@ def negative_sampling(edge_index: Tensor,
     assert method in ['sparse', 'dense']
 
     size = num_nodes
-    bipartite = isinstance(size, tuple)
-    if size is None:
-        size = int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
-    if isinstance(size, int):
-        size = (size, size)
+    bipartite = isinstance(size, (tuple, list))
+    size = maybe_num_nodes(edge_index) if size is None else size
+    size = (size, size) if not bipartite else size
     force_undirected = False if bipartite else force_undirected
 
     idx, population = edge_index_to_vector(edge_index, size, bipartite,
@@ -61,9 +59,12 @@ def negative_sampling(edge_index: Tensor,
 
     neg_idx = None
     if method == 'dense':
+        # The dense version creates a mask of shape `population` to check if
+        # for invalid samples.
         mask = idx.new_ones(population, dtype=torch.bool)
         mask[idx] = False
-        for _ in range(3):  # Number of tries to sample negative indices.
+        for i in range(3):  # Number of tries to sample negative indices.
+            print('try', i)
             rnd = sample(population, sample_size, idx.device)
             rnd = rnd[mask[rnd]]  # Filter true negatives.
             neg_idx = rnd if neg_idx is None else torch.cat([neg_idx, rnd])
@@ -73,7 +74,9 @@ def negative_sampling(edge_index: Tensor,
             mask[neg_idx] = False
 
     else:  # 'sparse'
-        for _ in range(3):  # Number of tries to sample negative indices.
+        # The sparse version checks for invalid samples via `np.isin`.
+        for i in range(3):  # Number of tries to sample negative indices.
+            print('try', i)
             rnd = sample(population, sample_size, device='cpu')
             mask = np.isin(rnd, idx.to('cpu'))
             if neg_idx is not None:
