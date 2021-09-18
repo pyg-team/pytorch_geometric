@@ -19,33 +19,40 @@ def test_batch():
     e1 = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     adj1 = SparseTensor.from_edge_index(e1)
     s1 = '1'
+    array1 = ['1', '2']
     x2 = torch.tensor([1, 2], dtype=torch.float)
     x2_sp = SparseTensor.from_dense(x2.view(-1, 1))
     e2 = torch.tensor([[0, 1], [1, 0]])
     adj2 = SparseTensor.from_edge_index(e2)
     s2 = '2'
+    array2 = ['3', '4', '5']
     x3 = torch.tensor([1, 2, 3, 4], dtype=torch.float)
     x3_sp = SparseTensor.from_dense(x3.view(-1, 1))
     e3 = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
     adj3 = SparseTensor.from_edge_index(e3)
     s3 = '3'
+    array3 = ['6', '7', '8', '9']
 
-    data1 = Data(x=x1, x_sp=x1_sp, edge_index=e1, adj=adj1, s=s1, num_nodes=3)
-    data2 = Data(x=x2, x_sp=x2_sp, edge_index=e2, adj=adj2, s=s2, num_nodes=2)
-    data3 = Data(x=x3, x_sp=x3_sp, edge_index=e3, adj=adj3, s=s3, num_nodes=4)
+    data1 = Data(x=x1, x_sp=x1_sp, edge_index=e1, adj=adj1, s=s1, array=array1,
+                 num_nodes=3)
+    data2 = Data(x=x2, x_sp=x2_sp, edge_index=e2, adj=adj2, s=s2, array=array2,
+                 num_nodes=2)
+    data3 = Data(x=x3, x_sp=x3_sp, edge_index=e3, adj=adj3, s=s3, array=array3,
+                 num_nodes=4)
 
     batch = Batch.from_data_list([data1])
     assert str(batch) == ('Batch(x=[3], edge_index=[2, 4], '
                           'x_sp=[3, 1, nnz=3], adj=[3, 3, nnz=4], s=[1], '
-                          'num_nodes=3, batch=[3], ptr=[2])')
+                          'array=[1], num_nodes=3, batch=[3], ptr=[2])')
     assert batch.num_graphs == 1
-    assert len(batch) == 8
+    assert len(batch) == 9
     assert batch.x.tolist() == [1, 2, 3]
     assert batch.x_sp.to_dense().view(-1).tolist() == batch.x.tolist()
     assert batch.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     edge_index = torch.stack(batch.adj.coo()[:2], dim=0)
     assert edge_index.tolist() == batch.edge_index.tolist()
     assert batch.s == ['1']
+    assert batch.array == [['1', '2']]
     assert batch.num_nodes == 3
     assert batch.batch.tolist() == [0, 0, 0]
     assert batch.ptr.tolist() == [0, 3]
@@ -54,9 +61,10 @@ def test_batch():
 
     assert str(batch) == ('Batch(x=[9], edge_index=[2, 12], '
                           'x_sp=[9, 1, nnz=9], adj=[9, 9, nnz=12], s=[3], '
-                          's_batch=[3], num_nodes=9, batch=[9], ptr=[4])')
+                          's_batch=[3], array=[3], num_nodes=9, batch=[9], '
+                          'ptr=[4])')
     assert batch.num_graphs == 3
-    assert len(batch) == 9
+    assert len(batch) == 10
     assert batch.x.tolist() == [1, 2, 3, 1, 2, 1, 2, 3, 4]
     assert batch.x_sp.to_dense().view(-1).tolist() == batch.x.tolist()
     assert batch.edge_index.tolist() == [[0, 1, 1, 2, 3, 4, 5, 6, 6, 7, 7, 8],
@@ -65,21 +73,21 @@ def test_batch():
     assert edge_index.tolist() == batch.edge_index.tolist()
     assert batch.s == ['1', '2', '3']
     assert batch.s_batch.tolist() == [0, 1, 2]
+    assert batch.array == [['1', '2'], ['3', '4', '5'], ['6', '7', '8', '9']]
     assert batch.num_nodes == 9
     assert batch.batch.tolist() == [0, 0, 0, 1, 1, 2, 2, 2, 2]
     assert batch.ptr.tolist() == [0, 3, 5, 9]
 
     data = batch[0]
     assert str(data) == ("Data(x=[3], edge_index=[2, 4], x_sp=[3, 1, nnz=3], "
-                         "adj=[3, 3, nnz=4], s='1', "
-                         "num_nodes=3)")
+                         "adj=[3, 3, nnz=4], s='1', array=[2], num_nodes=3)")
     data = batch[1]
     assert str(data) == ("Data(x=[2], edge_index=[2, 2], x_sp=[2, 1, nnz=2], "
-                         "adj=[2, 2, nnz=2], s='2', num_nodes=2)")
+                         "adj=[2, 2, nnz=2], s='2', array=[3], num_nodes=2)")
 
     data = batch[2]
     assert str(data) == ("Data(x=[4], edge_index=[2, 6], x_sp=[4, 1, nnz=4], "
-                         "adj=[4, 4, nnz=6], s='3', num_nodes=4)")
+                         "adj=[4, 4, nnz=6], s='3', array=[4], num_nodes=4)")
 
     assert len(batch.index_select([1, 0])) == 2
     assert len(batch.index_select(torch.tensor([1, 0]))) == 2
@@ -91,25 +99,27 @@ def test_batch():
     data_list = batch.to_data_list()
     assert len(data_list) == 3
 
-    assert len(data_list[0]) == 6
+    assert len(data_list[0]) == 7
     assert data_list[0].x.tolist() == [1, 2, 3]
     assert data_list[0].x_sp.to_dense().view(-1).tolist() == [1, 2, 3]
     assert data_list[0].edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     edge_index = torch.stack(data_list[0].adj.coo()[:2], dim=0)
     assert edge_index.tolist() == data_list[0].edge_index.tolist()
     assert data_list[0].s == '1'
+    assert data_list[0].array == ['1', '2']
     assert data_list[0].num_nodes == 3
 
-    assert len(data_list[1]) == 6
+    assert len(data_list[1]) == 7
     assert data_list[1].x.tolist() == [1, 2]
     assert data_list[1].x_sp.to_dense().view(-1).tolist() == [1, 2]
     assert data_list[1].edge_index.tolist() == [[0, 1], [1, 0]]
     edge_index = torch.stack(data_list[1].adj.coo()[:2], dim=0)
     assert edge_index.tolist() == data_list[1].edge_index.tolist()
     assert data_list[1].s == '2'
+    assert data_list[1].array == ['3', '4', '5']
     assert data_list[1].num_nodes == 2
 
-    assert len(data_list[2]) == 6
+    assert len(data_list[2]) == 7
     assert data_list[2].x.tolist() == [1, 2, 3, 4]
     assert data_list[2].x_sp.to_dense().view(-1).tolist() == [1, 2, 3, 4]
     assert data_list[2].edge_index.tolist() == [[0, 1, 1, 2, 2, 3],
@@ -117,6 +127,7 @@ def test_batch():
     edge_index = torch.stack(data_list[2].adj.coo()[:2], dim=0)
     assert edge_index.tolist() == data_list[2].edge_index.tolist()
     assert data_list[2].s == '3'
+    assert data_list[2].array == ['6', '7', '8', '9']
     assert data_list[2].num_nodes == 4
 
     torch_geometric.set_debug(True)

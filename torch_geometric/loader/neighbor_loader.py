@@ -40,7 +40,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             num_neighbors=[30] * 2,
             # Use a batch size of 128 for sampling training nodes
             batch_size=128,
-            input_nodes: data.train_mask),
+            input_nodes=data.train_mask),
         )
 
         sampled_data = next(iter(loader))
@@ -76,7 +76,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             num_neighbors={key: [30] * 2 for key in hetero_data.edge_types},
             # Use a batch size of 128 for sampling training nodes of type paper
             batch_size=128,
-            input_nodes: ('paper', data['paper'].train_mask),
+            input_nodes=('paper', hetero_data['paper'].train_mask),
         )
 
         sampled_hetero_data = next(iter(loader))
@@ -98,6 +98,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             number of neighbors to sample for each node in each iteration.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
             indices of nodes for which neighbors are sampled to create
             mini-batches.
@@ -164,9 +165,13 @@ class NeighborLoader(torch.utils.data.DataLoader):
             self.colptr_dict, self.row_dict, self.perm_dict = out
             if isinstance(num_neighbors, (list, tuple)):
                 self.num_neighbors = {
-                    edge_type_to_str(edge_type): num_neighbors
-                    for edge_type in self.edge_types
+                    key: num_neighbors
+                    for key in self.edge_types
                 }
+            self.num_neighbors = {
+                edge_type_to_str(key): value
+                for key, value in self.num_neighbors.items()
+            }
             self.num_hops = max([len(v) for v in self.num_neighbors.values()])
             if isinstance(input_nodes, str):
                 self.input_nodes = (input_nodes, None)
