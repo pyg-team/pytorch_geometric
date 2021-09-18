@@ -63,8 +63,7 @@ def negative_sampling(edge_index: Tensor,
         # for invalid samples.
         mask = idx.new_ones(population, dtype=torch.bool)
         mask[idx] = False
-        for i in range(3):  # Number of tries to sample negative indices.
-            print('try', i)
+        for _ in range(3):  # Number of tries to sample negative indices.
             rnd = sample(population, sample_size, idx.device)
             rnd = rnd[mask[rnd]]  # Filter true negatives.
             neg_idx = rnd if neg_idx is None else torch.cat([neg_idx, rnd])
@@ -75,8 +74,7 @@ def negative_sampling(edge_index: Tensor,
 
     else:  # 'sparse'
         # The sparse version checks for invalid samples via `np.isin`.
-        for i in range(3):  # Number of tries to sample negative indices.
-            print('try', i)
+        for _ in range(3):  # Number of tries to sample negative indices.
             rnd = sample(population, sample_size, device='cpu')
             mask = np.isin(rnd, idx.to('cpu'))
             if neg_idx is not None:
