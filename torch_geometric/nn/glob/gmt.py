@@ -1,6 +1,10 @@
+from typing import List, Callable
+
 import torch
+from torch import Tensor
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import to_dense_batch
+from torch_geometric.typing import OptTensor
 
 import math
 
@@ -123,10 +127,12 @@ class GraphMultisetTransformer(torch.nn.Module):
         ln (bool, optional): If set to :obj:`True`, will make use of
             layer normalization. (default: :obj:`False`)
     """
-    def __init__(self, in_channels, hidden_channels, out_channels,
-                 conv=None, num_nodes=300, pooling_ratio=0.25,
-                 pool_sequences=['GMPool_G', 'SelfAtt', 'GMPool_I'],
-                 num_heads=4, ln=False):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int, conv: Callable = None,
+                 num_nodes: int = 300, pooling_ratio: float = 0.25,
+                 pool_sequences: List[str] = [
+                     'GMPool_G', 'SelfAtt', 'GMPool_I'],
+                 num_heads: int = 4, ln: bool = False):
         super(GraphMultisetTransformer, self).__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -170,7 +176,8 @@ class GraphMultisetTransformer(torch.nn.Module):
                 )
         self.pools.append(torch.nn.Linear(hidden_channels, out_channels))
 
-    def forward(self, x: Tensor, batch: Tensor, edge_index: Optional[Tensor]=None) -> Tensor:
+    def forward(self, x: Tensor, batch: Tensor,
+                edge_index: OptTensor = None) -> Tensor:
         """"""
         x = self.pools[0](x)
         batch_x, mask = to_dense_batch(x, batch)
