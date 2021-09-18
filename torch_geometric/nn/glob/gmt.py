@@ -170,7 +170,7 @@ class GraphMultisetTransformer(torch.nn.Module):
                 )
         self.pools.append(torch.nn.Linear(hidden_channels, out_channels))
 
-    def forward(self, x, batch, edge_index=None):
+    def forward(self, x: Tensor, batch: Tensor, edge_index: Optional[Tensor]=None) -> Tensor:
         """"""
         x = self.pools[0](x)
         batch_x, mask = to_dense_batch(x, batch)
