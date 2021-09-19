@@ -48,13 +48,18 @@ class GNN(torch.nn.Module):
         return x.log_softmax(dim=1)
 
 
+feat_mask_types = ['individual_feature', 'scalar', 'feature']
+
+
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
 @pytest.mark.parametrize('return_type', ['log_prob', 'regression'])
-@pytest.mark.parametrize('feat_mask_type', ['individual_feature', 'scalar', 'feature'])
+@pytest.mark.parametrize('feat_mask_type', feat_mask_types)
 @pytest.mark.parametrize('model', [GCN(), GAT()])
-def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask, feat_mask_type):
+def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
+                                    feat_mask_type):
     explainer = GNNExplainer(model, log=False, return_type=return_type,
-                             allow_edge_mask=allow_edge_mask, feat_mask_type=feat_mask_type)
+                             allow_edge_mask=allow_edge_mask,
+                             feat_mask_type=feat_mask_type)
     assert explainer.__repr__() == 'GNNExplainer()'
 
     x = torch.randn(8, 3)
@@ -65,11 +70,12 @@ def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask, feat_ma
     node_feat_mask, edge_mask = explainer.explain_node(2, x, edge_index)
     if feat_mask_type == 'scalar':
         _, _ = explainer.visualize_subgraph(2, edge_index, edge_mask, y=y,
-                                            threshold=0.8, node_alpha=node_feat_mask)
+                                            threshold=0.8,
+                                            node_alpha=node_feat_mask)
     else:
         edge_y = torch.randint(low=0, high=30, size=(edge_index.size(1),))
-        _, _ = explainer.visualize_subgraph(2, edge_index, edge_mask, y=y, edge_y=edge_y,
-                                            threshold=0.8)
+        _, _ = explainer.visualize_subgraph(2, edge_index, edge_mask,
+                                            y=y, edge_y=edge_y, threshold=0.8)
     if feat_mask_type == 'individual_feature':
         assert node_feat_mask.size() == x.size()
     elif feat_mask_type == 'scalar':
@@ -86,11 +92,13 @@ def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask, feat_ma
 
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
 @pytest.mark.parametrize('return_type', ['log_prob', 'regression'])
-@pytest.mark.parametrize('feat_mask_type', ['individual_feature', 'scalar', 'feature'])
+@pytest.mark.parametrize('feat_mask_type', feat_mask_types)
 @pytest.mark.parametrize('model', [GNN()])
-def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask, feat_mask_type):
+def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
+                                     feat_mask_type):
     explainer = GNNExplainer(model, log=False, return_type=return_type,
-                             allow_edge_mask=allow_edge_mask, feat_mask_type=feat_mask_type)
+                             allow_edge_mask=allow_edge_mask,
+                             feat_mask_type=feat_mask_type)
 
     x = torch.randn(8, 3)
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7],
@@ -98,12 +106,18 @@ def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask, feat_m
 
     node_feat_mask, edge_mask = explainer.explain_graph(x, edge_index)
     if feat_mask_type == 'scalar':
-        _, _ = explainer.visualize_subgraph(-1, edge_index, edge_mask, y=torch.tensor(2),
-                                            threshold=0.8, node_alpha=node_feat_mask)
+        _, _ = explainer.visualize_subgraph(-1, edge_index,
+                                            edge_mask,
+                                            y=torch.tensor(2),
+                                            threshold=0.8,
+                                            node_alpha=node_feat_mask)
     else:
         edge_y = torch.randint(low=0, high=30, size=(edge_index.size(1),))
-        _, _ = explainer.visualize_subgraph(-1, edge_index, edge_mask, edge_y=edge_y,
-                                            y=torch.tensor(2), threshold=0.8)
+        _, _ = explainer.visualize_subgraph(-1, edge_index,
+                                            edge_mask,
+                                            edge_y=edge_y,
+                                            y=torch.tensor(2),
+                                            threshold=0.8)
     if feat_mask_type == 'individual_feature':
         assert node_feat_mask.size() == x.size()
     elif feat_mask_type == 'scalar':
@@ -130,7 +144,7 @@ def test_gnn_explainer_to_log_prob(model):
 
 
 @pytest.mark.parametrize('return_type', ['log_prob', 'regression'])
-@pytest.mark.parametrize('model', [GAT(), GCN()])
+@pytest.mark.parametrize('model', [GAT()])
 def test_gnn_explainer_with_existing_self_loops(model, return_type):
     explainer = GNNExplainer(model, log=False, return_type=return_type)
 

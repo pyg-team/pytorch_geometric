@@ -38,20 +38,24 @@ class GNNExplainer(torch.nn.Module):
             :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
             layers inside :obj:`model`. (default: :obj:`None`)
         return_type (str, optional): Denotes the type of output from
-            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model returns
-            the logarithm of probabilities), :obj:`"prob"` (the model returns
-            probabilities), :obj:`"raw"` (the model returns raw scores) and 
-            :obj:`"regression"` (the model returns embeddings - Euclidean distance
-            will be used as a measure of similarity).
+            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model
+            returns the logarithm of probabilities), :obj:`"prob"` (the
+            model returns probabilities), :obj:`"raw"` (the model returns raw
+            scores) and :obj:`"regression"` (the model returns embeddings -
+            Euclidean distance will be used as a measure of similarity).
             (default: :obj:`"log_prob"`)
-        feat_mask_type (str, optional): Denotes the type of feature mask that will
-            be learned. Valid inputs are :obj:`'feature'` (a single feature-level mask 
-            for all nodes), :obj:`'individual_feature'` to use individual feature-level mask 
-            for each node, and :obj:`'scalar'` to use a scalar (node-level) mask for each 
+        feat_mask_type (str, optional): Denotes the type of feature mask
+            that will
+            be learned. Valid inputs are :obj:`'feature'` (a single
+            feature-level mask for all nodes), :obj:`'individual_feature'`
+            to use individual feature-level mask for each node, and
+            :obj:`'scalar'` to use a scalar (node-level) mask for each
             individual node. (default: :obj:`'feature'`)
-        allow_edge_mask (boolean, optional): if False, edge mask will not be optimized.
+        allow_edge_mask (boolean, optional): if False, edge mask will not
+            be optimized.
             (default: :obj:`True`)
-        coeffs (dict, optional): Dictionary of hyperparameters with which to update the coefficients dictionary
+        coeffs (dict, optional): Dictionary of hyperparameters with which
+            to update the coefficients dictionary
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
@@ -161,10 +165,11 @@ class GNNExplainer(torch.nn.Module):
                     log_logits[node_idx], pred_label[node_idx])
             else:
                 loss = torch.cdist(log_logits, pred_label)
-        else:
+        elif node_idx != -1:
             loss = -log_logits[
-                node_idx, pred_label[node_idx]] if node_idx != -1 else -log_logits[
-                    0, pred_label[0]]
+                node_idx, pred_label[node_idx]]
+        else:
+            loss = -log_logits[0, pred_label[0]]
 
         m = self.edge_mask.sigmoid()
         edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
@@ -274,8 +279,8 @@ class GNNExplainer(torch.nn.Module):
         num_nodes = x.size(0)
 
         # Only operate on a k-hop subgraph around `node_idx`.
-        x, edge_index, mapping, hard_edge_mask, subset, kwargs = self.__subgraph__(
-            node_idx, x, edge_index, **kwargs)
+        x, edge_index, mapping, hard_edge_mask, subset, kwargs = \
+            self.__subgraph__(node_idx, x, edge_index, **kwargs)
 
         # Get the initial prediction.
         with torch.no_grad():
@@ -359,8 +364,10 @@ class GNNExplainer(torch.nn.Module):
                 edges with transparancy indicating the importance of edges.
                 (default: :obj:`None`)
             edge_y (Tensor, optional): The edge labels used as edge colorings.
-            node_alpha (Tensor, optional): Tensor of floats (0 - 1) indicating transparency of each node.
-            plot_random_state (int, optional): random seed of the networkx node placement algorithm
+            node_alpha (Tensor, optional): Tensor of floats (0 - 1) indicating
+                transparency of each node.
+            plot_random_state (int, optional): Random seed of the networkx
+                node placement algorithm.
                 (default: :obj:`10`)
             **kwargs (optional): Additional arguments passed to
                 :func:`nx.draw`.
@@ -402,7 +409,8 @@ class GNNExplainer(torch.nn.Module):
         else:
             edge_color = [colors[i % len(colors)]['color']
                           for i in edge_y[hard_edge_mask]]
-        data = Data(edge_index=edge_index, att=edge_mask, edge_color=edge_color, y=y,
+        data = Data(edge_index=edge_index, att=edge_mask,
+                    edge_color=edge_color, y=y,
                     num_nodes=y.size(0)).to('cpu')
         G = to_networkx(data, node_attrs=['y'], edge_attrs=[
                         'att', 'edge_color'])
@@ -439,7 +447,8 @@ class GNNExplainer(torch.nn.Module):
             assert torch.logical_and(
                 node_alpha_subset >= 0, node_alpha_subset <= 1).all()
             nx.draw_networkx_nodes(
-                G, pos, alpha=node_alpha_subset.tolist(), node_color=y.tolist(), **node_kwargs)
+                G, pos, alpha=node_alpha_subset.tolist(),
+                node_color=y.tolist(), **node_kwargs)
 
         nx.draw_networkx_labels(G, pos, **label_kwargs)
 
