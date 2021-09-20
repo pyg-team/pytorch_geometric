@@ -1,5 +1,4 @@
 import torch
-import scipy.io
 from torch_geometric.data import InMemoryDataset, download_url, Data
 
 
@@ -43,7 +42,9 @@ class QM7b(InMemoryDataset):
         download_url(self.url, self.raw_dir)
 
     def process(self):
-        data = scipy.io.loadmat(self.raw_paths[0])
+        from scipy.io import loadmat
+
+        data = loadmat(self.raw_paths[0])
         coulomb_matrix = torch.from_numpy(data['X'])
         target = torch.from_numpy(data['T']).to(torch.float)
 

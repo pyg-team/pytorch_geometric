@@ -1,16 +1,7 @@
-import pytest
-
 import torch
 from torch_geometric.nn import MetaPath2Vec
 
-try:
-    from torch_sparse import sample  # noqa
-    with_sample = True
-except ImportError:
-    with_sample = False
 
-
-@pytest.mark.skipif(not with_sample, reason='Latest torch-sparse not found')
 def test_metapath2vec():
     edge_index_dict = {
         ('author', 'writes', 'paper'):
@@ -37,7 +28,7 @@ def test_metapath2vec():
     z = model('author', torch.arange(2))
     assert z.size() == (2, 16)
 
-    pos_rw, neg_rw = model.sample(torch.arange(3))
+    pos_rw, neg_rw = model._sample(torch.arange(3))
 
     loss = model.loss(pos_rw, neg_rw)
     assert 0 <= loss.item()

@@ -9,6 +9,7 @@ from torch.nn import Parameter
 import torch.nn.functional as F
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.utils import (remove_self_loops, add_self_loops, softmax,
                                    is_undirected, negative_sampling,
                                    batched_negative_sampling, to_undirected,
@@ -76,11 +77,12 @@ class SuperGATConv(MessagePassing):
     .. note::
 
         For an example of using SuperGAT, see `examples/super_gat.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         super_gat.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
@@ -136,8 +138,8 @@ class SuperGATConv(MessagePassing):
         assert attention_type in ['MX', 'SD']
         assert 0.0 < neg_sample_ratio and 0.0 < edge_sample_ratio <= 1.0
 
-        self.weight = Parameter(torch.Tensor(in_channels,
-                                             heads * out_channels))
+        self.lin = Linear(in_channels, heads * out_channels, bias=False,
+                          weight_initializer='glorot')
 
         if self.attention_type == 'MX':
             self.att_l = Parameter(torch.Tensor(1, heads, out_channels))
@@ -158,7 +160,7 @@ class SuperGATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
+        self.lin.reset_parameters()
         glorot(self.att_l)
         glorot(self.att_r)
         zeros(self.bias)
@@ -178,7 +180,7 @@ class SuperGATConv(MessagePassing):
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=N)
 
-        x = torch.matmul(x, self.weight).view(-1, H, C)
+        x = self.lin(x).view(-1, H, C)
 
         # propagate_type: (x: Tensor)
         out = self.propagate(edge_index, x=x, size=None)
@@ -187,9 +189,9 @@ class SuperGATConv(MessagePassing):
             pos_edge_index = self.positive_sampling(edge_index)
 
             pos_att = self.get_attention(
-                edge_index_i=edge_index[1],
-                x_i=x[edge_index[1]],
-                x_j=x[edge_index[0]],
+                edge_index_i=pos_edge_index[1],
+                x_i=x[pos_edge_index[1]],
+                x_j=x[pos_edge_index[0]],
                 num_nodes=x.size(0),
                 return_logits=True,
             )
@@ -274,7 +276,7 @@ class SuperGATConv(MessagePassing):
     def get_attention_loss(self) -> Tensor:
         r"""Compute the self-supervised graph attention loss."""
         if not self.training:
-            return torch.tensor([0], device=self.weight.device)
+            return torch.tensor([0], device=self.lin.weight.device)
 
         return F.binary_cross_entropy_with_logits(
             self.att_x.mean(dim=-1),

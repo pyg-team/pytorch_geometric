@@ -1,23 +1,14 @@
 import torch
-import numba
 import numpy as np
 from scipy.linalg import expm
-from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 from torch_sparse import coalesce
 from torch_scatter import scatter_add
 
-
-def jit(**kwargs):
-    def decorator(func):
-        try:
-            return numba.jit(cache=True, **kwargs)(func)
-        except RuntimeError:
-            return numba.jit(cache=False, **kwargs)(func)
-
-    return decorator
+from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
 
 
-class GDC(object):
+class GDC(BaseTransform):
     r"""Processes the graph via Graph Diffusion Convolution (GDC) from the
     `"Diffusion Improves Graph Learning" <https://www.kdd.in.tum.de/gdc>`_
     paper.
@@ -27,7 +18,7 @@ class GDC(object):
         The paper offers additional advice on how to choose the
         hyperparameters.
         For an example of using GCN with GDC, see `examples/gcn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         gcn.py>`_.
 
     Args:
@@ -76,6 +67,9 @@ class GDC(object):
                  diffusion_kwargs=dict(method='ppr', alpha=0.15),
                  sparsification_kwargs=dict(method='threshold',
                                             avg_degree=64), exact=True):
+
+        self.__calc_ppr__ = get_calc_ppr()
+
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -283,7 +277,7 @@ class GDC(object):
                                               return_counts=True)
             indptr = np.append(indptr, len(edge_index_np[0]))
 
-            neighbors, neighbor_weights = GDC.__calc_ppr__(
+            neighbors, neighbor_weights = self.__calc_ppr__(
                 indptr, edge_index_np[1], out_degree, kwargs['alpha'],
                 kwargs['eps'])
             ppr_normalization = 'col' if normalization == 'col' else 'row'
@@ -494,9 +488,15 @@ class GDC(object):
                 f"PPR matrix normalization {normalization} unknown.")
         return edge_index, edge_weight
 
-    @staticmethod
-    @jit(nopython=True, parallel=True)
-    def __calc_ppr__(indptr, indices, out_degree, alpha, eps):
+    def __repr__(self):
+        return '{}()'.format(self.__class__.__name__)
+
+
+def get_calc_ppr():
+    import numba
+
+    @numba.jit(nopython=True, parallel=True)
+    def calc_ppr(indptr, indices, out_degree, alpha, eps):
         r"""Calculate the personalized PageRank vector for all nodes
         using a variant of the Andersen algorithm
         (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
@@ -513,6 +513,7 @@ class GDC(object):
 
         :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
         """
+
         alpha_eps = alpha * eps
         js = [[0]] * len(out_degree)
         vals = [[0.]] * len(out_degree)
@@ -546,5 +547,4 @@ class GDC(object):
             vals[inode] = list(p.values())
         return js, vals
 
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)
+    return calc_ppr

@@ -1,5 +1,4 @@
-from __future__ import print_function
-
+import sys
 import ssl
 import os.path as osp
 from six.moves import urllib
@@ -7,7 +6,7 @@ from six.moves import urllib
 from .makedirs import makedirs
 
 
-def download_url(url, folder, log=True):
+def download_url(url: str, folder: str, log: bool = True):
     r"""Downloads the content of an URL to a specific folder.
 
     Args:
@@ -22,11 +21,11 @@ def download_url(url, folder, log=True):
 
     if osp.exists(path):  # pragma: no cover
         if log:
-            print('Using exist file', filename)
+            print(f'Using existing file {filename}', file=sys.stderr)
         return path
 
     if log:
-        print('Downloading', url)
+        print(f'Downloading {url}', file=sys.stderr)
 
     makedirs(folder)
 

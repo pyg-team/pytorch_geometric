@@ -4,8 +4,11 @@ torch_geometric.nn
 .. contents:: Contents
     :local:
 
+.. autoclass:: torch_geometric.nn.sequential.Sequential
+
 Convolutional Layers
 --------------------
+
 .. currentmodule:: torch_geometric.nn.conv
 .. autosummary::
    :nosignatures:
@@ -29,6 +32,7 @@ Convolutional Layers
 
 Dense Convolutional Layers
 --------------------------
+
 .. currentmodule:: torch_geometric.nn.dense
 .. autosummary::
    :nosignatures:
@@ -45,6 +49,7 @@ Dense Convolutional Layers
 
 Normalization Layers
 --------------------
+
 .. currentmodule:: torch_geometric.nn.norm
 .. autosummary::
    :nosignatures:
@@ -59,6 +64,7 @@ Normalization Layers
 
 Global Pooling Layers
 ---------------------
+
 .. currentmodule:: torch_geometric.nn.glob
 .. autosummary::
    :nosignatures:
@@ -73,6 +79,7 @@ Global Pooling Layers
 
 Pooling Layers
 --------------
+
 .. currentmodule:: torch_geometric.nn.pool
 .. autosummary::
    :nosignatures:
@@ -87,6 +94,7 @@ Pooling Layers
 
 Dense Pooling Layers
 --------------------
+
 .. currentmodule:: torch_geometric.nn.dense
 .. autosummary::
    :nosignatures:
@@ -106,6 +114,7 @@ Dense Pooling Layers
 
 Unpooling Layers
 ----------------
+
 .. currentmodule:: torch_geometric.nn.unpool
 .. autosummary::
    :nosignatures:
@@ -121,6 +130,7 @@ Unpooling Layers
 
 Models
 ------
+
 .. currentmodule:: torch_geometric.nn.models
 .. autosummary::
    :nosignatures:
@@ -133,6 +143,32 @@ Models
    :members:
    :undoc-members:
    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training
+
+Functional
+----------
+
+.. py:currentmodule:: torch_geometric.nn.functional
+.. autosummary::
+   :nosignatures:
+   {% for cls in torch_geometric.nn.functional.classes %}
+     {{ cls }}
+   {% endfor %}
+
+.. automodule:: torch_geometric.nn.functional
+   :members:
+   :undoc-members:
+
+Model Transformations
+---------------------
+
+.. autoclass:: torch_geometric.nn.fx.Transformer
+   :members:
+   :undoc-members:
+   :exclude-members: graph, find_by_target, find_by_name
+
+.. autofunction:: torch_geometric.nn.to_hetero_transformer.to_hetero
+
+.. autofunction:: torch_geometric.nn.to_hetero_with_bases_transformer.to_hetero_with_bases
 
 DataParallel Layers
 -------------------

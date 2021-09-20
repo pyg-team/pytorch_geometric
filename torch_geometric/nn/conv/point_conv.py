@@ -10,7 +10,7 @@ from torch_geometric.utils import remove_self_loops, add_self_loops
 from ..inits import reset
 
 
-class PointConv(MessagePassing):
+class PointNetConv(MessagePassing):
     r"""The PointNet set layer from the `"PointNet: Deep Learning on Point Sets
     for 3D Classification and Segmentation"
     <https://arxiv.org/abs/1612.00593>`_ and `"PointNet++: Deep Hierarchical
@@ -48,7 +48,7 @@ class PointConv(MessagePassing):
                  global_nn: Optional[Callable] = None,
                  add_self_loops: bool = True, **kwargs):
         kwargs.setdefault('aggr', 'max')
-        super(PointConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.local_nn = local_nn
         self.global_nn = global_nn
@@ -98,3 +98,6 @@ class PointConv(MessagePassing):
         return '{}(local_nn={}, global_nn={})'.format(self.__class__.__name__,
                                                       self.local_nn,
                                                       self.global_nn)
+
+
+PointConv = PointNetConv

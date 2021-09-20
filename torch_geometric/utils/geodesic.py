@@ -2,11 +2,6 @@ import torch
 import numpy as np
 import multiprocessing as mp
 
-try:
-    import gdist
-except ImportError:
-    gdist = None
-
 
 def geodesic_distance(pos, face, src=None, dest=None, norm=True,
                       max_distance=None, num_workers=0):
@@ -40,9 +35,7 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
 
     :rtype: Tensor
     """
-
-    if gdist is None:
-        raise ImportError('Package `gdist` could not be found.')
+    import gdist
 
     max_distance = float('inf') if max_distance is None else max_distance
 
@@ -69,6 +62,12 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
 
     dest = None if dest is None else dest.detach().cpu().to(torch.int).numpy()
 
+    def _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype):
+        s = src[i:i + 1]
+        d = None if dest is None else dest[i:i + 1]
+        out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
+        return torch.from_numpy(out).to(dtype)
+
     num_workers = mp.cpu_count() if num_workers <= -1 else num_workers
     if num_workers > 0:
         with mp.Pool(num_workers) as pool:
@@ -88,11 +87,3 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
         out = out.view(-1, pos.shape[0])
 
     return out
-
-
-def _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype):
-    s = src[i:i + 1]
-    d = None if dest is None else dest[i:i + 1]
-
-    out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
-    return torch.from_numpy(out).to(dtype)

@@ -11,11 +11,14 @@ from .reddit import Reddit
 from .reddit2 import Reddit2
 from .flickr import Flickr
 from .yelp import Yelp
+from .amazon_products import AmazonProducts
 from .qm7 import QM7b
 from .qm9 import QM9
+from .md17 import MD17
 from .zinc import ZINC
 from .molecule_net import MoleculeNet
 from .entities import Entities
+from .rel_link_pred_dataset import RelLinkPredDataset
 from .ged_dataset import GEDDataset
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
@@ -44,9 +47,20 @@ from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
+from .ogb_mag import OGB_MAG
+from .dblp import DBLP
+from .imdb import IMDB
+from .last_fm import LastFM
 from .jodie import JODIEDataset
 from .mixhop_synthetic_dataset import MixHopSyntheticDataset
-from .mesh_cnn_datasets import (MeshShrech16Dataset, MeshCubesDataset, MeshHumanSegDataset, MeshCoSegDataset)
+from .mesh_cnn_datasets import MeshShrech16Dataset, MeshCubesDataset, MeshHumanSegDataset, MeshCoSegDataset
+from .upfd import UPFD
+from .github import GitHub
+from .facebook import FacebookPagePage
+from .lastfm_asia import LastFMAsia
+from .deezer_europe import DeezerEurope
+from .gemsec import GemsecDeezer
+from .twitch import Twitch
 
 __all__ = [
     'KarateClub',
@@ -63,11 +77,14 @@ __all__ = [
     'Reddit2',
     'Flickr',
     'Yelp',
+    'AmazonProducts',
     'QM7b',
     'QM9',
+    'MD17',
     'ZINC',
     'MoleculeNet',
     'Entities',
+    'RelLinkPredDataset',
     'GEDDataset',
     'MNISTSuperpixels',
     'FAUST',
@@ -97,12 +114,23 @@ __all__ = [
     'WebKB',
     'WikipediaNetwork',
     'Actor',
+    'OGB_MAG',
+    'DBLP',
+    'IMDB',
+    'LastFM',
     'JODIEDataset',
     'MixHopSyntheticDataset',
     'MeshShrech16Dataset',
     'MeshCubesDataset',
     'MeshHumanSegDataset',
     'MeshCoSegDataset',
+    'UPFD',
+    'GitHub',
+    'FacebookPagePage',
+    'LastFMAsia',
+    'DeezerEurope',
+    'GemsecDeezer',
+    'Twitch',
 ]
 
 classes = __all__

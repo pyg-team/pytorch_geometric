@@ -1,0 +1,72 @@
+\documentclass{standalone}
+
+\usepackage{tikz}
+
+\definecolor{green}{RGB}{159,213,179}
+\definecolor{blue}{RGB}{10,153,201}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \tikzset{rect/.style={draw,rectangle,inner sep=0pt,minimum width=2cm,minimum height=0.6cm,rounded corners=2pt}}
+  \tikzset{arrow/.style={draw,->,>=stealth}}
+
+  \def\offset{1.2}
+
+  \node[inner sep=0pt] at (0,0.7) {\strut\textbf{Homogeneous Model}};
+  \node[rect] (x) at (0,0) {\strut\texttt{x}};
+  \node[rect,fill=green!20!white] (conv1) at (0,-1*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=blue!20!white] (relu1) at (0,-2*\offset) {\texttt{ReLU}};
+  \node[rect,fill=green!20!white] (conv2) at (0,-3*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=blue!20!white] (relu2) at (0,-4*\offset) {\texttt{ReLU}};
+  \node[rect] (out) at (0,-5*\offset) {\texttt{out}};
+
+  \draw[arrow] (x) -- (conv1);
+  \draw[arrow] (conv1) -- (relu1);
+  \draw[arrow] (relu1) -- (conv2);
+  \draw[arrow] (conv2) -- (relu2);
+  \draw[arrow] (relu2) -- (out);
+
+  \node[inner sep=0pt] at (6,2*\offset+0.7) {\strut\textbf{Heterogeneous Model}};
+  \node[rect] (xpaper) at (3.5,2*\offset) {\strut\texttt{x\_paper}};
+  \node[rect] (xauthor) at (8.5,2*\offset) {\strut\texttt{x\_author}};
+  \node[rect] (linpaper) at (3.5,1*\offset) {\strut\texttt{Linear}};
+  \node[rect] (linauthor) at (8.5,1*\offset) {\strut\texttt{Linear}};
+  \node[rect] (x) at (6,0*\offset) {\strut\texttt{x}};
+  \node[rect,fill=green!20!white] (conv11) at (3.5,-1*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=green!20!white] (conv12) at (6,-1*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=green!20!white] (conv13) at (8.5,-1*\offset) {\texttt{SAGEConv}};
+  \node[inner sep=1pt] (aggr1) at (6,-1.5*\offset) {\footnotesize$+$};
+  \node[rect,fill=blue!20!white]  (relu1) at (6,-2*\offset) {\texttt{ReLU}};
+  \node[rect,fill=green!20!white] (conv21) at (3.5,-3*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=green!20!white] (conv22) at (6,-3*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=green!20!white] (conv23) at (8.5,-3*\offset) {\texttt{SAGEConv}};
+  \node[inner sep=1pt] (aggr2) at (6,-3.5*\offset) {\footnotesize$+$};
+  \node[rect,fill=blue!20!white]  (relu2) at (6,-4*\offset) {\texttt{ReLU}};
+  \node[rect] (outpaper) at (3.5,-5*\offset) {\strut\texttt{out\_paper}};
+  \node[rect] (outauthor) at (8.5,-5*\offset) {\strut\texttt{out\_author}};
+
+  \draw[arrow] (xpaper) -- (linpaper);
+  \draw[arrow] (xauthor) -- (linauthor);
+  \draw[arrow] (linpaper) -- (x);
+  \draw[arrow] (linauthor) -- (x);
+  \draw[arrow] (x) -- node[fill=white,inner sep=1pt] {\footnotesize $\mathbf{a}_{\mathcal{R}, 1}$} (conv11) ;
+  \draw[arrow] (x) -- node[fill=white,inner sep=1pt] {\footnotesize $\mathbf{a}_{\mathcal{R}, 2}$} (conv12) ;
+  \draw[arrow] (x) -- node[fill=white,inner sep=1pt] {\footnotesize $\mathbf{a}_{\mathcal{R}, 3}$} (conv13) ;
+  \draw[arrow] (conv11) -- (aggr1);
+  \draw[arrow] (conv12) -- (aggr1);
+  \draw[arrow] (conv13) -- (aggr1);
+  \draw[arrow] (aggr1) -- (relu1);
+  \draw[arrow] (relu1) -- node[fill=white,inner sep=0pt] {\footnotesize $\mathbf{a}_{\mathcal{R}, 1}$} (conv21) ;
+  \draw[arrow] (relu1) -- node[fill=white,inner sep=0pt] {\footnotesize $\mathbf{a}_{\mathcal{R}, 2}$} (conv22) ;
+  \draw[arrow] (relu1) -- node[fill=white,inner sep=0pt] {\footnotesize $\mathbf{a}_{\mathcal{R}, 3}$} (conv23) ;
+  \draw[arrow] (conv21) -- (aggr2);
+  \draw[arrow] (conv22) -- (aggr2);
+  \draw[arrow] (conv23) -- (aggr2);
+  \draw[arrow] (aggr2) -- (relu2);
+  \draw[arrow] (relu2) -- (outpaper);
+  \draw[arrow] (relu2) -- (outauthor);
+
+\end{tikzpicture}
+
+\end{document}

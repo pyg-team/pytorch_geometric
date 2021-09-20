@@ -8,7 +8,7 @@ from torch_geometric.nn.models import LabelPropagation
 
 
 class CorrectAndSmooth(torch.nn.Module):
-    r"""The correct and mmooth (C&S) post-processing model from the
+    r"""The correct and smooth (C&S) post-processing model from the
     `"Combining Label Propagation And Simple Models Out-performs Graph Neural
     Networks"
     <https://arxiv.org/abs/2010.13993>`_ paper, where soft predictions
@@ -18,7 +18,7 @@ class CorrectAndSmooth(torch.nn.Module):
 
     .. math::
         \mathbf{e}^{(0)}_i &= \begin{cases}
-            \mathbf{z}_i - \mathbf{y}_i, & \text{if }i
+            \mathbf{y}_i - \mathbf{z}_i, & \text{if }i
             \text{ is training node,}\\
             \mathbf{0}, & \text{else}
         \end{cases}
@@ -51,7 +51,7 @@ class CorrectAndSmooth(torch.nn.Module):
 
         For an example of using the C&S model, see
         `examples/correct_and_smooth.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         correct_and_smooth.py>`_.
 
     Args:

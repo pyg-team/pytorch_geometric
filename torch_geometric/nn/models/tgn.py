@@ -17,7 +17,7 @@ class TGNMemory(torch.nn.Module):
     .. note::
 
         For an example of using TGN, see `examples/tgn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         tgn.py>`_.
 
     Args:

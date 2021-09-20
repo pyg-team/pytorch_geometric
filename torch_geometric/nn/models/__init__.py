@@ -1,3 +1,4 @@
+from .basic_gnn import GCN, GraphSAGE, GIN, GAT
 from .jumping_knowledge import JumpingKnowledge
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -14,8 +15,14 @@ from .tgn import TGNMemory
 from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .mesh_models import MeshConvNet, MeshEncoderDecoder
+from .attentive_fp import AttentiveFP
+from .rect import RECT_L
 
 __all__ = [
+    'GCN',
+    'GraphSAGE',
+    'GIN',
+    'GAT',
     'JumpingKnowledge',
     'Node2Vec',
     'DeepGraphInfomax',
@@ -37,6 +44,8 @@ __all__ = [
     'CorrectAndSmooth',
     'MeshConvNet',
     'MeshEncoderDecoder',
+    'AttentiveFP',
+    'RECT_L',
 ]
 
-classes = sorted(__all__)
+classes = __all__

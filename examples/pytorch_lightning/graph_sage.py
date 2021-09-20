@@ -4,16 +4,16 @@ import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import ModuleList, BatchNorm1d
+from torch_sparse import SparseTensor
 from pytorch_lightning.metrics import Accuracy
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning import (LightningDataModule, LightningModule, Trainer,
-                               seed_everything)
+from pytorch_lightning import LightningDataModule, LightningModule, Trainer
 
-from torch_sparse import SparseTensor
 import torch_geometric.transforms as T
 from torch_geometric.nn import SAGEConv
-from torch_geometric.data import NeighborSampler
-from torch_geometric.datasets import Reddit as PyGReddit
+from torch_geometric import seed_everything
+from torch_geometric.loader import NeighborSampler
+from torch_geometric.datasets import Reddit
 
 
 class Batch(NamedTuple):
@@ -22,7 +22,7 @@ class Batch(NamedTuple):
     adjs_t: List[SparseTensor]
 
 
-class Reddit(LightningDataModule):
+class RedditDataModule(LightningDataModule):
     def __init__(self, data_dir):
         super().__init__()
         self.data_dir = data_dir
@@ -37,10 +37,10 @@ class Reddit(LightningDataModule):
         return 41
 
     def prepare_data(self):
-        PyGReddit(self.data_dir, pre_transform=self.transform)
+        Reddit(self.data_dir, pre_transform=self.transform)
 
     def setup(self, stage: Optional[str] = None):
-        self.data = PyGReddit(self.data_dir, pre_transform=self.transform)[0]
+        self.data = Reddit(self.data_dir, pre_transform=self.transform)[0]
 
     def train_dataloader(self):
         return NeighborSampler(self.data.adj_t, node_idx=self.data.train_mask,
@@ -87,7 +87,9 @@ class GraphSAGE(LightningModule):
         for _ in range(num_layers - 1):
             self.bns.append(BatchNorm1d(hidden_channels))
 
-        self.acc = Accuracy()
+        self.train_acc = Accuracy()
+        self.val_acc = Accuracy()
+        self.test_acc = Accuracy()
 
     def forward(self, x: Tensor, adjs_t: List[SparseTensor]) -> Tensor:
         for i, adj_t in enumerate(adjs_t):
@@ -102,26 +104,24 @@ class GraphSAGE(LightningModule):
         x, y, adjs_t = batch
         y_hat = self(x, adjs_t)
         train_loss = F.cross_entropy(y_hat, y)
-        train_acc = self.acc(y_hat.softmax(dim=-1), y)
-        self.log('train_acc', train_acc, prog_bar=True, on_step=False,
+        self.train_acc(y_hat.softmax(dim=-1), y)
+        self.log('train_acc', self.train_acc, prog_bar=True, on_step=False,
                  on_epoch=True)
         return train_loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
         x, y, adjs_t = batch
         y_hat = self(x, adjs_t)
-        val_acc = self.acc(y_hat.softmax(dim=-1), y)
-        self.log('val_acc', val_acc, on_step=False, on_epoch=True,
-                 prog_bar=True, sync_dist=True)
-        return val_acc
+        self.val_acc(y_hat.softmax(dim=-1), y)
+        self.log('val_acc', self.val_acc, prog_bar=True, on_step=False,
+                 on_epoch=True)
 
     def test_step(self, batch: Batch, batch_idx: int):
         x, y, adjs_t = batch
         y_hat = self(x, adjs_t)
-        test_acc = self.acc(y_hat.softmax(dim=-1), y)
-        self.log('test_acc', test_acc, on_step=False, on_epoch=True,
-                 prog_bar=True, sync_dist=True)
-        return test_acc
+        self.test_acc(y_hat.softmax(dim=-1), y)
+        self.log('test_acc', self.test_acc, prog_bar=True, on_step=False,
+                 on_epoch=True)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
@@ -129,7 +129,7 @@ class GraphSAGE(LightningModule):
 
 def main():
     seed_everything(42)
-    datamodule = Reddit('data/Reddit')
+    datamodule = RedditDataModule('data/Reddit')
     model = GraphSAGE(datamodule.num_features, datamodule.num_classes)
     checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
     trainer = Trainer(gpus=1, max_epochs=10, callbacks=[checkpoint_callback])

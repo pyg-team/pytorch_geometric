@@ -1,10 +1,12 @@
 import torch
 from torch_sparse import coalesce
 from torch_scatter import scatter_add
+
 from torch_geometric.utils import remove_self_loops
+from torch_geometric.transforms import BaseTransform
 
 
-class LineGraph(object):
+class LineGraph(BaseTransform):
     r"""Converts a graph to its corresponding line-graph:
 
     .. math::

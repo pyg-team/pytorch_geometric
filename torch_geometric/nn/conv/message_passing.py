@@ -1,3 +1,6 @@
+from typing import List, Optional, Set, Callable, get_type_hints
+from torch_geometric.typing import Adj, Size
+
 import os
 import re
 import inspect
@@ -5,12 +8,12 @@ import os.path as osp
 from uuid import uuid1
 from itertools import chain
 from inspect import Parameter
-from typing import List, Optional, Set
-from torch_geometric.typing import Adj, Size
+from collections import OrderedDict
 
 import torch
 from torch import Tensor
 from jinja2 import Template
+from torch.utils.hooks import RemovableHandle
 from torch_sparse import SparseTensor
 from torch_scatter import gather_csr, scatter, segment_csr
 
@@ -82,6 +85,17 @@ class MessagePassing(torch.nn.Module):
         # Support for GNNExplainer.
         self.__explain__ = False
         self.__edge_mask__ = None
+        self.__loop_mask__ = None
+
+        # Hooks:
+        self._propagate_forward_pre_hooks = OrderedDict()
+        self._propagate_forward_hooks = OrderedDict()
+        self._message_forward_pre_hooks = OrderedDict()
+        self._message_forward_hooks = OrderedDict()
+        self._aggregate_forward_pre_hooks = OrderedDict()
+        self._aggregate_forward_hooks = OrderedDict()
+        self._message_and_aggregate_forward_pre_hooks = OrderedDict()
+        self._message_and_aggregate_forward_hooks = OrderedDict()
 
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
@@ -213,6 +227,12 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
+
+        for hook in self._propagate_forward_pre_hooks.values():
+            res = hook(self, (edge_index, size, kwargs))
+            if res is not None:
+                edge_index, size, kwargs = res
+
         size = self.__check_input__(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
@@ -223,10 +243,18 @@ class MessagePassing(torch.nn.Module):
 
             msg_aggr_kwargs = self.inspector.distribute(
                 'message_and_aggregate', coll_dict)
+            for hook in self._message_and_aggregate_forward_pre_hooks.values():
+                res = hook(self, (edge_index, msg_aggr_kwargs))
+                if res is not None:
+                    edge_index, msg_aggr_kwargs = res
             out = self.message_and_aggregate(edge_index, **msg_aggr_kwargs)
+            for hook in self._message_and_aggregate_forward_hooks.values():
+                res = hook(self, (edge_index, msg_aggr_kwargs), out)
+                if res is not None:
+                    out = res
 
             update_kwargs = self.inspector.distribute('update', coll_dict)
-            return self.update(out, **update_kwargs)
+            out = self.update(out, **update_kwargs)
 
         # Otherwise, run both functions in separation.
         elif isinstance(edge_index, Tensor) or not self.fuse:
@@ -234,7 +262,15 @@ class MessagePassing(torch.nn.Module):
                                          kwargs)
 
             msg_kwargs = self.inspector.distribute('message', coll_dict)
+            for hook in self._message_forward_pre_hooks.values():
+                res = hook(self, (msg_kwargs, ))
+                if res is not None:
+                    msg_kwargs = res[0] if isinstance(res, tuple) else res
             out = self.message(**msg_kwargs)
+            for hook in self._message_forward_hooks.values():
+                res = hook(self, (msg_kwargs, ), out)
+                if res is not None:
+                    out = res
 
             # For `GNNExplainer`, we require a separate message and aggregate
             # procedure since this allows us to inject the `edge_mask` into the
@@ -244,16 +280,32 @@ class MessagePassing(torch.nn.Module):
                 # Some ops add self-loops to `edge_index`. We need to do the
                 # same for `edge_mask` (but do not train those).
                 if out.size(self.node_dim) != edge_mask.size(0):
+                    edge_mask = edge_mask[self.__loop_mask__]
                     loop = edge_mask.new_ones(size[0])
                     edge_mask = torch.cat([edge_mask, loop], dim=0)
                 assert out.size(self.node_dim) == edge_mask.size(0)
                 out = out * edge_mask.view([-1] + [1] * (out.dim() - 1))
 
             aggr_kwargs = self.inspector.distribute('aggregate', coll_dict)
+            for hook in self._aggregate_forward_pre_hooks.values():
+                res = hook(self, (aggr_kwargs, ))
+                if res is not None:
+                    aggr_kwargs = res[0] if isinstance(res, tuple) else res
             out = self.aggregate(out, **aggr_kwargs)
+            for hook in self._aggregate_forward_hooks.values():
+                res = hook(self, (aggr_kwargs, ), out)
+                if res is not None:
+                    out = res
 
             update_kwargs = self.inspector.distribute('update', coll_dict)
-            return self.update(out, **update_kwargs)
+            out = self.update(out, **update_kwargs)
+
+        for hook in self._propagate_forward_hooks.values():
+            res = hook(self, (edge_index, size, kwargs), out)
+            if res is not None:
+                out = res
+
+        return out
 
     def message(self, x_j: Tensor) -> Tensor:
         r"""Constructs messages from node :math:`j` to node :math:`i`
@@ -306,6 +358,112 @@ class MessagePassing(torch.nn.Module):
         """
         return inputs
 
+    def register_propagate_forward_pre_hook(self,
+                                            hook: Callable) -> RemovableHandle:
+        r"""Registers a forward pre-hook on the module.
+        The hook will be called every time before :meth:`propagate` is invoked.
+        It should have the following signature:
+
+        .. code-block:: python
+
+            hook(module, inputs) -> None or modified input
+
+        The hook can modify the input.
+        Input keyword arguments are passed to the hook as a dictionary in
+        :obj:`inputs[-1]`.
+
+        Returns a :class:`torch.utils.hooks.RemovableHandle` that can be used
+        to remove the added hook by calling :obj:`handle.remove()`.
+        """
+        handle = RemovableHandle(self._propagate_forward_pre_hooks)
+        self._propagate_forward_pre_hooks[handle.id] = hook
+        return handle
+
+    def register_propagate_forward_hook(self,
+                                        hook: Callable) -> RemovableHandle:
+        r"""Registers a forward hook on the module.
+        The hook will be called every time after :meth:`propagate` has computed
+        an output.
+        It should have the following signature:
+
+        .. code-block:: python
+
+            hook(module, inputs, output) -> None or modified output
+
+        The hook can modify the output.
+        Input keyword arguments are passed to the hook as a dictionary in
+        :obj:`inputs[-1]`.
+
+        Returns a :class:`torch.utils.hooks.RemovableHandle` that can be used
+        to remove the added hook by calling :obj:`handle.remove()`.
+        """
+        handle = RemovableHandle(self._propagate_forward_hooks)
+        self._propagate_forward_hooks[handle.id] = hook
+        return handle
+
+    def register_message_forward_pre_hook(self,
+                                          hook: Callable) -> RemovableHandle:
+        r"""Registers a forward pre-hook on the module.
+        The hook will be called every time before :meth:`message` is invoked.
+        See :meth:`register_propagate_forward_pre_hook` for more information.
+        """
+        handle = RemovableHandle(self._message_forward_pre_hooks)
+        self._message_forward_pre_hooks[handle.id] = hook
+        return handle
+
+    def register_message_forward_hook(self, hook: Callable) -> RemovableHandle:
+        r"""Registers a forward hook on the module.
+        The hook will be called every time after :meth:`message` has computed
+        an output.
+        See :meth:`register_propagate_forward_hook` for more information.
+        """
+        handle = RemovableHandle(self._message_forward_hooks)
+        self._message_forward_hooks[handle.id] = hook
+        return handle
+
+    def register_aggregate_forward_pre_hook(self,
+                                            hook: Callable) -> RemovableHandle:
+        r"""Registers a forward pre-hook on the module.
+        The hook will be called every time before :meth:`aggregate` is invoked.
+        See :meth:`register_propagate_forward_pre_hook` for more information.
+        """
+        handle = RemovableHandle(self._aggregate_forward_pre_hooks)
+        self._aggregate_forward_pre_hooks[handle.id] = hook
+        return handle
+
+    def register_aggregate_forward_hook(self,
+                                        hook: Callable) -> RemovableHandle:
+        r"""Registers a forward hook on the module.
+        The hook will be called every time after :meth:`aggregate` has computed
+        an output.
+        See :meth:`register_propagate_forward_hook` for more information.
+        """
+        handle = RemovableHandle(self._aggregate_forward_hooks)
+        self._aggregate_forward_hooks[handle.id] = hook
+        return handle
+
+    def register_message_and_aggregate_forward_pre_hook(
+            self, hook: Callable) -> RemovableHandle:
+        r"""Registers a forward pre-hook on the module.
+        The hook will be called every time before :meth:`message_and_aggregate`
+        is invoked.
+        See :meth:`register_propagate_forward_pre_hook` for more information.
+        """
+        handle = RemovableHandle(self._message_and_aggregate_forward_pre_hooks)
+        self._message_and_aggregate_forward_pre_hooks[handle.id] = hook
+        return handle
+
+    def register_message_and_aggregate_forward_hook(
+            self, hook: Callable) -> RemovableHandle:
+        r"""Registers a forward hook on the module.
+        The hook will be called every time after :meth:`message_and_aggregate`
+        has computed an output.
+        See :meth:`register_propagate_forward_hook` for more information.
+        """
+        handle = RemovableHandle(self._message_and_aggregate_forward_hooks)
+        self._message_and_aggregate_forward_hooks[handle.id] = hook
+        return handle
+
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None):
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
@@ -335,6 +493,11 @@ class MessagePassing(torch.nn.Module):
                     'inside the `MessagePassing` module.')
             prop_types = split_types_repr(match.group(1))
             prop_types = dict([re.split(r'\s*:\s*', t) for t in prop_types])
+
+        type_hints = get_type_hints(self.__class__.update)
+        prop_return_type = type_hints.get('return', 'Tensor')
+        if str(prop_return_type)[:6] == '<class':
+            prop_return_type = prop_return_type.__name__
 
         # Parse `__collect__()` types to format `{arg:1, type1, ...}`.
         collect_types = self.inspector.types(
@@ -367,6 +530,8 @@ class MessagePassing(torch.nn.Module):
             cls_name=cls_name,
             parent_cls_name=self.__class__.__name__,
             prop_types=prop_types,
+            prop_return_type=prop_return_type,
+            fuse=self.fuse,
             collect_types=collect_types,
             user_args=self.__user_args__,
             forward_header=forward_header,

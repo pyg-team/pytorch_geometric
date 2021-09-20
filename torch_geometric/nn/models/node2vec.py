@@ -2,7 +2,6 @@ import torch
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 from torch_sparse import SparseTensor
-from sklearn.linear_model import LogisticRegression
 
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -25,7 +24,7 @@ class Node2Vec(torch.nn.Module):
     .. note::
 
         For an example of using Node2Vec, see `examples/node2vec.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         node2vec.py>`_.
 
     Args:
@@ -148,6 +147,8 @@ class Node2Vec(torch.nn.Module):
              multi_class='auto', *args, **kwargs):
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
+        from sklearn.linear_model import LogisticRegression
+
         clf = LogisticRegression(solver=solver, multi_class=multi_class, *args,
                                  **kwargs).fit(train_z.detach().cpu().numpy(),
                                                train_y.detach().cpu().numpy())

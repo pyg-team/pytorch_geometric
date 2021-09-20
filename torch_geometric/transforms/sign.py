@@ -1,8 +1,10 @@
 import torch
 from torch_sparse import SparseTensor
 
+from torch_geometric.transforms import BaseTransform
 
-class SIGN(object):
+
+class SIGN(BaseTransform):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
     <https://arxiv.org/abs/2004.11198>`_ paper, which precomputes the fixed
@@ -20,7 +22,7 @@ class SIGN(object):
         Since intermediate node representations are pre-computed, this operator
         is able to scale well to large graphs via classic mini-batching.
         For an example of using SIGN, see `examples/sign.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         sign.py>`_.
 
     Args:

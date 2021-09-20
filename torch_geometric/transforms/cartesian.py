@@ -1,7 +1,9 @@
 import torch
 
+from torch_geometric.transforms import BaseTransform
 
-class Cartesian(object):
+
+class Cartesian(BaseTransform):
     r"""Saves the relative Cartesian coordinates of linked nodes in its edge
     attributes.
 

@@ -1,7 +1,7 @@
 Memory-Efficient Aggregations
 =============================
 
-The :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` interface of PyTorch Geometric relies on a gather-scatter scheme to aggregate messages from neighboring nodes.
+The :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` interface of PyG relies on a gather-scatter scheme to aggregate messages from neighboring nodes.
 For example, consider the message passing layer
 
 .. math::
@@ -15,11 +15,11 @@ that can be implemented as:
     from torch_geometric.nn import MessagePassing
 
     x = ...           # Node features of shape [num_nodes, num_features]
-    edge_index = ...  # Edge indices of shape [2, num_nodes]
+    edge_index = ...  # Edge indices of shape [2, num_edges]
 
     class MyConv(MessagePassing):
         def __init__(self):
-            super(MyConv, self).__init__(aggr="add")
+            super().__init__(aggr="add")
 
         def forward(self, x, edge_index):
             return self.propagate(edge_index, x=x)
@@ -34,7 +34,7 @@ Under the hood, the :class:`~torch_geometric.nn.conv.message_passing.MessagePass
     from torch_scatter import scatter
 
     x = ...           # Node features of shape [num_nodes, num_features]
-    edge_index = ...  # Edge indices of shape [2, num_nodes]
+    edge_index = ...  # Edge indices of shape [2, num_edges]
 
     x_j = x[edge_index[0]]  # Source node features [num_edges, num_features]
     x_i = x[edge_index[1]]  # Target node features [num_edges, num_features]
@@ -64,7 +64,7 @@ is equivalent to computing
 where :math:`\mathbf{A}` denotes a sparse adjacency matrix of shape :obj:`[num_nodes, num_nodes]`.
 This formulation allows to leverage dedicated and fast sparse-matrix multiplication implementations.
 
-In **PyTorch Geometric 1.6.0**, we officially introduce better support for sparse-matrix multiplication GNNs, resulting in a **lower memory footprint** and a **faster execution time**.
+In **PyG >= 1.6.0**, we officially introduce better support for sparse-matrix multiplication GNNs, resulting in a **lower memory footprint** and a **faster execution time**.
 As a result, we introduce the :class:`SparseTensor` class (from the :obj:`torch-sparse` package), which implements fast forward and backward passes for sparse-matrix multiplication based on the `"Design Principles for Sparse Matrix Multiplication on the GPU" <https://arxiv.org/abs/1803.08601>`_ paper.
 
 Using the :class:`SparseTensor` class is straightforward and similar to the way :obj:`scipy` treats sparse matrices:
@@ -117,7 +117,7 @@ With it, the :class:`~torch_geometric.nn.conv.GINConv` layer can now be implemen
 
     class GINConv(MessagePassing):
         def __init__(self):
-            super(GINConv, self).__init__(aggr="add")
+            super().__init__(aggr="add")
 
         def forward(self, x, edge_index):
             out = self.propagate(edge_index, x=x)
@@ -146,9 +146,9 @@ To convert the :obj:`edge_index` format to the newly introduced :class:`SparseTe
     >>> Data(adj_t=[2708, 2708, nnz=10556], x=[2708, 1433], y=[2708], ...)
 
 
-    class Net(torch.nn.Module):
+    class GNN(torch.nn.Module):
         def __init__(self):
-            super(Net, self).__init__()
+            super().__init__()
             self.conv1 = GCNConv(dataset.num_features, 16, cached=True)
             self.conv2 = GCNConv(16, dataset.num_classes, cached=True)
 
@@ -158,7 +158,7 @@ To convert the :obj:`edge_index` format to the newly introduced :class:`SparseTe
             x = self.conv2(x, adj_t)
             return F.log_softmax(x, dim=1)
 
-    model = Net()
+    model = GNN()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     def train(data):
@@ -175,6 +175,23 @@ To convert the :obj:`edge_index` format to the newly introduced :class:`SparseTe
 
 All code remains the same as before, except for the :obj:`data` transform via :obj:`T.ToSparseTensor()`.
 As an additional advantage, :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` implementations that utilize the :class:`SparseTensor` class are deterministic on the GPU since aggregations no longer rely on atomic operations.
+
+Notably, the GNN layer execution slightly changes in case GNNs incorporate single or multi-dimensional edge information :obj:`edge_weight` or :obj:`edge_attr` into their message passing formulation, respectively.
+In particular, it is now expected that these attributes are directly added as values to the :class:`SparseTensor` object.
+Instead of calling the GNN as
+
+.. code-block:: python
+
+    conv = GMMConv(16, 32, dim=3)
+    out = conv(x, edge_index, edge_attr)
+
+we now execute our GNN operator as
+
+.. code-block:: python
+
+    conv = GMMConv(16, 32, dim=3)
+    adj = SparseTensor(row=edge_index[0], col=edge_index[1], value=edge_attr)
+    out = conv(x, adj.t())
 
 .. note::
 

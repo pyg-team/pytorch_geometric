@@ -5,11 +5,12 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 import torch.nn.functional as F
-from torch.nn import Sequential, Linear, ReLU, Dropout
+from torch.nn import Sequential, ReLU, Dropout
 from torch.nn import BatchNorm1d, LayerNorm, InstanceNorm1d
 from torch_sparse import SparseTensor
 from torch_scatter import scatter, scatter_softmax
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.norm import MessageNorm
 
 from ..inits import reset
@@ -20,7 +21,7 @@ class MLP(Sequential):
                  bias: bool = True, dropout: float = 0.):
         m = []
         for i in range(1, len(channels)):
-            m.append(Linear(channels[i - 1], channels[i], bias))
+            m.append(Linear(channels[i - 1], channels[i], bias=bias))
 
             if i < len(channels) - 1:
                 if norm and norm == 'batch':
@@ -54,11 +55,14 @@ class GENConv(MessagePassing):
 
         For an example of using :obj:`GENConv`, see
         `examples/ogbn_proteins_deepgcn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         ogbn_proteins_deepgcn.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
+            derive the size from the first input(s) to the forward method.
+            A tuple corresponds to the sizes of source and target
+            dimensionalities.
         out_channels (int): Size of each output sample.
         aggr (str, optional): The aggregation scheme to use (:obj:`"softmax"`,
             :obj:`"softmax_sg"`, :obj:`"power"`, :obj:`"add"`, :obj:`"mean"`,
@@ -100,7 +104,7 @@ class GENConv(MessagePassing):
         self.aggr = aggr
         self.eps = eps
 
-        assert aggr in ['softmax', 'softmax_sg', 'power']
+        assert aggr in ['softmax', 'softmax_sg', 'power', 'add', 'mean', 'max']
 
         channels = [in_channels]
         for i in range(num_layers - 1):
@@ -178,13 +182,17 @@ class GENConv(MessagePassing):
             return scatter(inputs * out, index, dim=self.node_dim,
                            dim_size=dim_size, reduce='sum')
 
-        else:
+        elif self.aggr == 'power':
             min_value, max_value = 1e-7, 1e1
             torch.clamp_(inputs, min_value, max_value)
             out = scatter(torch.pow(inputs, self.p), index, dim=self.node_dim,
                           dim_size=dim_size, reduce='mean')
             torch.clamp_(out, min_value, max_value)
             return torch.pow(out, 1 / self.p)
+
+        else:
+            return scatter(inputs, index, dim=self.node_dim, dim_size=dim_size,
+                           reduce=self.aggr)
 
     def __repr__(self):
         return '{}({}, {}, aggr={})'.format(self.__class__.__name__,

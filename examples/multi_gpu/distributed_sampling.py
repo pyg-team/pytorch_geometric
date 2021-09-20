@@ -9,7 +9,7 @@ from torch.nn.parallel import DistributedDataParallel
 
 from torch_geometric.nn import SAGEConv
 from torch_geometric.datasets import Reddit
-from torch_geometric.data import NeighborSampler
+from torch_geometric.loader import NeighborSampler
 
 
 class SAGE(torch.nn.Module):
@@ -76,6 +76,7 @@ def run(rank, world_size, dataset):
                                           sizes=[-1], batch_size=2048,
                                           shuffle=False, num_workers=6)
 
+    torch.manual_seed(12345)
     model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)

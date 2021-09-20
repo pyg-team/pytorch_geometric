@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import os.path as osp
 
 import torch
@@ -47,12 +49,13 @@ class Planetoid(InMemoryDataset):
 
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
 
-    def __init__(self, root, name, split="public", num_train_per_class=20,
-                 num_val=500, num_test=1000, transform=None,
-                 pre_transform=None):
+    def __init__(self, root: str, name: str, split: str = "public",
+                 num_train_per_class: int = 20, num_val: int = 500,
+                 num_test: int = 1000, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         self.name = name
 
-        super(Planetoid, self).__init__(root, transform, pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
         self.split = split
@@ -84,20 +87,20 @@ class Planetoid(InMemoryDataset):
             self.data, self.slices = self.collate([data])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
-        return ['ind.{}.{}'.format(self.name.lower(), name) for name in names]
+        return [f'ind.{self.name.lower()}.{name}' for name in names]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -109,5 +112,5 @@ class Planetoid(InMemoryDataset):
         data = data if self.pre_transform is None else self.pre_transform(data)
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
-        return '{}()'.format(self.name)
+    def __repr__(self) -> str:
+        return f'{self.name}()'

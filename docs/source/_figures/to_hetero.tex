@@ -1,0 +1,69 @@
+\documentclass{standalone}
+
+\usepackage{tikz}
+
+\definecolor{green}{RGB}{159,213,179}
+\definecolor{blue}{RGB}{10,153,201}
+
+\begin{document}
+
+\begin{tikzpicture}
+  \tikzset{rect/.style={draw,rectangle,inner sep=0pt,minimum width=2cm,minimum height=0.6cm,rounded corners=2pt}}
+  \tikzset{arrow/.style={draw,->,>=stealth}}
+
+  \def\offset{1.2}
+
+  \node[inner sep=0pt] at (0,0.7) {\strut\textbf{Homogeneous Model}};
+  \node[rect] (x) at (0,0) {\strut\texttt{x}};
+  \node[rect,fill=green!20!white] (conv1) at (0,-1*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=blue!20!white] (relu1) at (0,-2*\offset) {\texttt{ReLU}};
+  \node[rect,fill=green!20!white] (conv2) at (0,-3*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=blue!20!white] (relu2) at (0,-4*\offset) {\texttt{ReLU}};
+  \node[rect] (out) at (0,-5*\offset) {\strut\texttt{out}};
+
+  \draw[arrow] (x) -- (conv1);
+  \draw[arrow] (conv1) -- (relu1);
+  \draw[arrow] (relu1) -- (conv2);
+  \draw[arrow] (conv2) -- (relu2);
+  \draw[arrow] (relu2) -- (out);
+
+  \node[inner sep=0pt] at (6,0.7) {\strut\textbf{Heterogeneous Model}};
+  \node[rect] (xpaper) at (3.5,-0) {\strut\texttt{x\_paper}};
+  \node[rect,fill=green!20!white] (conv1paper) at (3.5,-1*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=blue!20!white]  (relu1paper) at (3.5,-2*\offset) {\texttt{ReLU}};
+  \node[rect,fill=green!20!white] (conv2paper) at (3.5,-3*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=blue!20!white]  (relu2paper) at (3.5,-4*\offset) {\texttt{ReLU}};
+  \node[rect] (outpaper) at (3.5,-5*\offset) {\strut\texttt{out\_paper}};
+
+  \node[rect,fill=green!20!white] (conv1middle) at (6,-1*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=green!20!white] (conv2middle) at (6,-3*\offset) {\texttt{SAGEConv}};
+
+  \node[rect] (xauthor) at (8.5,-0) {\strut\texttt{x\_author}};
+  \node[rect,fill=green!20!white] (conv1author) at (8.5,-1*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=blue!20!white]  (relu1author) at (8.5,-2*\offset) {\texttt{ReLU}};
+  \node[rect,fill=green!20!white] (conv2author) at (8.5,-3*\offset) {\texttt{SAGEConv}};
+  \node[rect,fill=blue!20!white]  (relu2author) at (8.5,-4*\offset) {\texttt{ReLU}};
+  \node[rect] (outauthor) at (8.5,-5*\offset) {\strut\texttt{out\_author}};
+
+  \draw[arrow] (xpaper) -- (conv1paper);
+  \draw[arrow,out=270+45,in=90+45] (xpaper.south) to (conv1middle.north);
+  \draw[arrow] (xauthor) -- (conv1author);
+
+  \draw[arrow] (conv1paper) -- (relu1paper);
+  \draw[arrow,out=270+45,in=90+45] (conv1middle.south) to (relu1author.north);
+  \draw[arrow,out=270-60,in=0] (conv1author.south) to (relu1paper.east);
+
+  \draw[arrow] (relu1paper) -- (conv2paper);
+  \draw[arrow,out=270+45,in=90+45] (relu1paper.south) to (conv2middle.north);
+  \draw[arrow] (relu1author) -- (conv2author);
+
+  \draw[arrow] (conv2paper) -- (relu2paper);
+  \draw[arrow,out=270+45,in=90+45] (conv2middle.south) to (relu2author.north);
+  \draw[arrow,out=270-60,in=0] (conv2author.south) to (relu2paper.east);
+
+  \draw[arrow] (relu2paper) -- (outpaper);
+  \draw[arrow] (relu2author) -- (outauthor);
+
+\end{tikzpicture}
+
+\end{document}

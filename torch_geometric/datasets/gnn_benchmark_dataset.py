@@ -1,3 +1,5 @@
+from typing import Optional, Callable, List
+
 import os
 import os.path as osp
 import pickle
@@ -44,24 +46,31 @@ class GNNBenchmarkDataset(InMemoryDataset):
 
     names = ['PATTERN', 'CLUSTER', 'MNIST', 'CIFAR10', 'TSP', 'CSL']
 
-    url = 'https://pytorch-geometric.com/datasets/benchmarking-gnns'
-    csl_url = 'https://www.dropbox.com/s/rnbkp5ubgk82ocu/CSL.zip?dl=1'
+    root_url = 'https://data.pyg.org/datasets/benchmarking-gnns'
+    urls = {
+        'PATTERN': f'{root_url}/PATTERN_v2.zip',
+        'CLUSTER': f'{root_url}/CLUSTER_v2.zip',
+        'MNIST': f'{root_url}/MNIST_v2.zip',
+        'CIFAR10': f'{root_url}/CIFAR10_v2.zip',
+        'TSP': f'{root_url}/TSP_v2.zip',
+        'CSL': 'https://www.dropbox.com/s/rnbkp5ubgk82ocu/CSL.zip?dl=1',
+    }
 
-    def __init__(self, root, name, split='train', transform=None,
-                 pre_transform=None, pre_filter=None, use_node_attr=False,
-                 use_edge_attr=False, cleaned=False):
+    def __init__(self, root: str, name: str, split: str = "train",
+                 transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None,
+                 pre_filter: Optional[Callable] = None):
         self.name = name
         assert self.name in self.names
 
         if self.name == 'CSL' and split != 'train':
             split = 'train'
             logging.warning(
-                ('Dataset `CSL` does not provide a standardized splitting. '
-                 'Instead, it is recommended to perform 5-fold cross '
-                 'validation with stratifed sampling.'))
+                ("Dataset 'CSL' does not provide a standardized splitting. "
+                 "Instead, it is recommended to perform 5-fold cross "
+                 "validation with stratifed sampling"))
 
-        super(GNNBenchmarkDataset, self).__init__(root, transform,
-                                                  pre_transform, pre_filter)
+        super().__init__(root, transform, pre_transform, pre_filter)
 
         if split == 'train':
             path = self.processed_paths[0]
@@ -70,41 +79,39 @@ class GNNBenchmarkDataset(InMemoryDataset):
         elif split == 'test':
             path = self.processed_paths[2]
         else:
-            raise ValueError((f'Split {split} found, but expected either '
-                              'train, val, trainval or test'))
+            raise ValueError(f"Split '{split}' found, but expected either "
+                             f"'train', 'val', or 'test'")
 
         self.data, self.slices = torch.load(path)
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
-        name = self.name
-        if name == 'CSL':
+    def raw_file_names(self) -> List[str]:
+        if self.name == 'CSL':
             return [
                 'graphs_Kary_Deterministic_Graphs.pkl',
                 'y_Kary_Deterministic_Graphs.pt'
             ]
         else:
-            return [f'{name}_train.pt', f'{name}_val.pt', f'{name}_test.pt']
+            name = self.urls[self.name].split('/')[-1][:-4]
+            return [f'{name}.pt']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         if self.name == 'CSL':
             return ['data.pt']
         else:
             return ['train_data.pt', 'val_data.pt', 'test_data.pt']
 
     def download(self):
-        url = self.csl_url
-        url = f'{self.url}/{self.name}.zip' if self.name != 'CSL' else url
-        path = download_url(url, self.raw_dir)
+        path = download_url(self.urls[self.name], self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
 
@@ -113,9 +120,9 @@ class GNNBenchmarkDataset(InMemoryDataset):
             data_list = self.process_CSL()
             torch.save(self.collate(data_list), self.processed_paths[0])
         else:
-            for i in range(3):
-                self.data, self.slices = torch.load(self.raw_paths[i])
-                data_list = [self.get(i) for i in range(len(self))]
+            inputs = torch.load(self.raw_paths[0])
+            for i in range(len(inputs)):
+                data_list = [Data(**data_dict) for data_dict in inputs[i]]
 
                 if self.pre_filter is not None:
                     data_list = [d for d in data_list if self.pre_filter(d)]
@@ -125,13 +132,11 @@ class GNNBenchmarkDataset(InMemoryDataset):
 
                 torch.save(self.collate(data_list), self.processed_paths[i])
 
-    def process_CSL(self):
-        path = osp.join(self.raw_dir, 'graphs_Kary_Deterministic_Graphs.pkl')
-        with open(path, 'rb') as f:
+    def process_CSL(self) -> List[Data]:
+        with open(self.raw_paths[0], 'rb') as f:
             adjs = pickle.load(f)
 
-        path = osp.join(self.raw_dir, 'y_Kary_Deterministic_Graphs.pt')
-        ys = torch.load(path).tolist()
+        ys = torch.load(self.raw_paths[1]).tolist()
 
         data_list = []
         for adj, y in zip(adjs, ys):
@@ -146,5 +151,5 @@ class GNNBenchmarkDataset(InMemoryDataset):
             data_list.append(data)
         return data_list
 
-    def __repr__(self):
-        return '{}({})'.format(self.name, len(self))
+    def __repr__(self) -> str:
+        return f'{self.name}({len(self)})'

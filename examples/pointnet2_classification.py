@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch.nn import Sequential as Seq, Linear as Lin, ReLU, BatchNorm1d as BN
 from torch_geometric.datasets import ModelNet
 import torch_geometric.transforms as T
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 from torch_geometric.nn import PointConv, fps, radius, global_max_pool
 
 
@@ -14,7 +14,7 @@ class SAModule(torch.nn.Module):
         super(SAModule, self).__init__()
         self.ratio = ratio
         self.r = r
-        self.conv = PointConv(nn)
+        self.conv = PointConv(nn, add_self_loops=False)
 
     def forward(self, x, pos, batch):
         idx = fps(pos, batch, ratio=self.ratio)
@@ -97,8 +97,8 @@ def test(loader):
 
 
 if __name__ == '__main__':
-    path = osp.join(
-        osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
+    path = osp.join(osp.dirname(osp.realpath(__file__)), '..',
+                    'data/ModelNet10')
     pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
     train_dataset = ModelNet(path, '10', True, transform, pre_transform)
     test_dataset = ModelNet(path, '10', False, transform, pre_transform)

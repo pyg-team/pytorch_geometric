@@ -2,7 +2,6 @@ import os
 import os.path as osp
 
 import torch
-import pandas
 import numpy as np
 from torch_sparse import coalesce
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
@@ -11,16 +10,18 @@ from torch_geometric.data.makedirs import makedirs
 
 
 class EgoData(Data):
-    def __inc__(self, key, item):
+    def __inc__(self, key, value, *args, **kwargs):
         if key == 'circle':
             return self.num_nodes
         elif key == 'circle_batch':
-            return item.max().item() + 1 if item.numel() > 0 else 0
+            return value.max().item() + 1 if value.numel() > 0 else 0
         else:
-            return super(EgoData, self).__inc__(key, item)
+            return super().__inc__(key, value, *args, **kwargs)
 
 
 def read_ego(files, name):
+    import pandas as pd
+
     all_featnames = []
     files = [
         x for x in files if x.split('.')[-1] in
@@ -45,12 +46,11 @@ def read_ego(files, name):
 
         x = None
         if name != 'gplus':  # Don't read node features on g-plus:
-            x_ego = pandas.read_csv(egofeat_file, sep=' ', header=None,
-                                    dtype=np.float32)
+            x_ego = pd.read_csv(egofeat_file, sep=' ', header=None,
+                                dtype=np.float32)
             x_ego = torch.from_numpy(x_ego.values)
 
-            x = pandas.read_csv(feat_file, sep=' ', header=None,
-                                dtype=np.float32)
+            x = pd.read_csv(feat_file, sep=' ', header=None, dtype=np.float32)
             x = torch.from_numpy(x.values)[:, 1:]
 
             x_all = torch.cat([x, x_ego], dim=0)
@@ -64,8 +64,8 @@ def read_ego(files, name):
             x_all[:, torch.tensor(indices)] = x
             x = x_all
 
-        idx = pandas.read_csv(feat_file, sep=' ', header=None, dtype=str,
-                              usecols=[0], squeeze=True)
+        idx = pd.read_csv(feat_file, sep=' ', header=None, dtype=str,
+                          usecols=[0], squeeze=True)
 
         idx_assoc = {}
         for i, j in enumerate(idx):
@@ -82,10 +82,10 @@ def read_ego(files, name):
         circle_batch = torch.tensor(circles_batch)
 
         try:
-            row = pandas.read_csv(edges_file, sep=' ', header=None, dtype=str,
-                                  usecols=[0], squeeze=True)
-            col = pandas.read_csv(edges_file, sep=' ', header=None, dtype=str,
-                                  usecols=[1], squeeze=True)
+            row = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
+                              usecols=[0], squeeze=True)
+            col = pd.read_csv(edges_file, sep=' ', header=None, dtype=str,
+                              usecols=[1], squeeze=True)
         except:  # noqa
             continue
 
@@ -113,12 +113,14 @@ def read_ego(files, name):
 
 
 def read_soc(files, name):
+    import pandas as pd
+
     skiprows = 4
     if name == 'pokec':
         skiprows = 0
 
-    edge_index = pandas.read_csv(files[0], sep='\t', header=None,
-                                 skiprows=skiprows, dtype=np.int64)
+    edge_index = pd.read_csv(files[0], sep='\t', header=None,
+                             skiprows=skiprows, dtype=np.int64)
     edge_index = torch.from_numpy(edge_index.values).t()
     num_nodes = edge_index.max().item() + 1
     edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
@@ -127,8 +129,10 @@ def read_soc(files, name):
 
 
 def read_wiki(files, name):
-    edge_index = pandas.read_csv(files[0], sep='\t', header=None, skiprows=4,
-                                 dtype=np.int64)
+    import pandas as pd
+
+    edge_index = pd.read_csv(files[0], sep='\t', header=None, skiprows=4,
+                             dtype=np.int64)
     edge_index = torch.from_numpy(edge_index.values).t()
 
     idx = torch.unique(edge_index.flatten())
@@ -169,6 +173,8 @@ class SNAPDataset(InMemoryDataset):
         'ego-facebook': ['facebook.tar.gz'],
         'ego-gplus': ['gplus.tar.gz'],
         'ego-twitter': ['twitter.tar.gz'],
+        'soc-ca-astroph': ['ca-AstroPh.txt.gz'],
+        'soc-ca-grqc': ['ca-GrQc.txt.gz'],
         'soc-epinions1': ['soc-Epinions1.txt.gz'],
         'soc-livejournal1': ['soc-LiveJournal1.txt.gz'],
         'soc-pokec': ['soc-pokec-relationships.txt.gz'],
@@ -207,7 +213,6 @@ class SNAPDataset(InMemoryDataset):
     def download(self):
         for name in self.available_datasets[self.name]:
             path = download_url('{}/{}'.format(self.url, name), self.raw_dir)
-            print(path)
             if name.endswith('.tar.gz'):
                 extract_tar(path, self.raw_dir)
             elif name.endswith('.gz'):

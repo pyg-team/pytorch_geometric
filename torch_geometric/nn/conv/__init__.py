@@ -7,6 +7,7 @@ from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
+from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
 from .tag_conv import TAGConv
@@ -18,7 +19,7 @@ from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
-from .point_conv import PointConv
+from .point_conv import PointNetConv, PointConv
 from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
 from .nn_conv import NNConv, ECConv
@@ -33,10 +34,17 @@ from .pna_conv import PNAConv
 from .cluster_gcn_conv import ClusterGCNConv
 from .gen_conv import GENConv
 from .gcn2_conv import GCN2Conv
+from .pan_conv import PANConv
 from .wl_conv import WLConv
 from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
 from .mesh_conv import MeshConv
+from .fa_conv import FAConv
+from .eg_conv import EGConv
+from .pdn_conv import PDNConv
+from .general_conv import GeneralConv
+from .hgt_conv import HGTConv
+from .hetero_conv import HeteroConv
 
 __all__ = [
     'MessagePassing',
@@ -48,6 +56,7 @@ __all__ = [
     'GatedGraphConv',
     'ResGatedGraphConv',
     'GATConv',
+    'GATv2Conv',
     'TransformerConv',
     'AGNNConv',
     'TAGConv',
@@ -61,6 +70,7 @@ __all__ = [
     'FastRGCNConv',
     'SignedConv',
     'DNAConv',
+    'PointNetConv',
     'PointConv',
     'GMMConv',
     'SplineConv',
@@ -78,10 +88,17 @@ __all__ = [
     'ClusterGCNConv',
     'GENConv',
     'GCN2Conv',
+    'PANConv',
     'WLConv',
     'FiLMConv',
     'SuperGATConv',
     'MeshConv',
+    'FAConv',
+    'EGConv',
+    'PDNConv',
+    'GeneralConv',
+    'HGTConv',
+    'HeteroConv',
 ]
 
 classes = __all__

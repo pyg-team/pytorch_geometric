@@ -1,8 +1,10 @@
 import torch
+
 from torch_geometric.utils import to_undirected
+from torch_geometric.transforms import BaseTransform
 
 
-class FaceToEdge(object):
+class FaceToEdge(BaseTransform):
     r"""Converts mesh faces :obj:`[3, num_faces]` to edge indices
     :obj:`[2, num_edges]`.
 
@@ -10,7 +12,6 @@ class FaceToEdge(object):
         remove_faces (bool, optional): If set to :obj:`False`, the face tensor
             will not be removed.
     """
-
     def __init__(self, remove_faces=True):
         self.remove_faces = remove_faces
 
