@@ -1,3 +1,5 @@
+import pytest
+
 import torch
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import GCNConv, SAGEConv, GATConv, HeteroConv
@@ -9,7 +11,8 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     return torch.stack([row, col], dim=0)
 
 
-def test_hetero_conv():
+@pytest.mark.parametrize('aggr', ['sum', 'mean', 'min', 'max', None])
+def test_hetero_conv(aggr):
     data = HeteroData()
     data['paper'].x = torch.randn(50, 32)
     data['author'].x = torch.randn(30, 64)
@@ -23,9 +26,7 @@ def test_hetero_conv():
             ('paper', 'to', 'paper'): GCNConv(-1, 64),
             ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
             ('paper', 'to', 'author'): GATConv((-1, -1), 64),
-        },
-        aggr='sum',
-    )
+        }, aggr=aggr)
 
     assert len(list(conv.parameters())) > 0
     assert str(conv) == 'HeteroConv(num_relations=3)'
@@ -34,5 +35,9 @@ def test_hetero_conv():
                edge_weight_dict=data.edge_weight_dict)
 
     assert len(out) == 2
-    assert out['paper'].size() == (50, 64)
-    assert out['author'].size() == (30, 64)
+    if aggr is not None:
+        assert out['paper'].size() == (50, 64)
+        assert out['author'].size() == (30, 64)
+    else:
+        assert out['paper'].size() == (50, 2, 64)
+        assert out['author'].size() == (30, 1, 64)
