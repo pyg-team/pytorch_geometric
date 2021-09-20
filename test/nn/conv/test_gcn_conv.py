@@ -37,14 +37,22 @@ def test_gcn_conv():
     conv(x, adj1.t())
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
 
+
+def test_gcn_conv_with_decomposed_layers():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+
     conv = GCNConv(16, 32)
-    conv2 = copy.deepcopy(conv)
-    conv2.decomposed_layers = 2
+
+    decomposed_conv = copy.deepcopy(conv)
+    decomposed_conv.decomposed_layers = 2
+
     out1 = conv(x, edge_index)
-    assert torch.allclose(conv2(x, edge_index), out1, atol=1e-6)  # output is same with and without decomposition.
+    out2 = decomposed_conv(x, edge_index)
+    assert torch.allclose(out1, out2)
 
     t = '(Tensor, Tensor, OptTensor) -> Tensor'
-    jit = torch.jit.script(conv2.jittable(t))  # jittable works with decmoposition.
+    jit = torch.jit.script(decomposed_conv.jittable(t))
     assert jit(x, edge_index).tolist() == out1.tolist()
 
 
