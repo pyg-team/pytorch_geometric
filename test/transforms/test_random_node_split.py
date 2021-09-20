@@ -1,7 +1,7 @@
 import pytest
 
 import torch
-from torch_geometric.data import Data
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import RandomNodeSplit
 
 
@@ -137,3 +137,23 @@ def test_random_node_split(num_splits):
         assert (train_mask[:, i] & val_mask[:, i] & test_mask[:, i]).sum() == 0
         assert ((train_mask[:, i] | val_mask[:, i]
                  | test_mask[:, i]).sum() == 10 * num_classes + 100 + 200)
+
+
+def test_random_node_split_on_hetero_data():
+    data = HeteroData()
+
+    data['paper'].x = torch.randn(2000, 16)
+    data['paper'].y = torch.randint(4, (2000, ), dtype=torch.long)
+    data['author'].x = torch.randn(300, 16)
+
+    transform = RandomNodeSplit()
+    assert str(transform) == 'RandomNodeSplit(split=train_rest)'
+    data = transform(data)
+    assert len(data) == 5
+
+    assert len(data['author']) == 1
+    assert len(data['paper']) == 5
+
+    assert data['paper'].train_mask.sum() == 500
+    assert data['paper'].val_mask.sum() == 500
+    assert data['paper'].test_mask.sum() == 1000
