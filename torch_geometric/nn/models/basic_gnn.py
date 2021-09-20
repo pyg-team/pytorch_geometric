@@ -114,7 +114,7 @@ class GCN(BasicGNN):
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`).
             (default: :obj:`"last"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
@@ -151,7 +151,7 @@ class GraphSAGE(BasicGNN):
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`).
             (default: :obj:`"last"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
@@ -188,7 +188,7 @@ class GIN(BasicGNN):
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`).
             (default: :obj:`"last"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
@@ -235,7 +235,7 @@ class GAT(BasicGNN):
         norm (torch.nn.Module, optional): The normalization operator to use.
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode
-            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`).
             (default: :obj:`"last"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GATConv`.
