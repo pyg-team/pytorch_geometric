@@ -129,10 +129,7 @@ class GeneralEdgeConvLayer(MessagePassing):
         self.normalize = cfg.gnn.normalize_adj
         self.msg_direction = cfg.gnn.msg_direction
 
-        if self.msg_direction == 'single':
-            self.linear_msg = Linear(-1, out_channels, bias=False)
-        else:
-            self.linear_msg = Linear(-1, out_channels, bias=False)
+        self.linear_msg = Linear(-1, out_channels, bias=False)
         if cfg.gnn.self_msg == 'concat':
             self.linear_self = Linear(in_channels, out_channels, bias=False)
 
