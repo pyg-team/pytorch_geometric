@@ -456,8 +456,30 @@ class Data(BaseData):
 
     def to_heterogeneous(self, node_type: Optional[Tensor] = None,
                          edge_type: Optional[Tensor] = None,
-                         node_type_dict: Optional[Dict[int, NodeType]] = None,
-                         edge_type_dict: Optional[Dict[int, EdgeType]] = None):
+                         node_type_names: Optional[List[NodeType]] = None,
+                         edge_type_names: Optional[List[EdgeType]] = None):
+        r"""Converts a :class:`~torch_geometric.data.Data` object to a
+        heterogeneous :class:`~torch_geometric.data.HeteroData` object.
+        For this, node and edge attributes are splitted according to the
+        node-level and edge-level vectors :obj:`node_type` and
+        :obj:`edge_type`, respectively.
+        :obj:`node_type_names` and :obj:`edge_type_names` can be used to give
+        meaningful node and edge type names, respectively.
+        That is, the node_type :obj:`0` is given by :obj:`node_type_names[0]`.
+        If the :class:`~torch_geometric.data.Data` object was constructed via
+        :meth:`~torch_geometric.data.HeteroData.to_homogeneous`, the object can
+        be reconstructed without any need to pass in additional arguments.
+
+        Args:
+            node_type (Tensor, optional): A node-level vector denoting the type
+                of each node. (default: :obj:`None`)
+            edge_type (Tensor, optional): An edge-level vector denoting the
+                type of each edge. (default: :obj:`None`)
+            node_type_names (List[str], optional): The names of node types.
+                (default: :obj:`None`)
+            edge_type_names (List[Tuple[str, str, str]], optional): The names
+                of edge types. (default: :obj:`None`)
+        """
         from torch_geometric.data import HeteroData
 
         if node_type is None:
@@ -465,20 +487,22 @@ class Data(BaseData):
         if node_type is None:
             node_type = torch.zeros(self.num_nodes, dtype=torch.long)
 
-        if node_type_dict is None:
-            node_type_dict = self._store.__dict__.get('_node_type_dict', None)
-        if node_type_dict is None:
-            node_type_dict = {i: str(i) for i in node_type.unique().tolist()}
+        if node_type_names is None:
+            store = self._store
+            node_type_names = store.__dict__.get('_node_type_names', None)
+        if node_type_names is None:
+            node_type_names = [str(i) for i in node_type.unique().tolist()]
 
         if edge_type is None:
             edge_type = self._store.get('edge_type', None)
         if edge_type is None:
             edge_type = torch.zeros(self.num_edges, dtype=torch.long)
 
-        if edge_type_dict is None:
-            edge_type_dict = self._store.__dict__.get('_edge_type_dict', None)
-        if edge_type_dict is None:
-            edge_type_dict = {}
+        if edge_type_names is None:
+            store = self._store
+            edge_type_names = store.__dict__.get('_edge_type_names', None)
+        if edge_type_names is None:
+            edge_type_names = []
             edge_index = self.edge_index
             for i in edge_type.unique().tolist():
                 src, dst = edge_index[:, edge_type == i]
@@ -489,13 +513,13 @@ class Data(BaseData):
                         "Could not construct a 'HeteroData' object from the "
                         "'Data' object because single edge types span over "
                         "multiple node types")
-                edge_type_dict[i] = (node_type_dict[src_types[0]], str(i),
-                                     node_type_dict[dst_types[0]])
+                edge_type_names.append((node_type_names[src_types[0]], str(i),
+                                        node_type_names[dst_types[0]]))
 
         data = HeteroData()
 
         decrement = torch.empty_like(node_type)
-        for i, key in node_type_dict.items():
+        for i, key in enumerate(node_type_names):
             for attr, value in self.items():
                 if attr == 'node_type' or attr == 'edge_type':
                     continue
@@ -508,7 +532,7 @@ class Data(BaseData):
             if len(data[key]) == 0:
                 data[key].num_nodes = int((node_type == i).sum())
 
-        for i, key in edge_type_dict.items():
+        for i, key in enumerate(edge_type_names):
             src, _, dst = key
             for attr, value in self.items():
                 if attr == 'node_type' or attr == 'edge_type':

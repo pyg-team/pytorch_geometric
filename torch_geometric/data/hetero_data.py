@@ -443,18 +443,18 @@ class HeteroData(BaseData):
         data = Data(**self._global_store.to_dict())
 
         # Iterate over all node stores and record the slice information:
-        node_slices, node_type_dict, cumsum = {}, {}, 0
-        node_types = []
+        node_slices, cumsum = {}, 0
+        node_type_names, node_types = [], []
         for i, (node_type, store) in enumerate(self._node_store_dict.items()):
             num_nodes = store.num_nodes
             node_slices[node_type] = (cumsum, cumsum + num_nodes)
-            node_type_dict[i] = node_type
+            node_type_names.append(node_type)
             cumsum += num_nodes
 
             if add_node_type:
                 kwargs = {'dtype': torch.long}
                 node_types.append(torch.full((num_nodes, ), i, **kwargs))
-        data._node_type_dict = node_type_dict
+        data._node_type_names = node_type_names
 
         if len(node_types) > 1:
             data.node_type = torch.cat(node_types, dim=0)
@@ -477,13 +477,13 @@ class HeteroData(BaseData):
             data.num_nodes = cumsum
 
         # Iterate over all edge stores and record the slice information:
-        edge_slices, edge_type_dict, cumsum = {}, {}, 0
-        edge_indices, edge_types = [], []
+        edge_slices, cumsum = {}, 0
+        edge_indices, edge_type_names, edge_types = [], [], []
         for i, (edge_type, store) in enumerate(self._edge_store_dict.items()):
             src, _, dst = edge_type
             num_edges = store.num_edges
             edge_slices[edge_type] = (cumsum, cumsum + num_edges)
-            edge_type_dict[i] = edge_type
+            edge_type_names.append(edge_type)
             cumsum += num_edges
 
             kwargs = {'dtype': torch.long, 'device': store.edge_index.device}
@@ -492,7 +492,7 @@ class HeteroData(BaseData):
             edge_indices.append(store.edge_index + offset)
             if add_edge_type:
                 edge_types.append(torch.full((num_edges, ), i, **kwargs))
-        data._edge_type_dict = edge_type_dict
+        data._edge_type_names = edge_type_names
 
         if len(edge_indices) > 1:
             data.edge_index = torch.cat(edge_indices, dim=-1)
