@@ -54,8 +54,8 @@ def negative_sampling(edge_index: Tensor,
     if force_undirected:
         num_neg_samples = num_neg_samples // 2
 
-    prob = (idx.numel() / population)  # Probability to sample a negative.
-    sample_size = int(1.2 * num_neg_samples / prob)  # (Over)-sample size.
+    prob = 1. - idx.numel() / population  # Probability to sample a negative.
+    sample_size = int(1.1 * num_neg_samples / prob)  # (Over)-sample size.
 
     neg_idx = None
     if method == 'dense':
