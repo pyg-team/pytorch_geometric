@@ -189,8 +189,7 @@ These GNN layers can be stacked together to create Graph Neural Network models.
 * **[GATConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GATConv)** from Veličković *et al.*: [Graph Attention Networks](https://arxiv.org/abs/1710.10903) (ICLR 2018) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gat.py)]
 
 <details>
-<summary><b><span style="color: #0969da">Expand to see all implemented GNN layers ...</span></b></summary>
-
+<summary><b><a>Expand to see all implemented GNN layers ...</a></b></summary>
 
 * **[GCN2Conv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GCN2Conv)** from Chen *et al.*: [Simple and Deep Graph Convolutional Networks](https://arxiv.org/abs/2007.02133) (ICML 2020) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn2_cora.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn2_ppi.py)]
 * **[SplineConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SplineConv)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cora.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/faust.py)]
