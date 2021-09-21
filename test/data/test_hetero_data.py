@@ -161,8 +161,8 @@ def test_to_homogeneous_and_vice_versa():
     assert out.edge_type.size() == (1750, )
     assert out.edge_type.min() == 0
     assert out.edge_type.max() == 2
-    assert len(out._node_type_dict) == 2
-    assert len(out._edge_type_dict) == 3
+    assert len(out._node_type_names) == 2
+    assert len(out._edge_type_names) == 3
 
     out = out.to_heterogeneous()
     assert len(out) == 4
@@ -210,8 +210,8 @@ def test_to_homogeneous_and_vice_versa():
     edge_type = out.edge_type
     del out.node_type
     del out.edge_type
-    del out._edge_type_dict
-    del out._node_type_dict
+    del out._edge_type_names
+    del out._node_type_names
     out = out.to_heterogeneous(node_type, edge_type)
     assert len(out) == 4
     assert torch.allclose(data['paper'].x, out['0'].x)

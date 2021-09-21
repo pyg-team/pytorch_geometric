@@ -160,7 +160,7 @@ class Entities(InMemoryDataset):
                     test_y=test_y, num_nodes=N)
 
         if self.hetero:
-            data = data.to_heterogeneous(node_type_dict={0: 'v'})
+            data = data.to_heterogeneous(node_type_names=['v'])
 
         torch.save(self.collate([data]), self.processed_paths[0])
 
