@@ -32,7 +32,6 @@ class GATEncoder(torch.nn.Module):
         self.conv = GATConv(in_channels, out_channels, heads)
         self.activation = torch.nn.PReLU()
 
-
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor):
         return self.activation(self.conv(x, edge_index))
 
@@ -56,7 +55,6 @@ class HeteroUnsupervised(torch.nn.Module):
             })
             self.convs.append(conv)
 
-
     def forward(self, xx_dict, edge_index_dict):
         x_dict = {}
         for conv in self.convs:
@@ -70,21 +68,20 @@ class HeteroUnsupervised(torch.nn.Module):
         
         target_edge_index = \
             self.convert_to_meta_path_edge_index(edge_index_a, edge_index_b)
-    
+
         pos_feat = target_embeds
         # shuffle feature corruption
         idxx = np.random.permutation(pos_feat.shape[0])
         corrupted_feat = pos_feat[idxx]
-    
+
         pos_embed = self.encoder(pos_feat, target_edge_index)
 
         neg_embed = self.encoder(corrupted_feat, target_edge_index)
-        
+
         summary = torch.mean(pos_embed, dim=0)
 
 
         return pos_embed, neg_embed, summary
-
 
     def convert_to_meta_path_edge_index(self, edge_index_a, edge_index_b):
         paper2author_dict = \
@@ -100,28 +97,26 @@ class HeteroUnsupervised(torch.nn.Module):
         
         return target_edge_index
 
-
     def discriminate(self, z, summary, sigmoid=True):
         value = torch.matmul(z, torch.matmul(self.weight, summary))
         return torch.sigmoid(value) if sigmoid else value
 
-
     def reset_parameters(self):
         uniform(self.embed_size, self.weight)
-
 
     def loss(self, pos_embed, neg_embed, summary):
 
         pos_loss = -torch.log(\
             self.discriminate(pos_embed, summary, sigmoid=True) + EPS).mean()
         neg_loss = -torch.log(\
-            1 - self.discriminate(neg_embed, summary, sigmoid=True) + EPS).mean()
+            1 - self.discriminate(neg_embed, summary, sigmoid=True) + EPS)\
+                .mean()
 
-        return pos_loss+neg_loss
+        return pos_loss + neg_loss
 
 
 model = HeteroUnsupervised(data.metadata(),
-            out_channels = 64, hidden_channels = 64, num_layers = 2)
+                            out_channels=64, hidden_channels=64, num_layers=2)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -130,8 +125,8 @@ data, model = data.to(device), model.to(device)
 with torch.no_grad():  # Initialize lazy modules.
     out = model(data.x_dict, data.edge_index_dict)
 
-optimizer = torch.optim.Adam(model.parameters(),\
-                        lr=0.005, weight_decay=0.001)
+optimizer = torch.optim.Adam(model.parameters(),
+                            lr=0.005, weight_decay=0.001)
 
 
 def train():
@@ -175,7 +170,7 @@ def test():
     train_z, test_z, train_y, test_y = \
         train_test_split(test_embed, labels, train_size=0.8)
     clf = LogisticRegression(solver='lbfgs').fit(train_z, train_y)
-    test_score = clf.score(test_z, test_y) 
+    test_score = clf.score(test_z, test_y)
 
     # accuracy score of author nodes.
     return val_score, test_score
