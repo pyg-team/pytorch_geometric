@@ -179,11 +179,13 @@ It comprises of the following components:
 
 We list currently supported PyG models, layers and operators according to category:
 
-<details>
-<summary><b>GNN layers:</b>
-All Graph Neural Network layers are implemented via the <a href="https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing"><code><b>nn.MessagePassing</b></code></a> interface.
-A GNN layer specifies how to perform message passing, <i>i.e.</i> by designing different message, aggregation and update functions as defined <a href="https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html#">here</a>.
+**GNN layers:**
+All Graph Neural Network layers are implemented via the **[`nn.MessagePassing`](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing)** interface.
+A GNN layer specifies how to perform message passing, *i.e.* by designing different message, aggregation and update functions as defined [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html).
 These GNN layers can be stacked together to create Graph Neural Network models.
+
+<details>
+<summary>Expand to see all implemented GNN layers
 </summary>
 
 * **[SplineConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SplineConv)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cora.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/faust.py)]
