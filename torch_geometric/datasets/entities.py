@@ -8,8 +8,8 @@ from collections import Counter
 import torch
 import numpy as np
 
-from torch_geometric.data import (InMemoryDataset, Data, HeteroData,
-                                  download_url, extract_tar)
+from torch_geometric.data import InMemoryDataset, Data
+from torch_geometric.data import download_url, extract_tar
 
 
 class Entities(InMemoryDataset):
