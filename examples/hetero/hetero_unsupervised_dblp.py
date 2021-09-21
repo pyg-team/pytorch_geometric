@@ -170,10 +170,9 @@ def test():
     
     # accuracy score of author nodes.
     return val_score, test_score 
-        
 
 
-for epoch in range(1, 101):
+for epoch in range(1, 31):
     loss = train()
     valid_acc,test_acc = test()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Valid: {test_acc:.4f}, Test: {test_acc:.4f}')
