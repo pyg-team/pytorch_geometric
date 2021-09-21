@@ -288,21 +288,29 @@ class HeteroData(BaseData):
             args = args[0]
 
         if isinstance(args, str):
+            node_types = [key for key in self.node_types if key == args]
+            if len(node_types) == 1:
+                args = node_types[0]
+                return args
+
             # Try to map to edge type based on unique relation type:
-            edge_types = [key for key in self.metadata()[1] if key[1] == args]
+            edge_types = [key for key in self.edge_types if key[1] == args]
             if len(edge_types) == 1:
                 args = edge_types[0]
+                return args
 
-        elif len(args) == 2:
+        if len(args) == 2:
             # Try to find the unique source/destination node tuple:
             edge_types = [
-                key for key in self.metadata()[1]
+                key for key in self.edge_types
                 if key[0] == args[0] and key[-1] == args[-1]
             ]
             if len(edge_types) == 1:
                 args = edge_types[0]
+                return args
             else:
                 args = (args[0], self.DEFAULT_REL, args[1])
+                return args
 
         return args
 
@@ -446,7 +454,6 @@ class HeteroData(BaseData):
             if add_node_type:
                 kwargs = {'dtype': torch.long}
                 node_types.append(torch.full((num_nodes, ), i, **kwargs))
-        data._node_slices = node_slices
         data._node_type_dict = node_type_dict
 
         if len(node_types) > 1:
@@ -485,7 +492,6 @@ class HeteroData(BaseData):
             edge_indices.append(store.edge_index + offset)
             if add_edge_type:
                 edge_types.append(torch.full((num_edges, ), i, **kwargs))
-        data._edge_slices = edge_slices
         data._edge_type_dict = edge_type_dict
 
         if len(edge_indices) > 1:
