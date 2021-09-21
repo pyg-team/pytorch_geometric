@@ -13,7 +13,8 @@ from torch_geometric.transforms import BaseTransform
 
 class RandomLinkSplit(BaseTransform):
     r"""Performs an edge-level random split into training, validation and test
-    sets.
+    sets of a :class:`~torch_geometric.data.Data` or a
+    :class:`~torch_geometric.data.HeteroData` object.
     The split is performed such that the training split does not include edges
     in validation and test splits; and the validation split does not include
     edges in the test split.
