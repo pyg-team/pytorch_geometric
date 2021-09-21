@@ -191,6 +191,7 @@ These GNN layers can be stacked together to create Graph Neural Network models.
 <details>
 <summary><b><span style="color: #0969da">Expand to see all implemented GNN layers ...</span></b></summary>
 
+
 * **[GCN2Conv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GCN2Conv)** from Chen *et al.*: [Simple and Deep Graph Convolutional Networks](https://arxiv.org/abs/2007.02133) (ICML 2020) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn2_cora.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn2_ppi.py)]
 * **[SplineConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SplineConv)** from Fey *et al.*: [SplineCNN: Fast Geometric Deep Learning with Continuous B-Spline Kernels](https://arxiv.org/abs/1711.08920) (CVPR 2018) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cora.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/faust.py)]
 * **[NNConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.NNConv)** from Gilmer *et al.*: [Neural Message Passing for Quantum Chemistry](https://arxiv.org/abs/1704.01212) (ICML 2017) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/qm9_nn_conv.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/mnist_nn_conv.py)]
