@@ -56,7 +56,6 @@ def new_layer_config(dim_in, dim_out, num_layers, has_act, has_bias, cfg):
         has_act=has_act,
         final_act=True,
         act=cfg.gnn.act,
-        # Has bias is false by default. Only exception for the MLP layer.
         has_bias=has_bias,
         keep_edge=cfg.gnn.keep_edge,
         dim_inner=cfg.gnn.dim_inner,
