@@ -111,7 +111,7 @@ print(data)
 
 # 1. Add a reverse ('movie', 'rev_rates', 'user') relation for message passing.
 data = ToUndirected()(data)
-del data['movie', 'rev_rates', 'user'].edge_label
+del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # 2. Perform a link-level split into training, validation, and test edges.
 transform = RandomLinkSplit(num_val=0.05, num_test=0.1, neg_sampling_ratio=0.0,
