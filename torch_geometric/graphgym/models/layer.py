@@ -23,19 +23,23 @@ class LayerConfig:
     # mem parameters.
     mem_inplace: bool = False
 
-    # gnn parameters
+    # gnn parameters.
     dim_in: int = -1
     dim_out: int = -1
     edge_dim: int = -1
+    dim_inner: int = None
+    num_layers: int = 2
+    has_bias: bool = True
+    # regularizer parameters.
     has_l2norm: bool = True
     dropout: float = 0.0
+    # activation parameters.
     has_act: bool = True
     final_act: bool = True
     act: str = 'relu'
-    has_bias: bool = True
+
+    # other parameters.
     keep_edge: float = 0.5
-    dim_inner: int = None
-    num_layers: int = 2
 
 
 def new_layer_config(dim_in, dim_out, num_layers, has_act, has_bias, cfg):
