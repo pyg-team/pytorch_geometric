@@ -1,6 +1,6 @@
 from typing import (Optional, Dict, Any, Union, List, Iterable, Tuple,
                     NamedTuple, Callable)
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import OptTensor, NodeType, EdgeType
 from torch_geometric.deprecation import deprecated
 
 import copy
@@ -8,6 +8,7 @@ from collections.abc import Sequence, Mapping
 
 import torch
 import numpy as np
+from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.storage import (BaseStorage, NodeStorage,
@@ -452,6 +453,85 @@ class Data(BaseData):
         if num_nodes != num_edges:
             return True
         return 'edge' in key
+
+    def to_heterogeneous(self, node_type: Optional[Tensor] = None,
+                         edge_type: Optional[Tensor] = None,
+                         node_type_dict: Optional[Dict[int, NodeType]] = None,
+                         edge_type_dict: Optional[Dict[int, EdgeType]] = None):
+        from torch_geometric.data import HeteroData
+
+        if node_type is None:
+            node_type = self._store.get('node_type', None)
+        if node_type is None:
+            node_type = torch.zeros(self.num_nodes, dtype=torch.long)
+
+        if node_type_dict is None:
+            node_type_dict = self._store.__dict__.get('_node_type_dict', None)
+        if node_type_dict is None:
+            node_type_dict = {i: str(i) for i in node_type.unique().tolist()}
+
+        if edge_type is None:
+            edge_type = self._store.get('edge_type', None)
+        if edge_type is None:
+            edge_type = torch.zeros(self.num_edges, dtype=torch.long)
+
+        if edge_type_dict is None:
+            edge_type_dict = self._store.__dict__.get('_edge_type_dict', None)
+        if edge_type_dict is None:
+            edge_type_dict = {}
+            edge_index = self.edge_index
+            for i in edge_type.unique().tolist():
+                src, dst = edge_index[:, edge_type == i]
+                src_types = node_type[src].unique().tolist()
+                dst_types = node_type[dst].unique().tolist()
+                if len(src_types) != 1 and len(dst_types) != 1:
+                    raise ValueError(
+                        "Could not construct a 'HeteroData' object from the "
+                        "'Data' object because single edge types span over "
+                        "multiple node types")
+                edge_type_dict[i] = (node_type_dict[src_types[0]], str(i),
+                                     node_type_dict[dst_types[0]])
+
+        data = HeteroData()
+
+        decrement = torch.empty_like(node_type)
+        for i, key in node_type_dict.items():
+            for attr, value in self.items():
+                if attr == 'node_type' or attr == 'edge_type':
+                    continue
+                elif isinstance(value, Tensor) and self.is_node_attr(attr):
+                    mask = node_type == i
+                    data[key][attr] = value[mask]
+                    nnz = mask.nonzero(as_tuple=False).view(-1)
+                    nnz.sub_(torch.arange(nnz.size(0), device=nnz.device))
+                    decrement[mask] = nnz
+            if len(data[key]) == 0:
+                data[key].num_nodes = int((node_type == i).sum())
+
+        for i, key in edge_type_dict.items():
+            src, _, dst = key
+            for attr, value in self.items():
+                if attr == 'node_type' or attr == 'edge_type':
+                    continue
+                elif attr == 'edge_index':
+                    edge_index = value[:, edge_type == i]
+                    edge_index[0].sub_(decrement[edge_index[0]])
+                    edge_index[1].sub_(decrement[edge_index[1]])
+                    data[key].edge_index = edge_index
+                elif isinstance(value, Tensor) and self.is_edge_attr(attr):
+                    data[key][attr] = value[edge_type == i]
+
+        # Add global attributes.
+        keys = set(data.keys) | {'node_type', 'edge_type', 'num_nodes'}
+        for attr, value in self.items():
+            if attr in keys:
+                continue
+            if len(data.node_stores) == 1:
+                data.node_stores[0][attr] = value
+            else:
+                data[attr] = value
+
+        return data
 
     ###########################################################################
 
