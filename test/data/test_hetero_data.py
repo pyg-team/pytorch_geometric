@@ -150,14 +150,27 @@ def test_to_homogeneous():
     data['author', 'paper'].edge_attr = torch.randn(1000, 64)
 
     data = data.to_homogeneous()
-    assert len(data) == 5
+    assert len(data) == 6
     assert data.num_nodes == 300
     assert data.num_edges == 1750
     assert data.num_node_features == 128
     assert data.num_edge_features == 64
+    assert data.node_type.size() == (300, )
+    assert data.node_type.min() == 0
+    assert data.node_type.max() == 1
     assert data.edge_type.size() == (1750, )
     assert data.edge_type.min() == 0
     assert data.edge_type.max() == 2
     assert len(data._node_slices) == 2
+    assert len(data._node_type_dict) == 2
     assert len(data._edge_slices) == 3
     assert len(data._edge_type_dict) == 3
+
+    data = HeteroData()
+
+    data['paper'].num_nodes = 100
+    data['author'].num_nodes = 200
+
+    data = data.to_homogeneous(add_node_type=False)
+    assert len(data) == 1
+    assert data.num_nodes == 300
