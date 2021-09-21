@@ -453,6 +453,13 @@ class Data(BaseData):
             return True
         return 'edge' in key
 
+    def to_heterogeneous(self, node_attrs: Optional[List[str]] = None,
+                         edge_attrs: Optional[List[str]] = None,
+                         add_node_type: bool = True,
+                         add_edge_type: bool = True):
+        from torch_geometric.data import HeteroData  # noqa
+        pass
+
     ###########################################################################
 
     @classmethod
