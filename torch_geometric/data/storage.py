@@ -234,8 +234,9 @@ class NodeStorage(BaseStorage):
         # We sequentially access attributes that reveal the number of nodes.
         if 'num_nodes' in self:
             return self['num_nodes']
-        for key, value in self.items('x', 'pos', 'batch'):
-            if isinstance(value, Tensor):
+        for key, value in self.items():
+            if (isinstance(value, Tensor)
+                    and (key in {'x', 'pos', 'batch'} or 'node' in key)):
                 return value.size(self._parent().__cat_dim__(key, value, self))
         if 'adj' in self and isinstance(self.adj, SparseTensor):
             return self.adj.size(0)
@@ -307,8 +308,8 @@ class EdgeStorage(BaseStorage):
     @property
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
-        for key, value in self.items('edge_index', 'edge_attr'):
-            if isinstance(value, Tensor):
+        for key, value in self.items():
+            if isinstance(value, Tensor) and 'edge' in key:
                 return value.size(self._parent().__cat_dim__(key, value, self))
         for value in self.values('adj', 'adj_t'):
             if isinstance(value, SparseTensor):

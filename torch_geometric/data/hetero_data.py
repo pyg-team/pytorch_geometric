@@ -384,14 +384,18 @@ class HeteroData(BaseData):
 
     def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
                        edge_attrs: Optional[List[str]] = None,
+                       add_node_type: bool = True,
                        add_edge_type: bool = True) -> Data:
         """Converts a :class:`~torch_geometric.data.HeteroData` object to a
         homogeneous :class:`~torch_geometric.data.Data` object.
         By default, all features with same feature dimensionality across
-        different types will be merged into a single representation.
-        Furthermore, an attribute named :obj:`edge_type` will be added to the
-        returned :class:`~torch_geometric.data.Data` object, denoting an
-        edge-level vector holding the edge type of each edge as an integer.
+        different types will be merged into a single representation, unless
+        otherwise specified via the :obj:`node_attrs` and :obj:`edge_attrs`
+        arguments.
+        Furthermore, attributes named :obj:`node_type` and :obj:`edge_type`
+        will be added to the returned :class:`~torch_geometric.data.Data`
+        object, denoting node-level and edge-level vectors holding the
+        node and edge type as integers, respectively.
 
         Args:
             node_attrs (List[str], optional): The node features to combine
@@ -404,6 +408,10 @@ class HeteroData(BaseData):
                 same feature dimensionality. If set to :obj:`None`, will
                 automatically determine which edge features to combine.
                 (default: :obj:`None`)
+            add_node_type (bool, optional): If set to :obj:`False`, will not
+                add the node-level vector :obj:`node_type` to the returned
+                :class:`~torch_geometric.data.Data` object.
+                (default: :obj:`True`)
             add_edge_type (bool, optional): If set to :obj:`False`, will not
                 add the edge-level vector :obj:`edge_type` to the returned
                 :class:`~torch_geometric.data.Data` object.
@@ -427,12 +435,24 @@ class HeteroData(BaseData):
         data = Data(**self._global_store.to_dict())
 
         # Iterate over all node stores and record the slice information:
-        node_slices, cumsum = {}, 0
-        for node_type, store in self._node_store_dict.items():
+        node_slices, node_type_dict, cumsum = {}, {}, 0
+        node_types = []
+        for i, (node_type, store) in enumerate(self._node_store_dict.items()):
             num_nodes = store.num_nodes
             node_slices[node_type] = (cumsum, cumsum + num_nodes)
+            node_type_dict[i] = node_type
             cumsum += num_nodes
+
+            if add_node_type:
+                kwargs = {'dtype': torch.long}
+                node_types.append(torch.full((num_nodes, ), i, **kwargs))
         data._node_slices = node_slices
+        data._node_type_dict = node_type_dict
+
+        if len(node_types) > 1:
+            data.node_type = torch.cat(node_types, dim=0)
+        elif len(node_types) == 1:
+            data.node_type = node_types[0]
 
         # Combine node attributes into a single tensor:
         if node_attrs is None:
@@ -443,7 +463,10 @@ class HeteroData(BaseData):
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
 
-        if len(set(node_attrs) & {'x', 'pos', 'batch'}) == 0:
+        if len([
+                key for key in node_attrs
+                if (key in {'x', 'pos', 'batch'} or 'node' in key)
+        ]) == 0 and not add_node_type:
             data.num_nodes = cumsum
 
         # Iterate over all edge stores and record the slice information:
@@ -472,7 +495,7 @@ class HeteroData(BaseData):
 
         if len(edge_types) > 1:
             data.edge_type = torch.cat(edge_types, dim=0)
-        elif len(edge_indices) == 1:
+        elif len(edge_types) == 1:
             data.edge_type = edge_types[0]
 
         # Combine edge attributes into a single tensor:
