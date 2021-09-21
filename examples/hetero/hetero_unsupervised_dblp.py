@@ -107,10 +107,10 @@ class HeteroUnsupervised(torch.nn.Module):
 
         pos_loss = -torch.log(
             self.discriminate(pos_embed, summary, sigmoid=True) + EPS
-            ).mean()
+        ).mean()
         neg_loss = -torch.log(
             1 - self.discriminate(neg_embed, summary, sigmoid=True) + EPS
-            ).mean()
+        ).mean()
 
         return pos_loss + neg_loss
 
@@ -120,7 +120,7 @@ model = HeteroUnsupervised(
     out_channels=64,
     hidden_channels=64,
     num_layers=2
-    )
+)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
