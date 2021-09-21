@@ -106,13 +106,14 @@ data['user', 'rates', 'movie'].edge_index = edge_index
 data['user', 'rates', 'movie'].edge_label = edge_label
 print(data)
 
-# We can now convert `data` into an appropriate format for machine learning:
+# We can now convert `data` into an appropriate format for training a
+# graph-based machine learning model:
 
 # 1. Add a reverse ('movie', 'rev_rates', 'user') relation for message passing.
 data = ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label
 
-# 2. We perform a link-level split into training, validation, and test edges.
+# 2. Perform a link-level split into training, validation, and test edges.
 transform = RandomLinkSplit(num_val=0.05, num_test=0.1, neg_sampling_ratio=0.0,
                             edge_type=('user', 'rates', 'movie'),
                             rev_edge_type=('movie', 'rev_rates', 'user'))
