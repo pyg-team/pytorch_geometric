@@ -65,7 +65,7 @@ class HeteroUnsupervised(torch.nn.Module):
         # using meta path author paper author
         edge_index_a = edge_index_dict[('author', 'to', 'paper')]
         edge_index_b = edge_index_dict[('paper', 'to', 'author')]
-        
+
         target_edge_index = \
             self.convert_to_meta_path_edge_index(edge_index_a, edge_index_b)
 
@@ -80,12 +80,11 @@ class HeteroUnsupervised(torch.nn.Module):
 
         summary = torch.mean(pos_embed, dim=0)
 
-
         return pos_embed, neg_embed, summary
 
     def convert_to_meta_path_edge_index(self, edge_index_a, edge_index_b):
         paper2author_dict = \
-            {idx_a.item():idx_b.item() for idx_a, idx_b in edge_index_b.T}
+            {idx_a.item(): idx_b.item() for idx_a, idx_b in edge_index_b.T}
         target_edge_index = []
         for idx_a, idx_b in edge_index_a.T:
             idx_b = idx_b.item()
@@ -94,7 +93,7 @@ class HeteroUnsupervised(torch.nn.Module):
                 target_edge_index.append((idx_a, paper2author_dict[idx_b]))
         target_edge_index = torch.tensor(target_edge_index, dtype=torch.long)
         target_edge_index = target_edge_index.T
-        
+
         return target_edge_index
 
     def discriminate(self, z, summary, sigmoid=True):
@@ -106,11 +105,9 @@ class HeteroUnsupervised(torch.nn.Module):
 
     def loss(self, pos_embed, neg_embed, summary):
 
-        pos_loss = -torch.log(\
-            self.discriminate(pos_embed, summary, sigmoid=True) + EPS).mean()
-        neg_loss = -torch.log(\
-            1 - self.discriminate(neg_embed, summary, sigmoid=True) + EPS)\
-                .mean()
+        pos_loss = -torch.log(self.discriminate(pos_embed, summary, sigmoid=True) + EPS).mean()
+        neg_loss = -torch.log(1 - self.discriminate(neg_embed, summary, sigmoid=True) + EPS)\
+                    .mean()
 
         return pos_loss + neg_loss
 
@@ -126,7 +123,7 @@ with torch.no_grad():  # Initialize lazy modules.
     out = model(data.x_dict, data.edge_index_dict)
 
 optimizer = torch.optim.Adam(model.parameters(),
-                            lr=0.005, weight_decay=0.001)
+                             lr=0.005, weight_decay=0.001)
 
 
 def train():
