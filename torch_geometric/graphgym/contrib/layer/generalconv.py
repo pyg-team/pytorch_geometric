@@ -1,8 +1,8 @@
 import torch
+import torch.nn as nn
 from torch.nn import Parameter
 from torch_scatter import scatter_add
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.utils import add_remaining_self_loops
 
 from torch_geometric.nn.inits import glorot, zeros
@@ -118,8 +118,8 @@ class GeneralConvLayer(MessagePassing):
 class GeneralEdgeConvLayer(MessagePassing):
     r"""General GNN layer, with edge features
     """
-    def __init__(self, in_channels, out_channels, improved=False, cached=False,
-                 bias=True, **kwargs):
+    def __init__(self, in_channels, out_channels, edge_dim,
+                 improved=False, cached=False, bias=True, **kwargs):
         super(GeneralEdgeConvLayer, self).__init__(aggr=cfg.gnn.agg, **kwargs)
 
         self.in_channels = in_channels
@@ -129,9 +129,14 @@ class GeneralEdgeConvLayer(MessagePassing):
         self.normalize = cfg.gnn.normalize_adj
         self.msg_direction = cfg.gnn.msg_direction
 
-        self.linear_msg = Linear(-1, out_channels, bias=False)
+        if self.msg_direction == 'single':
+            self.linear_msg = nn.Linear(in_channels + edge_dim,
+                                        out_channels, bias=False)
+        else:
+            self.linear_msg = nn.Linear(in_channels * 2 + edge_dim,
+                                        out_channels, bias=False)
         if cfg.gnn.self_msg == 'concat':
-            self.linear_self = Linear(in_channels, out_channels, bias=False)
+            self.linear_self = nn.Linear(in_channels, out_channels, bias=False)
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
