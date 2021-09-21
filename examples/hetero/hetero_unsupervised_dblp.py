@@ -46,8 +46,7 @@ class HeteroUnsupervised(torch.nn.Module):
 
         # for encoder
         self.encoder = GATEncoder(hidden_channels, out_channels, heads = 1)
-        
-        
+
         self.convs = torch.nn.ModuleList()
         for _ in range(num_layers):
             conv = HeteroConv({
@@ -62,7 +61,7 @@ class HeteroUnsupervised(torch.nn.Module):
         for conv in self.convs:
             x_dict = conv(xx_dict, edge_index_dict)
             x_dict = {key: F.leaky_relu(x) for key, x in x_dict.items()}
-        
+
         target_embeds = x_dict['author']
         # using meta path author paper author
         edge_index_a = edge_index_dict[('author', 'to', 'paper')]
@@ -70,7 +69,7 @@ class HeteroUnsupervised(torch.nn.Module):
         
         target_edge_index = \
             self.convert_to_meta_path_edge_index(edge_index_a, edge_index_b)
-        
+    
         pos_feat = target_embeds
         # shuffle feature corruption
         idxx = np.random.permutation(pos_feat.shape[0])
@@ -81,8 +80,8 @@ class HeteroUnsupervised(torch.nn.Module):
         neg_embed = self.encoder(corrupted_feat, target_edge_index)
         
         summary = torch.mean(pos_embed, dim = 0)
-        
-        
+
+
         return pos_embed, neg_embed, summary
 
     def convert_to_meta_path_edge_index(self, edge_index_a, edge_index_b):
@@ -102,7 +101,7 @@ class HeteroUnsupervised(torch.nn.Module):
     def discriminate(self, z, summary, sigmoid = True):
         value = torch.matmul(z, torch.matmul(self.weight, summary))
         return torch.sigmoid(value) if sigmoid else value
-    
+
     def reset_parameters(self):
         uniform(self.embed_size, self.weight)
 
@@ -134,14 +133,12 @@ def train():
     model.train()
     optimizer.zero_grad()
     pos_embed, neg_embed, summary = model(data.x_dict, data.edge_index_dict)
-    
+
     # pick out the train embed
     mask = data['author']['train_mask']
     pos_embed = pos_embed[mask]
-    # torch.vstack([tensor for tensor, mask in zip(pos_embed, mask) if mask == True])
     neg_embed = neg_embed[mask]
-    # torch.vstack([tensor for tensor, mask in zip(neg_embed, mask) if mask == True])
-    
+
     loss = model.loss(pos_embed, neg_embed, summary)
     loss.backward()
     optimizer.step()
@@ -154,35 +151,33 @@ def test():
     pos_embed, _, _ = model(data.x_dict, data.edge_index_dict)
     mask = data['author']['val_mask']
     labels = data['author'].y[mask]
-    
+
     # I dont get it why it dosen't work
     valid_embed = pos_embed[mask]
-    
-    # valid_embed = torch.vstack([tensor for tensor, mask in zip(pos_embed, mask) if mask  =  =  True])
-    
-    train_z, test_z, train_y, test_y = train_test_split(valid_embed, labels, train_size = 0.8)    
+
+    train_z, test_z, train_y, test_y = \
+        train_test_split(valid_embed, labels, train_size = 0.8)    
     
     clf = LogisticRegression(solver = 'lbfgs').fit(train_z, train_y)
     val_score = clf.score(test_z, test_y)
-    
+
     mask = data['author']['test_mask']
     labels = data['author'].y[mask]
-    
+
     # I dont get it why it dosen't work
     test_embed = pos_embed[mask]
-    
-    # test_embed = torch.vstack([tensor for tensor, mask in zip(pos_embed, mask) if mask  =  =  True])
-    
-    train_z, test_z, train_y, test_y = train_test_split(test_embed, labels, train_size = 0.8)    
-    
-    clf = LogisticRegression(solver = 'lbfgs').fit(train_z, train_y)
+
+    train_z, test_z, train_y, test_y = \
+        train_test_split(test_embed, labels, train_size=0.8)
+    clf = LogisticRegression(solver='lbfgs').fit(train_z, train_y)
     test_score = clf.score(test_z, test_y) 
-    
+
     # accuracy score of author nodes.
-    return val_score, test_score 
+    return val_score, test_score
 
 
-for epoch in range(1, 31):
+for epoch in range(1, 101):
     loss = train()
     valid_acc, test_acc = test()
-    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Valid: {test_acc:.4f}, Test: {test_acc:.4f}')
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f},\
+         Valid: {test_acc:.4f}, Test: {test_acc:.4f}')
