@@ -225,7 +225,8 @@ class RandomLinkSplit(BaseTransform):
             edge_label = store[self.key]
             assert edge_label.dtype == torch.long and edge_label.dim() == 1
             edge_label = edge_label[index].add_(1)
-            delattr(out_store, self.key)
+            if hasattr(out_store, self.key):
+                delattr(out_store, self.key)
         else:
             edge_label = torch.ones(index.numel(), device=index.device)
 
