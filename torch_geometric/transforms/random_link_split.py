@@ -223,15 +223,19 @@ class RandomLinkSplit(BaseTransform):
 
         if hasattr(store, self.key):
             edge_label = store[self.key]
-            assert edge_label.dtype == torch.long and edge_label.dim() == 1
-            edge_label = edge_label[index].add_(1)
+            assert edge_label.dtype == torch.long
+            assert edge_label.size(0) == store.edge_index.size(1)
+            edge_label = edge_label[index]
+            if self.neg_sampling_ratio > 0:  # Increment labels by one.
+                edge_label.add_(1)
             if hasattr(out_store, self.key):
                 delattr(out_store, self.key)
         else:
             edge_label = torch.ones(index.numel(), device=index.device)
 
         if neg_edge_index.numel() > 0:
-            neg_edge_label = edge_label.new_zeros(neg_edge_index.size(1))
+            neg_edge_label = edge_label.new_zeros((neg_edge_index.size(1), ) +
+                                                  edge_label.size()[1:])
 
         if self.split_labels:
             out_store[f'pos_{self.key}'] = edge_label
