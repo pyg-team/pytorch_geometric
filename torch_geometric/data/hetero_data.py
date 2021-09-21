@@ -395,8 +395,7 @@ class HeteroData(BaseData):
         Furthermore, attributes named :obj:`node_type` and :obj:`edge_type`
         will be added to the returned :class:`~torch_geometric.data.Data`
         object, denoting node-level and edge-level vectors holding the
-        respetive node and edge type of each node and edge as an integer,
-        respectively.
+        node and edge type as integers, respectively.
 
         Args:
             node_attrs (List[str], optional): The node features to combine
