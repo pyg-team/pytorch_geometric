@@ -226,7 +226,9 @@ class RandomLinkSplit(BaseTransform):
             assert edge_label.dtype == torch.long
             assert edge_label.size(0) == store.edge_index.size(1)
             edge_label = edge_label[index]
-            if self.neg_sampling_ratio > 0:  # Increment labels by one.
+            # Increment labels by one. Note that there is no need to increment
+            # in case no negative edges are added.
+            if self.neg_sampling_ratio > 0:
                 edge_label.add_(1)
             if hasattr(out_store, self.key):
                 delattr(out_store, self.key)
