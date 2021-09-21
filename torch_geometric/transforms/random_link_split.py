@@ -198,7 +198,7 @@ class RandomLinkSplit(BaseTransform):
                     store[key] = value
 
         if isinstance(data, HeteroData) and self.rev_edge_type is not None:
-            rev_store = data[self.rev_edge_type]
+            rev_store = splitted_data[self.rev_edge_type]
             for key in rev_store.keys():
                 if key not in store:
                     del rev_store[key]  # We delete all outdated attributes.

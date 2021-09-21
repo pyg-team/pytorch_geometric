@@ -1,6 +1,14 @@
 import torch
+
+from torch_geometric.utils import is_undirected
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import RandomLinkSplit
-from torch_geometric.data import Data
+
+
+def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
+    return torch.stack([row, col], dim=0)
 
 
 def test_random_link_split():
@@ -63,3 +71,77 @@ def test_random_link_split():
     assert test_data.edge_attr.size() == (8, 3)
     assert test_data.edge_label_index.size(1) == 6
     assert test_data.edge_label.size(0) == 6
+
+
+def test_random_link_split_on_hetero_data():
+    data = HeteroData()
+
+    data['p'].x = torch.arange(100)
+    data['a'].x = torch.arange(100, 300)
+
+    data['p', 'p'].edge_index = get_edge_index(100, 100, 500)
+    data['p', 'p'].edge_attr = torch.arange(500)
+    data['p', 'a'].edge_index = get_edge_index(100, 200, 1000)
+    data['p', 'a'].edge_attr = torch.arange(500, 1500)
+    data['a', 'p'].edge_index = data['p', 'a'].edge_index.flip([0])
+    data['a', 'p'].edge_attr = torch.arange(1500, 2500)
+
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2, is_undirected=True,
+                                edge_type=('p', 'p'))
+    train_data, val_data, test_data = transform(data)
+
+    assert len(train_data['p']) == 1
+    assert len(train_data['a']) == 1
+    assert len(train_data['p', 'p']) == 4
+    assert len(train_data['p', 'a']) == 2
+    assert len(train_data['a', 'p']) == 2
+
+    assert is_undirected(train_data['p', 'p'].edge_index,
+                         train_data['p', 'p'].edge_attr)
+    assert is_undirected(val_data['p', 'p'].edge_index,
+                         val_data['p', 'p'].edge_attr)
+    assert is_undirected(test_data['p', 'p'].edge_index,
+                         test_data['p', 'p'].edge_attr)
+
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2,
+                                edge_type=('p', 'a'), rev_edge_type=('a', 'p'))
+    train_data, val_data, test_data = transform(data)
+
+    assert len(train_data['p']) == 1
+    assert len(train_data['a']) == 1
+    assert len(train_data['p', 'p']) == 2
+    assert len(train_data['p', 'a']) == 4
+    assert len(train_data['a', 'p']) == 2
+
+    assert train_data['p', 'a'].edge_index.size() == (2, 600)
+    assert train_data['p', 'a'].edge_attr.size() == (600, )
+    assert train_data['p', 'a'].edge_attr.min() >= 500
+    assert train_data['p', 'a'].edge_attr.max() <= 1500
+    assert train_data['a', 'p'].edge_index.size() == (2, 600)
+    assert train_data['a', 'p'].edge_attr.size() == (600, )
+    assert train_data['a', 'p'].edge_attr.min() >= 500
+    assert train_data['a', 'p'].edge_attr.max() <= 1500
+    assert train_data['p', 'a'].edge_label_index.size() == (2, 1200)
+    assert train_data['p', 'a'].edge_label.size() == (1200, )
+
+    assert val_data['p', 'a'].edge_index.size() == (2, 600)
+    assert val_data['p', 'a'].edge_attr.size() == (600, )
+    assert val_data['p', 'a'].edge_attr.min() >= 500
+    assert val_data['p', 'a'].edge_attr.max() <= 1500
+    assert val_data['a', 'p'].edge_index.size() == (2, 600)
+    assert val_data['a', 'p'].edge_attr.size() == (600, )
+    assert val_data['a', 'p'].edge_attr.min() >= 500
+    assert val_data['a', 'p'].edge_attr.max() <= 1500
+    assert val_data['p', 'a'].edge_label_index.size() == (2, 400)
+    assert val_data['p', 'a'].edge_label.size() == (400, )
+
+    assert test_data['p', 'a'].edge_index.size() == (2, 800)
+    assert test_data['p', 'a'].edge_attr.size() == (800, )
+    assert test_data['p', 'a'].edge_attr.min() >= 500
+    assert test_data['p', 'a'].edge_attr.max() <= 1500
+    assert test_data['a', 'p'].edge_index.size() == (2, 800)
+    assert test_data['a', 'p'].edge_attr.size() == (800, )
+    assert test_data['a', 'p'].edge_attr.min() >= 500
+    assert test_data['a', 'p'].edge_attr.max() <= 1500
+    assert test_data['p', 'a'].edge_label_index.size() == (2, 400)
+    assert test_data['p', 'a'].edge_label.size() == (400, )
