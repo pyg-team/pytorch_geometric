@@ -19,6 +19,7 @@ print(data)
 # We initialize conference node features with a single feature.
 data['conference'].x = torch.ones(data['conference'].num_nodes, 1)
 
+
 def uniform(size, tensor):
     if tensor is not None:
         bound = 1.0 / math.sqrt(size)
@@ -45,7 +46,7 @@ class HeteroUnsupervised(torch.nn.Module):
         self.weight = Parameter(torch.Tensor(out_channels, out_channels))
 
         # for encoder
-        self.encoder = GATEncoder(hidden_channels, out_channels, heads = 1)
+        self.encoder = GATEncoder(hidden_channels, out_channels, heads=1)
 
         self.convs = torch.nn.ModuleList()
         for _ in range(num_layers):
@@ -79,10 +80,11 @@ class HeteroUnsupervised(torch.nn.Module):
 
         neg_embed = self.encoder(corrupted_feat, target_edge_index)
         
-        summary = torch.mean(pos_embed, dim = 0)
+        summary = torch.mean(pos_embed, dim=0)
 
 
         return pos_embed, neg_embed, summary
+
 
     def convert_to_meta_path_edge_index(self, edge_index_a, edge_index_b):
         paper2author_dict = \
@@ -93,29 +95,32 @@ class HeteroUnsupervised(torch.nn.Module):
             idx_a = idx_a.item()
             if paper2author_dict.get(idx_b) is not None:
                 target_edge_index.append((idx_a, paper2author_dict[idx_b]))
-        target_edge_index = torch.tensor(target_edge_index, dtype = torch.long)
+        target_edge_index = torch.tensor(target_edge_index, dtype=torch.long)
         target_edge_index = target_edge_index.T
         
         return target_edge_index
 
-    def discriminate(self, z, summary, sigmoid = True):
+
+    def discriminate(self, z, summary, sigmoid=True):
         value = torch.matmul(z, torch.matmul(self.weight, summary))
         return torch.sigmoid(value) if sigmoid else value
+
 
     def reset_parameters(self):
         uniform(self.embed_size, self.weight)
 
+
     def loss(self, pos_embed, neg_embed, summary):
 
         pos_loss = -torch.log(\
-            self.discriminate(pos_embed, summary, sigmoid = True) + EPS).mean()
+            self.discriminate(pos_embed, summary, sigmoid=True) + EPS).mean()
         neg_loss = -torch.log(\
-            1 - self.discriminate(neg_embed, summary, sigmoid = True) + EPS).mean()
+            1 - self.discriminate(neg_embed, summary, sigmoid=True) + EPS).mean()
 
         return pos_loss+neg_loss
-            
 
-model = HeteroUnsupervised(data.metadata(), 
+
+model = HeteroUnsupervised(data.metadata(),
             out_channels = 64, hidden_channels = 64, num_layers = 2)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -125,8 +130,8 @@ data, model = data.to(device), model.to(device)
 with torch.no_grad():  # Initialize lazy modules.
     out = model(data.x_dict, data.edge_index_dict)
 
-optimizer = torch.optim.Adam(model.parameters(), \
-                        lr = 0.005, weight_decay = 0.001)
+optimizer = torch.optim.Adam(model.parameters(),\
+                        lr=0.005, weight_decay=0.001)
 
 
 def train():
@@ -156,9 +161,9 @@ def test():
     valid_embed = pos_embed[mask]
 
     train_z, test_z, train_y, test_y = \
-        train_test_split(valid_embed, labels, train_size = 0.8)    
-    
-    clf = LogisticRegression(solver = 'lbfgs').fit(train_z, train_y)
+        train_test_split(valid_embed, labels, train_size=0.8)
+
+    clf = LogisticRegression(solver='lbfgs').fit(train_z, train_y)
     val_score = clf.score(test_z, test_y)
 
     mask = data['author']['test_mask']
