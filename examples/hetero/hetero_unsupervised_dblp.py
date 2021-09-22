@@ -64,8 +64,7 @@ class HeteroUnsupervised(torch.nn.Module):
             x_dict = {key: F.leaky_relu(x) for key, x in x_dict.items()}
 
         target_embeds = x_dict['author']
-        
-        num_authors=len(target_embeds)
+
         edge_index_a = edge_index_dict[('author', 'to', 'paper')]
         edge_index_b = edge_index_dict[('paper', 'to', 'author')]
 
@@ -73,7 +72,7 @@ class HeteroUnsupervised(torch.nn.Module):
             self.convert_to_APA_edge_index(edge_index_a, edge_index_b)
         # please mannually preprocess corresponding metapath edge pair
         # this is just an example and NOT real ACPCA edge pair
-        ACPCA_edge_pair=APA_edge_pair[:,-5]
+        ACPCA_edge_pair=APA_edge_pair[:, -5]
 
         mp_edge_pairs=[APA_edge_pair,ACPCA_edge_pair]
 
@@ -81,7 +80,7 @@ class HeteroUnsupervised(torch.nn.Module):
         pos_embeds=[]
         neg_embeds=[]
         summaries=[]
-        for pos_feat, edge_index in zip(pos_feats,mp_edge_pairs):
+        for pos_feat, edge_index in zip(pos_feats, mp_edge_pairs):
             # shuffle feature corruption
             shuffle_idx = np.random.permutation(pos_feat.shape[0])
             corrupted_feat = pos_feat[shuffle_idx]
@@ -104,7 +103,7 @@ class HeteroUnsupervised(torch.nn.Module):
             x_dict = {key: F.leaky_relu(x) for key, x in x_dict.items()}
 
         target_embeds = x_dict['author']
-        
+
         edge_index_a = edge_index_dict[('author', 'to', 'paper')]
         edge_index_b = edge_index_dict[('paper', 'to', 'author')]
 
@@ -112,18 +111,18 @@ class HeteroUnsupervised(torch.nn.Module):
             self.convert_to_APA_edge_index(edge_index_a, edge_index_b)
         # Please mannually preprocess corresponding metapath edge pair
         # This is just an example and NOT real ACPCA edge pair
-        ACPCA_edge_pair=APA_edge_pair[:,-5]
+        ACPCA_edge_pair = APA_edge_pair[:,-5]
 
-        mp_edge_pairs=[APA_edge_pair,ACPCA_edge_pair]
+        mp_edge_pairs=[APA_edge_pair, ACPCA_edge_pair]
 
         pos_feats = [target_embeds for _ in range(len(mp_edge_pairs))]
         pos_embeds=[]
-        for pos_feat, edge_index in zip(pos_feats,mp_edge_pairs):
+        for pos_feat, edge_index in zip(pos_feats, mp_edge_pairs):
             pos_embed = self.encoder(pos_feat, edge_index)
             pos_embeds.append(pos_embed)
 
         # mean aggeragation
-        final_embed=sum(pos_embeds)/len(mp_edge_pairs)
+        final_embed = sum(pos_embeds) / len(mp_edge_pairs)
         return final_embed
 
     def convert_to_APA_edge_index(self, edge_index_a, edge_index_b):
@@ -148,14 +147,16 @@ class HeteroUnsupervised(torch.nn.Module):
 
     def loss(self, pos_embeds, neg_embeds, summaries):
         total_loss=0
-        for pos_embed,neg_embed,summary in zip(pos_embeds,neg_embeds,summaries):
+        for pos_embed, neg_embed, summary in \
+            zip(pos_embeds, neg_embeds, summaries):
+
             pos_loss = -torch.log(
                 self.discriminate(pos_embed, summary, sigmoid=True) + EPS
             ).mean()
             neg_loss = -torch.log(
                 1 - self.discriminate(neg_embed, summary, sigmoid=True) + EPS
             ).mean()
-            total_loss+=(pos_loss+neg_loss)
+            total_loss += (pos_loss + neg_loss)
 
         return total_loss
 
@@ -182,7 +183,8 @@ optimizer = torch.optim.Adam(model.parameters(),
 def train():
     model.train()
     optimizer.zero_grad()
-    pos_embeds, neg_embeds, summaries = model(data.x_dict, data.edge_index_dict)
+    pos_embeds, neg_embeds, summaries = \
+        model(data.x_dict, data.edge_index_dict)
 
     # pick out the train embed
     mask = data['author']['train_mask']
@@ -217,7 +219,8 @@ def test():
 
     train_z, test_z, train_y, test_y = \
         train_test_split(test_embed, labels, train_size=0.8)
-    clf = LogisticRegression(solver='lbfgs',max_iter=1000000).fit(train_z, train_y)
+    clf = LogisticRegression(solver='lbfgs', max_iter=1000000)\
+                .fit(train_z, train_y)
     test_score = clf.score(test_z, test_y)
 
     # accuracy score of author nodes.
