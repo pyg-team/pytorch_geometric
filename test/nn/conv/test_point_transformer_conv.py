@@ -7,9 +7,7 @@ from torch_geometric.nn import PointTransformerConv
 def test_point_transformer_conv():
     x1 = torch.randn(4, 16)
     pos1 = torch.randn(4, 3)
-    pos2 = torch.randn(2, 3)
-    
-    
+
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
@@ -31,8 +29,7 @@ def test_point_transformer_conv():
         '  (phi): Linear(in_features=16, out_features=32, bias=True)\n'
         '  (psi): Linear(in_features=16, out_features=32, bias=True)\n'
         ')')
-    
+
     out = conv(x1, pos1, edge_index)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, pos1, adj.t()), out, atol=1e-6)
-
