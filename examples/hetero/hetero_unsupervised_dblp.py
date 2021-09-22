@@ -208,7 +208,6 @@ def test():
 
     valid_embed = pos_embed[mask]
 
-
     train_z, test_z, train_y, test_y = \
         train_test_split(valid_embed, labels, train_size=0.8)
 
@@ -222,7 +221,7 @@ def test():
 
     train_z, test_z, train_y, test_y = \
         train_test_split(test_embed, labels, train_size=0.8)
-    
+
     clf = LogisticRegression(max_iter=n_iter).fit(train_z, train_y)
     test_score = clf.score(test_z, test_y)
 
