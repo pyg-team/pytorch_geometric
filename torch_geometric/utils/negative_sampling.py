@@ -90,7 +90,8 @@ def negative_sampling(edge_index: Tensor,
     return vector_to_edge_index(neg_idx, size, bipartite, force_undirected)
 
 
-def structured_negative_sampling(edge_index, num_nodes=None):
+def structured_negative_sampling(edge_index, num_nodes=None,
+                                 contains_neg_self_loops=True):
     r"""Samples a negative edge :obj:`(i,k)` for every positive edge
     :obj:`(i,j)` in the graph given by :attr:`edge_index`, and returns it as a
     tuple of the form :obj:`(i,j,k)`.
@@ -99,11 +100,14 @@ def structured_negative_sampling(edge_index, num_nodes=None):
         edge_index (LongTensor): The edge indices.
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        contains_neg_self_loops (bool, optional): If set to
+            :obj:`False`, sampled negative edges will not contain self loops.
+            It is independent of :attr:`edge_index`. (default: :obj:`True`)
 
     :rtype: (LongTensor, LongTensor, LongTensor)
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
+    self_loops = torch.arange(num_nodes) * (num_nodes + 1)
     i, j = edge_index.to('cpu')
     idx_1 = i * num_nodes + j
 
@@ -116,6 +120,10 @@ def structured_negative_sampling(edge_index, num_nodes=None):
         tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
         idx_2 = i[rest] * num_nodes + tmp
         mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
+        if not contains_neg_self_loops:
+            self_loop_mask = torch.from_numpy(np.isin(idx_2, self_loops)).to(
+                torch.bool)
+            mask = torch.logical_or(mask, self_loop_mask)
         k[rest] = tmp
         rest = rest[mask.nonzero(as_tuple=False).view(-1)]
 
