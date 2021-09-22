@@ -16,6 +16,7 @@ from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
+from .ke_model import TransE
 
 __all__ = [
     'GCN',
@@ -43,6 +44,7 @@ __all__ = [
     'CorrectAndSmooth',
     'AttentiveFP',
     'RECT_L',
+    'TransE',
 ]
 
 classes = __all__
