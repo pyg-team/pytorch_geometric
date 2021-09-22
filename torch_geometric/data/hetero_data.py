@@ -272,6 +272,14 @@ class HeteroData(BaseData):
         r"""Returns the number of nodes in the graph."""
         return super().num_nodes
 
+    @property
+    def num_node_types(self) -> int:
+        return len(self.node_types)
+
+    @property
+    def num_edge_types(self) -> int:
+        return len(self.edge_types)
+
     def debug(self):
         pass  # TODO
 

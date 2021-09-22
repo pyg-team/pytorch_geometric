@@ -92,6 +92,16 @@ class BaseData(object):
         """
         raise NotImplementedError
 
+    @property
+    def num_node_types(self) -> int:
+        r"""Returns the number of node types in the graph."""
+        raise NotImplementedError
+
+    @property
+    def num_edge_types(self) -> int:
+        r"""Returns the number of edge types in the graph."""
+        raise NotImplementedError
+
     def debug(self):
         raise NotImplementedError
 
@@ -420,6 +430,20 @@ class Data(BaseData):
             return self.num_nodes
         else:
             return 0
+
+    @property
+    def num_node_types(self) -> int:
+        if hasattr(self, 'node_type'):
+            return int(self.node_type.max()) + 1
+        else:
+            return 1
+
+    @property
+    def num_edge_types(self) -> int:
+        if hasattr(self, 'edge_type'):
+            return int(self.edge_type.max()) + 1
+        else:
+            return 1
 
     def debug(self):
         pass  # TODO

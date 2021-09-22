@@ -43,6 +43,7 @@ from .suite_sparse import SuiteSparseMatrixCollection
 from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
 from .word_net import WordNet18, WordNet18RR
+from .freebase import FB15K237
 from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
@@ -109,6 +110,7 @@ __all__ = [
     'AMiner',
     'WordNet18',
     'WordNet18RR',
+    'FB15K237',
     'WikiCS',
     'WebKB',
     'WikipediaNetwork',
