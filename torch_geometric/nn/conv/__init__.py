@@ -44,6 +44,7 @@ from .pdn_conv import PDNConv
 from .general_conv import GeneralConv
 from .hgt_conv import HGTConv
 from .hetero_conv import HeteroConv
+from .point_transformer_conv import PointTransformerConv
 
 __all__ = [
     'MessagePassing',
@@ -97,6 +98,7 @@ __all__ = [
     'GeneralConv',
     'HGTConv',
     'HeteroConv',
+    'PointTransformerConv',
 ]
 
 classes = __all__
