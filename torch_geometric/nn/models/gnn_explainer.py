@@ -51,13 +51,13 @@ class GNNExplainer(torch.nn.Module):
             to use individual feature-level mask for each node, and
             :obj:`'scalar'` to use a scalar (node-level) mask for each
             individual node. (default: :obj:`'feature'`)
-        allow_edge_mask (boolean, optional): if False, edge mask will not
+        allow_edge_mask (boolean, optional): if set to :obj:`False`, edge mask will not
             be optimized.
             (default: :obj:`True`)
-        coeffs (dict, optional): Dictionary of hyperparameters with which
-            to update the coefficients dictionary
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
+        **kwargs (dict, optional): Additional hyperparameters with which
+            to update the coefficients dictionary
     """
 
     coeffs = {
@@ -72,7 +72,7 @@ class GNNExplainer(torch.nn.Module):
     def __init__(self, model, epochs: int = 100, lr: float = 0.01,
                  num_hops: Optional[int] = None, return_type: str = 'log_prob',
                  feat_mask_type: str = 'feature', allow_edge_mask: bool = True,
-                 coeffs: Union[dict, None] = None, log: bool = True):
+                 log: bool = True, **kwargs):
         super(GNNExplainer, self).__init__()
         assert return_type in ['log_prob', 'prob', 'raw', 'regression']
         assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
@@ -84,8 +84,7 @@ class GNNExplainer(torch.nn.Module):
         self.log = log
         self.allow_edge_mask = allow_edge_mask
         self.feat_mask_type = feat_mask_type
-        if coeffs is not None:
-            self.coeffs.update(coeffs)
+        self.coeffs.update(kwargs)
 
     def __set_masks__(self, x, edge_index, init="normal"):
         (N, F), E = x.size(), edge_index.size(1)
