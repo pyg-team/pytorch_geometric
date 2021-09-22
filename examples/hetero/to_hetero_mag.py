@@ -1,6 +1,6 @@
 import argparse
-import os.path as osp
-from tqdm import tqdm
+from pathlib import Path
+tqdm import tqdm
 
 import torch
 from torch.nn import ReLU
@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--use_hgt_loader', action='store_true')
 args = parser.parse_args()
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/OGB')
+path = Path.joinpath(Path(__file__).resolve().parent, '../../data/OGB')
 transform = T.ToUndirected(merge=True)
 dataset = OGB_MAG(path, preprocess='metapath2vec', transform=transform)
 data = dataset[0]

@@ -1,6 +1,6 @@
 import copy
 import argparse
-import os.path as osp
+from pathlib import Path
 
 import torch
 from sklearn.linear_model import LogisticRegression
@@ -27,7 +27,7 @@ parser.add_argument('--dataset', type=str, default='Cora',
 parser.add_argument('--unseen-classes', type=int, nargs='*', default=[1, 2, 3])
 args = parser.parse_args()
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '../data/Planetoid')
+path = Path.joinpath(Path(__file__).resolve().parent, '../data/Planetoid')
 train_mask_original = Planetoid(path, args.dataset)[0].train_mask.clone()
 transform = T.Compose([
     T.NormalizeFeatures(),

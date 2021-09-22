@@ -1,6 +1,6 @@
 # Reaches around 0.7945 ± 0.0059 test accuracy.
 
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -10,7 +10,7 @@ from ogb.nodeproppred import PygNodePropPredDataset, Evaluator
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import GATConv
 
-root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
+root =  Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-products')

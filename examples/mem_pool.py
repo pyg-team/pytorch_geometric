@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -8,7 +8,7 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.datasets import TUDataset
 from torch_geometric.nn import GATConv, MemPooling, DeepGCNLayer
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TUD')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'TUD')
 dataset = TUDataset(path, name="PROTEINS_full", use_node_attr=True)
 dataset.data.x = dataset.data.x[:, :-3]  # only use non-binary features.
 dataset = dataset.shuffle()

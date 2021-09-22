@@ -1,11 +1,11 @@
-import os.path as osp
+from pathlib import Path 
 
 import torch
 from torch_geometric.datasets import BitcoinOTC
 from torch_geometric.nn import SignedGCN
 
 name = 'BitcoinOTC-1'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', name)
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', name)
 dataset = BitcoinOTC(path, edge_window_size=1)
 
 # Generate dataset.

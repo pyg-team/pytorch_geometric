@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -9,7 +9,7 @@ from torch_geometric.utils import normalized_cut
 from torch_geometric.nn import (SplineConv, graclus, max_pool, max_pool_x,
                                 global_mean_pool)
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
 train_dataset = MNISTSuperpixels(path, True, transform=transform)
 test_dataset = MNISTSuperpixels(path, False, transform=transform)

@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 import argparse
 
 import torch
@@ -13,7 +13,7 @@ parser.add_argument('--use_gdc', action='store_true',
 args = parser.parse_args()
 
 dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 

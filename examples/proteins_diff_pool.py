@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 from math import ceil
 
 import torch
@@ -16,7 +16,7 @@ class MyFilter(object):
         return data.num_nodes <= max_nodes
 
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data',
                 'PROTEINS_dense')
 dataset = TUDataset(path, name='PROTEINS', transform=T.ToDense(max_nodes),
                     pre_filter=MyFilter())

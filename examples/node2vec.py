@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import matplotlib.pyplot as plt
@@ -9,7 +9,7 @@ from torch_geometric.nn import Node2Vec
 
 def main():
     dataset = 'Cora'
-    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+    path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', dataset)
     dataset = Planetoid(path, dataset)
     data = dataset[0]
 

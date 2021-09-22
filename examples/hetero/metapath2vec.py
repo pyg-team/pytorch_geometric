@@ -1,12 +1,12 @@
 # Reaches around 91.8% Micro-F1 after 5 epochs.
 
-import os.path as osp
+from pathlib import Path
 
 import torch
 from torch_geometric.datasets import AMiner
 from torch_geometric.nn import MetaPath2Vec
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/AMiner')
+path = Path.joinpath(Path(__file__).resolve().parent, '../../data/AMiner')
 dataset = AMiner(path)
 data = dataset[0]
 

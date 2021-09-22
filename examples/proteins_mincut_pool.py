@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 from math import ceil
 
 import torch
@@ -9,7 +9,7 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCNConv, DenseGraphConv, dense_mincut_pool
 from torch_geometric.utils import to_dense_batch, to_dense_adj
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
 average_nodes = int(dataset.data.x.size(0) / len(dataset))
 n = (len(dataset) + 9) // 10

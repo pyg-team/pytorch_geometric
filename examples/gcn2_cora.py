@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 from torch.nn import Linear
@@ -9,7 +9,7 @@ from torch_geometric.nn import GCN2Conv
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 
 dataset = 'Cora'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', dataset)
 transform = T.Compose([T.NormalizeFeatures(), T.ToSparseTensor()])
 dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]

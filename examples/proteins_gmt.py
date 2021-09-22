@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 from torch.nn import Linear
@@ -7,7 +7,7 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCNConv, GraphMultisetTransformer
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
 avg_num_nodes = int(dataset.data.num_nodes / len(dataset))
 n = (len(dataset) + 9) // 10

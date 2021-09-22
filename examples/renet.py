@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -9,7 +9,7 @@ from torch_geometric.nn.models.re_net import RENet
 seq_len = 10
 
 # Load the dataset and precompute history objects.
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ICEWS18')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'ICEWS18')
 train_dataset = ICEWS18(path, pre_transform=RENet.pre_transform(seq_len))
 test_dataset = ICEWS18(path, split='test')
 

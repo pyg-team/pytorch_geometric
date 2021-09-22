@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -12,7 +12,7 @@ from torch_geometric.utils import intersection_and_union as i_and_u
 from pointnet2_classification import MLP
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
+path =  Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'ShapeNet')
 transform = T.Compose([
     T.RandomTranslate(0.01),
     T.RandomRotate(15, axis=0),

@@ -1,4 +1,4 @@
-import os.path as osp
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -7,7 +7,7 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINConv, global_add_pool
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TU')
+path = Path.joinpath(Path(__file__).resolve().parent, '..', 'data', 'TU')
 dataset = TUDataset(path, name='MUTAG').shuffle()
 
 train_dataset = dataset[len(dataset) // 10:]
