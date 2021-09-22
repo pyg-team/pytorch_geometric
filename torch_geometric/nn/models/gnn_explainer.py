@@ -51,9 +51,8 @@ class GNNExplainer(torch.nn.Module):
             to use individual feature-level mask for each node, and
             :obj:`'scalar'` to use a scalar (node-level) mask for each
             individual node. (default: :obj:`'feature'`)
-        allow_edge_mask (boolean, optional): if set to :obj:`False`, edge mask will not
-            be optimized.
-            (default: :obj:`True`)
+        allow_edge_mask (boolean, optional): if set to :obj:`False`, edge mask
+            will not be optimized. (default: :obj:`True`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
         **kwargs (dict, optional): Additional hyperparameters with which
