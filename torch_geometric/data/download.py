@@ -1,6 +1,7 @@
 import sys
 import ssl
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 from six.moves import urllib
 
 from .makedirs import makedirs
@@ -17,9 +18,10 @@ def download_url(url: str, folder: str, log: bool = True):
     """
 
     filename = url.rpartition('/')[2].split('?')[0]
-    path = osp.join(folder, filename)
+    path = Path.joinpath(folder, filename)
+    # path = osp.join(folder, filename)
 
-    if osp.exists(path):  # pragma: no cover
+    if path.exists():  # pragma: no cover
         if log:
             print(f'Using existing file {filename}', file=sys.stderr)
         return path
