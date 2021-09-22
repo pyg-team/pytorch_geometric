@@ -9,7 +9,16 @@ class FB15k_237(InMemoryDataset):
     Multi-Relational Data"
     <https://papers.nips.cc/paper/5071-translating-embeddings-for-modeling
     -multi-relational-data>`_ paper,
-    containing 14,541 entities, 237 relations and 310,116 fact triplets.
+    containing 14,541 entities, 237 relations and 310,116 fact triples.
+
+    .. note::
+
+        The original :class:`FB15k` dataset suffers from major test leakage
+        through inverse relations, where a large number of test triples could
+        be obtained by inverting triples in the training set.
+        In order to create a dataset without this characteristic, the
+        :class:`~torch_geometric.datasets.FB15k_237` describes a subset of
+        :class:`FB15k` where inverse relations are removed.
 
     Args:
         root (string): Root directory where the dataset should be saved.
