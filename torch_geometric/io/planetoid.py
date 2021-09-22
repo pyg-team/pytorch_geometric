@@ -1,5 +1,6 @@
 import sys
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 from itertools import repeat
 
 import torch
@@ -85,7 +86,7 @@ def read_planetoid_data(folder, prefix):
 
 
 def read_file(folder, prefix, name):
-    path = osp.join(folder, 'ind.{}.{}'.format(prefix.lower(), name))
+    path = Path.joinpath(folder, 'ind.{}.{}'.format(prefix.lower(), name))
 
     if name == 'test.index':
         return read_txt_array(path, dtype=torch.long)

@@ -75,8 +75,8 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
                              **kwargs)
 
         if self.sample_coverage > 0:
-            path = osp.join(save_dir or '', self.__filename__)
-            if save_dir is not None and osp.exists(path):  # pragma: no cover
+            path = Path.joinpath(save_dir or '', self.__filename__)
+            if save_dir is not None and Path(path).exists():  # pragma: no cover
                 self.node_norm, self.edge_norm = torch.load(path)
             else:
                 self.node_norm, self.edge_norm = self.__compute_norm__()
