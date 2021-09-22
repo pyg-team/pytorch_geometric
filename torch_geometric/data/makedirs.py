@@ -8,5 +8,5 @@ def makedirs(path):
         Path.mkdir(Path.expanduser(Path(path).resolve()))
         # os.makedirs(osp.expanduser(osp.normpath(path)))
     except OSError as e:
-        if e.errno != errno.EEXIST and Path.isdir(path):
+        if e.errno != errno.EEXIST and Path(path).isdir():
             raise e

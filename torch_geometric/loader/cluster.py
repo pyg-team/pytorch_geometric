@@ -35,7 +35,7 @@ class ClusterData(torch.utils.data.Dataset):
 
         recursive_str = '_recursive' if recursive else ''
         filename = f'partition_{num_parts}{recursive_str}.pt'
-        path = Path.joinpath(save_dir or '', filename)
+        path = Path.joinpath(Path(save_dir) or Path(''), filename)
         if save_dir is not None and path.exists():
             adj, partptr, perm = torch.load(path)
         else:
