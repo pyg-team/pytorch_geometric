@@ -1,7 +1,8 @@
 from torch_geometric.graphgym.config import cfg
 
 import torch
-import os
+# import os
+from pathlib import Path
 import logging
 
 
@@ -11,7 +12,7 @@ def get_ckpt_dir():
 
 def get_all_epoch():
     d = get_ckpt_dir()
-    names = os.listdir(d) if os.path.exists(d) else []
+    names = Path.iterdir(Path(d)) if Path(d).exists() else []
     if len(names) == 0:
         return [0]
     epochs = [int(name.split('.')[0]) for name in names]
@@ -40,7 +41,7 @@ def load_ckpt(model, optimizer=None, scheduler=None):
     else:
         epoch_resume = cfg.train.epoch_resume
     ckpt_name = '{}/{}.ckpt'.format(get_ckpt_dir(), epoch_resume)
-    if not os.path.isfile(ckpt_name):
+    if not Path(ckpt_name).isfile():
         return 0
     ckpt = torch.load(ckpt_name)
     epoch = ckpt['epoch']
@@ -69,7 +70,7 @@ def save_ckpt(model, optimizer, scheduler, epoch):
         'optimizer_state': optimizer.state_dict(),
         'scheduler_state': scheduler.state_dict()
     }
-    os.makedirs(get_ckpt_dir(), exist_ok=True)
+    Path.mkdirs(get_ckpt_dir(), exist_ok=True)
     ckpt_name = '{}/{}.ckpt'.format(get_ckpt_dir(), epoch)
     torch.save(ckpt, ckpt_name)
     logging.info('Check point saved: {}'.format(ckpt_name))
@@ -86,4 +87,4 @@ def clean_ckpt():
     for epoch in epochs:
         if epoch != epoch_last:
             ckpt_name = '{}/{}.ckpt'.format(get_ckpt_dir(), epoch)
-            os.remove(ckpt_name)
+            Path.unlink(ckpt_name)

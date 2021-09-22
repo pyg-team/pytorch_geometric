@@ -1,6 +1,6 @@
 import torch
 import math
-import os
+from pathlib import Path
 import sys
 import logging
 from torch_geometric.graphgym.config import cfg
@@ -46,7 +46,7 @@ class Logger(object):
         self._time_total = 0  # won't be reset
 
         self.out_dir = '{}/{}'.format(cfg.run_dir, name)
-        os.makedirs(self.out_dir, exist_ok=True)
+        Path.mkdir(self.out_dir, exist_ok=True)
         if cfg.tensorboard_each_run:
             if SummaryWriter is None:
                 raise ImportError(
