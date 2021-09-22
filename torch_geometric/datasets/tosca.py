@@ -1,5 +1,3 @@
-import os
-# import os.path as osp
 from pathlib import Path
 import glob
 
@@ -76,12 +74,12 @@ class TOSCA(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         data_list = []
         for cat in self.categories:
-            paths = glob.glob(Path.joinpath(self.raw_dir, '{}*.tri'.format(cat)))
+            paths = glob.glob(Path.joinpath(Path(self.raw_dir), '{}*.tri'.format(cat)))
             paths = [path[:-4] for path in paths]
             paths = sorted(paths, key=lambda e: (len(e), e))
 

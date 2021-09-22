@@ -70,12 +70,12 @@ class GeometricShapes(InMemoryDataset):
         torch.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset: str):
-        categories = glob.glob(Path.joinpath(self.raw_dir, '*', ''))
+        categories = glob.glob(Path.joinpath(Path(self.raw_dir), '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
         data_list = []
         for target, category in enumerate(categories):
-            folder = Path.joinpath(self.raw_dir, category, dataset)
+            folder = Path.joinpath(Path(self.raw_dir), category, dataset)
             paths = glob.glob('{}/*.off'.format(folder))
             for path in paths:
                 data = read_off(path)

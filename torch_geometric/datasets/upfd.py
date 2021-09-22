@@ -1,5 +1,3 @@
-import os
-# import os.path as osp
 from pathlib import Path
 
 import torch
@@ -88,11 +86,12 @@ class UPFD(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return Path.joinpath(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self):
-        return Path.joinpath(self.root, self.name, 'processed', self.feature)
+        return Path.joinpath(Path(self.root), self.name, 'processed',
+                                                            self.feature)
 
     @property
     def raw_file_names(self):
@@ -109,24 +108,25 @@ class UPFD(InMemoryDataset):
         from google_drive_downloader import GoogleDriveDownloader as gdd
 
         gdd.download_file_from_google_drive(
-            self.ids[self.name], Path.joinpath(self.raw_dir, f'{self.name}.zip'),
-            unzip=True)
-        os.remove(Path.joinpath(self.raw_dir, f'{self.name}.zip'))
+            self.ids[self.name], Path.joinpath(Path(self.raw_dir),
+                                                f'{self.name}.zip'),unzip=True)
+        Path.joinpath(Path(self.raw_dir), f'{self.name}.zip').unlink()
 
     def process(self):
         x = sp.load_npz(
-            Path.joinpath(self.raw_dir, f'new_{self.feature}_feature.npz'))
+            Path.joinpath(Path(self.raw_dir),
+                                f'new_{self.feature}_feature.npz'))
         x = torch.from_numpy(x.todense()).to(torch.float)
 
-        edge_index = read_txt_array(Path.joinpath(self.raw_dir, 'A.txt'), sep=',',
-                                    dtype=torch.long).t()
+        edge_index = read_txt_array(Path.joinpath(Path(self.raw_dir), 'A.txt'),
+                                    sep=',',dtype=torch.long).t()
         edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
 
-        y = np.load(Path.joinpath(self.raw_dir, 'graph_labels.npy'))
+        y = np.load(Path.joinpath(Path(self.raw_dir), 'graph_labels.npy'))
         y = torch.from_numpy(y).to(torch.long)
         _, y = y.unique(sorted=True, return_inverse=True)
 
-        batch = np.load(Path.joinpath(self.raw_dir, 'node_graph_id.npy'))
+        batch = np.load(Path.joinpath(Path(self.raw_dir), 'node_graph_id.npy'))
         batch = torch.from_numpy(batch).to(torch.long)
 
         node_slice = torch.cumsum(batch.bincount(), 0)
@@ -144,7 +144,8 @@ class UPFD(InMemoryDataset):
         self.data = Data(x=x, edge_index=edge_index, y=y)
 
         for path, split in zip(self.processed_paths, ['train', 'val', 'test']):
-            idx = np.load(Path.joinpath(self.raw_dir, f'{split}_idx.npy')).tolist()
+            idx = np.load(Path.joinpath(Path(self.raw_dir),
+                                        f'{split}_idx.npy')).tolist()
             data_list = [self.get(i) for i in idx]
             if self.pre_filter is not None:
                 data_list = [d for d in data_list if self.pre_filter(d)]

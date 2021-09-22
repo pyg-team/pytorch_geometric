@@ -1,5 +1,3 @@
-import os
-# import os.path as osp
 from pathlib import Path
 
 import torch
@@ -194,18 +192,18 @@ class SNAPDataset(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return Path.joinpath(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self):
-        return Path.joinpath(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def processed_file_names(self):
         return 'data.pt'
 
     def _download(self):
-        if Path.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
+        if Path.is_dir(self.raw_dir) and len(Path(self.raw_dir).iterdir()) > 0:
             return
 
         makedirs(self.raw_dir)
@@ -218,15 +216,15 @@ class SNAPDataset(InMemoryDataset):
                 extract_tar(path, self.raw_dir)
             elif name.endswith('.gz'):
                 extract_gz(path, self.raw_dir)
-            os.unlink(path)
+            path(path).unlink()
 
     def process(self):
         raw_dir = self.raw_dir
-        filenames = os.listdir(self.raw_dir)
-        if len(filenames) == 1 and Path.isdir(Path.joinpath(raw_dir, filenames[0])):
-            raw_dir = Path.joinpath(raw_dir, filenames[0])
+        filenames = Path(self.raw_dir).listdir()
+        if len(filenames) == 1 and Path.joinpath(Path(raw_dir), filenames[0]).is_dir():
+            raw_dir = Path.joinpath(Path(raw_dir), filenames[0])
 
-        raw_files = sorted([Path.joinpath(raw_dir, f) for f in os.listdir(raw_dir)])
+        raw_files = sorted([Path.joinpath(Path(raw_dir), f) for f in Path(raw_dir).iterdir()])
 
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])

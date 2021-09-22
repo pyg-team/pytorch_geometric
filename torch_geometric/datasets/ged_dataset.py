@@ -1,7 +1,6 @@
 from typing import Optional, Callable, List
 
 import os
-# import os.path as osp
 from pathlib import Path
 import glob
 import pickle
@@ -97,14 +96,14 @@ class GEDDataset(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter)
         path = self.processed_paths[0] if train else self.processed_paths[1]
         self.data, self.slices = torch.load(path)
-        path = Path.joinpath(self.processed_dir, f'{self.name}_ged.pt')
+        path = Path.joinpath(Path(self.processed_dir), f'{self.name}_ged.pt')
         self.ged = torch.load(path)
-        path = Path.joinpath(self.processed_dir, f'{self.name}_norm_ged.pt')
+        path = Path.joinpath(Path(self.processed_dir), f'{self.name}_norm_ged.pt')
         self.norm_ged = torch.load(path)
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [Path.joinpath(self.name, s) for s in ['train', 'test']]
+        return [Path.joinpath(Path(self.name), s) for s in ['train', 'test']]
 
     @property
     def processed_file_names(self) -> List[str]:
@@ -114,18 +113,18 @@ class GEDDataset(InMemoryDataset):
         name = self.datasets[self.name]['id']
         path = download_url(self.url.format(name), self.raw_dir)
         self.datasets[self.name]['extract'](path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
         name = self.datasets[self.name]['pickle']
         path = download_url(self.url.format(name), self.raw_dir)
-        os.rename(path, Path.joinpath(self.raw_dir, self.name, 'ged.pickle'))
+        Path(path).rename(Path.joinpath(Path(self.raw_dir), self.name, 'ged.pickle'))
 
     def process(self):
         import networkx as nx
 
         ids, Ns = [], []
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
-            names = glob.glob(Path.joinpath(r_path, '*.gexf'))
+            names = glob.glob(Path.joinpath(Path(r_path), '*.gexf'))
             # Get the graph IDs given by the file name:
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 
@@ -133,7 +132,7 @@ class GEDDataset(InMemoryDataset):
             # Convert graphs in .gexf format to a NetworkX Graph:
             for i, idx in enumerate(ids[-1]):
                 i = i if len(ids) == 1 else i + len(ids[0])
-                G = nx.read_gexf(Path.joinpath(r_path, f'{idx}.gexf'))
+                G = nx.read_gexf(Path.joinpath(Path(r_path), f'{idx}.gexf'))
                 mapping = {name: j for j, name in enumerate(G.nodes())}
                 G = nx.relabel_nodes(G, mapping)
                 Ns.append(G.number_of_nodes())
@@ -168,7 +167,7 @@ class GEDDataset(InMemoryDataset):
         assoc = {idx: i for i, idx in enumerate(ids[0])}
         assoc.update({idx: i + len(ids[0]) for i, idx in enumerate(ids[1])})
 
-        path = Path.joinpath(self.raw_dir, self.name, 'ged.pickle')
+        path = Path.joinpath(Path(self.raw_dir), self.name, 'ged.pickle')
         mat = torch.full((len(assoc), len(assoc)), float('inf'))
         with open(path, 'rb') as f:
             obj = pickle.load(f)
@@ -181,14 +180,14 @@ class GEDDataset(InMemoryDataset):
             g = torch.tensor(gs, dtype=torch.float)
             mat[x, y], mat[y, x] = g, g
 
-        path = Path.joinpath(self.processed_dir, f'{self.name}_ged.pt')
+        path = Path.joinpath(Path(self.processed_dir), f'{self.name}_ged.pt')
         torch.save(mat, path)
 
         # Calculate the normalized GEDs:
         N = torch.tensor(Ns, dtype=torch.float)
         norm_mat = mat / (0.5 * (N.view(-1, 1) + N.view(1, -1)))
 
-        path = Path.joinpath(self.processed_dir, f'{self.name}_norm_ged.pt')
+        path = Path.joinpath(Path(self.processed_dir), f'{self.name}_norm_ged.pt')
         torch.save(norm_mat, path)
 
     def __repr__(self) -> str:

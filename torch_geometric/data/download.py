@@ -18,10 +18,10 @@ def download_url(url: str, folder: str, log: bool = True):
     """
 
     filename = url.rpartition('/')[2].split('?')[0]
-    path = Path.joinpath(folder, filename)
+    path = Path.joinpath(Path(folder), filename)
     # path = osp.join(folder, filename)
 
-    if path.exists():  # pragma: no cover
+    if Path(path).exists():  # pragma: no cover
         if log:
             print(f'Using existing file {filename}', file=sys.stderr)
         return path

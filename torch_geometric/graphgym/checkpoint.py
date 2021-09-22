@@ -41,7 +41,7 @@ def load_ckpt(model, optimizer=None, scheduler=None):
     else:
         epoch_resume = cfg.train.epoch_resume
     ckpt_name = '{}/{}.ckpt'.format(get_ckpt_dir(), epoch_resume)
-    if not Path(ckpt_name).isfile():
+    if not Path(ckpt_name).is_file():
         return 0
     ckpt = torch.load(ckpt_name)
     epoch = ckpt['epoch']

@@ -53,7 +53,7 @@ class ZINC(InMemoryDataset):
         self.subset = subset
         assert split in ['train', 'val', 'test']
         super(ZINC, self).__init__(root, transform, pre_transform, pre_filter)
-        path = Path.joinpath(self.processed_dir, f'{split}.pt')
+        path = Path.joinpath(Path(self.processed_dir), f'{split}.pt')
         self.data, self.slices = torch.load(path)
 
     @property
@@ -66,7 +66,7 @@ class ZINC(InMemoryDataset):
     @property
     def processed_dir(self):
         name = 'subset' if self.subset else 'full'
-        return Path.joinpath(self.root, name, 'processed')
+        return Path.joinpath(path(self.root), name, 'processed')
 
     @property
     def processed_file_names(self):
@@ -76,21 +76,21 @@ class ZINC(InMemoryDataset):
         shutil.rmtree(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
-        os.rename(Path.joinpath(self.root, 'molecules'), self.raw_dir)
-        os.unlink(path)
+        Path.joinpath(Path(self.root), 'molecules').rename(Path(self.raw_dir))
+        Path(path).unlink()
 
         for split in ['train', 'val', 'test']:
             download_url(self.split_url.format(split), self.raw_dir)
 
     def process(self):
         for split in ['train', 'val', 'test']:
-            with open(Path.joinpath(self.raw_dir, f'{split}.pickle'), 'rb') as f:
+            with open(Path.joinpath(Path(self.raw_dir), f'{split}.pickle'), 'rb') as f:
                 mols = pickle.load(f)
 
             indices = range(len(mols))
 
             if self.subset:
-                with open(Path.joinpath(self.raw_dir, f'{split}.index'), 'r') as f:
+                with open(Path.joinpath(Path(self.raw_dir), f'{split}.index'), 'r') as f:
                     indices = [int(x) for x in f.read()[:-1].split(',')]
 
             pbar = tqdm(total=len(indices))
@@ -122,4 +122,4 @@ class ZINC(InMemoryDataset):
             pbar.close()
 
             torch.save(self.collate(data_list),
-                       Path.joinpath(self.processed_dir, f'{split}.pt'))
+                       Path.joinpath(Path(self.processed_dir), f'{split}.pt'))

@@ -142,12 +142,12 @@ class MD17(InMemoryDataset):
     @property
     def raw_dir(self) -> str:
         name = self.file_names[self.name].split('.')[0]
-        return Path.joinpath(self.root, name, 'raw')
+        return Path.joinpath(Path(self.root), name, 'raw')
 
     @property
     def processed_dir(self) -> str:
         name = self.file_names[self.name].split('.')[0]
-        return Path.joinpath(self.root, name, 'processed')
+        return Path.joinpath(Path(self.root), name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:

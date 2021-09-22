@@ -65,20 +65,20 @@ class DBLP(InMemoryDataset):
 
         node_types = ['author', 'paper', 'term', 'conference']
         for i, node_type in enumerate(node_types[:2]):
-            x = sp.load_npz(Path.joinpath(self.raw_dir, f'features_{i}.npz'))
+            x = sp.load_npz(Path.joinpath(Path(self.raw_dir), f'features_{i}.npz'))
             data[node_type].x = torch.from_numpy(x.todense()).to(torch.float)
 
-        x = np.load(Path.joinpath(self.raw_dir, 'features_2.npy'))
+        x = np.load(Path.joinpath(Path(self.raw_dir), 'features_2.npy'))
         data['term'].x = torch.from_numpy(x).to(torch.float)
 
-        node_type_idx = np.load(Path.joinpath(self.raw_dir, 'node_types.npy'))
+        node_type_idx = np.load(Path.joinpath(Path(self.raw_dir), 'node_types.npy'))
         node_type_idx = torch.from_numpy(node_type_idx).to(torch.long)
         data['conference'].num_nodes = int((node_type_idx == 3).sum())
 
-        y = np.load(Path.joinpath(self.raw_dir, 'labels.npy'))
+        y = np.load(Path.joinpath(Path(self.raw_dir), 'labels.npy'))
         data['author'].y = torch.from_numpy(y).to(torch.long)
 
-        split = np.load(Path.joinpath(self.raw_dir, 'train_val_test_idx.npz'))
+        split = np.load(Path.joinpath(Path(self.raw_dir), 'train_val_test_idx.npz'))
         for name in ['train', 'val', 'test']:
             idx = split[f'{name}_idx']
             idx = torch.from_numpy(idx).to(torch.long)
@@ -96,7 +96,7 @@ class DBLP(InMemoryDataset):
         s['term'] = (N_a + N_p, N_a + N_p + N_t)
         s['conference'] = (N_a + N_p + N_t, N_a + N_p + N_t + N_c)
 
-        A = sp.load_npz(Path.joinpath(self.raw_dir, 'adjM.npz'))
+        A = sp.load_npz(Path.joinpath(Path(self.raw_dir), 'adjM.npz'))
         for src, dst in product(node_types, node_types):
             A_sub = A[s[src][0]:s[src][1], s[dst][0]:s[dst][1]].tocoo()
             if A_sub.nnz > 0:

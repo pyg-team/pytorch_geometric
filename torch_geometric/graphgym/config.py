@@ -1,5 +1,4 @@
 import logging
-# import os
 from pathlib import Path
 from yacs.config import CfgNode as CN
 import shutil
@@ -483,7 +482,7 @@ def dump_cfg(cfg):
         cfg (CfgNode): Configuration node
 
     """
-    cfg_file = Path.joinpath(cfg.out_dir, cfg.cfg_dest)
+    cfg_file = Path.joinpath(Path(cfg.out_dir), cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
@@ -503,7 +502,7 @@ def load_cfg(cfg, args):
 
 
 def makedirs_rm_exist(dir):
-    if Path(dir).isdir():
+    if Path(dir).is_dir():
         shutil.rmtree(dir)
     Path.mkdir(dir, exist_ok=True)
 
@@ -520,7 +519,7 @@ def set_run_dir(out_dir, fname):
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
         fname = fname[:-5]
-    cfg.run_dir = Path.joinpath(out_dir, fname, str(cfg.seed))
+    cfg.run_dir = Path.joinpath(Path(out_dir), fname, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
         Path.mkdir(cfg.run_dir, exist_ok=True)
@@ -541,7 +540,7 @@ def set_agg_dir(out_dir, fname):
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
         fname = fname[:-5]
-    return Path.joinpath(out_dir, fname)
+    return Path.joinpath(Path(out_dir), fname)
 
 
 set_cfg(cfg)

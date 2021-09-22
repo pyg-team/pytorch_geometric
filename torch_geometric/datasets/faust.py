@@ -70,7 +70,7 @@ class FAUST(InMemoryDataset):
     def process(self):
         extract_zip(self.raw_paths[0], self.raw_dir, log=False)
 
-        path = Path.joinpath(self.raw_dir, 'MPI-FAUST', 'training', 'registrations')
+        path = Path.joinpath(Path(self.raw_dir), 'MPI-FAUST', 'training', 'registrations')
         path = Path.joinpath(path, 'tr_reg_{0:03d}.ply')
         data_list = []
         for i in range(100):
@@ -85,4 +85,4 @@ class FAUST(InMemoryDataset):
         torch.save(self.collate(data_list[:80]), self.processed_paths[0])
         torch.save(self.collate(data_list[80:]), self.processed_paths[1])
 
-        shutil.rmtree(Path.joinpath(self.raw_dir, 'MPI-FAUST'))
+        shutil.rmtree(Path.joinpath(Path(self.raw_dir), 'MPI-FAUST'))

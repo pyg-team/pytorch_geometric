@@ -86,7 +86,7 @@ def read_planetoid_data(folder, prefix):
 
 
 def read_file(folder, prefix, name):
-    path = Path.joinpath(folder, 'ind.{}.{}'.format(prefix.lower(), name))
+    path = Path.joinpath(Path(folder), 'ind.{}.{}'.format(prefix.lower(), name))
 
     if name == 'test.index':
         return read_txt_array(path, dtype=torch.long)

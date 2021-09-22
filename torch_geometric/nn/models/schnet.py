@@ -1,8 +1,6 @@
 from typing import Optional
 
-import os
 import warnings
-# import os.path as osp
 from pathlib import Path
 from math import pi as PI
 
@@ -153,16 +151,17 @@ class SchNet(torch.nn.Module):
         units[1] = ase.units.Bohr**3
         units[5] = ase.units.Bohr**2
 
-        root = Path.home(Path.resolve(root))
+        root = Path.home(Path(root).resolve())
         makedirs(root)
         folder = 'trained_schnet_models'
-        if not Path.joinpath(root, folder).exists():
+        if not Path.joinpath(Path(root), folder).exists():
             path = download_url(SchNet.url, root)
             extract_zip(path, root)
             Path.unlink(path)
 
         name = f'qm9_{qm9_target_dict[target]}'
-        path = Path.joinpath(root, 'trained_schnet_models', name, 'split.npz')
+        path = Path.joinpath(Path(root), 'trained_schnet_models', name,
+                            'split.npz')
 
         split = np.load(path)
         train_idx = split['train_idx']
@@ -178,7 +177,8 @@ class SchNet(torch.nn.Module):
         val_idx = assoc[val_idx[np.isin(val_idx, idx)]]
         test_idx = assoc[test_idx[np.isin(test_idx, idx)]]
 
-        path = Path.joinpath(root, 'trained_schnet_models', name, 'best_model')
+        path = Path.joinpath(Path(root), 'trained_schnet_models', name,
+                            'best_model')
 
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')

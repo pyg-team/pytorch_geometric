@@ -43,11 +43,11 @@ class Amazon(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return Path.joinpath(self.root, self.name.capitalize(), 'raw')
+        return Path.joinpath(Path(self.root), self.name.capitalize(), 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return Path.joinpath(self.root, self.name.capitalize(), 'processed')
+        return Path.joinpath(Path(self.root), self.name.capitalize(), 'processed')
 
     @property
     def raw_file_names(self) -> str:

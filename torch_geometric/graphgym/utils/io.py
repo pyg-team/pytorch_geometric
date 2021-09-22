@@ -77,7 +77,7 @@ def dict_list_to_tb(dict_list, writer):
 
 
 def makedirs(dir):
-    Path.mkdir(dir, exist_ok=True)
+    Path(dir).mkdir(exist_ok=True)
 
 
 def makedirs_rm_exist(dir):
@@ -90,6 +90,6 @@ def makedirs_rm_exist(dir):
     Returns:
 
     '''
-    if Path(dir).isdir():
+    if Path(dir).is_dir():
         shutil.rmtree(dir)
-    Path.mkdir(dir, exist_ok=True)
+    Path(dir).mkdir(exist_ok=True)

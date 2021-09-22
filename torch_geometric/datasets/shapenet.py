@@ -1,5 +1,3 @@
-import os
-# import os.path as osp
 import pathlib
 from pathlib import Path
 import shutil
@@ -137,17 +135,17 @@ class ShapeNet(InMemoryDataset):
     def processed_file_names(self):
         cats = '_'.join([cat[:3].lower() for cat in self.categories])
         return [
-            os.path.join('{}_{}.pt'.format(cats, split))
+            Path.joinpath(Path('{}_{}.pt'.format(cats, split)))
             for split in ['train', 'val', 'test', 'trainval']
         ]
 
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
-        os.unlink(path)
+        Path(path).unlink()
         shutil.rmtree(self.raw_dir)
         name = self.url.split('/')[-1].split('.')[0]
-        os.rename(Path.joinpath(self.root, name), self.raw_dir)
+        Path.joinpath(Path(self.root), name).rename(Path(self.raw_dir))
 
     def process_filenames(self, filenames):
         data_list = []
@@ -159,7 +157,7 @@ class ShapeNet(InMemoryDataset):
             if cat not in categories_ids:
                 continue
 
-            data = read_txt_array(Path.joinpath(self.raw_dir, name))
+            data = read_txt_array(Path.joinpath(Path(self.raw_dir), name))
             pos = data[:, :3]
             x = data[:, 3:6]
             y = data[:, -1].type(torch.long)
@@ -175,7 +173,7 @@ class ShapeNet(InMemoryDataset):
     def process(self):
         trainval = []
         for i, split in enumerate(['train', 'val', 'test']):
-            path = Path.joinpath(self.raw_dir, 'train_test_split',
+            path = Path.joinpath(Path(self.raw_dir), 'train_test_split',
                             f'shuffled_{split}_file_list.json')
             with open(path, 'r') as f:
                 filenames = [

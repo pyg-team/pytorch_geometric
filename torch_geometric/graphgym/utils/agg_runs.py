@@ -82,14 +82,14 @@ def agg_runs(dir, metric_best='auto'):
     '''
     results = {'train': None, 'val': None, 'test': None}
     results_best = {'train': None, 'val': None, 'test': None}
-    for seed in Path.iterdir(dir):
+    for seed in Path(dir).iterdir():
         if is_seed(seed):
-            dir_seed = Path.joinpath(dir, seed)
+            dir_seed = Path.joinpath(Path(dir), seed)
 
             split = 'val'
-            if split in Path.iterdir(dir_seed):
-                dir_split = Path.joinpath(dir_seed, split)
-                fname_stats = Path.joinpath(dir_split, 'stats.json')
+            if split in Path(dir_seed).iterdir():
+                dir_split = Path.joinpath(Path(dir_seed), split)
+                fname_stats = Path.joinpath(Path(dir_split), 'stats.json')
                 stats_list = json_to_dict_list(fname_stats)
                 if metric_best == 'auto':
                     metric = 'auc' if 'auc' in stats_list[0] else 'accuracy'
@@ -103,10 +103,10 @@ def agg_runs(dir, metric_best='auto'):
                         'epoch']
                 print(best_epoch)
 
-            for split in Path.iterdir(dir_seed):
+            for split in Path(dir_seed).iterdir():
                 if is_split(split):
-                    dir_split = Path.joinpath(dir_seed, split)
-                    fname_stats = Path.joinpath(dir_split, 'stats.json')
+                    dir_split = Path.joinpath(Path(dir_seed), split)
+                    fname_stats = Path.joinpath(Path(dir_split), 'stats.json')
                     stats_list = json_to_dict_list(fname_stats)
                     stats_best = [
                         stats for stats in stats_list
@@ -133,9 +133,9 @@ def agg_runs(dir, metric_best='auto'):
         results_best[key] = agg_dict_list(results_best[key])
     # save aggregated results
     for key, value in results.items():
-        dir_out = Path.joinpath(dir, 'agg', key)
+        dir_out = Path.joinpath(Path(dir), 'agg', key)
         makedirs_rm_exist(dir_out)
-        fname = Path.joinpath(dir_out, 'stats.json')
+        fname = Path.joinpath(Path(dir_out), 'stats.json')
         dict_list_to_json(value, fname)
 
         if cfg.tensorboard_agg:
@@ -146,11 +146,11 @@ def agg_runs(dir, metric_best='auto'):
             dict_list_to_tb(value, writer)
             writer.close()
     for key, value in results_best.items():
-        dir_out = Path.joinpath(dir, 'agg', key)
-        fname = Path.joinpath(dir_out, 'best.json')
+        dir_out = Path.joinpath(Path(dir), 'agg', key)
+        fname = Path.joinpath(Path(dir_out), 'best.json')
         dict_to_json(value, fname)
     logging.info('Results aggregated across runs saved in {}'.format(
-        Path.joinpath(dir, 'agg')))
+        Path.joinpath(Path(dir), 'agg')))
 
 
 def agg_batch(dir, metric_best='auto'):
@@ -164,61 +164,61 @@ def agg_batch(dir, metric_best='auto'):
 
     '''
     results = {'train': [], 'val': [], 'test': []}
-    for run in Path.iterdir(dir):
+    for run in Path(dir).iterdir():
         if run != 'agg':
             dict_name = name_to_dict(run)
-            dir_run = Path.joinpath(dir, run, 'agg')
-            if Path(dir_run).isdir():
-                for split in Path.iterdir(dir_run):
-                    dir_split = Path.joinpath(dir_run, split)
-                    fname_stats = Path.joinpath(dir_split, 'best.json')
+            dir_run = Path.joinpath(Path(dir), run, 'agg')
+            if Path(dir_run).is_dir():
+                for split in Path(dir_run).iterdir():
+                    dir_split = Path.joinpath(Path(dir_run), split)
+                    fname_stats = Path.joinpath(Path(dir_split), 'best.json')
                     dict_stats = json_to_dict_list(fname_stats)[
                         -1]  # get best val epoch
                     rm_keys(dict_stats,
                             ['lr', 'lr_std', 'eta', 'eta_std', 'params_std'])
                     results[split].append({**dict_name, **dict_stats})
-    dir_out = Path.joinpath(dir, 'agg')
+    dir_out = Path.joinpath(Path(dir), 'agg')
     makedirs_rm_exist(dir_out)
     for key in results:
         if len(results[key]) > 0:
             results[key] = pd.DataFrame(results[key])
             results[key] = results[key].sort_values(
                 list(dict_name.keys()), ascending=[True] * len(dict_name))
-            fname = Path.joinpath(dir_out, '{}_best.csv'.format(key))
+            fname = Path.joinpath(path(dir_out), '{}_best.csv'.format(key))
             results[key].to_csv(fname, index=False)
 
     results = {'train': [], 'val': [], 'test': []}
-    for run in Path.iterdir(dir):
+    for run in Path(dir).iterdir():
         if run != 'agg':
             dict_name = name_to_dict(run)
-            dir_run = Path.joinpath(dir, run, 'agg')
-            if Path(dir_run).isdir():
-                for split in Path.iterdir(dir_run):
-                    dir_split = Path.joinpath(dir_run, split)
-                    fname_stats = Path.joinpath(dir_split, 'stats.json')
+            dir_run = Path.joinpath(Path(dir), run, 'agg')
+            if Path(dir_run).is_dir():
+                for split in Path(dir_run).iterdir():
+                    dir_split = Path.joinpath(Path(dir_run), split)
+                    fname_stats = Path.joinpath(Path(dir_split), 'stats.json')
                     dict_stats = json_to_dict_list(fname_stats)[
                         -1]  # get last epoch
                     rm_keys(dict_stats,
                             ['lr', 'lr_std', 'eta', 'eta_std', 'params_std'])
                     results[split].append({**dict_name, **dict_stats})
-    dir_out = Path.joinpath(dir, 'agg')
+    dir_out = Path.joinpath(Path(dir), 'agg')
     for key in results:
         if len(results[key]) > 0:
             results[key] = pd.DataFrame(results[key])
             results[key] = results[key].sort_values(
                 list(dict_name.keys()), ascending=[True] * len(dict_name))
-            fname = Path.joinpath(dir_out, '{}.csv'.format(key))
+            fname = Path.joinpath(Path(dir_out), '{}.csv'.format(key))
             results[key].to_csv(fname, index=False)
 
     results = {'train': [], 'val': [], 'test': []}
-    for run in Path.iterdir(dir):
+    for run in Path(dir).iterdir():
         if run != 'agg':
             dict_name = name_to_dict(run)
-            dir_run = Path.joinpath(dir, run, 'agg')
-            if Path(dir_run).isdir():
-                for split in Path.iterdir(dir_run):
-                    dir_split = Path.joinpath(dir_run, split)
-                    fname_stats = Path.joinpath(dir_split, 'stats.json')
+            dir_run = Path.joinpath(Path(dir), run, 'agg')
+            if Path(dir_run).is_dir():
+                for split in Path(dir_run).iterdir():
+                    dir_split = Path.joinpath(Path(dir_run), split)
+                    fname_stats = Path.joinpath(Path(dir_split), 'stats.json')
                     dict_stats = json_to_dict_list(
                         fname_stats)  # get best epoch
                     if metric_best == 'auto':
@@ -233,13 +233,13 @@ def agg_batch(dir, metric_best='auto'):
                     rm_keys(dict_stats,
                             ['lr', 'lr_std', 'eta', 'eta_std', 'params_std'])
                     results[split].append({**dict_name, **dict_stats})
-    dir_out = Path.joinpath(dir, 'agg')
+    dir_out = Path.joinpath(Path(dir), 'agg')
     for key in results:
         if len(results[key]) > 0:
             results[key] = pd.DataFrame(results[key])
             results[key] = results[key].sort_values(
                 list(dict_name.keys()), ascending=[True] * len(dict_name))
-            fname = Path.joinpath(dir_out, '{}_bestepoch.csv'.format(key))
+            fname = Path.joinpath(Path(dir_out), '{}_bestepoch.csv'.format(key))
             results[key].to_csv(fname, index=False)
 
     print('Results aggregated across models saved in {}'.format(dir_out))

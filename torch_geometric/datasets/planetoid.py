@@ -89,11 +89,11 @@ class Planetoid(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return Path.joinpath(self.root, self.name, 'raw')
+        return Path.joinpath(Path(self.root), self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return Path.joinpath(self.root, self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:

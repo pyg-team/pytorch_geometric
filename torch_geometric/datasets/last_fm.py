@@ -61,7 +61,7 @@ class LastFM(InMemoryDataset):
     def process(self):
         data = HeteroData()
 
-        node_type_idx = np.load(Path.joinpath(self.raw_dir, 'node_types.npy'))
+        node_type_idx = np.load(Path.joinpath(Path(self.raw_dir), 'node_types.npy'))
         node_type_idx = torch.from_numpy(node_type_idx).to(torch.long)
 
         node_types = ['user', 'artist', 'tag']
@@ -69,9 +69,9 @@ class LastFM(InMemoryDataset):
             data[node_type].num_nodes = int((node_type_idx == i).sum())
 
         pos_split = np.load(
-            Path.joinpath(self.raw_dir, 'train_val_test_pos_user_artist.npz'))
+            Path.joinpath(Path(self.raw_dir), 'train_val_test_pos_user_artist.npz'))
         neg_split = np.load(
-            Path.joinpath(self.raw_dir, 'train_val_test_neg_user_artist.npz'))
+            Path.joinpath(Path(self.raw_dir), 'train_val_test_neg_user_artist.npz'))
 
         for name in ['train', 'val', 'test']:
             if name != 'train':
@@ -93,7 +93,7 @@ class LastFM(InMemoryDataset):
         s['artist'] = (N_u, N_u + N_a)
         s['tag'] = (N_u + N_a, N_u + N_a + N_t)
 
-        A = sp.load_npz(Path.joinpath(self.raw_dir, 'adjM.npz'))
+        A = sp.load_npz(Path.joinpath(Path(self.raw_dir), 'adjM.npz'))
         for src, dst in product(node_types, node_types):
             A_sub = A[s[src][0]:s[src][1], s[dst][0]:s[dst][1]].tocoo()
             if A_sub.nnz > 0:

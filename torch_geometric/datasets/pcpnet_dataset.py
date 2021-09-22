@@ -1,5 +1,3 @@
-import os
-# import os.path as osp
 from pathlib import Path
 
 import torch
@@ -102,7 +100,7 @@ class PCPNetDataset(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         path_file = self.raw_paths

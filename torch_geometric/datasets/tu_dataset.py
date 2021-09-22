@@ -79,12 +79,12 @@ class TUDataset(InMemoryDataset):
     @property
     def raw_dir(self) -> str:
         name = f'raw{"_cleaned" if self.cleaned else ""}'
-        return Path.joinpath(self.root, self.name, name)
+        return Path.joinpath(Path(self.root), self.name, name)
 
     @property
     def processed_dir(self) -> str:
         name = f'processed{"_cleaned" if self.cleaned else ""}'
-        return Path.joinpath(self.root, self.name, name)
+        return Path.joinpath(Path(self.root), self.name, name)
 
     @property
     def num_node_labels(self) -> int:
@@ -128,12 +128,12 @@ class TUDataset(InMemoryDataset):
 
     def download(self):
         url = self.cleaned_url if self.cleaned else self.url
-        folder = Path.joinpath(self.root, self.name)
+        folder = Path.joinpath(Path(self.root), self.name)
         path = download_url(f'{url}/{self.name}.zip', folder)
         extract_zip(path, folder)
-        os.unlink(path)
+        Path(path).unlink()
         shutil.rmtree(self.raw_dir)
-        os.rename(Path.joinpath(folder, self.name), self.raw_dir)
+        Path.joinpath(Path(folder), self.name).rename(Path(self.raw_dir))
 
     def process(self):
         self.data, self.slices = read_tu_data(self.raw_dir, self.name)

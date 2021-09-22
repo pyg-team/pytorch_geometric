@@ -1,5 +1,5 @@
 import os
-# import os.path as osp
+
 from pathlib import Path
 import shutil
 import glob
@@ -74,14 +74,14 @@ class ModelNet(InMemoryDataset):
     def download(self):
         path = download_url(self.urls[self.name], self.root)
         extract_zip(path, self.root)
-        os.unlink(path)
-        folder = Path.joinpath(self.root, 'ModelNet{}'.format(self.name))
+        Path(path).unlink()
+        folder = Path.joinpath(Path(self.root), 'ModelNet{}'.format(self.name))
         shutil.rmtree(self.raw_dir)
-        os.rename(folder, self.raw_dir)
+        Path(folder).rename(Path(self.raw_dir))
 
         # Delete osx metadata generated during compression of ModelNet10
-        metadata_folder = Path.joinpath(self.root, '__MACOSX')
-        if Path.exists(metadata_folder):
+        metadata_folder = Path.joinpath(Path(self.root), '__MACOSX')
+        if Path(metadata_folder).exists():
             shutil.rmtree(metadata_folder)
 
     def process(self):
@@ -89,12 +89,12 @@ class ModelNet(InMemoryDataset):
         torch.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset):
-        categories = glob.glob(Path.joinpath(self.raw_dir, '*', ''))
+        categories = glob.glob(Path.joinpath(Path(self.raw_dir), '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
         data_list = []
         for target, category in enumerate(categories):
-            folder = Path.joinpath(self.raw_dir, category, dataset)
+            folder = Path.joinpath(Path(self.raw_dir), category, dataset)
             paths = glob.glob('{}/{}_*.off'.format(folder, category))
             for path in paths:
                 data = read_off(path)
