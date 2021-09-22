@@ -2,7 +2,6 @@ import os
 
 from pathlib import Path
 import shutil
-import glob
 
 import torch
 from torch_geometric.data import InMemoryDataset, download_url, extract_zip
@@ -89,13 +88,15 @@ class ModelNet(InMemoryDataset):
         torch.save(self.process_set('test'), self.processed_paths[1])
 
     def process_set(self, dataset):
-        categories = glob.glob(Path.joinpath(Path(self.raw_dir), '*', ''))
+        categories = Path(self.raw_dir).rglob('*')
+        # categories = glob.glob(Path.joinpath(Path(self.raw_dir), '*', ''))
         categories = sorted([x.split(os.sep)[-2] for x in categories])
 
         data_list = []
         for target, category in enumerate(categories):
             folder = Path.joinpath(Path(self.raw_dir), category, dataset)
-            paths = glob.glob('{}/{}_*.off'.format(folder, category))
+            paths = Path(folder).rglob('{}_*.off'.format(category))
+            # paths = glob.glob('{}/{}_*.off'.format(folder, category))
             for path in paths:
                 data = read_off(path)
                 data.y = torch.tensor([target])

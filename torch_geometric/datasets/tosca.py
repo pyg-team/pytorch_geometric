@@ -1,5 +1,4 @@
 from pathlib import Path
-import glob
 
 import torch
 from torch_geometric.data import (InMemoryDataset, Data, download_url,
@@ -79,7 +78,8 @@ class TOSCA(InMemoryDataset):
     def process(self):
         data_list = []
         for cat in self.categories:
-            paths = glob.glob(Path.joinpath(Path(self.raw_dir), '{}*.tri'.format(cat)))
+            paths = Path(self.raw_dir).rglob('{}*.tri'.format(cat))
+            # paths = glob.glob(Path.joinpath(Path(self.raw_dir), '{}*.tri'.format(cat)))
             paths = [path[:-4] for path in paths]
             paths = sorted(paths, key=lambda e: (len(e), e))
 

@@ -124,7 +124,8 @@ class GEDDataset(InMemoryDataset):
 
         ids, Ns = [], []
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
-            names = glob.glob(Path.joinpath(Path(r_path), '*.gexf'))
+            names = Path(r_path).rglob('*.gexf')
+            # names = glob.glob(Path.joinpath(Path(r_path), '*.gexf'))
             # Get the graph IDs given by the file name:
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 

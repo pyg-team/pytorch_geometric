@@ -102,11 +102,12 @@ class SHREC2016(InMemoryDataset):
 
     def process(self):
         ref_data = read_off(
-            Path.joinpath(Path(self.raw_paths[0]), 'null', '{}.off'.format(self.cat)))
+            Path.joinpath(Path(self.raw_paths[0]), 'null',
+                                '{}.off'.format(self.cat)))
 
         train_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
-        paths = glob.glob(Path.joinpath(Path(self.raw_paths[0]), self.part, name))
+        paths = Path.joinpath(Path(self.raw_paths[0]), self.part).rglob(name)
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 
@@ -119,7 +120,7 @@ class SHREC2016(InMemoryDataset):
 
         test_list = []
         name = '{}_{}_*.off'.format(self.part, self.cat)
-        paths = glob.glob(Path.joinpath(Path(self.raw_paths[1]), self.part, name))
+        paths = Path.joinpath(Path(self.raw_paths[1]), self.part).rglob(name)
         paths = [path[:-4] for path in paths]
         paths = sorted(paths, key=lambda e: (len(e), e))
 

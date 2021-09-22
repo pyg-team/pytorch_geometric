@@ -1,6 +1,5 @@
 import pathlib
 from pathlib import Path
-import glob
 
 import torch
 import torch.nn.functional as F
@@ -17,7 +16,7 @@ names = [
 
 
 def read_tu_data(folder, prefix):
-    files = glob.glob(Path.joinpath(Path(folder), '{}_*.txt'.format(prefix)))
+    files = Path(folder).rglob('{}_*.txt'.format(prefix))
     names = [str(f).split(pathlib.os.sep)[-1][len(prefix) + 1:-4] for f in files]
 
     edge_index = read_file(folder, prefix, 'A', torch.long).t() - 1

@@ -74,7 +74,7 @@ class WILLOWObjectClass(InMemoryDataset):
         extract_zip(path, self.root)
         Path(path).unlink()
         Path.joinpath(Path(self.root), 'README').unlink()
-        Path.joinpath(Path(self.root), 'demo_showAnno.m')unlink()
+        Path.joinpath(Path(self.root), 'demo_showAnno.m').unlink()
         shutil.rmtree(self.raw_dir)
         Path.joinpath(Path(self.root), 'WILLOW-ObjectClass').rename(
                                                             Path(self.raw_dir))
@@ -86,7 +86,8 @@ class WILLOWObjectClass(InMemoryDataset):
         import torchvision.models as models
 
         category = self.category.capitalize()
-        names = glob.glob(Path.joinpath(Path(self.raw_dir), category, '*.png'))
+        names = Path.joinpath(Path(self.raw_dir), category).rglob('*.png')
+        # names = glob.glob(Path.joinpath(Path(self.raw_dir), category, '*.png'))
         names = sorted([name[:-4] for name in names])
 
         vgg16_outputs = []

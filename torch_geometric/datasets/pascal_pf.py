@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 import shutil
-import glob
 
 import torch
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
@@ -69,13 +68,14 @@ class PascalPF(InMemoryDataset):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         shutil.rmtree(self.raw_dir)
-        Path.joinpath(Path(self.root), 'PF-dataset-PASCAL').rename(Path(self.raw_dir))
+        Path.joinpath(Path(self.root),
+                            'PF-dataset-PASCAL').rename(Path(self.raw_dir))
 
     def process(self):
         from scipy.io import loadmat
 
-        path = Path.joinpath(Path(self.raw_dir), 'Annotations', self.category, '*.mat')
-        filenames = glob.glob(path)
+        path = Path.joinpath(Path(self.raw_dir), 'Annotations', self.category)
+        filenames = path.rgloob('*mat')
 
         names = []
         data_list = []
@@ -102,9 +102,9 @@ class PascalPF(InMemoryDataset):
             names.append(name)
             data_list.append(data)
 
-        pairs = loadmat(Path.joinpath(Path(self.raw_dir, 'parsePascalVOC.mat'))
+        pairs = loadmat(Path.joinpath(Path(self.raw_dir, 'parsePascalVOC.mat')))
         pairs = pairs['PascalVOC']['pair'][0, 0][
-            0, self.categories.index(self.category)]
+                0, self.categories.index(self.category)]
 
         pairs = [(names.index(x[0][0]), names.index(x[1][0])) for x in pairs]
 
