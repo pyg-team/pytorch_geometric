@@ -48,7 +48,7 @@ class RelLinkPredDataset(InMemoryDataset):
 
     @property
     def processed_dir(self) -> str:
-        return Path.join(Path(self.root), self.name, 'processed')
+        return Path.joinpath(Path(self.root), self.name, 'processed')
 
     @property
     def processed_file_names(self) -> str:

@@ -177,7 +177,7 @@ class ShapeNet(InMemoryDataset):
                             f'shuffled_{split}_file_list.json')
             with open(path, 'r') as f:
                 filenames = [
-                    pathlib.os.sep.join(name.split('/')[1:]) + '.txt'
+                    pathlib.os.sep.join(str(name).split('/')[1:]) + '.txt'
                     for name in json.load(f)
                 ]  # Removing first directory.
             data_list = self.process_filenames(filenames)

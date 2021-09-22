@@ -23,14 +23,14 @@ def read_ego(files, name):
 
     all_featnames = []
     files = [
-        x for x in files if x.split('.')[-1] in
+        x for x in files if str(x).split('.')[-1] in
         ['circles', 'edges', 'egofeat', 'feat', 'featnames']
     ]
     for i in range(4, len(files), 5):
         featnames_file = files[i]
         with open(featnames_file, 'r') as f:
             featnames = f.read().split('\n')[:-1]
-            featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
+            featnames = [' '.join(str(x).split(' ')[1:]) for x in featnames]
             all_featnames += featnames
     all_featnames = sorted(list(set(all_featnames)))
     all_featnames = {key: i for i, key in enumerate(all_featnames)}
@@ -58,7 +58,7 @@ def read_ego(files, name):
             x_all = torch.zeros(x.size(0), len(all_featnames))
             with open(featnames_file, 'r') as f:
                 featnames = f.read().split('\n')[:-1]
-                featnames = [' '.join(x.split(' ')[1:]) for x in featnames]
+                featnames = [' '.join(str(x).split(' ')[1:]) for x in featnames]
             indices = [all_featnames[featname] for featname in featnames]
             x_all[:, torch.tensor(indices)] = x
             x = x_all
@@ -216,11 +216,11 @@ class SNAPDataset(InMemoryDataset):
                 extract_tar(path, self.raw_dir)
             elif name.endswith('.gz'):
                 extract_gz(path, self.raw_dir)
-            path(path).unlink()
+            Path(path).unlink()
 
     def process(self):
         raw_dir = self.raw_dir
-        filenames = Path(self.raw_dir).listdir()
+        filenames = list(Path(self.raw_dir).iterdir())
         if len(filenames) == 1 and Path.joinpath(Path(raw_dir), filenames[0]).is_dir():
             raw_dir = Path.joinpath(Path(raw_dir), filenames[0])
 
