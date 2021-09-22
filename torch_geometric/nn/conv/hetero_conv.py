@@ -82,10 +82,16 @@ class HeteroConv(Module):
             if str_edge_type not in self.convs:
                 continue
 
-            kwargs = {
-                arg[:-5]: value[edge_type]  # `{*}_dict`
-                for arg, value in kwargs_dict.items() if edge_type in value
-            }
+            kwargs = {}
+            for arg, value_dict in kwargs_dict.items():
+                arg = arg[:-5]  # `{*}_dict`
+                if edge_type in value_dict:
+                    kwargs[arg] = value_dict[edge_type]
+                elif src == dst and src in value_dict:
+                    kwargs[arg] = value_dict[src]
+                elif src in value_dict or dst in value_dict:
+                    kwargs[arg] = (value_dict.get(src, None),
+                                   value_dict.get(dst, None))
 
             conv = self.convs[str_edge_type]
 
