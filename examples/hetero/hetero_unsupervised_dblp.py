@@ -107,7 +107,7 @@ class HeteroUnsupervised(torch.nn.Module):
         edge_index_a = edge_index_dict[('author', 'to', 'paper')]
         edge_index_b = edge_index_dict[('paper', 'to', 'author')]
 
-        APA_edge_pair= \
+        APA_edge_pair = \
             self.convert_to_APA_edge_index(edge_index_a, edge_index_b)
         # Please mannually preprocess corresponding metapath edge pair
         # This is just an example and NOT real ACPCA edge pair
@@ -168,8 +168,8 @@ model = HeteroUnsupervised(
     num_layers=2
 )
 
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 data, model = data.to(device), model.to(device)
 
@@ -200,16 +200,19 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
+    n_iter = 1000000
+
     pos_embed = model.embed(data.x_dict, data.edge_index_dict)
     mask = data['author']['val_mask']
     labels = data['author'].y[mask]
 
     valid_embed = pos_embed[mask]
 
+
     train_z, test_z, train_y, test_y = \
         train_test_split(valid_embed, labels, train_size=0.8)
 
-    clf = LogisticRegression(solver='lbfgs').fit(train_z, train_y)
+    clf = LogisticRegression(max_iter=n_iter).fit(train_z, train_y)
     val_score = clf.score(test_z, test_y)
 
     mask = data['author']['test_mask']
@@ -219,8 +222,8 @@ def test():
 
     train_z, test_z, train_y, test_y = \
         train_test_split(test_embed, labels, train_size=0.8)
-    clf = LogisticRegression(solver='lbfgs', max_iter=1000000)\
-                                .fit(train_z, train_y)
+    
+    clf = LogisticRegression(max_iter=n_iter).fit(train_z, train_y)
     test_score = clf.score(test_z, test_y)
 
     # accuracy score of author nodes.
