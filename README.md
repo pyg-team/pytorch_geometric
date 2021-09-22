@@ -230,6 +230,7 @@ These GNN layers can be stacked together to create Graph Neural Network models.
 * **[SuperGAT](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SuperGATConv)** from Kim and Oh: [How To Find Your Friendly Neighborhood: Graph Attention Design With Self-Supervision](https://openreview.net/forum?id=Wi5KUNlqWty) (ICLR 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/super_gat.py)]
 * **[HGTConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.HGTConv)** from Hu *et al.*: [Heterogeneous Graph Transformer](https://arxiv.org/abs/2003.01332) (WWW 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/hgt_dblp.py)]
 * A **[MetaLayer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.meta.MetaLayer)** for building any kind of graph network similar to the [TensorFlow Graph Nets library](https://github.com/deepmind/graph_nets) from Battaglia *et al.*: [Relational Inductive Biases, Deep Learning, and Graph Networks](https://arxiv.org/abs/1806.01261) (CoRR 2018)
+* **[PointTransformerConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.PointTransformerConv)** from Zhao *et al.*: [Point Transformer](https://arxiv.org/abs/2012.09164) (2020)
 </details>
 
 **Pooling layers:**
