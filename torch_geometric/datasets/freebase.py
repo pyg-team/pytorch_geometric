@@ -4,11 +4,31 @@ import torch
 from torch_geometric.data import InMemoryDataset, Data, download_url
 
 
-class FB15K237(InMemoryDataset):
+class FB15k_237(InMemoryDataset):
+    r"""The FB15K237 dataset from the `"Translating Embeddings for Modeling
+    Multi-Relational Data"
+    <https://papers.nips.cc/paper/5071-translating-embeddings-for-modeling
+    -multi-relational-data>`_ paper,
+    containing 14,541 entities, 237 relations and 310,116 fact triplets.
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        split (string): If :obj:`"train"`, loads the training dataset.
+            If :obj:`"val"`, loads the validation dataset.
+            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+    """
     url = ('https://raw.githubusercontent.com/villmow/'
            'datasets_knowledge_embedding/master/FB15k-237')
 
-    def __init__(self, root: str, split: str = 'train',
+    def __init__(self, root: str, split: str = "train",
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
