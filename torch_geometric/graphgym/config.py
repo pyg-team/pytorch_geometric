@@ -37,7 +37,7 @@ def set_cfg(cfg):
     cfg.cfg_dest = 'config.yaml'
 
     # Random seed
-    cfg.seed = 1
+    cfg.seed = 0
 
     # Print rounding
     cfg.round = 4
@@ -473,16 +473,21 @@ def assert_cfg(cfg):
     cfg.run_dir = cfg.out_dir
 
 
-def dump_cfg(cfg):
+def dump_cfg(cfg, fname):
     r"""
-    Dumps the config to the output directory specified in
-    :obj:`cfg.out_dir`
+    Dumps the config to the output directory in
+    :obj:`cfg.out_dir/fname`
 
     Args:
         cfg (CfgNode): Configuration node
 
     """
-    cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
+    fname = fname.split('/')[-1]
+    if fname.endswith('.yaml'):
+        fname = fname[:-5]
+    cfg_dir = os.path.join(cfg.out_dir, fname)
+    os.makedirs(cfg_dir, exist_ok=True)
+    cfg_file = os.path.join(cfg_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
