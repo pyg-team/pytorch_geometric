@@ -1,7 +1,8 @@
 from typing import List, Union, Tuple, Callable
 
-import os
-import os.path as osp
+# import os
+# import os.path as osp
+from pathlib import Path
 from uuid import uuid1
 
 import torch
@@ -86,8 +87,9 @@ def Sequential(
 
         calls.append((module, in_desc, out_desc))
 
-    root = os.path.dirname(osp.realpath(__file__))
-    with open(osp.join(root, 'sequential.jinja'), 'r') as f:
+    # root = os.path.dirname(osp.realpath(__file__))
+    root = Path.resolve(__file__).parent
+    with open(Path.joinpath(root, 'sequential.jinja'), 'r') as f:
         template = Template(f.read())
 
     cls_name = f'Sequential_{uuid1().hex[:6]}'
