@@ -74,7 +74,7 @@ class Dataset(torch.utils.data.Dataset):
         super().__init__()
 
         if isinstance(root, str):
-            root = Path.expanduser(Path.resolve(root))
+            root = Path.expanduser(Path(root).resolve())
             # root = osp.expanduser(osp.normpath(root))
 
         self.root = root

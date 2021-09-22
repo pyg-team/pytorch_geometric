@@ -1,6 +1,6 @@
 from typing import Optional
 
-import os.path as osp
+from pathlib import Path
 
 import torch
 from tqdm import tqdm

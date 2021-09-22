@@ -565,7 +565,7 @@ class MessagePassing(torch.nn.Module):
             forward_types = []
             forward_body = 8 * ' ' + f'# type: {typing}\n{forward_body}'
 
-        root = Path(Path.resolve(__file__)).parent
+        root = Path(__file__).resolve().parent
         with open(Path.joinpath(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 

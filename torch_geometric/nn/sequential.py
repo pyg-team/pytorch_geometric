@@ -88,7 +88,7 @@ def Sequential(
         calls.append((module, in_desc, out_desc))
 
     # root = os.path.dirname(osp.realpath(__file__))
-    root = Path.resolve(__file__).parent
+    root = Path(__file__).resolve().parent
     with open(Path.joinpath(root, 'sequential.jinja'), 'r') as f:
         template = Template(f.read())
 
