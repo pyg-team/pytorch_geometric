@@ -49,6 +49,17 @@ def test_data():
     assert clone.x.tolist() == data.x.tolist()
     assert clone.edge_index.tolist() == data.edge_index.tolist()
 
+    # test to_heterogenous
+    hetero_data = data.to_heterogeneous()
+    assert torch.allclose(data.x, hetero_data['0'].x)
+    assert torch.allclose(data.edge_index,
+                          hetero_data['0', '0'].edge_index)
+    data.edge_type = torch.tensor([0, 0, 1, 0])
+    hetero_data = data.to_heterogeneous()
+    assert torch.allclose(data.x, hetero_data['0'].x)
+    assert [3, 1] == [i.edge_index.size(1) for i in hetero_data.edge_stores]
+    data.edge_type = None
+
     data['x'] = x + 1
     assert data.x.tolist() == (x + 1).tolist()
 

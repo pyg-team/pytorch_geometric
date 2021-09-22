@@ -516,21 +516,30 @@ class Data(BaseData):
                 edge_type_names.append((node_type_names[src_types[0]], str(i),
                                         node_type_names[dst_types[0]]))
 
+        # iterate over node types to get node slices
+        # and index_map, which contains the index of each node
+        # in the heterogenous graph.
+        node_ids, index_map = {}, torch.zeros_like(node_type)
+        for i, key in enumerate(node_type_names):
+            node_ids[i] = (node_type == i).nonzero(as_tuple=False).view(-1)
+            index_map[node_ids[i]] = torch.arange(len(node_ids[i]))
+
+        # iterate over edge types to get edge slices
+        edge_ids = {}
+        for i, key in enumerate(edge_type_names):
+            edge_ids[i] = (edge_type == i).nonzero(as_tuple=False).view(-1)
+
         data = HeteroData()
 
-        decrement = torch.empty_like(node_type)
         for i, key in enumerate(node_type_names):
             for attr, value in self.items():
                 if attr == 'node_type' or attr == 'edge_type':
                     continue
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
-                    mask = node_type == i
-                    data[key][attr] = value[mask]
-                    nnz = mask.nonzero(as_tuple=False).view(-1)
-                    nnz.sub_(torch.arange(nnz.size(0), device=nnz.device))
-                    decrement[mask] = nnz
+                    data[key][attr] = value[node_ids[i]]
+
             if len(data[key]) == 0:
-                data[key].num_nodes = int((node_type == i).sum())
+                data[key].num_nodes = len(node_ids[i])
 
         for i, key in enumerate(edge_type_names):
             src, _, dst = key
@@ -538,12 +547,12 @@ class Data(BaseData):
                 if attr == 'node_type' or attr == 'edge_type':
                     continue
                 elif attr == 'edge_index':
-                    edge_index = value[:, edge_type == i]
-                    edge_index[0].sub_(decrement[edge_index[0]])
-                    edge_index[1].sub_(decrement[edge_index[1]])
+                    edge_index = value[:, edge_ids[i]]
+                    edge_index[0] = index_map[edge_index[0]]
+                    edge_index[1] = index_map[edge_index[1]]
                     data[key].edge_index = edge_index
                 elif isinstance(value, Tensor) and self.is_edge_attr(attr):
-                    data[key][attr] = value[edge_type == i]
+                    data[key][attr] = value[edge_ids[i]]
 
         # Add global attributes.
         keys = set(data.keys) | {'node_type', 'edge_type', 'num_nodes'}
