@@ -232,11 +232,11 @@ class MLP(nn.Module):
         layers = []
         if layer_config.num_layers > 1:
             sub_layer_config = LayerConfig(
-                                    num_layers=layer_config.num_layers-1,
-                                    dim_in=layer_config.dim_in,
-                                    dim_out=dim_inner,
-                                    dim_inner=dim_inner,
-                                    final_act=True)
+                num_layers=layer_config.num_layers - 1,
+                dim_in=layer_config.dim_in,
+                dim_out=dim_inner,
+                dim_inner=dim_inner,
+                final_act=True)
             layers.append(GeneralMultiLayer('linear', sub_layer_config))
             layers.append(Linear(layer_config))
         else:
