@@ -2,7 +2,8 @@ from typing import Optional, Callable, List
 
 import sys
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 from tqdm import tqdm
 
 import torch
@@ -154,8 +155,8 @@ class QM9(InMemoryDataset):
             os.unlink(file_path)
 
             file_path = download_url(self.raw_url2, self.raw_dir)
-            os.rename(osp.join(self.raw_dir, '3195404'),
-                      osp.join(self.raw_dir, 'uncharacterized.txt'))
+            os.rename(Path.joinpath(self.raw_dir, '3195404'),
+                      Path.joinpath(self.raw_dir, 'uncharacterized.txt'))
         except ImportError:
             path = download_url(self.processed_url, self.raw_dir)
             extract_zip(path, self.raw_dir)

@@ -1,7 +1,8 @@
 from typing import Optional, Callable, List
 
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 import numpy as np
@@ -141,12 +142,12 @@ class MD17(InMemoryDataset):
     @property
     def raw_dir(self) -> str:
         name = self.file_names[self.name].split('.')[0]
-        return osp.join(self.root, name, 'raw')
+        return Path.joinpath(self.root, name, 'raw')
 
     @property
     def processed_dir(self) -> str:
         name = self.file_names[self.name].split('.')[0]
-        return osp.join(self.root, name, 'processed')
+        return Path.joinpath(self.root, name, 'processed')
 
     @property
     def raw_file_names(self) -> List[str]:

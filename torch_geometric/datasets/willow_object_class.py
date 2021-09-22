@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 import shutil
 import glob
 
@@ -53,11 +54,11 @@ class WILLOWObjectClass(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, 'raw')
+        return Path.joinpath(self.root, 'raw')
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.category.capitalize(), 'processed')
+        return Path.joinpath(self.root, self.category.capitalize(), 'processed')
 
     @property
     def raw_file_names(self):
@@ -71,10 +72,10 @@ class WILLOWObjectClass(InMemoryDataset):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         os.unlink(path)
-        os.unlink(osp.join(self.root, 'README'))
-        os.unlink(osp.join(self.root, 'demo_showAnno.m'))
+        os.unlink(Path.joinpath(self.root, 'README'))
+        os.unlink(Path.joinpath(self.root, 'demo_showAnno.m'))
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
+        os.rename(Path.joinpath(self.root, 'WILLOW-ObjectClass'), self.raw_dir)
 
     def process(self):
         from PIL import Image
@@ -83,7 +84,7 @@ class WILLOWObjectClass(InMemoryDataset):
         import torchvision.models as models
 
         category = self.category.capitalize()
-        names = glob.glob(osp.join(self.raw_dir, category, '*.png'))
+        names = glob.glob(Path.joinpath(self.raw_dir, category, '*.png'))
         names = sorted([name[:-4] for name in names])
 
         vgg16_outputs = []

@@ -1,5 +1,6 @@
 import pickle
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 import numpy as np
@@ -43,11 +44,11 @@ class MixHopSyntheticDataset(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, f'{self.homophily:0.1f}'[::2], 'raw')
+        return Path.joinpath(self.root, f'{self.homophily:0.1f}'[::2], 'raw')
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, f'{self.homophily:0.1f}'[::2], 'processed')
+        return Path.joinpath(self.root, f'{self.homophily:0.1f}'[::2], 'processed')
 
     @property
     def raw_file_names(self):

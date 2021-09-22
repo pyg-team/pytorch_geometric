@@ -1,6 +1,7 @@
 from typing import Optional, Callable
 
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 import numpy as np
@@ -42,11 +43,11 @@ class GemsecDeezer(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self) -> str:
@@ -57,7 +58,7 @@ class GemsecDeezer(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        download_url(osp.join(self.url, self.name + '.npz'), self.raw_dir)
+        download_url(Path.joinpath(self.url, self.name + '.npz'), self.raw_dir)
 
     def process(self):
         data = np.load(self.raw_paths[0], 'r', allow_pickle=True)

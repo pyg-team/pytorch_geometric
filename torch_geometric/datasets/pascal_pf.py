@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 import shutil
 import glob
 
@@ -69,12 +70,12 @@ class PascalPF(InMemoryDataset):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(self.root, 'PF-dataset-PASCAL'), self.raw_dir)
+        os.rename(Path.joinpath(self.root, 'PF-dataset-PASCAL'), self.raw_dir)
 
     def process(self):
         from scipy.io import loadmat
 
-        path = osp.join(self.raw_dir, 'Annotations', self.category, '*.mat')
+        path = Path.joinpath(self.raw_dir, 'Annotations', self.category, '*.mat')
         filenames = glob.glob(path)
 
         names = []
@@ -102,7 +103,7 @@ class PascalPF(InMemoryDataset):
             names.append(name)
             data_list.append(data)
 
-        pairs = loadmat(osp.join(self.raw_dir, 'parsePascalVOC.mat'))
+        pairs = loadmat(Path.joinpath(self.raw_dir, 'parsePascalVOC.mat'))
         pairs = pairs['PascalVOC']['pair'][0, 0][
             0, self.categories.index(self.category)]
 

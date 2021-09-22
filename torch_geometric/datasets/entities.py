@@ -2,7 +2,8 @@ from typing import Optional, Callable, List
 
 import os
 import logging
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 from collections import Counter
 
 import torch
@@ -48,11 +49,11 @@ class Entities(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(self.root, self.name, 'processed')
 
     @property
     def num_relations(self) -> int:

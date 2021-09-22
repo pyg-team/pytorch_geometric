@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 import numpy as np
@@ -46,12 +47,12 @@ class Reddit(InMemoryDataset):
         os.unlink(path)
 
     def process(self):
-        data = np.load(osp.join(self.raw_dir, 'reddit_data.npz'))
+        data = np.load(Path.joinpath(self.raw_dir, 'reddit_data.npz'))
         x = torch.from_numpy(data['feature']).to(torch.float)
         y = torch.from_numpy(data['label']).to(torch.long)
         split = torch.from_numpy(data['node_types'])
 
-        adj = sp.load_npz(osp.join(self.raw_dir, 'reddit_graph.npz'))
+        adj = sp.load_npz(Path.joinpath(self.raw_dir, 'reddit_graph.npz'))
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)

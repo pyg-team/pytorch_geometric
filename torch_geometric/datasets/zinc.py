@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 import shutil
 import pickle
 
@@ -52,7 +53,7 @@ class ZINC(InMemoryDataset):
         self.subset = subset
         assert split in ['train', 'val', 'test']
         super(ZINC, self).__init__(root, transform, pre_transform, pre_filter)
-        path = osp.join(self.processed_dir, f'{split}.pt')
+        path = Path.joinpath(self.processed_dir, f'{split}.pt')
         self.data, self.slices = torch.load(path)
 
     @property
@@ -65,7 +66,7 @@ class ZINC(InMemoryDataset):
     @property
     def processed_dir(self):
         name = 'subset' if self.subset else 'full'
-        return osp.join(self.root, name, 'processed')
+        return Path.joinpath(self.root, name, 'processed')
 
     @property
     def processed_file_names(self):
@@ -75,7 +76,7 @@ class ZINC(InMemoryDataset):
         shutil.rmtree(self.raw_dir)
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
-        os.rename(osp.join(self.root, 'molecules'), self.raw_dir)
+        os.rename(Path.joinpath(self.root, 'molecules'), self.raw_dir)
         os.unlink(path)
 
         for split in ['train', 'val', 'test']:
@@ -83,13 +84,13 @@ class ZINC(InMemoryDataset):
 
     def process(self):
         for split in ['train', 'val', 'test']:
-            with open(osp.join(self.raw_dir, f'{split}.pickle'), 'rb') as f:
+            with open(Path.joinpath(self.raw_dir, f'{split}.pickle'), 'rb') as f:
                 mols = pickle.load(f)
 
             indices = range(len(mols))
 
             if self.subset:
-                with open(osp.join(self.raw_dir, f'{split}.index'), 'r') as f:
+                with open(Path.joinpath(self.raw_dir, f'{split}.index'), 'r') as f:
                     indices = [int(x) for x in f.read()[:-1].split(',')]
 
             pbar = tqdm(total=len(indices))
@@ -121,4 +122,4 @@ class ZINC(InMemoryDataset):
             pbar.close()
 
             torch.save(self.collate(data_list),
-                       osp.join(self.processed_dir, f'{split}.pt'))
+                       Path.joinpath(self.processed_dir, f'{split}.pt'))

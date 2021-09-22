@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 from torch_geometric.data import (Data, InMemoryDataset, download_url,
@@ -109,10 +110,10 @@ class PCPNetDataset(InMemoryDataset):
             filenames = f.read().split('\n')[:-1]
         data_list = []
         for filename in filenames:
-            pos_path = osp.join(self.raw_dir, filename + '.xyz')
-            normal_path = osp.join(self.raw_dir, filename + '.normals')
-            curv_path = osp.join(self.raw_dir, filename + '.curv')
-            idx_path = osp.join(self.raw_dir, filename + '.pidx')
+            pos_path = Path.joinpath(self.raw_dir, filename + '.xyz')
+            normal_path = Path.joinpath(self.raw_dir, filename + '.normals')
+            curv_path = Path.joinpath(self.raw_dir, filename + '.curv')
+            idx_path = Path.joinpath(self.raw_dir, filename + '.pidx')
             pos = read_txt_array(pos_path)
             normals = read_txt_array(normal_path)
             curv = read_txt_array(curv_path)

@@ -1,7 +1,8 @@
 from typing import Optional, Callable, List
 
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 import shutil
 
 import torch
@@ -78,12 +79,12 @@ class TUDataset(InMemoryDataset):
     @property
     def raw_dir(self) -> str:
         name = f'raw{"_cleaned" if self.cleaned else ""}'
-        return osp.join(self.root, self.name, name)
+        return Path.joinpath(self.root, self.name, name)
 
     @property
     def processed_dir(self) -> str:
         name = f'processed{"_cleaned" if self.cleaned else ""}'
-        return osp.join(self.root, self.name, name)
+        return Path.joinpath(self.root, self.name, name)
 
     @property
     def num_node_labels(self) -> int:
@@ -127,12 +128,12 @@ class TUDataset(InMemoryDataset):
 
     def download(self):
         url = self.cleaned_url if self.cleaned else self.url
-        folder = osp.join(self.root, self.name)
+        folder = Path.joinpath(self.root, self.name)
         path = download_url(f'{url}/{self.name}.zip', folder)
         extract_zip(path, folder)
         os.unlink(path)
         shutil.rmtree(self.raw_dir)
-        os.rename(osp.join(folder, self.name), self.raw_dir)
+        os.rename(Path.joinpath(folder, self.name), self.raw_dir)
 
     def process(self):
         self.data, self.slices = read_tu_data(self.raw_dir, self.name)

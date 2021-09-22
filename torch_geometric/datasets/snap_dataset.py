@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 
 import torch
 import numpy as np
@@ -193,18 +194,18 @@ class SNAPDataset(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(self.root, self.name, 'processed')
 
     @property
     def processed_file_names(self):
         return 'data.pt'
 
     def _download(self):
-        if osp.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
+        if Path.isdir(self.raw_dir) and len(os.listdir(self.raw_dir)) > 0:
             return
 
         makedirs(self.raw_dir)
@@ -222,10 +223,10 @@ class SNAPDataset(InMemoryDataset):
     def process(self):
         raw_dir = self.raw_dir
         filenames = os.listdir(self.raw_dir)
-        if len(filenames) == 1 and osp.isdir(osp.join(raw_dir, filenames[0])):
-            raw_dir = osp.join(raw_dir, filenames[0])
+        if len(filenames) == 1 and Path.isdir(Path.joinpath(raw_dir, filenames[0])):
+            raw_dir = Path.joinpath(raw_dir, filenames[0])
 
-        raw_files = sorted([osp.join(raw_dir, f) for f in os.listdir(raw_dir)])
+        raw_files = sorted([Path.joinpath(raw_dir, f) for f in os.listdir(raw_dir)])
 
         if self.name[:4] == 'ego-':
             data_list = read_ego(raw_files, self.name[4:])

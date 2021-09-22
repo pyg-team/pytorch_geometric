@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 import glob
 
 import torch
@@ -80,7 +81,7 @@ class TOSCA(InMemoryDataset):
     def process(self):
         data_list = []
         for cat in self.categories:
-            paths = glob.glob(osp.join(self.raw_dir, '{}*.tri'.format(cat)))
+            paths = glob.glob(Path.joinpath(self.raw_dir, '{}*.tri'.format(cat)))
             paths = [path[:-4] for path in paths]
             paths = sorted(paths, key=lambda e: (len(e), e))
 

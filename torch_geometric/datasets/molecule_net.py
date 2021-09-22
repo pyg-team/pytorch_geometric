@@ -1,5 +1,6 @@
 import os
-import os.path as osp
+# import os.path as osp
+from pathlib import Path
 import re
 
 import torch
@@ -120,11 +121,11 @@ class MoleculeNet(InMemoryDataset):
 
     @property
     def raw_dir(self):
-        return osp.join(self.root, self.name, 'raw')
+        return Path.joinpath(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.name, 'processed')
+        return Path.joinpath(self.root, self.name, 'processed')
 
     @property
     def raw_file_names(self):
