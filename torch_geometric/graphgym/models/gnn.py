@@ -4,10 +4,10 @@ import torch.nn.functional as F
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.head import head_dict
-from torch_geometric.graphgym.models.layer import (GeneralLayer,
+from torch_geometric.graphgym.models.layer import (new_layer_config,
+                                                   GeneralLayer,
                                                    GeneralMultiLayer,
-                                                   BatchNorm1dNode,
-                                                   BatchNorm1dEdge)
+                                                   BatchNorm1dNode)
 from torch_geometric.graphgym.init import init_weights
 from torch_geometric.graphgym.models.encoder import node_encoder_dict, \
     edge_encoder_dict
@@ -25,7 +25,10 @@ def GNNLayer(dim_in, dim_out, has_act=True):
         has_act (bool): Whether has activation function after the layer
 
     """
-    return GeneralLayer(cfg.gnn.layer_type, dim_in, dim_out, has_act)
+    return GeneralLayer(cfg.gnn.layer_type,
+                        layer_config=new_layer_config(
+                            dim_in, dim_out, 1,
+                            has_act=has_act, has_bias=False, cfg=cfg))
 
 
 def GNNPreMP(dim_in, dim_out):
@@ -37,8 +40,10 @@ def GNNPreMP(dim_in, dim_out):
         dim_out (int): Output dimension
 
     """
-    return GeneralMultiLayer('linear', cfg.gnn.layers_pre_mp, dim_in, dim_out,
-                             dim_inner=dim_out, final_act=True)
+    return GeneralMultiLayer('linear',
+                             layer_config=new_layer_config(
+                                 dim_in, dim_out, 1,
+                                 has_act=False, has_bias=False, cfg=cfg))
 
 
 class GNNStackStage(nn.Module):
@@ -100,7 +105,9 @@ class FeatureEncoder(nn.Module):
             NodeEncoder = node_encoder_dict[cfg.dataset.node_encoder_name]
             self.node_encoder = NodeEncoder(cfg.gnn.dim_inner)
             if cfg.dataset.node_encoder_bn:
-                self.node_encoder_bn = BatchNorm1dNode(cfg.gnn.dim_inner)
+                self.node_encoder_bn = BatchNorm1dNode(new_layer_config(
+                    cfg.gnn.dim_inner, -1, -1,
+                    has_act=False, has_bias=False, cfg=cfg))
             # Update dim_in to reflect the new dimension fo the node features
             self.dim_in = cfg.gnn.dim_inner
         if cfg.dataset.edge_encoder:
@@ -108,7 +115,9 @@ class FeatureEncoder(nn.Module):
             EdgeEncoder = edge_encoder_dict[cfg.dataset.edge_encoder_name]
             self.edge_encoder = EdgeEncoder(cfg.gnn.dim_inner)
             if cfg.dataset.edge_encoder_bn:
-                self.edge_encoder_bn = BatchNorm1dEdge(cfg.gnn.dim_inner)
+                self.edge_encoder_bn = BatchNorm1dNode(new_layer_config(
+                    cfg.gnn.dim_inner, -1, -1,
+                    has_act=False, has_bias=False, cfg=cfg))
 
     def forward(self, batch):
         """"""
