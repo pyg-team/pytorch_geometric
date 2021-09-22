@@ -51,7 +51,7 @@ def test_data():
 
     # test to_heterogenous
     hetero_data = data.to_heterogeneous()
-    assert torch.allclose(data.x, hetero_data.node_stores[0]['x'])
+    assert torch.allclose(data.x, hetero_data['0'].x)
     assert torch.allclose(data.edge_index,
                           hetero_data.edge_stores[0]['edge_index'])
     data.edge_type = torch.tensor([0, 0, 1, 0])
