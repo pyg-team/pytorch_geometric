@@ -67,7 +67,7 @@ def test_hetero_conv_with_custom_conv():
     data['author', 'paper'].edge_index = get_edge_index(30, 50, 100)
 
     conv = HeteroConv({key: CustomConv(64) for key in data.edge_types})
-    out = conv(data.x_dict, data.edge_index_dict, pos_dict=data.pos_dict)
+    out = conv(data.x_dict, data.edge_index_dict, data.pos_dict)
     assert len(out) == 2
     assert out['paper'].size() == (50, 64)
     assert out['author'].size() == (30, 64)
