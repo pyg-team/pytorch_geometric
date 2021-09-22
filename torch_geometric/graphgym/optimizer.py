@@ -17,6 +17,16 @@ class OptimizerConfig:
 
 
 def create_optimizer(params, optimizer_config: OptimizerConfig):
+    r"""
+    Create optimizer for the model
+
+    Args:
+        params: PyTorch model parameters
+
+    Returns: PyTorch optimizer
+
+    """
+
     params = filter(lambda p: p.requires_grad, params)
     # Try to load customized optimizer
     for func in register.optimizer_dict.values():
@@ -50,6 +60,16 @@ class SchedulerConfig:
 
 
 def create_scheduler(optimizer, scheduler_config: SchedulerConfig):
+    r"""
+    Create learning rate scheduler for the optimizer
+
+    Args:
+        optimizer: PyTorch optimizer
+
+    Returns: PyTorch scheduler
+
+    """
+
     # Try to load customized scheduler
     for func in register.scheduler_dict.values():
         scheduler = func(optimizer, scheduler_config)
@@ -57,12 +77,10 @@ def create_scheduler(optimizer, scheduler_config: SchedulerConfig):
             return scheduler
     if scheduler_config.scheduler == 'none':
         scheduler = optim.lr_scheduler.StepLR(
-            optimizer,
-            step_size=scheduler_config.max_epoch + 1)
+            optimizer, step_size=scheduler_config.max_epoch + 1)
     elif scheduler_config.scheduler == 'step':
         scheduler = optim.lr_scheduler.MultiStepLR(
-            optimizer,
-            milestones=scheduler_config.steps,
+            optimizer, milestones=scheduler_config.steps,
             gamma=scheduler_config.lr_decay)
     elif scheduler_config.scheduler == 'cos':
         scheduler = \

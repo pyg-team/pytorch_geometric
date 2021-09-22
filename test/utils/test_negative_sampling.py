@@ -1,37 +1,88 @@
 import torch
+from torch_geometric.utils import to_undirected, is_undirected
+from torch_geometric.utils.negative_sampling import edge_index_to_vector
+from torch_geometric.utils.negative_sampling import vector_to_edge_index
 from torch_geometric.utils import (negative_sampling,
                                    structured_negative_sampling,
-                                   batched_negative_sampling, to_undirected,
-                                   is_undirected)
+                                   batched_negative_sampling)
+
+
+def is_negative(edge_index, neg_edge_index, size, bipartite):
+    adj = torch.zeros(size, dtype=torch.bool)
+    neg_adj = torch.zeros(size, dtype=torch.bool)
+
+    adj[edge_index[0], edge_index[1]] = True
+    neg_adj[neg_edge_index[0], neg_edge_index[1]] = True
+
+    if not bipartite:
+        arange = torch.arange(size[0])
+        assert neg_adj[arange, arange].sum() == 0
+
+    return (adj & neg_adj).sum() == 0
+
+
+def test_edge_index_to_vector_and_vice_versa():
+    # Create a fully-connected graph:
+    N = 10
+    row = torch.arange(N).view(-1, 1).repeat(1, N).view(-1)
+    col = torch.arange(N).view(1, -1).repeat(N, 1).view(-1)
+    edge_index = torch.stack([row, col], dim=0)
+
+    idx, population = edge_index_to_vector(edge_index, (N, N), bipartite=True)
+    assert population == N * N
+    assert idx.tolist() == list(range(population))
+    edge_index2 = vector_to_edge_index(idx, (N, N), bipartite=True)
+    assert is_undirected(edge_index2)
+    assert edge_index.tolist() == edge_index2.tolist()
+
+    idx, population = edge_index_to_vector(edge_index, (N, N), bipartite=False)
+    assert population == N * N - N
+    assert idx.tolist() == list(range(population))
+    mask = edge_index[0] != edge_index[1]  # Remove self-loops.
+    edge_index2 = vector_to_edge_index(idx, (N, N), bipartite=False)
+    assert is_undirected(edge_index2)
+    assert edge_index[:, mask].tolist() == edge_index2.tolist()
+
+    idx, population = edge_index_to_vector(edge_index, (N, N), bipartite=False,
+                                           force_undirected=True)
+    assert population == (N * (N + 1)) / 2 - N
+    assert idx.tolist() == list(range(population))
+    mask = edge_index[0] != edge_index[1]  # Remove self-loops.
+    edge_index2 = vector_to_edge_index(idx, (N, N), bipartite=False,
+                                       force_undirected=True)
+    assert is_undirected(edge_index2)
+    assert edge_index[:, mask].tolist() == to_undirected(edge_index2).tolist()
 
 
 def test_negative_sampling():
     edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
 
     neg_edge_index = negative_sampling(edge_index)
-    assert neg_edge_index.size(1) <= edge_index.size(1)
-
-    adj = torch.zeros(4, 4, dtype=torch.bool)
-    adj[edge_index[0], edge_index[1]] = True
-
-    neg_adj = torch.zeros(4, 4, dtype=torch.bool)
-    neg_adj[neg_edge_index[0], neg_edge_index[1]] = True
-    assert (adj & neg_adj).sum() == 0
+    assert neg_edge_index.size(1) == edge_index.size(1)
+    assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
 
     neg_edge_index = negative_sampling(edge_index, num_neg_samples=2)
-    assert neg_edge_index.size(1) <= 2
+    assert neg_edge_index.size(1) == 2
+    assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
 
     edge_index = to_undirected(edge_index)
     neg_edge_index = negative_sampling(edge_index, force_undirected=True)
+    assert neg_edge_index.size(1) == edge_index.size(1) - 1
     assert is_undirected(neg_edge_index)
-    assert neg_edge_index.size(1) <= edge_index.size(1)
+    assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
 
-    adj = torch.zeros(4, 4, dtype=torch.bool)
-    adj[edge_index[0], edge_index[1]] = True
 
-    neg_adj = torch.zeros(4, 4, dtype=torch.bool)
-    neg_adj[neg_edge_index[0], neg_edge_index[1]] = True
-    assert (adj & neg_adj).sum() == 0
+def test_bipartite_negative_sampling():
+    edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
+
+    neg_edge_index = negative_sampling(edge_index, num_nodes=(3, 4))
+    assert neg_edge_index.size(1) == edge_index.size(1)
+    assert is_negative(edge_index, neg_edge_index, (3, 4), bipartite=True)
+
+    neg_edge_index = negative_sampling(edge_index, num_nodes=(3, 4),
+                                       num_neg_samples=2)
+    assert neg_edge_index.size(1) == 2
+    assert is_negative(edge_index, neg_edge_index, (3, 4), bipartite=True)
 
 
 def test_structured_negative_sampling():

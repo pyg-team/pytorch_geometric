@@ -5,7 +5,6 @@ from torch_geometric.typing import NodeType, EdgeType
 import copy
 import weakref
 import warnings
-from inspect import signature
 from collections import namedtuple
 from collections.abc import Sequence, Mapping, MutableMapping
 
@@ -235,13 +234,13 @@ class NodeStorage(BaseStorage):
         # We sequentially access attributes that reveal the number of nodes.
         if 'num_nodes' in self:
             return self['num_nodes']
-        for key, value in self.items('x', 'pos', 'batch'):
-            num_args = len(signature(self._parent().__cat_dim__).parameters)
-            args = (key, value, self)[:num_args]
-            return value.size(self._parent().__cat_dim__(*args))
-        if 'adj' in self:
+        for key, value in self.items():
+            if (isinstance(value, Tensor)
+                    and (key in {'x', 'pos', 'batch'} or 'node' in key)):
+                return value.size(self._parent().__cat_dim__(key, value, self))
+        if 'adj' in self and isinstance(self.adj, SparseTensor):
             return self.adj.size(0)
-        if 'adj_t' in self:
+        if 'adj_t' in self and isinstance(self.adj, SparseTensor):
             return self.adj_t.size(1)
         warnings.warn(
             f"Unable to accurately infer 'num_nodes' from the attribute set "
@@ -249,15 +248,21 @@ class NodeStorage(BaseStorage):
             f"attribute of " +
             ("'data'" if self._key is None else f"'data[{self._key}]'") +
             " to suppress this warning")
-        if 'edge_index' in self and self.edge_index.numel() > 0:
-            return int(self.edge_index.max()) + 1
-        if 'face' in self and self.face.numel() > 0:
-            return int(self.face.max()) + 1
+        if 'edge_index' in self and isinstance(self.edge_index, Tensor):
+            if self.edge_index.numel() > 0:
+                return int(self.edge_index.max()) + 1
+            else:
+                return 0
+        if 'face' in self and isinstance(self.face, Tensor):
+            if self.face.numel() > 0:
+                return int(self.face.max()) + 1
+            else:
+                return 0
         return None
 
     @property
     def num_node_features(self) -> int:
-        if 'x' in self:
+        if 'x' in self and isinstance(self.x, Tensor):
             return 1 if self.x.dim() == 1 else self.x.size(-1)
         return 0
 
@@ -303,17 +308,17 @@ class EdgeStorage(BaseStorage):
     @property
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
-        for key, value in self.items('edge_index', 'edge_attr'):
-            num_args = len(signature(self._parent().__cat_dim__).parameters)
-            args = (key, value, self)[:num_args]
-            return value.size(self._parent().__cat_dim__(*args))
+        for key, value in self.items():
+            if isinstance(value, Tensor) and 'edge' in key:
+                return value.size(self._parent().__cat_dim__(key, value, self))
         for value in self.values('adj', 'adj_t'):
-            return value.nnz()
+            if isinstance(value, SparseTensor):
+                return value.nnz()
         return 0
 
     @property
     def num_edge_features(self) -> int:
-        if 'edge_attr' in self:
+        if 'edge_attr' in self and isinstance(self.edge_attr, Tensor):
             return 1 if self.edge_attr.dim() == 1 else self.edge_attr.size(-1)
         return 0
 

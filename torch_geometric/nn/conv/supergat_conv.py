@@ -77,7 +77,7 @@ class SuperGATConv(MessagePassing):
     .. note::
 
         For an example of using SuperGAT, see `examples/super_gat.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         super_gat.py>`_.
 
     Args:

@@ -6,7 +6,7 @@ import logging
 
 
 def get_ckpt_dir():
-    return '{}/ckpt'.format(cfg.out_dir)
+    return '{}/ckpt'.format(cfg.run_dir)
 
 
 def get_all_epoch():
@@ -23,6 +23,18 @@ def get_last_epoch():
 
 
 def load_ckpt(model, optimizer=None, scheduler=None):
+    r'''
+    Load latest model checkpoint
+
+    Args:
+        model (torch.nn.Module): The model that will be loaded
+        optimizer (torch.optim, optional): The optimizer that will be loaded
+        scheduler (torch.optim, optional): The schduler that will be loaded
+
+    Returns:
+        Epoch count after loading the model
+
+    '''
     if cfg.train.epoch_resume < 0:
         epoch_resume = get_last_epoch()
     else:
@@ -41,6 +53,16 @@ def load_ckpt(model, optimizer=None, scheduler=None):
 
 
 def save_ckpt(model, optimizer, scheduler, epoch):
+    r'''
+    Save model checkpoint at given epoch
+
+    Args:
+        model (torch.nn.Module): The model that will be saved
+        optimizer (torch.optim): The optimizer that will be saved
+        scheduler (torch.optim): The schduler that will be saved
+        epoch (int): The epoch when the model is saved
+
+    '''
     ckpt = {
         'epoch': epoch,
         'model_state': model.state_dict(),
@@ -54,6 +76,11 @@ def save_ckpt(model, optimizer, scheduler, epoch):
 
 
 def clean_ckpt():
+    r'''
+
+    Only keep the latest model checkpoint, remove all the older checkpoints
+
+    '''
     epochs = get_all_epoch()
     epoch_last = max(epochs)
     for epoch in epochs:

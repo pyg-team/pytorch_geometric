@@ -18,7 +18,8 @@ def test_profile():
 
     dataset = Planetoid(root, 'PubMed')
     data = dataset[0].cuda()
-    model = GraphSAGE(dataset.num_features, 64, num_layers=3).cuda()
+    model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
+                      out_channels=dataset.num_classes).cuda()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     @profileit()

@@ -29,7 +29,7 @@ class UPFD(InMemoryDataset):
     .. note::
 
         For an example of using UPFD, see `examples/upfd.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         upfd.py>`_.
 
     Args:
