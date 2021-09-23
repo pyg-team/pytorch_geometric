@@ -71,7 +71,7 @@ class PointTransformerConv(MessagePassing):
         reset(self.phi)
         reset(self.psi)
 
-    def forward(self, x: Union[OptTensor, PairOptTensor],
+    def forward(self, x: Union[Tensor, PairTensor],
                 pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
         """"""
 
