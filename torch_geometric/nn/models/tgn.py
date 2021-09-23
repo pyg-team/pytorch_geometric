@@ -137,8 +137,8 @@ class TGNMemory(torch.nn.Module):
         memory = self.gru(aggr, self.memory[n_id])
 
         # Get local copy of updated `last_update`.
-        last_update = scatter_max(
-            t, idx, dim=0, dim_size=self.last_update.shape[0])[0][n_id]
+        dim_size = self.last_update.size(0)
+        last_update = scatter_max(t, idx, dim=0, dim_size=dim_size)[0][n_id]
 
         return memory, last_update
 
