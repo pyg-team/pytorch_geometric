@@ -3,6 +3,8 @@ from torch_geometric.utils import (to_undirected, is_undirected,
                                    contains_self_loops)
 from torch_geometric.utils.negative_sampling import edge_index_to_vector
 from torch_geometric.utils.negative_sampling import vector_to_edge_index
+from torch_geometric.utils.negative_sampling import \
+    is_neg_samp_feasible
 from torch_geometric.utils import (negative_sampling,
                                    structured_negative_sampling,
                                    batched_negative_sampling)
@@ -110,6 +112,19 @@ def test_structured_negative_sampling_without_self_loops():
                                            )
     neg_edge_index = torch.vstack([i, k])
     assert not contains_self_loops(neg_edge_index)
+
+
+def test_check_feasibility_of_negative_sampling():
+    edge_index = torch.LongTensor(
+        [[0, 0, 1, 1, 2, 2, 2], [1, 2, 0, 2, 0, 1, 1]])
+    assert is_neg_samp_feasible(edge_index, 'structure', 3, False) == False
+    assert is_neg_samp_feasible(edge_index, 'structure', 3, True) == True
+    assert is_neg_samp_feasible(edge_index, 'structure', 4, False) == True
+    assert is_neg_samp_feasible(edge_index, 'common', 3, False) == False
+    assert is_neg_samp_feasible(edge_index, 'common', 3, True) == True
+    assert is_neg_samp_feasible(edge_index, 'common', 4, False) == True
+    edge_index = torch.LongTensor([[0, 0, 1, 1, 2], [1, 2, 0, 2, 0]])
+    assert is_neg_samp_feasible(edge_index, 'common', 3, False) == True
 
 
 def test_batched_negative_sampling():
