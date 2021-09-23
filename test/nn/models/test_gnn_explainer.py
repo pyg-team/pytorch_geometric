@@ -92,7 +92,7 @@ def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
 
 
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
-@pytest.mark.parametrize('return_type', ['log_prob', 'regression'])
+@pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('feat_mask_type', feat_mask_types)
 @pytest.mark.parametrize('model', [GNN()])
 def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
