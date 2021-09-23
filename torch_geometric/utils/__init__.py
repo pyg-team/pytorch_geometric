@@ -26,7 +26,8 @@ from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
 from .negative_sampling import (negative_sampling,
                                 structured_negative_sampling,
-                                batched_negative_sampling)
+                                batched_negative_sampling,
+                                is_neg_samp_feasible)
 from .train_test_split_edges import train_test_split_edges
 from .metric import (accuracy, true_positive, true_negative, false_positive,
                      false_negative, precision, recall, f1_score,
@@ -71,6 +72,7 @@ __all__ = [
     'negative_sampling',
     'structured_negative_sampling',
     'batched_negative_sampling',
+    'is_neg_samp_feasible',
     'train_test_split_edges',
     'accuracy',
     'true_positive',
