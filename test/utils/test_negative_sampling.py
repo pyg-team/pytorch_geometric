@@ -117,11 +117,22 @@ def test_check_feasibility_of_negative_sampling():
     assert not is_neg_samp_feasible(edge_index, 'structure', 3, False, False)
     assert is_neg_samp_feasible(edge_index, 'structure', 3, False, True)
     assert is_neg_samp_feasible(edge_index, 'structure', 4, False, False)
-    assert not is_neg_samp_feasible(edge_index, 'common', 3, False, False)
-    assert is_neg_samp_feasible(edge_index, 'common', 3, False, True)
-    assert is_neg_samp_feasible(edge_index, 'common', 4, False, False)
+    assert not is_neg_samp_feasible(edge_index, 'common', 3, False)
+    assert is_neg_samp_feasible(edge_index, 'common', 4, False)
     edge_index = torch.LongTensor([[0, 0, 1, 1, 2], [1, 2, 0, 2, 0]])
-    assert is_neg_samp_feasible(edge_index, 'common', 3, False, False)
+    assert is_neg_samp_feasible(edge_index, 'common', 3, False)
+
+    # undirected
+    edge_index = torch.as_tensor([[0, 0, 1],[1, 2, 2]])
+    assert not is_neg_samp_feasible(edge_index, 'common', 3, False, False,
+                                    True)
+    assert is_neg_samp_feasible(edge_index, 'common', 3, False, False, False)
+
+    # bipartite
+    edge_index = torch.as_tensor([[0, 0, 1, 1, 2, 2], [0, 1, 0, 1, 0, 1]])
+    assert not is_neg_samp_feasible(edge_index, 'common', (3, 2), True)
+    edge_index = torch.as_tensor([[0, 0, 1, 1, 2], [0, 1, 0, 1, 0]])
+    assert is_neg_samp_feasible(edge_index, 'common', (3, 2), True)
 
 
 def test_batched_negative_sampling():
