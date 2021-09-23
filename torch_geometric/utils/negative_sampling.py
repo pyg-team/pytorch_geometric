@@ -6,7 +6,7 @@ import warnings
 import torch
 import numpy as np
 from torch import Tensor
-from torch_geometric.utils import degree, remove_self_loops
+from torch_geometric.utils import degree, remove_self_loops, to_undirected
 
 from .num_nodes import maybe_num_nodes
 
@@ -41,13 +41,15 @@ def negative_sampling(edge_index: Tensor,
     :rtype: LongTensor
     """
     assert method in ['sparse', 'dense']
-    assert is_neg_samp_feasible(edge_index, 'common', num_nodes, False)
 
     size = num_nodes
     bipartite = isinstance(size, (tuple, list))
     size = maybe_num_nodes(edge_index) if size is None else size
     size = (size, size) if not bipartite else size
     force_undirected = False if bipartite else force_undirected
+
+    assert is_neg_samp_feasible(edge_index, 'common', num_nodes, bipartite,
+                                False, force_undirected)
 
     idx, population = edge_index_to_vector(edge_index, size, bipartite,
                                            force_undirected)
@@ -110,7 +112,7 @@ def structured_negative_sampling(edge_index, num_nodes=None,
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    assert is_neg_samp_feasible(edge_index, 'structure', num_nodes,
+    assert is_neg_samp_feasible(edge_index, 'structure', num_nodes, False,
                                 contains_neg_self_loops)
 
     self_loops = torch.arange(num_nodes) * (num_nodes + 1)
@@ -251,14 +253,16 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         return torch.stack([row, col], dim=0)
 
 
-def is_neg_samp_feasible(edge_index, sample_method, num_nodes = None,
+def is_neg_samp_feasible(edge_index, sample_method: str, num_nodes = None,
+                         bipartite: bool = False,
                          contains_neg_self_loops: bool = True,
                          force_undirected: bool = False) -> bool:
     r"""Check feasibility of negative sampling.
 
     Args:
         edge_index (LongTensor): The edge indices.
-        sample_method (str): Set to :obj:`"structure"` when utilizing
+        sample_method (string): *i.e.*, :obj:`"structure"` or :obj:`"common"`.
+            Set to :obj:`"structure"` when utilizing
             structured_negative_sampling, and set to :obj:`"common"` for other
             situations.
         num_nodes (int or Tuple[int, int], optional): The number of nodes,
@@ -271,18 +275,28 @@ def is_neg_samp_feasible(edge_index, sample_method, num_nodes = None,
             It is independent of :attr:`edge_index`. (default: :obj:`True`)
         force_undirected (bool, optional): If set to :obj:`True`, sampled
             negative edges will be undirected. (default: :obj:`False`)
+
     :rtype: bool
     """
     assert sample_method in ['common', 'structure']
-
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    if sample_method != 'structure':
+        contains_neg_self_loops = False
     # remove duplicate edges for multi edges among two nodes
-    edge_index = torch.unique(edge_index.T, dim=0).T
-    if not contains_neg_self_loops:
-        edge_index, _ = remove_self_loops(edge_index)
-        max_num_neighbor = num_nodes - 1
+
+    if bipartite:
+        force_undirected = False
+        max_num_neighbor = num_nodes[1]
+        num_nodes = num_nodes[0]
     else:
+        num_nodes = maybe_num_nodes(edge_index, num_nodes)
         max_num_neighbor = num_nodes
+        edge_index = torch.unique(edge_index.T, dim = 0).T
+
+    if not contains_neg_self_loops and not bipartite:
+        edge_index, _ = remove_self_loops(edge_index)
+        max_num_neighbor -= 1
+    if force_undirected:
+        edge_index = to_undirected(edge_index)
     sender = edge_index[0]
     node_degree = degree(sender, num_nodes)
     if sample_method == 'structure':
