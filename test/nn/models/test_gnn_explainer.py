@@ -48,11 +48,12 @@ class GNN(torch.nn.Module):
         return x.log_softmax(dim=1)
 
 
+return_types = ['log_prob', 'regression']
 feat_mask_types = ['individual_feature', 'scalar', 'feature']
 
 
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
-@pytest.mark.parametrize('return_type', ['log_prob', 'regression'])
+@pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('feat_mask_type', feat_mask_types)
 @pytest.mark.parametrize('model', [GCN(), GAT()])
 def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
@@ -86,9 +87,8 @@ def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
     assert edge_mask.size() == (edge_index.size(1), )
     assert edge_mask.min() >= 0 and edge_mask.max() <= 1
     if not allow_edge_mask:
-        assert list(edge_mask) == [
-            1., 1., 1., 1., 1., 1., 1., 1., 0., 0., 0., 0., 0., 0.
-        ]
+        assert edge_mask[:8].tolist() == [1.] * 8
+        assert edge_mask[8:].tolist() == [0.] * 6
 
 
 @pytest.mark.parametrize('allow_edge_mask', [True, False])
@@ -141,7 +141,7 @@ def test_gnn_explainer_to_log_prob(model):
     assert torch.allclose(prob_to_log(prob), log_to_log(log_prob))
 
 
-@pytest.mark.parametrize('return_type', ['log_prob', 'regression'])
+@pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('model', [GAT()])
 def test_gnn_explainer_with_existing_self_loops(model, return_type):
     explainer = GNNExplainer(model, log=False, return_type=return_type)
