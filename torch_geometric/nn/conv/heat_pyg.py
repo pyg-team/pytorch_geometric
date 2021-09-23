@@ -11,7 +11,7 @@ def flatten_a_list_of_list(list_of_list):
         flat_list += l
     return flat_list
 
-class HEATlayer(nn.Module):
+class HEATConv(nn.Module):
     ''' 
         1.  type-specific transformation for nodes of different types: ('n1', 'n2').
             transform nodes from different vector space to the same vector space.
