@@ -1,6 +1,7 @@
 from typing import Optional, Union, Tuple
 
 import random
+import warnings
 
 import torch
 import numpy as np
@@ -40,7 +41,7 @@ def negative_sampling(edge_index: Tensor,
     :rtype: LongTensor
     """
     assert method in ['sparse', 'dense']
-    # assert is_neg_samp_feasible(edge_index, 'common', num_nodes, False)
+    assert is_neg_samp_feasible(edge_index, 'common', num_nodes, False)
 
     size = num_nodes
     bipartite = isinstance(size, (tuple, list))
@@ -250,8 +251,9 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         return torch.stack([row, col], dim=0)
 
 
-def is_neg_samp_feasible(edge_index, sample_method, num_nodes=None,
-                         contains_neg_self_loops=True) -> bool:
+def is_neg_samp_feasible(edge_index, sample_method, num_nodes = None,
+                         contains_neg_self_loops: bool = True,
+                         force_undirected: bool = False) -> bool:
     r"""Check feasibility of negative sampling.
 
     Args:
@@ -259,12 +261,16 @@ def is_neg_samp_feasible(edge_index, sample_method, num_nodes=None,
         sample_method (str): Set to :obj:`"structure"` when utilizing
             structured_negative_sampling, and set to :obj:`"common"` for other
             situations.
-        num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        num_nodes (int or Tuple[int, int], optional): The number of nodes,
+            *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
+            If given as a tuple, then :obj:`edge_index` is interpreted as a
+            bipartite graph with shape :obj:`(num_src_nodes, num_dst_nodes)`.
+            (default: :obj:`None`)
         contains_neg_self_loops (bool, optional): If set to
             :obj:`False`, sampled negative edges will not contain self loops.
             It is independent of :attr:`edge_index`. (default: :obj:`True`)
-
+        force_undirected (bool, optional): If set to :obj:`True`, sampled
+            negative edges will be undirected. (default: :obj:`False`)
     :rtype: bool
     """
     assert sample_method in ['common', 'structure']
@@ -282,10 +288,12 @@ def is_neg_samp_feasible(edge_index, sample_method, num_nodes=None,
     if sample_method == 'structure':
         if torch.sub(node_degree,
                      max_num_neighbor).nonzero().__len__() != num_nodes:
+            warnings.warn('Cannot apply negative sampling', RuntimeWarning)
             return False
     elif sample_method == 'common':
         if torch.sub(node_degree,
                      max_num_neighbor).nonzero().__len__() == 0:
+            warnings.warn('Cannot apply negative sampling', RuntimeWarning)
             return False
     else:
         raise ValueError("sample_method not in ['common', 'structure'] ")

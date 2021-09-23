@@ -3,8 +3,7 @@ from torch_geometric.utils import (to_undirected, is_undirected,
                                    contains_self_loops)
 from torch_geometric.utils.negative_sampling import edge_index_to_vector
 from torch_geometric.utils.negative_sampling import vector_to_edge_index
-from torch_geometric.utils.negative_sampling import \
-    is_neg_samp_feasible
+from torch_geometric.utils.negative_sampling import is_neg_samp_feasible
 from torch_geometric.utils import (negative_sampling,
                                    structured_negative_sampling,
                                    batched_negative_sampling)
