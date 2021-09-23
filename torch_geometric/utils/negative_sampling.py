@@ -250,12 +250,8 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         return torch.stack([row, col], dim=0)
 
 
-def is_neg_samp_feasible(
-        edge_index,
-        sample_method,
-        num_nodes = None,
-        contains_neg_self_loops = True
-) -> bool:
+def is_neg_samp_feasible(edge_index, sample_method, num_nodes = None,
+                         contains_neg_self_loops = True) -> bool:
     r"""Check feasibility of negative sampling.
 
     Args:
