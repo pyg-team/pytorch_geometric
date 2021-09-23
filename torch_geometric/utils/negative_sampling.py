@@ -225,7 +225,7 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
                          force_undirected: bool = False) -> Tensor:
 
     if bipartite:  # No need to account for self-loops.
-        row = idx // size[1]
+        row = torch.div(idx, size[1], rounding_mode = 'floor')
         col = idx % size[1]
         return torch.stack([row, col], dim=0)
 
@@ -244,7 +244,7 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         assert size[0] == size[1]
         num_nodes = size[0]
 
-        row = idx // (num_nodes - 1)
+        row = torch.div(idx, num_nodes - 1, rounding_mode = 'floor')
         col = idx % (num_nodes - 1)
         col[row <= col] += 1
         return torch.stack([row, col], dim=0)
