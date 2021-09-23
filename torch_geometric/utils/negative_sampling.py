@@ -1,11 +1,12 @@
 from typing import Optional, Union, Tuple
 
 import random
+import warnings
 
 import torch
 import numpy as np
 from torch import Tensor
-from torch_geometric.utils import degree
+from torch_geometric.utils import degree, remove_self_loops, to_undirected
 
 from .num_nodes import maybe_num_nodes
 
@@ -47,6 +48,9 @@ def negative_sampling(edge_index: Tensor,
     size = (size, size) if not bipartite else size
     force_undirected = False if bipartite else force_undirected
 
+    assert is_neg_samp_feasible(edge_index, 'common', num_nodes, bipartite,
+                                False, force_undirected)
+
     idx, population = edge_index_to_vector(edge_index, size, bipartite,
                                            force_undirected)
 
@@ -62,7 +66,7 @@ def negative_sampling(edge_index: Tensor,
     if method == 'dense':
         # The dense version creates a mask of shape `population` to check if
         # for invalid samples.
-        mask = idx.new_ones(population, dtype=torch.bool)
+        mask = idx.new_ones(population, dtype = torch.bool)
         mask[idx] = False
         for _ in range(3):  # Number of tries to sample negative indices.
             rnd = sample(population, sample_size, idx.device)
@@ -76,7 +80,7 @@ def negative_sampling(edge_index: Tensor,
     else:  # 'sparse'
         # The sparse version checks for invalid samples via `np.isin`.
         for _ in range(3):  # Number of tries to sample negative indices.
-            rnd = sample(population, sample_size, device='cpu')
+            rnd = sample(population, sample_size, device = 'cpu')
             mask = np.isin(rnd, idx.to('cpu'))
             if neg_idx is not None:
                 mask |= np.isin(rnd, neg_idx.to('cpu'))
@@ -90,7 +94,8 @@ def negative_sampling(edge_index: Tensor,
     return vector_to_edge_index(neg_idx, size, bipartite, force_undirected)
 
 
-def structured_negative_sampling(edge_index, num_nodes=None):
+def structured_negative_sampling(edge_index, num_nodes = None,
+                                 contains_neg_self_loops = True):
     r"""Samples a negative edge :obj:`(i,k)` for every positive edge
     :obj:`(i,j)` in the graph given by :attr:`edge_index`, and returns it as a
     tuple of the form :obj:`(i,j,k)`.
@@ -99,31 +104,42 @@ def structured_negative_sampling(edge_index, num_nodes=None):
         edge_index (LongTensor): The edge indices.
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        contains_neg_self_loops (bool, optional): If set to
+            :obj:`False`, sampled negative edges will not contain self loops.
+            It is independent of :attr:`edge_index`. (default: :obj:`True`)
 
     :rtype: (LongTensor, LongTensor, LongTensor)
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
+    assert is_neg_samp_feasible(edge_index, 'structure', num_nodes, False,
+                                contains_neg_self_loops)
+
+    self_loops = torch.arange(num_nodes) * (num_nodes + 1)
     i, j = edge_index.to('cpu')
     idx_1 = i * num_nodes + j
 
-    k = torch.randint(num_nodes, (i.size(0), ), dtype=torch.long)
+    k = torch.randint(num_nodes, (i.size(0),), dtype = torch.long)
     idx_2 = i * num_nodes + k
 
     mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
-    rest = mask.nonzero(as_tuple=False).view(-1)
+    rest = mask.nonzero(as_tuple = False).view(-1)
     while rest.numel() > 0:  # pragma: no cover
-        tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
+        tmp = torch.randint(num_nodes, (rest.numel(),), dtype = torch.long)
         idx_2 = i[rest] * num_nodes + tmp
         mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
+        if not contains_neg_self_loops:
+            self_loop_mask = torch.from_numpy(np.isin(idx_2, self_loops)).to(
+                torch.bool)
+            mask = torch.logical_or(mask, self_loop_mask)
         k[rest] = tmp
-        rest = rest[mask.nonzero(as_tuple=False).view(-1)]
+        rest = rest[mask.nonzero(as_tuple = False).view(-1)]
 
     return edge_index[0], edge_index[1], k.to(edge_index.device)
 
 
-def batched_negative_sampling(edge_index, batch, num_neg_samples=None,
-                              method="sparse", force_undirected=False):
+def batched_negative_sampling(edge_index, batch, num_neg_samples = None,
+                              method = "sparse", force_undirected = False):
     r"""Samples random negative edges of multiple graphs given by
     :attr:`edge_index` and :attr:`batch`.
 
@@ -146,10 +162,10 @@ def batched_negative_sampling(edge_index, batch, num_neg_samples=None,
 
     :rtype: LongTensor
     """
-    split = degree(batch[edge_index[0]], dtype=torch.long).tolist()
-    edge_indices = torch.split(edge_index, split, dim=1)
-    num_nodes = degree(batch, dtype=torch.long)
-    cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)[:-1]])
+    split = degree(batch[edge_index[0]], dtype = torch.long).tolist()
+    edge_indices = torch.split(edge_index, split, dim = 1)
+    num_nodes = degree(batch, dtype = torch.long)
+    cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim = 0)[:-1]])
 
     neg_edge_indices = []
     for edge_index, N, C in zip(edge_indices, num_nodes.tolist(),
@@ -158,23 +174,23 @@ def batched_negative_sampling(edge_index, batch, num_neg_samples=None,
                                            method, force_undirected) + C
         neg_edge_indices.append(neg_edge_index)
 
-    return torch.cat(neg_edge_indices, dim=1)
+    return torch.cat(neg_edge_indices, dim = 1)
 
 
-def sample(population: int, k: int, device=None) -> Tensor:
+def sample(population: int, k: int, device = None) -> Tensor:
     if population <= k:
-        return torch.arange(population, device=device)
+        return torch.arange(population, device = device)
     else:
-        return torch.tensor(random.sample(range(population), k), device=device)
+        return torch.tensor(random.sample(range(population), k),
+                            device = device)
 
 
 def edge_index_to_vector(
-    edge_index: Tensor,
-    size: Tuple[int, int],
-    bipartite: bool,
-    force_undirected: bool = False,
+        edge_index: Tensor,
+        size: Tuple[int, int],
+        bipartite: bool,
+        force_undirected: bool = False,
 ) -> Tuple[Tensor, int]:
-
     row, col = edge_index
 
     if bipartite:  # No need to account for self-loops.
@@ -189,7 +205,7 @@ def edge_index_to_vector(
         # We only operate on the upper triangular matrix:
         mask = row < col
         row, col = row[mask], col[mask]
-        offset = torch.arange(1, num_nodes, device=row.device).cumsum(0)[row]
+        offset = torch.arange(1, num_nodes, device = row.device).cumsum(0)[row]
         idx = row.mul_(num_nodes).add_(col).sub_(offset)
         population = (num_nodes * (num_nodes + 1)) // 2 - num_nodes
         return idx, population
@@ -210,20 +226,19 @@ def edge_index_to_vector(
 
 def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
                          force_undirected: bool = False) -> Tensor:
-
     if bipartite:  # No need to account for self-loops.
-        row = idx // size[1]
+        row = torch.div(idx, size[1], rounding_mode = 'floor')
         col = idx % size[1]
-        return torch.stack([row, col], dim=0)
+        return torch.stack([row, col], dim = 0)
 
     elif force_undirected:
         assert size[0] == size[1]
         num_nodes = size[0]
 
-        offset = torch.arange(1, num_nodes, device=idx.device).cumsum(0)
+        offset = torch.arange(1, num_nodes, device = idx.device).cumsum(0)
         end = torch.arange(num_nodes, num_nodes * num_nodes, num_nodes,
-                           device=idx.device)
-        row = torch.bucketize(idx, end.sub_(offset), right=True)
+                           device = idx.device)
+        row = torch.bucketize(idx, end.sub_(offset), right = True)
         col = offset[row].add_(idx) % num_nodes
         return torch.stack([torch.cat([row, col]), torch.cat([col, row])], 0)
 
@@ -231,7 +246,68 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         assert size[0] == size[1]
         num_nodes = size[0]
 
-        row = idx // (num_nodes - 1)
+        row = torch.div(idx, num_nodes - 1, rounding_mode = 'floor')
         col = idx % (num_nodes - 1)
         col[row <= col] += 1
-        return torch.stack([row, col], dim=0)
+        return torch.stack([row, col], dim = 0)
+
+
+def is_neg_samp_feasible(edge_index: Tensor, sample_method: str,
+                         num_nodes = None, bipartite: bool = False,
+                         contains_neg_self_loops: bool = True,
+                         force_undirected: bool = False) -> bool:
+    r"""Check feasibility of negative sampling.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        sample_method (string): *i.e.*, :obj:`"structure"` or :obj:`"common"`.
+            Set to :obj:`"structure"` when utilizing
+            structured_negative_sampling, and set to :obj:`"common"` for other
+            situations.
+        num_nodes (int or Tuple[int, int], optional): The number of nodes,
+            *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
+            If given as a tuple, then :obj:`edge_index` is interpreted as a
+            bipartite graph with shape :obj:`(num_src_nodes, num_dst_nodes)`.
+            (default: :obj:`None`)
+        contains_neg_self_loops (bool, optional): If set to
+            :obj:`False`, sampled negative edges will not contain self loops.
+            It is independent of :attr:`edge_index`. (default: :obj:`True`)
+        force_undirected (bool, optional): If set to :obj:`True`, sampled
+            negative edges will be undirected. (default: :obj:`False`)
+
+    :rtype: bool
+    """
+    assert sample_method in ['common', 'structure']
+    if sample_method != 'structure':
+        contains_neg_self_loops = False
+    # remove duplicate edges for multi edges among two nodes
+
+    if bipartite:
+        force_undirected = False
+        max_num_neighbor = num_nodes[1]
+        num_nodes = num_nodes[0]
+    else:
+        num_nodes = maybe_num_nodes(edge_index, num_nodes)
+        max_num_neighbor = num_nodes
+        edge_index = torch.unique(edge_index.T, dim = 0).T
+
+    if not contains_neg_self_loops and not bipartite:
+        edge_index, _ = remove_self_loops(edge_index)
+        max_num_neighbor -= 1
+    if force_undirected:
+        edge_index = to_undirected(edge_index)
+    sender = edge_index[0]
+    node_degree = degree(sender, num_nodes)
+    if sample_method == 'structure':
+        if torch.sub(node_degree,
+                     max_num_neighbor).nonzero().__len__() != num_nodes:
+            warnings.warn('Cannot apply negative sampling', RuntimeWarning)
+            return False
+    elif sample_method == 'common':
+        if torch.sub(node_degree,
+                     max_num_neighbor).nonzero().__len__() == 0:
+            warnings.warn('Cannot apply negative sampling', RuntimeWarning)
+            return False
+    else:
+        raise ValueError("sample_method not in ['common', 'structure'] ")
+    return True
