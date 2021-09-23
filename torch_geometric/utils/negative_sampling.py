@@ -5,7 +5,7 @@ import random
 import torch
 import numpy as np
 from torch import Tensor
-from torch_geometric.utils import degree
+from torch_geometric.utils import degree, remove_self_loops
 
 from .num_nodes import maybe_num_nodes
 
@@ -40,6 +40,7 @@ def negative_sampling(edge_index: Tensor,
     :rtype: LongTensor
     """
     assert method in ['sparse', 'dense']
+    assert is_neg_samp_feasible(edge_index, 'common', num_nodes, False)
 
     size = num_nodes
     bipartite = isinstance(size, (tuple, list))
@@ -107,6 +108,10 @@ def structured_negative_sampling(edge_index, num_nodes=None,
     :rtype: (LongTensor, LongTensor, LongTensor)
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+    assert is_neg_samp_feasible(edge_index, 'structure', num_nodes,
+                                contains_neg_self_loops)
+
     self_loops = torch.arange(num_nodes) * (num_nodes + 1)
     i, j = edge_index.to('cpu')
     idx_1 = i * num_nodes + j
@@ -243,3 +248,49 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         col = idx % (num_nodes - 1)
         col[row <= col] += 1
         return torch.stack([row, col], dim=0)
+
+
+def is_neg_samp_feasible(
+        edge_index,
+        sample_method,
+        num_nodes = None,
+        contains_neg_self_loops = True
+) -> bool:
+    r"""Check feasibility of negative sampling.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        sample_method (str): Set to :obj:`"structure"` when utilizing
+            structured_negative_sampling, and set to :obj:`"common"` for other
+            situations.
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        contains_neg_self_loops (bool, optional): If set to
+            :obj:`False`, sampled negative edges will not contain self loops.
+            It is independent of :attr:`edge_index`. (default: :obj:`True`)
+
+    :rtype: bool
+    """
+    assert sample_method in ['common', 'structure']
+
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    # remove duplicate edges for multi edges among two nodes
+    edge_index = torch.unique(edge_index.T, dim = 0).T
+    if not contains_neg_self_loops:
+        edge_index, _ = remove_self_loops(edge_index)
+        max_num_neighbor = num_nodes - 1
+    else:
+        max_num_neighbor = num_nodes
+    sender = edge_index[0]
+    node_degree = degree(sender, num_nodes)
+    if sample_method == 'structure':
+        if torch.sub(node_degree,
+                     max_num_neighbor).nonzero().__len__() != num_nodes:
+            return False
+    elif sample_method == 'common':
+        if torch.sub(node_degree,
+                     max_num_neighbor).nonzero().__len__() == 0:
+            return False
+    else:
+        raise ValueError("sample_method not in ['common', 'structure'] ")
+    return True
