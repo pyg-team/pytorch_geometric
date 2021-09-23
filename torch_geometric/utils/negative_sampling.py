@@ -225,7 +225,7 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
                          force_undirected: bool = False) -> Tensor:
 
     if bipartite:  # No need to account for self-loops.
-        row = torch.div(idx, size[1], rounding_mode = 'floor')
+        row = torch.div(idx, size[1], rounding_mode='floor')
         col = idx % size[1]
         return torch.stack([row, col], dim=0)
 
@@ -244,14 +244,14 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         assert size[0] == size[1]
         num_nodes = size[0]
 
-        row = torch.div(idx, num_nodes - 1, rounding_mode = 'floor')
+        row = torch.div(idx, num_nodes - 1, rounding_mode='floor')
         col = idx % (num_nodes - 1)
         col[row <= col] += 1
         return torch.stack([row, col], dim=0)
 
 
-def is_neg_samp_feasible(edge_index, sample_method, num_nodes = None,
-                         contains_neg_self_loops = True) -> bool:
+def is_neg_samp_feasible(edge_index, sample_method, num_nodes=None,
+                         contains_neg_self_loops=True) -> bool:
     r"""Check feasibility of negative sampling.
 
     Args:
@@ -271,7 +271,7 @@ def is_neg_samp_feasible(edge_index, sample_method, num_nodes = None,
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     # remove duplicate edges for multi edges among two nodes
-    edge_index = torch.unique(edge_index.T, dim = 0).T
+    edge_index = torch.unique(edge_index.T, dim=0).T
     if not contains_neg_self_loops:
         edge_index, _ = remove_self_loops(edge_index)
         max_num_neighbor = num_nodes - 1
