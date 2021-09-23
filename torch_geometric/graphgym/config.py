@@ -3,6 +3,7 @@ import os
 from yacs.config import CfgNode as CN
 import shutil
 
+from torch_geometric.data.makedirs import makedirs
 import torch_geometric.graphgym.register as register
 
 # Global config object
@@ -482,6 +483,7 @@ def dump_cfg(cfg):
         cfg (CfgNode): Configuration node
 
     """
+    makedirs(cfg.out_dir)
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
