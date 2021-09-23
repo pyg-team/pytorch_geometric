@@ -97,7 +97,7 @@ class GNNExplainer(torch.nn.Module):
         self.edge_mask = torch.nn.Parameter(torch.randn(E) * std)
         if not self.allow_edge_mask:
             self.edge_mask.requires_grad_(False)
-            self.edge_mask.fill_(float('inf'))  # Sigmoid returns `1`.
+            self.edge_mask.fill_(float('inf'))  # `sigmoid()` returns `1`.
         self.loop_mask = edge_index[0] != edge_index[1]
 
         for module in self.model.modules():
