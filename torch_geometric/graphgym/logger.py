@@ -12,11 +12,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, \
 
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
 
-try:
-    from tensorboardX import SummaryWriter
-except ImportError:
-    SummaryWriter = None
-
 
 def set_printing():
     """
@@ -50,9 +45,7 @@ class Logger(object):
         self.out_dir = '{}/{}'.format(cfg.run_dir, name)
         makedirs(self.out_dir)
         if cfg.tensorboard_each_run:
-            if SummaryWriter is None:
-                raise ImportError(
-                    'Tensorboard support requires `tensorboardX`.')
+            from tensorboardX import SummaryWriter
             self.tb_writer = SummaryWriter(self.out_dir)
 
         self.reset()
