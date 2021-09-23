@@ -1,5 +1,5 @@
 from typing import Union
-from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor, Adj
+from torch_geometric.typing import PairOptTensor, PairTensor, Adj
 
 from torch import Tensor
 from torch_sparse import SparseTensor, set_diag
@@ -7,7 +7,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
 from torch.nn import Sequential, ReLU, Linear
-from torch.nn.functional import softmax
+from torch_geometric.utils import softmax
 
 from ..inits import reset
 
@@ -91,7 +91,7 @@ class PointTransformerConv(MessagePassing):
 
         return self.propagate(edge_index, x=x, pos=pos)
 
-    def message(self, x_i, x_j, pos_i, pos_j):
+    def message(self, x_i, x_j, pos_i, pos_j, index):
 
         # query is x_i, key is x_j, value is the substraction of the two
         out_delta = self.delta((pos_j - pos_i))  # compute position encoding
@@ -103,7 +103,7 @@ class PointTransformerConv(MessagePassing):
 
         # normalize the result with softmax and multiply
         # by features transformed by alpha
-        msg = softmax(out_gamma, 1) * (
+        msg = softmax(out_gamma, index) * (
             self.alpha(x_j) + out_delta
         )
 
