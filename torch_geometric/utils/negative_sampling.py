@@ -253,7 +253,7 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         return torch.stack([row, col], dim=0)
 
 
-def is_neg_samp_feasible(edge_index:Tensor, sample_method: str,
+def is_neg_samp_feasible(edge_index: Tensor, sample_method: str,
                          num_nodes=None, bipartite: bool = False,
                          contains_neg_self_loops: bool = True,
                          force_undirected: bool = False) -> bool:
