@@ -22,7 +22,7 @@ class HEATConv(nn.Module):
                         edge_attr_emb_size=5, edge_type_emb_size=5, node_emb_size=5, 
                         out_channels=6, heads=3, concat=True):
 
-        super(HEATlayer, self).__init__()
+        super().__init__()
         ## Parameters
         self.node_type_set = node_type_set
         self.edge_type_set = edge_type_set
