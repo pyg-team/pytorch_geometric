@@ -54,6 +54,7 @@ def collate(
     #   We also need to make use of `inc_dict` when re-constructuing individual
     #   elements as attributes that got incremented need to be decremented
     #   while separating to obtain original values.
+    device = None
     slice_dict, inc_dict = defaultdict(dict), defaultdict(dict)
     for out_store in out.stores:
         key = out_store._key
@@ -76,6 +77,8 @@ def collate(
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
 
+            device = value.device if isinstance(value, Tensor) else device
+
             out_store[attr] = value
             if key is not None:
                 slice_dict[key][attr] = slices
@@ -88,14 +91,16 @@ def collate(
             if (attr in follow_batch and isinstance(slices, Tensor)
                     and slices.dim() == 1):
                 repeats = slices[1:] - slices[:-1]
-                batch = torch.arange(len(values)).repeat_interleave(repeats)
+                arange = torch.arange(len(values), device=device)
+                batch = arange.repeat_interleave(repeats.to(device))
                 out_store[f'{attr}_batch'] = batch
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
                 and stores[0].num_nodes is not None):
-            repeats = torch.tensor([store.num_nodes for store in stores])
-            arange = torch.arange(len(stores))
+            arange = torch.arange(len(stores), device=device)
+            repeats = torch.tensor([store.num_nodes for store in stores],
+                                   device=device)
             out_store.batch = arange.repeat_interleave(repeats)
             out_store.ptr = cumsum(repeats)
 
