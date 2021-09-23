@@ -1,5 +1,5 @@
 tensorboard_each_run: False
-tensorboard_agg: True
+tensorboard_agg: False
 dataset:
   format: PyG
   name: Cora
