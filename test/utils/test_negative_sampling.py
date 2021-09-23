@@ -123,7 +123,7 @@ def test_check_feasibility_of_negative_sampling():
     assert is_neg_samp_feasible(edge_index, 'common', 3, False)
 
     # undirected
-    edge_index = torch.as_tensor([[0, 0, 1],[1, 2, 2]])
+    edge_index = torch.as_tensor([[0, 0, 1], [1, 2, 2]])
     assert not is_neg_samp_feasible(edge_index, 'common', 3, False, False,
                                     True)
     assert is_neg_samp_feasible(edge_index, 'common', 3, False, False, False)
