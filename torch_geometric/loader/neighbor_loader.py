@@ -131,6 +131,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
     ):
         if kwargs.get('num_workers', 0) > 0:
             torch.multiprocessing.set_sharing_strategy('file_system')
+            kwargs['persistent_workers'] = True
 
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
