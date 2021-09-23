@@ -40,7 +40,7 @@ def negative_sampling(edge_index: Tensor,
     :rtype: LongTensor
     """
     assert method in ['sparse', 'dense']
-    assert is_neg_samp_feasible(edge_index, 'common', num_nodes, False)
+    # assert is_neg_samp_feasible(edge_index, 'common', num_nodes, False)
 
     size = num_nodes
     bipartite = isinstance(size, (tuple, list))
