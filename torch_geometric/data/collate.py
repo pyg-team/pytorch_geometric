@@ -171,6 +171,8 @@ def _collate(
             incs = get_incs(key, values, data_list, stores)
             if int(incs[-1]) != 0:
                 value.add_(incs)
+        else:
+            incs = None
         slices = torch.arange(len(values) + 1)
         return value, slices, incs
 
