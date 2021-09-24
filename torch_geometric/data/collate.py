@@ -167,8 +167,14 @@ def _collate(
     elif isinstance(elem, (int, float)):
         # Convert a list of numerical values to a `torch.Tensor`.
         value = torch.tensor(values)
+        if increment:
+            incs = get_incs(key, values, data_list, stores)
+            if int(incs[-1]) != 0:
+                value.add_(incs)
+        else:
+            incs = None
         slices = torch.arange(len(values) + 1)
-        return value, slices, None
+        return value, slices, incs
 
     else:
         # Other-wise, just return the list of values as it is.
