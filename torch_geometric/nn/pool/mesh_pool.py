@@ -44,9 +44,6 @@ class MeshPool(nn.Module):
         self.__meshes = None
         self.__merge_edges = [-1, -1]
 
-    def __call__(self, fe, meshes):
-        return self.forward(fe, meshes)
-
     def forward(self, fe, meshes):
         self.__updated_fe = [[] for _ in range(len(meshes))]
         pool_threads = []
