@@ -152,10 +152,6 @@ class MeshConv(MessagePassing):
                                            2]).contiguous()
         return features_neighborhood
 
-    def update(self, aggr_out):
-        # aggr_out has shape [N, out_channels]
-        return aggr_out
-
     def __repr__(self):
         return '{}(in_channels={}, out_channels={}, bias={}, hood=5, ' \
                'aggr=add)'.format(self.__class__.__name__, self.in_channels,
