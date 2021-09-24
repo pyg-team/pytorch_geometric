@@ -75,16 +75,18 @@ class AttributedGraphDataset(InMemoryDataset):
         gdd.download_file_from_google_drive(self.datasets[self.name], path)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
+        path = osp.join(self.raw_dir, f'{self.name}.attr')
+        if self.name == 'mag':
+            path = osp.join(self.raw_dir, self.name)
         for name in self.raw_file_names:
-            os.rename(osp.join(self.raw_dir, f'{self.name}.attr', name),
-                      osp.join(self.raw_dir, name))
-        shutil.rmtree(osp.join(self.raw_dir, f'{self.name}.attr'))
+            os.rename(osp.join(path, name), osp.join(self.raw_dir, name))
+        shutil.rmtree(path)
 
     def process(self):
         import pandas as pd
 
         x = sp.load_npz(self.raw_paths[0])
-        if x.shape[-1] > 10000:
+        if x.shape[-1] > 10000 or self.name == 'mag':
             x = SparseTensor.from_scipy(x).to(torch.float)
         else:
             x = torch.from_numpy(x.todense()).to(torch.float)
