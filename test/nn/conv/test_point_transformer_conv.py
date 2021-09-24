@@ -52,8 +52,8 @@ def test_point_transformer_conv():
     conv = PointTransformerConv(
         in_channels=16,
         out_channels=out_channels,
-        pos_encoding_nn=nn_pos,
-        mapping_nn=nn_map)
+        local_nn=nn_pos,
+        global_nn=nn_map)
     assert conv.__repr__() == (
         'PointTransformerConv(\n'
         '  (delta): Sequential(\n'

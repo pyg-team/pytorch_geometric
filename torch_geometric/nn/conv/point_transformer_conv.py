@@ -32,7 +32,7 @@ class PointTransformerConv(MessagePassing):
     Args:
         in_channels (int): Size of each input sample features
         out_channels (int) : size of each output sample features
-        pos_encoding_nn : (torch.nn.Module, optional): A neural network
+        local_nn : (torch.nn.Module, optional): A neural network
             :math:`\delta = \theta \left( \mathbf{p}_j -
             \mathbf{p}_i \right)` which maps relative spatial coordinates
             :obj:`pos_j - pos_i` of shape
@@ -44,7 +44,7 @@ class PointTransformerConv(MessagePassing):
             '    (1): ReLU()\n'
             '    (2): Linear(in_features=64, out_features=32, bias=True)\n'
             '  )\n'` (default: :obj:`None`)
-        mapping_nn : (torch.nn.Module, optional): A neural network
+        global_nn : (torch.nn.Module, optional): A neural network
             :math:`\gamma` which maps transformed node features of shape
             :obj:`[-1, out_channels]` to shape :obj:`[-1, out_channels]`,
             *e.g.*, defined by :class:`torch.nn.Sequential`. In case
@@ -57,10 +57,10 @@ class PointTransformerConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         pos_mlp_channels (int, optional) : size of intermediary channels in
             points relative spatial coordinates computation. Has no effect in
-            case pos_encoding_nn is not None (default: :obj:`64`)
+            case local_nn is not None (default: :obj:`64`)
         attn_mlp_channels (int, optional) : factor size of intermediary
             channels in transformed features mlp. Has no effect in
-            case mapping_nn is not None (default: :obj:`2`)
+            case global_nn is not None (default: :obj:`2`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -68,8 +68,8 @@ class PointTransformerConv(MessagePassing):
     def __init__(self,
                  in_channels,
                  out_channels,
-                 pos_encoding_nn=None,
-                 mapping_nn=None,
+                 local_nn=None,
+                 global_nn=None,
                  add_self_loops=True,
                  pos_mlp_channels=64,
                  attn_mlp_channels=2):
@@ -77,21 +77,21 @@ class PointTransformerConv(MessagePassing):
         super(PointTransformerConv,
               self).__init__(aggr='add')  # "Add" aggregation
 
-        if pos_encoding_nn is None:
-            pos_encoding_nn = Sequential(
+        if local_nn is None:
+            local_nn = Sequential(
                 Linear(3, pos_mlp_channels),
                 ReLU(),
                 Linear(pos_mlp_channels, out_channels)
             )
-        if mapping_nn is None:
-            mapping_nn = Sequential(
+        if global_nn is None:
+            global_nn = Sequential(
                 Linear(out_channels, out_channels * attn_mlp_channels),
                 ReLU(),
                 Linear(out_channels * attn_mlp_channels, out_channels)
             )
 
-        self.delta = pos_encoding_nn
-        self.gamma = mapping_nn
+        self.delta = local_nn
+        self.gamma = global_nn
         self.alpha = Linear(in_channels, out_channels)
         self.phi = Linear(in_channels, out_channels)
         self.psi = Linear(in_channels, out_channels)
