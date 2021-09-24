@@ -11,8 +11,9 @@ from torch_geometric.data import InMemoryDataset, Data, extract_zip
 
 
 class AttributedGraphDataset(InMemoryDataset):
-    r"""A variety of attributed graph datasets, as pre-processed by
-    `Renchi Yang <https://renchi.ac.cn/datasets/>`_.
+    r"""A variety of attributed graph datasets from the
+    `"Scaling Attributed Network Embedding to Massive Graphs"
+    <https://arxiv.org/abs/2009.00826>`_ paper.
 
     Args:
         root (string): Root directory where the dataset should be saved.
