@@ -17,7 +17,7 @@ def pad(input_arr, target_length, val=0, dim=1):
                   constant_values=val)
 
 
-class MeshCnnBaseDataset(Dataset):
+class MeshCnnBaseDataset(InMemoryDataset):
     r"""Base class for MeshCNN datasets: `"MeshCNN: A Network with an Edge"
      <https://arxiv.org/abs/1809.05910>`_ paper.
     This class is the base class for MeshCnnClassificationDataset and
