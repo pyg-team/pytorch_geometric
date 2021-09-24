@@ -32,32 +32,66 @@ class PointTransformerConv(MessagePassing):
     Args:
         in_channels (int): Size of each input sample features
         out_channels (int) : size of each output sample features
-        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+        pos_encoding_nn : (torch.nn.Module, optional): A neural network
+            :math:`\delta = \theta \left( \mathbf{p}_j -
+            \mathbf{p}_i \right)` which maps relative spatial coordinates
+            :obj:`pos_j - pos_i` of shape
+            :obj:`[-1, 3]` to shape
+            :obj:`[-1, out_channels]`, *e.g.*, defined by
+            :class:`torch.nn.Sequential`. In case :obj:`None` is given, is
+            initialized with :obj:`Sequential(\n'
+            '    (0): Linear(in_features=3, out_features=64, bias=True)\n'
+            '    (1): ReLU()\n'
+            '    (2): Linear(in_features=64, out_features=32, bias=True)\n'
+            '  )\n'` (default: :obj:`None`)
+        mapping_nn : (torch.nn.Module, optional): A neural network
+            :math:`\gamma` which maps transformed node features of shape
+            :obj:`[-1, out_channels]` to shape :obj:`[-1, out_channels]`,
+            *e.g.*, defined by :class:`torch.nn.Sequential`. In case
+            :obj:`None` is given, is initialized with :obj:`Sequential(\n'
+            '  (0): Linear(in_features=32, out_features=64, bias=True)\n'
+            '  (1): ReLU()\n'
+            '  (2): Linear(in_features=64, out_features=32, bias=True)\n'
+            ')'` (default: :obj:`None`)
+        add_self_loops (bool, optional) : If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
-
-        pos_mlp_channels : (int, optional) size of intermediary channels in
-            points relative spatial coordinates computation.
-            (default: :obj:`64`)
-        attn_mlp_channels : (int, optional) factor size of intermediary
-            channels in transformed features mlp. (default: :obj:`2`)
-
+        pos_mlp_channels (int, optional) : size of intermediary channels in
+            points relative spatial coordinates computation. Has no effect in
+            case pos_encoding_nn is not None (default: :obj:`64`)
+        attn_mlp_channels (int, optional) : factor size of intermediary
+            channels in transformed features mlp. Has no effect in
+            case mapping_nn is not None (default: :obj:`2`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
+
     def __init__(self,
                  in_channels,
                  out_channels,
+                 pos_encoding_nn=None,
+                 mapping_nn=None,
                  add_self_loops=True,
                  pos_mlp_channels=64,
                  attn_mlp_channels=2):
+
         super(PointTransformerConv,
               self).__init__(aggr='add')  # "Add" aggregation
 
-        self.delta = Sequential(Linear(3, pos_mlp_channels), ReLU(),
-                                Linear(pos_mlp_channels, out_channels))
-        self.gamma = Sequential(
-            Linear(out_channels, out_channels * attn_mlp_channels), ReLU(),
-            Linear(out_channels * attn_mlp_channels, out_channels))
+        if pos_encoding_nn is None:
+            pos_encoding_nn = Sequential(
+                Linear(3, pos_mlp_channels),
+                ReLU(),
+                Linear(pos_mlp_channels, out_channels)
+            )
+        if mapping_nn is None:
+            mapping_nn = Sequential(
+                Linear(out_channels, out_channels * attn_mlp_channels),
+                ReLU(),
+                Linear(out_channels * attn_mlp_channels, out_channels)
+            )
+
+        self.delta = pos_encoding_nn
+        self.gamma = mapping_nn
         self.alpha = Linear(in_channels, out_channels)
         self.phi = Linear(in_channels, out_channels)
         self.psi = Linear(in_channels, out_channels)
