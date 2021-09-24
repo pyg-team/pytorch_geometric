@@ -2,7 +2,6 @@ import os
 import os.path as osp
 import numpy as np
 import pickle
-import torch
 from torch_geometric.data import (download_url, extract_tar, Dataset)
 from torch_geometric.transforms.mesh_prepare import MeshCNNPrepare
 from torch_geometric.io import read_ply
@@ -152,9 +151,9 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
         n_input_edges (int): Number of input edges of mesh. It should be the
                              bigger than or equal to highest number of input
                              edges in the dataset.
-        phase (str, optional): Train or Test phase - if 'train' it will return
-                               the train dataset, if 'test' it will return the
-                               test dataset. Default is 'train'.
+        train (bool, optional): Train or Test - if 'True' it will return
+                               the train dataset, if 'False' it will return the
+                               test dataset. Default is 'True'.
         num_aug (int, optional): Number of augmentations to apply on mesh.
                                  Default is 1 which means no augmentations.
         slide_verts (float, optional): values between 0.0 to 1.0 - if set above
@@ -169,11 +168,11 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
     """
 
     def __init__(self, root: str, dataset_url: str, n_input_edges: int,
-                 phase: str = 'train', num_aug: int = 1,
+                 train: bool = True, num_aug: int = 1,
                  slide_verts: float = 0.0, scale_verts: bool = False,
                  flip_edges: float = 0.0):
         self.n_input_edges = n_input_edges
-        self.phase = phase
+        self.train = train
         self.num_aug = num_aug
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
@@ -187,6 +186,11 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
         self.n_input_channels = None
         self.n_classes = None
         self.size = None
+        if self.train:
+            self.phase = 'train'
+        else:
+            self.phase = 'test'
+
         MeshCnnBaseDataset.__init__(self, root=root, dataset_url=dataset_url)
 
     @staticmethod
@@ -311,9 +315,9 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         n_input_edges (int): Number of input edges of mesh. It should be the
                              bigger than or equal to highest number of input
                              edges in the dataset.
-        phase (str, optional): Train or Test phase - if 'train' it will return
-                               the train dataset, if 'test' it will return the
-                               test dataset. Default is 'train'.
+        train (bool, optional): Train or Test - if 'True' it will return
+                               the train dataset, if 'False' it will return the
+                               test dataset. Default is 'True'.
         num_aug (int, optional): Number of augmentations to apply on mesh.
                                  Default is 1 which means no augmentations.
         slide_verts (float, optional): values between 0.0 to 1.0 - if set above
@@ -328,12 +332,12 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
     """
 
     def __init__(self, root: str, dataset_url: str, dataset_name: str,
-                 n_input_edges: int, phase: str = 'train',
+                 n_input_edges: int, train: bool = True,
                  num_aug: int = 1, slide_verts: float = 0.0,
                  scale_verts: bool = False, flip_edges: float = 0.0):
         self.dataset_name = dataset_name
         self.n_input_edges = n_input_edges
-        self.phase = phase
+        self.train = train
         self.num_aug = num_aug
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
@@ -350,6 +354,11 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         self.n_input_channels = None
         self.n_classes = None
         self.size = None
+        if self.train:
+            self.phase = 'train'
+        else:
+            self.phase = 'test'
+
         MeshCnnBaseDataset.__init__(self, root=root, dataset_url=dataset_url)
 
     @staticmethod

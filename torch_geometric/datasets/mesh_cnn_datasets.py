@@ -8,9 +8,9 @@ class MeshShrech16Dataset:
     <https://arxiv.org/abs/1809.05910>`_ paper
     Args:
         root (str): Root folder for dataset.
-        phase (str, optional): Train or Test phase - if 'train' it will return
-                               the train datalodaer, if 'test' it will return
-                               the test datalodaer. Default is 'train'.
+        train (bool, optional): Train or Test - if 'True' it will return
+                               the train datalodaer, if 'False' it will return
+                               the test datalodaer. Default is 'True'.
         num_aug (int, optional): Number of augmentations to apply on mesh.
                                  Default is 1 which means no augmentations.
         slide_verts (float, optional): values between 0.0 to 1.0 - if set above
@@ -24,11 +24,11 @@ class MeshShrech16Dataset:
                                       percentage of flip_edges value.
     """
 
-    def __init__(self, root: str, phase: str = 'train', num_aug: int = 1,
+    def __init__(self, root: str, train: bool = True, num_aug: int = 1,
                  slide_verts: float = 0.0,
                  scale_verts: bool = False, flip_edges: float = 0.0):
         self.root = root
-        self.phase = phase
+        self.train = train
         self.num_aug = num_aug
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
@@ -42,7 +42,7 @@ class MeshShrech16Dataset:
             MeshCnnClassificationDataset(root=self.root,
                                          dataset_url=self.dataset_url,
                                          n_input_edges=self.n_input_edges,
-                                         phase=self.phase,
+                                         train=self.train,
                                          num_aug=self.num_aug,
                                          slide_verts=self.slide_verts,
                                          scale_verts=self.scale_verts,
@@ -58,9 +58,9 @@ class MeshCubesDataset:
     <https://arxiv.org/abs/1809.05910>`_ paper
     Args:
         root (str): Root folder for dataset.
-        phase (str, optional): Train or Test phase - if 'train' it will return
-                               the train datalodaer, if 'test' it will return
-                               the test datalodaer. Default is 'train'.
+        train (bool, optional): Train or Test - if 'True' it will return
+                               the train datalodaer, if 'False' it will return
+                               the test datalodaer. Default is 'True'.
         num_aug (int, optional): Number of augmentations to apply on mesh.
                                  Default is 1 which means no augmentations.
         slide_verts (float, optional): values between 0.0 to 1.0 - if set above
@@ -74,11 +74,11 @@ class MeshCubesDataset:
                                       percentage of flip_edges value.
     """
 
-    def __init__(self, root: str, phase: str = 'train', num_aug: int = 1,
+    def __init__(self, root: str, train: bool = True, num_aug: int = 1,
                  slide_verts: float = 0.0,
                  scale_verts: bool = False, flip_edges: float = 0.0):
         self.root = root
-        self.phase = phase
+        self.train = train
         self.num_aug = num_aug
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
@@ -92,7 +92,7 @@ class MeshCubesDataset:
             MeshCnnClassificationDataset(root=self.root,
                                          dataset_url=self.dataset_url,
                                          n_input_edges=self.n_input_edges,
-                                         phase=self.phase,
+                                         train=self.train,
                                          num_aug=self.num_aug,
                                          slide_verts=self.slide_verts,
                                          scale_verts=self.scale_verts,
@@ -108,9 +108,9 @@ class MeshHumanSegDataset:
     <https://arxiv.org/abs/1809.05910>`_ paper.
     Args:
         root (str): Root folder for dataset.
-        phase (str, optional): Train or Test phase - if 'train' it will return
-                               the train datalodaer, if 'test' it will return
-                               the test datalodaer. Default is 'train'.
+        train (bool, optional): Train or Test - if 'True' it will return
+                               the train datalodaer, if 'False' it will return
+                               the test datalodaer. Default is 'True'.
         num_aug (int, optional): Number of augmentations to apply on mesh.
                                  Default is 1 which means no augmentations.
         slide_verts (float, optional): values between 0.0 to 1.0 - if set above
@@ -124,11 +124,11 @@ class MeshHumanSegDataset:
                                       percentage of flip_edges value.
     """
 
-    def __init__(self, root: str, phase: str = 'train', num_aug: int = 1,
+    def __init__(self, root: str, train: bool = True, num_aug: int = 1,
                  slide_verts: float = 0.0,
                  scale_verts: bool = False, flip_edges: float = 0.0):
         self.root = root
-        self.phase = phase
+        self.train = train
         self.num_aug = num_aug
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
@@ -144,7 +144,7 @@ class MeshHumanSegDataset:
                                        dataset_url=self.dataset_url,
                                        dataset_name=self.dataset_name,
                                        n_input_edges=self.n_input_edges,
-                                       phase=self.phase,
+                                       train=self.train,
                                        num_aug=self.num_aug,
                                        slide_verts=self.slide_verts,
                                        scale_verts=self.scale_verts,
@@ -163,9 +163,9 @@ class MeshCoSegDataset:
         sub_dataset (str, optional): sub-dataset in co_seg. Options are:
                                      coseg_aliens, coseg_chairs, coseg_vases.
                                      Default is coseg_aliens.
-        phase (str, optional): Train or Test phase - if 'train' it will return
-                               the train datalodaer, if 'test' it will return
-                               the test datalodaer. Default is 'train'.
+        train (bool, optional): Train or Test - if 'True' it will return
+                               the train datalodaer, if 'False' it will return
+                               the test datalodaer. Default is 'True'.
         num_aug (int, optional): Number of augmentations to apply on mesh.
                                  Default is 1 which means no augmentations.
         slide_verts (float, optional): values between 0.0 to 1.0 - if set above
@@ -180,11 +180,11 @@ class MeshCoSegDataset:
     """
 
     def __init__(self, root: str, sub_dataset: str = 'coseg_aliens',
-                 phase: str = 'train', num_aug: int = 1,
+                 train: bool = True, num_aug: int = 1,
                  slide_verts: float = 0.0, scale_verts: bool = False,
                  flip_edges: float = 0.0):
         self.root = root
-        self.phase = phase
+        self.train = train
         self.num_aug = num_aug
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
@@ -200,7 +200,7 @@ class MeshCoSegDataset:
                                        dataset_url=self.dataset_url,
                                        dataset_name=self.dataset_name,
                                        n_input_edges=self.n_input_edges,
-                                       phase=self.phase,
+                                       train=self.train,
                                        num_aug=self.num_aug,
                                        slide_verts=self.slide_verts,
                                        scale_verts=self.scale_verts,

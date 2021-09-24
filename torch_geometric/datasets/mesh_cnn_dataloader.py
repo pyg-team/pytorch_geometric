@@ -20,9 +20,9 @@ class MeshDataLoader:
         gpu_ids (int, list, optional): GPU IDs to use in the dataloader.
                                        Default is an empty list means CPU
                                        option.
-        phase (str, optional): Train or Test phase - if 'train' it will return
-                               the train datalodaer, if 'test' it will
-                               return the test datalodaer. Default is 'train'.
+        train (bool, optional): Train or Test case - if True it will return
+                               the train datalodaer, if Fase it will return
+                               the test datalodaer. Default is True.
         batch_size (int, optional): batch size for dataloader. Default is 1.
         shuffle (bool, optional): If `True` the dataloader will load data in a
                                   random manner. If `False` it will load the
@@ -37,7 +37,7 @@ class MeshDataLoader:
     """
 
     def __init__(self, mesh_dataset: MeshCnnBaseDataset, data_set_type: str,
-                 gpu_ids=[], phase: str = 'train', batch_size: int = 1,
+                 gpu_ids=[], train: bool = True, batch_size: int = 1,
                  shuffle: bool = True, hold_history: bool = False,
                  export_folder: str = ''):
 
@@ -56,9 +56,7 @@ class MeshDataLoader:
         self.data_loader = DataLoader(dataset=self.dataset,
                                       batch_size=self.batch_size,
                                       shuffle=shuffle)
-        self.is_train = False
-        if phase == 'train':
-            self.is_train = True
+        self.train = train
 
     def __len__(self):
         return min(len(self.dataset), self.max_dataset_size)
@@ -91,7 +89,7 @@ class MeshDataLoader:
                 labels = torch.as_tensor(labels).long()
                 # set inputs
                 input_edge_features = input_edge_features.to(
-                    self.device).requires_grad_(self.is_train)
+                    self.device).requires_grad_(self.train)
                 labels = labels.to(self.device)
                 soft_label = torch.as_tensor(soft_label).to(self.device)
             yield meshes, input_edge_features, labels, soft_label
