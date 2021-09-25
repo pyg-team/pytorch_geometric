@@ -443,6 +443,8 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         dir_name = osp.dirname(filename)
         prefix = osp.basename(filename)
         load_dir = osp.join(dir_name, 'cache')
+        if not osp.isdir(load_dir):
+            os.makedirs(load_dir, exist_ok=True)
         load_file = osp.join(load_dir,
                              '%s_%03d.npz' % (
                                  prefix, np.random.randint(0, self.num_aug)))
