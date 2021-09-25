@@ -1,6 +1,8 @@
 from torch_geometric.datasets.mesh_cnn_base_datasets import (
     MeshCnnClassificationDataset, MeshCnnSegmentationDataset)
 
+from torch_geometric.transforms.mesh_prepare import MeshCNNPrepare
+
 
 class MeshShrech16Dataset:
     r"""This class creates the classification shrech16 dataset for MeshCNN
@@ -33,20 +35,20 @@ class MeshShrech16Dataset:
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
         self.flip_edges = flip_edges
-        self.dataset_url = \
-            'https://www.dropbox.com/s/w16st84r6wc57u7/shrec_16.tar.gz?dl=1'
         self.n_input_edges = 750
         self.data_set_type = 'classification'
 
+        self.mesh_prepare = MeshCNNPrepare(aug_slide_verts=slide_verts,
+                                           aug_scale_verts=scale_verts,
+                                           aug_flip_edges=flip_edges,
+                                           num_aug=num_aug)
+
         self.dataset = \
             MeshCnnClassificationDataset(root=self.root,
-                                         dataset_url=self.dataset_url,
+                                         name='shrec16',
                                          n_input_edges=self.n_input_edges,
                                          train=self.train,
-                                         num_aug=self.num_aug,
-                                         slide_verts=self.slide_verts,
-                                         scale_verts=self.scale_verts,
-                                         flip_edges=self.flip_edges)
+                                         transform=self.mesh_prepare)
 
     def __len__(self):
         return len(self.dataset)
@@ -83,27 +85,27 @@ class MeshCubesDataset:
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
         self.flip_edges = flip_edges
-        self.dataset_url = \
-            'https://www.dropbox.com/s/2bxs5f9g60wa0wr/cubes.tar.gz?dl=1'
+
         self.n_input_edges = 750
         self.data_set_type = 'classification'
 
+        self.mesh_prepare = MeshCNNPrepare(aug_slide_verts=slide_verts,
+                                           aug_scale_verts=scale_verts,
+                                           aug_flip_edges=flip_edges,
+                                           num_aug=num_aug)
         self.dataset = \
             MeshCnnClassificationDataset(root=self.root,
-                                         dataset_url=self.dataset_url,
+                                         name='cubes',
                                          n_input_edges=self.n_input_edges,
                                          train=self.train,
-                                         num_aug=self.num_aug,
-                                         slide_verts=self.slide_verts,
-                                         scale_verts=self.scale_verts,
-                                         flip_edges=self.flip_edges)
+                                         transform=self.mesh_prepare)
 
     def __len__(self):
         return len(self.dataset)
 
 
 class MeshHumanSegDataset:
-    r"""This class creates the segmentation human_set dataset for MeshCNN
+    r"""This class creates the segmentation human_seg dataset for MeshCNN
     datasets: `"MeshCNN: A Network with an Edge"
     <https://arxiv.org/abs/1809.05910>`_ paper.
     Args:
@@ -133,22 +135,20 @@ class MeshHumanSegDataset:
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
         self.flip_edges = flip_edges
-        self.dataset_url = \
-            'https://www.dropbox.com/s/s3n05sw0zg27fz3/human_seg.tar.gz?dl=1'
         self.dataset_name = 'human_seg'
         self.n_input_edges = 2280
         self.data_set_type = 'segmentation'
 
+        self.mesh_prepare = MeshCNNPrepare(aug_slide_verts=slide_verts,
+                                           aug_scale_verts=scale_verts,
+                                           aug_flip_edges=flip_edges,
+                                           num_aug=num_aug)
         self.dataset = \
             MeshCnnSegmentationDataset(root=self.root,
-                                       dataset_url=self.dataset_url,
-                                       dataset_name=self.dataset_name,
+                                       name=self.dataset_name,
                                        n_input_edges=self.n_input_edges,
                                        train=self.train,
-                                       num_aug=self.num_aug,
-                                       slide_verts=self.slide_verts,
-                                       scale_verts=self.scale_verts,
-                                       flip_edges=self.flip_edges)
+                                       transform=self.mesh_prepare)
 
     def __len__(self):
         return len(self.dataset)
@@ -189,22 +189,21 @@ class MeshCoSegDataset:
         self.slide_verts = slide_verts
         self.scale_verts = scale_verts
         self.flip_edges = flip_edges
-        self.dataset_url = \
-            'https://www.dropbox.com/s/34vy4o5fthhz77d/coseg.tar.gz?dl=1'
         self.dataset_name = sub_dataset
         self.n_input_edges = 2280
         self.data_set_type = 'segmentation'
 
+        self.mesh_prepare = MeshCNNPrepare(aug_slide_verts=slide_verts,
+                                           aug_scale_verts=scale_verts,
+                                           aug_flip_edges=flip_edges,
+                                           num_aug=num_aug)
+
         self.dataset = \
             MeshCnnSegmentationDataset(root=self.root,
-                                       dataset_url=self.dataset_url,
-                                       dataset_name=self.dataset_name,
+                                       name=self.dataset_name,
                                        n_input_edges=self.n_input_edges,
                                        train=self.train,
-                                       num_aug=self.num_aug,
-                                       slide_verts=self.slide_verts,
-                                       scale_verts=self.scale_verts,
-                                       flip_edges=self.flip_edges)
+                                       transform=self.mesh_prepare)
 
     def __len__(self):
         return len(self.dataset)

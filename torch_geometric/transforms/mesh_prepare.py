@@ -25,32 +25,38 @@ class MeshCNNPrepare:
                                           above 0 will apply random flip of
                                           edge with percentage of
                                           aug_flip_edges value.
+        num_aug (int, optional): number of augmentations to perform.
+                                 Default is 1.
     """
 
     def __init__(self, aug_slide_verts: float = 0.0,
                  aug_scale_verts: bool = False,
                  aug_flip_edges: float = 0.0,
-                 aug_file: str = ''):
+                 num_aug: int = 1):
 
         self.aug_slide_verts = aug_slide_verts
         self.aug_scale_verts = aug_scale_verts
         self.aug_flip_edges = aug_flip_edges
-        self.aug_file = aug_file
+        self.num_aug = num_aug
         self.mesh_data = MeshCNNData()
 
-    def __call__(self, data):
+    def __call__(self, data, load_path: str = ''):
         """
         This function will fill MeshCNNData with data input.
         Args:
             data (torch_geometric.data.Data) - if exists must have keys of
             'pos' and 'faces' or 'pos' and 'face'. Holds the mesh data.
+            load_path (str, optional) - if path exists it will load mesh data
+                                        from file. Otherwise, it will create
+                                        mesh data from scratch using 'data'.
+                                        Default is an empty string.
 
         Returns:
             mesh_data (torch_geometric.transforms.mesh.MeshCNNData) -
             MeshCNNData structure.
 
         """
-        load_path = self.aug_file
+        self.mesh_data = MeshCNNData()
         if os.path.exists(load_path):
             loaded_data = np.load(load_path, encoding='latin1',
                                   allow_pickle=True)

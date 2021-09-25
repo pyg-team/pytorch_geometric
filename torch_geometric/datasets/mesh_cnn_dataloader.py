@@ -1,7 +1,7 @@
 import torch
 from os import mkdir
 import os.path as osp
-from torch_geometric.data.dataloader import DataLoader
+from torch_geometric.loader import DataListLoader
 from torch_geometric.datasets.mesh_cnn_base_datasets import MeshCnnBaseDataset
 from torch_geometric.data.meshcnnhandler import MeshCNNHandler
 
@@ -53,16 +53,16 @@ class MeshDataLoader:
         self.n_input_channels = self.dataset.n_input_channels
         self.device = torch.device(
             'cuda:{}'.format(gpu_ids[0])) if gpu_ids else torch.device('cpu')
-        self.data_loader = DataLoader(dataset=self.dataset,
-                                      batch_size=self.batch_size,
-                                      shuffle=shuffle)
+        self.data_loader = DataListLoader(dataset=self.dataset,
+                                          batch_size=self.batch_size,
+                                          shuffle=shuffle)
         self.train = train
 
     def __len__(self):
         return min(len(self.dataset), self.max_dataset_size)
 
     def __iter__(self):
-        for j, data in enumerate(self.data_loader):
+        for j, data_list in enumerate(self.data_loader):
             if j * self.batch_size >= len(self.dataset):
                 break
             else:
@@ -71,15 +71,15 @@ class MeshDataLoader:
                 soft_label = []
                 input_edge_features = []
                 if self.data_set_type == 'classification':
-                    labels = -1 * torch.ones(data.num_graphs).long()
-                for idx in range(0, data.num_graphs):
-                    d = data.get_example(idx)
+                    labels = -1 * torch.ones(len(data_list)).long()
+                for idx in range(0, len(data_list)):
+                    d = data_list[idx]
                     meshes.append(
                         MeshCNNHandler(mesh_data=d,
                                        hold_history=self.hold_history,
                                        export_folder=self.export_folder))
                     if self.data_set_type == 'classification':
-                        labels[idx] = d.label.item()
+                        labels[idx] = d.label
                     if self.data_set_type == 'segmentation':
                         labels.append(d.label)
                         soft_label.append(d.soft_label)

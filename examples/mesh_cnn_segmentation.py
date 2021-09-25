@@ -104,7 +104,7 @@ class MeshCNNSegmentation:
         lr = self.optimizer.param_groups[0]['lr']
         print('learning rate = %.7f' % lr)
 
-    def train(self, dataloader, epoch, max_epochs):
+    def train_model(self, dataloader, epoch, max_epochs):
         epoch_iter = 0
         iter_data_time = time.time()
         epoch_start_time = time.time()
@@ -127,7 +127,7 @@ class MeshCNNSegmentation:
         self.save_network('epoch_{}'.format(epoch))
         self.update_learning_rate()
 
-    def test(self, dataloader):
+    def test_model(self, dataloader):
         num_correct_counter = 0
         num_examples_counter = 0
         self.net.eval()
@@ -272,8 +272,8 @@ def main():
 
     # train and test model:
     for epoch in range(1, args.max_epochs + 1):
-        model.train(train_data_loader, epoch, args.max_epochs)
-        test_acc = model.test(test_data_loader)
+        model.train_model(train_data_loader, epoch, args.max_epochs)
+        test_acc = model.test_model(test_data_loader)
         message = 'epoch: {}, TEST ACC: [{:.5} %]\n'.format(epoch,
                                                             test_acc * 100)
         print(message)

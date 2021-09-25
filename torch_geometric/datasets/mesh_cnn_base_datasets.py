@@ -2,7 +2,7 @@ import os
 import os.path as osp
 import numpy as np
 import pickle
-from torch_geometric.data import (download_url, extract_tar, Dataset)
+from torch_geometric.data import (download_url, extract_tar, InMemoryDataset)
 from torch_geometric.transforms.mesh_prepare import MeshCNNPrepare
 from torch_geometric.io import read_ply
 import ntpath
@@ -146,37 +146,35 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
     data augmentations.
     Args:
         root (str): Root folder for dataset.
-        dataset_url (str): dataset URL link (see supported links in
-                           MeshCnnBaseDataset)
+        name (str): dataset name (supported are: shrec16, cubes)
         n_input_edges (int): Number of input edges of mesh. It should be the
                              bigger than or equal to highest number of input
                              edges in the dataset.
         train (bool, optional): Train or Test - if 'True' it will return
                                the train dataset, if 'False' it will return the
                                test dataset. Default is 'True'.
-        num_aug (int, optional): Number of augmentations to apply on mesh.
-                                 Default is 1 which means no augmentations.
-        slide_verts (float, optional): values between 0.0 to 1.0 - if set above
-                                       0 will apply shift along mesh surface
-                                       with percentage of slide_verts value.
-        scale_verts (bool, optional): If set to `False` - do not apply scale
-                                      vertex augmentation If set to `True` -
-                                      apply non-uniformly scale on the mesh
-        flip_edges (float, optional): values between 0.0 to 1.0 - if set above
-                                      0 will apply random flip of edges
-                                      with percentage of flip_edges value.
+        transform (MeshCNNPrepare, optional): meshcnn prepare transform. This
+                                              transfrom will create the actual
+                                              mesh_data and perform
+                                              augmentations.
+                                              Default is MeshCNNPrepare default
     """
 
-    def __init__(self, root: str, dataset_url: str, n_input_edges: int,
-                 train: bool = True, num_aug: int = 1,
-                 slide_verts: float = 0.0, scale_verts: bool = False,
-                 flip_edges: float = 0.0):
+    def __init__(self, root: str, name: str, n_input_edges: int,
+                 train: bool = True, transform=MeshCNNPrepare()):
+
+        self.name = name
+        if name == 'shrec16':
+            dataset_url = 'https://www.dropbox.com/s/w16st84r6wc57u7/shrec_16.tar.gz?dl=1'
+        elif name == 'cubes':
+            dataset_url = 'https://www.dropbox.com/s/2bxs5f9g60wa0wr/cubes.tar.gz?dl=1'
+        else:
+            raise ValueError("dataset name %s is not supported" % name)
+
+        self.mesh_prepare_transform = transform
         self.n_input_edges = n_input_edges
         self.train = train
-        self.num_aug = num_aug
-        self.slide_verts = slide_verts
-        self.scale_verts = scale_verts
-        self.flip_edges = flip_edges
+        self.num_aug = transform.num_aug
         self.dir = None
         self.classes = []
         self.class_to_idx = []
@@ -252,16 +250,8 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
                 if osp.exists(load_file):
                     continue
                 else:
-                    if self.num_aug > 1:
-                        mesh_prepare = MeshCNNPrepare(
-                            aug_slide_verts=self.slide_verts,
-                            aug_scale_verts=self.scale_verts,
-                            aug_flip_edges=self.flip_edges,
-                            aug_file=load_file)
-                    else:
-                        mesh_prepare = MeshCNNPrepare(aug_file=load_file)
                     data = self.get_data_from_file(path)
-                    mesh_data = mesh_prepare(data)
+                    self.mesh_prepare_transform(data, load_file)
 
     def len(self):
         return len(self.paths_labels)
@@ -273,20 +263,14 @@ class MeshCnnClassificationDataset(MeshCnnBaseDataset):
         dir_name = osp.dirname(filename)
         prefix = osp.basename(filename)
         load_dir = osp.join(dir_name, 'cache')
+        if not osp.isdir(load_dir):
+            os.makedirs(load_dir, exist_ok=True)
         load_file = osp.join(load_dir,
                              '%s_%03d.npz' % (
                                  prefix, np.random.randint(0, self.num_aug)))
 
-        if self.num_aug > 1:
-            mesh_prepare = MeshCNNPrepare(aug_slide_verts=self.slide_verts,
-                                          aug_scale_verts=self.scale_verts,
-                                          aug_flip_edges=self.flip_edges,
-                                          aug_file=load_file)
-        else:
-            mesh_prepare = MeshCNNPrepare(aug_file=load_file)
-
         data = self.get_data_from_file(path)
-        mesh_data = mesh_prepare(data)
+        mesh_data = self.mesh_prepare_transform(data, load_file)
         mesh_data.label = label
         mesh_data.num_nodes = len(mesh_data.pos)
         mesh_data.edge_attr = pad(mesh_data.edge_attr, self.n_input_edges)
@@ -310,38 +294,37 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         root (str): Root folder for dataset.
         dataset_url (str): dataset URL link (see supported links in
                            MeshCnnBaseDataset)
-        dataset_name (str): dataset name according to sub-dataset segmentation
-                            name (see segmentation URLs in MeshCnnBaseDataset).
+        name (str): dataset name according to sub-dataset segmentation
+                    name (supported are: coseg_aliens, coseg_chairs,
+                    coseg_vases, human_seg).
         n_input_edges (int): Number of input edges of mesh. It should be the
                              bigger than or equal to highest number of input
                              edges in the dataset.
         train (bool, optional): Train or Test - if 'True' it will return
                                the train dataset, if 'False' it will return the
                                test dataset. Default is 'True'.
-        num_aug (int, optional): Number of augmentations to apply on mesh.
-                                 Default is 1 which means no augmentations.
-        slide_verts (float, optional): values between 0.0 to 1.0 - if set above
-                                       0 will apply shift along mesh surface
-                                       with percentage of slide_verts value.
-        scale_verts (bool, optional): If set to `False` - do not apply scale
-                                      vertex augmentation If set to `True` -
-                                      apply non-uniformly scale on the mesh
-        flip_edges (float, optional): values between 0.0 to 1.0 - if set above
-                                      0 will apply random flip of edges with
-                                      percentage of flip_edges value.
+        transform (MeshCNNPrepare, optional): meshcnn prepare transform. This
+                                              transfrom will create the actual
+                                              mesh_data and perform
+                                              augmentations.
+                                              Default is MeshCNNPrepare default
     """
 
-    def __init__(self, root: str, dataset_url: str, dataset_name: str,
-                 n_input_edges: int, train: bool = True,
-                 num_aug: int = 1, slide_verts: float = 0.0,
-                 scale_verts: bool = False, flip_edges: float = 0.0):
-        self.dataset_name = dataset_name
+    def __init__(self, root: str, name: str, n_input_edges: int,
+                 train: bool = True, transform=MeshCNNPrepare()):
+
+        self.name = name
+        if 'coseg_' in name:
+            dataset_url = 'https://www.dropbox.com/s/34vy4o5fthhz77d/coseg.tar.gz?dl=1'
+        elif name == 'human_seg':
+            dataset_url = 'https://www.dropbox.com/s/s3n05sw0zg27fz3/human_seg.tar.gz?dl=1'
+        else:
+            raise ValueError("dataset name %s is not supported" % name)
+
+        self.mesh_prepare_transform = transform
         self.n_input_edges = n_input_edges
         self.train = train
-        self.num_aug = num_aug
-        self.slide_verts = slide_verts
-        self.scale_verts = scale_verts
-        self.flip_edges = flip_edges
+        self.num_aug = transform.num_aug
         self.dir = None
         self.paths = None
         self.offset = None
@@ -415,7 +398,7 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
         return classes, offset
 
     def process(self):
-        self.dir = osp.join(self.raw_dir, self.dataset_name)
+        self.dir = osp.join(self.raw_dir, self.name)
         self.paths = self.make_dataset(osp.join(self.dir, self.phase))
         self.seg_paths = self.get_seg_files(self.paths,
                                             os.path.join(self.dir, 'seg'),
@@ -427,7 +410,7 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
             os.path.join(self.dir, 'classes.txt'), self.seg_paths)
         self.n_classes = len(self.classes)
         self.size = len(self.paths)
-        self.get_mean_std(self.dataset_name + '_')
+        self.get_mean_std(self.name + '_')
 
         # Process all files - run augmentations and save for future use
         for path in self.paths:
@@ -443,16 +426,8 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
                 if osp.exists(load_file):
                     continue
                 else:
-                    if self.num_aug > 1:
-                        mesh_prepare = MeshCNNPrepare(
-                            aug_slide_verts=self.slide_verts,
-                            aug_scale_verts=self.scale_verts,
-                            aug_flip_edges=self.flip_edges,
-                            aug_file=load_file)
-                    else:
-                        mesh_prepare = MeshCNNPrepare(aug_file=load_file)
                     data = self.get_data_from_file(path)
-                    mesh_data = mesh_prepare(data)
+                    self.mesh_prepare_transform(data, load_file)
 
     def len(self):
         return len(self.paths)
@@ -472,15 +447,8 @@ class MeshCnnSegmentationDataset(MeshCnnBaseDataset):
                              '%s_%03d.npz' % (
                                  prefix, np.random.randint(0, self.num_aug)))
 
-        if self.num_aug > 1:
-            mesh_prepare = MeshCNNPrepare(aug_slide_verts=self.slide_verts,
-                                          aug_scale_verts=self.scale_verts,
-                                          aug_flip_edges=self.flip_edges,
-                                          aug_file=load_file)
-        else:
-            mesh_prepare = MeshCNNPrepare(aug_file=load_file)
         data = self.get_data_from_file(path)
-        mesh_data = mesh_prepare(data)
+        mesh_data = self.mesh_prepare_transform(data, load_file)
         mesh_data.label = label
         mesh_data.soft_label = soft_label
         mesh_data.num_nodes = len(mesh_data.pos)

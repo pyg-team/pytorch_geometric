@@ -88,7 +88,6 @@ class MeshCNNHandler:
                  export_folder: str = ''):
 
         self.mesh_data = mesh_data
-        self.mesh_data.edges_count = self.mesh_data.edges_count.item()
         self.pool_count = 0
         self.export_folder = export_folder
         self.history_data = None
