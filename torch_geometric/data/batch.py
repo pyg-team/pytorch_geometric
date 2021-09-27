@@ -20,6 +20,11 @@ class DynamicInheritance(type):
     def __call__(cls, *args, **kwargs):
         base_cls = kwargs.pop('_base_cls', Data)
 
+        name = f'{base_cls.__name__}{cls.__name__}'
+        if name not in globals():
+            globals()[name] = type(name, (cls, base_cls), {})
+        new_cls = globals()[name]
+
         params = list(inspect.signature(base_cls.__init__).parameters.items())
         for i, (k, v) in enumerate(params[1:]):
             if k == 'args' or k == 'kwargs':
@@ -30,14 +35,12 @@ class DynamicInheritance(type):
                 continue
             kwargs[k] = None
 
-        new_cls = type(cls.__name__, (cls, base_cls), {})
-        out = super(DynamicInheritance, new_cls).__call__(*args, **kwargs)
-        return out
+        return super(DynamicInheritance, new_cls).__call__(*args, **kwargs)
 
 
 class DynamicInheritanceGetter(object):
     def __call__(self, cls, base_cls):
-        return type(cls.__name__, (cls, base_cls), {})()
+        return cls(_base_cls=base_cls)
 
 
 class Batch(metaclass=DynamicInheritance):

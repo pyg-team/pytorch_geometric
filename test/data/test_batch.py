@@ -1,3 +1,7 @@
+import os
+import sys
+import random
+
 import torch
 import numpy as np
 from torch_sparse import SparseTensor
@@ -44,7 +48,7 @@ def test_batch():
                  array=array3, num_nodes=4)
 
     batch = Batch.from_data_list([data1])
-    assert str(batch) == ('Batch(x=[3], edge_index=[2, 4], y=[1], '
+    assert str(batch) == ('DataBatch(x=[3], edge_index=[2, 4], y=[1], '
                           'x_sp=[3, 1, nnz=3], adj=[3, 3, nnz=4], s=[1], '
                           'array=[1], num_nodes=3, batch=[3], ptr=[2])')
     assert batch.num_graphs == 1
@@ -63,7 +67,7 @@ def test_batch():
 
     batch = Batch.from_data_list([data1, data2, data3], follow_batch=['s'])
 
-    assert str(batch) == ('Batch(x=[9], edge_index=[2, 12], y=[3], '
+    assert str(batch) == ('DataBatch(x=[9], edge_index=[2, 12], y=[3], '
                           'x_sp=[9, 1, nnz=9], adj=[9, 9, nnz=12], s=[3], '
                           's_batch=[3], array=[3], num_nodes=9, batch=[9], '
                           'ptr=[4])')
@@ -166,8 +170,8 @@ def test_batching_with_new_dimension():
         [MyData(x=x1, foo=foo1, y=y1),
          MyData(x=x2, foo=foo2, y=y2)])
 
-    assert batch.__repr__() == (
-        'Batch(x=[5], y=[2], foo=[2, 4], batch=[5], ptr=[3])')
+    assert str(batch) == ('MyDataBatch(x=[5], y=[2], foo=[2, 4], batch=[5], '
+                          'ptr=[3])')
     assert len(batch) == 5
     assert batch.x.tolist() == [1, 2, 3, 1, 2]
     assert batch.foo.size() == (2, 4)
@@ -186,8 +190,21 @@ def test_batching_with_new_dimension():
     torch_geometric.set_debug(True)
 
 
-def test_recursive_batch():
+def test_pickling():
+    data = Data(x=torch.randn(5, 16))
+    batch = Batch.from_data_list([data, data, data, data])
 
+    path = f'{random.randrange(sys.maxsize)}.pt'
+    torch.save(batch, path)
+    batch = torch.load(path)
+
+    assert batch.__class__.__name__ == 'DataBatch'
+    assert len(batch) == 3
+
+    os.remove(path)
+
+
+def test_recursive_batch():
     data1 = Data(
         x={
             '1': torch.randn(10, 32),
