@@ -194,7 +194,7 @@ def test_pickling():
     data = Data(x=torch.randn(5, 16))
     batch = Batch.from_data_list([data, data, data, data])
 
-    path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.pt')
+    path = f'{random.randrange(sys.maxsize)}.pt'
     torch.save(batch, path)
     batch = torch.load(path)
 
