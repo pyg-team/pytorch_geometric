@@ -29,7 +29,9 @@ class ShapeNet(InMemoryDataset):
             Can be explicitly set to :obj:`None` to load all categories.
             (default: :obj:`None`)
         include_normals (bool, optional): If set to :obj:`False`, will not
-            include normal vectors as input features. (default: :obj:`True`)
+            include normal vectors as input features to :obj:`data.x`.
+            As a result, :obj:`data.x` will be :obj:`None`.
+            (default: :obj:`True`)
         split (string, optional): If :obj:`"train"`, loads the training
             dataset.
             If :obj:`"val"`, loads the validation dataset.
