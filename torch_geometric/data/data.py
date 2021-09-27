@@ -516,15 +516,16 @@ class Data(BaseData):
                 edge_type_names.append((node_type_names[src_types[0]], str(i),
                                         node_type_names[dst_types[0]]))
 
-        # iterate over node types to get node slices
-        # and index_map, which contains the index of each node
-        # in the heterogenous graph.
-        node_ids, index_map = {}, torch.zeros_like(node_type)
+        # We iterate over node types to find the local node indices belonging
+        # to each node type. Furthermore, we create a global `index_map` vector
+        # that maps global node indices to local ones in the final
+        # heterogeneous graph:
+        node_ids, index_map = {}, torch.empty_like(node_type)
         for i, key in enumerate(node_type_names):
             node_ids[i] = (node_type == i).nonzero(as_tuple=False).view(-1)
             index_map[node_ids[i]] = torch.arange(len(node_ids[i]))
 
-        # iterate over edge types to get edge slices
+        # We iterate over edge types to find the local edge indices:
         edge_ids = {}
         for i, key in enumerate(edge_type_names):
             edge_ids[i] = (edge_type == i).nonzero(as_tuple=False).view(-1)
@@ -539,7 +540,7 @@ class Data(BaseData):
                     data[key][attr] = value[node_ids[i]]
 
             if len(data[key]) == 0:
-                data[key].num_nodes = len(node_ids[i])
+                data[key].num_nodes = node_ids[i].size(0)
 
         for i, key in enumerate(edge_type_names):
             src, _, dst = key

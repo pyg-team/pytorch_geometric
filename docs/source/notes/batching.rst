@@ -75,7 +75,7 @@ In this case, :obj:`edge_index_s` should be increased by the number of nodes in 
 
 .. code-block:: python
 
-    def __inc__(self, key, value, *args, **kawrgs):
+    def __inc__(self, key, value, *args, **kwargs):
         if key == 'edge_index_s':
             return self.x_s.size(0)
         if key == 'edge_index_t':

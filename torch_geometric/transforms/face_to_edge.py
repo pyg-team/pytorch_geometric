@@ -16,7 +16,7 @@ class FaceToEdge(BaseTransform):
         self.remove_faces = remove_faces
 
     def __call__(self, data):
-        if data.face is not None:
+        if hasattr(data, 'face'):
             face = data.face
             edge_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
             edge_index = to_undirected(edge_index, num_nodes=data.num_nodes)

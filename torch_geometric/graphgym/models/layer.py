@@ -231,10 +231,13 @@ class MLP(nn.Module):
         layer_config.has_bias = True
         layers = []
         if layer_config.num_layers > 1:
-            layers.append(
-                GeneralMultiLayer('linear', layer_config.num_layers - 1,
-                                  layer_config.dim_in, dim_inner,
-                                  dim_inner, final_act=True))
+            sub_layer_config = LayerConfig(
+                num_layers=layer_config.num_layers - 1,
+                dim_in=layer_config.dim_in,
+                dim_out=dim_inner,
+                dim_inner=dim_inner,
+                final_act=True)
+            layers.append(GeneralMultiLayer('linear', sub_layer_config))
             layers.append(Linear(layer_config))
         else:
             layers.append(Linear(layer_config))

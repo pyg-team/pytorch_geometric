@@ -56,6 +56,7 @@ class HeteroConv(Module):
         self,
         x_dict: Dict[NodeType, Tensor],
         edge_index_dict: Dict[EdgeType, Adj],
+        *args_dict,
         **kwargs_dict,
     ) -> Dict[NodeType, Tensor]:
         r"""
@@ -65,8 +66,10 @@ class HeteroConv(Module):
             edge_index_dict (Dict[Tuple[str, str, str], Tensor]): A dictionary
                 holding graph connectivity information for each individual
                 edge type.
-            **kwargs_dict (optional): Additional forward arguments
-                of individual :class:`torch_geometric.nn.conv.MessagePassing`
+            *args_dict (optional): Additional forward arguments of invididual
+                :class:`torch_geometric.nn.conv.MessagePassing` layers.
+            **kwargs_dict (optional): Additional forward arguments of
+                individual :class:`torch_geometric.nn.conv.MessagePassing`
                 layers.
                 For example, if a specific GNN layer at edge type
                 :obj:`edge_type` expects edge attributes :obj:`edge_attr` as a
@@ -82,17 +85,33 @@ class HeteroConv(Module):
             if str_edge_type not in self.convs:
                 continue
 
-            kwargs = {
-                arg[:-5]: value[edge_type]  # `{*}_dict`
-                for arg, value in kwargs_dict.items() if edge_type in value
-            }
+            args = []
+            for value_dict in args_dict:
+                if edge_type in value_dict:
+                    args.append(value_dict[edge_type])
+                elif src == dst and src in value_dict:
+                    args.append(value_dict[src])
+                elif src in value_dict or dst in value_dict:
+                    args.append(
+                        (value_dict.get(src, None), value_dict.get(dst, None)))
+
+            kwargs = {}
+            for arg, value_dict in kwargs_dict.items():
+                arg = arg[:-5]  # `{*}_dict`
+                if edge_type in value_dict:
+                    kwargs[arg] = value_dict[edge_type]
+                elif src == dst and src in value_dict:
+                    kwargs[arg] = value_dict[src]
+                elif src in value_dict or dst in value_dict:
+                    kwargs[arg] = (value_dict.get(src, None),
+                                   value_dict.get(dst, None))
 
             conv = self.convs[str_edge_type]
 
             if src == dst:
-                out = conv(x=x_dict[src], edge_index=edge_index, **kwargs)
+                out = conv(x_dict[src], edge_index, *args, **kwargs)
             else:
-                out = conv(x=(x_dict[src], x_dict[dst]), edge_index=edge_index,
+                out = conv((x_dict[src], x_dict[dst]), edge_index, *args,
                            **kwargs)
 
             out_dict[dst].append(out)
