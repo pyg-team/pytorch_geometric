@@ -170,8 +170,8 @@ def test_batching_with_new_dimension():
         [MyData(x=x1, foo=foo1, y=y1),
          MyData(x=x2, foo=foo2, y=y2)])
 
-    assert batch.__repr__() == (
-        'MyDataBatch(x=[5], y=[2], foo=[2, 4], batch=[5], ptr=[3])')
+    assert str(batch) == ('MyDataBatch(x=[5], y=[2], foo=[2, 4], batch=[5], '
+                          'ptr=[3])')
     assert len(batch) == 5
     assert batch.x.tolist() == [1, 2, 3, 1, 2]
     assert batch.foo.size() == (2, 4)
