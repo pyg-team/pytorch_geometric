@@ -135,6 +135,8 @@ class NeighborLoader(torch.utils.data.DataLoader):
 
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
+        if 'dataset' in kwargs:
+            del kwargs['dataset']
 
         self.data = data
         self.num_neighbors = num_neighbors
