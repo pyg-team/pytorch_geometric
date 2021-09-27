@@ -79,7 +79,7 @@ class Entities(InMemoryDataset):
     def download(self):
         path = download_url(self.url.format(self.name), self.root)
         extract_tar(path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         import gzip

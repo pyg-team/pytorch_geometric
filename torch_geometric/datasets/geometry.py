@@ -63,7 +63,7 @@ class GeometricShapes(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         torch.save(self.process_set('train'), self.processed_paths[0])

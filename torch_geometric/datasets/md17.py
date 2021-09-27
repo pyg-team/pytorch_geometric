@@ -167,7 +167,7 @@ class MD17(InMemoryDataset):
         path = download_url(url, self.raw_dir)
         if url[-4:] == '.zip':
             extract_zip(path, self.raw_dir)
-            os.unlink(path)
+            Path(path).unlink()
 
     def process(self):
         it = zip(self.raw_paths, self.processed_paths)

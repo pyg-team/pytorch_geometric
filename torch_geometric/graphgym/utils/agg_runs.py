@@ -184,7 +184,7 @@ def agg_batch(dir, metric_best='auto'):
             results[key] = pd.DataFrame(results[key])
             results[key] = results[key].sort_values(
                 list(dict_name.keys()), ascending=[True] * len(dict_name))
-            fname = Path.joinpath(path(dir_out), '{}_best.csv'.format(key))
+            fname = Path.joinpath(Path(dir_out), '{}_best.csv'.format(key))
             results[key].to_csv(fname, index=False)
 
     results = {'train': [], 'val': [], 'test': []}

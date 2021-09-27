@@ -114,7 +114,7 @@ class GNNBenchmarkDataset(InMemoryDataset):
     def download(self):
         path = download_url(self.urls[self.name], self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.unlink(path)
+        Path(path).unlink()
 
     def process(self):
         if self.name == 'CSL':

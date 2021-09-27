@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-tqdm import tqdm
+from tqdm import tqdm
 
 import torch
 from torch.nn import ReLU

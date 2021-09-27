@@ -58,7 +58,7 @@ class Yelp(InMemoryDataset):
         gdd.download_file_from_google_drive(self.role_id, path)
 
     def process(self):
-        f = np.load(Path.joinpath(path(self.raw_dir), 'adj_full.npz'))
+        f = np.load(Path.joinpath(Path(self.raw_dir), 'adj_full.npz'))
         adj = sp.csr_matrix((f['data'], f['indices'], f['indptr']), f['shape'])
         adj = adj.tocoo()
         row = torch.from_numpy(adj.row).to(torch.long)

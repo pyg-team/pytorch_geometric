@@ -140,7 +140,7 @@ class MoleculeNet(InMemoryDataset):
         path = download_url(url, self.raw_dir)
         if self.names[self.name][1][-2:] == 'gz':
             extract_gz(path, self.raw_dir)
-            os.unlink(path)
+            Path(path).unlink()
 
     def process(self):
         from rdkit import Chem

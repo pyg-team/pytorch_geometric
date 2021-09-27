@@ -157,7 +157,7 @@ class SchNet(torch.nn.Module):
         if not Path.joinpath(Path(root), folder).exists():
             path = download_url(SchNet.url, root)
             extract_zip(path, root)
-            Path.unlink(path)
+            Path(path).unlink()
 
         name = f'qm9_{qm9_target_dict[target]}'
         path = Path.joinpath(Path(root), 'trained_schnet_models', name,

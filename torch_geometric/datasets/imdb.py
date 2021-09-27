@@ -57,7 +57,7 @@ class IMDB(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        os.remove(path)
+        Path(path).unlink()
 
     def process(self):
         data = HeteroData()

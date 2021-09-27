@@ -66,7 +66,7 @@ class ZINC(InMemoryDataset):
     @property
     def processed_dir(self):
         name = 'subset' if self.subset else 'full'
-        return Path.joinpath(path(self.root), name, 'processed')
+        return Path.joinpath(Path(self.root), name, 'processed')
 
     @property
     def processed_file_names(self):

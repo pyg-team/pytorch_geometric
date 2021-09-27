@@ -87,4 +87,4 @@ def clean_ckpt():
     for epoch in epochs:
         if epoch != epoch_last:
             ckpt_name = '{}/{}.ckpt'.format(get_ckpt_dir(), epoch)
-            Path.unlink(ckpt_name)
+            Path(ckpt_name).unlink()

@@ -54,7 +54,7 @@ class AMiner(InMemoryDataset):
         path = download_url(self.url, self.root)
         extract_zip(path, self.root)
         Path.joinpath(Path(self.root), 'net_aminer').rename(Path(self.raw_dir))
-        Path(path).unlink(path)
+        Path(path).unlink()
         path = download_url(self.y_url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         Path(path).unlink()
