@@ -56,6 +56,21 @@ def test_dataloader(num_workers):
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
+def test_multiprocessing():
+    queue = torch.multiprocessing.Manager().Queue()
+    data = Data(x=torch.randn(5, 16))
+    data_list = [data, data, data, data]
+    loader = DataLoader(data_list, batch_size=2)
+    for batch in loader:
+        queue.put(batch)
+
+    batch = queue.get()
+    assert len(batch) == 3
+
+    batch = queue.get()
+    assert len(batch) == 3
+
+
 def test_pin_memory():
     x = torch.randn(3, 16)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
