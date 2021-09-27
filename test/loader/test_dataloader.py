@@ -5,7 +5,8 @@ import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import DataLoader
 
-num_workers_list = [0] if sys.platform in ['win32', 'darwin'] else [0, 2]
+with_mp = sys.platform not in ['win32', 'darwin']
+num_workers_list = [0, 2] if with_mp else [0]
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -56,6 +57,7 @@ def test_dataloader(num_workers):
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
+@pytest.mark.skipif(not with_mp, reason='Multi-processing not available')
 def test_multiprocessing():
     queue = torch.multiprocessing.Manager().Queue()
     data = Data(x=torch.randn(5, 16))
