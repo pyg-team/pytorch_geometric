@@ -416,7 +416,9 @@ class Data(BaseData):
             return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'index' in key or 'face' in key:
+        if 'batch' in key:
+            return int(value.max()) + 1
+        elif 'index' in key or 'face' in key:
             return self.num_nodes
         else:
             return 0

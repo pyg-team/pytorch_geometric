@@ -42,7 +42,7 @@ def separate(cls, batch: BaseData, idx: int, slice_dict: Any,
 
         # The `num_nodes` attribute needs special treatment, as we cannot infer
         # the real number of nodes from the total number of nodes alone:
-        if 'num_nodes' in batch_store:
+        if hasattr(batch_store, '_num_nodes'):
             data_store.num_nodes = batch_store._num_nodes[idx]
 
     return data
