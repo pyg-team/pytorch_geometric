@@ -35,6 +35,14 @@ def test_point_transformer_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, pos1, adj.t()), out, atol=1e-6)
 
+    # test with in_channels as tuple
+    conv = PointTransformerConv(in_channels=(8, 16), out_channels=32)
+    x2 = torch.randn(4, 8)
+
+    out = conv((x1, x2), pos1, edge_index)
+    assert out.size() == (4, 32)
+    assert torch.allclose(conv((x1, x2), pos1, adj.t()), out, atol=1e-6)
+
     # Test with custom nn
     out_channels = 64
     nn_pos = Sequential(

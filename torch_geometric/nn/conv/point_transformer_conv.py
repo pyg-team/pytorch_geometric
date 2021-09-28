@@ -30,7 +30,7 @@ class PointTransformerConv(MessagePassing):
     defines the position of each point.
 
     Args:
-        in_channels (int): Size of each input sample features
+        in_channels (int or tuple): Size of each input sample features
         out_channels (int) : size of each output sample features
         local_nn : (torch.nn.Module, optional): A neural network
             :math:`\delta = \theta \left( \mathbf{p}_j -
@@ -90,11 +90,14 @@ class PointTransformerConv(MessagePassing):
                 Linear(out_channels * attn_mlp_channels, out_channels)
             )
 
+        if isinstance(in_channels, int):
+            in_channels = (in_channels, in_channels)
+
         self.delta = local_nn
         self.gamma = global_nn
-        self.alpha = Linear(in_channels, out_channels)
-        self.phi = Linear(in_channels, out_channels)
-        self.psi = Linear(in_channels, out_channels)
+        self.alpha = Linear(in_channels[1], out_channels)
+        self.phi = Linear(in_channels[0], out_channels)
+        self.psi = Linear(in_channels[1], out_channels)
 
         self.add_self_loops = add_self_loops
 
