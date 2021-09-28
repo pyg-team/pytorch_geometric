@@ -193,10 +193,17 @@ def test_batching_with_new_dimension():
 def test_pickling():
     data = Data(x=torch.randn(5, 16))
     batch = Batch.from_data_list([data, data, data, data])
+    assert id(batch._store._parent()) == id(batch)
+    assert batch.num_nodes == 20
 
     path = f'{random.randrange(sys.maxsize)}.pt'
     torch.save(batch, path)
+    assert id(batch._store._parent()) == id(batch)
+    assert batch.num_nodes == 20
+
     batch = torch.load(path)
+    assert id(batch._store._parent()) == id(batch)
+    assert batch.num_nodes == 20
 
     assert batch.__class__.__name__ == 'DataBatch'
     assert len(batch) == 3
