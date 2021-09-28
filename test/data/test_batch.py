@@ -16,7 +16,6 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
 
 
 def test_batch():
-    return
     torch_geometric.set_debug(True)
 
     x1 = torch.tensor([1, 2, 3], dtype=torch.float)
@@ -150,7 +149,6 @@ def test_batch():
 
 
 def test_batching_with_new_dimension():
-    return
     torch_geometric.set_debug(True)
 
     class MyData(Data):
@@ -193,7 +191,6 @@ def test_batching_with_new_dimension():
 
 
 def test_pickling():
-    return
     data = Data(x=torch.randn(5, 16))
     batch = Batch.from_data_list([data, data, data, data])
     assert id(batch._store._parent()) == id(batch)
@@ -215,7 +212,6 @@ def test_pickling():
 
 
 def test_recursive_batch():
-    return
     data1 = Data(
         x={
             '1': torch.randn(10, 32),
@@ -265,19 +261,19 @@ def test_recursive_batch():
 
 
 def test_batching_of_batches():
-    data = Data(x=torch.randn(5, 16))
+    data = Data(x=torch.randn(2, 16))
     batch = Batch.from_data_list([data, data])
 
     batch = Batch.from_data_list([batch, batch])
-    print(batch)
-    print(batch.batch)
-    # print(batch.ptr)
-
-    print(batch[0])
+    assert len(batch) == 2
+    assert batch.x[0:2].tolist() == data.x.tolist()
+    assert batch.x[2:4].tolist() == data.x.tolist()
+    assert batch.x[4:6].tolist() == data.x.tolist()
+    assert batch.x[6:8].tolist() == data.x.tolist()
+    assert batch.batch.tolist() == [0, 0, 1, 1, 2, 2, 3, 3]
 
 
 def test_hetero_batch():
-    return
     e1 = ('p', 'a')
     e2 = ('a', 'p')
     data1 = HeteroData()
