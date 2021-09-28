@@ -247,7 +247,7 @@ Let's learn about it in an example:
 
     for batch in loader:
         batch
-        >>> Batch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
+        >>> DataBatch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
 
         batch.num_graphs
         >>> 32
@@ -273,7 +273,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
 
     for data in loader:
         data
-        >>> Batch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
+        >>> DataBatch(batch=[1082], edge_index=[2, 4066], x=[1082, 21], y=[32])
 
         data.num_graphs
         >>> 32

@@ -15,7 +15,7 @@ from torch_geometric.nn.dense import Linear
 
 try:
     from torch.fx import GraphModule, Graph, Node
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 

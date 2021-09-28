@@ -95,7 +95,7 @@ class BaseStorage(MutableMapping):
         return out
 
     def __getstate__(self) -> Dict[str, Any]:
-        out = self.__dict__
+        out = self.__dict__.copy()
 
         _parent = out.get('_parent', None)
         if _parent is not None:

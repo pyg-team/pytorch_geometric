@@ -118,6 +118,8 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
+        if 'dataset' in kwargs:
+            del kwargs['dataset']
 
         # Save for Pytorch Lightning...
         self.edge_index = edge_index
