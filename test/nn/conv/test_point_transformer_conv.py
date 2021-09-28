@@ -16,16 +16,7 @@ def test_point_transformer_conv():
     conv = PointTransformerConv(in_channels=16, out_channels=32)
     assert conv.__repr__() == (
         'PointTransformerConv(\n'
-        '  (delta): Sequential(\n'
-        '    (0): Linear(in_features=3, out_features=64, bias=True)\n'
-        '    (1): ReLU()\n'
-        '    (2): Linear(in_features=64, out_features=32, bias=True)\n'
-        '  )\n'
-        '  (gamma): Sequential(\n'
-        '    (0): Linear(in_features=32, out_features=64, bias=True)\n'
-        '    (1): ReLU()\n'
-        '    (2): Linear(in_features=64, out_features=32, bias=True)\n'
-        '  )\n'
+        '  (delta): Linear(in_features=3, out_features=32, bias=True)\n'
         '  (alpha): Linear(in_features=16, out_features=32, bias=True)\n'
         '  (phi): Linear(in_features=16, out_features=32, bias=True)\n'
         '  (psi): Linear(in_features=16, out_features=32, bias=True)\n'

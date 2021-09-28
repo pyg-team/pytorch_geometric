@@ -6,7 +6,7 @@ from torch_sparse import SparseTensor, set_diag
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
-from torch.nn import Sequential, ReLU, Linear
+from torch.nn import Linear
 from torch_geometric.utils import softmax
 
 from ..inits import reset
@@ -38,29 +38,15 @@ class PointTransformerConv(MessagePassing):
             :obj:`pos_j - pos_i` of shape
             :obj:`[-1, 3]` to shape
             :obj:`[-1, out_channels]`, *e.g.*, defined by
-            :class:`torch.nn.Sequential`. In case :obj:`None` is given, is
-            initialized with :obj:`Sequential(\n'
-            '    (0): Linear(in_features=3, out_features=64, bias=True)\n'
-            '    (1): ReLU()\n'
-            '    (2): Linear(in_features=64, out_features=32, bias=True)\n'
-            '  )\n'` (default: :obj:`None`)
+            :class:`torch.nn.Sequential`. Will be defaulted to a linear
+            mapping if not specified. (default: :obj:`None`)
         global_nn : (torch.nn.Module, optional): A neural network
             :math:`\gamma` which maps transformed node features of shape
             :obj:`[-1, out_channels]` to shape :obj:`[-1, out_channels]`,
-            *e.g.*, defined by :class:`torch.nn.Sequential`. In case
-            :obj:`None` is given, is initialized with :obj:`Sequential(\n'
-            '  (0): Linear(in_features=32, out_features=64, bias=True)\n'
-            '  (1): ReLU()\n'
-            '  (2): Linear(in_features=64, out_features=32, bias=True)\n'
-            ')'` (default: :obj:`None`)
+            *e.g.*, defined by :class:`torch.nn.Sequential`.
+            (default: :obj:`None`)
         add_self_loops (bool, optional) : If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
-        pos_mlp_channels (int, optional) : size of intermediary channels in
-            points relative spatial coordinates computation. Has no effect in
-            case local_nn is not None (default: :obj:`64`)
-        attn_mlp_channels (int, optional) : factor size of intermediary
-            channels in transformed features mlp. Has no effect in
-            case global_nn is not None (default: :obj:`2`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -70,28 +56,16 @@ class PointTransformerConv(MessagePassing):
                  out_channels,
                  local_nn=None,
                  global_nn=None,
-                 add_self_loops=True,
-                 pos_mlp_channels=64,
-                 attn_mlp_channels=2):
+                 add_self_loops=True):
 
         super(PointTransformerConv,
               self).__init__(aggr='add')  # "Add" aggregation
 
-        if local_nn is None:
-            local_nn = Sequential(
-                Linear(3, pos_mlp_channels),
-                ReLU(),
-                Linear(pos_mlp_channels, out_channels)
-            )
-        if global_nn is None:
-            global_nn = Sequential(
-                Linear(out_channels, out_channels * attn_mlp_channels),
-                ReLU(),
-                Linear(out_channels * attn_mlp_channels, out_channels)
-            )
-
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
+
+        if local_nn is None:
+            local_nn = Linear(3, out_channels)
 
         self.delta = local_nn
         self.gamma = global_nn
@@ -135,8 +109,11 @@ class PointTransformerConv(MessagePassing):
 
         out_phi_psi = self.phi(x_i) - self.psi(
             x_j)  # compute point wise transformation
-        out_gamma = self.gamma(out_phi_psi +
-                               out_delta)  # compute importance factor
+
+        # compute importance factor
+        out_gamma = out_phi_psi + out_delta
+        if self.gamma is not None:
+            out_gamma = self.gamma(out_gamma)
 
         # normalize the result with softmax and multiply
         # by features transformed by alpha
