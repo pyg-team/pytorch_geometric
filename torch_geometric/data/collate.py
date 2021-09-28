@@ -73,6 +73,10 @@ def collate(
                 out_store.num_nodes = sum(values)
                 continue
 
+            # Skip batching of `ptr` vectors for now:
+            if attr == 'ptr':
+                continue
+
             # Collate attributes into a unified representation:
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)

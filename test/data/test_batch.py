@@ -260,6 +260,19 @@ def test_recursive_batch():
     assert out2.edge_index[1].tolist(), data2.edge_index[1].tolist()
 
 
+def test_batching_of_batches():
+    data = Data(x=torch.randn(2, 16))
+    batch = Batch.from_data_list([data, data])
+
+    batch = Batch.from_data_list([batch, batch])
+    assert len(batch) == 2
+    assert batch.x[0:2].tolist() == data.x.tolist()
+    assert batch.x[2:4].tolist() == data.x.tolist()
+    assert batch.x[4:6].tolist() == data.x.tolist()
+    assert batch.x[6:8].tolist() == data.x.tolist()
+    assert batch.batch.tolist() == [0, 0, 1, 1, 2, 2, 3, 3]
+
+
 def test_hetero_batch():
     e1 = ('p', 'a')
     e2 = ('a', 'p')
