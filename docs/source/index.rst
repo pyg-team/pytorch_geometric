@@ -26,7 +26,6 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    notes/cheatsheet
    notes/colabs
    notes/resources
-   notes/video_tutorials
 
 .. toctree::
    :glob:
