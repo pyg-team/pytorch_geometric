@@ -56,7 +56,10 @@ class ToUndirected(BaseTransform):
             else:
                 keys, values = [], []
                 for key, value in store.items():
-                    if isinstance(value, Tensor) and value.size(0) == nnz:
+                    if key == 'edge_index':
+                        continue
+
+                    if isinstance(value, Tensor) and data.is_edge_attr(key):
                         keys.append(key)
                         values.append(value)
 
