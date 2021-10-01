@@ -63,13 +63,13 @@ class RandomLinkSplit(BaseTransform):
             (default: :obj:`True`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
             edges to the number of positive edges. (default: :obj:`1.0`)
-        edge_types (Tuple[str, str, str] or List[Tuple[str, str, str]],
-            optional): The edge types used for performing edge-level splitting
-            in case of operating on :class:`~torch_geometric.data.HeteroData`
-            objects. (default: :obj:`None`)
-        rev_edge_types (Tuple[str, str, str] or List[Tuple[str, str, str]],
-            optional): The reverse edge types of :obj:`edge_types` in case of
+        edge_types (Tuple[EdgeType] or List[EdgeType], optional): The edge
+            types used for performing edge-level splitting in case of
             operating on :class:`~torch_geometric.data.HeteroData` objects.
+            (default: :obj:`None`)
+        rev_edge_types (Tuple[EdgeType] or List[Tuple[EdgeType]], optional):
+            The reverse edge types of :obj:`edge_types` in case of operating
+            on :class:`~torch_geometric.data.HeteroData` objects.
             This will ensure that edges of the reverse direction will be
             splitted accordingly to prevent any data leakage.
             Can be :obj:`None` in case no reverse connection exists.
