@@ -1,5 +1,5 @@
-Colabs and Videos Tutorials
-===========================
+Colab Notebooks and Videos Tutorials
+====================================
 
 We have prepared a list of colab notebooks that practically introduces you to the world of **Graph Neural Networks** with **PyG**:
 
