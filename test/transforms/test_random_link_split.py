@@ -72,6 +72,18 @@ def test_random_link_split():
     assert test_data.edge_label_index.size(1) == 6
     assert test_data.edge_label.size(0) == 6
 
+    # Disjoint training split:
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2, is_undirected=False,
+                                disjoint_train_ratio=0.5)
+    train_data, val_data, test_data = transform(data)
+
+    assert len(train_data) == 5
+    assert train_data.num_nodes == 100
+    assert train_data.edge_index.size() == (2, 3)
+    assert train_data.edge_attr.size() == (3, 3)
+    assert train_data.edge_label_index.size(1) == 6
+    assert train_data.edge_label.size(0) == 6
+
 
 def test_random_link_split_on_hetero_data():
     data = HeteroData()

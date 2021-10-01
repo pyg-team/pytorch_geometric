@@ -63,6 +63,11 @@ class RandomLinkSplit(BaseTransform):
             (default: :obj:`True`)
         neg_sampling_ratio (float, optional): The ratio of sampled negative
             edges to the number of positive edges. (default: :obj:`1.0`)
+        disjoint_train_ratio (int or float, optional): If set to a value
+            greater than :obj:`0.0`, training edges will not be shared for
+            message passing and supervision. Instead, :disjoint_train_ratio`
+            edges are used as ground-truth labels for supervision during
+            training. (default: :obj:`0.0`)
         edge_types (Tuple[EdgeType] or List[EdgeType], optional): The edge
             types used for performing edge-level splitting in case of
             operating on :class:`~torch_geometric.data.HeteroData` objects.
@@ -84,6 +89,7 @@ class RandomLinkSplit(BaseTransform):
         split_labels: bool = False,
         add_negative_train_samples: bool = True,
         neg_sampling_ratio: float = 1.0,
+        disjoint_train_ratio: Union[int, float] = 0.0,
         edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
         rev_edge_types: Optional[Union[EdgeType, List[EdgeType]]] = None,
     ):
@@ -94,6 +100,7 @@ class RandomLinkSplit(BaseTransform):
         self.split_labels = split_labels
         self.add_negative_train_samples = add_negative_train_samples
         self.neg_sampling_ratio = neg_sampling_ratio
+        self.disjoint_train_ratio = disjoint_train_ratio
         self.edge_types = edge_types
         self.rev_edge_types = rev_edge_types
 
@@ -141,9 +148,10 @@ class RandomLinkSplit(BaseTransform):
             if is_undirected:
                 perm = perm[edge_index[0] <= edge_index[1]]
 
-            num_val, num_test = self.num_val, self.num_test
+            num_val = self.num_val
             if isinstance(num_val, float):
                 num_val = int(num_val * perm.numel())
+            num_test = self.num_test
             if isinstance(num_test, float):
                 num_test = int(num_test * perm.numel())
 
@@ -156,8 +164,15 @@ class RandomLinkSplit(BaseTransform):
             test_edges = perm[num_train + num_val:]
             train_val_edges = perm[:num_train + num_val]
 
+            num_disjoint = self.disjoint_train_ratio
+            if isinstance(num_disjoint, float):
+                num_disjoint = int(num_disjoint * train_edges.numel())
+            if num_train - num_disjoint <= 0:
+                raise ValueError("Insufficient number of edges for training")
+
             # Create data splits:
-            self._split(train_store, train_edges, is_undirected, rev_edge_type)
+            self._split(train_store, train_edges[num_disjoint:], is_undirected,
+                        rev_edge_type)
             self._split(val_store, train_edges, is_undirected, rev_edge_type)
             self._split(test_store, train_val_edges, is_undirected,
                         rev_edge_type)
@@ -165,7 +180,10 @@ class RandomLinkSplit(BaseTransform):
             # Create negative samples:
             num_neg_train = 0
             if self.add_negative_train_samples:
-                num_neg_train = int(num_train * self.neg_sampling_ratio)
+                if num_disjoint > 0:
+                    num_neg_train = int(num_disjoint * self.neg_sampling_ratio)
+                else:
+                    num_neg_train = int(num_train * self.neg_sampling_ratio)
             num_neg_val = int(num_val * self.neg_sampling_ratio)
             num_neg_test = int(num_test * self.neg_sampling_ratio)
 
@@ -179,6 +197,8 @@ class RandomLinkSplit(BaseTransform):
                                                method='sparse')
 
             # Create labels:
+            if num_disjoint > 0:
+                train_edges = train_edges[:num_disjoint]
             self._create_label(
                 store,
                 train_edges,
