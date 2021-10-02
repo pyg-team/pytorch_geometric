@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Tuple, Callable, Optional
 
 from torch import Tensor
 from torch.nn import Linear
@@ -14,44 +14,52 @@ from ..inits import reset
 
 class PointTransformerConv(MessagePassing):
     r"""The PointTransformer layer from the `"Point Transformer"
-    <https://arxiv.org/abs/2012.09164>` paper
+    <https://arxiv.org/abs/2012.09164>`_ paper
 
     .. math::
         \mathbf{x}^{\prime}_i =  \sum_{j \in
-        \mathcal{N}(i) \cup \{ i \}} \rho \left( \gamma \left( \phi
-        \left( \mathbf{x}_i \right) - \psi \left( \mathbf{x}_j \right) \right)
-        + \delta  \right) \odot \left( \alpha \left(  \mathbf{x}_j \right)
-        + \delta \right) ,
+        \mathcal{N}(i) \cup \{ i \}} \alpha_{i,j} \left(W_3\mathbf{x}_j
+        + \delta_{ij} \right)
 
-    where :math:`\gamma` and :math:`\delta = \theta \left( \mathbf{p}_j -
-    \mathbf{p}_i \right)` denote neural networks, *.i.e.* MLPs, that
-    respectively map transformed node features and relative spatial
-    coordinates. :math:`\mathbf{P} \in \mathbb{R}^{N \times D}`
+    where the attention coefficients :math:`\alpha_{i,j}` and
+    positional embedding :math:`\delta_{ij}` are computed as.
+
+    .. math::
+        \alpha_{i,j}= \textrm{softmax} \left( \gamma_\mathbf{\Theta}
+        W_1\mathbf{x}_i - W_2\mathbf{x}_j + \delta_{i,j}  \right)
+
+    .. math::
+        \delta_{i,j}= h_{\mathbf{\Theta}}(pos_i - pos_j)
+
+    where :math:`\gamma_\mathbf{\Theta}` and :math:`h_\mathbf{\Theta}`
+    denote neural networks, *.i.e.* MLPs, that are
+    used to compute attention coefficients and map relative spatial
+    coordinates respectively. :math:`\mathbf{P} \in \mathbb{R}^{N \times D}`
     defines the position of each point.
 
     Args:
         in_channels (int or tuple): Size of each input sample features
         out_channels (int) : size of each output sample features
         local_nn : (torch.nn.Module, optional): A neural network
-            :math:`\delta = \theta \left( \mathbf{p}_j -
-            \mathbf{p}_i \right)` which maps relative spatial coordinates
-            :obj:`pos_j - pos_i` of shape
-            :obj:`[-1, 3]` to shape
+            :math:`h_\mathbf{\Theta}` which maps relative spatial coordinates
+            :obj:`pos_j - pos_i` of shape :obj:`[-1, 3]` to shape
             :obj:`[-1, out_channels]`, *e.g.*, defined by
-            :class:`torch.nn.Sequential`. Will be defaulted to a linear
+            :class:`torch.nn.Sequential`. Will default to a linear
             mapping if not specified. (default: :obj:`None`)
         attn_nn : (torch.nn.Module, optional): A neural network
-            :math:`\gamma` which maps transformed node features of shape
-            :obj:`[-1, out_channels]` to shape :obj:`[-1, out_channels]`,
-            *e.g.*, defined by :class:`torch.nn.Sequential`.
-            (default: :obj:`None`)
+            :math:`\gamma_\mathbf{\Theta}` which maps transformed
+            node features of shape :obj:`[-1, out_channels]`
+            to shape :obj:`[-1, out_channels]`, *e.g.*, defined
+            by :class:`torch.nn.Sequential`.(default: :obj:`None`)
         add_self_loops (bool, optional) : If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels, out_channels, local_nn=None, attn_nn=None,
-                 add_self_loops=True):
+    def __init__(self, in_channels: Union[int, Tuple[int, int]],
+                 out_channels: int, local_nn: Optional[Callable] = None,
+                 attn_nn: Optional[Callable] = None,
+                 add_self_loops: bool = True):
 
         super(PointTransformerConv,
               self).__init__(aggr='add')  # "Add" aggregation
@@ -110,7 +118,7 @@ class PointTransformerConv(MessagePassing):
     def message(self, x_j, pos_i, pos_j, alpha_i, alpha_j, index):
 
         out_delta = self.local_nn((pos_j - pos_i))
-        alpha = alpha_i + alpha_j + out_delta
+        alpha = alpha_i - alpha_j + out_delta
         if self.attn_nn is not None:
             alpha = self.attn_nn(alpha)
         alpha = softmax(alpha, index)
