@@ -40,7 +40,7 @@ class PointTransformerConv(MessagePassing):
             :obj:`[-1, out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`. Will be defaulted to a linear
             mapping if not specified. (default: :obj:`None`)
-        global_nn : (torch.nn.Module, optional): A neural network
+        attn_nn : (torch.nn.Module, optional): A neural network
             :math:`\gamma` which maps transformed node features of shape
             :obj:`[-1, out_channels]` to shape :obj:`[-1, out_channels]`,
             *e.g.*, defined by :class:`torch.nn.Sequential`.
@@ -50,16 +50,14 @@ class PointTransformerConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 local_nn=None,
-                 global_nn=None,
+    def __init__(self, in_channels, out_channels, local_nn=None, attn_nn=None,
                  add_self_loops=True):
 
         super(PointTransformerConv,
               self).__init__(aggr='add')  # "Add" aggregation
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -67,20 +65,20 @@ class PointTransformerConv(MessagePassing):
         if local_nn is None:
             local_nn = Linear(3, out_channels)
 
-        self.delta = local_nn
-        self.gamma = global_nn
-        self.alpha = Linear(in_channels[1], out_channels)
-        self.phi = Linear(in_channels[0], out_channels)
-        self.psi = Linear(in_channels[1], out_channels)
+        self.local_nn = local_nn
+        self.attn_nn = attn_nn
+        self.lin = Linear(in_channels[0], out_channels)
+        self.lin_src = Linear(in_channels[0], out_channels)
+        self.lin_dst = Linear(in_channels[1], out_channels)
 
         self.add_self_loops = add_self_loops
 
     def reset_parameters(self):
-        reset(self.delta)
-        reset(self.gamma)
-        reset(self.alpha)
-        reset(self.phi)
-        reset(self.psi)
+        reset(self.local_nn)
+        reset(self.attn_nn)
+        reset(self.lin)
+        reset(self.lin_src)
+        reset(self.lin_dst)
 
     def forward(self, x: Union[Tensor, PairTensor],
                 pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
@@ -104,21 +102,18 @@ class PointTransformerConv(MessagePassing):
 
     def message(self, x_i, x_j, pos_i, pos_j, index):
 
-        # query is x_i, key is x_j, value is the substraction of the two
-        out_delta = self.delta((pos_j - pos_i))  # compute position encoding
+        # compute position encoding
+        out_delta = self.local_nn((pos_j - pos_i))
+        alpha = self.lin_dst(x_i) - self.lin_src(x_j) + out_delta
+        if self.attn_nn is not None:
+            alpha = self.attn_nn(alpha)
+        alpha = softmax(alpha, index)
 
-        out_phi_psi = self.phi(x_i) - self.psi(
-            x_j)  # compute point wise transformation
-
-        # compute importance factor
-        out_gamma = out_phi_psi + out_delta
-        if self.gamma is not None:
-            out_gamma = self.gamma(out_gamma)
-
-        # normalize the result with softmax and multiply
-        # by features transformed by alpha
-        msg = softmax(out_gamma, index) * (
-            self.alpha(x_j) + out_delta
-        )
+        msg = alpha * (self.lin(x_j) + out_delta)
 
         return msg
+
+    def __repr__(self):
+        return '{}({}, {}, local_nn={}, attn_nn={})'.format(
+            self.__class__.__name__, self.in_channels, self.out_channels,
+            self.local_nn, self.attn_nn)

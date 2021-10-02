@@ -15,20 +15,17 @@ def test_point_transformer_conv():
 
     conv = PointTransformerConv(in_channels=16, out_channels=32)
     assert conv.__repr__() == (
-        'PointTransformerConv(\n'
-        '  (delta): Linear(in_features=3, out_features=32, bias=True)\n'
-        '  (alpha): Linear(in_features=16, out_features=32, bias=True)\n'
-        '  (phi): Linear(in_features=16, out_features=32, bias=True)\n'
-        '  (psi): Linear(in_features=16, out_features=32, bias=True)\n'
-        ')')
+        'PointTransformerConv(16, 32, local_nn='
+        'Linear(in_features=3, out_features=32, bias=True)'
+        ', attn_nn=None)')
 
     out = conv(x1, pos1, edge_index)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, pos1, adj.t()), out, atol=1e-6)
 
     # test with in_channels as tuple
-    conv = PointTransformerConv(in_channels=(8, 16), out_channels=32)
     x2 = torch.randn(4, 8)
+    conv = PointTransformerConv(in_channels=(16, 8), out_channels=32)
 
     out = conv((x1, x2), pos1, edge_index)
     assert out.size() == (4, 32)
@@ -36,13 +33,13 @@ def test_point_transformer_conv():
 
     # Test with custom nn
     out_channels = 64
-    nn_pos = Sequential(
+    local_nn = Sequential(
         Linear(3, 16),
         ReLU(),
         Linear(16, out_channels)
     )
 
-    nn_map = Sequential(
+    attn_nn = Sequential(
         Linear(out_channels, 32),
         ReLU(),
         Linear(32, out_channels)
@@ -51,24 +48,8 @@ def test_point_transformer_conv():
     conv = PointTransformerConv(
         in_channels=16,
         out_channels=out_channels,
-        local_nn=nn_pos,
-        global_nn=nn_map)
-    assert conv.__repr__() == (
-        'PointTransformerConv(\n'
-        '  (delta): Sequential(\n'
-        '    (0): Linear(in_features=3, out_features=16, bias=True)\n'
-        '    (1): ReLU()\n'
-        '    (2): Linear(in_features=16, out_features=64, bias=True)\n'
-        '  )\n'
-        '  (gamma): Sequential(\n'
-        '    (0): Linear(in_features=64, out_features=32, bias=True)\n'
-        '    (1): ReLU()\n'
-        '    (2): Linear(in_features=32, out_features=64, bias=True)\n'
-        '  )\n'
-        '  (alpha): Linear(in_features=16, out_features=64, bias=True)\n'
-        '  (phi): Linear(in_features=16, out_features=64, bias=True)\n'
-        '  (psi): Linear(in_features=16, out_features=64, bias=True)\n'
-        ')')
+        local_nn=local_nn,
+        attn_nn=attn_nn)
 
     out = conv(x1, pos1, edge_index)
     assert out.size() == (4, 64)
