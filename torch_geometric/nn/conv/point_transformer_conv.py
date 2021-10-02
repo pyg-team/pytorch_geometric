@@ -1,12 +1,12 @@
 from typing import Union
-from torch_geometric.typing import PairOptTensor, PairTensor, Adj
 
 from torch import Tensor
+from torch.nn import Linear
+
+from torch_geometric.typing import PairTensor, Adj
 from torch_sparse import SparseTensor, set_diag
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.utils import remove_self_loops, add_self_loops
-
-from torch.nn import Linear
 from torch_geometric.utils import softmax
 
 from ..inits import reset
@@ -85,7 +85,12 @@ class PointTransformerConv(MessagePassing):
         """"""
 
         if not isinstance(x, tuple):
-            x: PairOptTensor = (x, x)
+            alpha = (self.lin_src(x), self.lin_dst(x))
+            x = self.lin(x)
+            x: PairTensor = (x, x)
+        else:
+            alpha = (self.lin_src(x[0]), self.lin_dst(x[1]))
+            x = (self.lin(x[0]), x[1])
 
         if isinstance(pos, Tensor):
             pos: PairTensor = (pos, pos)
@@ -98,18 +103,19 @@ class PointTransformerConv(MessagePassing):
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 
-        return self.propagate(edge_index, x=x, pos=pos)
+        # propagate_type: (x: PairTensor, pos: PairTensor, alpha: PairTensor)
+        out = self.propagate(edge_index, x=x, pos=pos, alpha=alpha, size=None)
+        return out
 
-    def message(self, x_i, x_j, pos_i, pos_j, index):
+    def message(self, x_j, pos_i, pos_j, alpha_i, alpha_j, index):
 
-        # compute position encoding
         out_delta = self.local_nn((pos_j - pos_i))
-        alpha = self.lin_dst(x_i) - self.lin_src(x_j) + out_delta
+        alpha = alpha_i + alpha_j + out_delta
         if self.attn_nn is not None:
             alpha = self.attn_nn(alpha)
         alpha = softmax(alpha, index)
 
-        msg = alpha * (self.lin(x_j) + out_delta)
+        msg = alpha * (x_j + out_delta)
 
         return msg
 
