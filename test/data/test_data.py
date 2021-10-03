@@ -109,6 +109,17 @@ def test_data():
     assert data.num_node_features == 0
     assert data.num_edge_features == 0
 
+    test_value: str = 'test_value'
+    data[test_value] = test_value
+    assert data[test_value] == test_value
+
+    del data[test_value]
+
+    try:
+        del data[test_value]
+    except KeyError as err:
+        assert str(err) == "'Key {} is not in the store'".format(test_value)
+
     torch_geometric.set_debug(False)
 
 
