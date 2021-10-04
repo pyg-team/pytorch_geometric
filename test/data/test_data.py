@@ -115,6 +115,9 @@ def test_data():
     del data[value]
     del data[value]  # Deleting unset attributes should work as well.
 
+    assert data.get(key) is None
+    assert data.get('title') == 'test'
+
     torch_geometric.set_debug(False)
 
 
