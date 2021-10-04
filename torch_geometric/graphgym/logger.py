@@ -1,20 +1,16 @@
 import torch
 import math
-import os
 import sys
 import logging
+
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.data.makedirs import makedirs
 from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
     f1_score, roc_auc_score, mean_absolute_error, mean_squared_error
 
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
-
-try:
-    from tensorboardX import SummaryWriter
-except ImportError:
-    SummaryWriter = None
 
 
 def set_printing():
@@ -24,6 +20,7 @@ def set_printing():
     """
     logging.root.handlers = []
     logging_cfg = {'level': logging.INFO, 'format': '%(message)s'}
+    makedirs(cfg.run_dir)
     h_file = logging.FileHandler('{}/logging.log'.format(cfg.run_dir))
     h_stdout = logging.StreamHandler(sys.stdout)
     if cfg.print == 'file':
@@ -46,11 +43,9 @@ class Logger(object):
         self._time_total = 0  # won't be reset
 
         self.out_dir = '{}/{}'.format(cfg.run_dir, name)
-        os.makedirs(self.out_dir, exist_ok=True)
+        makedirs(self.out_dir)
         if cfg.tensorboard_each_run:
-            if SummaryWriter is None:
-                raise ImportError(
-                    'Tensorboard support requires `tensorboardX`.')
+            from tensorboardX import SummaryWriter
             self.tb_writer = SummaryWriter(self.out_dir)
 
         self.reset()

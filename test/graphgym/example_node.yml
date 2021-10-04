@@ -1,0 +1,37 @@
+tensorboard_each_run: False
+tensorboard_agg: False
+dataset:
+  format: PyG
+  name: Cora
+  task: node
+  task_type: classification
+  node_encoder: False
+  node_encoder_name: Atom
+  edge_encoder: False
+  edge_encoder_name: Bond
+train:
+  batch_size: 128
+  eval_period: 1
+  ckpt_period: 100
+  sampler: full_batch
+model:
+  type: gnn
+  loss_fun: cross_entropy
+  edge_decoding: dot
+  graph_pooling: add
+gnn:
+  layers_pre_mp: 0
+  layers_mp: 2
+  layers_post_mp: 1
+  dim_inner: 16
+  layer_type: gcnconv
+  stage_type: stack
+  batchnorm: False
+  act: prelu
+  dropout: 0.1
+  agg: mean
+  normalize_adj: False
+optim:
+  optimizer: adam
+  base_lr: 0.01
+  max_epoch: 3
