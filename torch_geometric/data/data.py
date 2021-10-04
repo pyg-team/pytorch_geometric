@@ -358,7 +358,8 @@ class Data(BaseData):
         self._store[key] = value
 
     def __delitem__(self, key: str):
-        del self.store[key]
+        if key in self._store:
+            del self._store[key]
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
