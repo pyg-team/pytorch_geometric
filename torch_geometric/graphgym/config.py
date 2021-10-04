@@ -521,6 +521,8 @@ def set_run_dir(out_dir, fname):
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
         fname = fname[:-5]
+    elif fname.endswith('.yml'):
+        fname = fname[:-4]
     cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
@@ -542,6 +544,8 @@ def set_agg_dir(out_dir, fname):
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
         fname = fname[:-5]
+    elif fname.endswith('.yml'):
+        fname = fname[:-4]
     return os.path.join(out_dir, fname)
 
 

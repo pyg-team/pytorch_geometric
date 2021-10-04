@@ -24,26 +24,20 @@ from torch_geometric.graphgym.optimizer import (create_optimizer,
 
 
 def test_run_single_graphgym():
-    print('1')
     Args = namedtuple('Args', ['cfg_file', 'opts'])
     root = osp.join(osp.dirname(osp.realpath(__file__)))
     args = Args(osp.join(root, 'example_node.yml'), [])
-    print('1')
 
     load_cfg(cfg, args)
-    print('2')
     cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     cfg.dataset.dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
     dump_cfg(cfg)
-    print('3')
     set_printing()
 
-    print('4')
     seed_everything(cfg.seed)
     auto_select_device()
     set_run_dir(cfg.out_dir, args.cfg_file)
-    print('5')
 
     loaders = create_loader()
     assert len(loaders) == 3
