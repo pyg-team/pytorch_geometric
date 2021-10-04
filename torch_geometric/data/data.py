@@ -352,8 +352,7 @@ class Data(BaseData):
         delattr(self._store, key)
 
     def __getitem__(self, key: str) -> Any:
-        if key in self._store:
-            return self._store[key]
+        return self._store[key]
 
     def __setitem__(self, key: str, value: Any):
         self._store[key] = value
@@ -361,8 +360,6 @@ class Data(BaseData):
     def __delitem__(self, key: str):
         if key in self._store:
             del self._store[key]
-        else:
-            raise KeyError('Key {} is not in the store'.format(key))
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
