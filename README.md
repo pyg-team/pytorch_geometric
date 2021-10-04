@@ -70,6 +70,7 @@ For this, we load the [Cora](https://pytorch-geometric.readthedocs.io/en/latest/
 
 ```python
 import torch
+from torch import Tensor
 from torch_geometric.nn import GCNConv
 from torch_geometric.datasets import Planetoid
 
@@ -123,6 +124,7 @@ For example, this is all it takes to implement the [edge convolutional layer](ht
 
 ```python
 import torch
+from torch import Tensor
 from torch.nn import Sequential, Linear, ReLU
 from torch_geometric.nn import MessagePassing
 
