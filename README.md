@@ -98,6 +98,7 @@ model = GCN(dataset.num_features, 16, dataset.num_classes)
 ```python
 import torch.nn.functional as F
 
+data = dataset[0]
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 for epoch in range(200):
