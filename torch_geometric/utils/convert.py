@@ -156,6 +156,7 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         if set(feat_dict.keys()) != set(edge_attrs):
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
+            key = f'edge_{key}' if key in node_attrs else key
             data[str(key)].append(value)
 
     for key, value in data.items():
@@ -166,22 +167,32 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
 
     data['edge_index'] = edge_index.view(2, -1)
     data = torch_geometric.data.Data.from_dict(data)
-    if data.x is None:
-        data.num_nodes = G.number_of_nodes()
 
     if group_node_attrs is all:
         group_node_attrs = list(node_attrs)
     if group_node_attrs is not None:
-        xs = [data[key] for key in group_node_attrs]
-        xs = [x.view(-1, 1) if x.dim() <= 1 else x for x in xs]
+        xs = []
+        for key in group_node_attrs:
+            x = data[key]
+            x = x.view(-1, 1) if x.dim() <= 1 else x
+            xs.append(x)
+            del data[key]
         data.x = torch.cat(xs, dim=-1)
 
     if group_edge_attrs is all:
         group_edge_attrs = list(edge_attrs)
     if group_edge_attrs is not None:
-        edge_attrs = [data[key] for key in group_edge_attrs]
-        edge_attrs = [x.view(-1, 1) if x.dim() <= 1 else x for x in edge_attrs]
-        data.edge_attr = torch.cat(edge_attrs, dim=-1)
+        xs = []
+        for key in group_edge_attrs:
+            key = f'edge_{key}' if key in node_attrs else key
+            x = data[key]
+            x = x.view(-1, 1) if x.dim() <= 1 else x
+            xs.append(x)
+            del data[key]
+        data.edge_attr = torch.cat(xs, dim=-1)
+
+    if data.x is None and data.pos is None:
+        data.num_nodes = G.number_of_nodes()
 
     return data
 
