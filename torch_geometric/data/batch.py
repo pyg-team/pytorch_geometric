@@ -81,7 +81,7 @@ class Batch(metaclass=DynamicInheritance):
 
         return batch
 
-    def get(self, idx: int) -> Union[Data, HeteroData]:
+    def get_example(self, idx: int) -> Union[Data, HeteroData]:
         r"""Gets the :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object at index :obj:`idx`.
         The :class:`~torch_geometric.data.Batch` object must have been created
@@ -139,13 +139,13 @@ class Batch(metaclass=DynamicInheritance):
                 f"np.ndarray of dtype long or bool are valid indices (got "
                 f"'{type(idx).__name__}')")
 
-        return [self.get(i) for i in idx]
+        return [self.get_example(i) for i in idx]
 
     def __getitem__(self, idx: Union[int, np.integer, str, IndexType]) -> Any:
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
                 or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
-            return self.get(idx)
+            return self.get_example(idx)
         elif isinstance(idx, str) or (isinstance(idx, tuple)
                                       and isinstance(idx[0], str)):
             # Accessing attributes or node/edge types:
@@ -160,7 +160,7 @@ class Batch(metaclass=DynamicInheritance):
         The :class:`~torch_geometric.data.Batch` object must have been created
         via :meth:`from_data_list` in order to be able to reconstruct the
         initial objects."""
-        return [self.get(i) for i in range(self.num_graphs)]
+        return [self.get_example(i) for i in range(self.num_graphs)]
 
     @property
     def num_graphs(self) -> int:
