@@ -119,7 +119,7 @@ class BaseStorage(MutableMapping):
     # In contrast to standard `keys()`, `values()` and `items()` functions of
     # Python dictionaries, we allow to only iterate over a subset of items
     # denoted by a list of keys `args`.
-    # This is especically useful for adding PyTorch Tensor functionality to the
+    # This is especially useful for adding PyTorch Tensor functionality to the
     # storage object, e.g., in case we only want to transfer a subset of keys
     # to the GPU (i.e. the ones that are relevant to the deep learning model).
 
