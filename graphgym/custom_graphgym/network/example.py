@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torch_geometric.nn as pyg_nn
 
 from torch_geometric.graphgym.config import cfg
-import torch_geometric.graphgym.models.head
+import torch_geometric.graphgym.models.head  # noqa, register module
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.register import register_network
 
@@ -33,8 +33,7 @@ class ExampleGNN(torch.nn.Module):
             raise ValueError("Model {} unavailable".format(model_type))
 
     def forward(self, batch):
-        x, edge_index, x_batch = \
-            batch.x, batch.edge_index, batch.batch
+        x, edge_index = batch.x, batch.edge_index
 
         for i in range(len(self.convs)):
             x = self.convs[i](x, edge_index)

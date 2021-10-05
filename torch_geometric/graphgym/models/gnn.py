@@ -10,7 +10,7 @@ from torch_geometric.graphgym.models.layer import (new_layer_config,
                                                    BatchNorm1dNode)
 from torch_geometric.graphgym.init import init_weights
 
-import torch_geometric.graphgym.models.encoder
+import torch_geometric.graphgym.models.encoder # noqa, register module
 import torch_geometric.graphgym.register as register
 
 
