@@ -88,8 +88,14 @@ class BondEncoder(torch.nn.Module):
 
 node_encoder_dict = {'Integer': IntegerFeatureEncoder, 'Atom': AtomEncoder}
 
-node_encoder_dict = {**register.node_encoder_dict, **node_encoder_dict}
+register.node_encoder_dict = {
+    **register.node_encoder_dict,
+    **node_encoder_dict
+}
 
 edge_encoder_dict = {'Bond': BondEncoder}
 
-edge_encoder_dict = {**register.edge_encoder_dict, **edge_encoder_dict}
+register.edge_encoder_dict = {
+    **register.edge_encoder_dict,
+    **edge_encoder_dict
+}
