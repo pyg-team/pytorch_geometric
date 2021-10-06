@@ -38,7 +38,7 @@ def set_cfg(cfg):
     cfg.cfg_dest = 'config.yaml'
 
     # Random seed
-    cfg.seed = 1
+    cfg.seed = 0
 
     # Print rounding
     cfg.round = 4

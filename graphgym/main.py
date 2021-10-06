@@ -41,11 +41,12 @@ if __name__ == '__main__':
     # Set Pytorch environment
     torch.set_num_threads(cfg.num_threads)
     dump_cfg(cfg)
-    set_printing()
     # Repeat for different random seeds
     for i in range(args.repeat):
+        set_printing()
         # Set configurations for each run
-        seed_everything(cfg.seed + i)
+        cfg.seed = cfg.seed + 1
+        seed_everything(cfg.seed)
         auto_select_device()
         set_run_dir(cfg.out_dir, args.cfg_file)
         # Set machine learning pipeline
