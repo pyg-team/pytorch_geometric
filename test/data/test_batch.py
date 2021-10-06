@@ -342,17 +342,16 @@ def test_hetero_batch():
     assert torch.allclose(out2[e2].edge_attr, data2[e2].edge_attr)
 
 
-class PairData(Data):
-    def __inc__(self, key, value, *args, **kwargs):
-        if key == 'edge_index_s':
-            return self.x_s.size(0)
-        if key == 'edge_index_t':
-            return self.x_t.size(0)
-        else:
-            return super().__inc__(key, value, *args, **kwargs)
-
-
 def test_pair_data_batching():
+    class PairData(Data):
+        def __inc__(self, key, value, *args, **kwargs):
+            if key == 'edge_index_s':
+                return self.x_s.size(0)
+            if key == 'edge_index_t':
+                return self.x_t.size(0)
+            else:
+                return super().__inc__(key, value, *args, **kwargs)
+
     x_s = torch.randn(5, 16)
     edge_index_s = torch.tensor([
         [0, 0, 0, 0],
