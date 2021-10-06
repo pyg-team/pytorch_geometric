@@ -101,7 +101,7 @@ def collate(
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
-                and stores[0].num_nodes is not None):
+                and stores[0].can_infer_num_nodes):
             arange = torch.arange(len(stores), device=device)
             repeats = torch.tensor([store.num_nodes for store in stores],
                                    device=device)
