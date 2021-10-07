@@ -473,21 +473,17 @@ def assert_cfg(cfg):
     cfg.run_dir = cfg.out_dir
 
 
-def dump_cfg(cfg, fname):
+def dump_cfg(cfg):
     r"""
-    Dumps the config to the output directory in
-    :obj:`cfg.out_dir/fname`
+    Dumps the config to the output directory specified in
+    :obj:`cfg.out_dir`
 
     Args:
         cfg (CfgNode): Configuration node
 
     """
-    fname = fname.split('/')[-1]
-    if fname.endswith('.yaml'):
-        fname = fname[:-5]
-    cfg_dir = os.path.join(cfg.out_dir, fname)
-    os.makedirs(cfg_dir, exist_ok=True)
-    cfg_file = os.path.join(cfg_dir, cfg.cfg_dest)
+    makedirs(cfg.out_dir)
+    cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
 
