@@ -8,7 +8,8 @@ from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import ModuleList, Sequential, Linear, BatchNorm1d, ReLU
 
-from torch_geometric.nn.conv import GCNConv, SAGEConv, GINConv, GATConv
+from torch_geometric.nn.conv import (GCNConv, SAGEConv, GINConv, GATConv,
+                                     PNAConv)
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
 
 
@@ -260,3 +261,53 @@ class GAT(BasicGNN):
             GATConv(in_channels, out_channels, dropout=dropout, **kwargs))
         for _ in range(1, num_layers):
             self.convs.append(GATConv(hidden_channels, out_channels, **kwargs))
+
+
+class PNA(BasicGNN):
+    r"""The Graph Neural Network from the `"Principal Neighbourhood Aggregation
+    for Graph Nets" <https://arxiv.org/abs/2004.05718>`_ paper, using the
+    :class:`~torch_geometric.nn.conv.PNAConv` operator for message passing.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        hidden_channels (int): Size of each hidden sample.
+        num_layers (int): Number of message passing layers.
+        aggregators (list of str): Set of aggregation function identifiers,
+            namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
+            :obj:`"var"` and :obj:`"std"`.
+        scalers: (list of str): Set of scaling function identifiers, namely
+            :obj:`"identity"`, :obj:`"amplification"`,
+            :obj:`"attenuation"`, :obj:`"linear"` and
+            :obj:`"inverse_linear"`.
+        deg (Tensor): Histogram of in-degrees of nodes in the training set,
+            used by scalers to normalize.
+        out_channels (int, optional): If not set to :obj:`None`, will apply a
+            final linear transformation to convert hidden node embeddings to
+            output size :obj:`out_channels`. (default: :obj:`None`)
+        dropout (float, optional): Dropout probability. (default: :obj:`0.`)
+        act (Callable, optional): The non-linear activation function to use.
+            (default: :meth:`torch.nn.ReLU(inplace=True)`)
+        norm (torch.nn.Module, optional): The normalization operator to use.
+            (default: :obj:`None`)
+        jk (str, optional): The Jumping Knowledge mode
+            (:obj:`"last"`, :obj:`"cat"`, :obj:`"max"`, :obj:`"last"`).
+            (default: :obj:`"last"`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.PNAConv`.
+    """
+    def __init__(self, in_channels: int, hidden_channels: int, num_layers: int,
+                 aggregators: List[str], scalers: List[str], deg: Tensor,
+                 out_channels: Optional[int] = None, dropout: float = 0.0,
+                 act: Optional[Callable] = ReLU(inplace=True),
+                 norm: Optional[torch.nn.Module] = None, jk: str = 'last',
+                 **kwargs):
+        super().__init__(in_channels, hidden_channels, num_layers,
+                         out_channels, dropout, act, norm, jk)
+
+        self.convs.append(
+            PNAConv(in_channels, hidden_channels, aggregators, scalers, deg,
+                    **kwargs))
+        for _ in range(1, num_layers):
+            self.convs.append(
+                PNAConv(hidden_channels, hidden_channels, aggregators, scalers,
+                        deg, **kwargs))
