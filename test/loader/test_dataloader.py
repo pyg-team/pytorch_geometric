@@ -1,12 +1,16 @@
 import sys
+import multiprocessing
 import pytest
 
 import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import DataLoader
 
-with_mp = sys.platform not in ['win32', 'darwin']
+with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
+
+if sys.platform == 'darwin':
+    multiprocessing.set_start_method('spawn')
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
