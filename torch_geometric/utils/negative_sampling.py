@@ -118,7 +118,8 @@ def structured_negative_sampling(edge_index, num_nodes=None,
     self_loops = torch.arange(num_nodes) * (num_nodes + 1)
     i, j = edge_index.to('cpu')
     idx_1 = i * num_nodes + j
-    idx_1 = idx_1 if contains_neg_self_loops else torch.cat([idx_1, self_loops])
+    idx_1 = idx_1 if contains_neg_self_loops else torch.cat(
+        [idx_1, self_loops])
 
     k = torch.randint(num_nodes, (i.size(0),), dtype=torch.long)
     idx_2 = i * num_nodes + k
@@ -259,8 +260,8 @@ def is_neg_samp_feasible(edge_index: Tensor, sample_method: str,
         edge_index (LongTensor): The edge indices.
         sample_method (string): *i.e.*, :obj:`"structure"` or :obj:`"common"`.
             Set to :obj:`"structure"` when utilizing
-            structured_negative_sampling, and set to :obj:`"common"` for other
-            situations.
+            structured_negative_sampling, and set to :obj:`"common"` for
+            negative_sampling or batched_negative_sampling.
         num_nodes (int or Tuple[int, int], optional): The number of nodes,
             *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
             If given as a tuple, then :obj:`edge_index` is interpreted as a
