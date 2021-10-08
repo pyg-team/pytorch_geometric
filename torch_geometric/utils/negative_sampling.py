@@ -259,8 +259,8 @@ def is_neg_samp_feasible(edge_index: Tensor, sample_method: str,
         edge_index (LongTensor): The edge indices.
         sample_method (string): *i.e.*, :obj:`"structure"` or :obj:`"common"`.
             Set to :obj:`"structure"` when utilizing
-            structured_negative_sampling, and set to :obj:`"common"` for other
-            situations.
+            structured_negative_sampling, and set to :obj:`"common"` for
+            negative_sampling or batched_negative_sampling.
         num_nodes (int or Tuple[int, int], optional): The number of nodes,
             *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
             If given as a tuple, then :obj:`edge_index` is interpreted as a
