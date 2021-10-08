@@ -118,6 +118,7 @@ def structured_negative_sampling(edge_index, num_nodes=None,
     self_loops = torch.arange(num_nodes) * (num_nodes + 1)
     i, j = edge_index.to('cpu')
     idx_1 = i * num_nodes + j
+    idx_1 = idx_1 if contains_neg_self_loops else torch.cat([idx_1, self_loops])
 
     k = torch.randint(num_nodes, (i.size(0),), dtype=torch.long)
     idx_2 = i * num_nodes + k
