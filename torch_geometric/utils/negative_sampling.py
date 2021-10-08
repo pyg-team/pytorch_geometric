@@ -129,10 +129,6 @@ def structured_negative_sampling(edge_index, num_nodes=None,
         tmp = torch.randint(num_nodes, (rest.numel(),), dtype=torch.long)
         idx_2 = i[rest] * num_nodes + tmp
         mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
-        if not contains_neg_self_loops:
-            self_loop_mask = torch.from_numpy(np.isin(idx_2, self_loops)).to(
-                torch.bool)
-            mask = torch.logical_or(mask, self_loop_mask)
         k[rest] = tmp
         rest = rest[mask.nonzero(as_tuple=False).view(-1)]
 
