@@ -81,10 +81,10 @@ class Dataset(torch.utils.data.Dataset):
         self.pre_filter = pre_filter
         self._indices: Optional[Sequence] = None
 
-        if 'download' in self.__class__.__dict__.keys():
+        if 'download' in self.__class__.__dict__:
             self._download()
 
-        if 'process' in self.__class__.__dict__.keys():
+        if 'process' in self.__class__.__dict__:
             self._process()
 
     def indices(self) -> Sequence:

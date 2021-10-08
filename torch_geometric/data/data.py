@@ -358,7 +358,8 @@ class Data(BaseData):
         self._store[key] = value
 
     def __delitem__(self, key: str):
-        del self.store[key]
+        if key in self._store:
+            del self._store[key]
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
@@ -416,7 +417,9 @@ class Data(BaseData):
             return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'index' in key or 'face' in key:
+        if 'batch' in key:
+            return int(value.max()) + 1
+        elif 'index' in key or 'face' in key:
             return self.num_nodes
         else:
             return 0

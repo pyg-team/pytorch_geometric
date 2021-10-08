@@ -66,4 +66,4 @@ pooling_dict = {
     'max': global_max_pool
 }
 
-pooling_dict = {**register.pooling_dict, **pooling_dict}
+register.pooling_dict = {**register.pooling_dict, **pooling_dict}

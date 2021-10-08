@@ -20,6 +20,7 @@ from .molecule_net import MoleculeNet
 from .entities import Entities
 from .rel_link_pred_dataset import RelLinkPredDataset
 from .ged_dataset import GEDDataset
+from .attributed_graph_dataset import AttributedGraphDataset
 from .mnist_superpixels import MNISTSuperpixels
 from .faust import FAUST
 from .dynamic_faust import DynamicFAUST
@@ -85,6 +86,7 @@ __all__ = [
     'Entities',
     'RelLinkPredDataset',
     'GEDDataset',
+    'AttributedGraphDataset',
     'MNISTSuperpixels',
     'FAUST',
     'DynamicFAUST',

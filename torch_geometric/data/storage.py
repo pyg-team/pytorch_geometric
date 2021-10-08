@@ -95,7 +95,7 @@ class BaseStorage(MutableMapping):
         return out
 
     def __getstate__(self) -> Dict[str, Any]:
-        out = self.__dict__
+        out = self.__dict__.copy()
 
         _parent = out.get('_parent', None)
         if _parent is not None:
@@ -119,7 +119,7 @@ class BaseStorage(MutableMapping):
     # In contrast to standard `keys()`, `values()` and `items()` functions of
     # Python dictionaries, we allow to only iterate over a subset of items
     # denoted by a list of keys `args`.
-    # This is especically useful for adding PyTorch Tensor functionality to the
+    # This is especially useful for adding PyTorch Tensor functionality to the
     # storage object, e.g., in case we only want to transfer a subset of keys
     # to the GPU (i.e. the ones that are relevant to the deep learning model).
 
@@ -228,6 +228,20 @@ class NodeStorage(BaseStorage):
         if key is None or not isinstance(key, str):
             raise ValueError("'_key' does not denote a valid node type")
         return key
+
+    @property
+    def can_infer_num_nodes(self):
+        keys = set(self.keys())
+        num_node_keys = {
+            'num_nodes', 'x', 'pos', 'batch', 'adj', 'adj_t', 'edge_index',
+            'face'
+        }
+        if len(keys & num_node_keys) > 0:
+            return True
+        elif len([key for key in keys if 'node' in key]) > 0:
+            return True
+        else:
+            return False
 
     @property
     def num_nodes(self) -> Optional[int]:

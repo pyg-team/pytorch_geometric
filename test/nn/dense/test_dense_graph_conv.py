@@ -12,8 +12,8 @@ def test_dense_graph_conv(aggr):
     assert dense_conv.__repr__() == 'DenseGraphConv(16, 16)'
 
     # Ensure same weights and bias.
-    dense_conv.lin_rel = sparse_conv.lin_l
-    dense_conv.lin_root = sparse_conv.lin_r
+    dense_conv.lin_rel = sparse_conv.lin_rel
+    dense_conv.lin_root = sparse_conv.lin_root
 
     x = torch.randn((5, channels))
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 3, 4],

@@ -73,6 +73,10 @@ def collate(
                 out_store.num_nodes = sum(values)
                 continue
 
+            # Skip batching of `ptr` vectors for now:
+            if attr == 'ptr':
+                continue
+
             # Collate attributes into a unified representation:
             value, slices, incs = _collate(attr, values, data_list, stores,
                                            increment)
@@ -97,7 +101,7 @@ def collate(
 
         # In case the storage holds node, we add a top-level batch vector it:
         if (add_batch and isinstance(stores[0], NodeStorage)
-                and stores[0].num_nodes is not None):
+                and stores[0].can_infer_num_nodes):
             arange = torch.arange(len(stores), device=device)
             repeats = torch.tensor([store.num_nodes for store in stores],
                                    device=device)
@@ -167,8 +171,14 @@ def _collate(
     elif isinstance(elem, (int, float)):
         # Convert a list of numerical values to a `torch.Tensor`.
         value = torch.tensor(values)
+        if increment:
+            incs = get_incs(key, values, data_list, stores)
+            if int(incs[-1]) != 0:
+                value.add_(incs)
+        else:
+            incs = None
         slices = torch.arange(len(values) + 1)
-        return value, slices, None
+        return value, slices, incs
 
     else:
         # Other-wise, just return the list of values as it is.

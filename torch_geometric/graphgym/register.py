@@ -1,4 +1,4 @@
-def register(key, module, module_dict):
+def register_base(key, module, module_dict):
     """
     Base function for registering a customized module to a module dictionary
 
@@ -28,7 +28,7 @@ def register_act(key, module):
         module: PyTorch module
 
     """
-    register(key, module, act_dict)
+    register_base(key, module, act_dict)
 
 
 node_encoder_dict = {}
@@ -44,7 +44,7 @@ def register_node_encoder(key, module):
         module: PyTorch module
 
     """
-    register(key, module, node_encoder_dict)
+    register_base(key, module, node_encoder_dict)
 
 
 edge_encoder_dict = {}
@@ -60,7 +60,7 @@ def register_edge_encoder(key, module):
         module: PyTorch module
 
     """
-    register(key, module, edge_encoder_dict)
+    register_base(key, module, edge_encoder_dict)
 
 
 stage_dict = {}
@@ -76,7 +76,7 @@ def register_stage(key, module):
         module: PyTorch module
 
     """
-    register(key, module, stage_dict)
+    register_base(key, module, stage_dict)
 
 
 head_dict = {}
@@ -92,7 +92,7 @@ def register_head(key, module):
         module: PyTorch module
 
     """
-    register(key, module, head_dict)
+    register_base(key, module, head_dict)
 
 
 layer_dict = {}
@@ -108,7 +108,7 @@ def register_layer(key, module):
         module: PyTorch module
 
     """
-    register(key, module, layer_dict)
+    register_base(key, module, layer_dict)
 
 
 pooling_dict = {}
@@ -124,7 +124,7 @@ def register_pooling(key, module):
         module: PyTorch module
 
     """
-    register(key, module, pooling_dict)
+    register_base(key, module, pooling_dict)
 
 
 network_dict = {}
@@ -140,7 +140,7 @@ def register_network(key, module):
         module: PyTorch module
 
     """
-    register(key, module, network_dict)
+    register_base(key, module, network_dict)
 
 
 config_dict = {}
@@ -156,7 +156,7 @@ def register_config(key, module):
         module: PyTorch module
 
     """
-    register(key, module, config_dict)
+    register_base(key, module, config_dict)
 
 
 loader_dict = {}
@@ -172,7 +172,7 @@ def register_loader(key, module):
         module: PyTorch module
 
     """
-    register(key, module, loader_dict)
+    register_base(key, module, loader_dict)
 
 
 optimizer_dict = {}
@@ -188,7 +188,7 @@ def register_optimizer(key, module):
         module: PyTorch module
 
     """
-    register(key, module, optimizer_dict)
+    register_base(key, module, optimizer_dict)
 
 
 scheduler_dict = {}
@@ -204,7 +204,7 @@ def register_scheduler(key, module):
         module: PyTorch module
 
     """
-    register(key, module, scheduler_dict)
+    register_base(key, module, scheduler_dict)
 
 
 loss_dict = {}
@@ -220,7 +220,7 @@ def register_loss(key, module):
         module: PyTorch module
 
     """
-    register(key, module, loss_dict)
+    register_base(key, module, loss_dict)
 
 
 train_dict = {}
@@ -236,4 +236,4 @@ def register_train(key, module):
         module: PyTorch module
 
     """
-    register(key, module, train_dict)
+    register_base(key, module, train_dict)

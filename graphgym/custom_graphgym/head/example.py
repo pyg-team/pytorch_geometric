@@ -11,9 +11,9 @@ class ExampleNodeHead(nn.Module):
 
     def _apply_index(self, batch):
         if batch.node_label_index.shape[0] == batch.node_label.shape[0]:
-            return batch.node_feature[batch.node_label_index], batch.node_label
+            return batch.x[batch.node_label_index], batch.node_label
         else:
-            return batch.node_feature[batch.node_label_index], \
+            return batch.x[batch.node_label_index], \
                 batch.node_label[batch.node_label_index]
 
     def forward(self, batch):

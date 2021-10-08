@@ -50,14 +50,14 @@ class GraphConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lin_l = Linear(in_channels[0], out_channels, bias=bias)
-        self.lin_r = Linear(in_channels[1], out_channels, bias=False)
+        self.lin_rel = Linear(in_channels[0], out_channels, bias=bias)
+        self.lin_root = Linear(in_channels[1], out_channels, bias=False)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin_l.reset_parameters()
-        self.lin_r.reset_parameters()
+        self.lin_rel.reset_parameters()
+        self.lin_root.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:
@@ -68,11 +68,11 @@ class GraphConv(MessagePassing):
         # propagate_type: (x: OptPairTensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=size)
-        out = self.lin_l(out)
+        out = self.lin_rel(out)
 
         x_r = x[1]
         if x_r is not None:
-            out += self.lin_r(x_r)
+            out += self.lin_root(x_r)
 
         return out
 

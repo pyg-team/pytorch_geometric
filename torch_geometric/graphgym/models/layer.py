@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch_geometric as pyg
 
-from torch_geometric.graphgym.models.act import act_dict
+import torch_geometric.graphgym.models.act
 from torch_geometric.graphgym.contrib.layer.generalconv import (
     GeneralConvLayer, GeneralEdgeConvLayer)
 
@@ -81,7 +81,7 @@ class GeneralLayer(nn.Module):
         self.has_l2norm = layer_config.has_l2norm
         has_bn = layer_config.has_batchnorm
         layer_config.has_bias = not has_bn
-        self.layer = layer_dict[name](layer_config, **kwargs)
+        self.layer = register.layer_dict[name](layer_config, **kwargs)
         layer_wrapper = []
         if has_bn:
             layer_wrapper.append(
@@ -93,7 +93,7 @@ class GeneralLayer(nn.Module):
                 nn.Dropout(p=layer_config.dropout,
                            inplace=layer_config.mem_inplace))
         if layer_config.has_act:
-            layer_wrapper.append(act_dict[layer_config.act])
+            layer_wrapper.append(register.act_dict[layer_config.act])
         self.post_layer = nn.Sequential(*layer_wrapper)
 
     def forward(self, batch):
@@ -396,4 +396,4 @@ layer_dict = {
 }
 
 # register additional convs
-layer_dict = {**register.layer_dict, **layer_dict}
+register.layer_dict = {**register.layer_dict, **layer_dict}
