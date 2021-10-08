@@ -303,11 +303,9 @@ def is_neg_samp_feasible(edge_index: Tensor, sample_method: str,
                      max_num_neighbor).nonzero().__len__() != num_nodes:
             warnings.warn('Cannot apply negative sampling', RuntimeWarning)
             return False
-    elif sample_method == 'common':
+    else:
         if torch.sub(node_degree,
                      max_num_neighbor).nonzero().__len__() == 0:
             warnings.warn('Cannot apply negative sampling', RuntimeWarning)
             return False
-    else:
-        raise ValueError("sample_method not in ['common', 'structure'] ")
     return True
