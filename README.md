@@ -372,7 +372,7 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.ht
 
 To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
 
-```sh
+```
 pip install torch-scatter -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
 pip install torch-sparse -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
 pip install torch-geometric
@@ -397,18 +397,18 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.ht
 
 ### From master
 
-In case you want to experiment with the latest PyG features which are not fully released yet, you can install PyG from master via
+In case you want to experiment with the latest PyG features which are not fully released yet, ensure that `torch-scatter` and `torch-sparse` are installed by [following the [steps mentioned above](#pip-wheels)
 
 ```
 pip install torch-scatter -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 pip install torch-sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+```
+
+and install PyG from master via
+
+```
 pip install git+https://github.com/pyg-team/pytorch_geometric.git
 ```
-where 
-- `${TORCH}` should be replaced by the specific PyTorch version, e.g. `1.8.0`, `1.8.1`, `1.9.0`. You can check your installed version using `torch.__version__`.
-- `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
-
-Please refer to the sections above to check which OS/PyTorch/CUDA combinations are available.
 
 ## Cite
 
