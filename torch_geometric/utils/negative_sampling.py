@@ -41,6 +41,7 @@ def negative_sampling(edge_index: Tensor,
     """
     assert method in ['sparse', 'dense']
     assert negative_sampling_feasible(edge_index, num_nodes, force_undirected)
+
     size = num_nodes
     bipartite = isinstance(size, (tuple, list))
     size = maybe_num_nodes(edge_index) if size is None else size
@@ -184,6 +185,7 @@ def edge_index_to_vector(
     bipartite: bool,
     force_undirected: bool = False,
 ) -> Tuple[Tensor, int]:
+
     row, col = edge_index
 
     if bipartite:  # No need to account for self-loops.
@@ -219,6 +221,7 @@ def edge_index_to_vector(
 
 def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
                          force_undirected: bool = False) -> Tensor:
+
     if bipartite:  # No need to account for self-loops.
         row = idx.div(size[1], rounding_mode='floor')
         col = idx % size[1]
