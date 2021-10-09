@@ -45,7 +45,7 @@ Hence, if you modify a Python file, you do not need to reinstall PyG again and a
 5. Ensure that you have a working PyG installation by running the entire test suite with
 
 ```
-python setup.py test
+python -m pytest
 ```
 
 In case an error occurs, please first check if all sub-packages ([`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse), [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster) and [`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)) are on its latest reported version.
@@ -56,10 +56,10 @@ The PyG testing suite is located under `test/`.
 Run the entire test suite with
 
 ```
-python setup.py test
+python -m pytest
 ```
 
-or run individual test files, like `pytest --no-cov test/utils/test_convert.py`, for individual test suites.
+or run individual test files, like `python -m pytest --no-cov test/utils/test_convert.py`, for individual test suites.
 
 ## Continuous Integration
 
@@ -79,7 +79,7 @@ If you do not want to format your code manually, we recommend to use [`yapf`](ht
 2. Ensure that the entire test suite passes and that code coverage roughly stays the same. Please feel encouraged to provide a test with your submitted code.
 
 ```
-python setup.py test
+python -m pytest
 ```
 
 ## Building Documentation
