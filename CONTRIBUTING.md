@@ -33,7 +33,7 @@ cd pytorch_geometric
 git pull
 ```
 
-4. Install PyG in `develop` mode:
+4. Install PyG in editable mode:
 
 ```
 python -m pip install -e .
