@@ -33,10 +33,10 @@ cd pytorch_geometric
 git pull
 ```
 
-4. Install PyG in `develop` mode:
+4. Install PyG in editable mode:
 
 ```
-python setup.py develop
+python -m pip install -e .
 ```
 
 This mode will symlink the Python files from the current local source tree into the Python install.
