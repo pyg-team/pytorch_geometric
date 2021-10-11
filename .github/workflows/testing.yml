@@ -59,7 +59,7 @@ jobs:
 
       - name: Run test-suite
         run: |
-          python setup.py test
+          python -m pytest
 
       - name: Generate coverage report
         if: success()
