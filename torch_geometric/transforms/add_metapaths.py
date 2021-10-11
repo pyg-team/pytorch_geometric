@@ -36,30 +36,26 @@ class AddMetaPaths(BaseTransform):
             if 'x' in data[i]:
                 num_nodes_dict[i] = data[i].x.size(0)
 
-        edge_types = deepcopy(data.edge_types)  # can copy be used instead.
-        keep_nodes = []  # list with all start and end nodes.
+        edge_types = deepcopy(data.edge_types)  # save original edge types
         for j, metapath in enumerate(self.metapaths):
+
+            for path in metapath:
+                assert path in edge_types, f'{path} edge not present'
 
             new_edge_type = f'metapath_{j}'
             start_node = metapath[0][0]
             end_node = metapath[-1][-1]
-            keep_nodes.append(start_node)
-            keep_nodes.append(end_node)
+            new_edge_index = data[metapath[0]].edge_index
+            m = num_nodes_dict[metapath[0][0]]
 
-            for i, path in enumerate(metapath):
-                assert path in edge_types, f'{path} edge not present'
-
-                if i == 0:
-                    new_edge_index = data[path].edge_index
-                    m = num_nodes_dict[path[0]]
-                else:
-                    k = num_nodes_dict[path[0]]
-                    n = num_nodes_dict[path[2]]
-                    edge_index = data[path].edge_index
-                    valueA = torch.ones(new_edge_index.shape[1])
-                    valueB = torch.ones(edge_index.shape[1])
-                    new_edge_index, _ = spspmm(new_edge_index, valueA,
-                                               edge_index, valueB, m, k, n)
+            for i, path in enumerate(metapath[1:]):
+                k = num_nodes_dict[path[0]]
+                n = num_nodes_dict[path[2]]
+                edge_index = data[path].edge_index
+                valueA = torch.ones(new_edge_index.shape[1])
+                valueB = torch.ones(edge_index.shape[1])
+                new_edge_index, _ = spspmm(new_edge_index, valueA, edge_index,
+                                           valueB, m, k, n, coalesced=True)
                 data[(start_node, new_edge_type,
                       end_node)].edge_index = new_edge_index
 
