@@ -50,8 +50,8 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
          pip install torch-sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
          pip install torch-geometric
 
-    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by the specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.7.1`, :obj:`1.8.0`, :obj:`1.8.1`, :obj:`1.9.0`), respectively.
-    For example, for PyTorch 1.9.0 and CUDA 11.1, type:
+    where :obj:`${CUDA}` and :obj:`${TORCH}` should be replaced by the specific CUDA version (:obj:`cpu`, :obj:`cu92`, :obj:`cu101`, :obj:`cu102`, :obj:`cu110`, :obj:`cu111`) and PyTorch version (:obj:`1.4.0`, :obj:`1.5.0`, :obj:`1.6.0`, :obj:`1.7.0`, :obj:`1.7.1`, :obj:`1.8.0`, :obj:`1.8.1`, :obj:`1.9.0`, :obj:`1.9.1`), respectively.
+    For example, for PyTorch 1.9.0/1.9.1 and CUDA 11.1, type:
 
     .. code-block:: none
 
