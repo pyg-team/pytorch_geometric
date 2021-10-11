@@ -18,7 +18,8 @@ install_requires = [
     'yacs',
     'PyYAML',
 ]
-tests_require = ['pytest', 'pytest-cov', 'mock']
+setup_requires = []
+tests_requires = ['pytest', 'pytest-runner', 'pytest-cov', 'mock']
 
 setup(
     name='torch_geometric',
@@ -37,7 +38,9 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=install_requires,
-    extras_require={'test': tests_require},
+    setup_requires=setup_requires,
+    tests_requires=tests_requires,
+    extras_require={'test': tests_requires},
     packages=find_packages(),
     include_package_data=True,
 )
