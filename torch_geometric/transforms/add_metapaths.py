@@ -11,10 +11,68 @@ from torch_geometric.transforms import BaseTransform
 
 
 class AddMetaPaths(BaseTransform):
+    r""" Adds edges for all :obj:`metapaths`. Metapaths are defined in
+    `"Heterogenous Graph Attention Networks"
+    <https://arxiv.org/abs/1903.07293>`_ paper.
+
+    .. code-block:: python
+
+        from torch_geometric.data import HeteroData
+        from torch_geometric.transforms import AddMetaPaths
+
+        dblp = HeteroData()
+        dblp['paper'].x = ...
+        dblp['author'].x = ...
+        dblp['conference'].x = ...
+        dblp['paper', 'cites', 'paper'].edge_index = ...
+        dblp['paper', 'author'].edge_index = ...
+        dblp['author', 'paper'].edge_index = ...
+        dblp['conference', 'paper'].edge_index = ...
+        dblp['paper', 'conference'].edge_index = ...
+
+        # Add two metapaths
+        # 1. from 'paper' to 'paper' through 'conference'.
+        # 2. from 'author' to 'paper' through 'conference'.
+        # Newly added edges are called ('paper', 'metapath_0', 'paper')
+        # and ('author', 'metapath_1', 'conference')
+        metapaths = [[('paper', 'to', 'conference'),
+                      ('conference', 'to', 'paper')],
+                    [('author', 'to', 'paper'), ('paper', 'to', 'conference')]]
+        dblp_meta = AddMetaPaths(metapaths)(dblp.clone())
+        print(dblp_meta.edge_types)
+        >>> [('paper', 'cites', 'paper'), ('paper', 'to', 'author'),
+            ('author', 'to', 'paper'), ('conference', 'to', 'paper'),
+            ('paper', 'to', 'conference'), ('paper', 'metapath_0', 'paper'),
+            ('author', 'metapath_1', 'conference')]
+
+        # info on added metapaths
+        print(dblp_meta.metapaths)
+        >>> [[('paper', 'to', 'conference'), ('conference', 'to', 'paper')],
+             [('author', 'to', 'paper'), ('paper', 'to', 'conference')]]
+
+        # Add metapaths, and drop all other edges except
+        # edges between same node type.
+        dblp_meta = AddMetaPaths(metapaths, drop_orig_edges=True,
+                                 keep_same_node_type=True)(dblp.clone())
+        print(dblp_meta.edge_types)
+        >>> [('paper', 'cites', 'paper'), ('paper', 'metapath_0', 'paper'),
+            ('author', 'metapath_1', 'conference')]
+
+    Args:
+        metapaths(List[List[Tuple[str, str, str]]]): The metapaths described as
+            a list  of list of :obj:`(src_node_type, rel_type, dst_node_type)`
+            tuples.
+        drop_orig_edges(bool, optional): If set to :obj:`True`,
+            existing edges are dropped. (default: :obj:`False`)
+        keep_same_node_type(bool, optional): If set to :obj:`True` when
+            :obj:`drop_orig_edges` is set to :obj:`True`,existing edges are
+            dropped except edges that connect the same node type.
+            (default: :obj:`False`)
+
+    """
     def __init__(self, metapaths: List[List[EdgeType]],
                  drop_orig_edges: bool = False,
-                 keep_same_node_type: bool = False,
-                 drop_nodes: bool = False) -> None:
+                 keep_same_node_type: bool = False) -> None:
         super().__init__()
 
         for path in metapaths:
@@ -29,7 +87,7 @@ class AddMetaPaths(BaseTransform):
         self.drop_orig_edges = drop_orig_edges
         self.keep_same_node_type = keep_same_node_type
 
-    def __call__(self, data: HeteroData):
+    def __call__(self, data: HeteroData) -> HeteroData:
 
         num_nodes_dict = maybe_num_nodes_dict(data.edge_index_dict)
         for i in data.node_types:
@@ -52,8 +110,10 @@ class AddMetaPaths(BaseTransform):
                 k = num_nodes_dict[path[0]]
                 n = num_nodes_dict[path[2]]
                 edge_index = data[path].edge_index
-                valueA = torch.ones(new_edge_index.shape[1])
-                valueB = torch.ones(edge_index.shape[1])
+                valueA = new_edge_index.new_ones((new_edge_index.size(1), ),
+                                                 dtype=torch.float)
+                valueB = edge_index.new_ones((edge_index.size(1), ),
+                                             dtype=torch.float)
                 new_edge_index, _ = spspmm(new_edge_index, valueA, edge_index,
                                            valueB, m, k, n, coalesced=True)
                 data[(start_node, new_edge_type,
