@@ -61,6 +61,7 @@ from .lastfm_asia import LastFMAsia
 from .deezer_europe import DeezerEurope
 from .gemsec import GemsecDeezer
 from .twitch import Twitch
+from .airports import Airports
 
 __all__ = [
     'KarateClub',
@@ -128,6 +129,7 @@ __all__ = [
     'DeezerEurope',
     'GemsecDeezer',
     'Twitch',
+    'Airports',
 ]
 
 classes = __all__
