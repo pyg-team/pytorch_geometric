@@ -189,7 +189,7 @@ Frequently Asked Questions
 
    .. code-block:: none
 
-       $ MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py install
+       $ MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python -m pip install .
 
 #. On macOS: ``ld: warning: directory not found for option '-L/usr/local/cuda/lib64'`` and ``ld: library not found for -lcudart``: Symlink ``cuda/lib`` to ``cuda/lib64`` (see `Issue#116 <https://github.com/pyg-team/pytorch_geometric/issues/116>`_):
 
