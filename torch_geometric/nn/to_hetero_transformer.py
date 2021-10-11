@@ -115,6 +115,8 @@ class ToHeteroTransformer(Transformer):
 
     aggrs = {
         'sum': torch.add,
+        # For 'mean' aggregation, we first sum up all feature matrices, and
+        # divide by the number of matrices in a later step.
         'mean': torch.add,
         'max': torch.max,
         'min': torch.min,

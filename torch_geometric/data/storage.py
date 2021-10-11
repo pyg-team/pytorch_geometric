@@ -230,6 +230,20 @@ class NodeStorage(BaseStorage):
         return key
 
     @property
+    def can_infer_num_nodes(self):
+        keys = set(self.keys())
+        num_node_keys = {
+            'num_nodes', 'x', 'pos', 'batch', 'adj', 'adj_t', 'edge_index',
+            'face'
+        }
+        if len(keys & num_node_keys) > 0:
+            return True
+        elif len([key for key in keys if 'node' in key]) > 0:
+            return True
+        else:
+            return False
+
+    @property
     def num_nodes(self) -> Optional[int]:
         # We sequentially access attributes that reveal the number of nodes.
         if 'num_nodes' in self:

@@ -7,7 +7,7 @@ import torch.nn as nn
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.models.layer import new_layer_config, MLP
-from torch_geometric.graphgym.models.pooling import pooling_dict
+import torch_geometric.graphgym.models.pooling # noqa, register module
 
 import torch_geometric.graphgym.register as register
 
@@ -102,7 +102,7 @@ class GNNGraphHead(nn.Module):
         self.layer_post_mp = MLP(
             new_layer_config(dim_in, dim_out, cfg.gnn.layers_post_mp,
                              has_act=False, has_bias=True, cfg=cfg))
-        self.pooling_fun = pooling_dict[cfg.model.graph_pooling]
+        self.pooling_fun = register.pooling_dict[cfg.model.graph_pooling]
 
     def _apply_index(self, batch):
         return batch.graph_feature, batch.y
@@ -123,4 +123,4 @@ head_dict = {
     'graph': GNNGraphHead
 }
 
-head_dict = {**register.head_dict, **head_dict}
+register.head_dict = {**register.head_dict, **head_dict}

@@ -1,4 +1,4 @@
-from .basic_gnn import GCN, GraphSAGE, GIN, GAT
+from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA
 from .jumping_knowledge import JumpingKnowledge
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
@@ -22,6 +22,7 @@ __all__ = [
     'GraphSAGE',
     'GIN',
     'GAT',
+    'PNA',
     'JumpingKnowledge',
     'Node2Vec',
     'DeepGraphInfomax',

@@ -72,6 +72,18 @@ def test_random_link_split():
     assert test_data.edge_label_index.size(1) == 6
     assert test_data.edge_label.size(0) == 6
 
+    # Disjoint training split:
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2, is_undirected=False,
+                                disjoint_train_ratio=0.5)
+    train_data, val_data, test_data = transform(data)
+
+    assert len(train_data) == 5
+    assert train_data.num_nodes == 100
+    assert train_data.edge_index.size() == (2, 3)
+    assert train_data.edge_attr.size() == (3, 3)
+    assert train_data.edge_label_index.size(1) == 6
+    assert train_data.edge_label.size(0) == 6
+
 
 def test_random_link_split_on_hetero_data():
     data = HeteroData()
@@ -87,7 +99,7 @@ def test_random_link_split_on_hetero_data():
     data['a', 'p'].edge_attr = torch.arange(1500, 2500)
 
     transform = RandomLinkSplit(num_val=0.2, num_test=0.2, is_undirected=True,
-                                edge_type=('p', 'p'))
+                                edge_types=('p', 'p'))
     train_data, val_data, test_data = transform(data)
 
     assert len(train_data['p']) == 1
@@ -104,7 +116,8 @@ def test_random_link_split_on_hetero_data():
                          test_data['p', 'p'].edge_attr)
 
     transform = RandomLinkSplit(num_val=0.2, num_test=0.2,
-                                edge_type=('p', 'a'), rev_edge_type=('a', 'p'))
+                                edge_types=('p', 'a'),
+                                rev_edge_types=('a', 'p'))
     train_data, val_data, test_data = transform(data)
 
     assert len(train_data['p']) == 1
@@ -145,3 +158,19 @@ def test_random_link_split_on_hetero_data():
     assert test_data['a', 'p'].edge_attr.max() <= 1500
     assert test_data['p', 'a'].edge_label_index.size() == (2, 400)
     assert test_data['p', 'a'].edge_label.size() == (400, )
+
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2, is_undirected=True,
+                                edge_types=[('p', 'p'), ('p', 'a')],
+                                rev_edge_types=[None, ('a', 'p')])
+    train_data, val_data, test_data = transform(data)
+
+    assert len(train_data['p']) == 1
+    assert len(train_data['a']) == 1
+    assert len(train_data['p', 'p']) == 4
+    assert len(train_data['p', 'a']) == 4
+    assert len(train_data['a', 'p']) == 2
+
+    assert is_undirected(train_data['p', 'p'].edge_index,
+                         train_data['p', 'p'].edge_attr)
+    assert train_data['p', 'a'].edge_index.size() == (2, 600)
+    assert train_data['a', 'p'].edge_index.size() == (2, 600)
