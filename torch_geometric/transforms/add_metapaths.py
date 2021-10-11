@@ -1,4 +1,4 @@
-from copy import deepcopy
+from copy import copy
 from typing import List
 
 import torch
@@ -11,7 +11,9 @@ from torch_geometric.transforms import BaseTransform
 
 
 class AddMetaPaths(BaseTransform):
-    r""" Adds edges for all :obj:`metapaths`. Metapaths are defined in
+    r""" Adds edges between nodes connected by
+    :obj:`metapaths`, to a given heterogenous graph.
+    Metapaths are defined in
     `"Heterogenous Graph Attention Networks"
     <https://arxiv.org/abs/1903.07293>`_ paper.
 
@@ -32,8 +34,8 @@ class AddMetaPaths(BaseTransform):
 
         # Add two metapaths
         # 1. from 'paper' to 'paper' through 'conference'.
-        # 2. from 'author' to 'paper' through 'conference'.
-        # Newly added edges are called ('paper', 'metapath_0', 'paper')
+        # 2. from 'author' to 'conference' through 'papers'.
+        # New edges are of type ('paper', 'metapath_0', 'paper')
         # and ('author', 'metapath_1', 'conference')
         metapaths = [[('paper', 'to', 'conference'),
                       ('conference', 'to', 'paper')],
@@ -64,9 +66,9 @@ class AddMetaPaths(BaseTransform):
             tuples.
         drop_orig_edges(bool, optional): If set to :obj:`True`,
             existing edges are dropped. (default: :obj:`False`)
-        keep_same_node_type(bool, optional): If set to :obj:`True` when
-            :obj:`drop_orig_edges` is set to :obj:`True`,existing edges are
-            dropped except edges that connect the same node type.
+        keep_same_node_type(bool, optional): If set to :obj:`True` then
+            existing edges between the same node type are not dropped even
+            if :obj:`drop_orig_edges` is set to :obj:`True`.
             (default: :obj:`False`)
 
     """
@@ -77,7 +79,7 @@ class AddMetaPaths(BaseTransform):
 
         for path in metapaths:
             assert len(path) >= 2, f'invalid metapath {path}'
-            assert all([len(i) == 3
+            assert all([len(i) >= 2
                         for i in path]), f'invalid edge type in {path}'
             assert all([
                 j[-1] == path[i + 1][0] for i, j in enumerate(path[:-1])
@@ -94,11 +96,12 @@ class AddMetaPaths(BaseTransform):
             if 'x' in data[i]:
                 num_nodes_dict[i] = data[i].x.size(0)
 
-        edge_types = deepcopy(data.edge_types)  # save original edge types
+        edge_types = copy(data.edge_types)  # save original edge types
         for j, metapath in enumerate(self.metapaths):
 
             for path in metapath:
-                assert path in edge_types, f'{path} edge not present'
+                assert path in edge_types, (f"{path} edge not present."
+                                            "Try adding rel_type 'to'")
 
             new_edge_type = f'metapath_{j}'
             start_node = metapath[0][0]

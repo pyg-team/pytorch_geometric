@@ -1,5 +1,4 @@
 import torch
-from copy import deepcopy
 
 from torch_geometric.transforms import AddMetaPaths
 from torch_geometric.data import HeteroData
@@ -23,7 +22,7 @@ def test_add_metapaths():
                                                   'paper'].edge_index[[1, 0]]
 
     # test transform options.
-    orig_edge_type = deepcopy(dblp.edge_types)
+    orig_edge_type = dblp.edge_types
     metapaths = [[('paper', 'to', 'conference'),
                   ('conference', 'to', 'paper')]]
     meta1 = AddMetaPaths(metapaths)(dblp.clone())
