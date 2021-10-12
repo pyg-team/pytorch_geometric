@@ -1,4 +1,3 @@
-from copy import copy
 from typing import List
 
 import torch
@@ -6,16 +5,29 @@ import torch
 from torch_geometric.typing import EdgeType
 from torch_geometric.data import HeteroData
 from torch_sparse.spspmm import spspmm
-from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
 from torch_geometric.transforms import BaseTransform
 
 
 class AddMetaPaths(BaseTransform):
-    r""" Adds edges between nodes connected by
-    :obj:`metapaths`, to a given heterogenous graph.
-    Metapaths are defined in
-    `"Heterogenous Graph Attention Networks"
-    <https://arxiv.org/abs/1903.07293>`_ paper.
+    r""" Adds edges to a :obj:`HeteroData` object between nodes connected
+    by given :obj:`metapaths`. As described in `"Heterogenous Graph Attention
+    Networks" <https://arxiv.org/abs/1903.07293>`_ paper a metapath is a path
+    of the form
+
+    .. math::
+
+        V_1 \xrightarrow{R1} V_2 \xrightarrow{R2}...\xrightarrow{R_{l-1}} V_l
+
+        R= R_1\circ R_2\circ...\circ R_{l-1}
+
+    Here :math:`R` is the composite relation between node types
+    :math:`V_1` and :math:`V_l`.
+
+    The added edge for the :math:`i^{th}` metapath is of type
+    :obj:`(src_node_type, "metapath_i", dst_node_type)` where
+    :obj:`src_node_type` and :obj:`dst_node_type` are :math:`V_1`
+    and :math:`V_l` repectively. Further :obj:`metapaths` list is
+    added to the :obj:`HeteroData` object.
 
     .. code-block:: python
 
@@ -74,13 +86,11 @@ class AddMetaPaths(BaseTransform):
     """
     def __init__(self, metapaths: List[List[EdgeType]],
                  drop_orig_edges: bool = False,
-                 keep_same_node_type: bool = False) -> None:
+                 keep_same_node_type: bool = False):
         super().__init__()
 
         for path in metapaths:
             assert len(path) >= 2, f'invalid metapath {path}'
-            assert all([len(i) >= 2
-                        for i in path]), f'invalid edge type in {path}'
             assert all([
                 j[-1] == path[i + 1][0] for i, j in enumerate(path[:-1])
             ]), f'invalid sequence of nodes {path}'
@@ -91,17 +101,14 @@ class AddMetaPaths(BaseTransform):
 
     def __call__(self, data: HeteroData) -> HeteroData:
 
-        num_nodes_dict = maybe_num_nodes_dict(data.edge_index_dict)
-        for i in data.node_types:
-            if 'x' in data[i]:
-                num_nodes_dict[i] = data[i].x.size(0)
+        num_nodes_dict = data.num_nodes_dict
+        edge_types = data.edge_types  # save original edge types
 
-        edge_types = copy(data.edge_types)  # save original edge types
         for j, metapath in enumerate(self.metapaths):
 
             for path in metapath:
-                assert path in edge_types, (f"{path} edge not present."
-                                            "Try adding rel_type 'to'")
+                assert data._to_canonical(
+                    path) in edge_types, f"{path} edge not present."
 
             new_edge_type = f'metapath_{j}'
             start_node = metapath[0][0]
@@ -111,7 +118,7 @@ class AddMetaPaths(BaseTransform):
 
             for i, path in enumerate(metapath[1:]):
                 k = num_nodes_dict[path[0]]
-                n = num_nodes_dict[path[2]]
+                n = num_nodes_dict[path[-1]]
                 edge_index = data[path].edge_index
                 valueA = new_edge_index.new_ones((new_edge_index.size(1), ),
                                                  dtype=torch.float)

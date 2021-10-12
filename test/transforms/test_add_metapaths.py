@@ -23,8 +23,8 @@ def test_add_metapaths():
 
     # test transform options.
     orig_edge_type = dblp.edge_types
-    metapaths = [[('paper', 'to', 'conference'),
-                  ('conference', 'to', 'paper')]]
+    metapaths = [[('paper', 'conference'),
+                  ('conference', 'paper')]]
     meta1 = AddMetaPaths(metapaths)(dblp.clone())
     meta2 = AddMetaPaths(metapaths, drop_orig_edges=True)(dblp.clone())
     meta3 = AddMetaPaths(metapaths, drop_orig_edges=True,
@@ -40,9 +40,9 @@ def test_add_metapaths():
                                 ('paper', 'metapath_0', 'paper')]
 
     # test 4-hop metapath
-    metapaths = [[('author', 'to', 'paper'), ('paper', 'to', 'conference')],
-                 [('author', 'to', 'paper'), ('paper', 'to', 'conference'),
-                  ('conference', 'to', 'paper'), ('paper', 'to', 'author')]]
+    metapaths = [[('author', 'paper'), ('paper', 'conference')],
+                 [('author', 'paper'), ('paper', 'conference'),
+                  ('conference', 'paper'), ('paper', 'author')]]
     meta1 = AddMetaPaths(metapaths)(dblp.clone())
     assert meta1['author', 'metapath_0',
                  'conference'].edge_index.shape[-1] == 4
