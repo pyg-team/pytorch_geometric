@@ -123,7 +123,7 @@ def add_self_loops(
         if fill_value is None:
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
 
-        if isinstance(fill_value, float):
+        elif isinstance(fill_value, float):
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
                                            fill_value)
         elif isinstance(fill_value, Tensor):
@@ -132,6 +132,7 @@ def add_self_loops(
                 loop_attr = loop_attr.unsqueeze(0)
             sizes = [N] + [1] * (loop_attr.dim() - 1)
             loop_attr = loop_attr.repeat(*sizes)
+
         elif isinstance(fill_value, str):
             loop_attr = scatter(edge_attr, edge_index[1], dim=0, dim_size=N,
                                 reduce=fill_value)
@@ -202,7 +203,7 @@ def add_remaining_self_loops(
         if fill_value is None:
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
 
-        if isinstance(fill_value, float):
+        elif isinstance(fill_value, float):
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
                                            fill_value)
         elif isinstance(fill_value, Tensor):
@@ -211,6 +212,7 @@ def add_remaining_self_loops(
                 loop_attr = loop_attr.unsqueeze(0)
             sizes = [N] + [1] * (loop_attr.dim() - 1)
             loop_attr = loop_attr.repeat(*sizes)
+
         elif isinstance(fill_value, str):
             loop_attr = scatter(edge_attr, edge_index[1], dim=0, dim_size=N,
                                 reduce=fill_value)
