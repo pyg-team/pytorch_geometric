@@ -66,24 +66,45 @@ def segregate_self_loops(
     return edge_index, edge_attr, loop_edge_index, loop_edge_attr
 
 
+@torch.jit._overload
+def add_self_loops(edge_index, edge_attr=None, fill_value=None,
+                   num_nodes=None):
+    # type: (Tensor, OptTensor, Optional[float], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
+    pass
+
+
+# @torch.jit._overload
+def add_self_loops(edge_index, edge_attr=None, fill_value=None,
+                   num_nodes=None):
+    # type: (Tensor, OptTensor, OptTensor, Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def add_self_loops(edge_index, edge_attr=None, fill_value=None,
+                   num_nodes=None):
+    # type: (Tensor, OptTensor, Optional[str], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
+    pass
+
+
 def add_self_loops(
         edge_index: Tensor, edge_attr: OptTensor = None,
-        fill_value: Union[float, Tensor, str] = 1.,
+        fill_value: Union[float, Tensor, str] = None,
         num_nodes: Optional[int] = None) -> Tuple[Tensor, OptTensor]:
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features
     (:obj:`edge_attr != None`), edge features of self-loops will be added
-    according to :arg:`fill_value`.
+    according to :obj:`fill_value`.
 
     Args:
         edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
             features. (default: :obj:`None`)
         fill_value (float or Tensor or str, optional): The way to generate
-            edge features of self-loops (in case :arg:`edge_attr != None`).
+            edge features of self-loops (in case :obj:`edge_attr != None`).
             If given as :obj:`float` or :class:`torch.Tensor`, edge features of
-            self-loops will be directly given by :arg:`fill_value`.
+            self-loops will be directly given by :obj:`fill_value`.
             If given as :obj:`str`, edge features of self-loops are computed by
             aggregating all features of edges that point to the specific node,
             according to a reduce operation. (:obj:`"add"`, :obj:`"mean"`,
@@ -99,7 +120,10 @@ def add_self_loops(
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
 
     if edge_attr is not None:
-        if isinstance(fill_value, (int, float)):
+        if fill_value is None:
+            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
+
+        if isinstance(fill_value, float):
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
                                            fill_value)
         elif isinstance(fill_value, Tensor):
@@ -108,9 +132,11 @@ def add_self_loops(
                 loop_attr = loop_attr.unsqueeze(0)
             sizes = [N] + [1] * (loop_attr.dim() - 1)
             loop_attr = loop_attr.repeat(*sizes)
-        else:
+        elif isinstance(fill_value, str):
             loop_attr = scatter(edge_attr, edge_index[1], dim=0, dim_size=N,
                                 reduce=fill_value)
+        else:
+            raise AttributeError("No valid 'fill_value' provided")
 
         edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
 
@@ -118,24 +144,45 @@ def add_self_loops(
     return edge_index, edge_attr
 
 
+@torch.jit._overload
+def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
+                             num_nodes=None):
+    # type: (Tensor, OptTensor, Optional[float], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
+    pass
+
+
+# @torch.jit._overload
+def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
+                             num_nodes=None):
+    # type: (Tensor, OptTensor, OptTensor, Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
+                             num_nodes=None):
+    # type: (Tensor, OptTensor, Optional[str], Optional[int]) -> Tuple[Tensor, OptTensor]  # noqa
+    pass
+
+
 def add_remaining_self_loops(
         edge_index: Tensor, edge_attr: OptTensor = None,
-        fill_value: Union[float, Tensor, str] = 1.,
+        fill_value: Union[float, Tensor, str] = None,
         num_nodes: Optional[int] = None) -> Tuple[Tensor, OptTensor]:
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features
     (:obj:`edge_attr != None`), edge features of non-existing self-loops will
-    be added according to :arg:`fill_value`.
+    be added according to :obj:`fill_value`.
 
     Args:
         edge_index (LongTensor): The edge indices.
         edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
             features. (default: :obj:`None`)
         fill_value (float or Tensor or str, optional): The way to generate
-            edge features of self-loops (in case :arg:`edge_attr != None`).
+            edge features of self-loops (in case :obj:`edge_attr != None`).
             If given as :obj:`float` or :class:`torch.Tensor`, edge features of
-            self-loops will be directly given by :arg:`fill_value`.
+            self-loops will be directly given by :obj:`fill_value`.
             If given as :obj:`str`, edge features of self-loops are computed by
             aggregating all features of edges that point to the specific node,
             according to a reduce operation. (:obj:`"add"`, :obj:`"mean"`,
@@ -152,7 +199,10 @@ def add_remaining_self_loops(
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
 
     if edge_attr is not None:
-        if isinstance(fill_value, (int, float)):
+        if fill_value is None:
+            loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:], 1.)
+
+        if isinstance(fill_value, float):
             loop_attr = edge_attr.new_full((N, ) + edge_attr.size()[1:],
                                            fill_value)
         elif isinstance(fill_value, Tensor):
@@ -161,9 +211,11 @@ def add_remaining_self_loops(
                 loop_attr = loop_attr.unsqueeze(0)
             sizes = [N] + [1] * (loop_attr.dim() - 1)
             loop_attr = loop_attr.repeat(*sizes)
-        else:
+        elif isinstance(fill_value, str):
             loop_attr = scatter(edge_attr, edge_index[1], dim=0, dim_size=N,
                                 reduce=fill_value)
+        else:
+            raise AttributeError("No valid 'fill_value' provided")
 
         inv_mask = ~mask
         loop_attr[edge_index[0][inv_mask]] = edge_attr[inv_mask]
