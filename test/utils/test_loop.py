@@ -41,14 +41,45 @@ def test_segregate_self_loops():
 
 def test_add_self_loops():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
+    edge_weight = torch.tensor([0.5, 0.5, 0.5])
+    edge_attr = torch.eye(3).float()
 
     expected = [[0, 1, 0, 0, 1], [1, 0, 0, 0, 1]]
     assert add_self_loops(edge_index)[0].tolist() == expected
 
-    edge_weight = torch.tensor([0.5, 0.5, 0.5])
-    edge_index, edge_weight = add_self_loops(edge_index, edge_weight)
-    assert edge_index.tolist() == expected
-    assert edge_weight.tolist() == [0.5, 0.5, 0.5, 1, 1]
+    out = add_self_loops(edge_index, edge_weight)
+    assert out[0].tolist() == expected
+    assert out[1].tolist() == [0.5, 0.5, 0.5, 1., 1.]
+
+    out = add_self_loops(edge_index, edge_weight, fill_value=torch.tensor(2.))
+    assert out[0].tolist() == expected
+    assert out[1].tolist() == [0.5, 0.5, 0.5, 2., 2.]
+
+    out = add_self_loops(edge_index, edge_weight, fill_value='add')
+    assert out[0].tolist() == expected
+    assert out[1].tolist() == [0.5, 0.5, 0.5, 1, 0.5]
+
+    out = add_self_loops(edge_index, edge_attr)
+    assert out[0].tolist() == expected
+    assert out[1].tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
+                               [1., 1., 1.], [1., 1., 1.]]
+
+    out = add_self_loops(edge_index, edge_attr,
+                         fill_value=torch.tensor([0., 1., 0.]))
+    assert out[0].tolist() == expected
+    assert out[1].tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
+                               [0., 1., 0.], [0., 1., 0.]]
+
+    out = add_self_loops(edge_index, edge_attr, fill_value='add')
+    assert out[0].tolist() == expected
+    assert out[1].tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
+                               [0., 1., 1.], [1., 0., 0.]]
+
+    edge_index = torch.tensor([]).view(2, 0)
+    edge_weight = torch.tensor([], dtype=torch.float)
+    out = add_self_loops(edge_index, edge_weight, num_nodes=1)
+    assert out[0].tolist() == [[0], [0]]
+    assert out[1].tolist() == [1.]
 
 
 def test_add_remaining_self_loops():

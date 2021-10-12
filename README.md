@@ -343,9 +343,9 @@ conda install pyg -c pyg -c conda-forge
 
 We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
-#### PyTorch 1.9.0
+#### PyTorch 1.9.0/1.9.1
 
-To install the binaries for PyTorch 1.9.0, simply run
+To install the binaries for PyTorch 1.9.0 and 1.9.1, simply run
 
 ```
 pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html
