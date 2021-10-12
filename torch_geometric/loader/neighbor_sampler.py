@@ -69,10 +69,10 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         For an example of using :obj:`NeighborSampler`, see
         `examples/reddit.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         reddit.py>`_ or
         `examples/ogbn_products_sage.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         ogbn_products_sage.py>`_.
 
     Args:
@@ -118,6 +118,8 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
+        if 'dataset' in kwargs:
+            del kwargs['dataset']
 
         # Save for Pytorch Lightning...
         self.edge_index = edge_index

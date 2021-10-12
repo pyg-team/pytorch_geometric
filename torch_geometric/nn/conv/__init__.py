@@ -28,6 +28,7 @@ from .edge_conv import EdgeConv, DynamicEdgeConv
 from .x_conv import XConv
 from .ppf_conv import PPFConv
 from .feast_conv import FeaStConv
+from .point_transformer_conv import PointTransformerConv
 from .hypergraph_conv import HypergraphConv
 from .le_conv import LEConv
 from .pna_conv import PNAConv
@@ -81,6 +82,7 @@ __all__ = [
     'XConv',
     'PPFConv',
     'FeaStConv',
+    'PointTransformerConv',
     'HypergraphConv',
     'LEConv',
     'PNAConv',

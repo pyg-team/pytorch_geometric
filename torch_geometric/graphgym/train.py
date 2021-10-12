@@ -46,6 +46,17 @@ def eval_epoch(logger, loader, model, split='val'):
 
 
 def train(loggers, loaders, model, optimizer, scheduler):
+    """
+    The core training pipeline
+
+    Args:
+        loggers: List of loggers
+        loaders: List of loaders
+        model: GNN model
+        optimizer: PyTorch optimizer
+        scheduler: PyTorch learning rate scheduler
+
+    """
     start_epoch = 0
     if cfg.train.auto_resume:
         start_epoch = load_ckpt(model, optimizer, scheduler)
@@ -71,4 +82,4 @@ def train(loggers, loaders, model, optimizer, scheduler):
     if cfg.train.ckpt_clean:
         clean_ckpt()
 
-    logging.info('Task done, results saved in {}'.format(cfg.out_dir))
+    logging.info('Task done, results saved in {}'.format(cfg.run_dir))

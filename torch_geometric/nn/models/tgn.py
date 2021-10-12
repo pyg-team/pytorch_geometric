@@ -17,7 +17,7 @@ class TGNMemory(torch.nn.Module):
     .. note::
 
         For an example of using TGN, see `examples/tgn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         tgn.py>`_.
 
     Args:
@@ -137,7 +137,8 @@ class TGNMemory(torch.nn.Module):
         memory = self.gru(aggr, self.memory[n_id])
 
         # Get local copy of updated `last_update`.
-        last_update = self.last_update.scatter(0, idx, t)[n_id]
+        dim_size = self.last_update.size(0)
+        last_update = scatter_max(t, idx, dim=0, dim_size=dim_size)[0][n_id]
 
         return memory, last_update
 

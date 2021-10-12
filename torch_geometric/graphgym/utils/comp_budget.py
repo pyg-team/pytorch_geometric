@@ -5,7 +5,13 @@ from yacs.config import CfgNode as CN
 
 
 def params_count(model):
-    """Computes the number of parameters."""
+    '''
+    Computes the number of parameters.
+
+    Args:
+        model (nn.Module): PyTorch model
+
+    '''
     return sum([p.numel() for p in model.parameters()])
 
 
@@ -15,7 +21,7 @@ def get_stats():
 
 
 def match_computation(stats_baseline, key=['gnn', 'dim_inner'], mode='sqrt'):
-    '''Match computation budge by cfg.gnn.dim_inner'''
+    '''Match computation budget by modifying cfg.gnn.dim_inner'''
     stats = get_stats()
     if stats != stats_baseline:
         # Phase 1: fast approximation
@@ -60,7 +66,18 @@ def dict_to_stats(cfg_dict):
     return stats
 
 
-def dict_match_baseline(cfg_dict, cfg_dict_baseline, verbose=True):
+def match_baseline_cfg(cfg_dict, cfg_dict_baseline, verbose=True):
+    '''
+    Match the computational budget of a given baseline model. THe current
+    configuration dictionary will be modifed and returned.
+
+    Args:
+        cfg_dict (dict): Current experiment's configuration
+        cfg_dict_baseline (dict): Baseline configuration
+        verbose (str, optional): If printing matched paramter conunts
+
+
+    '''
     stats_baseline = dict_to_stats(cfg_dict_baseline)
     set_cfg(cfg)
     cfg_new = CN(cfg_dict)

@@ -93,9 +93,9 @@ class HeteroData(BaseData):
     DEFAULT_REL = 'to'
 
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
-        self._global_store = BaseStorage(_parent=self)
-        self._node_store_dict = {}
-        self._edge_store_dict = {}
+        self.__dict__['_global_store'] = BaseStorage(_parent=self)
+        self.__dict__['_node_store_dict'] = {}
+        self.__dict__['_edge_store_dict'] = {}
 
         for key, value in chain((_mapping or {}).items(), kwargs.items()):
             if '__' in key and isinstance(value, Mapping):
@@ -109,8 +109,8 @@ class HeteroData(BaseData):
     def __getattr__(self, key: str) -> Any:
         # `data.*_dict` => Link to node and edge stores.
         # `data.*` => Link to the `_global_store`.
-        # It is the same as using `collect` to collect nodes and edges features
-        # and use `attribute` to get graph attribute.
+        # Using `data.*_dict` is the same as using `collect()` for collecting
+        # nodes and edges features.
         if bool(re.search('_dict$', key)):
             out = self.collect(key[:-5])
             if len(out) > 0:
@@ -118,27 +118,15 @@ class HeteroData(BaseData):
         return getattr(self._global_store, key)
 
     def __setattr__(self, key: str, value: Any):
-        # `data._* = ...` => Link to the private `__dict__` store.
-        # `data.* = ...` => Link to the `_global_store`.
-        # NOTE: We aim to prevent duplicates in node or edge keys.
-        if key[:1] == '_':
-            self.__dict__[key] = value
-        else:
-            if key in self.node_types:
-                raise AttributeError(
-                    f"'{key}' is already present as a node type")
-            elif key in self.edge_types:
-                raise AttributeError(
-                    f"'{key}' is already present as an edge type")
-            setattr(self._global_store, key, value)
+        # NOTE: We aim to prevent duplicates in node or edge types.
+        if key in self.node_types:
+            raise AttributeError(f"'{key}' is already present as a node type")
+        elif key in self.edge_types:
+            raise AttributeError(f"'{key}' is already present as an edge type")
+        setattr(self._global_store, key, value)
 
     def __delattr__(self, key: str):
-        # `del data._*` => Link to the private `__dict__` store.
-        # `del data.*` => Link to the `_global_store`.
-        if key[:1] == '_':
-            del self.__dict__[key]
-        else:
-            delattr(self._global_store, key)
+        delattr(self._global_store, key)
 
     def __getitem__(self, *args: Tuple[QueryType]) -> Any:
         # `data[*]` => Link to either `_global_store`, _node_store_dict` or
@@ -157,30 +145,33 @@ class HeteroData(BaseData):
             return self.get_node_store(key)
 
     def __setitem__(self, key: str, value: Any):
-        if key in chain(self.node_types, self.edge_types):
-            raise AttributeError(
-                f"'{key}' is already present as a node/edge-type")
+        if key in self.node_types:
+            raise AttributeError(f"'{key}' is already present as a node type")
+        elif key in self.edge_types:
+            raise AttributeError(f"'{key}' is already present as an edge type")
         self._global_store[key] = value
 
     def __delitem__(self, *args: Tuple[QueryType]):
         # `del data[*]` => Link to `_node_store_dict` or `_edge_store_dict`.
         key = self._to_canonical(*args)
-        if isinstance(key, tuple) and key in self.edge_types:
+        if key in self.edge_types:
             del self._edge_store_dict[key]
         elif key in self.node_types:
             del self._node_store_dict[key]
+        else:
+            del self._global_store[key]
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
             out.__dict__[key] = value
-        out._global_store = copy.copy(self._global_store)
+        out.__dict__['_global_store'] = copy.copy(self._global_store)
         out._global_store._parent = out
-        out._node_store_dict = {}
+        out.__dict__['_node_store_dict'] = {}
         for key, store in self._node_store_dict.items():
             out._node_store_dict[key] = copy.copy(store)
             out._node_store_dict[key]._parent = out
-        out._edge_store_dict = {}
+        out.__dict__['_edge_store_dict'] = {}
         for key, store in self._edge_store_dict.items():
             out._edge_store_dict[key] = copy.copy(store)
             out._edge_store_dict[key]._parent = out
@@ -189,16 +180,11 @@ class HeteroData(BaseData):
     def __deepcopy__(self, memo):
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
-            if key not in ['_node_store_dict', '_edge_store_dict']:
-                out.__dict__[key] = copy.deepcopy(value, memo)
+            out.__dict__[key] = copy.deepcopy(value, memo)
         out._global_store._parent = out
-        out._node_store_dict = {}
-        for key, store in self._node_store_dict.items():
-            out._node_store_dict[key] = copy.deepcopy(store, memo)
+        for key in self._node_store_dict.keys():
             out._node_store_dict[key]._parent = out
-        out._edge_store_dict = {}
-        for key, store in self._edge_store_dict.items():
-            out._edge_store_dict[key] = copy.deepcopy(store, memo)
+        for key in out._edge_store_dict.keys():
             out._edge_store_dict[key]._parent = out
         return out
 
@@ -209,6 +195,13 @@ class HeteroData(BaseData):
         info = ',\n'.join(info1 + info2 + info3)
         info = f'\n{info}\n' if len(info) > 0 else info
         return f'{self.__class__.__name__}({info})'
+
+    def stores_as(self, data: 'HeteroData'):
+        for node_type in data.node_types:
+            self.get_node_store(node_type)
+        for edge_type in data.edge_types:
+            self.get_edge_store(*edge_type)
+        return self
 
     @property
     def stores(self) -> List[BaseStorage]:
@@ -269,7 +262,9 @@ class HeteroData(BaseData):
     def __inc__(self, key: str, value: Any,
                 store: Optional[NodeOrEdgeStorage] = None, *args,
                 **kwargs) -> Any:
-        if isinstance(store, EdgeStorage) and 'index' in key:
+        if 'batch' in key:
+            return int(value.max()) + 1
+        elif isinstance(store, EdgeStorage) and 'index' in key:
             return torch.tensor(store.size()).view(2, 1)
         else:
             return 0
@@ -295,21 +290,29 @@ class HeteroData(BaseData):
             args = args[0]
 
         if isinstance(args, str):
+            node_types = [key for key in self.node_types if key == args]
+            if len(node_types) == 1:
+                args = node_types[0]
+                return args
+
             # Try to map to edge type based on unique relation type:
-            edge_types = [key for key in self.metadata()[1] if key[1] == args]
+            edge_types = [key for key in self.edge_types if key[1] == args]
             if len(edge_types) == 1:
                 args = edge_types[0]
+                return args
 
-        elif len(args) == 2:
+        if len(args) == 2:
             # Try to find the unique source/destination node tuple:
             edge_types = [
-                key for key in self.metadata()[1]
+                key for key in self.edge_types
                 if key[0] == args[0] and key[-1] == args[-1]
             ]
             if len(edge_types) == 1:
                 args = edge_types[0]
+                return args
             else:
                 args = (args[0], self.DEFAULT_REL, args[1])
+                return args
 
         return args
 
@@ -391,14 +394,18 @@ class HeteroData(BaseData):
 
     def to_homogeneous(self, node_attrs: Optional[List[str]] = None,
                        edge_attrs: Optional[List[str]] = None,
+                       add_node_type: bool = True,
                        add_edge_type: bool = True) -> Data:
         """Converts a :class:`~torch_geometric.data.HeteroData` object to a
         homogeneous :class:`~torch_geometric.data.Data` object.
         By default, all features with same feature dimensionality across
-        different types will be merged into a single representation.
-        Furthermore, an attribute named :obj:`edge_type` will be added to the
-        returned :class:`~torch_geometric.data.Data` object, denoting an
-        edge-level vector holding the edge type of each edge as an integer.
+        different types will be merged into a single representation, unless
+        otherwise specified via the :obj:`node_attrs` and :obj:`edge_attrs`
+        arguments.
+        Furthermore, attributes named :obj:`node_type` and :obj:`edge_type`
+        will be added to the returned :class:`~torch_geometric.data.Data`
+        object, denoting node-level and edge-level vectors holding the
+        node and edge type as integers, respectively.
 
         Args:
             node_attrs (List[str], optional): The node features to combine
@@ -411,13 +418,17 @@ class HeteroData(BaseData):
                 same feature dimensionality. If set to :obj:`None`, will
                 automatically determine which edge features to combine.
                 (default: :obj:`None`)
+            add_node_type (bool, optional): If set to :obj:`False`, will not
+                add the node-level vector :obj:`node_type` to the returned
+                :class:`~torch_geometric.data.Data` object.
+                (default: :obj:`True`)
             add_edge_type (bool, optional): If set to :obj:`False`, will not
                 add the edge-level vector :obj:`edge_type` to the returned
                 :class:`~torch_geometric.data.Data` object.
                 (default: :obj:`True`)
         """
         def _consistent_size(stores: List[BaseStorage]) -> List[str]:
-            sizes_dict = defaultdict(set)
+            sizes_dict = defaultdict(list)
             for store in stores:
                 for key, value in store.items():
                     if key in ['edge_index', 'adj_t']:
@@ -425,18 +436,32 @@ class HeteroData(BaseData):
                     if isinstance(value, Tensor):
                         dim = self.__cat_dim__(key, value, store)
                         size = value.size()[:dim] + value.size()[dim + 1:]
-                        sizes_dict[key].add(tuple(size))
-            return [k for k, sizes in sizes_dict.items() if len(sizes) == 1]
+                        sizes_dict[key].append(tuple(size))
+            return [
+                k for k, sizes in sizes_dict.items()
+                if len(sizes) == len(stores) and len(set(sizes)) == 1
+            ]
 
         data = Data(**self._global_store.to_dict())
 
         # Iterate over all node stores and record the slice information:
         node_slices, cumsum = {}, 0
-        for node_type, store in self._node_store_dict.items():
+        node_type_names, node_types = [], []
+        for i, (node_type, store) in enumerate(self._node_store_dict.items()):
             num_nodes = store.num_nodes
             node_slices[node_type] = (cumsum, cumsum + num_nodes)
+            node_type_names.append(node_type)
             cumsum += num_nodes
-        data._node_slices = node_slices
+
+            if add_node_type:
+                kwargs = {'dtype': torch.long}
+                node_types.append(torch.full((num_nodes, ), i, **kwargs))
+        data._node_type_names = node_type_names
+
+        if len(node_types) > 1:
+            data.node_type = torch.cat(node_types, dim=0)
+        elif len(node_types) == 1:
+            data.node_type = node_types[0]
 
         # Combine node attributes into a single tensor:
         if node_attrs is None:
@@ -447,17 +472,20 @@ class HeteroData(BaseData):
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
 
-        if len(set(node_attrs) & {'x', 'pos', 'batch'}) == 0:
+        if len([
+                key for key in node_attrs
+                if (key in {'x', 'pos', 'batch'} or 'node' in key)
+        ]) == 0 and not add_node_type:
             data.num_nodes = cumsum
 
         # Iterate over all edge stores and record the slice information:
-        edge_slices, edge_type_dict, cumsum = {}, {}, 0
-        edge_indices, edge_types = [], []
+        edge_slices, cumsum = {}, 0
+        edge_indices, edge_type_names, edge_types = [], [], []
         for i, (edge_type, store) in enumerate(self._edge_store_dict.items()):
             src, _, dst = edge_type
             num_edges = store.num_edges
             edge_slices[edge_type] = (cumsum, cumsum + num_edges)
-            edge_type_dict[i] = edge_type
+            edge_type_names.append(edge_type)
             cumsum += num_edges
 
             kwargs = {'dtype': torch.long, 'device': store.edge_index.device}
@@ -466,8 +494,7 @@ class HeteroData(BaseData):
             edge_indices.append(store.edge_index + offset)
             if add_edge_type:
                 edge_types.append(torch.full((num_edges, ), i, **kwargs))
-        data._edge_slices = edge_slices
-        data._edge_type_dict = edge_type_dict
+        data._edge_type_names = edge_type_names
 
         if len(edge_indices) > 1:
             data.edge_index = torch.cat(edge_indices, dim=-1)
@@ -476,7 +503,7 @@ class HeteroData(BaseData):
 
         if len(edge_types) > 1:
             data.edge_type = torch.cat(edge_types, dim=0)
-        elif len(edge_indices) == 1:
+        elif len(edge_types) == 1:
             data.edge_type = edge_types[0]
 
         # Combine edge attributes into a single tensor:

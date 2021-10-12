@@ -1,9 +1,10 @@
 import torch
 import math
-import os
 import sys
 import logging
+
 from torch_geometric.graphgym.config import cfg
+from torch_geometric.data.makedirs import makedirs
 from torch_geometric.graphgym.utils.io import dict_to_json, dict_to_tb
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, \
@@ -11,16 +12,16 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, \
 
 from torch_geometric.graphgym.utils.device import get_current_gpu_usage
 
-try:
-    from tensorboardX import SummaryWriter
-except ImportError:
-    SummaryWriter = None
 
+def set_printing():
+    """
+    Set up printing options
 
-def setup_printing():
+    """
     logging.root.handlers = []
     logging_cfg = {'level': logging.INFO, 'format': '%(message)s'}
-    h_file = logging.FileHandler('{}/logging.log'.format(cfg.out_dir))
+    makedirs(cfg.run_dir)
+    h_file = logging.FileHandler('{}/logging.log'.format(cfg.run_dir))
     h_stdout = logging.StreamHandler(sys.stdout)
     if cfg.print == 'file':
         logging_cfg['handlers'] = [h_file]
@@ -41,12 +42,10 @@ class Logger(object):
         self._epoch_total = cfg.optim.max_epoch
         self._time_total = 0  # won't be reset
 
-        self.out_dir = '{}/{}'.format(cfg.out_dir, name)
-        os.makedirs(self.out_dir, exist_ok=True)
+        self.out_dir = '{}/{}'.format(cfg.run_dir, name)
+        makedirs(self.out_dir)
         if cfg.tensorboard_each_run:
-            if SummaryWriter is None:
-                raise ImportError(
-                    'Tensorboard support requires `tensorboardX`.')
+            from tensorboardX import SummaryWriter
             self.tb_writer = SummaryWriter(self.out_dir)
 
         self.reset()
@@ -212,6 +211,12 @@ def infer_task():
 
 
 def create_logger():
+    """
+    Create logger for the experiment
+
+    Returns: List of logger objects
+
+    """
     loggers = []
     names = ['train', 'val', 'test']
     for i, dataset in enumerate(range(cfg.share.num_splits)):

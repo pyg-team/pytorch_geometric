@@ -12,7 +12,7 @@ from torch_geometric.nn.fx import Transformer
 
 try:
     from torch.fx import GraphModule, Graph, Node
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
@@ -30,17 +30,17 @@ def to_hetero(module: Module, metadata: Metadata, aggr: str = "sum",
         import torch
         from torch_geometric.nn import SAGEConv, to_hetero
 
-        Net(torch.nn.Module):
+        class GNN(torch.nn.Module):
             def __init__(self):
-                self.conv1 = SAGEConv(-1, 16)
-                self.conv2 = SAGEConv(16, 16)
+                self.conv1 = SAGEConv((-1, -1), 32)
+                self.conv2 = SAGEConv((32, 32), 32)
 
             def forward(self, x, edge_index):
                 x = self.conv1(x, edge_index).relu()
                 x = self.conv2(x, edge_index).relu()
                 return x
 
-        model = Net()
+        model = GNN()
 
         node_types = ['paper', 'author']
         edge_types = [
@@ -115,6 +115,8 @@ class ToHeteroTransformer(Transformer):
 
     aggrs = {
         'sum': torch.add,
+        # For 'mean' aggregation, we first sum up all feature matrices, and
+        # divide by the number of matrices in a later step.
         'mean': torch.add,
         'max': torch.max,
         'min': torch.min,

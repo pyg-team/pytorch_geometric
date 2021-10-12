@@ -14,9 +14,11 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, ones, reset
 
 
-def group(xs: List[Tensor], aggr: str) -> Optional[Tensor]:
+def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
     if len(xs) == 0:
         return None
+    elif aggr is None:
+        return torch.stack(xs, dim=1)
     elif len(xs) == 1:
         return xs[0]
     else:
@@ -34,7 +36,7 @@ class HGTConv(MessagePassing):
     .. note::
 
         For an example of using HGT, see `examples/hetero/hgt_dblp.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         hetero/hgt_dblp.py>`_.
 
     Args:

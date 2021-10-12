@@ -13,8 +13,8 @@ class DenseGraphConv(torch.nn.Module):
         self.out_channels = out_channels
         self.aggr = aggr
 
-        self.lin_rel = Linear(in_channels, out_channels, bias=False)
-        self.lin_root = Linear(in_channels, out_channels, bias=bias)
+        self.lin_rel = Linear(in_channels, out_channels, bias=bias)
+        self.lin_root = Linear(in_channels, out_channels, bias=False)
 
         self.reset_parameters()
 

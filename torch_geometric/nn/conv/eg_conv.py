@@ -37,7 +37,7 @@ class EGConv(MessagePassing):
 
     .. note::
         For an example of using :obj:`EGConv`, see `examples/egc.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/
         examples/egc.py>`_.
 
     Args:

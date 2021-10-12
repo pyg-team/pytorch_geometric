@@ -37,7 +37,7 @@ class RandomNodeSampler(torch.utils.data.DataLoader):
         For an example of using
         :class:`~torch_geometric.loader.RandomNodeSampler`, see
         `examples/ogbn_proteins_deepgcn.py
-        <https://github.com/rusty1s/pytorch_geometric/blob/master/examples/
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         ogbn_proteins_deepgcn.py>`_.
 
     Args:

@@ -3,11 +3,13 @@ from torch_geometric.transforms import LinearTransformation
 from torch_geometric.data import Data
 
 
-def test_cartesian():
+def test_linear_transformation():
     matrix = torch.tensor([[2, 0], [0, 2]], dtype=torch.float)
     transform = LinearTransformation(matrix)
-    assert transform.__repr__() == ('LinearTransformation('
-                                    '[[2.0, 0.0], [0.0, 2.0]])')
+    assert str(transform) == ('LinearTransformation(\n'
+                              '[[2. 0.]\n'
+                              ' [0. 2.]]\n'
+                              ')')
 
     pos = torch.Tensor([[-1, 1], [-3, 0], [2, -1]])
 
