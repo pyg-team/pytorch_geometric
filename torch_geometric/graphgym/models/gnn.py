@@ -10,7 +10,7 @@ from torch_geometric.graphgym.models.layer import (new_layer_config,
                                                    BatchNorm1dNode)
 from torch_geometric.graphgym.init import init_weights
 
-import torch_geometric.graphgym.models.encoder # noqa, register module
+import torch_geometric.graphgym.models.encoder  # noqa, register module
 import torch_geometric.graphgym.register as register
 
 
@@ -42,7 +42,8 @@ def GNNPreMP(dim_in, dim_out, num_layers):
     """
     return GeneralMultiLayer(
         'linear',
-        layer_config=new_layer_config(dim_in, dim_out, num_layers, has_act=False,
+        layer_config=new_layer_config(dim_in, dim_out, num_layers,
+                                      has_act=False,
                                       has_bias=False, cfg=cfg))
 
 
