@@ -50,6 +50,7 @@ def test_run_single_graphgym():
     assert isinstance(model.encoder, FeatureEncoder)
     assert isinstance(model.mp, GNNStackStage)
     assert isinstance(model.post_mp, GNNNodeHead)
+    assert len(list(model.pre_mp.children())) == cfg.gnn.layers_pre_mp
 
     optimizer_config = OptimizerConfig(optimizer=cfg.optim.optimizer,
                                        base_lr=cfg.optim.base_lr,
@@ -66,7 +67,7 @@ def test_run_single_graphgym():
     assert isinstance(scheduler, torch.optim.lr_scheduler.CosineAnnealingLR)
 
     cfg.params = params_count(model)
-    assert cfg.params == 23336
+    assert cfg.params == 23880
 
     train(loggers, loaders, model, optimizer, scheduler)
 
