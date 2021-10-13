@@ -65,31 +65,31 @@ Dictionaries containing the heterogeneous information grouped by attribute names
 
 .. code-block:: python
 
-   model = HeteroGNN(...)
+    model = HeteroGNN(...)
 
-   output = model(data.x_dict, data.edge_index_dict, data.edge_attr_dict)
+    output = model(data.x_dict, data.edge_index_dict, data.edge_attr_dict)
 
 If the dataset exists in the `list of Pytorch Geometric datasets <https://pytorch-geometric.readthedocs.io/en/latest/modules/datasets.html>`_, it can directly be imported and used.
 In particular, it will be downloaded to :obj:`root` and processed automatically.
 
 .. code-block:: python
 
-   from torch_geometric.datasets import OGB_MAG
+    from torch_geometric.datasets import OGB_MAG
 
-   dataset = OGB_MAG(root='./data', preprocess='metapath2vec')
-   data = dataset[0]
+    dataset = OGB_MAG(root='./data', preprocess='metapath2vec')
+    data = dataset[0]
 
 The :obj:`data` object can be printed for verification.
 
 .. code-block:: text
 
-   HeteroData(
+    HeteroData(
       paper={
-         x=[736389, 128],
-         y=[736389],
-         train_mask=[736389],
-         val_mask=[736389],
-         test_mask=[736389]
+        x=[736389, 128],
+        y=[736389],
+        train_mask=[736389],
+        val_mask=[736389],
+        test_mask=[736389]
       },
       author={ x=[1134649, 128] },
       institution={ x=[8740, 128] },
@@ -98,7 +98,7 @@ The :obj:`data` object can be printed for verification.
       (author, writes, paper)={ edge_index=[2, 7145660] },
       (paper, cites, paper)={ edge_index=[2, 5416271] },
       (paper, has_topic, field_of_study)={ edge_index=[2, 7505078] }
-   )
+    )
 
 .. note::
 
@@ -114,33 +114,33 @@ For example, single node or edge stores can be indiviually indexed:
 
 .. code-block:: python
 
-   paper_node_data = data['paper']
-   cites_edge_data = data['paper', 'cites', 'paper']
+    paper_node_data = data['paper']
+    cites_edge_data = data['paper', 'cites', 'paper']
 
 In case the edge type can be uniquely identified by only the pair of source and destination node types or the edge type, the following operations work as well:
 
 .. code-block:: python
 
-   cites_edge_data = data['paper', 'paper']
-   cites_edge_data = data['cites']
+    cites_edge_data = data['paper', 'paper']
+    cites_edge_data = data['cites']
 
 We can add new node types or tensors and remove them:
 
 .. code-block:: python
 
-   data['paper'].year = ...    # Setting a new paper attribute
-   del data['field_of_study']  # Deleting 'field_of_study' node type
-   del data['has_topic']       # Deleting 'has_topic' edge type
+    data['paper'].year = ...    # Setting a new paper attribute
+    del data['field_of_study']  # Deleting 'field_of_study' node type
+    del data['has_topic']       # Deleting 'has_topic' edge type
 
 We can access the meta-data of the :obj:`data` object, holding information of all present node and edge types:
 
 .. code-block:: python
 
-   node_types, edge_types = data.metadata()
-   print(node_types)
-   ['paper', 'author', 'institution']
-   print(edge_types)
-   [('paper', 'cites', 'paper'),
+    node_types, edge_types = data.metadata()
+    print(node_types)
+    ['paper', 'author', 'institution']
+    print(edge_types)
+    [('paper', 'cites', 'paper'),
     ('author', 'writes', 'paper'),
     ('author', 'affiliated_with', 'institution')]
 
@@ -148,24 +148,24 @@ The :obj:`data` object can be transferred between devices as usual:
 
 .. code-block:: python
 
-   data = data.to('cuda:0')
-   data = data.cpu()
+    data = data.to('cuda:0')
+    data = data.cpu()
 
 We further have access to additional helper functions to analyze the given graph
 
 .. code-block:: python
 
-   data.has_isolated_nodes()
-   data.has_self_loops()
-   data.is_undirected()
+    data.has_isolated_nodes()
+    data.has_self_loops()
+    data.is_undirected()
 
 and can convert it to a homogeneous "typed" graph via :meth:`~torch_geometric.data.HeteroData.to_homogeneous` which is able to maintain features in case their dimensionalities match across different types:
 
 .. code-block:: python
 
-   homogeneous_data = data.to_homogeneous()
-   print(homogeneous_data)
-   Data(x=[1879778, 128], edge_index=[2, 13605929], edge_type=[13605929])
+    homogeneous_data = data.to_homogeneous()
+    print(homogeneous_data)
+    Data(x=[1879778, 128], edge_index=[2, 13605929], edge_type=[13605929])
 
 Here, :obj:`homogeneous_data.edge_type` represents an edge-level vector that holds the edge type of each edge as an integer.
 
@@ -176,11 +176,11 @@ Most `transformations <https://pytorch-geometric.readthedocs.io/en/latest/module
 
 .. code-block:: python
 
-   import torch_geometric.transforms as T
+    import torch_geometric.transforms as T
 
-   data = T.ToUndirected()(data)
-   data = T.AddSelfLoops()(data)
-   data = T.NormalizeFeatures()(data)
+    data = T.ToUndirected()(data)
+    data = T.AddSelfLoops()(data)
+    data = T.NormalizeFeatures()(data)
 
 Here, :meth:`~torch_geometric.transforms.ToUndirected` transforms a directed graph into (the PyG representation of) an undirected graph, by adding reverse edges for all edges in the graph.
 Thus, future message passing is performed in both direction of all edges.
@@ -214,26 +214,26 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
 
 .. code-block:: python
 
-   import torch_geometric.transforms as T
-   from torch_geometric.datasets import OGB_MAG
-   from torch_geometric.nn import SAGEConv, to_hetero
+    import torch_geometric.transforms as T
+    from torch_geometric.datasets import OGB_MAG
+    from torch_geometric.nn import SAGEConv, to_hetero
 
-   data = OGB_MAG(root='./data', preprocess='metapath2vec', transform=T.ToUndirected())[0]
+    data = OGB_MAG(root='./data', preprocess='metapath2vec', transform=T.ToUndirected())[0]
 
-   class GNN(torch.nn.Module):
-       def __init__(self, hidden_channels, out_channels):
-           super().__init__()
-           self.conv1 = SAGEConv((-1, -1), hidden_channels)
-           self.conv2 = SAGEConv((-1, -1), out_channels)
+    class GNN(torch.nn.Module):
+        def __init__(self, hidden_channels, out_channels):
+            super().__init__()
+            self.conv1 = SAGEConv((-1, -1), hidden_channels)
+            self.conv2 = SAGEConv((-1, -1), out_channels)
 
-       def forward(self, x, edge_index):
-           x = self.conv1(x, edge_index).relu()
-           x = self.conv2(x, edge_index)
-           return x
+        def forward(self, x, edge_index):
+            x = self.conv1(x, edge_index).relu()
+            x = self.conv2(x, edge_index)
+            return x
 
 
-   model = GNN(hidden_channels=64, out_channels=dataset.num_classes)
-   model = to_hetero(model, data.metadata(), aggr='sum')
+    model = GNN(hidden_channels=64, out_channels=dataset.num_classes)
+    model = to_hetero(model, data.metadata(), aggr='sum')
 
 The process takes an existing GNN model and duplicates the message functions to work on each edge type individually, as detailed in the following figure.
 
@@ -254,29 +254,29 @@ Note that we pass in a tuple of :obj:`in_channels` to :class:`~torch_geometric.n
 
    .. code-block:: python
 
-      with torch.no_grad():  # Initialize lazy modules.
-          out = model(data.x_dict, data.edge_index_dict)
+        with torch.no_grad():  # Initialize lazy modules.
+            out = model(data.x_dict, data.edge_index_dict)
 
 Both :meth:`~torch_geometric.nn.to_hetero` and :meth:`~torch_geometric.nn.to_hetero_with_bases` are very flexible with respect to the homogeneous architectures that can be automatically converted to heterogeneous ones, *e.g.*, applying skip-connections, jumping knowledge or other techniques are supported out-of-the-box.
 For example, this is all it takes to implement a heterogeneous graph attention network with learnable skip-connections:
 
 .. code-block:: python
 
-   from torch_geometric.nn import GATConv, Linear, to_hetero
+    from torch_geometric.nn import GATConv, Linear, to_hetero
 
-   class GAT(torch.nn.Module):
-       def __init__(self, hidden_channels, out_channels):
-           super().__init__()
-           self.conv1 = GATConv((-1, -1), hidden_channels, add_self_loops=False)
-           self.lin1 = Linear(-1, hidden_channels)
-           self.conv2 = GATConv((-1, -1), out_channels, add_self_loops=False)
-           self.lin2 = Linear(-1, out_channels)
+    class GAT(torch.nn.Module):
+        def __init__(self, hidden_channels, out_channels):
+            super().__init__()
+            self.conv1 = GATConv((-1, -1), hidden_channels, add_self_loops=False)
+            self.lin1 = Linear(-1, hidden_channels)
+            self.conv2 = GATConv((-1, -1), out_channels, add_self_loops=False)
+            self.lin2 = Linear(-1, out_channels)
 
-       def forward(self, x, edge_index):
-           x = self.conv1(x, edge_index) + self.lin1(x)
-           x = x.relu()
-           x = self.conv2(x, edge_index) + self.lin2(x)
-           return x
+        def forward(self, x, edge_index):
+            x = self.conv1(x, edge_index) + self.lin1(x)
+            x = x.relu()
+            x = self.conv2(x, edge_index) + self.lin2(x)
+            return x
 
 
    model = GAT(hidden_channels=64, out_channels=dataset.num_classes)
@@ -288,15 +288,15 @@ Afterwards, the created model can be trained as usual:
 
 .. code-block:: python
 
-   def train():
-       model.train()
-       optimizer.zero_grad()
-       out = model(data.x_dict, data.edge_index_dict)
-       mask = data['paper'].train_mask
-       loss = F.cross_entropy(out['paper'][mask], data['paper'].y[mask])
-       loss.backward()
-       optimizer.step()
-       return float(loss)
+    def train():
+        model.train()
+        optimizer.zero_grad()
+        out = model(data.x_dict, data.edge_index_dict)
+        mask = data['paper'].train_mask
+        loss = F.cross_entropy(out['paper'][mask], data['paper'].y[mask])
+        loss.backward()
+        optimizer.step()
+        return float(loss)
 
 Using the Heterogenous Convolution Wrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -308,38 +308,38 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
 
 .. code-block:: python
 
-   from torch_geometric.nn import HeteroConv, GCNConv, SAGEConv, GATConv, Linear
+    from torch_geometric.nn import HeteroConv, GCNConv, SAGEConv, GATConv, Linear
 
-   class HeteroGNN(torch.nn.Module):
-       def __init__(self, hidden_channels, out_channels, num_layers):
-           super().__init__()
+    class HeteroGNN(torch.nn.Module):
+        def __init__(self, hidden_channels, out_channels, num_layers):
+            super().__init__()
 
-           self.convs = torch.nn.ModuleList()
-           for _ in range(num_layers):
-               conv = HeteroConv({
-                   ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels)
-                   ('author', 'writes', 'paper'): GATConv((-1, -1), hidden_channels)
-                   ('author', 'affiliated_with', 'institution'): SAGEConv((-1, -1), hidden_channels)
-               }, aggr='sum')
-               self.convs.append(conv)
+            self.convs = torch.nn.ModuleList()
+            for _ in range(num_layers):
+                conv = HeteroConv({
+                    ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels)
+                    ('author', 'writes', 'paper'): GATConv((-1, -1), hidden_channels)
+                    ('author', 'affiliated_with', 'institution'): SAGEConv((-1, -1), hidden_channels)
+                }, aggr='sum')
+                self.convs.append(conv)
 
-           self.lin = Linear(hidden_channels, out_channels)
+            self.lin = Linear(hidden_channels, out_channels)
 
-      def forward(self, x_dict, edge_index_dict):
-         for conv in self.convs:
-             x_dict = conv(x_dict, edge_index_dict)
-             x_dict = {key: x.relu() for key, x in x_dict.items()}
-         return self.lin(x_dict['author'])
+        def forward(self, x_dict, edge_index_dict):
+            for conv in self.convs:
+                x_dict = conv(x_dict, edge_index_dict)
+                x_dict = {key: x.relu() for key, x in x_dict.items()}
+            return self.lin(x_dict['author'])
 
-   model = HeteroGNN(hidden_channels=64, out_channels=dataset.num_classes,
-                     num_layers=2)
+    model = HeteroGNN(hidden_channels=64, out_channels=dataset.num_classes,
+                      num_layers=2)
 
 We can initialize the model by calling it once (see :ref:`here<lazyinit>` for more details about lazy initialization)
 
 .. code-block:: python
 
-   with torch.no_grad():  # Initialize lazy modules.
-       out = model(data.x_dict, data.edge_index_dict)
+    with torch.no_grad():  # Initialize lazy modules.
+         out = model(data.x_dict, data.edge_index_dict)
 
 and run the standard training procedure as outlined :ref:`here<trainfunc>`.
 
@@ -351,39 +351,42 @@ These operators can be directly used to build heterogeneous GNN models as can be
 
 .. code-block:: python
 
-   from torch_geometric.nn import HGTConv, Linear
+    from torch_geometric.nn import HGTConv, Linear
 
-   class HGT(torch.nn.Module):
-       def __init__(self, hidden_channels, out_channels, num_heads, num_layers):
-           super().__init__()
+    class HGT(torch.nn.Module):
+        def __init__(self, hidden_channels, out_channels, num_heads, num_layers):
+            super().__init__()
 
-           self.lin_dict = torch.nn.ModuleDict()
-           for node_type in data.node_types:
-               self.lin_dict[node_type] = Linear(-1, hidden_channels)
+            self.lin_dict = torch.nn.ModuleDict()
+            for node_type in data.node_types:
+                self.lin_dict[node_type] = Linear(-1, hidden_channels)
 
-           self.convs = torch.nn.ModuleList()
-           for _ in range(num_layers):
-               conv = HGTConv(hidden_channels, hidden_channels, data.metadata(),
-                              num_heads, group='sum')
-               self.convs.append(conv)
+            self.convs = torch.nn.ModuleList()
+            for _ in range(num_layers):
+                conv = HGTConv(hidden_channels, hidden_channels, data.metadata(),
+                               num_heads, group='sum')
+            self.convs.append(conv)
 
-           self.lin = Linear(hidden_channels, out_channels)
+            self.lin = Linear(hidden_channels, out_channels)
 
-       def forward(self, x_dict, edge_index_dict):
-           x_dict = {key: lin(x).relu() for key, lin in self.lin_dict.items()}
-           for conv in self.convs:
-               x_dict = conv(x_dict, edge_index_dict)
-           return self.lin(x_dict['author'])
+        def forward(self, x_dict, edge_index_dict):
+            for node_type, x in x_dict.items():
+                x_dict[node_type] = self.lin_dict[node_type](x).relu_()
 
-   model = HGT(hidden_channels=64, out_channels=dataset.num_classes,
-               num_heads=2, num_layers=2)
+            for conv in self.convs:
+                x_dict = conv(x_dict, edge_index_dict)
+
+            return self.lin(x_dict['author'])
+
+    model = HGT(hidden_channels=64, out_channels=dataset.num_classes,
+                num_heads=2, num_layers=2)
 
 We can initialize the model by calling it once (see :ref:`here<lazyinit>` for more details about lazy initialization).
 
 .. code-block:: python
 
-   with torch.no_grad():  # Initialize lazy modules.
-      out = model(data.x_dict, data.edge_index_dict)
+    with torch.no_grad():  # Initialize lazy modules.
+         out = model(data.x_dict, data.edge_index_dict)
 
 and run the standard training procedure as outlined :ref:`here<trainfunc>`.
 
@@ -400,23 +403,23 @@ Performing neighbor sampling using :class:`~torch_geometric.loader.NeighborLoade
 
 .. code-block:: python
 
-   import torch_geometric.transforms as T
-   from torch_geometric.datasets import OGB_MAG
-   from torch_geometric.loader import NeighborLoader
+    import torch_geometric.transforms as T
+    from torch_geometric.datasets import OGB_MAG
+    from torch_geometric.loader import NeighborLoader
 
-   transform = T.ToUndirected()  # Add reverse edge types.
-   data = OGB_MAG(root='./data', preprocess='metapath2vec', transform=transform)[0]
+    transform = T.ToUndirected()  # Add reverse edge types.
+    data = OGB_MAG(root='./data', preprocess='metapath2vec', transform=transform)[0]
 
-   train_loader = NeighborLoader(
-       data,
-       # Sample 15 neighbors for each node and each edge type for 2 iterations:
-       num_neighbors=[15] * 2
-       # Use a batch size of 128 for sampling training nodes of type "paper":
-       batch_size=128,
-       input_nodes=('paper', data['paper'].train_mask),
-   )
+    train_loader = NeighborLoader(
+        data,
+        # Sample 15 neighbors for each node and each edge type for 2 iterations:
+        num_neighbors=[15] * 2,
+        # Use a batch size of 128 for sampling training nodes of type "paper":
+        batch_size=128,
+        input_nodes=('paper', data['paper'].train_mask),
+    )
 
-   batch = next(iter(train_loader))
+    batch = next(iter(train_loader))
 
 
 Notably, :class:`~torch_geometric.loader.NeighborLoader` works for both homogeneous *and* heterogeneous graphs.
@@ -424,7 +427,7 @@ When operating in heterogeneous graphs, more fine-grained control over the amoun
 
 .. code-block:: python
 
-   num_neighbors = {key: [15] * 2 for key in data.edge_types}
+    num_neighbors = {key: [15] * 2 for key in data.edge_types}
 
 Using the :obj:`input_nodes` argument, we further specify the type and indices of nodes from which we want to sample local neighborhoods, *i.e.* all the "paper" nodes marked as training nodes according to :obj:`data['paper'].train_mask`.
 
@@ -432,26 +435,26 @@ Printing :obj:`batch` then yields the following output:
 
 .. code-block:: text
 
-   HeteroData(
-     paper={
-       x=[20799, 256],
-       y=[20799],
-       train_mask=[20799],
-       val_mask=[20799],
-       test_mask=[20799],
-       batch_size=128
-     },
-     author={ x=[4419, 128] },
-     institution={ x=[302, 128] },
-     field_of_study={ x=[2605, 128] },
-     (author, affiliated_with, institution)={ edge_index=[2, 0] },
-     (author, writes, paper)={ edge_index=[2, 5927] },
-     (paper, cites, paper)={ edge_index=[2, 11829] },
-     (paper, has_topic, field_of_study)={ edge_index=[2, 10573] },
-     (institution, rev_affiliated_with, author)={ edge_index=[2, 829] },
-     (paper, rev_writes, author)={ edge_index=[2, 5512] },
-     (field_of_study, rev_has_topic, paper)={ edge_index=[2, 10499] }
-   )
+    HeteroData(
+      paper={
+        x=[20799, 256],
+        y=[20799],
+        train_mask=[20799],
+        val_mask=[20799],
+        test_mask=[20799],
+        batch_size=128
+      },
+      author={ x=[4419, 128] },
+      institution={ x=[302, 128] },
+      field_of_study={ x=[2605, 128] },
+      (author, affiliated_with, institution)={ edge_index=[2, 0] },
+      (author, writes, paper)={ edge_index=[2, 5927] },
+      (paper, cites, paper)={ edge_index=[2, 11829] },
+      (paper, has_topic, field_of_study)={ edge_index=[2, 10573] },
+      (institution, rev_affiliated_with, author)={ edge_index=[2, 829] },
+      (paper, rev_writes, author)={ edge_index=[2, 5512] },
+      (field_of_study, rev_has_topic, paper)={ edge_index=[2, 10499] }
+    )
 
 As such, :obj:`batch` holds a total of 28,187 nodes involved for computing the embeddings of 128 "paper" nodes.
 Sampled nodes are always sorted based on the order in which they were sampled.
@@ -461,24 +464,24 @@ Training our heterogeneous GNN model in mini-batch mode is then similar to train
 
 .. code-block:: python
 
-   def train():
-       model.train()
+    def train():
+        model.train()
 
-       total_examples = total_loss = 0
-       for batch in train_loader:
-           optimizer.zero_grad()
-           batch = batch.to('cuda:0')
-           batch_size = batch['paper'].batch_size
-           out = model(batch.x_dict, batch.edge_index_dict)
-           loss = F.cross_entropy(out['paper'][:batch_size],
-                                  batch['paper'].y[:batch_size])
-           loss.backward()
-           optimizer.step()
+        total_examples = total_loss = 0
+        for batch in train_loader:
+            optimizer.zero_grad()
+            batch = batch.to('cuda:0')
+            batch_size = batch['paper'].batch_size
+            out = model(batch.x_dict, batch.edge_index_dict)
+            loss = F.cross_entropy(out['paper'][:batch_size],
+                                   batch['paper'].y[:batch_size])
+            loss.backward()
+            optimizer.step()
 
-           total_examples += batch_size
-           total_loss += float(loss) * batch_size
+            total_examples += batch_size
+            total_loss += float(loss) * batch_size
 
-       return total_loss / total_examples
+        return total_loss / total_examples
 
 Importantly, we only make use of the first 128 "paper" nodes during loss computation.
 We do so by slicing both "paper" labels :obj:`batch['paper'].y` and "paper" output predictions :obj:`out['paper']` based on :obj:`batch['paper'].batch_size`, representing the labels and final output predictions of original mini-batch nodes, respectively.
