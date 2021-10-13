@@ -43,7 +43,11 @@ def test_add_metapaths():
                  [('author', 'paper'), ('paper', 'conference'),
                   ('conference', 'paper'), ('paper', 'author')]]
     meta1 = AddMetaPaths(metapaths)(dblp.clone())
-    assert meta1['author', 'metapath_0',
-                 'conference'].edge_index.shape[-1] == 4
-    assert meta1['author', 'metapath_1', 'author'].edge_index.shape[-1] == 4
+    new_edge_types = [('author', 'metapath_0', 'conference'),
+                      ('author', 'metapath_1', 'author')]
+    assert meta1[new_edge_types[0]].edge_index.shape[-1] == 4
+    assert meta1[new_edge_types[1]].edge_index.shape[-1] == 4
+
+    # test metapaths_dict
     assert list(meta1.metapaths_dict.values()) == metapaths
+    assert list(meta1.metapaths_dict.keys()) == new_edge_types

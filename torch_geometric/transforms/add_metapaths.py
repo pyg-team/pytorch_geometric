@@ -35,43 +35,44 @@ class AddMetaPaths(BaseTransform):
 
         from torch_geometric.data import HeteroData
         from torch_geometric.transforms import AddMetaPaths
+        from torch_geometric.datasets import DBLP
 
-        dblp = HeteroData()
-        dblp['paper'].x = ...
-        dblp['author'].x = ...
-        dblp['conference'].x = ...
-        dblp['paper', 'cites', 'paper'].edge_index = ...
-        dblp['paper', 'author'].edge_index = ...
-        dblp['author', 'paper'].edge_index = ...
-        dblp['conference', 'paper'].edge_index = ...
-        dblp['paper', 'conference'].edge_index = ...
+        data = DBLP(root)[0]
+        # 4 node types: "paper", "author", "conference", and "term"
+        # 6 edge types: ("paper","author"), ("author", "paper"),
+        #               ("paper, "term"),("paper", "conference"),
+        #               ("term, "paper"), ("conference", "paper")
 
         # Add two metapaths
         # 1. from 'paper' to 'paper' through 'conference'.
-        # 2. from 'author' to 'conference' through 'papers'.
+        # 2. from 'author' to 'conference' through 'paper'.
         # New edges are of type ('paper', 'metapath_0', 'paper')
         # and ('author', 'metapath_1', 'conference')
         metapaths = [[('paper','conference'),('conference','paper')],
                     [('author','paper'), ('paper','conference')]]
-        dblp_meta = AddMetaPaths(metapaths)(dblp.clone())
-        print(dblp_meta.edge_types)
-        >>> [('paper', 'cites', 'paper'), ('paper', 'to', 'author'),
-            ('author', 'to', 'paper'), ('conference', 'to', 'paper'),
-            ('paper', 'to', 'conference'), ('paper', 'metapath_0', 'paper'),
-            ('author', 'metapath_1', 'conference')]
+        data_meta = AddMetaPaths(metapaths)(data.clone())
+        print(data_meta.edge_types)
+        >>> [('author', 'to', 'paper'),('paper', 'to', 'author'),
+             ('paper', 'to', 'term'),('paper', 'to', 'conference'),
+             ('term', 'to', 'paper'),('conference', 'to', 'paper'),
+             ('paper', 'metapath_0', 'paper'),
+             ('author', 'metapath_1', 'conference')]
 
         # info on added edge types
-        print(dblp_meta.metapaths_dict)
+        print(data_meta.metapaths_dict)
         >>> {('paper', 'metapath_0', 'paper'): [('paper', 'conference'),
                                                 ('conference', 'paper')],
              ('author', 'metapath_1', 'conference'): [('author', 'paper'),
                                                       ('paper', 'conference')]}
 
+        # add a new edge type between same node types
+        data['paper', 'cites', 'paper'].edge_index = ...
+
         # Add metapaths, and drop all other edges except
         # edges between same node type.
-        dblp_meta = AddMetaPaths(metapaths, drop_orig_edges=True,
-                                 keep_same_node_type=True)(dblp.clone())
-        print(dblp_meta.edge_types)
+        data_meta = AddMetaPaths(metapaths, drop_orig_edges=True,
+                                 keep_same_node_type=True)(data.clone())
+        print(data_meta.edge_types)
         >>> [('paper', 'cites', 'paper'), ('paper', 'metapath_0', 'paper'),
             ('author', 'metapath_1', 'conference')]
 
@@ -112,8 +113,6 @@ class AddMetaPaths(BaseTransform):
                 assert data._to_canonical(
                     edge_type) in edge_types, f"{edge_type} edge not present."
 
-            new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
-
             edge_type = metapath[0]
             adj1 = SparseTensor.from_edge_index(
                 edge_index=data[edge_type].edge_index,
@@ -126,6 +125,7 @@ class AddMetaPaths(BaseTransform):
                 adj1 = adj1 @ adj2
 
             row, col, _ = adj1.coo()
+            new_edge_type = (metapath[0][0], f'metapath_{j}', metapath[-1][-1])
             data[new_edge_type].edge_index = torch.vstack([row, col])
             data.metapaths_dict[new_edge_type] = metapath
 
