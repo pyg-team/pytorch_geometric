@@ -23,8 +23,7 @@ def test_add_metapaths():
 
     # test transform options.
     orig_edge_type = dblp.edge_types
-    metapaths = [[('paper', 'conference'),
-                  ('conference', 'paper')]]
+    metapaths = [[('paper', 'conference'), ('conference', 'paper')]]
     meta1 = AddMetaPaths(metapaths)(dblp.clone())
     meta2 = AddMetaPaths(metapaths, drop_orig_edges=True)(dblp.clone())
     meta3 = AddMetaPaths(metapaths, drop_orig_edges=True,
@@ -47,4 +46,4 @@ def test_add_metapaths():
     assert meta1['author', 'metapath_0',
                  'conference'].edge_index.shape[-1] == 4
     assert meta1['author', 'metapath_1', 'author'].edge_index.shape[-1] == 4
-    assert meta1.metapaths == metapaths
+    assert list(meta1.metapaths_dict.values()) == metapaths
