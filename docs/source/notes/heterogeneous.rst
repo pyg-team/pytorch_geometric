@@ -332,7 +332,7 @@ The following `example <https://github.com/pyg-team/pytorch_geometric/blob/maste
             return self.lin(x_dict['author'])
 
     model = HeteroGNN(hidden_channels=64, out_channels=dataset.num_classes,
-                        num_layers=2)
+                      num_layers=2)
 
 We can initialize the model by calling it once (see :ref:`here<lazyinit>` for more details about lazy initialization)
 
