@@ -200,7 +200,7 @@ class NeighborLoader(torch.utils.data.DataLoader):
             self.directed,
         )
 
-        data = filter_data(self.data, node, row, col, edge, self.perm)
+        data = filter_data(self.data, node, row, col, edge, self.perm).to(self.data.x.device)
         data.batch_size = len(indices)
         data = data if self.transform is None else self.transform(data)
 
