@@ -52,7 +52,7 @@ class AddMetaPaths(BaseTransform):
         # 1. From "paper" to "paper" through "conference"
         # 2. From "author" to "conference" through "paper"
         metapaths = [[("paper", "conference"), ("conference", "paper")],
-                     [("author", "paper'), ("paper", "conference")]]
+                     [("author", "paper"), ("paper", "conference")]]
         data = AddMetaPaths(metapaths)(data)
 
         print(data.edge_types)
