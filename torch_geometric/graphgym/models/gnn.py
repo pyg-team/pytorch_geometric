@@ -10,7 +10,7 @@ from torch_geometric.graphgym.models.layer import (new_layer_config,
                                                    BatchNorm1dNode)
 from torch_geometric.graphgym.init import init_weights
 
-import torch_geometric.graphgym.models.encoder # noqa, register module
+import torch_geometric.graphgym.models.encoder  # noqa, register module
 import torch_geometric.graphgym.register as register
 
 
@@ -30,18 +30,20 @@ def GNNLayer(dim_in, dim_out, has_act=True):
                                       has_bias=False, cfg=cfg))
 
 
-def GNNPreMP(dim_in, dim_out):
+def GNNPreMP(dim_in, dim_out, num_layers):
     """
     Wrapper for NN layer before GNN message passing
 
     Args:
         dim_in (int): Input dimension
         dim_out (int): Output dimension
+        num_layers (int): Number of layers
 
     """
     return GeneralMultiLayer(
         'linear',
-        layer_config=new_layer_config(dim_in, dim_out, 1, has_act=False,
+        layer_config=new_layer_config(dim_in, dim_out, num_layers,
+                                      has_act=False,
                                       has_bias=False, cfg=cfg))
 
 
@@ -145,7 +147,8 @@ class GNN(nn.Module):
         dim_in = self.encoder.dim_in
 
         if cfg.gnn.layers_pre_mp > 0:
-            self.pre_mp = GNNPreMP(dim_in, cfg.gnn.dim_inner)
+            self.pre_mp = GNNPreMP(
+                dim_in, cfg.gnn.dim_inner, cfg.gnn.layers_pre_mp)
             dim_in = cfg.gnn.dim_inner
         if cfg.gnn.layers_mp > 0:
             self.mp = GNNStage(dim_in=dim_in, dim_out=cfg.gnn.dim_inner,

@@ -20,7 +20,7 @@ model:
   edge_decoding: dot
   graph_pooling: add
 gnn:
-  layers_pre_mp: 0
+  layers_pre_mp: 2
   layers_mp: 2
   layers_post_mp: 1
   dim_inner: 16

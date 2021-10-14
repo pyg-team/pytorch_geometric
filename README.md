@@ -172,7 +172,7 @@ It comprises of the following components:
 * The PyG **engine** utilizes the powerful PyTorch deep learning framework, as well as additions of efficient CUDA libraries for operating on sparse data, *e.g.*, [`torch-scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch-sparse`](https://github.com/rusty1s/pytorch_sparse) and [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster).
 * The PyG **storage** handles data processing, transformation and loading pipelines. It is capable of handling and processing large-scale graph datasets, and provides effective solutions for heterogeneous graphs. It further provides a variety of sampling solutions, which enable training of GNNs on large-scale graphs.
 * The PyG **operators** bundle essential functionalities for implementing Graph Neural Networks. PyG supports important GNN building blocks that can be combined and applied to various parts of a GNN model, ensuring rich flexibility of GNN design.
-* Finally, PyG provides an abundant set of GNN **models**, and examples that showcases GNN models on standard graph benchmarks. Thanks to its flexibility, users can easily build and modify custom GNN models to fit their specific needs.
+* Finally, PyG provides an abundant set of GNN **models**, and examples that showcase GNN models on standard graph benchmarks. Thanks to its flexibility, users can easily build and modify custom GNN models to fit their specific needs.
 
 <p align="center">
   <img width="100%" src="https://raw.githubusercontent.com/pyg-team/pytorch_geometric/master/docs/source/_static/img/architecture.svg?sanitize=true" />
@@ -343,9 +343,9 @@ conda install pyg -c pyg -c conda-forge
 
 We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
-#### PyTorch 1.9.0
+#### PyTorch 1.9.0/1.9.1
 
-To install the binaries for PyTorch 1.9.0, simply run
+To install the binaries for PyTorch 1.9.0 and 1.9.1, simply run
 
 ```
 pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html
@@ -372,7 +372,7 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.ht
 
 To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
 
-```sh
+```
 pip install torch-scatter -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
 pip install torch-sparse -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
 pip install torch-geometric
@@ -397,7 +397,7 @@ pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.ht
 
 ### From master
 
-In case you want to experiment with the latest PyG features which are not fully released yet, you can install PyG from master via
+In case you want to experiment with the latest PyG features which are not fully released yet, ensure that `torch-scatter` and `torch-sparse` are installed by [following the steps mentioned above](#pip-wheels), and install PyG from master via:
 
 ```
 pip install git+https://github.com/pyg-team/pytorch_geometric.git

@@ -25,6 +25,10 @@ def collate(
     # In addition, `collate` can handle nested data structures such as
     # dictionaries and lists.
 
+    if not isinstance(data_list, (list, tuple)):
+        # Materialize `data_list` to keep the `_parent` weakref alive.
+        data_list = list(data_list)
+
     if cls != data_list[0].__class__:
         out = cls(_base_cls=data_list[0].__class__)  # Dynamic inheritance.
     else:
