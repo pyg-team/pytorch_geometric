@@ -5,7 +5,6 @@ from torch_geometric.data import HeteroData
 
 
 def test_add_metapaths():
-
     dblp = HeteroData()
     dblp['paper'].x = torch.ones(5)
     dblp['author'].x = torch.ones(6)
@@ -21,7 +20,7 @@ def test_add_metapaths():
     dblp['paper', 'conference'].edge_index = dblp['conference',
                                                   'paper'].edge_index[[1, 0]]
 
-    # test transform options.
+    # Test transform options:
     orig_edge_type = dblp.edge_types
     metapaths = [[('paper', 'conference'), ('conference', 'paper')]]
     meta1 = AddMetaPaths(metapaths)(dblp.clone())
@@ -38,7 +37,7 @@ def test_add_metapaths():
     assert meta3.edge_types == [('paper', 'cites', 'paper'),
                                 ('paper', 'metapath_0', 'paper')]
 
-    # test 4-hop metapath
+    # Test 4-hop metapath:
     metapaths = [[('author', 'paper'), ('paper', 'conference')],
                  [('author', 'paper'), ('paper', 'conference'),
                   ('conference', 'paper'), ('paper', 'author')]]
@@ -48,6 +47,6 @@ def test_add_metapaths():
     assert meta1[new_edge_types[0]].edge_index.shape[-1] == 4
     assert meta1[new_edge_types[1]].edge_index.shape[-1] == 4
 
-    # test metapaths_dict
-    assert list(meta1.metapaths_dict.values()) == metapaths
-    assert list(meta1.metapaths_dict.keys()) == new_edge_types
+    # Test `metapath_dict` information:
+    assert list(meta1.metapath_dict.values()) == metapaths
+    assert list(meta1.metapath_dict.keys()) == new_edge_types
