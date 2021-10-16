@@ -6,7 +6,8 @@ from torch.nn import Sequential as Seq, Linear as Lin, BatchNorm1d as BN, ReLU
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
-from torch_geometric.data import DataLoader, Data
+from torch_geometric.data import Data
+from torch_geometric.loader import DataLoader
 from torch_geometric.nn.pool import max_pool_neighbor_x, knn
 from torch_geometric.nn.conv import PointTransformerConv
 from torch_geometric.graphgym.models import global_mean_pool
@@ -91,13 +92,6 @@ def transition_down(x, pos, mlp, batch=None, k=16):
     return new_x, new_pos, sub_batch
 
 
-def MLP(channels, batch_norm=True):
-    return Seq(*[
-        Seq(Lin(channels[i - 1], channels[i]), ReLU(), BN(channels[i]))
-        for i in range(1, len(channels))
-    ])
-
-
 class Net(torch.nn.Module):
     def __init__(self, NUM_CLASSES, NUM_FEATURES, dim_model, k=16):
         super(Net, self).__init__()
@@ -168,15 +162,6 @@ class Net(torch.nn.Module):
         return F.log_softmax(out, dim=-1)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net(train_dataset.num_classes, 1, dim_model=[
-            32, 64, 128, 256, 512], k=16).to(device)
-optimizer = torch.optim.SGD(
-    model.parameters(), lr=0.05, momentum=0.9, weight_decay=0.0001)
-scheduler = torch.optim.lr_scheduler.MultiStepLR(
-    optimizer, milestones=[120, 160], gamma=0.1)
-
-
 def train():
     model.train()
 
@@ -204,9 +189,19 @@ def test(loader):
     return correct / len(loader.dataset)
 
 
-for epoch in range(1, 201):
-    loss = train()
-    test_acc = test(test_loader)
-    print('Epoch {:03d}, Loss: {:.4f}, Test: {:.4f}'.format(
-        epoch, loss, test_acc))
-    scheduler.step()
+if __name__ == '__main__':
+    
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = Net(train_dataset.num_classes, 1, dim_model=[
+                32, 64, 128, 256, 512], k=16).to(device)
+    # NB : learning parameters are different from the paper
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
+    
+    
+    for epoch in range(1, 201):
+        loss = train()
+        test_acc = test(test_loader)
+        print('Epoch {:03d}, Loss: {:.4f}, Test: {:.4f}'.format(
+            epoch, loss, test_acc))
+        scheduler.step()
