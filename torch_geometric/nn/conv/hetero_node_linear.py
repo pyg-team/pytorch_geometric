@@ -8,7 +8,7 @@ class HeteroLinear(torch.nn.Module):
     '''
     1. type-specific transformation for nodes of different types: 
     '''
-    def __init__(self, in_channels, num_node_types, node_emb_size):
+    def __init__(self, in_channels: int, out_channels: int, num_node_types: int, **kwargs):
         super().__init__()
 
         self.in_channels = in_channels 
