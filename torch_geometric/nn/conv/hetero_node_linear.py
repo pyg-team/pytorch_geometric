@@ -18,7 +18,7 @@ class HeteroLinear(torch.nn.Module):
         self.HeteroNodeEmbedLinears = torch.nn.ModuleList([Linear(in_channels, out_channels, **kwargs) for i in range(num_node_types)])
     
     def forward(self, x: Tensor, node_type: Tensor) -> Tensor:
-        emb_x = torch.zeros(x.shape[0], self.node_emb_size).to(x.device)
+        emb_x = x.new_empty(x.shape[0], self.node_emb_size)
         for idx in range(self.num_node_types):
             node_mask = node_type == idx
             emb_x[node_mask] = self.HeteroNodeEmbedLinears[node_type](x[node_mask])
