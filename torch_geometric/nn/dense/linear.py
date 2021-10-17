@@ -114,6 +114,7 @@ class Linear(torch.nn.Module):
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, bias={self.bias is not None})')
 
+    
 class HeteroLinear(torch.nn.Module):
     r"""Applies linear tranformations to the incoming data according to node types
     .. math::
