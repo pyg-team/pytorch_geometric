@@ -4,7 +4,7 @@ def retrieve_masks(node_or_edge_type, wanted_types=[]):
     assert set(wanted_types) < set(node_or_edge_type), 'wanted: {}, contains: {}'.format(set(wanted_types), set(node_or_edge_type))
     return [True if x in wanted_types else False for x in node_or_edge_type]
 
-class HeteroNodeLinear(torch.nn.Module):
+class HeteroLinear(torch.nn.Module):
     '''
     1. type-specific transformation for nodes of different types: 
     '''
