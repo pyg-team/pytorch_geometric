@@ -114,10 +114,10 @@ class Net(torch.nn.Module):
         )
 
         # end block
-        self.transformer = TransformerBlock(
-            in_channels=dim_model[-1],
-            out_channels=dim_model[-1],
-            hidden_channels=dim_model[-1]
+        self.end_transformer = TransformerBlock(
+            in_channels=dim_model[0],
+            out_channels=dim_model[0],
+            hidden_channels=dim_model[0]
         )
 
         # class score computation
@@ -161,7 +161,7 @@ class Net(torch.nn.Module):
         # backbone up : augment cardinality and reduce dimensionnality
         n = len(self.transformers_down)
         for i in range(n):
-            edge_index = knn_graph(pos, k=16, batch=out_batch[- i - 1])
+            edge_index = knn_graph(pos, k=self.k, batch=out_batch[- i - 1])
             x = self.transformers_up[- i - 1](x, pos, edge_index)
             x, pos = transition_up(x,
                                    pos,
@@ -172,6 +172,10 @@ class Net(torch.nn.Module):
                                    batch_sub=out_batch[- i - 1],
                                    batch=out_batch[- i - 2])
 
+        # end transformer
+        edge_index = knn_graph(pos, k=self.k, batch=out_batch[0])
+        x = self.end_transformer(x, pos, edge_index)
+
         # Class score
         out = self.lin(x)
 
@@ -180,7 +184,7 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net(train_dataset.num_classes, 3, dim_model=[
-                32, 64, 128, 256, 512], k=16).to(device)
+    32, 64, 128, 256, 512], k=16).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
 

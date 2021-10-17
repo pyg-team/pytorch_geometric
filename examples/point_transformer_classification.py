@@ -190,15 +190,16 @@ def test(loader):
 
 
 if __name__ == '__main__':
-    
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Net(train_dataset.num_classes, 1, dim_model=[
                 32, 64, 128, 256, 512], k=16).to(device)
     # NB : learning parameters are different from the paper
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
-    
-    
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
+                                                step_size=20,
+                                                gamma=0.5)
+
     for epoch in range(1, 201):
         loss = train()
         test_acc = test(test_loader)
