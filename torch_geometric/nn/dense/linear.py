@@ -113,3 +113,33 @@ class Linear(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, bias={self.bias is not None})')
+
+class HeteroLinear(torch.nn.Module):
+    r"""Applies linear tranformations to the incoming data according to node types
+    .. math::
+        \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}}_{\kappa} \mathbf{W}^{\top}}_{\kappa} + \mathbf{b}}_{\kappa}
+    for the incoming data of type: \kappa
+    A list of class: `torch.nn.Linear`.
+
+    Args:
+        in_channels (int): Size of each input sample.
+            Will be initialized lazily in case :obj:`-1`.
+        out_channels (int): Size of each output sample.
+        num_node_types (int): Number of node types in the incoming data.
+
+    """
+    def __init__(self, in_channels: int, out_channels: int, num_node_types: int, **kwargs):
+        super().__init__()
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.num_node_types = num_node_types
+
+        self.HeteroNodeEmbedLinears = torch.nn.ModuleList([torch.nn.Linear(in_channels, out_channels, **kwargs) for i in range(num_node_types)])
+    
+    def forward(self, x: Tensor, node_type: Tensor) -> Tensor:
+        emb_x = x.new_empty(x.shape[0], self.out_channels)
+        for idx in range(self.num_node_types):
+            node_mask = node_type == idx
+            emb_x[node_mask] = self.HeteroNodeEmbedLinears[idx](x[node_mask])
+        return emb_x
