@@ -31,7 +31,8 @@ train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False)
 
 
-def transition_up(x_sub, pos_sub, mlp_sub, x, pos, mlp, batch_sub=None, batch=None):
+def transition_up(x_sub, pos_sub, mlp_sub, x, pos, mlp, batch_sub=None,
+                  batch=None):
     '''
         Reduce features dimensionnality and interpolate back to higher
         resolution and cardinality

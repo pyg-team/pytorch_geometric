@@ -6,14 +6,14 @@ from torch.nn import Sequential as Seq, Linear as Lin, BatchNorm1d as BN, ReLU
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
-from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.pool import max_pool_neighbor_x, knn
+from torch_geometric.nn.pool import knn
 from torch_geometric.nn.conv import PointTransformerConv
 from torch_geometric.nn import global_mean_pool
 
 from torch_cluster import knn_graph
 from torch_cluster import fps
+from torch_scatter import scatter_max
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
 # In its current state, PointTransformerConv does not support the absence of
@@ -29,7 +29,7 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 class TransformerBlock(torch.nn.Module):
     def __init__(self, in_channels, out_channels, hidden_channels):
         super(TransformerBlock, self).__init__()
-        self.lin_in  = Lin(in_channels, hidden_channels)
+        self.lin_in = Lin(in_channels, hidden_channels)
         self.lin_out = Lin(out_channels, out_channels)
 
         self.pos_nn = Seq(
@@ -78,11 +78,13 @@ def transition_down(x, pos, mlp, batch=None, k=16):
     x = mlp(x)
 
     # Max pool onto each cluster the features from knn in points
-    data = Data(pos=pos, x=x, edge_index=id_k_neighbor, batch=batch)
-    max_pool_neighbor_x(data)
+    x_out, _ = scatter_max(x[id_k_neighbor[1]],
+                           id_k_neighbor[0],
+                           dim_size=id_clusters.size(0),
+                           dim=0)
 
     # keep only the clusters and their max-pooled features
-    new_pos, new_x = data.pos[id_clusters], data.x[id_clusters]
+    new_pos, new_x = pos[id_clusters], x_out
     return new_x, new_pos, sub_batch
 
 
