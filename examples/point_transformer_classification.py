@@ -29,14 +29,8 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 class TransformerBlock(torch.nn.Module):
     def __init__(self, in_channels, out_channels, hidden_channels):
         super(TransformerBlock, self).__init__()
-        self.lin_in = Seq(
-            Lin(in_channels, hidden_channels),
-            ReLU()
-        )
-        self.lin_out = Seq(
-            Lin(out_channels, out_channels),
-            ReLU()
-        )
+        self.lin_in  = Lin(in_channels, hidden_channels)
+        self.lin_out = Lin(out_channels, out_channels)
 
         self.pos_nn = Seq(
             Lin(3, 64),
@@ -58,9 +52,9 @@ class TransformerBlock(torch.nn.Module):
         )
 
     def forward(self, x, pos, edge_index):
-        x = self.lin_in(x)
+        x = self.lin_in(x).relu()
         x = self.transformer(x, pos, edge_index)
-        x = self.lin_out(x)
+        x = self.lin_out(x).relu()
 
         return x
 
