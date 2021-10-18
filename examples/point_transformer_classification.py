@@ -10,7 +10,7 @@ from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn.pool import max_pool_neighbor_x, knn
 from torch_geometric.nn.conv import PointTransformerConv
-from torch_geometric.graphgym.models import global_mean_pool
+from torch_geometric.nn import global_mean_pool
 
 from torch_cluster import knn_graph
 from torch_cluster import fps
