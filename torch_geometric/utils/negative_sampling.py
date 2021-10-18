@@ -40,7 +40,8 @@ def negative_sampling(edge_index: Tensor,
     :rtype: LongTensor
     """
     assert method in ['sparse', 'dense']
-    assert negative_sampling_feasible(edge_index, num_nodes, force_undirected)
+    assert _negative_sampling_feasible(
+        edge_index, num_nodes, force_undirected), "No valid negative edge"
 
     size = num_nodes
     bipartite = isinstance(size, (tuple, list))
@@ -109,8 +110,10 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    assert structured_negative_sampling_feasible(edge_index, num_nodes,
-                                                 contains_neg_self_loops)
+    assert _structured_negative_sampling_feasible(
+        edge_index, num_nodes,
+        contains_neg_self_loops), ("Some positve edges don't"
+                                   "have a valid negative edge")
 
     self_loops = torch.arange(num_nodes) * (num_nodes + 1)
     i, j = edge_index.to('cpu')
@@ -248,10 +251,9 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         return torch.stack([row, col], dim=0)
 
 
-def structured_negative_sampling_feasible(
+def _structured_negative_sampling_feasible(
         edge_index: Tensor, num_nodes: Optional[int] = None,
         contains_neg_self_loops: bool = True) -> bool:
-    r"""Check feasibility of :obj:`structured_negative_sampling`."""
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     max_num_neighbor = num_nodes
@@ -265,11 +267,11 @@ def structured_negative_sampling_feasible(
     return node_degree.sub(max_num_neighbor).nonzero().size(0) == num_nodes
 
 
-def negative_sampling_feasible(
-        edge_index: Tensor,
-        num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-        force_undirected: bool = False) -> bool:
-    r"""Check feasibility of :obj:`negative_sampling`."""
+def _negative_sampling_feasible(edge_index: Tensor,
+                                num_nodes: Optional[Union[int,
+                                                          Tuple[int,
+                                                                int]]] = None,
+                                force_undirected: bool = False) -> bool:
 
     if isinstance(num_nodes, Tuple):
         force_undirected = False
