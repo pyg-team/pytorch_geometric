@@ -56,7 +56,7 @@ class CGConv(MessagePassing):
         if batch_norm:
             self.bn = BatchNorm1d(channels[1])
         else:
-            self.register_parameter('bn', None)
+            self.bn = None
 
         self.reset_parameters()
 
