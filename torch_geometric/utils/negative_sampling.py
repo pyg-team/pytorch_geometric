@@ -40,7 +40,6 @@ def negative_sampling(edge_index: Tensor,
     :rtype: LongTensor
     """
     assert method in ['sparse', 'dense']
-    assert negative_sampling_feasible(edge_index, num_nodes, force_undirected)
 
     size = num_nodes
     bipartite = isinstance(size, (tuple, list))
@@ -108,9 +107,6 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
     :rtype: (LongTensor, LongTensor, LongTensor)
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
-    assert structured_negative_sampling_feasible(edge_index, num_nodes,
-                                                 contains_neg_self_loops)
 
     self_loops = torch.arange(num_nodes) * (num_nodes + 1)
     i, j = edge_index.to('cpu')
