@@ -123,27 +123,32 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.00)
 def train():
     model.train()
     optimizer.zero_grad()
-    out = model(train_data.x_dict, train_data.edge_index_dict, train_data[('user', 'rates', 'movie')].edge_label_index)
+    out = model(train_data.x_dict, 
+                train_data.edge_index_dict, 
+                train_data[('user', 'rates', 'movie')].edge_label_index)
     
     # Get true ratings
     y = train_data[('user','rates','movie')].edge_label
-    y = torch.squeeze(y)
+    target = torch.squeeze(y)
     
     ## Apply multi class loss
-    F.nll_loss(out, torch.squeeze(y)).backward()
+    F.nll_loss(out, target).backward()
     optimizer.step()
 
 def test():
     model.eval()
     accs = []
     for d in [train_data, val_data, test_data]:
-        logits = model(d.x_dict, d.edge_index_dict, d[('user', 'rates', 'movie')].edge_label_index)
+        logits = model(d.x_dict, 
+                       d.edge_index_dict, 
+                       d[('user', 'rates', 'movie')].edge_label_index)
         
         pred = logits.max(1)[1]
         y = d[('user','rates','movie')].edge_label
-        y = torch.squeeze(y)
+        target = torch.squeeze(y)
         
-        acc = pred.eq(y).sum().item() / y.numel()
+        # Calculate average accuracy
+        acc = pred.eq(target).sum().item() / target.numel()
         accs.append(acc)
     return accs
 
@@ -159,4 +164,5 @@ for epoch in range(1, 400):
             
         log = 'Epoch: {:03d}, Train: {:.4f}, Val: {:.4f}, Test: {:.4f}'
         #print(log.format(epoch, train_acc, best_val_acc, test_acc))
+        # Printing current validation and test accuracy for debugging
         print(log.format(epoch, train_acc, val_acc, tmp_test_acc))
