@@ -1,4 +1,3 @@
-import os
 import os.path as osp
 
 import torch
@@ -83,6 +82,23 @@ class IdentityEncoder(object):
 
 
 class MovieLense(InMemoryDataset):
+    r"""A heterogeneous rating dataset, assembled by GroupLens Research, from 
+    the `MovieLens web site <https://movielens.org>`_, consisting of nodes of
+    type :obj:`"movie"` and :obj:`"user"`. User ratings for movies are available 
+    as ground truth labels for the edges  between the users and the 
+    movies ('user', 'rates', 'movie').
+
+    Args:
+        root (string): Root directory where the dataset should be saved.
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.HeteroData` object and returns a
+            transformed version. The data object will be transformed before
+            every access. (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.HeteroData` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+    """
     
     url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
