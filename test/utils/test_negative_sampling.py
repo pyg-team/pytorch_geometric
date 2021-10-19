@@ -3,8 +3,8 @@ from torch_geometric.utils import (to_undirected, is_undirected,
                                    contains_self_loops)
 from torch_geometric.utils.negative_sampling import (edge_index_to_vector,
                                                      vector_to_edge_index)
-from torch_geometric.utils.negative_sampling import (
-    negative_sampling_feasible, structured_negative_sampling_feasible)
+from torch_geometric.utils import (negative_sampling_feasible,
+                                   structured_negative_sampling_feasible)
 from torch_geometric.utils import (negative_sampling,
                                    structured_negative_sampling,
                                    batched_negative_sampling)
@@ -123,7 +123,13 @@ def test_negative_sampling_feasible():
     edge_index = torch.LongTensor([[0, 0, 1, 1, 2], [1, 2, 0, 2, 0]])
     assert negative_sampling_feasible(edge_index, 3, False)
 
-    # undirected
+    # One node connected to all other nodes:
+    edge_index = torch.LongTensor([[0, 0, 0, 0, 2, 2],
+                                   [1, 2, 3, 4, 0, 1]])
+    assert negative_sampling_feasible(edge_index, 5, False)
+    assert negative_sampling_feasible(edge_index, 5, True)
+
+    # Undirected:
     edge_index = torch.as_tensor([[0, 0, 1], [1, 2, 2]])
     assert not negative_sampling_feasible(edge_index, 3, True)
     assert negative_sampling_feasible(edge_index, 3, False)

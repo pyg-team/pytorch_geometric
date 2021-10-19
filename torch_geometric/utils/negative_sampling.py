@@ -251,7 +251,22 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
 def structured_negative_sampling_feasible(
         edge_index: Tensor, num_nodes: Optional[int] = None,
         contains_neg_self_loops: bool = True) -> bool:
-    r"""Check feasibility of :obj:`structured_negative_sampling`."""
+    r"""Returns :obj:`True` if
+    :obj:`torch_geometric.utils.structured_negative_sampling` is feasible
+    on the graph given by :obj:`edge_index`.
+    :obj:`torch_geometric.utils.structured_negative_sampling` is infeasible
+    if atleast one node is connected to all valid neighbors.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        contains_neg_self_loops (bool, optional): If set to
+            :obj:`False`, sampled negative edges will not contain self loops.
+            (default: :obj:`True`)
+
+    :rtype: bool
+    """
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     max_num_neighbor = num_nodes
@@ -259,17 +274,36 @@ def structured_negative_sampling_feasible(
 
     if not contains_neg_self_loops:
         edge_index, _ = remove_self_loops(edge_index)
-        max_num_neighbor -= 1
+        max_num_neighbor -= 1  # reduce number of valid neighbors
 
     node_degree = degree(edge_index[0], num_nodes)
-    return node_degree.sub(max_num_neighbor).nonzero().size(0) == num_nodes
+    # True if ALL nodes are not connected to all valid neighbors
+    return torch.all(node_degree < max_num_neighbor)
 
 
-def negative_sampling_feasible(
-        edge_index: Tensor,
-        num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-        force_undirected: bool = False) -> bool:
-    r"""Check feasibility of :obj:`negative_sampling`."""
+def negative_sampling_feasible(edge_index: Tensor,
+                               num_nodes: Optional[Union[int,
+                                                         Tuple[int,
+                                                               int]]] = None,
+                               force_undirected: bool = False) -> bool:
+    r"""Returns :obj:`True` if
+    :obj:`torch_geometric.utils.negative_sampling` is feasible
+    on the graph given by :obj:`edge_index`.
+    :obj:`torch_geometric.utils.negative_sampling` is infeasible
+    if graph is fully connected.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        num_nodes (int or Tuple[int, int], optional): The number of nodes,
+            *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
+            If given as a tuple, then :obj:`edge_index` is interpreted as a
+            bipartite graph with shape :obj:`(num_src_nodes, num_dst_nodes)`.
+            (default: :obj:`None`)
+        force_undirected (bool, optional): If set to :obj:`True`, sampled
+            negative edges will be undirected. (default: :obj:`False`)
+
+    :rtype: bool
+    """
 
     if isinstance(num_nodes, Tuple):
         force_undirected = False
@@ -283,6 +317,6 @@ def negative_sampling_feasible(
         max_num_neighbor -= 1
 
     edge_index = to_undirected(edge_index) if force_undirected else edge_index
-
     node_degree = degree(edge_index[0], num_nodes)
-    return node_degree.sub(max_num_neighbor).nonzero().size(0) != 0
+    # True if ANY node is not connected to all valid neighbors
+    return torch.any(node_degree < max_num_neighbor)
