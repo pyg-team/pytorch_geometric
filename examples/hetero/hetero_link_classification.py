@@ -29,6 +29,7 @@ del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 transform = RandomLinkSplit(
     num_val=0.05,
     num_test=0.1,
+    disjoint_train_ratio=0.2,
     neg_sampling_ratio=0.0,
     edge_types=[('user', 'rates', 'movie')],
     rev_edge_types=[('movie', 'rev_rates', 'user')],
@@ -117,7 +118,7 @@ model(train_data.x_dict, train_data.edge_index_dict, train_data[('user', 'rates'
 print(f"Number of model parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}")
 
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.00)
 
 def train():
     model.train()
