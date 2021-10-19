@@ -4,7 +4,7 @@ from torch_geometric.utils import (to_undirected, is_undirected,
 from torch_geometric.utils.negative_sampling import (edge_index_to_vector,
                                                      vector_to_edge_index)
 from torch_geometric.utils.negative_sampling import (
-    _negative_sampling_feasible, _structured_negative_sampling_feasible)
+    negative_sampling_feasible, structured_negative_sampling_feasible)
 from torch_geometric.utils import (negative_sampling,
                                    structured_negative_sampling,
                                    batched_negative_sampling)
@@ -114,25 +114,25 @@ def test_structured_negative_sampling():
 def test_negative_sampling_feasible():
     edge_index = torch.LongTensor([[0, 0, 1, 1, 2, 2, 2],
                                    [1, 2, 0, 2, 0, 1, 1]])
-    assert not _structured_negative_sampling_feasible(edge_index, 3, False)
-    assert _structured_negative_sampling_feasible(edge_index, 3, True)
-    assert _structured_negative_sampling_feasible(edge_index, 4, False)
-    assert not _negative_sampling_feasible(edge_index, 3)
-    assert _negative_sampling_feasible(edge_index, 4)
+    assert not structured_negative_sampling_feasible(edge_index, 3, False)
+    assert structured_negative_sampling_feasible(edge_index, 3, True)
+    assert structured_negative_sampling_feasible(edge_index, 4, False)
+    assert not negative_sampling_feasible(edge_index, 3)
+    assert negative_sampling_feasible(edge_index, 4)
 
     edge_index = torch.LongTensor([[0, 0, 1, 1, 2], [1, 2, 0, 2, 0]])
-    assert _negative_sampling_feasible(edge_index, 3, False)
+    assert negative_sampling_feasible(edge_index, 3, False)
 
     # undirected
     edge_index = torch.as_tensor([[0, 0, 1], [1, 2, 2]])
-    assert not _negative_sampling_feasible(edge_index, 3, True)
-    assert _negative_sampling_feasible(edge_index, 3, False)
+    assert not negative_sampling_feasible(edge_index, 3, True)
+    assert negative_sampling_feasible(edge_index, 3, False)
 
     # bipartite
     edge_index = torch.as_tensor([[0, 0, 1, 1, 2, 2], [0, 1, 0, 1, 0, 1]])
-    assert not _negative_sampling_feasible(edge_index, (3, 2))
+    assert not negative_sampling_feasible(edge_index, (3, 2))
     edge_index = torch.as_tensor([[0, 0, 1, 1, 2], [0, 1, 0, 1, 0]])
-    assert _negative_sampling_feasible(edge_index, (3, 2))
+    assert negative_sampling_feasible(edge_index, (3, 2))
 
 
 def test_batched_negative_sampling():
