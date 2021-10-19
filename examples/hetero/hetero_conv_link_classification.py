@@ -130,10 +130,11 @@ model = model.to(device)
 train_data, val_data, test_data = train_data.to(device), val_data.to(device), test_data.to(device)
 
 # Get number of model parameters
-# (Due to lazy initialisation we need to run one model step so the number of parameters can be inferred)
-model(train_data.x_dict, 
-      train_data.edge_index_dict, 
-      train_data[('user', 'rates', 'movie')].edge_label_index)
+# Due to lazy initialisation we need to run one model step so the number of parameters can be inferred
+with torch.no_grad():
+    model(train_data.x_dict, 
+        train_data.edge_index_dict, 
+        train_data[('user', 'rates', 'movie')].edge_label_index)
 print(f"Number of model parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}")
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0)
