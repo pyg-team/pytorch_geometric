@@ -153,7 +153,7 @@ def test():
     return accs
 
 best_val_acc = test_acc = 0
-for epoch in range(1, 400):
+for epoch in range(1, 201):
     train()
     
     if (epoch % 10 == 0) or (epoch == 1):
