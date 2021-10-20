@@ -60,8 +60,8 @@ def negative_sampling(edge_index: Tensor,
 
     neg_idx = None
     if method == 'dense':
-        # The dense version creates a mask of shape `population` to check if
-        # for invalid samples.
+        # The dense version creates a mask of shape `population` to check for
+        # invalid samples.
         mask = idx.new_ones(population, dtype=torch.bool)
         mask[idx] = False
         for _ in range(3):  # Number of tries to sample negative indices.
