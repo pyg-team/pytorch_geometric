@@ -5,7 +5,7 @@ import random
 import torch
 import numpy as np
 from torch import Tensor
-from torch_geometric.utils import degree, remove_self_loops, to_undirected
+from torch_geometric.utils import degree, remove_self_loops
 
 from .num_nodes import maybe_num_nodes
 
@@ -276,44 +276,3 @@ def structured_negative_sampling_feasible(
     node_degree = degree(edge_index[0], num_nodes)
     # True if ALL nodes are not connected to all valid neighbors
     return torch.all(node_degree < max_num_neighbor)
-
-
-def negative_sampling_feasible(edge_index: Tensor,
-                               num_nodes: Optional[Union[int,
-                                                         Tuple[int,
-                                                               int]]] = None,
-                               force_undirected: bool = False) -> bool:
-    r"""Returns :obj:`True` if
-    :obj:`torch_geometric.utils.negative_sampling` is feasible
-    on the graph given by :obj:`edge_index`.
-    :obj:`torch_geometric.utils.negative_sampling` is infeasible
-    if graph is fully connected.
-
-    Args:
-        edge_index (LongTensor): The edge indices.
-        num_nodes (int or Tuple[int, int], optional): The number of nodes,
-            *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
-            If given as a tuple, then :obj:`edge_index` is interpreted as a
-            bipartite graph with shape :obj:`(num_src_nodes, num_dst_nodes)`.
-            (default: :obj:`None`)
-        force_undirected (bool, optional): If set to :obj:`True`, sampled
-            negative edges will be undirected. (default: :obj:`False`)
-
-    :rtype: bool
-    """
-
-    if isinstance(num_nodes, Tuple):
-        force_undirected = False
-        max_num_neighbor = num_nodes[1]
-        num_nodes = num_nodes[0]
-    else:
-        num_nodes = maybe_num_nodes(edge_index, num_nodes)
-        max_num_neighbor = num_nodes
-        edge_index = torch.unique(edge_index.T, dim=0).T
-        edge_index, _ = remove_self_loops(edge_index)
-        max_num_neighbor -= 1
-
-    edge_index = to_undirected(edge_index) if force_undirected else edge_index
-    node_degree = degree(edge_index[0], num_nodes)
-    # True if ANY node is not connected to all valid neighbors
-    return torch.any(node_degree < max_num_neighbor)
