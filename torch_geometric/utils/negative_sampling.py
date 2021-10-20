@@ -49,6 +49,7 @@ def negative_sampling(edge_index: Tensor,
 
     idx, population = edge_index_to_vector(edge_index, size, bipartite,
                                            force_undirected)
+    assert idx.numel() < population, ("No negative edges to sample")
 
     if num_neg_samples is None:
         num_neg_samples = edge_index.size(1)
