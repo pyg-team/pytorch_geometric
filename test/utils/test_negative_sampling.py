@@ -3,10 +3,10 @@ from torch_geometric.utils import (to_undirected, is_undirected,
                                    contains_self_loops)
 from torch_geometric.utils.negative_sampling import (edge_index_to_vector,
                                                      vector_to_edge_index)
-from torch_geometric.utils import structured_negative_sampling_feasible
 from torch_geometric.utils import (negative_sampling,
+                                   batched_negative_sampling,
                                    structured_negative_sampling,
-                                   batched_negative_sampling)
+                                   structured_negative_sampling_feasible)
 
 
 def is_negative(edge_index, neg_edge_index, size, bipartite):
@@ -102,7 +102,7 @@ def test_structured_negative_sampling():
     neg_adj[i, k] = 1
     assert (adj & neg_adj).sum() == 0
 
-    # test no self loops
+    # Test with no self-loops:
     edge_index = torch.LongTensor([[0, 0, 1, 1, 2], [1, 2, 0, 2, 1]])
     i, j, k = structured_negative_sampling(edge_index, num_nodes=4,
                                            contains_neg_self_loops=False)
