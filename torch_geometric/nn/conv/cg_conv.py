@@ -53,14 +53,18 @@ class CGConv(MessagePassing):
 
         self.lin_f = Linear(sum(channels) + dim, channels[1], bias=bias)
         self.lin_s = Linear(sum(channels) + dim, channels[1], bias=bias)
-        self.bn = BatchNorm1d(channels[1])
+        if batch_norm:
+            self.bn = BatchNorm1d(channels[1])
+        else:
+            self.bn = None
 
         self.reset_parameters()
 
     def reset_parameters(self):
         self.lin_f.reset_parameters()
         self.lin_s.reset_parameters()
-        self.bn.reset_parameters()
+        if self.bn is not None:
+            self.bn.reset_parameters()
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
@@ -70,7 +74,7 @@ class CGConv(MessagePassing):
 
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=size)
-        out = self.bn(out) if self.batch_norm else out
+        out = out if self.bn is None else self.bn(out)
         out += x[1]
         return out
 
