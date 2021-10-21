@@ -99,12 +99,16 @@ class Logger(object):
     def classification_binary(self):
         true, pred_score = torch.cat(self._true), torch.cat(self._pred)
         pred_int = self._get_pred_int(pred_score)
+        try:
+            r_a_score = roc_auc_score(true, pred_score)
+        except ValueError:
+            r_a_score = 0.0
         return {
             'accuracy': round(accuracy_score(true, pred_int), cfg.round),
             'precision': round(precision_score(true, pred_int), cfg.round),
             'recall': round(recall_score(true, pred_int), cfg.round),
             'f1': round(f1_score(true, pred_int), cfg.round),
-            'auc': round(roc_auc_score(true, pred_score), cfg.round),
+            'auc': round(r_a_score, cfg.round),
         }
 
     def classification_multi(self):
