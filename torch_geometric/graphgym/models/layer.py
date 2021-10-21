@@ -42,6 +42,7 @@ class LayerConfig:
 
     # other parameters.
     keep_edge: float = 0.5
+    aggr: str = "add"
 
 
 def new_layer_config(dim_in, dim_out, num_layers, has_act, has_bias, cfg):
@@ -61,7 +62,9 @@ def new_layer_config(dim_in, dim_out, num_layers, has_act, has_bias, cfg):
         has_bias=has_bias,
         keep_edge=cfg.gnn.keep_edge,
         dim_inner=cfg.gnn.dim_inner,
-        num_layers=num_layers)
+        num_layers=num_layers,
+        aggr=cfg.gnn.agg,
+    )
 
 
 # General classes
@@ -290,7 +293,9 @@ class GCNConv(nn.Module):
         self.model = pyg.nn.GCNConv(
             layer_config.dim_in,
             layer_config.dim_out,
-            bias=layer_config.has_bias)
+            bias=layer_config.has_bias,
+            aggr=layer_config.aggr,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
@@ -307,7 +312,9 @@ class SAGEConv(nn.Module):
         self.model = pyg.nn.SAGEConv(
             layer_config.dim_in,
             layer_config.dim_out,
-            bias=layer_config.has_bias)
+            bias=layer_config.has_bias,
+            aggr=layer_config.aggr,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
@@ -324,7 +331,9 @@ class GATConv(nn.Module):
         self.model = pyg.nn.GATConv(
             layer_config.dim_in,
             layer_config.dim_out,
-            bias=layer_config.has_bias)
+            bias=layer_config.has_bias,
+            aggr=layer_config.aggr,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
@@ -342,7 +351,8 @@ class GINConv(nn.Module):
             nn.Linear(layer_config.dim_in, layer_config.dim_out),
             nn.ReLU(),
             nn.Linear(layer_config.dim_out, layer_config.dim_out),
-        self.model = pyg.nn.GINConv(gin_nn)
+        )
+        self.model = pyg.nn.GINConv(gin_nn, aggr=layer_config.aggr)
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
@@ -362,6 +372,7 @@ class SplineConv(nn.Module):
             dim=1,
             kernel_size=2,
             bias=layer_config.has_bias,
+            aggr=layer_config.aggr,
         )
 
     def forward(self, batch):
