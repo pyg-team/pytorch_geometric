@@ -5,7 +5,7 @@ import random
 import torch
 import numpy as np
 from torch import Tensor
-from torch_geometric.utils import degree, remove_self_loops
+from torch_geometric.utils import degree, remove_self_loops, coalesce
 
 from .num_nodes import maybe_num_nodes
 
@@ -109,25 +109,26 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    self_loops = torch.arange(num_nodes) * (num_nodes + 1)
-    i, j = edge_index.to('cpu')
-    idx_1 = i * num_nodes + j
-    idx_1 = idx_1 if contains_neg_self_loops else torch.cat(
-        [idx_1, self_loops])
+    row, col = edge_index.cpu()
+    pos_idx = row * num_nodes + col
+    if not contains_neg_self_loops:
+        loop_idx = torch.arange(num_nodes) * (num_nodes + 1)
+        pos_idx = torch.cat([pos_idx, loop_idx], dim=0)
 
-    k = torch.randint(num_nodes, (i.size(0), ), dtype=torch.long)
-    idx_2 = i * num_nodes + k
+    rand = torch.randint(num_nodes, (row.size(0), ), dtype=torch.long)
+    neg_idx = row * num_nodes + rand
 
-    mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
+    mask = torch.from_numpy(np.isin(neg_idx, pos_idx)).to(torch.bool)
     rest = mask.nonzero(as_tuple=False).view(-1)
     while rest.numel() > 0:  # pragma: no cover
-        tmp = torch.randint(num_nodes, (rest.numel(), ), dtype=torch.long)
-        idx_2 = i[rest] * num_nodes + tmp
-        mask = torch.from_numpy(np.isin(idx_2, idx_1)).to(torch.bool)
-        k[rest] = tmp
-        rest = rest[mask.nonzero(as_tuple=False).view(-1)]
+        tmp = torch.randint(num_nodes, (rest.size(0), ), dtype=torch.long)
+        rand[rest] = tmp
+        neg_idx = row[rest] * num_nodes + tmp
 
-    return edge_index[0], edge_index[1], k.to(edge_index.device)
+        mask = torch.from_numpy(np.isin(neg_idx, pos_idx)).to(torch.bool)
+        rest = rest[mask]
+
+    return edge_index[0], edge_index[1], rand.to(edge_index.device)
 
 
 def batched_negative_sampling(edge_index, batch, num_neg_samples=None,
@@ -249,10 +250,10 @@ def structured_negative_sampling_feasible(
         edge_index: Tensor, num_nodes: Optional[int] = None,
         contains_neg_self_loops: bool = True) -> bool:
     r"""Returns :obj:`True` if
-    :obj:`torch_geometric.utils.structured_negative_sampling` is feasible
+    :meth:`~torch_geometric.utils.structured_negative_sampling` is feasible
     on the graph given by :obj:`edge_index`.
-    :obj:`torch_geometric.utils.structured_negative_sampling` is infeasible
-    if atleast one node is connected to all valid neighbors.
+    :obj:`~torch_geometric.utils.structured_negative_sampling` is infeasible
+    if atleast one node is connected to all other nodes.
 
     Args:
         edge_index (LongTensor): The edge indices.
@@ -264,15 +265,15 @@ def structured_negative_sampling_feasible(
 
     :rtype: bool
     """
-
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-    max_num_neighbor = num_nodes
-    edge_index = torch.unique(edge_index.T, dim=0).T
+    max_num_neighbors = num_nodes
+
+    edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     if not contains_neg_self_loops:
         edge_index, _ = remove_self_loops(edge_index)
-        max_num_neighbor -= 1  # reduce number of valid neighbors
+        max_num_neighbors -= 1  # Reduce number of valid neighbors
 
-    node_degree = degree(edge_index[0], num_nodes)
-    # True if ALL nodes are not connected to all valid neighbors
-    return torch.all(node_degree < max_num_neighbor)
+    deg = degree(edge_index[0], num_nodes)
+    # True if there exists no node that is connected to all other nodes.
+    return bool(torch.all(deg < max_num_neighbors))
