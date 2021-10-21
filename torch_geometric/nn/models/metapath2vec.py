@@ -224,7 +224,8 @@ class MetaPath2Vec(torch.nn.Module):
                          test_y.detach().cpu().numpy())
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.embedding.weight.size(0)}, '
+        return (f'{self.__class__.__name__}('
+                f'{self.embedding.weight.size(0) - 1}, '
                 f'{self.embedding.weight.size(1)})')
 
 
