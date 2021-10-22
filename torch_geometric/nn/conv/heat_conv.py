@@ -1,6 +1,6 @@
 import torch
+from torch import Tensor, LongTensor
 from torch_geometric.nn import MessagePassing
-
 from torch_geometric.nn.dense.linear import HeteroLinear
 
 class HEATConv(MessagePassing):
@@ -56,7 +56,7 @@ class HEATConv(MessagePassing):
         return emb_edge_attributes, emb_edge_types
   
 
-    def forward(self, x, edge_index, edge_attr, node_type, edge_type):
+    def forward(self, x: Tensor, edge_index: Adj, edge_attr: Tensor, node_type: LongTensor, edge_type: LongTensor):
         """
         Args:
             x:[num_node, in_channels]
