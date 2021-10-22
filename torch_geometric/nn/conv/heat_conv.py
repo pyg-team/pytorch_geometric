@@ -55,16 +55,14 @@ class HEATConv(MessagePassing):
         self.leaky_relu = nn.LeakyReLU(0.2)
         self.soft_max = nn.Softmax(dim=1)
     
-    def embed_nodes(self, x, node_type_list):
-        ''' embed node attributes according to their types. '''
-        return self.het_node_lin(x, node_type_list)
     
     def embed_edges(self, edge_attrs, edge_types):
         ''' embed edge attributes and edge types respectively. '''
         emb_edge_attributes = self.leaky_relu(self.edge_attr_emb(edge_attrs))
         emb_edge_types = self.leaky_relu(self.edge_type_emb(torch.tensor(edge_types)))
         return emb_edge_attributes, emb_edge_types
-    
+  
+
     def forward(self, x, edge_index, edge_attr, node_type, edge_type):
         """
         Args:
