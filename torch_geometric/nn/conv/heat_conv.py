@@ -21,7 +21,7 @@ class HEATConv(MessagePassing):
                         edge_attr_emb_size=5, edge_type_emb_size=5, node_emb_size=5, 
                         out_channels=6, heads=3, concat=True, **kwargs):
 
-        super().__init__(aggr='add')
+        super().__init__(aggr='add', **kwargs)
         ## Parameters
         self.in_channels = in_channels 
         self.edge_dim = edge_dim 
