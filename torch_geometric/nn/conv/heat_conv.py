@@ -39,7 +39,7 @@ class HEATConv(MessagePassing):
         #### Layers ####
         ## Node Embeddings 
         ''' assuming that different nodes have the same dimension, but different vector space. '''
-        self.het_node_lin = HeteroNodeLinear(in_channels=self.in_channels, 
+        self.het_node_lin = HeteroLinear(in_channels=self.in_channels, 
                                              num_node_types=self.num_node_types, 
                                              node_emb_size=self.node_emb_size)
         ## Edge Embeddings
