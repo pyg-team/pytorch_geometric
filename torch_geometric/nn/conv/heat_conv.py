@@ -16,10 +16,10 @@ class HEATConv(MessagePassing):
        transform nodes from different vector space to the same vector space.
     2. edges are assumed to have different types but contains the same attributes.
     '''
-    def __init__(self,  in_channels=4, edge_dim=2, 
-                        num_node_types = 3, num_edge_types = 4,
-                        edge_attr_emb_size=5, edge_type_emb_size=5, node_emb_size=5, 
-                        out_channels=6, heads=3, concat=True, **kwargs):
+    def __init__(self,  in_channels: int, edge_dim: int, 
+                        num_node_types: int, num_edge_types: int,
+                        edge_attr_emb_size: int, edge_type_emb_size: int, node_emb_size: int, 
+                        out_channels: int, heads: int, concat: bool = True, **kwargs):
 
         super().__init__(aggr='add', **kwargs)
         ## Parameters
