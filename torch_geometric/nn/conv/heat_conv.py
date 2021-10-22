@@ -52,7 +52,7 @@ class HEATConv(MessagePassing):
     def embed_edges(self, edge_attrs, edge_types):
         ''' embed edge attributes and edge types respectively. '''
         emb_edge_attributes = self.leaky_relu(self.edge_attr_emb(edge_attrs))
-        emb_edge_types = self.leaky_relu(self.edge_type_emb(torch.tensor(edge_types)))
+        emb_edge_types = self.leaky_relu(self.edge_type_emb(edge_types))
         return emb_edge_attributes, emb_edge_types
   
 
