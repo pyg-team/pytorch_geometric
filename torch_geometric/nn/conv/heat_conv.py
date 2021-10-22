@@ -75,7 +75,7 @@ class HEATConv(MessagePassing):
             edge_type: [number_edges, 1] edge_type is an integer
         """
         # Node-type specific transformation
-        node_emb = self.embed_nodes(x, node_type)
+        node_emb = self.het_node_lin(x, node_type)
 
         # Edge attribute and type transformation
         edge_attr_emb, edge_type_emb = self.embed_edges(edge_attr, edge_type)
