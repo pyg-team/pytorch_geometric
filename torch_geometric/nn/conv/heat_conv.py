@@ -33,8 +33,9 @@ class HEATConv(MessagePassing):
         ## Node Embeddings 
         ''' assuming that different nodes have the same dimension, but different vector space. '''
         self.het_node_lin = HeteroLinear(in_channels=self.in_channels, 
-                                             num_node_types=self.num_node_types, 
-                                             node_emb_size=self.node_emb_size)
+                                         out_channels=self.node_emb_size,
+                                         num_node_types=self.num_node_types, 
+                                         )
         ## Edge Embeddings
         ''' assuming that different edges have different types but contains the same kind of attributes. '''
         self.edge_type_emb = torch.nn.Embedding(self.num_edge_types, self.edge_type_emb_size)
