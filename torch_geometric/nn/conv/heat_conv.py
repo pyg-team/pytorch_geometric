@@ -19,7 +19,7 @@ class HEATConv(MessagePassing):
     def __init__(self,  in_channels=4, edge_dim=2, 
                         num_node_types = 3, num_edge_types = 4,
                         edge_attr_emb_size=5, edge_type_emb_size=5, node_emb_size=5, 
-                        out_channels=6, heads=3, concat=True):
+                        out_channels=6, heads=3, concat=True, **kwargs):
 
         super().__init__(aggr='add')
         ## Parameters
