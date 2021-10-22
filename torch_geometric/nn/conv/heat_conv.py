@@ -1,25 +1,18 @@
 import torch
-import torch.nn as nn
 from torch_geometric.nn import MessagePassing
 
 from torch_geometric.nn.dense.linear import HeteroLinear
 
-def flatten_a_list_of_list(list_of_list):
-    flat_list = []
-    for l1 in list_of_list:
-        flat_list += l1
-    return flat_list
-
 class HEATConv(MessagePassing):
     '''
-    1. type-specific transformation for nodes of different types: ('n1', 'n2').
+    1. type-specific transformation for nodes of different types.
        transform nodes from different vector space to the same vector space.
-    2. edges are assumed to have different types but contains the same attributes.
+    2. edges are assumed to have different types but contains the same kind of attributes.
     '''
-    def __init__(self,  in_channels=4, edge_dim=2, 
-                        num_node_types = 3, num_edge_types = 4,
-                        edge_attr_emb_size=5, edge_type_emb_size=5, node_emb_size=5, 
-                        out_channels=6, heads=3, concat=True, **kwargs):
+    def __init__(self,  in_channels: int, edge_dim: int, 
+                        num_node_types: int, num_edge_types: int,
+                        edge_attr_emb_size: int, edge_type_emb_size: int, node_emb_size: int, 
+                        out_channels: int, heads: int, concat: bool = True, **kwargs):
 
         super().__init__(aggr='add', **kwargs)
         ## Parameters
@@ -44,16 +37,16 @@ class HEATConv(MessagePassing):
                                              node_emb_size=self.node_emb_size)
         ## Edge Embeddings
         ''' assuming that different edges have different types but contains the same kind of attributes. '''
-        self.edge_type_emb = nn.Embedding(self.num_edge_types, self.edge_type_emb_size)
-        self.edge_attr_emb = nn.Linear(self.edge_dim, self.edge_attr_emb_size, bias=False) 
+        self.edge_type_emb = torch.nn.Embedding(self.num_edge_types, self.edge_type_emb_size)
+        self.edge_attr_emb = torch.nn.Linear(self.edge_dim, self.edge_attr_emb_size, bias=False) 
 
         ## Transform the concatenated edge_nbrs feature to out_channels to update the next node feature
-        self.node_update_emb = nn.Linear(self.edge_attr_emb_size + self.node_emb_size, self.out_channels, bias=False) 
+        self.node_update_emb = torch.nn.Linear(self.edge_attr_emb_size + self.node_emb_size, self.out_channels, bias=False) 
 
         ## Attention
-        self.attention_nn = nn.Linear(self.edge_attr_emb_size + self.edge_type_emb_size + 2*self.node_emb_size, 1*self.heads, bias=False)
-        self.leaky_relu = nn.LeakyReLU(0.2)
-        self.soft_max = nn.Softmax(dim=1)
+        self.attention_nn = torch.nn.Linear(self.edge_attr_emb_size + self.edge_type_emb_size + 2*self.node_emb_size, 1*self.heads, bias=False)
+        self.leaky_relu = torch.nn.LeakyReLU(0.2)
+        self.soft_max = torch.nn.Softmax(dim=1)
     
     
     def embed_edges(self, edge_attrs, edge_types):
@@ -111,44 +104,6 @@ class HEATConv(MessagePassing):
         
         return torch.flatten(x*norm, start_dim=1) if self.concat else torch.mean(x*norm, dim=2)
         
-if __name__ == '__main__':
-    from torch_geometric.data import Data, DataLoader
-    
-    ## Prepare a data
-    node_features = torch.randn((3, 4))
-    
-    node_type = [0, 1, 2]
-    edge_type = torch.tensor([[0, 2, 1, 1, 2]], dtype=torch.long)
-    edge_type = [0, 2, 1, 1, 2]
-    edge_attr = torch.randn((5, 2))
-    edge_index = torch.tensor([[0, 0, 1, 2, 0],
-                               [1, 2, 0, 0, 0]])
-    data_1 = Data(  x=node_features, edge_index=edge_index, 
-                    node_type_list=node_type, edge_type_list=edge_type,
-                    edge_type=edge_type, edge_attr=edge_attr )
-
-    data_2 = data_1
-
-    dataloader = DataLoader([data_1, data_2], batch_size=2)
-
-    ## initialize the HEATConv layers accordingly
-    heatlayer_1 = HEATConv(in_channels=4, num_node_types = 3, num_edge_types = 4, heads=3, concat=True)
-    heat_2_in_ch = heatlayer_1.out_channels*heatlayer_1.heads if heatlayer_1.concat else heatlayer_1.out_channels
-    heatlayer_2 = HEATConv(in_channels=heat_2_in_ch, num_node_types = 3, num_edge_types = 4, concat=False)
-    heat_3_in_ch = heatlayer_2.out_channels*heatlayer_2.heads if heatlayer_2.concat else heatlayer_2.out_channels
-    heatlayer_3 = HEATConv(in_channels=heat_3_in_ch, num_node_types = 3, num_edge_types = 4, concat=False)
-    
-    for d in dataloader:
-        # print(d)
-        d.flat_node_type_list = flatten_a_list_of_list(d.node_type_list)
-        d.flat_edge_type_list = flatten_a_list_of_list(d.edge_type_list)
-        # print(d)
-
-        x_next = heatlayer_1(d.x, d.edge_index, d.edge_attr, d.flat_node_type_list, d.flat_edge_type_list)
-        x_next = heatlayer_2(x_next, d.edge_index, d.edge_attr, d.flat_node_type_list, d.flat_edge_type_list)
-        x_next = heatlayer_3(x_next, d.edge_index, d.edge_attr, d.flat_node_type_list, d.flat_edge_type_list)
-        print(x_next.shape)
-        # break
 
 
 
