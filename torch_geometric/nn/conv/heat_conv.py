@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch_geometric.nn import MessagePassing
 
-from hetero_node_linear import HeteroNodeLinear
+from torch_geometric.nn.dense.linear import HeteroLinear
 
 def flatten_a_list_of_list(list_of_list):
     flat_list = []
