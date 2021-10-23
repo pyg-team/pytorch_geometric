@@ -38,7 +38,7 @@ datasets = LazyLoader('datasets', globals(), 'torch_geometric.datasets')
 nn = LazyLoader('nn', globals(), 'torch_geometric.nn')
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')
 
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 __all__ = [
     'seed_everything',
