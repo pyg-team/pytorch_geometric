@@ -475,7 +475,7 @@ class GDC(BaseTransform):
         """
         edge_weight = torch.Tensor(np.concatenate(neighbor_weights)).to(device)
         i = np.repeat(np.arange(len(neighbors)),
-                      np.fromiter(map(len, neighbors), dtype=np.int))
+                      np.fromiter(map(len, neighbors), dtype=int))
         j = np.concatenate(neighbors)
         if normalization == 'col':
             edge_index = torch.Tensor(np.vstack([j, i])).to(device)
