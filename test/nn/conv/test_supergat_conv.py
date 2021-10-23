@@ -18,7 +18,7 @@ def test_supergat_conv(att_type):
 
     # Negative samples are given.
     neg_edge_index = conv.negative_sampling(edge_index, x.size(0))
-    assert conv(x, edge_index, neg_edge_index).tolist() == out.tolist()
+    assert torch.allclose(conv(x, edge_index, neg_edge_index), out)
     att_loss = conv.get_attention_loss()
     assert isinstance(att_loss, torch.Tensor) and att_loss > 0
 
@@ -32,6 +32,6 @@ def test_supergat_conv(att_type):
 
     # Batch of graphs and negative samples are given.
     neg_edge_index = conv.negative_sampling(edge_index, x.size(0), batch)
-    assert conv(x, edge_index, neg_edge_index).tolist() == out.tolist()
+    assert torch.allclose(conv(x, edge_index, neg_edge_index), out)
     att_loss = conv.get_attention_loss()
     assert isinstance(att_loss, torch.Tensor) and att_loss > 0
