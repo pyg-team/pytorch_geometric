@@ -6,6 +6,7 @@ from torch import Tensor
 import torch.nn.functional as F
 from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear
 
 from ..inits import reset
 
@@ -112,6 +113,7 @@ class GINEConv(MessagePassing):
         super(GINEConv, self).__init__(**kwargs)
         self.nn = nn
         self.initial_eps = eps
+        self.linear = Linear(-1, self.nn[0].in_features)
         if train_eps:
             self.eps = torch.nn.Parameter(torch.Tensor([eps]))
         else:
@@ -120,6 +122,7 @@ class GINEConv(MessagePassing):
 
     def reset_parameters(self):
         reset(self.nn)
+        reset(self.linear)
         self.eps.data.fill_(self.initial_eps)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
@@ -131,7 +134,7 @@ class GINEConv(MessagePassing):
         # Node and edge feature dimensionalites need to match.
         if isinstance(edge_index, Tensor):
             assert edge_attr is not None
-            assert x[0].size(-1) == edge_attr.size(-1)
+            edge_attr = self.linear(edge_attr)
         elif isinstance(edge_index, SparseTensor):
             assert x[0].size(-1) == edge_index.size(-1)
 
