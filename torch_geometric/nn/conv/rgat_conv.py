@@ -525,8 +525,8 @@ class RGATConv(MessagePassing):
             return alpha.view(-1, self.heads, 1) * outj.view(-1, self.heads,
                                                              self.out_channels)
         elif self.attention_mode == "multiplicative-self-attention":
-            return alpha.view(-1, self.heads, self.d, 1) \
-                   * outj.view(-1, self.heads, 1, self.out_channels)
+            return (alpha.view(-1, self.heads, self.d, 1) *
+                    outj.view(-1, self.heads, 1, self.out_channels))
 
     def update(self, aggr_out: Tensor):
         if self.attention_mode == "additive-self-attention":
