@@ -17,7 +17,7 @@ def test_metapath2vec():
 
     model = MetaPath2Vec(edge_index_dict, embedding_dim=16, metapath=metapath,
                          walk_length=2, context_size=2)
-    assert model.__repr__() == 'MetaPath2Vec(5, 16)'
+    assert str(model) == 'MetaPath2Vec(5, 16)'
 
     z = model('author')
     assert z.size() == (3, 16)

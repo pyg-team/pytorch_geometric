@@ -432,7 +432,7 @@ class GDC(BaseTransform):
         :rtype: (:class:`Tensor`)
         """
         if symmetric:
-            e, V = torch.symeig(matrix, eigenvectors=True)
+            e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
             diff_mat_np = expm(matrix.cpu().numpy())

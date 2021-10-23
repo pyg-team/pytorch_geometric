@@ -180,7 +180,8 @@ class MetaPath2Vec(torch.nn.Module):
         return torch.cat(walks, dim=0)
 
     def _sample(self, batch: List[int]) -> Tuple[Tensor, Tensor]:
-        batch = torch.tensor(batch, dtype=torch.long)
+        if not isinstance(batch, Tensor):
+            batch = torch.tensor(batch, dtype=torch.long)
         return self._pos_sample(batch), self._neg_sample(batch)
 
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
@@ -211,7 +212,7 @@ class MetaPath2Vec(torch.nn.Module):
         return pos_loss + neg_loss
 
     def test(self, train_z: Tensor, train_y: Tensor, test_z: Tensor,
-             test_y: Tensor, solver: str = 'lbfgs', multi_class: str = 'auto',
+             test_y: Tensor, solver: str = "lbfgs", multi_class: str = "auto",
              *args, **kwargs) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
