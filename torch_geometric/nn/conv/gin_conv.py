@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable, Union, Optional
 from torch_geometric.typing import OptPairTensor, Adj, OptTensor, Size
 
 import torch
@@ -104,16 +104,19 @@ class GINEConv(MessagePassing):
             (default: :obj:`0.`)
         train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`
             will be a trainable parameter. (default: :obj:`False`)
+        edge_dim (int, optional): Number of edge features.
+            (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
     def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
+                 edge_dim: Optional[int] = 0,
                  **kwargs):
         kwargs.setdefault('aggr', 'add')
         super(GINEConv, self).__init__(**kwargs)
         self.nn = nn
         self.initial_eps = eps
-        self.linear = Linear(-1, self.nn[0].in_features)
+        self.linear = Linear(edge_dim, self.nn[0].in_features) if edge_dim > 0 else None
         if train_eps:
             self.eps = torch.nn.Parameter(torch.Tensor([eps]))
         else:
@@ -122,7 +125,8 @@ class GINEConv(MessagePassing):
 
     def reset_parameters(self):
         reset(self.nn)
-        reset(self.linear)
+        if self.linear is not None:
+            reset(self.linear)
         self.eps.data.fill_(self.initial_eps)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
@@ -131,10 +135,13 @@ class GINEConv(MessagePassing):
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
+        if self.linear is not None:
+            edge_attr = self.linear(edge_attr)
+
         # Node and edge feature dimensionalites need to match.
         if isinstance(edge_index, Tensor):
             assert edge_attr is not None
-            edge_attr = self.linear(edge_attr)
+            assert x[0].size(-1) == edge_attr.size(-1)
         elif isinstance(edge_index, SparseTensor):
             assert x[0].size(-1) == edge_index.size(-1)
 
