@@ -19,14 +19,14 @@ def erdos_renyi_graph(num_nodes, edge_prob, directed=False):
         idx = idx + torch.arange(1, num_nodes).view(-1, 1)
         idx = idx.view(-1)
     else:
-        idx = torch.combinations(torch.arange(num_nodes))
+        idx = torch.combinations(torch.arange(num_nodes), r=2)
 
     # Filter edges.
     mask = torch.rand(idx.size(0)) < edge_prob
     idx = idx[mask]
 
     if directed:
-        row = idx // num_nodes
+        row = idx.div(num_nodes, rounding_mode='floor')
         col = idx % num_nodes
         edge_index = torch.stack([row, col], dim=0)
     else:
@@ -68,10 +68,10 @@ def stochastic_blockmodel_graph(block_sizes, edge_probs, directed=False):
         idx = idx.view(num_nodes - 1, num_nodes)
         idx = idx + torch.arange(1, num_nodes).view(-1, 1)
         idx = idx.view(-1)
-        row = idx // num_nodes
+        row = idx.div(num_nodes, rounding_mode='floor')
         col = idx % num_nodes
     else:
-        row, col = torch.combinations(torch.arange(num_nodes)).t()
+        row, col = torch.combinations(torch.arange(num_nodes), r=2).t()
 
     mask = torch.bernoulli(prob[node_idx[row], node_idx[col]]).to(torch.bool)
     edge_index = torch.stack([row[mask], col[mask]], dim=0)

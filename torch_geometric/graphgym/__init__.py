@@ -10,7 +10,7 @@ from .logger import set_printing, create_logger
 from .loss import compute_loss
 from .model_builder import create_model
 from .optimizer import create_optimizer, create_scheduler
-from .register import (register, register_act, register_node_encoder,  # noqa
+from .register import (register_base, register_act, register_node_encoder,  # noqa
                        register_edge_encoder, register_stage, register_head,
                        register_layer, register_pooling, register_network,
                        register_config, register_loader, register_optimizer,
@@ -42,7 +42,7 @@ __all__ = [
 classes = __all__
 
 classes_reg = [
-    'register',
+    'register_base',
     'register_act',
     'register_node_encoder',
     'register_edge_encoder',

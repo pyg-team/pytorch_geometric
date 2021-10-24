@@ -1,15 +1,18 @@
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.storage import NodeStorage
 from torch_geometric.transforms import BaseTransform
 
 
 class RandomNodeSplit(BaseTransform):
     r"""Performs a node-level random split by adding :obj:`train_mask`,
-    :obj:`val_mask` and :obj:`test_mask` attributes to the :obj:`data` object.
+    :obj:`val_mask` and :obj:`test_mask` attributes to the
+    :class:`~torch_geometric.data.Data` or
+    :class:`~torch_geometric.data.HeteroData` object.
 
     Args:
         split (string): The type of dataset split (:obj:`"train_rest"`,
@@ -42,6 +45,9 @@ class RandomNodeSplit(BaseTransform):
             of :obj:`"train_rest"` and :obj:`"random"` split. If float, it
             represents the ratio of samples to include in the test set.
             (default: :obj:`1000`)
+        key (str, optional): The name of the attribute holding ground-truth
+            labels. By default, will only add node-level splits for node-level
+            storages in which :obj:`key` is present. (default: :obj:`"y"`).
     """
     def __init__(
         self,
@@ -50,6 +56,7 @@ class RandomNodeSplit(BaseTransform):
         num_train_per_class: int = 20,
         num_val: Union[int, float] = 500,
         num_test: Union[int, float] = 1000,
+        key: Optional[str] = "y",
     ):
         assert split in ['train_rest', 'test_rest', 'random']
         self.split = split
@@ -57,46 +64,49 @@ class RandomNodeSplit(BaseTransform):
         self.num_train_per_class = num_train_per_class
         self.num_val = num_val
         self.num_test = num_test
+        self.key = key
 
-    def __call__(self, data: Data) -> Data:
-        train_masks, val_masks, test_masks = [], [], []
-        for _ in range(self.num_splits):
-            train_mask, val_mask, test_mask = self._sample_split(data)
-            train_masks.append(train_mask)
-            val_masks.append(val_mask)
-            test_masks.append(test_mask)
+    def __call__(self, data: Union[Data, HeteroData]):
+        for store in data.node_stores:
+            if self.key is not None and not hasattr(store, self.key):
+                continue
 
-        data.train_mask = torch.stack(train_masks, dim=-1).squeeze(-1)
-        data.val_mask = torch.stack(val_masks, dim=-1).squeeze(-1)
-        data.test_mask = torch.stack(test_masks, dim=-1).squeeze(-1)
+            train_masks, val_masks, test_masks = zip(
+                *[self._split(store) for _ in range(self.num_splits)])
+
+            store.train_mask = torch.stack(train_masks, dim=-1).squeeze(-1)
+            store.val_mask = torch.stack(val_masks, dim=-1).squeeze(-1)
+            store.test_mask = torch.stack(test_masks, dim=-1).squeeze(-1)
 
         return data
 
-    def _sample_split(self, data: Data) -> Tuple[Tensor, Tensor, Tensor]:
-        train_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-        val_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
-        test_mask = torch.zeros(data.num_nodes, dtype=torch.bool)
+    def _split(self, store: NodeStorage) -> Tuple[Tensor, Tensor, Tensor]:
+        num_nodes = store.num_nodes
+
+        train_mask = torch.zeros(num_nodes, dtype=torch.bool)
+        val_mask = torch.zeros(num_nodes, dtype=torch.bool)
+        test_mask = torch.zeros(num_nodes, dtype=torch.bool)
 
         if isinstance(self.num_val, float):
-            num_val = round(data.num_nodes * self.num_val)
+            num_val = round(num_nodes * self.num_val)
         else:
             num_val = self.num_val
 
         if isinstance(self.num_test, float):
-            num_test = round(data.num_nodes * self.num_test)
+            num_test = round(num_nodes * self.num_test)
         else:
             num_test = self.num_test
 
         if self.split == 'train_rest':
-            perm = torch.randperm(data.num_nodes)
+            perm = torch.randperm(num_nodes)
             val_mask[perm[:num_val]] = True
             test_mask[perm[num_val:num_val + num_test]] = True
             train_mask[perm[num_val + num_test:]] = True
-
         else:
-            num_classes = int(data.y.max().item()) + 1
+            y = getattr(store, self.key)
+            num_classes = int(y.max().item()) + 1
             for c in range(num_classes):
-                idx = (data.y == c).nonzero(as_tuple=False).view(-1)
+                idx = (y == c).nonzero(as_tuple=False).view(-1)
                 idx = idx[torch.randperm(idx.size(0))]
                 idx = idx[:self.num_train_per_class]
                 train_mask[idx] = True

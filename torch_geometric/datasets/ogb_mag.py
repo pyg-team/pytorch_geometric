@@ -6,7 +6,6 @@ import os.path as osp
 
 import torch
 import numpy as np
-import pandas as pd
 
 from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
                                   extract_zip)
@@ -53,7 +52,8 @@ class OGB_MAG(InMemoryDataset):
     def __init__(self, root: str, preprocess: Optional[str] = None,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
-        self.preprocess = preprocess.lower()
+        preprocess = None if preprocess is None else preprocess.lower()
+        self.preprocess = preprocess
         assert self.preprocess in [None, 'metapath2vec', 'transe']
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -108,12 +108,19 @@ class OGB_MAG(InMemoryDataset):
             os.remove(path)
 
     def process(self):
+        import pandas as pd
+
         data = HeteroData()
 
         path = osp.join(self.raw_dir, 'node-feat', 'paper', 'node-feat.csv.gz')
         x_paper = pd.read_csv(path, compression='gzip', header=None,
                               dtype=np.float32).values
         data['paper'].x = torch.from_numpy(x_paper)
+
+        path = osp.join(self.raw_dir, 'node-feat', 'paper', 'node_year.csv.gz')
+        year_paper = pd.read_csv(path, compression='gzip', header=None,
+                                 dtype=np.int64).values
+        data['paper'].year = torch.from_numpy(year_paper).view(-1)
 
         path = osp.join(self.raw_dir, 'node-label', 'paper',
                         'node-label.csv.gz')

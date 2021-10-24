@@ -22,7 +22,7 @@ def test_pdn_conv():
 
     t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out)
+    assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 def test_pdn_conv_with_sparse_node_input_feature():

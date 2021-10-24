@@ -12,4 +12,4 @@ act_dict = {
     'lrelu_05': nn.LeakyReLU(negative_slope=0.5, inplace=cfg.mem.inplace),
 }
 
-act_dict = {**register.act_dict, **act_dict}
+register.act_dict = {**register.act_dict, **act_dict}

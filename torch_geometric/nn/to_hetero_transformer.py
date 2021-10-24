@@ -12,7 +12,7 @@ from torch_geometric.nn.fx import Transformer
 
 try:
     from torch.fx import GraphModule, Graph, Node
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
@@ -115,6 +115,8 @@ class ToHeteroTransformer(Transformer):
 
     aggrs = {
         'sum': torch.add,
+        # For 'mean' aggregation, we first sum up all feature matrices, and
+        # divide by the number of matrices in a later step.
         'mean': torch.add,
         'max': torch.max,
         'min': torch.min,

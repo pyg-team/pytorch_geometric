@@ -176,6 +176,23 @@ To convert the :obj:`edge_index` format to the newly introduced :class:`SparseTe
 All code remains the same as before, except for the :obj:`data` transform via :obj:`T.ToSparseTensor()`.
 As an additional advantage, :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` implementations that utilize the :class:`SparseTensor` class are deterministic on the GPU since aggregations no longer rely on atomic operations.
 
+Notably, the GNN layer execution slightly changes in case GNNs incorporate single or multi-dimensional edge information :obj:`edge_weight` or :obj:`edge_attr` into their message passing formulation, respectively.
+In particular, it is now expected that these attributes are directly added as values to the :class:`SparseTensor` object.
+Instead of calling the GNN as
+
+.. code-block:: python
+
+    conv = GMMConv(16, 32, dim=3)
+    out = conv(x, edge_index, edge_attr)
+
+we now execute our GNN operator as
+
+.. code-block:: python
+
+    conv = GMMConv(16, 32, dim=3)
+    adj = SparseTensor(row=edge_index[0], col=edge_index[1], value=edge_attr)
+    out = conv(x, adj.t())
+
 .. note::
 
     Since this feature is still experimental, some operations, *e.g.*, graph pooling methods, may still require you to input the :obj:`edge_index` format.

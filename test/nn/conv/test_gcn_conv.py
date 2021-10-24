@@ -1,3 +1,5 @@
+import copy
+
 import torch
 from torch_sparse import SparseTensor
 from torch_geometric.nn import GCNConv
@@ -35,6 +37,24 @@ def test_gcn_conv():
     assert conv(x, edge_index).tolist() == out1.tolist()
     conv(x, adj1.t())
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
+
+
+def test_gcn_conv_with_decomposed_layers():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+
+    conv = GCNConv(16, 32)
+
+    decomposed_conv = copy.deepcopy(conv)
+    decomposed_conv.decomposed_layers = 2
+
+    out1 = conv(x, edge_index)
+    out2 = decomposed_conv(x, edge_index)
+    assert torch.allclose(out1, out2)
+
+    t = '(Tensor, Tensor, OptTensor) -> Tensor'
+    jit = torch.jit.script(decomposed_conv.jittable(t))
+    assert jit(x, edge_index).tolist() == out1.tolist()
 
 
 def test_gcn_conv_with_sparse_input_feature():

@@ -64,7 +64,7 @@ For example, consider storing two graphs, a source graph :math:`\mathcal{G}_s` a
    from torch_geometric.data import Data
 
    class PairData(Data):
-       def __init__(self, edge_index_s, x_s, edge_index_t, x_t):
+       def __init__(self, edge_index_s=None, x_s=None, edge_index_t=None, x_t=None):
            super().__init__()
            self.edge_index_s = edge_index_s
            self.x_s = x_s
@@ -75,7 +75,7 @@ In this case, :obj:`edge_index_s` should be increased by the number of nodes in 
 
 .. code-block:: python
 
-    def __inc__(self, key, value, *args, **kawrgs):
+    def __inc__(self, key, value, *args, **kwargs):
         if key == 'edge_index_s':
             return self.x_s.size(0)
         if key == 'edge_index_t':
@@ -106,8 +106,8 @@ We can test our :class:`PairData` batching behaviour by setting up a simple test
     batch = next(iter(loader))
 
     print(batch)
-    >>> Batch(edge_index_s=[2, 8], x_s=[10, 16],
-              edge_index_t=[2, 6], x_t=[8, 16])
+    >>> PairDataBatch(edge_index_s=[2, 8], x_s=[10, 16],
+                      edge_index_t=[2, 6], x_t=[8, 16])
 
     print(batch.edge_index_s)
     >>> tensor([[0, 0, 0, 0, 5, 5, 5, 5],
@@ -129,8 +129,8 @@ Here, we can specify for which attributes we want to maintain the batch informat
     batch = next(iter(loader))
 
     print(batch)
-    >>> Batch(edge_index_s=[2, 8], x_s=[10, 16], x_s_batch=[10],
-              edge_index_t=[2, 6], x_t=[8, 16], x_t_batch=[8])
+    >>> PairDataBatch(edge_index_s=[2, 8], x_s=[10, 16], x_s_batch=[10],
+                      edge_index_t=[2, 6], x_t=[8, 16], x_t_batch=[8])
     print(batch.x_s_batch)
     >>> tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
 
@@ -153,7 +153,7 @@ To achieve this, consider a bipartite graph between two node types with correspo
    from torch_geometric.data import Data
 
    class BipartiteData(Data):
-       def __init__(self, edge_index, x_s, x_t):
+       def __init__(self, edge_index=None, x_s=None, x_t=None):
            super().__init__()
            self.edge_index = edge_index
            self.x_s = x_s
@@ -189,7 +189,7 @@ We can again test our implementation by running a simple test script:
     batch = next(iter(loader))
 
     print(batch)
-    >>> Batch(edge_index=[2, 8], x_s=[4, 16], x_t=[6, 16])
+    >>> BipartiteDataBatch(edge_index=[2, 8], x_s=[4, 16], x_t=[6, 16])
 
     print(batch.edge_index)
     >>> tensor([[0, 0, 1, 1, 2, 2, 3, 3],
@@ -228,6 +228,6 @@ PyG achieves this by returning a concatenation dimension of :obj:`None` in :meth
    batch = next(iter(loader))
 
    print(batch)
-   >>> Batch(edge_index=[2, 8], foo=[2, 16])
+   >>> MyDataBatch(edge_index=[2, 8], foo=[2, 16])
 
 As desired, :obj:`batch.foo` is now described by two dimensions: The batch dimension and the feature dimension.

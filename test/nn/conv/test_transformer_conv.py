@@ -18,7 +18,7 @@ def test_transformer_conv():
 
     t = '(Tensor, Tensor, NoneType, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, edge_index).tolist() == out.tolist()
+    assert torch.allclose(jit(x1, edge_index), out)
 
     t = '(Tensor, SparseTensor, NoneType, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
@@ -26,7 +26,7 @@ def test_transformer_conv():
 
     # Test `return_attention_weights`.
     result = conv(x1, edge_index, return_attention_weights=True)
-    assert result[0].tolist() == out.tolist()
+    assert torch.allclose(result[0], out)
     assert result[1][0].size() == (2, 4)
     assert result[1][1].size() == (4, 2)
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
@@ -41,7 +41,7 @@ def test_transformer_conv():
          'Tuple[Tensor, Tuple[Tensor, Tensor]]')
     jit = torch.jit.script(conv.jittable(t))
     result = jit(x1, edge_index, return_attention_weights=True)
-    assert result[0].tolist() == out.tolist()
+    assert torch.allclose(result[0], out)
     assert result[1][0].size() == (2, 4)
     assert result[1][1].size() == (4, 2)
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
@@ -64,7 +64,7 @@ def test_transformer_conv():
 
     t = '(PairTensor, Tensor, NoneType, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index).tolist() == out.tolist()
+    assert torch.allclose(jit((x1, x2), edge_index), out)
 
     t = '(PairTensor, SparseTensor, NoneType, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))

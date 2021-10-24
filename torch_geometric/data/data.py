@@ -1,6 +1,6 @@
 from typing import (Optional, Dict, Any, Union, List, Iterable, Tuple,
                     NamedTuple, Callable)
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import OptTensor, NodeType, EdgeType
 from torch_geometric.deprecation import deprecated
 
 import copy
@@ -8,6 +8,7 @@ from collections.abc import Sequence, Mapping
 
 import torch
 import numpy as np
+from torch import Tensor
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.storage import (BaseStorage, NodeStorage,
@@ -357,7 +358,8 @@ class Data(BaseData):
         self._store[key] = value
 
     def __delitem__(self, key: str):
-        del self.store[key]
+        if key in self._store:
+            del self._store[key]
 
     def __copy__(self):
         out = self.__class__.__new__(self.__class__)
@@ -415,13 +417,158 @@ class Data(BaseData):
             return 0
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if 'index' in key or 'face' in key:
+        if 'batch' in key:
+            return int(value.max()) + 1
+        elif 'index' in key or 'face' in key:
             return self.num_nodes
         else:
             return 0
 
     def debug(self):
         pass  # TODO
+
+    def is_node_attr(self, key: str) -> bool:
+        r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
+        node-level attribute."""
+        value = self[key]
+        cat_dim = self.__cat_dim__(key, value, self._store)
+
+        num_nodes, num_edges = self.num_nodes, self.num_edges
+        if not isinstance(value, torch.Tensor):
+            return False
+        if value.size(cat_dim) != num_nodes:
+            return False
+        if num_nodes != num_edges:
+            return True
+        return 'edge' not in key
+
+    def is_edge_attr(self, key: str) -> bool:
+        r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
+        edge-level attribute."""
+        value = self[key]
+        cat_dim = self.__cat_dim__(key, value, self._store)
+
+        num_nodes, num_edges = self.num_nodes, self.num_edges
+        if not isinstance(value, torch.Tensor):
+            return False
+        if value.size(cat_dim) != num_edges:
+            return False
+        if num_nodes != num_edges:
+            return True
+        return 'edge' in key
+
+    def to_heterogeneous(self, node_type: Optional[Tensor] = None,
+                         edge_type: Optional[Tensor] = None,
+                         node_type_names: Optional[List[NodeType]] = None,
+                         edge_type_names: Optional[List[EdgeType]] = None):
+        r"""Converts a :class:`~torch_geometric.data.Data` object to a
+        heterogeneous :class:`~torch_geometric.data.HeteroData` object.
+        For this, node and edge attributes are splitted according to the
+        node-level and edge-level vectors :obj:`node_type` and
+        :obj:`edge_type`, respectively.
+        :obj:`node_type_names` and :obj:`edge_type_names` can be used to give
+        meaningful node and edge type names, respectively.
+        That is, the node_type :obj:`0` is given by :obj:`node_type_names[0]`.
+        If the :class:`~torch_geometric.data.Data` object was constructed via
+        :meth:`~torch_geometric.data.HeteroData.to_homogeneous`, the object can
+        be reconstructed without any need to pass in additional arguments.
+
+        Args:
+            node_type (Tensor, optional): A node-level vector denoting the type
+                of each node. (default: :obj:`None`)
+            edge_type (Tensor, optional): An edge-level vector denoting the
+                type of each edge. (default: :obj:`None`)
+            node_type_names (List[str], optional): The names of node types.
+                (default: :obj:`None`)
+            edge_type_names (List[Tuple[str, str, str]], optional): The names
+                of edge types. (default: :obj:`None`)
+        """
+        from torch_geometric.data import HeteroData
+
+        if node_type is None:
+            node_type = self._store.get('node_type', None)
+        if node_type is None:
+            node_type = torch.zeros(self.num_nodes, dtype=torch.long)
+
+        if node_type_names is None:
+            store = self._store
+            node_type_names = store.__dict__.get('_node_type_names', None)
+        if node_type_names is None:
+            node_type_names = [str(i) for i in node_type.unique().tolist()]
+
+        if edge_type is None:
+            edge_type = self._store.get('edge_type', None)
+        if edge_type is None:
+            edge_type = torch.zeros(self.num_edges, dtype=torch.long)
+
+        if edge_type_names is None:
+            store = self._store
+            edge_type_names = store.__dict__.get('_edge_type_names', None)
+        if edge_type_names is None:
+            edge_type_names = []
+            edge_index = self.edge_index
+            for i in edge_type.unique().tolist():
+                src, dst = edge_index[:, edge_type == i]
+                src_types = node_type[src].unique().tolist()
+                dst_types = node_type[dst].unique().tolist()
+                if len(src_types) != 1 and len(dst_types) != 1:
+                    raise ValueError(
+                        "Could not construct a 'HeteroData' object from the "
+                        "'Data' object because single edge types span over "
+                        "multiple node types")
+                edge_type_names.append((node_type_names[src_types[0]], str(i),
+                                        node_type_names[dst_types[0]]))
+
+        # We iterate over node types to find the local node indices belonging
+        # to each node type. Furthermore, we create a global `index_map` vector
+        # that maps global node indices to local ones in the final
+        # heterogeneous graph:
+        node_ids, index_map = {}, torch.empty_like(node_type)
+        for i, key in enumerate(node_type_names):
+            node_ids[i] = (node_type == i).nonzero(as_tuple=False).view(-1)
+            index_map[node_ids[i]] = torch.arange(len(node_ids[i]))
+
+        # We iterate over edge types to find the local edge indices:
+        edge_ids = {}
+        for i, key in enumerate(edge_type_names):
+            edge_ids[i] = (edge_type == i).nonzero(as_tuple=False).view(-1)
+
+        data = HeteroData()
+
+        for i, key in enumerate(node_type_names):
+            for attr, value in self.items():
+                if attr == 'node_type' or attr == 'edge_type':
+                    continue
+                elif isinstance(value, Tensor) and self.is_node_attr(attr):
+                    data[key][attr] = value[node_ids[i]]
+
+            if len(data[key]) == 0:
+                data[key].num_nodes = node_ids[i].size(0)
+
+        for i, key in enumerate(edge_type_names):
+            src, _, dst = key
+            for attr, value in self.items():
+                if attr == 'node_type' or attr == 'edge_type':
+                    continue
+                elif attr == 'edge_index':
+                    edge_index = value[:, edge_ids[i]]
+                    edge_index[0] = index_map[edge_index[0]]
+                    edge_index[1] = index_map[edge_index[1]]
+                    data[key].edge_index = edge_index
+                elif isinstance(value, Tensor) and self.is_edge_attr(attr):
+                    data[key][attr] = value[edge_ids[i]]
+
+        # Add global attributes.
+        keys = set(data.keys) | {'node_type', 'edge_type', 'num_nodes'}
+        for attr, value in self.items():
+            if attr in keys:
+                continue
+            if len(data.node_stores) == 1:
+                data.node_stores[0][attr] = value
+            else:
+                data[attr] = value
+
+        return data
 
     ###########################################################################
 
