@@ -3,10 +3,10 @@ import pytest
 from itertools import product
 
 import torch
-from torch_geometric.nn import Linear
-from torch_geometric.nn.dense.linear import HeteroLinear
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
+
+from torch_geometric.nn import Linear, HeteroLinear
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
