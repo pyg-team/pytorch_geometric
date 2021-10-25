@@ -44,6 +44,7 @@ from .eg_conv import EGConv
 from .pdn_conv import PDNConv
 from .general_conv import GeneralConv
 from .hgt_conv import HGTConv
+from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
 
 __all__ = [
@@ -98,6 +99,7 @@ __all__ = [
     'PDNConv',
     'GeneralConv',
     'HGTConv',
+    'HEATConv',
     'HeteroConv',
 ]
 
