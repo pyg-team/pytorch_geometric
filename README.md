@@ -233,6 +233,7 @@ These GNN layers can be stacked together to create Graph Neural Network models.
 * **[GravNetConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GravNetConv)** from Qasim *et al.*: [Learning Representations of Irregular Particle-detector Geometry with Distance-weighted Graph Networks](https://arxiv.org/abs/1902.07987) (European Physics Journal C, 2019)
 * **[SuperGAT](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SuperGATConv)** from Kim and Oh: [How To Find Your Friendly Neighborhood: Graph Attention Design With Self-Supervision](https://openreview.net/forum?id=Wi5KUNlqWty) (ICLR 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/super_gat.py)]
 * **[HGTConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.HGTConv)** from Hu *et al.*: [Heterogeneous Graph Transformer](https://arxiv.org/abs/2003.01332) (WWW 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/hgt_dblp.py)]
+* **[HEATConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.HEATonv)** from Mo *et al.*: [Heterogeneous Edge-Enhanced Graph Attention Network For Multi-Agent Trajectory Prediction](https://arxiv.org/abs/2106.07161) (CoRR 2021)
 * A **[MetaLayer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.meta.MetaLayer)** for building any kind of graph network similar to the [TensorFlow Graph Nets library](https://github.com/deepmind/graph_nets) from Battaglia *et al.*: [Relational Inductive Biases, Deep Learning, and Graph Networks](https://arxiv.org/abs/1806.01261) (CoRR 2018)
 </details>
 
@@ -343,6 +344,31 @@ conda install pyg -c pyg -c conda-forge
 
 We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
+#### PyTorch 1.10.0
+
+To install the binaries for PyTorch 1.10.0, simply run
+
+```
+pip install torch-scatter -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.html
+pip install torch-sparse -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.html
+pip install torch-geometric
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu102`, or `cu113` depending on your PyTorch installation (`torch.version.cuda`).
+
+|             | `cpu` | `cu102` | `cu113` |
+|-------------|-------|---------|---------|
+| **Linux**   | ✅    | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |
+
+For additional but optional functionality, run
+
+```
+pip install torch-cluster -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.html
+pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.10.0+${CUDA}.html
+```
+
 #### PyTorch 1.9.0/1.9.1
 
 To install the binaries for PyTorch 1.9.0 and 1.9.1, simply run
@@ -368,32 +394,7 @@ pip install torch-cluster -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html
 pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.9.0+${CUDA}.html
 ```
 
-#### PyTorch 1.8.0/1.8.1
-
-To install the binaries for PyTorch 1.8.0 and 1.8.1, simply run
-
-```
-pip install torch-scatter -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
-pip install torch-sparse -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
-pip install torch-geometric
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu101`, `cu102`, or `cu111` depending on your PyTorch installation (`torch.version.cuda`).
-
-|             | `cpu` | `cu101` | `cu102` | `cu111` |
-|-------------|-------|---------|---------|---------|
-| **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ❌      | ✅      | ✅      |
-| **macOS**   | ✅    |         |         |         |
-
-For additional but optional functionality, run
-
-```
-pip install torch-cluster -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
-pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.8.0+${CUDA}.html
-```
-
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0 and PyTorch 1.7.0/1.7.1 (following the same procedure).
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1 and PyTorch 1.8.0/1.8.1 (following the same procedure).
 
 ### From master
 

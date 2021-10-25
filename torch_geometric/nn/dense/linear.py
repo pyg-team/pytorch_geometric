@@ -22,8 +22,8 @@ class Linear(torch.nn.Module):
     initialization.
 
     Args:
-        in_channels (int): Size of each input sample.
-            Will be initialized lazily in case :obj:`-1`.
+        in_channels (int): Size of each input sample. Will be initialized
+            lazily in case it is given as :obj:`-1`.
         out_channels (int): Size of each output sample.
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
@@ -32,8 +32,8 @@ class Linear(torch.nn.Module):
             or :obj:`None`).
             If set to :obj:`None`, will match default weight initialization of
             :class:`torch.nn.Linear`. (default: :obj:`None`)
-        bias_initializer (str, optional): The initializer for the bias
-            vector (:obj:`"zeros"` or :obj:`None`).
+        bias_initializer (str, optional): The initializer for the bias vector
+            (:obj:`"zeros"` or :obj:`None`).
             If set to :obj:`None`, will match default bias initialization of
             :class:`torch.nn.Linear`. (default: :obj:`None`)
     """
@@ -99,6 +99,7 @@ class Linear(torch.nn.Module):
                     f"'{self.bias_initializer}' is not supported")
 
     def forward(self, x: Tensor) -> Tensor:
+        """"""
         return F.linear(x, self.weight, self.bias)
 
     @torch.no_grad()
@@ -113,3 +114,54 @@ class Linear(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, bias={self.bias is not None})')
+
+
+class HeteroLinear(torch.nn.Module):
+    r"""Applies separate linear tranformations to the incoming data according
+    to node types
+
+    .. math::
+        \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
+        \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
+
+    for node type :math:`\kappa`.
+    It supports lazy initialization and customizable weight and bias
+    initialization.
+
+    Args:
+        in_channels (int): Size of each input sample. Will be initialized
+            lazily in case it is given as :obj:`-1`.
+        out_channels (int): Size of each output sample.
+        num_node_types (int): The number of node types.
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.Linear`.
+    """
+    def __init__(self, in_channels: int, out_channels: int,
+                 num_node_types: int, **kwargs):
+        super().__init__()
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+
+        self.lins = torch.nn.ModuleList([
+            Linear(in_channels, out_channels, **kwargs)
+            for _ in range(num_node_types)
+        ])
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        for lin in self.lins:
+            lin.reset_parameters()
+
+    def forward(self, x: Tensor, node_type: Tensor) -> Tensor:
+        """"""
+        out = x.new_empty(x.size(0), self.out_channels)
+        for i, lin in enumerate(self.lins):
+            mask = node_type == i
+            out[mask] = lin(x[mask])
+        return out
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, bias={self.lins[0].bias is not None})')

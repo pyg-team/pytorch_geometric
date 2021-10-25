@@ -127,7 +127,7 @@ class Batch(metaclass=DynamicInheritance):
         elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
             idx = idx.flatten().tolist()
 
-        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
             idx = idx.flatten().nonzero()[0].flatten().tolist()
 
         elif isinstance(idx, Sequence) and not isinstance(idx, str):

@@ -2,9 +2,9 @@ import torch
 from torch_geometric.data import Data, HeteroData, InMemoryDataset
 
 
-class TestDataset(InMemoryDataset):
+class MyTestDataset(InMemoryDataset):
     def __init__(self, data_list):
-        super().__init__('/tmp/TestDataset')
+        super().__init__('/tmp/MyTestDataset')
         self.data, self.slices = self.collate(data_list)
 
 
@@ -20,8 +20,8 @@ def test_in_memory_dataset():
     data2 = Data(x2, edge_index, face=face, test_int=2, test_str='2')
     data2.num_nodes = 5
 
-    dataset = TestDataset([data1, data2])
-    assert str(dataset) == 'TestDataset(2)'
+    dataset = MyTestDataset([data1, data2])
+    assert str(dataset) == 'MyTestDataset(2)'
     assert len(dataset) == 2
 
     assert len(dataset[0]) == 6
@@ -55,8 +55,8 @@ def test_collate_with_new_dimension():
 
     data = MyData(x=x, foo=foo, y=y)
 
-    dataset = TestDataset([data, data])
-    assert str(dataset) == 'TestDataset(2)'
+    dataset = MyTestDataset([data, data])
+    assert str(dataset) == 'MyTestDataset(2)'
     assert len(dataset) == 2
 
     data1 = dataset[0]
@@ -83,8 +83,8 @@ def test_hetero_in_memory_dataset():
     data2['paper'].x = torch.randn(10, 16)
     data2['paper', 'paper'].edge_index = torch.randint(0, 10, (2, 30)).long()
 
-    dataset = TestDataset([data1, data2])
-    assert str(dataset) == 'TestDataset(2)'
+    dataset = MyTestDataset([data1, data2])
+    assert str(dataset) == 'MyTestDataset(2)'
     assert len(dataset) == 2
 
     assert len(dataset[0]) == 3
