@@ -95,8 +95,8 @@ class Net(torch.nn.Module):
 
         # first block
         self.mlp_input = Seq(
-            Lin(NUM_FEATURES, 32),
-            BN(32),
+            Lin(NUM_FEATURES, dim_model[0]),
+            BN(dim_model[0]),
             ReLU()
         )
 
