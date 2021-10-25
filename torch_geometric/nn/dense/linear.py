@@ -132,7 +132,7 @@ class HeteroLinear(torch.nn.Module):
         in_channels (int): Size of each input sample. Will be initialized
             lazily in case it is given as :obj:`-1`.
         out_channels (int): Size of each output sample.
-        num_node_types (int): Number of node types.
+        num_node_types (int): The number of node types.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
     """
