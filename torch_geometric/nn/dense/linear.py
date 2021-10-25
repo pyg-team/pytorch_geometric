@@ -148,6 +148,12 @@ class HeteroLinear(torch.nn.Module):
             for _ in range(num_node_types)
         ])
 
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        for lin in self.lins:
+            lin.reset_parameters()
+
     def forward(self, x: Tensor, node_type: Tensor) -> Tensor:
         """"""
         out = x.new_empty(x.size(0), self.out_channels)

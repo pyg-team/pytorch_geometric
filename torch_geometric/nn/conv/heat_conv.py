@@ -1,7 +1,15 @@
+from typing import Optional
+from torch_geometric.typing import Adj, Size, OptTensor
+
 import torch
-from torch import Tensor, LongTensor
-from torch_geometric.nn import MessagePassing
-from torch_geometric.nn.dense.linear import HeteroLinear
+from torch import Tensor
+from torch.nn import Embedding
+import torch.nn.functional as F
+
+from torch_geometric.utils import softmax
+from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.dense.linear import Linear, HeteroLinear
+
 
 class HEATConv(MessagePassing):
     '''
@@ -9,108 +17,86 @@ class HEATConv(MessagePassing):
        transform nodes from different vector space to the same vector space.
     2. edges are assumed to have different types but contains the same kind of attributes.
     '''
-    def __init__(self,  in_channels: int, edge_dim: int, 
-                        num_node_types: int, num_edge_types: int,
-                        edge_attr_emb_size: int, edge_type_emb_size: int, node_emb_size: int, 
-                        out_channels: int, heads: int, concat: bool = True, **kwargs):
+    def __init__(self, in_channels: int, out_channels: int,
+                 num_node_types: int, num_edge_types: int,
+                 edge_type_emb_dim: int, edge_dim: int, edge_attr_emb_dim: int,
+                 heads: int = 1, concat: bool = True,
+                 negative_slope: float = 0.2, dropout: float = 0.0,
+                 root_weight: bool = True, bias: bool = True, **kwargs):
 
-        super().__init__(aggr='add', **kwargs)
-        ## Parameters
-        self.in_channels = in_channels 
-        self.edge_dim = edge_dim 
+        kwargs.setdefault('aggr', 'add')
+        super().__init__(node_dim=0, **kwargs)
 
-        self.num_node_types = num_node_types
-        self.num_edge_types = num_edge_types
-    
-        self.edge_attr_emb_size = edge_attr_emb_size
-        self.edge_type_emb_size = edge_type_emb_size
-        self.node_emb_size = node_emb_size
+        self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
         self.concat = concat
+        self.negative_slope = negative_slope
+        self.dropout = dropout
+        self.root_weight = root_weight
 
-        #### Layers ####
-        ## Node Embeddings 
-        ''' assuming that different nodes have the same dimension, but different vector space. '''
-        self.het_node_lin = HeteroLinear(in_channels=self.in_channels, 
-                                         out_channels=self.node_emb_size,
-                                         num_node_types=self.num_node_types, 
-                                         )
-        ## Edge Embeddings
-        ''' assuming that different edges have different types but contains the same kind of attributes. '''
-        self.edge_type_emb = torch.nn.Embedding(self.num_edge_types, self.edge_type_emb_size)
-        self.edge_attr_emb = torch.nn.Linear(self.edge_dim, self.edge_attr_emb_size, bias=False) 
+        self.hetero_lin = HeteroLinear(in_channels, out_channels,
+                                       num_node_types, bias=bias)
 
-        ## Transform the concatenated edge_nbrs feature to out_channels to update the next node feature
-        self.node_update_emb = torch.nn.Linear(self.edge_attr_emb_size + self.node_emb_size, self.out_channels, bias=False) 
+        self.edge_type_emb = Embedding(num_edge_types, edge_type_emb_dim)
+        self.edge_attr_emb = Linear(edge_dim, edge_attr_emb_dim, bias=False)
 
-        ## Attention
-        self.attention_nn = torch.nn.Linear(self.edge_attr_emb_size + self.edge_type_emb_size + 2*self.node_emb_size, 1*self.heads, bias=False)
-        self.leaky_relu = torch.nn.LeakyReLU(0.2)
-        self.soft_max = torch.nn.Softmax(dim=1)
-    
-    
-    def embed_edges(self, edge_attrs, edge_types):
-        ''' embed edge attributes and edge types respectively. '''
-        emb_edge_attributes = self.leaky_relu(self.edge_attr_emb(edge_attrs))
-        emb_edge_types = self.leaky_relu(self.edge_type_emb(edge_types))
-        return emb_edge_attributes, emb_edge_types
-  
+        self.att = Linear(
+            2 * out_channels + edge_type_emb_dim + edge_attr_emb_dim,
+            self.heads, bias=False)
 
-    def forward(self, x: Tensor, edge_index: Tensor, edge_attr: Tensor, node_type: LongTensor, edge_type: LongTensor):
-        """
-        Args:
-            x:[num_node, in_channels]
-            edge_index: [2, number_edge]
-            edge_attr: [number_edges, len_edge_attr]
-            node_type: [number_nodes, 1] node_type is an integer
-            edge_type: [number_edges, 1] edge_type is an integer
-        """
-        # Node-type specific transformation
-        node_emb = self.het_node_lin(x, node_type)
+        self.lin = Linear(out_channels + edge_attr_emb_dim, out_channels,
+                          bias=bias)
 
-        # Edge attribute and type transformation
-        edge_attr_emb, edge_type_emb = self.embed_edges(edge_attr, edge_type)
-        
-        # Edge-enhanced masked attention
-        emb_edge_feat = torch.cat((edge_attr_emb, edge_type_emb), dim=1) # e_{i,j} in heat paper
+        self.reset_parameters()
 
-        src_node_emb = node_emb[edge_index[0]]
-        tar_node_emb = node_emb[edge_index[1]] 
-        src_node_n_edge_feat = torch.cat((emb_edge_feat, src_node_emb), dim=1) # e^+_{ij}
+    def reset_parameters(self):
+        self.hetero_lin.reset_parameters()
+        self.edge_type_emb.reset_parameters()
+        self.edge_attr_emb.reset_parameters()
+        self.att.reset_parameters()
+        self.lin.reset_parameters()
 
-        ## ------------------------ v Eq. 9 v ------------------------ ## 
-        tar_src_node_n_edge_feat = torch.cat((tar_node_emb, src_node_n_edge_feat), dim=1) # eq.9 [ \arrow{h}_{\kappa i} | e^+_{i,j}]
-        scores = self.leaky_relu(self.attention_nn(tar_src_node_n_edge_feat))
-        
-        scores_matrix = torch.sparse_coo_tensor(edge_index, scores, torch.Size([x.shape[0], x.shape[0], self.heads])).to_dense().to(x.device)
-        scores_matrix = torch.where(scores_matrix==0.0, torch.ones_like(scores_matrix) * -10000, scores_matrix)
-        attention_matrix = self.soft_max(scores_matrix) # [num_nodes, num_nbrs, heads]]
+    def forward(self, x: Tensor, edge_index: Adj, node_type: Tensor,
+                edge_type: Tensor, edge_attr: OptTensor = None,
+                size: Size = None) -> Tensor:
+        """"""
+        x = self.hetero_lin(x, node_type)
 
-        edges_attentions_index = torch.nonzero(attention_matrix, as_tuple=True) # indexes in the att matrix
-        edges_attentions = attention_matrix[edges_attentions_index]
-        ## ============================================================ ## 
+        edge_type_emb = F.leaky_relu(self.edge_type_emb(edge_type),
+                                     self.negative_slope)
 
-        ## ------------------------ v Eq. 10 v ------------------------ ## 
-        src_n_edge_attr = self.leaky_relu(self.node_update_emb(torch.cat((src_node_emb, edge_attr_emb), dim=1))) # eq.10 W_h[ concat. ]
-        ## =========================================================== ## 
+        # propagate_type: (x: Tensor, edge_type_emb: Tensor, edge_attr: OptTensor)  # noqa
+        out = self.propagate(edge_index, x=x, edge_type_emb=edge_type_emb,
+                             edge_attr=edge_attr, size=size)
 
-        return self.propagate(edge_index, x=src_n_edge_attr, norm=edges_attentions)
-        
+        if self.concat:
+            if self.root_weight:
+                out += x.view(-1, 1, self.out_channels)
+            out = out.view(-1, self.heads * self.out_channels)
+        else:
+            out = out.mean(dim=1)
+            if self.root_weight:
+                out += x
 
-    ## ------------------------ Message Passing ------------------------ ## 
-    def message(self, x, norm):
-        x = x.unsqueeze(2).repeat(1,1,self.heads)
-        norm = norm.view(x.shape[0], 1, self.heads).repeat(1, self.out_channels, 1)
-        
-        return torch.flatten(x*norm, start_dim=1) if self.concat else torch.mean(x*norm, dim=2)
-        
+        return out
 
+    def message(self, x_i: Tensor, x_j: Tensor, edge_type_emb: Tensor,
+                edge_attr: Tensor, index: Tensor, ptr: OptTensor,
+                size_i: Optional[int]) -> Tensor:
 
+        edge_attr = F.leaky_relu(self.edge_attr_emb(edge_attr),
+                                 self.negative_slope)
 
+        alpha = torch.cat([x_i, x_j, edge_type_emb, edge_attr], dim=-1)
+        alpha = F.leaky_relu(self.att(alpha), self.negative_slope)
+        alpha = softmax(alpha, index, ptr, size_i)
+        alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
+        out = self.lin(torch.cat([x_i, edge_attr], dim=-1)).unsqueeze(-2)
+        out = out * alpha.unsqueeze(-1)
+        return out
 
-    
-
-
-    
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, heads={self.heads})')
