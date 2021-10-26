@@ -108,7 +108,6 @@ def batched_negative_sampling(
             node to a specific example.
             If given as a tuple, then :obj:`edge_index` is interpreted as a
             bipartite graph connecting two different node types.
-            (default: :obj:`None`)
         num_neg_samples (int, optional): The number of negative samples to
             return. If set to :obj:`None`, will try to return a negative edge
             for every positive edge. (default: :obj:`None`)
