@@ -65,7 +65,8 @@ def coalesce(
         return edge_index
 
     dim_size = edge_index.size(1)
-    idx = torch.arange(0, nnz).sub_(mask.logical_not_().cumsum(dim=0))
+    idx = torch.arange(0, nnz, device=edge_index.device)
+    idx.sub_(mask.logical_not_().cumsum(dim=0))
 
     if isinstance(edge_attr, Tensor):
         edge_attr = scatter(edge_attr, idx, 0, None, dim_size, reduce)
