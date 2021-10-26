@@ -164,12 +164,13 @@ class TransformerConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
+
         query = self.lin_query(x[1]).view(-1, self.heads, self.out_channels)
         key = self.lin_key(x[0]).view(-1, self.heads, self.out_channels)
         value = self.lin_value(x[0]).view(-1, self.heads, self.out_channels)
 
-        # propagate_type: (query: Tensor, key:Tensor, value: Tensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, query = query, key = key, value = value,
+        # propagate_type: (query: Tensor, key:Tensor, value: Tensor, edge_attr: OptTensor) # noqa
+        out = self.propagate(edge_index, query=query, key=key, value=value,
                              edge_attr=edge_attr, size=None)
 
         alpha = self._alpha
@@ -198,27 +199,22 @@ class TransformerConv(MessagePassing):
         else:
             return out
 
-    def message(self, query_i: Tensor, key_j:Tensor,
-                value_j:Tensor, edge_attr: OptTensor,
-                index: Tensor, ptr: OptTensor,
+    def message(self, query_i: Tensor, key_j: Tensor, value_j: Tensor,
+                edge_attr: OptTensor, index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
-
-        query = query_i
-        key = key_j
-        value = value_j
 
         if self.lin_edge is not None:
             assert edge_attr is not None
             edge_attr = self.lin_edge(edge_attr).view(-1, self.heads,
                                                       self.out_channels)
-            key += edge_attr
+            key_j += edge_attr
 
-        alpha = (query * key).sum(dim=-1) / math.sqrt(self.out_channels)
+        alpha = (query_i * key_j).sum(dim=-1) / math.sqrt(self.out_channels)
         alpha = softmax(alpha, index, ptr, size_i)
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        out = value
+        out = value_j
         if edge_attr is not None:
             out += edge_attr
 
@@ -229,6 +225,7 @@ class TransformerConv(MessagePassing):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
                                              self.in_channels,
                                              self.out_channels, self.heads)
+
 
 x1 = torch.randn(4, 8)
 x2 = torch.randn(2, 16)
