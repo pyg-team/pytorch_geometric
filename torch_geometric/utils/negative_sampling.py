@@ -91,6 +91,71 @@ def negative_sampling(edge_index: Tensor,
     return vector_to_edge_index(neg_idx, size, bipartite, force_undirected)
 
 
+def batched_negative_sampling(
+    edge_index: Tensor,
+    batch: Union[Tensor, Tuple[Tensor, Tensor]],
+    num_neg_samples: Optional[int] = None,
+    method: str = "sparse",
+    force_undirected: bool = False,
+) -> Tensor:
+    r"""Samples random negative edges of multiple graphs given by
+    :attr:`edge_index` and :attr:`batch`.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        batch (LongTensor or Tuple[LongTensor, LongTensor]): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            node to a specific example.
+            If given as a tuple, then :obj:`edge_index` is interpreted as a
+            bipartite graph connecting two different node types.
+            (default: :obj:`None`)
+        num_neg_samples (int, optional): The number of negative samples to
+            return. If set to :obj:`None`, will try to return a negative edge
+            for every positive edge. (default: :obj:`None`)
+        method (string, optional): The method to use for negative sampling,
+            *i.e.*, :obj:`"sparse"` or :obj:`"dense"`.
+            This is a memory/runtime trade-off.
+            :obj:`"sparse"` will work on any graph of any size, while
+            :obj:`"dense"` can perform faster true-negative checks.
+            (default: :obj:`"sparse"`)
+        force_undirected (bool, optional): If set to :obj:`True`, sampled
+            negative edges will be undirected. (default: :obj:`False`)
+
+    :rtype: LongTensor
+    """
+    if isinstance(batch, Tensor):
+        src_batch, dst_batch = batch, batch
+    else:
+        src_batch, dst_batch = batch[0], batch[1]
+
+    split = degree(src_batch[edge_index[0]], dtype=torch.long).tolist()
+    edge_indices = torch.split(edge_index, split, dim=1)
+
+    num_src = degree(src_batch, dtype=torch.long)
+    cum_src = torch.cat([src_batch.new_zeros(1), num_src.cumsum(0)[:-1]])
+
+    if isinstance(batch, Tensor):
+        num_nodes = num_src.tolist()
+        cumsum = cum_src
+    else:
+        num_dst = degree(dst_batch, dtype=torch.long)
+        cum_dst = torch.cat([dst_batch.new_zeros(1), num_dst.cumsum(0)[:-1]])
+
+        num_nodes = torch.stack([num_src, num_dst], dim=1).tolist()
+        cumsum = torch.stack([cum_src, cum_dst], dim=1).unsqueeze(-1)
+
+    neg_edge_indices = []
+    for i, edge_index in enumerate(edge_indices):
+        edge_index = edge_index - cumsum[i]
+        neg_edge_index = negative_sampling(edge_index, num_nodes[i],
+                                           num_neg_samples, method,
+                                           force_undirected)
+        neg_edge_index += cumsum[i]
+        neg_edge_indices.append(neg_edge_index)
+
+    return torch.cat(neg_edge_indices, dim=1)
+
+
 def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
                                  contains_neg_self_loops: bool = True):
     r"""Samples a negative edge :obj:`(i,k)` for every positive edge
@@ -131,43 +196,40 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
     return edge_index[0], edge_index[1], rand.to(edge_index.device)
 
 
-def batched_negative_sampling(edge_index, batch, num_neg_samples=None,
-                              method="sparse", force_undirected=False):
-    r"""Samples random negative edges of multiple graphs given by
-    :attr:`edge_index` and :attr:`batch`.
+def structured_negative_sampling_feasible(
+        edge_index: Tensor, num_nodes: Optional[int] = None,
+        contains_neg_self_loops: bool = True) -> bool:
+    r"""Returns :obj:`True` if
+    :meth:`~torch_geometric.utils.structured_negative_sampling` is feasible
+    on the graph given by :obj:`edge_index`.
+    :obj:`~torch_geometric.utils.structured_negative_sampling` is infeasible
+    if atleast one node is connected to all other nodes.
 
     Args:
         edge_index (LongTensor): The edge indices.
-        batch (LongTensor): Batch vector
-            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example.
-        num_neg_samples (int, optional): The number of negative samples to
-            return. If set to :obj:`None`, will try to return a negative edge
-            for every positive edge. (default: :obj:`None`)
-        method (string, optional): The method to use for negative sampling,
-            *i.e.*, :obj:`"sparse"` or :obj:`"dense"`.
-            This is a memory/runtime trade-off.
-            :obj:`"sparse"` will work on any graph of any size, while
-            :obj:`"dense"` can perform faster true-negative checks.
-            (default: :obj:`"sparse"`)
-        force_undirected (bool, optional): If set to :obj:`True`, sampled
-            negative edges will be undirected. (default: :obj:`False`)
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        contains_neg_self_loops (bool, optional): If set to
+            :obj:`False`, sampled negative edges will not contain self loops.
+            (default: :obj:`True`)
 
-    :rtype: LongTensor
+    :rtype: bool
     """
-    split = degree(batch[edge_index[0]], dtype=torch.long).tolist()
-    edge_indices = torch.split(edge_index, split, dim=1)
-    num_nodes = degree(batch, dtype=torch.long)
-    cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)[:-1]])
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    max_num_neighbors = num_nodes
 
-    neg_edge_indices = []
-    for edge_index, N, C in zip(edge_indices, num_nodes.tolist(),
-                                cum_nodes.tolist()):
-        neg_edge_index = negative_sampling(edge_index - C, N, num_neg_samples,
-                                           method, force_undirected) + C
-        neg_edge_indices.append(neg_edge_index)
+    edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
-    return torch.cat(neg_edge_indices, dim=1)
+    if not contains_neg_self_loops:
+        edge_index, _ = remove_self_loops(edge_index)
+        max_num_neighbors -= 1  # Reduce number of valid neighbors
+
+    deg = degree(edge_index[0], num_nodes)
+    # True if there exists no node that is connected to all other nodes.
+    return bool(torch.all(deg < max_num_neighbors))
+
+
+###############################################################################
 
 
 def sample(population: int, k: int, device=None) -> Tensor:
@@ -244,36 +306,3 @@ def vector_to_edge_index(idx: Tensor, size: Tuple[int, int], bipartite: bool,
         col = idx % (num_nodes - 1)
         col[row <= col] += 1
         return torch.stack([row, col], dim=0)
-
-
-def structured_negative_sampling_feasible(
-        edge_index: Tensor, num_nodes: Optional[int] = None,
-        contains_neg_self_loops: bool = True) -> bool:
-    r"""Returns :obj:`True` if
-    :meth:`~torch_geometric.utils.structured_negative_sampling` is feasible
-    on the graph given by :obj:`edge_index`.
-    :obj:`~torch_geometric.utils.structured_negative_sampling` is infeasible
-    if atleast one node is connected to all other nodes.
-
-    Args:
-        edge_index (LongTensor): The edge indices.
-        num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
-        contains_neg_self_loops (bool, optional): If set to
-            :obj:`False`, sampled negative edges will not contain self loops.
-            (default: :obj:`True`)
-
-    :rtype: bool
-    """
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
-    max_num_neighbors = num_nodes
-
-    edge_index = coalesce(edge_index, num_nodes=num_nodes)
-
-    if not contains_neg_self_loops:
-        edge_index, _ = remove_self_loops(edge_index)
-        max_num_neighbors -= 1  # Reduce number of valid neighbors
-
-    deg = degree(edge_index[0], num_nodes)
-    # True if there exists no node that is connected to all other nodes.
-    return bool(torch.all(deg < max_num_neighbors))
