@@ -164,9 +164,13 @@ class TransformerConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
+        query = self.lin_query(x[1]).view(-1, self.heads, self.out_channels)
+        key = self.lin_key(x[0]).view(-1, self.heads, self.out_channels)
+        value = self.lin_value(x[0]).view(-1, self.heads, self.out_channels)
 
-        # propagate_type: (x: PairTensor, edge_attr: OptTensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
+        # propagate_type: (query: Tensor, key:Tensor, value: Tensor, edge_attr: OptTensor)
+        out = self.propagate(edge_index, query = query, key = key, value = value,
+                             edge_attr=edge_attr, size=None)
 
         alpha = self._alpha
         self._alpha = None
@@ -194,12 +198,14 @@ class TransformerConv(MessagePassing):
         else:
             return out
 
-    def message(self, x_i: Tensor, x_j: Tensor, edge_attr: OptTensor,
+    def message(self, query_i: Tensor, key_j:Tensor,
+                value_j:Tensor, edge_attr: OptTensor,
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
 
-        query = self.lin_query(x_i).view(-1, self.heads, self.out_channels)
-        key = self.lin_key(x_j).view(-1, self.heads, self.out_channels)
+        query = query_i
+        key = key_j
+        value = value_j
 
         if self.lin_edge is not None:
             assert edge_attr is not None
@@ -212,7 +218,7 @@ class TransformerConv(MessagePassing):
         self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        out = self.lin_value(x_j).view(-1, self.heads, self.out_channels)
+        out = value
         if edge_attr is not None:
             out += edge_attr
 
@@ -223,3 +229,10 @@ class TransformerConv(MessagePassing):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
                                              self.in_channels,
                                              self.out_channels, self.heads)
+
+x1 = torch.randn(4, 8)
+x2 = torch.randn(2, 16)
+edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+
+conv = TransformerConv(8, 32, heads=2, beta=True)
+out = conv(x1, edge_index)
