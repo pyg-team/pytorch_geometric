@@ -162,12 +162,14 @@ class TransformerConv(MessagePassing):
                 attention weights for each edge. (default: :obj:`None`)
         """
 
+        H, C = self.heads, self.out_channels
+
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
-        query = self.lin_query(x[1]).view(-1, self.heads, self.out_channels)
-        key = self.lin_key(x[0]).view(-1, self.heads, self.out_channels)
-        value = self.lin_value(x[0]).view(-1, self.heads, self.out_channels)
+        query = self.lin_query(x[1]).view(-1, H, C)
+        key = self.lin_key(x[0]).view(-1, H, C)
+        value = self.lin_value(x[0]).view(-1, H, C)
 
         # propagate_type: (query: Tensor, key:Tensor, value: Tensor, edge_attr: OptTensor) # noqa
         out = self.propagate(edge_index, query=query, key=key, value=value,
