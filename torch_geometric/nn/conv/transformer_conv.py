@@ -227,11 +227,3 @@ class TransformerConv(MessagePassing):
         return '{}({}, {}, heads={})'.format(self.__class__.__name__,
                                              self.in_channels,
                                              self.out_channels, self.heads)
-
-
-x1 = torch.randn(4, 8)
-x2 = torch.randn(2, 16)
-edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-
-conv = TransformerConv(8, 32, heads=2, beta=True)
-out = conv(x1, edge_index)
