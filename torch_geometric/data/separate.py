@@ -26,10 +26,8 @@ def separate(cls, batch: BaseData, idx: int, slice_dict: Any,
         if key is not None:
             attrs = slice_dict[key].keys()
         else:
-            attrs = [
-                attr for attr in slice_dict.keys()
-                if attr in set(batch_store.keys())
-            ]
+            attrs = set(batch_store.keys())
+            attrs = [attr for attr in slice_dict.keys() if attr in attrs]
         for attr in attrs:
             if key is not None:
                 slices = slice_dict[key][attr]
@@ -59,7 +57,28 @@ def _separate(
     decrement: bool,
 ) -> Any:
 
-    if isinstance(value, Mapping):
+    if isinstance(value, Tensor):
+        # Narrow a `torch.Tensor` based on `slices`.
+        # NOTE: We need to take care of decrementing elements appropriately.
+        cat_dim = batch.__cat_dim__(key, value, store)
+        start, end = int(slices[idx]), int(slices[idx + 1])
+        value = value.narrow(cat_dim or 0, start, end - start)
+        value = value.squeeze(0) if cat_dim is None else value
+        if decrement and (incs.dim() > 1 or int(incs[idx]) != 0):
+            value = value - incs[idx]
+        return value
+
+    elif isinstance(value, SparseTensor) and decrement:
+        # Narrow a `SparseTensor` based on `slices`.
+        # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
+        cat_dim = batch.__cat_dim__(key, value, store)
+        cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
+        for i, dim in enumerate(cat_dims):
+            start, end = int(slices[idx][i]), int(slices[idx + 1][i])
+            value = value.narrow(dim, start, end - start)
+        return value
+
+    elif isinstance(value, Mapping):
         # Recursively separate elements of dictionaries.
         return {
             key: _separate(key, elem, idx, slices[key],
@@ -77,27 +96,6 @@ def _separate(
                       incs[i] if decrement else None, batch, store, decrement)
             for i, elem in enumerate(value)
         ]
-
-    elif isinstance(value, Tensor):
-        # Narrow a `torch.Tensor` based on `slices`.
-        # NOTE: We need to take care of decrementing elements appropriately.
-        cat_dim = batch.__cat_dim__(key, value, store)
-        start, end = slices[idx], slices[idx + 1]
-        value = value.narrow(cat_dim or 0, start, end - start)
-        value = value.squeeze(0) if cat_dim is None else value
-        if decrement and (incs.dim() > 1 or int(incs[idx]) != 0):
-            value = value - incs[idx]
-        return value
-
-    elif isinstance(value, SparseTensor) and decrement:
-        # Narrow a `SparseTensor` based on `slices`.
-        # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
-        cat_dim = batch.__cat_dim__(key, value, store)
-        cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
-        for i, dim in enumerate(cat_dims):
-            start, end = int(slices[idx][i]), int(slices[idx + 1][i])
-            value = value.narrow(dim, start, end - start)
-        return value
 
     else:
         return value[idx]
