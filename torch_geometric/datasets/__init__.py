@@ -62,8 +62,10 @@ from .deezer_europe import DeezerEurope
 from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
+from .ba_shapes import BAShapes
 
 __all__ = [
+    'BAShapes',
     'KarateClub',
     'TUDataset',
     'GNNBenchmarkDataset',
