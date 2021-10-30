@@ -327,11 +327,16 @@ class Data(BaseData):
         super().__init__()
         self.__dict__['_store'] = GlobalStorage(_parent=self)
 
-        self.x = x
-        self.edge_index = edge_index
-        self.edge_attr = edge_attr
-        self.y = y
-        self.pos = pos
+        if x is not None:
+            self.x = x
+        if edge_index is not None:
+            self.edge_index = edge_index
+        if edge_attr is not None:
+            self.edge_attr = edge_attr
+        if y is not None:
+            self.y = y
+        if pos is not None:
+            self.pos = pos
 
         for key, value in kwargs.items():
             setattr(self, key, value)

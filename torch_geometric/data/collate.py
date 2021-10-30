@@ -125,27 +125,7 @@ def _collate(
 
     elem = values[0]
 
-    if isinstance(elem, Mapping):
-        # Recursively collate elements of dictionaries.
-        value_dict, slice_dict, inc_dict = {}, {}, {}
-        for key in elem.keys():
-            value_dict[key], slice_dict[key], inc_dict[key] = _collate(
-                key, [v[key] for v in values], data_list, stores, increment)
-        return value_dict, slice_dict, inc_dict
-
-    elif (isinstance(elem, Sequence) and not isinstance(elem, str)
-          and isinstance(elem[0], (Tensor, SparseTensor))):
-        # Recursively collate elements of lists.
-        value_list, slice_list, inc_list = [], [], []
-        for i in range(len(elem)):
-            value, slices, incs = _collate(key, [v[i] for v in values],
-                                           data_list, stores, increment)
-            value_list.append(value)
-            slice_list.append(slices)
-            inc_list.append(incs)
-        return value_list, slice_list, inc_list
-
-    elif isinstance(elem, Tensor):
+    if isinstance(elem, Tensor):
         # Concatenate a list of `torch.Tensor` along the `cat_dim`.
         # NOTE: We need to take care of incrementing elements appropriately.
         cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
@@ -183,6 +163,26 @@ def _collate(
             incs = None
         slices = torch.arange(len(values) + 1)
         return value, slices, incs
+
+    elif isinstance(elem, Mapping):
+        # Recursively collate elements of dictionaries.
+        value_dict, slice_dict, inc_dict = {}, {}, {}
+        for key in elem.keys():
+            value_dict[key], slice_dict[key], inc_dict[key] = _collate(
+                key, [v[key] for v in values], data_list, stores, increment)
+        return value_dict, slice_dict, inc_dict
+
+    elif (isinstance(elem, Sequence) and not isinstance(elem, str)
+          and isinstance(elem[0], (Tensor, SparseTensor))):
+        # Recursively collate elements of lists.
+        value_list, slice_list, inc_list = [], [], []
+        for i in range(len(elem)):
+            value, slices, incs = _collate(key, [v[i] for v in values],
+                                           data_list, stores, increment)
+            value_list.append(value)
+            slice_list.append(slices)
+            inc_list.append(incs)
+        return value_list, slice_list, inc_list
 
     else:
         # Other-wise, just return the list of values as it is.
