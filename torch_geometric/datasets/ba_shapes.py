@@ -42,16 +42,18 @@ class BAShapes(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
-
-    def __init__(self, seed: Optional[int] = None,
-                 connection_distribution: str = 'random',
-                 transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        seed: Optional[int] = None,
+        connection_distribution: str = 'random',
+        transform: Optional[Callable] = None,
+    ):
         super().__init__('.', transform, None, None)
         assert connection_distribution in ['random', 'uniform']
         if seed is not None:
             np.random.seed(seed)
 
-        # Build basis graph
+        # Build Barabasi Albert Braph
         num_nodes = 300
         connecting_degree = 5
         G = ba(num_nodes, connecting_degree, seed)
@@ -67,8 +69,16 @@ class BAShapes(InMemoryDataset):
         # Connect shapes to basis graph
         for i in range(num_shapes):
             G_house = house()
-            G = nx.disjoint_union(G, G_house)
-            G.add_edge((num_nodes - 1), connecting_nodes[i], label=0)
+            G_house = nx.relabel_nodes(
+                G_house, {
+                    2: num_nodes,
+                    3: num_nodes + 1,
+                    0: num_nodes + 3,
+                    1: num_nodes + 2,
+                    4: num_nodes + 4
+                })
+            G = nx.union(G, G_house)
+            G.add_edge(num_nodes, connecting_nodes[i], label=0)
             num_nodes += 5
 
         # Edge label mask
@@ -77,7 +87,7 @@ class BAShapes(InMemoryDataset):
         edge_labels = torch.LongTensor(edge_labels)
 
         num_nodes = len(G.nodes())
-        x = torch.ones(num_nodes, requires_grad=True, dtype=torch.float)
+        x = torch.ones((num_nodes, 10), dtype=torch.float)
         edge_index = torch.LongTensor(list(G.edges)).t().contiguous()
         y = list(nx.get_node_attributes(G, 'label').values())
         y = torch.LongTensor(y)
