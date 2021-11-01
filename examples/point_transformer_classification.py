@@ -45,17 +45,18 @@ class TransformerBlock(torch.nn.Module):
         )
 
         self.transformer = PointTransformerConv(
-            in_channels,
+            in_channels, #TODO : fix hidden_channels
             out_channels,
             pos_nn=self.pos_nn,
             attn_nn=self.attn_nn
         )
 
     def forward(self, x, pos, edge_index):
+        x_skip = x.clone()
         x = self.lin_in(x).relu()
         x = self.transformer(x, pos, edge_index)
         x = self.lin_out(x).relu()
-
+        x = x + x_skip
         return x
 
 
@@ -99,31 +100,28 @@ class Net(torch.nn.Module):
             BN(dim_model[0]),
             ReLU()
         )
+        
+        self.transformer_input = TransformerBlock(in_channels=dim_model[0],
+                                                  out_channels=dim_model[0],
+                                                  hidden_channels=dim_model[0])
 
         # backbone layers
         self.transformers_down = torch.nn.ModuleList()
         self.mlp_down = torch.nn.ModuleList()
 
         for i in range(len(dim_model) - 1):
-
-            # Add Point Transformer block followed by a Transition Down block
-            self.transformers_down.append(
-                TransformerBlock(in_channels=dim_model[i],
-                                 out_channels=dim_model[i + 1],
-                                 hidden_channels=dim_model[i])
-            )
+            # Add Transition Down block followed by a Transformer block 
             self.mlp_down.append(Seq(
-                Lin(dim_model[i + 1], dim_model[i + 1]),
+                Lin(dim_model[i], dim_model[i + 1]),
                 BN(dim_model[i + 1]),
                 ReLU())
             )
-
-        # end block
-        self.transformer = TransformerBlock(
-            in_channels=dim_model[-1],
-            out_channels=dim_model[-1],
-            hidden_channels=dim_model[-1]
-        )
+            
+            self.transformers_down.append(
+                TransformerBlock(in_channels=dim_model[i + 1],
+                                 out_channels=dim_model[i + 1],
+                                 hidden_channels=dim_model[i + 1])
+            )
 
         # class score computation
         self.lin = Seq(Lin(dim_model[-1], 64),
@@ -137,17 +135,17 @@ class Net(torch.nn.Module):
 
         # first block
         x = self.mlp_input(x)
+        edge_index = knn_graph(pos, k=self.k, batch=batch)
+        x = self.transformer_input(x, pos,edge_index)
 
         # backbone
         for i in range(len(self.transformers_down)):
-            edge_index = knn_graph(pos, k=self.k, batch=batch)
-            x = self.transformers_down[i](x, pos, edge_index)
             x, pos, batch = transition_down(
                 x, pos, self.mlp_down[i], batch=batch, k=self.k)
-
-        # end block
-        edge_index = knn_graph(pos, k=self.k, batch=batch)
-        x = self.transformer(x, pos, edge_index)
+            
+            edge_index = knn_graph(pos, k=self.k, batch=batch)
+            x = self.transformers_down[i](x, pos, edge_index)
+            
 
         # GlobalAveragePooling
         x = global_mean_pool(x, batch)
