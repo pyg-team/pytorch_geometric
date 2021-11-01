@@ -6,21 +6,55 @@ import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.nn import GCNConv, ChebConv  # noqa
+from torch_geometric.utils import from_scipy_sparse_matrix
+
+import pickle
+import numpy as np
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_gdc', action='store_true',
                     help='Use GDC preprocessing.')
 args = parser.parse_args()
 
-dataset = 'Cora'
+dataset = 'ota'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
-dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
-data = dataset[0]
-print(data)
-print(data.x)
-print(data.y)
-print(data.edge_index)
-exit()
+print(path)
+# dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
+# data = dataset[0]
+
+with open(osp.join(path,'processed_data.p'), 'rb') as fp:
+    all_inputs = pickle.load(fp)
+
+if 'circuit_graph' in locals():
+    del circuit_graph
+
+for circuit_name, circuit_data in all_inputs.items():
+    df = circuit_data["data_matrix"]
+    print(circuit_name)
+    node_features = df.values
+    node_features = np.delete(node_features, 0, 1)
+    node_features = np.array(node_features, dtype=np.float32)
+    node_features = node_features[:, 0:16]
+    x = torch.Tensor(node_features)
+    y = torch.Tensor(circuit_data["target"])
+    adj = circuit_data["adjacency_matrix"]
+    # print(adj.todense())
+    edge_index, edge_weight = from_scipy_sparse_matrix(adj)
+    print(edge_index,edge_weight)
+    exit()
+    if 'circuit_graph' in locals() and 'X' in locals():
+        X = np.concatenate((X, node_features), axis=0)
+        label = circuit_data["target"].reshape((-1, 1))
+        y = np.concatenate((y, label), axis=0)
+        igraph = circuit_data["adjacency_matrix"]
+        circuit_graph = block_diag((circuit_graph, igraph)).tocsr()
+    else:
+        X = node_features
+        y = circuit_data["target"].reshape((-1, 1))
+        circuit_graph = circuit_data["adjacency_matrix"]
+
+
 if args.use_gdc:
     gdc = T.GDC(self_loop_weight=1, normalization_in='sym',
                 normalization_out='col',

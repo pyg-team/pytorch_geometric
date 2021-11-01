@@ -20,6 +20,12 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
                 'PROTEINS_dense')
 dataset = TUDataset(path, name='PROTEINS', transform=T.ToDense(max_nodes),
                     pre_filter=MyFilter())
+print(dataset)
+print(dataset[0])
+print(dataset[0].x)
+print(dataset[0].y)
+print(dataset[0].adj)
+exit(0)
 dataset = dataset.shuffle()
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]

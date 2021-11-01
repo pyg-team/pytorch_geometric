@@ -18,7 +18,12 @@ train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
-
+print(type(train_dataset), train_dataset)
+print(train_dataset[0])
+print(train_dataset[0].x)
+print(train_dataset[0].y)
+print(train_dataset[0].adj_t)
+exit()
 class Net(torch.nn.Module):
     def __init__(self, hidden_channels, num_layers, alpha, theta,
                  shared_weights=True, dropout=0.0):
