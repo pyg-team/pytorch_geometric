@@ -10,7 +10,7 @@ from torch_geometric.utils import k_hop_subgraph
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 
-dataset = BAShapes(seed=0)
+dataset = BAShapes()
 data = dataset[0]
 
 model = GCN(data.num_node_features, 20, 3, dataset.num_classes)
@@ -22,7 +22,7 @@ train_idx, test_idx = train_test_split(idx, train_size=0.8, stratify=data.y)
 data = data.to(device)
 x, edge_index, y = data.x, data.edge_index, data.y
 
-for epoch in range(1, 1001):
+for epoch in range(1, 2001):
     model.train()
     optimizer.zero_grad()
     out = model(x, edge_index)
@@ -39,12 +39,12 @@ for epoch in range(1, 1001):
         test_correct = (out[test_idx].argmax(dim=1) == y[test_idx]).sum()
         test_acc = test_correct / len(test_idx)
         print(f'Epoch: {epoch}, Train Accuracy: {train_acc}, ',
-              'Test Accuracy: {test_acc}')
+              f'Test Accuracy: {test_acc}')
 
 # Explain One Node
 model.eval()
 explainer = GNNExplainer(model, epochs=300, return_type='log_prob', log=False)
-node_id = 400
+node_id = 600
 _, edge_mask = explainer.explain_node(node_id, x, edge_index)
 plt.figure(figsize=(20, 20))
 ax, G = explainer.visualize_subgraph(node_id, edge_index, edge_mask, y=data.y)
@@ -53,7 +53,7 @@ plt.show()
 # ROC AUC Over Test Nodes
 targets = []
 preds = []
-for node_idx in tqdm(idx[data.test_mask]):
+for node_idx in tqdm(idx[data.expl_mask]):
     _, edge_mask = explainer.explain_node(node_idx.item(), x, edge_index)
     subgraph = k_hop_subgraph(node_idx.item(), 3, edge_index)
     edge_label = torch.masked_select(data.edge_label, subgraph[3]).cpu()

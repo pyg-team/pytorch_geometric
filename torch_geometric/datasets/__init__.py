@@ -65,7 +65,6 @@ from .airports import Airports
 from .ba_shapes import BAShapes
 
 __all__ = [
-    'BAShapes',
     'KarateClub',
     'TUDataset',
     'GNNBenchmarkDataset',
@@ -132,6 +131,7 @@ __all__ = [
     'GemsecDeezer',
     'Twitch',
     'Airports',
+    'BAShapes',
 ]
 
 classes = __all__

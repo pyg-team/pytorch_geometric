@@ -2,24 +2,16 @@ from typing import Optional, Callable
 
 import torch
 import numpy as np
-import networkx as nx
 from torch_geometric.data import InMemoryDataset, Data
+from torch_geometric.utils import barabasi_albert_graph
 
 
 def house():
-    G = nx.house_graph()
-    labels = [1, 1, 2, 2, 3]
-    attr = {i: labels[i] for i in range(5)}
-    nx.set_node_attributes(G, attr, 'label')
-    nx.set_edge_attributes(G, 1, 'label')
-    return G
-
-
-def ba(num_nodes=300, m=5, seed=None):
-    G = nx.barabasi_albert_graph(num_nodes, m, seed=seed)
-    nx.set_node_attributes(G, 0, 'label')
-    nx.set_edge_attributes(G, 0, 'label')
-    return G
+    edge_index = [[0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4],
+                  [1, 3, 4, 4, 2, 0, 1, 3, 2, 0, 0, 1]]
+    edge_index = torch.tensor(edge_index)
+    label = torch.tensor([1, 1, 2, 2, 3])
+    return edge_index, label
 
 
 class BAShapes(InMemoryDataset):
@@ -29,9 +21,6 @@ class BAShapes(InMemoryDataset):
     "house"-structured graphs connected to it.
 
     Args:
-        seed (int, optional): Random seed used for :obj:`networkx` Barabási
-            Albert graph generation and for :obj:`numpy` methods.
-            (default: :obj:`None`)
         connection_distribution (string, optional): Specifies how the houses
             and the BA graph get connected. Valid inputs are :obj:`random`
             (random BA graph nodes are selected for connection to the houses),
@@ -42,21 +31,16 @@ class BAShapes(InMemoryDataset):
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
-    def __init__(
-        self,
-        seed: Optional[int] = None,
-        connection_distribution: str = 'random',
-        transform: Optional[Callable] = None,
-    ):
-        super().__init__('.', transform, None, None)
+    def __init__(self, connection_distribution: str = 'random',
+                 transform: Optional[Callable] = None):
+        super().__init__('.', transform)
         assert connection_distribution in ['random', 'uniform']
-        if seed is not None:
-            np.random.seed(seed)
 
         # Build Barabasi Albert Braph
         num_nodes = 300
-        connecting_degree = 5
-        G = ba(num_nodes, connecting_degree, seed)
+        edge_index = barabasi_albert_graph(num_nodes=num_nodes, num_edges=5)
+        label = torch.zeros(num_nodes, dtype=int)
+        edge_label = torch.zeros(edge_index.size(1), dtype=int)
 
         # Select nodes to connect shapes
         num_shapes = 80
@@ -68,36 +52,27 @@ class BAShapes(InMemoryDataset):
 
         # Connect shapes to basis graph
         for i in range(num_shapes):
-            G_house = house()
-            G_house = nx.relabel_nodes(
-                G_house, {
-                    2: num_nodes,
-                    3: num_nodes + 1,
-                    0: num_nodes + 3,
-                    1: num_nodes + 2,
-                    4: num_nodes + 4
-                })
-            G = nx.union(G, G_house)
-            G.add_edge(num_nodes, connecting_nodes[i], label=0)
+            house_edge_index, house_label = house()
+            house_edge_index = house_edge_index + num_nodes
+            connecting_edge_index = torch.tensor([
+                [connecting_nodes[i], num_nodes],
+                [num_nodes, connecting_nodes[i]]]
+            )
+            edge_index = torch.cat([
+                edge_index, house_edge_index, connecting_edge_index], dim=-1)
+            edge_label = torch.cat([
+                edge_label,
+                torch.tensor(house_edge_index.size(1) * [1]),
+                torch.tensor([0, 0])]
+            )
+            label = torch.cat((label, house_label))
             num_nodes += 5
 
-        # Edge label mask
-        G = G.to_directed() if not nx.is_directed(G) else G
-        edge_labels = list(nx.get_edge_attributes(G, 'label').values())
-        edge_labels = torch.LongTensor(edge_labels)
-
-        num_nodes = len(G.nodes())
         x = torch.ones((num_nodes, 10), dtype=torch.float)
-        edge_index = torch.LongTensor(list(G.edges)).t().contiguous()
-        y = list(nx.get_node_attributes(G, 'label').values())
-        y = torch.LongTensor(y)
-        test_mask = np.zeros(num_nodes, dtype=bool)
-        test_mask[range(400, num_nodes, 5)] = True
+        expl_mask = np.zeros(num_nodes, dtype=bool)
+        expl_mask[range(400, num_nodes, 5)] = True
 
-        data = Data(x=x, edge_index=edge_index, y=y, test_mask=test_mask,
-                    edge_label=edge_labels)
+        data = Data(x=x, edge_index=edge_index, y=label, expl_mask=expl_mask,
+                    edge_label=edge_label)
 
         self.data, self.slices = self.collate([data])
-
-    def __repr__(self):
-        return '{}()'.format(self.__class__.__name__)
