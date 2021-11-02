@@ -37,10 +37,10 @@ class GATv2Conv(MessagePassing):
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
         [\mathbf{x}_i \, \Vert \, \mathbf{x}_k]
         \right)\right)}.
-    
+
     If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
     the attention coefficients :math:`\alpha_{i,j}` are computed as
-    
+
     .. math::
         \alpha_{i,j} =
         \frac{
@@ -115,7 +115,7 @@ class GATv2Conv(MessagePassing):
                                 weight_initializer='glorot')
 
         self.att = Parameter(torch.Tensor(1, heads, out_channels))
-        
+
         if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
                                    weight_initializer='glorot')
@@ -183,8 +183,10 @@ class GATv2Conv(MessagePassing):
                     num_nodes = min(num_nodes, x_r.size(0))
                 if size is not None:
                     num_nodes = min(size[0], size[1])
-                edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
-                edge_index, edge_attr = add_self_loops(edge_index, edge_attr, num_nodes=num_nodes)
+                edge_index, edge_attr = remove_self_loops(
+                    edge_index, edge_attr)
+                edge_index, edge_attr = add_self_loops(
+                    edge_index, edge_attr, num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 if self.edge_dim is None:
                     edge_index = set_diag(edge_index)
@@ -201,9 +203,10 @@ class GATv2Conv(MessagePassing):
             assert self.lin_edge is not None
             edge_attr_transformed = self.lin_edge(edge_attr)
             edge_attr_transformed = edge_attr_transformed.view(-1, H, C)
-            
+
         # propagate_type: (x: PairTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), edge_attr=edge_attr_transformed, size=size)
+        out = self.propagate(edge_index, x=(x_l, x_r),
+                            edge_attr=edge_attr_transformed, size=size)
 
         alpha = self._alpha
         self._alpha = None
