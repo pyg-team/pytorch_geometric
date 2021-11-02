@@ -139,7 +139,15 @@ def _collate(
         else:
             incs = None
 
-        value = torch.cat(values, dim=cat_dim or 0)
+        if torch.utils.data.get_worker_info() is not None:
+            # Write directly into shared memory to avoid an extra copy:
+            numel = sum(value.numel() for value in values)
+            storage = elem.storage()._new_shared(numel)
+            out = elem.new(storage)
+        else:
+            out = None
+
+        value = torch.cat(values, dim=cat_dim or 0, out=out)
         return value, slices, incs
 
     elif isinstance(elem, SparseTensor) and increment:
