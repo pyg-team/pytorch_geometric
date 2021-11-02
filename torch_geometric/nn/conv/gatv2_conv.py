@@ -14,7 +14,8 @@ from torch_geometric.nn.inits import glorot, zeros
 
 
 class GATv2Conv(MessagePassing):
-    r"""The GATv2 operator from the `"How Attentive are Graph Attention Networks?"
+    r"""The GATv2 operator from the
+        `"How Attentive are Graph Attention Networks?"
     <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static
     attention problem of the standard :class:`~torch_geometric.conv.GATConv`
     layer: since the linear layers in the standard GAT are applied right after
@@ -70,6 +71,14 @@ class GATv2Conv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         edge_dim (int, optional): Edge feature dimensionality (in case
             there are any). (default: :obj:`None`)
+        fill_value (float or Tensor or str, optional): The way to generate
+            edge features of self-loops (in case :obj:`edge_dim != None`).
+            If given as :obj:`float` or :class:`torch.Tensor`, edge features of
+            self-loops will be directly given by :obj:`fill_value`.
+            If given as :obj:`str`, edge features of self-loops are computed by
+            aggregating all features of edges that point to the specific node,
+            according to a reduce operation. (:obj:`"add"`, :obj:`"mean"`,
+            :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`"mean"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
@@ -87,9 +96,10 @@ class GATv2Conv(MessagePassing):
         heads: int = 1,
         concat: bool = True,
         negative_slope: float = 0.2,
-        dropout: float = 0.,
+        dropout: float = 0.0,
         add_self_loops: bool = True,
         edge_dim: Optional[int] = None,
+        fill_value: Union[float, Tensor, str] = 'mean',
         bias: bool = True,
         share_weights: bool = False,
         **kwargs,
@@ -104,6 +114,7 @@ class GATv2Conv(MessagePassing):
         self.dropout = dropout
         self.add_self_loops = add_self_loops
         self.edge_dim = edge_dim
+        self.fill_value = fill_value
         self.share_weights = share_weights
 
         self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
@@ -144,10 +155,10 @@ class GATv2Conv(MessagePassing):
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None,
                 return_attention_weights: bool = None):
-        # type: (Union[Tensor, PairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
@@ -186,7 +197,8 @@ class GATv2Conv(MessagePassing):
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
                 edge_index, edge_attr = add_self_loops(
-                    edge_index, edge_attr, num_nodes=num_nodes)
+                    edge_index, edge_attr, fill_value=self.fill_value,
+                    num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 if self.edge_dim is None:
                     edge_index = set_diag(edge_index)
@@ -204,9 +216,9 @@ class GATv2Conv(MessagePassing):
             edge_attr_transformed = self.lin_edge(edge_attr)
             edge_attr_transformed = edge_attr_transformed.view(-1, H, C)
 
-        # propagate_type: (x: PairTensor)
+        # propagate_type: (x: PairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=(x_l, x_r),
-                            edge_attr=edge_attr_transformed, size=size)
+                             edge_attr=edge_attr_transformed, size=size)
 
         alpha = self._alpha
         self._alpha = None
