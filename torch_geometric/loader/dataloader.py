@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Optional
 
 from collections.abc import Mapping, Sequence
 
@@ -52,9 +52,9 @@ class DataLoader(torch.utils.data.DataLoader):
         shuffle (bool, optional): If set to :obj:`True`, the data will be
             reshuffled at every epoch. (default: :obj:`False`)
         follow_batch (List[str], optional): Creates assignment batch
-            vectors for each key in the list. (default: :obj:`[]`)
+            vectors for each key in the list. (default: :obj:`None`)
         exclude_keys (List[str], optional): Will exclude each key in the
-            list. (default: :obj:`[]`)
+            list. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.
     """
@@ -63,8 +63,8 @@ class DataLoader(torch.utils.data.DataLoader):
         dataset: Union[Dataset, List[Data], List[HeteroData]],
         batch_size: int = 1,
         shuffle: bool = False,
-        follow_batch: List[str] = [],
-        exclude_keys: List[str] = [],
+        follow_batch: Optional[List[str]] = None,
+        exclude_keys: Optional[List[str]] = None,
         **kwargs,
     ):
 
