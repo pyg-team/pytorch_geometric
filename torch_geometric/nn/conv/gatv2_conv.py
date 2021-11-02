@@ -14,8 +14,7 @@ from torch_geometric.nn.inits import glorot, zeros
 
 
 class GATv2Conv(MessagePassing):
-    r"""The GATv2 operator from the
-        `"How Attentive are Graph Attention Networks?"
+    r"""The GATv2 operator from the `"How Attentive are Graph Attention Networks?"
     <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static
     attention problem of the standard :class:`~torch_geometric.conv.GATConv`
     layer: since the linear layers in the standard GAT are applied right after
