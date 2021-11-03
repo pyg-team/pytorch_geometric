@@ -2,6 +2,7 @@ from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .gnn_benchmark_dataset import GNNBenchmarkDataset
 from .planetoid import Planetoid
+from .ota_planetoid import ota_planetoid
 from .nell import NELL
 from .citation_full import CitationFull, CoraFull
 from .coauthor import Coauthor
@@ -96,6 +97,7 @@ __all__ = [
     'CoMA',
     'SHREC2016',
     'TOSCA',
+    'ota_planetoid',
     'PCPNetDataset',
     'S3DIS',
     'GeometricShapes',

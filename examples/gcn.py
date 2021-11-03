@@ -17,6 +17,8 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 print(data)
+print(type(data), type(data.x), type(data.y), type(data.edge_index))
+print(data.x[0][0],type(data.x[0][0]), data.y[0], type(data.y[0]))
 print(data.x)
 print(data.y)
 print(data.edge_index)

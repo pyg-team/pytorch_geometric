@@ -18,10 +18,12 @@ def read_planetoid_data(folder, prefix):
     names = ['x', 'tx', 'allx', 'y', 'ty', 'ally', 'graph', 'test.index']
     items = [read_file(folder, prefix, name) for name in names]
     x, tx, allx, y, ty, ally, graph, test_index = items
+    print(tx.shape)
+    print(x.shape, allx.shape,ty.shape)
+    print(tx)
     train_index = torch.arange(y.size(0), dtype=torch.long)
     val_index = torch.arange(y.size(0), y.size(0) + 500, dtype=torch.long)
     sorted_test_index = test_index.sort()[0]
-
     if prefix.lower() == 'citeseer':
         # There are some isolated nodes in the Citeseer graph, resulting in
         # none consecutive test indices. We need to identify them and add them
