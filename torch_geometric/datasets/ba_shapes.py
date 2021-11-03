@@ -1,15 +1,13 @@
 from typing import Optional, Callable
 
 import torch
-import numpy as np
 from torch_geometric.data import InMemoryDataset, Data
 from torch_geometric.utils import barabasi_albert_graph
 
 
 def house():
-    edge_index = [[0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4],
-                  [1, 3, 4, 4, 2, 0, 1, 3, 2, 0, 0, 1]]
-    edge_index = torch.tensor(edge_index)
+    edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4],
+                               [1, 3, 4, 4, 2, 0, 1, 3, 2, 0, 0, 1]])
     label = torch.tensor([1, 1, 2, 2, 3])
     return edge_index, label
 
@@ -22,57 +20,63 @@ class BAShapes(InMemoryDataset):
 
     Args:
         connection_distribution (string, optional): Specifies how the houses
-            and the BA graph get connected. Valid inputs are :obj:`random`
+            and the BA graph get connected. Valid inputs are :obj:`"random"`
             (random BA graph nodes are selected for connection to the houses),
-            :obj:`uniform` (uniformly distributed BA graph nodes are selected
-            for connection to the houses). (default: :obj:`random`)
+            and :obj:`"uniform"` (uniformly distributed BA graph nodes are
+            selected for connection to the houses). (default: :obj:`"random"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
             (default: :obj:`None`)
     """
-    def __init__(self, connection_distribution: str = 'random',
+    def __init__(self, connection_distribution: str = "random",
                  transform: Optional[Callable] = None):
         super().__init__('.', transform)
         assert connection_distribution in ['random', 'uniform']
 
-        # Build Barabasi Albert Braph
+        # Build the Barabasi-Albert graph:
         num_nodes = 300
-        edge_index = barabasi_albert_graph(num_nodes=num_nodes, num_edges=5)
-        label = torch.zeros(num_nodes, dtype=int)
-        edge_label = torch.zeros(edge_index.size(1), dtype=int)
+        edge_index = barabasi_albert_graph(num_nodes, num_edges=5)
+        edge_label = torch.zeros(edge_index.size(1), dtype=torch.int64)
+        node_label = torch.zeros(num_nodes, dtype=torch.int64)
 
-        # Select nodes to connect shapes
-        num_shapes = 80
+        # Select nodes to connect shapes:
+        num_houses = 80
         if connection_distribution == 'random':
-            connecting_nodes = np.random.choice(num_nodes, num_shapes, False)
+            connecting_nodes = torch.randperm(num_nodes)[:num_houses]
         else:
-            step = num_nodes // num_shapes
-            connecting_nodes = np.arange(0, num_nodes, step=step)
+            step = num_nodes // num_houses
+            connecting_nodes = torch.arange(0, num_nodes, step)
 
-        # Connect shapes to basis graph
-        for i in range(num_shapes):
+        # Connect houses to Barabasi-Albert graph:
+        edge_indices = [edge_index]
+        edge_labels = [edge_label]
+        node_labels = [node_label]
+        for i in range(num_houses):
             house_edge_index, house_label = house()
-            house_edge_index = house_edge_index + num_nodes
-            connecting_edge_index = torch.tensor([
-                [connecting_nodes[i], num_nodes],
-                [num_nodes, connecting_nodes[i]]]
-            )
-            edge_index = torch.cat([
-                edge_index, house_edge_index, connecting_edge_index], dim=-1)
-            edge_label = torch.cat([
-                edge_label,
-                torch.tensor(house_edge_index.size(1) * [1]),
-                torch.tensor([0, 0])]
-            )
-            label = torch.cat((label, house_label))
+
+            edge_indices.append(house_edge_index + num_nodes)
+            edge_indices.append(
+                torch.tensor([[int(connecting_nodes[i]), num_nodes],
+                              [num_nodes, int(connecting_nodes[i])]]))
+
+            edge_labels.append(
+                torch.ones(house_edge_index.size(1), dtype=torch.long))
+            edge_labels.append(torch.zeros(2, dtype=torch.long))
+
+            node_labels.append(house_label)
+
             num_nodes += 5
 
-        x = torch.ones((num_nodes, 10), dtype=torch.float)
-        expl_mask = np.zeros(num_nodes, dtype=bool)
-        expl_mask[range(400, num_nodes, 5)] = True
+        edge_index = torch.cat(edge_indices, dim=1)
+        edge_label = torch.cat(edge_labels, dim=0)
+        node_label = torch.cat(node_labels, dim=0)
 
-        data = Data(x=x, edge_index=edge_index, y=label, expl_mask=expl_mask,
-                    edge_label=edge_label)
+        x = torch.ones((num_nodes, 10), dtype=torch.float)
+        expl_mask = torch.zeros(num_nodes, dtype=torch.bool)
+        expl_mask[torch.arange(400, num_nodes, 5)] = True
+
+        data = Data(x=x, edge_index=edge_index, y=node_label,
+                    expl_mask=expl_mask, edge_label=edge_label)
 
         self.data, self.slices = self.collate([data])

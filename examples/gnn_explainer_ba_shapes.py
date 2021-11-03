@@ -1,65 +1,69 @@
 from tqdm import tqdm
+
 import torch
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
-import numpy as np
+from sklearn.metrics import roc_auc_score
+from sklearn.model_selection import train_test_split
+
 from torch_geometric.datasets import BAShapes
 from torch_geometric.nn import GCN, GNNExplainer
 from torch_geometric.utils import k_hop_subgraph
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_auc_score
-
 dataset = BAShapes()
 data = dataset[0]
 
-model = GCN(data.num_node_features, 20, 3, dataset.num_classes)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = model.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
-idx = np.arange(0, data.num_nodes)
+idx = torch.arange(data.num_nodes)
 train_idx, test_idx = train_test_split(idx, train_size=0.8, stratify=data.y)
-data = data.to(device)
-x, edge_index, y = data.x, data.edge_index, data.y
 
-for epoch in range(1, 2001):
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+data = data.to(device)
+model = GCN(data.num_node_features, hidden_channels=20, num_layers=3,
+            out_channels=dataset.num_classes).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
+
+
+def train():
     model.train()
     optimizer.zero_grad()
-    out = model(x, edge_index)
-    loss = F.cross_entropy(out[train_idx], y[train_idx])
+    out = model(data.x, data.edge_index)
+    loss = F.cross_entropy(out[train_idx], data.y[train_idx])
     torch.nn.utils.clip_grad_norm_(model.parameters(), 2.0)
     loss.backward()
     optimizer.step()
+    return float(loss)
 
+
+@torch.no_grad()
+def test():
+    model.eval()
+    pred = model(data.x, data.edge_index).argmax(dim=-1)
+
+    train_correct = int((pred[train_idx] == data.y[train_idx]).sum())
+    train_acc = train_correct / train_idx.size(0)
+
+    test_correct = int((pred[test_idx] == data.y[test_idx]).sum())
+    test_acc = test_correct / test_idx.size(0)
+
+    return train_acc, test_acc
+
+
+for epoch in range(1, 2001):
+    loss = train()
     if epoch % 200 == 0:
-        train_correct = (out[train_idx].argmax(dim=1) == y[train_idx]).sum()
-        train_acc = train_correct / len(train_idx)
-        model.eval()
-        out = model(x, edge_index)
-        test_correct = (out[test_idx].argmax(dim=1) == y[test_idx]).sum()
-        test_acc = test_correct / len(test_idx)
-        print(f'Epoch: {epoch}, Train Accuracy: {train_acc}, ',
-              f'Test Accuracy: {test_acc}')
+        train_acc, test_acc = test()
+        print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, '
+              f'Train: {train_acc:.4f}, Test: {test_acc:.4f}')
 
-# Explain One Node
 model.eval()
-explainer = GNNExplainer(model, epochs=300, return_type='log_prob', log=False)
-node_id = 600
-_, edge_mask = explainer.explain_node(node_id, x, edge_index)
-plt.figure(figsize=(20, 20))
-ax, G = explainer.visualize_subgraph(node_id, edge_index, edge_mask, y=data.y)
-plt.show()
+targets, preds = [], []
+explainer = GNNExplainer(model, epochs=300, return_type='raw', log=False)
 
-# ROC AUC Over Test Nodes
-targets = []
-preds = []
-for node_idx in tqdm(idx[data.expl_mask]):
-    _, edge_mask = explainer.explain_node(node_idx.item(), x, edge_index)
-    subgraph = k_hop_subgraph(node_idx.item(), 3, edge_index)
-    edge_label = torch.masked_select(data.edge_label, subgraph[3]).cpu()
-    edge_mask = torch.masked_select(edge_mask, subgraph[3]).cpu()
-    targets.extend(edge_label)
-    preds.extend(edge_mask.cpu())
+# Explanation ROC AUC over all test nodes:
+for node_idx in tqdm(data.expl_mask.nonzero(as_tuple=False).view(-1).tolist()):
+    _, edge_mask = explainer.explain_node(node_idx, data.x, data.edge_index)
+    subgraph = k_hop_subgraph(node_idx, num_hops=3, edge_index=data.edge_index)
+    targets.append(data.edge_label[subgraph[3]].cpu())
+    preds.append(edge_mask[subgraph[3]].cpu())
 
-auc = roc_auc_score(targets, preds)
-print(f'Mean ROC AUC: {auc}')
+auc = roc_auc_score(torch.cat(targets), torch.cat(preds))
+print(f'Mean ROC AUC: {auc:.4f}')
