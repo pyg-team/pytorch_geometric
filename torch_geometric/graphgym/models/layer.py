@@ -1,5 +1,5 @@
 import copy
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import torch
 import torch.nn as nn
@@ -238,6 +238,7 @@ class MLP(nn.Module):
                 dim_inner=dim_inner,
                 final_act=True)
             layers.append(GeneralMultiLayer('linear', sub_layer_config))
+            layer_config = replace(layer_config, dim_in=dim_inner)
             layers.append(Linear(layer_config))
         else:
             layers.append(Linear(layer_config))
