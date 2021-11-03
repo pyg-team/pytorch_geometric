@@ -62,6 +62,7 @@ from .deezer_europe import DeezerEurope
 from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
+from .ba_shapes import BAShapes
 
 __all__ = [
     'KarateClub',
@@ -130,6 +131,7 @@ __all__ = [
     'GemsecDeezer',
     'Twitch',
     'Airports',
+    'BAShapes',
 ]
 
 classes = __all__
