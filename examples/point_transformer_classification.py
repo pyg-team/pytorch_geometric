@@ -52,11 +52,11 @@ class TransformerBlock(torch.nn.Module):
         )
 
     def forward(self, x, pos, edge_index):
-        x_skip = x.clone()
+        #x_skip = x.clone()
         x = self.lin_in(x).relu()
         x = self.transformer(x, pos, edge_index)
         x = self.lin_out(x).relu()
-        x = x + x_skip
+        #x = x + x_skip
         return x
 
 

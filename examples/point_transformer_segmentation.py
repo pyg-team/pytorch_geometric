@@ -38,7 +38,7 @@ def transition_up(x_sub, pos_sub, mlp_sub, x, pos, mlp, batch_sub=None,
         resolution and cardinality
     '''
 
-    # transform low-res features
+    # transform low-res features and reduce the number of features
     x_sub = mlp_sub(x_sub)
 
     # interpolate low-res feats to high-res points
@@ -63,7 +63,7 @@ class Net(torch.nn.Module):
         )
         
         self.transformer_input = TransformerBlock(in_channels=dim_model[0],
-                                 out_channels=dim_model[1],
+                                 out_channels=dim_model[0],
                                  hidden_channels=dim_model[0])
 
         # backbone layers
@@ -73,38 +73,38 @@ class Net(torch.nn.Module):
         self.mlp_up_sub = torch.nn.ModuleList()
         self.mlp_up = torch.nn.ModuleList()
 
-        for i in range(1, len(dim_model) - 1):
+        for i in range(0, len(dim_model) - 1):
 
             # Add Transition Down block followed by a Point Transformer block
             self.mlp_down.append(Seq(
+                Lin(dim_model[i], dim_model[i+1]),
+                BN(dim_model[i+1]),
+                ReLU())
+            )
+
+            self.transformers_down.append(
+                TransformerBlock(in_channels=dim_model[i+1],
+                                 out_channels=dim_model[i + 1],
+                                 hidden_channels=dim_model[i + 1])
+            )
+            
+            # Add Transition Up block followed by Point Transformer block
+            self.mlp_up_sub.append(Seq(
+                Lin(dim_model[i + 1], dim_model[i]),
+                BN(dim_model[i]),
+                ReLU())
+            )
+
+            self.mlp_up.append(Seq(
                 Lin(dim_model[i], dim_model[i]),
                 BN(dim_model[i]),
                 ReLU())
             )
 
-            self.transformers_down.append(
-                TransformerBlock(in_channels=dim_model[i],
-                                 out_channels=dim_model[i + 1],
-                                 hidden_channels=dim_model[i])
-            )
-            
-            # Add Transition Up block followed by Point Transformer block
-            self.mlp_up_sub.append(Seq(
-                Lin(dim_model[i + 1], dim_model[i + 1]),
-                BN(dim_model[i + 1]),
-                ReLU())
-            )
-
-            self.mlp_up.append(Seq(
-                Lin(dim_model[i + 1], dim_model[i + 1]),
-                BN(dim_model[i + 1]),
-                ReLU())
-            )
-
             self.transformers_up.append(TransformerBlock(
-                in_channels=dim_model[i + 1],
+                in_channels=dim_model[i],
                 out_channels=dim_model[i],
-                hidden_channels=dim_model[i + 1]))
+                hidden_channels=dim_model[i]))
 
         # summit layers 
         self.mlp_summit = Seq(
@@ -115,7 +115,7 @@ class Net(torch.nn.Module):
         
         self.transformer_summit = TransformerBlock(
             in_channels=dim_model[-1],
-            out_channels=dim_model[-2],
+            out_channels=dim_model[-1],
             hidden_channels=dim_model[-1]
         )
 
@@ -161,8 +161,7 @@ class Net(torch.nn.Module):
         
         # backbone up : augment cardinality and reduce dimensionnality
         n = len(self.transformers_down)
-        for i in range(i,n):
-            import pdb; pdb.set_trace()
+        for i in range(n):
             x, pos = transition_up(x,
                                    pos,
                                    self.mlp_up_sub[- i - 1],
@@ -171,8 +170,7 @@ class Net(torch.nn.Module):
                                    self.mlp_up[- i - 1],
                                    batch_sub=out_batch[- i - 1],
                                    batch=out_batch[- i - 2])
-            
-            edge_index = knn_graph(pos, k=self.k, batch=out_batch[- i - 1])
+            edge_index = knn_graph(pos, k=self.k, batch=out_batch[- i - 2])
             x = self.transformers_up[- i - 1](x, pos, edge_index)
 
         # Class score
