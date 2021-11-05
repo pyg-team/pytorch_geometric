@@ -207,17 +207,9 @@ class GATv2Conv(MessagePassing):
                         "simultaneously is currently not yet supported for "
                         "'edge_index' in a 'SparseTensor' form")
 
-        edge_attr_transformed: OptTensor = None
-        if edge_attr is not None:
-            if edge_attr.dim() == 1:
-                edge_attr = edge_attr.view(-1, 1)
-            assert self.lin_edge is not None
-            edge_attr_transformed = self.lin_edge(edge_attr)
-            edge_attr_transformed = edge_attr_transformed.view(-1, H, C)
-
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=(x_l, x_r),
-                             edge_attr=edge_attr_transformed, size=size)
+                             edge_attr=edge_attr, size=size)
 
         alpha = self._alpha
         self._alpha = None
@@ -243,8 +235,15 @@ class GATv2Conv(MessagePassing):
                 index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
         x = x_i + x_j
+
         if edge_attr is not None:
+            if edge_attr.dim() == 1:
+                edge_attr = edge_attr.view(-1, 1)
+            assert self.lin_edge is not None
+            edge_attr = self.lin_edge(edge_attr)
+            edge_attr = edge_attr.view(-1, self.heads, self.out_channels)
             x += edge_attr
+
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
         alpha = softmax(alpha, index, ptr, size_i)
