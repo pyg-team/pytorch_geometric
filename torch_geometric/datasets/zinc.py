@@ -73,9 +73,7 @@ class ZINC(InMemoryDataset):
 
     def download(self):
         shutil.rmtree(self.raw_dir)
-        print(self.url)
         path = download_url(self.url, self.root)
-        print(path)
         extract_zip(path, self.root)
         os.rename(osp.join(self.root, 'molecules'), self.raw_dir)
         os.unlink(path)
