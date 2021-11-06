@@ -8,8 +8,7 @@ def test_gatv2_conv():
     x2 = torch.randn(2, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
-    value = torch.randn(row.size(0))
-    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = GATv2Conv(8, 32, heads=2)
     assert conv.__repr__() == 'GATv2Conv(8, 32, heads=2)'
@@ -18,12 +17,12 @@ def test_gatv2_conv():
     assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out)
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
 
-    t = '(Tensor, Tensor, Size, NoneType) -> Tensor'
+    t = '(Tensor, Tensor, OptTensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit(x1, edge_index), out)
     assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
 
-    t = '(Tensor, SparseTensor, Size, NoneType) -> Tensor'
+    t = '(Tensor, SparseTensor, OptTensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
 
@@ -40,7 +39,8 @@ def test_gatv2_conv():
     assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
     assert conv._alpha is None
 
-    t = '(Tensor, Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]'
+    t = ('(Tensor, Tensor, OptTensor, Size, bool) -> '
+         'Tuple[Tensor, Tuple[Tensor, Tensor]]')
     jit = torch.jit.script(conv.jittable(t))
     result = jit(x1, edge_index, return_attention_weights=True)
     assert torch.allclose(result[0], out)
@@ -49,7 +49,8 @@ def test_gatv2_conv():
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
     assert conv._alpha is None
 
-    t = '(Tensor, SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]'
+    t = ('(Tensor, SparseTensor, OptTensor, Size, bool) -> '
+         'Tuple[Tensor, SparseTensor]')
     jit = torch.jit.script(conv.jittable(t))
     result = jit(x1, adj.t(), return_attention_weights=True)
     assert torch.allclose(result[0], out, atol=1e-6)
@@ -59,14 +60,37 @@ def test_gatv2_conv():
     adj = adj.sparse_resize((4, 2))
     out1 = conv((x1, x2), edge_index)
     assert out1.size() == (2, 64)
-    assert torch.allclose(conv((x1, x2), edge_index, (4, 2)), out1)
+    assert torch.allclose(conv((x1, x2), edge_index, size=(4, 2)), out1)
     assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-6)
 
-    t = '(OptPairTensor, Tensor, Size, NoneType) -> Tensor'
+    t = '(OptPairTensor, Tensor, OptTensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit((x1, x2), edge_index), out1)
     assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out1)
 
-    t = '(OptPairTensor, SparseTensor, Size, NoneType) -> Tensor'
+    t = '(OptPairTensor, SparseTensor, OptTensor, Size, NoneType) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+
+
+def test_gatv2_conv_with_edge_attr():
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 1, 1]])
+    edge_weight = torch.randn(edge_index.size(1))
+    edge_attr = torch.randn(edge_index.size(1), 4)
+
+    conv = GATv2Conv(8, 32, heads=2, edge_dim=1, fill_value=0.5)
+    out = conv(x, edge_index, edge_weight)
+    assert out.size() == (4, 64)
+
+    conv = GATv2Conv(8, 32, heads=2, edge_dim=1, fill_value='mean')
+    out = conv(x, edge_index, edge_weight)
+    assert out.size() == (4, 64)
+
+    conv = GATv2Conv(8, 32, heads=2, edge_dim=4, fill_value=0.5)
+    out = conv(x, edge_index, edge_attr)
+    assert out.size() == (4, 64)
+
+    conv = GATv2Conv(8, 32, heads=2, edge_dim=4, fill_value='mean')
+    out = conv(x, edge_index, edge_attr)
+    assert out.size() == (4, 64)
