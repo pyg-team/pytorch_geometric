@@ -19,7 +19,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
 # In its current state, PointTransformerConv does not support the absence of
 # features, so we create dummy nodes features with the 'Constant' Transform
 pre_transform, transform = T.NormalizeScale(), T.Compose(
-    [T.SamplePoints(1024), T.Constant(1)])
+    [T.SamplePoints(1024)])
 train_dataset = ModelNet(path, '10', True, transform, pre_transform)
 test_dataset = ModelNet(path, '10', False, transform, pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
@@ -45,18 +45,18 @@ class TransformerBlock(torch.nn.Module):
         )
 
         self.transformer = PointTransformerConv(
-            in_channels, #TODO : fix hidden_channels
+            hidden_channels,
             out_channels,
             pos_nn=self.pos_nn,
             attn_nn=self.attn_nn
         )
 
     def forward(self, x, pos, edge_index):
-        #x_skip = x.clone()
+        # x_skip = x.clone()
         x = self.lin_in(x).relu()
         x = self.transformer(x, pos, edge_index)
         x = self.lin_out(x).relu()
-        #x = x + x_skip
+        # x = x + x_skip
         return x
 
 
@@ -94,13 +94,16 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         self.k = k
 
+        # dummy feature is created if there is none given
+        NUM_FEATURES = max(NUM_FEATURES, 1)
+
         # first block
         self.mlp_input = Seq(
             Lin(NUM_FEATURES, dim_model[0]),
             BN(dim_model[0]),
             ReLU()
         )
-        
+
         self.transformer_input = TransformerBlock(in_channels=dim_model[0],
                                                   out_channels=dim_model[0],
                                                   hidden_channels=dim_model[0])
@@ -110,13 +113,13 @@ class Net(torch.nn.Module):
         self.mlp_down = torch.nn.ModuleList()
 
         for i in range(len(dim_model) - 1):
-            # Add Transition Down block followed by a Transformer block 
+            # Add Transition Down block followed by a Transformer block
             self.mlp_down.append(Seq(
                 Lin(dim_model[i], dim_model[i + 1]),
                 BN(dim_model[i + 1]),
                 ReLU())
             )
-            
+
             self.transformers_down.append(
                 TransformerBlock(in_channels=dim_model[i + 1],
                                  out_channels=dim_model[i + 1],
@@ -133,19 +136,22 @@ class Net(torch.nn.Module):
     def forward(self, data):
         x, pos, batch = data.x, data.pos, data.batch
 
+        # add dummy features in case there is none
+        if x is None:
+            x = torch.ones((pos.shape[0], 1)).to(pos.get_device())
+
         # first block
         x = self.mlp_input(x)
         edge_index = knn_graph(pos, k=self.k, batch=batch)
-        x = self.transformer_input(x, pos,edge_index)
+        x = self.transformer_input(x, pos, edge_index)
 
         # backbone
         for i in range(len(self.transformers_down)):
             x, pos, batch = transition_down(
                 x, pos, self.mlp_down[i], batch=batch, k=self.k)
-            
+
             edge_index = knn_graph(pos, k=self.k, batch=batch)
             x = self.transformers_down[i](x, pos, edge_index)
-            
 
         # GlobalAveragePooling
         x = global_mean_pool(x, batch)

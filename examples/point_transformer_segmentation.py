@@ -55,16 +55,19 @@ class Net(torch.nn.Module):
         super(Net, self).__init__()
         self.k = k
 
+        # dummy feature is created if there is none given
+        NUM_FEATURES = max(NUM_FEATURES, 1)
+
         # first block
         self.mlp_input = Seq(
             Lin(NUM_FEATURES, dim_model[0]),
             BN(dim_model[0]),
             ReLU()
         )
-        
+
         self.transformer_input = TransformerBlock(in_channels=dim_model[0],
-                                 out_channels=dim_model[0],
-                                 hidden_channels=dim_model[0])
+                                                  out_channels=dim_model[0],
+                                                  hidden_channels=dim_model[0])
 
         # backbone layers
         self.transformers_up = torch.nn.ModuleList()
@@ -77,17 +80,17 @@ class Net(torch.nn.Module):
 
             # Add Transition Down block followed by a Point Transformer block
             self.mlp_down.append(Seq(
-                Lin(dim_model[i], dim_model[i+1]),
-                BN(dim_model[i+1]),
+                Lin(dim_model[i], dim_model[i + 1]),
+                BN(dim_model[i + 1]),
                 ReLU())
             )
 
             self.transformers_down.append(
-                TransformerBlock(in_channels=dim_model[i+1],
+                TransformerBlock(in_channels=dim_model[i + 1],
                                  out_channels=dim_model[i + 1],
                                  hidden_channels=dim_model[i + 1])
             )
-            
+
             # Add Transition Up block followed by Point Transformer block
             self.mlp_up_sub.append(Seq(
                 Lin(dim_model[i + 1], dim_model[i]),
@@ -106,13 +109,13 @@ class Net(torch.nn.Module):
                 out_channels=dim_model[i],
                 hidden_channels=dim_model[i]))
 
-        # summit layers 
+        # summit layers
         self.mlp_summit = Seq(
             Lin(dim_model[-1], dim_model[-1]),
             BN(dim_model[-1]),
             ReLU()
         )
-        
+
         self.transformer_summit = TransformerBlock(
             in_channels=dim_model[-1],
             out_channels=dim_model[-1],
@@ -128,6 +131,10 @@ class Net(torch.nn.Module):
 
     def forward(self, data):
         x, pos, batch = data.x, data.pos, data.batch
+
+        # add dummy features in case there is none
+        if x is None:
+            x = torch.ones((pos.shape[0], 1)).to(pos.get_device())
 
         out_x = []
         out_pos = []
@@ -158,7 +165,7 @@ class Net(torch.nn.Module):
         x = self.mlp_summit(x)
         edge_index = knn_graph(pos, k=self.k, batch=batch)
         x = self.transformer_summit(x, pos, edge_index)
-        
+
         # backbone up : augment cardinality and reduce dimensionnality
         n = len(self.transformers_down)
         for i in range(n):
