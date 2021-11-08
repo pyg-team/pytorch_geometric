@@ -87,17 +87,35 @@ class HGBDataset(InMemoryDataset):
 
         # node_types = {0: 'paper', 1, 'author', ...}
         # edge_types = {0: ('paper', 'cite', 'paper'), ...}
-        with open(self.raw_paths[0], 'r') as f:  # `info.dat`
-            info = json.load(f)
-        n_types = {int(k): v for k, v in info['node.dat']['node type'].items()}
-        e_types = {int(k): v for k, v in info['link.dat']['link type'].items()}
-        e_types = {k: tuple(v.values()) for k, v in e_types.items()}
-        for key, (src, dst, rel) in e_types.items():
-            src, dst = n_types[int(src)], n_types[int(dst)]
-            rel = rel.split('-')[1]
-            rel = rel if rel != dst else 'to'
-            e_types[key] = (src, rel, dst)
-        num_classes = len(info['label.dat']['node type']['0'])
+        if self.name not in ['freebase']:
+            with open(self.raw_paths[0], 'r') as f:  # `info.dat`
+                info = json.load(f)
+            n_types = {k: v for k, v in info['node.dat']['node type'].items()}
+            e_types = {k: v for k, v in info['link.dat']['link type'].items()}
+            e_types = {k: tuple(v.values()) for k, v in e_types.items()}
+            for key, (src, dst, rel) in e_types.items():
+                src, dst = n_types[src], n_types[dst]
+                rel = rel.split('-')[1]
+                rel = rel if rel != dst else 'to'
+                e_types[key] = (src, rel, dst)
+            num_classes = len(info['label.dat']['node type']['0'])
+        else:
+            with open(self.raw_paths[0], 'r') as f:  # `info.dat`
+                info = f.read().split('\n')
+                start = info.index('TYPE\tMEANING') + 1
+                end = info[start:].index('')
+                n_types = [v.split('\t\t') for v in info[start:end]]
+                n_types = {k: v.lower() for k, v in n_types}
+                print(n_types)
+                # print(start, end)
+                # print(info[start:end])
+                start = info.index('LINK\tSTART\tEND\tMEANING') + 1
+                end = info[start:].index('')
+                e_types = [v.split('\t')[-1] for v in info[start:end]]
+                print(e_types)
+                # print(start, end)
+                # print(info[start:end])
+            raise NotImplementedError
 
         # Extract node information:
         mapping_dict = {}  # Maps global node indices to local ones.
@@ -106,7 +124,7 @@ class HGBDataset(InMemoryDataset):
         with open(self.raw_paths[1], 'r') as f:  # `node.dat`
             xs = [v.split('\t') for v in f.read().split('\n')[:-1]]
         for x in xs:
-            n_id, n_type = int(x[0]), n_types[int(x[2])]
+            n_id, n_type = x[0], n_types[x[2]]
             mapping_dict[n_id] = num_nodes_dict[n_type]
             num_nodes_dict[n_type] += 1
             if len(x) >= 4:  # Extract features (in case they are given).
@@ -140,7 +158,7 @@ class HGBDataset(InMemoryDataset):
             with open(self.raw_paths[4], 'r') as f:  # `label.dat.test`
                 test_ys = [v.split('\t') for v in f.read().split('\n')[:-1]]
             for y in train_ys:
-                n_id, n_type = mapping_dict[int(y[0])], n_types[int(y[2])]
+                n_id, n_type = mapping_dict[y[0]], n_types[y[2]]
 
                 if not hasattr(data[n_type], 'y'):
                     num_nodes = data[n_type].num_nodes
