@@ -124,7 +124,7 @@ class GeneralMultiLayer(nn.Module):
     """
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super(GeneralMultiLayer, self).__init__()
-        dim_inner = layer_config.dim_in \
+        dim_inner = layer_config.dim_out \
             if layer_config.dim_inner is None \
             else layer_config.dim_inner
         for i in range(layer_config.num_layers):
