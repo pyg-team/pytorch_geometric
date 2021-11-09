@@ -63,6 +63,7 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .ba_shapes import BAShapes
+from .deepnets1m import DeepNets1M
 
 __all__ = [
     'KarateClub',
@@ -132,6 +133,7 @@ __all__ = [
     'Twitch',
     'Airports',
     'BAShapes',
+    'DeepNets1M',
 ]
 
 classes = __all__
