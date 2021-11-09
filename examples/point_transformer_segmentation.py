@@ -1,4 +1,4 @@
-from point_transformer_classification import transition_down, TransformerBlock
+from point_transformer_classification import TransitionDown, TransformerBlock
 
 import os.path as osp
 
@@ -31,23 +31,37 @@ train_loader = DataLoader(train_dataset, batch_size=10, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=10, shuffle=False)
 
 
-def transition_up(x_sub, pos_sub, mlp_sub, x, pos, mlp, batch_sub=None,
-                  batch=None):
+class TransitionUp(torch.nn.Module):
     '''
         Reduce features dimensionnality and interpolate back to higher
         resolution and cardinality
     '''
 
-    # transform low-res features and reduce the number of features
-    x_sub = mlp_sub(x_sub)
+    def __init__(self, in_channels, out_channels):
+        super(TransitionUp, self).__init__()
+        self.mlp_sub = Seq(
+            Lin(in_channels, out_channels),
+            BN(out_channels),
+            ReLU()
+        )
 
-    # interpolate low-res feats to high-res points
-    x_interpolated = knn_interpolate(
-        x_sub, pos_sub, pos, k=3, batch_x=batch_sub, batch_y=batch)
+        self.mlp = Seq(
+            Lin(out_channels, out_channels),
+            BN(out_channels),
+            ReLU()
+        )
 
-    x = mlp(x) + x_interpolated
+    def forward(self, x, x_sub, pos, pos_sub, batch=None, batch_sub=None):
+        # transform low-res features and reduce the number of features
+        x_sub = self.mlp_sub(x_sub)
 
-    return x, pos
+        # interpolate low-res feats to high-res points
+        x_interpolated = knn_interpolate(
+            x_sub, pos_sub, pos, k=3, batch_x=batch_sub, batch_y=batch)
+
+        x = self.mlp(x) + x_interpolated
+
+        return x, pos
 
 
 class Net(torch.nn.Module):
@@ -67,47 +81,38 @@ class Net(torch.nn.Module):
 
         self.transformer_input = TransformerBlock(in_channels=dim_model[0],
                                                   out_channels=dim_model[0],
-                                                  hidden_channels=dim_model[0])
+                                                  )
 
         # backbone layers
         self.transformers_up = torch.nn.ModuleList()
         self.transformers_down = torch.nn.ModuleList()
-        self.mlp_down = torch.nn.ModuleList()
-        self.mlp_up_sub = torch.nn.ModuleList()
-        self.mlp_up = torch.nn.ModuleList()
+        self.transition_up = torch.nn.ModuleList()
+        self.transition_down = torch.nn.ModuleList()
 
         for i in range(0, len(dim_model) - 1):
 
             # Add Transition Down block followed by a Point Transformer block
-            self.mlp_down.append(Seq(
-                Lin(dim_model[i], dim_model[i + 1]),
-                BN(dim_model[i + 1]),
-                ReLU())
+            self.transition_down.append(
+                TransitionDown(in_channels=dim_model[i],
+                               out_channels=dim_model[i + 1],
+                               k=self.k)
             )
 
             self.transformers_down.append(
                 TransformerBlock(in_channels=dim_model[i + 1],
-                                 out_channels=dim_model[i + 1],
-                                 hidden_channels=dim_model[i + 1])
+                                 out_channels=dim_model[i + 1])
             )
 
             # Add Transition Up block followed by Point Transformer block
-            self.mlp_up_sub.append(Seq(
-                Lin(dim_model[i + 1], dim_model[i]),
-                BN(dim_model[i]),
-                ReLU())
+            self.transition_up.append(
+                TransitionUp(in_channels=dim_model[i+1],
+                             out_channels=dim_model[i])
             )
 
-            self.mlp_up.append(Seq(
-                Lin(dim_model[i], dim_model[i]),
-                BN(dim_model[i]),
-                ReLU())
+            self.transformers_up.append(
+                TransformerBlock(in_channels=dim_model[i],
+                                 out_channels=dim_model[i])
             )
-
-            self.transformers_up.append(TransformerBlock(
-                in_channels=dim_model[i],
-                out_channels=dim_model[i],
-                hidden_channels=dim_model[i]))
 
         # summit layers
         self.mlp_summit = Seq(
@@ -119,7 +124,6 @@ class Net(torch.nn.Module):
         self.transformer_summit = TransformerBlock(
             in_channels=dim_model[-1],
             out_channels=dim_model[-1],
-            hidden_channels=dim_model[-1]
         )
 
         # class score computation
@@ -152,8 +156,8 @@ class Net(torch.nn.Module):
 
         # backbone down : #reduce cardinality and augment dimensionnality
         for i in range(len(self.transformers_down)):
-            x, pos, batch = transition_down(
-                x, pos, self.mlp_down[i], batch=batch, k=self.k)
+            x, pos, batch = self.transition_down[i](
+                x, pos, batch=batch)
             edge_index = knn_graph(pos, k=self.k, batch=batch)
             x = self.transformers_down[i](x, pos, edge_index)
 
@@ -169,14 +173,15 @@ class Net(torch.nn.Module):
         # backbone up : augment cardinality and reduce dimensionnality
         n = len(self.transformers_down)
         for i in range(n):
-            x, pos = transition_up(x,
-                                   pos,
-                                   self.mlp_up_sub[- i - 1],
-                                   out_x[- i - 2],
-                                   out_pos[- i - 2],
-                                   self.mlp_up[- i - 1],
-                                   batch_sub=out_batch[- i - 1],
-                                   batch=out_batch[- i - 2])
+            x, pos = self.transition_up[- i - 1](
+                x=out_x[- i - 2],
+                x_sub=x,
+                pos=out_pos[- i - 2],
+                pos_sub=pos,
+                batch_sub=out_batch[- i - 1],
+                batch=out_batch[- i - 2]
+            )
+
             edge_index = knn_graph(pos, k=self.k, batch=out_batch[- i - 2])
             x = self.transformers_up[- i - 1](x, pos, edge_index)
 
