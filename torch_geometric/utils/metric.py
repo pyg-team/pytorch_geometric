@@ -177,7 +177,7 @@ def mean_iou(pred, target, num_classes, batch=None, omitnans=False):
         num_classes (int): The number of classes.
         batch (LongTensor): The assignment vector which maps each pred-target
             pair to an example.
-        omitnans (bool): Flag for controlling tha handling of NaNs when averaging.
+        omitnans (bool): Flag for controlling tha handling of NaNs.
                          True - NaNs ignored, False - NaN = 1
 
     :rtype: :class:`Tensor`
@@ -190,5 +190,5 @@ def mean_iou(pred, target, num_classes, batch=None, omitnans=False):
     else:
         iou[torch.isnan(iou)] = 1
         iou = iou.mean(dim=-1)
-    
+
     return iou
