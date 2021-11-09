@@ -105,7 +105,7 @@ class Net(torch.nn.Module):
 
             # Add Transition Up block followed by Point Transformer block
             self.transition_up.append(
-                TransitionUp(in_channels=dim_model[i+1],
+                TransitionUp(in_channels=dim_model[i + 1],
                              out_channels=dim_model[i])
             )
 
