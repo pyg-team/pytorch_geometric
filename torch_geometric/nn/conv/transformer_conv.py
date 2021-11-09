@@ -49,8 +49,8 @@ class TransformerConv(MessagePassing):
                 \alpha_{i,j} \mathbf{W}_2 \vec{x}_j \right)}_{=\mathbf{m}_i}
 
             with :math:`\beta_i = \textrm{sigmoid}(\mathbf{w}_5^{\top}
-            [ \mathbf{x}_i, \mathbf{m}_i, \mathbf{x}_i - \mathbf{m}_i ])`
-            (default: :obj:`False`)
+            [ \mathbf{W}_1 \mathbf{x}_i, \mathbf{m}_i, \mathbf{W}_1
+            \mathbf{x}_i - \mathbf{m}_i ])` (default: :obj:`False`)
         dropout (float, optional): Dropout probability of the normalized
             attention coefficients which exposes each node to a stochastically
             sampled neighborhood during training. (default: :obj:`0`)
