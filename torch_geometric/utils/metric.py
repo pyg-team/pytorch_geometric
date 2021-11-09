@@ -168,7 +168,7 @@ def intersection_and_union(pred, target, num_classes, batch=None):
     return i, u
 
 
-def mean_iou(pred, target, num_classes, batch=None):
+def mean_iou(pred, target, num_classes, batch=None, omitnans=False):
     r"""Computes the mean intersection over union score of predictions.
 
     Args:
@@ -177,11 +177,18 @@ def mean_iou(pred, target, num_classes, batch=None):
         num_classes (int): The number of classes.
         batch (LongTensor): The assignment vector which maps each pred-target
             pair to an example.
+        omitnans (bool): Flag for controlling tha handling of NaNs when averaging.
+                         True - NaNs ignored, False - NaN = 1
 
     :rtype: :class:`Tensor`
     """
     i, u = intersection_and_union(pred, target, num_classes, batch)
     iou = i.to(torch.float) / u.to(torch.float)
-    iou[torch.isnan(iou)] = 1
-    iou = iou.mean(dim=-1)
+
+    if omitnans:
+        iou = iou[~iou.isnan()].mean()
+    else:
+        iou[torch.isnan(iou)] = 1
+        iou = iou.mean(dim=-1)
+    
     return iou
