@@ -3,6 +3,7 @@ from dataclasses import dataclass, replace
 
 import torch
 import torch.nn as nn
+from torch_geometric.nn import Linear as Linear_pyg
 import torch.nn.functional as F
 import torch_geometric as pyg
 
@@ -161,7 +162,7 @@ class Linear(nn.Module):
     """
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super(Linear, self).__init__()
-        self.model = nn.Linear(
+        self.model = Linear_pyg(
             layer_config.dim_in,
             layer_config.dim_out,
             bias=layer_config.has_bias)
@@ -310,9 +311,9 @@ class GINConv(nn.Module):
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super(GINConv, self).__init__()
         gin_nn = nn.Sequential(
-            nn.Linear(layer_config.dim_in, layer_config.dim_out),
+            Linear_pyg(layer_config.dim_in, layer_config.dim_out),
             nn.ReLU(),
-            nn.Linear(layer_config.dim_out, layer_config.dim_out))
+            Linear_pyg(layer_config.dim_out, layer_config.dim_out))
         self.model = pyg.nn.GINConv(gin_nn)
 
     def forward(self, batch):
