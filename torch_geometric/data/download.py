@@ -16,8 +16,9 @@ def download_url(url: str, folder: str, log: bool = True):
             console. (default: :obj:`True`)
     """
 
-    filename = url.rpartition('/')[2]
-    filename = filename if filename[0] == '?' else filename.split('?')[0]
+    filename = url.rpartition('/')[2].split('?')[0]
+    # filename = url.rpartition('/')[2]
+    # filename = filename if filename[0] == '?' else filename.split('?')[0]
     path = osp.join(folder, filename)
 
     if osp.exists(path):  # pragma: no cover
