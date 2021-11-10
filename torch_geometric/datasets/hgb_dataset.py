@@ -49,8 +49,7 @@ class HGBDataset(InMemoryDataset):
 
     def __init__(self, root: str, name: str,
                  transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+                 pre_transform: Optional[Callable] = None):
         self.name = name.lower()
         assert self.name in set(self.names.keys())
         super().__init__(root, transform, pre_transform)
@@ -114,7 +113,7 @@ class HGBDataset(InMemoryDataset):
                 src, dst = n_types[int(src)], n_types[int(dst)]
                 rel = rel.split('-')[1]
                 e_types[key] = (src, rel, dst)
-        else:
+        else:  # Link prediction:
             raise NotImplementedError
 
         # Extract node information:
@@ -180,8 +179,11 @@ class HGBDataset(InMemoryDataset):
                 n_id, n_type = mapping_dict[int(y[0])], n_types[int(y[2])]
                 data[n_type].test_mask[n_id] = True
 
-        else:
+        else:  # Link prediction:
             raise NotImplementedError
+
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
 

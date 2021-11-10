@@ -64,6 +64,7 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .ba_shapes import BAShapes
+from .malnet_tiny import MalNetTiny
 
 __all__ = [
     'KarateClub',
@@ -134,6 +135,7 @@ __all__ = [
     'Twitch',
     'Airports',
     'BAShapes',
+    'MalNetTiny',
 ]
 
 classes = __all__
