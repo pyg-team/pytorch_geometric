@@ -38,12 +38,22 @@ class GNNExplainer(torch.nn.Module):
             :class:`~torch_geometric.nn.conv.message_passing.MessagePassing`
             layers inside :obj:`model`. (default: :obj:`None`)
         return_type (str, optional): Denotes the type of output from
-            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model returns
-            the logarithm of probabilities), :obj:`"prob"` (the model returns
-            probabilities) and :obj:`"raw"` (the model returns raw scores).
+            :obj:`model`. Valid inputs are :obj:`"log_prob"` (the model
+            returns the logarithm of probabilities), :obj:`"prob"` (the
+            model returns probabilities), :obj:`"raw"` (the model returns raw
+            scores) and :obj:`"regression"` (the model returns scalars).
             (default: :obj:`"log_prob"`)
+        feat_mask_type (str, optional): Denotes the type of feature mask
+            that will be learned. Valid inputs are :obj:`"feature"` (a single
+            feature-level mask for all nodes), :obj:`"individual_feature"`
+            (individual feature-level masks for each node), and :obj:`"scalar"`
+            (scalar mask for each each node). (default: :obj:`"feature"`)
+        allow_edge_mask (boolean, optional): If set to :obj:`False`, the edge
+            mask will not be optimized. (default: :obj:`True`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
+        **kwargs (optional): Additional hyper-parameters to override default
+            settings in :attr:`~torch_geometric.nn.models.GNNExplainer.coeffs`.
     """
 
     coeffs = {
@@ -57,24 +67,37 @@ class GNNExplainer(torch.nn.Module):
 
     def __init__(self, model, epochs: int = 100, lr: float = 0.01,
                  num_hops: Optional[int] = None, return_type: str = 'log_prob',
-                 log: bool = True):
-        super(GNNExplainer, self).__init__()
-        assert return_type in ['log_prob', 'prob', 'raw']
+                 feat_mask_type: str = 'feature', allow_edge_mask: bool = True,
+                 log: bool = True, **kwargs):
+        super().__init__()
+        assert return_type in ['log_prob', 'prob', 'raw', 'regression']
+        assert feat_mask_type in ['feature', 'individual_feature', 'scalar']
         self.model = model
         self.epochs = epochs
         self.lr = lr
         self.__num_hops__ = num_hops
         self.return_type = return_type
         self.log = log
+        self.allow_edge_mask = allow_edge_mask
+        self.feat_mask_type = feat_mask_type
+        self.coeffs.update(kwargs)
 
     def __set_masks__(self, x, edge_index, init="normal"):
         (N, F), E = x.size(), edge_index.size(1)
 
         std = 0.1
-        self.node_feat_mask = torch.nn.Parameter(torch.randn(F) * 0.1)
+        if self.feat_mask_type == 'individual_feature':
+            self.node_feat_mask = torch.nn.Parameter(torch.randn(N, F) * std)
+        elif self.feat_mask_type == 'scalar':
+            self.node_feat_mask = torch.nn.Parameter(torch.randn(N, 1) * std)
+        else:
+            self.node_feat_mask = torch.nn.Parameter(torch.randn(1, F) * std)
 
         std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
         self.edge_mask = torch.nn.Parameter(torch.randn(E) * std)
+        if not self.allow_edge_mask:
+            self.edge_mask.requires_grad_(False)
+            self.edge_mask.fill_(float('inf'))  # `sigmoid()` returns `1`.
         self.loop_mask = edge_index[0] != edge_index[1]
 
         for module in self.model.modules():
@@ -125,13 +148,20 @@ class GNNExplainer(torch.nn.Module):
                 item = item[edge_mask]
             kwargs[key] = item
 
-        return x, edge_index, mapping, edge_mask, kwargs
+        return x, edge_index, mapping, edge_mask, subset, kwargs
 
     def __loss__(self, node_idx, log_logits, pred_label):
         # node_idx is -1 for explaining graphs
-        loss = -log_logits[
-            node_idx, pred_label[node_idx]] if node_idx != -1 else -log_logits[
-                0, pred_label[0]]
+        if self.return_type == 'regression':
+            if node_idx != -1:
+                loss = torch.cdist(log_logits[node_idx], pred_label[node_idx])
+            else:
+                loss = torch.cdist(log_logits, pred_label)
+        else:
+            if node_idx != -1:
+                loss = -log_logits[node_idx, pred_label[node_idx]]
+            else:
+                loss = -log_logits[0, pred_label[0]]
 
         m = self.edge_mask.sigmoid()
         edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
@@ -173,14 +203,19 @@ class GNNExplainer(torch.nn.Module):
         # Get the initial prediction.
         with torch.no_grad():
             out = self.model(x=x, edge_index=edge_index, batch=batch, **kwargs)
-            log_logits = self.__to_log_prob__(out)
-            pred_label = log_logits.argmax(dim=-1)
+            if self.return_type == 'regression':
+                prediction = out
+            else:
+                log_logits = self.__to_log_prob__(out)
+                pred_label = log_logits.argmax(dim=-1)
 
         self.__set_masks__(x, edge_index)
         self.to(x.device)
-
-        optimizer = torch.optim.Adam([self.node_feat_mask, self.edge_mask],
-                                     lr=self.lr)
+        if self.allow_edge_mask:
+            parameters = [self.node_feat_mask, self.edge_mask]
+        else:
+            parameters = [self.node_feat_mask]
+        optimizer = torch.optim.Adam(parameters, lr=self.lr)
 
         if self.log:  # pragma: no cover
             pbar = tqdm(total=self.epochs)
@@ -188,10 +223,13 @@ class GNNExplainer(torch.nn.Module):
 
         for epoch in range(1, self.epochs + 1):
             optimizer.zero_grad()
-            h = x * self.node_feat_mask.view(1, -1).sigmoid()
+            h = x * self.node_feat_mask.sigmoid()
             out = self.model(x=h, edge_index=edge_index, batch=batch, **kwargs)
-            log_logits = self.__to_log_prob__(out)
-            loss = self.__loss__(-1, log_logits, pred_label)
+            if self.return_type == 'regression':
+                loss = self.__loss__(-1, out, prediction)
+            else:
+                log_logits = self.__to_log_prob__(out)
+                loss = self.__loss__(-1, log_logits, pred_label)
             loss.backward()
             optimizer.step()
 
@@ -201,7 +239,7 @@ class GNNExplainer(torch.nn.Module):
         if self.log:  # pragma: no cover
             pbar.close()
 
-        node_feat_mask = self.node_feat_mask.detach().sigmoid()
+        node_feat_mask = self.node_feat_mask.detach().sigmoid().squeeze()
         edge_mask = self.edge_mask.detach().sigmoid()
 
         self.__clear_masks__()
@@ -224,23 +262,30 @@ class GNNExplainer(torch.nn.Module):
         self.model.eval()
         self.__clear_masks__()
 
+        num_nodes = x.size(0)
         num_edges = edge_index.size(1)
 
         # Only operate on a k-hop subgraph around `node_idx`.
-        x, edge_index, mapping, hard_edge_mask, kwargs = self.__subgraph__(
-            node_idx, x, edge_index, **kwargs)
+        x, edge_index, mapping, hard_edge_mask, subset, kwargs = \
+            self.__subgraph__(node_idx, x, edge_index, **kwargs)
 
         # Get the initial prediction.
         with torch.no_grad():
             out = self.model(x=x, edge_index=edge_index, **kwargs)
-            log_logits = self.__to_log_prob__(out)
-            pred_label = log_logits.argmax(dim=-1)
+            if self.return_type == 'regression':
+                prediction = out
+            else:
+                log_logits = self.__to_log_prob__(out)
+                pred_label = log_logits.argmax(dim=-1)
 
         self.__set_masks__(x, edge_index)
         self.to(x.device)
 
-        optimizer = torch.optim.Adam([self.node_feat_mask, self.edge_mask],
-                                     lr=self.lr)
+        if self.allow_edge_mask:
+            parameters = [self.node_feat_mask, self.edge_mask]
+        else:
+            parameters = [self.node_feat_mask]
+        optimizer = torch.optim.Adam(parameters, lr=self.lr)
 
         if self.log:  # pragma: no cover
             pbar = tqdm(total=self.epochs)
@@ -248,10 +293,13 @@ class GNNExplainer(torch.nn.Module):
 
         for epoch in range(1, self.epochs + 1):
             optimizer.zero_grad()
-            h = x * self.node_feat_mask.view(1, -1).sigmoid()
+            h = x * self.node_feat_mask.sigmoid()
             out = self.model(x=h, edge_index=edge_index, **kwargs)
-            log_logits = self.__to_log_prob__(out)
-            loss = self.__loss__(mapping, log_logits, pred_label)
+            if self.return_type == 'regression':
+                loss = self.__loss__(mapping, out, prediction)
+            else:
+                log_logits = self.__to_log_prob__(out)
+                loss = self.__loss__(mapping, log_logits, pred_label)
             loss.backward()
             optimizer.step()
 
@@ -262,6 +310,16 @@ class GNNExplainer(torch.nn.Module):
             pbar.close()
 
         node_feat_mask = self.node_feat_mask.detach().sigmoid()
+        if self.feat_mask_type == 'individual_feature':
+            new_mask = x.new_zeros(num_nodes, x.size(-1))
+            new_mask[subset] = node_feat_mask
+            node_feat_mask = new_mask
+        elif self.feat_mask_type == 'scalar':
+            new_mask = x.new_zeros(num_nodes, 1)
+            new_mask[subset] = node_feat_mask
+            node_feat_mask = new_mask
+        node_feat_mask = node_feat_mask.squeeze()
+
         edge_mask = self.edge_mask.new_zeros(num_edges)
         edge_mask[hard_edge_mask] = self.edge_mask.detach().sigmoid()
 
@@ -270,7 +328,8 @@ class GNNExplainer(torch.nn.Module):
         return node_feat_mask, edge_mask
 
     def visualize_subgraph(self, node_idx, edge_index, edge_mask, y=None,
-                           threshold=None, **kwargs):
+                           threshold=None, edge_y=None, node_alpha=None,
+                           seed=10, **kwargs):
         r"""Visualizes the subgraph given an edge mask
         :attr:`edge_mask`.
 
@@ -286,6 +345,11 @@ class GNNExplainer(torch.nn.Module):
                 important edges. If set to :obj:`None`, will visualize all
                 edges with transparancy indicating the importance of edges.
                 (default: :obj:`None`)
+            edge_y (Tensor, optional): The edge labels used as edge colorings.
+            node_alpha (Tensor, optional): Tensor of floats (0 - 1) indicating
+                transparency of each node.
+            seed (int, optional): Random seed of the :obj:`networkx` node
+                placement algorithm. (default: :obj:`10`)
             **kwargs (optional): Additional arguments passed to
                 :func:`nx.draw`.
 
@@ -320,9 +384,19 @@ class GNNExplainer(torch.nn.Module):
         else:
             y = y[subset].to(torch.float) / y.max().item()
 
-        data = Data(edge_index=edge_index, att=edge_mask, y=y,
-                    num_nodes=y.size(0)).to('cpu')
-        G = to_networkx(data, node_attrs=['y'], edge_attrs=['att'])
+        if edge_y is None:
+            edge_color = ['black'] * edge_index.size(1)
+        else:
+            colors = list(plt.rcParams['axes.prop_cycle'])
+            edge_color = [
+                colors[i % len(colors)]['color']
+                for i in edge_y[hard_edge_mask]
+            ]
+
+        data = Data(edge_index=edge_index, att=edge_mask,
+                    edge_color=edge_color, y=y, num_nodes=y.size(0)).to('cpu')
+        G = to_networkx(data, node_attrs=['y'],
+                        edge_attrs=['att', 'edge_color'])
         mapping = {k: i for k, i in enumerate(subset.tolist())}
         G = nx.relabel_nodes(G, mapping)
 
@@ -335,7 +409,7 @@ class GNNExplainer(torch.nn.Module):
         label_kwargs = {k: v for k, v in kwargs.items() if k in label_args}
         label_kwargs['font_size'] = kwargs.get('font_size') or 10
 
-        pos = nx.spring_layout(G)
+        pos = nx.spring_layout(G, seed=seed)
         ax = plt.gca()
         for source, target, data in G.edges(data=True):
             ax.annotate(
@@ -343,11 +417,21 @@ class GNNExplainer(torch.nn.Module):
                 textcoords='data', arrowprops=dict(
                     arrowstyle="->",
                     alpha=max(data['att'], 0.1),
+                    color=data['edge_color'],
                     shrinkA=sqrt(node_kwargs['node_size']) / 2.0,
                     shrinkB=sqrt(node_kwargs['node_size']) / 2.0,
                     connectionstyle="arc3,rad=0.1",
                 ))
-        nx.draw_networkx_nodes(G, pos, node_color=y.tolist(), **node_kwargs)
+
+        if node_alpha is None:
+            nx.draw_networkx_nodes(G, pos, node_color=y.tolist(),
+                                   **node_kwargs)
+        else:
+            node_alpha_subset = node_alpha[subset]
+            assert ((node_alpha_subset >= 0) & (node_alpha_subset <= 1)).all()
+            nx.draw_networkx_nodes(G, pos, alpha=node_alpha_subset.tolist(),
+                                   node_color=y.tolist(), **node_kwargs)
+
         nx.draw_networkx_labels(G, pos, **label_kwargs)
 
         return ax, G

@@ -29,7 +29,8 @@ class NormalizeRotation(BaseTransform):
 
         pos = pos - pos.mean(dim=0, keepdim=True)
         C = torch.matmul(pos.t(), pos)
-        e, v = torch.eig(C, eigenvectors=True)  # v[:,j] is j-th eigenvector
+        e, v = torch.linalg.eig(C)  # v[:,j] is j-th eigenvector
+        e, v = torch.view_as_real(e), v.real
 
         if self.sort:
             indices = e[:, 0].argsort(descending=True)

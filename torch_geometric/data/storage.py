@@ -68,8 +68,8 @@ class BaseStorage(MutableMapping):
         return self._mapping[key]
 
     def __setitem__(self, key: str, value: Any):
-        if value is None and key in self:
-            del self[key]
+        if value is None and key in self._mapping:
+            del self._mapping[key]
         elif value is not None:
             self._mapping[key] = value
 
@@ -95,7 +95,7 @@ class BaseStorage(MutableMapping):
         return out
 
     def __getstate__(self) -> Dict[str, Any]:
-        out = self.__dict__
+        out = self.__dict__.copy()
 
         _parent = out.get('_parent', None)
         if _parent is not None:
@@ -119,7 +119,7 @@ class BaseStorage(MutableMapping):
     # In contrast to standard `keys()`, `values()` and `items()` functions of
     # Python dictionaries, we allow to only iterate over a subset of items
     # denoted by a list of keys `args`.
-    # This is especically useful for adding PyTorch Tensor functionality to the
+    # This is especially useful for adding PyTorch Tensor functionality to the
     # storage object, e.g., in case we only want to transfer a subset of keys
     # to the GPU (i.e. the ones that are relevant to the deep learning model).
 
@@ -230,12 +230,27 @@ class NodeStorage(BaseStorage):
         return key
 
     @property
+    def can_infer_num_nodes(self):
+        keys = set(self.keys())
+        num_node_keys = {
+            'num_nodes', 'x', 'pos', 'batch', 'adj', 'adj_t', 'edge_index',
+            'face'
+        }
+        if len(keys & num_node_keys) > 0:
+            return True
+        elif len([key for key in keys if 'node' in key]) > 0:
+            return True
+        else:
+            return False
+
+    @property
     def num_nodes(self) -> Optional[int]:
         # We sequentially access attributes that reveal the number of nodes.
         if 'num_nodes' in self:
             return self['num_nodes']
-        for key, value in self.items('x', 'pos', 'batch'):
-            if isinstance(value, Tensor):
+        for key, value in self.items():
+            if (isinstance(value, Tensor)
+                    and (key in {'x', 'pos', 'batch'} or 'node' in key)):
                 return value.size(self._parent().__cat_dim__(key, value, self))
         if 'adj' in self and isinstance(self.adj, SparseTensor):
             return self.adj.size(0)
@@ -307,8 +322,8 @@ class EdgeStorage(BaseStorage):
     @property
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
-        for key, value in self.items('edge_index', 'edge_attr'):
-            if isinstance(value, Tensor):
+        for key, value in self.items():
+            if isinstance(value, Tensor) and 'edge' in key:
                 return value.size(self._parent().__cat_dim__(key, value, self))
         for value in self.values('adj', 'adj_t'):
             if isinstance(value, SparseTensor):

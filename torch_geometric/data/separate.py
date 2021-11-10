@@ -26,10 +26,8 @@ def separate(cls, batch: BaseData, idx: int, slice_dict: Any,
         if key is not None:
             attrs = slice_dict[key].keys()
         else:
-            attrs = [
-                attr for attr in slice_dict.keys()
-                if attr in set(batch_store.keys())
-            ]
+            attrs = set(batch_store.keys())
+            attrs = [attr for attr in slice_dict.keys() if attr in attrs]
         for attr in attrs:
             if key is not None:
                 slices = slice_dict[key][attr]
@@ -42,7 +40,7 @@ def separate(cls, batch: BaseData, idx: int, slice_dict: Any,
 
         # The `num_nodes` attribute needs special treatment, as we cannot infer
         # the real number of nodes from the total number of nodes alone:
-        if 'num_nodes' in batch_store:
+        if hasattr(batch_store, '_num_nodes'):
             data_store.num_nodes = batch_store._num_nodes[idx]
 
     return data
@@ -59,29 +57,11 @@ def _separate(
     decrement: bool,
 ) -> Any:
 
-    if isinstance(value, Mapping):
-        # Recursively separate elements of dictionaries.
-        return {
-            key: _separate(key, elem, idx, slices[key],
-                           incs[key] if decrement else None, batch, store,
-                           decrement)
-            for key, elem in value.items()
-        }
-
-    elif (isinstance(value, Sequence) and isinstance(value[0], Sequence)
-          and not isinstance(value[0], str)):
-        # Recursively separate elements of lists of lists.
-        return [
-            _separate(key, elem, idx, slices[i],
-                      incs[i] if decrement else None, batch, store, decrement)
-            for i, elem in enumerate(value)
-        ]
-
-    elif isinstance(value, Tensor):
+    if isinstance(value, Tensor):
         # Narrow a `torch.Tensor` based on `slices`.
         # NOTE: We need to take care of decrementing elements appropriately.
         cat_dim = batch.__cat_dim__(key, value, store)
-        start, end = slices[idx], slices[idx + 1]
+        start, end = int(slices[idx]), int(slices[idx + 1])
         value = value.narrow(cat_dim or 0, start, end - start)
         value = value.squeeze(0) if cat_dim is None else value
         if decrement and (incs.dim() > 1 or int(incs[idx]) != 0):
@@ -97,6 +77,25 @@ def _separate(
             start, end = int(slices[idx][i]), int(slices[idx + 1][i])
             value = value.narrow(dim, start, end - start)
         return value
+
+    elif isinstance(value, Mapping):
+        # Recursively separate elements of dictionaries.
+        return {
+            key: _separate(key, elem, idx, slices[key],
+                           incs[key] if decrement else None, batch, store,
+                           decrement)
+            for key, elem in value.items()
+        }
+
+    elif (isinstance(value, Sequence) and isinstance(value[0], Sequence)
+          and not isinstance(value[0], str)
+          and isinstance(value[0][0], (Tensor, SparseTensor))):
+        # Recursively separate elements of lists of lists.
+        return [
+            _separate(key, elem, idx, slices[i],
+                      incs[i] if decrement else None, batch, store, decrement)
+            for i, elem in enumerate(value)
+        ]
 
     else:
         return value[idx]

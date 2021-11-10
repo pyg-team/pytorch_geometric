@@ -87,7 +87,7 @@ class SGConv(MessagePassing):
                 if self.cached:
                     self._cached_x = x
         else:
-            x = cache
+            x = cache.detach()
 
         return self.lin(x)
 

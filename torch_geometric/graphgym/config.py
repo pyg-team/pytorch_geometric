@@ -3,6 +3,7 @@ import os
 from yacs.config import CfgNode as CN
 import shutil
 
+from torch_geometric.data.makedirs import makedirs
 import torch_geometric.graphgym.register as register
 
 # Global config object
@@ -37,7 +38,7 @@ def set_cfg(cfg):
     cfg.cfg_dest = 'config.yaml'
 
     # Random seed
-    cfg.seed = 1
+    cfg.seed = 0
 
     # Print rounding
     cfg.round = 4
@@ -201,26 +202,6 @@ def set_cfg(cfg):
 
     # Define label: Column name
     cfg.dataset.label_column = 'none'
-
-    # ----------------------------------------------------------------------- #
-    # Snowflake options
-    # ----------------------------------------------------------------------- #
-    cfg.snowflake = CN()
-
-    # Account name
-    cfg.snowflake.account = 'EPA65780'
-
-    # User name
-    cfg.snowflake.user = 'yjxxx'
-
-    # Password
-    cfg.snowflake.password = 'Test12345'
-
-    # Warehouse name
-    cfg.snowflake.warehouse = 'SF_TUTS_WH'
-
-    # Database name
-    cfg.snowflake.database = 'Vrtex'
 
     # ----------------------------------------------------------------------- #
     # Training options
@@ -482,6 +463,7 @@ def dump_cfg(cfg):
         cfg (CfgNode): Configuration node
 
     """
+    makedirs(cfg.out_dir)
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
     with open(cfg_file, 'w') as f:
         cfg.dump(stream=f)
@@ -519,6 +501,8 @@ def set_run_dir(out_dir, fname):
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
         fname = fname[:-5]
+    elif fname.endswith('.yml'):
+        fname = fname[:-4]
     cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
@@ -540,6 +524,8 @@ def set_agg_dir(out_dir, fname):
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
         fname = fname[:-5]
+    elif fname.endswith('.yml'):
+        fname = fname[:-4]
     return os.path.join(out_dir, fname)
 
 

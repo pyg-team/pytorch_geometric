@@ -14,9 +14,11 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, ones, reset
 
 
-def group(xs: List[Tensor], aggr: str) -> Optional[Tensor]:
+def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
     if len(xs) == 0:
         return None
+    elif aggr is None:
+        return torch.stack(xs, dim=1)
     elif len(xs) == 1:
         return xs[0]
     else:
@@ -169,7 +171,7 @@ class HGTConv(MessagePassing):
             out = self.a_lin[node_type](F.gelu(out))
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = self.skip[node_type].sigmoid()
-                out = alpha * alpha + (1 - alpha) * x_dict[node_type]
+                out = alpha * out + (1 - alpha) * x_dict[node_type]
             out_dict[node_type] = out
 
         return out_dict

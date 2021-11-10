@@ -6,7 +6,6 @@ import os.path as osp
 
 import torch
 import numpy as np
-import pandas as pd
 
 from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
                                   extract_zip)
@@ -109,6 +108,8 @@ class OGB_MAG(InMemoryDataset):
             os.remove(path)
 
     def process(self):
+        import pandas as pd
+
         data = HeteroData()
 
         path = osp.join(self.raw_dir, 'node-feat', 'paper', 'node-feat.csv.gz')

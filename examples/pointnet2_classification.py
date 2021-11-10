@@ -21,7 +21,7 @@ class SAModule(torch.nn.Module):
         row, col = radius(pos, pos[idx], self.r, batch, batch[idx],
                           max_num_neighbors=64)
         edge_index = torch.stack([col, row], dim=0)
-        x = self.conv(x, (pos, pos[idx]), edge_index)
+        x = self.conv((x, x[idx]), (pos, pos[idx]), edge_index)
         pos, batch = pos[idx], batch[idx]
         return x, pos, batch
 
@@ -50,6 +50,7 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
+        # Input channels account for both `pos` and node features.
         self.sa1_module = SAModule(0.5, 0.2, MLP([3, 64, 64, 128]))
         self.sa2_module = SAModule(0.25, 0.4, MLP([128 + 3, 128, 128, 256]))
         self.sa3_module = GlobalSAModule(MLP([256 + 3, 256, 512, 1024]))

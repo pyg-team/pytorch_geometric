@@ -22,10 +22,10 @@ class PointNetConv(MessagePassing):
         \mathcal{N}(i) \cup \{ i \}} h_{\mathbf{\Theta}} ( \mathbf{x}_j,
         \mathbf{p}_j - \mathbf{p}_i) \right),
 
-    where :math:`\gamma_{\mathbf{\Theta}}` and
-    :math:`h_{\mathbf{\Theta}}` denote neural
-    networks, *.i.e.* MLPs, and :math:`\mathbf{P} \in \mathbb{R}^{N \times D}`
-    defines the position of each point.
+    where :math:`\gamma_{\mathbf{\Theta}}` and :math:`h_{\mathbf{\Theta}}`
+    denote neural networks, *i.e.* MLPs, and
+    :math:`\mathbf{P} \in \mathbb{R}^{N \times D}` defines the position of
+    each point.
 
     Args:
         local_nn (torch.nn.Module, optional): A neural network
@@ -72,8 +72,8 @@ class PointNetConv(MessagePassing):
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)
-                edge_index, _ = add_self_loops(edge_index,
-                                               num_nodes=pos[1].size(0))
+                edge_index, _ = add_self_loops(
+                    edge_index, num_nodes=min(pos[0].size(0), pos[1].size(0)))
             elif isinstance(edge_index, SparseTensor):
                 edge_index = set_diag(edge_index)
 

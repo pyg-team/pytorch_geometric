@@ -51,7 +51,7 @@ class HGTLoader(torch.utils.data.DataLoader):
             num_samples={key: [512] * 4 for key in hetero_data.node_types},
             # Use a batch size of 128 for sampling training nodes of type paper
             batch_size=128,
-            input_nodes: ('paper': hetero_data['paper'].train_mask),
+            input_nodes=('paper': hetero_data['paper'].train_mask),
         )
 
         sampled_hetero_data = next(iter(loader))
@@ -90,6 +90,7 @@ class HGTLoader(torch.utils.data.DataLoader):
     ):
         if kwargs.get('num_workers', 0) > 0:
             torch.multiprocessing.set_sharing_strategy('file_system')
+            kwargs['persistent_workers'] = True
 
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']

@@ -5,7 +5,7 @@ from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import ModuleList, BatchNorm1d
 from torch_sparse import SparseTensor
-from pytorch_lightning.metrics import Accuracy
+from torchmetrics import Accuracy
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning import LightningDataModule, LightningModule, Trainer
 

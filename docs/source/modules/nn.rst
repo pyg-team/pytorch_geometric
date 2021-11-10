@@ -6,6 +6,15 @@ torch_geometric.nn
 
 .. autoclass:: torch_geometric.nn.sequential.Sequential
 
+.. currentmodule:: torch_geometric.nn.dense
+
+   {% for cls in torch_geometric.nn.dense.lin_classes %}
+.. autoclass:: {{ cls }}
+   :members:
+   :undoc-members:
+   :exclude-members: training, initialize_parameters
+   {% endfor %}
+
 Convolutional Layers
 --------------------
 
@@ -23,7 +32,7 @@ Convolutional Layers
 .. automodule:: torch_geometric.nn.conv
    :members:
    :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training
+   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, initialize_parameters
 
 .. automodule:: torch_geometric.nn.meta
    :members:
@@ -102,15 +111,13 @@ Dense Pooling Layers
      {{ cls }}
    {% endfor %}
 
-.. automodule:: torch_geometric.nn.dense.diff_pool
-   :members:
-   :undoc-members:
-   :exclude-members: training
 
-.. automodule:: torch_geometric.nn.dense.mincut_pool
+   {% for cls in torch_geometric.nn.dense.pool_classes %}
+.. autoclass:: {{ cls }}
    :members:
    :undoc-members:
    :exclude-members: training
+   {% endfor %}
 
 Unpooling Layers
 ----------------
