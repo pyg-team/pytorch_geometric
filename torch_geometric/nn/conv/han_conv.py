@@ -1,30 +1,18 @@
-from typing import Union, Dict, Optional, List
-from torch_geometric.typing import NodeType, EdgeType, Metadata
-
+from typing import Union, Dict, Optional
 from collections import defaultdict
+
 import torch
 from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Parameter
+
+from torch_geometric.typing import NodeType, EdgeType, Metadata
 from torch_sparse import SparseTensor
 from torch_geometric.nn.dense import Linear
 from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, reset
-
-
-def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
-    if len(xs) == 0:
-        return None
-    elif aggr is None:
-        return torch.stack(xs, dim=1)
-    elif len(xs) == 1:
-        return xs[0]
-    else:
-        out = torch.stack(xs, dim=0)
-        out = getattr(torch, aggr)(out, dim=0)
-        out = out[0] if isinstance(out, tuple) else out
-        return out
+from .hgt_conv import group
 
 
 class HANConv(MessagePassing):
@@ -62,8 +50,10 @@ class HANConv(MessagePassing):
         **kwargs,
     ):
         super().__init__(aggr='add', node_dim=0, **kwargs)
+
         if not isinstance(in_channels, dict):
             in_channels = {node_type: in_channels for node_type in metadata[0]}
+
         self.rel_types = []
         self.group = group
         self.heads = heads
@@ -77,13 +67,11 @@ class HANConv(MessagePassing):
         for node_type in metadata[0]:
             self.proj[node_type] = Linear(in_channels[node_type], out_channels)
         dim = out_channels // heads
-        for metapath in metadata[1]:
-            self.rel_types.append('__'.join(metapath))
-            src, rel, dst = metapath
-            self.src_rel['__'.join(metapath)] = Parameter(
-                torch.Tensor(1, heads, dim))
-            self.dst_rel['__'.join(metapath)] = Parameter(
-                torch.Tensor(1, heads, dim))
+        for edge_type in metadata[1]:
+            edge_type = '__'.join(edge_type)
+            self.rel_types.append(edge_type)
+            self.src_rel[edge_type] = Parameter(torch.Tensor(1, heads, dim))
+            self.dst_rel[edge_type] = Parameter(torch.Tensor(1, heads, dim))
         self.semantic_prj = Linear(out_channels, out_channels)
         self.semantic_attn = Parameter(torch.Tensor(out_channels))
 
@@ -115,29 +103,30 @@ class HANConv(MessagePassing):
             be set to :obj:`None`.
         """
         H, D = self.heads, self.out_channels // self.heads
-        x_node_dict = dict()
+        x_node_dict, msg_dict, out_dict = {}, {}, {}
+
         # Iterate over node types
         for node_type, x_node in x_dict.items():
             x_node_dict[node_type] = self.proj[node_type](x_node).view(
                 -1, H, D)
-        # Create metapath message dictionary
-        msg_dict = dict()
+            out_dict[node_type] = []
 
-        # Iterate over edge types(metapaths)
+        # Iterate over edge types
         for edge_type, edge_index in edge_index_dict.items():
-            src_type, rel, dst_type = edge_type
-            src_rel = self.src_rel['__'.join(edge_type)]
-            dst_rel = self.dst_rel['__'.join(edge_type)]
-            x_src = x_node_dict[src_type]
+            src_type, _, dst_type = edge_type
+            edge_type = '__'.join(edge_type)
+            src_rel = self.src_rel[edge_type]
+            dst_rel = self.dst_rel[edge_type]
             x_dst = x_node_dict[dst_type]
-            # propagate_type: (x_src_j: Tensor, src_rel: Tensor,
-            # x_dst_i: Tensor, dst_rel: Tensor)
-            out = self.propagate(edge_index, x_src=x_src, src_rel=src_rel,
-                                 x_dst=x_dst, dst_rel=dst_rel,
-                                 size=(x_src.shape[0], x_dst.shape[0]))
-            # applying non-linearity to semantic specific node embedding
+            alpha_src = (x_node_dict[src_type] * src_rel).sum(dim=-1)
+            alpha_dst = (x_dst * dst_rel).sum(dim=-1)
+            alpha = (alpha_src, alpha_dst)
+            # propagate_type: (x_dst: Tensor, alpha: PairTensor)
+            out = self.propagate(edge_index, x_dst=x_dst, alpha=alpha,
+                                 size=None)
+
             out = F.relu(out)
-            msg_dict['__'.join(edge_type)] = out
+            msg_dict[edge_type] = out
 
         # compute attention across semantic
         semattn_scores = []
@@ -166,12 +155,10 @@ class HANConv(MessagePassing):
 
         return out_dict
 
-    def message(self, x_src_j: Tensor, src_rel: Tensor, x_dst_i: Tensor,
-                dst_rel: Tensor, index: Tensor, ptr: Optional[Tensor],
+    def message(self, x_dst_i: Tensor, alpha_i: Tensor, alpha_j: Tensor,
+                index: Tensor, ptr: Optional[Tensor],
                 size_i: Optional[int]) -> Tensor:
 
-        alpha_j = (x_src_j * src_rel).sum(dim=-1)
-        alpha_i = (x_dst_i * dst_rel).sum(dim=-1)
         alpha = alpha_j + alpha_i
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
