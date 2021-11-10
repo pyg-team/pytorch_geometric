@@ -18,15 +18,15 @@ class HGBDataset(InMemoryDataset):
     KDD21-Lv-et-al-HeterGNN.pdf>`_ paper.
 
     .. note::
-        Note that test labels are not given to prevent data leakage issues.
-        If you want to obtain final test scores, you will need to submit your
-        prediction to the `HGB leaderboard <https://www.biendata.xyz/hgb/>`_.
+        Test labels are randomly given to prevent data leakage issues.
+        If you want to obtain final test performance, you will need to submit
+        your model predictions to the
+        `HGB leaderboard <https://www.biendata.xyz/hgb/>`_.
 
     Args:
         root (string): Root directory where the dataset should be saved.
         name (string): The name of the dataset (one of :obj:`"ACM"`,
-            :obj:`"DBLP"`, :obj:`"Freebase"`, :obj:`"IMDB"`, :obj:`"Amazon"`,
-            :obj:`"LastFM"`, :obj:`"PubMed"`)
+            :obj:`"DBLP"`, :obj:`"Freebase"`, :obj:`"IMDB"`)
         transform (callable, optional): A function/transform that takes in an
             :class:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
@@ -45,12 +45,9 @@ class HGBDataset(InMemoryDataset):
         'dblp': 'DBLP',
         'freebase': 'Freebase',
         'imdb': 'IMDB',
-        'amazon': 'amazon',
-        'lastfm': 'LastFM',
-        'pubmed': 'PubMed',
     }
 
-    def __init__(self, root: str, name: str, split: str = "train",
+    def __init__(self, root: str, name: str,
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None,
                  pre_filter: Optional[Callable] = None):
@@ -87,34 +84,37 @@ class HGBDataset(InMemoryDataset):
 
         # node_types = {0: 'paper', 1, 'author', ...}
         # edge_types = {0: ('paper', 'cite', 'paper'), ...}
-        if self.name not in ['freebase']:
+        if self.name in ['acm', 'dblp', 'imdb']:
             with open(self.raw_paths[0], 'r') as f:  # `info.dat`
                 info = json.load(f)
-            n_types = {k: v for k, v in info['node.dat']['node type'].items()}
-            e_types = {k: v for k, v in info['link.dat']['link type'].items()}
-            e_types = {k: tuple(v.values()) for k, v in e_types.items()}
+            n_types = info['node.dat']['node type']
+            n_types = {int(k): v for k, v in n_types.items()}
+            e_types = info['link.dat']['link type']
+            e_types = {int(k): tuple(v.values()) for k, v in e_types.items()}
             for key, (src, dst, rel) in e_types.items():
-                src, dst = n_types[src], n_types[dst]
+                src, dst = n_types[int(src)], n_types[int(dst)]
                 rel = rel.split('-')[1]
-                rel = rel if rel != dst else 'to'
+                rel = rel if rel != dst and rel[1:] != dst else 'to'
                 e_types[key] = (src, rel, dst)
             num_classes = len(info['label.dat']['node type']['0'])
-        else:
+        elif self.name in ['freebase']:
             with open(self.raw_paths[0], 'r') as f:  # `info.dat`
                 info = f.read().split('\n')
-                start = info.index('TYPE\tMEANING') + 1
-                end = info[start:].index('')
-                n_types = [v.split('\t\t') for v in info[start:end]]
-                n_types = {k: v.lower() for k, v in n_types}
-                print(n_types)
-                # print(start, end)
-                # print(info[start:end])
-                start = info.index('LINK\tSTART\tEND\tMEANING') + 1
-                end = info[start:].index('')
-                e_types = [v.split('\t')[-1] for v in info[start:end]]
-                print(e_types)
-                # print(start, end)
-                # print(info[start:end])
+            start = info.index('TYPE\tMEANING') + 1
+            end = info[start:].index('')
+            n_types = [v.split('\t\t') for v in info[start:start + end]]
+            n_types = {int(k): v.lower() for k, v in n_types}
+
+            e_types = {}
+            start = info.index('LINK\tSTART\tEND\tMEANING') + 1
+            end = info[start:].index('')
+            for key, row in enumerate(info[start:start + end]):
+                row = row.split('\t')[1:]
+                src, dst, rel = [v for v in row if v != '']
+                src, dst = n_types[int(src)], n_types[int(dst)]
+                rel = rel.split('-')[1]
+                e_types[key] = (src, rel, dst)
+        else:
             raise NotImplementedError
 
         # Extract node information:
@@ -124,14 +124,14 @@ class HGBDataset(InMemoryDataset):
         with open(self.raw_paths[1], 'r') as f:  # `node.dat`
             xs = [v.split('\t') for v in f.read().split('\n')[:-1]]
         for x in xs:
-            n_id, n_type = x[0], n_types[x[2]]
+            n_id, n_type = int(x[0]), n_types[int(x[2])]
             mapping_dict[n_id] = num_nodes_dict[n_type]
             num_nodes_dict[n_type] += 1
             if len(x) >= 4:  # Extract features (in case they are given).
                 x_dict[n_type].append([float(v) for v in x[3].split(',')])
         for n_type in n_types.values():
             if len(x_dict[n_type]) == 0:
-                data[n_type].x = torch.eye(num_nodes_dict[n_type])
+                data[n_type].num_nodes = num_nodes_dict[n_type]
             else:
                 data[n_type].x = torch.tensor(x_dict[n_type])
 
@@ -152,13 +152,14 @@ class HGBDataset(InMemoryDataset):
             if not torch.allclose(edge_weight, torch.ones_like(edge_weight)):
                 data[e_type].edge_weight = edge_weight
 
+        # Node classification:
         if self.name in ['acm', 'dblp', 'freebase', 'imdb']:
             with open(self.raw_paths[3], 'r') as f:  # `label.dat`
                 train_ys = [v.split('\t') for v in f.read().split('\n')[:-1]]
             with open(self.raw_paths[4], 'r') as f:  # `label.dat.test`
                 test_ys = [v.split('\t') for v in f.read().split('\n')[:-1]]
             for y in train_ys:
-                n_id, n_type = mapping_dict[y[0]], n_types[y[2]]
+                n_id, n_type = mapping_dict[int(y[0])], n_types[int(y[2])]
 
                 if not hasattr(data[n_type], 'y'):
                     num_nodes = data[n_type].num_nodes
