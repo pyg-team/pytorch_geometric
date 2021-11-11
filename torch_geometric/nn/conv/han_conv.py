@@ -3,7 +3,6 @@ from typing import Union, Dict, Optional, List
 import torch
 from torch import Tensor, nn
 import torch.nn.functional as F
-from torch.nn import Parameter
 
 from torch_geometric.typing import NodeType, EdgeType, Metadata
 from torch_sparse import SparseTensor
@@ -14,13 +13,13 @@ from torch_geometric.nn.inits import glorot, reset
 
 
 def group(xs: List[Tensor], q: nn.Parameter,
-          lin: nn.Module) -> Optional[Tensor]:
+          k_lin: nn.Module) -> Optional[Tensor]:
     if len(xs) == 0:
         return None
     else:
         num_edge_types = len(xs)
         out = torch.stack(xs)
-        attn_score = (q * torch.tanh(lin(out)).mean(1)).sum(-1)
+        attn_score = (q * torch.tanh(k_lin(out)).mean(1)).sum(-1)
         attn = F.softmax(attn_score, dim=0)
         out = torch.sum(attn.view(num_edge_types, 1, -1) * out, dim=0)
         return out
@@ -30,7 +29,8 @@ class HANConv(MessagePassing):
     r"""
     The Heterogenous Graph Attention Operator from the
     `"Heterogenous Graph Attention Network"
-    <https://arxiv.org/pdf/1903.07293.pdf>` paper
+    <https://arxiv.org/pdf/1903.07293.pdf>`_ paper.
+
     Args:
         in_channels (int or Dict[str, int]): Size of each input sample of every
             node type, or :obj:`-1` to derive the size from the first input(s)
@@ -43,6 +43,8 @@ class HANConv(MessagePassing):
             information.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
+        negative_slope (float, optional): LeakyReLU angle of the negative
+            slope. (default: :obj:`0.2`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -65,24 +67,28 @@ class HANConv(MessagePassing):
         self.out_channels = out_channels
         self.negative_slope = negative_slope
         self.metadata = metadata
-        self.proj = torch.nn.ModuleDict()
-        self.lin_src = torch.nn.ParameterDict()
-        self.lin_dst = torch.nn.ParameterDict()
+        self.k_lin = nn.Linear(out_channels, out_channels)
+        self.q = nn.Parameter(torch.Tensor(1,out_channels))
 
-        for node_type in metadata[0]:
-            self.proj[node_type] = Linear(in_channels[node_type], out_channels)
+        self.proj = nn.ModuleDict()
+        for node_type,in_channels in self.in_channels.items():
+            self.proj[node_type] = Linear(in_channels, out_channels)
+
+        self.lin_src = nn.ParameterDict()
+        self.lin_dst = nn.ParameterDict()
         dim = out_channels // heads
         for edge_type in metadata[1]:
             edge_type = '__'.join(edge_type)
-            self.lin_src[edge_type] = Parameter(torch.Tensor(1, heads, dim))
-            self.lin_dst[edge_type] = Parameter(torch.Tensor(1, heads, dim))
-        self.lin_semantic = Linear(out_channels, out_channels)
-        self.q = Parameter(torch.Tensor(out_channels))
+            self.lin_src[edge_type] = nn.Parameter(torch.Tensor(1, heads, dim))
+            self.lin_dst[edge_type] = nn.Parameter(torch.Tensor(1, heads, dim))
+
+        self.reset_parameters()
 
     def reset_parameters(self):
         reset(self.proj)
-        glorot(self.a_rel)
-        reset(self.semantic_proj)
+        glorot(self.lin_src)
+        glorot(self.lin_dst)
+        self.k_lin.reset_parameters()
         glorot(self.q)
 
     def forward(
@@ -107,7 +113,7 @@ class HANConv(MessagePassing):
             be set to :obj:`None`.
         """
         H, D = self.heads, self.out_channels // self.heads
-        x_node_dict, out_dict = {}, {}, {}
+        x_node_dict, out_dict = {}, {}
 
         # Iterate over node types:
         for node_type, x_node in x_dict.items():
@@ -134,7 +140,7 @@ class HANConv(MessagePassing):
 
         # iterate over node types:
         for node_type, outs in out_dict.items():
-            out = group(outs, self.q, self.lin_semantic)
+            out = group(outs, self.q, self.k_lin)
 
             if out is None:
                 out_dict[node_type] = None
