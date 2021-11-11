@@ -68,10 +68,10 @@ class HANConv(MessagePassing):
         self.negative_slope = negative_slope
         self.metadata = metadata
         self.k_lin = nn.Linear(out_channels, out_channels)
-        self.q = nn.Parameter(torch.Tensor(1,out_channels))
+        self.q = nn.Parameter(torch.Tensor(1, out_channels))
 
         self.proj = nn.ModuleDict()
-        for node_type,in_channels in self.in_channels.items():
+        for node_type, in_channels in self.in_channels.items():
             self.proj[node_type] = Linear(in_channels, out_channels)
 
         self.lin_src = nn.ParameterDict()
