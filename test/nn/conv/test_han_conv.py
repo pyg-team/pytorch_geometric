@@ -3,7 +3,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn import HANConv
 
 
-def test_han_conv_same_dimensions():
+def test_han_conv():
 
     x_dict = {
         'author': torch.randn(6, 16),
@@ -14,9 +14,9 @@ def test_han_conv_same_dimensions():
     edge2 = torch.randint(0, 5, (2, 4), dtype=torch.long)
     edge3 = torch.randint(0, 3, (2, 5), dtype=torch.long)
     edge_index_dict = {
-        ('author', 'metapath1', 'author'): edge1,
-        ('paper', 'matapath2', 'paper'): edge2,
-        ('paper', 'matapath3', 'paper'): edge3,
+        ('author', 'metapath0', 'author'): edge1,
+        ('paper', 'matapath1', 'paper'): edge2,
+        ('paper', 'matapath2', 'paper'): edge3,
     }
 
     adj_t_dict = {}
@@ -45,7 +45,7 @@ def test_han_conv_same_dimensions():
         assert torch.allclose(out1, out2, atol=1e-6)
 
 
-def test_hgt_conv_lazy():
+def test_han_conv_lazy():
 
     x_dict = {
         'author': torch.randn(6, 16),
