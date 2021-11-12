@@ -63,4 +63,4 @@ jobs:
 
       - name: Check package metadata
         run: |
-          mypy -m torch_geometric
+          mypy --install-types --non-interactive --ignore-missing-imports -m torch_geometric
