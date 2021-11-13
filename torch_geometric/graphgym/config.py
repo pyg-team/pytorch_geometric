@@ -238,6 +238,9 @@ def set_cfg(cfg):
     # Save model checkpoint every checkpoint period epochs
     cfg.train.ckpt_period = 100
 
+    # Enabling checkpoint, set False to disable and save I/O
+    cfg.train.enable_ckpt = True
+
     # Resume training from the latest checkpoint in the output directory
     cfg.train.auto_resume = False
 

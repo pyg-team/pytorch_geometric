@@ -77,7 +77,7 @@ def train(loggers, loaders, model, optimizer, scheduler):
                 eval_epoch(loggers[i], loaders[i], model,
                            split=split_names[i - 1])
                 loggers[i].write_epoch(cur_epoch)
-        if is_ckpt_epoch(cur_epoch):
+        if is_ckpt_epoch(cur_epoch) and cfg.train.enable_ckpt:
             save_ckpt(model, optimizer, scheduler, cur_epoch)
     for logger in loggers:
         logger.close()
