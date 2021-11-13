@@ -235,6 +235,9 @@ def set_cfg(cfg):
     # Evaluate model on test data every eval period epochs
     cfg.train.eval_period = 10
 
+    # Option to skip training epoch evaluation
+    cfg.train.skip_train_eval = False
+
     # Save model checkpoint every checkpoint period epochs
     cfg.train.ckpt_period = 100
 
