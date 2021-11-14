@@ -1,14 +1,14 @@
 from types import ModuleType
 from importlib import import_module
 
-from .seed import seed_everything
-from .debug import is_debug_enabled, debug, set_debug
-
 import torch_geometric.data
 import torch_geometric.loader
 import torch_geometric.transforms
 import torch_geometric.utils
 import torch_geometric.profile
+
+from .seed import seed_everything
+from .debug import is_debug_enabled, debug, set_debug
 
 
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/
@@ -17,7 +17,7 @@ class LazyLoader(ModuleType):
     def __init__(self, local_name, parent_module_globals, name):
         self._local_name = local_name
         self._parent_module_globals = parent_module_globals
-        super(LazyLoader, self).__init__(name)
+        super().__init__(name)
 
     def _load(self):
         module = import_module(self.__name__)
