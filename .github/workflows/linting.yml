@@ -26,7 +26,12 @@ jobs:
       - name: Install dependencies
         run: |
           pip install flake8
+          pip install pyroma
 
       - name: Run linting
         run: |
           flake8 .
+
+      - name: Check package metadata
+        run: |
+          pyroma --min=10 .
