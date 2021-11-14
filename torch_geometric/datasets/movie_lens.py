@@ -1,7 +1,6 @@
 import os.path as osp
 
 import torch
-import torch.nn.functional as F
 
 import pandas as pd
 from sentence_transformers import SentenceTransformer
