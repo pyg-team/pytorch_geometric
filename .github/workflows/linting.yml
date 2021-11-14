@@ -27,6 +27,25 @@ jobs:
         run: |
           flake8 .
 
+  pylint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          pip install pylint
+
+      - name: Run linting
+        run: |
+          pylint torch_geometric
+
   pyroma:
     runs-on: ubuntu-latest
 
