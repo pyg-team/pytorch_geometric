@@ -100,17 +100,17 @@ class GEDDataset(InMemoryDataset):
         self.ged = torch.load(path)
         path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
         self.norm_ged = torch.load(path)
-        
+
     @property
     def raw_file_names(self) -> List[str]:
-       # returns ['LINUX/train', 'LINUX/test']
+        # returns ['LINUX/train', 'LINUX/test']
         return [osp.join(self.name, s) for s in ['train', 'test']]
-      
+
     @property
     def processed_file_names(self) -> List[str]:
-      # Returns ['LINUX_training.pt', 'LINUX_test.pt']
+        # Returns ['LINUX_training.pt', 'LINUX_test.pt']
         return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
-    
+
     # Downloading the graph data and the GED values from the GDrive
     def download(self):
         # Downloads the .tar/.zip file of the graphs and extracts them
@@ -127,19 +127,18 @@ class GEDDataset(InMemoryDataset):
     def process(self):
         import networkx as nx
 
-        ids, Ns = [], []    
+        ids, Ns = [], []
         # Iterating over paths for raw and processed data (train + test)
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
             # names - finds out the paths of all the raw graphs
             names = glob.glob(osp.join(r_path, '*.gexf'))
-            # Get sorted graph IDs from file name (123.gexf -> 123 is the graph ID)
+            # Get sorted graph IDs given the file name# For eg. if graph is - 123.gexf -> 123 is graph ID
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 
             data_list = []
             # Convert graphs in .gexf format to a NetworkX Graph:
             for i, idx in enumerate(ids[-1]):
                 i = i if len(ids) == 1 else i + len(ids[0])
-                
                 # Reading the raw .gexf graph
                 G = nx.read_gexf(osp.join(r_path, f'{idx}.gexf'))
                 # Mapping of nodes in G to a number
@@ -189,10 +188,11 @@ class GEDDataset(InMemoryDataset):
                 xs += [assoc[x]]
                 ys += [assoc[y]]
                 gs += [g]
-            # Pickle file does not have GEDs for (test, test) graph pair, hence they are still float('inf')
+            # Pickle file does not have GEDs for test graph pairs
+            # That is GEDs for (test_graph, test_graph) pair are still float('inf')
             x, y = torch.tensor(xs), torch.tensor(ys)  # x,y are graph numbers
             g = torch.tensor(gs, dtype=torch.float)    # g is the GED
-            mat[x, y], mat[y, x] = g, g                # Setting the values of the GEDs
+            mat[x, y], mat[y, x] = g, g  # Setting the GED values
 
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
         torch.save(mat, path)
