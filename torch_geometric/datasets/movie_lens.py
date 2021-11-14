@@ -80,13 +80,12 @@ class IdentityEncoder(object):
         return torch.from_numpy(df.values).view(-1, 1).to(self.dtype)
 
 
-
 class MovieLens(InMemoryDataset):
-    r"""A heterogeneous rating dataset, assembled by GroupLens Research from 
+    r"""A heterogeneous rating dataset, assembled by GroupLens Research from
     the `MovieLens web site <https://movielens.org>`_, consisting of nodes of
-    type :obj:`"movie"` and :obj:`"user"`. User ratings for movies are available 
-    as ground truth labels for the edges  between the users and the 
-    movies ('user', 'rates', 'movie').
+    type :obj:`"movie"` and :obj:`"user"`. User ratings for movies are
+    available as ground truth labels for the edges  between the users and
+    the movies ('user', 'rates', 'movie').
 
     Args:
         root (string): Root directory where the dataset should be saved.
@@ -99,14 +98,14 @@ class MovieLens(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-    
+
     url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
-    def __init__(self, root, transform: Optional[Callable] = None,pre_transform: Optional[Callable] = None):
+    def __init__(self, root, transform: Optional[Callable] = None,
+                 pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
 
         self.data, self.slices = torch.load(self.processed_paths[0])
-        
 
     @property
     def raw_dir(self) -> str:
@@ -118,7 +117,10 @@ class MovieLens(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [osp.join('ml-latest-small', 'movies.csv'), osp.join('ml-latest-small', 'ratings.csv')]
+        return [
+            osp.join('ml-latest-small', 'movies.csv'),
+            osp.join('ml-latest-small', 'ratings.csv')
+        ]
 
     @property
     def processed_file_names(self) -> str:
@@ -127,14 +129,14 @@ class MovieLens(InMemoryDataset):
     def download(self):
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        #os.remove(path)
-        
 
     def process(self):
-        user_x, user_mapping = load_node_csv(osp.join(self.raw_dir, self.raw_file_names[1]), index_col='userId')
+        user_x, user_mapping = load_node_csv(
+            osp.join(self.raw_dir, self.raw_file_names[1]), index_col='userId')
 
         movie_x, movie_mapping = load_node_csv(
-            osp.join(self.raw_dir, self.raw_file_names[0]), index_col='movieId', encoders={
+            osp.join(self.raw_dir, self.raw_file_names[0]),
+            index_col='movieId', encoders={
                 'title': SequenceEncoder(),
                 'genres': GenresEncoder()
             })
@@ -149,9 +151,10 @@ class MovieLens(InMemoryDataset):
         )
 
         data = HeteroData()
-        data['user'].num_nodes = len(user_mapping)  # Users do not have any features.
+        data['user'].num_nodes = len(
+            user_mapping)  # Users do not have any features.
         data['movie'].x = movie_x
-        
+
         data['user', 'rates', 'movie'].edge_index = edge_index
         data['user', 'rates', 'movie'].edge_label = edge_label
 
@@ -159,4 +162,3 @@ class MovieLens(InMemoryDataset):
             data = self.pre_transform(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-   
