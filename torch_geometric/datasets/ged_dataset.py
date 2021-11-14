@@ -101,20 +101,25 @@ class GEDDataset(InMemoryDataset):
         path = osp.join(self.processed_dir, f'{self.name}_norm_ged.pt')
         self.norm_ged = torch.load(path)
 
+    # returns ['LINUX/train', 'LINUX/test']
     @property
     def raw_file_names(self) -> List[str]:
         return [osp.join(self.name, s) for s in ['train', 'test']]
-
+    
+    # Returns ['LINUX_training.pt', 'LINUX_test.pt']
     @property
     def processed_file_names(self) -> List[str]:
         return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
-
+    
+    # Downloading the graph data and the GED values from the GDrive 
     def download(self):
+        # Downloads the .tar/.zip file of the graphs and extracts them 
         name = self.datasets[self.name]['id']
         path = download_url(self.url.format(name), self.raw_dir)
         self.datasets[self.name]['extract'](path, self.raw_dir)
         os.unlink(path)
-
+        
+        # Downloads the pre-computed GEDs from the pickle file
         name = self.datasets[self.name]['pickle']
         path = download_url(self.url.format(name), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
