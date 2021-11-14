@@ -113,7 +113,3 @@ def test_run_trivial_graphgym():
 
     shutil.rmtree(cfg.out_dir)
     shutil.rmtree(cfg.dataset.dir)
-
-
-if __name__ == '__main__':
-    main()
