@@ -25,12 +25,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install flake8
+          pip install tox
           pip install pyroma
 
       - name: Run linting
         run: |
-          flake8 .
+          tox -e flake8
 
       - name: Check package metadata
         run: |
