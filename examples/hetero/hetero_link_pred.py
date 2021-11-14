@@ -22,8 +22,6 @@ data['user'].x = torch.eye(data['user'].num_nodes, dtype=data['movie'].x.dtype)
 data = ToUndirected()(data)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.Fd
 
-print("data type:")
-print(data[('user', 'rates', 'movie')].edge_label.dtype)
 # 2. Perform a link-level split into training, validation, and test edges.
 transform = RandomLinkSplit(
     num_val=0.1,

@@ -122,7 +122,7 @@ __all__ = [
     'Actor',
     'OGB_MAG',
     'DBLP',
-    'MovieLense',
+    'MovieLens',
     'IMDB',
     'LastFM',
     'HGBDataset',
