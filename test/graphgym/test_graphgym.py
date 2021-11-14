@@ -18,6 +18,7 @@ from torch_geometric.graphgym.optim import create_optimizer, create_scheduler
 from torch_geometric.graphgym.train import train
 from torch_geometric.graphgym.utils import (agg_runs, auto_select_device,
                                             params_count)
+from torch_geometric.graphgym import register
 
 
 def test_run_single_graphgym():
@@ -64,3 +65,55 @@ def test_run_single_graphgym():
 
     shutil.rmtree(cfg.out_dir)
     shutil.rmtree(cfg.dataset.dir)
+
+
+def trivial_metric(true, pred, task_type):
+    return {'trivial': 1}
+
+
+def test_run_trivial_graphgym():
+    register.register_metric('trivial', trivial_metric)
+    cfg.metric_best = 'trivial'
+
+    Args = namedtuple('Args', ['cfg_file', 'opts'])
+    root = osp.join(osp.dirname(osp.realpath(__file__)))
+    args = Args(osp.join(root, 'example_node.yml'), [])
+
+    load_cfg(cfg, args)
+    cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    cfg.dataset.dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    dump_cfg(cfg)
+    set_printing()
+
+    seed_everything(cfg.seed)
+    auto_select_device()
+    set_run_dir(cfg.out_dir, args.cfg_file)
+    loaders = create_loader()
+    loggers = create_logger()
+    model = create_model()
+
+    optimizer_config = OptimizerConfig(optimizer=cfg.optim.optimizer,
+                                       base_lr=cfg.optim.base_lr,
+                                       weight_decay=cfg.optim.weight_decay,
+                                       momentum=cfg.optim.momentum)
+    optimizer = create_optimizer(model.parameters(), optimizer_config)
+
+    scheduler_config = SchedulerConfig(scheduler=cfg.optim.scheduler,
+                                       steps=cfg.optim.steps,
+                                       lr_decay=cfg.optim.lr_decay,
+                                       max_epoch=cfg.optim.max_epoch)
+    scheduler = create_scheduler(optimizer, scheduler_config)
+
+    cfg.params = params_count(model)
+
+    train(loggers, loaders, model, optimizer, scheduler)
+
+    agg_runs(set_agg_dir(cfg.out_dir, args.cfg_file), cfg.metric_best)
+
+    shutil.rmtree(cfg.out_dir)
+    shutil.rmtree(cfg.dataset.dir)
+
+
+if __name__ == '__main__':
+    main()

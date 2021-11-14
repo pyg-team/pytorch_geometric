@@ -2,6 +2,8 @@ import logging
 import math
 import sys
 
+from torch_geometric.graphgym import register
+
 import torch
 
 from torch_geometric.data.makedirs import makedirs
@@ -163,14 +165,22 @@ class Logger(object):
     def write_epoch(self, cur_epoch):
         basic_stats = self.basic()
 
-        if self.task_type == 'regression':
-            task_stats = self.regression()
-        elif self.task_type == 'classification_binary':
-            task_stats = self.classification_binary()
-        elif self.task_type == 'classification_multi':
-            task_stats = self.classification_multi()
-        else:
-            raise ValueError('Task has to be regression or classification')
+        # Try to load customized metrics
+        task_stats = None
+        for func in register.metric_dict.values():
+            task_stats = func(self._true, self._pred, self.task_type)
+            if task_stats is not None:
+                break
+
+        if task_stats is None:
+            if self.task_type == 'regression':
+                task_stats = self.regression()
+            elif self.task_type == 'classification_binary':
+                task_stats = self.classification_binary()
+            elif self.task_type == 'classification_multi':
+                task_stats = self.classification_multi()
+            else:
+                raise ValueError('Task has to be regression or classification')
 
         epoch_stats = {'epoch': cur_epoch}
         eta_stats = {'eta': round(self.eta(cur_epoch), cfg.round)}

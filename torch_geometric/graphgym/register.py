@@ -115,3 +115,19 @@ def register_loss(key: str, module: Any = None):
 def register_train(key: str, module: Any = None):
     r"""Registers a training function in GraphGym."""
     return register_base(train_dict, key, module)
+
+
+metric_dict = {}
+
+
+def register_metric(key, module):
+    """
+    Register a customized metric function.
+    After registeration, the module can be directly called by GraphGym.
+
+    Args:
+        key (string): Name of the module
+        module: PyTorch modeul
+
+    """
+    register_base(key, module, metric_dict)
