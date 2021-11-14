@@ -81,8 +81,8 @@ class IdentityEncoder(object):
 
 
 
-class MovieLense(InMemoryDataset):
-    r"""A heterogeneous rating dataset, assembled by GroupLens Research, from 
+class MovieLens(InMemoryDataset):
+    r"""A heterogeneous rating dataset, assembled by GroupLens Research from 
     the `MovieLens web site <https://movielens.org>`_, consisting of nodes of
     type :obj:`"movie"` and :obj:`"user"`. User ratings for movies are available 
     as ground truth labels for the edges  between the users and the 

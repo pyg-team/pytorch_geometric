@@ -50,7 +50,7 @@ from .wikipedia_network import WikipediaNetwork
 from .actor import Actor
 from .ogb_mag import OGB_MAG
 from .dblp import DBLP
-from .movie_lense import MovieLense
+from .movie_lens import MovieLens
 from .imdb import IMDB
 from .last_fm import LastFM
 from .hgb_dataset import HGBDataset

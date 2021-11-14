@@ -1,0 +1,198 @@
+import os.path as osp
+import torch
+from torch.nn import Parameter
+import torch.nn.functional as F
+
+from torch_geometric.datasets import MovieLens
+
+from torch_geometric.transforms import ToUndirected, RandomLinkSplit
+
+from torch_geometric.nn import SAGEConv, to_hetero
+
+path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
+dataset = MovieLens(path)
+data = dataset[0]
+
+data['user'].x = torch.eye(data['user'].num_nodes, dtype=data['movie'].x.dtype)
+
+# We can now convert `data` into an appropriate format for training a
+# graph-based machine learning model:
+
+# 1. Add a reverse ('movie', 'rev_rates', 'user') relation for message passing.
+data = ToUndirected()(data)
+del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.Fd
+
+print("data type:")
+print(data[('user', 'rates', 'movie')].edge_label.dtype)
+# 2. Perform a link-level split into training, validation, and test edges.
+transform = RandomLinkSplit(
+    num_val=0.1,
+    num_test=0.1,
+    disjoint_train_ratio=0.2,
+    neg_sampling_ratio=0.0,
+    edge_types=[('user', 'rates', 'movie')],
+    rev_edge_types=[('movie', 'rev_rates', 'user')],
+)
+train_data, val_data, test_data = transform(data)
+
+# Transform labels to float32 so the mse_loss works
+data_dict = {'train': (train_data), 'val': (val_data), 'test': (test_data)}
+for d in data_dict.values():
+    d[('user', 'rates',
+       'movie')].edge_label = d[('user', 'rates',
+                                 'movie')].edge_label.type(torch.float32)
+
+
+# Construct GNN for message passing
+class GNN(torch.nn.Module):
+    def __init__(self, hidden_channels, out_channels):
+        super().__init__()
+        self.conv1 = SAGEConv((-1, -1), hidden_channels)
+        self.conv2 = SAGEConv((-1, -1), out_channels)
+
+    def forward(self, x, edge_index):
+        x = self.conv1(x, edge_index).relu()
+        x = self.conv2(x, edge_index)
+        return x
+
+
+class EdgeDecoder(torch.nn.Module):
+    def __init__(self, hidden_channels, edge_labels):
+        super().__init__()
+
+        self.edge_labels = edge_labels
+        num_relations = torch.numel(self.edge_labels)
+
+        self.rel_emb = Parameter(torch.Tensor(num_relations, hidden_channels))
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        torch.nn.init.xavier_uniform_(self.rel_emb)
+
+    def decode(self, z, edge_index, edge_type):
+        # We only need to decode on the ('user','rates','movie') edges
+        z_src = z['user']
+        z_dst = z['movie']
+        z_src = z_src[edge_index[0]]
+        z_dst = z_dst[edge_index[1]]
+        rel = self.rel_emb[int(edge_type)]
+        return torch.sum(z_src * rel * z_dst, dim=1)
+
+    def forward(self, z, edge_label_index):
+        # Initialise scores array, which records the DistMult score for
+        # each supervision edge and edge_label (rating)
+        scores = torch.zeros(edge_label_index.shape[1],
+                             self.edge_labels.shape[0])
+        for label in self.edge_labels:
+            score = self.decode(z, edge_label_index, label)
+            scores[:, int(label)] = score
+        # Return "probabilities" for each class
+        logits = F.softmax(scores, dim=1)
+        possible_ratings = torch.Tensor(self.edge_labels)
+
+        # Get ratings
+        prod = logits * possible_ratings
+        predicted_ratings = torch.sum(prod, dim=1)
+
+        return (predicted_ratings)
+
+
+class EdgeClassifier(torch.nn.Module):
+    def __init__(self, hidden_channels, edge_labels):
+        super().__init__()
+        # Set up GNN for message passing
+        self.encoder = GNN(hidden_channels=hidden_channels,
+                           out_channels=hidden_channels)
+        # Make the GNN model heterogeneous
+        self.encoder = to_hetero(self.encoder, data.metadata(), aggr='sum')
+
+        # DistMult based "decoder" for edge classification
+        self.decoder = EdgeDecoder(hidden_channels, edge_labels)
+
+    def forward(self, x_dict, edge_index_dict, edge_label_index):
+        # Perform message passing
+        z = self.encoder(x_dict, edge_index_dict)
+
+        # The edges that go into the decoder are the supervision edges
+        out = self.decoder(z, edge_label_index)
+        return (out)
+
+
+edge_labels = torch.unique(test_data['user', 'rates', 'movie'].edge_label)
+
+hidden_dim = 32
+model = EdgeClassifier(hidden_channels=hidden_dim, edge_labels=edge_labels)
+
+# Get number of model parameters
+# Due to lazy initialisation we need to run one model step so the number
+# of parameters can be inferred
+with torch.no_grad():
+    model(train_data.x_dict, train_data.edge_index_dict,
+          train_data[('user', 'rates', 'movie')].edge_label_index)
+
+num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print(f"Number of model parameters: {num_params}")
+
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0)
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+model = model.to(device)
+train_data, val_data, test_data = train_data.to(device), val_data.to(
+    device), test_data.to(device)
+
+
+def train():
+    model.train()
+    optimizer.zero_grad()
+
+    # Get predicted labels
+    pred = model(train_data.x_dict, train_data.edge_index_dict,
+                 train_data[('user', 'rates', 'movie')].edge_label_index)
+
+    # Get true ratings
+    target = train_data[('user', 'rates', 'movie')].edge_label
+
+    # Apply rmse loss
+    loss = F.mse_loss(pred, torch.squeeze(target), reduction='mean')
+
+    loss.backward()
+    optimizer.step()
+
+
+def test():
+    model.eval()
+    rmse_dict = {}
+    data_dict = {'train': (train_data), 'val': (val_data), 'test': (test_data)}
+    for key, d in data_dict.items():
+        pred = model(d.x_dict, d.edge_index_dict,
+                     d[('user', 'rates', 'movie')].edge_label_index)
+
+        target = d[('user', 'rates', 'movie')].edge_label
+
+        with torch.no_grad():
+            rmse = F.mse_loss(pred, torch.squeeze(target), reduction='mean')
+
+        rmse_dict[key] = rmse
+
+    return rmse_dict
+
+
+best_val_rmse = test_rmse = 100
+for epoch in range(1, 101):
+    train()
+
+    if (epoch % 5 == 0) or (epoch == 1):
+        rmse = test()
+        if rmse['val'] < best_val_rmse:
+            best_val_rmse = rmse['val']
+            test_rmse = rmse['test']
+        # Printing current metrics
+        log = (f"Epoch: {epoch}, "
+               f"rmse train: {rmse['train']:.4f}, "
+               f"rmse val: {rmse['val']:.4f}, "
+               f"rmse test: {rmse['test']:.4f}.")
+
+        print(log)
+print((f"Best validation RMSE: {best_val_rmse:.4f}, "
+       f"associated test RMSE: {test_rmse:.4f}"))
