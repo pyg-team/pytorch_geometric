@@ -132,7 +132,8 @@ class GEDDataset(InMemoryDataset):
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
             # names - finds out the paths of all the raw graphs
             names = glob.glob(osp.join(r_path, '*.gexf'))
-            # Get sorted graph IDs given the file name# For eg. if graph is - 123.gexf -> 123 is graph ID
+            # Get sorted graph IDs given the file name
+            # For eg. if graph is - 123.gexf -> 123 is graph ID
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 
             data_list = []
@@ -189,7 +190,7 @@ class GEDDataset(InMemoryDataset):
                 ys += [assoc[y]]
                 gs += [g]
             # Pickle file does not have GEDs for test graph pairs
-            # That is GEDs for (test_graph, test_graph) pair are still float('inf')
+            # GEDs for (test_graph, test_graph) pair are still float('inf')
             x, y = torch.tensor(xs), torch.tensor(ys)  # x,y are graph numbers
             g = torch.tensor(gs, dtype=torch.float)    # g is the GED
             mat[x, y], mat[y, x] = g, g  # Setting the GED values
