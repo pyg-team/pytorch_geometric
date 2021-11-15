@@ -26,7 +26,7 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 class TransformerBlock(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(TransformerBlock, self).__init__()
+        super().__init__()
         self.lin_in = Lin(in_channels, in_channels)
         self.lin_out = Lin(out_channels, out_channels)
 
@@ -65,7 +65,7 @@ class TransitionDown(torch.nn.Module):
     '''
 
     def __init__(self, in_channels, out_channels, ratio=0.25, k=16):
-        super(TransitionDown, self).__init__()
+        super().__init__()
         self.k = k
         self.ratio = ratio
         self.mlp = Seq(
@@ -101,7 +101,7 @@ class TransitionDown(torch.nn.Module):
 
 class Net(torch.nn.Module):
     def __init__(self, NUM_CLASSES, NUM_FEATURES, dim_model, k=16):
-        super(Net, self).__init__()
+        super().__init__()
         self.k = k
 
         # dummy feature is created if there is none given
@@ -145,7 +145,7 @@ class Net(torch.nn.Module):
 
         # add dummy features in case there is none
         if x is None:
-            x = torch.ones((pos.shape[0], 1)).to(pos.get_device())
+            x = torch.ones((pos.shape[0], 1), device=pos.get_device())
 
         # first block
         x = self.mlp_input(x)
@@ -198,7 +198,7 @@ def test(loader):
 if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(train_dataset.num_classes, 1, dim_model=[
+    model = Net(train_dataset.num_classes, 0, dim_model=[
                 32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
@@ -208,6 +208,6 @@ if __name__ == '__main__':
     for epoch in range(1, 201):
         loss = train()
         test_acc = test(test_loader)
-        print('Epoch {:03d}, Loss: {:.4f}, Test: {:.4f}'.format(
+        print(f'Epoch {epoch:03d}, Loss: {loss:.4f}, Test: {test_acc:.4f}')
             epoch, loss, test_acc))
         scheduler.step()

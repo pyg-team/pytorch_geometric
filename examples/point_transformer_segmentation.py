@@ -38,7 +38,7 @@ class TransitionUp(torch.nn.Module):
     '''
 
     def __init__(self, in_channels, out_channels):
-        super(TransitionUp, self).__init__()
+        super().__init__()
         self.mlp_sub = Seq(
             Lin(in_channels, out_channels),
             BN(out_channels),
@@ -66,7 +66,7 @@ class TransitionUp(torch.nn.Module):
 
 class Net(torch.nn.Module):
     def __init__(self, NUM_CLASSES, NUM_FEATURES, dim_model, k=16):
-        super(Net, self).__init__()
+        super().__init__()
         self.k = k
 
         # dummy feature is created if there is none given
