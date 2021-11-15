@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 __version__ = '2.0.2'
-url = 'https://github.com/pyg-team/pytorch_geometric'
+URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
     'numpy',
@@ -26,8 +26,8 @@ setup(
     description='Graph Neural Network Library for PyTorch',
     author='Matthias Fey',
     author_email='matthias.fey@tu-dortmund.de',
-    url=url,
-    download_url='{}/archive/{}.tar.gz'.format(url, __version__),
+    url=URL,
+    download_url=f'{URL}/archive/{__version__}.tar.gz',
     keywords=[
         'deep-learning'
         'pytorch',

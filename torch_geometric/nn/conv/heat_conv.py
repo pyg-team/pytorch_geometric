@@ -124,9 +124,8 @@ class HEATConv(MessagePassing):
         alpha = softmax(alpha, index, ptr, size_i)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        out = self.lin(torch.cat([x_i, edge_attr], dim=-1)).unsqueeze(-2)
-        out = out * alpha.unsqueeze(-1)
-        return out
+        out = self.lin(torch.cat([x_j, edge_attr], dim=-1)).unsqueeze(-2)
+        return out * alpha.unsqueeze(-1)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

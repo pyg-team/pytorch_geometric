@@ -1,8 +1,9 @@
 import copy
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import torch
 import torch.nn as nn
+from torch_geometric.nn import Linear as Linear_pyg
 import torch.nn.functional as F
 import torch_geometric as pyg
 
@@ -124,7 +125,7 @@ class GeneralMultiLayer(nn.Module):
     """
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super(GeneralMultiLayer, self).__init__()
-        dim_inner = layer_config.dim_in \
+        dim_inner = layer_config.dim_out \
             if layer_config.dim_inner is None \
             else layer_config.dim_inner
         for i in range(layer_config.num_layers):
@@ -161,7 +162,7 @@ class Linear(nn.Module):
     """
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super(Linear, self).__init__()
-        self.model = nn.Linear(
+        self.model = Linear_pyg(
             layer_config.dim_in,
             layer_config.dim_out,
             bias=layer_config.has_bias)
@@ -238,6 +239,7 @@ class MLP(nn.Module):
                 dim_inner=dim_inner,
                 final_act=True)
             layers.append(GeneralMultiLayer('linear', sub_layer_config))
+            layer_config = replace(layer_config, dim_in=dim_inner)
             layers.append(Linear(layer_config))
         else:
             layers.append(Linear(layer_config))
@@ -309,9 +311,9 @@ class GINConv(nn.Module):
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super(GINConv, self).__init__()
         gin_nn = nn.Sequential(
-            nn.Linear(layer_config.dim_in, layer_config.dim_out),
+            Linear_pyg(layer_config.dim_in, layer_config.dim_out),
             nn.ReLU(),
-            nn.Linear(layer_config.dim_out, layer_config.dim_out))
+            Linear_pyg(layer_config.dim_out, layer_config.dim_out))
         self.model = pyg.nn.GINConv(gin_nn)
 
     def forward(self, batch):
