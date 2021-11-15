@@ -95,11 +95,13 @@ class TransitionDown(torch.nn.Module):
         sub_pos, out = pos[id_clusters], x_out
         return out, sub_pos, sub_batch
 
+
 def MLP(channels):
     return Seq(*[
         Seq(Lin(channels[i - 1], channels[i]), BN(channels[i]), ReLU())
         for i in range(1, len(channels))
     ])
+
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim_model, k=16):
