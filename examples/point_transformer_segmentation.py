@@ -1,4 +1,4 @@
-from point_transformer_classification import TransitionDown, TransformerBlock
+from point_transformer_classification import TransitionDown, TransformerBlock, MLP
 
 import os.path as osp
 
@@ -73,11 +73,7 @@ class Net(torch.nn.Module):
         in_channels = max(in_channels, 1)
 
         # first block
-        self.mlp_input = Seq(
-            Lin(in_channels, dim_model[0]),
-            BN(dim_model[0]),
-            ReLU()
-        )
+        self.mlp_input = MLP([in_channels, dim_model[0]])
 
         self.transformer_input = TransformerBlock(in_channels=dim_model[0],
                                                   out_channels=dim_model[0],

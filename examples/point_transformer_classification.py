@@ -95,6 +95,11 @@ class TransitionDown(torch.nn.Module):
         sub_pos, out = pos[id_clusters], x_out
         return out, sub_pos, sub_batch
 
+def MLP(channels):
+    return Seq(*[
+        Seq(Lin(channels[i - 1], channels[i]), BN(channels[i]), ReLU())
+        for i in range(1, len(channels))
+    ])
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, out_channels, dim_model, k=16):
@@ -105,11 +110,7 @@ class Net(torch.nn.Module):
         in_channels = max(in_channels, 1)
 
         # first block
-        self.mlp_input = Seq(
-            Lin(in_channels, dim_model[0]),
-            BN(dim_model[0]),
-            ReLU()
-        )
+        self.mlp_input = MLP([in_channels, dim_model[0]])
 
         self.transformer_input = TransformerBlock(in_channels=dim_model[0],
                                                   out_channels=dim_model[0])
