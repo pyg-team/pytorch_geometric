@@ -95,8 +95,6 @@ class HANConv(MessagePassing):
         self,
         x_dict: Dict[NodeType, Tensor],
         edge_index_dict: Dict[EdgeType, Adj]
-
-                                                            SparseTensor]],
     ) -> Dict[NodeType, Optional[Tensor]]:
         r"""
         Args:
