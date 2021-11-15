@@ -37,7 +37,6 @@ def test_han_conv():
     assert out_dict1['author'].size() == (6, 16)
     assert out_dict1['paper'].size() == (5, 16)
     assert out_dict1['term'] is None
-    del x_dict['term']
     del out_dict1['term']
 
     out_dict2 = conv(x_dict, adj_t_dict)
