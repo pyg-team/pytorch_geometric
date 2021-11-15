@@ -1,13 +1,10 @@
 import os.path as osp
-
 import torch
-
 import pandas as pd
-from sentence_transformers import SentenceTransformer
 
-from torch_geometric.data import HeteroData, download_url, extract_zip
+from torch_geometric.data import (InMemoryDataset, HeteroData, download_url,
+                                  extract_zip)
 
-from torch_geometric.data import InMemoryDataset, download_url
 from typing import Optional, Callable, List
 
 
@@ -41,7 +38,9 @@ def load_edge_csv(path, src_index_col, src_mapping, dst_index_col, dst_mapping,
 
 class SequenceEncoder(object):
     # The 'SequenceEncoder' encodes raw column strings into embeddings.
-    def __init__(self, model_name='all-MiniLM-L6-v2', device=None):
+    def __init__(self, model_name, device=None):
+        # Import transformer for encoding movie titles
+        from sentence_transformers import SentenceTransformer
         self.device = device
         self.model = SentenceTransformer(model_name, device=device)
 
@@ -96,14 +95,18 @@ class MovieLens(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+        model_name (str): Name of model used to transform movie titles to node
+            features. The model comes from the`Huggingface SentenceTransformer
+            <https://huggingface.co/sentence-transformers>`_.
     """
 
     url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
     def __init__(self, root, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+                 pre_transform: Optional[Callable] = None,
+                 model_name: Optional[str] = 'all-MiniLM-L6-v2'):
         super().__init__(root, transform, pre_transform)
-
+        self.model_name = model_name
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -136,7 +139,7 @@ class MovieLens(InMemoryDataset):
         movie_x, movie_mapping = load_node_csv(
             osp.join(self.raw_dir, self.raw_file_names[0]),
             index_col='movieId', encoders={
-                'title': SequenceEncoder(),
+                'title': SequenceEncoder(model_name=self.model_name),
                 'genres': GenresEncoder()
             })
 

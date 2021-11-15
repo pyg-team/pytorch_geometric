@@ -1,16 +1,36 @@
 import os.path as osp
+import argparse
 import torch
 from torch.nn import Parameter
 import torch.nn.functional as F
 
 from torch_geometric.datasets import MovieLens
-
 from torch_geometric.transforms import ToUndirected, RandomLinkSplit
 
 from torch_geometric.nn import SAGEConv, to_hetero
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '--feature_extraction_model', type=str, default='all-MiniLM-L6-v2',
+    help='Model used to transform movie titles to node features.')
+parser.add_argument(
+    '--link_split_num_val', type=float, default=0.1)
+parser.add_argument(
+    '--link_split_num_test', type=float, default=0.1)
+parser.add_argument(
+    '--disjoint_train_ratio', type=float, default=0.0,
+    help=('Proportion of training edges used for supervision. '
+          'The remainder is disjoint and used for message passing.'
+          'This option can be used to avoid target leakage.')
+)
+parser.add_argument('--num_epochs', type=int, default=101)
+parser.add_argument('--lr', type=float, default=0.01)
+parser.add_argument('--weight_decay', type=float, default=0.0005)
+parser.add_argument('--hidden', type=int, default=32)
+args = parser.parse_args()
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
-dataset = MovieLens(path)
+dataset = MovieLens(path, model_name=args.feature_extraction_model)
 data = dataset[0]
 
 data['user'].x = torch.eye(data['user'].num_nodes, dtype=data['movie'].x.dtype)
@@ -24,9 +44,9 @@ del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.Fd
 
 # 2. Perform a link-level split into training, validation, and test edges.
 transform = RandomLinkSplit(
-    num_val=0.1,
-    num_test=0.1,
-    disjoint_train_ratio=0.2,
+    num_val=args.link_split_num_val,
+    num_test=args.link_split_num_test,
+    disjoint_train_ratio=args.disjoint_train_ratio,
     neg_sampling_ratio=0.0,
     edge_types=[('user', 'rates', 'movie')],
     rev_edge_types=[('movie', 'rev_rates', 'user')],
@@ -84,11 +104,12 @@ class EdgeDecoder(torch.nn.Module):
         for label in self.edge_labels:
             score = self.decode(z, edge_label_index, label)
             scores[:, int(label)] = score
+
         # Return "probabilities" for each class
         logits = F.softmax(scores, dim=1)
         possible_ratings = torch.Tensor(self.edge_labels)
 
-        # Get ratings
+        # Get ratings (expectation value)
         prod = logits * possible_ratings
         predicted_ratings = torch.sum(prod, dim=1)
 
@@ -104,7 +125,7 @@ class EdgeClassifier(torch.nn.Module):
         # Make the GNN model heterogeneous
         self.encoder = to_hetero(self.encoder, data.metadata(), aggr='sum')
 
-        # DistMult based "decoder" for edge classification
+        # DistMult based decoder for edge classification
         self.decoder = EdgeDecoder(hidden_channels, edge_labels)
 
     def forward(self, x_dict, edge_index_dict, edge_label_index):
@@ -118,7 +139,7 @@ class EdgeClassifier(torch.nn.Module):
 
 edge_labels = torch.unique(test_data['user', 'rates', 'movie'].edge_label)
 
-hidden_dim = 32
+hidden_dim = args.hidden
 model = EdgeClassifier(hidden_channels=hidden_dim, edge_labels=edge_labels)
 
 # Get number of model parameters
@@ -131,7 +152,9 @@ with torch.no_grad():
 num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print(f"Number of model parameters: {num_params}")
 
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0)
+optimizer = torch.optim.Adam(model.parameters(),
+                             lr=args.lr,
+                             weight_decay=args.weight_decay)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -144,7 +167,7 @@ def train():
     model.train()
     optimizer.zero_grad()
 
-    # Get predicted labels
+    # Get predicted ratings
     pred = model(train_data.x_dict, train_data.edge_index_dict,
                  train_data[('user', 'rates', 'movie')].edge_label_index)
 
@@ -177,7 +200,7 @@ def test():
 
 
 best_val_rmse = test_rmse = 100
-for epoch in range(1, 101):
+for epoch in range(1, args.num_epochs):
     train()
 
     if (epoch % 5 == 0) or (epoch == 1):
