@@ -65,7 +65,7 @@ class TransitionUp(torch.nn.Module):
 
 
 class Net(torch.nn.Module):
-    def __init__(self, out_channels, in_channels, dim_model, k=16):
+    def __init__(self, in_channels, out_channels, dim_model, k=16):
         super().__init__()
         self.k = k
 
@@ -177,13 +177,14 @@ class Net(torch.nn.Module):
                 x=out_x[- i - 2],
                 x_sub=x,
                 pos=out_pos[- i - 2],
-                pos_sub=pos,
+                pos_sub=out_pos[- i - 1],
                 batch_sub=out_batch[- i - 1],
                 batch=out_batch[- i - 2]
             )
 
-            edge_index = knn_graph(pos, k=self.k, batch=out_batch[- i - 2])
-            x = self.transformers_up[- i - 1](x, pos, edge_index)
+            edge_index = knn_graph(out_pos[- i - 2], k=self.k,
+                                   batch=out_batch[- i - 2])
+            x = self.transformers_up[- i - 1](x, out_pos[- i - 2], edge_index)
 
         # Class score
         out = self.lin(x)
