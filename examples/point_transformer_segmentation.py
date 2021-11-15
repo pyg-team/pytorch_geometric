@@ -1,4 +1,5 @@
-from point_transformer_classification import TransitionDown, TransformerBlock, MLP
+from point_transformer_classification import TransitionDown, TransformerBlock
+from point_transformer_classification import MLP
 
 import os.path as osp
 
