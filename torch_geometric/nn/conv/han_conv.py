@@ -94,7 +94,8 @@ class HANConv(MessagePassing):
     def forward(
         self,
         x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Union[Dict[EdgeType, Tensor], Dict[EdgeType,
+        edge_index_dict: Dict[EdgeType, Adj]
+
                                                             SparseTensor]],
     ) -> Dict[NodeType, Optional[Tensor]]:
         r"""
