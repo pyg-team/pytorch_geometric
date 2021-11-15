@@ -103,46 +103,44 @@ class GEDDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        # returns ['LINUX/train', 'LINUX/test']
+        # Returns, e.g., ['LINUX/train', 'LINUX/test']
         return [osp.join(self.name, s) for s in ['train', 'test']]
 
     @property
     def processed_file_names(self) -> List[str]:
-        # Returns ['LINUX_training.pt', 'LINUX_test.pt']
+        # Returns, e.g., ['LINUX_training.pt', 'LINUX_test.pt']
         return [f'{self.name}_{s}.pt' for s in ['training', 'test']]
 
-    # Downloading the graph data and the GED values from the GDrive
     def download(self):
-        # Downloads the .tar/.zip file of the graphs and extracts them
+        # Downloads the .tar/.zip file of the graphs and extracts them:
         name = self.datasets[self.name]['id']
         path = download_url(self.url.format(name), self.raw_dir)
         self.datasets[self.name]['extract'](path, self.raw_dir)
         os.unlink(path)
-        # Downloads the pickle file containing pre-computed GEDs
+
+        # Downloads the pickle file containing pre-computed GEDs:
         name = self.datasets[self.name]['pickle']
         path = download_url(self.url.format(name), self.raw_dir)
         os.rename(path, osp.join(self.raw_dir, self.name, 'ged.pickle'))
 
-    # Pre-processing the raw graphs to PyG compatible graphs
     def process(self):
         import networkx as nx
 
         ids, Ns = [], []
-        # Iterating over paths for raw and processed data (train + test)
+        # Iterating over paths for raw and processed data (train + test):
         for r_path, p_path in zip(self.raw_paths, self.processed_paths):
-            # names - finds out the paths of all the raw graphs
+            # Find the paths of all raw graphs:
             names = glob.glob(osp.join(r_path, '*.gexf'))
-            # Get sorted graph IDs given the file name
-            # For eg. if graph is - 123.gexf -> 123 is graph ID
+            # Get sorted graph IDs given filename: 123.gexf -> 123
             ids.append(sorted([int(i.split(os.sep)[-1][:-5]) for i in names]))
 
             data_list = []
             # Convert graphs in .gexf format to a NetworkX Graph:
             for i, idx in enumerate(ids[-1]):
                 i = i if len(ids) == 1 else i + len(ids[0])
-                # Reading the raw .gexf graph
+                # Reading the raw `*.gexf` graph:
                 G = nx.read_gexf(osp.join(r_path, f'{idx}.gexf'))
-                # Mapping of nodes in G to a number
+                # Mapping of nodes in `G` to a contiguous number:
                 mapping = {name: j for j, name in enumerate(G.nodes())}
                 G = nx.relabel_nodes(G, mapping)
                 Ns.append(G.number_of_nodes())
@@ -150,14 +148,13 @@ class GEDDataset(InMemoryDataset):
                 edge_index = torch.tensor(list(G.edges)).t().contiguous()
                 if edge_index.numel() == 0:
                     edge_index = torch.empty((2, 0), dtype=torch.long)
-                # Converting graph (edge index) to an undirected graph
                 edge_index = to_undirected(edge_index, num_nodes=Ns[-1])
 
                 data = Data(edge_index=edge_index, i=i)
                 data.num_nodes = Ns[-1]
 
                 # Create a one-hot encoded feature matrix denoting the atom
-                # type for the  AIDS700nef dataset:
+                # type (for the `AIDS700nef` dataset):
                 if self.name == 'AIDS700nef':
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
@@ -172,7 +169,7 @@ class GEDDataset(InMemoryDataset):
                     data = self.pre_transform(data)
 
                 data_list.append(data)
-            # Saving the processed graphs in the path
+
             torch.save(self.collate(data_list), p_path)
 
         assoc = {idx: i for i, idx in enumerate(ids[0])}
@@ -180,7 +177,7 @@ class GEDDataset(InMemoryDataset):
 
         # Extracting ground-truth GEDs from the GED pickle file
         path = osp.join(self.raw_dir, self.name, 'ged.pickle')
-        # Torch Tensor containing GEDs - all GEDs initialized to float('inf')
+        # Initialize GEDs as float('inf'):
         mat = torch.full((len(assoc), len(assoc)), float('inf'))
         with open(path, 'rb') as f:
             obj = pickle.load(f)
@@ -189,11 +186,11 @@ class GEDDataset(InMemoryDataset):
                 xs += [assoc[x]]
                 ys += [assoc[y]]
                 gs += [g]
-            # Pickle file does not have GEDs for test graph pairs
-            # GEDs for (test_graph, test_graph) pair are still float('inf')
-            x, y = torch.tensor(xs), torch.tensor(ys)  # x,y are graph numbers
-            g = torch.tensor(gs, dtype=torch.float)    # g is the GED
-            mat[x, y], mat[y, x] = g, g  # Setting the GED values
+            # The pickle file does not contain GEDs for test graph pairs, i.e.
+            # GEDs for (test_graph, test_graph) pairs are still float('inf'):
+            x, y = torch.tensor(xs), torch.tensor(ys)
+            ged = torch.tensor(gs, dtype=torch.float)
+            mat[x, y], mat[y, x] = ged, ged
 
         path = osp.join(self.processed_dir, f'{self.name}_ged.pt')
         torch.save(mat, path)
