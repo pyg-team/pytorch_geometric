@@ -4,8 +4,7 @@ import torch
 from torch import Tensor, nn
 import torch.nn.functional as F
 
-from torch_geometric.typing import NodeType, EdgeType, Metadata
-from torch_sparse import SparseTensor
+from torch_geometric.typing import NodeType, EdgeType, Metadata, Adj
 from torch_geometric.nn.dense import Linear
 from torch_geometric.utils import softmax
 from torch_geometric.nn.conv import MessagePassing
