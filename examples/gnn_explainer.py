@@ -9,15 +9,16 @@ from torch_geometric.nn import GCNConv, GNNExplainer
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
+transform = T.Compose([T.GCNNorm(), T.NormalizeFeatures()])
+dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]
 
 
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = GCNConv(dataset.num_features, 16)
-        self.conv2 = GCNConv(16, dataset.num_classes)
+        self.conv1 = GCNConv(dataset.num_features, 16, normalize=False)
+        self.conv2 = GCNConv(16, dataset.num_classes, normalize=False)
 
     def forward(self, x, edge_index):
         x = F.relu(self.conv1(x, edge_index))
