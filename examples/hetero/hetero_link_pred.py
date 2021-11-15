@@ -106,11 +106,11 @@ class EdgeDecoder(torch.nn.Module):
             scores[:, int(label)] = score
 
         # Return "probabilities" for each class
-        logits = F.softmax(scores, dim=1)
+        probs = F.softmax(scores, dim=1)
         possible_ratings = torch.Tensor(self.edge_labels)
 
         # Get ratings (expectation value)
-        prod = logits * possible_ratings
+        prod = probs * possible_ratings
         predicted_ratings = torch.sum(prod, dim=1)
 
         return (predicted_ratings)
