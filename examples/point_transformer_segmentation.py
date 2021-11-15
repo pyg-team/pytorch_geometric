@@ -61,20 +61,20 @@ class TransitionUp(torch.nn.Module):
 
         x = self.mlp(x) + x_interpolated
 
-        return x, pos
+        return x
 
 
 class Net(torch.nn.Module):
-    def __init__(self, NUM_CLASSES, NUM_FEATURES, dim_model, k=16):
+    def __init__(self, out_channels, in_channels, dim_model, k=16):
         super().__init__()
         self.k = k
 
         # dummy feature is created if there is none given
-        NUM_FEATURES = max(NUM_FEATURES, 1)
+        in_channels = max(in_channels, 1)
 
         # first block
         self.mlp_input = Seq(
-            Lin(NUM_FEATURES, dim_model[0]),
+            Lin(in_channels, dim_model[0]),
             BN(dim_model[0]),
             ReLU()
         )
@@ -131,7 +131,7 @@ class Net(torch.nn.Module):
                        ReLU(),
                        Lin(64, 64),
                        ReLU(),
-                       Lin(64, NUM_CLASSES))
+                       Lin(64, out_channels))
 
     def forward(self, data):
         x, pos, batch = data.x, data.pos, data.batch
@@ -173,7 +173,7 @@ class Net(torch.nn.Module):
         # backbone up : augment cardinality and reduce dimensionnality
         n = len(self.transformers_down)
         for i in range(n):
-            x, pos = self.transition_up[- i - 1](
+            x = self.transition_up[- i - 1](
                 x=out_x[- i - 2],
                 x_sub=x,
                 pos=out_pos[- i - 2],
@@ -192,7 +192,7 @@ class Net(torch.nn.Module):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net(train_dataset.num_classes, 3, dim_model=[
+model = Net(3, train_dataset.num_classes, dim_model=[
     32, 64, 128, 256, 512], k=16).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
@@ -219,7 +219,6 @@ def train():
             total_loss = correct_nodes = total_nodes = 0
 
 
-@torch.no_grad()
 def test(loader):
     model.eval()
 

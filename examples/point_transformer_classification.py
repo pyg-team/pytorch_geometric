@@ -16,8 +16,7 @@ from torch_cluster import fps
 from torch_scatter import scatter_max
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
-pre_transform, transform = T.NormalizeScale(), T.Compose(
-    [T.SamplePoints(1024)])
+pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
 train_dataset = ModelNet(path, '10', True, transform, pre_transform)
 test_dataset = ModelNet(path, '10', False, transform, pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
@@ -50,11 +49,9 @@ class TransformerBlock(torch.nn.Module):
         )
 
     def forward(self, x, pos, edge_index):
-        # x_skip = x.clone()
         x = self.lin_in(x).relu()
         x = self.transformer(x, pos, edge_index)
         x = self.lin_out(x).relu()
-        # x = x + x_skip # negatively impacts training
         return x
 
 
@@ -95,21 +92,21 @@ class TransitionDown(torch.nn.Module):
                                dim=0)
 
         # keep only the clusters and their max-pooled features
-        new_pos, new_x = pos[id_clusters], x_out
-        return new_x, new_pos, sub_batch
+        sub_pos, out = pos[id_clusters], x_out
+        return out, sub_pos, sub_batch
 
 
 class Net(torch.nn.Module):
-    def __init__(self, NUM_CLASSES, NUM_FEATURES, dim_model, k=16):
+    def __init__(self, in_channels, out_channels, dim_model, k=16):
         super().__init__()
         self.k = k
 
         # dummy feature is created if there is none given
-        NUM_FEATURES = max(NUM_FEATURES, 1)
+        in_channels = max(in_channels, 1)
 
         # first block
         self.mlp_input = Seq(
-            Lin(NUM_FEATURES, dim_model[0]),
+            Lin(in_channels, dim_model[0]),
             BN(dim_model[0]),
             ReLU()
         )
@@ -138,7 +135,7 @@ class Net(torch.nn.Module):
                        ReLU(),
                        Lin(64, 64),
                        ReLU(),
-                       Lin(64, NUM_CLASSES))
+                       Lin(64, out_channels))
 
     def forward(self, data):
         x, pos, batch = data.x, data.pos, data.batch
@@ -183,14 +180,14 @@ def train():
     return total_loss / len(train_dataset)
 
 
+@torch.no_grad()
 def test(loader):
     model.eval()
 
     correct = 0
     for data in loader:
         data = data.to(device)
-        with torch.no_grad():
-            pred = model(data).max(dim=1)[1]
+        pred = model(data).max(dim=1)[1]
         correct += pred.eq(data.y).sum().item()
     return correct / len(loader.dataset)
 
@@ -198,7 +195,7 @@ def test(loader):
 if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = Net(train_dataset.num_classes, 0, dim_model=[
+    model = Net(0, train_dataset.num_classes, dim_model=[
                 32, 64, 128, 256, 512], k=16).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
@@ -209,5 +206,4 @@ if __name__ == '__main__':
         loss = train()
         test_acc = test(test_loader)
         print(f'Epoch {epoch:03d}, Loss: {loss:.4f}, Test: {test_acc:.4f}')
-            epoch, loss, test_acc))
         scheduler.step()
