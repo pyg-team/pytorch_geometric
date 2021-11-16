@@ -249,7 +249,7 @@ class SchNet(torch.nn.Module):
             # Get center of mass.
             mass = self.atomic_mass[z].view(-1, 1)
             c = scatter(mass * pos, batch, dim=0) / scatter(mass, batch, dim=0)
-            h = h * (pos - c[batch])
+            h = h * (pos - c.index_select(0, batch))
 
         if not self.dipole and self.mean is not None and self.std is not None:
             h = h * self.std + self.mean
