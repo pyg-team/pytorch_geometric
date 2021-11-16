@@ -621,6 +621,10 @@ class Data(BaseData):
         return self['edge_index'] if 'edge_index' in self._store else None
 
     @property
+    def edge_weight(self) -> Any:
+        return self['edge_weight'] if 'edge_weight' in self._store else None
+
+    @property
     def edge_attr(self) -> Any:
         return self['edge_attr'] if 'edge_attr' in self._store else None
 
