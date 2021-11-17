@@ -13,6 +13,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data.storage import (BaseStorage, NodeStorage,
                                           EdgeStorage, GlobalStorage)
+from torch_geometric.utils import subgraph
 
 
 class BaseData(object):
@@ -461,6 +462,38 @@ class Data(BaseData):
         if num_nodes != num_edges:
             return True
         return 'edge' in key
+
+    def subgraph(self, subset: Tensor):
+        r"""Returns the induced subgraph of a :obj:`subset` of nodes.
+
+        Args:
+            subset (LongTensor or BoolTensor): The nodes to keep.
+        """
+
+        edge_index, _, edge_mask = subgraph(subset, self.edge_index,
+                                            relabel_nodes=True,
+                                            num_nodes=self.num_nodes,
+                                            return_edge_mask=True)
+
+        if subset.dtype == torch.bool or subset.dtype == torch.uint8:
+            num_nodes = int(subset.sum())
+        else:
+            num_nodes = subset.size(0)
+
+        data = copy.copy(self)
+
+        for key, value in data.items():
+            if key == 'edge_index':
+                data.edge_index = edge_index
+            elif key == 'num_nodes':
+                data.num_nodes = num_nodes
+            elif isinstance(value, Tensor):
+                if self.is_node_attr(key):
+                    data[key] = value[subset]
+                elif self.is_edge_attr(key):
+                    data[key] = value[edge_mask]
+
+        return data
 
     def to_heterogeneous(self, node_type: Optional[Tensor] = None,
                          edge_type: Optional[Tensor] = None,
