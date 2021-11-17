@@ -22,6 +22,9 @@ def subgraph(subset: Union[Tensor, List[int]], edge_index: Tensor,
             starting from zero. (default: :obj:`False`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        return_edge_mask (bool, optional): If set to :obj:`True`, will return
+            the edge mask to filter out additional edge features.
+            (default: :obj:`False`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
     """

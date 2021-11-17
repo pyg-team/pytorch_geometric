@@ -11,9 +11,9 @@ import numpy as np
 from torch import Tensor
 from torch_sparse import SparseTensor
 
+from torch_geometric.utils import subgraph
 from torch_geometric.data.storage import (BaseStorage, NodeStorage,
                                           EdgeStorage, GlobalStorage)
-from torch_geometric.utils import subgraph
 
 
 class BaseData(object):
