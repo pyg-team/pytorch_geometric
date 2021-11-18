@@ -12,18 +12,17 @@ from torch_geometric.nn import SAGEConv, to_hetero
 parser = argparse.ArgumentParser()
 parser.add_argument(
     '--feature_extraction_model', type=str, default='all-MiniLM-L6-v2',
-    help='Model used to transform movie titles to node features.')
-parser.add_argument(
-    '--link_split_num_val', type=float, default=0.1)
-parser.add_argument(
-    '--link_split_num_test', type=float, default=0.1)
+    help='Model used to transform movie titles to node features.'
+    'This should be one of the models available in Huggingface'
+    'SentenceTransformer (https://huggingface.co/sentence-transformers)')
 parser.add_argument(
     '--disjoint_train_ratio', type=float, default=0.0,
     help=('Proportion of training edges used for supervision. '
           'The remainder is disjoint and used for message passing.'
-          'This option can be used to avoid target leakage.')
-)
-parser.add_argument('--num_epochs', type=int, default=101)
+          'This option can be used if target leakage is a concern.'))
+parser.add_argument('--num_val', type=float, default=0.1)
+parser.add_argument('--num_test', type=float, default=0.1)
+parser.add_argument('--num_epochs', type=int, default=201)
 parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--weight_decay', type=float, default=0.0005)
 parser.add_argument('--hidden', type=int, default=32)
@@ -33,6 +32,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
 dataset = MovieLens(path, model_name=args.feature_extraction_model)
 data = dataset[0]
 
+# Add user node features for message passing
 data['user'].x = torch.eye(data['user'].num_nodes, dtype=data['movie'].x.dtype)
 
 # We can now convert `data` into an appropriate format for training a
@@ -40,7 +40,7 @@ data['user'].x = torch.eye(data['user'].num_nodes, dtype=data['movie'].x.dtype)
 
 # 1. Add a reverse ('movie', 'rev_rates', 'user') relation for message passing.
 data = ToUndirected()(data)
-del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.Fd
+del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # 2. Perform a link-level split into training, validation, and test edges.
 transform = RandomLinkSplit(
@@ -174,7 +174,7 @@ def train():
     # Get true ratings
     target = train_data[('user', 'rates', 'movie')].edge_label
 
-    # Apply rmse loss
+    # Apply mse loss
     loss = F.mse_loss(pred, torch.squeeze(target), reduction='mean')
 
     loss.backward()
@@ -192,7 +192,8 @@ def test():
         target = d[('user', 'rates', 'movie')].edge_label
 
         with torch.no_grad():
-            rmse = F.mse_loss(pred, torch.squeeze(target), reduction='mean')
+            rmse = torch.sqrt(F.mse_loss(pred, torch.squeeze(target),
+                              reduction='mean'))
 
         rmse_dict[key] = rmse
 
