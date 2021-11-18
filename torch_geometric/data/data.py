@@ -464,25 +464,25 @@ class Data(BaseData):
         return 'edge' in key
 
     def subgraph(self, subset: Tensor):
-        r"""Returns the induced subgraph of a :obj:`subset` of nodes.
+        r"""Returns the induced subgraph given by the node indices
+        :obj:`subset`.
 
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
 
-        edge_index, _, edge_mask = subgraph(subset, self.edge_index,
-                                            relabel_nodes=True,
-                                            num_nodes=self.num_nodes,
-                                            return_edge_mask=True)
+        out = subgraph(subset, self.edge_index, relabel_nodes=True,
+                       num_nodes=self.num_nodes, return_edge_mask=True)
+        edge_index, _, edge_mask = out
 
-        if subset.dtype == torch.bool or subset.dtype == torch.uint8:
+        if subset.dtype == torch.bool:
             num_nodes = int(subset.sum())
         else:
             num_nodes = subset.size(0)
 
         data = copy.copy(self)
 
-        for key, value in data.items():
+        for key, value in data:
             if key == 'edge_index':
                 data.edge_index = edge_index
             elif key == 'num_nodes':
