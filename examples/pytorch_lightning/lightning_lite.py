@@ -12,7 +12,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Flickr')
 
 
 class Lite(LightningLite):
-    def run(self, path, num_workers):
+    def run(self, path: str, num_workers: int = 0):
         dataset = Flickr(path)
         train_loader = NeighborLoader(dataset[0], num_neighbors=[10] * 2,
                                       shuffle=True, batch_size=1024,
