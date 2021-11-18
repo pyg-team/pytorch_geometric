@@ -37,7 +37,7 @@ class GridSampling(BaseTransform):
         else:
             batch = data.batch
 
-        c = torch_geometric.nn.voxel_grid(data.pos, batch, self.size,
+        c = torch_geometric.nn.voxel_grid(data.pos, self.size, batch,
                                           self.start, self.end)
         c, perm = torch_geometric.nn.pool.consecutive.consecutive_cluster(c)
 
