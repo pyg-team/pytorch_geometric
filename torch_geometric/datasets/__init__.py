@@ -66,6 +66,7 @@ from .twitch import Twitch
 from .airports import Airports
 from .ba_shapes import BAShapes
 from .malnet_tiny import MalNetTiny
+from .omdb import OMDB
 
 __all__ = [
     'KarateClub',
@@ -138,6 +139,7 @@ __all__ = [
     'Airports',
     'BAShapes',
     'MalNetTiny',
+    'OMDB',
 ]
 
 classes = __all__

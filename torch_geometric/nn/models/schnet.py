@@ -249,7 +249,7 @@ class SchNet(torch.nn.Module):
             # Get center of mass.
             mass = self.atomic_mass[z].view(-1, 1)
             c = scatter(mass * pos, batch, dim=0) / scatter(mass, batch, dim=0)
-            h = h * (pos - c[batch])
+            h = h * (pos - c.index_select(0, batch))
 
         if not self.dipole and self.mean is not None and self.std is not None:
             h = h * self.std + self.mean
@@ -295,7 +295,7 @@ class InteractionBlock(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.mlp[0].weight)
         self.mlp[0].bias.data.fill_(0)
         torch.nn.init.xavier_uniform_(self.mlp[2].weight)
-        self.mlp[0].bias.data.fill_(0)
+        self.mlp[2].bias.data.fill_(0)
         self.conv.reset_parameters()
         torch.nn.init.xavier_uniform_(self.lin.weight)
         self.lin.bias.data.fill_(0)

@@ -79,7 +79,7 @@ class Node2Vec(torch.nn.Module):
     def forward(self, batch=None):
         """Returns the embeddings for the nodes in :obj:`batch`."""
         emb = self.embedding.weight
-        return emb if batch is None else emb[batch]
+        return emb if batch is None else emb.index_select(0, batch)
 
     def loader(self, **kwargs):
         return DataLoader(range(self.adj.sparse_size(0)),

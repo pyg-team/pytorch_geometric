@@ -1,10 +1,14 @@
+from typing import Union, List, Optional
+
 import torch
+from torch import Tensor
 
 from .num_nodes import maybe_num_nodes
 
 
-def subgraph(subset, edge_index, edge_attr=None, relabel_nodes=False,
-             num_nodes=None):
+def subgraph(subset: Union[Tensor, List[int]], edge_index: Tensor,
+             edge_attr: Optional[Tensor] = None, relabel_nodes: bool = False,
+             num_nodes: Optional[int] = None, return_edge_mask: bool = False):
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`.
 
@@ -18,39 +22,46 @@ def subgraph(subset, edge_index, edge_attr=None, relabel_nodes=False,
             starting from zero. (default: :obj:`False`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        return_edge_mask (bool, optional): If set to :obj:`True`, will return
+            the edge mask to filter out additional edge features.
+            (default: :obj:`False`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
     """
 
     device = edge_index.device
 
-    if isinstance(subset, list) or isinstance(subset, tuple):
-        subset = torch.tensor(subset, dtype=torch.long)
+    if isinstance(subset, (list, tuple)):
+        subset = torch.tensor(subset, dtype=torch.long, device=device)
 
     if subset.dtype == torch.bool or subset.dtype == torch.uint8:
-        n_mask = subset
+        node_mask = subset
+        num_nodes = node_mask.size(0)
 
         if relabel_nodes:
-            n_idx = torch.zeros(n_mask.size(0), dtype=torch.long,
-                                device=device)
-            n_idx[subset] = torch.arange(subset.sum().item(), device=device)
+            node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
+                                   device=device)
+            node_idx[subset] = torch.arange(subset.sum().item(), device=device)
     else:
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
-        n_mask = torch.zeros(num_nodes, dtype=torch.bool)
-        n_mask[subset] = 1
+        node_mask = torch.zeros(num_nodes, dtype=torch.bool, device=device)
+        node_mask[subset] = 1
 
         if relabel_nodes:
-            n_idx = torch.zeros(num_nodes, dtype=torch.long, device=device)
-            n_idx[subset] = torch.arange(subset.size(0), device=device)
+            node_idx = torch.zeros(num_nodes, dtype=torch.long, device=device)
+            node_idx[subset] = torch.arange(subset.size(0), device=device)
 
-    mask = n_mask[edge_index[0]] & n_mask[edge_index[1]]
-    edge_index = edge_index[:, mask]
-    edge_attr = edge_attr[mask] if edge_attr is not None else None
+    edge_mask = node_mask[edge_index[0]] & node_mask[edge_index[1]]
+    edge_index = edge_index[:, edge_mask]
+    edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        edge_index = n_idx[edge_index]
+        edge_index = node_idx[edge_index]
 
-    return edge_index, edge_attr
+    if return_edge_mask:
+        return edge_index, edge_attr, edge_mask
+    else:
+        return edge_index, edge_attr
 
 
 def k_hop_subgraph(node_idx, num_hops, edge_index, relabel_nodes=False,

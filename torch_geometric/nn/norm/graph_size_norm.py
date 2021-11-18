@@ -21,4 +21,4 @@ class GraphSizeNorm(nn.Module):
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
 
         inv_sqrt_deg = degree(batch, dtype=x.dtype).pow(-0.5)
-        return x * inv_sqrt_deg[batch].view(-1, 1)
+        return x * inv_sqrt_deg.index_select(0, batch).view(-1, 1)

@@ -28,7 +28,6 @@ class Set2Set(torch.nn.Module):
             a stacked LSTM, with the second LSTM taking in outputs of the first
             LSTM and computing the final results. (default: :obj:`1`)
     """
-
     def __init__(self, in_channels, processing_steps, num_layers=1):
         super(Set2Set, self).__init__()
 
@@ -56,7 +55,7 @@ class Set2Set(torch.nn.Module):
         for i in range(self.processing_steps):
             q, h = self.lstm(q_star.unsqueeze(0), h)
             q = q.view(batch_size, self.in_channels)
-            e = (x * q[batch]).sum(dim=-1, keepdim=True)
+            e = (x * q.index_select(0, batch)).sum(dim=-1, keepdim=True)
             a = softmax(e, batch, num_nodes=batch_size)
             r = scatter_add(a * x, batch, dim=0, dim_size=batch_size)
             q_star = torch.cat([q, r], dim=-1)

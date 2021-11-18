@@ -49,12 +49,13 @@ class PairNorm(torch.nn.Module):
                 return scale * x / (self.eps + x.norm(2, -1, keepdim=True))
 
         else:
-            x = x - scatter(x, batch, dim=0, reduce='mean')[batch]
+            mean = scatter(x, batch, dim=0, reduce='mean')
+            x = x - mean.index_select(0, batch)
 
             if not self.scale_individually:
                 return scale * x / torch.sqrt(self.eps + scatter(
                     x.pow(2).sum(-1, keepdim=True), batch, dim=0,
-                    reduce='mean')[batch])
+                    reduce='mean').index_select(0, batch))
             else:
                 return scale * x / (self.eps + x.norm(2, -1, keepdim=True))
 
