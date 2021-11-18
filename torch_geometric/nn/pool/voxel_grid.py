@@ -18,8 +18,8 @@ def voxel_grid(pos, size, batch=None, start=None, end=None):
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times D}`.
         size (float or [float] or Tensor): Size of a voxel (in each dimension).
         batch (LongTensor, optional): Batch vector :math:`\mathbf{b} \in {\{ 0,
-            \ldots,B-1\}}^N`, which assigns each node to a specific example.
-             (default: :obj:`None`)
+            \ldots,B-1\}}^N`, which assigns each node to a specific example. 
+            (default: :obj:`None`)
         start (float or [float] or Tensor, optional): Start coordinates of the
             grid (in each dimension). If set to :obj:`None`, will be set to the
             minimum coordinates found in :attr:`pos`. (default: :obj:`None`)
