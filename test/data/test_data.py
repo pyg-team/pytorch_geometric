@@ -121,6 +121,33 @@ def test_data():
     torch_geometric.set_debug(False)
 
 
+def test_data_subgraph():
+    x = torch.arange(5)
+    y = torch.tensor([0.])
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4],
+                               [1, 0, 2, 1, 3, 2, 4, 3]])
+    edge_weight = torch.arange(edge_index.size(1))
+
+    data = Data(x=x, y=y, edge_index=edge_index, edge_weight=edge_weight,
+                num_nodes=5)
+
+    out = data.subgraph(torch.tensor([1, 2, 3]))
+    assert len(out) == 5
+    assert torch.allclose(out.x, torch.arange(1, 4))
+    assert torch.allclose(out.y, y)
+    assert out.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert torch.allclose(out.edge_weight, edge_weight[torch.arange(2, 6)])
+    assert out.num_nodes == 3
+
+    out = data.subgraph(torch.tensor([False, False, False, True, True]))
+    assert len(out) == 5
+    assert torch.allclose(out.x, torch.arange(3, 5))
+    assert torch.allclose(out.y, y)
+    assert out.edge_index.tolist() == [[0, 1], [1, 0]]
+    assert torch.allclose(out.edge_weight, edge_weight[torch.arange(6, 8)])
+    assert out.num_nodes == 2
+
+
 def test_copy_data():
     data = Data(x=torch.randn(20, 5))
 
