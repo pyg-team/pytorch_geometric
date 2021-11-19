@@ -1,4 +1,8 @@
+from typing import Union, List, Optional
+
 import torch
+from torch import Tensor
+
 from torch_geometric.utils.repeat import repeat
 
 try:
@@ -7,7 +11,13 @@ except ImportError:
     grid_cluster = None
 
 
-def voxel_grid(pos, size, batch=None, start=None, end=None):
+def voxel_grid(
+    pos: Tensor,
+    size: Union[float, List[float], Tensor],
+    batch: Optional[Tensor] = None,
+    start: Optional[Union[float, List[float], Tensor]] = None,
+    end: Optional[Union[float, List[float], Tensor]] = None,
+) -> Tensor:
     r"""Voxel grid pooling from the, *e.g.*, `Dynamic Edge-Conditioned Filters
     in Convolutional Networks on Graphs <https://arxiv.org/abs/1704.02901>`_
     paper, which overlays a regular grid of user-defined size over a point
