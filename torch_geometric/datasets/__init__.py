@@ -141,7 +141,7 @@ __all__ = [
     'MalNetTiny',
     'OMDB',
     'Polblogs',
-    'Email_eu_core',
+    'EmailEUCore',
 ]
 
 classes = __all__

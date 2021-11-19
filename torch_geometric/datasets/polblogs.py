@@ -8,7 +8,7 @@ from torch_geometric.utils import to_undirected
 
 
 class Polblogs(InMemoryDataset):
-    """ The Political Blogs dataset (Polblogs) was introduced 
+    r"""The Political Blogs dataset (Polblogs) was introduced 
     by Adamic, L. A., & Glance, N. in "The political blogosphere 
     and the 2004 US election: divided they blog", in Proceedings of the 
     WWW-2005 Workshop on the Weblogging Ecosystem (2005). 
@@ -40,17 +40,17 @@ class Polblogs(InMemoryDataset):
 
     url = 'https://netset.telecom-paris.fr/datasets/polblogs.tar.gz'
 
-    def __init__(self, root=None, transform=None, pre_transform=None, pre_filter=None):
+    def __init__(self, root: str=None, transform: Optional[Callable]=None, pre_transform: Optional[Callable]=None):
         super().__init__(root=root, transform=transform,
                          pre_transform=pre_transform, pre_filter=pre_filter)
         self.data = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return 'polblogs.csv'
 
     @ property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):

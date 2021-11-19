@@ -8,8 +8,8 @@ from torch_geometric.utils.convert import from_networkx
 
 
 class Email_eu_core(InMemoryDataset):
-    """ This dataset is an e-mail communication network from a large European 
-    research institution, taken from the "Local Higher-order Graph Clustering." 
+    r"""This dataset is an e-mail communication network from a large European 
+    research institution, taken from the `"Local Higher-order Graph Clustering" <https://www-cs.stanford.edu/~jure/pubs/mappr-kdd17.pdf>`_ paper. 
     paper <https://www-cs.stanford.edu/~jure/pubs/mappr-kdd17.pdf>.  
     Vertices indicate members of the institution and an edge between a pair 
     of members indicates that they exchanged at least one email. 
@@ -37,17 +37,19 @@ class Email_eu_core(InMemoryDataset):
     url = 'https://snap.stanford.edu/data/email-Eu-core.txt.gz'
     url2 = 'https://snap.stanford.edu/data/email-Eu-core-department-labels.txt.gz'
 
-    def __init__(self, root, transform=None, pre_transform=None, pre_filter=None):
+from typing import Optional, Callable
+
+    def __init__(self, root: str, transform: Optional[Callable]=None, pre_transform: Optional[Callable]=None):
         super().__init__(root=root, transform=transform,
                          pre_transform=pre_transform, pre_filter=pre_filter)
         self.data = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return 'email-eu.csv'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
