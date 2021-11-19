@@ -67,7 +67,7 @@ from .ba_shapes import BAShapes
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import Polblogs
-from .email_eu_core import Email_eu_core
+from .email_eu_core import EmailEUCore
 
 __all__ = [
     'KarateClub',
