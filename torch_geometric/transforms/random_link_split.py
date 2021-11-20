@@ -144,9 +144,13 @@ class RandomLinkSplit(BaseTransform):
             is_undirected &= rev_edge_type is None
 
             edge_index = store.edge_index
-            perm = torch.randperm(edge_index.size(1), device=edge_index.device)
             if is_undirected:
-                perm = perm[edge_index[0] <= edge_index[1]]
+                mask = edge_index[0] <= edge_index[1]
+                perm = mask.nonzero(as_tuple=False).view(-1)
+                perm = perm[torch.randperm(perm.size(0), device=perm.device)]
+            else:
+                device = edge_index.device
+                perm = torch.randperm(edge_index.size(1), device=device)
 
             num_val = self.num_val
             if isinstance(num_val, float):

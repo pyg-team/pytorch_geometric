@@ -44,7 +44,7 @@ The `GCN layer <https://arxiv.org/abs/1609.02907>`_ is mathematically defined as
 
 .. math::
 
-    \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{\deg(j)}} \cdot \left( \mathbf{\Theta} \cdot \mathbf{x}_j^{(k-1)} \right),
+    \mathbf{x}_i^{(k)} = \sum_{j \in \mathcal{N}(i) \cup \{ i \}} \frac{1}{\sqrt{\deg(i)} \cdot \sqrt{\deg(j)}} \cdot \left( \mathbf{\Theta}^{\top} \cdot \mathbf{x}_j^{(k-1)} \right),
 
 where neighboring node features are first transformed by a weight matrix :math:`\mathbf{\Theta}`, normalized by their degree, and finally summed up.
 This formula can be divided into the following steps:

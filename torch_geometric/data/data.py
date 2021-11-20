@@ -11,6 +11,7 @@ import numpy as np
 from torch import Tensor
 from torch_sparse import SparseTensor
 
+from torch_geometric.utils import subgraph
 from torch_geometric.data.storage import (BaseStorage, NodeStorage,
                                           EdgeStorage, GlobalStorage)
 
@@ -462,6 +463,38 @@ class Data(BaseData):
             return True
         return 'edge' in key
 
+    def subgraph(self, subset: Tensor):
+        r"""Returns the induced subgraph given by the node indices
+        :obj:`subset`.
+
+        Args:
+            subset (LongTensor or BoolTensor): The nodes to keep.
+        """
+
+        out = subgraph(subset, self.edge_index, relabel_nodes=True,
+                       num_nodes=self.num_nodes, return_edge_mask=True)
+        edge_index, _, edge_mask = out
+
+        if subset.dtype == torch.bool:
+            num_nodes = int(subset.sum())
+        else:
+            num_nodes = subset.size(0)
+
+        data = copy.copy(self)
+
+        for key, value in data:
+            if key == 'edge_index':
+                data.edge_index = edge_index
+            elif key == 'num_nodes':
+                data.num_nodes = num_nodes
+            elif isinstance(value, Tensor):
+                if self.is_node_attr(key):
+                    data[key] = value[subset]
+                elif self.is_edge_attr(key):
+                    data[key] = value[edge_mask]
+
+        return data
+
     def to_heterogeneous(self, node_type: Optional[Tensor] = None,
                          edge_type: Optional[Tensor] = None,
                          node_type_names: Optional[List[NodeType]] = None,
@@ -619,6 +652,10 @@ class Data(BaseData):
     @property
     def edge_index(self) -> Any:
         return self['edge_index'] if 'edge_index' in self._store else None
+
+    @property
+    def edge_weight(self) -> Any:
+        return self['edge_weight'] if 'edge_weight' in self._store else None
 
     @property
     def edge_attr(self) -> Any:

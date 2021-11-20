@@ -3,9 +3,6 @@
 PyG Documentation
 =================
 
-
-In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, multi GPU-support, a large number of common benchmark datasets (based on simple interfaces to create your own), and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
-
 **PyG** *(PyTorch Geometric)* is a library built upon `PyTorch <https://pytorch.org/>`_ to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as `geometric deep learning <http://geometricdeeplearning.com/>`_, from a variety of published papers.

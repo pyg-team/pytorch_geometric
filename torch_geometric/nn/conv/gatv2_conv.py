@@ -38,6 +38,20 @@ class GATv2Conv(MessagePassing):
         [\mathbf{x}_i \, \Vert \, \mathbf{x}_k]
         \right)\right)}.
 
+    If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
+    the attention coefficients :math:`\alpha_{i,j}` are computed as
+
+    .. math::
+        \alpha_{i,j} =
+        \frac{
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
+        [\mathbf{x}_i \, \Vert \, \mathbf{x}_j \, \Vert \, \mathbf{e}_{i,j}]
+        \right)\right)}
+        {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
+        \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(\mathbf{\Theta}
+        [\mathbf{x}_i \, \Vert \, \mathbf{x}_k \, \Vert \, \mathbf{e}_{i,k}]
+        \right)\right)}.
+
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
@@ -54,6 +68,16 @@ class GATv2Conv(MessagePassing):
             sampled neighborhood during training. (default: :obj:`0`)
         add_self_loops (bool, optional): If set to :obj:`False`, will not add
             self-loops to the input graph. (default: :obj:`True`)
+        edge_dim (int, optional): Edge feature dimensionality (in case
+            there are any). (default: :obj:`None`)
+        fill_value (float or Tensor or str, optional): The way to generate
+            edge features of self-loops (in case :obj:`edge_dim != None`).
+            If given as :obj:`float` or :class:`torch.Tensor`, edge features of
+            self-loops will be directly given by :obj:`fill_value`.
+            If given as :obj:`str`, edge features of self-loops are computed by
+            aggregating all features of edges that point to the specific node,
+            according to a reduce operation. (:obj:`"add"`, :obj:`"mean"`,
+            :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`"mean"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         share_weights (bool, optional): If set to :obj:`True`, the same matrix
@@ -64,10 +88,21 @@ class GATv2Conv(MessagePassing):
     """
     _alpha: OptTensor
 
-    def __init__(self, in_channels: int, out_channels: int, heads: int = 1,
-                 concat: bool = True, negative_slope: float = 0.2,
-                 dropout: float = 0., add_self_loops: bool = True,
-                 bias: bool = True, share_weights: bool = False, **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        heads: int = 1,
+        concat: bool = True,
+        negative_slope: float = 0.2,
+        dropout: float = 0.0,
+        add_self_loops: bool = True,
+        edge_dim: Optional[int] = None,
+        fill_value: Union[float, Tensor, str] = 'mean',
+        bias: bool = True,
+        share_weights: bool = False,
+        **kwargs,
+    ):
         super(GATv2Conv, self).__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
@@ -77,6 +112,8 @@ class GATv2Conv(MessagePassing):
         self.negative_slope = negative_slope
         self.dropout = dropout
         self.add_self_loops = add_self_loops
+        self.edge_dim = edge_dim
+        self.fill_value = fill_value
         self.share_weights = share_weights
 
         self.lin_l = Linear(in_channels, heads * out_channels, bias=bias,
@@ -88,6 +125,12 @@ class GATv2Conv(MessagePassing):
                                 weight_initializer='glorot')
 
         self.att = Parameter(torch.Tensor(1, heads, out_channels))
+
+        if edge_dim is not None:
+            self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
+                                   weight_initializer='glorot')
+        else:
+            self.lin_edge = None
 
         if bias and concat:
             self.bias = Parameter(torch.Tensor(heads * out_channels))
@@ -103,15 +146,18 @@ class GATv2Conv(MessagePassing):
     def reset_parameters(self):
         self.lin_l.reset_parameters()
         self.lin_r.reset_parameters()
+        if self.lin_edge is not None:
+            self.lin_edge.reset_parameters()
         glorot(self.att)
         zeros(self.bias)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
-                size: Size = None, return_attention_weights: bool = None):
-        # type: (Union[Tensor, PairTensor], Tensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, Size, NoneType) -> Tensor  # noqa
-        # type: (Union[Tensor, PairTensor], Tensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
-        # type: (Union[Tensor, PairTensor], SparseTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
+                edge_attr: OptTensor = None, size: Size = None,
+                return_attention_weights: bool = None):
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
+        # type: (Union[Tensor, PairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
+        # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
         r"""
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
@@ -147,13 +193,23 @@ class GATv2Conv(MessagePassing):
                     num_nodes = min(num_nodes, x_r.size(0))
                 if size is not None:
                     num_nodes = min(size[0], size[1])
-                edge_index, _ = remove_self_loops(edge_index)
-                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
+                edge_index, edge_attr = remove_self_loops(
+                    edge_index, edge_attr)
+                edge_index, edge_attr = add_self_loops(
+                    edge_index, edge_attr, fill_value=self.fill_value,
+                    num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
-                edge_index = set_diag(edge_index)
+                if self.edge_dim is None:
+                    edge_index = set_diag(edge_index)
+                else:
+                    raise NotImplementedError(
+                        "The usage of 'edge_attr' and 'add_self_loops' "
+                        "simultaneously is currently not yet supported for "
+                        "'edge_index' in a 'SparseTensor' form")
 
-        # propagate_type: (x: PairTensor)
-        out = self.propagate(edge_index, x=(x_l, x_r), size=size)
+        # propagate_type: (x: PairTensor, edge_attr: OptTensor)
+        out = self.propagate(edge_index, x=(x_l, x_r),
+                             edge_attr=edge_attr, size=size)
 
         alpha = self._alpha
         self._alpha = None
@@ -175,9 +231,19 @@ class GATv2Conv(MessagePassing):
         else:
             return out
 
-    def message(self, x_j: Tensor, x_i: Tensor, index: Tensor, ptr: OptTensor,
+    def message(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
+                index: Tensor, ptr: OptTensor,
                 size_i: Optional[int]) -> Tensor:
         x = x_i + x_j
+
+        if edge_attr is not None:
+            if edge_attr.dim() == 1:
+                edge_attr = edge_attr.view(-1, 1)
+            assert self.lin_edge is not None
+            edge_attr = self.lin_edge(edge_attr)
+            edge_attr = edge_attr.view(-1, self.heads, self.out_channels)
+            x += edge_attr
+
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)
         alpha = softmax(alpha, index, ptr, size_i)

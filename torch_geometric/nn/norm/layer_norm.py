@@ -64,13 +64,13 @@ class LayerNorm(torch.nn.Module):
             mean = scatter(x, batch, dim=0, dim_size=batch_size,
                            reduce='add').sum(dim=-1, keepdim=True) / norm
 
-            x = x - mean[batch]
+            x = x - mean.index_select(0, batch)
 
             var = scatter(x * x, batch, dim=0, dim_size=batch_size,
                           reduce='add').sum(dim=-1, keepdim=True)
             var = var / norm
 
-            out = x / (var + self.eps).sqrt()[batch]
+            out = x / (var + self.eps).sqrt().index_select(0, batch)
 
         if self.weight is not None and self.bias is not None:
             out = out * self.weight + self.bias
