@@ -110,6 +110,7 @@ class TransformerConv(MessagePassing):
         self.concat = concat
         self.dropout = dropout
         self.edge_dim = edge_dim
+        self._alpha = None
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
