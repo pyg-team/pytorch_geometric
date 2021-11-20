@@ -19,11 +19,11 @@ class EdgeMessagePassingExample(MessagePassing):
 
     def forward(self, data: Data):
         x = self.propagate(data.edge_index, edge_attr=data.edge_attr, x=data.x)
-        edge_attr = self.edges_propagate(data.edge_index, edge_attr=data.edge_attr, x=data.x)
+        edge_attr = self.edge_update(data.edge_index, edge_attr=data.edge_attr, x=data.x)
         return x, edge_attr
 
-    def edge_message_and_update(self, edge_attr, x_i, x_j):
-        return edge_attr
+    def edge_message(self, edge_attr, x_i, x_j):
+        return x_i
 
     def message(self, edge_attr, x_i, x_j):
         return x_i

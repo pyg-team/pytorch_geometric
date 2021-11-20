@@ -97,11 +97,11 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.message)
         self.inspector.inspect(self.message_and_aggregate, pop_first=True)
         self.inspector.inspect(self.aggregate, pop_first=True)
-        self.inspector.inspect(self.edge_message_and_update)
+        self.inspector.inspect(self.edge_message)
         self.inspector.inspect(self.update, pop_first=True)
 
         self.__user_args__ = self.inspector.keys(
-            ['message', 'aggregate', 'update']).difference(self.special_args)
+            ['message', 'aggregate', 'update', 'edge_message']).difference(self.special_args)
         self.__fused_user_args__ = self.inspector.keys(
             ['message_and_aggregate', 'update']).difference(self.special_args)
 
@@ -116,12 +116,10 @@ class MessagePassing(torch.nn.Module):
         # Hooks:
         self._propagate_forward_pre_hooks = OrderedDict()
         self._propagate_forward_hooks = OrderedDict()
-        self._edges_propagate_forward_pre_hooks = OrderedDict()
-        self._edges_propagate_forward_hooks = OrderedDict()
+        self._edge_update_forward_pre_hooks = OrderedDict()
+        self._edge_update_forward_hooks = OrderedDict()
         self._message_forward_pre_hooks = OrderedDict()
         self._message_forward_hooks = OrderedDict()
-        self._edge_message_and_update_forward_pre_hooks = OrderedDict()
-        self._edge_message_and_update_forward_hooks = OrderedDict()
         self._aggregate_forward_pre_hooks = OrderedDict()
         self._aggregate_forward_hooks = OrderedDict()
         self._message_and_aggregate_forward_pre_hooks = OrderedDict()
@@ -358,8 +356,8 @@ class MessagePassing(torch.nn.Module):
 
         return out
 
-    def edges_propagate(self, edge_index: Adj, size: Size = None, **kwargs):
-        r"""The initial call to start propagating messages.
+    def edge_update(self, edge_index: Adj, size: Size = None, **kwargs):
+        r"""The call to generate edge updates from messages.
 
         Args:
             edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor` or a
@@ -372,7 +370,7 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to update edges featres.
         """
         decomposed_layers = 1 if self.__explain__ else self.decomposed_layers
-        for hook in self._edges_propagate_forward_pre_hooks.values():
+        for hook in self._edge_update_forward_pre_hooks.values():
             res = hook(self, (edge_index, size, kwargs))
             if res is not None:
                 edge_index, size, kwargs = res
@@ -392,18 +390,12 @@ class MessagePassing(torch.nn.Module):
             if decomposed_layers > 1:
                 for arg in decomp_args:
                     kwargs[arg] = decomp_kwargs[arg][i]
+
             coll_dict = self.__collect__(self.__user_args__, edge_index,
                                             size, kwargs)
-            msg_kwargs = self.inspector.distribute('edge_message_and_update', coll_dict)
-            for hook in self._edge_message_and_update_forward_pre_hooks.values():
-                res = hook(self, (msg_kwargs, ))
-                if res is not None:
-                    msg_kwargs = res[0] if isinstance(res, tuple) else res
-            out = self.edge_message_and_update(**msg_kwargs)
-            for hook in self._edge_message_and_update_forward_hooks.values():
-                res = hook(self, (msg_kwargs, ), out)
-                if res is not None:
-                    out = res
+            print(coll_dict.keys())
+            msg_kwargs = self.inspector.distribute('edge_message', coll_dict)
+            out = self.edge_message(**msg_kwargs)
 
             if decomposed_layers > 1:
                 decomp_out.append(out)
@@ -411,7 +403,7 @@ class MessagePassing(torch.nn.Module):
         if decomposed_layers > 1:
             out = torch.cat(decomp_out, dim=-1)
 
-        for hook in self._edges_propagate_forward_hooks.values():
+        for hook in self._edge_update_forward_hooks.values():
             res = hook(self, (edge_index, size, kwargs), out)
             if res is not None:
                 out = res
@@ -430,7 +422,7 @@ class MessagePassing(torch.nn.Module):
         """
         return x_j
 
-    def edge_message_and_update(self, edge_attr: Tensor) -> Tensor:
+    def edge_message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
         r"""Constructs a messages for each edge in the graph.
         This function can use as argument inputs to :meth:`propagate_edges`,
         Furthermore, tensors passed to :meth:`propagate` can be mapped to the
@@ -439,7 +431,7 @@ class MessagePassing(torch.nn.Module):
         The output of this functition should have the same shape as the 
         :obj:`edge_index` provided to :meth:`propagate_edges`.     
         """
-        return edge_attr
+        return (x_i + x_j)/2
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
@@ -523,24 +515,24 @@ class MessagePassing(torch.nn.Module):
         self._propagate_forward_hooks[handle.id] = hook
         return handle
 
-    def register_edges_propagate_forward_pre_hook(self,
+    def register_edge_updates_forward_pre_hook(self,
                                           hook: Callable) -> RemovableHandle:
         r"""Registers a forward pre-hook on the module.
         The hook will be called every time before :meth:`edges_propagate` is invoked.
         See :meth:`register_propagate_forward_pre_hook` for more information.
         """
-        handle = RemovableHandle(self._edges_propagate_forward_pre_hooks)
-        self._edges_propagate_forward_pre_hooks[handle.id] = hook
+        handle = RemovableHandle(self._edge_update_forward_pre_hooks)
+        self._edge_update_forward_pre_hooks[handle.id] = hook
         return handle
 
-    def register_edges_propagate_forward_hook(self, hook: Callable) -> RemovableHandle:
+    def register_edge_updates_forward_hook(self, hook: Callable) -> RemovableHandle:
         r"""Registers a forward hook on the module.
         The hook will be called every time after :meth:`edges_propagate` has computed
         an output.
         See :meth:`register_propagate_forward_hook` for more information.
         """
-        handle = RemovableHandle(self._edges_propagate_forward_hooks)
-        self._edges_propagate_forward_hooks[handle.id] = hook
+        handle = RemovableHandle(self._edge_update_forward_hooks)
+        self._edge_update_forward_hooks[handle.id] = hook
         return handle
 
     def register_message_forward_pre_hook(self,
@@ -561,26 +553,6 @@ class MessagePassing(torch.nn.Module):
         """
         handle = RemovableHandle(self._message_forward_hooks)
         self._message_forward_hooks[handle.id] = hook
-        return handle
-
-    def register_edge_message_and_update_forward_pre_hook(self,
-                                          hook: Callable) -> RemovableHandle:
-        r"""Registers a forward pre-hook on the module.
-        The hook will be called every time before :meth:`edge_message_and_update` is invoked.
-        See :meth:`register_propagate_forward_pre_hook` for more information.
-        """
-        handle = RemovableHandle(self._edge_message_and_update_forward_pre_hooks)
-        self._edge_message_forward_pre_hooks[handle.id] = hook
-        return handle
-
-    def register_edge_message_and_update_forward_hook(self, hook: Callable) -> RemovableHandle:
-        r"""Registers a forward hook on the module.
-        The hook will be called every time after :meth:`edge_message_and_update` has computed
-        an output.
-        See :meth:`register_propagate_forward_hook` for more information.
-        """
-        handle = RemovableHandle(self._edge_message_and_update_forward_hooks)
-        self._edge_message_and_update_forward_hooks[handle.id] = hook
         return handle
 
     def register_aggregate_forward_pre_hook(self,

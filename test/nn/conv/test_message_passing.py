@@ -56,6 +56,7 @@ def test_my_conv():
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
     conv = MyConv(8, 32)
+    
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
     assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
@@ -148,12 +149,11 @@ def test_copy():
     assert conv.lin_l.weight.data_ptr != conv2.lin_l.weight.data_ptr
     assert conv.lin_r.weight.data_ptr != conv2.lin_r.weight.data_ptr
 
-
 num_pre_hook_calls = 0
 num_hook_calls = 0
 
-
 def test_message_passing_hooks():
+
     conv = MyConv(8, 32)
 
     x = torch.randn(4, 8)
@@ -194,6 +194,12 @@ def test_message_passing_hooks():
     handle8 = conv.register_message_and_aggregate_forward_hook(hook)
     assert len(conv._message_and_aggregate_forward_hooks) == 1
 
+    handle9 = conv.register_edge_updates_forward_pre_hook(pre_hook)
+    assert len(conv._edge_update_forward_pre_hooks) == 1
+    handle10 = conv.register_edge_updates_forward_hook(hook)
+    assert len(conv._edge_update_forward_hooks) == 1
+    
+
     out1 = conv(x, edge_index, value)
     assert num_pre_hook_calls == 3
     assert num_hook_calls == 3
@@ -201,6 +207,9 @@ def test_message_passing_hooks():
     assert num_pre_hook_calls == 5
     assert num_hook_calls == 5
     assert torch.allclose(out1, out2)
+    out3 = conv.edge_update(adj.t(), x=x)
+    assert num_pre_hook_calls == 6
+    assert num_hook_calls == 6
 
     handle1.remove()
     assert len(conv._propagate_forward_pre_hooks) == 0
@@ -221,6 +230,11 @@ def test_message_passing_hooks():
     assert len(conv._message_and_aggregate_forward_pre_hooks) == 0
     handle8.remove()
     assert len(conv._message_and_aggregate_forward_hooks) == 0
+
+    handle9.remove()
+    assert len(conv._edge_update_forward_pre_hooks) == 0
+    handle10.remove()
+    assert len(conv._edge_update_forward_hooks) == 0  
 
 
 def test_modified_message_passing_hook():
