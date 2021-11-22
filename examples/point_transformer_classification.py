@@ -140,8 +140,7 @@ class Net(torch.nn.Module):
                        ReLU(),
                        Lin(64, out_channels))
 
-    def forward(self, data):
-        x, pos, batch = data.x, data.pos, data.batch
+    def forward(self, x, pos, batch=None):
 
         # add dummy features in case there is none
         if x is None:
@@ -175,7 +174,7 @@ def train():
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        out = model(data)
+        out = model(data.x, data.pos, data.batch)
         loss = F.nll_loss(out, data.y)
         loss.backward()
         total_loss += loss.item() * data.num_graphs
@@ -190,7 +189,7 @@ def test(loader):
     correct = 0
     for data in loader:
         data = data.to(device)
-        pred = model(data).max(dim=1)[1]
+        pred = model(data.x, data.pos, data.batch).max(dim=1)[1]
         correct += pred.eq(data.y).sum().item()
     return correct / len(loader.dataset)
 
