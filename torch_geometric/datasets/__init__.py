@@ -66,6 +66,8 @@ from .airports import Airports
 from .ba_shapes import BAShapes
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
+from .polblogs import PolBlogs
+from .email_eu_core import EmailEUCore
 
 __all__ = [
     'KarateClub',
@@ -138,6 +140,8 @@ __all__ = [
     'BAShapes',
     'MalNetTiny',
     'OMDB',
+    'PolBlogs',
+    'EmailEUCore',
 ]
 
 classes = __all__
