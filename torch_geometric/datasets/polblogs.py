@@ -1,24 +1,23 @@
-import tarfile
-import os
-from typing import Callable, Optional
+from typing import Optional, Callable, List
 
-import pandas as pd
+import os
+
 import torch
-from torch_geometric.data import Data, InMemoryDataset, download_url
-from torch_geometric.utils import to_undirected
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_tar)
 
 
 class Polblogs(InMemoryDataset):
-    r"""The Political Blogs dataset (Polblogs) was introduced 
-    by Adamic, L. A., & Glance, N. in "The political blogosphere 
-    and the 2004 US election: divided they blog", in Proceedings of the 
-    WWW-2005 Workshop on the Weblogging Ecosystem (2005). 
+    r"""The Political Blogs dataset from the `"The Political Blogosphere and
+    the 2004 US Election: Divided they Blog"
+    <https://dl.acm.org/doi/10.1145/1134271.1134277>`_ paper.
 
-    Polblogs is a graph with 1,490 vertices (representing political
-    blogs) and 19,025 edges (links between blogs). These links are
-    automatically extracted from a crawl of the front page of the blog. 
-    Each vertex receives a label indicating the political leaning of the blog: 
-    liberal or conservative. Edges are undirected. 
+    :class:`Polblogs` is a graph with 1,490 vertices (representing political
+    blogs) and 19,025 edges (links between blogs).
+    The links are automatically extracted from a crawl of the front page of the
+    blog.
+    Each vertex receives a label indicating the political leaning of the blog:
+    liberal or conservative.
 
     Args:
         root (string): Root directory where the dataset should be saved.
@@ -36,38 +35,32 @@ class Polblogs(InMemoryDataset):
 
     def __init__(self, root: str = None, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
-        super().__init__(root=root, transform=transform, pre_transform=pre_transform)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self) -> str:
-        return 'polblogs.csv'
+    def raw_file_names(self) -> List[str]:
+        return ['adjacency.csv', 'labels.csv']
 
-    @ property
+    @property
     def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
-        with tarfile.open(path) as f:
-            f.extractall(os.path.dirname(path))
+        extract_tar(path, self.raw_dir)
         os.unlink(path)
 
     def process(self):
-        A = pd.read_csv(self.raw_dir + '/adjacency.csv',
-                        header=None, index_col=False)
-        A = torch.tensor(A.to_numpy().T)
-        labels = pd.read_csv(self.raw_dir + '/labels.csv', header=None)
-        labels = torch.tensor(labels.to_numpy().T[0])
-        # one label was forgotten
-        labels = torch.cat((torch.tensor([0]), labels), dim=0)
+        import pandas as pd
 
-        # Construct PyG dataframe
-        data = Data(edge_index=A, y=labels)
-        data.edge_index = to_undirected(data.edge_index)
-        data.num_classes = 2
-        data.y = labels
-        data.num_nodes = data.y.shape[0]
+        edge_index = pd.read_csv(self.raw_paths[0], header=None)
+        edge_index = torch.from_numpy(edge_index.values).t().contiguous()
+
+        y = pd.read_csv(self.raw_paths[1], header=None)
+        y = torch.from_numpy(y.values).view(-1)
+
+        data = Data(edge_index=edge_index, y=y, num_nodes=y.size(0))
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
