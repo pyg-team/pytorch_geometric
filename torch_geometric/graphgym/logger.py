@@ -166,13 +166,17 @@ class Logger(object):
         basic_stats = self.basic()
 
         # Try to load customized metrics
-        task_stats = None
-        for func in register.metric_dict.values():
-            task_stats = func(self._true, self._pred, self.task_type)
-            if task_stats is not None:
-                break
+        task_stats = {}
+        for custom_metric in cfg.custom_metrics:
+            func = register.metric_dict.get(custom_metric)
+            if not func:
+                raise ValueError(
+                    f'Unknown custom metric function name: {custom_metric}'
+                )
+            custom_metric_score = func(self._true, self._pred, self.task_type)
+            task_stats[custom_metric] = custom_metric_score
 
-        if task_stats is None:
+        if not task_stats:  # use default metrics if no matching custom metric
             if self.task_type == 'regression':
                 task_stats = self.regression()
             elif self.task_type == 'classification_binary':

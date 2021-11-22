@@ -43,6 +43,9 @@ def set_cfg(cfg):
     # Config name (in out_dir)
     cfg.cfg_dest = 'config.yaml'
 
+    # Names of registered custom metric funcs to be used (use defaults if none)
+    cfg.custom_metrics = []
+
     # Random seed
     cfg.seed = 0
 

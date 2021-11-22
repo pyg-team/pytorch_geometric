@@ -68,12 +68,13 @@ def test_run_single_graphgym():
 
 
 def trivial_metric(true, pred, task_type):
-    return {'trivial': 1}
+    return 1
 
 
 def test_run_trivial_graphgym():
     register.register_metric('trivial', trivial_metric)
     cfg.metric_best = 'trivial'
+    cfg.custom_metrics = ['trivial']
 
     Args = namedtuple('Args', ['cfg_file', 'opts'])
     root = osp.join(osp.dirname(osp.realpath(__file__)))
