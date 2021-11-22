@@ -7,7 +7,7 @@ from torch_geometric.data import (Data, InMemoryDataset, download_url,
                                   extract_tar)
 
 
-class Polblogs(InMemoryDataset):
+class PolBlogs(InMemoryDataset):
     r"""The Political Blogs dataset from the `"The Political Blogosphere and
     the 2004 US Election: Divided they Blog"
     <https://dl.acm.org/doi/10.1145/1134271.1134277>`_ paper.
