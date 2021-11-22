@@ -3,6 +3,7 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch.nn import Sequential as Seq, Linear as Lin, BatchNorm1d as BN, ReLU
+from torch.nn import Identity
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
@@ -29,17 +30,9 @@ class TransformerBlock(torch.nn.Module):
         self.lin_in = Lin(in_channels, in_channels)
         self.lin_out = Lin(out_channels, out_channels)
 
-        self.pos_nn = Seq(
-            Lin(3, 64),
-            ReLU(),
-            Lin(64, out_channels)
-        )
+        self.pos_nn = MLP([3, 64, out_channels], batch_norm=False)
 
-        self.attn_nn = Seq(
-            Lin(out_channels, 64),
-            ReLU(),
-            Lin(64, out_channels)
-        )
+        self.attn_nn = MLP([out_channels, 64, out_channels], batch_norm=False)
 
         self.transformer = PointTransformerConv(
             in_channels,
@@ -65,11 +58,7 @@ class TransitionDown(torch.nn.Module):
         super().__init__()
         self.k = k
         self.ratio = ratio
-        self.mlp = Seq(
-            Lin(in_channels, out_channels),
-            BN(out_channels),
-            ReLU()
-        )
+        self.mlp = MLP([in_channels, out_channels])
 
     def forward(self, x, pos, batch):
         # FPS sampling
@@ -96,9 +85,13 @@ class TransitionDown(torch.nn.Module):
         return out, sub_pos, sub_batch
 
 
-def MLP(channels):
+def MLP(channels, batch_norm=True):
     return Seq(*[
-        Seq(Lin(channels[i - 1], channels[i]), BN(channels[i]), ReLU())
+        Seq(
+            Lin(channels[i - 1], channels[i]),
+            BN(channels[i]) if batch_norm else Identity(),
+            ReLU()
+        )
         for i in range(1, len(channels))
     ])
 
@@ -134,11 +127,13 @@ class Net(torch.nn.Module):
             )
 
         # class score computation
-        self.lin = Seq(Lin(dim_model[-1], 64),
-                       ReLU(),
-                       Lin(64, 64),
-                       ReLU(),
-                       Lin(64, out_channels))
+        self.mlp_output = Seq(
+            Lin(dim_model[-1], 64),
+            ReLU(),
+            Lin(64, 64),
+            ReLU(),
+            Lin(64, out_channels)
+        )
 
     def forward(self, x, pos, batch=None):
 
@@ -162,7 +157,7 @@ class Net(torch.nn.Module):
         x = global_mean_pool(x, batch)
 
         # Class score
-        out = self.lin(x)
+        out = self.mlp_output(x)
 
         return F.log_softmax(out, dim=-1)
 

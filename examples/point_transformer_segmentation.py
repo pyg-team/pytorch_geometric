@@ -5,7 +5,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import Sequential as Seq, Linear as Lin, BatchNorm1d as BN, ReLU
+from torch.nn import Sequential as Seq, Linear as Lin, ReLU
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
@@ -40,17 +40,8 @@ class TransitionUp(torch.nn.Module):
 
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.mlp_sub = Seq(
-            Lin(in_channels, out_channels),
-            BN(out_channels),
-            ReLU()
-        )
-
-        self.mlp = Seq(
-            Lin(out_channels, out_channels),
-            BN(out_channels),
-            ReLU()
-        )
+        self.mlp_sub = MLP([in_channels, out_channels])
+        self.mlp = MLP([out_channels, out_channels])
 
     def forward(self, x, x_sub, pos, pos_sub, batch=None, batch_sub=None):
         # transform low-res features and reduce the number of features
@@ -112,11 +103,7 @@ class Net(torch.nn.Module):
             )
 
         # summit layers
-        self.mlp_summit = Seq(
-            Lin(dim_model[-1], dim_model[-1]),
-            BN(dim_model[-1]),
-            ReLU()
-        )
+        self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], batch_norm=False)
 
         self.transformer_summit = TransformerBlock(
             in_channels=dim_model[-1],
@@ -124,11 +111,13 @@ class Net(torch.nn.Module):
         )
 
         # class score computation
-        self.lin = Seq(Lin(dim_model[0], 64),
-                       ReLU(),
-                       Lin(64, 64),
-                       ReLU(),
-                       Lin(64, out_channels))
+        self.mlp_output = Seq(
+            Lin(dim_model[0], 64),
+            ReLU(),
+            Lin(64, 64),
+            ReLU(),
+            Lin(64, out_channels)
+        )
 
     def forward(self, x, pos, batch=None):
 
@@ -183,7 +172,7 @@ class Net(torch.nn.Module):
             x = self.transformers_up[- i - 1](x, out_pos[- i - 2], edge_index)
 
         # Class score
-        out = self.lin(x)
+        out = self.mlp_output(x)
 
         return F.log_softmax(out, dim=-1)
 
