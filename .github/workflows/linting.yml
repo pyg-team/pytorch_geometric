@@ -28,6 +28,7 @@ jobs:
           flake8 .
 
   pylint:
+    continue-on-error: true
     runs-on: ubuntu-latest
 
     steps:
@@ -66,6 +67,7 @@ jobs:
           pyroma --min=10 .
 
   mypy:
+    continue-on-error: true
     runs-on: ubuntu-latest
 
     steps:
